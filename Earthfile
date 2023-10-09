@@ -1,5 +1,8 @@
 VERSION 0.7
 ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global REGISTRY='ghcr.io'
+ARG --global REG_USER='territoiresentransitions'
+ARG --global REG_TARGET=$REGISTRY/$REG_USER
 
 postgres:
     FROM postgres:15
@@ -228,7 +231,8 @@ node-fr-deps: ## modèle d'image contenant les dépendances d'un module front
 
 app-deps: ## dépendances pour l'app
     FROM +node-fr-deps --MODULE_DIR=$APP_DIR
-    SAVE IMAGE app-deps:latest
+    RUN echo $REG_TARGET
+    SAVE IMAGE --cache-from=$REG_TARGET/app-deps:latest --push app-deps:latest
 
 app-build: ## build l'app
     ARG PLATFORM
@@ -527,6 +531,11 @@ test:
     RUN earthly +api-test
     RUN earthly +deploy-test
     RUN earthly +app-test
+
+docker-dev-login: ## s'identifier sur la registry
+    ARG TOKEN
+    LOCALLY
+    RUN docker login $REGISTRY -u $REG_USER -p $TOKEN
 
 help: ## affiche ce message d'aide
     LOCALLY
