@@ -44,16 +44,6 @@ const Footer = () => {
                   beta.gouv
                 </a>
               </li>
-              <li className="fr-footer__content-item">
-                <a
-                  className="fr-footer__content-link"
-                  href="https://territoireengagetransitionecologique.ademe.fr"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  territoireengagetransitionecologique.ademe.fr
-                </a>
-              </li>
             </ul>
           </div>
         </div>
