@@ -2,6 +2,10 @@
 
 BEGIN;
 
+select indicateur_id, thematique
+from indicateur_personnalise_thematique
+where false;
+
 select indicateur_id, user_id, tag_id
 from indicateur_personnalise_pilote
 where false;

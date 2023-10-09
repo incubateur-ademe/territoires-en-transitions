@@ -70,4 +70,34 @@ create policy allow_delete on indicateur_personnalise_service_tag
         private.indicateur_personnalise_collectivite_id(indicateur_id)
     ));
 
+
+create table indicateur_personnalise_thematique
+(
+    indicateur_id integer references indicateur_personnalise_definition not null,
+    thematique text references thematique not null,
+    primary key (indicateur_id, thematique)
+);
+alter table indicateur_personnalise_thematique enable row level security;
+create policy allow_insert on indicateur_personnalise_thematique
+    for insert
+    with check (have_edition_acces(
+        private.indicateur_personnalise_collectivite_id(indicateur_id)
+    ));
+create policy allow_read on indicateur_personnalise_thematique
+    for select
+    using (can_read_acces_restreint(
+        private.indicateur_personnalise_collectivite_id(indicateur_id)
+    ));
+create policy allow_update on indicateur_personnalise_thematique
+    for update
+    using (have_edition_acces(
+        private.indicateur_personnalise_collectivite_id(indicateur_id)
+    ));
+create policy allow_delete on indicateur_personnalise_thematique
+    for delete
+    using (have_edition_acces(
+        private.indicateur_personnalise_collectivite_id(indicateur_id)
+    ));
+
+
 COMMIT;
