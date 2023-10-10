@@ -499,7 +499,7 @@ dev:
         RUN earthly +app-run
     END
 
-    RUN earthly +refresh-views
+    RUN earthly +refresh-views --DB_URL=$DB_URL
 
 stop:
     LOCALLY
