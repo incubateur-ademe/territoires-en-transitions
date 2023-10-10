@@ -34,7 +34,7 @@ sqitch-build:
     RUN cpanm --quiet --notest App::Sqitch
     ENTRYPOINT ["sqitch"]
     CMD ["help"]
-    SAVE IMAGE --push $REG_TARGET/sqitch:15
+    SAVE IMAGE --cache-from=$REG_TARGET/sqitch:15 --push $REG_TARGET/sqitch:15
 
 sqitch-builder:
     LOCALLY
@@ -83,7 +83,7 @@ db-deploy:
     ARG network=host
     ARG to=@HEAD
     LOCALLY
-    RUN earthly +db-deploy-build
+    RUN earthly --use-inline-cache --save-inline-cache --push +db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
@@ -94,7 +94,7 @@ db-deploy-test:
     ARG network=host
     ARG tag=v2.63.0
     LOCALLY
-    RUN earthly +db-deploy-build
+    RUN earthly --use-inline-cache +db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
