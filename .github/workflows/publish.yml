@@ -1,0 +1,64 @@
+name: Publish Docker image
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+#  release:
+#     types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  #test-unit:
+
+  build-dev:
+    #needs: unit-test
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+
+      - name: Login into registry
+        run: earthly +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push front deps image
+        run: earthly --use-inline-cache --save-inline-cache --push +front-deps
+
+      - name: Build and push app image
+        run: earthly --use-inline-cache --save-inline-cache --push +app-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+
+  test-api:
+    needs: build-dev
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.52.3
+
+      - name: Start services
+        run: earthly +dev --stop=no --datalayer=yes --business=yes --app=no --eco=yes --fast=no --version=HEAD --DB_URL=${{ secrets.DB_URL }} --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} --API_URL=${{ secrets.API_URL }}
+
+      - name: Test API
+        run: earthly +api-test
+
+  # test-e2e:
+  #   needs: build
+
+  # deploy:
+  #   needs: [test-api, test-e2e]

@@ -1,8 +1,20 @@
-VERSION 0.7
+VERSION 0.7 
+LOCALLY
+# chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global SITE_DIR='./packages/site'
+ARG --global UI_DIR='./packages/ui'
+# paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
 ARG --global REG_USER='territoiresentransitions'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
+# tags appliqués aux images docker générées
+ARG --global ENV_PREFIX="dev"
+ARG FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
+ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
+ARG --global APP_IMG_NAME=$REG_TARGET/app:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
+ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
+ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 postgres:
     FROM postgres:15
@@ -203,7 +215,7 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL ./business/tests/data/dl_content
 
 
-node-fr: ## image de base pour les images utilisant node
+node-fr: ## construit l'image de base pour les images utilisant node
     ARG TARGETPLATFORM
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
@@ -215,64 +227,60 @@ node-fr: ## image de base pour les images utilisant node
     WORKDIR "/app"
     SAVE IMAGE node-fr:latest
 
-node-fr-deps: ## modèle d'image contenant les dépendances d'un module front
-    ARG --required MODULE_DIR
+front-deps: ## construit l'image contenant les dépendances des modules front
     FROM +node-fr
     # dépendances globales
     COPY ./package.json ./
     COPY ./package-lock.json ./
-    # dépendances du module
-    COPY $MODULE_DIR/package.json ./$MODULE_DIR/
-    # dépendances du module partagé
-    COPY ./packages/ui/package.json ./packages/ui/
+    # dépendances des modules
+    COPY $APP_DIR/package.json ./$APP_DIR/
+    COPY $SITE_DIR/package.json ./$SITE_DIR/
+    COPY $UI_DIR/package.json ./$UI_DIR/
     # installe les dépendances
     RUN npm ci
-    SAVE IMAGE node-fr-deps:latest
+    SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
 
-app-deps: ## dépendances pour l'app
-    FROM +node-fr-deps --MODULE_DIR=$APP_DIR
-    RUN echo $REG_TARGET
-    SAVE IMAGE --cache-from=$REG_TARGET/app-deps:latest --push app-deps:latest
-
-app-build: ## build l'app
+app-build: ## construit l'image de l'app
     ARG PLATFORM
     ARG --required ANON_KEY
-    ARG --required BROWSER_API_URL
-    ARG --required SERVER_API_URL
-    FROM +app-deps
-    ENV REACT_APP_SUPABASE_URL=$BROWSER_API_URL
+    ARG --required API_URL
+    ARG kong_url=http://supabase_kong_tet:8000
+    FROM +front-deps
+    ENV REACT_APP_SUPABASE_URL=$API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV ZIP_ORIGIN_OVERRIDE=$SERVER_API_URL
+    ENV ZIP_ORIGIN_OVERRIDE=$KONG_URL
     # copie les sources des modules à construire
-    COPY $APP_DIR/. ./$APP_DIR/
-    COPY ./packages/ui ./packages/ui
+    COPY $APP_DIR/. $APP_DIR/
+    COPY $UI_DIR/. $UI_DIR
     RUN npm run build -w @tet/ui -w @tet/app
     EXPOSE 3000
     WORKDIR $APP_DIR
     CMD ["dumb-init", "node", "server.js"]
-    SAVE IMAGE app:latest
+    SAVE IMAGE --cache-from=$APP_IMG_NAME --push $APP_IMG_NAME
+    IF [ $TARGETARCH = "amd64" ]
+        SAVE IMAGE --push $REG_TARGET/app:$ENV_PREFIX-$GIT_BRANCH
+    END
 
-app-run: ## build et lance l'app en local
+app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
-    ARG internal_url=http://supabase_kong_tet:8000
     ARG network=supabase_network_tet
     LOCALLY
-    RUN earthly +app-build --ANON_KEY=$ANON_KEY --BROWSER_API_URL=$API_URL --SERVER_API_URL=$internal_url
+    RUN earthly +app-build --ANON_KEY=$ANON_KEY --API_URL=$API_URL
     RUN docker run -d --rm \
         --name app_tet \
         --network $network \
         --publish 3000:3000 \
-        app:latest
+        $APP_IMG_NAME
 
-app-test-build: ## build une image pour exécuter les tests unitaires de l'app
-    FROM +app-deps
+app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
+    FROM +front-deps
     ENV REACT_APP_SUPABASE_URL
     ENV REACT_APP_SUPABASE_KEY
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
-    COPY $APP_DIR/. ./$APP_DIR/
-    COPY ./packages/ui ./packages/ui
+    COPY $APP_DIR $APP_DIR
+    COPY $UI_DIR $UI_DIR
     # la commande utilisée pour lancer les tests
     CMD npm run test -w @tet/app
     SAVE IMAGE app-test:latest
@@ -292,17 +300,13 @@ app-test: ## lance les tests unitaires de l'app
         --env ZIP_ORIGIN_OVERRIDE=$url \
         app-test:latest
 
-site-deps: ## dépendances pour le site
-    FROM +node-fr-deps --MODULE_DIR="./packages/site"
-    SAVE IMAGE site-deps:latest
-
-site-build: ## build le site
+site-build: ## construit l'image du site
     ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG --required STRAPI_KEY
     ARG --required STRAPI_URL
-    FROM +site-deps
+    FROM +front-deps
     ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
     ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
     ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
@@ -311,14 +315,17 @@ site-build: ## build le site
     ENV PORT=80
     EXPOSE $PORT
     # copie les sources des modules à construire
-    COPY ./packages/site ./packages/site
-    COPY ./packages/ui ./packages/ui
+    COPY $SITE_DIR $SITE_DIR
+    COPY $UI_DIR $UI_DIR
     RUN npm run build -w @tet/ui -w @tet/site
     WORKDIR ./packages/site
     CMD ["dumb-init", "./node_modules/.bin/next", "start"]
-    SAVE IMAGE site:latest
+    SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
+    IF [ $TARGETARCH = "amd64" ]
+        SAVE IMAGE --push $REG_TARGET/site:$ENV_PREFIX-$GIT_BRANCH
+    END
 
-site-run: ## build et lance le site en local
+site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
     FROM +site-build
     LOCALLY
@@ -326,7 +333,7 @@ site-run: ## build et lance le site en local
         --name site_tet \
         --network $network \
         --publish 3001:80 \
-        site:latest
+        $SITE_IMG_NAME
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
@@ -399,7 +406,7 @@ gen-types: ## génère le typage à partir de la base de données
         RUN npx supabase gen types typescript --local --schema public --schema labellisation > $APP_DIR/src/types/database.types.ts
     END
     RUN cp $APP_DIR/src/types/database.types.ts ./api_tests/lib/database.types.ts
-    RUN cp $APP_DIR/src/types/database.types.ts ./packages/site/app/database.types.ts
+    RUN cp $APP_DIR/src/types/database.types.ts $SITE_DIR/app/database.types.ts
 
 setup-env:
     LOCALLY
@@ -429,6 +436,8 @@ copy-volume:
 dev:
     LOCALLY
     ARG --required DB_URL
+    ARG --required SERVICE_ROLE_KEY
+    ARG --required API_URL
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
@@ -461,7 +470,7 @@ dev:
             RUN docker stop supabase_pg_meta_tet
         END
 
-        RUN earthly +deploy --to @$version
+        RUN earthly +deploy --to @$version --DB_URL=$DB_URL
 
         # Seed si aucune collectivité en base
         RUN docker run --rm \
@@ -470,12 +479,12 @@ dev:
             -c "select 1 / count(*) from collectivite;" \
             || earthly +seed
 
-        RUN earthly +load-json
+        RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
     END
 
     IF [ "$business" = "yes" ]
-        RUN earthly +business
-        RUN earthly +update-scores
+        RUN earthly +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
+        RUN earthly +update-scores --DB_URL=$DB_URL
     END
 
     IF [ "$app" = "yes" ]
@@ -532,10 +541,29 @@ test:
     RUN earthly +deploy-test
     RUN earthly +app-test
 
-docker-dev-login: ## s'identifier sur la registry
-    ARG TOKEN
+docker-dev-login: ## permet de s'identifier sur la registry
+    ARG --required GH_USER
+    ARG --required GH_TOKEN
     LOCALLY
-    RUN docker login $REGISTRY -u $REG_USER -p $TOKEN
+    RUN docker login $REGISTRY -u $GH_USER -p $GH_TOKEN
+
+koyeb-bin: ## extrait le binaire koyeb de l'image officielle
+    FROM koyeb/koyeb-cli:latest
+    SAVE ARTIFACT ./koyeb
+
+koyeb:
+    ARG --required KOYEB_API_KEY
+    FROM alpine
+    COPY +koyeb-bin/koyeb ./
+    RUN echo "token: $KOYEB_API_KEY" > ~/.koyeb.yaml
+
+site-deploy:
+    FROM +koyeb
+    RUN ./koyeb services update site/site --docker $SITE_IMG_NAME
+
+app-deploy:
+    FROM +koyeb
+    RUN ./koyeb services update app/app --docker $APP_IMG_NAME
 
 help: ## affiche ce message d'aide
     LOCALLY
