@@ -33,7 +33,7 @@ sqitch-build:
     RUN cpanm --quiet --notest App::Sqitch
     ENTRYPOINT ["sqitch"]
     CMD ["help"]
-    SAVE IMAGE --cache-from=$REG_TARGET/sqitch:15 --push $REG_TARGET/sqitch:15
+    SAVE IMAGE --push $REG_TARGET/sqitch:15
 
 db-deploy-build:
     FROM +sqitch-build
@@ -47,7 +47,7 @@ pg-tap-build:
     RUN apt-get install cpanminus -y
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
     ENTRYPOINT ["pg_prove"]
-    SAVE IMAGE --cache-from=$REG_TARGET/pg-tap:15 --push $REG_TARGET/pg-tap:15
+    SAVE IMAGE --push $REG_TARGET/pg-tap:15
 
 db-test-build:
     FROM +pg-tap-build
