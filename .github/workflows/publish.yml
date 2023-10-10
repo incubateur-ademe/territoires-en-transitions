@@ -82,8 +82,11 @@ jobs:
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test API
-        run: earthly +api-test
-
+        run: >
+          earthly +api-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
   # test-e2e:
   #   needs: build
 
