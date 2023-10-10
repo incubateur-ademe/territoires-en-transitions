@@ -1,0 +1,19 @@
+{
+  "/page": "app/page.js",
+  "/accessibilite/page": "app/accessibilite/page.js",
+  "/actus/page": "app/actus/page.js",
+  "/mentions/page": "app/mentions/page.js",
+  "/cgu/page": "app/cgu/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/collectivite/page": "app/collectivite/page.js",
+  "/programme/page": "app/programme/page.js",
+  "/cookies/page": "app/cookies/page.js",
+  "/faq/page": "app/faq/page.js",
+  "/actus/[id]/page": "app/actus/[id]/page.js",
+  "/collectivite/[code]/page": "app/collectivite/[code]/page.js",
+  "/stats/page": "app/stats/page.js",
+  "/actus/[id]/[slug]/page": "app/actus/[id]/[slug]/page.js",
+  "/collectivite/[code]/[name]/page": "app/collectivite/[code]/[name]/page.js",
+  "/stats/region/[regionCode]/page": "app/stats/region/[regionCode]/page.js",
+  "/stats/departement/[departmentCode]/page": "app/stats/departement/[departmentCode]/page.js"
+}

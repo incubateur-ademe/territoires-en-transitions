@@ -1,0 +1,9 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[86],{76027:function(e,r,t){Promise.resolve().then(t.bind(t,2076))},2076:function(e,r,t){"use strict";t.r(r);var n=t(26705),i=t(20955);r.default=e=>{let{data:r}=e,[t,s]=(0,i.useState)([,,,]),[o,f]=(0,i.useState)(),[c,u]=(0,i.useState)(3);return(0,i.useEffect)(()=>(f(window.innerWidth),window.addEventListener("resize",()=>f(window.innerWidth)),()=>window.removeEventListener("resize",()=>f(window.innerWidth))),[]),(0,i.useEffect)(()=>{o&&(o<=768?u(1):o<=1280?u(2):u(3))},[o]),(0,i.useEffect)(()=>{let e=[];for(let r=0;r<c;r++)e.push([]);r&&r.forEach((r,t)=>{e[t%c].push(r)}),s(e)},[r,c]),(0,n.jsx)("div",{className:"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8",children:t.map((e,r)=>(0,n.jsx)("div",{className:"grid grid-cols-1 gap-8 h-fit",children:e.map((e,r)=>(0,n.jsx)(i.Fragment,{children:e},r))},r))})}},69991:function(e,r,t){"use strict";/**
+ * @license React
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */var n=t(20955),i=Symbol.for("react.element"),s=Symbol.for("react.fragment"),o=Object.prototype.hasOwnProperty,f=n.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,c={key:!0,ref:!0,__self:!0,__source:!0};function u(e,r,t){var n,s={},u=null,a=null;for(n in void 0!==t&&(u=""+t),void 0!==r.key&&(u=""+r.key),void 0!==r.ref&&(a=r.ref),r)o.call(r,n)&&!c.hasOwnProperty(n)&&(s[n]=r[n]);if(e&&e.defaultProps)for(n in r=e.defaultProps)void 0===s[n]&&(s[n]=r[n]);return{$$typeof:i,type:e,key:u,ref:a,props:s,_owner:f.current}}r.Fragment=s,r.jsx=u,r.jsxs=u},26705:function(e,r,t){"use strict";e.exports=t(69991)}},function(e){e.O(0,[121,114,744],function(){return e(e.s=76027)}),_N_E=e.O()}]);

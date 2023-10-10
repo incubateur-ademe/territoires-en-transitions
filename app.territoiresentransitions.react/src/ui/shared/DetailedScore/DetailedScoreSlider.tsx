@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import SliderBase from '@mui/material/Slider';
-import {withStyles} from 'tss-react/mui';
+import {styled} from '@mui/material/styles';
 import {actionAvancementColors} from 'app/theme';
 import TagFilters from '../filters/TagFilters';
 
@@ -15,31 +15,29 @@ export type TSliderProps = {
 const TRACK_HEIGHT = 8;
 
 // version stylée du composant de base
-const Slider = withStyles(SliderBase, {
-  root: {
-    color: 'transparent',
-    height: TRACK_HEIGHT,
-    padding: 0,
-    display: 'block',
-  },
-  thumb: {
+const StyledSlider = styled(SliderBase)({
+  color: 'transparent',
+  height: TRACK_HEIGHT,
+  padding: 0,
+  display: 'block',
+  '& .MuiSlider-thumb': {
     height: 22,
     width: 22,
     backgroundColor: '#fff',
     border: '2px solid #bfbfbf',
-    '&:focus, &:hover, &:active': {
+    '&:focus, &:hover, &:Mui-active': {
       boxShadow: '0px 0px 0px 6px rgba(191, 191, 191, 0.16)',
     },
   },
-  track: {
+  '& .MuiSlider-track': {
     color: 'transparent',
     height: TRACK_HEIGHT,
   },
-  rail: {
+  '& .MuiSlider-rail': {
     color: 'transparent',
     height: TRACK_HEIGHT,
   },
-  mark: {
+  '& .MuiSlider-mark': {
     backgroundColor: '#fff',
     height: TRACK_HEIGHT * 0.7,
   },
@@ -180,7 +178,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
           }}
         />
 
-        <Slider
+        <StyledSlider
           marks={getMarksValues(step)}
           step={step}
           value={currentValue}

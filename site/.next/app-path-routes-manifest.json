@@ -1,0 +1,19 @@
+{
+  "/page": "/",
+  "/accessibilite/page": "/accessibilite",
+  "/actus/page": "/actus",
+  "/mentions/page": "/mentions",
+  "/cgu/page": "/cgu",
+  "/contact/page": "/contact",
+  "/collectivite/page": "/collectivite",
+  "/programme/page": "/programme",
+  "/cookies/page": "/cookies",
+  "/faq/page": "/faq",
+  "/actus/[id]/page": "/actus/[id]",
+  "/collectivite/[code]/page": "/collectivite/[code]",
+  "/stats/page": "/stats",
+  "/actus/[id]/[slug]/page": "/actus/[id]/[slug]",
+  "/collectivite/[code]/[name]/page": "/collectivite/[code]/[name]",
+  "/stats/region/[regionCode]/page": "/stats/region/[regionCode]",
+  "/stats/departement/[departmentCode]/page": "/stats/departement/[departmentCode]"
+}
