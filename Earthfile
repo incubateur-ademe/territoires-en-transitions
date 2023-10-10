@@ -37,6 +37,7 @@ db-deploy-build:
     FROM +sqitch-build
     COPY sqitch.conf ./sqitch.conf
     COPY ./data_layer/sqitch ./data_layer/sqitch
+    SAVE IMAGE db-deploy-build:latest
 
 pg-tap-build:
     FROM +postgres
@@ -44,15 +45,19 @@ pg-tap-build:
     RUN apt-get install cpanminus -y
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
     ENTRYPOINT ["pg_prove"]
+    SAVE IMAGE --cache-from=$REG_TARGET/pg-tap:15 --push $REG_TARGET/pg-tap:15
+
+db-test-build:
+    FROM +pg-tap-build
     CMD ["./tests/collectivite/identite.sql"]
     COPY ./data_layer/tests ./tests
-    SAVE IMAGE pg-tap:latest
+    SAVE IMAGE db-test:latest
 
 db-test:
     ARG --required DB_URL
     ARG network=host
     LOCALLY
-    RUN earthly +pg-tap-build
+    RUN earthly +db-test-build
     RUN docker run --rm \
         --network $network \
         --env PGHOST=$(echo $DB_URL | cut -d@ -f2 | cut -d: -f1) \
@@ -60,7 +65,7 @@ db-test:
         --env PGUSER=$(echo $DB_URL | cut -d: -f3 | cut -d@ -f1) \
         --env PGPASSWORD=$(echo $DB_URL | cut -d: -f3 | cut -d@ -f1) \
         --env PGDATABASE=$(echo $DB_URL | cut -d/ -f4) \
-        pg-tap:latest
+        db-test:latest
 
 db-deploy:
     ARG --required DB_URL
@@ -71,7 +76,7 @@ db-deploy:
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest db-deploy --to $to --mode change
+        db-deploy-build:latest deploy --to $to --mode change
 
 db-deploy-test:
     ARG --required DB_URL
