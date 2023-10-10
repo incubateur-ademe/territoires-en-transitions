@@ -13,7 +13,8 @@ ARG --global REG_TARGET=$REGISTRY/$REG_USER
 ARG --global ENV_PREFIX="dev"
 ARG FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
-ARG --global APP_IMG_NAME=$REG_TARGET/app:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
+ARG --global APP_TAG=$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
+ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
 ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -276,7 +277,7 @@ app-run: ## construit et lance l'image de l'app en local
     ARG --required API_URL
     ARG network=supabase_network_tet
     LOCALLY
-    RUN earthly +app-build --ANON_KEY=$ANON_KEY --API_URL=$API_URL
+    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
     RUN docker run -d --rm \
         --name app_tet \
         --network $network \
@@ -502,6 +503,25 @@ dev:
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
+
+BUILD_IF_NO_IMG:
+    COMMAND
+    ARG --required IMG_NAME
+    ARG --required IMG_TAG
+    ARG --required BUILD_TARGET
+    ARG pull=yes
+    RUN echo "Searching for image $IMG_NAME:$IMG_TAG ..."
+    IF [ "docker image ls | grep $IMG_NAME | grep $IMG_TAG" ]
+        RUN echo "Image found, skipping"
+    ELSE
+        IF [ "$pull" = "yes" ]
+            RUN echo "Image not found, trying to pull $REG_TARGET/$IMG_NAME:$IMG_TAG"
+            RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
+        ELSE
+            RUN echo "Image not found, building +$BUILD_TARGET"
+            RUN earthly +$BUILD_TARGET
+        END
+    END
 
 stop:
     LOCALLY
