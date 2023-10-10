@@ -8,7 +8,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-for SUBDIRECTORY in "$@"
+for SUBDIRECTORY in $(echo "$1" | tr "," " ")
 do
   if [ ! -d "$SUBDIRECTORY" ]; then
     echo "Erreur: $SUBDIRECTORY n'est pas un dossier"
