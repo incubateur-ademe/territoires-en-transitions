@@ -35,7 +35,7 @@ jobs:
       - name: Build and push pg_tap
         run: earthly --use-inline-cache --save-inline-cache --push +pg-tap-build
 
-  build-dev-business:
+  build-business-dev:
     # todo: needs: unit-test
     environment: dev
     runs-on: ubuntu-latest
@@ -77,8 +77,8 @@ jobs:
 
   test-api:
     needs:
-      - build-dev-app
-      - build-dev-business
+      - build-app-dev
+      - build-business-dev
       - build-tools
     environment: dev
     runs-on: ubuntu-latest
