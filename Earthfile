@@ -194,7 +194,7 @@ business:
         --publish 8888:8888 \
         --env SUPABASE_URL=$url \
         --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-        business:latest
+        $BUSINESS_IMG_NAME
 
 business-test-build:
     FROM +business-build
