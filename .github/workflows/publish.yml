@@ -104,6 +104,9 @@ jobs:
         with:
           version: 1.52.3
 
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
@@ -148,6 +151,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 1.52.3
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Start services
         run: >
@@ -194,6 +200,9 @@ jobs:
         with:
           version: 1.52.3
 
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
@@ -239,6 +248,9 @@ jobs:
         with:
           version: 1.52.3
 
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
@@ -279,6 +291,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 1.52.3
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Start services
         run: >
@@ -322,6 +337,10 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 1.52.3
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
 
       # fixe la langue de l'environnement de test : permet de faire passer les
       # tests de composant utilisant des fonctions telles que toLocaleString()
@@ -384,6 +403,8 @@ jobs:
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Deploy site on koyeb
         run: earthly --use-inline-cache +site-deploy --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
