@@ -313,6 +313,7 @@ jobs:
       - build-business-dev
       - build-tools
       - build-app-dev
+    environment: dev
     name: End-to-end tests
     runs-on: ubuntu-latest
     timeout-minutes: 60
