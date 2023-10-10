@@ -36,6 +36,10 @@ sqitch-build:
     CMD ["help"]
     SAVE IMAGE --push $REG_TARGET/sqitch:15
 
+sqitch-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=sqitch --IMG_TAG=15 --BUILD_TARGET=sqitch-build
+
 db-deploy-build:
     FROM +sqitch-build
     COPY sqitch.conf ./sqitch.conf
@@ -49,6 +53,10 @@ pg-tap-build:
     RUN cpanm TAP::Parser::SourceHandler::pgTAP
     ENTRYPOINT ["pg_prove"]
     SAVE IMAGE --push $REG_TARGET/pg-tap:15
+
+pg-tap-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=pg-tap --IMG_TAG=15 --BUILD_TARGET=pg-tap-build
 
 db-test-build:
     FROM +pg-tap-build
@@ -90,15 +98,15 @@ db-deploy-test:
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest db-deploy --mode change
+        sqitch:15 db-deploy --mode change
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest revert --to @$tag --y
+        sqitch:15 revert --to @$tag --y
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest db-deploy --mode change --verify
+        sqitch:15 db-deploy --mode change --verify
 
 seed-build:
     FROM +postgres
@@ -519,7 +527,7 @@ BUILD_IF_NO_IMG:
             RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
         ELSE
             RUN echo "Image not found, building +$BUILD_TARGET"
-            RUN earthly +$BUILD_TARGET
+            RUN earthly --push +$BUILD_TARGET
         END
     END
 
