@@ -13,6 +13,43 @@ import {
   VideoFetchedData,
 } from '../../../types';
 
+export const getMetaData = async (id: number) => {
+  const data = await fetchItem('actualites', id, [
+    ['populate[0]', 'Metadata'],
+    ['populate[1]', 'Metadata.Titre'],
+    ['populate[2]', 'Metadata.Description'],
+    ['populate[3]', 'Metadata.Image'],
+    ['populate[4]', 'Couverture'],
+  ]);
+
+  const image =
+    (data?.attributes.Metadata?.Image?.data as unknown as StrapiItem)
+      ?.attributes ??
+    (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes;
+
+  return {
+    title: (data?.attributes.Metadata?.Titre as unknown as string)
+      ? (data?.attributes.Metadata?.Titre as unknown as string)
+      : (data?.attributes.Titre as unknown as string) ?? undefined,
+    description: (data?.attributes.Metadata?.Description as unknown as string)
+      ? (data?.attributes.Metadata?.Description as unknown as string)
+      : (data?.attributes.Resume as unknown as string) ?? undefined,
+    image: image
+      ? {
+          url: image.url as unknown as string,
+          width: image.width as unknown as number,
+          height: image.height as unknown as number,
+          type: image.mime as unknown as string,
+          alt: image.alternativeText as unknown as string,
+        }
+      : undefined,
+    publishedAt:
+      (data.attributes.DateCreation as unknown as string) ??
+      (data.attributes.createdAt as unknown as string),
+    updatedAt: data.attributes.updatedAt as unknown as string,
+  };
+};
+
 export const getData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
     ['populate[0]', 'Couverture'],

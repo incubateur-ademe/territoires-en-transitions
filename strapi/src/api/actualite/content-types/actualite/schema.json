@@ -35,6 +35,11 @@
       "required": false,
       "maxLength": 255
     },
+    "Metadata": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contenu.metadata"
+    },
     "Sections": {
       "type": "dynamiczone",
       "components": [

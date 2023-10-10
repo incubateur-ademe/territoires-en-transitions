@@ -1,23 +1,41 @@
-'use client';
+'use server';
 
-import {useRouter} from 'next/navigation';
+import {redirect} from 'next/navigation';
 import {convertNameToSlug} from 'app/utils';
-import {useCollectivite} from './[name]/useCollectivite';
+import {Metadata} from 'next';
+import {supabase} from 'app/initSupabase';
+
+const fetchCollectiviteName = async (code_siren_insee: string) => {
+  const {data, error} = await supabase
+    .from('site_labellisation')
+    .select('nom')
+    .match({code_siren_insee});
+
+  if (error) {
+    throw new Error(`site_labellisation-${code_siren_insee}`);
+  }
+  if (!data || !data.length) {
+    return null;
+  }
+
+  return data[0].nom;
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Collectivités',
+  };
+}
 
 /**
  * Permet la redirection vers la page collectivité lorsque seul
  * le code SIREN / INSEE est renseigné dans l'url
  */
 
-const DetailCodeCollectivite = ({params}: {params: {code: string}}) => {
-  const router = useRouter();
-  const {data} = useCollectivite(params.code);
+const DetailCodeCollectivite = async ({params}: {params: {code: string}}) => {
+  const nom = await fetchCollectiviteName(params.code);
 
-  router.push(
-    `/collectivite/${params.code}/${convertNameToSlug(
-      data && data[0].nom ? data[0].nom : '',
-    )}`,
-  );
+  redirect(`/collectivite/${params.code}/${convertNameToSlug(nom ?? '')}`);
 };
 
 export default DetailCodeCollectivite;

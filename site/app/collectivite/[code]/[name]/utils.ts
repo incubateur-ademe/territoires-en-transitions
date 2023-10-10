@@ -52,7 +52,7 @@ export const getData = async (codeSirenInsee: string) => {
             data: {
               titre: (section as ParagrapheFetchedData).Titre,
               texte: (section as ParagrapheFetchedData).Texte,
-              image: (section as ParagrapheFetchedData).Image.data,
+              image: (section as ParagrapheFetchedData).Image?.data,
               legendeVisible: (section as ParagrapheFetchedData).LegendeVisible,
             } as ParagrapheArticleData,
           };
@@ -76,7 +76,7 @@ export const getData = async (codeSirenInsee: string) => {
               texte: (section as ActionsCaeFetchedData)
                 .PlanificationTerritoriale.Texte,
               image: (section as ActionsCaeFetchedData)
-                .PlanificationTerritoriale.Image.data,
+                .PlanificationTerritoriale.Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData)
                 .PlanificationTerritoriale.LegendeVisible,
             });
@@ -87,7 +87,7 @@ export const getData = async (codeSirenInsee: string) => {
               texte: (section as ActionsCaeFetchedData).PatrimoineCollectivite
                 .Texte,
               image: (section as ActionsCaeFetchedData).PatrimoineCollectivite
-                .Image.data,
+                .Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData)
                 .PatrimoineCollectivite.LegendeVisible,
             });
@@ -98,7 +98,7 @@ export const getData = async (codeSirenInsee: string) => {
               texte: (section as ActionsCaeFetchedData).ApprovisionnementEnergie
                 .Texte,
               image: (section as ActionsCaeFetchedData).ApprovisionnementEnergie
-                .Image.data,
+                .Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData)
                 .ApprovisionnementEnergie.LegendeVisible,
             });
@@ -107,7 +107,7 @@ export const getData = async (codeSirenInsee: string) => {
             actions.push({
               titre: 'Mobilité',
               texte: (section as ActionsCaeFetchedData).Mobilite.Texte,
-              image: (section as ActionsCaeFetchedData).Mobilite.Image.data,
+              image: (section as ActionsCaeFetchedData).Mobilite.Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData).Mobilite
                 .LegendeVisible,
             });
@@ -118,7 +118,7 @@ export const getData = async (codeSirenInsee: string) => {
               texte: (section as ActionsCaeFetchedData).OrganisationInterne
                 .Texte,
               image: (section as ActionsCaeFetchedData).OrganisationInterne
-                .Image.data,
+                .Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData)
                 .OrganisationInterne.LegendeVisible,
             });
@@ -129,7 +129,7 @@ export const getData = async (codeSirenInsee: string) => {
               texte: (section as ActionsCaeFetchedData).CommunicationCooperation
                 .Texte,
               image: (section as ActionsCaeFetchedData).CommunicationCooperation
-                .Image.data,
+                .Image?.data,
               legendeVisible: (section as ActionsCaeFetchedData)
                 .CommunicationCooperation.LegendeVisible,
             });
@@ -144,7 +144,7 @@ export const getData = async (codeSirenInsee: string) => {
             data: {
               titre: (section as ParagrapheCustomFetchedData).Titre,
               texte: (section as ParagrapheCustomFetchedData).Texte,
-              image: (section as ParagrapheCustomFetchedData).Image.data,
+              image: (section as ParagrapheCustomFetchedData).Image?.data,
               alignementImage: (section as ParagrapheCustomFetchedData)
                 .AlignementImage,
               legendeVisible: (section as ParagrapheCustomFetchedData)
@@ -155,7 +155,7 @@ export const getData = async (codeSirenInsee: string) => {
           return {
             type: 'image',
             data: {
-              data: (section as ImageFetchedData).Image.data,
+              data: (section as ImageFetchedData).Image?.data,
               legendeVisible: (section as ImageFetchedData).LegendeVisible,
             },
           };
