@@ -568,10 +568,12 @@ koyeb:
     RUN echo "token: $KOYEB_API_KEY" > ~/.koyeb.yaml
 
 site-deploy:
+    ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update site/site --docker $SITE_IMG_NAME
 
 app-deploy:
+    ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update app/app --docker $APP_IMG_NAME
 
