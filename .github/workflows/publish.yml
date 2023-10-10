@@ -15,7 +15,7 @@ concurrency:
 jobs:
   #test-unit:
 
-  echo:
+  build-tools:
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -25,38 +25,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
-
-      - run: echo $(git log -1 --pretty=format:"%H" -- README.md)
-      - run: echo $(git log -1 --pretty=format:"%H" README.md)
-
-
-      - run: echo $(git log -1 --pretty=format:"%H" -- packages)
-      - run: echo $(git log -1 --pretty=format:"%H" -- packages/ui)
-      - run: echo $(git log -1 --pretty=format:"%H" -- packages/site)
-      - run: echo $(git log -1 --pretty=format:"%H" -- app.territoiresentransitions.react)
-      - run: echo $(git log -1 --pretty=format:"%H" -- business)
-      - run: echo $(git log -1 --pretty=format:"%H" -- data_layer)
-      - run: echo $(git log -1 --pretty=format:"%H" -- .)
-
-      - run: echo $(git log -1 --pretty=format:"%H" packages)
-      - run: echo $(git log -1 --pretty=format:"%H" packages/ui)
-      - run: echo $(git log -1 --pretty=format:"%H" packages/site)
-      - run: echo $(git log -1 --pretty=format:"%H" app.territoiresentransitions.react)
-      - run: echo $(git log -1 --pretty=format:"%H" business)
-      - run: echo $(git log -1 --pretty=format:"%H" data_layer)
-      - run: echo $(git log -1 --pretty=format:"%H" .)
-
-
-  build-tools:
-    environment: dev
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -78,6 +46,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -97,6 +68,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -120,6 +94,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -162,6 +139,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -204,6 +184,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -247,6 +230,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -285,6 +271,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
@@ -325,6 +314,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.0
@@ -387,6 +379,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
