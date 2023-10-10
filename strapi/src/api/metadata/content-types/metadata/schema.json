@@ -12,11 +12,10 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Titre": {
-      "type": "string"
-    },
-    "Description": {
-      "type": "text"
+    "Metadata": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contenu.metadata"
     }
   }
 }

@@ -11,7 +11,7 @@ import {convertNameToSlug} from 'app/utils';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Actus',
+    title: 'Actualités',
   };
 }
 

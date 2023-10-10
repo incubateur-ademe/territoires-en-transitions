@@ -3,12 +3,31 @@ import {StrapiItem} from 'src/strapi/StrapiItem';
 import {AccueilData} from './types';
 
 export const getMetaData = async () => {
-  const data = await fetchSingle('metadata');
+  const data = await fetchSingle('metadata', [
+    ['populate[0]', 'Metadata'],
+    ['populate[1]', 'Metadata.Titre'],
+    ['populate[2]', 'Metadata.Description'],
+    ['populate[3]', 'Metadata.Image'],
+  ]);
+
+  const image = (
+    data?.attributes.Metadata?.Image?.data as unknown as StrapiItem
+  )?.attributes;
 
   return {
-    title: (data?.attributes.Titre as unknown as string) ?? undefined,
+    title: (data?.attributes.Metadata?.Titre as unknown as string) ?? undefined,
     description:
-      (data?.attributes.Description as unknown as string) ?? undefined,
+      (data?.attributes.Metadata?.Description as unknown as string) ??
+      undefined,
+    image: image
+      ? {
+          url: image.url as unknown as string,
+          width: image.width as unknown as number,
+          height: image.height as unknown as number,
+          type: image.mime as unknown as string,
+          alt: image.alternativeText as unknown as string,
+        }
+      : undefined,
   };
 };
 

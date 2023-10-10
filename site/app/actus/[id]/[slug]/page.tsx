@@ -5,15 +5,55 @@ import {getLocalDateString} from 'src/utils/getLocalDateString';
 import ParagrapheArticle from './ParagrapheArticle';
 import InfoArticle from './InfoArticle';
 import {GallerieArticleData, ImageArticleData} from '../../../types';
-import {getData} from './utils';
+import {getData, getMetaData} from './utils';
 import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
 import {ParagrapheCustomArticleData} from 'app/types';
-import {Metadata} from 'next';
+import {Metadata, ResolvingMetadata} from 'next';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: {id: string};
+  },
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const data = await getMetaData(parseInt(params.id));
+  const metadata = (await parent) as Metadata;
+
   return {
-    title: 'Actus',
+    ...metadata,
+    title: data.title ? {absolute: data.title} : 'Actualités',
+    description: data.description ? data.description : metadata.description,
+    openGraph: {
+      ...metadata.openGraph,
+      title: data.title ? data.title : metadata.openGraph?.title,
+      description: data.description
+        ? data.description
+        : metadata.openGraph?.description,
+      images: data.image
+        ? [
+            {
+              url: data.image.url,
+              width: data.image.width,
+              height: data.image.height,
+              type: data.image.type,
+              alt: data.image.alt,
+            },
+          ]
+        : metadata.openGraph?.images,
+      type: 'article',
+      publishedTime: data.publishedAt,
+      modifiedTime: data.updatedAt,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   };
 }
 

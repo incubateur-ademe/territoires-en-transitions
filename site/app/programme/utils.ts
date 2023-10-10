@@ -24,7 +24,7 @@ export const getData = async () => {
         titre: d.attributes.Titre as unknown as string,
         description:
           (d.attributes.Description as unknown as string) ?? undefined,
-        image: (d.attributes.Image.data as unknown as StrapiItem) ?? undefined,
+        image: (d.attributes.Image?.data as unknown as StrapiItem) ?? undefined,
         href: (d.attributes.URL as unknown as string) ?? undefined,
       }))
     : null;
