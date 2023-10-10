@@ -87,5 +87,18 @@ jobs:
   # test-e2e:
   #   needs: build
 
-  # deploy:
-  #   needs: [test-api, test-e2e]
+  deploy:
+    environment: preprod
+    # todo: if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [test-api]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+
+      - name: Deploy site on koyeb
+        run: earthly +site-deploy --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
