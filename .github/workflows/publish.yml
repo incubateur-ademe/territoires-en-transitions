@@ -33,10 +33,10 @@ jobs:
         run: earthly +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Build and push Sqitch
-        run: earthly --use-inline-cache --save-inline-cache --push +sqitch-build
+        run: earthly --use-inline-cache --save-inline-cache --push +sqitch-builder
 
       - name: Build and push pg_tap
-        run: earthly --use-inline-cache --save-inline-cache --push +pg-tap-build
+        run: earthly --use-inline-cache --save-inline-cache --push +pg-tap-builder
 
   build-business-dev:
     # todo: needs: unit-test
@@ -215,8 +215,7 @@ jobs:
       - name: Test de l'application React
         run: >
           earthly +app-test
-          --DB_URL=${{ secrets.DB_URL }}
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
           
 
