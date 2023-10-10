@@ -1,4 +1,4 @@
-VERSION 0.7 
+VERSION 0.7
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
@@ -31,9 +31,12 @@ sqitch-build:
     RUN cpanm --quiet --notest App::Sqitch
     ENTRYPOINT ["sqitch"]
     CMD ["help"]
+    SAVE IMAGE --cache-from=$REG_TARGET/sqitch:15 --push $REG_TARGET/sqitch:15
+
+db-deploy-build:
+    FROM +sqitch-build
     COPY sqitch.conf ./sqitch.conf
     COPY ./data_layer/sqitch ./data_layer/sqitch
-    SAVE IMAGE sqitch:latest
 
 pg-tap-build:
     FROM +postgres
@@ -59,27 +62,27 @@ db-test:
         --env PGDATABASE=$(echo $DB_URL | cut -d/ -f4) \
         pg-tap:latest
 
-deploy:
+db-deploy:
     ARG --required DB_URL
     ARG network=host
     ARG to=@HEAD
     LOCALLY
-    RUN earthly +sqitch-build
+    RUN earthly +db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest deploy --to $to --mode change
+        sqitch:latest db-deploy --to $to --mode change
 
-deploy-test:
+db-deploy-test:
     ARG --required DB_URL
     ARG network=host
     ARG tag=v2.63.0
     LOCALLY
-    RUN earthly +sqitch-build
+    RUN earthly +db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest deploy --mode change
+        sqitch:latest db-deploy --mode change
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
@@ -87,7 +90,7 @@ deploy-test:
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:latest deploy --mode change --verify
+        sqitch:latest db-deploy --mode change --verify
 
 seed-build:
     FROM +postgres
@@ -137,7 +140,7 @@ load-json:
         --network $network \
         --env API_URL=$API_URL \
         --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-        load-json:latest deploy --mode change
+        load-json:latest db-deploy --mode change
 
 update-scores:
     ARG --required DB_URL
@@ -470,7 +473,7 @@ dev:
             RUN docker stop supabase_pg_meta_tet
         END
 
-        RUN earthly +deploy --to @$version --DB_URL=$DB_URL
+        RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
         # Seed si aucune collectivité en base
         RUN docker run --rm \
@@ -538,7 +541,7 @@ test:
     RUN earthly +db-test
     RUN earthly +business-test
     RUN earthly +api-test
-    RUN earthly +deploy-test
+    RUN earthly +db-deploy-test
     RUN earthly +app-test
 
 docker-dev-login: ## permet de s'identifier sur la registry
