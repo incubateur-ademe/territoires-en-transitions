@@ -15,7 +15,7 @@ ARG FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; e
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
-ARG --global BUSINESS_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
+ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 postgres:
