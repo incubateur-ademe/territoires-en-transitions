@@ -77,7 +77,6 @@ jobs:
 
   test-api:
     needs:
-      - build-app-dev
       - build-business-dev
       - build-tools
     environment: dev
@@ -159,6 +158,48 @@ jobs:
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
+
+  test-app:
+    needs:
+      - build-business-dev
+      - build-tools
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.52.3
+
+      - name: Start services
+        run: >
+          earthly +dev 
+          --stop=no --datalayer=yes --business=no --app=no --eco=yes --fast=no --version=HEAD 
+          --DB_URL=${{ secrets.DB_URL }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Reset de postgrest
+        run: docker restart supabase_rest_tet
+
+      - name: Test curl
+        run: >
+          earthly +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Test de l'application React
+        run: >
+          earthly +app-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
           
 
   test-deploy:
@@ -195,7 +236,7 @@ jobs:
 
       - name: Test Deploy
         run: >
-          earthly +deploy-test
+          earthly +db-deploy-test
           --DB_URL=${{ secrets.DB_URL }}
           
 
