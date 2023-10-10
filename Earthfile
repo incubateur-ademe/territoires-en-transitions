@@ -477,7 +477,7 @@ dev:
             --network $network \
             psql:latest $DB_URL -v ON_ERROR_STOP=1 \
             -c "select 1 / count(*) from collectivite;" \
-            || earthly +seed
+            || earthly +seed --DB_URL=$DB_URL
 
         RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
     END
