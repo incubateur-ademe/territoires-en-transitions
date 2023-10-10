@@ -98,15 +98,15 @@ db-deploy-test:
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:15 db-deploy --mode change
+        $REG_TARGET/sqitch:15 db-deploy --mode change
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:15 revert --to @$tag --y
+        $REG_TARGET/sqitch:15 revert --to @$tag --y
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        sqitch:15 db-deploy --mode change --verify
+        $REG_TARGET/sqitch:15 db-deploy --mode change --verify
 
 seed-build:
     FROM +postgres
