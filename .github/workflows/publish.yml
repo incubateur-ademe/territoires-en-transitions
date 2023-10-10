@@ -35,7 +35,26 @@ jobs:
       - name: Build and push pg_tap
         run: earthly --use-inline-cache --save-inline-cache --push +pg-tap-build
 
-  build-dev:
+  build-dev-business:
+    # todo: needs: unit-test
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+
+      - name: Login into registry
+        run: earthly +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push business deps image
+        run: earthly --use-inline-cache --save-inline-cache --push +business-build
+
+
+  build-app-dev:
     # todo: needs: unit-test
     environment: dev
     runs-on: ubuntu-latest
@@ -58,7 +77,8 @@ jobs:
 
   test-api:
     needs:
-      - build-dev
+      - build-dev-app
+      - build-dev-business
       - build-tools
     environment: dev
     runs-on: ubuntu-latest
@@ -81,9 +101,16 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
+      - name: Test curl
+        run: >
+          earthly +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
       - name: Test API
         run: >
-          earthly +api-test
+          earthly +api-test --tests 'base droit historique plan_action labellisation indicateurs utilisateur'
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
