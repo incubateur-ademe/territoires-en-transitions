@@ -581,7 +581,7 @@ restore-db: ## Restaure la db depuis une image
          RUN docker volume rm $DB_VOLUME_NAME || echo "Volume $DB_VOLUME_NAME not found"
          RUN docker volume create --name $DB_VOLUME_NAME
          RUN docker run --rm \
-            -v $volume:/volume \
+            -v $DB_VOLUME_NAME:/volume \
             $DB_SAVE_IMG_NAME ash -c "cd /save ; cp -av . /volume"
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, cannot restore"
