@@ -8,7 +8,7 @@ import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
 const FichesNonClassees = () => {
   const collectivite_id = useCollectiviteId();
 
-  const data = useFichesNonClasseesListe(collectivite_id!);
+  const {data} = useFichesNonClasseesListe(collectivite_id!);
 
   const {mutate: createFicheAction} = useCreateFicheAction();
 
@@ -16,7 +16,7 @@ const FichesNonClassees = () => {
 
   return (
     <div data-test="FichesNonClassees" className="p-10 grow">
-      {data.fiches.length === 0 ? (
+      {data.length === 0 ? (
         <div className="flex flex-col items-center mt-8">
           <PictoLeaf className="w-24 fill-gray-400" />
           <div className="my-6 text-gray-500">Aucune fiche non classée</div>
@@ -26,7 +26,7 @@ const FichesNonClassees = () => {
         </div>
       ) : (
         <div className="grid lg:grid-cols-2 gap-6">
-          {data.fiches.map(f => (
+          {data.map(f => (
             <FicheActionCard
               key={f.id}
               ficheAction={f}
