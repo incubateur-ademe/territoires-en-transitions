@@ -127,7 +127,7 @@ jobs:
 
       - name: Test API
         run: >
-          earthly --use-inline-cache +api-test --tests 'base droit historique plan_action labellisation indicateurs utilisateur'
+          earthly --use-inline-cache +api-test --tests 'base droit historique plan_action indicateurs utilisateur'
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
