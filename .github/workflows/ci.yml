@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Intégration continue
 
 on:
   pull_request:
@@ -104,16 +104,14 @@ jobs:
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
-      - name: Start services
+      - name: Prepare faster
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=no --fast=no --faster=no --version=HEAD 
+          earthly --use-inline-cache +prepare-faster 
+          --stop=no --push=yes
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
-
-      - name: Build and push db image
-        run: earthly +save-db --push=yes
 
   test-api:
     needs:
@@ -144,7 +142,8 @@ jobs:
           earthly --use-inline-cache +dev 
           --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -155,6 +154,7 @@ jobs:
           earthly --use-inline-cache +curl-test
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test API
@@ -162,6 +162,7 @@ jobs:
           earthly --use-inline-cache +api-test --tests 'base droit historique plan_action indicateurs utilisateur'
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
   test-business:
@@ -193,7 +194,8 @@ jobs:
           earthly --use-inline-cache +dev 
           --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -204,6 +206,7 @@ jobs:
           earthly --use-inline-cache +curl-test
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test Business
@@ -211,13 +214,14 @@ jobs:
           earthly --use-inline-cache +business-test
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
   test-app:
     needs:
-      - build-business-dev
       - build-db
       - build-tools
+      - build-app-dev
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -242,7 +246,8 @@ jobs:
           earthly --use-inline-cache +dev 
           --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -253,6 +258,7 @@ jobs:
           earthly --use-inline-cache +curl-test
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test de l'application React
@@ -291,7 +297,8 @@ jobs:
           earthly --use-inline-cache +dev 
           --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test curl
@@ -299,6 +306,7 @@ jobs:
           earthly --use-inline-cache +curl-test
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test Deploy
@@ -336,7 +344,8 @@ jobs:
           earthly --use-inline-cache +dev 
           --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} 
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test Deploy
@@ -424,25 +433,3 @@ jobs:
         with:
           name: logs.tgz
           path: ./logs.tgz
-
-
-  deploy:
-    environment: preprod
-    # todo: if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [test-api, test-business, test-app, test-db-deploy, test-db, test-e2e]
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Deploy site on koyeb
-        run: earthly --use-inline-cache +site-deploy --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
