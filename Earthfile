@@ -17,6 +17,7 @@ ARG --global APP_TAG=$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
 ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
+ARG --global DL_TAG=$ENV_PREFIX-$(sh ./subdirs_hash.sh data_layer)
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 postgres:
@@ -44,7 +45,7 @@ db-deploy-build:
     FROM +sqitch-build
     COPY sqitch.conf ./sqitch.conf
     COPY ./data_layer/sqitch ./data_layer/sqitch
-    SAVE IMAGE db-deploy-build:latest
+    SAVE IMAGE --push $REG_TARGET/db-deploy:$DL_TAG
 
 pg-tap-build:
     FROM +postgres
@@ -83,11 +84,11 @@ db-deploy:
     ARG network=host
     ARG to=@HEAD
     LOCALLY
-    RUN earthly --use-inline-cache --save-inline-cache --push +db-deploy-build
+    DO +BUILD_IF_NO_IMG --IMG_NAME=db-deploy --IMG_TAG=$DL_TAG --BUILD_TARGET=db-deploy-build
     RUN docker run --rm \
         --network $network \
         --env SQITCH_TARGET=db:$DB_URL \
-        db-deploy-build:latest deploy --to $to --mode change
+        $REG_TARGET/db-deploy:$DL_TAG deploy --to $to --mode change
 
 db-deploy-test:
     ARG --required DB_URL
