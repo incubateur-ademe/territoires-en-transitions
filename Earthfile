@@ -604,9 +604,8 @@ prepare-faster:
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
          RUN earthly +dev --stop=$stop --business=no --app=no --fast=no
+         RUN earthly +save-db --push=$push
      END
-
-    RUN earthly +save-db --push=$push
 
 prepare-fast:
     ARG version  # version du plan
