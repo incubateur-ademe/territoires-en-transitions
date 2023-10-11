@@ -97,6 +97,9 @@ jobs:
       - uses: earthly/actions/setup-earthly@v1
         with:
           version: v0.7.20
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 1.52.3
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
