@@ -18,6 +18,8 @@ ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
 ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global DL_TAG=$ENV_PREFIX-$(sh ./subdirs_hash.sh data_layer)
+ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
+ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 postgres:
@@ -442,16 +444,6 @@ setup-env:
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
-copy-volume:
-     ARG --required from
-     ARG --required to
-     LOCALLY
-     RUN docker volume rm $to || echo "volume $to not found"
-     RUN docker volume create --name $to
-     RUN docker run --rm \
-        -v $from:/from \
-        -v $to:/to \
-        alpine ash -c "cd /from ; cp -av . /to"
 
 dev:
     LOCALLY
@@ -465,7 +457,13 @@ dev:
     ARG app=no
     ARG eco=no
     ARG fast=no
+    ARG faster=no
     ARG version=HEAD # version du plan
+
+    IF [ "$fast" = "yes" -a "$faster" = "yes" ]
+        RUN echo "Les options fast et faster sont mutuellement exclusives"
+        RUN exit 1
+    END
 
     IF [ "$stop" = "yes" ]
         RUN earthly +stop --npx=$npx
@@ -474,6 +472,10 @@ dev:
     IF [ "$datalayer" = "yes" ]
         IF [ "$fast" = "yes" ]
             RUN earthly +restore-state
+        END
+
+        IF [ "$faster" = "yes" ]
+            RUN earthly +restore-db
         END
 
         IF [ "$CI" = "true" ]
@@ -490,16 +492,18 @@ dev:
             RUN docker stop supabase_pg_meta_tet
         END
 
-        RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
+        IF [ "$faster" = "no" ]
+            RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
-        # Seed si aucune collectivité en base
-        RUN docker run --rm \
-            --network $network \
-            psql:latest $DB_URL -v ON_ERROR_STOP=1 \
-            -c "select 1 / count(*) from collectivite;" \
-            || earthly +seed --DB_URL=$DB_URL
+            # Seed si aucune collectivité en base
+            RUN docker run --rm \
+                --network $network \
+                psql:latest $DB_URL -v ON_ERROR_STOP=1 \
+                -c "select 1 / count(*) from collectivite;" \
+                || earthly +seed --DB_URL=$DB_URL
 
-        RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+            RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+        END
     END
 
     IF [ "$business" = "yes" ]
@@ -519,6 +523,7 @@ BUILD_IF_NO_IMG:
     ARG --required IMG_TAG
     ARG --required BUILD_TARGET
     ARG pull=yes
+    ARG push=yes
     RUN echo "Searching for image $IMG_NAME:$IMG_TAG ..."
     IF [ "docker image ls | grep $IMG_NAME | grep $IMG_TAG" ]
         RUN echo "Image found, skipping"
@@ -528,7 +533,11 @@ BUILD_IF_NO_IMG:
             RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
         ELSE
             RUN echo "Image not found, building +$BUILD_TARGET"
-            RUN earthly --push +$BUILD_TARGET
+            IF [ "$push" = "yes" ]
+                RUN earthly --push +$BUILD_TARGET
+            ELSE
+                RUN earthly +$BUILD_TARGET
+            END
         END
     END
 
@@ -541,6 +550,49 @@ stop:
     END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
     RUN earthly +clear-state
+
+copy-volume: ## Copie un volume
+     ARG --required from
+     ARG --required to
+     LOCALLY
+     RUN docker volume rm $to || echo "volume $to not found"
+     RUN docker volume create --name $to
+     RUN docker run --rm \
+        -v $from:/from \
+        -v $to:/to \
+        alpine ash -c "cd /from ; cp -av . /to"
+
+save-db: ## Sauvegarde la db dans une image en vue de la publier
+     ARG push=no
+     LOCALLY
+     RUN docker run \
+        -v $DB_VOLUME_NAME:/volume \
+        alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
+     RUN docker commit \
+         $(docker ps -lq) \
+         $DB_SAVE_IMG_NAME
+     RUN docker container rm $(docker ps -lq)
+     IF [ "$push" = "yes" ]
+        RUN docker push $DB_SAVE_IMG_NAME
+     END
+
+restore-db: ## Restaure la db depuis une image
+     ARG volume=supabase_db_tet
+     ARG pull=no
+     LOCALLY
+     IF [ "$pull" = "yes" ]
+        RUN docker pull $DB_SAVE_IMG_NAME
+     END
+     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
+         RUN echo "Image $DB_SAVE_IMG_NAME found, restoring..."
+         RUN docker volume rm $DB_VOLUME_NAME || echo "Volume $DB_VOLUME_NAME not found"
+         RUN docker volume create --name $DB_VOLUME_NAME
+         RUN docker run --rm \
+            -v $volume:/volume \
+            $DB_SAVE_IMG_NAME ash -c "cd /save ; cp -av . /volume"
+     ELSE
+         RUN echo "Image $DB_SAVE_IMG_NAME not found, cannot restore"
+     END
 
 prepare-fast:
     ARG version  # version du plan
