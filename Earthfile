@@ -279,9 +279,6 @@ app-build: ## construit l'image de l'app
     WORKDIR $APP_DIR
     CMD ["dumb-init", "node", "server.js"]
     SAVE IMAGE --cache-from=$APP_IMG_NAME --push $APP_IMG_NAME
-    IF [ "$TARGETARCH" = "amd64" ]
-        SAVE IMAGE --push $REG_TARGET/app:$ENV_PREFIX-$GIT_BRANCH
-    END
 
 app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
@@ -343,9 +340,6 @@ site-build: ## construit l'image du site
     WORKDIR ./packages/site
     CMD ["dumb-init", "./node_modules/.bin/next", "start"]
     SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
-    IF [ "$TARGETARCH" = "amd64" ]
-        SAVE IMAGE --push $REG_TARGET/site:$ENV_PREFIX-$GIT_BRANCH
-    END
 
 site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
