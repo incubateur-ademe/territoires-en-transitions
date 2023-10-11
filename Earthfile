@@ -597,7 +597,7 @@ prepare-faster:
      ARG stop=yes
      LOCALLY
      IF [ "$push" = "yes" ]
-        RUN docker pull $DB_SAVE_IMG_NAME
+        RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
      END
      IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
          RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
