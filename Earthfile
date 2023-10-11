@@ -563,22 +563,15 @@ copy-volume: ## Copie un volume
 save-db: ## Sauvegarde la db dans une image en vue de la publier
      ARG push=no
      LOCALLY
+     RUN docker run \
+        -v $DB_VOLUME_NAME:/volume \
+        alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
+     RUN docker commit \
+         $(docker ps -lq) \
+         $DB_SAVE_IMG_NAME
+     RUN docker container rm $(docker ps -lq)
      IF [ "$push" = "yes" ]
-        RUN docker pull $DB_SAVE_IMG_NAME
-     END
-     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
-         RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
-     ELSE
-         RUN docker run \
-            -v $DB_VOLUME_NAME:/volume \
-            alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
-         RUN docker commit \
-             $(docker ps -lq) \
-             $DB_SAVE_IMG_NAME
-         RUN docker container rm $(docker ps -lq)
-         IF [ "$push" = "yes" ]
-            RUN docker push $DB_SAVE_IMG_NAME
-         END
+        RUN docker push $DB_SAVE_IMG_NAME
      END
 
 restore-db: ## Restaure la db depuis une image
@@ -598,6 +591,22 @@ restore-db: ## Restaure la db depuis une image
          RUN echo "Image $DB_SAVE_IMG_NAME not found, cannot restore"
          RUN exit 1
      END
+
+prepare-faster:
+     ARG push=no
+     ARG stop=yes
+     LOCALLY
+     IF [ "$push" = "yes" ]
+        RUN docker pull $DB_SAVE_IMG_NAME
+     END
+     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
+         RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
+     ELSE
+         RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
+         RUN earthly +dev --stop=$stop --business=no --app=no --fast=no
+     END
+
+    RUN earthly +save-db --push=$push
 
 prepare-fast:
     ARG version  # version du plan
