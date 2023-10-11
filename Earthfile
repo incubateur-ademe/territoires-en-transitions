@@ -475,7 +475,7 @@ dev:
         END
 
         IF [ "$faster" = "yes" ]
-            RUN earthly +restore-db
+            RUN earthly +restore-db --pull=yes
         END
 
         IF [ "$CI" = "true" ]
@@ -592,6 +592,7 @@ restore-db: ## Restaure la db depuis une image
             $DB_SAVE_IMG_NAME ash -c "cd /save ; cp -av . /volume"
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, cannot restore"
+         RUN exit 1
      END
 
 prepare-fast:
