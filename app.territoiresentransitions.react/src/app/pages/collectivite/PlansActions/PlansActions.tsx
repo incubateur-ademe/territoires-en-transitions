@@ -15,13 +15,16 @@ const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
 
   const {data: planListe} = usePlansNavigation();
-  const fichesNonClasseesListe = useFichesNonClasseesListe(
+  const {data: fichesNonClasseesListe} = useFichesNonClasseesListe(
     collectivite?.collectivite_id!
   );
 
   const {mutate: createFicheAction} = useCreateFicheAction();
 
   if (!collectivite) return null;
+
+  const hasFicheNonClassees =
+    (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
 
   return (
     <CollectivitePageLayout
@@ -30,7 +33,7 @@ const PlansActions = () => {
         links: generatePlanActionNavigationLinks(
           collectivite.collectivite_id,
           planListe,
-          fichesNonClasseesListe?.count
+          hasFicheNonClassees,
         ),
         actions: !collectivite.readonly && (
           <>

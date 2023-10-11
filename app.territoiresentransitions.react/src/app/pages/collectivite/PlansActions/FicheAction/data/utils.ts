@@ -27,4 +27,10 @@ export const ficheResumeByTitle = (a: FicheResume, b: FicheResume) => {
   if (!a.titre) return -1;
   if (!b.titre) return 1;
   return naturalSort(a.titre, b.titre);
+export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
+  return fiches.sort((a: FicheResume, b: FicheResume) => {
+    if (!a.titre) return -1;
+    if (!b.titre) return 1;
+    return naturalSort(a.titre, b.titre);
+  });
 };

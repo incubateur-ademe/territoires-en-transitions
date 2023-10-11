@@ -34,6 +34,7 @@ export const generatePlanActionNavigationLinks = (
   collectiviteId: number,
   plans?: PlanNode[],
   fichesNonClasseesTotal?: number | null
+  hasFichesNonClassees: boolean,
 ) => {
   const plansLinks: SideNavLinks = [
     {
@@ -76,7 +77,7 @@ export const generatePlanActionNavigationLinks = (
     );
   }
 
-  if (fichesNonClasseesTotal && fichesNonClasseesTotal > 0) {
+  if (hasFichesNonClassees) {
     plansLinks.push({
       link: makeCollectiviteFichesNonClasseesUrl({
         collectiviteId,
