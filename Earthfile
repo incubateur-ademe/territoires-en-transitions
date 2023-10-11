@@ -563,15 +563,22 @@ copy-volume: ## Copie un volume
 save-db: ## Sauvegarde la db dans une image en vue de la publier
      ARG push=no
      LOCALLY
-     RUN docker run \
-        -v $DB_VOLUME_NAME:/volume \
-        alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
-     RUN docker commit \
-         $(docker ps -lq) \
-         $DB_SAVE_IMG_NAME
-     RUN docker container rm $(docker ps -lq)
      IF [ "$push" = "yes" ]
-        RUN docker push $DB_SAVE_IMG_NAME
+        RUN docker pull $DB_SAVE_IMG_NAME
+     END
+     IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
+         RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
+     ELSE
+         RUN docker run \
+            -v $DB_VOLUME_NAME:/volume \
+            alpine ash -c "mkdir /save ; cd /volume ; cp -av . /save"
+         RUN docker commit \
+             $(docker ps -lq) \
+             $DB_SAVE_IMG_NAME
+         RUN docker container rm $(docker ps -lq)
+         IF [ "$push" = "yes" ]
+            RUN docker push $DB_SAVE_IMG_NAME
+         END
      END
 
 restore-db: ## Restaure la db depuis une image
