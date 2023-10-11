@@ -577,7 +577,6 @@ save-db: ## Sauvegarde la db dans une image en vue de la publier
      END
 
 restore-db: ## Restaure la db depuis une image
-     ARG volume=supabase_db_tet
      ARG pull=no
      LOCALLY
      IF [ "$pull" = "yes" ]
