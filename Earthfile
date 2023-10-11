@@ -10,14 +10,14 @@ ARG --global REGISTRY='ghcr.io'
 ARG --global REG_USER='territoiresentransitions'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
 # tags appliqués aux images docker générées
-ARG --global ENV_PREFIX="dev"
+ARG --global ENV_NAME="dev"
 ARG FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
-ARG --global APP_TAG=$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
+ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
-ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_PREFIX-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
-ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_PREFIX-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
-ARG --global DL_TAG=$ENV_PREFIX-$(sh ./subdirs_hash.sh data_layer)
+ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
+ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
+ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -645,12 +645,12 @@ koyeb:
 site-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
-    RUN ./koyeb services update site/site --docker $SITE_IMG_NAME
+    RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
 
 app-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
-    RUN ./koyeb services update app/app --docker $APP_IMG_NAME
+    RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
 
 help: ## affiche ce message d'aide
     LOCALLY
