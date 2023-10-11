@@ -510,7 +510,7 @@ dev:
     END
 
     IF [ "$app" = "yes" ]
-        RUN earthly +app-run
+        RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
