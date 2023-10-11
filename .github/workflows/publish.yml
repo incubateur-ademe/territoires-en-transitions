@@ -107,7 +107,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --fast=no --faster=no --version=HEAD 
+          --stop=no --datalayer=yes --business=no --app=no --eco=no --fast=no --faster=no --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
           --API_URL=${{ secrets.API_URL }}
@@ -266,6 +266,7 @@ jobs:
     needs:
       - build-business-dev
       - build-tools
+      - build-db
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -288,7 +289,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --fast=no --version=HEAD 
+          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
           --API_URL=${{ secrets.API_URL }}
@@ -310,6 +311,7 @@ jobs:
     needs:
       - build-business-dev
       - build-tools
+      - build-db
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -332,7 +334,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=no --fast=no --version=HEAD 
+          --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
           --API_URL=${{ secrets.API_URL }}
@@ -347,6 +349,7 @@ jobs:
       - build-business-dev
       - build-tools
       - build-app-dev
+      - build-db
     environment: dev
     name: End-to-end tests
     runs-on: ubuntu-latest
@@ -385,7 +388,7 @@ jobs:
           sudo update-locale LANG=${{env.LANG}}
 
       - run: earthly --use-inline-cache +setup-env
-      - run: earthly --use-inline-cache +dev --app=yes
+      - run: earthly --use-inline-cache +dev --app=yes --faster=yes
       - run: docker restart supabase_rest_tet
       - run: earthly --use-inline-cache +curl-test
 
