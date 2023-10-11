@@ -37,7 +37,7 @@ const FiltersPlanAction = ({
   onChangePlan,
 }: FiltersPlanActionProps): JSX.Element => {
   const plansActions = usePlansActionsListe(collectiviteId);
-  const fichesNonClassees = useFichesNonClasseesListe(collectiviteId);
+  const {data: fichesNonClassees} = useFichesNonClasseesListe(collectiviteId);
 
   // Construction de la liste de filtres par plan d'action
   const filters = [
@@ -56,7 +56,7 @@ const FiltersPlanAction = ({
     );
   }
 
-  if (fichesNonClassees?.fiches && fichesNonClassees.fiches.length > 0) {
+  if (fichesNonClassees && fichesNonClassees.length > 0) {
     filters.push({
       value: filtreFichesNonClassees.id.toString(),
       label: filtreFichesNonClassees.name,
