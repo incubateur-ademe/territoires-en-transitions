@@ -285,6 +285,7 @@ app-run: ## construit et lance l'image de l'app en local
     ARG --required API_URL
     ARG network=supabase_network_tet
     LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
     DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
     RUN docker run -d --rm \
         --name app_tet \
@@ -343,7 +344,6 @@ site-build: ## construit l'image du site
 
 site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
-    FROM +site-build
     LOCALLY
     RUN docker run -d --rm \
         --name site_tet \
