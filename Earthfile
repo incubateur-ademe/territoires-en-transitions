@@ -446,8 +446,9 @@ setup-env:
 dev:
     LOCALLY
     ARG --required DB_URL
-    ARG --required SERVICE_ROLE_KEY
     ARG --required API_URL
+    ARG --required ANON_KEY
+    ARG --required SERVICE_ROLE_KEY
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
