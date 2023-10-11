@@ -11,7 +11,7 @@ ARG --global REG_USER='territoiresentransitions'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
 # tags appliqués aux images docker générées
 ARG --global ENV_NAME="dev"
-ARG FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
+ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
@@ -261,6 +261,10 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     # installe les dépendances
     RUN npm ci
     SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
+
+front-deps-builder:
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
