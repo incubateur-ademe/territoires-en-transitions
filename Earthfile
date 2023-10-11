@@ -578,7 +578,7 @@ restore-db: ## Restaure la db depuis une image
      ARG pull=no
      LOCALLY
      IF [ "$pull" = "yes" ]
-        RUN docker pull $DB_SAVE_IMG_NAME
+        RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
      END
      IF [ "docker image ls | grep db-save | grep $DL_TAG" ]
          RUN echo "Image $DB_SAVE_IMG_NAME found, restoring..."
@@ -595,6 +595,9 @@ restore-db: ## Restaure la db depuis une image
 prepare-faster:
      ARG push=no
      ARG stop=yes
+     ARG --required DB_URL
+     ARG --required SERVICE_ROLE_KEY
+     ARG --required API_URL
      LOCALLY
      IF [ "$push" = "yes" ]
         RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
@@ -603,7 +606,9 @@ prepare-faster:
          RUN echo "Image $DB_SAVE_IMG_NAME found, skipping..."
      ELSE
          RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
-         RUN earthly +dev --stop=$stop --business=no --app=no --fast=no
+         RUN earthly +dev \
+            --stop=$stop --business=no --app=no --fast=no \
+            --DB_URL=$DB_URL --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
          RUN earthly +save-db --push=$push
      END
 
