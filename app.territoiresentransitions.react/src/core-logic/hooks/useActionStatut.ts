@@ -5,6 +5,7 @@ import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 import {useActionScore} from './scoreHooks';
 import {Database} from 'types/database.types';
 import {useCollectiviteId} from './params';
+import {TActionAvancement} from 'types/alias';
 
 /**
  * Charge le statut d'une action
@@ -39,12 +40,7 @@ export const useTasksStatus = (tasksIds: string[]) => {
   );
 
   let tasksStatus: {
-    [key: string]:
-      | 'fait'
-      | 'pas_fait'
-      | 'programme'
-      | 'non_renseigne'
-      | 'detaille';
+    [key: string]: TActionAvancement;
   } = {};
 
   tasksIds.forEach(taskId => {

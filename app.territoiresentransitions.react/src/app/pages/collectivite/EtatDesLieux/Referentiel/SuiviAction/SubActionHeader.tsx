@@ -12,16 +12,12 @@ import {SuiviScoreRow} from '../data/useScoreRealise';
 import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
 import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
+import {TActionAvancement} from 'types/alias';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
-  actionAvancement?:
-    | 'fait'
-    | 'pas_fait'
-    | 'programme'
-    | 'non_renseigne'
-    | 'detaille';
+  actionAvancement?: TActionAvancement;
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   displayProgressBar?: boolean;

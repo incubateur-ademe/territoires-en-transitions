@@ -7,10 +7,93 @@ import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinition
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {useTasksStatus} from 'core-logic/hooks/useActionStatut';
 import {Dispatch, SetStateAction, useState} from 'react';
+import {ActionScore} from 'types/ClientScore';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {StatusToSavePayload} from './ActionStatusDropdown';
 import {getStatusFromIndex} from './utils';
+
+/**
+ * Vérifie pour chaque tâche de la sous-action le statut
+ * en base et le statut en cours de modification
+ * Toutes les tâches doivent avoir un statut différent de 'non renseigné'
+ */
+const isCustomScoreGranted = (
+  tasks: ActionDefinitionSummary[],
+  tasksStatus: {
+    [key: string]:
+      | 'fait'
+      | 'pas_fait'
+      | 'programme'
+      | 'non_renseigne'
+      | 'detaille';
+  },
+  localStatus: {
+    [key: string]: StatusToSavePayload;
+  }
+) => {
+  const isGranted = tasks.reduce((result, currTask) => {
+    if (
+      (!!tasksStatus[currTask.id] &&
+        tasksStatus[currTask.id] === 'non_renseigne') ||
+      !tasksStatus[currTask.id]
+    ) {
+      // Si la tâche est à 'non renseigné' ou n'a pas de statut attribué
+      // -> On vérifie que le statut soit renseigné localement
+      if (
+        !!localStatus[currTask.id] &&
+        localStatus[currTask.id].avancement !== 'non_renseigne'
+      ) {
+        return result;
+      } else return false;
+    } else {
+      // Si la tâche est à un statut différent de 'non renseigné'
+      // -> On vérifie que le statut local n'ait pas été changé à 'non renseigné'
+      if (
+        !!localStatus[currTask.id] &&
+        localStatus[currTask.id].avancement === 'non_renseigne'
+      ) {
+        return false;
+      } else return result;
+    }
+  }, true);
+
+  return isGranted;
+};
+
+/**
+ * Calcul pour une tâche donnée du nouveau score détaillé
+ * en fonction du statut choisi dans la modale
+ */
+const getNewTaskScores = (task: ActionScore, payload: StatusToSavePayload) => {
+  let taskScores = {
+    point_fait: 0,
+    point_programme: 0,
+    point_pas_fait: 0,
+  };
+
+  switch (payload.avancement) {
+    case 'fait':
+    case 'programme':
+    case 'pas_fait':
+      taskScores[`point_${payload.avancement}`] = task.point_potentiel;
+      break;
+    case 'detaille':
+      if (payload.avancementDetaille) {
+        taskScores.point_fait =
+          task.point_potentiel * payload.avancementDetaille[0];
+        taskScores.point_programme =
+          task.point_potentiel * payload.avancementDetaille[1];
+        taskScores.point_pas_fait =
+          task.point_potentiel * payload.avancementDetaille[2];
+      }
+      break;
+    default:
+      break;
+  }
+
+  return taskScores;
+};
 
 type ScoreAutoModalProps = {
   action: ActionDefinitionSummary;
@@ -59,6 +142,9 @@ const ScoreAutoModal = ({
       },
     }));
 
+    // Calcul de la jauge de score auto en fonction
+    // des modifications faites dans la modale
+    // en passant en revue toutes les tâches de la sous-action
     let scoreFait = 0;
     let scoreProgramme = 0;
     let scorePasFait = 0;
@@ -68,6 +154,9 @@ const ScoreAutoModal = ({
         task.action_id !== payload.actionId &&
         !localTasksScores[task.action_id]
       ) {
+        // La tâche n'est pas celle modifiée dans la payload
+        // et n'a pas été modifiée dans la modale
+        // -> score stocké en base
         scoreFait += task.point_fait;
         scoreProgramme += task.point_programme;
         scorePasFait += task.point_pas_fait;
@@ -75,58 +164,22 @@ const ScoreAutoModal = ({
         task.action_id !== payload.actionId &&
         localTasksScores[task.action_id]
       ) {
+        // La tâche n'est pas celle modifiée dans la payload
+        // mais a été modifiée dans la modale
+        // -> score stocké localement
         scoreFait += localTasksScores[task.action_id].point_fait;
         scoreProgramme += localTasksScores[task.action_id].point_programme;
         scorePasFait += localTasksScores[task.action_id].point_pas_fait;
       } else {
-        switch (payload.avancement) {
-          case 'fait':
-            scoreFait += task.point_potentiel;
-            break;
-          case 'programme':
-            scoreProgramme += task.point_potentiel;
-            break;
-          case 'pas_fait':
-            scorePasFait += task.point_potentiel;
-            break;
-          case 'detaille':
-            if (payload.avancementDetaille) {
-              scoreFait += task.point_potentiel * payload.avancementDetaille[0];
-              scoreProgramme +=
-                task.point_potentiel * payload.avancementDetaille[1];
-              scorePasFait +=
-                task.point_potentiel * payload.avancementDetaille[2];
-            }
-            break;
-          default:
-            break;
-        }
-
+        // La tâche est celle modifiée dans la payload
+        // -> calcul du nouveau score de la tâche
+        const newScores = getNewTaskScores(task, payload);
+        scoreFait += newScores.point_fait;
+        scoreProgramme += newScores.point_programme;
+        scorePasFait += newScores.point_pas_fait;
         setLocalTasksScores(prevState => ({
           ...prevState,
-          [task.action_id]: {
-            point_fait:
-              payload.avancement === 'fait'
-                ? task.point_potentiel
-                : payload.avancement === 'detaille' &&
-                  payload.avancementDetaille
-                ? task.point_potentiel * payload.avancementDetaille[0]
-                : 0,
-            point_programme:
-              payload.avancement === 'programme'
-                ? task.point_potentiel
-                : payload.avancement === 'detaille' &&
-                  payload.avancementDetaille
-                ? task.point_potentiel * payload.avancementDetaille[1]
-                : 0,
-            point_pas_fait:
-              payload.avancement === 'pas_fait'
-                ? task.point_potentiel
-                : payload.avancement === 'detaille' &&
-                  payload.avancementDetaille
-                ? task.point_potentiel * payload.avancementDetaille[2]
-                : 0,
-          },
+          [task.action_id]: {...newScores},
         }));
       }
     });
@@ -147,32 +200,6 @@ const ScoreAutoModal = ({
     }
 
     onSaveScore(newStatus);
-  };
-
-  const isCustomScoreGranted = () => {
-    const isGranted = tasks.reduce((result, currTask) => {
-      if (
-        (!!tasksStatus[currTask.id] &&
-          tasksStatus[currTask.id] === 'non_renseigne') ||
-        !tasksStatus[currTask.id]
-      ) {
-        if (
-          !!localStatus[currTask.id] &&
-          localStatus[currTask.id].avancement !== 'non_renseigne'
-        ) {
-          return result;
-        } else return false;
-      } else {
-        if (
-          !!localStatus[currTask.id] &&
-          localStatus[currTask.id].avancement === 'non_renseigne'
-        ) {
-          return false;
-        } else return result;
-      }
-    }, true);
-
-    return isGranted;
   };
 
   return (
@@ -217,14 +244,15 @@ const ScoreAutoModal = ({
                 onSaveStatus={handleChangeStatus}
               />
 
-              {action.referentiel === 'cae' && !isCustomScoreGranted() && (
-                <div className="fr-alert fr-alert--warning mt-12 mb-12">
-                  <p>
-                    Pour activer l’ajustement manuel, vous devez renseigner un
-                    statut pour chaque tâche.
-                  </p>
-                </div>
-              )}
+              {action.referentiel === 'cae' &&
+                !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
+                  <div className="fr-alert fr-alert--warning mt-12 mb-12">
+                    <p>
+                      Pour activer l’ajustement manuel, vous devez renseigner un
+                      statut pour chaque tâche.
+                    </p>
+                  </div>
+                )}
 
               <div className="w-full flex justify-end gap-4 mt-12 mb-4">
                 {action.referentiel === 'eci' && (
@@ -248,7 +276,9 @@ const ScoreAutoModal = ({
                       if (onOpenScorePerso) onOpenScorePerso();
                       setExternalOpen(false);
                     }}
-                    disabled={!isCustomScoreGranted()}
+                    disabled={
+                      !isCustomScoreGranted(tasks, tasksStatus, localStatus)
+                    }
                     className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
                   >
                     Personnaliser ce score

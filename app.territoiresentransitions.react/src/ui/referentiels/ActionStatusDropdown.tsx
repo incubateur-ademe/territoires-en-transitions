@@ -5,7 +5,7 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {TActionAvancementExt} from 'types/alias';
+import {TActionAvancement, TActionAvancementExt} from 'types/alias';
 import {
   ITEMS_AVEC_NON_CONCERNE,
   SelectActionStatut,
@@ -31,12 +31,7 @@ export type StatusToSavePayload = {
   actionId: string;
   statut: {
     action_id: string;
-    avancement:
-      | 'fait'
-      | 'pas_fait'
-      | 'programme'
-      | 'non_renseigne'
-      | 'detaille';
+    avancement: TActionAvancement;
     avancement_detaille: number[] | null;
     collectivite_id: number;
     concerne: boolean;
