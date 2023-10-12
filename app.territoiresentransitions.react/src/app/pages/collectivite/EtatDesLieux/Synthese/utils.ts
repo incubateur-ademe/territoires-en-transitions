@@ -123,8 +123,8 @@ export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
     programmes: aggregatedScore[1].value,
     pas_fait: aggregatedScore[2].value,
     non_renseigne: aggregatedScore[3].value,
-    max_personnalise: aggregatedScore.reduce(
-      (sum, currVal) => sum + currVal.value,
+    max_personnalise: scoreData.reduce(
+      (res, currVal) => res + currVal.points_max_personnalises,
       0
     ),
   };
