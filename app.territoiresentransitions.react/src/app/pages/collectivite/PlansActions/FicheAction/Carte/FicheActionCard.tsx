@@ -31,7 +31,10 @@ const FicheActionCard = ({
   link,
   isEditable = false,
 }: Props) => {
-  const {mutate: deleteFiche} = useDeleteFicheAction();
+  const {mutate: deleteFiche} = useDeleteFicheAction({
+    ficheId: ficheAction.id!,
+    axeId,
+  });
 
   const editButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -111,13 +114,7 @@ const FicheActionCard = ({
             isInMultipleAxes={
               (ficheAction.plans && ficheAction.plans.length > 1) || false
             }
-            onDelete={() =>
-              deleteFiche({
-                ficheId: ficheAction.id!,
-                planActionId: planId,
-                axeId,
-              })
-            }
+            onDelete={() => deleteFiche()}
           />
         </div>
       )}

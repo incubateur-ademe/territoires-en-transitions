@@ -42,9 +42,8 @@ export default ActionCard;
 
 export const ActionCardSkeleton = () => (
   <div className="animate-pulse flex flex-col h-full p-6 border border-gray-200">
-    <div className="h-6 w-20 mb-2 rounded-md bg-gray-200" />
+    <div className="h-5 w-20 mb-3 rounded-md bg-gray-200" />
     <div className="h-4 w-48 rounded-sm bg-gray-200" />
-    <div className="h-5 my-5 rounded-sm bg-gray-200" />
-    <span className="h-5 w-5 ml-auto bg-gray-200 rounded-full" />
+    <div className="h-5 mt-4 rounded-sm bg-gray-200" />
   </div>
 );
