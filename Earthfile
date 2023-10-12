@@ -594,6 +594,7 @@ prepare-faster:
      ARG --required DB_URL
      ARG --required SERVICE_ROLE_KEY
      ARG --required API_URL
+     ARG --required ANON_KEY
      LOCALLY
      IF [ "$push" = "yes" ]
         RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
@@ -604,7 +605,7 @@ prepare-faster:
          RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
          RUN earthly +dev \
             --stop=$stop --business=no --app=no --fast=no \
-            --DB_URL=$DB_URL --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+            --DB_URL=$DB_URL --ANON_KEY=$ANON_KEY --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
          RUN earthly +save-db --push=$push
      END
 
