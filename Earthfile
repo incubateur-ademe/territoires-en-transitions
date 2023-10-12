@@ -310,18 +310,13 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
-    ARG --required ANON_KEY
-    ARG url=http://supabase_kong_tet:8000
-    ARG network=supabase_network_tet
     LOCALLY
     RUN earthly +app-test-build
     RUN docker run --rm \
         --name app-test_tet \
-        --network $network \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
-        --env REACT_APP_SUPABASE_URL=$url \
-        --env REACT_APP_SUPABASE_KEY=$ANON_KEY \
-        --env ZIP_ORIGIN_OVERRIDE=$url \
+        --env REACT_APP_SUPABASE_URL='http://fake' \
+        --env REACT_APP_SUPABASE_KEY='fake' \
         app-test:latest
 
 site-build: ## construit l'image du site
