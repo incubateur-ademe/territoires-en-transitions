@@ -270,11 +270,9 @@ app-build: ## construit l'image de l'app
     ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required API_URL
-    ARG kong_url=http://supabase_kong_tet:8000
     FROM +front-deps
     ENV REACT_APP_SUPABASE_URL=$API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV ZIP_ORIGIN_OVERRIDE=$KONG_URL
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
@@ -291,10 +289,12 @@ app-run: ## construit et lance l'image de l'app en local
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
     DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
+    ARG kong_url=http://supabase_kong_tet:8000
     RUN docker run -d --rm \
         --name app_tet \
         --network $network \
         --publish 3000:3000 \
+        --env ZIP_ORIGIN_OVERRIDE=$kong_url \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
