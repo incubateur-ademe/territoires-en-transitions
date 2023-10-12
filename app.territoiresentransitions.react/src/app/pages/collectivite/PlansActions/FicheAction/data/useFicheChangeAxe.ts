@@ -2,19 +2,20 @@ import {useMutation, useQueryClient} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from './types';
-import {ficheChangeAxeDansPlan} from '../../PlanAction/data/utils';
 import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
-import {naturalSort} from 'utils/naturalSort';
+import {PlanNode} from '../../PlanAction/data/types';
+import {sortFichesResume} from './utils';
 
 type Args = {
   fiche: FicheResume;
-  plan_id: number;
   old_axe_id: number;
   new_axe_id: number;
 };
 
-export const useFicheChangeAxe = () => {
+export const useFicheChangeAxe = ({planId}: {planId: number}) => {
   const queryClient = useQueryClient();
+
+  const flat_axes_Key = ['flat_axes', planId];
 
   return useMutation(
     async ({fiche, new_axe_id, old_axe_id}: Args) => {
@@ -27,63 +28,69 @@ export const useFicheChangeAxe = () => {
     {
       mutationKey: 'fiche_change_axe',
       onMutate: async args => {
-        const {fiche, new_axe_id, old_axe_id, plan_id} = args;
+        const {fiche, new_axe_id, old_axe_id} = args;
         const fiche_id = fiche.id!;
 
-        // clés dans le cache
-        const planActionKey = ['plan_action', plan_id];
-        const oldAxeKey = ['axe_fiches', old_axe_id];
-        const newAxeKey = ['axe_fiches', new_axe_id];
+        const old_axe_fiches_Key = ['axe_fiches', old_axe_id];
+        const new_axe_fiches_Key = ['axe_fiches', new_axe_id];
 
-        // copie l'état précédent avant de modifier le cache
-        const previousState = [
-          [planActionKey, queryClient.getQueryData(planActionKey)],
-          [oldAxeKey, queryClient.getQueryData(oldAxeKey)],
-          [newAxeKey, queryClient.getQueryData(newAxeKey)],
+        const previousData = [
+          [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
+          [old_axe_fiches_Key, queryClient.getQueryData(old_axe_fiches_Key)],
+          [new_axe_fiches_Key, queryClient.getQueryData(new_axe_fiches_Key)],
         ];
 
-        // met à jour les listes d'id de fiches dans l'arborescence
-        queryClient.setQueryData(planActionKey, (old: any) => {
-          return ficheChangeAxeDansPlan(old, fiche_id, old_axe_id, new_axe_id);
-        });
-
-        // supprime la fiche de l'axe source
         queryClient.setQueryData(
-          ['axe_fiches', old_axe_id],
-          (old: FicheResume[] | undefined): FicheResume[] => {
-            return (
-              old?.filter((fiche: FicheResume) => fiche.id !== fiche_id) || []
-            );
+          flat_axes_Key,
+          (old: PlanNode[] | undefined): PlanNode[] => {
+            if (old) {
+              return old.map(axe => {
+                if (axe.id === old_axe_id) {
+                  return {
+                    ...axe,
+                    fiches: axe.fiches?.filter(id => id !== fiche_id) || [],
+                  };
+                } else if (axe.id === new_axe_id) {
+                  return {
+                    ...axe,
+                    fiches: axe.fiches ? [...axe.fiches, fiche_id] : [fiche_id],
+                  };
+                } else {
+                  return axe;
+                }
+              });
+            } else {
+              return [];
+            }
           }
         );
 
-        // ajoute la fiche dans l'axe destination
         queryClient.setQueryData(
-          ['axe_fiches', new_axe_id],
+          old_axe_fiches_Key,
           (old: FicheResume[] | undefined): FicheResume[] => {
-            return [...(old || []), fiche].sort(byTitle);
+            return old?.filter(f => f.id !== fiche_id) || [];
           }
         );
 
-        // renvoi l'état précédent
-        return previousState;
+        queryClient.setQueryData(
+          new_axe_fiches_Key,
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            return sortFichesResume([...(old || []), fiche]);
+          }
+        );
+
+        return previousData;
       },
-      onError: (err, args, previousState) => {
-        // en cas d'erreur restaure l'état précédent
-        previousState?.forEach(([key, data]) =>
+      onError: (err, args, previousData) => {
+        previousData?.forEach(([key, data]) =>
           queryClient.setQueryData(key as string[], data)
         );
       },
       onSuccess: (data, args) => {
-        args.fiche.id && dropAnimation(`fiche-${args.fiche.id.toString()}`);
+        queryClient.invalidateQueries(flat_axes_Key).then(() => {
+          args.fiche.id && dropAnimation(`fiche-${args.fiche.id.toString()}`);
+        });
       },
     }
   );
-};
-
-// tri local des fiches par titre
-const byTitle = (a: FicheResume, b: FicheResume) => {
-  if (!a.titre) return -1;
-  if (!b.titre) return 1;
-  return naturalSort(a.titre, b.titre);
 };

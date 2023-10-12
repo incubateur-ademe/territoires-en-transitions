@@ -1,6 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
 import {FicheResume} from '../../FicheAction/data/types';
+import {sortFichesResume} from '../../FicheAction/data/utils';
 
 type Args = {
   ficheIds: number[];
@@ -14,6 +15,6 @@ export const useAxeFiches = ({ficheIds, axeId}: Args) => {
       .select()
       .in('id', ficheIds);
 
-    return data as FicheResume[];
+    return sortFichesResume(data as FicheResume[]);
   });
 };

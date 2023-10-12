@@ -13,7 +13,7 @@ type TFicheActionHeader = {
 
 const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
   const {mutate: exportFiche, isLoading} = useExportFicheAction(fiche.id);
-  const {mutate: deleteFiche} = useDeleteFicheAction();
+  const {mutate: deleteFiche} = useDeleteFicheAction({ficheId: fiche.id!});
   const plansProfondeur = usePlanActionProfondeur();
 
   const generateButtonTitle = () => {
@@ -37,7 +37,7 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
           )}
           <FicheActionSupprimerModal
             isInMultipleAxes={(fiche.axes && fiche.axes.length > 1) || false}
-            onDelete={() => deleteFiche({ficheId: fiche.id!})}
+            onDelete={() => deleteFiche()}
           />
           <button
             className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-download-line"
