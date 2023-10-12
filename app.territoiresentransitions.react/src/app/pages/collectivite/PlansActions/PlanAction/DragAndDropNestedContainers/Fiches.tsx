@@ -26,30 +26,36 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
       {isLoading
         ? ficheIds.map(id => <ActionCardSkeleton key={id} />)
         : data &&
-          data.map(fiche => (
-            <Fiche
-              key={fiche.id}
-              axeId={axeId}
-              planId={planId}
-              fiche={fiche}
-              url={
-                fiche.id
-                  ? isAxePage
-                    ? makeCollectivitePlanActionAxeFicheUrl({
-                        collectiviteId: fiche.collectivite_id!,
-                        planActionUid: planId.toString(),
-                        ficheUid: fiche.id.toString(),
-                        axeUid: axeId.toString(),
-                      })
-                    : makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: fiche.collectivite_id!,
-                        planActionUid: planId.toString(),
-                        ficheUid: fiche.id!.toString(),
-                      })
-                  : undefined
-              }
-            />
-          ))}
+          data.map(fiche => {
+            if (fiche.id! < 0) {
+              return <ActionCardSkeleton key={fiche.id} />;
+            } else {
+              return (
+                <Fiche
+                  key={fiche.id}
+                  axeId={axeId}
+                  planId={planId}
+                  fiche={fiche}
+                  url={
+                    fiche.id
+                      ? isAxePage
+                        ? makeCollectivitePlanActionAxeFicheUrl({
+                            collectiviteId: fiche.collectivite_id!,
+                            planActionUid: planId.toString(),
+                            ficheUid: fiche.id.toString(),
+                            axeUid: axeId.toString(),
+                          })
+                        : makeCollectivitePlanActionFicheUrl({
+                            collectiviteId: fiche.collectivite_id!,
+                            planActionUid: planId.toString(),
+                            ficheUid: fiche.id!.toString(),
+                          })
+                      : undefined
+                  }
+                />
+              );
+            }
+          })}
     </div>
   );
 };

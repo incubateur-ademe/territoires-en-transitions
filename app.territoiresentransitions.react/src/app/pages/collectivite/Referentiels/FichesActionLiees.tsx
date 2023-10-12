@@ -1,9 +1,9 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useCreateFicheAction} from '../PlansActions/FicheAction/data/useUpsertFicheAction';
 import FichesLiees from '../PlansActions/FicheAction/FicheActionForm/FichesLiees';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {useFichesActionLiees} from './useFichesActionLiees';
 import {useUpdateFichesActionLiees} from './useUpdateFichesActionLiees';
+import {useCreateFicheResume} from '../PlansActions/FicheAction/data/useCreateFicheResume';
 
 export type TFichesActionProps = {
   actionId: string;
@@ -16,7 +16,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const {actionId} = props;
   const collectivite = useCurrentCollectivite();
   const {data: fiches} = useFichesActionLiees(actionId);
-  const {mutate: createFicheAction} = useCreateFicheAction({
+  const {mutate: createFicheResume} = useCreateFicheResume({
     actionId,
     openInNewTab: true,
   });
@@ -29,7 +29,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
       {!isReadonly && (
         <button
           className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-4w"
-          onClick={() => createFicheAction()}
+          onClick={() => createFicheResume()}
         >
           Créer une fiche action
         </button>
