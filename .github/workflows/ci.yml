@@ -59,7 +59,6 @@ jobs:
       - name: Build and push business deps image
         run: earthly --use-inline-cache --save-inline-cache --push +business-build
 
-
   build-app-dev:
     # todo: needs: unit-test
     environment: dev
@@ -266,7 +265,6 @@ jobs:
           earthly --use-inline-cache +app-test
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
-          
 
   test-db-deploy:
     needs:
@@ -313,7 +311,6 @@ jobs:
         run: >
           earthly --use-inline-cache +db-deploy-test
           --DB_URL=${{ secrets.DB_URL }}
-          
 
   test-db:
     needs:
@@ -388,7 +385,6 @@ jobs:
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
-
       # fixe la langue de l'environnement de test : permet de faire passer les
       # tests de composant utilisant des fonctions telles que toLocaleString()
       - name: Set locale
@@ -396,10 +392,16 @@ jobs:
           sudo locale-gen ${{env.LANG}}
           sudo update-locale LANG=${{env.LANG}}
 
-      - run: earthly --use-inline-cache +setup-env
-      - run: earthly --use-inline-cache +dev --app=yes --faster=yes
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev 
+          --stop=no --datalayer=yes --business=yes --app=yes --eco=yes --faster=yes --version=HEAD 
+          --DB_URL=${{ secrets.DB_URL }} 
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          --API_URL=${{ secrets.API_URL }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+
       - run: docker restart supabase_rest_tet
-      - run: earthly --use-inline-cache +curl-test
 
       # run tests into electron
       - name: Cypress run
@@ -408,7 +410,10 @@ jobs:
           working-directory: ${{env.e2e-directory}}
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SERVICE_ROLE_KEY }}
 
       - name: Upload report to GitHub
         if: failure()
