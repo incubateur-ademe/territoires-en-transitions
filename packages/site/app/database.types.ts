@@ -5271,45 +5271,6 @@ export interface Database {
           }
         ]
       }
-      commune_pop_legale: {
-        Row: {
-          codarr: string | null
-          codcan: string | null
-          codcom: string | null
-          coddep: string | null
-          codreg: string | null
-          com: string | null
-          pcap: number | null
-          pmun: number | null
-          ptot: number | null
-          reg: string | null
-        }
-        Insert: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Update: {
-          codarr?: string | null
-          codcan?: string | null
-          codcom?: string | null
-          coddep?: string | null
-          codreg?: string | null
-          com?: string | null
-          pcap?: number | null
-          pmun?: number | null
-          ptot?: number | null
-          reg?: string | null
-        }
-        Relationships: []
-      }
       confidentialite_crud: {
         Row: {
           c: Database["public"]["Enums"]["confidentialite_option_crud"]
@@ -23498,6 +23459,28 @@ export interface Database {
           restore_point: unknown
         }[]
       }
+      create_fiche: {
+        Args: {
+          collectivite_id: number
+          axe_id?: number
+          action_id?: unknown
+          indicateur_referentiel_id?: unknown
+          indicateur_personnalise_id?: number
+        }
+        Returns: {
+          collectivite_id: number | null
+          date_fin_provisoire: string | null
+          id: number | null
+          modified_at: string | null
+          niveau_priorite:
+            | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+            | null
+          pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+          plans: unknown[] | null
+          statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          titre: string | null
+        }
+      }
       create_hypertable: {
         Args: {
           relation: unknown
@@ -23589,10 +23572,6 @@ export interface Database {
       }
       diag:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               msg: string
             }
@@ -23602,6 +23581,10 @@ export interface Database {
             Args: {
               msg: unknown
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -23719,13 +23702,25 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              fiche_action_action: unknown
+              fiche_action_indicateur: unknown
             }
-            Returns: unknown[]
+            Returns: {
+              collectivite_id: number | null
+              date_fin_provisoire: string | null
+              id: number | null
+              modified_at: string | null
+              niveau_priorite:
+                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+                | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
           }
         | {
             Args: {
-              fiche_action_indicateur: unknown
+              fiche_action_action: unknown
             }
             Returns: {
               collectivite_id: number | null
@@ -25392,6 +25387,44 @@ export interface Database {
       time_bucket:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -25473,44 +25506,6 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
             }
             Returns: number
           }
