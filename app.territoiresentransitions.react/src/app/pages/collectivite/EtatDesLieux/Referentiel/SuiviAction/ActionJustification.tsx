@@ -44,19 +44,13 @@ const ActionJustification = ({
         autoFocus={autoFocus}
         disabled={isLoading}
         onSave={payload => {
-          onSave
-            ? onSave({
-                collectivite_id: payload.collectivite_id,
-                action_id: payload.action_id,
-                texte: payload.commentaire,
-                modified_at: new Date().toLocaleDateString(),
-              })
-            : saveActionJustification({
-                collectivite_id: payload.collectivite_id,
-                action_id: payload.action_id,
-                texte: payload.commentaire,
-                modified_at: new Date().toLocaleDateString(),
-              });
+          const savedData = {
+            collectivite_id: payload.collectivite_id,
+            action_id: payload.action_id,
+            texte: payload.commentaire,
+            modified_at: new Date().toLocaleDateString(),
+          };
+          onSave ? onSave(savedData) : saveActionJustification(savedData);
         }}
       />
     </div>

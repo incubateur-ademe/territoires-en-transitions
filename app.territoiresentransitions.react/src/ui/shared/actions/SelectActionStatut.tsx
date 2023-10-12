@@ -2,6 +2,7 @@ import {TActionAvancement, TActionAvancementExt} from 'types/alias';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import {avancementToLabel} from 'app/labels';
 import ActionStatutBadge from './ActionStatutBadge';
+import classNames from 'classnames';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
@@ -56,7 +57,10 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
       value={currentValue}
       options={options}
       onSelect={onChange}
-      buttonClassName={`min-w-5rem !w-fit p-0 !bg-transparent ${buttonClassName}`}
+      buttonClassName={classNames(
+        'min-w-5rem !w-fit p-0 !bg-transparent',
+        buttonClassName
+      )}
       renderOption={option => (
         <ActionStatutBadge
           statut={option.value as TActionAvancementExt}
