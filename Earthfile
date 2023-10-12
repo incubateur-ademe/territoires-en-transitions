@@ -337,8 +337,7 @@ site-build: ## construit l'image du site
     COPY $SITE_DIR $SITE_DIR
     COPY $UI_DIR $UI_DIR
     RUN npm run build -w @tet/ui -w @tet/site
-    WORKDIR ./packages/site
-    CMD ["dumb-init", "./node_modules/.bin/next", "start"]
+    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
     SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
 
 site-run: ## construit et lance l'image du site en local
