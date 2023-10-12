@@ -23,14 +23,38 @@ export const getPersonneId = (personne: Personne): string =>
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
 /** Ordonne les fiches résumé par titre */
-export const ficheResumeByTitle = (a: FicheResume, b: FicheResume) => {
-  if (!a.titre) return -1;
-  if (!b.titre) return 1;
-  return naturalSort(a.titre, b.titre);
 export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
   return fiches.sort((a: FicheResume, b: FicheResume) => {
     if (!a.titre) return -1;
     if (!b.titre) return 1;
     return naturalSort(a.titre, b.titre);
   });
+};
+
+type FactoryArgs = {
+  collectivite_id: number;
+  axeFichesIds?: number[] | null;
+  axe_id?: number;
+};
+
+export const ficheResumeFactory = ({
+  collectivite_id,
+  axeFichesIds,
+  axe_id,
+}: FactoryArgs): FicheResume => {
+  const lowerId = axeFichesIds
+    ? axeFichesIds.reduce((a, b) => (a < b ? a : b))
+    : 0;
+  const tempId = Math.min(0, lowerId || 0) - 1;
+  return {
+    id: tempId,
+    collectivite_id,
+    date_fin_provisoire: null,
+    modified_at: null,
+    niveau_priorite: null,
+    pilotes: null,
+    plans: axe_id ? [{id: axe_id, collectivite_id}] : null,
+    statut: null,
+    titre: null,
+  };
 };

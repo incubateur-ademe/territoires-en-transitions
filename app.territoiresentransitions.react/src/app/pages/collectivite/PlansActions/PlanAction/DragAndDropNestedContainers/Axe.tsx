@@ -11,10 +11,10 @@ import {generateTitle} from '../../FicheAction/data/utils';
 import IconDrag from 'ui/icons/IconDrag';
 import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
 import {useAddAxe} from '../data/useUpsertAxe';
-import {useCreateFicheAction} from '../../FicheAction/data/useUpsertFicheAction';
 import {checkAxeHasFiche, childrenOfPlanNodes} from '../data/utils';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import AxeSkeleton from './AxeSkeleton';
+import {useCreateFicheResume} from '../../FicheAction/data/useCreateFicheResume';
 
 export type AxeDndData = {
   type: 'axe';
@@ -35,9 +35,10 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
   const uniqueId = `axe-${axe.id}`;
 
   const {mutate: addAxe} = useAddAxe(axe.id, axe.depth, plan.id);
-  const {mutate: createFiche} = useCreateFicheAction({
+
+  const {mutate: createFicheResume} = useCreateFicheResume({
     axeId: axe.id,
-    planActionId: plan.id,
+    planId: plan.id,
     axeFichesIds: axe.fiches,
   });
 
@@ -167,7 +168,7 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
                 title="Créer une fiche"
                 onClick={() => {
                   setIsOpen(true);
-                  createFiche();
+                  createFicheResume();
                 }}
               />
               <button

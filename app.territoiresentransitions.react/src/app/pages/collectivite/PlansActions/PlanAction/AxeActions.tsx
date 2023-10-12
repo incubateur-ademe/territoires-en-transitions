@@ -1,7 +1,7 @@
-import {useCreateFicheAction} from '../FicheAction/data/useUpsertFicheAction';
 import {useAddAxe} from './data/useUpsertAxe';
 import {PlanNode} from './data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCreateFicheResume} from '../FicheAction/data/useCreateFicheResume';
 
 type Props = {
   plan: PlanNode;
@@ -11,8 +11,12 @@ type Props = {
 export const AxeActions = ({plan, axe}: Props) => {
   const collectivite_id = useCollectiviteId();
 
-  const {mutate: createFiche} = useCreateFicheAction({axeId, planActionId});
   const {mutate: addAxe} = useAddAxe(axe.id, axe.depth, plan.id);
+  const {mutate: createFicheResume} = useCreateFicheResume({
+    axeId: axe.id,
+    planId: plan.id,
+    axeFichesIds: axe.fiches,
+  });
 
   return (
     <div className="flex items-center gap-6">
@@ -27,7 +31,7 @@ export const AxeActions = ({plan, axe}: Props) => {
       </button>
       <button
         className="fr-btn fr-btn--sm fr-btn--primary"
-        onClick={() => createFiche()}
+        onClick={() => createFicheResume()}
       >
         Créer une fiche action
       </button>
