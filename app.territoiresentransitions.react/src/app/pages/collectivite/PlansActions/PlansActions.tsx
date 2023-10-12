@@ -14,7 +14,7 @@ import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
 
-  const {data: planListe} = usePlansNavigation();
+  const {data: axes} = usePlansNavigation();
   const {data: fichesNonClasseesListe} = useFichesNonClasseesListe(
     collectivite?.collectivite_id!
   );
@@ -32,8 +32,8 @@ const PlansActions = () => {
       sideNav={{
         links: generatePlanActionNavigationLinks(
           collectivite.collectivite_id,
-          planListe,
           hasFicheNonClassees,
+          axes
         ),
         actions: !collectivite.readonly && (
           <>

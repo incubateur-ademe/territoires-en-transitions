@@ -26,10 +26,10 @@ const AxeTitre = ({planActionId, axe, isOpen, isReadonly}: Props) => {
     if (inputRef.current) {
       if (axe.nom) {
         inputRef.current.value !== axe.nom &&
-          updatePlan({id: axe.id, nom: inputRef.current.value.trim()});
+          updatePlan({...axe, nom: inputRef.current.value.trim()});
       } else {
         inputRef.current.value.trim().length > 0 &&
-          updatePlan({id: axe.id, nom: inputRef.current.value.trim()});
+          updatePlan({...axe, nom: inputRef.current.value.trim()});
       }
     }
   };

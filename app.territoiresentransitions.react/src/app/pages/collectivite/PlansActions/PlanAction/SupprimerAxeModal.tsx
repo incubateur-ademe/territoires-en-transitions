@@ -1,14 +1,12 @@
 import Modal from 'ui/shared/floating-ui/Modal';
-import {FlatAxe, PlanNode} from './data/types';
+import {PlanNode} from './data/types';
 import {useDeleteAxe} from './data/useDeleteAxe';
-import {checkAxeHasFiche, getAxeInPlan} from './data/utils';
-import {useParams} from 'react-router-dom';
 
 type Props = {
   children: JSX.Element;
-  isPlan?: boolean;
-  plan: PlanNode;
-  axe: FlatAxe;
+  planId: number;
+  axe: PlanNode;
+  axeHasFiche: boolean;
   redirectURL?: string;
 };
 
@@ -18,18 +16,14 @@ type Props = {
  */
 const SupprimerAxeModal = ({
   children,
-  isPlan,
-  plan,
+  planId,
   axe,
+  axeHasFiche,
   redirectURL,
 }: Props) => {
-  const {axeUid} = useParams<{axeUid: string}>();
+  const {mutate: deletePlan} = useDeleteAxe(axe.id, planId, redirectURL);
 
-  const {mutate: deletePlan} = useDeleteAxe(
-    axe.id,
-    axeUid ? parseInt(axeUid) : plan.id,
-    redirectURL
-  );
+  const isPlan = axe.id !== planId;
 
   return (
     <Modal
@@ -43,7 +37,7 @@ const SupprimerAxeModal = ({
                 : 'Souhaitez-vous vraiment supprimer ce niveau ?'}
             </h6>
             {/** Vérifie si un axe contient un ou plusieurs fiches */}
-            {checkAxeHasFiche(getAxeInPlan(plan, axe.id)) ? (
+            {axeHasFiche ? (
               <>
                 <p id={descriptionId} className="mb-4">
                   {isPlan

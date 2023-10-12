@@ -1,6 +1,5 @@
 import {createPortal} from 'react-dom';
 import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
 import classNames from 'classnames';
 import {DragOverlay, useDraggable, useDroppable} from '@dnd-kit/core';
 
@@ -13,6 +12,9 @@ import IconDrag from 'ui/icons/IconDrag';
 import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
 import {useAddAxe} from '../data/useUpsertAxe';
 import {useCreateFicheAction} from '../../FicheAction/data/useUpsertFicheAction';
+import {checkAxeHasFiche, childrenOfPlanNodes} from '../data/utils';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import AxeSkeleton from './AxeSkeleton';
 
 export type AxeDndData = {
   type: 'axe';
@@ -22,22 +24,21 @@ export type AxeDndData = {
 type Props = {
   axe: PlanNode;
   plan: PlanNode;
+  axes: PlanNode[];
   isAxePage: boolean;
   isReadonly: boolean;
 };
 
-const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
+const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
+  const collectivite_id = useCollectiviteId();
+
   const uniqueId = `axe-${axe.id}`;
 
-  const {axeUid} = useParams<{axeUid: string}>();
-
-  const {mutate: addAxe} = useAddAxe(
-    axe.id,
-    axeUid ? parseInt(axeUid) : plan.id
-  );
+  const {mutate: addAxe} = useAddAxe(axe.id, axe.depth, plan.id);
   const {mutate: createFiche} = useCreateFicheAction({
     axeId: axe.id,
     planActionId: plan.id,
+    axeFichesIds: axe.fiches,
   });
 
   const {
@@ -69,16 +70,15 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
   const overData = over?.data.current;
 
   const isDragging =
-    activeData?.axe?.id === axe.id && activeData?.type === 'axe';
+    activeData?.type === 'axe' && activeData?.axe?.id === axe.id;
 
   const isDroppable =
     isOver &&
     ((activeData?.type === 'axe' &&
-      active?.id !== over?.id &&
-      activeData?.axe.ancestors &&
-      activeData?.axe.ancestors[activeData?.axe.ancestors.length - 1] !==
-        overData?.axe.id) ||
-      (activeData?.type === 'fiche' && activeData?.axeId !== overData?.axe.id));
+      activeData?.axe.id !== axe.id &&
+      activeData.axe.parent !== axe.id &&
+      overData?.axe.id === axe.id) ||
+      (activeData?.type === 'fiche' && activeData.axeId !== axe.id));
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -86,10 +86,14 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
     isOver && active?.id !== over?.id && setIsOpen(true);
   }, [isOver]);
 
+  if (axe.id < 0) {
+    return <AxeSkeleton />;
+  }
+
   return (
     <div
       data-test="Axe"
-      id={`axe-${axe.id.toString()}`}
+      id={`axe-${axe.id}`}
       className="relative flex flex-col"
     >
       {/** Drag overlay */}
@@ -171,12 +175,16 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
                 title="Créer un sous-titre"
                 onClick={() => {
                   setIsOpen(true);
-                  addAxe();
+                  addAxe({collectivite_id: collectivite_id!, parent: axe.id});
                 }}
               >
                 <IconFolderAddLine className="h-4 w-4 fill-bf500" />
               </button>
-              <SupprimerAxeModal axe={axe} plan={plan}>
+              <SupprimerAxeModal
+                planId={plan.id}
+                axe={axe}
+                axeHasFiche={checkAxeHasFiche(axe, axes)}
+              >
                 <button
                   data-test="SupprimerAxeBouton"
                   className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line ml-3 mt-1"
@@ -204,19 +212,19 @@ const Axe = ({plan, axe, isAxePage, isReadonly}: Props) => {
               axeId={axe.id}
             />
           )}
-          {axe.children.length > 0 &&
-            axe.children.map((axe: PlanNode) => (
-              <Axe
-                key={axe.id}
-                plan={plan}
-                axe={axe}
-                isAxePage={isAxePage}
-                isReadonly={isReadonly}
-              />
-            ))}
+          {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (
+            <Axe
+              key={axe.id}
+              plan={plan}
+              axe={axe}
+              axes={axes}
+              isAxePage={isAxePage}
+              isReadonly={isReadonly}
+            />
+          ))}
           {/** Empty state */}
           {(!axe.fiches || axe.fiches.length === 0) &&
-            axe.children.length === 0 &&
+            childrenOfPlanNodes(axe, axes).length === 0 &&
             !isOver && (
               <div className="mb-4 px-2 text-sm italic text-gray-400">
                 Cet axe ne contient aucune fiche ni sous-axe

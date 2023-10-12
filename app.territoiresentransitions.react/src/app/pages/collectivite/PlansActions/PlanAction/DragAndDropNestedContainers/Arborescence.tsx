@@ -9,7 +9,6 @@ import {
 } from '@dnd-kit/core';
 
 import {PlanNode} from '../data/types';
-import {getAxeInPlan} from '../data/utils';
 import NestedDroppableContainers from './NestedDroppableContainers';
 import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
@@ -21,13 +20,14 @@ import './dropAnimation.css';
 interface Props {
   plan: PlanNode;
   axe: PlanNode;
+  axes: PlanNode[];
   isAxePage: boolean;
   isReadonly: boolean;
 }
 
-function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
-  const {mutate: changeAxeFiche} = useFicheChangeAxe();
-  const {mutate: updateAxe} = useDragAxe(axe.id);
+function Arborescence({plan, axe, axes, isAxePage, isReadonly}: Props) {
+  const {mutate: changeAxeFiche} = useFicheChangeAxe({planId: plan.id});
+  const {mutate: moveAxe} = useDragAxe(plan.id);
 
   const keyboardCodes = {
     start: ['Enter'],
@@ -45,7 +45,8 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
   );
 
   const hasContent =
-    axe.children.length > 0 || (axe.fiches && axe.fiches.length > 0);
+    axes.filter(a => a.parent === axe.id).length > 0 ||
+    (axe.fiches && axe.fiches.length > 0);
 
   return (
     <DndContext
@@ -59,6 +60,7 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
         <NestedDroppableContainers
           plan={plan}
           axe={axe}
+          axes={axes}
           isAxePage={isAxePage}
         />
       ) : (
@@ -67,9 +69,7 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
           <div className="my-6 text-gray-500">
             Aucune arborescence pour l'instant
           </div>
-          {!isReadonly && (
-            <AxeActions planActionId={plan.id} axeId={axe ? axe.id : plan.id} />
-          )}
+          {!isReadonly && <AxeActions plan={plan} axe={axe} />}
         </div>
       )}
     </DndContext>
@@ -89,26 +89,21 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
         if (axe.id === overData.axe.id) {
           changeAxeFiche({
             fiche: activeData.fiche,
-            plan_id: axe.id,
-            new_axe_id: axe.id,
+            new_axe_id: overData.axe.id,
             old_axe_id: activeData.axeId,
           });
         } else {
           // Si la fiche n'existe pas déjà dans l'axe on l'ajoute
           if (
             !activeData?.fiche.plans.some(
-              (plan: PlanNode) => plan.id === overData.axe.id
+              (axe: PlanNode) => axe.id === overData.axe.id
             )
           ) {
-            const newAxe = getAxeInPlan(axe, overData.axe.id);
-            if (newAxe) {
-              changeAxeFiche({
-                fiche: activeData.fiche,
-                plan_id: axe.id,
-                new_axe_id: newAxe.id,
-                old_axe_id: activeData.axeId,
-              });
-            }
+            changeAxeFiche({
+              fiche: activeData.fiche,
+              new_axe_id: overData.axe.id,
+              old_axe_id: activeData.axeId,
+            });
           }
         }
       }
@@ -116,14 +111,12 @@ function Arborescence({plan, axe, isAxePage, isReadonly}: Props) {
         // si c'est un axe
         // si le drag id est différent du drop id et que le drop id n'est pas le parent direct du drag
         if (
-          activeData?.axe.id !== overData?.axe.id &&
-          activeData?.axe.ancestors &&
-          activeData?.axe.ancestors[activeData.axe.ancestors.length - 1] !==
-            overData?.axe.id
+          activeData.axe.id !== overData.axe.id &&
+          activeData.axe.parent !== overData.axe.id
         ) {
-          updateAxe({
-            id: activeData.axe.id as number,
-            parent: overData?.axe.id as number,
+          moveAxe({
+            axe: activeData.axe,
+            newParentId: overData.axe.id,
           });
         }
       }

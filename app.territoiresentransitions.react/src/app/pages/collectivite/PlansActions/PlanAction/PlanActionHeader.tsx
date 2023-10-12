@@ -5,16 +5,16 @@ import {
 import SmallIconContextMenu from 'ui/shared/select/SmallIconContextMenu';
 import SupprimerAxeModal from './SupprimerAxeModal';
 import {PlanNode} from './data/types';
-import {checkAxeHasFiche} from './data/utils';
 import {useExportPlanAction} from './data/useExportPlanAction';
 import {generateTitle} from '../FicheAction/data/utils';
 import FilAriane from 'ui/shared/FilAriane';
 
 type TPlanActionHeader = {
-  isAxePage: boolean;
-  plan: PlanNode;
-  axe?: PlanNode;
   collectivite_id: number;
+  plan: PlanNode;
+  axe: PlanNode;
+  isAxePage: boolean;
+  axeHasFiches: boolean;
   isReadonly?: boolean;
 };
 
@@ -25,24 +25,25 @@ const EXPORT_OPTIONS = [
 
 const PlanActionHeader = ({
   collectivite_id,
-  isAxePage,
   plan,
   axe,
+  isAxePage,
+  axeHasFiches,
   isReadonly,
 }: TPlanActionHeader) => {
-  const {mutate: exportPlanAction, isLoading} = useExportPlanAction(plan.id);
+  const {mutate: exportPlanAction, isLoading} = useExportPlanAction(axe.id);
 
   return (
     <div className="">
       <div className="py-6 flex items-center justify-between">
         {/** Lien plan d'action page axe */}
-        {isAxePage && axe && (
+        {isAxePage && (
           <FilAriane
             links={[
               {
                 path: makeCollectivitePlanActionUrl({
                   collectiviteId: collectivite_id,
-                  planActionUid: plan.id.toString(),
+                  planActionUid: axe.id.toString(),
                 }),
                 displayedName: generateTitle(plan.nom),
               },
@@ -54,9 +55,9 @@ const PlanActionHeader = ({
         {!isReadonly && (
           <div className="flex items-center gap-4 ml-auto">
             <SupprimerAxeModal
-              isPlan={!isAxePage}
-              axe={axe ? axe : plan}
-              plan={plan}
+              planId={plan.id}
+              axe={axe}
+              axeHasFiche={axeHasFiches}
               redirectURL={
                 isAxePage
                   ? makeCollectivitePlanActionUrl({
@@ -76,7 +77,7 @@ const PlanActionHeader = ({
                 }
               />
             </SupprimerAxeModal>
-            {!isAxePage && checkAxeHasFiche(plan) && !isReadonly ? (
+            {!isAxePage && axeHasFiches && !isReadonly ? (
               <SmallIconContextMenu
                 dataTest="export-pa"
                 title="Exporter"

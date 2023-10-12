@@ -3,52 +3,24 @@ import {FlatAxe, PlanNode} from './types';
 import {TProfondeurAxe} from './types';
 
 /**
- * Fonction récursive qui trouve un axe dans un plan et le retourne.
- * @param plan plan action complet
- * @param axe axe à récupérer
- * @return axe as PlanAction | null
- */
-export const getAxeInPlan = (
-  plan: PlanNode,
-  axeId: number
-): PlanNode | null => {
-  if (plan.id === axeId) {
-    return plan;
-  }
-  if (plan.children && plan.children.length > 0) {
-    for (let i = 0; i < plan.children.length; i++) {
-      if (plan.children[i] && plan.children[i].id === axeId) {
-        return plan.children[i];
-      } else if (plan.children[i].children) {
-        const resultat = getAxeInPlan(plan.children[i], axeId);
-        if (resultat) {
-          return resultat;
-        }
-      }
-    }
-  }
-  return null;
-};
-
-/**
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
  * Dès que le script rencontre une fiche dans l'arbre, il retourne `true`.
  * @param plan plan ou axe sous forme de PlanAction
- * @return true si existe, sinon undefined
+ * @return boolean
  */
-export const checkAxeHasFiche = (
-  plan?: PlanNode | null
-): boolean | undefined => {
-  if (plan && plan.fiches && plan.fiches?.length > 0) {
+export const checkAxeHasFiche = (axe: PlanNode, axes: PlanNode[]): boolean => {
+  const children = childrenOfPlanNodes(axe, axes);
+  if (axe.fiches && axe.fiches?.length > 0) {
     return true;
   }
-  if (plan && plan.children && plan.children.length > 0) {
-    for (let i = 0; i < plan.children.length; i++) {
-      if (checkAxeHasFiche(plan.children[i])) {
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      if (checkAxeHasFiche(children[i], children)) {
         return true;
       }
     }
   }
+  return false;
 };
 
 /**
@@ -75,172 +47,52 @@ export const checkAxeExistInPlanProfondeur = (
   return getAllAxeIds(plan).includes(axeId);
 };
 
-/**
- * Fonction recursive qui supprime un axe et son arborescence d'un plan.
- * @param plan plan d'action complet
- * @param axe_id id de l'axe à supprimer
- * @return plan d'action complet sans l'axe as PlanAction | undefined
- */
-export const removeAxeFromPlan = (
-  plan: PlanNode,
-  axe_id: number
-): PlanNode | undefined => {
-  if (plan.id === axe_id) {
-    return undefined;
-  }
-  if (plan.children && plan.children.length > 0) {
-    plan.children = plan.children.filter(enfant => {
-      if (enfant.id !== axe_id) {
-        if (enfant.children && enfant.children.length > 0) {
-          removeAxeFromPlan(enfant, axe_id);
-        }
-        return enfant;
-      }
-      return false;
-    });
-  }
-  return plan;
+/** Transforme un tableau de FlatAxe en tableau de PlanNode */
+export const flatAxesToPlanNodes = (axes: FlatAxe[]): PlanNode[] => {
+  return axes.map(({ancestors, ...a}) => {
+    return {
+      ...a,
+      parent: ancestors?.length ? ancestors[ancestors.length - 1] : null,
+    };
+  });
 };
 
-/**
- * Fonction recursive qui ajoute un axe et son arborescence à un axe.
- * @param plan plan d'action complet ou page axe
- * @param axe l'axe à ajouter
- * @param axeParentId id du nouveau parent de l'axe
- * @return plan d'action complet avec l'axe ranger dans le bon axe parent
- */
-export const addAxeToPlan = (
-  plan: PlanNode,
+export const sortPlanNodes = (axes: PlanNode[]): PlanNode[] => {
+  return axes.sort((a: PlanNode, b: PlanNode) => {
+    if (!a.nom) return -1;
+    if (!b.nom) return 1;
+    return naturalSort(a.nom, b.nom);
+  });
+};
+
+export const childrenOfPlanNodes = (
   axe: PlanNode,
-  axeParentId: number
-) => {
-  if (axeParentId === plan.id) {
-    if (plan.children && plan.children.length > 0) {
-      plan.children = [...plan.children, axe].sort(byNom);
-    } else {
-      plan.children = [axe];
-    }
-  }
-  if (plan.children && plan.children.length > 0) {
-    for (let index = 0; index < plan.children.length; index++) {
-      const element = plan.children[index];
-      if (element.id !== axeParentId) {
-        if (element.children && element.children.length > 0) {
-          addAxeToPlan(element, axe, axeParentId);
-        }
-      } else {
-        if (plan.children && plan.children.length > 0) {
-          element.children = [...element.children, axe].sort(byNom);
-        } else {
-          element.children = [axe];
-        }
-        plan.children[index] = element;
-      }
-    }
-  }
-  return plan;
+  axes: PlanNode[]
+): PlanNode[] => {
+  return sortPlanNodes(axes.filter(a => a.parent === axe.id));
 };
 
-// tri des axes par nom
-const byNom = (a: PlanNode, b: PlanNode) => {
-  if (!a.nom) return -1;
-  if (!b.nom) return 1;
-  return naturalSort(a.nom, b.nom);
+type PlanNodeFactory = {
+  axes: PlanNode[];
+  parentId?: number;
+  parentDepth?: number;
+  nom?: string | null;
 };
 
-/**
- * Convertit une liste d'axes ordonnancés en une liste de plans.
- * @param axes
- * @returns
- */
-export const buildPlans = (axes: FlatAxe[]): PlanNode[] => {
-  let plans: PlanNode[] = [];
-  let nodes = {} as {[key: number]: PlanNode};
+export const planNodeFactory = ({
+  axes,
+  parentId,
+  parentDepth,
+  nom,
+}: PlanNodeFactory): PlanNode => {
+  const lowerId = axes.reduce((a, b) => (a.id! < b.id! ? a : b)).id;
+  const tempId = Math.min(0, lowerId || 0) - 1;
 
-  for (let i = 0; i < axes.length; i++) {
-    let axe: PlanNode = {...axes[i], children: []};
-    nodes[axe.id] = axe;
-    if (axe.depth === 0) plans.push(axe);
-    else nodes[axe.ancestors[axe.ancestors.length - 1]].children.push(axe);
-  }
-
-  return plans;
-};
-
-/**
- * Fonction recursive qui supprime une fiche d'un axe et l'ajoute dans l'axe de réception.
- * @param axe axe racine qui contient les l'ancien et le nouvel axe pour la fiche
- * @param fiche_id id de la fiche à bouger
- * @param old_axe_id id de l'axe à où il faut supprimer la fiche
- * @param new_axe_id id de l'axe à où il faut ajouter la fiche
- * @return l'axe racine avec les fiche déplacée dans le bon axe
- */
-export const ficheChangeAxeDansPlan = (
-  axe: PlanNode,
-  fiche_id: number,
-  old_axe_id: number,
-  new_axe_id: number
-): PlanNode | undefined => {
-  const tempAxe = deleteFicheFromAxe(axe, fiche_id, old_axe_id);
-  const newAxe = tempAxe && addFicheToAxe(tempAxe, fiche_id, new_axe_id);
-  return newAxe;
-};
-
-/** Permet de façon récursive de supprimer la fiche d'un axe */
-export const deleteFicheFromAxe = (
-  axe: PlanNode,
-  fiche_id: number,
-  old_axe_id: number
-) => {
-  if (axe.id === old_axe_id) {
-    return {...axe, fiches: axe.fiches.filter(f => f !== fiche_id)};
-  }
-  if (axe.children && axe.children.length > 0) {
-    axe.children.forEach(enfant => {
-      if (enfant.id === old_axe_id) {
-        if (enfant.fiches && enfant.fiches.length > 0) {
-          enfant.fiches = enfant.fiches.filter(fiche => fiche !== fiche_id);
-        }
-      } else {
-        if (enfant.children && enfant.children.length > 0) {
-          deleteFicheFromAxe(enfant, fiche_id, old_axe_id);
-        }
-      }
-    });
-  }
-  return axe;
-};
-
-/** Permet de façon récursive d'ajouter la fiche à un axe */
-export const addFicheToAxe = (
-  axe: PlanNode,
-  fiche_id: number,
-  new_axe_id: number
-) => {
-  const newAxe = axe;
-  if (axe.id === new_axe_id) {
-    if (axe.fiches) {
-      newAxe.fiches = [...axe.fiches, fiche_id];
-    } else {
-      newAxe.fiches = [fiche_id];
-    }
-  }
-  if (axe.children && axe.children.length > 0) {
-    for (let index = 0; index < axe.children.length; index++) {
-      const element = axe.children[index];
-      if (element.id !== new_axe_id) {
-        if (element.children && element.children.length > 0) {
-          addFicheToAxe(element, fiche_id, new_axe_id);
-        }
-      } else {
-        if (element.fiches) {
-          element.fiches = [...element.fiches, fiche_id];
-        } else {
-          element.fiches = [fiche_id];
-        }
-        axe.children[index] = element;
-      }
-    }
-  }
-  return newAxe;
+  return {
+    id: tempId,
+    nom: nom ?? '',
+    fiches: null,
+    parent: parentId ?? null,
+    depth: parentDepth ?? 0,
+  };
 };

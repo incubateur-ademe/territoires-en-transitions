@@ -10,20 +10,26 @@ import {PlanNode} from '../data/types';
 
 type Props = {
   plan: PlanNode;
-  axe?: PlanNode;
+  axe: PlanNode;
+  isAxePage: boolean;
   setIsFiltered: (isFiltered: boolean) => void;
 };
 
-const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
+const PlanActionFiltresAccordeon = ({
+  plan,
+  axe,
+  isAxePage,
+  setIsFiltered,
+}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   // on utilise les params pour savoir si l'URL contient des filtres et
   // ainsi afficher l'accordéon ouvert ou non au montage de la page
   const [filters] = useSearchParams<TFilters>(
-    axe
+    isAxePage
       ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
       : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
-    {collectivite_id: collectivite_id!, axes: [axe ? axe.id : plan.id]},
+    {collectivite_id: collectivite_id!, axes: [axe.id]},
     nameToShortNames
   );
 
@@ -44,6 +50,7 @@ const PlanActionFiltresAccordeon = ({plan, axe, setIsFiltered}: Props) => {
           <PlanActionFiltres
             plan={plan}
             axe={axe}
+            isAxePage={isAxePage}
             setIsFiltered={setIsFiltered}
           />
         )

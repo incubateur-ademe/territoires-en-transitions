@@ -11,22 +11,23 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type Props = {
   plan: PlanNode;
-  axe?: PlanNode;
+  axe: PlanNode;
+  isAxePage: boolean;
   setIsFiltered: (filtered: boolean) => void;
 };
 
-const PlanActionFiltres = ({plan, axe, setIsFiltered}: Props) => {
+const PlanActionFiltres = ({plan, axe, isAxePage, setIsFiltered}: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const [filtered, setFiltered] = useState(false);
 
   const initialFilters: TFilters = {
     collectivite_id: collectivite_id!,
-    axes: [axe ? axe.id : plan.id],
+    axes: [axe.id],
   };
 
   const filters = useFichesActionFiltresListe({
-    url: axe
+    url: isAxePage
       ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
       : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
     initialFilters,

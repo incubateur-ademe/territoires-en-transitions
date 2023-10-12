@@ -3,52 +3,59 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQueryClient} from 'react-query';
 import {useHistory} from 'react-router-dom';
 import {PlanNode} from './types';
-import {removeAxeFromPlan} from './utils';
 
 export const useDeleteAxe = (
   axe_id: number,
-  planGlobalId: number,
+  planId: number,
   redirectURL?: string
 ) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
 
+  const flat_axes_key = ['flat_axes', planId];
+  const navigation_key = ['plans_navigation', collectivite_id];
+
   return useMutation(
     async () => {
       await supabaseClient.rpc('delete_axe_all', {axe_id});
     },
     {
-      mutationKey: 'delete_axe',
       onMutate: async () => {
-        const planActionKey = ['plan_action', planGlobalId];
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries({queryKey: planActionKey});
+        await queryClient.cancelQueries({queryKey: flat_axes_key});
+        await queryClient.cancelQueries({queryKey: navigation_key});
 
-        // Snapshot the previous value
-        const previousAction: {plan: PlanNode} | undefined =
-          queryClient.getQueryData(planActionKey);
+        const previousData = [
+          [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
+          [navigation_key, queryClient.getQueryData(navigation_key)],
+        ];
 
-        // Optimistically update to the new value
-        queryClient.setQueryData(planActionKey, (old: any | PlanNode) => {
-          return removeAxeFromPlan(old, axe_id);
-        });
+        // update l'axe d'un plan
+        // ne supprime que l'axe parent et non les enfants
+        // ceux ci ne sont pas affichés et retirer lors de l'invalidation
+        queryClient.setQueryData(flat_axes_key, (old: PlanNode[] | undefined) =>
+          old ? old.filter(a => a.id !== axe_id) : []
+        );
 
-        // Return a context object with the snapshotted value
-        return {previousAction};
+        // update les axes de la navigation
+        // ne supprime que l'axe parent et non les enfants
+        // ceux ci ne sont pas affichés et retirer lors de l'invalidation
+        queryClient.setQueryData(
+          navigation_key,
+          (old: PlanNode[] | undefined) =>
+            old ? old.filter(a => a.id !== axe_id) : []
+        );
+
+        return previousData;
       },
-      onSettled: (data, err, args, context) => {
-        if (err) {
-          queryClient.setQueryData(
-            ['plan_action', planGlobalId],
-            context?.previousAction
-          );
-        }
-        queryClient.invalidateQueries(['plan_action', planGlobalId]);
-        queryClient.invalidateQueries(['plan_action', axe_id]);
-        queryClient.invalidateQueries(['plans_actions', collectivite_id]);
-        queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
+      onError: (err, axe, previousData) => {
+        previousData?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
+        );
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(flat_axes_key);
+        queryClient.invalidateQueries(navigation_key);
         redirectURL && history.push(redirectURL);
       },
     }

@@ -6,14 +6,16 @@ import {PlanNode} from '../data/types';
 import Fiches from './Fiches';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {AxeActions} from '../AxeActions';
+import {childrenOfPlanNodes} from '../data/utils';
 
 interface Props {
   plan: PlanNode;
   axe: PlanNode;
+  axes: PlanNode[];
   isAxePage: boolean;
 }
 
-function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
+function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
   const collectivite = useCurrentCollectivite();
 
   const {
@@ -21,7 +23,7 @@ function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
     active,
     setNodeRef: droppableRef,
   } = useDroppable({
-    id: axe.id * 50,
+    id: axe.id * 5000,
     data: {
       type: 'axe',
       axe,
@@ -30,10 +32,7 @@ function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
 
   const isDroppable =
     (active?.data.current?.type === 'axe' &&
-      active.data.current.axe.ancestors &&
-      active.data.current.axe.ancestors[
-        active.data.current.axe.ancestors.length - 1
-      ] !== axe.id) ||
+      active.data.current.axe.parent !== axe.id) ||
     (active?.data.current?.type === 'fiche' &&
       active.data.current.axeId !== axe.id);
 
@@ -41,7 +40,7 @@ function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
     <div className="flex flex-col">
       {!collectivite?.readonly && (
         <div className="mb-4">
-          <AxeActions planActionId={plan.id} axeId={axe.id} />
+          <AxeActions plan={plan} axe={axe} />
         </div>
       )}
       {isDroppable && (
@@ -64,16 +63,16 @@ function NestedDroppableContainers({plan, axe, isAxePage}: Props) {
           axeId={axe.id}
         />
       )}
-      {axe.children.length > 0 &&
-        axe.children.map(axe => (
-          <Axe
-            key={axe.id}
-            plan={plan}
-            axe={axe}
-            isAxePage={isAxePage}
-            isReadonly={collectivite!.readonly}
-          />
-        ))}
+      {childrenOfPlanNodes(axe, axes).map(axe => (
+        <Axe
+          key={axe.id}
+          plan={plan}
+          axe={axe}
+          axes={axes}
+          isAxePage={isAxePage}
+          isReadonly={collectivite!.readonly}
+        />
+      ))}
     </div>
   );
 }

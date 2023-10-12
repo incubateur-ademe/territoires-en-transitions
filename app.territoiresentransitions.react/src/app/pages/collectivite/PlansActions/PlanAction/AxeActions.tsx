@@ -1,27 +1,27 @@
-import {useParams} from 'react-router-dom';
 import {useCreateFicheAction} from '../FicheAction/data/useUpsertFicheAction';
 import {useAddAxe} from './data/useUpsertAxe';
+import {PlanNode} from './data/types';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type Props = {
-  axeId: number;
-  planActionId: number;
+  plan: PlanNode;
+  axe: PlanNode;
 };
 
-export const AxeActions = ({axeId, planActionId}: Props) => {
-  const {axeUid} = useParams<{axeUid: string}>();
+export const AxeActions = ({plan, axe}: Props) => {
+  const collectivite_id = useCollectiviteId();
 
-  const {mutate: addAxe} = useAddAxe(
-    axeId,
-    axeUid ? parseInt(axeUid) : planActionId
-  );
   const {mutate: createFiche} = useCreateFicheAction({axeId, planActionId});
+  const {mutate: addAxe} = useAddAxe(axe.id, axe.depth, plan.id);
 
   return (
     <div className="flex items-center gap-6">
       <button
         data-test="AjouterAxe"
         className="fr-btn fr-btn--sm fr-btn--secondary"
-        onClick={() => addAxe()}
+        onClick={() =>
+          addAxe({collectivite_id: collectivite_id!, parent: axe.id})
+        }
       >
         Ajouter un nouveau titre
       </button>

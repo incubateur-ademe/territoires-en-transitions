@@ -14,18 +14,24 @@ import {useEditAxe} from './data/useEditAxe';
 import {PlanNode} from './data/types';
 
 type PlanActionProps = {
+  /** Axe racine du plan d'action (depth = 0) */
   plan: PlanNode;
-  axe?: PlanNode;
+  /** Axe utilisé pour toutes les actions, que ce soit l'axe racine ou inférieur */
+  axe: PlanNode;
+  /** La liste des axes liés à ce plan d'action */
+  axes: PlanNode[];
 };
 
-export const PlanAction = ({plan, axe}: PlanActionProps) => {
+export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
   const collectivite = useCurrentCollectivite();
+
+  const {mutate: updateAxe} = useEditAxe(axe.id);
 
   const isReadonly = collectivite?.readonly ?? false;
 
-  const isAxePage = axe !== undefined;
+  const isAxePage = axe.depth === 1;
 
-  const {mutate: updateAxe} = useEditAxe(plan.id);
+  const axeHasFiche = checkAxeHasFiche(axe, axes);
 
   const [isFiltered, setIsFiltered] = useState(false);
 
@@ -36,28 +42,29 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         customClass={
           isAxePage ? {text: '!text-[1.75rem]'} : {text: '!text-[2rem]'}
         }
-        titre={isAxePage ? axe.nom : plan.nom}
-        onUpdate={nom => updateAxe({id: isAxePage ? axe.id : plan.id, nom})}
+        titre={axe.nom}
+        onUpdate={nom => updateAxe({...axe, nom})}
         isReadonly={isReadonly}
       />
       <div className="mx-auto px-10">
         {/** Header */}
         <PlanActionHeader
           collectivite_id={collectivite?.collectivite_id!}
-          isAxePage={isAxePage}
           plan={plan}
           axe={axe}
+          isAxePage={isAxePage}
+          axeHasFiches={axeHasFiche}
           isReadonly={isReadonly}
         />
         {/**
          * Filtres
          * On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche
          **/}
-        {((!isAxePage && checkAxeHasFiche(plan)) ||
-          (isAxePage && checkAxeHasFiche(axe))) && (
+        {axeHasFiche && (
           <PlanActionFiltresAccordeon
             plan={plan}
             axe={axe}
+            isAxePage={isAxePage}
             setIsFiltered={isFiltered => setIsFiltered(isFiltered)}
           />
         )}
@@ -65,13 +72,14 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
         {!isFiltered && (
           <Arborescence
             plan={plan}
-            axe={axe ?? plan}
+            axe={axe}
+            axes={axes}
             isAxePage={isAxePage}
             isReadonly={isReadonly}
           />
         )}
         {/** Footer */}
-        <PlanActionFooter plan={plan} isReadonly={isReadonly} />
+        <PlanActionFooter />
       </div>
     </div>
   );
@@ -79,19 +87,18 @@ export const PlanAction = ({plan, axe}: PlanActionProps) => {
 
 const PlanActionConnected = () => {
   const {planUid} = useParams<{planUid: string}>();
-  const {axeUid} = useParams<{axeUid: string}>();
+  const {axeUid} = useParams<{axeUid?: string}>();
 
-  const {data: planData, isLoading: planLoading} = usePlanAction(
+  const {data: allPlanNodes, isLoading: planLoading} = usePlanAction(
     parseInt(planUid)
   );
-  const {data: axeData, isLoading: axeLoading} = usePlanAction(
-    parseInt(axeUid)
-  );
 
-  const isLoading = planLoading || axeLoading;
+  const plan = allPlanNodes?.find(a => a?.depth === 0);
 
-  return !isLoading && planData ? (
-    <PlanAction plan={planData} axe={axeData} />
+  const axe = allPlanNodes?.find(a => a.id.toString() === axeUid);
+
+  return !planLoading && plan && allPlanNodes ? (
+    <PlanAction plan={plan} axe={axe ?? plan} axes={allPlanNodes} />
   ) : (
     <div className="h-[6.75rem] w-full bg-indigo-700 xl:mr-6" />
   );
