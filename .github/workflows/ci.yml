@@ -80,7 +80,7 @@ jobs:
         run: earthly --use-inline-cache --save-inline-cache --push +front-deps-builder
 
   build-app-dev:
-    needs: test-app
+    needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
