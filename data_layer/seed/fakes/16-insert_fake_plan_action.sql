@@ -1,28 +1,28 @@
 truncate table axe cascade;
 
-insert into axe (nom, collectivite_id, parent, modified_by)
-values ('Plan Vélo 2020-2024',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 1
-       ('Axe 1 : Sécurité : développer les aménagements cyclables et améliorer la sécurité routière', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 2
-       ('Axe 2 : Sûreté : mieux lutter contre le vol', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 3
-       ('Axe 3 : Créer un cadre incitatif reconnaissant pleinement l’usage du vélo comme un mode de transport vertueux', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 4
-       ('Axe 4 : Développer une culture vélo', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 5
-       ('4.1 : Pratiquer le vélo en toute sécurité', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 6
-       ('4.2 : Déployer des plans de mobilité scolaires', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 7
-       ('4.2.1 : Apprendre le vélo aux enfants', 1, 7, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 8
-       ('4.2.1.1 : Faire passer permis vélo aux CM2', 1, 8, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 9
-       ('4.3 : Développer l’activité physique pour la santé', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 10
-       ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 11
-       ('Plan Vélo 2024-2028',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 12
-       ('Axe 1 : Sécurité : développer les aménagements cyclables et améliorer la sécurité routière', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 13
-       ('Axe 2 : Sûreté : mieux lutter contre le vol', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 14
-       ('Axe 3 : Créer un cadre incitatif reconnaissant pleinement l’usage du vélo comme un mode de transport vertueux', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 15
-       ('Axe 4 : Développer une culture vélo', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 16
-       ('4.1 : Pratiquer le vélo en toute sécurité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 17
-       ('4.2 : Déployer des plans de mobilité scolaires', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 18
-       ('4.2.1 : Apprendre le vélo aux enfants', 1, 18, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 19
-       ('4.2.1.1 : Faire passer permis vélo aux CM2', 1, 19, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 20
-       ('4.3 : Développer l’activité physique pour la santé', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 21
-       ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'); -- id 22
+insert into axe (nom, collectivite_id, parent, modified_by, plan)
+values ('Plan Vélo 2020-2024',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 1
+       ('Axe 1 : Sécurité : développer les aménagements cyclables et améliorer la sécurité routière', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 2
+       ('Axe 2 : Sûreté : mieux lutter contre le vol', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 3
+       ('Axe 3 : Créer un cadre incitatif reconnaissant pleinement l’usage du vélo comme un mode de transport vertueux', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 4
+       ('Axe 4 : Développer une culture vélo', 1, 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 5
+       ('4.1 : Pratiquer le vélo en toute sécurité', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 6
+       ('4.2 : Déployer des plans de mobilité scolaires', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 7
+       ('4.2.1 : Apprendre le vélo aux enfants', 1, 7, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 8
+       ('4.2.1.1 : Faire passer permis vélo aux CM2', 1, 8, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 9
+       ('4.3 : Développer l’activité physique pour la santé', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 10
+       ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 5, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1), -- id 11
+       ('Plan Vélo 2024-2028',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 12
+       ('Axe 1 : Sécurité : développer les aménagements cyclables et améliorer la sécurité routière', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 13
+       ('Axe 2 : Sûreté : mieux lutter contre le vol', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 14
+       ('Axe 3 : Créer un cadre incitatif reconnaissant pleinement l’usage du vélo comme un mode de transport vertueux', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 15
+       ('Axe 4 : Développer une culture vélo', 1, 12, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 16
+       ('4.1 : Pratiquer le vélo en toute sécurité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 17
+       ('4.2 : Déployer des plans de mobilité scolaires', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 18
+       ('4.2.1 : Apprendre le vélo aux enfants', 1, 18, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 19
+       ('4.2.1.1 : Faire passer permis vélo aux CM2', 1, 19, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 20
+       ('4.3 : Développer l’activité physique pour la santé', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 21
+       ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12); -- id 22
 
 
 insert into fiche_action (titre, description, piliers_eci, collectivite_id, modified_by)

@@ -116,7 +116,7 @@ create function
 as
 $$
     -- Vide les tables des audits
-    truncate annexe cascade;
+truncate annexe cascade;
 truncate fiche_action_financeur_tag;
 truncate financeur_tag cascade;
 truncate fiche_action_service_tag;
@@ -155,8 +155,10 @@ insert into public.fiche_action_sous_thematique
 select * from test.fiche_action_sous_thematique;
 
 
+    alter table axe disable trigger axe_modifie_plan;
 insert into public.axe
 select * from test.axe;
+    alter table axe enable trigger axe_modifie_plan;
 
 insert into public.fiche_action_axe
 select * from test.fiche_action_axe;
