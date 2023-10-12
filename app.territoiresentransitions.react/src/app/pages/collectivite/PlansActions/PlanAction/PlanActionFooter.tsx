@@ -1,12 +1,6 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import {PlanNode} from './data/types';
 
-type TPlanActionFooter = {
-  plan: PlanNode;
-  isReadonly: boolean;
-};
-
-const PlanActionFooter = ({plan, isReadonly}: TPlanActionFooter) => {
+const PlanActionFooter = () => {
   return (
     <div className="py-12">
       <ScrollTopButton />

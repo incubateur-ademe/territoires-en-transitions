@@ -6,6 +6,8 @@ import {useHistory} from 'react-router-dom';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
 import {TAxeInsert} from 'types/alias';
 import {waitForMarkup} from 'utils/waitForMarkup';
+import {PlanNode} from './types';
+import {planNodeFactory, sortPlanNodes} from './utils';
 
 /**
  * Upsert un axe pour une collectivité.
@@ -31,11 +33,39 @@ export const useCreatePlanAction = () => {
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
 
-  return useMutation({
-    mutationFn: upsertAxe,
+  const navigation_key = ['plans_navigation', collectivite_id];
+
+  return useMutation(upsertAxe, {
     meta: {disableToast: true},
+    onMutate: async ({nom}) => {
+      await queryClient.cancelQueries({queryKey: navigation_key});
+
+      const previousData: PlanNode[] | undefined =
+        queryClient.getQueryData(navigation_key);
+
+      queryClient.setQueryData(
+        navigation_key,
+        (old: PlanNode[] | undefined) => {
+          if (old) {
+            const axe = planNodeFactory({axes: old, nom});
+            const tempNavigation = [...old, axe];
+            sortPlanNodes(tempNavigation);
+            return tempNavigation;
+          } else {
+            return [];
+          }
+        }
+      );
+
+      return previousData;
+    },
+    onError: (err, axe, previousData) => {
+      queryClient.setQueryData(navigation_key, previousData);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(navigation_key);
+    },
     onSuccess: data => {
-      queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
       history.push(
         makeCollectivitePlanActionUrl({
           collectiviteId: collectivite_id!,
@@ -49,29 +79,78 @@ export const useCreatePlanAction = () => {
 /**
  * Ajoute un sous-axe à un axe
  */
-export const useAddAxe = (parentId: number, planActionId: number) => {
+export const useAddAxe = (
+  parentId: number,
+  parentDepth: number,
+  planActionId: number
+) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
 
-  return useMutation(
-    // Considéré comme un axe car on fourni un parent
-    () =>
-      upsertAxe({collectivite_id: collectivite_id!, parent: parentId} as never),
-    {
-      meta: {disableToast: true},
-      onSuccess: data => {
-        queryClient.invalidateQueries(['plans_navigation', collectivite_id]);
-        queryClient
-          .invalidateQueries(['plan_action', planActionId])
-          .then(() => {
-            waitForMarkup(`#axe-${data[0].id}`).then(el => {
-              // scroll au niveau du nouvel axe créé
-              el?.scrollIntoView({behavior: 'smooth', block: 'center'});
-              // donne le focus à son titre
-              document.getElementById(`axe-titre-${data[0].id}`)?.focus();
-            });
+  const flat_axes_key = ['flat_axes', planActionId];
+  const navigation_key = ['plans_navigation', collectivite_id];
+
+  return useMutation(upsertAxe, {
+    meta: {disableToast: true},
+    onMutate: async () => {
+      await queryClient.cancelQueries({queryKey: flat_axes_key});
+      await queryClient.cancelQueries({queryKey: navigation_key});
+
+      const previousData = [
+        [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
+        [navigation_key, queryClient.getQueryData(navigation_key)],
+      ];
+
+      queryClient.setQueryData(flat_axes_key, (old: PlanNode[] | undefined) => {
+        if (old) {
+          const axe = planNodeFactory({
+            axes: old,
+            parentId,
+            parentDepth: parentDepth + 1,
           });
-      },
-    }
-  );
+          const tempNavigation = [...old, axe];
+          sortPlanNodes(tempNavigation);
+          return tempNavigation;
+        } else {
+          return [];
+        }
+      });
+
+      queryClient.setQueryData(
+        navigation_key,
+        (old: PlanNode[] | undefined) => {
+          if (old) {
+            const axe = planNodeFactory({
+              axes: old,
+              parentId,
+              parentDepth: parentDepth + 1,
+            });
+            const tempAxes = [...old, axe];
+            sortPlanNodes(tempAxes);
+            return tempAxes;
+          } else {
+            return [];
+          }
+        }
+      );
+
+      return previousData;
+    },
+    onError: (err, axe, previousData) => {
+      previousData?.forEach(([key, data]) =>
+        queryClient.setQueryData(key as string[], data)
+      );
+    },
+    onSuccess: data => {
+      queryClient.invalidateQueries(navigation_key);
+      queryClient.invalidateQueries(flat_axes_key).then(() => {
+        waitForMarkup(`#axe-${data[0].id}`).then(el => {
+          // scroll au niveau du nouvel axe créé
+          el?.scrollIntoView({behavior: 'smooth', block: 'center'});
+          // donne le focus à son titre
+          document.getElementById(`axe-titre-${data[0].id}`)?.focus();
+        });
+      });
+    },
+  });
 };

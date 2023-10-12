@@ -7,6 +7,8 @@ export type TFicheActionInsert =
 export type TFicheActionUpdate =
   Database['public']['Tables']['fiche_action']['Update'];
 
+export type TFlatAxe = Database['public']['CompositeTypes']['flat_axe_node'];
+
 export type TAxeRow = Database['public']['Tables']['axe']['Row'];
 export type TAxeInsert = Database['public']['Tables']['axe']['Insert'];
 export type TAxeUpdate = Database['public']['Tables']['axe']['Update'];
