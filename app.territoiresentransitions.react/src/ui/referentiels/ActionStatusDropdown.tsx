@@ -183,6 +183,14 @@ export const ActionStatusDropdown = ({
           modified_by: statut?.modified_by,
         });
       }, 100);
+    } else if (action.type === 'sous-action') {
+      saveActionStatut({
+        ...args,
+        avancement: 'non_renseigne',
+        concerne: true,
+        modified_at: statut?.modified_at,
+        modified_by: statut?.modified_by,
+      });
     }
   };
 
