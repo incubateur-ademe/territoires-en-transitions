@@ -1,7 +1,7 @@
 # language: fr
 
 Fonctionnalité: Gérer les fiches et les plans d'action
-@focus
+
   Scénario: Ajouter, éditer et supprimer une fiche action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"

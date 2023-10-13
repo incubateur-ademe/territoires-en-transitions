@@ -23,7 +23,7 @@ const SupprimerAxeModal = ({
 }: Props) => {
   const {mutate: deletePlan} = useDeleteAxe(axe.id, planId, redirectURL);
 
-  const isPlan = axe.id !== planId;
+  const isPlan = axe.id === planId;
 
   return (
     <Modal
