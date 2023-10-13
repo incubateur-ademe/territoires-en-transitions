@@ -1,7 +1,6 @@
 name: Déploiement à la demande
 
 on:
-  pull_request: # todo: <-- Remove me
   workflow_dispatch:
 
 concurrency:
