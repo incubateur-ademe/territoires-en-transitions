@@ -105,12 +105,12 @@ const FicheActionCard = ({
               title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
               className={classNames(
-                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line hover:!bg-gray-200'
+                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-grey975 hover:!bg-gray-200'
               )}
             />
           )}
           <FicheActionSupprimerModal
-            buttonClassname="invisible group-hover:visible"
+            buttonClassname="invisible group-hover:visible !bg-grey975"
             isInMultipleAxes={
               (ficheAction.plans && ficheAction.plans.length > 1) || false
             }
