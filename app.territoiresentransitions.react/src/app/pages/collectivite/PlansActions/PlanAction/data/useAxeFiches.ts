@@ -9,7 +9,7 @@ type Args = {
 };
 
 export const useAxeFiches = ({ficheIds, axeId}: Args) => {
-  return useQuery(['axe_fiches', axeId], async () => {
+  return useQuery(['axe_fiches', axeId, ficheIds], async () => {
     const {data} = await supabaseClient
       .from('fiche_resume')
       .select()
