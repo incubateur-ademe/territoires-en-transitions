@@ -350,7 +350,8 @@ jobs:
       - build-db
     environment: dev
     name: End-to-end tests
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 60
     env:
       e2e-directory: ./e2e
