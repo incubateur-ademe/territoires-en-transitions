@@ -10,10 +10,6 @@ on:
           - preprod
           - prod
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   deploy-site:
     name: Déploie le site

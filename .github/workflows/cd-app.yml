@@ -10,10 +10,6 @@ on:
           - preprod
           - prod
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   deploy-app:
     name: Déploie l'app
@@ -48,7 +44,7 @@ jobs:
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
-      - name: Deploy app on koyeb
+      - name: Deploy app on Koyeb
         run: >
           earthly 
           --use-inline-cache 
