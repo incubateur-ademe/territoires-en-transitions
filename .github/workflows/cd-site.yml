@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deploy-site:
     name: Déploie le site
-    environment: ${{ github.event.inputs.target }
+    environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
