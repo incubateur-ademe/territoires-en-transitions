@@ -1,0 +1,57 @@
+name: Déploiement à la demande de l'app
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Où déployer
+        options:
+          - preprod
+          - prod
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-app:
+    name: Déploie l'app
+    environment: preprod
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push front deps image
+        run: >
+          earthly 
+          --use-inline-cache --save-inline-cache --push 
+          --platform=linux/amd64 
+          +front-deps-builder
+
+      - name: Build and push app image
+        run: >
+          earthly 
+          --use-inline-cache --save-inline-cache --push 
+          --platform=linux/amd64 
+          +app-build
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+
+      - name: Deploy app on koyeb
+        run: >
+          earthly 
+          --use-inline-cache 
+          +app-deploy
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
