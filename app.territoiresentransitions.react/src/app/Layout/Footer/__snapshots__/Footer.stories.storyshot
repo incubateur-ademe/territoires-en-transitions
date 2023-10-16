@@ -67,18 +67,6 @@ exports[`Storyshots app/Layout/Footer Exemple 1`] = `
               beta.gouv
             </a>
           </li>
-          <li
-            className="fr-footer__content-item"
-          >
-            <a
-              className="fr-footer__content-link"
-              href="https://territoireengagetransitionecologique.ademe.fr"
-              rel="noreferrer"
-              target="_blank"
-            >
-              territoireengagetransitionecologique.ademe.fr
-            </a>
-          </li>
         </ul>
       </div>
     </div>
