@@ -48,7 +48,9 @@ export const HeaderIndicateur = ({
     <HeaderTitle
       titre={title}
       customClass={{
-        container: classNames('!bg-bf925', {'pb-0': !readonly}),
+        container: classNames('!bg-bf925 sticky top-0 z-40', {
+          'pb-0': !readonly,
+        }),
         text: classNames('!text-[#3a3a3a] text-[1rem]', {'pb-4': !readonly}),
       }}
       onUpdate={onUpdate}
