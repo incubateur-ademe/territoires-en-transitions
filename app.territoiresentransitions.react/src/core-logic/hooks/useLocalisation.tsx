@@ -56,13 +56,23 @@ const locationFromPath = (path: string): Localisation => {
     else if (path.endsWith('priorisation')) onglet = 'priorisation';
     else if (path.endsWith('detail')) onglet = 'detail';
   } else if (path.includes('/indicateurs/')) {
-    // page
-    page = 'indicateur';
-    // tag
-    if (path.endsWith('/eci')) tag = 'eci';
-    else if (path.endsWith('/cae')) tag = 'cae';
-    else if (path.endsWith('/crte')) tag = 'crte';
-    else if (path.endsWith('/perso')) tag = 'personnalise';
+    const match = /(cles|selection|perso|cae|eci|crte)\/(.+)?/.exec(path);
+    if (match) {
+      const [subpath, category, id] = match;
+      // tag
+      if (['eci', 'cae', 'crte'].includes(category))
+        tag = category as 'eci' | 'cae' | 'crte';
+      else if (category === 'perso') tag = 'personnalise';
+      else if (category === 'cles') tag = 'clef';
+      else if (category === 'selection') tag = 'priorites';
+      // page
+      if (id) {
+        // si il y a un id d'indicateur on est sur une page détail
+        page = 'indicateur';
+      } else {
+        page = 'indicateurs';
+      }
+    }
   } else if (path.includes('/labellisation/')) {
     // page
     page = 'labellisation';
