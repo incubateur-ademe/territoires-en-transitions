@@ -49,12 +49,13 @@ export const useIndicateursParents = () =>
   useIndicateurDefinitions()?.filter(({parent}) => parent === null);
 
 /** Fourni les définitions des indicateurs par groupe d'indicateurs prédéfinis */
-export const useIndicateursParentsGroup = (group: ReferentielOfIndicateur) => {
+export const useIndicateursParentsGroup = (group: string) => {
   // on affiche que les indicateurs parents sauf dans le cas CRTE
   const tous = useIndicateurDefinitions();
   const parents = useIndicateursParents();
+  if (!['cae', 'eci', 'crte'].includes(group)) return [];
   return (group === 'crte' ? tous : parents)?.filter(({programmes}) =>
-    programmes.includes(group)
+    programmes.includes(group as ReferentielOfIndicateur)
   );
 };
 
