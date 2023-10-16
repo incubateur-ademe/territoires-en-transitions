@@ -22,7 +22,7 @@ export type ProgrammeData = {
     description: string;
     contenu: Content[] | null;
   };
-  offre: {
+  compte: {
     description: string;
   };
   benefices: {

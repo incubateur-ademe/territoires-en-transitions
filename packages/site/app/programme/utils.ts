@@ -74,8 +74,8 @@ export const getData = async () => {
             .Description as unknown as string,
           contenu: formattedServices,
         },
-        offre: {
-          description: data.attributes.Offre.Description as unknown as string,
+        compte: {
+          description: data.attributes.Compte.Description as unknown as string,
         },
         benefices: {
           titre: data.attributes.Benefices.Titre as unknown as string,

@@ -4,9 +4,8 @@
 import Services from './Services';
 import Benefices from './Benefices';
 import Etapes from './Etapes';
-import Objectifs from './Objectifs';
 import ProgrammeBanner from './ProgrammeBanner';
-import Offre from './Offre';
+import Compte from './Compte';
 import Ressources from './Ressources';
 import {ProgrammeData} from './types';
 import NoResult from '@components/info/NoResult';
@@ -29,12 +28,7 @@ const Programme = async () => {
         titre={data.titre}
         description={data.description}
         couvertureURL={data.couvertureURL}
-      />
-
-      <Objectifs
-        titre={data.objectifs.titre}
-        description={data.objectifs.description}
-        contenu={data.objectifs.contenu}
+        objectifs={data.objectifs}
       />
 
       <Services
@@ -43,7 +37,7 @@ const Programme = async () => {
         contenu={data.services.contenu}
       />
 
-      <Offre description={data.offre.description} />
+      <Compte description={data.compte.description} />
 
       <Benefices
         titre={data.benefices.titre}

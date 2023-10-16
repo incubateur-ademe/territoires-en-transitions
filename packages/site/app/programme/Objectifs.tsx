@@ -1,11 +1,8 @@
-'use client';
-
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {processMarkedContent} from 'src/utils/processMarkedContent';
-import {useEffect, useState} from 'react';
 import {Content} from './types';
+import Card from '@components/cards/Card';
 
 type ObjectifsProps = {
   titre: string;
@@ -14,48 +11,31 @@ type ObjectifsProps = {
 };
 
 const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
-  const [processedContent, setProcessedContent] = useState<Content[]>([]);
-
-  useEffect(() => {
-    const processContent = async () => {
-      if (contenu) {
-        const newContent = [...contenu];
-
-        newContent.forEach(async c => {
-          const newDescription = await processMarkedContent(c.description);
-          c.description = newDescription;
-        });
-
-        setProcessedContent(newContent);
-      }
-    };
-    processContent();
-  }, [contenu]);
-
-  return contenu && processedContent.length ? (
+  return contenu && contenu.length ? (
     <CardsSection
       title={titre}
+      textClassname="text-center"
+      className="px-0"
       description={description}
       cardsList={
-        <CardsWrapper cols={5}>
-          {processedContent.map((c, index) => (
-            <div key={index} className="flex flex-col items-center gap-8">
-              {c.image && (
-                <div className="w-[140px] h-[140px] bg-white rounded-full flex items-center justify-center">
-                  <StrapiImage data={c.image} displayCaption={false} />
-                </div>
-              )}
-              <p
-                className="text-center"
-                dangerouslySetInnerHTML={{
-                  __html: c.description,
-                }}
-              />
-            </div>
+        <CardsWrapper cols={5} className="gap-8">
+          {contenu.map((c, index) => (
+            <Card
+              key={index}
+              className="!border-primary-3 !gap-4 xl:!gap-5 !p-4 xl:!p-5"
+              description={c.description}
+              textClassName="text-center small-text"
+              image={
+                c.image ? (
+                  <div className="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center">
+                    <StrapiImage data={c.image} displayCaption={false} />
+                  </div>
+                ) : undefined
+              }
+            />
           ))}
         </CardsWrapper>
       }
-      customBackground="#fff6f0"
     />
   ) : null;
 };

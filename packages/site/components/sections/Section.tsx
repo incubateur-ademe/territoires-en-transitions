@@ -5,7 +5,6 @@ type SectionProps = {
   children: React.ReactNode;
   containerClassName?: string;
   className?: string;
-  customBackground?: string;
 };
 
 const Section = ({
@@ -13,12 +12,10 @@ const Section = ({
   children,
   containerClassName = '',
   className = '',
-  customBackground,
 }: SectionProps): JSX.Element => (
   <section
     id={id}
     className={classNames('section fr-py-7w', containerClassName)}
-    style={{backgroundColor: customBackground}}
   >
     <div className={classNames('fr-container flex flex-col gap-4', className)}>
       {children}

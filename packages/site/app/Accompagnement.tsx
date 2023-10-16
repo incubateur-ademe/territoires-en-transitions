@@ -15,11 +15,13 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
     <CardsSection
       title={titre}
       description={description}
+      containerClassName="bg-primary-1"
       cardsList={
         <CardsWrapper cols={2}>
           {contenu.map((c, index) => (
             <Card
               key={index}
+              className="border-none"
               title={c.titre}
               description={c.description}
               button={{title: c.button.titre, href: c.button.href}}
@@ -31,6 +33,7 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
                   displayCaption={false}
                 />
               }
+              imagePosition="left"
             />
           ))}
         </CardsWrapper>

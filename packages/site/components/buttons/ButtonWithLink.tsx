@@ -3,8 +3,8 @@ import classNames from 'classnames';
 type ButtonWithLinkProps = {
   children: React.ReactNode;
   href: string;
-  rounded?: boolean;
   secondary?: boolean;
+  tertiary?: boolean;
   external?: boolean;
   fullWidth?: boolean;
   className?: string;
@@ -13,19 +13,23 @@ type ButtonWithLinkProps = {
 const ButtonWithLink = ({
   children,
   href,
-  rounded = false,
   secondary = false,
+  tertiary = false,
   external = false,
   fullWidth = false,
   className,
 }: ButtonWithLinkProps): JSX.Element => {
   return (
     <a
-      className={classNames('fr-btn !h-fit', className, {
-        'rounded-md': rounded,
-        'fr-btn--secondary': secondary,
-        '!w-full': fullWidth,
-      })}
+      className={classNames(
+        'fr-btn !h-fit',
+        {
+          'fr-btn--tertiary': tertiary,
+          'fr-btn--secondary': secondary,
+          '!w-full': fullWidth,
+        },
+        className,
+      )}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer noopener' : undefined}
       href={href}

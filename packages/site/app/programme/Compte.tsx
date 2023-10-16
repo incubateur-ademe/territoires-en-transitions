@@ -1,11 +1,10 @@
 import InfoSection from '@components/sections/InfoSection';
-import CodingPicto from 'public/pictogrammes/CodingPicto';
 
-type OffreProps = {
+type CompteProps = {
   description: string;
 };
 
-const Offre = ({description}: OffreProps) => {
+const Compte = ({description}: CompteProps) => {
   return (
     <InfoSection
       content={description}
@@ -13,11 +12,12 @@ const Offre = ({description}: OffreProps) => {
         {
           title: 'Créer un compte',
           href: 'https://app.territoiresentransitions.fr/auth/signup',
+          external: true,
+          tertiary: true,
         },
       ]}
-      pictogram={<CodingPicto />}
     />
   );
 };
 
-export default Offre;
+export default Compte;

@@ -77,7 +77,7 @@ const Slideshow = ({
 
       {slides.length > 1 && (
         <button
-          className="fr-btn fr-icon-arrow-right-s-line rounded-md min-w-[40px]"
+          className="fr-btn fr-icon-arrow-right-s-line min-w-[40px]"
           title="next"
           onClick={() => handleChangeIndex('next')}
         />

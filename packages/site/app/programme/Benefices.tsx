@@ -21,7 +21,6 @@ const Benefices = ({titre, description, contenu}: BeneficesProps) => {
               key={c.id}
               title={c.titre ?? ''}
               description={c.description}
-              className="border border-[#ddd]"
             />
           ))}
         </CardsWrapper>

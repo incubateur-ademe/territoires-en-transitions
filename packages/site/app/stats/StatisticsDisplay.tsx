@@ -33,7 +33,7 @@ const StatisticsDisplay = ({
 
   return (
     <>
-      <Section customBackground="#fff">
+      <Section>
         {nationalStats ? (
           <p>
             Territoires en Transitions est une plateforme publique gratuite et
@@ -98,7 +98,7 @@ const StatisticsDisplay = ({
         </div>
       </Section>
 
-      <Section customBackground="#fff">
+      <Section>
         <SectionHead>
           Outiller les personnes chargées de la planification écologique
         </SectionHead>
@@ -119,7 +119,7 @@ const StatisticsDisplay = ({
         />
       </Section>
 
-      <Section className="flex-col" customBackground="#fff">
+      <Section className="flex-col">
         <SectionHead>
           Connaître l’état des lieux des forces et faiblesses de chaque
           territoire
@@ -133,7 +133,7 @@ const StatisticsDisplay = ({
         <EtatDesLieux region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section customBackground="#fff">
+      <Section>
         <SectionHead>
           Planifier et prioriser les actions en faveur de la transition
           écologique
@@ -150,7 +150,7 @@ const StatisticsDisplay = ({
         <EvolutionPlansAction region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section customBackground="#fff">
+      <Section>
         <SectionHead>
           Suivre les indicateurs clés de réalisation et d’impact de la
           transition écologique
@@ -163,7 +163,7 @@ const StatisticsDisplay = ({
         <EvolutionIndicateurs region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section customBackground="#fff">
+      <Section>
         <SectionHead>
           Partager et valoriser la progression de chaque territoire
         </SectionHead>

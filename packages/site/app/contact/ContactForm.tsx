@@ -172,8 +172,8 @@ const ContactForm = () => {
         open={status !== null}
         onClose={() => setStatus(null)}
         className={classNames('!text-white', {
-          '!bg-[#18753C]': status === 'success',
-          '!bg-[#CE0500]': status === 'error',
+          '!bg-success-1': status === 'success',
+          '!bg-error-1': status === 'error',
         })}
       >
         <div className="flex items-center">

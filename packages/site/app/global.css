@@ -2,6 +2,221 @@
 @tailwind components;
 @tailwind utilities;
 
+/*** Mise en forme DS Territoires en Transitions ***/
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    @apply text-primary-8;
+  }
+
+  h1 {
+    font-size: 40px;
+    line-height: 48px;
+  }
+
+  h2 {
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  h3 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  h4 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  h5 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  h6 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+}
+
+@layer components {
+  @media (min-width: 78em) {
+    .fr-container,
+    .fr-container-sm,
+    .fr-container-md,
+    .fr-container-lg {
+      max-width: 100%;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .fr-container,
+    .fr-container-sm,
+    .fr-container-md,
+    .fr-container-lg {
+      max-width: 1280px;
+    }
+  }
+
+  @media (min-width: 1350) {
+    .fr-container,
+    .fr-container-sm,
+    .fr-container-md,
+    .fr-container-lg {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .paragraphe-12,
+  .paragraphe-14,
+  .paragraphe-16,
+  .paragraphe-18,
+  .paragraphe-22,
+  .paragraphe-12 > p,
+  .paragraphe-14 > p,
+  .paragraphe-16 > p,
+  .paragraphe-18 > p,
+  .paragraphe-22 > p {
+    font-weight: 400;
+    @apply text-primary-10;
+  }
+
+  .paragraphe-12,
+  .paragraphe-12 > p {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .paragraphe-14,
+  .paragraphe-14 > p {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .paragraphe-16,
+  .paragraphe-16 > p {
+    font-size: 16px;
+    line-height: 28px;
+  }
+
+  .paragraphe-18,
+  .paragraphe-18 > p {
+    font-size: 18px;
+    line-height: 30px;
+  }
+
+  .paragraphe-22,
+  .paragraphe-22 > p {
+    font-size: 22px;
+    line-height: 36px;
+  }
+
+  .fr-btn {
+    @apply bg-primary-7;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+    box-shadow: none;
+    border-radius: 10px;
+    padding: 14px 25px;
+  }
+
+  button:not(:disabled):hover,
+  .fr-btn:hover,
+  a[href].fr-btn:hover {
+    @apply bg-primary-8;
+  }
+
+  .fr-btn:disabled {
+    @apply bg-primary-4;
+    @apply text-primary-3;
+  }
+
+  .fr-btn.fr-btn--secondary {
+    @apply bg-secondary-1;
+  }
+
+  button:not(:disabled).fr-btn--secondary:hover,
+  .fr-btn.fr-btn--secondary:hover,
+  a[href].fr-btn.fr-btn--secondary:hover,
+  .fr-btn.fr-btn--secondary:disabled {
+    @apply bg-secondary-2;
+  }
+
+  .fr-btn.fr-btn--tertiary,
+  .fr-btn.btn-outlined {
+    background-color: #fff;
+    @apply text-primary-7;
+    border: solid;
+    @apply border border-primary-7;
+  }
+
+  button:not(:disabled).fr-btn--tertiary:hover,
+  .fr-btn.fr-btn--tertiary:hover,
+  a[href].fr-btn.fr-btn--tertiary:hover,
+  .fr-btn.btn-outlined:hover {
+    @apply bg-primary-1;
+    @apply text-primary-8;
+    @apply border-primary-8;
+  }
+
+  .fr-btn.fr-btn--tertiary:disabled,
+  .fr-btn.btn-outlined:disabled {
+    @apply text-primary-3;
+    @apply border border-primary-4;
+  }
+
+  .fr-checkbox-group input[type='checkbox']:checked + label::before {
+    @apply bg-primary-7;
+  }
+
+  .fr-checkbox-group input[type='checkbox'] + label::before {
+    background-image: radial-gradient(
+        at 5px 4px,
+        transparent 4px,
+        #6a6af4 4px,
+        #6a6af4 5px,
+        transparent 6px
+      ),
+      linear-gradient(#6a6af4, #6a6af4),
+      radial-gradient(
+        at calc(100% - 5px) 4px,
+        transparent 4px,
+        #6a6af4 4px,
+        #6a6af4 5px,
+        transparent 6px
+      ),
+      linear-gradient(#6a6af4, #6a6af4),
+      radial-gradient(
+        at calc(100% - 5px) calc(100% - 4px),
+        transparent 4px,
+        #6a6af4 4px,
+        #6a6af4 5px,
+        transparent 6px
+      ),
+      linear-gradient(#6a6af4, #6a6af4),
+      radial-gradient(
+        at 5px calc(100% - 4px),
+        transparent 4px,
+        #6a6af4 4px,
+        #6a6af4 5px,
+        transparent 6px
+      ),
+      linear-gradient(#6a6af4, #6a6af4), var(--data-uri-svg);
+  }
+}
+
+/*** CSS spécifique au site ***/
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -12,10 +227,6 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-}
-
-.homepage-container > section:nth-of-type(even) {
-  background-color: #f5f5fe;
 }
 
 h1,
@@ -30,45 +241,7 @@ ol {
   margin-bottom: 1.5rem;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-}
-
-h1 {
-  font-size: 2rem;
-  line-height: 2.5rem;
-}
-
-h2 {
-  font-size: 1.75rem;
-  line-height: 2.25rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-h4 {
-  font-size: 1.375rem;
-  line-height: 1.75rem;
-}
-
-h5 {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-h6 {
-  font-size: 1.125rem;
-  line-height: 1.5rem;
-}
-
+/** cartes dsfr */
 .fr-card.fr-enlarge-link:hover {
   background-color: #f6f6f6 !important;
   transition-duration: 700ms;
@@ -98,15 +271,29 @@ nav.md-toc ~ h2:before {
   content: counter(h2counter) '.\0000a0';
 }
 
+/** listes ul / ol */
 ul:not(.fr-footer__content-list, .fr-btns-group),
 ol {
   list-style: inside;
 }
 
+/** contenu des pages articles */
 .article *:not(h1, h2, h3, h4, h5, h6) {
   font-size: 18px;
 }
 
 .article a {
   color: var(--text-action-high-blue-france);
+}
+
+/* classes utilisées sur les textes générés par remark */
+.no-margin,
+.no-margin > * {
+  margin: 0;
+}
+
+.small-text,
+.small-text > * {
+  font-size: 15px !important;
+  line-height: 20.8px !important;
 }
