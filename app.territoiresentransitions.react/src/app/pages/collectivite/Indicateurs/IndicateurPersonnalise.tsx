@@ -10,7 +10,7 @@ import {useIndicateurACompleter} from './useIndicateurACompleter';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
 import {useExportIndicateurs} from './useExportIndicateurs';
 import IndicateurChart from './charts/IndicateurChart';
-import {HeaderIndicateur} from './Header';
+import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
