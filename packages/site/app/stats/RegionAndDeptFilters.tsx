@@ -167,7 +167,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
       />
 
       <button
-        className="fr-btn fr-btn--secondary"
+        className="fr-btn fr-btn--tertiary"
         onClick={() => {
           setSelectedRegion(emptyString);
           setSelectedDepartment(emptyString);

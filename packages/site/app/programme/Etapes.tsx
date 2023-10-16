@@ -13,6 +13,7 @@ type EtapesProps = {
 const Etapes = ({titre, description, contenu}: EtapesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
+      containerClassName="bg-primary-1"
       title={titre}
       description={description}
       cardsList={
@@ -21,15 +22,14 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
             <Card
               key={c.id}
               step={index + 1}
-              title={c.titre ?? ''}
+              subtitle={c.titre ?? ''}
               description={c.description}
-              className="border border-black"
             />
           ))}
         </CardsWrapper>
       }
     >
-      <ButtonWithLink href="/contact" className="mt-6" rounded>
+      <ButtonWithLink href="/contact" className="mt-6">
         Contactez-nous
       </ButtonWithLink>
     </CardsSection>

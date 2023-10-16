@@ -1,7 +1,6 @@
 'use client';
 
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import CarteAvecFiltres from '@components/carte/CarteAvecFiltres';
 import {useEffect, useRef, useState} from 'react';
@@ -47,10 +46,6 @@ const Carte = () => {
         française
       </div>
     </div> */}
-
-        <ButtonWithLink href="/faq" secondary rounded className="mt-16 mx-auto">
-          Lire les questions fréquentes
-        </ButtonWithLink>
       </Section>
     </div>
   );

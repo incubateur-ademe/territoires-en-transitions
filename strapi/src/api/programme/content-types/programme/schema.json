@@ -37,11 +37,11 @@
       "component": "bloc.description",
       "required": true
     },
-    "Offre": {
-      "displayName": "Offre",
+    "Compte": {
+      "displayName": "Compte",
       "type": "component",
       "repeatable": false,
-      "component": "bloc.offre",
+      "component": "bloc.compte",
       "required": true
     },
     "Benefices": {

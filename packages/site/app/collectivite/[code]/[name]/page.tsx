@@ -34,7 +34,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   return (
     <>
       {/* En-tête de la page collectivité */}
-      <Section containerClassName="!pb-6" customBackground="#fff">
+      <Section containerClassName="!pb-6">
         <a
           className="fr-link fr-icon-arrow-left-line fr-link--icon-left w-fit text-[#666] text-sm mb-8"
           href="/"
@@ -57,7 +57,6 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
         data.contenu.map((section, index) => (
           <Section
             key={index}
-            customBackground="#fff"
             containerClassName={
               index === 0 && !data.description ? '!pt-0 !pb-6' : '!py-6'
             }
@@ -87,7 +86,10 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
               <GallerieArticle data={section.data as GallerieArticleData} />
             ) : // Contenu de type vidéo Youtube ou Dailymotion
             section.type === 'video' ? (
-              <EmbededVideo url={section.data as string} className="mb-6" />
+              <EmbededVideo
+                url={section.data as string}
+                className="mb-6 lg:w-4/5"
+              />
             ) : // Contenu de type info (dans un cadre bleu)
             section.type === 'info' ? (
               <InfoArticle texte={section.data as string} />

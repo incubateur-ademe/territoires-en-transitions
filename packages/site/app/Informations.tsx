@@ -10,24 +10,26 @@ import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 type InformationsProps = {
   titre: string;
   description?: string;
+  className?: string;
 };
 
-const Informations = ({titre, description}: InformationsProps) => {
+const Informations = ({titre, description, className}: InformationsProps) => {
   return (
     <CardsSection
       title={titre}
       description={description}
+      containerClassName={className}
       cardsList={
         <CardsWrapper cols={3} className="!gap-14">
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<InformationPicto />} />
-            <ButtonWithLink href="/faq" secondary fullWidth rounded>
+            <ButtonWithLink href="/faq" tertiary fullWidth>
               Lire les questions fréquentes
             </ButtonWithLink>
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CommunityPicto />} />
-            <ButtonWithLink href="/contact" secondary fullWidth rounded>
+            <ButtonWithLink href="/contact" tertiary fullWidth>
               Contacter l'équipe
             </ButtonWithLink>
           </div>
@@ -37,7 +39,6 @@ const Informations = ({titre, description}: InformationsProps) => {
               href="https://calendly.com/territoiresentransitions"
               fullWidth
               external
-              rounded
             >
               Participer à une démo
             </ButtonWithLink>

@@ -27,7 +27,7 @@ const EmbededVideo = ({url, title, className}: EmbededVideoProps) => {
 
   return embedLink.length ? (
     <iframe
-      className={classNames('aspect-video w-full lg:w-4/5 mx-auto', className)}
+      className={classNames('aspect-video w-full mx-auto', className)}
       src={embedLink}
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowFullScreen

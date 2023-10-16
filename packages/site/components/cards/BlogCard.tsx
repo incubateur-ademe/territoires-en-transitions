@@ -27,20 +27,34 @@ const BlogCard = ({
 }: BlogCardProps) => {
   return (
     <div
-      className={classNames('fr-card fr-card--no-border border rounded-lg', {
-        'fr-enlarge-link': !!href,
-      })}
+      className={classNames(
+        'fr-card fr-card--no-border border rounded-[20px]',
+        {
+          'fr-enlarge-link': !!href,
+        },
+      )}
       style={{
         backgroundColor: backgroundColor ? backgroundColor : '#fff',
-        borderColor: backgroundColor ? backgroundColor : '#e5e7eb',
+        borderColor: backgroundColor ? backgroundColor : '#ddd',
+        boxShadow: backgroundColor ? '' : '0px 4px 25px 0px #0000000D',
       }}
     >
       <div className="fr-card__body">
         <div className="fr-card__content">
-          <h3 className="fr-card__title">
-            {href ? <a href={href}>{title}</a> : <>{title}</>}
-          </h3>
-          {description && <p className="fr-card__desc">{description}</p>}
+          <h5 className="fr-card__title !text-primary-8 leading-[35px]">
+            {href ? (
+              <a href={href} className="!text-primary-8">
+                {title}
+              </a>
+            ) : (
+              <>{title}</>
+            )}
+          </h5>
+          {description && (
+            <p className="fr-card__desc text-primary-10 leading-[30px]">
+              {description}
+            </p>
+          )}
           <div className="fr-card__start">
             {date && (
               <p className="fr-card__detail">{getLocalDateString(date)}</p>
@@ -69,7 +83,7 @@ const BlogCard = ({
         </div>
         {badge && (
           <div className="fr-badges-group">
-            <p className="fr-badge fr-badge--blue-ecume">{badge}</p>
+            <p className="fr-badge text-primary-8 bg-primary-1">{badge}</p>
           </div>
         )}
       </div>

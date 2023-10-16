@@ -1,25 +1,36 @@
+import classNames from 'classnames';
 import Section from './Section';
 
 type CardsSectionProps = {
   id?: string;
   title: string;
+  textClassname?: string;
   description?: string;
   cardsList: React.ReactNode;
   children?: React.ReactNode;
-  customBackground?: string;
+  containerClassName?: string;
+  className?: string;
 };
 
 const CardsSection = ({
   id,
   title,
+  textClassname,
   description,
   cardsList,
   children,
-  customBackground,
+  containerClassName,
+  className,
 }: CardsSectionProps) => (
-  <Section id={id} customBackground={customBackground}>
-    <h2>{title}</h2>
-    {description && <p className="text-xl">{description}</p>}
+  <Section
+    id={id}
+    containerClassName={classNames(containerClassName)}
+    className={classNames(className)}
+  >
+    <h2 className={textClassname}>{title}</h2>
+    {description && (
+      <p className={classNames('text-xl', textClassname)}>{description}</p>
+    )}
     {cardsList}
     {children}
   </Section>

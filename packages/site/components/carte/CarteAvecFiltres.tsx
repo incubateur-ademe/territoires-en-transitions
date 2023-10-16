@@ -66,7 +66,7 @@ const CarteAvecFiltres = () => {
 
         <div className="flex flex-col md:flex-row lg:flex-col justify-between gap-8 w-full md:px-16 lg:px-0">
           <div className="flex flex-col items-center w-full md:w-fit lg:w-full ">
-            <p className="text-[#000091]">
+            <p className="text-primary-8">
               Je découvre les collectivités engagées :
             </p>
             <FiltreLabels
@@ -80,7 +80,7 @@ const CarteAvecFiltres = () => {
 
           {(filtre === 'labellisees_cae' || filtre === 'labellisees_eci') && (
             <div className="flex flex-col items-center w-full md:w-fit lg:w-full">
-              <p className="text-[#000091]">
+              <p className="text-primary-8">
                 Je filtre par niveau de labellisation :
               </p>
               <FiltreEtoiles

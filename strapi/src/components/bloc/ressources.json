@@ -7,7 +7,7 @@
   "options": {},
   "attributes": {
     "Description": {
-      "type": "richtext",
+      "type": "text",
       "default": "Besoin de précisions avant de m'engager !",
       "required": true,
       "maxLength": 200

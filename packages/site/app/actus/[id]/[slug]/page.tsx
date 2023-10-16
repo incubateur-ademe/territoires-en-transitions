@@ -98,7 +98,6 @@ const Article = async ({params}: {params: {id: string}}) => {
       {data.contenu.map((section, index) => (
         <Section
           key={index}
-          customBackground="#fff"
           containerClassName={index === 0 ? '!pt-0 !pb-6' : '!py-6'}
           className="article"
         >
@@ -122,7 +121,10 @@ const Article = async ({params}: {params: {id: string}}) => {
               <GallerieArticle data={section.data as GallerieArticleData} />
             ) : // Contenu de type vidéo Youtube ou Dailymotion
             section.type === 'video' ? (
-              <EmbededVideo url={section.data as string} className="mb-6" />
+              <EmbededVideo
+                url={section.data as string}
+                className="mb-6 lg:w-4/5"
+              />
             ) : // Contenu de type info (dans un cadre bleu)
             section.type === 'info' ? (
               <InfoArticle texte={section.data as string} />
@@ -133,10 +135,7 @@ const Article = async ({params}: {params: {id: string}}) => {
         </Section>
       ))}
 
-      <Section
-        customBackground="#fff"
-        className="!flex-row flex-wrap justify-between gap-y-14"
-      >
+      <Section className="!flex-row flex-wrap justify-between gap-y-14">
         {data.prevId && (
           <a
             className="fr-link fr-icon-arrow-left-line fr-link--icon-left order-1"

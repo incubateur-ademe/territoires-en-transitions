@@ -24,11 +24,7 @@ const Introduction = ({description, logos}: IntroductionProps) => {
   }, [description]);
 
   return (
-    <Section
-      customBackground="#fff"
-      containerClassName="!pt-0 !pb-6"
-      className="article h-fit"
-    >
+    <Section containerClassName="!pt-0 !pb-6" className="article h-fit">
       <div className="h-fit flex flex-col md:block">
         {/* Logos de la collectivités */}
         {logos && (

@@ -33,11 +33,13 @@ const Accueil = async () => {
       <Informations
         titre={data.informations.titre}
         description={data.informations.description}
+        className={data.temoignages ? 'bg-primary-1' : '#fff'}
       />
 
       <Newsletter
         titre={data.newsletter.titre}
         description={data.newsletter.description}
+        className={data.temoignages ? '#fff' : 'bg-primary-1'}
       />
     </>
   ) : (

@@ -1,5 +1,4 @@
 import InfoSection from '@components/sections/InfoSection';
-import DocumentPicto from 'public/pictogrammes/DocumentPicto';
 
 type RessourcesProps = {
   description: string;
@@ -13,10 +12,20 @@ const Ressources = ({description, buttons}: RessourcesProps) => {
   return (
     <InfoSection
       content={description}
-      buttons={buttons.map(b => ({...b, title: b.titre, external: true}))}
-      pictogram={<DocumentPicto />}
-      customBackground="#6a6af4"
-      customTextStyle="text-white"
+      buttons={[
+        ...buttons.map(b => ({
+          ...b,
+          title: b.titre,
+          external: true,
+          tertiary: true,
+        })),
+        {
+          title: 'Lire les questions fréquentes',
+          href: '/faq',
+          tertiary: true,
+          className: '!bg-[#FFE8BD] hover:bg-[#FFE4A8]',
+        },
+      ]}
     />
   );
 };
