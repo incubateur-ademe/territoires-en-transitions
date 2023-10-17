@@ -157,7 +157,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
         <FormField label="Personne pilote">
           <PersonnePiloteDropdown
-            ficheId={fiche.id}
+            keysToInvalidate={[['fiche_action', fiche.id]]}
             personnes={fiche.pilotes}
             onSelect={pilotes => updateFiche({...fiche, pilotes})}
             isReadonly={isReadonly}
