@@ -44,6 +44,8 @@ jobs:
           +app-build
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+          --SENTRY_DSN=${{ env.SENTRY_DSN }}
+          --CRISP_WEBSITE_ID=${{ env.CRISP_WEBSITE_ID }}
 
       - name: Deploy app on Koyeb
         run: >
