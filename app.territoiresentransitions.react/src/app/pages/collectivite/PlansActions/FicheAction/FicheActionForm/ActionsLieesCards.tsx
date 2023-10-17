@@ -22,9 +22,8 @@ export const ActionsLieesCards = ({
   return actionsLiees.length > 0 ? (
     <div className="grid grid-cols-2 gap-6 mb-8">
       {actionsLiees.map(action => (
-        <div className="relative self-stretch">
+        <div className="relative self-stretch" key={action.action_id}>
           <ActionCard
-            key={action.action_id}
             openInNewTab
             link={makeCollectiviteTacheUrl({
               collectiviteId: collectiviteId,
