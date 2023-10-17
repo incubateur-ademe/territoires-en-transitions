@@ -675,10 +675,33 @@ site-deploy:
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
 
-app-deploy:
+app-deploy: ## Déploie le front dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
+
+app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
+    ARG --required KOYEB_API_KEY
+    LOCALLY
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g')
+    FROM +koyeb
+    IF [ "./koyeb apps list | grep test-app-$name" ]
+        RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
+        RUN /koyeb apps update test-app-$name/test-app-$name --docker $APP_IMG_NAME
+    ELSE
+        RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
+        RUN /koyeb apps init "test-app-$name" --docker "$APP_IMG_NAME" --type web --port 3000:http --route /:3000
+    END
+
+app-destroy-test: ## Supprime l'app de test
+    ARG --required KOYEB_API_KEY
+    LOCALLY
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g')
+    FROM +koyeb
+    IF [ "./koyeb apps list | grep test-app-$name" ]
+        RUN echo "Test app already deployed on Koyeb at test-app-$name, deleting..."
+        RUN /koyeb apps delete test-app-$name
+    END
 
 help: ## affiche ce message d'aide
     LOCALLY
