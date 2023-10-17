@@ -4,7 +4,7 @@ import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 import {SANS_STATUT, TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {ficheActionStatutOptions} from '../../FicheAction/data/options/listesStatiques';
-import FicheActionBadgeStatut from '../../FicheAction/FicheActionForm/FicheActionBadgeStatut';
+import BadgeStatut from '../../components/BadgeStatut';
 import {TFicheActionStatuts} from 'types/alias';
 
 const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
@@ -53,7 +53,7 @@ const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
               v === SANS_STATUT ? (
                 <span key={v}>Sans statut</span>
               ) : (
-                <FicheActionBadgeStatut key={v} statut={v} />
+                <BadgeStatut key={v} statut={v} small />
               )
             )}
           </div>
@@ -63,9 +63,7 @@ const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
             return <span>{option.label}</span>;
           }
           return (
-            <FicheActionBadgeStatut
-              statut={option.value as TFicheActionStatuts}
-            />
+            <BadgeStatut statut={option.value as TFicheActionStatuts} small />
           );
         }}
         placeholderText="Sélectionner des options"

@@ -5,6 +5,7 @@ import {SANS_PRIORITE, TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import {ficheActionNiveauPrioriteOptions} from '../../FicheAction/data/options/listesStatiques';
 import {TFicheActionNiveauxPriorite} from 'types/alias';
+import BadgePriorite from '../../components/BadgePriorite';
 
 const FiltrePriorites = ({filters, setFilters}: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select
@@ -52,6 +53,28 @@ const FiltrePriorites = ({filters, setFilters}: TFiltreProps) => {
         }
         options={options}
         onSelect={newValues => setFilters(selectPriorite(newValues))}
+        renderSelection={values => (
+          <div className="flex items-center flex-wrap gap-2">
+            {values.map(v =>
+              v === SANS_PRIORITE ? (
+                <span key={v}>Non priorisé</span>
+              ) : (
+                <BadgePriorite key={v} priorite={v} small />
+              )
+            )}
+          </div>
+        )}
+        renderOption={option => {
+          if (option.value === ITEM_ALL || option.value === SANS_PRIORITE) {
+            return <span>{option.label}</span>;
+          }
+          return (
+            <BadgePriorite
+              priorite={option.value as TFicheActionNiveauxPriorite}
+              small
+            />
+          );
+        }}
         placeholderText="Sélectionner des options"
         disabled={options.length === 0}
       />
