@@ -13,6 +13,7 @@ on:
 jobs:
   deploy-site:
     name: Déploie le site
+    run-name: Déploiement du site sur ${{ inputs.deploy_target }}
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -29,7 +30,7 @@ jobs:
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Build and push front deps image
-        run: > 
+        run: >
           earthly 
           --use-inline-cache --save-inline-cache --push 
           --platform=linux/amd64 
@@ -52,4 +53,3 @@ jobs:
           +site-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-
