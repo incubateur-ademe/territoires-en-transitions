@@ -1,4 +1,5 @@
 name: Déploiement à la demande de l'app
+run-name: Déploiement de l'app sur ${{ github.event.inputs.target }}
 
 on:
   workflow_dispatch:
