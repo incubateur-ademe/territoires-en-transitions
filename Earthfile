@@ -690,7 +690,9 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN /koyeb apps update test-app-$name/test-app-$name --docker $APP_IMG_NAME
     ELSE
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
-        RUN /koyeb apps init "test-app-$name" --docker "$APP_IMG_NAME" --type web --port 3000:http --route /:3000
+        RUN /koyeb apps init "test-app-$name" \
+         --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
+         --type web --port 3000:http --route /:3000 --env PORT=3000
     END
 
 app-destroy-test: ## Supprime l'app de test
@@ -698,6 +700,7 @@ app-destroy-test: ## Supprime l'app de test
     LOCALLY
     ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g' | head -c 12)
     FROM +koyeb
+    RUN ./koyeb apps list  # Le IF suivant ne fonctionne pas sans lister avant.
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, deleting..."
         RUN /koyeb apps delete test-app-$name
