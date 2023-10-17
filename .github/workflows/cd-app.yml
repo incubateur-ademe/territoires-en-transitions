@@ -53,6 +53,7 @@ jobs:
   deploy-app:
     name: Déploie l'app
     if: ${{ ! github.event.inputs.is-test-app == 'true' }}
+    needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -79,6 +80,7 @@ jobs:
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
+    needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
