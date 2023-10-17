@@ -1,5 +1,6 @@
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {Badge} from 'ui/shared/Badge';
+import FormField from 'ui/shared/form/FormField';
 import {referentielToName} from 'app/labels';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import IndicateurChart from '../charts/IndicateurChart';
@@ -39,12 +40,12 @@ export const IndicateurDetail = ({
         {
           /** actions liées */
           actionsLiees?.length ? (
-            <>
-              <p className="fr-mb-1w font-medium">
-                {actionsLiees.length > 1 ? 'Actions liées' : 'Action liée'}
-              </p>
+            <FormField
+              className="fr-mb-1w"
+              label={actionsLiees.length > 1 ? 'Actions liées' : 'Action liée'}
+            >
               <ActionsLieesCards actions={actionsLiees} />
-            </>
+            </FormField>
           ) : null
         }
         <FichesActionLiees definition={definition} />
