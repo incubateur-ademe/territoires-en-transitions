@@ -8,6 +8,7 @@ import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurReferentielDefinition} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {useIndicateurACompleter} from '../useIndicateurACompleter';
+import {IndicateurLinkedInfo} from './IndicateurLinkedInfo';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -36,7 +37,7 @@ export const IndicateurDetail = ({
       </div>
       <IndicateurValuesTabs definition={definition} />
       <div className="fr-mt-5w ">
-        {/** TODO: personne et direction pilote */}
+        <IndicateurLinkedInfo definition={definition} />
         {
           /** actions liées */
           actionsLiees?.length ? (

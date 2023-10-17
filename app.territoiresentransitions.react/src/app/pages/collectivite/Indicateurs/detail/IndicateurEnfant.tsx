@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import {TIndicateurReferentielDefinition} from '../types';
-import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {Badge} from 'ui/shared/Badge';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {useToggle} from 'ui/shared/useToggle';
@@ -12,6 +11,7 @@ import {useIndicateurACompleter} from '../useIndicateurACompleter';
 import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
+import {IndicateurLinkedInfo} from './IndicateurLinkedInfo';
 
 export const IndicateurEnfant = ({
   definition,
@@ -123,6 +123,7 @@ const IndicateurEnfantContent = ({
           <Spacer size={3} />
         )
       }
+      <IndicateurLinkedInfo definition={definition} />
       <FichesActionLiees definition={definition} />
     </div>
   );
