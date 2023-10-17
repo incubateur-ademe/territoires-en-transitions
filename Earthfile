@@ -270,9 +270,13 @@ app-build: ## construit l'image de l'app
     ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required API_URL
+    ARG CRISP_WEBSITE_ID
+    ARG SENTRY_DSN
     FROM +front-deps
     ENV REACT_APP_SUPABASE_URL=$API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
+    ENV REACT_APP_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+    ENV REACT_APP_SENTRY_DSN=$SENTRY_DSN
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
