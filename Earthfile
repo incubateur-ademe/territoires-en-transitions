@@ -523,7 +523,11 @@ BUILD_IF_NO_IMG:
     ELSE
         IF [ "$pull" = "yes" ]
             RUN echo "Image not found, trying to pull $REG_TARGET/$IMG_NAME:$IMG_TAG"
-            RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
+            IF [ "$push" = "yes" ]
+                RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly --push +$BUILD_TARGET
+            ELSE
+                RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
+            END
         ELSE
             RUN echo "Image not found, building +$BUILD_TARGET"
             IF [ "$push" = "yes" ]
