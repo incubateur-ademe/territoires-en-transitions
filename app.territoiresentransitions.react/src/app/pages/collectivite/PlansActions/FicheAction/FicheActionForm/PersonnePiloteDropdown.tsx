@@ -1,3 +1,4 @@
+import {QueryKey} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TOption} from 'ui/shared/select/commons';
 import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown';
@@ -8,14 +9,14 @@ import {useDeleteTag} from '../data/options/useTagDelete';
 import {useTagUpdate} from '../data/options/useTagUpdate';
 
 type Props = {
-  ficheId: number | null;
+  keysToInvalidate?: QueryKey[];
   personnes: Personne[] | null;
   onSelect: (personnes: Personne[]) => void;
   isReadonly: boolean;
 };
 
 const PersonnePiloteDropdown = ({
-  ficheId,
+  keysToInvalidate,
   personnes,
   onSelect,
   isReadonly,
@@ -27,13 +28,13 @@ const PersonnePiloteDropdown = ({
   const {mutate: updateTag} = useTagUpdate({
     key: ['personnes', collectivite_id],
     tagTableName: 'personne_tag',
-    keysToInvalidate: [['fiche_action', ficheId?.toString()]],
+    keysToInvalidate,
   });
 
   const {mutate: deleteTag} = useDeleteTag({
     key: ['personnes', collectivite_id],
     tagTableName: 'personne_tag',
-    keysToInvalidate: [['fiche_action', ficheId?.toString()]],
+    keysToInvalidate,
   });
 
   const options: TOption[] = personneListe
