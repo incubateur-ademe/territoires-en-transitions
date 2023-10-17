@@ -1,69 +1,62 @@
 import {Database} from 'types/database.types';
 import {NonNullableFields} from './utils';
 
-export type TFicheAction = Database['public']['Views']['fiches_action']['Row'];
-export type TFicheActionInsert =
-  Database['public']['Tables']['fiche_action']['Insert'];
-export type TFicheActionUpdate =
-  Database['public']['Tables']['fiche_action']['Update'];
+// Alias génériques sur le typage de la base
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+export type TablesInsert<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert'];
+export type TablesUpdate<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update'];
+export type Views<T extends keyof Database['public']['Views']> =
+  Database['public']['Views'][T]['Row'];
+export type Enums<T extends keyof Database['public']['Enums']> =
+  Database['public']['Enums'][T];
 
 export type TFlatAxe = Database['public']['CompositeTypes']['flat_axe_node'];
 
-export type TAxeRow = Database['public']['Tables']['axe']['Row'];
-export type TAxeInsert = Database['public']['Tables']['axe']['Insert'];
-export type TAxeUpdate = Database['public']['Tables']['axe']['Update'];
+export type TFicheAction = Views<'fiches_action'>;
+export type TFicheActionInsert = TablesInsert<'fiche_action'>;
+export type TFicheActionUpdate = TablesUpdate<'fiche_action'>;
 
-export type TPlanActionChemin =
-  Database['public']['Views']['plan_action_chemin']['Row'];
+export type TAxeRow = Tables<'axe'>;
+export type TAxeInsert = TablesInsert<'axe'>;
+export type TAxeUpdate = TablesUpdate<'axe'>;
 
-export type TPlanActionProfondeur =
-  Database['public']['Views']['plan_action_profondeur']['Row'];
+export type TPlanActionChemin = Views<'plan_action_chemin'>;
 
-export type TThematiqueRow = Database['public']['Tables']['thematique']['Row'];
-export type TThematiqueInsert =
-  Database['public']['Tables']['thematique']['Insert'];
+export type TPlanActionProfondeur = Views<'plan_action_profondeur'>;
 
-export type TSousThematiqueRow =
-  Database['public']['Tables']['sous_thematique']['Row'];
-export type TSousThematiqueInsert =
-  Database['public']['Tables']['sous_thematique']['Insert'];
+export type TThematiqueRow = Tables<'thematique'>;
+export type TThematiqueInsert = TablesInsert<'thematique'>;
 
-export type TFicheActionStructureRow =
-  Database['public']['Tables']['structure_tag']['Row'];
-export type TFicheActionStructureInsert =
-  Database['public']['Tables']['structure_tag']['Insert'];
+export type TSousThematiqueRow = Tables<'sous_thematique'>;
+export type TSousThematiqueInsert = TablesInsert<'sous_thematique'>;
 
-export type TFicheActionServicePiloteRow =
-  Database['public']['Tables']['service_tag']['Row'];
-export type TFicheActionServicePiloteInsert =
-  Database['public']['Tables']['service_tag']['Insert'];
+export type TFicheActionStructureRow = Tables<'structure_tag'>;
+export type TFicheActionStructureInsert = TablesInsert<'structure_tag'>;
 
-export type TFicheActionPersonnePiloteRow =
-  Database['public']['Tables']['personne_tag']['Row'];
-export type TFicheActionPersonnePiloteInsert =
-  Database['public']['Tables']['personne_tag']['Insert'];
+export type TFicheActionServicePiloteRow = Tables<'service_tag'>;
+export type TFicheActionServicePiloteInsert = TablesInsert<'service_tag'>;
 
-export type TPartenaireRow =
-  Database['public']['Tables']['partenaire_tag']['Row'];
-export type TPartenaireInsert =
-  Database['public']['Tables']['partenaire_tag']['Insert'];
+export type TFicheActionPersonnePiloteRow = Tables<'personne_tag'>;
+export type TFicheActionPersonnePiloteInsert = TablesInsert<'personne_tag'>;
 
-export type TFinanceurTagRow =
-  Database['public']['Tables']['financeur_tag']['Row'];
-export type TFinanceurTagInsert =
-  Database['public']['Tables']['financeur_tag']['Insert'];
+export type TPartenaireRow = Tables<'partenaire_tag'>;
+export type TPartenaireInsert = TablesInsert<'partenaire_tag'>;
 
-export type TAnnexeRow = Database['public']['Tables']['annexe']['Row'];
-export type TAnnexeInsert = Database['public']['Tables']['annexe']['Insert'];
+export type TFinanceurTagRow = Tables<'financeur_tag'>;
+export type TFinanceurTagInsert = TablesInsert<'financeur_tag'>;
 
-export type TActionRow = Database['public']['Tables']['action_relation']['Row'];
-export type TActionInsert =
-  Database['public']['Tables']['action_relation']['Insert'];
+export type TAnnexeRow = Tables<'annexe'>;
+export type TAnnexeInsert = TablesInsert<'annexe'>;
 
-export type TPersonneTagInsert =
-  Database['public']['Tables']['personne_tag']['Insert'];
+export type TActionRow = Tables<'action_relation'>;
+export type TActionInsert = TablesInsert<'action_relation'>;
 
-export type TFicheResume = Database['public']['Views']['fiche_resume']['Row'];
+export type TPersonneTagInsert = TablesInsert<'personne_tag'>;
+
+export type TFicheResume = Views<'fiche_resume'>;
 
 export type TPersonne = Database['public']['CompositeTypes']['personne'];
 export type TIndicateur =
@@ -71,33 +64,24 @@ export type TIndicateur =
 export type TFinanceurMontant =
   Database['public']['CompositeTypes']['financeur_montant'];
 
-export type TFicheActionCibles =
-  Database['public']['Enums']['fiche_action_cibles'];
+export type TFicheActionCibles = Enums<'fiche_action_cibles'>;
 export type TFicheActionNiveauxPriorite =
-  Database['public']['Enums']['fiche_action_niveaux_priorite'];
-export type TFicheActionPiliersECI =
-  Database['public']['Enums']['fiche_action_piliers_eci'];
+  Enums<'fiche_action_niveaux_priorite'>;
+export type TFicheActionPiliersECI = Enums<'fiche_action_piliers_eci'>;
 export type TFicheActionResultatsAttendus =
-  Database['public']['Enums']['fiche_action_resultats_attendus'];
-export type TFicheActionStatuts =
-  Database['public']['Enums']['fiche_action_statuts'];
-export type TFicheActionEcheances =
-  Database['public']['Enums']['fiche_action_echeances'];
+  Enums<'fiche_action_resultats_attendus'>;
+export type TFicheActionStatuts = Enums<'fiche_action_statuts'>;
+export type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
-export type TActionRelationInsert =
-  Database['public']['Tables']['action_relation']['Insert'];
+export type TActionRelationInsert = TablesInsert<'action_relation'>;
 
-export type TActionAvancement = Database['public']['Enums']['avancement'];
+export type TActionAvancement = Enums<'avancement'>;
 export type TActionAvancementExt = TActionAvancement | 'non_concerne';
 
-export type TActionStatutsRow = NonNullableFields<
-  Database['public']['Views']['action_statuts']['Row']
->;
+export type TActionStatutsRow = NonNullableFields<Views<'action_statuts'>>;
 
-export type TNomCollectivite = NonNullableFields<
-  Database['public']['Views']['named_collectivite']['Row']
->;
+export type TNomCollectivite = NonNullableFields<Views<'named_collectivite'>>;
 
-export type TNiveauAcces = Database['public']['Enums']['niveau_acces'];
+export type TNiveauAcces = Enums<'niveau_acces'>;
 
-export type TMembreFonction = Database['public']['Enums']['membre_fonction'];
+export type TMembreFonction = Enums<'membre_fonction'>;
