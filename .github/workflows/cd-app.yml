@@ -6,14 +6,17 @@ on:
     inputs:
       target:
         type: choice
-        description: Où déployer
+        description: Quel environnement ?
         options:
           - preprod
           - prod
+      is-test-app:
+        type: boolean
+        description: Application de test
 
 jobs:
-  deploy-app:
-    name: Déploie l'app
+  build-app:
+    name: Build l'app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -47,10 +50,54 @@ jobs:
           --SENTRY_DSN=${{ env.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ env.CRISP_WEBSITE_ID }}
 
+  deploy-app:
+    name: Déploie l'app
+    if: ${{ ! github.event.inputs.is-test-app == 'true' }}
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
       - name: Deploy app on Koyeb
         run: >
           earthly 
           --use-inline-cache 
           +app-deploy
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+
+  deploy-test-app:
+    name: Déploie l'app de test
+    if: ${{ github.event.inputs.is-test-app == 'true' }}
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Deploy test app on Koyeb
+        run: >
+          earthly 
+          --use-inline-cache 
+          +app-deploy-test
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
