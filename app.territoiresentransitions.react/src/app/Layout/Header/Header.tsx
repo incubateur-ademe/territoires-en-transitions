@@ -7,6 +7,9 @@ import {AccesRapide} from './AccesRapide';
 import {MaintenanceNotice} from './MaintenanceNotice';
 import ademeSrc from 'app/static/img/ademe.svg';
 
+/** Valeur de la hauteur sur header de l'application */
+export const appHeaderHeight = 183;
+
 /**
  * Affiche l'en-tête
  */
