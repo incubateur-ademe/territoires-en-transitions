@@ -14,6 +14,7 @@ import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {IndicateurLinkedInfo} from './detail/IndicateurLinkedInfo';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -79,6 +80,7 @@ const IndicateurPersonnaliseBase = ({
             onBlur={e => handleUpdate('description', e.target.value)}
           />
         </FormField>
+        <IndicateurLinkedInfo definition={definition} />
         <FichesActionLiees definition={definition} />
         <FormField label="Unité" className="fr-mt-3w fr-label">
           <InputControlled
