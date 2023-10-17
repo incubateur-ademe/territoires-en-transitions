@@ -5,8 +5,8 @@ import {format} from 'date-fns';
 
 import {FicheResume} from '../data/types';
 import {generateTitle} from '../data/utils';
-import FicheActionBadgeStatut from '../FicheActionForm/FicheActionBadgeStatut';
-import FicheActionBadgePriorite from '../FicheActionForm/FicheActionBadgePriorite';
+import BadgeStatut from '../../components/BadgeStatut';
+import BadgePriorite from '../../components/BadgePriorite';
 import Titre from './Titre';
 import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
@@ -135,14 +135,11 @@ const FicheActionCard = ({
             ficheAction.statut) && (
             <div className="flex items-center mb-3">
               {ficheAction.statut && (
-                <FicheActionBadgeStatut statut={ficheAction.statut} small />
+                <BadgeStatut statut={ficheAction.statut} />
               )}
               {ficheAction.niveau_priorite && (
                 <div className={classNames({'ml-4': ficheAction.statut})}>
-                  <FicheActionBadgePriorite
-                    priorite={ficheAction.niveau_priorite}
-                    small
-                  />
+                  <BadgePriorite priorite={ficheAction.niveau_priorite} />
                 </div>
               )}
               {ficheAction.date_fin_provisoire && (

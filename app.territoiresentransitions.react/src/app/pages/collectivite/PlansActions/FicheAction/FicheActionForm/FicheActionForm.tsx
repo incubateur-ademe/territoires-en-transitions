@@ -16,7 +16,7 @@ import {
 } from '../data/options/listesStatiques';
 import {FicheAction} from '../data/types';
 import {useEditFicheAction} from '../data/useUpsertFicheAction';
-import FicheActionBadgeStatut from './FicheActionBadgeStatut';
+import BadgeStatut from '../../components/BadgeStatut';
 import FicheActionFormBudgetInput from './FicheActionFormBudgetInput';
 import FicheActionFormDateInput from './FicheActionFormDateInput';
 import Section from './Section';
@@ -27,6 +27,7 @@ import PersonneReferenteDropdown from './PersonneReferenteDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
 import {
+  TFicheActionNiveauxPriorite,
   TFicheActionStatuts,
   TSousThematiqueRow,
   TThematiqueRow,
@@ -44,6 +45,7 @@ import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
 import IndicateursLies from './IndicateursLies';
 import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersoModal';
+import BadgePriorite from '../../components/BadgePriorite';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -287,10 +289,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               options={ficheActionStatutOptions}
               onSelect={value => updateFiche({...fiche, statut: value})}
               placeholderText="Sélectionnez une option"
-              renderSelection={v => <FicheActionBadgeStatut statut={v} />}
+              renderSelection={v => <BadgeStatut statut={v} small />}
               renderOption={option => (
-                <FicheActionBadgeStatut
+                <BadgeStatut
                   statut={option.value as TFicheActionStatuts}
+                  small
                 />
               )}
               disabled={isReadonly}
@@ -304,6 +307,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               onSelect={value =>
                 updateFiche({...fiche, niveau_priorite: value})
               }
+              renderSelection={v => <BadgePriorite priorite={v} small />}
+              renderOption={option => (
+                <BadgePriorite
+                  priorite={option.value as TFicheActionNiveauxPriorite}
+                  small
+                />
+              )}
               placeholderText="Sélectionnez une option"
               disabled={isReadonly}
             />

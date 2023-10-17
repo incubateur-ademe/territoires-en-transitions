@@ -1,4 +1,6 @@
 import classNames from 'classnames';
+
+import Badge from './Badge';
 import {TFicheActionStatuts} from 'types/alias';
 
 const statusToColor: Record<TFicheActionStatuts, string> = {
@@ -16,21 +18,16 @@ type Props = {
   small?: boolean;
 };
 
-const FicheActionBadgeStatut = ({className, statut, small}: Props) => {
+const BadgeStatut = ({className, statut, small}: Props) => {
   return (
-    <span
-      data-test="FicheActionBadgeStatut"
-      className={classNames(
-        className,
-        'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md',
-        {'!text-xs': small},
-        statusToColor[statut]
-      )}
+    <Badge
+      dataTest="FicheActionBadgeStatut"
       title="Statut"
-    >
-      {statut}
-    </span>
+      className={classNames(statusToColor[statut], className)}
+      label={statut}
+      small={small}
+    />
   );
 };
 
-export default FicheActionBadgeStatut;
+export default BadgeStatut;
