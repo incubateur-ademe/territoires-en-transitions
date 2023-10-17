@@ -5,11 +5,13 @@ import {Badge} from 'ui/shared/Badge';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {useToggle} from 'ui/shared/useToggle';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import {useIndicateurACompleter} from '../useIndicateurACompleter';
+import FormField from 'ui/shared/form/FormField';
+import {Spacer} from 'ui/dividers/Spacer';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
+import {useIndicateurACompleter} from '../useIndicateurACompleter';
 import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
-import {Spacer} from 'ui/dividers/Spacer';
+import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 
 export const IndicateurEnfant = ({
   definition,
@@ -91,7 +93,7 @@ const IndicateurEnfantContent = ({
   definition: TIndicateurReferentielDefinition;
   actionsLieesCommunes: string[];
 }) => {
-  //
+  // charge les actions liées à l'indicateur
   const actionsLiees = definition.actions
     ?.filter(action_id => !actionsLieesCommunes.includes(action_id))
     .map(id => ({id}));
@@ -107,14 +109,16 @@ const IndicateurEnfantContent = ({
       {
         /** actions liées */
         actionsLiees?.length ? (
-          <>
-            <p className="fr-mt-4w fr-mb-1w font-medium">
-              {actionsLiees.length > 1
+          <FormField
+            className="fr-mt-4w"
+            label={
+              actionsLiees.length > 1
                 ? 'Actions référentiel liées'
-                : 'Action référentiel liée'}
-            </p>
+                : 'Action référentiel liée'
+            }
+          >
             <ActionsLieesCards actions={actionsLiees} />
-          </>
+          </FormField>
         ) : (
           <Spacer size={3} />
         )
