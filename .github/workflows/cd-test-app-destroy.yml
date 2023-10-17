@@ -1,0 +1,30 @@
+name: Supprime l'app de test de la branche
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  destroy-test-app:
+    name: Supprime l'app de test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Deploy test app on Koyeb
+        run: >
+          earthly 
+          --use-inline-cache 
+          +app-destroy-test
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
