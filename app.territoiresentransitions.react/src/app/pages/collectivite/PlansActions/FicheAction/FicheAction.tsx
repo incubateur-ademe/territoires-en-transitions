@@ -8,6 +8,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import HeaderTitle from 'ui/HeaderTitle';
 import {useEditFicheAction} from './data/useUpsertFicheAction';
 import {FicheAction as FicheActionType} from './data/types';
+import HeaderFixed from '../../CollectivitePageLayout/HeaderFixed';
 
 type FicheActionProps = {
   fiche: FicheActionType;
@@ -19,10 +20,15 @@ export const FicheAction = ({fiche}: FicheActionProps) => {
   const isReadonly = collectivite?.readonly ?? false;
   return (
     <div data-test="FicheAction" className="w-full">
-      <HeaderTitle
-        titre={fiche.titre}
-        onUpdate={titre => updateFiche({...fiche, titre: titre})}
-        isReadonly={isReadonly}
+      <HeaderFixed
+        render={({isScrolled}) => (
+          <HeaderTitle
+            titre={fiche.titre}
+            onUpdate={titre => updateFiche({...fiche, titre: titre})}
+            isScrolled={isScrolled}
+            isReadonly={isReadonly}
+          />
+        )}
       />
       <div className="mx-auto px-10">
         <FicheActionHeader fiche={fiche} isReadonly={isReadonly} />
