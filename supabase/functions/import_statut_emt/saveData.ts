@@ -29,6 +29,7 @@ export const commentaire = async(
         }
     }
     commentaireToSave.modified_by = tetId;
+    commentaireToSave.commentaire = 'Import EMT: ' + commentaireToSave.commentaire;
 
     const { error, data } = await supabaseClient.from('action_commentaire').upsert(commentaireToSave);
     if (error) {
@@ -38,7 +39,7 @@ export const commentaire = async(
 }
 
 /**
- * Sauvegarde un commentaire
+ * Sauvegarde un statut
  * @param supabaseClient
  * @param collectivite_id collectivité concernée
  * @param action_id action concernée
