@@ -48,7 +48,7 @@ const ActionJustification = ({
             collectivite_id: payload.collectivite_id,
             action_id: payload.action_id,
             texte: payload.commentaire,
-            modified_at: new Date().toLocaleDateString(),
+            modified_at: new Date().toDateString(),
           };
           onSave ? onSave(savedData) : saveActionJustification(savedData);
         }}

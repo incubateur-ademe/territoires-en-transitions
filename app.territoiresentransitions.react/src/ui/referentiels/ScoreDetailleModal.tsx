@@ -79,28 +79,28 @@ const ScoreDetailleModal = ({
 
             {/* Score automatique */}
             {isScorePerso &&
-              scores &&
-              scores.avancementDetaille &&
-              scores.scoreMax && (
-                <div className="flex items-start mt-2 mb-6">
-                  <p className="mb-0 text-sm mr-4">Score automatique</p>
-                  <ProgressBarWithTooltip
-                    score={
-                      scores.avancementDetaille?.map((a, idx) => ({
-                        value: a,
-                        label: avancementToLabel[getStatusFromIndex(idx)],
-                        color: actionAvancementColors[getStatusFromIndex(idx)],
-                      })) ?? []
-                    }
-                    total={scores.scoreMax ?? 0}
-                    defaultScore={{
-                      label: avancementToLabel.non_renseigne,
-                      color: actionAvancementColors.non_renseigne,
-                    }}
-                    valueToDisplay={avancementToLabel.fait}
-                  />
-                </div>
-              )}
+            scores &&
+            scores.avancementDetaille &&
+            scores.scoreMax ? (
+              <div className="flex items-start mt-2 mb-6">
+                <p className="mb-0 text-sm mr-4">Score automatique</p>
+                <ProgressBarWithTooltip
+                  score={
+                    scores.avancementDetaille?.map((a, idx) => ({
+                      value: a,
+                      label: avancementToLabel[getStatusFromIndex(idx)],
+                      color: actionAvancementColors[getStatusFromIndex(idx)],
+                    })) ?? []
+                  }
+                  total={scores.scoreMax ?? 0}
+                  defaultScore={{
+                    label: avancementToLabel.non_renseigne,
+                    color: actionAvancementColors.non_renseigne,
+                  }}
+                  valueToDisplay={avancementToLabel.fait}
+                />
+              </div>
+            ) : null}
 
             <hr className="p-1" />
 
