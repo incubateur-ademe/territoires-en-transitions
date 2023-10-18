@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import { getSupabaseClient } from "../_shared/getSupabaseClient.ts";
+import {
+  getSupabaseClient,
+  getSupabaseClientWithServiceRole,
+} from '../_shared/getSupabaseClient.ts';
 import { XLSXToPlan } from "./importXLSX.ts";
 import * as xlsx from "https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs";
 import * as cptable from "https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs";
@@ -16,6 +19,14 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (
+    req.headers.get('authorization') !==
+    `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+  ) {
+    // Seule la service key permet d'exécuter cette fonction.
+    return new Response('Execute access forbidden', { status: 403 });
+  }
+
   const data = await req.formData();
   const planId = data.get("planId") as string;
   const planNom = data.get("planNom") as string;
@@ -25,7 +36,7 @@ serve(async (req) => {
   const workbook = xlsx.read(await file.arrayBuffer(), { type: "array" });
 
   try {
-    const supabaseClient = getSupabaseClient(req);
+    const supabaseClient = getSupabaseClientWithServiceRole();
     const res = await XLSXToPlan(
       supabaseClient,
       workbook,
