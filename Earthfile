@@ -384,6 +384,7 @@ api-test-build:
     FROM denoland/deno
     ENV SUPABASE_URL
     ENV SUPABASE_KEY
+    ENV SERVICE_ROLE_KEY
     WORKDIR tests
     COPY ./api_tests .
     RUN deno cache tests/base/smoke.test.ts
@@ -404,6 +405,7 @@ api-test:
               --name api_test_tet \
               --network $network \
               --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+              --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
               --env SUPABASE_URL=$API_URL \
               api-test:latest test -A tests/$test/*.test.ts --location 'http://localhost'
     END
