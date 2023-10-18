@@ -687,7 +687,7 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
     FROM +koyeb
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
-        RUN /koyeb apps update test-app-$name/test-app-$name --docker $APP_IMG_NAME
+        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME
     ELSE
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
