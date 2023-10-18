@@ -54,7 +54,6 @@ const LineChart = (props: LineChartProps) => {
         format: value => Number(value).toLocaleString('fr'),
       }}
       pointSize={3}
-      pointColor={{from: 'serieColor'}}
       pointBorderWidth={4}
       pointBorderColor={{from: 'serieColor'}}
       pointLabelYOffset={-12}
