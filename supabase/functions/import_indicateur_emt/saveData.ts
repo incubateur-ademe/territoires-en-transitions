@@ -17,15 +17,14 @@ export const resultat = async(
 ):
     Promise<boolean> => {
 
-    const indicateurToSave : Database["public"]["Tables"]["indicateur_resultat_import"]["Insert"] = {
+    const indicateurToSave : Database["public"]["Tables"]["indicateur_resultat"]["Insert"] = {
         indicateur_id: indicateur_id,
         collectivite_id: collectivite_id,
         annee : annee,
         valeur : valeur,
-        source : 'import EMT'
     }
 
-    const { error, data } = await supabaseClient.from('indicateur_resultat_import').upsert(indicateurToSave);
+    const { error, data } = await supabaseClient.from('indicateur_resultat').upsert(indicateurToSave);
     if (error) {
         throw new Error(error.message);
     }
@@ -66,6 +65,7 @@ export const commentaire = async(
         }
     }
     commentaireToSave.modified_by = tetId;
+    commentaireToSave.commentaire = 'Import EMT: ' + commentaireToSave.commentaire
 
     const { error, data } = await supabaseClient.from('indicateur_resultat_commentaire').upsert(commentaireToSave);
     if (error) {
