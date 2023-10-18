@@ -536,3 +536,5 @@ site/labellisation [site/labellisation@v2.69.0] 2023-11-02T14:12:40Z Florian <fl
 collectivite/collectivite_test 2023-10-26T09:18:21Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la suppression d'une collectivité test
 collectivite/toutes_les_collectivites [collectivite/toutes_les_collectivites@v2.67.0] 2023-10-26T09:32:25Z Amandine Jacquelin <conta@LanceLibre> # Enlève les collectivités tests de collectivite_card
 plan_action/plan_action [plan_action/plan_action@v2.67.0] 2023-10-26T15:41:19Z Amandine Jacquelin <conta@LanceLibre> # Ajoute service role à delete_axe_all
+
+taxonomie/thematique 2023-10-30T08:46:50Z Florian <florian@derfurth.com> # Les thématiques partagées entre fiches action et indicateurs
