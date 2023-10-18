@@ -4,8 +4,10 @@ import {TIndicateurDefinition} from '../types';
 import {useIndicateurResume} from './useIndicateurResume';
 import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
 import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
+import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
 import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/PersonnePiloteDropdown';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
+import ThematiquesDropdown from '../../PlansActions/FicheAction/FicheActionForm/ThematiquesDropdown';
 
 export type TIndicateurLinkedInfoProps = {
   definition: TIndicateurDefinition;
@@ -25,6 +27,8 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
     useUpsertIndicateurPilote(definition);
   const {mutate: upsertIndicateurServicePilote} =
     useUpsertIndicateurServicePilote(definition);
+  const {mutate: upsertIndicateurPersoThematique} =
+    useUpsertIndicateurPersoThematique(definition);
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
@@ -51,6 +55,16 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
           isReadonly={isReadonly}
         />
       </FormField>
+      {/** Thématiques */}
+      {definition.isPerso && (
+        <FormField className="fr-mt-4w" label="Thématique">
+          <ThematiquesDropdown
+            thematiques={resume?.thematiques || []}
+            onSelect={upsertIndicateurPersoThematique}
+            isReadonly={isReadonly}
+          />
+        </FormField>
+      )}
     </>
   );
 };
