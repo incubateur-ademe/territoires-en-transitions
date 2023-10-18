@@ -24,5 +24,6 @@ module.exports = defineConfig({
     setupNodeEvents,
     // et des commandes personnalisées
     supportFile: 'cypress/support/index.js',
+    scrollBehavior: 'center',
   },
 });
