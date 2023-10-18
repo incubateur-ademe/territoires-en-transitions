@@ -1,10 +1,11 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import FormField from 'ui/shared/form/FormField';
-import StructurePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/StructurePiloteDropdown';
 import {TIndicateurDefinition} from '../types';
 import {useIndicateurResume} from './useIndicateurResume';
 import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
+import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
 import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/PersonnePiloteDropdown';
+import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
 
 export type TIndicateurLinkedInfoProps = {
   definition: TIndicateurDefinition;
@@ -22,6 +23,8 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
   // fonctions de mise à jour des données
   const {mutate: upsertIndicateurPilote} =
     useUpsertIndicateurPilote(definition);
+  const {mutate: upsertIndicateurServicePilote} =
+    useUpsertIndicateurServicePilote(definition);
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
@@ -29,14 +32,6 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
 
   return (
     <>
-      {/** structures pilotes */}
-      <FormField className="fr-mt-4w" label="Structure pilote">
-        <StructurePiloteDropdown
-          structures={resume?.services || []}
-          onSelect={structures => console.log(structures)}
-          isReadonly={isReadonly}
-        />
-      </FormField>
       {/** personne pilote */}
       <FormField className="fr-mt-4w" label="Personne pilote">
         <PersonnePiloteDropdown
@@ -44,7 +39,15 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
             ['indicateur_resume', collectivite.collectivite_id, definition.id],
           ]}
           personnes={resume?.pilotes || []}
-          onSelect={pilotes => upsertIndicateurPilote(pilotes)}
+          onSelect={upsertIndicateurPilote}
+          isReadonly={isReadonly}
+        />
+      </FormField>
+      {/** services pilotes */}
+      <FormField className="fr-mt-4w" label="Direction ou service pilote">
+        <ServicePiloteDropdown
+          services={resume?.services || []}
+          onSelect={upsertIndicateurServicePilote}
           isReadonly={isReadonly}
         />
       </FormField>
