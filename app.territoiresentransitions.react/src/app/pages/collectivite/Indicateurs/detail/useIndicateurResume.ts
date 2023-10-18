@@ -3,11 +3,9 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Tables, Views} from 'types/alias';
 
-type TFetchedData = Pick<
-  Views<'indicateur_resume'>,
-  'pilotes' | 'thematiques'
-> & {
+type TFetchedData = Pick<Views<'indicateur_resume'>, 'pilotes'> & {
   services: Tables<'service_tag'>[] | null;
+  thematiques: Tables<'thematique'>[] | null;
 };
 
 /** Charge les informations complémentaires (pilotes, etc.) associées à un indicateur */
