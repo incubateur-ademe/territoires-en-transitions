@@ -1,6 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import {getSupabaseClient, TSupabaseClient} from "../_shared/getSupabaseClient.ts";
+import {
+  getSupabaseClient,
+  getSupabaseClientWithServiceRole,
+  TSupabaseClient,
+} from '../_shared/getSupabaseClient.ts';
 import * as xlsx from "https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs";
 import * as cptable from "https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs";
 import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js';
@@ -22,8 +26,15 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+  if (
+    req.headers.get('authorization') !==
+    `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+  ) {
+    // Seule la service key permet d'exécuter cette fonction.
+    return new Response('Execute access forbidden', { status: 403 });
+  }
   try {
-    const supabaseClient = getSupabaseClient(req);
+    const supabaseClient = getSupabaseClientWithServiceRole();
     // Récupère les paramètres de la fonction : collectivite_id, file et test
     const data = await req.formData();
     const collectivite_id = parseInt(data.get("collectivite_id") as string);
