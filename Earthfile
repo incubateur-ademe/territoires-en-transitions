@@ -277,7 +277,7 @@ app-build: ## construit l'image de l'app
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV REACT_APP_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
     ENV REACT_APP_SENTRY_DSN=$SENTRY_DSN
-    LABEL org.opencontainers.image.description "Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
+    LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
