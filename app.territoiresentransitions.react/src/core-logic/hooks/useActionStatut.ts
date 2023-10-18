@@ -40,13 +40,16 @@ export const useTasksStatus = (tasksIds: string[]) => {
   );
 
   let tasksStatus: {
-    [key: string]: TActionAvancement;
+    [key: string]: {avancement: TActionAvancement; concerne: boolean};
   } = {};
 
   tasksIds.forEach(taskId => {
     const task = data?.find(action => action.action_id === taskId);
     if (task !== undefined)
-      tasksStatus = {...tasksStatus, [taskId]: task.avancement};
+      tasksStatus = {
+        ...tasksStatus,
+        [taskId]: {avancement: task.avancement, concerne: task.concerne},
+      };
   });
 
   return {tasksStatus, isLoading};
