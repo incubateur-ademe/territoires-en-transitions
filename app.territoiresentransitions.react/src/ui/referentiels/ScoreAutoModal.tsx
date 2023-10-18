@@ -212,7 +212,7 @@ const ScoreAutoModal = ({
           <>
             <h4>Détailler l'avancement : {action.id.split('_')[1]}</h4>
 
-            {scores && scores.scoreMax && localAvancement && (
+            {scores && scores.scoreMax && localAvancement ? (
               <div className="flex items-start mt-2 mb-6">
                 <p className="mb-0 text-sm mr-4">
                   Score {action.referentiel === 'cae' ? 'automatique' : ''}
@@ -233,7 +233,7 @@ const ScoreAutoModal = ({
                   valueToDisplay={avancementToLabel.fait}
                 />
               </div>
-            )}
+            ) : null}
 
             <hr className="p-1" />
 
