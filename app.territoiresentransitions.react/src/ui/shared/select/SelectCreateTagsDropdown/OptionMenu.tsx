@@ -63,8 +63,8 @@ const OptionMenu = ({option, onDeleteClick, onUpdateTagName, close}: Props) => {
           return (
             <>
               <p id={descriptionId} className="mt-2">
-                Souhaitez-vous vraiment supprimer cette option pour toutes les
-                fiches action de votre collectivité ?
+                Souhaitez-vous vraiment supprimer cette option de votre
+                collectivité ?
               </p>
               <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline">
                 <button
