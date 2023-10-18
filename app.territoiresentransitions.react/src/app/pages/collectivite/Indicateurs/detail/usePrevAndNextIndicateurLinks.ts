@@ -46,7 +46,7 @@ export const usePrevAndNextIndicateurLinks = () => {
 
   // index de l'indicateur courante
   const currentIndicateurIndex = definitions.findIndex(
-    ({id}) => id === indicateurId
+    ({id}) => id.toString() === indicateurId
   );
 
   // indicateur précédent
