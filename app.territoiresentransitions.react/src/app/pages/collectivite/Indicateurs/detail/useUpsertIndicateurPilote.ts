@@ -8,113 +8,94 @@ import {TIndicateurDefinition} from '../types';
 export const useUpsertIndicateurPilote = (
   definition: TIndicateurDefinition
 ) => {
-  const {id, isPerso} = definition;
-
-  const upsertIndicateurPredefiniPilote = useUpsertIndicateurPredefiniPilote(
-    id as string
-  );
-  const upsertIndicateurPersoPilote = useUpsertIndicateurPersoPilote(
-    id as number
-  );
-  return isPerso
-    ? upsertIndicateurPersoPilote
-    : upsertIndicateurPredefiniPilote;
-};
-
-/** Met à jour les personnes pilotes d'un indicateur prédéfini */
-const useUpsertIndicateurPredefiniPilote = (indicateur_id: string) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
 
+  const {id: indicateur_id, isPerso} = definition;
+  const table = isPerso
+    ? 'indicateur_personnalise_pilote'
+    : 'indicateur_pilote';
+
   return useMutation({
-    mutationKey: `upsert_indicateur_pilote`,
+    mutationKey: `upsert_${table}`,
     mutationFn: async (variables: Personne[]) => {
       if (!collectivite_id || !indicateur_id) return;
 
-      // supprime les ref. vers les users ou tags qui ne sont plus associés à l'indicateur
-      const {user_ids, tag_ids, somethingToRemove} = toRemove(variables);
-      if (somethingToRemove) {
-        await supabaseClient
-          .from('indicateur_pilote')
-          .delete()
-          .eq('collectivite_id', collectivite_id)
-          .eq('indicateur_id', indicateur_id)
-          .or(`user_id.not.in.(${user_ids}), tag_id.not.in.(${tag_ids})`);
+      // supprime les éventuelles ref. vers les users ou tags qui ne sont plus associés à l'indicateur
+      const {userIds, tagIds, tagsToAdd} = splitTagsAndUsers(variables);
+      const query = supabaseClient
+        .from(table)
+        .delete()
+        .eq('indicateur_id', indicateur_id)
+        .or(
+          `user_id.not.in.(${userIds.join(',')}), tag_id.not.in.(${tagIds.join(
+            ','
+          )})`
+        );
+      if (!isPerso) {
+        query.eq('collectivite_id', collectivite_id);
       }
+      await query;
 
-      // et ajoute les nouvelles entrées
-      return supabaseClient.from('indicateur_pilote').upsert(
-        variables.map(({user_id, tag_id}) => ({
-          user_id,
-          tag_id,
-          collectivite_id,
-          indicateur_id,
-        })),
-        {onConflict: 'collectivite_id,indicateur_id,user_id,tag_id'}
+      // ajoute les éventuels nouveaux tags
+      const {data: newTags} = await supabaseClient
+        .from('personne_tag')
+        .insert(tagsToAdd.map(t => ({...t, collectivite_id})))
+        .select('id');
+
+      // rassemble les ids des nouveaux tags avec les autres ids (users et tags)
+      const newTagIds = newTags?.map(({id}) => id) || [];
+      const merged = [
+        ...userIds.map(user_id => ({user_id, tag_id: null})),
+        ...tagIds.concat(newTagIds).map(tag_id => ({user_id: null, tag_id})),
+      ].map(p =>
+        // et ajoute l'id de l'indicateur (et de la collectivité si nécessaire)
+        isPerso ? {...p, indicateur_id} : {...p, collectivite_id, indicateur_id}
       );
+
+      // ajoute les nouvelles entrées si elles n'existent pas déjà
+      return supabaseClient.from(table).upsert(merged, {
+        onConflict: `${
+          isPerso ? '' : 'collectivite_id,'
+        }indicateur_id,user_id,tag_id`,
+      });
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries([
         'indicateur_resume',
         collectivite_id,
         indicateur_id,
       ]);
-    },
-  });
-};
-
-/** Met à jour les personnes pilotes d'un indicateur */
-const useUpsertIndicateurPersoPilote = (indicateur_id: number) => {
-  const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
-
-  return useMutation({
-    mutationKey: `indicateur_personnalise_pilote`,
-    mutationFn: async (variables: Personne[]) => {
-      if (isNaN(indicateur_id)) return;
-
-      // supprime les ref. vers les users ou tags qui ne sont plus associés à l'indicateur
-      const {user_ids, tag_ids, somethingToRemove} = toRemove(variables);
-      if (somethingToRemove) {
-        await supabaseClient
-          .from('indicateur_personnalise_pilote')
-          .delete()
-          .eq('indicateur_id', indicateur_id)
-          .or(`user_id.not.in.(${user_ids}), tag_id.not.in.(${tag_ids})`);
+      // si on a ajouté un tag il faut aussi rafraichir la liste déroulante
+      const {tagsToAdd} = splitTagsAndUsers(variables);
+      if (tagsToAdd.length) {
+        queryClient.invalidateQueries(['personnes', collectivite_id]);
       }
-
-      // et ajoute les nouvelles entrées
-      return supabaseClient.from('indicateur_personnalise_pilote').upsert(
-        variables.map(({user_id, tag_id}) => ({
-          user_id,
-          tag_id,
-          indicateur_id,
-        })),
-        {onConflict: 'indicateur_id,user_id,tag_id'}
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries([
-        'indicateur_resume',
-        collectivite_id,
-        indicateur_id,
-      ]);
     },
   });
 };
 
-const toRemove = (variables: Personne[]) => {
-  const user_ids = variables
-    .map(({user_id}) => user_id)
-    .filter(Boolean)
-    .join(',');
-  const tag_ids = variables
-    .map(({tag_id}) => tag_id)
-    .filter(Boolean)
-    .join(',');
-  return {
-    user_ids,
-    tag_ids,
-    somethingToRemove: user_ids.length + tag_ids.length > 0,
-  };
-};
+// sépare les id d'utilisateurs, les ids de tags et les noms des tags à ajouter
+const splitTagsAndUsers = (variables: Personne[]) =>
+  variables.reduce(
+    (res, {user_id, tag_id, nom}) => {
+      if (user_id) {
+        res.userIds.push(user_id);
+      } else if (typeof tag_id === 'number') {
+        res.tagIds.push(tag_id);
+        return res;
+      } else {
+        const n = nom?.trim();
+        if (n) {
+          res.tagsToAdd.push({nom: n});
+        }
+      }
+      return res;
+    },
+    {
+      userIds: [],
+      tagIds: [],
+      tagsToAdd: [],
+    } as {userIds: string[]; tagIds: number[]; tagsToAdd: {nom: string}[]}
+  );
