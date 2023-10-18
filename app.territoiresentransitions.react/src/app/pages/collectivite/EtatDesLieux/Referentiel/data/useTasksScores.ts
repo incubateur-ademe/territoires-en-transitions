@@ -7,22 +7,23 @@ export const useTasksScoreRepartition = (actionId: string) => {
   const tasksScores = scores[referentielId(actionId)].filter(
     act => act.action_id.includes(actionId) && act.action_id !== actionId
   );
+  const subActionScore = scores[referentielId(actionId)].filter(
+    act => act.action_id === actionId
+  );
 
   let scoreFait = 0;
   let scoreProgramme = 0;
   let scorePasFait = 0;
-  let scoreMax = 0;
 
   tasksScores.forEach(task => {
     scoreFait += task.point_fait;
     scoreProgramme += task.point_programme;
     scorePasFait += task.point_pas_fait;
-    scoreMax += task.point_potentiel;
   });
 
   return {
     tasksScores,
     avancementDetaille: [scoreFait, scoreProgramme, scorePasFait],
-    scoreMax,
+    scoreMax: subActionScore[0].point_potentiel,
   };
 };

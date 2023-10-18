@@ -1,17 +1,12 @@
-import {avancementToLabel} from 'app/labels';
 import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
-import {useTasksScoreRepartition} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
 import SubActionTasksList from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/SubActionTasksList';
-import {actionAvancementColors} from 'app/theme';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
 import {useTasksStatus} from 'core-logic/hooks/useActionStatut';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {ActionScore} from 'types/ClientScore';
-import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
+import {TActionAvancement} from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {StatusToSavePayload} from './ActionStatusDropdown';
-import {getStatusFromIndex} from './utils';
 
 /**
  * Vérifie pour chaque tâche de la sous-action le statut
@@ -21,12 +16,7 @@ import {getStatusFromIndex} from './utils';
 const isCustomScoreGranted = (
   tasks: ActionDefinitionSummary[],
   tasksStatus: {
-    [key: string]:
-      | 'fait'
-      | 'pas_fait'
-      | 'programme'
-      | 'non_renseigne'
-      | 'detaille';
+    [key: string]: {avancement: TActionAvancement; concerne: boolean};
   },
   localStatus: {
     [key: string]: StatusToSavePayload;
@@ -35,7 +25,8 @@ const isCustomScoreGranted = (
   const isGranted = tasks.reduce((result, currTask) => {
     if (
       (!!tasksStatus[currTask.id] &&
-        tasksStatus[currTask.id] === 'non_renseigne') ||
+        tasksStatus[currTask.id].avancement === 'non_renseigne' &&
+        tasksStatus[currTask.id].concerne) ||
       !tasksStatus[currTask.id]
     ) {
       // Si la tâche est à 'non renseigné' ou n'a pas de statut attribué
@@ -61,40 +52,6 @@ const isCustomScoreGranted = (
   return isGranted;
 };
 
-/**
- * Calcul pour une tâche donnée du nouveau score détaillé
- * en fonction du statut choisi dans la modale
- */
-const getNewTaskScores = (task: ActionScore, payload: StatusToSavePayload) => {
-  let taskScores = {
-    point_fait: 0,
-    point_programme: 0,
-    point_pas_fait: 0,
-  };
-
-  switch (payload.avancement) {
-    case 'fait':
-    case 'programme':
-    case 'pas_fait':
-      taskScores[`point_${payload.avancement}`] = task.point_potentiel;
-      break;
-    case 'detaille':
-      if (payload.avancementDetaille) {
-        taskScores.point_fait =
-          task.point_potentiel * payload.avancementDetaille[0];
-        taskScores.point_programme =
-          task.point_potentiel * payload.avancementDetaille[1];
-        taskScores.point_pas_fait =
-          task.point_potentiel * payload.avancementDetaille[2];
-      }
-      break;
-    default:
-      break;
-  }
-
-  return taskScores;
-};
-
 type ScoreAutoModalProps = {
   action: ActionDefinitionSummary;
   actionScores: {[actionId: string]: SuiviScoreRow};
@@ -113,24 +70,12 @@ const ScoreAutoModal = ({
   onOpenScorePerso,
 }: ScoreAutoModalProps): JSX.Element => {
   const tasks = useActionSummaryChildren(action);
-  const scores = useTasksScoreRepartition(action.id);
 
   const {tasksStatus} = useTasksStatus(tasks.map(task => task.id));
 
   const [localStatus, setLocalStatus] = useState<{
     [key: string]: StatusToSavePayload;
   }>({});
-  const [localTasksScores, setLocalTasksScores] = useState<{
-    [key: string]: {
-      point_fait: number;
-      point_programme: number;
-      point_pas_fait: number;
-    };
-  }>({});
-  const [localAvancement, setLocalAvancement] = useState(
-    scores.avancementDetaille
-  );
-
   const handleChangeStatus = (payload: StatusToSavePayload) => {
     setLocalStatus(prevState => ({
       ...prevState,
@@ -141,50 +86,6 @@ const ScoreAutoModal = ({
         avancementDetaille: payload.avancementDetaille,
       },
     }));
-
-    // Calcul de la jauge de score auto en fonction
-    // des modifications faites dans la modale
-    // en passant en revue toutes les tâches de la sous-action
-    let scoreFait = 0;
-    let scoreProgramme = 0;
-    let scorePasFait = 0;
-
-    scores.tasksScores.forEach(task => {
-      if (
-        task.action_id !== payload.actionId &&
-        !localTasksScores[task.action_id]
-      ) {
-        // La tâche n'est pas celle modifiée dans la payload
-        // et n'a pas été modifiée dans la modale
-        // -> score stocké en base
-        scoreFait += task.point_fait;
-        scoreProgramme += task.point_programme;
-        scorePasFait += task.point_pas_fait;
-      } else if (
-        task.action_id !== payload.actionId &&
-        localTasksScores[task.action_id]
-      ) {
-        // La tâche n'est pas celle modifiée dans la payload
-        // mais a été modifiée dans la modale
-        // -> score stocké localement
-        scoreFait += localTasksScores[task.action_id].point_fait;
-        scoreProgramme += localTasksScores[task.action_id].point_programme;
-        scorePasFait += localTasksScores[task.action_id].point_pas_fait;
-      } else {
-        // La tâche est celle modifiée dans la payload
-        // -> calcul du nouveau score de la tâche
-        const newScores = getNewTaskScores(task, payload);
-        scoreFait += newScores.point_fait;
-        scoreProgramme += newScores.point_programme;
-        scorePasFait += newScores.point_pas_fait;
-        setLocalTasksScores(prevState => ({
-          ...prevState,
-          [task.action_id]: {...newScores},
-        }));
-      }
-    });
-
-    setLocalAvancement([scoreFait, scoreProgramme, scorePasFait]);
   };
 
   const handleSaveScoreAuto = () => {
@@ -211,29 +112,6 @@ const ScoreAutoModal = ({
         return (
           <>
             <h4>Détailler l'avancement : {action.id.split('_')[1]}</h4>
-
-            {scores && scores.scoreMax && localAvancement ? (
-              <div className="flex items-start mt-2 mb-6">
-                <p className="mb-0 text-sm mr-4">
-                  Score {action.referentiel === 'cae' ? 'automatique' : ''}
-                </p>
-                <ProgressBarWithTooltip
-                  score={
-                    localAvancement?.map((a, idx) => ({
-                      value: a,
-                      label: avancementToLabel[getStatusFromIndex(idx)],
-                      color: actionAvancementColors[getStatusFromIndex(idx)],
-                    })) ?? []
-                  }
-                  total={scores.scoreMax ?? 0}
-                  defaultScore={{
-                    label: avancementToLabel.non_renseigne,
-                    color: actionAvancementColors.non_renseigne,
-                  }}
-                  valueToDisplay={avancementToLabel.fait}
-                />
-              </div>
-            ) : null}
 
             <hr className="p-1" />
 

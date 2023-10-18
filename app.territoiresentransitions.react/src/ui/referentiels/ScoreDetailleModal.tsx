@@ -80,6 +80,7 @@ const ScoreDetailleModal = ({
             {/* Score automatique */}
             {isScorePerso &&
             scores &&
+            scores.tasksScores.filter(task => task.concerne).length &&
             scores.avancementDetaille &&
             scores.scoreMax ? (
               <div className="flex items-start mt-2 mb-6">
