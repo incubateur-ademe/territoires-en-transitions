@@ -76,8 +76,8 @@ Deno.test("Envoyer un plan d'action avec fetch", dirtyOptions, async () => {
 
   const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/import_plan_action`;
   const headers = {
-    apikey: Deno.env.get("SERVICE_ROLE_KEY")!,
-    Authorization: `Bearer ${Deno.env.get("SERVICE_ROLE_KEY")}`,
+    apikey: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
   };
   const path = "./ressources/Plan_nouveau.xlsx";
 
