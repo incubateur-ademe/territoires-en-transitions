@@ -519,3 +519,6 @@ plan_action/fiches [plan_action/fiches@v2.65.0] 2023-09-28T14:25:24Z Amandine Ja
 
 automatisation/crm [automatisation/crm@v2.66.0] 2023-10-23T09:20:57Z Florian <florian@derfurth.com> # Ajoute les dernières infos de labellisation à la vue collectivités du CRM
 @v2.67.0 2023-10-23T15:01:17Z Florian <florian@derfurth.com> # Envoie les infos de labellisation au CRM
+
+collectivite/identite [collectivite/identite@v2.66.0] 2023-10-19T13:41:00Z Amandine Jacquelin <conta@LanceLibre> # Ajoute métropole à l'identité
+evaluation/seuils_de_population [evaluation/seuils_de_population@v2.66.0] 2023-10-19T14:20:50Z Amandine Jacquelin <conta@LanceLibre> # Ajout seuil plus_de_20000

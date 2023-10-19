@@ -9,9 +9,10 @@ IdentitePopulationOption = Literal[
     "moins_de_20000",
     "moins_de_50000",
     "moins_de_100000",
+    "plus_de_20000",
     "plus_de_100000",
 ]
-IdentiteLocalisationOption = Literal["DOM"]
+IdentiteLocalisationOption = Literal["DOM", "Metropole"]
 
 
 @dataclass
