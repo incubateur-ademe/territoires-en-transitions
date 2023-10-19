@@ -61,7 +61,7 @@ const activeFilters: TCollectivitesFilters = {
   niveauDeLabellisation: [],
   realiseCourant: ['75-100'],
   tauxDeRemplissage: ['80-99', '100'],
-  trierPar: 'score',
+  trierPar: ['score'],
 };
 
 const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
