@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {SwitchLabelLeft, TSwitchLabelLeftProps} from './SwitchLabelLeft';
 
@@ -12,16 +12,22 @@ const common = {
   onChange: action('onChange'),
 };
 
-const Template: Story<TSwitchLabelLeftProps> = args => (
+const Template: StoryFn<TSwitchLabelLeftProps> = args => (
   <SwitchLabelLeft {...common} {...args} className="w-40" />
 );
 
-export const Unchecked = Template.bind({});
-Unchecked.args = {
-  checked: false,
+export const Unchecked = {
+  render: Template,
+
+  args: {
+    checked: false,
+  },
 };
 
-export const Checked = Template.bind({});
-Checked.args = {
-  checked: true,
+export const Checked = {
+  render: Template,
+
+  args: {
+    checked: true,
+  },
 };

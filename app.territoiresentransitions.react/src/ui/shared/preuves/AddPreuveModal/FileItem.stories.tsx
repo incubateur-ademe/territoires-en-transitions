@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {FileItem, TFileItemProps} from './FileItem';
 
 // utilitaire pour générer un objet File
@@ -58,37 +58,56 @@ export default {
   excludeStories: ['createMockFile', 'fileItemMocks'],
 } as Meta;
 
-const Template: Story<TFileItemProps> = args => (
+const Template: StoryFn<TFileItemProps> = args => (
   <div style={{maxWidth: 548, border: '1px dashed'}}>
     <FileItem {...args} />
   </div>
 );
 
-export const Running = Template.bind({});
-Running.args = {...fileItemMocks.running1};
+export const Running = {
+  render: Template,
+  args: {...fileItemMocks.running1},
+};
 
-export const Running2 = Template.bind({});
-Running2.args = {...fileItemMocks.running2};
+export const Running2 = {
+  render: Template,
+  args: {...fileItemMocks.running2},
+};
 
-export const Completed = Template.bind({});
-Completed.args = {...fileItemMocks.completed};
+export const Completed = {
+  render: Template,
+  args: {...fileItemMocks.completed},
+};
 
-export const FailedTooBig = Template.bind({});
-FailedTooBig.args = {...fileItemMocks.toobig};
+export const FailedTooBig = {
+  render: Template,
+  args: {...fileItemMocks.toobig},
+};
 
-export const FailedUnknownFormat = Template.bind({});
-FailedUnknownFormat.args = {...fileItemMocks.unknownFormat};
+export const FailedUnknownFormat = {
+  render: Template,
+  args: {...fileItemMocks.unknownFormat},
+};
 
-export const FailedFormatAndSize = Template.bind({});
-FailedFormatAndSize.args = {...fileItemMocks.formatAndSize};
+export const FailedFormatAndSize = {
+  render: Template,
+  args: {...fileItemMocks.formatAndSize},
+};
 
-export const FailedToUpload = Template.bind({});
-FailedToUpload.args = {...fileItemMocks.uploadError};
+export const FailedToUpload = {
+  render: Template,
+  args: {...fileItemMocks.uploadError},
+};
 
-export const FailedDuplicate = Template.bind({});
-FailedDuplicate.args = {...fileItemMocks.duplicateWarning};
+export const FailedDuplicate = {
+  render: Template,
+  args: {...fileItemMocks.duplicateWarning},
+};
 
-export const FailedDuplicatedAndRenamed = Template.bind({});
-FailedDuplicatedAndRenamed.args = {
-  ...fileItemMocks.duplicatedAndRenamedWarning,
+export const FailedDuplicatedAndRenamed = {
+  render: Template,
+
+  args: {
+    ...fileItemMocks.duplicatedAndRenamedWarning,
+  },
 };

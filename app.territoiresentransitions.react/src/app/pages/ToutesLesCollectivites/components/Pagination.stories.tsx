@@ -1,17 +1,21 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {Pagination, TPaginationProps} from './Pagination';
 
 export default {
   component: Pagination,
 } as Meta;
 
-const Template: Story<TPaginationProps> = args => (
+const Template: StoryFn<TPaginationProps> = args => (
   <ul>
     <Pagination {...args} />
   </ul>
 );
 
-export const UneSeulePage = Template.bind({});
+export const UneSeulePage = {
+  render: Template,
+  args: UneSeulePageArgs,
+};
+
 const UneSeulePageArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 1,
@@ -19,9 +23,12 @@ const UneSeulePageArgs: TPaginationProps = {
     console.log(selected);
   },
 };
-UneSeulePage.args = UneSeulePageArgs;
 
-export const TroisPages = Template.bind({});
+export const TroisPages = {
+  render: Template,
+  args: TroisPagesArgs,
+};
+
 const TroisPagesArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 3,
@@ -29,9 +36,12 @@ const TroisPagesArgs: TPaginationProps = {
     console.log(selected);
   },
 };
-TroisPages.args = TroisPagesArgs;
 
-export const SixPages = Template.bind({});
+export const SixPages = {
+  render: Template,
+  args: SixPagesArgs,
+};
+
 const SixPagesArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 6,
@@ -39,9 +49,12 @@ const SixPagesArgs: TPaginationProps = {
     console.log(selected);
   },
 };
-SixPages.args = SixPagesArgs;
 
-export const HuitPages = Template.bind({});
+export const HuitPages = {
+  render: Template,
+  args: HuitPagesArgs,
+};
+
 const HuitPagesArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 8,
@@ -49,9 +62,12 @@ const HuitPagesArgs: TPaginationProps = {
     console.log(selected);
   },
 };
-HuitPages.args = HuitPagesArgs;
 
-export const CentPlusPage = Template.bind({});
+export const CentPlusPage = {
+  render: Template,
+  args: CentPlusPageArgs,
+};
+
 const CentPlusPageArgs: TPaginationProps = {
   selectedPage: 110,
   nbOfPages: 140,
@@ -59,4 +75,3 @@ const CentPlusPageArgs: TPaginationProps = {
     console.log(selected);
   },
 };
-CentPlusPage.args = CentPlusPageArgs;

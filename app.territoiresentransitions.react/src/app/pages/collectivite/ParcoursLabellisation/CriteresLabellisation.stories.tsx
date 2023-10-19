@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {
   CriteresLabellisation,
   TCriteresLabellisationProps,
@@ -9,37 +9,43 @@ export default {
   component: CriteresLabellisation,
 } as Meta;
 
-const Template: Story<TCriteresLabellisationProps> = args => (
+const Template: StoryFn<TCriteresLabellisationProps> = args => (
   <CriteresLabellisation collectiviteId={1} {...args} />
 );
 
-export const PremiereEtoileECI = Template.bind({});
-PremiereEtoileECI.args = {
-  parcours: {
-    ...fixture.parcours1,
-    demande: {
-      id: 1,
-      en_cours: true,
-      collectivite_id: 1,
-      referentiel: 'eci',
-      etoiles: '1',
+export const PremiereEtoileECI = {
+  render: Template,
+
+  args: {
+    parcours: {
+      ...fixture.parcours1,
+      demande: {
+        id: 1,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'eci',
+        etoiles: '1',
+      },
     },
+    preuves: [],
   },
-  preuves: [],
 };
 
-export const PremiereEtoileCAE = Template.bind({});
-PremiereEtoileCAE.args = {
-  parcours: {
-    ...fixture.parcours1,
-    referentiel: 'cae',
-    demande: {
-      id: 1,
-      en_cours: true,
-      collectivite_id: 1,
+export const PremiereEtoileCAE = {
+  render: Template,
+
+  args: {
+    parcours: {
+      ...fixture.parcours1,
       referentiel: 'cae',
-      etoiles: '1',
+      demande: {
+        id: 1,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'cae',
+        etoiles: '1',
+      },
     },
+    preuves: [],
   },
-  preuves: [],
 };

@@ -1,7 +1,6 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-import {PreuveDoc, TPreuveDocProps} from './PreuveDoc';
+import {PreuveDoc} from './PreuveDoc';
 
 import {preuveComplementaireFichier, preuveComplementaireLien} from './fixture';
 
@@ -34,68 +33,75 @@ const handlerWithEditCommentOn = {
   },
 };
 
-const Template: Story<TPreuveDocProps> = args => <PreuveDoc {...args} />;
-
-export const PreuveFichier = Template.bind({});
-PreuveFichier.args = {
-  handlers,
-  preuve: {...preuveComplementaireFichier, commentaire: null},
-};
-
-export const PreuveFichierEditionCommentaire = Template.bind({});
-PreuveFichierEditionCommentaire.args = {
-  handlers: handlerWithEditCommentOn,
-  preuve: {
-    ...preuveComplementaireFichier,
-  },
-};
-// storyshot désactivé car le TextInput a un id qui change tout le temps
-PreuveFichierEditionCommentaire.parameters = {storyshots: false};
-
-export const PreuveFichierCommentee = Template.bind({});
-PreuveFichierCommentee.args = {
-  handlers,
-  preuve: {
-    ...preuveComplementaireFichier,
-    commentaire: 'Cf pp 34-35 - Document provisoire, en attente d’approbation',
+export const PreuveFichier = {
+  args: {
+    handlers,
+    preuve: {...preuveComplementaireFichier, commentaire: null},
   },
 };
 
-export const PreuveFichierEditionNom = Template.bind({});
-PreuveFichierEditionNom.args = {
-  handlers: {
-    ...handlers,
-    editFilename: {
-      ...handlers.editFilename,
-      isEditing: true,
+export const PreuveFichierEditionCommentaire = {
+  args: {
+    handlers: handlerWithEditCommentOn,
+    preuve: {
+      ...preuveComplementaireFichier,
     },
   },
-  preuve: {
-    ...preuveComplementaireFichier,
+
+  parameters: {storyshots: false},
+};
+
+export const PreuveFichierCommentee = {
+  args: {
+    handlers,
+    preuve: {
+      ...preuveComplementaireFichier,
+      commentaire:
+        'Cf pp 34-35 - Document provisoire, en attente d’approbation',
+    },
   },
 };
-// storyshot désactivé car le TextInput a un id qui change tout le temps
-PreuveFichierEditionNom.parameters = {storyshots: false};
 
-export const PreuveLien = Template.bind({});
-PreuveLien.args = {
-  handlers,
-  preuve: preuveComplementaireLien,
+export const PreuveFichierEditionNom = {
+  args: {
+    handlers: {
+      ...handlers,
+      editFilename: {
+        ...handlers.editFilename,
+        isEditing: true,
+      },
+    },
+    preuve: {
+      ...preuveComplementaireFichier,
+    },
+  },
+
+  parameters: {storyshots: false},
 };
 
-export const PreuveLienEditionCommentaire = Template.bind({});
-PreuveLienEditionCommentaire.args = {
-  handlers: handlerWithEditCommentOn,
-  preuve: preuveComplementaireLien,
+export const PreuveLien = {
+  args: {
+    handlers,
+    preuve: preuveComplementaireLien,
+  },
 };
-// storyshot désactivé car le TextInput a un id qui change tout le temps
-PreuveLienEditionCommentaire.parameters = {storyshots: false};
 
-export const PreuveLienCommentee = Template.bind({});
-PreuveLienCommentee.args = {
-  handlers,
-  preuve: {
-    ...preuveComplementaireLien,
-    commentaire: 'Cf pp 34-35 - Document provisoire, en attente d’approbation',
+export const PreuveLienEditionCommentaire = {
+  args: {
+    handlers: handlerWithEditCommentOn,
+    preuve: preuveComplementaireLien,
+  },
+
+  parameters: {storyshots: false},
+};
+
+export const PreuveLienCommentee = {
+  args: {
+    handlers,
+    preuve: {
+      ...preuveComplementaireLien,
+      commentaire:
+        'Cf pp 34-35 - Document provisoire, en attente d’approbation',
+    },
   },
 };

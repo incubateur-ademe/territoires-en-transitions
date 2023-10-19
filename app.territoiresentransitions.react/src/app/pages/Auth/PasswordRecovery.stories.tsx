@@ -4,26 +4,33 @@ export default {
   component: PasswordRecovery,
 };
 
-export const Default = (args: TPasswordRecoveryOpts) => (
-  <PasswordRecovery {...args} />
-);
+export const Default = {};
 
-export const Opened = (args: TPasswordRecoveryOpts) => (
-  <PasswordRecovery {...args} opened />
-);
-Opened.parameters = {storyshots: false};
+export const Opened = {
+  render: (args: TPasswordRecoveryOpts) => (
+    <PasswordRecovery {...args} opened />
+  ),
 
-export const Prefilled = (args: TPasswordRecoveryOpts) => (
-  <PasswordRecovery {...args} opened email="someone@example.com" />
-);
-Prefilled.parameters = {storyshots: false};
+  parameters: {storyshots: false},
+};
 
-export const Succeed = (args: TPasswordRecoveryOpts) => (
-  <PasswordRecovery
-    {...args}
-    opened
-    email="someone@example.com"
-    succeed="someone@example.com"
-  />
-);
-Succeed.parameters = {storyshots: false};
+export const Prefilled = {
+  render: (args: TPasswordRecoveryOpts) => (
+    <PasswordRecovery {...args} opened email="someone@example.com" />
+  ),
+
+  parameters: {storyshots: false},
+};
+
+export const Succeed = {
+  render: (args: TPasswordRecoveryOpts) => (
+    <PasswordRecovery
+      {...args}
+      opened
+      email="someone@example.com"
+      succeed="someone@example.com"
+    />
+  ),
+
+  parameters: {storyshots: false},
+};

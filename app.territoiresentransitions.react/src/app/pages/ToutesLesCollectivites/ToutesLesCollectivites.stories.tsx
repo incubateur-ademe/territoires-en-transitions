@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {
   RenderToutesLesCollectivites,
   TRenderToutesCollectivitesProps,
@@ -11,10 +11,6 @@ import type {DepartementRead} from 'generated/dataLayer/departement_read';
 export default {
   component: RenderToutesLesCollectivites,
 } as Meta;
-
-const Template: Story<TRenderToutesCollectivitesProps> = args => (
-  <RenderToutesLesCollectivites {...args} />
-);
 
 const emptyFilters: TCollectivitesFilters = {
   types: [],
@@ -43,7 +39,10 @@ const fakeDepartements: DepartementRead[] = [
   {code: '28', region_code: '28', libelle: 'Normandie'},
 ];
 
-export const AvecDesRésultatsSansFiltres = Template.bind({});
+export const AvecDesRésultatsSansFiltres = {
+  args: avecDesRésultatsSansFiltresArgs,
+};
+
 const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
   collectivitesCount: fixture.collectivites.length,
@@ -54,7 +53,6 @@ const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   regions: fakeRegions,
   departements: fakeRegions,
 };
-AvecDesRésultatsSansFiltres.args = avecDesRésultatsSansFiltresArgs;
 
 const activeFilters: TCollectivitesFilters = {
   types: ['CC', 'CU'],
@@ -68,7 +66,10 @@ const activeFilters: TCollectivitesFilters = {
   trierPar: 'score',
 };
 
-export const AvecDesRésultatsEtDesFiltres = Template.bind({});
+export const AvecDesRésultatsEtDesFiltres = {
+  args: avecDesRésultatsEtDesArgs,
+};
+
 const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
   collectivitesCount: fixture.collectivites.length,
@@ -79,9 +80,11 @@ const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
   regions: fakeRegions,
   departements: fakeRegions,
 };
-AvecDesRésultatsEtDesFiltres.args = avecDesRésultatsEtDesArgs;
 
-export const SansRésultats = Template.bind({});
+export const SansRésultats = {
+  args: sansRésultatsArgs,
+};
+
 const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
   collectivites: [],
   collectivitesCount: 0,
@@ -92,4 +95,3 @@ const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
   regions: fakeRegions,
   departements: fakeDepartements,
 };
-SansRésultats.args = sansRésultatsArgs;

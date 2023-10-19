@@ -1,8 +1,6 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 
 import HistoriqueItemReponse from './HistoriqueItemReponse';
-import {THistoriqueItemProps} from '../types';
 import {
   fakeReponseChoix,
   fakeReponseChoix2,
@@ -16,46 +14,50 @@ export default {
   component: HistoriqueItemReponse,
 } as Meta;
 
-const Template: Story<THistoriqueItemProps> = args => (
-  <HistoriqueItemReponse {...args} />
-);
-
-export const PremiereReponseQuestionChoix = Template.bind({});
-PremiereReponseQuestionChoix.args = {
-  item: fakeReponseChoix,
+export const PremiereReponseQuestionChoix = {
+  args: {
+    item: fakeReponseChoix,
+  },
 };
 
-export const ReponseQuestionChoixModifiee = Template.bind({});
-ReponseQuestionChoixModifiee.args = {
-  item: fakeReponseChoix2,
+export const ReponseQuestionChoixModifiee = {
+  args: {
+    item: fakeReponseChoix2,
+  },
 };
 
-export const PremiereReponseQuestionBinaire = Template.bind({});
-PremiereReponseQuestionBinaire.args = {
-  item: fakeReponseBinaire,
+export const PremiereReponseQuestionBinaire = {
+  args: {
+    item: fakeReponseBinaire,
+  },
 };
 
-export const ReponseQuestionBinaireModifiee = Template.bind({});
-ReponseQuestionBinaireModifiee.args = {
-  item: fakeReponseBinaire2,
+export const ReponseQuestionBinaireModifiee = {
+  args: {
+    item: fakeReponseBinaire2,
+  },
 };
 
-export const PremiereReponseQuestionProportion = Template.bind({});
-PremiereReponseQuestionProportion.args = {
-  item: fakeReponseProportion,
+export const PremiereReponseQuestionProportion = {
+  args: {
+    item: fakeReponseProportion,
+  },
 };
 
-export const ReponseQuestionProportionModifiee = Template.bind({});
-ReponseQuestionProportionModifiee.args = {
-  item: fakeReponseProportion2,
+export const ReponseQuestionProportionModifiee = {
+  args: {
+    item: fakeReponseProportion2,
+  },
 };
 
-export const ReponseQuestionProportionJustifiee = Template.bind({});
-ReponseQuestionProportionJustifiee.args = {
-  item: {...fakeReponseProportion, justification: 'Parce que...'},
+export const ReponseQuestionProportionJustifiee = {
+  args: {
+    item: {...fakeReponseProportion, justification: 'Parce que...'},
+  },
 };
 
-export const ReponseQuestionProportionModifieeEtJustifiee = Template.bind({});
-ReponseQuestionProportionModifieeEtJustifiee.args = {
-  item: {...fakeReponseProportion2, justification: 'Parce que...'},
+export const ReponseQuestionProportionModifieeEtJustifiee = {
+  args: {
+    item: {...fakeReponseProportion2, justification: 'Parce que...'},
+  },
 };

@@ -1,6 +1,6 @@
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-import {AddPreuveModal, TAddPreuveModalProps} from './index';
+import {AddPreuveModal} from './index';
 
 const DEFAULT_ARGS = {
   onClose: action('onClose'),
@@ -14,9 +14,6 @@ export default {
   args: DEFAULT_ARGS,
 } as Meta;
 
-const Template: Story<TAddPreuveModalProps> = args => (
-  <AddPreuveModal {...args} />
-);
-
-export const Default = Template.bind({});
-Default.parameters = {storyshots: false}; // désactive le storyshot à cause d'un pb dans react-dsfr <File> (?)
+export const Default = {
+  parameters: {storyshots: false},
+};
