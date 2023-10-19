@@ -125,6 +125,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                type="button"
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -244,6 +245,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                type="button"
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -366,6 +368,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                type="button"
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -655,6 +658,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                type="button"
               >
                 <span
                   className="mr-auto flex flex-col gap-2"
@@ -1040,6 +1044,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
                 onKeyUp={[Function]}
                 onMouseDown={[Function]}
                 onPointerDown={[Function]}
+                type="button"
               >
                 <span
                   className="mr-auto flex flex-col gap-2"

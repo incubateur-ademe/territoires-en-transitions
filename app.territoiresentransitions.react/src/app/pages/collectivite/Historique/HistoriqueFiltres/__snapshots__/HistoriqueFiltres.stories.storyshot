@@ -34,6 +34,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          type="button"
         >
           <span
             className="mr-auto text-grey425 line-clamp-1"
@@ -67,6 +68,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          type="button"
         >
           <span
             className="mr-auto flex line-clamp-1"
@@ -189,6 +191,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          type="button"
         >
           <span
             className="mr-auto text-grey425 line-clamp-1"
@@ -222,6 +225,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onPointerDown={[Function]}
+          type="button"
         >
           <span
             className="mr-auto text-grey425 line-clamp-1"

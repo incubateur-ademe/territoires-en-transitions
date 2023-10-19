@@ -44,6 +44,7 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"
@@ -77,6 +78,7 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"

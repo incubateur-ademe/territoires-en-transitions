@@ -72,6 +72,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Et Des 
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto flex line-clamp-1"
@@ -100,6 +101,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Et Des 
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"
@@ -3006,6 +3008,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Sans Fi
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"
@@ -3032,6 +3035,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Sans Fi
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"
@@ -5920,6 +5924,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Résultats 1`] = `
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto flex line-clamp-1"
@@ -5948,6 +5953,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Résultats 1`] = `
             onKeyUp={[Function]}
             onMouseDown={[Function]}
             onPointerDown={[Function]}
+            type="button"
           >
             <span
               className="mr-auto text-grey425 line-clamp-1"

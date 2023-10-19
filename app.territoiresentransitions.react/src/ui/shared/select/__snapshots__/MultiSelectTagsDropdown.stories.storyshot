@@ -10,6 +10,7 @@ exports[`Storyshots ui/shared/select/MultiSelectTagsDropdown Default 1`] = `
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  type="button"
 >
   <span
     className="mr-auto text-grey425 line-clamp-1"

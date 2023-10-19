@@ -139,6 +139,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -258,6 +259,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -380,6 +382,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -747,6 +750,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -866,6 +870,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -988,6 +993,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1355,6 +1361,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1474,6 +1481,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -1596,6 +1604,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
@@ -2076,6 +2085,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onPointerDown={[Function]}
+                  type="button"
                 >
                   <span
                     className="mr-auto flex flex-col gap-2"
