@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {CriterePreuves, TCriterePreuvesProps} from './CriterePreuves';
 import fixture from './fixture.json';
 
@@ -6,26 +6,29 @@ export default {
   component: CriterePreuves,
 } as Meta;
 
-const Template: Story<TCriterePreuvesProps> = args => (
+const Template: StoryFn<TCriterePreuvesProps> = args => (
   <ul>
     <CriterePreuves {...args} />
   </ul>
 );
 
-export const PremiereEtoileECI = Template.bind({});
-PremiereEtoileECI.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    demande: {
-      id: 1,
-      en_cours: true,
-      collectivite_id: 1,
-      referentiel: 'eci',
-      etoiles: '1',
+export const PremiereEtoileECI = {
+  render: Template,
+
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
+      demande: {
+        id: 1,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'eci',
+        etoiles: '1',
+      },
     },
+    preuves: [],
   },
-  preuves: [],
 };
 
 // le critère est considéré comme rempli si il y a au moins un fichier
@@ -37,113 +40,131 @@ const FILE1 = {
   path: 'some-uuid/fichier-preuve.doc',
   commentaire: '',
 };
-export const PremiereEtoileECIRempli = Template.bind({});
-PremiereEtoileECIRempli.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    demande: {
-      id: 1,
-      en_cours: true,
-      collectivite_id: 1,
-      referentiel: 'eci',
-      etoiles: '1',
+
+export const PremiereEtoileECIRempli = {
+  render: Template,
+
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
+      demande: {
+        id: 1,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'eci',
+        etoiles: '1',
+      },
     },
+    preuves: [FILE1],
   },
-  preuves: [FILE1],
 };
 
-export const AutresEtoilesECI = Template.bind({});
-AutresEtoilesECI.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    etoiles: '2',
-    critere_score: {
-      atteint: false,
+export const AutresEtoilesECI = {
+  render: Template,
+
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
       etoiles: '2',
-      score_fait: 0.2,
-      score_a_realiser: 0.35,
+      critere_score: {
+        atteint: false,
+        etoiles: '2',
+        score_fait: 0.2,
+        score_a_realiser: 0.35,
+      },
+      demande: {
+        id: 2,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'eci',
+        etoiles: '2',
+      },
     },
-    demande: {
-      id: 2,
-      en_cours: true,
-      collectivite_id: 1,
-      referentiel: 'eci',
-      etoiles: '2',
-    },
+    preuves: [],
   },
-  preuves: [],
 };
 
-export const PremiereEtoileCAE = Template.bind({});
-PremiereEtoileCAE.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    referentiel: 'cae',
-    demande: {
-      id: 1,
-      en_cours: true,
-      collectivite_id: 1,
+export const PremiereEtoileCAE = {
+  render: Template,
+
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
       referentiel: 'cae',
-      etoiles: '1',
+      demande: {
+        id: 1,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'cae',
+        etoiles: '1',
+      },
     },
+    preuves: [],
   },
-  preuves: [],
 };
 
-// pas d'autres docs de candidature pour le référentiel CAE
-export const AutresEtoilesCAE = Template.bind({});
-AutresEtoilesCAE.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    referentiel: 'cae',
-    etoiles: '2',
-    critere_score: {
-      atteint: false,
-      etoiles: '2',
-      score_fait: 0.2,
-      score_a_realiser: 0.35,
-    },
-    demande: {
-      id: 2,
-      en_cours: true,
-      collectivite_id: 1,
-      referentiel: 'cae',
-      etoiles: '2',
-    },
-  },
-  preuves: [],
-};
+export const AutresEtoilesCAE = {
+  render: Template,
 
-export const CAEScoreSuperieurA35Pourcent = Template.bind({});
-CAEScoreSuperieurA35Pourcent.args = {
-  collectiviteId: 1,
-  parcours: {
-    ...fixture.parcours1,
-    referentiel: 'cae',
-    etoiles: '2',
-    critere_score: {
-      atteint: false,
-      etoiles: '2',
-      score_fait: 0.36,
-      score_a_realiser: 0.35,
-    },
-    demande: {
-      id: 2,
-      en_cours: true,
-      collectivite_id: 1,
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
       referentiel: 'cae',
       etoiles: '2',
+      critere_score: {
+        atteint: false,
+        etoiles: '2',
+        score_fait: 0.2,
+        score_a_realiser: 0.35,
+      },
+      demande: {
+        id: 2,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'cae',
+        etoiles: '2',
+      },
     },
+    preuves: [],
   },
-  preuves: [],
 };
 
-export const CAEScoreSuperieurA35PourcentRempli = Template.bind({});
-CAEScoreSuperieurA35PourcentRempli.args = {
-  ...CAEScoreSuperieurA35Pourcent.args,
-  preuves: [FILE1],
+export const CAEScoreSuperieurA35Pourcent = {
+  render: Template,
+
+  args: {
+    collectiviteId: 1,
+    parcours: {
+      ...fixture.parcours1,
+      referentiel: 'cae',
+      etoiles: '2',
+      critere_score: {
+        atteint: false,
+        etoiles: '2',
+        score_fait: 0.36,
+        score_a_realiser: 0.35,
+      },
+      demande: {
+        id: 2,
+        en_cours: true,
+        collectivite_id: 1,
+        referentiel: 'cae',
+        etoiles: '2',
+      },
+    },
+    preuves: [],
+  },
+};
+
+export const CAEScoreSuperieurA35PourcentRempli = {
+  render: Template,
+
+  args: {
+    ...CAEScoreSuperieurA35Pourcent.args,
+    preuves: [FILE1],
+  },
 };

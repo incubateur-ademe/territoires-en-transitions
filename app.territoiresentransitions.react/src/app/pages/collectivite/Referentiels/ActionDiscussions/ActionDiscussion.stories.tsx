@@ -1,5 +1,4 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import ActionDiscussion, {ActionDiscussionProps} from './ActionDiscussion';
 import {
   fakeActionDiscussion,
@@ -10,27 +9,26 @@ export default {
   component: ActionDiscussion,
 } as Meta;
 
-const Template: Story<ActionDiscussionProps> = args => (
-  <ActionDiscussion {...args} />
-);
+export const Ouverte = {
+  args: OuverteArgs,
+};
 
-// const handlers = {
-//   changeVue: action('changeVue') as (vue: TActionDiscussionStatut) => void,
-// };
-
-export const Ouverte = Template.bind({});
 const OuverteArgs: ActionDiscussionProps = {
   discussion: fakeActionDiscussion,
 };
-Ouverte.args = OuverteArgs;
 
-export const Fermee = Template.bind({});
+export const Fermee = {
+  args: FermeeArgs,
+};
+
 const FermeeArgs: ActionDiscussionProps = {
   discussion: {...fakeActionDiscussion, status: 'ferme'},
 };
-Fermee.args = FermeeArgs;
 
-export const AvecCommentairesMasques = Template.bind({});
+export const AvecCommentairesMasques = {
+  args: AvecCommentairesMasquesArgs,
+};
+
 const AvecCommentairesMasquesArgs: ActionDiscussionProps = {
   discussion: {
     ...fakeActionDiscussion,
@@ -45,4 +43,3 @@ const AvecCommentairesMasquesArgs: ActionDiscussionProps = {
     ],
   },
 };
-AvecCommentairesMasques.args = AvecCommentairesMasquesArgs;

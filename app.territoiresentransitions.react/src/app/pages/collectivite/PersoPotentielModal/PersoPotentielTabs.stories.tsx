@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {
   PersoPotentielTabs,
   TPersoPotentielTabsProps,
@@ -9,7 +9,7 @@ export default {
   component: PersoPotentielTabs,
 } as Meta;
 
-const Template: Story<TPersoPotentielTabsProps> = args => (
+const Template: StoryFn<TPersoPotentielTabsProps> = args => (
   <PersoPotentielTabs
     actionDef={Fixture.ACTION_DEF}
     onChange={Fixture.onChange}
@@ -18,51 +18,75 @@ const Template: Story<TPersoPotentielTabsProps> = args => (
   />
 );
 
-export const QuestionChoix = Template.bind({});
-QuestionChoix.args = {
-  actionScore: Fixture.SCORE,
-  questionReponses: [Fixture.Q1],
+export const QuestionChoix = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE,
+    questionReponses: [Fixture.Q1],
+  },
 };
 
-export const QuestionChoixModifiee = Template.bind({});
-QuestionChoixModifiee.args = {
-  actionScore: Fixture.SCORE_MODIFIE,
-  questionReponses: [{...Fixture.Q1, reponse: 'c3'}],
+export const QuestionChoixModifiee = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE_MODIFIE,
+    questionReponses: [{...Fixture.Q1, reponse: 'c3'}],
+  },
 };
 
-export const QuestionBinaire = Template.bind({});
-QuestionBinaire.args = {
-  actionScore: Fixture.SCORE,
-  questionReponses: [Fixture.Q2],
+export const QuestionBinaire = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE,
+    questionReponses: [Fixture.Q2],
+  },
 };
 
-export const QuestionBinaireModifiee = Template.bind({});
-QuestionBinaireModifiee.args = {
-  actionScore: Fixture.SCORE_MODIFIE,
-  questionReponses: [{...Fixture.Q2, reponse: false}],
+export const QuestionBinaireModifiee = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE_MODIFIE,
+    questionReponses: [{...Fixture.Q2, reponse: false}],
+  },
 };
 
-export const QuestionProportion = Template.bind({});
-QuestionProportion.args = {
-  actionScore: Fixture.SCORE,
-  questionReponses: [Fixture.Q3],
+export const QuestionProportion = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE,
+    questionReponses: [Fixture.Q3],
+  },
 };
 
-export const QuestionProportionModifiee = Template.bind({});
-QuestionProportionModifiee.args = {
-  actionScore: Fixture.SCORE_MODIFIE,
-  questionReponses: [{...Fixture.Q3, reponse: 60}],
+export const QuestionProportionModifiee = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE_MODIFIE,
+    questionReponses: [{...Fixture.Q3, reponse: 60}],
+  },
 };
 
-export const PlusieursQuestions = Template.bind({});
-PlusieursQuestions.args = {
-  actionScore: Fixture.SCORE_MODIFIE,
-  questionReponses: [Fixture.Q1, Fixture.Q2, {...Fixture.Q3, reponse: 60}],
+export const PlusieursQuestions = {
+  render: Template,
+
+  args: {
+    actionScore: Fixture.SCORE_MODIFIE,
+    questionReponses: [Fixture.Q1, Fixture.Q2, {...Fixture.Q3, reponse: 60}],
+  },
 };
 
-export const Documentation = Template.bind({});
-Documentation.args = {
-  defaultActiveTab: 1,
-  actionScore: Fixture.SCORE_MODIFIE,
-  questionReponses: [Fixture.Q1, Fixture.Q2, Fixture.Q3],
+export const Documentation = {
+  render: Template,
+
+  args: {
+    defaultActiveTab: 1,
+    actionScore: Fixture.SCORE_MODIFIE,
+    questionReponses: [Fixture.Q1, Fixture.Q2, Fixture.Q3],
+  },
 };

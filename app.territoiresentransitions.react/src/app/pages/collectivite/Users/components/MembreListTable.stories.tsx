@@ -1,5 +1,4 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {TUpdateMembre} from '../types';
 import MembreListTable, {MembreListTableProps} from './MembreListTable';
@@ -9,16 +8,15 @@ export default {
   component: MembreListTable,
 } as Meta;
 
-const Template: Story<MembreListTableProps> = args => (
-  <MembreListTable {...args} />
-);
-
 const handlers = {
   updateMembre: action('updateMembre') as TUpdateMembre,
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const AsAdmin = Template.bind({});
+export const AsAdmin = {
+  args: AsAdminArgs,
+};
+
 const AsAdminArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeAdmin.user_id,
@@ -26,9 +24,11 @@ const AsAdminArgs: MembreListTableProps = {
   isLoading: false,
   ...handlers,
 };
-AsAdmin.args = AsAdminArgs;
 
-export const AsEditeur = Template.bind({});
+export const AsEditeur = {
+  args: AsEditeurArgs,
+};
+
 const AsEditeurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeEditeur.user_id,
@@ -36,9 +36,11 @@ const AsEditeurArgs: MembreListTableProps = {
   isLoading: false,
   ...handlers,
 };
-AsEditeur.args = AsEditeurArgs;
 
-export const AsLecteur = Template.bind({});
+export const AsLecteur = {
+  args: AsLecteurArgs,
+};
+
 const AsLecteurArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeLecteur.user_id,
@@ -46,22 +48,25 @@ const AsLecteurArgs: MembreListTableProps = {
   isLoading: false,
   ...handlers,
 };
-AsLecteur.args = AsLecteurArgs;
 
-export const IsLoading = Template.bind({});
+export const IsLoading = {
+  args: IsLoadingArgs,
+};
+
 const IsLoadingArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
   currentUserAccess: 'admin',
   isLoading: true,
   ...handlers,
 };
-IsLoading.args = IsLoadingArgs;
 
-export const Empty = Template.bind({});
+export const Empty = {
+  args: EmptyArgs,
+};
+
 const EmptyArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
   currentUserAccess: 'admin',
   isLoading: false,
   ...handlers,
 };
-Empty.args = EmptyArgs;

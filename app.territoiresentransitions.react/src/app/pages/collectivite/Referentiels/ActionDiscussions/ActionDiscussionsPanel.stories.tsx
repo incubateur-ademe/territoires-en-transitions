@@ -1,5 +1,5 @@
 import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {
   ActionDiscussionPanelContent,
@@ -15,7 +15,7 @@ export default {
   component: ActionDiscussionPanelContent,
 } as Meta;
 
-const Template: Story<ActionDiscussionsPanelProps> = args => (
+const Template: StoryFn<ActionDiscussionsPanelProps> = args => (
   <ActionDiscussionPanelContent {...args} onClose={action('onClose')} />
 );
 
@@ -23,7 +23,11 @@ const handlers = {
   changeVue: action('changeVue') as (vue: TActionDiscussionStatut) => void,
 };
 
-export const VueOuverts = Template.bind({});
+export const VueOuverts = {
+  render: Template,
+  args: VueOuvertsArgs,
+};
+
 const VueOuvertsArgs: ActionDiscussionsPanelProps = {
   actionId: 'eci-1.1.1',
   vue: 'ouvert',
@@ -43,9 +47,12 @@ const VueOuvertsArgs: ActionDiscussionsPanelProps = {
   ],
   ...handlers,
 };
-VueOuverts.args = VueOuvertsArgs;
 
-export const VueFermes = Template.bind({});
+export const VueFermes = {
+  render: Template,
+  args: VueFermesArgs,
+};
+
 const VueFermesArgs: ActionDiscussionsPanelProps = {
   actionId: 'eci-1.1.1',
   vue: 'ferme',
@@ -69,4 +76,3 @@ const VueFermesArgs: ActionDiscussionsPanelProps = {
   ],
   ...handlers,
 };
-VueFermes.args = VueFermesArgs;

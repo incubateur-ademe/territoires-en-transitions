@@ -4,8 +4,10 @@ export default {
   component: ResetPasswordForm,
 };
 
-export const Default = () => <ResetPasswordForm token="fake" />;
-Default.parameters = {storyshots: false};
+export const Default = {
+  render: () => <ResetPasswordForm token="fake" />,
+  parameters: {storyshots: false},
+};
 
 export const Failure = () => (
   <ResetPasswordForm

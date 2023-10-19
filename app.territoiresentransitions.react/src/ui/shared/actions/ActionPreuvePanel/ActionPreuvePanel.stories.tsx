@@ -1,5 +1,5 @@
-import {Story, Meta} from '@storybook/react';
-import ActionPreuvePanel, {TActionPreuvePanelProps} from './ActionPreuvePanel';
+import { Meta} from '@storybook/react';
+import ActionPreuvePanel from './ActionPreuvePanel';
 
 const DEFAULT_ARGS = {
   action: {id: 'eci_1.1.1', identifiant: '1.1.1', referentiel: 'eci'},
@@ -11,11 +11,8 @@ export default {
   args: DEFAULT_ARGS,
 } as Meta;
 
-const Template: Story<TActionPreuvePanelProps> = args => (
-  <ActionPreuvePanel {...args} />
-);
-
-export const Default = Template.bind({});
-Default.args = {
-  ...DEFAULT_ARGS,
+export const Default = {
+  args: {
+    ...DEFAULT_ARGS,
+  },
 };

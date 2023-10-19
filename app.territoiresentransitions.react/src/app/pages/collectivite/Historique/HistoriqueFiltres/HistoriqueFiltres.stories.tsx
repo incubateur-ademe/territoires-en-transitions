@@ -1,23 +1,21 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
-import HistoriqueFiltres, {HistoriqueFiltresProps} from './HistoriqueFiltres';
+import HistoriqueFiltres from './HistoriqueFiltres';
 import {TSetFilters} from '../filters';
 
 export default {
   component: HistoriqueFiltres,
 } as Meta;
 
-const Template: Story<HistoriqueFiltresProps> = args => (
-  <HistoriqueFiltres {...args} />
-);
-
 const handlers = {
   setFilters: action('setFilters') as TSetFilters,
 };
 
-export const Defaut = Template.bind({});
+export const Defaut = {
+  args: filtresArgs,
+};
+
 const filtresArgs = {
   itemsNumber: 0,
   initialFilters: {collectivite_id: 1},
@@ -26,9 +24,11 @@ const filtresArgs = {
   },
   ...handlers,
 };
-Defaut.args = filtresArgs;
 
-export const AvecFiltres = Template.bind({});
+export const AvecFiltres = {
+  args: avecFiltresArgs,
+};
+
 const avecFiltresArgs = {
   itemsNumber: 4,
   initialFilters: {collectivite_id: 1},
@@ -40,4 +40,3 @@ const avecFiltresArgs = {
   },
   ...handlers,
 };
-AvecFiltres.args = avecFiltresArgs;
