@@ -1,12 +1,10 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {
   RenderToutesLesCollectivites,
   TRenderToutesCollectivitesProps,
 } from './ToutesLesCollectivites';
 import fixture from './fixture.json';
 import type {TCollectivitesFilters} from './filtreLibelles';
-import type {RegionRead} from 'generated/dataLayer/region_read';
-import type {DepartementRead} from 'generated/dataLayer/departement_read';
 
 export default {
   component: RenderToutesLesCollectivites,
@@ -23,7 +21,7 @@ const emptyFilters: TCollectivitesFilters = {
   tauxDeRemplissage: [],
 };
 
-const fakeRegions: RegionRead[] = [
+const fakeRegions = [
   {code: '69', libelle: 'Auvergne-Rhône-Alpes'},
   {code: '29', libelle: 'Bretagne'},
   {code: '94', libelle: 'Corse'},
@@ -31,17 +29,13 @@ const fakeRegions: RegionRead[] = [
   {code: '28', libelle: 'Normandie'},
 ];
 
-const fakeDepartements: DepartementRead[] = [
+const fakeDepartements = [
   {code: '69', region_code: '69', libelle: 'Auvergne-Rhône-Alpes'},
   {code: '29', region_code: '29', libelle: 'Bretagne'},
   {code: '29', region_code: '29', libelle: 'Corse'},
   {code: '11', region_code: '11', libelle: 'Île de France'},
   {code: '28', region_code: '28', libelle: 'Normandie'},
 ];
-
-export const AvecDesRésultatsSansFiltres = {
-  args: avecDesRésultatsSansFiltresArgs,
-};
 
 const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
@@ -52,6 +46,10 @@ const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
   },
   regions: fakeRegions,
   departements: fakeRegions,
+};
+
+export const AvecDesRésultatsSansFiltres = {
+  args: avecDesRésultatsSansFiltresArgs,
 };
 
 const activeFilters: TCollectivitesFilters = {
@@ -66,10 +64,6 @@ const activeFilters: TCollectivitesFilters = {
   trierPar: 'score',
 };
 
-export const AvecDesRésultatsEtDesFiltres = {
-  args: avecDesRésultatsEtDesArgs,
-};
-
 const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
   collectivites: fixture.collectivites,
   collectivitesCount: fixture.collectivites.length,
@@ -81,8 +75,8 @@ const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
   departements: fakeRegions,
 };
 
-export const SansRésultats = {
-  args: sansRésultatsArgs,
+export const AvecDesRésultatsEtDesFiltres = {
+  args: avecDesRésultatsEtDesArgs,
 };
 
 const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
@@ -94,4 +88,8 @@ const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
   },
   regions: fakeRegions,
   departements: fakeDepartements,
+};
+
+export const SansRésultats = {
+  args: sansRésultatsArgs,
 };

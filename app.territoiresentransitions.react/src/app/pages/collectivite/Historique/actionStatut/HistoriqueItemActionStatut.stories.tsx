@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 
 import HistoriqueItemActionStatut from './HistoriqueItemActionStatut';
 import {THistoriqueItemProps} from '../types';
@@ -14,42 +14,42 @@ export default {
   component: HistoriqueItemActionStatut,
 } as Meta;
 
-export const AjoutDeStatutSimple = {
-  args: ajoutDeStatutSimpleArgs,
-};
-
 const ajoutDeStatutSimpleArgs: THistoriqueItemProps = {
   item: fakeAjoutSimpleActionStatutHistorique,
 };
 
-export const AjoutDeStatutDetaille = {
-  args: ajoutDeStatutDetailleArgs,
+export const AjoutDeStatutSimple = {
+  args: ajoutDeStatutSimpleArgs,
 };
 
 const ajoutDeStatutDetailleArgs: THistoriqueItemProps = {
   item: fakeAjoutDetailleActionStatutHistorique,
 };
 
-export const ModificationDeStatutSimple = {
-  args: modificationDeStatutSimpleArgs,
+export const AjoutDeStatutDetaille = {
+  args: ajoutDeStatutDetailleArgs,
 };
 
 const modificationDeStatutSimpleArgs: THistoriqueItemProps = {
   item: fakeModificationSimpleActionStatutHistorique,
 };
 
-export const ModificationDeStatutSimpleADetaille = {
-  args: modificationDeStatutSimpleADetailleArgs,
+export const ModificationDeStatutSimple = {
+  args: modificationDeStatutSimpleArgs,
 };
 
 const modificationDeStatutSimpleADetailleArgs: THistoriqueItemProps = {
   item: fakeModificationSimpleADetailleActionStatutHistorique,
 };
 
-export const ModificationDeStatutDetailleADetaille = {
-  args: modificationDeStatutDetailleADetailleArgs,
+export const ModificationDeStatutSimpleADetaille = {
+  args: modificationDeStatutSimpleADetailleArgs,
 };
 
 const modificationDeStatutDetailleADetailleArgs: THistoriqueItemProps = {
   item: fakeModificationDetailleActionStatutHistorique,
+};
+
+export const ModificationDeStatutDetailleADetaille = {
+  args: modificationDeStatutDetailleADetailleArgs,
 };

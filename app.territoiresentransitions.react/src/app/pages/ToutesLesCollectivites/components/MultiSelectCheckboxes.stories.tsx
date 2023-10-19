@@ -1,3 +1,4 @@
+import React from 'react';
 import {StoryFn, Meta} from '@storybook/react';
 import {
   MultiSelectCheckboxes,
@@ -23,11 +24,6 @@ const options = [
   {id: '5', libelle: 'Cinquième étoile'},
 ];
 
-export const SelectionTousParDefaut = {
-  render: Template,
-  args: selectionTousParDefautArgs,
-};
-
 const selectionTousParDefautArgs: TMultiSelectCheckboxesProps = {
   htmlId: 'exemple',
   title: 'Niveau de labellisation',
@@ -38,9 +34,9 @@ const selectionTousParDefautArgs: TMultiSelectCheckboxesProps = {
   },
 };
 
-export const SelectionMultiple = {
+export const SelectionTousParDefaut = {
   render: Template,
-  args: selectionMultipleArgs,
+  args: selectionTousParDefautArgs,
 };
 
 const selectionMultipleArgs: TMultiSelectCheckboxesProps = {
@@ -51,4 +47,9 @@ const selectionMultipleArgs: TMultiSelectCheckboxesProps = {
   onChange: (selected: string[]) => {
     console.log(selected);
   },
+};
+
+export const SelectionMultiple = {
+  render: Template,
+  args: selectionMultipleArgs,
 };
