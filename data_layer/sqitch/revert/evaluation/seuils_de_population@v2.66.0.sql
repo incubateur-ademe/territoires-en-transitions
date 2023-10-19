@@ -6,13 +6,14 @@ create or replace function private.population_buckets(population integer)
     returns text[]
 as
 $$
-with bornes as (select unnest(array [10000, 20000, 50000, 100000] :: int[]) as pop),
-     plafonds as (select pop from bornes where bornes.pop > population)
 select case
+           when population < 5000   then '{"moins_de_5000", "moins_de_10000", "moins_de_50000", "moins_de_100000"}'
+           when population < 10000  then '{"moins_de_10000", "moins_de_20000", "moins_de_100000"}'
+           when population < 20000  then '{"moins_de_20000", "moins_de_100000"}'
+           when population < 100000 then '{"moins_de_100000"}'
            when population > 100000 then '{"plus_de_100000"}'
-           else array_agg('moins_de_' || plafonds.pop)
+           else '{}'
            end::text[]
-from plafonds;
 $$ language sql stable;
 comment on function private.population_buckets is
     'Renvoie un tableau de valeurs représentant les seuils de population '
