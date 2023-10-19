@@ -7,16 +7,18 @@ import {
 } from './useUpsertIndicateurPersoDefinition';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import classNames from 'classnames';
+import {TThematiqueRow} from 'types/alias';
+import {FicheAction} from '../PlansActions/FicheAction/data/types';
 
 /** Affiche la page de création d'un indicateur personnalisé  */
 const IndicateurPersoNouveau = ({
   className,
-  ficheId,
+  fiche,
   onClose,
 }: {
   className?: string;
-  /** Identifiant de la fiche action à laquelle rattacher le nouvel indicateur */
-  ficheId?: number;
+  /** Fiche action à laquelle rattacher le nouvel indicateur */
+  fiche?: FicheAction;
   onClose?: () => void;
 }) => {
   const collectiviteId = useCollectiviteId()!;
@@ -29,6 +31,7 @@ const IndicateurPersoNouveau = ({
   };
 
   const history = useHistory();
+  const ficheId = fiche?.id;
 
   const {mutate: save, isLoading} = useUpsertIndicateurPersoDefinition({
     onSuccess: data => {
@@ -49,7 +52,7 @@ const IndicateurPersoNouveau = ({
 
   const onSave = (
     definition: TIndicateurPersoDefinitionWrite,
-    thematiques: string[]
+    thematiques: TThematiqueRow[]
   ) => {
     save({definition, ficheId, thematiques});
   };
@@ -62,6 +65,7 @@ const IndicateurPersoNouveau = ({
       </h4>
       <IndicateurPersoNouveauForm
         indicateur={newDefinition}
+        thematiquesFiche={fiche?.thematiques}
         isSaving={isLoading}
         onSave={onSave}
         onCancel={onClose ? onClose : () => history.goBack()}

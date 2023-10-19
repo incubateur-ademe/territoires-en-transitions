@@ -129,7 +129,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
           isReadonly={isReadonly}
         />
-        <IndicateurPersonnaliseCreationDialog ficheId={fiche.id} />
+        <IndicateurPersonnaliseCreationDialog fiche={fiche} />
         <FormField label="Résultats attendus">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
