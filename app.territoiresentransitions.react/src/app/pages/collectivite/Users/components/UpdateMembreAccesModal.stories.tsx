@@ -1,5 +1,4 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {TUpdateMembre} from '../types';
 import UpdateMembreAccesModal, {
@@ -11,10 +10,6 @@ export default {
   parameters: {storyshots: false},
 } as Meta;
 
-const Template: Story<AccesModalProps> = args => (
-  <UpdateMembreAccesModal {...args} />
-);
-
 const handlers = {
   setIsOpen: action('setIsOpen'),
   updateMembre: action('updateMembre') as TUpdateMembre,
@@ -22,7 +17,10 @@ const handlers = {
   removeInvite: action('removeInvite'),
 };
 
-export const AdminRetireUnMembre = Template.bind({});
+export const AdminRetireUnMembre = {
+  args: AdminRetireUnMembreArgs,
+};
+
 const AdminRetireUnMembreArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
@@ -31,9 +29,11 @@ const AdminRetireUnMembreArgs: AccesModalProps = {
   isCurrentUser: false,
   ...handlers,
 };
-AdminRetireUnMembre.args = AdminRetireUnMembreArgs;
 
-export const AdminRetireUnInvite = Template.bind({});
+export const AdminRetireUnInvite = {
+  args: AdminRetireUnInviteArgs,
+};
+
 const AdminRetireUnInviteArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
@@ -42,9 +42,11 @@ const AdminRetireUnInviteArgs: AccesModalProps = {
   isCurrentUser: false,
   ...handlers,
 };
-AdminRetireUnInvite.args = AdminRetireUnInviteArgs;
 
-export const AdminSeRetireLuiMeme = Template.bind({});
+export const AdminSeRetireLuiMeme = {
+  args: AdminSeRetireLuiMemeArgs,
+};
+
 const AdminSeRetireLuiMemeArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
@@ -53,9 +55,11 @@ const AdminSeRetireLuiMemeArgs: AccesModalProps = {
   isCurrentUser: true,
   ...handlers,
 };
-AdminSeRetireLuiMeme.args = AdminSeRetireLuiMemeArgs;
 
-export const AdminChangeSonAcces = Template.bind({});
+export const AdminChangeSonAcces = {
+  args: AdminChangeSonAccesArgs,
+};
+
 const AdminChangeSonAccesArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'edition',
@@ -64,4 +68,3 @@ const AdminChangeSonAccesArgs: AccesModalProps = {
   isCurrentUser: true,
   ...handlers,
 };
-AdminChangeSonAcces.args = AdminChangeSonAccesArgs;

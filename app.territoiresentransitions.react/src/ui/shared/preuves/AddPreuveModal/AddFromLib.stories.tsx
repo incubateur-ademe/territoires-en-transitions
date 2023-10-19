@@ -1,7 +1,6 @@
-import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import { Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-import {AddFromLib, TAddFromLibProps} from './AddFromLib';
+import {AddFromLib} from './AddFromLib';
 
 export default {
   component: AddFromLib,
@@ -11,12 +10,11 @@ export default {
   },
 } as Meta;
 
-const Template: Story<TAddFromLibProps> = args => <AddFromLib {...args} />;
-
-export const Vide = Template.bind({});
-Vide.args = {
-  items: [],
-  total: 0,
+export const Vide = {
+  args: {
+    items: [],
+    total: 0,
+  },
 };
 
 const genMockFile = (count: number) =>
@@ -29,8 +27,9 @@ const genMockFile = (count: number) =>
       hash: 'fake',
     }));
 
-export const Fichiers = Template.bind({});
-Fichiers.args = {
-  items: genMockFile(4),
-  total: 12,
+export const Fichiers = {
+  args: {
+    items: genMockFile(4),
+    total: 12,
+  },
 };

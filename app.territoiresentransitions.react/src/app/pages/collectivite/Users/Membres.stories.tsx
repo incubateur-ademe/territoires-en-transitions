@@ -1,5 +1,3 @@
-import React from 'react';
-import {Story} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
 import {Membres, MembresProps} from './Membres';
@@ -16,14 +14,15 @@ export default {
   component: Membres,
 };
 
-const Template: Story<MembresProps> = args => <Membres {...args} />;
-
 const handlers = {
   updateMembre: action('updateMembre') as TUpdateMembre,
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const EnTantQueLecteur = Template.bind({});
+export const EnTantQueLecteur = {
+  args: EnTantQueLecteurArgs,
+};
+
 const EnTantQueLecteurArgs: MembresProps = {
   addUser: async _request => null,
   addUserResponse: {},
@@ -33,9 +32,11 @@ const EnTantQueLecteurArgs: MembresProps = {
   collectivite: fakeCurrentCollectiviteLecture,
   ...handlers,
 };
-EnTantQueLecteur.args = EnTantQueLecteurArgs;
 
-export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = Template.bind({});
+export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = {
+  args: EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs,
+};
+
 const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
   addUser: async _request => undefined,
   addUserResponse: {added: false, invitationUrl: 'invitationId'},
@@ -45,10 +46,11 @@ const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
   collectivite: fakeCurrentCollectiviteAdmin,
   ...handlers,
 };
-EnTantQuAdminQuiInviteUnNouvelUtilisateur.args =
-  EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs;
 
-export const EnTantQuAdminQuiInviteUnUtilisateurExistant = Template.bind({});
+export const EnTantQuAdminQuiInviteUnUtilisateurExistant = {
+  args: EnTantQuAdminQuiInviteUnUtilisateurExistantArgs,
+};
+
 const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
   addUser: async _request => undefined,
   addUserResponse: {added: true},
@@ -58,10 +60,11 @@ const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
   collectivite: fakeCurrentCollectiviteAdmin,
   ...handlers,
 };
-EnTantQuAdminQuiInviteUnUtilisateurExistant.args =
-  EnTantQuAdminQuiInviteUnUtilisateurExistantArgs;
 
-export const EnTantQuAdminQuiInviteUnUtilisateurDejaMembre = Template.bind({});
+export const EnTantQuAdminQuiInviteUnUtilisateurDejaMembre = {
+  args: EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs,
+};
+
 const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
   addUser: async _ => undefined,
   addUserResponse: {
@@ -74,5 +77,3 @@ const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
   collectivite: fakeCurrentCollectiviteAdmin,
   ...handlers,
 };
-EnTantQuAdminQuiInviteUnUtilisateurDejaMembre.args =
-  EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs;

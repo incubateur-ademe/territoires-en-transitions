@@ -1,4 +1,4 @@
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {
   MultiSelectCheckboxes,
   TMultiSelectCheckboxesProps,
@@ -8,7 +8,7 @@ export default {
   component: MultiSelectCheckboxes,
 } as Meta;
 
-const Template: Story<TMultiSelectCheckboxesProps> = args => (
+const Template: StoryFn<TMultiSelectCheckboxesProps> = args => (
   <ul>
     <MultiSelectCheckboxes {...args} />
   </ul>
@@ -23,7 +23,11 @@ const options = [
   {id: '5', libelle: 'Cinquième étoile'},
 ];
 
-export const SelectionTousParDefaut = Template.bind({});
+export const SelectionTousParDefaut = {
+  render: Template,
+  args: selectionTousParDefautArgs,
+};
+
 const selectionTousParDefautArgs: TMultiSelectCheckboxesProps = {
   htmlId: 'exemple',
   title: 'Niveau de labellisation',
@@ -33,9 +37,12 @@ const selectionTousParDefautArgs: TMultiSelectCheckboxesProps = {
     console.log(selected);
   },
 };
-SelectionTousParDefaut.args = selectionTousParDefautArgs;
 
-export const SelectionMultiple = Template.bind({});
+export const SelectionMultiple = {
+  render: Template,
+  args: selectionMultipleArgs,
+};
+
 const selectionMultipleArgs: TMultiSelectCheckboxesProps = {
   htmlId: 'exemple',
   title: 'Niveau de labellisation',
@@ -45,4 +52,3 @@ const selectionMultipleArgs: TMultiSelectCheckboxesProps = {
     console.log(selected);
   },
 };
-SelectionMultiple.args = selectionMultipleArgs;

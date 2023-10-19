@@ -4,5 +4,7 @@ export default {
   component: RegistrationForm,
 };
 
-export const Exemple = () => <RegistrationForm />;
-Exemple.parameters = {storyshots: false};
+export const Exemple = {
+  render: () => <RegistrationForm />,
+  parameters: {storyshots: false},
+};

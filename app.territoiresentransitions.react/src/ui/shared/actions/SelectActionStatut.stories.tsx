@@ -1,5 +1,5 @@
 import React from 'react';
-import {Story, Meta} from '@storybook/react';
+import {StoryFn, Meta} from '@storybook/react';
 import {
   SelectActionStatut,
   TSelectActionStatutProps,
@@ -10,20 +10,29 @@ export default {
   component: SelectActionStatut,
 } as Meta;
 
-const Template: Story<TSelectActionStatutProps> = args => (
+const Template: StoryFn<TSelectActionStatutProps> = args => (
   <div style={{width: 200}}>
     <SelectActionStatut {...args} />
   </div>
 );
 
-export const SelectionParDefaut = Template.bind({});
-export const AvecSelection = Template.bind({});
-AvecSelection.args = {
-  value: 'fait',
+export const SelectionParDefaut = {
+  render: Template,
 };
 
-export const AvecNonConcerne = Template.bind({});
-AvecNonConcerne.args = {
-  value: 'non_concerne',
-  items: ITEMS_AVEC_NON_CONCERNE,
+export const AvecSelection = {
+  render: Template,
+
+  args: {
+    value: 'fait',
+  },
+};
+
+export const AvecNonConcerne = {
+  render: Template,
+
+  args: {
+    value: 'non_concerne',
+    items: ITEMS_AVEC_NON_CONCERNE,
+  },
 };
