@@ -1,16 +1,14 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {TThematiqueRow, Tables, TablesInsert} from 'types/alias';
 
-type TIndicateurPersoDef =
-  Database['public']['Tables']['indicateur_personnalise_definition'];
-
-export type TIndicateurPersoDefinitionWrite = TIndicateurPersoDef['Insert'] & {
-  collectivite_id: number;
-};
+export type TIndicateurPersoDefinitionWrite =
+  TablesInsert<'indicateur_personnalise_definition'> & {
+    collectivite_id: number;
+  };
 
 export const useUpsertIndicateurPersoDefinition = (options?: {
-  onSuccess: (data: TIndicateurPersoDef['Row']) => void;
+  onSuccess: (data: Tables<'indicateur_personnalise_definition'>) => void;
 }) => {
   const queryClient = useQueryClient();
 
@@ -21,9 +19,9 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
       ficheId,
       thematiques,
     }: {
-      definition: TIndicateurPersoDef['Insert'];
+      definition: TablesInsert<'indicateur_personnalise_definition'>;
       ficheId?: number | null;
-      thematiques?: string[] | null;
+      thematiques?: TThematiqueRow[] | null;
     }) => {
       const {data, error} = await supabaseClient
         .from('indicateur_personnalise_definition')
@@ -46,7 +44,7 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
           await supabaseClient
             .from('indicateur_personnalise_thematique')
             .upsert(
-              thematiques.map(thematique => ({
+              thematiques.map(({thematique}) => ({
                 thematique,
                 indicateur_id: indicateur_personnalise_id,
               })),

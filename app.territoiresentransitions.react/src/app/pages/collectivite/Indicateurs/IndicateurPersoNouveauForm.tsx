@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import classNames from 'classnames';
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
@@ -5,7 +6,7 @@ import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
 import FormField from '../../../../ui/shared/form/FormField';
 import ThematiquesDropdown from '../PlansActions/FicheAction/FicheActionForm/ThematiquesDropdown';
-import {useState} from 'react';
+import {TThematiqueRow} from 'types/alias';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -19,20 +20,20 @@ const validation = Yup.object({
 export const IndicateurPersoNouveauForm = (props: {
   indicateur: TIndicateurPersoDefinitionWrite;
   isSaving?: boolean;
+  thematiquesFiche?: TThematiqueRow[] | null;
   onSave: (
     data: TIndicateurPersoDefinitionWrite,
-    thematiques: string[]
+    thematiques: TThematiqueRow[]
   ) => void;
   onCancel?: () => void;
 }) => {
-  const {indicateur, isSaving, onSave, onCancel} = props;
-  const [thematiques, setThematiques] = useState<{thematique: string}[]>([]);
+  const {indicateur, isSaving, thematiquesFiche, onSave, onCancel} = props;
+  const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
+    thematiquesFiche || []
+  );
 
   const handleSave = (data: TIndicateurPersoDefinitionWrite) => {
-    onSave(
-      data,
-      thematiques.map(t => t.thematique)
-    );
+    onSave(data, thematiques);
   };
 
   return (
