@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {fakeAdmin, fakeEditeur, fakeLecteur} from './fakeData';
 import MembreListTableRow, {
@@ -15,10 +15,6 @@ const handlers = {
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const Admin = {
-  args: AdminArgs,
-};
-
 const AdminArgs: TMembreListTableRowProps = {
   currentUserId: fakeAdmin.user_id,
   membre: fakeAdmin,
@@ -26,8 +22,8 @@ const AdminArgs: TMembreListTableRowProps = {
   ...handlers,
 };
 
-export const Editeur = {
-  args: EditeurArgs,
+export const Admin = {
+  args: AdminArgs,
 };
 
 const EditeurArgs: TMembreListTableRowProps = {
@@ -37,8 +33,8 @@ const EditeurArgs: TMembreListTableRowProps = {
   ...handlers,
 };
 
-export const Lecteur = {
-  args: LecteurArgs,
+export const Editeur = {
+  args: EditeurArgs,
 };
 
 const LecteurArgs: TMembreListTableRowProps = {
@@ -48,8 +44,8 @@ const LecteurArgs: TMembreListTableRowProps = {
   ...handlers,
 };
 
-export const Invite = {
-  args: InviteArgs,
+export const Lecteur = {
+  args: LecteurArgs,
 };
 
 const InviteArgs: TMembreListTableRowProps = {
@@ -57,4 +53,8 @@ const InviteArgs: TMembreListTableRowProps = {
   membre: {email: 'invite@dodo.com', niveau_acces: 'lecture'},
   currentUserAccess: 'lecture',
   ...handlers,
+};
+
+export const Invite = {
+  args: InviteArgs,
 };

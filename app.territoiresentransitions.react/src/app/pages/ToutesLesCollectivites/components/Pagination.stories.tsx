@@ -11,11 +11,6 @@ const Template: StoryFn<TPaginationProps> = args => (
   </ul>
 );
 
-export const UneSeulePage = {
-  render: Template,
-  args: UneSeulePageArgs,
-};
-
 const UneSeulePageArgs: TPaginationProps = {
   selectedPage: 1,
   nbOfPages: 1,
@@ -24,9 +19,9 @@ const UneSeulePageArgs: TPaginationProps = {
   },
 };
 
-export const TroisPages = {
+export const UneSeulePage = {
   render: Template,
-  args: TroisPagesArgs,
+  args: UneSeulePageArgs,
 };
 
 const TroisPagesArgs: TPaginationProps = {
@@ -37,9 +32,9 @@ const TroisPagesArgs: TPaginationProps = {
   },
 };
 
-export const SixPages = {
+export const TroisPages = {
   render: Template,
-  args: SixPagesArgs,
+  args: TroisPagesArgs,
 };
 
 const SixPagesArgs: TPaginationProps = {
@@ -50,9 +45,9 @@ const SixPagesArgs: TPaginationProps = {
   },
 };
 
-export const HuitPages = {
+export const SixPages = {
   render: Template,
-  args: HuitPagesArgs,
+  args: SixPagesArgs,
 };
 
 const HuitPagesArgs: TPaginationProps = {
@@ -63,9 +58,9 @@ const HuitPagesArgs: TPaginationProps = {
   },
 };
 
-export const CentPlusPage = {
+export const HuitPages = {
   render: Template,
-  args: CentPlusPageArgs,
+  args: HuitPagesArgs,
 };
 
 const CentPlusPageArgs: TPaginationProps = {
@@ -74,4 +69,9 @@ const CentPlusPageArgs: TPaginationProps = {
   onChange: (selected: number) => {
     console.log(selected);
   },
+};
+
+export const CentPlusPage = {
+  render: Template,
+  args: CentPlusPageArgs,
 };

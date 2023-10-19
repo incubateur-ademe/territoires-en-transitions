@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {
   AssocierCollectiviteDialog,
   TAssocierCollectiviteDialogProps,
@@ -8,16 +8,12 @@ export default {
   component: AssocierCollectiviteDialog,
 } as Meta;
 
-export const AucunContactReferent = {
-  args: aucunContactReferentArgs,
-};
-
 const aucunContactReferentArgs: TAssocierCollectiviteDialogProps = {
   getReferentContacts: async () => [],
 };
 
-export const UnSeulContactReferent = {
-  args: unSeulContactReferentArgs,
+export const AucunContactReferent = {
+  args: aucunContactReferentArgs,
 };
 
 const unSeulContactReferentArgs: TAssocierCollectiviteDialogProps = {
@@ -26,8 +22,8 @@ const unSeulContactReferentArgs: TAssocierCollectiviteDialogProps = {
   ],
 };
 
-export const PlusieursContactsReferents = {
-  args: plusieursContactsReferentsArgs,
+export const UnSeulContactReferent = {
+  args: unSeulContactReferentArgs,
 };
 
 const plusieursContactsReferentsArgs: TAssocierCollectiviteDialogProps = {
@@ -35,4 +31,8 @@ const plusieursContactsReferentsArgs: TAssocierCollectiviteDialogProps = {
     {nom: 'Cruze', prenom: 'Tom', email: 'tom@email.fr'},
     {nom: 'Canaple', prenom: 'Marie', email: 'marie@email.fr'},
   ],
+};
+
+export const PlusieursContactsReferents = {
+  args: plusieursContactsReferentsArgs,
 };
