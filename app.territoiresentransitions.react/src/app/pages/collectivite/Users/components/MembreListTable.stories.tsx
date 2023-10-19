@@ -48,14 +48,14 @@ const AsLecteurArgs: MembreListTableProps = {
 };
 AsLecteur.args = AsLecteurArgs;
 
-export const isLoading = Template.bind({});
-const isLoadingArgs: MembreListTableProps = {
+export const IsLoading = Template.bind({});
+const IsLoadingArgs: MembreListTableProps = {
   currentUserId: fakeAdmin.user_id,
   currentUserAccess: 'admin',
   isLoading: true,
   ...handlers,
 };
-isLoading.args = isLoadingArgs;
+IsLoading.args = IsLoadingArgs;
 
 export const Empty = Template.bind({});
 const EmptyArgs: MembreListTableProps = {
