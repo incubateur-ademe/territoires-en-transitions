@@ -3,7 +3,7 @@
  * tests fonctionne.
  */
 
-import { assertEquals } from "https://deno.land/std@0.163.0/testing/asserts.ts";
+import { assertEquals, assertExists } from "https://deno.land/std@0.163.0/testing/asserts.ts";
 import { fakeCredentials, signIn, signOut } from "../../lib/auth.ts";
 import { supabase } from "../../lib/supabase.ts";
 import { testReset } from "../../lib/rpcs/testReset.ts";
@@ -40,3 +40,10 @@ Deno.test("Authentification et DCP", async () => {
 Deno.test("Le reset du datalayer n'émet pas d'erreur", async () => {
   await testReset();
 });
+
+Deno.test("Les variables d'environnement sont présentes", async () => {
+  assertExists(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'), "SUPABASE_SERVICE_ROLE_KEY devrait exister.");
+  assertExists(Deno.env.get('SUPABASE_URL'), "SUPABASE_URL devrait exister.");
+  assertExists(Deno.env.get('SUPABASE_KEY'), "SUPABASE_KEY devrait exister.");
+});
+
