@@ -404,9 +404,9 @@ api-test:
       RUN docker run --rm \
               --name api_test_tet \
               --network $network \
-              --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
-              --env SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
               --env SUPABASE_URL=$API_URL \
+              --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+              --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
               api-test:latest test -A tests/$test/*.test.ts --location 'http://localhost'
     END
 
