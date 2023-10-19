@@ -198,4 +198,6 @@ begin
 end;
 $$;
 
+drop function create_fiche;
+
 COMMIT;
