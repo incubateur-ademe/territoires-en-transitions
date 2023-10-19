@@ -52,7 +52,7 @@ jobs:
 
   deploy-app:
     name: Déploie l'app
-    if: ${{ ! github.event.inputs.is-test-app == 'true' }}
+    if: ${{ github.event.inputs.is-test-app != 'true' }}
     needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
