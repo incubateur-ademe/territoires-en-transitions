@@ -5,5 +5,5 @@ export default {
   component: Badge,
 } as Meta;
 
-export const success = () => <Badge status="success">Succès</Badge>;
-export const info = () => <Badge status="info">Info</Badge>;
+export const Success = () => <Badge status="success">Succès</Badge>;
+export const Info = () => <Badge status="info">Info</Badge>;
