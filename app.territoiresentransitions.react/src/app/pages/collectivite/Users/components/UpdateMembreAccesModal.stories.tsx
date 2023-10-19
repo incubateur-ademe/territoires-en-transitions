@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {TUpdateMembre} from '../types';
 import UpdateMembreAccesModal, {
@@ -17,10 +17,6 @@ const handlers = {
   removeInvite: action('removeInvite'),
 };
 
-export const AdminRetireUnMembre = {
-  args: AdminRetireUnMembreArgs,
-};
-
 const AdminRetireUnMembreArgs: AccesModalProps = {
   isOpen: true,
   selectedOption: 'remove',
@@ -30,8 +26,8 @@ const AdminRetireUnMembreArgs: AccesModalProps = {
   ...handlers,
 };
 
-export const AdminRetireUnInvite = {
-  args: AdminRetireUnInviteArgs,
+export const AdminRetireUnMembre = {
+  args: AdminRetireUnMembreArgs,
 };
 
 const AdminRetireUnInviteArgs: AccesModalProps = {
@@ -43,8 +39,8 @@ const AdminRetireUnInviteArgs: AccesModalProps = {
   ...handlers,
 };
 
-export const AdminSeRetireLuiMeme = {
-  args: AdminSeRetireLuiMemeArgs,
+export const AdminRetireUnInvite = {
+  args: AdminRetireUnInviteArgs,
 };
 
 const AdminSeRetireLuiMemeArgs: AccesModalProps = {
@@ -56,8 +52,8 @@ const AdminSeRetireLuiMemeArgs: AccesModalProps = {
   ...handlers,
 };
 
-export const AdminChangeSonAcces = {
-  args: AdminChangeSonAccesArgs,
+export const AdminSeRetireLuiMeme = {
+  args: AdminSeRetireLuiMemeArgs,
 };
 
 const AdminChangeSonAccesArgs: AccesModalProps = {
@@ -67,4 +63,8 @@ const AdminChangeSonAccesArgs: AccesModalProps = {
   membreEmail: '',
   isCurrentUser: true,
   ...handlers,
+};
+
+export const AdminChangeSonAcces = {
+  args: AdminChangeSonAccesArgs,
 };

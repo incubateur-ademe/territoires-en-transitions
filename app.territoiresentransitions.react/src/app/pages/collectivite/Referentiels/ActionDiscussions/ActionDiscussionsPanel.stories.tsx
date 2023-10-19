@@ -16,16 +16,11 @@ export default {
 } as Meta;
 
 const Template: StoryFn<ActionDiscussionsPanelProps> = args => (
-  <ActionDiscussionPanelContent {...args} onClose={action('onClose')} />
+  <ActionDiscussionPanelContent {...args} />
 );
 
 const handlers = {
   changeVue: action('changeVue') as (vue: TActionDiscussionStatut) => void,
-};
-
-export const VueOuverts = {
-  render: Template,
-  args: VueOuvertsArgs,
 };
 
 const VueOuvertsArgs: ActionDiscussionsPanelProps = {
@@ -48,9 +43,9 @@ const VueOuvertsArgs: ActionDiscussionsPanelProps = {
   ...handlers,
 };
 
-export const VueFermes = {
+export const VueOuverts = {
   render: Template,
-  args: VueFermesArgs,
+  args: VueOuvertsArgs,
 };
 
 const VueFermesArgs: ActionDiscussionsPanelProps = {
@@ -75,4 +70,9 @@ const VueFermesArgs: ActionDiscussionsPanelProps = {
     },
   ],
   ...handlers,
+};
+
+export const VueFermes = {
+  render: Template,
+  args: VueFermesArgs,
 };

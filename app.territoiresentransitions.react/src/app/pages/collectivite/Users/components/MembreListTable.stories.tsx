@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {TUpdateMembre} from '../types';
 import MembreListTable, {MembreListTableProps} from './MembreListTable';
@@ -13,10 +13,6 @@ const handlers = {
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const AsAdmin = {
-  args: AsAdminArgs,
-};
-
 const AsAdminArgs: MembreListTableProps = {
   membres: fakeMembres,
   currentUserId: fakeAdmin.user_id,
@@ -25,8 +21,8 @@ const AsAdminArgs: MembreListTableProps = {
   ...handlers,
 };
 
-export const AsEditeur = {
-  args: AsEditeurArgs,
+export const AsAdmin = {
+  args: AsAdminArgs,
 };
 
 const AsEditeurArgs: MembreListTableProps = {
@@ -37,8 +33,8 @@ const AsEditeurArgs: MembreListTableProps = {
   ...handlers,
 };
 
-export const AsLecteur = {
-  args: AsLecteurArgs,
+export const AsEditeur = {
+  args: AsEditeurArgs,
 };
 
 const AsLecteurArgs: MembreListTableProps = {
@@ -49,8 +45,8 @@ const AsLecteurArgs: MembreListTableProps = {
   ...handlers,
 };
 
-export const IsLoading = {
-  args: IsLoadingArgs,
+export const AsLecteur = {
+  args: AsLecteurArgs,
 };
 
 const IsLoadingArgs: MembreListTableProps = {
@@ -60,8 +56,8 @@ const IsLoadingArgs: MembreListTableProps = {
   ...handlers,
 };
 
-export const Empty = {
-  args: EmptyArgs,
+export const IsLoading = {
+  args: IsLoadingArgs,
 };
 
 const EmptyArgs: MembreListTableProps = {
@@ -69,4 +65,8 @@ const EmptyArgs: MembreListTableProps = {
   currentUserAccess: 'admin',
   isLoading: false,
   ...handlers,
+};
+
+export const Empty = {
+  args: EmptyArgs,
 };

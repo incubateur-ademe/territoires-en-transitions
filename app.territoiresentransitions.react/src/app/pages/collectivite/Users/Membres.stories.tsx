@@ -19,10 +19,6 @@ const handlers = {
   removeFromCollectivite: action('removeFromCollectivite'),
 };
 
-export const EnTantQueLecteur = {
-  args: EnTantQueLecteurArgs,
-};
-
 const EnTantQueLecteurArgs: MembresProps = {
   addUser: async _request => null,
   addUserResponse: {},
@@ -33,8 +29,8 @@ const EnTantQueLecteurArgs: MembresProps = {
   ...handlers,
 };
 
-export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = {
-  args: EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs,
+export const EnTantQueLecteur = {
+  args: EnTantQueLecteurArgs,
 };
 
 const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
@@ -47,8 +43,8 @@ const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
   ...handlers,
 };
 
-export const EnTantQuAdminQuiInviteUnUtilisateurExistant = {
-  args: EnTantQuAdminQuiInviteUnUtilisateurExistantArgs,
+export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = {
+  args: EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs,
 };
 
 const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
@@ -61,8 +57,8 @@ const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
   ...handlers,
 };
 
-export const EnTantQuAdminQuiInviteUnUtilisateurDejaMembre = {
-  args: EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs,
+export const EnTantQuAdminQuiInviteUnUtilisateurExistant = {
+  args: EnTantQuAdminQuiInviteUnUtilisateurExistantArgs,
 };
 
 const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
@@ -76,4 +72,8 @@ const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
   isLoading: false,
   collectivite: fakeCurrentCollectiviteAdmin,
   ...handlers,
+};
+
+export const EnTantQuAdminQuiInviteUnUtilisateurDejaMembre = {
+  args: EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs,
 };

@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
 import HistoriqueFiltres from './HistoriqueFiltres';
@@ -12,10 +12,6 @@ const handlers = {
   setFilters: action('setFilters') as TSetFilters,
 };
 
-export const Defaut = {
-  args: filtresArgs,
-};
-
 const filtresArgs = {
   itemsNumber: 0,
   initialFilters: {collectivite_id: 1},
@@ -25,8 +21,8 @@ const filtresArgs = {
   ...handlers,
 };
 
-export const AvecFiltres = {
-  args: avecFiltresArgs,
+export const Defaut = {
+  args: filtresArgs,
 };
 
 const avecFiltresArgs = {
@@ -39,4 +35,8 @@ const avecFiltresArgs = {
     endDate: '2022-11-24',
   },
   ...handlers,
+};
+
+export const AvecFiltres = {
+  args: avecFiltresArgs,
 };

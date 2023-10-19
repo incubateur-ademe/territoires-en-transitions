@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import ActionDiscussion, {ActionDiscussionProps} from './ActionDiscussion';
 import {
   fakeActionDiscussion,
@@ -9,24 +9,20 @@ export default {
   component: ActionDiscussion,
 } as Meta;
 
-export const Ouverte = {
-  args: OuverteArgs,
-};
-
 const OuverteArgs: ActionDiscussionProps = {
   discussion: fakeActionDiscussion,
 };
 
-export const Fermee = {
-  args: FermeeArgs,
+export const Ouverte = {
+  args: OuverteArgs,
 };
 
 const FermeeArgs: ActionDiscussionProps = {
   discussion: {...fakeActionDiscussion, status: 'ferme'},
 };
 
-export const AvecCommentairesMasques = {
-  args: AvecCommentairesMasquesArgs,
+export const Fermee = {
+  args: FermeeArgs,
 };
 
 const AvecCommentairesMasquesArgs: ActionDiscussionProps = {
@@ -42,4 +38,8 @@ const AvecCommentairesMasquesArgs: ActionDiscussionProps = {
       },
     ],
   },
+};
+
+export const AvecCommentairesMasques = {
+  args: AvecCommentairesMasquesArgs,
 };
