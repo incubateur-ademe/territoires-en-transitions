@@ -3,6 +3,9 @@ import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
+import FormField from '../../../../ui/shared/form/FormField';
+import ThematiquesDropdown from '../PlansActions/FicheAction/FicheActionForm/ThematiquesDropdown';
+import {useState} from 'react';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -16,45 +19,66 @@ const validation = Yup.object({
 export const IndicateurPersoNouveauForm = (props: {
   indicateur: TIndicateurPersoDefinitionWrite;
   isSaving?: boolean;
-  onSave: (data: TIndicateurPersoDefinitionWrite) => void;
+  onSave: (
+    data: TIndicateurPersoDefinitionWrite,
+    thematiques: string[]
+  ) => void;
   onCancel?: () => void;
 }) => {
   const {indicateur, isSaving, onSave, onCancel} = props;
+  const [thematiques, setThematiques] = useState<{thematique: string}[]>([]);
+
+  const handleSave = (data: TIndicateurPersoDefinitionWrite) => {
+    onSave(
+      data,
+      thematiques.map(t => t.thematique)
+    );
+  };
 
   return (
     <Formik<TIndicateurPersoDefinitionWrite>
       initialValues={indicateur}
+      isInitialValid={false}
       validationSchema={validation}
-      onSubmit={onSave}
+      onSubmit={handleSave}
     >
-      <Form>
-        <div className="bg-grey975 fr-py-7w fr-px-10w">
-          <p>
-            Les indicateurs personnalisés vous permettent de suivre de manière
-            spécifique les actions menées par votre collectivité. Associez-les à
-            une ou plusieurs fiches action pour faciliter leur mise à jour !
-          </p>
-          <FormikInput name="titre" label="Nom de l’indicateur" />
-          <FormikInput name="unite" label="Unité" />
-          <FormikInput type="area" name="description" label="Description" />
-        </div>
-        <div className="flex flex-row justify-end gap-4 pt-5">
-          {onCancel && (
-            <button className="fr-btn fr-btn--secondary" onClick={onCancel}>
-              Annuler
+      {({isValid}) => (
+        <Form>
+          <div className="bg-grey975 fr-py-7w fr-px-10w">
+            <p>
+              Les indicateurs personnalisés vous permettent de suivre de manière
+              spécifique les actions menées par votre collectivité. Associez-les
+              à une ou plusieurs fiches action pour faciliter leur mise à jour !
+            </p>
+            <FormikInput name="titre" label="Nom de l’indicateur" />
+            <FormikInput name="unite" label="Unité" />
+            <FormikInput type="area" name="description" label="Description" />
+            <FormField className="fr-mt-4w" label="Thématique">
+              <ThematiquesDropdown
+                thematiques={thematiques}
+                onSelect={setThematiques}
+                isReadonly={false}
+              />
+            </FormField>
+          </div>
+          <div className="flex flex-row justify-end gap-4 pt-5">
+            {onCancel && (
+              <button className="fr-btn fr-btn--secondary" onClick={onCancel}>
+                Annuler
+              </button>
+            )}
+            <button
+              type="submit"
+              className={classNames('fr-btn', {
+                'fr-btn--icon-right fr-icon-arrow-right-line': !isSaving,
+              })}
+              disabled={isSaving || !isValid}
+            >
+              {isSaving ? 'Enregistrement en cours...' : 'Valider et compléter'}
             </button>
-          )}
-          <button
-            type="submit"
-            className={classNames('fr-btn', {
-              'fr-btn--icon-right fr-icon-arrow-right-line': !isSaving,
-            })}
-            disabled={isSaving}
-          >
-            {isSaving ? 'Enregistrement en cours...' : 'Valider et compléter'}
-          </button>
-        </div>
-      </Form>
+          </div>
+        </Form>
+      )}
     </Formik>
   );
 };

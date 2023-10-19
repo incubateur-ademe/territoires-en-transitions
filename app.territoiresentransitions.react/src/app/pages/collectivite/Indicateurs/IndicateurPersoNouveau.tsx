@@ -47,8 +47,11 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition, ficheId});
+  const onSave = (
+    definition: TIndicateurPersoDefinitionWrite,
+    thematiques: string[]
+  ) => {
+    save({definition, ficheId, thematiques});
   };
 
   return (
