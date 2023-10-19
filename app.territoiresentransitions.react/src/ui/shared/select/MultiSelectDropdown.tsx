@@ -109,6 +109,7 @@ const MultiSelectButton = forwardRef(
       aria-label="ouvrir le menu"
       className={classNames(buttonDisplayedClassname, buttonClassName)}
       disabled={disabled}
+      type="button"
       {...props}
     >
       {values && values?.length !== 0 ? (

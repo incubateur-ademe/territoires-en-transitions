@@ -10,6 +10,7 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Custom Option Et Selectio
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  type="button"
 >
   <span
     className="fr-fi-filter-fill fr-fi--sm w-full text-center text-bf500 font-bold"
@@ -32,6 +33,7 @@ exports[`Storyshots ui/shared/select/MultiSelectFilter Default 1`] = `
   onKeyUp={[Function]}
   onMouseDown={[Function]}
   onPointerDown={[Function]}
+  type="button"
 >
   <span
     className="mr-auto flex line-clamp-1"
