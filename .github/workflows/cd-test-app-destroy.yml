@@ -8,6 +8,7 @@ on:
 jobs:
   destroy-test-app:
     name: Supprime l'app de test
+    environment: preprod
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
