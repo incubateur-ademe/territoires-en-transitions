@@ -1,7 +1,9 @@
 import {useEffect, useRef} from 'react';
 
-export const onlyNumericWithFloatRegExp = new RegExp(/^-?\d*[.,]?\d*$/);
-export const onlyNumericRegExp = new RegExp(/^\d?\d*$/);
+export const onlyNumericWithFloatRegExp = new RegExp(
+  /^-?(?:\d|\s)*[.,]?(?:\d|\s)*$/
+);
+export const onlyNumericRegExp = new RegExp(/^(?:\d|\s)?(?:\d|\s)*$/);
 
 const EVENTS = [
   'input',
@@ -44,6 +46,7 @@ export const useInputFilterRef = <
       if (errMsg && ['keydown', 'mousedown', 'focusout'].includes(e.type)) {
         this.setCustomValidity('');
       }
+      this.value = this.value.replaceAll(' ', '');
       this.oldValue = this.value;
       this.oldSelectionStart = this.selectionStart;
       this.oldSelectionEnd = this.selectionEnd;
