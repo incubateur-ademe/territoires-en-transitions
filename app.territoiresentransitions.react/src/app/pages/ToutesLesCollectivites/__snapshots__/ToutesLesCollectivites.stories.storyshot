@@ -761,7 +761,9 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Et Des 
           >
             <span
               className="mr-auto flex line-clamp-1"
-            />
+            >
+              % Réalisé courant
+            </span>
             <span
               className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
@@ -6608,7 +6610,9 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Résultats 1`] = `
           >
             <span
               className="mr-auto flex line-clamp-1"
-            />
+            >
+              % Réalisé courant
+            </span>
             <span
               className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
