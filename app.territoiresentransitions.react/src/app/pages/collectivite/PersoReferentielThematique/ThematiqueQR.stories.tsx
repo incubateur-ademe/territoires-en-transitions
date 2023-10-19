@@ -1,7 +1,7 @@
 import {Story, Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {ThematiqueQR, TThematiqueQRProps} from './ThematiqueQR';
-import {Q1, Q2, Q3} from '../PersoPotentielModal/fixture.json';
+import Fixture from '../PersoPotentielModal/fixture.json';
 
 export default {
   component: ThematiqueQR,
@@ -14,7 +14,7 @@ const Template: Story<TThematiqueQRProps> = args => (
       id: 1,
       nom: 'Grand Montauban',
     }}
-    questionReponses={[Q1, Q2, {...Q3, reponse: 60}]}
+    questionReponses={[Fixture.Q1, Fixture.Q2, {...Fixture.Q3, reponse: 60}]}
     {...args}
   />
 );
