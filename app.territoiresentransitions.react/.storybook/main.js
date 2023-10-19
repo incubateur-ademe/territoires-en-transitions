@@ -7,8 +7,6 @@ module.exports = {
 
   // extensions chargées
   addons: [
-    // pour faire des liens entre les stories
-    '@storybook/addon-links',
     // les extensions les plus utilisées (Actions, Controls, Docs...)
     '@storybook/addon-essentials',
     '@storybook/preset-create-react-app',
