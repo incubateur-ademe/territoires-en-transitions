@@ -20,19 +20,12 @@ type CollectiviteFeatureProps = {
 const CollectiviteFeature = ({collectivite}: CollectiviteFeatureProps) => {
   const router = useRouter();
   const geojson = collectivite.geojson as unknown as GeoJsonObject;
-  const style: PathOptions = collectivite.labellisee
-    ? {
-        fillColor: '#4D75AC',
-        fillOpacity: 0.7,
-        color: '#4D75AC',
-        weight: 1.5,
-      }
-    : {
-        fillColor: '#9E9E9E',
-        fillOpacity: 0.7,
-        color: '#9E9E9E',
-        weight: 1.5,
-      };
+  const style: PathOptions = {
+    fillColor: '#4D75AC',
+    fillOpacity: 0.7,
+    color: '#4D75AC',
+    weight: 1.5,
+  };
 
   return (
     <FeatureGroup key={collectivite.collectivite_id}>

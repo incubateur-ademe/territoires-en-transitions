@@ -41,29 +41,13 @@ const CarteAvecFiltres = () => {
   return filtre ? (
     <div className="flex flex-col lg:flex-row justify-between mt-8">
       <div
-        className="w-full md:w-[700px] md:h-[700px] lg:w-[550px] lg:h-[550px] xl:w-[700px] xl:h-[700px] mb-12 mx-auto"
+        className="w-full md:w-[700px] md:h-[700px] lg:w-[550px] lg:h-[550px] xl:w-[700px] xl:h-[700px] mx-auto"
         style={windowWidth && windowWidth < 768 ? {height: windowWidth} : {}}
       >
         <CarteCollectivites filtre={filtre} etoiles={etoiles} />
       </div>
 
       <div className="flex flex-col items-start justify-start gap-8">
-        <div className="flex gap-4 items-center">
-          <div className="bg-[#4D75AC] min-w-[40px] h-[30px] rounded-2xl"></div>
-          <div className="lg:w-[350px]">
-            <strong>Collectivités engagées labellisées</strong> sur au moins un
-            des 2 référentiels : Climat Air Énergie (CAE) et/ou Économie
-            Circulaire (ECi)
-          </div>
-        </div>
-        <div className="flex gap-4 items-center">
-          <div className="bg-[#9E9E9E] min-w-[40px] h-[30px] rounded-2xl"></div>
-          <div className="lg:w-[350px]">
-            <strong>Collectivités engagées non labellisées</strong> signataires
-            d'un Contrat d'Objectif Territorial (COT)
-          </div>
-        </div>
-
         <div className="flex flex-col md:flex-row lg:flex-col justify-between gap-8 w-full md:px-16 lg:px-0">
           <div className="flex flex-col items-center w-full md:w-fit lg:w-full ">
             <p className="text-primary-8">
