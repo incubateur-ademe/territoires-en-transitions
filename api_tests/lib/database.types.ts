@@ -3297,6 +3297,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }
         Insert: {
           collectivite_id: number
@@ -3306,6 +3308,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Update: {
           collectivite_id?: number
@@ -3315,6 +3319,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Relationships: [
           {
@@ -3639,6 +3645,30 @@ export interface Database {
             foreignKeyName: "axe_parent_fkey"
             columns: ["parent"]
             referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "axe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_type_fkey"
+            columns: ["type"]
+            referencedRelation: "plan_action_type"
             referencedColumns: ["id"]
           }
         ]
@@ -6316,6 +6346,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6346,6 +6377,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6376,6 +6408,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -12293,6 +12326,46 @@ export interface Database {
           collectivite_id?: number
           id?: number
           nom?: string
+        }
+        Relationships: []
+      }
+      plan_action_type: {
+        Row: {
+          categorie: string
+          detail: string | null
+          id: number
+          type: string
+        }
+        Insert: {
+          categorie: string
+          detail?: string | null
+          id?: number
+          type: string
+        }
+        Update: {
+          categorie?: string
+          detail?: string | null
+          id?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_action_type_categorie_fkey"
+            columns: ["categorie"]
+            referencedRelation: "plan_action_type_categorie"
+            referencedColumns: ["categorie"]
+          }
+        ]
+      }
+      plan_action_type_categorie: {
+        Row: {
+          categorie: string
+        }
+        Insert: {
+          categorie: string
+        }
+        Update: {
+          categorie?: string
         }
         Relationships: []
       }
@@ -19168,6 +19241,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -19511,6 +19585,7 @@ export interface Database {
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           referents: Database["public"]["CompositeTypes"]["personne"][] | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -23683,6 +23758,7 @@ export interface Database {
       col_is_null:
         | {
             Args: {
+              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23691,7 +23767,6 @@ export interface Database {
           }
         | {
             Args: {
-              schema_name: unknown
               table_name: unknown
               column_name: unknown
               description?: string
@@ -23814,6 +23889,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -24039,24 +24115,6 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              fiche_action_indicateur: unknown
-            }
-            Returns: {
-              collectivite_id: number | null
-              date_fin_provisoire: string | null
-              id: number | null
-              modified_at: string | null
-              niveau_priorite:
-                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
-                | null
-              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
-              plans: unknown[] | null
-              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
-              titre: string | null
-            }[]
-          }
-        | {
-            Args: {
               fiche_action_action: unknown
             }
             Returns: {
@@ -24069,6 +24127,26 @@ export interface Database {
                 | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
+              restreint: boolean | null
+              statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+              titre: string | null
+            }[]
+          }
+        | {
+            Args: {
+              fiche_action_indicateur: unknown
+            }
+            Returns: {
+              collectivite_id: number | null
+              date_fin_provisoire: string | null
+              id: number | null
+              modified_at: string | null
+              niveau_priorite:
+                | Database["public"]["Enums"]["fiche_action_niveaux_priorite"]
+                | null
+              pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
+              plans: unknown[] | null
+              restreint: boolean | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
               titre: string | null
             }[]
@@ -24109,6 +24187,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }[]
@@ -25330,6 +25409,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }[]
       }
       preuve_count: {
@@ -25413,6 +25494,13 @@ export interface Database {
           chunk: unknown
           index?: unknown
           verbose?: boolean
+        }
+        Returns: undefined
+      }
+      restreindre_plan: {
+        Args: {
+          plan_id: number
+          restreindre: boolean
         }
         Returns: undefined
       }
@@ -25724,89 +25812,6 @@ export interface Database {
       time_bucket:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               offset: unknown
@@ -25818,6 +25823,51 @@ export interface Database {
               bucket_width: unknown
               ts: string
               offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
             }
             Returns: string
           }
@@ -25843,6 +25893,44 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
             }
             Returns: number
           }
@@ -25926,6 +26014,12 @@ export interface Database {
       todo:
         | {
             Args: {
+              how_many: number
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
               why: string
               how_many: number
             }
@@ -25941,12 +26035,6 @@ export interface Database {
         | {
             Args: {
               why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
             }
             Returns: boolean[]
           }
