@@ -518,3 +518,4 @@ plan_action/fiches [plan_action/fiches@v2.65.0] 2023-09-28T14:25:24Z Amandine Ja
 @v2.66.0 2023-10-19T12:22:55Z Florian <florian@derfurth.com> # Justification des ajustement des scores et améliorations PA
 
 automatisation/crm [automatisation/crm@v2.66.0] 2023-10-23T09:20:57Z Florian <florian@derfurth.com> # Ajoute les dernières infos de labellisation à la vue collectivités du CRM
+@v2.67.0 2023-10-23T15:01:17Z Florian <florian@derfurth.com> # Envoie les infos de labellisation au CRM
