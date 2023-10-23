@@ -133,28 +133,22 @@ const FicheActionCard = ({
           {(ficheAction.date_fin_provisoire ||
             ficheAction.niveau_priorite ||
             ficheAction.statut) && (
-            <div className="flex items-center mb-3">
+            <div className="flex items-center gap-4 mb-3">
               {ficheAction.statut && (
                 <BadgeStatut statut={ficheAction.statut} />
               )}
               {ficheAction.niveau_priorite && (
-                <div className={classNames({'ml-4': ficheAction.statut})}>
-                  <BadgePriorite priorite={ficheAction.niveau_priorite} />
-                </div>
+                <BadgePriorite priorite={ficheAction.niveau_priorite} />
               )}
               {ficheAction.date_fin_provisoire && (
                 <div
-                  className={classNames({
-                    'ml-4': ficheAction.statut || ficheAction.niveau_priorite,
-                  })}
+                  className="text-sm text-gray-500 whitespace-nowrap"
                   title="Échéance"
                 >
-                  <div className="text-sm text-gray-500 whitespace-nowrap">
-                    {format(
-                      new Date(ficheAction.date_fin_provisoire),
-                      'dd/MM/yyyy'
-                    )}
-                  </div>
+                  {format(
+                    new Date(ficheAction.date_fin_provisoire),
+                    'dd/MM/yyyy'
+                  )}
                 </div>
               )}
             </div>
