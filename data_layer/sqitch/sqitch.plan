@@ -516,3 +516,5 @@ plan_action/fiches [plan_action/fiches@v2.64.1] 2023-09-28T07:46:21Z Florian <fl
 referentiel/justification_ajustement 2023-10-04T09:01:17Z Florian <florian@derfurth.com> # Ajoute la justification des ajustements des scores détaillés
 plan_action/fiches [plan_action/fiches@v2.65.0] 2023-09-28T14:25:24Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le droit au service_role à upsert_fiche_action pour retool, et ajoute la fonction create_fiche
 @v2.66.0 2023-10-19T12:22:55Z Florian <florian@derfurth.com> # Justification des ajustement des scores et améliorations PA
+
+automatisation/crm [automatisation/crm@v2.66.0] 2023-10-23T09:20:57Z Florian <florian@derfurth.com> # Ajoute les dernières infos de labellisation à la vue collectivités du CRM

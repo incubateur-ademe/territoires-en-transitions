@@ -2,101 +2,52 @@
 
 BEGIN;
 
-drop view crm_usages;
-drop materialized view stats.crm_usages;
+drop view crm_collectivites;
 
-create materialized view stats.crm_usages
+create view crm_collectivites
 as
-with premier_rattachements as (select collectivite_id,
-                                      min(created_at
-                                          )::date as date
-                               from private_utilisateur_droit
-                               where active
-                               group by collectivite_id),
-     comptes as (select c.collectivite_id,
-                        (select count(*
-                                    )
-                         from fiche_action x
-                         where x.collectivite_id = c.collectivite_id) as fiches,
-                        (select count(*
-                                    )
-                         from axe x
-                         where x.collectivite_id = c.collectivite_id
-                           and x.parent is null)                      as plans,
-                        (select count(*
-                                    )
-                         from indicateur_resultat x
-                         where x.collectivite_id = c.collectivite_id) as resultats_indicateurs,
-                        (select count(*
-                                    )
-                         from indicateur_personnalise_definition x
-                         where x.collectivite_id = c.collectivite_id) as indicateurs_perso,
-                        (select count(*
-                                    )
-                         from indicateur_personnalise_resultat x
-                         where x.collectivite_id = c.collectivite_id) as resultats_indicateurs_perso
-                 from stats.collectivite c)
-select collectivite_id,
-       nom || ' (' || collectivite_id || ')' as key,
-       completude_eci,
-       completude_cae,
-       x.fiches,
-       x.plans,
-       x.resultats_indicateurs,
-       x.indicateurs_perso,
-       x.resultats_indicateurs_perso,
-       pr.date                               as premier_rattachement,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.titre is not null
-          and (f.description is not null or f.objectifs is not null)) as fiches_initiees,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and (f.statut is not null
-            or f.niveau_priorite is not null
-            or f.date_debut is not null
-            or f.date_fin_provisoire is not null
-            or f.id in (select fiche_id from fiche_action_structure_tag)
-            or f.id in (select fiche_id from fiche_action_pilote st)
-            or f.id in (select fiche_id from fiche_action_service_tag)
-            ))                                                        as fiches_pilotage,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.id in (select fiche_id from fiche_action_indicateur)) as fiches_indicateur,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.id in (select fiche_id from fiche_action_action))     as fiches_action_referentiel,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.id in (select fiche_id from fiches_liees_par_fiche))  as fiches_fiche_liee,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.modified_at > current_timestamp - interval '1 month')  as fiches_mod_1mois,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.modified_at > current_timestamp - interval '3 month')  as fiches_mod_3mois,
-       (select count(*)
-        from fiche_action f
-        where f.collectivite_id = c.collectivite_id
-          and f.modified_at > current_timestamp - interval '6 month')  as fiches_mod_6mois
+select c.nom || ' (' || c.collectivite_id || ')' as key,
+       c.collectivite_id,
+       c.nom,
+       c.type_collectivite,
+       c.nature_collectivite,
+       c.code_siren_insee,
+       c.region_name,
+       c.region_code,
+       c.departement_name,
+       c.departement_code,
+       c.population_totale,
+       coalesce(cot.actif, false) as cot,
+       ll_cae.etoiles as lab_cae_etoiles,
+       ll_cae.score_programme as lab_cae_programme,
+       ll_cae.score_realise as lab_cae_realise,
+       ll_cae.annee as lab_cae_annee,
+       ll_eci.etoiles as lab_eci_etoiles,
+       ll_eci.score_programme as lab_eci_programme,
+       ll_eci.score_realise as lab_eci_realise,
+       ll_eci.annee as lab_eci_annee
 from stats.collectivite c
-         join stats.collectivite_active using (collectivite_id)
-         left join comptes x using (collectivite_id)
-         left join stats.pourcentage_completude pc using (collectivite_id)
-         left join premier_rattachements pr using (collectivite_id)
-order by c.nom;
-
-create view crm_usages
-as
-select *
-from stats.crm_usages
+         left join cot using (collectivite_id)
+         left join lateral (select l2.referentiel,
+                                   l2.etoiles,
+                                   l2.score_programme,
+                                   l2.score_realise,
+                                   l2.annee
+                            from labellisation l2
+                            where l2.collectivite_id = c.collectivite_id
+                              and l2.referentiel = 'cae'
+                            order by annee desc
+                            limit 1) as ll_cae on true
+         left join lateral (select l2.referentiel,
+                                   l2.etoiles,
+                                   l2.score_programme,
+                                   l2.score_realise,
+                                   l2.annee
+                            from labellisation l2
+                            where l2.collectivite_id = c.collectivite_id
+                              and l2.referentiel = 'eci'
+                            order by annee desc
+                            limit 1) as ll_eci on true
 where is_service_role();
 
 COMMIT;
