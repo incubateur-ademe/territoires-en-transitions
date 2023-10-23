@@ -7,7 +7,7 @@ import {
     TTag
 } from "./types.ts";
 import {Enums} from "../_shared/typeUtils.ts";
-import {Database} from "../_shared/database.types";
+import {Database} from "../_shared/database.types.ts";
 
 const regexSplit = /((et\/ou)|[,/+?&;]|\n|\r| - | -|- |^-| et (?!de))(?![^(]*[)])(?![^«]*[»])/;
 const regexSplitThematique = /([/+?&;]|\n|\r| - | -|- |^-)(?![^(]*[)])(?![^«]*[»])/;
