@@ -56,5 +56,6 @@ export const ficheResumeFactory = ({
     plans: axe_id ? [{id: axe_id, collectivite_id}] : null,
     statut: null,
     titre: null,
+    restreint: false,
   };
 };

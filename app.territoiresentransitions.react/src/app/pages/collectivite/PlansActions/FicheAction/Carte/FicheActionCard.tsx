@@ -10,6 +10,8 @@ import BadgePriorite from '../../components/BadgePriorite';
 import Titre from './Titre';
 import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
+import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
+import Notif from 'ui/shared/designSystem/Notif';
 
 type Props = {
   link?: string;
@@ -83,6 +85,15 @@ const FicheActionCard = ({
         {'opacity-30': !ficheAction.id}
       )}
     >
+      {/** Cadenas accès restreint */}
+      {ficheAction.restreint && (
+        <div
+          title="Fiche en accès restreint"
+          className="absolute -top-4 left-8"
+        >
+          <Notif icon={<IconLockFill className="w-4 h-4" />} />
+        </div>
+      )}
       {/** Menu d'options */}
       {isEditable && (
         <div className="group absolute top-4 right-4 !flex">
