@@ -208,6 +208,18 @@ si identite(localisation, DOM) alors 4/3
 ```
 La note du référentiel actuel est à 15 %. Pour les collectivités DOM, la note de la sous-action passe à 20 %.
 
+# Désactivation 6.4.1.6.4 liee metropole
+```yaml
+action_id: cae_6.4.1.6.4
+```
+## Règles
+### Désactivation
+```formule
+identite(localisation, Metropole)
+```
+Dans les DOM, les mesures spécifiques DOM plan Ecophyto sont déclinées/soutenues localement donc désactivée pour les collectivités en métropole.
+
+
 # Modification points cae 6.4.1.8 liee DOM
 ```yaml
 action_id: cae_6.4.1.8

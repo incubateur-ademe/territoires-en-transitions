@@ -43,6 +43,16 @@ si identite(localisation, DOM) et reponse(ECS, NON) alors 0.3
 Pour une collectivité hors France Métropolitaine, et en l'absence de besoin d'eau chaude sanitaire, le score de la 2.2.3 est réduit de 70 %.
 Pour une collectivité hors France Métropolitaine, le statut des sous-actions 2.2.3.1 à 2.2.3.3 est "non concerné".
 
+# Désactivation 2.2.4.2.4 liee metropole
+```yaml
+action_id: cae_2.2.4.2.4
+```
+## Règles
+### Désactivation
+```formule
+identite(localisation, Metropole)
+```
+Pour une collectivité hors DOM, la tâche "installer ou favoriser les moyens de production avec stockage de l’électricité" est non concernée.
 
 # Réduction potentiel cae 2.3.1 liee eclairage public
 ```yaml
