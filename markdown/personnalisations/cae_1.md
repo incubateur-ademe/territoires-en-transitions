@@ -21,6 +21,17 @@ identite(population, moins_de_50000)
 ```
 Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'obligation BEGES.
 
+# Personnalisation cae 1.1.2.1 liee obligation bilan GES "territoire"
+```yaml
+action_id: cae_1.1.2.1
+```
+## Règles
+### Désactivation
+```formule
+si identite(type, EPCI) et identite(population, plus_de_20000) alors VRAI
+```
+Seuls les EPCI à fiscalité propre de plus de 20 000 habitants ne sont pas évaluées sur cette action.
+
 # Desactivation cae 1.1.2.1.5 liee EPCI
 ```yaml
 action_id: cae_1.1.2.1.5
@@ -30,6 +41,28 @@ action_id: cae_1.1.2.1.5
 ```formule
 identite(type, EPCI)
 ```
+
+# Modification points cae 1.1.2.2 liee EPCI et plus_de_20000
+```yaml
+action_id: cae_1.1.2.2
+```
+## Règles
+### Réduction de potentiel
+```formule
+si identite(type, EPCI) et identite(population, plus_de_20000) alors 5/4
+```
+La note du référentiel actuel est à 40 %. Pour les EPCI plus de 20 000, la note de la sous-action passe à 50 %.
+
+# Modification points cae 1.1.2.5 liee EPCI et plus_de_20000
+```yaml
+action_id: cae_1.1.2.5
+```
+## Règles
+### Réduction de potentiel
+```formule
+si identite(type, EPCI) et identite(population, plus_de_20000) alors 3/2
+```
+La note du référentiel actuel est à 20 %. Pour les EPCI plus de 20 000, la note de la sous-action passe à 30 %.
 
 # Réduction potentiel cae 1.2.2 liee AOM
 ```yaml
