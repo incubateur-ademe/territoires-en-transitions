@@ -5,6 +5,9 @@ import {FicheAction} from '../data/types';
 import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfondeur';
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {useExportFicheAction} from '../data/useExportFicheAction';
+import ToggleButton from 'ui/shared/designSystem/ToggleButton';
+import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
+import {useEditFicheAction} from '../data/useUpsertFicheAction';
 
 type TFicheActionHeader = {
   fiche: FicheAction;
@@ -12,6 +15,7 @@ type TFicheActionHeader = {
 };
 
 const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
+  const {mutate: updateFiche} = useEditFicheAction();
   const {mutate: exportFiche, isLoading} = useExportFicheAction(fiche.id);
   const {mutate: deleteFiche} = useDeleteFicheAction({ficheId: fiche.id!});
   const plansProfondeur = usePlanActionProfondeur();
@@ -29,6 +33,30 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
       {/** Actions */}
       {!isReadonly && (
         <div className="mb-6 flex items-center justify-end gap-4">
+          <div className="mr-auto">
+            <DSTetTooltip
+              label={() => (
+                <p>
+                  Si le mode privé est activé la fiche action n'est plus
+                  consultable par les personnes n’étant pas membres de votre
+                  collectivité.
+                  <br />
+                  <br />
+                  L’arborescence reste accessible pour tous les utilisateurs et
+                  la fiche reste consultable par l’ADEME et le service support
+                  de la plateforme.
+                </p>
+              )}
+            >
+              <ToggleButton
+                isChecked={fiche.restreint}
+                onClick={() =>
+                  updateFiche({...fiche, restreint: !fiche.restreint})
+                }
+                description="Fiche action en mode privé"
+              />
+            </DSTetTooltip>
+          </div>
           {plansProfondeur?.plans && plansProfondeur.plans.length > 0 && (
             <FicheActionRangerModal
               fiche={fiche}
