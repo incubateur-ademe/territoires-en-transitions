@@ -16,19 +16,6 @@ type Props = {
 };
 
 const BadgePriorite = ({className, priorite, small}: Props) => {
-  // return (
-  //   <span
-  //     className={classNames(
-  //       className,
-  //       'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md border',
-  //       {'!text-xs': small},
-  //       statusToColor[priorite]
-  //     )}
-  //     title="Priorité"
-  //   >
-  //     {priorite}
-  //   </span>
-  // );
   return (
     <Badge
       title="Priorité"

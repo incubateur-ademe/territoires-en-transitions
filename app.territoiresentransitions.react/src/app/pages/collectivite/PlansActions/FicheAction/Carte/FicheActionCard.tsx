@@ -27,7 +27,6 @@ const FicheActionCard = ({
   openInNewTab,
   ficheAction,
   axeId,
-  planId,
   link,
   isEditable = false,
 }: Props) => {
