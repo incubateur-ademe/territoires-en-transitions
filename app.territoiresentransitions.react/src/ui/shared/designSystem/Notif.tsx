@@ -8,6 +8,8 @@ type Props = {
   number?: number;
 };
 
+/** Affiche un nombre et/ou un icon dans un rond ,
+ * donner le bon statut pour avoir la couleur voulue en fonction du statut */
 const Notif = ({status = 'default', icon, number}: Props) => {
   const statusToColor: Record<Status, string> = {
     default: 'text-principale fill-principale bg-principale-3',
