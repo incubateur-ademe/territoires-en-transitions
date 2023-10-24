@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {CheckIcon} from 'ui/icons/CheckIcon';
+import {IconDoubleCheck} from 'ui/icons/IconDoubleCheck';
 import {toLocaleFixed} from 'utils/toFixed';
 
 type ScoreDisplayProps = {
@@ -46,7 +46,7 @@ const ScoreDisplay = ({
       )}
     >
       {icon === 'check' ? (
-        <CheckIcon
+        <IconDoubleCheck
           className={classNames('h-4 inline-block', {
             'mr-1': size === 'xs',
             'mr-2': size === 'sm',

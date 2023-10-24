@@ -1,4 +1,4 @@
-export const CheckIcon = ({className}: {className?: string}) => (
+export const IconDoubleCheck = ({className}: {className?: string}) => (
   <svg
     className={className}
     width="24"

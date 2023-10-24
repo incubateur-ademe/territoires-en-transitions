@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 import {makeCollectiviteAccueilUrl} from 'app/paths';
 import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {CheckIcon} from 'ui/icons/CheckIcon';
+import {IconDoubleCheck} from 'ui/icons/IconDoubleCheck';
 
 export type TCollectiviteCarteProps = {
   collectivite: TCollectiviteCarte;
@@ -99,7 +99,7 @@ export const ReferentielCol = (props: TReferentielColProps) => {
           <CinqEtoiles etoiles={props.etoiles} />
           <div>
             {' '}
-            <CheckIcon className="inline-block mr-3" />
+            <IconDoubleCheck className="inline-block mr-3" />
             <span className="font-semibold">
               {toPercentString(props.scoreRealise)}
             </span>{' '}
