@@ -1,4 +1,4 @@
-import {cloneElement, ReactElement, useCallback, useState} from 'react';
+import {cloneElement, ReactElement, useCallback, useRef, useState} from 'react';
 import {
   Placement,
   offset,
@@ -13,6 +13,8 @@ import {
   useDismiss,
   useClick,
   ReferenceType,
+  FloatingArrow,
+  arrow,
 } from '@floating-ui/react';
 import DOMPurify from 'dompurify';
 import classNames from 'classnames';
@@ -20,6 +22,11 @@ import classNames from 'classnames';
 export type TTooltipProps = {
   /** libellé de l'infobulle (accepte du code HTML ou peut être une fonction de rendu) */
   label: string | (() => ReactElement);
+  /** pour décaler le tooltip */
+  offsetValue?: number;
+  /** le temps (en ms) avant que le tooltip apparaisse */
+  triggerDuration?: number;
+  withArrow?: boolean;
   /** position à utiliser de préférence */
   placement?: Placement;
   /** élément auquel ajouter l'infobulle */
@@ -44,6 +51,9 @@ const tooltipClass =
 export const Tooltip = ({
   children,
   label,
+  offsetValue,
+  triggerDuration,
+  withArrow = false,
   placement = 'bottom-start',
   activatedBy = 'hover',
   delay = 1000,
@@ -51,11 +61,21 @@ export const Tooltip = ({
 }: TTooltipProps) => {
   const [open, setOpen] = useState(false);
 
+  const arrowRef = useRef(null);
+
   const {x, y, refs, strategy, context} = useFloating({
     placement,
     open,
     onOpenChange: setOpen,
-    middleware: [offset(5), flip(), shift({padding: 8})],
+    middleware: [
+      offset(offsetValue ?? 5),
+      flip(),
+      shift({padding: 8}),
+      withArrow &&
+        arrow({
+          element: arrowRef,
+        }),
+    ],
     whileElementsMounted: autoUpdate,
   });
 
@@ -90,7 +110,21 @@ export const Tooltip = ({
               : undefined
           }
         >
-          {typeof label === 'function' ? label() : null}
+          {typeof label === 'function' ? (
+            <>
+              {withArrow && (
+                <FloatingArrow
+                  ref={arrowRef}
+                  context={context}
+                  fill="white"
+                  strokeWidth={1}
+                  stroke="#6A6AF4"
+                  staticOffset={'15%'}
+                />
+              )}
+              {label()}
+            </>
+          ) : null}
         </div>
       )}
     </>
