@@ -5,9 +5,10 @@ import IconCheck from 'ui/shared/designSystem/icons/IconCheck';
 type Props = {
   isChecked?: boolean | null;
   onClick: () => void;
-  description: string;
+  description?: string;
 };
 
+/** Boutton toggle avec description */
 const ToggleButton = forwardRef(
   (
     {isChecked = false, description, onClick}: Props,
@@ -46,7 +47,7 @@ const ToggleButton = forwardRef(
             </span>
           </div>
         </div>
-        <span>{description}</span>
+        {description && <span className="text-grey-7">{description}</span>}
       </button>
     );
   }
