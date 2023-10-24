@@ -1,9 +1,9 @@
 import {useEffect, useRef, useState} from 'react';
+import classNames from 'classnames';
 
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import {useUpdateFicheResume} from '../data/useUpdateFicheResume';
 import {FicheResume} from '../data/types';
-import classNames from 'classnames';
 
 type Props = {
   axeId?: number;
@@ -72,12 +72,12 @@ const Titre = ({fiche, axeId, isEdit, setIsEdit}: Props) => {
   }, [isEdit]);
 
   return (
-    <div className="mb-auto font-medium line-clamp-3" title="Titre">
+    <div className="font-medium line-clamp-3" title="Titre">
       <TextareaControlled
         ref={inputRef}
         id={`fiche-titre-${fiche.id?.toString()}`}
         className={classNames(
-          'grow !p-0 !min-h-0 !text-base text-left !outline-none !resize-none placeholder:text-gray-900 disabled:pointer-events-none disabled:cursor-pointer disabled:text-gray-900',
+          'grow !p-0 !min-h-0 !text-base text-left !leading-relaxed !outline-none !resize-none placeholder:text-principale-9 disabled:pointer-events-none disabled:cursor-pointer disabled:text-principale-9',
           {
             'placeholder:!text-gray-400': isFocus,
           }
