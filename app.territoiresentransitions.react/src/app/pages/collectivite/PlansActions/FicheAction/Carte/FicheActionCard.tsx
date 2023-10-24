@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {NavLink} from 'react-router-dom';
 import classNames from 'classnames';
-import {format} from 'date-fns';
+import {format, isBefore, startOfToday} from 'date-fns';
 
 import {FicheResume} from '../data/types';
 import {generateTitle} from '../data/utils';
@@ -81,7 +81,7 @@ const FicheActionCard = ({
       data-test="ActionCarte"
       id={carteId}
       className={classNames(
-        'relative group h-full border border-gray-200 hover:bg-grey975',
+        'relative group h-full rounded-xl border border-grey-3 hover:border-principale-3 hover:bg-principale-1',
         {'opacity-30': !ficheAction.id}
       )}
     >
@@ -89,24 +89,27 @@ const FicheActionCard = ({
       {ficheAction.restreint && (
         <div
           title="Fiche en accès restreint"
-          className="absolute -top-4 left-8"
+          className="absolute -top-5 left-8"
         >
           <Notif icon={<IconLockFill className="w-4 h-4" />} />
         </div>
       )}
       {/** Menu d'options */}
       {isEditable && (
-        <div className="group absolute top-4 right-4 !flex">
+        <div className="group absolute top-4 right-4 !flex gap-2">
           {isEdit ? (
             <NavLink
               to={link || '#'}
               target={openInNewTab ? '_blank' : undefined}
               rel={openInNewTab ? 'noopener noreferrer' : undefined}
-              className={classNames('invisible group-hover:visible !bg-none', {
-                'after:!hidden': openInNewTab,
-              })}
+              className={classNames(
+                'invisible group-hover:visible !bg-none rounded-lg',
+                {
+                  'after:!hidden': openInNewTab,
+                }
+              )}
             >
-              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line hover:!bg-gray-200" />
+              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line !bg-white hover:!bg-principale-3 rounded-lg" />
             </NavLink>
           ) : (
             <button
@@ -115,12 +118,12 @@ const FicheActionCard = ({
               title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
               className={classNames(
-                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-grey975 hover:!bg-gray-200'
+                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-principale-3 rounded-lg'
               )}
             />
           )}
           <FicheActionSupprimerModal
-            buttonClassname="invisible group-hover:visible !bg-grey975"
+            buttonClassname="invisible group-hover:visible !bg-white rounded-lg"
             isInMultipleAxes={
               (ficheAction.plans && ficheAction.plans.length > 1) || false
             }
@@ -139,43 +142,15 @@ const FicheActionCard = ({
         )}
         onClick={e => isEdit && e.preventDefault()}
       >
-        <div className="flex flex-col h-full p-6">
-          {(ficheAction.date_fin_provisoire ||
-            ficheAction.niveau_priorite ||
-            ficheAction.statut) && (
-            <div className="flex items-center gap-4 mb-3">
+        <div className="flex flex-col gap-3 h-full p-6">
+          {(ficheAction.niveau_priorite || ficheAction.statut) && (
+            <div className="flex items-center gap-4">
               {ficheAction.statut && (
                 <BadgeStatut statut={ficheAction.statut} />
               )}
               {ficheAction.niveau_priorite && (
                 <BadgePriorite priorite={ficheAction.niveau_priorite} />
               )}
-              {ficheAction.date_fin_provisoire && (
-                <div
-                  className="text-sm text-gray-500 whitespace-nowrap"
-                  title="Échéance"
-                >
-                  {format(
-                    new Date(ficheAction.date_fin_provisoire),
-                    'dd/MM/yyyy'
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-          {ficheAction.pilotes && (
-            <div className="mb-3 text-sm text-gray-600" title="Pilotes">
-              <span className="fr-icon-user-line mr-2 before:!w-4" />
-              {ficheAction.pilotes?.map(pilote => pilote.nom).join(' | ')}
-            </div>
-          )}
-          {ficheAction.plans?.length && (
-            <div className="mb-3 text-sm text-gray-400" title="Emplacements">
-              {ficheAction.plans
-                ? ficheAction.plans
-                    ?.map(plan => generateTitle(plan?.nom))
-                    .join(' | ')
-                : 'Fiches non classées'}
             </div>
           )}
           <Titre
@@ -184,6 +159,52 @@ const FicheActionCard = ({
             isEdit={isEdit}
             setIsEdit={setIsEdit}
           />
+          {ficheAction.plans?.length && (
+            <div className="text-sm text-grey-6" title="Emplacements">
+              {ficheAction.plans
+                ? ficheAction.plans
+                    ?.map(plan => generateTitle(plan?.nom))
+                    .join(' | ')
+                : 'Fiches non classées'}
+            </div>
+          )}
+          {(ficheAction.pilotes || ficheAction.date_fin_provisoire) && (
+            <div className="flex items-center gap-4 flex-wrap text-sm text-principale-7">
+              {ficheAction.pilotes && (
+                <div className="flex items-start" title="Pilotes">
+                  <span className="fr-icon-user-line mr-1.5 before:!w-4" />
+                  <span className="mt-0.5">
+                    {ficheAction.pilotes?.map(pilote => pilote.nom).join(' | ')}
+                  </span>
+                </div>
+              )}
+              {ficheAction.date_fin_provisoire && (
+                <>
+                  {ficheAction.pilotes && (
+                    <div className="w-[1px] h-6 bg-grey-3" />
+                  )}
+                  <div
+                    className={classNames(
+                      'flex items-center whitespace-nowrap',
+                      {
+                        'text-error-1': isBefore(
+                          new Date(ficheAction.date_fin_provisoire),
+                          startOfToday()
+                        ),
+                      }
+                    )}
+                    title="Échéance"
+                  >
+                    <span className="fr-icon-calendar-line mr-1.5 before:!w-4" />
+                    {format(
+                      new Date(ficheAction.date_fin_provisoire),
+                      'dd/MM/yyyy'
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </NavLink>
     </div>
