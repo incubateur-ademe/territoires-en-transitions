@@ -12,9 +12,9 @@ import IconDrag from 'ui/icons/IconDrag';
 import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
 import {useAddAxe} from '../data/useUpsertAxe';
 import {checkAxeHasFiche, childrenOfPlanNodes} from '../data/utils';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import AxeSkeleton from './AxeSkeleton';
 import {useCreateFicheResume} from '../../FicheAction/data/useCreateFicheResume';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 export type AxeDndData = {
   type: 'axe';
@@ -30,7 +30,11 @@ type Props = {
 };
 
 const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+
+  const canDrag =
+    collectivite?.niveau_acces === 'admin' ||
+    collectivite?.niveau_acces === 'edition';
 
   const uniqueId = `axe-${axe.id}`;
 
@@ -65,6 +69,7 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
       type: 'axe',
       axe,
     } as AxeDndData,
+    disabled: !canDrag,
   });
 
   const activeData = active?.data.current;
@@ -121,7 +126,7 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
       >
         <div className="flex items-start">
           {/** Drag handle */}
-          {!isDragging && (
+          {canDrag && !isDragging && (
             <div className="absolute top-0 -left-10 w-10 h-16 flex">
               <button
                 ref={draggableRef}
@@ -176,7 +181,10 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
                 title="Créer un sous-titre"
                 onClick={() => {
                   setIsOpen(true);
-                  addAxe({collectivite_id: collectivite_id!, parent: axe.id});
+                  addAxe({
+                    collectivite_id: collectivite?.collectivite_id!,
+                    parent: axe.id,
+                  });
                 }}
               >
                 <IconFolderAddLine className="h-4 w-4 fill-bf500" />

@@ -3,6 +3,8 @@ import {DragOverlay, useDraggable} from '@dnd-kit/core';
 
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import {FicheResume} from '../../FicheAction/data/types';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import classNames from 'classnames';
 
 export type FicheDndData = {
   type: 'fiche';
@@ -18,6 +20,12 @@ type Props = {
 };
 
 const Fiche = ({planId, axeId, url, fiche}: Props) => {
+  const collectivite = useCurrentCollectivite();
+
+  const canDrag =
+    collectivite?.niveau_acces === 'admin' ||
+    collectivite?.niveau_acces === 'edition';
+
   const {
     active,
     attributes,
@@ -30,6 +38,7 @@ const Fiche = ({planId, axeId, url, fiche}: Props) => {
       type: 'fiche',
       fiche,
     },
+    disabled: !canDrag,
   });
 
   const isDragging =
@@ -50,7 +59,7 @@ const Fiche = ({planId, axeId, url, fiche}: Props) => {
         )}
       {!active && (
         <div
-          className="h-full"
+          className={classNames('h-full', {'cursor-default': !canDrag})}
           ref={draggableRef}
           {...listeners}
           {...attributes}

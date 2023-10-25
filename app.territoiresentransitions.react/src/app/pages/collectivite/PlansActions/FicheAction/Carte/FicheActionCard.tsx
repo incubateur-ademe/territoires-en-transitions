@@ -12,6 +12,7 @@ import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
 import Notif from 'ui/shared/designSystem/Notif';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   link?: string;
@@ -32,6 +33,11 @@ const FicheActionCard = ({
   link,
   isEditable = false,
 }: Props) => {
+  const collectivite = useCurrentCollectivite();
+
+  const isNotClickable =
+    collectivite?.niveau_acces === null && ficheAction.restreint;
+
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheAction.id!,
     axeId,
@@ -81,8 +87,8 @@ const FicheActionCard = ({
       data-test="ActionCarte"
       id={carteId}
       className={classNames(
-        'relative group h-full rounded-xl border border-grey-3 hover:border-principale-3 hover:bg-principale-1',
-        {'opacity-30': !ficheAction.id}
+        'relative group h-full rounded-xl border border-grey-3',
+        {'hover:border-principale-3 hover:bg-principale-1': !isNotClickable}
       )}
     >
       {/** Cadenas accès restreint */}
@@ -95,7 +101,7 @@ const FicheActionCard = ({
         </div>
       )}
       {/** Menu d'options */}
-      {isEditable && (
+      {!collectivite?.readonly && isEditable && (
         <div className="group absolute top-4 right-4 !flex gap-2">
           {isEdit ? (
             <NavLink
@@ -138,7 +144,10 @@ const FicheActionCard = ({
         rel={openInNewTab ? 'noopener noreferrer' : undefined}
         className={classNames(
           {'after:!hidden': openInNewTab},
-          {'cursor-default': isEdit || !ficheAction.id}
+          {'cursor-default': isEdit || !ficheAction.id},
+          {
+            '!cursor-default, pointer-events-none': isNotClickable,
+          }
         )}
         onClick={e => isEdit && e.preventDefault()}
       >
