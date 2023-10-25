@@ -26,6 +26,12 @@ Les collectivités de moins de 50 000 habitants ne sont pas concernées par l'ob
 action_id: cae_1.1.2.1
 ```
 ## Règles
+
+### Réduction de potentiel
+```formule
+si identite(type, EPCI) et identite(population, plus_de_20000) alors 0
+```
+
 ### Désactivation
 ```formule
 si identite(type, EPCI) et identite(population, plus_de_20000) alors VRAI
