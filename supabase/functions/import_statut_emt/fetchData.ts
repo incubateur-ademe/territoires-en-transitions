@@ -33,7 +33,7 @@ export const commentaires = async(supabaseClient : TSupabaseClient, collectivite
 export const statuts = async(supabaseClient : TSupabaseClient, collectivite_id : number):
     Promise<Map<string, Database["public"]["Tables"]["action_statut"]["Insert"]>> => {
     const query = supabaseClient
-        .from('action_commentaire')
+        .from('action_statut')
         .select()
         .eq('collectivite_id', collectivite_id);
 

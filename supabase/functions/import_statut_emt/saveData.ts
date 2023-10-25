@@ -57,21 +57,22 @@ export const statut = async(
 ):
     Promise<boolean> => {
     let statutToSave : Database["public"]["Tables"]["action_statut"]["Insert"]= statuts.get(action_id);
-    if(statutToSave) {
-        statutToSave.avancement = statut;
-    }else{
+    // On n'écrase pas les statuts déjà renseignés.
+    if(!statutToSave) {
         statutToSave = {
             action_id: action_id,
             collectivite_id: collectivite_id,
             avancement: statut,
+            modified_by = tetId,
             concerne: true
         }
-    }
-    statutToSave.modified_by = tetId;
+        // Erreur "msg":"InvalidWorkerCreation: worker boot error" si ajouté dans l'instruction précédente
+        statutToSave.modified_by = tetId;
 
-    const { error, data } = await supabaseClient.from('action_statut').upsert(statutToSave);
-    if (error) {
-        throw new Error(error.message);
+        const { error, data } = await supabaseClient.from('action_statut').upsert(statutToSave);
+        if (error) {
+            throw new Error(error.message);
+        }
     }
     return true;
 }
