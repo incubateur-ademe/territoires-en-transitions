@@ -1177,6 +1177,18 @@
       "titre": "Modification points cae 6.4.1.6 liee DOM"
     },
     {
+      "action_id": "cae_6.4.1.6.4",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Dans les DOM, les mesures sp\u00e9cifiques DOM plan Ecophyto sont d\u00e9clin\u00e9es/soutenues localement donc d\u00e9sactiv\u00e9e pour les collectivit\u00e9s en m\u00e9tropole.</p>\n",
+          "formule": "identite(localisation, Metropole)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "D\u00e9sactivation 6.4.1.6.4 liee metropole"
+    },
+    {
       "action_id": "cae_6.4.1.8",
       "description": "",
       "regles": [
@@ -1499,6 +1511,18 @@
       "titre": "Personnalisation cae 1.1.2.0.2 liee obligation BEGES"
     },
     {
+      "action_id": "cae_1.1.2.1",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Seuls les EPCI \u00e0 fiscalit\u00e9 propre de plus de 20 000 habitants ne sont pas \u00e9valu\u00e9es sur cette action.</p>\n",
+          "formule": "si identite(type, EPCI) et identite(population, plus_de_20000) alors VRAI\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "Personnalisation cae 1.1.2.1 liee obligation bilan GES \"territoire\""
+    },
+    {
       "action_id": "cae_1.1.2.1.5",
       "description": "",
       "regles": [
@@ -1509,6 +1533,30 @@
         }
       ],
       "titre": "Desactivation cae 1.1.2.1.5 liee EPCI"
+    },
+    {
+      "action_id": "cae_1.1.2.2",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>La note du r\u00e9f\u00e9rentiel actuel est \u00e0 40 %. Pour les EPCI plus de 20 000, la note de la sous-action passe \u00e0 50 %.</p>\n",
+          "formule": "si identite(type, EPCI) et identite(population, plus_de_20000) alors 5/4\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Modification points cae 1.1.2.2 liee EPCI et plus_de_20000"
+    },
+    {
+      "action_id": "cae_1.1.2.5",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>La note du r\u00e9f\u00e9rentiel actuel est \u00e0 20 %. Pour les EPCI plus de 20 000, la note de la sous-action passe \u00e0 30 %.</p>\n",
+          "formule": "si identite(type, EPCI) et identite(population, plus_de_20000) alors 3/2\n",
+          "type": "reduction"
+        }
+      ],
+      "titre": "Modification points cae 1.1.2.5 liee EPCI et plus_de_20000"
     },
     {
       "action_id": "cae_1.2.2",
@@ -1711,6 +1759,18 @@
         }
       ],
       "titre": "R\u00e9duction potentiel cae 2.2.3 liee eau chaude sanitaire"
+    },
+    {
+      "action_id": "cae_2.2.4.2.4",
+      "description": "",
+      "regles": [
+        {
+          "description": "<p>Pour une collectivit\u00e9 hors DOM, la t\u00e2che &quot;installer ou favoriser les moyens de production avec stockage de l\u2019\u00e9lectricit\u00e9&quot; est non concern\u00e9e.</p>\n",
+          "formule": "identite(localisation, Metropole)\n",
+          "type": "desactivation"
+        }
+      ],
+      "titre": "D\u00e9sactivation 2.2.4.2.4 liee metropole"
     },
     {
       "action_id": "cae_2.3.1",
