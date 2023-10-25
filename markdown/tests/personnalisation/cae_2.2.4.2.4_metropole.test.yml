@@ -5,6 +5,6 @@ Collectivité:
     - Metropole
 Scores:
   cae_2.2.4.2.4:
-    point_referentiel: 0.4
+    point_referentiel: 0.3
     point_potentiel: 0.0
     desactive: yes
