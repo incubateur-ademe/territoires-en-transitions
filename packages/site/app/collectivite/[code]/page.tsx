@@ -5,10 +5,10 @@ import {convertNameToSlug} from 'app/utils';
 import {Metadata} from 'next';
 import {supabase} from 'app/initSupabase';
 
-const fetchCollectiviteName = async (code_siren_insee: string) => {
+export const fetchCollectivite = async (code_siren_insee: string) => {
   const {data, error} = await supabase
     .from('site_labellisation')
-    .select('nom')
+    .select()
     .match({code_siren_insee});
 
   if (error) {
@@ -18,7 +18,7 @@ const fetchCollectiviteName = async (code_siren_insee: string) => {
     return null;
   }
 
-  return data[0].nom;
+  return data[0];
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,9 +33,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 
 const DetailCodeCollectivite = async ({params}: {params: {code: string}}) => {
-  const nom = await fetchCollectiviteName(params.code);
+  const data = await fetchCollectivite(params.code);
 
-  redirect(`/collectivite/${params.code}/${convertNameToSlug(nom ?? '')}`);
+  redirect(
+    `/collectivite/${params.code}/${convertNameToSlug(data?.nom ?? '')}`,
+  );
 };
 
 export default DetailCodeCollectivite;

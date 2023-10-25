@@ -65,7 +65,7 @@
     }
   }
 
-  @media (min-width: 1350) {
+  @media (min-width: 1350px) {
     .fr-container,
     .fr-container-sm,
     .fr-container-md,

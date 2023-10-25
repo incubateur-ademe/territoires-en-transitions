@@ -12,24 +12,28 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Nom": {
+    "nom": {
       "type": "string",
       "required": true,
       "unique": true
     },
-    "SIREN": {
+    "code_siren_insee": {
       "type": "string",
       "required": true,
       "unique": true
     },
-    "Logos": {
+    "couverture": {
+      "allowedTypes": ["images"],
       "type": "media",
-      "multiple": true,
-      "required": false,
+      "multiple": false
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
       "allowedTypes": ["images"]
     },
-    "Introduction": {
-      "type": "richtext"
+    "url": {
+      "type": "string"
     },
     "Sections": {
       "type": "dynamiczone",

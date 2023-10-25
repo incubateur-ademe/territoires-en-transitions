@@ -40,6 +40,11 @@ module.exports = {
           1: '#F4C447',
           2: '#FFE4A8',
         },
+        // Couleurs new
+        new: {
+          1: '#FFE8BD',
+          2: '#66543D',
+        },
         // Couleurs success
         success: {
           1: '#48A775',
@@ -52,8 +57,24 @@ module.exports = {
           2: '#FFD8D8',
           3: '#FF9789',
         },
+        // Couleurs warning
+        warning: {
+          1: '#FFA903',
+          2: '#FFF5DF',
+          3: '#FBC55C',
+        },
+        // Couleurs info
+        info: {
+          1: '#4380F5',
+          2: '#EEF4FF',
+          3: '#91B2EE',
+        },
         // Gris
         grey: {
+          1: '#FDFDFD',
+          3: '#EEEEEE',
+          5: '#CECECE',
+          6: '#929292',
           8: '#666666',
         },
         // Autres couleurs
