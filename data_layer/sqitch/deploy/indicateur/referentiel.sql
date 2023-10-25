@@ -4,29 +4,34 @@
 BEGIN;
 
 create or replace view indicateur_rempli(indicateur_id, perso_id, collectivite_id, rempli) as
-with indicateurs as (
-    select indicateur_id,
-           collectivite_id,
-           valeur
-    from indicateur_resultat ir
-    union all
-    select indicateur_id,
-           collectivite_id,
-           valeur
-    from indicateur_resultat_import
-)
-SELECT indicateur_id,
+SELECT i.indicateur_id,
        NULL::integer        AS perso_id,
-       collectivite_id,
-       count(valeur) > 0 AS rempli
-FROM indicateurs i
-GROUP BY indicateur_id, collectivite_id
+       i.collectivite_id,
+       count(i.valeur) > 0 AS rempli
+FROM (select indicateur_id,
+             collectivite_id,
+             valeur
+      from indicateur_resultat ir
+      union all
+      select indicateur_id,
+             collectivite_id,
+             valeur
+      from indicateur_resultat_import) i
+GROUP BY i.indicateur_id, i.collectivite_id
 UNION ALL
 SELECT alt.id               AS indicateur_id,
        NULL::integer        AS perso_id,
        i.collectivite_id,
        count(i.valeur) > 0 AS rempli
-FROM indicateurs i
+FROM (select indicateur_id,
+             collectivite_id,
+             valeur
+      from indicateur_resultat ir
+      union all
+      select indicateur_id,
+             collectivite_id,
+             valeur
+      from indicateur_resultat_import) i
          JOIN indicateur_definition alt ON alt.valeur_indicateur::text = i.indicateur_id::text
 GROUP BY alt.id, i.collectivite_id
 UNION ALL
