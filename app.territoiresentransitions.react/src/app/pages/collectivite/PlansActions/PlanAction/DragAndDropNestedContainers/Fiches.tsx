@@ -21,7 +21,7 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
 
   return (
     <div
-      className={classNames('grid grid-cols-2 gap-4', {'my-2': !isDndActive})}
+      className={classNames('grid grid-cols-2 gap-6', {'my-2': !isDndActive})}
     >
       {isLoading
         ? ficheIds.map(id => <ActionCardSkeleton key={id} />)
