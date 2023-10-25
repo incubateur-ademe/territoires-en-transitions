@@ -77,9 +77,7 @@ export default function RootLayout({children}: {children: JSX.Element}) {
       <body className="min-h-screen flex flex-col justify-between">
         <div>
           <AppHeader />
-          <div className="homepage-container fr-container-fluid">
-            {children}
-          </div>
+          <div className="fr-container-fluid">{children}</div>
         </div>
         <Footer />
       </body>
