@@ -35,7 +35,7 @@ export const useCreateFicheAction = () => {
     {
       meta: {disableToast: true},
       onSuccess: data => {
-        queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
+        queryClient.invalidateQueries(['axe_fiches', null]);
         const url = makeCollectiviteFicheNonClasseeUrl({
           collectiviteId: collectivite_id!,
           ficheUid: data[0].id!.toString(),
@@ -88,7 +88,7 @@ export const useEditFicheAction = () => {
       }
       queryClient.invalidateQueries(['fiche_action', fiche.id?.toString()]);
 
-      queryClient.invalidateQueries(['fiches_non_classees', collectivite_id]);
+      queryClient.invalidateQueries(['axe_fiches', null]);
       queryClient.invalidateQueries(['structures', collectivite_id]);
       queryClient.invalidateQueries(['partenaires', collectivite_id]);
       queryClient.invalidateQueries(['personnes_pilotes', collectivite_id]);

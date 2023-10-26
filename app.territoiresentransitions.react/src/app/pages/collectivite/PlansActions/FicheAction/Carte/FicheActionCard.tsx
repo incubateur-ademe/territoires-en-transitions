@@ -40,7 +40,7 @@ const FicheActionCard = ({
 
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheAction.id!,
-    axeId,
+    axeId: axeId || null,
   });
 
   const editButtonRef = useRef<HTMLButtonElement>(null);

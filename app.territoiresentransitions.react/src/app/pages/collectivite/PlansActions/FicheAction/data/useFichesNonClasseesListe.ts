@@ -5,7 +5,7 @@ import {FicheResume} from './types';
 import {sortFichesResume} from './utils';
 
 export const useFichesNonClasseesListe = (collectivite_id: number) => {
-  return useQuery(['fiches_non_classees', collectivite_id], async () => {
+  return useQuery(['axe_fiches', null], async () => {
     const {data} = await supabaseClient
       .from('fiche_resume')
       .select('*', {count: 'exact'})
