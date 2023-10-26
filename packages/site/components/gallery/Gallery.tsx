@@ -1,13 +1,24 @@
 'use client';
 
+import classNames from 'classnames';
 import {Fragment, ReactNode, useEffect, useState} from 'react';
 
 type GalleryProps = {
   data: ReactNode[];
+  maxCols?: 1 | 2 | 3;
+  breakpoints?: {md: number; lg: number};
+  gap?: string;
+  className?: string;
 };
 
-const Gallery = ({data}: GalleryProps) => {
-  const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(3));
+const Gallery = ({
+  data,
+  maxCols = 3,
+  breakpoints = {md: 768, lg: 1280},
+  gap = 'gap-8',
+  className,
+}: GalleryProps) => {
+  const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(maxCols));
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
   const [columns, setColumns] = useState(3);
 
@@ -26,12 +37,15 @@ const Gallery = ({data}: GalleryProps) => {
   // Met à jour le nombre de colonnes
   useEffect(() => {
     if (windowWidth) {
-      if (windowWidth <= 768) {
+      if (windowWidth <= breakpoints.md) {
         setColumns(1);
-      } else if (windowWidth <= 1280) {
-        setColumns(2);
+      } else if (windowWidth <= breakpoints.lg) {
+        if (maxCols === 3) setColumns(2);
+        else setColumns(1);
       } else {
-        setColumns(3);
+        if (maxCols === 3) setColumns(3);
+        else if (maxCols === 2) setColumns(2);
+        else setColumns(1);
       }
     }
   }, [windowWidth]);
@@ -51,9 +65,20 @@ const Gallery = ({data}: GalleryProps) => {
   }, [data, columns]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+    <div
+      className={classNames(
+        'grid grid-cols-1',
+        {
+          'md:grid-cols-2': maxCols === 3,
+          'lg:grid-cols-2': maxCols === 2,
+          'xl:grid-cols-3': maxCols === 3,
+        },
+        gap,
+        className,
+      )}
+    >
       {dataGallery.map((column, index) => (
-        <div key={index} className="grid grid-cols-1 gap-8 h-fit">
+        <div key={index} className={classNames('grid grid-cols-1 h-fit', gap)}>
           {column.map((element, i) => (
             <Fragment key={i}>{element}</Fragment>
           ))}
