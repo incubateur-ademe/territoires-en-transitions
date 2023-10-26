@@ -12,6 +12,7 @@ import RestreindreFichesModal from './RestreindreFichesModal';
 import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
 import IconUnlockFill from 'ui/shared/designSystem/icons/IconUnlockFill';
 import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
+import classNames from 'classnames';
 
 type TPlanActionHeader = {
   collectivite_id: number;
@@ -94,14 +95,14 @@ const PlanActionHeader = ({
                 }
               />
             </SupprimerAxeModal>
-            {!isAxePage && axeHasFiches && (
+            {!isAxePage && (
               <>
                 <RestreindreFichesModal
                   planId={plan.id}
                   axes={axes}
                   restreindre={false}
                 >
-                  <button>
+                  <button disabled={!axeHasFiches}>
                     <DSTetTooltip
                       placement="bottom"
                       label={() => (
@@ -111,7 +112,11 @@ const PlanActionHeader = ({
                       )}
                     >
                       <div className="fr-btn fr-btn--tertiary fr-btn--sm !p-2">
-                        <IconUnlockFill className="h-4 w-4 fill-success-1" />
+                        <IconUnlockFill
+                          className={classNames('h-4 w-4 fill-success-1', {
+                            'fill-grey-5': !axeHasFiches,
+                          })}
+                        />
                       </div>
                     </DSTetTooltip>
                   </button>
@@ -121,7 +126,7 @@ const PlanActionHeader = ({
                   axes={axes}
                   restreindre
                 >
-                  <button>
+                  <button disabled={!axeHasFiches}>
                     <DSTetTooltip
                       placement="bottom"
                       label={() => (
@@ -131,7 +136,11 @@ const PlanActionHeader = ({
                       )}
                     >
                       <div className="fr-btn fr-btn--tertiary fr-btn--sm !p-2">
-                        <IconLockFill className="h-4 w-4 fill-principale" />
+                        <IconLockFill
+                          className={classNames('h-4 w-4 fill-principale', {
+                            'fill-grey-5': !axeHasFiches,
+                          })}
+                        />
                       </div>
                     </DSTetTooltip>
                   </button>
