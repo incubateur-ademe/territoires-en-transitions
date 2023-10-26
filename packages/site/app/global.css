@@ -119,7 +119,7 @@
     line-height: 36px;
   }
 
-  .fr-btn {
+  .fr-btn:not(.nav-btn) {
     @apply bg-primary-7;
     color: #fff;
     font-size: 16px;
@@ -130,13 +130,13 @@
     padding: 14px 25px;
   }
 
-  button:not(:disabled):hover,
-  .fr-btn:hover,
-  a[href].fr-btn:hover {
+  button:not(.nav-btn):not(:disabled):hover,
+  .fr-btn:not(.nav-btn):hover,
+  a[href].fr-btn:not(.nav-btn):hover {
     @apply bg-primary-8;
   }
 
-  .fr-btn:disabled {
+  .fr-btn:not(.nav-btn):disabled {
     @apply bg-primary-4;
     @apply text-primary-3;
   }
