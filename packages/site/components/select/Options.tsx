@@ -135,7 +135,7 @@ const Option = <T extends string>({
         values?.includes(option.value as T) && index === activeIndex
       }
       className={classNames(
-        '!outline-0 focus:bg-[#f6f6f6]',
+        '!outline-0 focus:!bg-[#f6f6f6] hover:!bg-[#f6f6f6]',
         optionButtonClassname,
       )}
       onClick={() => {
