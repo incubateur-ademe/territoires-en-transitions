@@ -2,6 +2,13 @@
 
 BEGIN;
 
+comment on type filterable_type_collectivite is '';
+comment on type collectivite_filtre_type is '';
+
+select type, id, libelle, intervalle
+from filtre_intervalle
+where false;
+
 select collectivite_id,
        nom,
        type_collectivite,

@@ -532,3 +532,7 @@ site/labellisation [site/labellisation@v2.68.0] 2023-10-27T12:01:06Z Florian <fl
 plan_action/confidentialite 2023-10-11T08:34:37Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la possibilité de restreindre les fiches et les axes aux utilisateurs hors collectivité. Ajoute un type aux plans. Facilite l'accès au plan.
 site/labellisation [site/labellisation@v2.69.0] 2023-11-02T14:12:40Z Florian <florian@derfurth.com> # Permet d'accéder aux données de labellisation sans avoir de compte
 @v2.70.0 2023-11-02T15:41:27Z Florian <florian@derfurth.com> # Confidentialité des fiches action
+
+collectivite/collectivite_test 2023-10-26T09:18:21Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la suppression d'une collectivité test
+collectivite/toutes_les_collectivites [collectivite/toutes_les_collectivites@v2.67.0] 2023-10-26T09:32:25Z Amandine Jacquelin <conta@LanceLibre> # Enlève les collectivités tests de collectivite_card
+plan_action/plan_action [plan_action/plan_action@v2.67.0] 2023-10-26T15:41:19Z Amandine Jacquelin <conta@LanceLibre> # Ajoute service role à delete_axe_all

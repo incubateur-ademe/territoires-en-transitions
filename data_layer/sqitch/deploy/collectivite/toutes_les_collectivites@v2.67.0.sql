@@ -5,10 +5,39 @@
 
 BEGIN;
 
-drop materialized view stats.collectivite_referentiel;
-drop view automatisation.collectivites_crm;
-drop view automatisation.collectivite_plan_action;
-drop materialized view collectivite_card;
+create type filterable_type_collectivite
+as enum ('commune', 'syndicat', 'CU', 'CC', 'POLEM', 'METRO', 'CA', 'EPT', 'PETR');
+
+create type collectivite_filtre_type
+as enum ('population', 'score', 'remplissage');
+
+create table filtre_intervalle
+(
+    type       collectivite_filtre_type not null,
+    id         varchar(30)              not null,
+    libelle    text                     not null,
+    intervalle numrange                 not null,
+    primary key (type, id)
+);
+
+insert into filtre_intervalle
+values ('population', '<20000', 'Moins de 20 000', '[0,20000]'),
+       ('population', '20000-50000', '20 000 - 50 000', '[20000,50000]'),
+       ('population', '50000-100000', '50 000 - 100 000', '[50000,100000]'),
+       ('population', '100000-200000', '100 000 - 200 000', '[100000,200000]'),
+       ('population', '>200000', 'Plus de 200 000', '[200000,]'),
+       --
+       ('score', '0-34', '0 à 34 %', '[0,35)'),
+       ('score', '35-49', '35 à 49 %', '[35,50)'),
+       ('score', '50-64', '50 à 64 %', '[50,65)'),
+       ('score', '65-74', '65 à 74 %', '[65,75)'),
+       ('score', '75-100', '75 à 100 %', '[75,]'),
+       --
+       ('remplissage', '0', '0', '[0,1)'),
+       ('remplissage', '0-49', '0 à 50 %', '[1,50)'),
+       ('remplissage', '50-79', '50 à 79 %', '[50,80)'),
+       ('remplissage', '80-99', '80 à 99 %', '[80,100)'),
+       ('remplissage', '100', '100 %', '[100,]');
 
 create materialized view collectivite_card
 as
@@ -164,71 +193,5 @@ from card
 
 -- keep only active collectivités only.
 where card.collectivite_id in (select collectivite_id from private_utilisateur_droit where active);
-
-create materialized view stats.collectivite_referentiel as
-SELECT c.*,
-       collectivite_card.etoiles_cae,
-       collectivite_card.etoiles_eci,
-       collectivite_card.etoiles_all,
-       collectivite_card.score_fait_cae,
-       collectivite_card.score_fait_eci,
-       collectivite_card.score_fait_min,
-       collectivite_card.score_fait_max,
-       collectivite_card.score_fait_sum,
-       collectivite_card.score_programme_cae,
-       collectivite_card.score_programme_eci,
-       collectivite_card.score_programme_max,
-       collectivite_card.score_programme_sum,
-       collectivite_card.completude_cae,
-       collectivite_card.completude_eci,
-       collectivite_card.completude_min,
-       collectivite_card.completude_max,
-       collectivite_card.population_intervalle,
-       collectivite_card.completude_cae_intervalle,
-       collectivite_card.completude_eci_intervalle,
-       collectivite_card.completude_intervalles,
-       collectivite_card.fait_cae_intervalle,
-       collectivite_card.fait_eci_intervalle,
-       collectivite_card.fait_intervalles
-FROM collectivite_card
-         JOIN stats.collectivite c USING (collectivite_id);
-
-create view automatisation.collectivites_crm
-            (nom, lien_plateforme, collectivite_id, code_siren_insee, completude_cae, completude_eci, departement_name,
-             region_name, population_totale, type_collectivite, etoiles_cae, etoiles_eci, date_dernier_score)
-as
-SELECT unaccent(c.nom::text)                                                                               AS nom,
-       concat('https://app.territoiresentransitions.fr/collectivite/', c.collectivite_id,
-              '/tableau_bord')                                                                             AS lien_plateforme,
-       c.collectivite_id,
-       c.code_siren_insee,
-       c.completude_cae,
-       c.completude_eci,
-       dep.libelle                                                                                         AS departement_name,
-       reg.libelle                                                                                         AS region_name,
-       c.population                                                                                        AS population_totale,
-       c.type_collectivite,
-       c.etoiles_cae,
-       c.etoiles_eci,
-       lc.data                                                                                             AS date_dernier_score
-FROM collectivite_card c
-         JOIN imports.departement dep ON c.departement_code::text = dep.code::text
-         JOIN imports.region reg ON c.region_code::text = reg.code::text
-         JOIN evaluation.late_collectivite lc ON c.collectivite_id = lc.collectivite_id;
-
-create view automatisation.collectivite_plan_action
-            (collectivite_id, nom, code_siren_insee, nb_axes, nb_fiches, max, lien_plateforme) as
-SELECT c.collectivite_id,
-       c.nom,
-       c.code_siren_insee,
-       count(DISTINCT a.*)                                                                          AS nb_axes,
-       count(DISTINCT f.*)                                                                          AS nb_fiches,
-       max(dcp.email)                                                                               AS max,
-       concat('https://app.territoiresentransitions.fr/collectivite/', c.collectivite_id, '/plans') AS lien_plateforme
-FROM collectivite_card c
-         LEFT JOIN axe a ON c.collectivite_id = a.collectivite_id
-         LEFT JOIN fiche_action f ON c.collectivite_id = f.collectivite_id
-         LEFT JOIN dcp ON a.modified_by = dcp.user_id OR f.modified_by = dcp.user_id
-GROUP BY c.collectivite_id, c.nom, c.code_siren_insee;
 
 COMMIT;
