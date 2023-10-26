@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use server';
 
+import Gallery from '@components/gallery/Gallery';
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import EmbededVideo from '@components/video/EmbededVideo';
@@ -14,11 +15,14 @@ import {
   ParagrapheArticleData,
   ParagrapheCustomArticleData,
 } from 'app/types';
+import classNames from 'classnames';
 import {Metadata} from 'next';
 import {fetchCollectivite} from '../page';
 import ActionsCAE from './ActionsCAE';
 import Citation from './Citation';
 import CollectiviteHeader from './CollectiviteHeader';
+import ConnexionCompte from './ConnexionCompte';
+import CreationCompte from './CreationCompte';
 import Introduction from './Introduction';
 import Labellisation from './Labellisation';
 import Performance from './Performance';
@@ -39,17 +43,45 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   return (
     <Section
       containerClassName="bg-primary-1 max-md:!py-0"
-      className="max-md:px-0"
+      className="max-md:px-0 grid grid-cols-11 !gap-0 md:!gap-10 xl:!gap-12"
     >
-      <CollectiviteHeader
-        nom={collectiviteData.nom}
-        region={collectiviteData.region_name ?? undefined}
-        departement={collectiviteData.departement_name ?? undefined}
-        type={collectiviteData.type_collectivite ?? undefined}
-        population={collectiviteData.population_totale ?? undefined}
-        url={strapiData?.url}
-        couverture={strapiData?.couverture}
-        logo={strapiData?.logo}
+      <div
+        className={classNames('col-span-full', {
+          'lg:col-span-8': collectiviteData.active,
+        })}
+      >
+        <CollectiviteHeader
+          nom={collectiviteData.nom}
+          region={collectiviteData.region_name ?? undefined}
+          departement={collectiviteData.departement_name ?? undefined}
+          type={collectiviteData.type_collectivite ?? undefined}
+          population={collectiviteData.population_totale ?? undefined}
+          url={strapiData?.url}
+          couverture={strapiData?.couverture}
+          logo={strapiData?.logo}
+        />
+      </div>
+      <div
+        className={classNames(
+          'col-span-full md:col-span-4 lg:col-span-3 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
+          {'lg:order-last': !collectiviteData.active},
+        )}
+      >
+        {collectiviteData.active ? <ConnexionCompte /> : <CreationCompte />}
+      </div>
+      <Gallery
+        className="col-span-full md:col-span-7 lg:col-span-8"
+        maxCols={2}
+        breakpoints={{md: 768, lg: 1024}}
+        gap="gap-0 md:gap-10 xl:gap-12"
+        data={[
+          <div key={1} className="bg-white md:rounded-[10px]">
+            test 1
+          </div>,
+          <div key={2} className="bg-white md:rounded-[10px]">
+            test 2
+          </div>,
+        ]}
       />
     </Section>
   );
