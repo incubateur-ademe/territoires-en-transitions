@@ -14,7 +14,7 @@ import {PlanNode} from '../../PlanAction/data/types';
 type Args = {
   ficheId: number;
   /** Invalider la cle axe_fiches et savoir s'il faut rediriger ou non */
-  axeId?: number;
+  axeId: number | null;
 };
 
 /**
@@ -32,7 +32,6 @@ export const useDeleteFicheAction = (args: Args) => {
 
   const axe_fiches_key = ['axe_fiches', axeId];
   const flat_axes_Key = ['flat_axes', planActionId];
-  const fiches_non_classees_key = ['fiches_non_classees', collectivite_id];
 
   return useMutation(
     async () => {
@@ -43,10 +42,6 @@ export const useDeleteFicheAction = (args: Args) => {
       onMutate: async args => {
         const previousData = [
           [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
-          [
-            fiches_non_classees_key,
-            queryClient.getQueryData(fiches_non_classees_key),
-          ],
           [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
         ];
 
@@ -75,13 +70,6 @@ export const useDeleteFicheAction = (args: Args) => {
           }
         );
 
-        queryClient.setQueryData(
-          fiches_non_classees_key,
-          (old: FicheResume[] | undefined): FicheResume[] => {
-            return old?.filter(f => f.id !== ficheId) || [];
-          }
-        );
-
         return previousData;
       },
       onError: (err, args, previousData) => {
@@ -90,7 +78,6 @@ export const useDeleteFicheAction = (args: Args) => {
         );
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(fiches_non_classees_key);
         queryClient.invalidateQueries(axe_fiches_key);
         queryClient.invalidateQueries(flat_axes_Key);
         if (!axeId) {
@@ -102,16 +89,25 @@ export const useDeleteFicheAction = (args: Args) => {
               })
             );
           }
+          // Si la fiche est non classée
           if (pathname.includes('fiches')) {
             const fiches = queryClient.getQueryData(
-              fiches_non_classees_key
+              axe_fiches_key
             ) as FicheResume[];
+            // Pas de redirection si l'utilisateur est sur la page "Fiches non classées" et qu'il y a d'autres fiches
+            const pathnameItems = pathname.split('/');
+            const lastPathnameItem = pathnameItems[pathnameItems.length - 1];
+            // Tant qu'il y a plus d'une fiche dans la page "Fiches non classées" on redirige vers celle-ci
             if (fiches?.length > 0) {
-              history.push(
-                makeCollectiviteFichesNonClasseesUrl({
-                  collectiviteId: collectivite_id!,
-                })
-              );
+              // Si l'action vient d'une page fiche action
+              if (lastPathnameItem !== 'fiches') {
+                history.push(
+                  makeCollectiviteFichesNonClasseesUrl({
+                    collectiviteId: collectivite_id!,
+                  })
+                );
+              }
+              // S'il n'y a plus de fiche dans la page "Fiches non classées"
             } else {
               history.push(
                 makeCollectivitePlansActionsSyntheseUrl({

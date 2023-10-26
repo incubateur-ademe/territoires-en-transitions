@@ -17,7 +17,10 @@ type TFicheActionHeader = {
 const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
   const {mutate: updateFiche} = useEditFicheAction();
   const {mutate: exportFiche, isLoading} = useExportFicheAction(fiche.id);
-  const {mutate: deleteFiche} = useDeleteFicheAction({ficheId: fiche.id!});
+  const {mutate: deleteFiche} = useDeleteFicheAction({
+    ficheId: fiche.id!,
+    axeId: null,
+  });
   const plansProfondeur = usePlanActionProfondeur();
 
   const generateButtonTitle = () => {
