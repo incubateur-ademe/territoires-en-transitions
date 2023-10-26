@@ -8,11 +8,16 @@ import {PlanNode} from './data/types';
 import {useExportPlanAction} from './data/useExportPlanAction';
 import {generateTitle} from '../FicheAction/data/utils';
 import FilAriane from 'ui/shared/FilAriane';
+import RestreindreFichesModal from './RestreindreFichesModal';
+import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
+import IconUnlockFill from 'ui/shared/designSystem/icons/IconUnlockFill';
+import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
 
 type TPlanActionHeader = {
   collectivite_id: number;
   plan: PlanNode;
   axe: PlanNode;
+  axes: PlanNode[];
   isAxePage: boolean;
   axeHasFiches: boolean;
   isReadonly?: boolean;
@@ -27,6 +32,7 @@ const PlanActionHeader = ({
   collectivite_id,
   plan,
   axe,
+  axes,
   isAxePage,
   axeHasFiches,
   isReadonly,
@@ -54,6 +60,17 @@ const PlanActionHeader = ({
         {/** Actions */}
         {!isReadonly && (
           <div className="flex items-center gap-4 ml-auto">
+            {!isAxePage && axeHasFiches ? (
+              <SmallIconContextMenu
+                dataTest="export-pa"
+                title="Exporter"
+                disabled={isLoading}
+                options={EXPORT_OPTIONS}
+                buttonClassname="fr-icon-download-line fr-btn--sm"
+                hideDefaultIcon
+                onSelect={format => exportPlanAction(format as any)}
+              />
+            ) : null}
             <SupprimerAxeModal
               planId={plan.id}
               axe={axe}
@@ -77,17 +94,50 @@ const PlanActionHeader = ({
                 }
               />
             </SupprimerAxeModal>
-            {!isAxePage && axeHasFiches && !isReadonly ? (
-              <SmallIconContextMenu
-                dataTest="export-pa"
-                title="Exporter"
-                disabled={isLoading}
-                options={EXPORT_OPTIONS}
-                buttonClassname="fr-icon-download-line fr-btn--sm"
-                hideDefaultIcon
-                onSelect={format => exportPlanAction(format as any)}
-              />
-            ) : null}
+            {!isAxePage && axeHasFiches && (
+              <>
+                <RestreindreFichesModal
+                  planId={plan.id}
+                  axes={axes}
+                  restreindre={false}
+                >
+                  <button>
+                    <DSTetTooltip
+                      placement="bottom"
+                      label={() => (
+                        <span>
+                          Rendre publiques l'ensemble des fiches du plan
+                        </span>
+                      )}
+                    >
+                      <div className="fr-btn fr-btn--tertiary fr-btn--sm !p-2">
+                        <IconUnlockFill className="h-4 w-4 fill-success-1" />
+                      </div>
+                    </DSTetTooltip>
+                  </button>
+                </RestreindreFichesModal>
+                <RestreindreFichesModal
+                  planId={plan.id}
+                  axes={axes}
+                  restreindre
+                >
+                  <button>
+                    <DSTetTooltip
+                      placement="bottom"
+                      label={() => (
+                        <span>
+                          Rendre privées l'ensemble des fiches du plan
+                        </span>
+                      )}
+                    >
+                      <div className="fr-btn fr-btn--tertiary fr-btn--sm !p-2">
+                        <IconLockFill className="h-4 w-4 fill-principale" />
+                      </div>
+                    </DSTetTooltip>
+                  </button>
+                </RestreindreFichesModal>
+              </>
+            )}
           </div>
         )}
       </div>
