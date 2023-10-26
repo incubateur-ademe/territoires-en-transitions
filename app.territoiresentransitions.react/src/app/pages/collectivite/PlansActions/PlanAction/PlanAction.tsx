@@ -52,6 +52,7 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
           collectivite_id={collectivite?.collectivite_id!}
           plan={plan}
           axe={axe}
+          axes={axes}
           isAxePage={isAxePage}
           axeHasFiches={axeHasFiche}
           isReadonly={isReadonly}
