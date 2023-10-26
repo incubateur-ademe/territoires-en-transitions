@@ -119,7 +119,6 @@ export const Tooltip = ({
                   fill="white"
                   strokeWidth={1}
                   stroke="#6A6AF4"
-                  staticOffset={'15%'}
                 />
               )}
               {label()}
