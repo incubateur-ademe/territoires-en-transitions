@@ -57,9 +57,10 @@ export type ActionCommentaireFieldProps = {
   backgroundClassName?: string;
   action: ActionDefinitionSummary;
   initialValue: string;
-  autoFocus?: boolean;
   title?: string;
   subtitle?: string;
+  autoFocus?: boolean;
+  disabled?: boolean;
   onSave: (payload: {
     action_id: string;
     collectivite_id: number;
@@ -77,6 +78,7 @@ export const ActionCommentaireField = ({
   title,
   subtitle,
   autoFocus = false,
+  disabled = false,
   onSave,
 }: ActionCommentaireFieldProps) => {
   const collectivite = useCurrentCollectivite();
@@ -107,7 +109,7 @@ export const ActionCommentaireField = ({
               commentaire: commentaire.trim(),
             });
         }}
-        disabled={collectivite.readonly}
+        disabled={collectivite.readonly || disabled}
         autoFocus={autoFocus}
       />
     </>

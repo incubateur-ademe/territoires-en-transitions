@@ -34,32 +34,31 @@ const ActionJustification = ({
 
   return (
     <div className={className}>
-      {!isLoading && (
-        <ActionCommentaireField
-          dataTest={`just-${action.id}`}
-          backgroundClassName={backgroundClassName}
-          action={action}
-          initialValue={actionJustification?.texte ?? ''}
-          title={title}
-          subtitle={subtitle}
-          autoFocus={autoFocus}
-          onSave={payload => {
-            onSave
-              ? onSave({
-                  collectivite_id: payload.collectivite_id,
-                  action_id: payload.action_id,
-                  texte: payload.commentaire,
-                  modified_at: new Date().toLocaleDateString(),
-                })
-              : saveActionJustification({
-                  collectivite_id: payload.collectivite_id,
-                  action_id: payload.action_id,
-                  texte: payload.commentaire,
-                  modified_at: new Date().toLocaleDateString(),
-                });
-          }}
-        />
-      )}
+      <ActionCommentaireField
+        dataTest={`just-${action.id}`}
+        backgroundClassName={backgroundClassName}
+        action={action}
+        initialValue={actionJustification?.texte ?? ''}
+        title={title}
+        subtitle={subtitle}
+        autoFocus={autoFocus}
+        disabled={isLoading}
+        onSave={payload => {
+          onSave
+            ? onSave({
+                collectivite_id: payload.collectivite_id,
+                action_id: payload.action_id,
+                texte: payload.commentaire,
+                modified_at: new Date().toLocaleDateString(),
+              })
+            : saveActionJustification({
+                collectivite_id: payload.collectivite_id,
+                action_id: payload.action_id,
+                texte: payload.commentaire,
+                modified_at: new Date().toLocaleDateString(),
+              });
+        }}
+      />
     </div>
   );
 };
