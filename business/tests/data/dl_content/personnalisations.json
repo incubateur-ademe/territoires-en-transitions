@@ -1515,6 +1515,11 @@
       "description": "",
       "regles": [
         {
+          "description": "",
+          "formule": "si identite(type, EPCI) et identite(population, plus_de_20000) alors 0\n",
+          "type": "reduction"
+        },
+        {
           "description": "<p>Seuls les EPCI \u00e0 fiscalit\u00e9 propre de plus de 20 000 habitants ne sont pas \u00e9valu\u00e9es sur cette action.</p>\n",
           "formule": "si identite(type, EPCI) et identite(population, plus_de_20000) alors VRAI\n",
           "type": "desactivation"
