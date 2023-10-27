@@ -527,3 +527,4 @@ evaluation/seuils_de_population [evaluation/seuils_de_population@v2.66.0] 2023-1
 collectivite/mes_collectivites_v2 [collectivite/mes_collectivites_v2@v2.64.1] 2023-09-29T13:29:06Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les collectivités de l'auditeur
 indicateur/referentiel [indicateur/referentiel@v2.65.0] 2023-10-03T09:37:00Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les indicateurs importés au count pour les indicateurs remplis
 site/labellisation [site/labellisation@v2.68.0] 2023-10-27T12:01:06Z Florian <florian@derfurth.com> # Ajoute des relations calculées pour les données des pages collectivités
+@v2.69.0 2023-10-27T14:22:23Z Florian <florian@derfurth.com> # Corrige le comptage des indicateurs remplis, la liste des collectivités des auditeurs et prépare les futures pages collectivités
