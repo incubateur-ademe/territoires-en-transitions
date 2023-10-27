@@ -522,3 +522,4 @@ automatisation/crm [automatisation/crm@v2.66.0] 2023-10-23T09:20:57Z Florian <fl
 
 collectivite/identite [collectivite/identite@v2.66.0] 2023-10-19T13:41:00Z Amandine Jacquelin <conta@LanceLibre> # Ajoute métropole à l'identité
 evaluation/seuils_de_population [evaluation/seuils_de_population@v2.66.0] 2023-10-19T14:20:50Z Amandine Jacquelin <conta@LanceLibre> # Ajout seuil plus_de_20000
+@v2.68.0 2023-10-27T09:27:06Z Florian <florian@derfurth.com> # Permet de nouvelles règles de personnalisation
