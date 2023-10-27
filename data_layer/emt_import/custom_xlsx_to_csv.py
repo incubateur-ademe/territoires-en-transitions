@@ -19,8 +19,8 @@ if __name__ == '__main__':
         # on renomme les colonnes
         df.columns = ['id', 'nom', 'phase',
                       'points', 'potentiel',
-                      'points_fait', 'points_programme',
-                      'pourcentage_fait', 'pourcentage_programme', 'statut',  # pour reconstituer le détaillé
+                      'points_fait', 'pourcentage_fait',
+                      'points_programme', 'pourcentage_programme', 'statut',  # pour reconstituer le détaillé
                       'commentaire']  # à importer
 
         # on convertit les colonnes en valeurs numériques, les valeurs inconvertibles seront N/A
