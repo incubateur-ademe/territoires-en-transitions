@@ -2,8 +2,13 @@
 
 BEGIN;
 
-select indicateur_id, perso_id, collectivite_id, rempli
-from indicateur_rempli
+select indicateur_id, collectivite_id, user_id, tag_id
+from indicateur_pilote
 where false;
+
+select indicateur_id, collectivite_id, service_tag_id
+from indicateur_service_tag
+where false;
+
 
 ROLLBACK;

@@ -2,16 +2,9 @@
 
 BEGIN;
 
-alter policy allow_read
-    on indicateur_personnalise_definition
-    using (is_authenticated());
-
-alter policy allow_read
-    on indicateur_personnalise_resultat
-    using (is_authenticated());
-
-alter policy allow_read
-    on indicateur_personnalise_objectif
-    using (is_authenticated());
+drop table indicateur_personnalise_service_tag;
+drop table indicateur_personnalise_pilote;
+drop table indicateur_personnalise_thematique;
+drop function private.indicateur_personnalise_collectivite_id;
 
 COMMIT;
