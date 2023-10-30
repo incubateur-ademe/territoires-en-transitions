@@ -1,10 +1,8 @@
-'use client';
-
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {ParagrapheCustomArticleData} from 'app/types';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
-import {processMarkedContent} from 'src/utils/processMarkedContent';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type ParagrapheArticleProps = {
   paragraphe: ParagrapheCustomArticleData;
@@ -13,17 +11,6 @@ type ParagrapheArticleProps = {
 const ParagrapheArticle = ({
   paragraphe: {titre, texte, image, alignementImage, legendeVisible},
 }: ParagrapheArticleProps) => {
-  const [processedText, setProcessedText] = useState<string | undefined>();
-
-  const processContent = async (texte: string) => {
-    const newText = await processMarkedContent(texte);
-    setProcessedText(newText);
-  };
-
-  useEffect(() => {
-    if (texte) processContent(texte);
-  }, [texte]);
-
   return (
     <div className="flex flex-col w-full">
       {/* Titre du paragraphe */}
@@ -39,7 +26,7 @@ const ParagrapheArticle = ({
       )}
 
       {/* Contenu du paragraphe */}
-      {(processedText ||
+      {(texte ||
         (image &&
           (alignementImage === 'Gauche' || alignementImage === 'Droite'))) && (
         <div className="flex flex-col md:block">
@@ -61,13 +48,13 @@ const ParagrapheArticle = ({
             )}
 
           {/* Texte */}
-          {processedText && (
-            <div
+          {texte && (
+            <Markdown
+              remarkPlugins={[remarkGfm]}
               className="text-lg break-words sm:break-normal"
-              dangerouslySetInnerHTML={{
-                __html: processedText,
-              }}
-            />
+            >
+              {texte}
+            </Markdown>
           )}
         </div>
       )}
