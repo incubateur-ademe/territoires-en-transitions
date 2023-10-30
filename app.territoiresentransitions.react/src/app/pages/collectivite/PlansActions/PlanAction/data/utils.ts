@@ -85,7 +85,7 @@ export const planNodeFactory = ({
   parentDepth,
   nom,
 }: PlanNodeFactory): PlanNode => {
-  const lowerId = axes.reduce((a, b) => (a.id! < b.id! ? a : b)).id;
+  const lowerId = axes?.reduce((a, b) => (a.id! < b.id! ? a : b), {id: 0}).id;
   const tempId = Math.min(0, lowerId || 0) - 1;
 
   return {
