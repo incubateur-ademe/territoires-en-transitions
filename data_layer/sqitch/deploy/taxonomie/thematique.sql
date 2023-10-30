@@ -8,6 +8,8 @@ drop view fiches_action;
 drop view private.fiches_action;
 
 -- Thématiques
+drop function private.ajouter_thematique;
+
 alter table thematique
     add id serial;
 
@@ -46,6 +48,22 @@ alter table thematique
     rename column thematique to nom;
 
 drop table indicateur_thematique_nom;
+
+create or replace function private.ajouter_thematique(fiche_id integer, thematique text) returns void
+    language sql
+    volatile
+begin
+    atomic
+    with matching as (select t.id from thematique t where t.nom = ajouter_thematique.thematique limit 1)
+    insert
+    into fiche_action_thematique as fat (fiche_id, thematique_id)
+    select ajouter_thematique.fiche_id as fiche_id,
+           matching.id as thematique_id
+    from matching
+    on conflict (fiche_id, thematique_id) do nothing;
+end;
+
+comment on function private.ajouter_thematique(integer, text) is 'Ajoute une thématique à la fiche';
 
 -- PA
 create or replace view private.fiches_action
@@ -295,7 +313,7 @@ begin
     if new.thematiques is not null then
         foreach thematique in array new.thematiques::thematique[]
             loop
-                perform private.ajouter_thematique(id_fiche, thematique.thematique);
+                perform private.ajouter_thematique(id_fiche, thematique.nom);
             end loop;
     end if;
     delete from fiche_action_sous_thematique where fiche_id = id_fiche;
