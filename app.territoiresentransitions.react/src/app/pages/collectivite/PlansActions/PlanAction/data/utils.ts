@@ -15,7 +15,7 @@ export const checkAxeHasFiche = (axe: PlanNode, axes: PlanNode[]): boolean => {
   }
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      if (checkAxeHasFiche(children[i], children)) {
+      if (checkAxeHasFiche(children[i], axes)) {
         return true;
       }
     }
