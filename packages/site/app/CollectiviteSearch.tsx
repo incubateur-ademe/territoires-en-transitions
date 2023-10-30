@@ -3,7 +3,7 @@
 import AutocompleteInputSelect from '@components/select/AutocompleteInputSelect';
 import {useRouter} from 'next/navigation';
 import {Dispatch, SetStateAction, useState} from 'react';
-import {useFilteredCollectivites} from './collectivite/[code]/[name]/useCollectivite';
+import {useFilteredCollectivites} from './useFilteredCollectivites';
 import {convertNameToSlug} from './utils';
 
 type CollectiviteSearchProps = {
