@@ -22,31 +22,39 @@
       "required": true,
       "unique": true
     },
-    "couverture": {
-      "allowedTypes": ["images"],
-      "type": "media",
-      "multiple": false
+    "url": {
+      "type": "string"
     },
     "logo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "url": {
+    "couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "video_url": {
       "type": "string"
     },
-    "Sections": {
-      "type": "dynamiczone",
-      "components": [
-        "contenu.performance-collectivite",
-        "contenu.citation",
-        "contenu.actions-cae",
-        "contenu.paragraphe",
-        "contenu.image",
-        "contenu.gallerie",
-        "contenu.video",
-        "contenu.info"
-      ]
+    "video_en_haut": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "actions": {
+      "displayName": "TexteCollectivite",
+      "type": "component",
+      "repeatable": true,
+      "component": "contenu.texte-collectivite",
+      "max": 4
     }
   }
 }
