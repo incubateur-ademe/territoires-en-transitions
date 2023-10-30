@@ -1,9 +1,7 @@
-'use client';
-
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
-import {processMarkedContent} from 'src/utils/processMarkedContent';
+import ButtonWithLink from '@components/buttons/ButtonWithLink';
 
 type CardProps = {
   title?: string;
@@ -39,21 +37,6 @@ const Card = ({
   className,
   textClassName,
 }: CardProps) => {
-  const [processedContent, setProcessedContent] = useState<
-    string | undefined
-  >();
-
-  const processContent = async (description: string) => {
-    const newContent = await processMarkedContent(description);
-    console.log(description, newContent);
-
-    setProcessedContent(newContent);
-  };
-
-  useEffect(() => {
-    processContent(description);
-  }, [description]);
-
   return (
     <div
       className={classNames(
@@ -84,18 +67,16 @@ const Card = ({
               {subtitle}
             </p>
           )}
-          {processedContent && (
-            <p
-              className={classNames(
-                'paragraphe-16',
-                {'no-margin': !button},
-                textClassName,
-              )}
-              dangerouslySetInnerHTML={{
-                __html: processedContent,
-              }}
-            />
-          )}
+          <Markdown
+            remarkPlugins={[remarkGfm]}
+            className={classNames(
+              'paragraphe-16',
+              {'no-margin': !button},
+              textClassName,
+            )}
+          >
+            {description}
+          </Markdown>
         </div>
 
         {button && (

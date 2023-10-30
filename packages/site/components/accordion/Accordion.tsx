@@ -1,8 +1,9 @@
 'use client';
 
+import {useState} from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
-import {processMarkedContent} from 'src/utils/processMarkedContent';
 
 type AccordionType = {
   id: string;
@@ -18,18 +19,6 @@ const Accordion = ({
   initialState = false,
 }: AccordionType) => {
   const [expanded, setExpanded] = useState(initialState ?? false);
-  const [processedContent, setProcessedContent] = useState<
-    string | undefined
-  >();
-
-  const processContent = async (content: string) => {
-    const newContent = await processMarkedContent(content);
-    setProcessedContent(newContent);
-  };
-
-  useEffect(() => {
-    if (typeof content === 'string') processContent(content);
-  }, [content]);
 
   const contentClassName = classNames({
     'fr-collapse--expanded py-3 px-4': expanded,
@@ -48,19 +37,13 @@ const Accordion = ({
           {title}
         </button>
       </h3>
-      {processedContent ? (
-        <div
-          className={contentClassName}
-          id={id}
-          dangerouslySetInnerHTML={{
-            __html: processedContent,
-          }}
-        />
-      ) : (
-        <div className={contentClassName} id={id}>
-          {content}
-        </div>
-      )}
+      <div className={contentClassName} id={id}>
+        {typeof content === 'string' ? (
+          <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
+        ) : (
+          content
+        )}
+      </div>
     </div>
   );
 };
