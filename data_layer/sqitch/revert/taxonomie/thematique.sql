@@ -8,6 +8,8 @@ drop view fiches_action;
 drop view private.fiches_action;
 
 -- Thématiques
+drop function private.ajouter_thematique;
+
 alter table thematique
     rename column nom to thematique;
 
@@ -36,6 +38,15 @@ create table indicateur_thematique_nom
 );
 comment on table indicateur_thematique_nom
     is 'Les ids thématiques et leurs noms.';
+
+create function private.ajouter_thematique(fiche_id integer, thematique text) returns void
+    language sql
+    volatile
+begin
+    atomic
+    insert into fiche_action_thematique
+    values (ajouter_thematique.fiche_id, ajouter_thematique.thematique);
+end ;
 
 -- PA
 create or replace view private.fiches_action
