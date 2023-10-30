@@ -18,6 +18,7 @@ import {
 import classNames from 'classnames';
 import {Metadata} from 'next';
 import {fetchCollectivite} from '../page';
+import ActionCollectivite from './ActionCollectivite';
 import ActionsCAE from './ActionsCAE';
 import Citation from './Citation';
 import CollectiviteHeader from './CollectiviteHeader';
@@ -93,20 +94,37 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       </div>
 
       {/* Contenu */}
-      <Gallery
-        className="col-span-full md:col-span-7 lg:col-span-8"
-        maxCols={2}
-        breakpoints={{md: 768, lg: 1024}}
-        gap="gap-0 md:gap-10 xl:gap-12"
-        data={[
-          <div key={1} className="bg-white md:rounded-[10px]">
-            test 1
-          </div>,
-          <div key={2} className="bg-white md:rounded-[10px]">
-            test 2
-          </div>,
-        ]}
-      />
+      {strapiData?.contenu ? (
+        <div className="col-span-full md:col-span-7 lg:col-span-8 flex flex-col gap-10 xl:gap-12">
+          {strapiData.contenu.video && (
+            <EmbededVideo
+              url={strapiData.contenu.video}
+              className={classNames('w-full md:rounded-[10px]', {
+                'order-last': !strapiData.contenu.video_en_haut,
+              })}
+            />
+          )}
+          {strapiData.contenu.actions.length > 0 &&
+            strapiData.contenu.actions.map(action => (
+              <ActionCollectivite key={action.id} action={action} />
+            ))}
+        </div>
+      ) : (
+        <Gallery
+          className="col-span-full md:col-span-7 lg:col-span-8"
+          maxCols={2}
+          breakpoints={{md: 768, lg: 1024}}
+          gap="gap-0 md:gap-10 xl:gap-12"
+          data={[
+            <div key={1} className="bg-white md:rounded-[10px]">
+              test 1
+            </div>,
+            <div key={2} className="bg-white md:rounded-[10px]">
+              test 2
+            </div>,
+          ]}
+        />
+      )}
     </Section>
   );
 

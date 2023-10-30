@@ -21,6 +21,8 @@ export const getData = async (codeSirenInsee: string) => {
     ['filters[code_siren_insee]', `${codeSirenInsee}`],
     ['populate[0]', 'couverture'],
     ['populate[1]', 'logo'],
+    ['populate[2]', 'actions'],
+    ['populate[3]', 'actions.image'],
     // ['populate[1]', 'Sections'],
     // ['populate[2]', 'Sections.Image'],
     // ['populate[3]', 'Sections.Gallerie'],
@@ -40,6 +42,9 @@ export const getData = async (codeSirenInsee: string) => {
 
   if (data && data.length) {
     const collectiviteData = data[0].attributes;
+    const isContentDefined =
+      (collectiviteData.actions as unknown as {}[]).length > 0;
+
     return {
       nom: collectiviteData.nom as unknown as string,
       code_siren_insee: collectiviteData.code_siren_insee as unknown as string,
@@ -48,6 +53,25 @@ export const getData = async (codeSirenInsee: string) => {
         undefined,
       logo: (collectiviteData.logo.data as unknown as StrapiItem) ?? undefined,
       url: (collectiviteData.url as unknown as string) ?? undefined,
+      contenu: isContentDefined
+        ? {
+            video:
+              (collectiviteData.video_url as unknown as string) ?? undefined,
+            video_en_haut:
+              (collectiviteData.video_en_haut as unknown as boolean) ?? false,
+            actions: (
+              collectiviteData.actions as unknown as {
+                id: string;
+                titre: string;
+                contenu: string;
+                image: {data: StrapiItem};
+              }[]
+            ).map(action => ({
+              ...action,
+              image: action.image.data,
+            })),
+          }
+        : undefined,
     };
   } else return null;
 

@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_contenu_texte_collectivites",
+  "info": {
+    "displayName": "TexteCollectivite",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "contenu": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

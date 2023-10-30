@@ -1,0 +1,74 @@
+'use client';
+
+import {useState} from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import classNames from 'classnames';
+import {StrapiItem} from 'src/strapi/StrapiItem';
+import AnchorAsButton from '@components/buttons/AnchorAsButton';
+import {StrapiImage} from '@components/strapiImage/StrapiImage';
+
+const splitContent = (content: string, limit: number) => {
+  let newContent = content.slice(0, limit);
+  const sentenceEnd = content.slice(limit).split(' ')[0];
+  newContent += sentenceEnd;
+  return newContent;
+};
+
+type ActionCollectiviteProps = {
+  action: {
+    titre: string;
+    contenu: string;
+    image: StrapiItem;
+  };
+};
+
+const ActionCollectivite = ({
+  action: {titre, contenu, image},
+}: ActionCollectiviteProps) => {
+  const [contenuOpen, setContenuOpen] = useState(false);
+  const limitContent = 700;
+
+  return (
+    <div className="rounded-[10px] bg-white overflow-hidden">
+      {image && (
+        <div className="h-[450px] w-full overflow-hidden relative">
+          <StrapiImage
+            data={image}
+            className="object-cover min-h-full min-w-full"
+            containerClassName="w-full h-full"
+          />
+          {(image.attributes.caption as unknown as string) && (
+            <div className="text-right text-grey-1 text-[14px] leading-4 py-1 px-2 absolute right-0 top-[426px] bg-grey-8/50 rounded-tl-sm">
+              {image.attributes.caption as unknown as string}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div
+        className={classNames('py-10 px-8 lg:p-8', {
+          '-mb-6': contenu.length <= limitContent,
+        })}
+      >
+        <h3>{titre}</h3>
+        <Markdown remarkPlugins={[remarkGfm]}>
+          {contenu.length <= limitContent || contenuOpen
+            ? contenu
+            : `${splitContent(contenu, limitContent)}...`}
+        </Markdown>
+
+        {contenu.length > limitContent && (
+          <AnchorAsButton
+            onClick={() => setContenuOpen(prevState => !prevState)}
+            className="text-primary-7 font-bold"
+          >
+            {contenuOpen ? 'Lire moins' : 'Lire plus'}
+          </AnchorAsButton>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ActionCollectivite;
