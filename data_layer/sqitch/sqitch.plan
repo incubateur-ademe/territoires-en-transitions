@@ -540,3 +540,4 @@ plan_action/plan_action [plan_action/plan_action@v2.67.0] 2023-10-26T15:41:19Z A
 taxonomie/thematique 2023-10-30T08:46:50Z Florian <florian@derfurth.com> # Les thématiques partagées entre fiches action et indicateurs
 indicateur/referentiel [indicateur/referentiel@v2.69.0] 2023-10-30T10:17:35Z Florian <florian@derfurth.com> # Personnes et services pilotes
 indicateur/personnalise [indicateur/personnalise@v2.69.0] 2023-10-30T10:18:28Z Florian <florian@derfurth.com> # Personnes et services pilotes
+indicateur/detail 2023-10-31T14:03:49Z Florian <florian@derfurth.com> # Pilotes, services et thématiques
