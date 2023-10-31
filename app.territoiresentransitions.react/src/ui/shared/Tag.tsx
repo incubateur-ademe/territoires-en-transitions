@@ -5,9 +5,16 @@ type TTag = {
   onCloseClick?: () => void;
   className?: string;
   isUserCreated?: boolean;
+  disabled?: boolean;
 };
 
-const Tag = ({className, title, onCloseClick, isUserCreated}: TTag) => {
+const Tag = ({
+  className,
+  title,
+  onCloseClick,
+  isUserCreated,
+  disabled,
+}: TTag) => {
   if (!title || title.length === 0) {
     return null;
   }
@@ -15,7 +22,7 @@ const Tag = ({className, title, onCloseClick, isUserCreated}: TTag) => {
     <div
       className={classNames(
         'flex items-center px-3 py-0.5 text-white bg-bf500  rounded-full',
-        {'pr-2': onCloseClick},
+        {'pr-2': onCloseClick && !disabled},
         {
           '!bg-white !border !border-gray-300 !text-gray-900': isUserCreated,
         },
@@ -23,7 +30,7 @@ const Tag = ({className, title, onCloseClick, isUserCreated}: TTag) => {
       )}
     >
       <span className="py-0.5 text-sm">{title}</span>
-      {onCloseClick && (
+      {!disabled && onCloseClick && (
         <div
           className="ml-1 rounded-full cursor-pointer"
           onClick={evt => {

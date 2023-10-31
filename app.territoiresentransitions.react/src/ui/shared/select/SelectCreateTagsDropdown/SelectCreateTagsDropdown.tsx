@@ -71,6 +71,7 @@ const SelectCreateTagsDropdown = <T extends string>({
       placement={placement}
       toggle={false}
       enterToToggle={false}
+      disabled={disabled}
       render={({close}) => (
         <div>
           {inputValue.trim().length > 0 && isNotSimilar && (
@@ -211,7 +212,9 @@ const SelectCreateTagsButton = forwardRef(
         {...props}
       >
         <div
-          className={classNames(buttonDisplayedClassname, buttonClassName)}
+          className={classNames(buttonDisplayedClassname, buttonClassName, {
+            'cursor-not-allowed': disabled,
+          })}
           onClick={handleWrapperClick}
         >
           <div className="flex items-center flex-wrap gap-2 grow">
@@ -225,6 +228,7 @@ const SelectCreateTagsButton = forwardRef(
                     onSelect(sortedValues.filter(value => value !== v))
                   }
                   isUserCreated={isUserCreatedOption(v, userCreatedTagIds)}
+                  disabled={disabled}
                 />
               ))}
             {!disabled && (

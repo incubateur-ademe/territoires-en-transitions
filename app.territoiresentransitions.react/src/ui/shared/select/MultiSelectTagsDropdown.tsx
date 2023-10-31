@@ -38,6 +38,7 @@ const MultiSelectTagsDropdown = <T extends string>({
               key={v}
               title={getOptionLabel(v, getOptions(options))}
               onCloseClick={() => onSelect(values.filter(val => val !== v))}
+              disabled={disabled}
             />
           ))}
         </div>

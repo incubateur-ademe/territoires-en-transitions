@@ -29,6 +29,7 @@ type DropdownFloaterProps = {
   /** z-index */
   zIndex?: number;
   'data-test'?: string;
+  disabled?: boolean;
 };
 
 const DropdownFloater = ({
@@ -41,12 +42,13 @@ const DropdownFloater = ({
   offsetValue = 4,
   zIndex = 1200,
   'data-test': dataTest,
+  disabled,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const {x, y, strategy, refs, context} = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
+    open: disabled ? false : isOpen,
+    onOpenChange: disabled ? () => null : setIsOpen,
     placement: placement ?? 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
