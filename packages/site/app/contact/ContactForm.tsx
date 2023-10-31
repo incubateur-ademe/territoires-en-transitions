@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@components/dstet/buttons/Button';
 import {ToastFloater} from '@components/floating-ui/ToastFloater';
 import classNames from 'classnames';
 import {useState} from 'react';
@@ -164,7 +165,7 @@ const ContactForm = () => {
         </div>
 
         <div className="flex justify-end">
-          <button className="fr-btn rounded-lg">Envoyer</button>
+          <Button size="big">Envoyer</Button>
         </div>
       </form>
 

@@ -1,3 +1,4 @@
+import {ButtonVariant} from '@components/dstet/buttons/utils';
 import InfoSection from '@components/sections/InfoSection';
 
 type RessourcesProps = {
@@ -17,12 +18,12 @@ const Ressources = ({description, buttons}: RessourcesProps) => {
           ...b,
           title: b.titre,
           external: true,
-          tertiary: true,
+          variant: 'outlined' as ButtonVariant,
         })),
         {
           title: 'Lire les questions fréquentes',
           href: '/faq',
-          tertiary: true,
+          variant: 'outlined',
           className: '!bg-[#FFE8BD] hover:bg-[#FFE4A8]',
         },
       ]}

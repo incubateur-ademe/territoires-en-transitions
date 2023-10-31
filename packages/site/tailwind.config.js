@@ -72,10 +72,15 @@ module.exports = {
         // Gris
         grey: {
           1: '#FDFDFD',
+          2: '#F9F9F9',
           3: '#EEEEEE',
+          4: '#DDDDDD',
           5: '#CECECE',
           6: '#929292',
+          7: '#8A8A8A',
           8: '#666666',
+          9: '#535252',
+          10: '#161616',
         },
         // Autres couleurs
         'orange-1': '#F28E40',

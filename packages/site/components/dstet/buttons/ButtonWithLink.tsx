@@ -1,33 +1,31 @@
 import classNames from 'classnames';
+import {AnchorHTMLAttributes} from 'react';
+import {ButtonSize, ButtonVariant, getTetButtonClassnames} from './utils';
 
 type ButtonWithLinkProps = {
-  children: React.ReactNode;
-  href: string;
-  secondary?: boolean;
-  tertiary?: boolean;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   external?: boolean;
   fullWidth?: boolean;
-  className?: string;
-};
+} & AnchorHTMLAttributes<HTMLAnchorElement>;
 
 const ButtonWithLink = ({
   children,
   href,
-  secondary = false,
-  tertiary = false,
+  variant = 'primary',
+  size = 'normal',
   external = false,
   fullWidth = false,
   className,
+  ...otherProps
 }: ButtonWithLinkProps): JSX.Element => {
   return (
     <a
+      {...otherProps}
       className={classNames(
-        'fr-btn !h-fit',
-        {
-          'fr-btn--tertiary': tertiary,
-          'fr-btn--secondary': secondary,
-          '!w-full': fullWidth,
-        },
+        '!h-fit',
+        {'!w-full': fullWidth},
+        getTetButtonClassnames(variant, size),
         className,
       )}
       target={external ? '_blank' : undefined}

@@ -1,4 +1,5 @@
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
+import {ButtonVariant} from '@components/dstet/buttons/utils';
 import classNames from 'classnames';
 import Section from './Section';
 
@@ -8,9 +9,8 @@ type InfoSectionProps = {
   buttons: {
     title: string;
     href: string;
-    secondary?: boolean;
-    tertiary?: boolean;
     external?: boolean;
+    variant?: ButtonVariant;
     className?: string;
   }[];
 };
@@ -33,9 +33,9 @@ const InfoSection = ({id, content, buttons}: InfoSectionProps) => {
                 button.className,
               )}
               href={button.href}
-              secondary={button.secondary}
-              tertiary={button.tertiary}
               external={button.external}
+              variant={button.variant}
+              size="big"
             >
               {button.title}
             </ButtonWithLink>

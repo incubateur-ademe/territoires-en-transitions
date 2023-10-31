@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import CalendarPicto from 'public/pictogrammes/CalendarPicto';
@@ -23,13 +23,18 @@ const Informations = ({titre, description, className}: InformationsProps) => {
         <CardsWrapper cols={3} className="!gap-14">
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<InformationPicto />} />
-            <ButtonWithLink href="/faq" tertiary fullWidth>
+            <ButtonWithLink href="/faq" fullWidth variant="outlined" size="big">
               Lire les questions fréquentes
             </ButtonWithLink>
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CommunityPicto />} />
-            <ButtonWithLink href="/contact" tertiary fullWidth>
+            <ButtonWithLink
+              href="/contact"
+              fullWidth
+              variant="outlined"
+              size="big"
+            >
               Contacter l'équipe
             </ButtonWithLink>
           </div>
@@ -39,6 +44,7 @@ const Informations = ({titre, description, className}: InformationsProps) => {
               href="https://calendly.com/territoiresentransitions"
               fullWidth
               external
+              size="big"
             >
               Participer à une démo
             </ButtonWithLink>

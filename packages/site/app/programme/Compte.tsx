@@ -13,7 +13,7 @@ const Compte = ({description}: CompteProps) => {
           title: 'Créer un compte',
           href: 'https://app.territoiresentransitions.fr/auth/signup',
           external: true,
-          tertiary: true,
+          variant: 'outlined',
         },
       ]}
     />

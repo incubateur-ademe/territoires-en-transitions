@@ -1,4 +1,4 @@
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 
 const ConnexionCompte = () => {
   return (
@@ -6,7 +6,10 @@ const ConnexionCompte = () => {
       <p className="text-center text-primary-8 font-bold text-[18px] leading-[28px]">
         Vous êtes membre de cette collectivité ?
       </p>
-      <ButtonWithLink href="https://app.territoiresentransitions.fr/auth/signin">
+      <ButtonWithLink
+        href="https://app.territoiresentransitions.fr/auth/signin"
+        size="big"
+      >
         Se connecter
       </ButtonWithLink>
     </div>

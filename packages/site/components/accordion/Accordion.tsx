@@ -29,7 +29,7 @@ const Accordion = ({
     <div className="fr-accordion">
       <h3 className="fr-accordion__title">
         <button
-          className="fr-accordion__btn nav-btn"
+          className="fr-accordion__btn"
           aria-controls={id}
           aria-expanded={expanded}
           onClick={() => setExpanded(prevState => !prevState)}
