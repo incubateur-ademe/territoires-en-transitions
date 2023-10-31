@@ -6,12 +6,13 @@ type Props = {
   isChecked?: boolean | null;
   onClick: () => void;
   description?: string;
+  'data-test'?: string;
 };
 
 /** Boutton toggle avec description */
 const ToggleButton = forwardRef(
   (
-    {isChecked = false, description, onClick}: Props,
+    {isChecked = false, description, onClick, 'data-test': dataTest}: Props,
     ref: Ref<HTMLButtonElement>
   ) => {
     const [checked, setChecked] = useState(isChecked);
@@ -23,6 +24,7 @@ const ToggleButton = forwardRef(
 
     return (
       <button
+        data-test={dataTest}
         ref={ref}
         className="flex items-center gap-3 !bg-transparent"
         onClick={handleClick}

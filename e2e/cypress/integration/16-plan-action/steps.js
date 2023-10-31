@@ -43,12 +43,39 @@ When(
   }
 );
 
-When(/je navigue sur la fiche "([^"]*)"/, titre => {
-  cy.get('[data-test=ActionCarte]').contains(titre).click();
-});
-
 When(/je supprime la fiche/, () => {
   cy.get('[data-test=SupprimerFicheBouton]').click();
+  cy.contains('Confirmer').click();
+});
+
+When(/je toggle la confidentialité de la fiche/, () => {
+  cy.get('[data-test=FicheToggleConfidentialite]').click();
+});
+
+When(/la carte "([^"]*)" est privée/, titre => {
+  cy.get('[data-test=FicheCartePrivee]')
+    .parents('[data-test=ActionCarte]')
+    .contains(titre)
+    .should('be.visible');
+});
+
+When(/je ne peux pas cliquer sur la carte "([^"]*)"/, titre => {
+  cy.get('[data-test=ActionCarte]')
+    .contains(titre)
+    .should('have.css', 'pointer-events', 'none');
+});
+
+When(/toutes les cartes sont publiques/, () => {
+  cy.get('[data-test=FicheCartePrivee]').should('not.exist');
+});
+
+When(/je rends publiques toutes les fiches d'un plan/, () => {
+  cy.get('[data-test=BoutonToutesFichesPubliques]').click();
+  cy.contains('Confirmer').click();
+});
+
+When(/je rends privées toutes les fiches d'un plan/, () => {
+  cy.get('[data-test=BoutonToutesFichesPrivees]').click();
   cy.contains('Confirmer').click();
 });
 
@@ -109,9 +136,15 @@ When(/j'ajoute une fiche au plan d'action/, () => {
     .click();
 });
 
-When(/je la nomme "([^"]*)" et je navigue vers cette derniere/, titre => {
+When(/je nomme la carte "([^"]*)"/, titre => {
   cy.wait(50);
-  cy.get('[data-test=ActionCarte]').find('textarea').type(`${titre}{enter}`);
+  cy.get('[data-test=ActionCarte]')
+    .find('textarea')
+    .first()
+    .type(`${titre}{enter}`);
+});
+
+When(/je navigue vers la fiche "([^"]*)"/, titre => {
   cy.get('[data-test=ActionCarte]').contains(titre).click();
   cy.get('[data-test=FicheAction]').contains(titre).should('be.visible');
 });
@@ -123,7 +156,7 @@ When(/j'ajoute une fiche à la page axe/, () => {
     .click();
 });
 
-When(/je reviens sur le plan d'action "([^"]*)"/, titre => {
+When(/je navigue vers le plan "([^"]*)"/, titre => {
   cy.get('[data-test=SideNavigation]').contains(titre).click();
 });
 
