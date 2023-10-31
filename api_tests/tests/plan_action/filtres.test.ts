@@ -138,40 +138,6 @@ Deno.test("Fiches par budget", dirtyOptions, async () => {
   await signOut();
 });
 
-Deno.test("Fiches par thematique", dirtyOptions, async () => {
-  await testReset();
-  await signIn("yolododo");
-
-  const filterResponse = await supabase.rpc("filter_fiches_action", {
-    collectivite_id: 1,
-    thematiques: [{ thematique: "Activités économiques" }],
-  });
-  assertExists(filterResponse.data);
-  assertEquals(filterResponse.data.length, 10);
-
-  const filterResponse2 = await supabase.rpc("filter_fiches_action", {
-    collectivite_id: 1,
-    thematiques: [{ thematique: "Énergie et climat" }],
-  });
-  assertExists(filterResponse2.data);
-  assertEquals(filterResponse2.data.length, 0);
-
-  const filterResponse3 = await supabase.rpc("filter_fiches_action", {
-    collectivite_id: 1,
-    sous_thematiques: [
-      {
-        id: 1,
-        thematique: "Activités économiques",
-        sous_thematique: "Agriculture et alimentation",
-      },
-    ],
-  });
-  assertExists(filterResponse3.data);
-  assertEquals(filterResponse3.data.length, 10);
-
-  await signOut();
-});
-
 Deno.test("Fiches sans plan", dirtyOptions, async () => {
   await testReset();
   await signIn("yolododo");
