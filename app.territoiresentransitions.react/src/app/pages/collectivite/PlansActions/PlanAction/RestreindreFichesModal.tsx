@@ -33,7 +33,7 @@ const RestreindreFichesModal = ({
             </h6>
             <p id={descriptionId} className="mb-4">
               {restreindre
-                ? "En passant en privé l'ensemble des fiches de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les fiches restent consultables par l’ADEME et le service support de la plateforme"
+                ? "En passant en privé l'ensemble des fiches de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les fiches restent consultables par l’ADEME et le service support de la plateforme."
                 : "En passant en public l'ensemble des fiches de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité."}
             </p>
             <div className="mt-8 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
