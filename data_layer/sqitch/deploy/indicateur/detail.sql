@@ -4,13 +4,14 @@ BEGIN;
 
 create view indicateur_definitions
 as
-select null::integer  as collectivite_id,
+select c.id           as collectivite_id,
        definition.id  as indicateur_id,
        null::integer  as indicateur_perso_id,
        definition.nom as nom,
        definition.description,
        definition.unite
-from indicateur_definition definition
+from collectivite c
+         cross join indicateur_definition definition
 union all
 select definition.collectivite_id as collectivite_id,
        null::indicateur_id        as indicateur_id,
