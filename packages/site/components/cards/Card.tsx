@@ -1,7 +1,8 @@
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
+import {ButtonVariant} from '@components/dstet/buttons/utils';
 
 type CardProps = {
   title?: string;
@@ -11,8 +12,8 @@ type CardProps = {
   button?: {
     title: string;
     href: string;
-    secondary?: boolean;
     external?: boolean;
+    variant?: ButtonVariant;
   };
   image?: React.ReactNode;
   imagePosition?: 'top' | 'left';
@@ -82,9 +83,10 @@ const Card = ({
         {button && (
           <ButtonWithLink
             href={button.href}
-            secondary={button.secondary}
+            variant={button.variant}
             external={button.external}
             fullWidth
+            size="big"
           >
             {button.title}
           </ButtonWithLink>

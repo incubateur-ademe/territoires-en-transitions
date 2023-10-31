@@ -119,62 +119,6 @@
     line-height: 36px;
   }
 
-  .fr-btn:not(.nav-btn) {
-    @apply bg-primary-7;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 20px;
-    box-shadow: none;
-    border-radius: 10px;
-    padding: 14px 25px;
-  }
-
-  button:not(.nav-btn):not(:disabled):hover,
-  .fr-btn:not(.nav-btn):hover,
-  a[href].fr-btn:not(.nav-btn):hover {
-    @apply bg-primary-8;
-  }
-
-  .fr-btn:not(.nav-btn):disabled {
-    @apply bg-primary-4;
-    @apply text-primary-3;
-  }
-
-  .fr-btn.fr-btn--secondary {
-    @apply bg-secondary-1;
-  }
-
-  button:not(:disabled).fr-btn--secondary:hover,
-  .fr-btn.fr-btn--secondary:hover,
-  a[href].fr-btn.fr-btn--secondary:hover,
-  .fr-btn.fr-btn--secondary:disabled {
-    @apply bg-secondary-2;
-  }
-
-  .fr-btn.fr-btn--tertiary,
-  .fr-btn.btn-outlined {
-    background-color: #fff;
-    @apply text-primary-7;
-    border: solid;
-    @apply border border-primary-7;
-  }
-
-  button:not(:disabled).fr-btn--tertiary:hover,
-  .fr-btn.fr-btn--tertiary:hover,
-  a[href].fr-btn.fr-btn--tertiary:hover,
-  .fr-btn.btn-outlined:hover {
-    @apply bg-primary-1;
-    @apply text-primary-8;
-    @apply border-primary-8;
-  }
-
-  .fr-btn.fr-btn--tertiary:disabled,
-  .fr-btn.btn-outlined:disabled {
-    @apply text-primary-3;
-    @apply border border-primary-4;
-  }
-
   .fr-checkbox-group input[type='checkbox']:checked + label::before {
     @apply bg-primary-7;
   }

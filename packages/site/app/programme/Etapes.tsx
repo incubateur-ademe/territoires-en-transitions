@@ -1,4 +1,4 @@
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
@@ -29,7 +29,7 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <ButtonWithLink href="/contact" className="mt-6">
+      <ButtonWithLink href="/contact" className="mt-6" size="big">
         Contactez-nous
       </ButtonWithLink>
     </CardsSection>

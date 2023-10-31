@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@components/dstet/buttons/Button';
 import classNames from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
 
@@ -52,7 +53,8 @@ const Slideshow = ({
       )}
     >
       {slides.length > 1 && (
-        <button
+        <Button
+          size="big"
           className="fr-btn fr-icon-arrow-left-s-line rounded-md min-w-[40px]"
           title="previous"
           onClick={() => handleChangeIndex('previous')}
@@ -76,8 +78,9 @@ const Slideshow = ({
       </div>
 
       {slides.length > 1 && (
-        <button
-          className="fr-btn fr-icon-arrow-right-s-line min-w-[40px]"
+        <Button
+          size="big"
+          className="fr-icon-arrow-right-s-line min-w-[40px]"
           title="next"
           onClick={() => handleChangeIndex('next')}
         />

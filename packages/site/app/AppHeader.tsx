@@ -40,7 +40,7 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
           aria-haspopup="menu"
           id="button-861"
           title="Menu"
-          className="fr-btn--menu fr-btn nav-btn"
+          className="fr-btn--menu fr-btn"
           onClick={() => setMenuOpened(prevState => !prevState)}
         >
           Menu
@@ -56,7 +56,7 @@ function Links() {
       <li>
         <a
           href="https://app.territoiresentransitions.fr/auth/signup"
-          className="fr-btn nav-btn fr-icon-add-circle-line"
+          className="fr-btn fr-icon-add-circle-line"
         >
           Créer un compte
         </a>
@@ -64,7 +64,7 @@ function Links() {
       <li>
         <a
           href="https://app.territoiresentransitions.fr/auth/signin"
-          className="fr-btn nav-btn fr-icon-account-line"
+          className="fr-btn fr-icon-account-line"
         >
           Se connecter
         </a>
@@ -123,7 +123,7 @@ function Menu({menuOpened, setMenuOpened}: MenuProps) {
       <div className="fr-container">
         <button
           aria-controls="modal-header__menu"
-          className="fr-btn nav-btn fr-btn--close"
+          className="fr-btn fr-btn--close"
           onClick={() => setMenuOpened(false)}
         >
           Fermer

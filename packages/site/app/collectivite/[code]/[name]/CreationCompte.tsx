@@ -1,4 +1,4 @@
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 
 const CreationCompte = () => {
   return (
@@ -7,7 +7,10 @@ const CreationCompte = () => {
         Faites un pas supplémentaire vers la transition écologique en créant un
         compte gratuit
       </p>
-      <ButtonWithLink href="https://app.territoiresentransitions.fr/auth/signup">
+      <ButtonWithLink
+        href="https://app.territoiresentransitions.fr/auth/signup"
+        size="big"
+      >
         Créer un compte
       </ButtonWithLink>
     </div>

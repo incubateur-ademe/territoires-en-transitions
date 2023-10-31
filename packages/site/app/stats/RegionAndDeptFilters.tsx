@@ -5,6 +5,7 @@ import {supabase} from '../initSupabase';
 import {useEffect, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Select from '../../components/inputs/Select';
+import Button from '@components/dstet/buttons/Button';
 
 /**
  * Toutes les régions.
@@ -166,8 +167,9 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         onChange={setSelectedDepartment}
       />
 
-      <button
-        className="fr-btn fr-btn--tertiary"
+      <Button
+        size="big"
+        variant="grey"
         onClick={() => {
           setSelectedRegion(emptyString);
           setSelectedDepartment(emptyString);
@@ -178,7 +180,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         }}
       >
         Désactiver tous les filtres
-      </button>
+      </Button>
     </div>
   );
 };

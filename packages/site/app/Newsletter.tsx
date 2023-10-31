@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import classNames from 'classnames';
 
@@ -17,6 +17,7 @@ const Newsletter = ({titre, description, className}: NewsletterProps) => {
       <ButtonWithLink
         href="https://cloud.contact.ademe.fr/inscription-tete"
         external
+        size="big"
       >
         S'inscrire
       </ButtonWithLink>

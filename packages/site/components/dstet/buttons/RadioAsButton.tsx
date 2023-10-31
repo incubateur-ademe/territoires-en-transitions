@@ -1,3 +1,5 @@
+import {getTetButtonClassnames} from '@components/dstet/buttons/utils';
+import classNames from 'classnames';
 import './RadioAsButton.css';
 
 type RadioAsButtonProps = {
@@ -16,7 +18,12 @@ const RadioAsButton = ({
   onCheck,
 }: RadioAsButtonProps) => {
   return (
-    <div className="button block relative fr-btn fr-btn--tertiary !w-full h-[50px]">
+    <div
+      className={classNames(
+        'button block relative !w-full h-[50px]',
+        getTetButtonClassnames('outlined', 'big'),
+      )}
+    >
       <input
         className="opacity-0 block absolute top-0 bottom-0 left-0 right-0"
         type="radio"

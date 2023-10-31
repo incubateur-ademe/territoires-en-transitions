@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import Accordion from '@components/accordion/Accordion';
-import ButtonWithLink from '@components/buttons/ButtonWithLink';
+import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import {sortByRank} from 'app/utils';
 import {Metadata} from 'next';
@@ -66,7 +66,7 @@ const Faq = async () => {
         </p>
         <div className="flex-auto flex justify-center items-center gap-8 flex-wrap">
           <PictoWithBackground pictogram={<CommunityPicto />} />
-          <ButtonWithLink href="/contact" tertiary>
+          <ButtonWithLink href="/contact" variant="outlined" size="big">
             Contacter l'équipe
           </ButtonWithLink>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import RadioAsButton from '@components/buttons/RadioAsButton';
+import RadioAsButton from '@components/dstet/buttons/RadioAsButton';
 import {FiltresLabels} from './CarteCollectivites';
 
 type FiltreLabelsProps = {
