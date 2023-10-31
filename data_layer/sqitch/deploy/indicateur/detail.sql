@@ -53,6 +53,7 @@ comment on function services is
 create function
     private.get_personne_tag(indicateur_pilote)
     returns personne_tag
+    security definer
 begin
     atomic
     select case
@@ -70,6 +71,7 @@ comment on function private.get_personne_tag(indicateur_pilote) is
 create function
     private.get_personne_tag(indicateur_personnalise_pilote)
     returns personne_tag
+    security definer
 begin
     atomic
     select case
