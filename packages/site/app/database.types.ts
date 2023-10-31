@@ -24542,10 +24542,6 @@ export interface Database {
           niveaux_priorite?: Database["public"]["Enums"]["fiche_action_niveaux_priorite"][]
           sans_statut?: boolean
           statuts?: Database["public"]["Enums"]["fiche_action_statuts"][]
-          sans_thematique?: boolean
-          thematiques?: unknown[]
-          sans_sous_thematique?: boolean
-          sous_thematiques?: unknown[]
           sans_budget?: boolean
           budget_min?: number
           budget_max?: number
