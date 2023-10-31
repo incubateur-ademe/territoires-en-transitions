@@ -14,14 +14,14 @@ const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
 
   const options: TOption[] = thematiqueListe
     ? thematiqueListe.map(thematique => ({
-        value: thematique.thematique,
-        label: thematique.thematique,
+        value: thematique.nom,
+        label: thematique.nom,
       }))
     : [];
 
   const formatThematiques = (values: string[]) =>
     thematiqueListe?.filter(thematique =>
-      values.some(v => v === thematique.thematique)
+      values.some(v => v === thematique.nom)
     ) ?? [];
 
   // On invalide la liste des options dans useEditFicheAction
@@ -29,7 +29,7 @@ const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
   return (
     <MultiSelectTagsDropdown
       buttonClassName={DSFRbuttonClassname}
-      values={thematiques?.map((t: TThematiqueRow) => t.thematique)}
+      values={thematiques?.map((t: TThematiqueRow) => t.nom)}
       options={options}
       onSelect={values => onSelect(formatThematiques(values))}
       disabled={isReadonly}

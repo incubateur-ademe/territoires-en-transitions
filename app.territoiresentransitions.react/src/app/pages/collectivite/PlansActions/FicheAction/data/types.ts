@@ -7,11 +7,11 @@ import {
   TFicheActionStructureInsert,
   TPartenaireInsert,
   TSousThematiqueInsert,
-  TThematiqueInsert,
   TPersonne,
   TFinanceurTagInsert,
   TFinanceurMontant,
   TFicheResume,
+  TThematiqueRow,
 } from 'types/alias';
 
 export type FicheAction = Omit<
@@ -29,7 +29,7 @@ export type FicheAction = Omit<
   | 'financeurs'
   | 'fiches_liees'
 > & {
-  thematiques: TThematiqueInsert[] | null;
+  thematiques: TThematiqueRow[] | null;
   sous_thematiques: TSousThematiqueInsert[] | null;
   partenaires: TPartenaireInsert[] | null;
   structures: TFicheActionStructureInsert[] | null;
