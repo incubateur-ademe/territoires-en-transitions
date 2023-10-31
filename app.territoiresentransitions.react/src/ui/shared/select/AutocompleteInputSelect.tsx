@@ -49,6 +49,7 @@ const AutocompleteInputSelect = <T extends string>({
       placement={placement}
       toggle={false}
       enterToToggle={false}
+      disabled={disabled}
       render={() => (
         <Options
           dataTest={dataTest}
@@ -135,7 +136,9 @@ const AutocompleteButton = forwardRef(
         {...props}
       >
         <div
-          className={classNames(buttonDisplayedClassname, buttonClassName)}
+          className={classNames(buttonDisplayedClassname, buttonClassName, {
+            'cursor-not-allowed': disabled,
+          })}
           onClick={handleWrapperClick}
         >
           <div className="flex items-center flex-wrap gap-2 grow">
@@ -148,6 +151,7 @@ const AutocompleteButton = forwardRef(
                   onCloseClick={() =>
                     onSelect(values.filter(value => value !== v))
                   }
+                  disabled={disabled}
                 />
               ))}
             <input
