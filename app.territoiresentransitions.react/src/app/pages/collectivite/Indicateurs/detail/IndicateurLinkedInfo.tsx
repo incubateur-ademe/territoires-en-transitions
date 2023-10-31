@@ -7,7 +7,7 @@ import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilo
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
 import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/PersonnePiloteDropdown';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
-import ThematiquesDropdown from '../../PlansActions/FicheAction/FicheActionForm/ThematiquesDropdown';
+import ThematiquesDropdown from './ThematiquesDropdown';
 
 export type TIndicateurLinkedInfoProps = {
   definition: TIndicateurDefinition;
