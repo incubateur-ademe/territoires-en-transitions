@@ -45,8 +45,7 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
                   collectivité.
                   <br />
                   <br />
-                  L’arborescence reste accessible pour tous les utilisateurs et
-                  la fiche reste consultable par l’ADEME et le service support
+                  La fiche reste consultable par l’ADEME et le service support
                   de la plateforme.
                 </p>
               )}
