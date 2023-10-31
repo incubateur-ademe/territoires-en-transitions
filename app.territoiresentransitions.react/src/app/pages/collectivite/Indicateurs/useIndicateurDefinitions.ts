@@ -78,29 +78,3 @@ export const useIndicateursAction = (actionId: string) =>
 /** Fourni la définition d'un indicateur à partir de son id */
 export const useIndicateur = (indicateurId: string) =>
   useIndicateurDefinitions()?.find(({id}) => id === indicateurId);
-
-/** Fourni les id et libellés des thématiques associées aux indicateurs */
-export const useIndicateurThematiquesLabels = () => {
-  const {data} = useQuery(
-    ['indicateur_thematique_nom'],
-    async () => {
-      const {data, error} = await supabaseClient
-        .from('indicateur_thematique_nom')
-        .select('*')
-        .order('nom', {ascending: true});
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      return (
-        data
-          ?.map(({id, nom}) => ({id, label: nom || ''}))
-          // tri par nom (pour que les diacritiques soient pris en compte)
-          .sort((a, b) => a.label.localeCompare(b.label))
-      );
-    },
-    DISABLE_AUTO_REFETCH
-  );
-  return data || [];
-};
