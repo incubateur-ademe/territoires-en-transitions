@@ -1,5 +1,5 @@
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {useIndicateurThematiquesLabels} from '../useIndicateurDefinitions';
+import {useThematiqueListe} from '../../PlansActions/FicheAction/data/options/useThematiqueListe';
 import {
   TIndicateurDefinition,
   TIndicateurReferentielDefinition,
@@ -74,8 +74,8 @@ export const useFilteredDefinitions = ({
   );
   const {selection = []} = filters;
 
-  // les id et le slibellés des thématiques
-  const thematiques = useIndicateurThematiquesLabels();
+  // les id et les libellés des thématiques
+  const {data: thematiques} = useThematiqueListe();
 
   // gestionnaire d'options de filtrage
   const {addOption, insertOption, getOptionsWithCounters, applyFilters} =
@@ -107,10 +107,12 @@ export const useFilteredDefinitions = ({
 
   // ajoute un sous-ensemble et une option pour chaque thématique
   if (addThematiqueOptions) {
-    thematiques.forEach(({id, label}) => {
-      addOption({value: `t_${id}`, label}, d =>
-        (d as TIndicateurReferentielDefinition).thematiques?.includes(id)
-      );
+    thematiques?.forEach(({id, md_id, nom}) => {
+      if (md_id) {
+        addOption({value: `t_${id}`, label: nom}, d =>
+          (d as TIndicateurReferentielDefinition).thematiques?.includes(md_id)
+        );
+      }
     });
 
     // ajoute le sous-ensemble et l'option "sans thématique"
