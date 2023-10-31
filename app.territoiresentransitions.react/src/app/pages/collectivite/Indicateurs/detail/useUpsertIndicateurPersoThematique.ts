@@ -1,9 +1,8 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TThematiqueRow} from 'types/alias';
 import {TIndicateurDefinition} from '../types';
-
-type TThematique = {thematique: string};
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
 export const useUpsertIndicateurPersoThematique = (
@@ -16,27 +15,26 @@ export const useUpsertIndicateurPersoThematique = (
 
   return useMutation({
     mutationKey: 'upsert_indicateur_personnalise_thematique',
-    mutationFn: async (variables: TThematique[]) => {
+    mutationFn: async (thematiques: TThematiqueRow[]) => {
       if (!collectivite_id || !isPerso || typeof indicateur_id !== 'number')
         return;
 
       // supprime les éventuelles ref. vers les tags qui ne sont plus associés à l'indicateur
-      const thematiques = variables.map(t => t.thematique);
       await supabaseClient
         .from('indicateur_personnalise_thematique')
         .delete()
         .eq('indicateur_id', indicateur_id)
         .not(
-          'thematique',
+          'thematique_id',
           'in',
-          `(${thematiques.map(t => `'${t}'`).join(',')})`
+          `(${thematiques.map(t => t.id).join(',')})`
         );
 
       // ajoute les nouvelles entrées si elles n'existent pas déjà
       return supabaseClient.from('indicateur_personnalise_thematique').upsert(
-        thematiques.map(thematique => ({thematique, indicateur_id})),
+        thematiques.map(t => ({thematique_id: t.id, indicateur_id})),
         {
-          onConflict: 'indicateur_id,thematique',
+          onConflict: 'indicateur_id,thematique_id',
         }
       );
     },

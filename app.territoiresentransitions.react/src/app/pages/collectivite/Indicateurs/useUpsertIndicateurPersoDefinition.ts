@@ -44,8 +44,8 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
           await supabaseClient
             .from('indicateur_personnalise_thematique')
             .upsert(
-              thematiques.map(({thematique}) => ({
-                thematique,
+              thematiques.map(thematique => ({
+                thematique_id: thematique.id,
                 indicateur_id: indicateur_personnalise_id,
               })),
               {

@@ -4,8 +4,8 @@ import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
-import FormField from '../../../../ui/shared/form/FormField';
-import ThematiquesDropdown from '../PlansActions/FicheAction/FicheActionForm/ThematiquesDropdown';
+import FormField from 'ui/shared/form/FormField';
+import ThematiquesDropdown from './detail/ThematiquesDropdown';
 import {TThematiqueRow} from 'types/alias';
 
 const validation = Yup.object({
