@@ -22,7 +22,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la carte de la fiche créée est présente et affiche le titre "Fiche test", le pilote "Michel Sapasse" et le statut "En cours"
     # supprimer la fiche créée
-    Quand je navigue sur la fiche "Fiche test"
+    Quand je navigue vers la fiche "Fiche test"
     Et que je supprime la fiche
     Et que je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la fiche "Fiche test" n'est plus présente
@@ -38,8 +38,9 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je le nomme "Axe 1: les tests passent"
     # ajouter une fiche au plan d'action
     Quand j'ajoute une fiche au plan d'action
+    Et que je nomme la carte "Fiche test"
     # naviguer vers cette fiche
-    Et que je la nomme "Fiche test" et je navigue vers cette derniere
+    Et que je navigue vers la fiche "Fiche test"
     # ouvrir la modale "Ranger la fiche"
     Et que j'ouvre la modale ranger la fiche
     Alors le "Modale ranger fiche action" est visible
@@ -62,6 +63,43 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Axe 1: les tests passent"
 
+  Scénario: Rendre confidentielles des fiches
+    Etant donné que je suis connecté en tant que "yolo"
+    Et que je suis sur la page "Plans action" de la collectivité "1"
+    # créer un plan d'action depuis la barre de navigation latérale
+    Quand je clique sur le bouton "Ajouter un plan d'action"
+    Et que je crée le plan "Plan test"
+    # ajouter une fiche au plan d'action
+    Quand j'ajoute une fiche au plan d'action
+    Et que je nomme la carte "Fiche test 1"
+    # ajouter une fiche au plan d'action
+    Quand j'ajoute une fiche au plan d'action
+    Et que je nomme la carte "Fiche test 2"
+    # naviguer vers cette fiche
+    Et que je navigue vers la fiche "Fiche test 2"
+    # changer la confidentialité
+    Et que je toggle la confidentialité de la fiche
+    # revenir sur le plan d'action
+    Et que je navigue vers le plan "Plan test"
+    # la fiche doit etre confidentielle
+    Alors la carte "Fiche test 2" est privée
+    # rendre toutes les fiches publiques
+    Quand je rends publiques toutes les fiches d'un plan
+    # les fiches doivent etre publique
+    Alors toutes les cartes sont publiques
+    # rendre toutes les fiches privées
+    Quand je rends privées toutes les fiches d'un plan
+    # se connecter comme yala dada
+    Quand je me reconnecte en tant que visiteur
+    # aller sur le plan d'action
+    Et que je suis sur la page "Plans action" de la collectivité "1"
+    Et que je navigue vers le plan "Plan test"
+    # les fiches doivent etre privées
+    Alors la carte "Fiche test 1" est privée
+    Alors la carte "Fiche test 2" est privée
+    # les fiches ne sont pas clickable
+    Alors je ne peux pas cliquer sur la carte "Fiche test 1"
+
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Plans action" de la collectivité "1"
@@ -74,7 +112,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # ajouter une fiche au plan d'action
     Quand j'ajoute une fiche au plan d'action
-    Et que je reviens sur le plan d'action "Plan test"
+    Et que je navigue vers le plan "Plan test"
     Alors le "Filtrer les fiches" est visible
 
     # ajouter un deuxième axe "Axe 0"
@@ -122,9 +160,11 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je navigue vers "Axe 1: les tests passent"
     Alors le "Page axe" est visible
 
-    # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
+    # ajouter une fiche
     Quand j'ajoute une fiche à la page axe
-    Et que je la nomme "Fiche test" et je navigue vers cette derniere
+    Et que je nomme la carte "Fiche test"
+    # naviguer vers cette fiche
+    Et que je navigue vers la fiche "Fiche test"
 
     # créer un tag personne pilote "Michel Sapasse"
     Quand j'ouvre la section "acteurs"
@@ -160,9 +200,6 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     Quand je filtre les fiches par "Sans élu·e référent·e" du filtre "personne-referentes"
     Alors "1" fiches action s'affichent
-
-    # Quand je recharge la page
-    # Alors "1" fiches action s'affichent
 
     Quand je clique sur le bouton "Désactiver tous les filtres"
     Alors un message demandant à l'utilisateur de sélectionner un filtre s'affiche

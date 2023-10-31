@@ -51,6 +51,7 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
               )}
             >
               <ToggleButton
+                data-test="FicheToggleConfidentialite"
                 isChecked={fiche.restreint}
                 onClick={() =>
                   updateFiche({...fiche, restreint: !fiche.restreint})

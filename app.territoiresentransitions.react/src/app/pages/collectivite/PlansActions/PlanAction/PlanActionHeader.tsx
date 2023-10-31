@@ -102,7 +102,10 @@ const PlanActionHeader = ({
                   axes={axes}
                   restreindre={false}
                 >
-                  <button disabled={!axeHasFiches}>
+                  <button
+                    data-test="BoutonToutesFichesPubliques"
+                    disabled={!axeHasFiches}
+                  >
                     <DSTetTooltip
                       placement="bottom"
                       label={() => (
@@ -126,7 +129,10 @@ const PlanActionHeader = ({
                   axes={axes}
                   restreindre
                 >
-                  <button disabled={!axeHasFiches}>
+                  <button
+                    data-test="BoutonToutesFichesPrivees"
+                    disabled={!axeHasFiches}
+                  >
                     <DSTetTooltip
                       placement="bottom"
                       label={() => (

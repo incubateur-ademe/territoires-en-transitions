@@ -94,6 +94,7 @@ const FicheActionCard = ({
       {/** Cadenas accès restreint */}
       {ficheAction.restreint && (
         <div
+          data-test="FicheCartePrivee"
           title="Fiche en accès restreint"
           className="absolute -top-5 left-8"
         >
