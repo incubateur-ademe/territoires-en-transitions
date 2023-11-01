@@ -126,9 +126,8 @@ const FichesLiees = ({
       {fiches && fiches.length > 0 && (
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (
-            <div className="relative self-stretch">
+            <div className="relative self-stretch" key={fiche.id}>
               <FicheActionCard
-                key={fiche.id}
                 openInNewTab
                 ficheAction={fiche}
                 link={
