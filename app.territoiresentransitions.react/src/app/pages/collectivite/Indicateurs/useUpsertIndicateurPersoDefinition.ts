@@ -49,7 +49,7 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
                 indicateur_id: indicateur_personnalise_id,
               })),
               {
-                onConflict: 'indicateur_id,thematique',
+                onConflict: 'indicateur_id,thematique_id',
               }
             );
         }
