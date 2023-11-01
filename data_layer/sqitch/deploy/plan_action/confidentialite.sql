@@ -228,8 +228,6 @@ FROM private.fiche_resume fr
 WHERE ((fr.id = (fiche_resume.fiche_action_indicateur).fiche_id) AND can_read_acces_restreint(fr.collectivite_id));
 END;
 
--- TODO faire pareil que private.fiche_resume avec private.indicateur_resume
-
 create or replace view private.fiches_action
 as
 SELECT fa.modified_at,
@@ -589,6 +587,7 @@ $$;
 
 create or replace function plan_action_tableau_de_bord(collectivite_id integer, plan_id integer DEFAULT NULL::integer, sans_plan boolean DEFAULT false) returns plan_action_tableau_de_bord
     stable
+    security definer
     language plpgsql
 as
 $$
