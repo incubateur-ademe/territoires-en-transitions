@@ -12,6 +12,9 @@ export type Views<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row'];
 export type Enums<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T];
+export type CompositeTypes<
+  T extends keyof Database['public']['CompositeTypes']
+> = Database['public']['CompositeTypes'][T];
 
 export type TFlatAxe = Database['public']['CompositeTypes']['flat_axe_node'];
 

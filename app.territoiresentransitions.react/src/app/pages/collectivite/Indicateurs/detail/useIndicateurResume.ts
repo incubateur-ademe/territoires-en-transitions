@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Tables} from 'types/alias';
+import {CompositeTypes, Tables} from 'types/alias';
 
 type TFetchedData = {
-  pilotes: Tables<'personne_tag'>[];
+  pilotes: CompositeTypes<'personne'>[];
   services: Tables<'service_tag'>[];
   thematiques: Tables<'thematique'>[];
 };
