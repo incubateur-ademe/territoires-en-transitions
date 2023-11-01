@@ -52,47 +52,52 @@ comment on function services is
     'La liste de services pilotes rattachés à un indicateur.';
 
 create function
-    private.get_personne_tag(indicateur_pilote)
-    returns personne_tag
+    private.get_personne(indicateur_pilote)
+    returns personne
     security definer
 begin
     atomic
     select case
                when $1.tag_id is not null
-                   then (select pt from personne_tag pt where pt.id = $1.tag_id)
-               else (select row ($1.tag_id, u.prenom || ' ' || u.nom, $1.collectivite_id)::personne_tag
+                   then (select row (pt.nom, pt.collectivite_id, $1.tag_id, null::uuid)::personne
+                         from personne_tag pt
+                         where pt.id = $1.tag_id)
+               else (select row (u.prenom || ' ' || u.nom, $1.collectivite_id, null::integer, u.user_id)::personne
                      from utilisateur.dcp_display u
                      where u.user_id = $1.user_id)
                end;
 end;
-comment on function private.get_personne_tag(indicateur_pilote) is
+comment on function private.get_personne(indicateur_pilote) is
     'Renvoie la personne pilote d''un indicateur.';
 
 
 create function
-    private.get_personne_tag(indicateur_personnalise_pilote)
-    returns personne_tag
+    private.get_personne(indicateur_personnalise_pilote)
+    returns personne
     security definer
 begin
     atomic
     select case
                when $1.tag_id is not null
-                   then (select pt from personne_tag pt where pt.id = $1.tag_id)
-               else (select row ($1.tag_id,
-                                u.prenom || ' ' || u.nom,
+                   then (select (select row (pt.nom, pt.collectivite_id, $1.tag_id, null::uuid)::personne
+                                 from personne_tag pt
+                                 where pt.id = $1.tag_id))
+               else (select row (u.prenom || ' ' || u.nom,
                                 (select collectivite_id
                                  from indicateur_personnalise_definition d
-                                 where d.id = $1.indicateur_id))::personne_tag
+                                 where d.id = $1.indicateur_id),
+                                null::integer,
+                                u.user_id)::personne
                      from utilisateur.dcp_display u
                      where u.user_id = $1.user_id)
                end;
 end;
-comment on function private.get_personne_tag(indicateur_personnalise_pilote) is
+comment on function private.get_personne(indicateur_personnalise_pilote) is
     'Renvoie la personne pilote d''un indicateur personnalisé.';
 
 create function
     pilotes(indicateur_definitions)
-    returns setof personne_tag[]
+    returns setof personne[]
     rows 1
 begin
     atomic
@@ -100,16 +105,16 @@ begin
                    (select case
                                when $1.indicateur_id is not null -- indicateur prédéfini
                                    then
-                                   (select array_agg(private.get_personne_tag(pilote))
+                                   (select array_agg(private.get_personne(pilote))
                                     from indicateur_pilote pilote
                                     where pilote.collectivite_id = $1.collectivite_id
                                       and pilote.indicateur_id = $1.indicateur_id)
                                else -- indicateur personnalisé
-                                   (select array_agg(private.get_personne_tag(pilote))
+                                   (select array_agg(private.get_personne(pilote))
                                     from indicateur_personnalise_pilote pilote
                                     where pilote.indicateur_id = $1.indicateur_perso_id)
                                end),
-                   '{}'::personne_tag[]
+                   '{}'::personne[]
            );
 end;
 comment on function pilotes is
