@@ -67,9 +67,7 @@ export type TExportData = Awaited<ReturnType<typeof fetchData>>;
  * Charge les libellsés des thématiques
  */
 const fetchThematiques = async (supabaseClient: TSupabaseClient) => {
-  const { data, error } = await supabaseClient
-    .from('indicateur_thematique_nom')
-    .select('*');
+  const { data, error } = await supabaseClient.from('thematique').select('*');
 
   if (error) {
     throw new Error(error.message);
@@ -84,7 +82,7 @@ const fetchThematiques = async (supabaseClient: TSupabaseClient) => {
 const fetchDefinitionIndicateurs = async (
   supabaseClient: TSupabaseClient,
   indicateur_ids: string[],
-  thematiqueDefinitions: Tables<'indicateur_thematique_nom'>[] | undefined
+  thematiqueDefinitions: Tables<'thematique'>[] | undefined
 ) => {
   const { data, error } = await supabaseClient
     .from('indicateur_definition')
