@@ -1,4 +1,4 @@
-import { Tables } from '../_shared/typeUtils.ts';
+import { NonNullableFields, Tables, Views } from '../_shared/typeUtils.ts';
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { groupBy } from '../_shared/groupBy.ts';
 import {
@@ -110,7 +110,9 @@ const fetchDefinitionIndicateurs = async (
 
         // - les libellés des thématiques
         const thematiqueNoms = thematiques
-          ?.map((tid) => thematiqueDefinitions?.find((t) => t.id === tid)?.nom)
+          ?.map(
+            (tid) => thematiqueDefinitions?.find((t) => t.md_id === tid)?.nom
+          )
           .filter(Boolean);
 
         return { ...definition, enfants, thematiqueNoms };
@@ -118,15 +120,25 @@ const fetchDefinitionIndicateurs = async (
   );
 };
 
+// type d'une définition (chargée depuis la vue `indicateur_definitions`)
+type TIndicateurDef<Id extends 'indicateur_id' | 'indicateur_perso_id'> =
+  NonNullableFields<
+    Pick<Views<'indicateur_definitions'>, 'nom' | 'description' | 'unite'>
+  > & {
+    id: NonNullable<Views<'indicateur_definitions'>[Id]>;
+    thematiques: Tables<'thematique'>[];
+  };
+
 const fetchDefinitionIndicateursPersos = async (
   supabaseClient: TSupabaseClient,
   indicateur_ids: number[]
 ) => {
   const { data, error } = await supabaseClient
-    .from('indicateur_personnalise_definition')
-    .select()
-    .in('id', indicateur_ids)
-    .order('titre', { ascending: true });
+    .from('indicateur_definitions')
+    .select('id:indicateur_perso_id,nom,description,unite,thematiques')
+    .in('indicateur_perso_id', indicateur_ids)
+    .order('nom', { ascending: true })
+    .returns<TIndicateurDef<'indicateur_perso_id'>[]>();
 
   if (error) {
     throw new Error(error.message);

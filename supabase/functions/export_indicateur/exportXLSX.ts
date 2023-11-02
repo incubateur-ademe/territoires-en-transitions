@@ -83,7 +83,7 @@ const genIndicateurWorkbook = async (id: TIndicateurId, data: TExportData) => {
   } else {
     const def = definitionsPersos.find((d) => d.id === id);
     if (def) {
-      filename = `${def.titre} - ${exportedAt}.xlsx`;
+      filename = `${def.nom} - ${exportedAt}.xlsx`;
       addIndicateurPersoToWorkbook(workbook, def, valeursPersos);
     }
   }
@@ -137,10 +137,16 @@ const addIndicateurPersoToWorkbook = (
   definition: TExportData['definitionsPersos'][0],
   valeurs: TExportData['valeurs']
 ) => {
-  const { titre, description } = definition;
+  const { nom, description, thematiques } = definition;
 
   // ajoute une feuille avec la définition
-  addDefinitionWorksheet(workbook, titre, description);
+  const wsDef = addDefinitionWorksheet(workbook, nom || '', description || '');
+
+  // complète la feuille avec les thématiques
+  const definitionRows = [
+    ['Thématiques', thematiques.map((t) => t.nom)?.join(',')],
+  ];
+  wsDef.addRows(definitionRows);
 
   // ajoute la feuille de données
   const wsData = workbook.addWorksheet('Données');
