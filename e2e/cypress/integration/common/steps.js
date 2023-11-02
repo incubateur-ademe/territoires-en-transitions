@@ -333,3 +333,15 @@ When(/le texte "([^"]*)" est visible/, texte => {
 When(/le texte "([^"]*)" est absent/, texte => {
   cy.contains(texte).should('not.exist');
 });
+
+When(
+  /je crée un tag "([^"]*)" avec le sélecteur de tag "([^"]*)"/,
+  (tag, selecteur) => {
+    cy.get(`[data-test=${selecteur}-input]`).type(
+      '{selectall}{backspace}' + tag
+    );
+    cy.get(`[data-test=${selecteur}-creer-tag]`).click();
+    cy.get('body').click(10, 10);
+    cy.get(`[data-test=${selecteur}]`).contains(tag).should('be.visible');
+  }
+);
