@@ -58,7 +58,7 @@ const locationFromPath = (path: string): Localisation => {
   } else if (path.includes('/indicateurs/')) {
     const match = /(cles|selection|perso|cae|eci|crte)\/(.+)?/.exec(path);
     if (match) {
-      const [subpath, category, id] = match;
+      const [, category, id] = match;
       // tag
       if (['eci', 'cae', 'crte'].includes(category))
         tag = category as 'eci' | 'cae' | 'crte';

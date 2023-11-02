@@ -2,7 +2,6 @@ import {ReactNode} from 'react';
 import classNames from 'classnames';
 import {IndicateurViewParamOption} from 'app/paths';
 import {viewTitles} from './Indicateurs';
-import HeaderTitle from 'ui/HeaderTitle';
 
 /** Affiche l'en-tête d'une liste d'indicateurs */
 export const HeaderIndicateursList = ({
