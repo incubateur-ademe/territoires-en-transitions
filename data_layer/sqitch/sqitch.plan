@@ -529,5 +529,5 @@ indicateur/referentiel [indicateur/referentiel@v2.65.0] 2023-10-03T09:37:00Z Ama
 site/labellisation [site/labellisation@v2.68.0] 2023-10-27T12:01:06Z Florian <florian@derfurth.com> # Ajoute des relations calculées pour les données des pages collectivités
 @v2.69.0 2023-10-27T14:22:23Z Florian <florian@derfurth.com> # Corrige le comptage des indicateurs remplis, la liste des collectivités des auditeurs et prépare les futures pages collectivités
 
-site/labellisation [site/labellisation@v2.69.0] 2023-11-02T14:12:40Z Florian <florian@derfurth.com> # Répare les accès
 plan_action/confidentialite 2023-10-11T08:34:37Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la possibilité de restreindre les fiches et les axes aux utilisateurs hors collectivité. Ajoute un type aux plans. Facilite l'accès au plan.
+site/labellisation [site/labellisation@v2.69.0] 2023-11-02T14:12:40Z Florian <florian@derfurth.com> # Permet d'accéder aux données de labellisation sans avoir de compte
