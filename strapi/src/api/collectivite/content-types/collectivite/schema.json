@@ -22,24 +22,20 @@
       "required": true,
       "unique": true
     },
-    "url": {
-      "type": "string"
-    },
     "logo": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "couverture": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
+    },
+    "url": {
+      "type": "string"
     },
     "video_url": {
       "type": "string"
@@ -49,12 +45,20 @@
       "default": false,
       "required": true
     },
+    "temoignages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "contenu.temoignage",
+      "max": 3,
+      "min": 1
+    },
     "actions": {
       "displayName": "TexteCollectivite",
       "type": "component",
       "repeatable": true,
       "component": "contenu.texte-collectivite",
-      "max": 4
+      "max": 4,
+      "min": 1
     }
   }
 }

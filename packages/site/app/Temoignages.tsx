@@ -1,6 +1,6 @@
 import TestimonialCard from '@components/cards/TestimonialCard';
 import CardsSection from '@components/sections/CardsSection';
-import Slideshow from '@components/slideshow/Slideshow';
+import SlideshowOld from '@components/slideshow/SlideshowOld';
 import {Temoignage} from './types';
 
 type TemoignagesProps = {
@@ -15,7 +15,7 @@ const Temoignages = ({titre, description, contenu}: TemoignagesProps) => {
       title={titre}
       description={description}
       cardsList={
-        <Slideshow
+        <SlideshowOld
           className="my-6 xl:mx-auto xl:w-5/6"
           autoSlide
           slides={contenu.map(t => (

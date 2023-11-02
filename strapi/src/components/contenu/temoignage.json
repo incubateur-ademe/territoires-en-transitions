@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_contenu_temoignages",
+  "info": {
+    "displayName": "Temoignage",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "auteur": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "role": {
+      "type": "string",
+      "maxLength": 200,
+      "required": true
+    },
+    "temoignage": {
+      "type": "text",
+      "maxLength": 500,
+      "required": true
+    },
+    "portrait": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

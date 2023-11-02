@@ -1,6 +1,7 @@
 'use client';
 
 import Button from '@components/dstet/buttons/Button';
+import {ButtonVariant} from '@components/dstet/buttons/utils';
 import classNames from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
 
@@ -8,6 +9,9 @@ type SlideshowProps = {
   slides: React.ReactNode[];
   autoSlide?: boolean;
   autoSlideDelay?: number;
+  dotsColor?: 'default' | 'orange';
+  displayButtons?: boolean;
+  buttonsVariant?: ButtonVariant;
   className?: string;
 };
 
@@ -17,9 +21,12 @@ type SlideshowProps = {
 
 const Slideshow = ({
   slides,
-  className,
   autoSlide = false,
   autoSlideDelay = 5000,
+  dotsColor = 'default',
+  displayButtons = true,
+  buttonsVariant = 'grey',
+  className,
 }: SlideshowProps) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
@@ -46,31 +53,20 @@ const Slideshow = ({
   }, [slideIndex, autoSlide, autoSlideDelay, handleChangeIndex]);
 
   return (
-    <div
-      className={classNames(
-        'flex justify-between items-center min-h-[250px]',
-        className,
-      )}
-    >
-      {slides.length > 1 && (
-        <Button
-          size="big"
-          className="fr-btn fr-icon-arrow-left-s-line rounded-md min-w-[40px]"
-          title="previous"
-          onClick={() => handleChangeIndex('previous')}
-        />
-      )}
-
+    <div className={classNames('flex flex-col gap-12', className)}>
       <div className="overflow-hidden">
         <div
-          className="whitespace-nowrap"
+          className="whitespace-nowrap h-full"
           style={{
             transition: 'ease 1000ms',
             transform: `translate3d(${-slideIndex * 100}%, 0, 0)`,
           }}
         >
           {slides.map((slide, index) => (
-            <div key={index} className="inline-block whitespace-normal w-full">
+            <div
+              key={index}
+              className="inline-block whitespace-normal w-full h-full mt-0"
+            >
               <div className="flex justify-center">{slide}</div>
             </div>
           ))}
@@ -78,12 +74,44 @@ const Slideshow = ({
       </div>
 
       {slides.length > 1 && (
-        <Button
-          size="big"
-          className="fr-icon-arrow-right-s-line min-w-[40px]"
-          title="next"
-          onClick={() => handleChangeIndex('next')}
-        />
+        <div className="flex justify-between items-center">
+          {displayButtons && (
+            <Button
+              variant={buttonsVariant}
+              size="big"
+              className="fr-icon-arrow-left-s-line"
+              title="previous"
+              onClick={() => handleChangeIndex('previous')}
+            />
+          )}
+          <div className="flex gap-3 mx-auto">
+            {slides.map((slide, index) => (
+              <div
+                key={index}
+                className={classNames(
+                  'rounded-full w-[11px] h-[11px] hover:cursor-pointer',
+                  {
+                    'bg-primary-7':
+                      index === slideIndex && dotsColor === 'default',
+                    'bg-orange-1':
+                      index === slideIndex && dotsColor === 'orange',
+                    'bg-[#D9D9D9] hover:bg-grey-5': index !== slideIndex,
+                  },
+                )}
+                onClick={() => setSlideIndex(index)}
+              />
+            ))}
+          </div>
+          {displayButtons && (
+            <Button
+              variant={buttonsVariant}
+              size="big"
+              className="fr-icon-arrow-right-s-line"
+              title="next"
+              onClick={() => handleChangeIndex('next')}
+            />
+          )}
+        </div>
       )}
     </div>
   );

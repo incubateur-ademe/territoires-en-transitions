@@ -52,7 +52,7 @@ const ActionCollectivite = ({
         })}
       >
         <h3>{titre}</h3>
-        <Markdown remarkPlugins={[remarkGfm]}>
+        <Markdown remarkPlugins={[remarkGfm]} className="paragraphe-16">
           {contenu.length <= limitContent || contenuOpen
             ? contenu
             : `${splitContent(contenu, limitContent)}...`}
