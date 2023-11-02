@@ -24,10 +24,9 @@ const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
       values.some(v => v === `${thematique.id}`)
     ) ?? [];
 
-  // On invalide la liste des options dans useEditFicheAction
-
   return (
     <MultiSelectTagsDropdown
+      data-test="thematiques"
       buttonClassName={DSFRbuttonClassname}
       values={thematiques?.map((t: TThematiqueRow) => `${t.id}`)}
       options={options}

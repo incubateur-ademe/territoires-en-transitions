@@ -74,6 +74,7 @@ const IndicateurPersonnaliseBase = ({
           label="Description et méthodologie de calcul"
         >
           <TextareaControlled
+            data-test="desc"
             className="fr-input fr-mt-1w !outline-none"
             initialValue={description}
             readOnly={isReadonly}
