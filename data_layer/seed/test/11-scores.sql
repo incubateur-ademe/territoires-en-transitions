@@ -272,6 +272,8 @@ begin
     truncate pre_audit_scores cascade;
     truncate post_audit_scores cascade;
     truncate labellisation cascade;
+    truncate personnalisation_consequence cascade;
+    truncate client_scores cascade;
 
     insert into public.pre_audit_scores select * from test.pre_audit_scores;
     insert into public.post_audit_scores select * from test.post_audit_scores;
