@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create or replace function
+create function
     labellisations(site_labellisation)
     returns setof labellisation[]
     rows 1
@@ -18,7 +18,7 @@ end;
 comment on function labellisations(site_labellisation) is
     'Données de labellisation historique.';
 
-create or replace function
+create function
     indicateurs_gaz_effet_serre(site_labellisation)
     returns setof indicateur_resultat_import[]
     rows 1
