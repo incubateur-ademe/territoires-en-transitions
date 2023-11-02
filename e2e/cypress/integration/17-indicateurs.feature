@@ -20,6 +20,21 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Et le graphique de l'indicateur est vide
     Et le badge "À compléter" est visible
     Et le badge "Complété" est absent
+    Et la page vérifie les conditions suivantes :
+      | Elément         | Condition | Valeur |
+      | Personne pilote | contient  |        |
+      | Service pilote  | contient  |        |
+      | Description     | absent    |        |
+      | Thématique      | absent    |        |
+
+    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Et que je crée un tag "Un service" avec le sélecteur de tag "ServicePilote"
+    Alors la page vérifie les conditions suivantes :
+      | Elément         | Condition | Valeur         |
+      | Personne pilote | contient  | Michel Sapasse |
+      | Service pilote  | contient  | Un service     |
+      | Description     | absent    |                |
+      | Thématique      | absent    |                |
 
     Quand j'ajoute le résultat 123 pour l'année 2000
     Alors le tableau des résultats de l'indicateur contient :
@@ -58,8 +73,8 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Alors le texte "Créer un indicateur personnalisé" est visible
 
     Quand je crée l'indicateur avec les données suivantes :
-      | Nom            | Unité | Description    |
-      | Mon indicateur | %     | Ma description |
+      | Nom            | Unité | Description    | Thématique        |
+      | Mon indicateur | %     | Ma description | Énergie et climat |
     Alors le texte "Créer un indicateur personnalisé" est absent
     Et le texte "Mon indicateur" est visible
     Et le tableau des résultats de l'indicateur est vide
@@ -72,7 +87,23 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Et la page contient au moins 1 graphique vide
 
     Quand je clique sur le 1er graphique
-    Et que j'ajoute le résultat 123 pour l'année 2000
+    Alors la page vérifie les conditions suivantes :
+      | Elément         | Condition | Valeur            |
+      | Description     | contient  | Ma description    |
+      | Personne pilote | contient  |                   |
+      | Service pilote  | contient  |                   |
+      | Thématique      | contient  | Énergie et climat |
+
+    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Et que je crée un tag "Un service" avec le sélecteur de tag "ServicePilote"
+    Alors la page vérifie les conditions suivantes :
+      | Elément         | Condition | Valeur            |
+      | Description     | contient  | Ma description    |
+      | Personne pilote | contient  | Michel Sapasse    |
+      | Service pilote  | contient  | Un service        |
+      | Thématique      | contient  | Énergie et climat |
+
+    Quand j'ajoute le résultat 123 pour l'année 2000
     Alors le tableau des résultats de l'indicateur contient :
       | Année | Résultat | Commentaire |
       | 2000  | 123      |             |
