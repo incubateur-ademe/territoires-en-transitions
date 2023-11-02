@@ -2,10 +2,11 @@
 
 BEGIN;
 
-create function
+create or replace function
     labellisations(site_labellisation)
     returns setof labellisation[]
     rows 1
+    security definer
 begin
     atomic
     select coalesce(
@@ -18,10 +19,11 @@ end;
 comment on function labellisations(site_labellisation) is
     'Données de labellisation historique.';
 
-create function
+create or replace function
     indicateurs_gaz_effet_serre(site_labellisation)
     returns setof indicateur_resultat_import[]
     rows 1
+    security definer
 begin
     atomic
     select coalesce(
