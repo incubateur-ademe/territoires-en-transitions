@@ -1,6 +1,5 @@
 import Modal from 'ui/shared/floating-ui/Modal';
 import {PlanNode} from './data/types';
-import {useDeleteAxe} from './data/useDeleteAxe';
 import {useRestreindreFiches} from '../FicheAction/data/useRestreindreFiches';
 
 type Props = {
