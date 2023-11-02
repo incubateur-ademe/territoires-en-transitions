@@ -15,6 +15,11 @@ interface Props {
   isAxePage: boolean;
 }
 
+/**
+ * Racine de l'arborescence des fiches et axes d'un plan.
+ * Bien que contenant des fiches et axes comme le composant `Axe`,
+ * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
+ */
 function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
   const collectivite = useCurrentCollectivite();
 

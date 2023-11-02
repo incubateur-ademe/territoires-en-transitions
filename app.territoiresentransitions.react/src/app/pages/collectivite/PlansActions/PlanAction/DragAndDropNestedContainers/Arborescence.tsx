@@ -25,6 +25,10 @@ interface Props {
   isReadonly: boolean;
 }
 
+/**
+ * C'est ici qu'est initilisé le drag & drop.
+ * La fonction `handleDragHand` permet de réaliser des actions au drop d'un élément.
+ */
 function Arborescence({plan, axe, axes, isAxePage, isReadonly}: Props) {
   const {mutate: changeAxeFiche} = useFicheChangeAxe({planId: plan.id});
   const {mutate: moveAxe} = useDragAxe(plan.id);

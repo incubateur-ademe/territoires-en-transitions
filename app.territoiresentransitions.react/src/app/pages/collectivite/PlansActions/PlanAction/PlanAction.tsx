@@ -29,6 +29,7 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
 
   const isReadonly = collectivite?.readonly ?? false;
 
+  // Permet de différentier une page axe d'une page plan
   const isAxePage = axe.depth === 1;
 
   const axeHasFiche = checkAxeHasFiche(axe, axes);
@@ -86,6 +87,11 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
   );
 };
 
+/**
+ * On récupère les params de l'URL afin de savoir si nous sommes dans une page plan ou page axe.
+ * Le param `plan` nous permet de récupérer tous les axes du plan d'action, que l'on soit sur une page plan ou axe.
+ * Le `plan` est toujours requis car on l'utilise dans les hooks et plus particulièrement les invalidations des clés react-query.
+ */
 const PlanActionConnected = () => {
   const {planUid} = useParams<{planUid: string}>();
   const {axeUid} = useParams<{axeUid?: string}>();
