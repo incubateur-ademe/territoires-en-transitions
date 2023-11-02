@@ -5,12 +5,11 @@ import classNames from 'classnames';
 import {fetchCollectivite, getStrapiData} from '../../utils';
 import Gallery from '@components/gallery/Gallery';
 import Section from '@components/sections/Section';
-import EmbededVideo from '@components/video/EmbededVideo';
-import ActionCollectivite from './ActionCollectivite';
 import CollectiviteHeader from './CollectiviteHeader';
 import ConnexionCompte from './ConnexionCompte';
 import CreationCompte from './CreationCompte';
 import LabellisationLogo from './LabellisationLogo';
+import ContenuCollectivite from './ContenuCollectivite';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -77,20 +76,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
 
       {/* Contenu */}
       {strapiData?.contenu ? (
-        <div className="col-span-full md:col-span-7 lg:col-span-8 flex flex-col gap-10 xl:gap-12">
-          {strapiData.contenu.video && (
-            <EmbededVideo
-              url={strapiData.contenu.video}
-              className={classNames('w-full md:rounded-[10px]', {
-                'order-last': !strapiData.contenu.video_en_haut,
-              })}
-            />
-          )}
-          {strapiData.contenu.actions.length > 0 &&
-            strapiData.contenu.actions.map(action => (
-              <ActionCollectivite key={action.id} action={action} />
-            ))}
-        </div>
+        <ContenuCollectivite contenu={strapiData.contenu} />
       ) : (
         <Gallery
           className="col-span-full md:col-span-7 lg:col-span-8"

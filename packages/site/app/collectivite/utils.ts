@@ -23,8 +23,10 @@ export const getStrapiData = async (codeSirenInsee: string) => {
     ['filters[code_siren_insee]', `${codeSirenInsee}`],
     ['populate[0]', 'couverture'],
     ['populate[1]', 'logo'],
-    ['populate[2]', 'actions'],
-    ['populate[3]', 'actions.image'],
+    ['populate[2]', 'temoignages'],
+    ['populate[3]', 'temoignages.portrait'],
+    ['populate[4]', 'actions'],
+    ['populate[5]', 'actions.image'],
   ]);
 
   if (data && data.length) {
@@ -46,9 +48,21 @@ export const getStrapiData = async (codeSirenInsee: string) => {
               (collectiviteData.video_url as unknown as string) ?? undefined,
             video_en_haut:
               (collectiviteData.video_en_haut as unknown as boolean) ?? false,
+            temoignages: (
+              collectiviteData.temoignages as unknown as {
+                id: number;
+                auteur: string;
+                role: string;
+                temoignage: string;
+                portrait: {data: StrapiItem};
+              }[]
+            ).map(temoignage => ({
+              ...temoignage,
+              portrait: temoignage.portrait.data,
+            })),
             actions: (
               collectiviteData.actions as unknown as {
-                id: string;
+                id: number;
                 titre: string;
                 contenu: string;
                 image: {data: StrapiItem};
