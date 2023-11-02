@@ -107,9 +107,11 @@ const checkRowReadOnly = ([annee, resultat, commentaire], index) =>
 
 When("je crée l'indicateur avec les données suivantes :", dataTable => {
   const rows = dataTable.rows();
-  const [nom, unite, desc] = rows[0];
+  const [nom, unite, desc, thematique] = rows[0];
   cy.get('input#titre').click().type(nom);
   cy.get('input#unite').click().type(unite);
   cy.get('textarea#description').click().type(desc);
-  cy.get('button[type=submit]').click();
+  cy.get(LocalSelectors['Thématique'].selector).click();
+  cy.get(`[data-test=thematiques-options] button`).contains(thematique).click();
+  cy.get('button[type=submit]').click({force: true});
 });
