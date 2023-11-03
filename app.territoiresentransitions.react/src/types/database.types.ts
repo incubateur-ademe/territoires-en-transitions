@@ -3297,6 +3297,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }
         Insert: {
           collectivite_id: number
@@ -3306,6 +3308,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Update: {
           collectivite_id?: number
@@ -3315,6 +3319,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Relationships: [
           {
@@ -3639,6 +3645,30 @@ export interface Database {
             foreignKeyName: "axe_parent_fkey"
             columns: ["parent"]
             referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "axe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_type_fkey"
+            columns: ["type"]
+            referencedRelation: "plan_action_type"
             referencedColumns: ["id"]
           }
         ]
@@ -6316,6 +6346,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6346,6 +6377,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6376,6 +6408,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -13036,6 +13069,46 @@ export interface Database {
           collectivite_id?: number
           id?: number
           nom?: string
+        }
+        Relationships: []
+      }
+      plan_action_type: {
+        Row: {
+          categorie: string
+          detail: string | null
+          id: number
+          type: string
+        }
+        Insert: {
+          categorie: string
+          detail?: string | null
+          id?: number
+          type: string
+        }
+        Update: {
+          categorie?: string
+          detail?: string | null
+          id?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_action_type_categorie_fkey"
+            columns: ["categorie"]
+            referencedRelation: "plan_action_type_categorie"
+            referencedColumns: ["categorie"]
+          }
+        ]
+      }
+      plan_action_type_categorie: {
+        Row: {
+          categorie: string
+        }
+        Insert: {
+          categorie: string
+        }
+        Update: {
+          categorie?: string
         }
         Relationships: []
       }
@@ -19925,6 +19998,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -20268,6 +20342,7 @@ export interface Database {
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           referents: Database["public"]["CompositeTypes"]["personne"][] | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -20634,6 +20709,17 @@ export interface Database {
           collectivite_id: number | null
           modified_by_id: string | null
           modified_by_nom: string | null
+        }
+        Relationships: []
+      }
+      indicateur_definitions: {
+        Row: {
+          collectivite_id: number | null
+          description: string | null
+          indicateur_id: string | null
+          indicateur_perso_id: number | null
+          nom: string | null
+          unite: string | null
         }
         Relationships: []
       }
@@ -24270,6 +24356,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -24507,6 +24594,7 @@ export interface Database {
                 | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
+              restreint: boolean | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
               titre: string | null
             }[]
@@ -24525,6 +24613,7 @@ export interface Database {
                 | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
+              restreint: boolean | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
               titre: string | null
             }[]
@@ -24561,6 +24650,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }[]
@@ -25749,6 +25839,12 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      pilotes: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown[]
+      }
       plan: {
         Args: {
           "": number
@@ -25794,6 +25890,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }[]
       }
       preuve_count: {
@@ -25880,6 +25978,13 @@ export interface Database {
         }
         Returns: undefined
       }
+      restreindre_plan: {
+        Args: {
+          plan_id: number
+          restreindre: boolean
+        }
+        Returns: undefined
+      }
       retool_user_list: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -25930,6 +26035,12 @@ export interface Database {
           "": unknown[]
         }
         Returns: string
+      }
+      services: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown[]
       }
       set_adaptive_chunking: {
         Args: {
@@ -26178,6 +26289,12 @@ export interface Database {
           scores?: unknown[]
         }
         Returns: undefined
+      }
+      thematiques: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown[]
       }
       throws_ok: {
         Args: {
