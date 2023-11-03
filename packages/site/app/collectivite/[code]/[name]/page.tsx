@@ -15,6 +15,7 @@ import CreationCompte from './CreationCompte';
 import LabellisationLogo from './LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
+import {natureCollectiviteToLabel} from './labels';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -37,14 +38,22 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       {/* Bannière avec nom de la collectivité et photo */}
       <div
         className={classNames('col-span-full', {
-          'lg:col-span-8': collectiviteData.active,
+          'lg:col-span-8': collectiviteData.labellisee,
         })}
       >
         <CollectiviteHeader
           nom={collectiviteData.nom}
           region={collectiviteData.region_name ?? undefined}
+          regionCode={collectiviteData.region_code ?? undefined}
           departement={collectiviteData.departement_name ?? undefined}
-          type={collectiviteData.type_collectivite ?? undefined}
+          departementCode={collectiviteData.departement_code ?? undefined}
+          type={
+            ['commune', 'CC', 'CA', 'CU', 'EPT', 'METRO', 'PETR'].includes(
+              collectiviteData.nature_collectivite,
+            )
+              ? natureCollectiviteToLabel[collectiviteData.nature_collectivite]
+              : collectiviteData.type_collectivite
+          }
           population={collectiviteData.population_totale ?? undefined}
           url={strapiData?.url}
           couverture={strapiData?.couverture}
@@ -56,28 +65,24 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       <div
         className={classNames(
           'col-span-full md:col-span-4 lg:col-span-3 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
-          {'lg:order-last': !collectiviteData.active},
+          {'lg:order-last': !collectiviteData.labellisee},
         )}
       >
-        {collectiviteData.active ? (
-          <>
-            <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
-              <LabellisationLogo
-                cae={
-                  (collectiviteData.cae_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
-                  undefined
-                }
-                eci={
-                  (collectiviteData.eci_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
-                  undefined
-                }
-              />
-            </div>
-            <ConnexionCompte />
-          </>
-        ) : (
-          <CreationCompte />
+        {collectiviteData.labellisee && (
+          <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
+            <LabellisationLogo
+              cae={
+                (collectiviteData.cae_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
+                undefined
+              }
+              eci={
+                (collectiviteData.eci_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
+                undefined
+              }
+            />
+          </div>
         )}
+        {collectiviteData.active ? <ConnexionCompte /> : <CreationCompte />}
       </div>
 
       {/* Contenu */}

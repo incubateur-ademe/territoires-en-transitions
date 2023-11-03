@@ -9,3 +9,13 @@ export const secteurIdToLabel: Record<string, string> = {
   'cae_1.f': 'Autres Transports',
   'cae_1.g': 'Agriculture',
 };
+
+export const natureCollectiviteToLabel: Record<string, string> = {
+  commune: 'Commune',
+  CC: 'Communauté de communes',
+  CA: "Communauté d'agglomération",
+  CU: 'Communauté urbaine',
+  EPT: 'Etablissement Public Territorial',
+  METRO: 'Métropole',
+  PETR: "Pôle d'équilibre territorial rural",
+};
