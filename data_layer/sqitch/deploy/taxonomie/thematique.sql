@@ -133,7 +133,8 @@ SELECT fa.modified_at,
               FROM financeur_tag ft
                        JOIN fiche_action_financeur_tag faft ON ft.id = faft.financeur_tag_id
               WHERE faft.fiche_id = fa.id) fin) AS financeurs,
-       fic.fiches_liees
+       fic.fiches_liees,
+       fa.restreint
 FROM fiche_action fa
          LEFT JOIN (SELECT fath.fiche_id,
                            array_agg(th.*) AS thematiques
@@ -181,7 +182,7 @@ create view public.fiches_action
              financements, budget_previsionnel, statut, niveau_priorite, date_debut, date_fin_provisoire,
              amelioration_continue, calendrier, notes_complementaires, maj_termine, collectivite_id, created_at,
              modified_by, thematiques, sous_thematiques, partenaires, structures, pilotes, referents, axes, actions,
-             indicateurs, services, financeurs, fiches_liees)
+             indicateurs, services, financeurs, fiches_liees, restreint)
 as
 SELECT fiches_action.modified_at,
        fiches_action.id,
@@ -216,10 +217,13 @@ SELECT fiches_action.modified_at,
        fiches_action.indicateurs,
        fiches_action.services,
        fiches_action.financeurs,
-       fiches_action.fiches_liees
+       fiches_action.fiches_liees,
+       fiches_action.restreint
 FROM private.fiches_action
-WHERE can_read_acces_restreint(fiches_action.collectivite_id);
-
+WHERE case
+          when fiches_action.restreint = true -- null = false
+              then have_lecture_acces(fiches_action.collectivite_id) or est_support()
+          else can_read_acces_restreint((fiches_action.collectivite_id)) end;
 
 create or replace function upsert_fiche_action() returns trigger
     security definer
@@ -265,7 +269,8 @@ begin
                                   calendrier,
                                   notes_complementaires,
                                   maj_termine,
-                                  collectivite_id)
+                                  collectivite_id,
+                                  restreint)
         values (new.titre,
                 new.description,
                 new.piliers_eci,
@@ -283,7 +288,8 @@ begin
                 new.calendrier,
                 new.notes_complementaires,
                 new.maj_termine,
-                new.collectivite_id)
+                new.collectivite_id,
+                new.restreint)
         returning id into id_fiche;
         new.id = id_fiche;
     else
@@ -305,7 +311,8 @@ begin
             calendrier= new.calendrier,
             notes_complementaires= new.notes_complementaires,
             maj_termine= new.maj_termine,
-            collectivite_id      = new.collectivite_id
+            collectivite_id      = new.collectivite_id,
+            restreint            = new.restreint
         where id = id_fiche;
     end if;
 
