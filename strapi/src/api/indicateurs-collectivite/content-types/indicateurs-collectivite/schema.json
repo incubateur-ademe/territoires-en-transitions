@@ -12,6 +12,26 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "inscription_description": {
+      "type": "string",
+      "required": true,
+      "default": "faites un pas supplémentaire vers la transition écologique en créant un compte gratuit"
+    },
+    "inscription_cta": {
+      "type": "string",
+      "required": true,
+      "default": "Créer un compte"
+    },
+    "connexion_description": {
+      "type": "string",
+      "required": true,
+      "default": "Vous êtes membre de cette collectivité ?"
+    },
+    "connexion_cta": {
+      "type": "string",
+      "required": true,
+      "default": "Se connecter"
+    },
     "gaz_effet_serre": {
       "displayName": "Indicateur",
       "type": "component",
