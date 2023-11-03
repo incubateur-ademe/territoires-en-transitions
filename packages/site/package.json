@@ -24,6 +24,7 @@
     "@nivo/pie": "^0.81.0",
     "@nivo/stream": "^0.81.0",
     "@nivo/waffle": "^0.81.0",
+    "@react-spring/web": "^9.7.3",
     "@supabase/supabase-js": "^2.31.0",
     "@tet/ui": "^1.0.0",
     "classnames": "^2.3.2",

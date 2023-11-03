@@ -2,7 +2,11 @@
 
 import {Metadata} from 'next';
 import classNames from 'classnames';
-import {fetchCollectivite, getStrapiData} from '../../utils';
+import {
+  fetchCollectivite,
+  getStrapiData,
+  getStrapiDefaultData,
+} from '../../utils';
 import Gallery from '@components/gallery/Gallery';
 import Section from '@components/sections/Section';
 import CollectiviteHeader from './CollectiviteHeader';
@@ -10,6 +14,7 @@ import ConnexionCompte from './ConnexionCompte';
 import CreationCompte from './CreationCompte';
 import LabellisationLogo from './LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
+import IndicateursCollectivite from './IndicateursCollectivite';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -20,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   const collectiviteData = await fetchCollectivite(params.code);
   const strapiData = await getStrapiData(params.code);
+  const strapiDefaultData = await getStrapiDefaultData();
 
   if (!collectiviteData || !collectiviteData.nom) return null;
 
@@ -78,20 +84,14 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       {strapiData?.contenu ? (
         <ContenuCollectivite contenu={strapiData.contenu} />
       ) : (
-        <Gallery
-          className="col-span-full md:col-span-7 lg:col-span-8"
-          maxCols={2}
-          breakpoints={{md: 768, lg: 1024}}
-          gap="gap-0 md:gap-10 xl:gap-12"
-          data={[
-            <div key={1} className="bg-white md:rounded-[10px]">
-              test 1
-            </div>,
-            <div key={2} className="bg-white md:rounded-[10px]">
-              test 2
-            </div>,
-          ]}
-        />
+        strapiDefaultData && (
+          <IndicateursCollectivite
+            defaultData={strapiDefaultData}
+            indicateurs={{
+              gaz_effet_serre: collectiviteData.indicateurs_gaz_effet_serre,
+            }}
+          />
+        )
       )}
     </Section>
   );

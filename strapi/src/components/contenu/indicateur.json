@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_contenu_indicateurs",
+  "info": {
+    "displayName": "Indicateur",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "titre_encadre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "description_encadre": {
+      "type": "text",
+      "required": true
+    },
+    "illustration_encadre": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

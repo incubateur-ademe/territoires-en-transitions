@@ -18,7 +18,12 @@ type Collection =
   | 'services'
   | 'temoignages';
 
-type Single = 'accueil' | 'contact' | 'metadata' | 'programme';
+type Single =
+  | 'accueil'
+  | 'contact'
+  | 'metadata'
+  | 'indicateurs-collectivite'
+  | 'programme';
 
 export async function fetchCollection(
   path: Collection,

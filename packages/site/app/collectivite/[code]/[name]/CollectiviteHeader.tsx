@@ -3,6 +3,7 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
+import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 
 type CollectiviteHeaderProps = {
   nom: string;
@@ -66,9 +67,7 @@ const CollectiviteHeader = ({
           <div className={classNames('flex gap-2 flex-wrap', {'mb-6': !!url})}>
             {population && (
               <Badge
-                content={`${population
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} habitants`}
+                content={`${getFormattedNumber(population)} habitants`}
                 status="new"
                 className="text-primary-7"
               />
