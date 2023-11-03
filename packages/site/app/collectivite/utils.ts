@@ -117,6 +117,19 @@ export const getStrapiDefaultData = async () => {
     const gaz_effet_serre = data.attributes.gaz_effet_serre;
 
     return {
+      inscription: {
+        description:
+          (data.attributes.inscription_description as unknown as string) ??
+          undefined,
+        cta:
+          (data.attributes.inscription_cta as unknown as string) ?? undefined,
+      },
+      connexion: {
+        description:
+          (data.attributes.connexion_description as unknown as string) ??
+          undefined,
+        cta: (data.attributes.connexionn_cta as unknown as string) ?? undefined,
+      },
       gaz_effet_serre: gaz_effet_serre
         ? {
             titre: gaz_effet_serre.titre as unknown as string,

@@ -7,15 +7,13 @@ import {
   getStrapiData,
   getStrapiDefaultData,
 } from '../../utils';
-import Gallery from '@components/gallery/Gallery';
 import Section from '@components/sections/Section';
 import CollectiviteHeader from './CollectiviteHeader';
-import ConnexionCompte from './ConnexionCompte';
-import CreationCompte from './CreationCompte';
 import LabellisationLogo from './LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
 import {natureCollectiviteToLabel} from './labels';
+import AccesCompte from './AccesCompte';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -82,7 +80,25 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
             />
           </div>
         )}
-        {collectiviteData.active ? <ConnexionCompte /> : <CreationCompte />}
+        {collectiviteData.active ? (
+          <AccesCompte
+            description={
+              strapiDefaultData?.connexion?.description ??
+              'Vous êtes membre de cette collectivité ?'
+            }
+            cta={strapiDefaultData?.connexion?.cta ?? 'Se connecter'}
+            href="https://app.territoiresentransitions.fr/auth/signin"
+          />
+        ) : (
+          <AccesCompte
+            description={
+              strapiDefaultData?.inscription?.description ??
+              'Faites un pas supplémentaire vers la transition écologique en créant un compte gratuit'
+            }
+            cta={strapiDefaultData?.inscription?.cta ?? 'Créer un compte'}
+            href="https://app.territoiresentransitions.fr/auth/signup"
+          />
+        )}
       </div>
 
       {/* Contenu */}
