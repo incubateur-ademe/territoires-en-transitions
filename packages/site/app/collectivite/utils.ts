@@ -1,11 +1,41 @@
+import {Database} from 'app/database.types';
 import {supabase} from 'app/initSupabase';
-import {fetchCollection} from 'src/strapi/strapi';
+import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
+
+export type Indicateurs =
+  Database['public']['Tables']['indicateur_resultat_import']['Row'];
+
+type Collectivite = {
+  collectivite_id: number;
+  nom: string;
+  type_collectivite: string;
+  nature_collectivite: string;
+  code_siren_insee: string;
+  region_name: string;
+  region_code: string;
+  departement_name: string;
+  departement_code: string;
+  population_totale: number;
+  active: true;
+  cot: false;
+  engagee: true;
+  labellisee: true;
+  cae_obtenue_le: string;
+  cae_etoiles: number;
+  cae_score_realise: number;
+  cae_score_programme: number;
+  eci_obtenue_le: string;
+  eci_etoiles: number;
+  eci_score_realise: number;
+  eci_score_programme: number;
+  indicateurs_gaz_effet_serre: Indicateurs[];
+};
 
 export const fetchCollectivite = async (code_siren_insee: string) => {
   const {data, error} = await supabase
     .from('site_labellisation')
-    .select()
+    .select('*, indicateurs_gaz_effet_serre')
     .match({code_siren_insee});
 
   if (error) {
@@ -15,7 +45,7 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
     return null;
   }
 
-  return data[0];
+  return data[0] as unknown as Collectivite;
 };
 
 export const getStrapiData = async (codeSirenInsee: string) => {
@@ -71,6 +101,31 @@ export const getStrapiData = async (codeSirenInsee: string) => {
               ...action,
               image: action.image.data,
             })),
+          }
+        : undefined,
+    };
+  } else return null;
+};
+
+export const getStrapiDefaultData = async () => {
+  const data = await fetchSingle('indicateurs-collectivite', [
+    ['populate[0]', 'gaz_effet_serre'],
+    ['populate[1]', 'gaz_effet_serre.illustration_encadre'],
+  ]);
+
+  if (data) {
+    const gaz_effet_serre = data.attributes.gaz_effet_serre;
+
+    return {
+      gaz_effet_serre: gaz_effet_serre
+        ? {
+            titre: gaz_effet_serre.titre as unknown as string,
+            description: gaz_effet_serre.description as unknown as string,
+            titre_encadre: gaz_effet_serre.titre_encadre as unknown as string,
+            description_encadre:
+              gaz_effet_serre.description_encadre as unknown as string,
+            illustration_encadre: gaz_effet_serre.illustration_encadre
+              .data as unknown as StrapiItem,
           }
         : undefined,
     };
