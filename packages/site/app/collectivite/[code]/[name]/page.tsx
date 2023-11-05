@@ -104,15 +104,15 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       {/* Contenu */}
       {strapiData?.contenu ? (
         <ContenuCollectivite contenu={strapiData.contenu} />
+      ) : strapiDefaultData ? (
+        <IndicateursCollectivite
+          defaultData={strapiDefaultData}
+          indicateurs={{
+            gaz_effet_serre: collectiviteData.indicateurs_gaz_effet_serre,
+          }}
+        />
       ) : (
-        strapiDefaultData && (
-          <IndicateursCollectivite
-            defaultData={strapiDefaultData}
-            indicateurs={{
-              gaz_effet_serre: collectiviteData.indicateurs_gaz_effet_serre,
-            }}
-          />
-        )
+        <div className="col-span-full md:col-span-7 lg:col-span-8" />
       )}
     </Section>
   );
