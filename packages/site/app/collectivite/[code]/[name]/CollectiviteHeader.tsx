@@ -116,7 +116,7 @@ const CollectiviteHeader = ({
         {/* Logo de la collectivité */}
         {logo && (
           <div
-            className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0"
+            className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit w-fit"
             style={{boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)'}}
           >
             <StrapiImage
