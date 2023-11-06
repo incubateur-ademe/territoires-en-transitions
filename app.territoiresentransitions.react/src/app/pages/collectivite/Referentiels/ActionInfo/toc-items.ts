@@ -5,9 +5,8 @@ export const TOC_ITEMS = [
   {id: 'desc', label: 'Description'},
   {id: 'contexte', label: 'Contexte et réglementation'},
   {id: 'exemples', label: 'Exemples d’autres collectivités'},
-  {id: 'ressources', label: 'Ressources documentaires'},
-  {id: 'reduction_potentiel', label: 'Réduction de potentiel'},
-  {id: 'perimetre_evaluation', label: 'Renvois-limite'},
+  {id: 'ressources', label: 'Ressources'},
+  {id: 'perimetre_evaluation', label: 'Précisions évaluation'},
 ] as const;
 
 // renvoi les items du sommaire à afficher pour une action donnée
