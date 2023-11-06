@@ -61,6 +61,7 @@ serve(async (req) => {
     }
     const commentaires = await fetch.commentaires(supabaseClient, collectivite_id);
     const definitions = await fetch.definitions(supabaseClient);
+    const resultats = await fetch.resultats(supabaseClient, collectivite_id)
     const tetId = test?yoloUserId:tetUserId;
 
     // Pour chaque ligne du fichier
@@ -85,7 +86,8 @@ serve(async (req) => {
                 collectivite_id,
                 indicateur_id,
                 annee,
-                valeurClean
+                valeurClean,
+                resultats
             );
           }
           // Sauvegarde le commentaire s'il est présent
