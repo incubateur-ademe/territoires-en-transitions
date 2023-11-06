@@ -63,7 +63,7 @@ pg-tap-builder:
 
 db-test-build:
     FROM +pg-tap-build
-    CMD ["./tests/collectivite/*.sql"]
+    CMD ["./tests/collectivite/collectivite_test.sql"]
     COPY ./data_layer/tests ./tests
     SAVE IMAGE db-test:latest
 
