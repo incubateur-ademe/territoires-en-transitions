@@ -7,26 +7,33 @@ import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
  * @param indicateur_id indicateur concernée
  * @param annee annee de la valeur de l'indicateur
  * @param valeur valeur de l'indicateur
+ * @param resultats resultats déjà existant à ne pas écraser
  */
 export const resultat = async(
     supabaseClient : TSupabaseClient,
     collectivite_id : number,
     indicateur_id : string,
     annee : string,
-    valeur : number
+    valeur : number,
+    resultats : Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Insert"]>
 ):
     Promise<boolean> => {
 
-    const indicateurToSave : Database["public"]["Tables"]["indicateur_resultat"]["Insert"] = {
-        indicateur_id: indicateur_id,
-        collectivite_id: collectivite_id,
-        annee : annee,
-        valeur : valeur,
-    }
+    let indicateurToSave : Database["public"]["Tables"]["indicateur_resultat"]["Insert"]=
+        resultats.get(indicateur_id + ' - ' +annee);
+    // On n'écrase pas les indicateurs déjà renseignés.
+    if(!indicateurToSave) {
+        indicateurToSave = {
+            indicateur_id: indicateur_id,
+            collectivite_id: collectivite_id,
+            annee: annee,
+            valeur: valeur,
+        }
 
-    const { error, data } = await supabaseClient.from('indicateur_resultat').upsert(indicateurToSave);
-    if (error) {
-        throw new Error(error.message);
+        const {error, data} = await supabaseClient.from('indicateur_resultat').upsert(indicateurToSave);
+        if (error) {
+            throw new Error(error.message);
+        }
     }
     return true;
 }

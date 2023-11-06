@@ -52,3 +52,28 @@ export const definitions = async(supabaseClient : TSupabaseClient):
     return toReturn;
 }
 
+/**
+ * Récupère les résultats des indicateurs
+ * @param supabaseClient
+ * @param collectivite_id
+ * @return definitions
+ */
+export const resultats = async(supabaseClient : TSupabaseClient, collectivite_id : number):
+    Promise<Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Row"]>> => {
+    const query = supabaseClient
+        .from('indicateur_resultat')
+        .select()
+        .eq('collectivite_id', collectivite_id);
+
+    const { error, data } = await query;
+    if (error) {
+        throw new Error(error.message);
+    }
+    const toReturn = new Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Row"]>();
+    for(let i=0; i<data.length; i++){
+        const resultat : Database["public"]["Tables"]["indicateur_resultat"]["Row"] = data[i];
+        toReturn.set(resultat.indicateur_id +' - '+ resultat.annee, resultat);
+    }
+    return toReturn;
+}
+
