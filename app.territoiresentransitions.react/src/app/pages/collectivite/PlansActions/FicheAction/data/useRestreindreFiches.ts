@@ -1,5 +1,4 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQueryClient} from 'react-query';
 import {PlanNode} from '../../PlanAction/data/types';
 import {FicheResume} from './types';
