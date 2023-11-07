@@ -128,13 +128,15 @@ const SubActionCard = ({
           {(auditStatus !== 'audit_en_cours' || openSubAction) && (
             <>
               <ActionCommentaire action={subAction} className="mb-10" />
-              {subAction.referentiel === 'cae' && avancement === 'detaille' && (
+              {subAction.referentiel === 'cae' &&
+              avancement === 'detaille' &&
+              subAction.children?.length ? (
                 <ActionJustification
                   action={subAction}
                   className="mb-10"
                   title="Justification de l’ajustement manuel du score"
                 />
-              )}
+              ) : null}
             </>
           )}
 
