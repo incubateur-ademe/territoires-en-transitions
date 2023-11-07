@@ -1,4 +1,5 @@
-import {lazy, Suspense} from 'react';
+import {Suspense} from 'react';
+import {lazy} from 'utils/lazy';
 import {useParams} from 'react-router-dom';
 import {renderLoader} from 'utils/renderLoader';
 import {Referentiel} from 'types/litterals';
