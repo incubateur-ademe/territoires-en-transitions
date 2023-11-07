@@ -536,9 +536,9 @@ site/labellisation [site/labellisation@v2.69.0] 2023-11-02T14:12:40Z Florian <fl
 collectivite/collectivite_test 2023-10-26T09:18:21Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la suppression d'une collectivité test
 collectivite/toutes_les_collectivites [collectivite/toutes_les_collectivites@v2.67.0] 2023-10-26T09:32:25Z Amandine Jacquelin <conta@LanceLibre> # Enlève les collectivités tests de collectivite_card
 plan_action/plan_action [plan_action/plan_action@v2.67.0] 2023-10-26T15:41:19Z Amandine Jacquelin <conta@LanceLibre> # Ajoute service role à delete_axe_all
-
 taxonomie/thematique 2023-10-30T08:46:50Z Florian <florian@derfurth.com> # Les thématiques partagées entre fiches action et indicateurs
 indicateur/referentiel [indicateur/referentiel@v2.69.0] 2023-10-30T10:17:35Z Florian <florian@derfurth.com> # Personnes et services pilotes
 indicateur/personnalise [indicateur/personnalise@v2.69.0] 2023-10-30T10:18:28Z Florian <florian@derfurth.com> # Personnes et services pilotes
 indicateur/detail 2023-10-31T14:03:49Z Florian <florian@derfurth.com> # Pilotes, services et thématiques
 taxonomie/personne 2023-11-07T08:58:36Z Florian <florian@derfurth.com> # Répare la liste des personnes de la collectivité
+@v2.80.0 2023-11-07T16:28:26Z Florian <florian@derfurth.com> # Améliorations des collectivités de test et nouvelles fonctionnalités indicateurs
