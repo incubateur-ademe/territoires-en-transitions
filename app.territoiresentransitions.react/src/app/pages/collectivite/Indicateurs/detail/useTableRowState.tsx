@@ -130,7 +130,12 @@ export const useTableRowState = ({
     if (confirm) {
       saveChange(true);
     } else {
-      setState({...state, confirmAvantEcrasement: null});
+      setState({
+        annee: '',
+        valeur: '',
+        commentaire: '',
+        confirmAvantEcrasement: null,
+      });
     }
   };
 
