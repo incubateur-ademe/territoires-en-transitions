@@ -2,8 +2,6 @@
 
 BEGIN;
 
-drop view private.personnes_collectivite;
-
 create or replace function personnes_collectivite(collectivite_id integer) returns SETOF personne
     language sql
 as
@@ -23,5 +21,7 @@ from (select pt.nom,
       from collectivite_membres(personnes_collectivite.collectivite_id) cm) req
 where can_read_acces_restreint(req.collectivite_id);
 $$;
+
+drop view private.personnes_collectivite;
 
 COMMIT;
