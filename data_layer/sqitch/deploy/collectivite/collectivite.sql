@@ -4,23 +4,22 @@
 
 BEGIN;
 
-alter table collectivite
-    add column access_restreint boolean default false not null;
-
-create function can_read_acces_restreint(collectivite_id integer) returns boolean as $$
-begin
-    return (
-        select case when (select access_restreint
-                          from collectivite
-                          where id = can_read_acces_restreint.collectivite_id
-                          limit 1)
-                        then have_lecture_acces(can_read_acces_restreint.collectivite_id)
-                    else is_authenticated() end
-    );
-
-end;
-$$language plpgsql security definer;
-comment on function can_read_acces_restreint
-    is 'Vrai si l''utilisateur a accès en lecture à la collectivité en prenant en compte la restriction access_restreint';
-
+create or replace view named_collectivite as
+select * from (SELECT collectivite.id                                        AS collectivite_id,
+                      COALESCE(epci.nom, commune.nom, collectivite_test.nom) AS nom,
+                      case
+                          when epci is not null then 'epci'
+                          when commune is not null then 'commune'
+                          when collectivite_test is not null then 'collectivite_test'
+                          end as type
+               FROM collectivite
+                        LEFT JOIN epci ON epci.collectivite_id = collectivite.id
+                        LEFT JOIN commune ON commune.collectivite_id = collectivite.id
+                        LEFT JOIN collectivite_test ON collectivite_test.collectivite_id = collectivite.id
+               ORDER BY (
+                            CASE
+                                WHEN collectivite_test.nom IS NOT NULL
+                                    THEN '0'::text || unaccent(collectivite_test.nom::text)
+                                ELSE unaccent(COALESCE(epci.nom, commune.nom)::text)
+                                END)) col where type = 'epci';
 COMMIT;

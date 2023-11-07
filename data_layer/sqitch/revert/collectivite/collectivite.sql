@@ -4,8 +4,6 @@
 
 BEGIN;
 
-drop function can_read_acces_restreint;
-alter table collectivite
-    drop column access_restreint;
+-- On ne revert pas named_collectivite car trop de dépendances
 
 COMMIT;
