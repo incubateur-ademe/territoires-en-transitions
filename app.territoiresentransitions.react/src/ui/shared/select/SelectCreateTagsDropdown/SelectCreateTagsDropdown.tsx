@@ -86,7 +86,7 @@ const SelectCreateTagsDropdown = <T extends string>({
               <span className="mr-2">Créer</span>{' '}
               <Tag
                 title={inputValue}
-                className="bg-indigo-100 text-indigo-700"
+                className="bg-indigo-100 !text-indigo-700"
               />
             </button>
           )}
