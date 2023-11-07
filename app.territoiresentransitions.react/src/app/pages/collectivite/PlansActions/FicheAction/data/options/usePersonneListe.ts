@@ -19,7 +19,12 @@ const fetchPersonneListe = async (
     throw new Error(error.message);
   }
 
-  return data as unknown as Personne[];
+  return (
+    (data as unknown as Personne[])
+      // filtre pour éviter les entrées avec un nom vide (pb des invitations : en
+      // attente de correctif back)
+      ?.filter(p => p.nom?.trim())
+  );
 };
 
 export const usePersonneListe = () => {
