@@ -159,7 +159,7 @@ values ((select collectivite_id from collectivite_test where nom = 'testsql' lim
 -- fiche_action_lien
 insert into fiche_action_lien(fiche_une, fiche_deux) values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1)*10+1, (select collectivite_id from collectivite_test where nom = 'testsql' limit 1)*10+2);
 -- fiche_action_thematique
-insert into fiche_action_thematique(fiche_id, thematique) values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'Énergie et climat');
+insert into fiche_action_thematique(fiche_id, thematique_id) values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 5);
 -- fiche_action_sous_thematique
 insert into fiche_action_sous_thematique(fiche_id, thematique_id) values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 44);
 -- PERSONNALISATION
