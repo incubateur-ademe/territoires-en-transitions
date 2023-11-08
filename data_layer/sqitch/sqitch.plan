@@ -552,3 +552,5 @@ indicateur/artificialisation [indicateur/artificialisation@v2.81.0] 2023-11-20T1
 stats/vues_BI [stats/vues_BI@v2.80.0] 2023-11-15T15:35:38Z Amandine Jacquelin <conta@LanceLibre> # Remplace certains modified_at par created_at
 stats/locales [stats/locales@v2.80.0] 2023-11-15T15:36:21Z Amandine Jacquelin <conta@LanceLibre> # Remplace certains modified_at par created_at
 @v2.83.0 2023-11-24T10:14:51Z Florian <florian@derfurth.com> # Ajoute et corrige des vues pour les pages statistiques du site
+
+indicateur/filtre 2023-11-08T09:53:54Z Florian <florian@derfurth.com> # Permet de filtrer les indicateurs
