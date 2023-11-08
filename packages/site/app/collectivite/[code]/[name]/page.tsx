@@ -1,6 +1,6 @@
 'use server';
 
-import {Metadata} from 'next';
+import {Metadata, ResolvingMetadata} from 'next';
 import classNames from 'classnames';
 import {
   fetchCollectivite,
@@ -14,11 +14,28 @@ import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
 import {natureCollectiviteToLabel} from './labels';
 import AccesCompte from './AccesCompte';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: 'Collectivités',
-  };
+export async function generateMetadata(
+  {params}: {params: {code: string}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const collectiviteData = await fetchCollectivite(params.code);
+  const strapiData = await getStrapiData(params.code);
+  const strapiDefaultData = await getStrapiDefaultData();
+
+  if (!collectiviteData || !collectiviteData.nom) return metadata;
+
+  return getUpdatedMetadata(metadata, {
+    title:
+      strapiData?.seo.metaTitle ??
+      strapiDefaultData?.seo.metaTitle ??
+      collectiviteData.nom,
+    description:
+      strapiData?.seo.metaDescription ?? strapiDefaultData?.seo.metaDescription,
+    image: strapiData?.seo.metaImage ?? strapiDefaultData?.seo.metaImage,
+  });
 }
 
 const DetailCollectivite = async ({params}: {params: {code: string}}) => {
