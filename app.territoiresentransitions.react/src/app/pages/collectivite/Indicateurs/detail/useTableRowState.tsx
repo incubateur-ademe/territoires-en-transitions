@@ -61,7 +61,8 @@ export const useTableRowState = ({
     key: keyof typeof state,
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const value = e.target.value.replaceAll(' ', '');
+    const value =
+      key === 'valeur' ? e.target.value.replaceAll(' ', '') : e.target.value;
     if (key === 'annee' && value.length > 4) {
       setState({...state, annee: value.slice(0, 4)});
     } else {
