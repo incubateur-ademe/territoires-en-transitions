@@ -66,7 +66,7 @@ const ImporterPlan = () => {
               onClick={() =>
                 tracker({fonction: 'modele_import', action: 'telechargement'})
               }
-              href="https://docs.google.com/spreadsheets/d/1hmpj74Smtrzp-d5R3Rwlf9VRnokeKVDn/edit#gid=246577666"
+              href="/20231107-Fichier-Import-PA-NEW.xlsx"
               target="_blank"
               rel="noopener noreferrer"
             >
