@@ -25,7 +25,8 @@ type crud = 'c'| 'r'| 'u'| 'd';
 /** Les paramètres et la clause where à passer en appelant la base de données */
 type parameters = {
     parameter : { [key: string]: any } | null,
-    where : { nom : string, valeur : any | null } | null
+    where : { nom : string, valeur : any | null } | null,
+    relation : string|null
 }
 
 /** Fonctions qui ont une action de suppression ou d'insertion nécessitant de régénérer les données après leur appel */
@@ -33,7 +34,7 @@ const fonctionsDeSuppression = ['delete_axe_all', 'enlever_fiche_action_d_un_axe
     'ajouter_fiche_action_dans_un_axe', 'add_bibliotheque_fichier', 'deplacer_fiche_action_dans_un_axe'];
 
 /** Fonctions d'insertion nécessitant des paramètres propre à l'insertion */
-const fonctionDeInsert = ['ajouter_fiche_action_dans_un_axe', 'add_bibliotheque_fichier'];
+const fonctionDeInsert = ['ajouter_fiche_action_dans_un_axe', 'add_bibliotheque_fichier', 'create_fiche'];
 
 /** Tables avec des droits pour l'utilisateur lui-même (auth = user_id) */
 const tablesDroitSurSoi = ['action_discussion_commentaire'];
@@ -63,6 +64,10 @@ const waitBusinessTimeout = 15000;
 const tablesMultipleContrainteUnique = ["indicateur_objectif_commentaire", "indicateur_perso_objectif_commentaire",
     "indicateur_perso_resultat_commentaire"];
 
+/** Vues matérialisées dont on ne récupère pas les colonnes */
+const vuesMaterialisees = ['site_labellisation'];
+
+
 /**
  * Fonction à appeler pour lancer les tests
  *
@@ -72,8 +77,7 @@ const tablesMultipleContrainteUnique = ["indicateur_objectif_commentaire", "indi
  */
 export async function runConfidentialiteTest(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"] | null,
-    nomElement : string | null,
-    profil: Database["public"]["Enums"]["confidentialite_profil"] | null
+    nomElement : string | null
 ) : Promise<boolean> {
     await testReset();
     await supabase.rpc('confidentialite_init_test');
@@ -87,13 +91,8 @@ export async function runConfidentialiteTest(
         if(nomElement==null){
             toReturn = await confidentialiteTestTypeElement(typeElement);
         }else{
-            if(profil==null){
-                // Lancer tous les tests pour cet élément
-                toReturn = await confidentialiteTestElement(typeElement, nomElement);
-            }else{
-                // Lancer tous les tests pour cet élément avec ce profil
-                toReturn = await confidentialiteTestProfil(typeElement, nomElement, profil);
-            }
+            // Lancer tous les tests pour cet élément
+            toReturn = await confidentialiteTestElement(typeElement, nomElement, null);
         }
     }
     await testReset();
@@ -106,7 +105,7 @@ export async function runConfidentialiteTest(
  * @param profil profil de l'utilisateur à connecter
  * @param collectivite l'id de la collectivité auquel appartient le profil à connecter
  */
-export async function confidentialiteSignIn(
+async function confidentialiteSignIn(
     profil: Database["public"]["Enums"]["confidentialite_profil"],
     collectivite : number
 ) {
@@ -125,7 +124,7 @@ export async function confidentialiteSignIn(
  *
  * @return vrai si les tests sont passés
  */
-export async function confidentialiteTest(): Promise<boolean> {
+async function confidentialiteTest(): Promise<boolean> {
     let toReturn = true;
     // Tables
     toReturn = await confidentialiteTestTypeElement('table') && toReturn;
@@ -142,17 +141,17 @@ export async function confidentialiteTest(): Promise<boolean> {
  * @param typeElement table, fonction ou vue à tester
  * @return vrai si les tests sont passés
  */
-export async function confidentialiteTestTypeElement(
+async function confidentialiteTestTypeElement(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"]
 ): Promise<boolean> {
     let toReturn = true;
     const elements = await supabase
         .from("confidentialite_"+typeElement+"s_a_tester")
-        .select("element");
+        .select("element, id_element");
     if (elements != null && elements.data != null) {
         for (const element of elements.data) {
             toReturn = await confidentialiteTestElement(
-                typeElement, element.element
+                typeElement, element.element, element.id_element
             ) && toReturn;
         }
     }
@@ -164,20 +163,39 @@ export async function confidentialiteTestTypeElement(
  *
  * @param typeElement table, fonction ou vue à tester
  * @param nomElement nom de l'élément à tester
+ * @param idElement id de l'élément à tester (null hors fonction)
  * @return vrai si les tests de cet élément sont passés
  */
-export async function confidentialiteTestElement(
+async function confidentialiteTestElement(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
-    nomElement : string
+    nomElement : string,
+    idElement : string|null
 ): Promise<boolean> {
     if (waitBusiness.includes(nomElement)){
         // Attend les calculs du business
         await new Promise(f => setTimeout(f, waitBusinessTimeout));
     }
     let toReturn = true;
-    for (const profil of allProfils){
-        toReturn = await confidentialiteTestProfil(typeElement, nomElement, profil) && toReturn;
+    if(typeElement == 'fonction' && idElement == null){
+        const elements = await supabase
+            .from("confidentialite_fonctions_a_tester")
+            .select("element, id_element")
+            .eq("element", nomElement);
+        if (elements != null && elements.data != null) {
+            for (const element of elements.data) {
+                for (const profil of allProfils){
+                    toReturn =
+                        await confidentialiteTestProfil(typeElement, nomElement, element.id_element as string, profil)
+                        && toReturn;
+                }
+            }
+        }
+    }else{
+        for (const profil of allProfils){
+            toReturn = await confidentialiteTestProfil(typeElement, nomElement, idElement, profil) && toReturn;
+        }
     }
+
     return toReturn;
 }
 
@@ -186,12 +204,14 @@ export async function confidentialiteTestElement(
  *
  * @param typeElement table, fonction ou vue à tester
  * @param nomElement nom de l'élément à tester
+ * @param idElement id de l'élément à tester (null hors fonction)
  * @param profil type de profil à tester
  * @return vrai si les tests pour ce profil sont passés
  */
-export async function confidentialiteTestProfil(
+async function confidentialiteTestProfil(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
     nomElement : string,
+    idElement : string|null,
     profil: Database["public"]["Enums"]["confidentialite_profil"]
 ): Promise<boolean> {
     let toReturn = true;
@@ -221,24 +241,24 @@ export async function confidentialiteTestProfil(
             // Test C
             if (typeElement == 'table' || triggerCVue){
                 toReturn = await confidentialiteTestCRUD(
-                    typeElement, nomElement, profil, profilCol, 'c', collectivite
+                    typeElement, nomElement, idElement, profil, profilCol, 'c', collectivite
                 ) && toReturn;
             }
 
             // Test R
             toReturn = await confidentialiteTestCRUD(
-                typeElement, nomElement, profil, profilCol, 'r', collectivite
+                typeElement, nomElement, idElement, profil, profilCol, 'r', collectivite
             ) && toReturn;
             // Test U
             if (typeElement == 'table' || triggerUVue){
                 toReturn = await confidentialiteTestCRUD(
-                    typeElement, nomElement, profil, profilCol, 'u', collectivite
+                    typeElement, nomElement, idElement, profil, profilCol, 'u', collectivite
                 ) && toReturn;
             }
             // Test D
             if (typeElement == 'table' || triggerDVue){
                 toReturn = await confidentialiteTestCRUD(
-                    typeElement, nomElement, profil, profilCol, 'd', collectivite
+                    typeElement, nomElement, idElement, profil, profilCol, 'd', collectivite
                 ) && toReturn;
             }
         }
@@ -251,15 +271,17 @@ export async function confidentialiteTestProfil(
  *
  * @param typeElement table, fonction ou vue à tester
  * @param nomElement nom de l'élément à tester
+ * @param idElement id de l'élément à tester (null hors fonction)
  * @param profil type de profil à tester
  * @param profilCol collectivité auquel appartient le profil
  * @param crud commande crud à tester
  * @param collectivite collectivité sur laquelle est effectué le test
  * @return vrai si les tests de création sont passés
  */
-export async function confidentialiteTestCRUD(
+async function confidentialiteTestCRUD(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
     nomElement : string,
+    idElement : string|null,
     profil: Database["public"]["Enums"]["confidentialite_profil"],
     profilCol : number,
     crud : crud,
@@ -272,9 +294,28 @@ export async function confidentialiteTestCRUD(
         await confidentialiteParametre(
             typeElement,
             nomElement,
+            idElement,
             collectivite,
             crud == 'c'||fonctionDeInsert.includes(nomElement)
         );
+    let parametreRelation : parameters | null = null;
+    if(typeElement=='fonction' && parametres.relation!=null){
+        const vue = await supabase
+            .from("confidentialite_vues_a_tester").select()
+            .eq("element", parametres.relation);
+        let typeRelation : Database["public"]["Enums"]["confidentialite_type_element"] = 'table';
+        if (vue!=null && vue.data!=null) {
+            typeRelation = 'vue';
+        }
+        parametreRelation =
+            await confidentialiteParametre(
+                typeRelation,
+                parametres.relation as string,
+                null,
+                collectivite,
+                false
+            );
+    }
     // Fait le test
     await confidentialiteSignIn(profil, profilCol);
     switch (crud) {
@@ -283,7 +324,13 @@ export async function confidentialiteTestCRUD(
             break;
         case "r":
             if (typeElement == 'fonction') {
-                resultat = await supabase.rpc(nomElement as any, parametres.parameter).select();
+                if(parametres.relation==null){
+                    resultat = await supabase.rpc(nomElement as any, parametres.parameter).select();
+                }else if (parametreRelation!=null && parametreRelation.where !=null){
+                    resultat = await supabase.from(parametres.relation).select("*, "+nomElement)
+                        .eq(parametreRelation.where.nom, parametreRelation.where.valeur);
+                }
+
             } else if (parametres.where != null){
                 resultat = await supabase.from(nomElement).select().eq(parametres.where.nom, parametres.where.valeur);
             }else{
@@ -314,28 +361,29 @@ export async function confidentialiteTestCRUD(
     }
     await signOut();
 
-    // Reset les données s'il y a eu une suppression
-    let deleted = crud=="d" && resultat.data!=null && resultat.data.length>0;
-    let deletedFonction = typeElement=='fonction'
-        &&  fonctionsDeSuppression.includes(nomElement);
-    // Reset les données qui ont un nombre d'insert limité (ex: les tables avec des clés composées)
-    let futurConflict = false;
-    if ((crud=="c"||crud=="u") && resultat.data!=null && resultat.data.length>0){
-        const possibleConflict = await supabase.from('confidentialite_cle_primaire_compose').select().eq('table_name', nomElement);
-        futurConflict = (possibleConflict.data!=null && possibleConflict.data.length>0) ||
-            nomElement.includes("_tag") ||
-            tablesDroitSurSoi.includes(nomElement) ||
-            tablesMultipleContrainteUnique.includes(nomElement);
-    }
-    if(deleted || deletedFonction || futurConflict){
-        await testReset();
-        await supabase.rpc('confidentialite_init_test');
-        if (waitBusiness.includes(nomElement)){
-            // Attend les calculs du business
-            await new Promise(f => setTimeout(f, waitBusinessTimeout));
+    if(resultat){
+        // Reset les données s'il y a eu une suppression
+        let deleted = crud=="d" && resultat.data!=null && resultat.data.length>0;
+        let deletedFonction = typeElement=='fonction'
+            &&  fonctionsDeSuppression.includes(nomElement);
+        // Reset les données qui ont un nombre d'insert limité (ex: les tables avec des clés composées)
+        let futurConflict = false;
+        if ((crud=="c"||crud=="u") && resultat.data!=null && resultat.data.length>0){
+            const possibleConflict = await supabase.from('confidentialite_cle_primaire_compose').select().eq('table_name', nomElement);
+            futurConflict = (possibleConflict.data!=null && possibleConflict.data.length>0) ||
+                nomElement.includes("_tag") ||
+                tablesDroitSurSoi.includes(nomElement) ||
+                tablesMultipleContrainteUnique.includes(nomElement);
+        }
+        if(deleted || deletedFonction || futurConflict){
+            await testReset();
+            await supabase.rpc('confidentialite_init_test');
+            if (waitBusiness.includes(nomElement)){
+                // Attend les calculs du business
+                await new Promise(f => setTimeout(f, waitBusinessTimeout));
+            }
         }
     }
-
     // Vérifie le résultat du test
     return await confidentialiteCheckResultat(
         typeElement, nomElement, profil, profilCol, crud, collectivite, resultat);
@@ -346,13 +394,15 @@ export async function confidentialiteTestCRUD(
  *
  * @param typeElement table, fonction ou vue à tester
  * @param nomElement nom de l'élément à tester
+ * @param idElement id de l'élément à tester (null hors fonction)
  * @param collectivite collectivité sur laquelle est effectué le test
  * @param insert vrai si c'est une action d'insert qui est testé
  * @return parameters avec l'objet à upsert et/ou la condition where à appliquer
  */
-export async function confidentialiteParametre(
+async function confidentialiteParametre(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
     nomElement : string,
+    idElement : string|null,
     collectivite : number,
     insert : boolean
 ):Promise<parameters> {
@@ -369,19 +419,24 @@ export async function confidentialiteParametre(
             nomVue = 'confidentialite_vues_colonnes';
             break;
     }
-    const params = await supabase.from(nomVue).select().eq('element', nomElement);
-
+    const params = await supabase.from(nomVue).select()
+        .eq('element', typeElement == 'fonction' ? idElement : nomElement);
     // Crée dynamiquement l'objet à insérer, à modifier, ou les paramètres d'une fonction
     const toInsert: { [key: string]: any } = {};
-    let mapParams : Map<string, any> = new Map<string, string>();
-    if (params !=null && params.data != null) {
+    let relation: string | null = null;
+    let mapParams: Map<string, any> = new Map<string, string>();
+    if (params != null && params.data != null) {
         for (let param of params.data) {
-            mapParams.set(param.colonne, param.type);
-            toInsert[param.colonne] =
-                await confidentialiteParametreValeurParDefaut(
-                    param.element, param.colonne, param.type, collectivite, insert);
+            if (param.colonne == null) {
+                relation = param.type;
+            } else {
+                mapParams.set(param.colonne, param.type);
+                toInsert[param.colonne] =
+                    await confidentialiteParametreValeurParDefaut(
+                        nomElement, param.colonne, param.type, collectivite, insert);
+            }
         }
-        if (tablesPreuve.includes(nomElement)){
+        if (tablesPreuve.includes(nomElement)) {
             // Cas spécial :
             // les preuves nécessitent de spécifier l'url qui n'apparaît pas comme un champ obligatoire, mais en est un
             toInsert['url'] = 'url';
@@ -397,6 +452,11 @@ export async function confidentialiteParametre(
             valeur: await confidentialiteParametreValeurParDefaut(
                 nomElement, "id", "integer", collectivite, false
             )
+        };
+    }else if(vuesMaterialisees.includes(nomElement)){
+        where = {
+            nom: "collectivite_id",
+            valeur: collectivite
         };
     }else {
         for (let colonneWhere of colonnesWhere ){
@@ -414,7 +474,8 @@ export async function confidentialiteParametre(
 
     return {
         parameter : toInsert,
-        where : where
+        where : where,
+        relation : relation
     };
 }
 
@@ -428,7 +489,7 @@ export async function confidentialiteParametre(
  * @param insert vrai si c'est une action d'insert qui est testé
  * @return la valeur par default pour la colonne demandée
  */
-export async function confidentialiteParametreValeurParDefaut(
+async function confidentialiteParametreValeurParDefaut(
     nomElement : string,
     colonne : string,
     type : string,
@@ -460,7 +521,7 @@ export async function confidentialiteParametreValeurParDefaut(
         case "new_axe_id" :
             return col*10;
         case "axe_id" :
-            return insert ? col*10 : col;
+        case "plan_id" :
         case "financeur_tag_id" :
         case "service_tag_id" :
         case "partenaire_tag_id" :
@@ -488,6 +549,8 @@ export async function confidentialiteParametreValeurParDefaut(
         case "referentiel" :
             return 'eci';
         case "indicateur_id":
+        case "indicateur_referentiel_id":
+        case "indicateur_personnalise_id":
             if(type=="integer"){
                 return insert? col*10 : col;
             }
@@ -625,7 +688,42 @@ export async function confidentialiteParametreValeurParDefaut(
             return {
                 "fiche_id" : col,
                 "action_id" : "eci_2.1"
-            };
+            }
+        case "fiche_action_indicateur":
+            return {
+                "fiche_id" : col,
+                "indicateur_id" : "eci_5"
+            }
+        case "site_labellisation":
+            return {
+                "collectivite_id" : col,
+                "nom" : null,
+                "type_collectivite" : null,
+                "nature_collectivite" : null,
+                "code_siren_insee" : null,
+                "region_name" : null,
+                "region_code" : null,
+                "departement_name" : null,
+                "departement_code" : null,
+                "population_totale" : null,
+                "active" : true,
+                "cot" : false,
+                "engagee" : false,
+                "labellisee" : false,
+                "cae_obtenue_le" : null,
+                "cae_etoiles" : null,
+                "cae_score_realise" : null,
+                "cae_score_programme" : null,
+                "eci_obtenue_le" : null,
+                "eci_etoiles" : null,
+                "eci_score_realise" : null,
+                "eci_score_programme" : null
+            }
+        case "site_region" :
+            return {
+                "insee" : '76',
+                "labellisation" : null
+            }
     }
 // Si type non trouvé, alors c'est un type propre à TeT
     const enumType = await supabase.from('confidentialite_types_enum').select('enum_nom').eq('type_nom', type);
@@ -644,7 +742,7 @@ export async function confidentialiteParametreValeurParDefaut(
  * @param resultat résultat du test
  * @return true si le profil peut faire cette action
  */
-export async function confidentialiteCheckResultat(
+async function confidentialiteCheckResultat(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
     nomElement : string,
     profil: Database["public"]["Enums"]["confidentialite_profil"],
@@ -697,105 +795,111 @@ export async function confidentialiteCheckResultat(
             resultatAttendu = false;
         }
         // Récupère le résultat obtenu
-        raisonEchec = `code ${resultat.status} : ${resultat.statusText}`;
-        switch (resultat.status) {
-            case 200 :
-                resultatObtenu = true;
-                if (typeElement!="fonction" && (resultat.data==null || resultat.data.length==0)){
-                    // Retour 200 pour une table ou une vue, mais avec un retour vide
-                    resultatObtenu = false;
-                    switch (crud){
-                        case "c" :
-                            raisonEchec = "La création ne s'est pas faite"
-                            break;
-                        case "r" :
-                            raisonEchec = "La requête retourne 0 enregistrement"
-                            // Cas spécial :
-                            // preuve_audit ne retourne pas de résultat pour la collectivité qui n'est pas en audit
-                            if(nomElement == "preuve_audit" &&
-                                collectivite == 500 &&
-                                profil!= 'public' && profil!= 'connecte'){
+        if(resultat) {
+            raisonEchec = `code ${resultat.status} : ${resultat.statusText}`;
+            switch (resultat.status) {
+                case 200 :
+                    resultatObtenu = true;
+                    if (typeElement != "fonction" && (resultat.data == null || resultat.data.length == 0)) {
+                        // Retour 200 pour une table ou une vue, mais avec un retour vide
+                        resultatObtenu = false;
+                        switch (crud) {
+                            case "c" :
+                                raisonEchec = "La création ne s'est pas faite"
+                                break;
+                            case "r" :
+                                raisonEchec = "La requête retourne 0 enregistrement"
+                                // Cas spécial :
+                                // preuve_audit ne retourne pas de résultat pour la collectivité qui n'est pas en audit
+                                if (nomElement == "preuve_audit" &&
+                                    collectivite == 500 &&
+                                    profil != 'public' && profil != 'connecte') {
+                                    resultatObtenu = true;
+                                }
+                                break;
+                            case "u" :
+                            case "d" :
+                                raisonEchec = "L'utilisateur n'a pas accès à cet enregistrement"
+                                break;
+                        }
+                    } else if (typeElement == "fonction" && resultat.data != null && (typeof resultat.data) == "object") {
+                        // Une fonction peut retourner des données null quand il n'y a pas les droits.
+                        // On considère donc que si tous les éléments retournés sont à null
+                        // alors l'utilisateur n'a pas les droits.
+                        resultatObtenu = false;
+                        for (let d in resultat.data) {
+                            if (resultat.data[d] != null) {
                                 resultatObtenu = true;
                             }
-                            break;
-                        case "u" :
-                        case "d" :
-                            raisonEchec = "L'utilisateur n'a pas accès à cet enregistrement"
-                            break;
-                    }
-                }else if(typeElement=="fonction" && resultat.data!=null && (typeof  resultat.data) == "object"){
-                    // Une fonction peut retourner des données null quand il n'y a pas les droits.
-                    // On considère donc que si tous les éléments retournés sont à null
-                    // alors l'utilisateur n'a pas les droits.
-                    resultatObtenu = false;
-                    for (let d in resultat.data) {
-                        if (resultat.data[d] != null) {
-                            resultatObtenu = true;
                         }
                     }
-                }
-                break;
-            case 201 :
-                resultatObtenu = true;
-                break;
-            case 204 :
-                resultatObtenu = typeElement=="fonction";
-                break;
-            case 400 :
-                resultatObtenu = false;
-                if(resultat.error!=null) {
-                    raisonEchec = resultat.error.message;
-                }
-                // Cas spécial :
-                // Les collectivités en audit ne peuvent pas commencer un audit
-                if (nomElement == "labellisation_commencer_audit" &&
-                    (collectivite==501 || collectivite == 502) &&
-                    resultat.error.message == "La demande liée à l'audit est en cours, elle n'a pas été envoyée."){
+                    break;
+                case 201 :
                     resultatObtenu = true;
-                }
-                break;
-            case 403 :
-                // Cas spécial :
-                // Les profils testés sont déjà inscrit et n'ont pas d'invitation
-                resultatObtenu = nomElement=="consume_invitation";
-                break;
-            case 404 :
-            case 409 :
-                resultatObtenu = null;
-                break;
-            default : // 401, 405
-                resultatObtenu = false;
+                    break;
+                case 204 :
+                    resultatObtenu = typeElement == "fonction";
+                    break;
+                case 400 :
+                    resultatObtenu = false;
+                    if (resultat.error != null) {
+                        raisonEchec = resultat.error.message;
+                    }
+                    // Cas spécial :
+                    // Les collectivités en audit ne peuvent pas commencer un audit
+                    if (nomElement == "labellisation_commencer_audit" &&
+                        (collectivite == 501 || collectivite == 502) &&
+                        resultat.error.message == "La demande liée à l'audit est en cours, elle n'a pas été envoyée.") {
+                        resultatObtenu = true;
+                    }
+                    break;
+                case 403 :
+                    // Cas spécial :
+                    // Les profils testés sont déjà inscrit et n'ont pas d'invitation
+                    resultatObtenu = nomElement == "consume_invitation";
+                    break;
+                case 404 :
+                case 409 :
+                    resultatObtenu = null;
+                    break;
+                default : // 401, 405
+                    resultatObtenu = false;
+            }
+        }else{
+            resultatObtenu = null;
+            raisonEchec = 'Pas de résultats';
         }
     }
     // Retourne OK si le résultat attendu correspond au résultat obtenu
     const toReturn = resultatObtenu==null? false : resultatObtenu==resultatAttendu;
 
-    console.log(
-        typeElement + " " + nomElement + " - "
-        + crud + " par " + profil
-        + (profilCol == 0
-                ? " "
-                : ("_" + profilCol + " ")
-        ) + "sur la collectivité " + collectivite
-        + " : " + (resultatObtenu == null
-                ? "%cERREUR%c"
-                : (toReturn
-                    ? ("%cOK %c[" + (resultatObtenu
-                            ? "autorisé"
-                            : "non autorisé")
+    if(!toReturn) {
+        console.log(
+            typeElement + " " + nomElement + " - "
+            + crud + " par " + profil
+            + (profilCol == 0
+                    ? " "
+                    : ("_" + profilCol + " ")
+            ) + "sur la collectivité " + collectivite
+            + " : " + (resultatObtenu == null
+                    ? "%cERREUR%c"
+                    : (toReturn
+                        ? ("%cOK %c[" + (resultatObtenu
+                                ? "autorisé"
+                                : "non autorisé")
+                        )
+                        : "%cECHEC %c[" + (resultatObtenu
+                            ? "autorisé à tord"
+                            : "non autorisé à tord"
                     )
-                    : "%cECHEC %c[" + (resultatObtenu
-                        ? "autorisé à tord"
-                        : "non autorisé à tord"
-                )
-            ) + "]"
-        ) + " (" + raisonEchec + ")"
-        , "color: " + (resultatObtenu == null
-        ? "red"
-        : (toReturn
-            ? "green"
-            : "orange"
-    ) + ";"), "color : White;");
-
+                ) + "]"
+            ) + " (" + raisonEchec + ")"
+            , "color: " + (resultatObtenu == null
+            ? "red"
+            : (toReturn
+                ? "green"
+                : "orange"
+        ) + ";"), "color : White;");
+    }
     return toReturn;
 }

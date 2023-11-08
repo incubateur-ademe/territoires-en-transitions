@@ -1,6 +1,6 @@
 -- Vues
 create materialized view confidentialite_tables_a_tester as
-select table_name as element
+select table_name as element,  null as id_element
 from information_schema.tables
 where table_schema = 'public'
   and table_name not like 'test_%'
@@ -10,19 +10,18 @@ order by table_name;
 comment on materialized view confidentialite_tables_a_tester is 'Liste des tables à tester';
 
 create materialized view confidentialite_fonctions_a_tester as
-select routine_name as element
+select routine_name as element,  specific_name as id_element
 from information_schema.routines
 where routine_schema = 'public'
   and routine_definition is not null
   and data_type != 'trigger'
   and routine_name not like 'test_%'
   and routine_name not like 'confidentialite_%'
-  and routine_name != 'fiche_resume' and routine_name != 'geojson' -- fonction en doublon
 order by routine_name;
 comment on materialized view confidentialite_fonctions_a_tester is 'Liste des fonctions à tester';
 
 create materialized view confidentialite_vues_a_tester as
-select table_name as element, is_trigger_insertable_into as c, is_trigger_updatable as u, is_trigger_deletable as d
+select table_name as element,  null as id_element, is_trigger_insertable_into as c, is_trigger_updatable as u, is_trigger_deletable as d
 from information_schema.views
 where table_schema = 'public'
   and table_name not like 'test_%'
@@ -51,7 +50,7 @@ comment on materialized view confidentialite_vues_colonnes
     is 'Liste des colonnes essentielles pour chaque vue à tester';
 
 create materialized view confidentialite_fonctions_parametres as
-select r.routine_name as element,
+select r.specific_name as element,
        p.parameter_name as colonne,
        case when p.data_type = 'USER-DEFINED' then p.udt_name else p.data_type end as type
 from information_schema.routines r

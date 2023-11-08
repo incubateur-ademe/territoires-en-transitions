@@ -406,6 +406,7 @@ begin
     insert into indicateur_perso_resultat_commentaire(collectivite_id, indicateur_id, annee, commentaire, modified_by, modified_at)
     values (colid, colid, 2020, 'test', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now());
     alter table indicateur_perso_resultat_commentaire enable trigger modified_by;
+    -- Suite indicateur après plan action
 
     -- PLAN ACTION --
     -- fiche_action -> fiche_id (2ème valeur pour les inserts des tables liées)
@@ -467,9 +468,10 @@ begin
     -- fiche_action_lien
     insert into fiche_action_lien(fiche_une, fiche_deux) values (colid*10+1, colid*10+2);
     -- fiche_action_thematique
-    insert into fiche_action_thematique(fiche_id, thematique) values (colid, 'Énergie et climat');
+    insert into fiche_action_thematique(fiche_id, thematique_id) values (colid, 5);
     -- fiche_action_sous_thematique
     insert into fiche_action_sous_thematique(fiche_id, thematique_id) values (colid, 44);
+
     -- PERSONNALISATION
     -- reponse_binaire
     insert into reponse_binaire(collectivite_id, question_id, reponse) values (colid, 'dechets_1', true);
@@ -482,11 +484,49 @@ begin
     insert into justification(collectivite_id, question_id, texte, modified_at, modified_by)
     values (colid, 'dechets_1', 'texte', now(), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
     alter table justification enable trigger modified_by;
+    -- justification_ajustement
+    alter table justification_ajustement disable trigger modified_by;
+    insert into justification_ajustement (collectivite_id, action_id, texte, modified_at, modified_by)
+    values (colid, 'eci_2.1','texte', now(), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+    alter table justification_ajustement enable trigger modified_by;
+
+    -- INDICATEURS 2
+-- indicateur_pilote
+    insert into indicateur_pilote (indicateur_id, collectivite_id, user_id, tag_id)
+    values ('eci_5', colid, null, colid);
+    -- indicateur_service_tag
+    insert into indicateur_service_tag(indicateur_id, collectivite_id, service_tag_id)
+    values ('eci_5', colid, colid);
+    -- indicateur_personnalise_pilote
+    insert into indicateur_personnalise_pilote (indicateur_id, user_id, tag_id)
+    values (colid, null, colid);
+    -- indicateur_personalise_service_tag
+    insert into indicateur_personnalise_service_tag (indicateur_id, service_tag_id)
+    values (colid, colid);
+    -- indicateur_personnalise_thematique
+    insert into indicateur_personnalise_thematique (indicateur_id, thematique_id)
+    values (colid, 5);
 
     -- AUTRE
     -- cot
     insert into cot(collectivite_id, actif, signataire)
     values (colid, true, null);
+    -- geojson
+    insert into stats.epci_geojson (siren, raison_sociale, nature_juridique, geojson)
+    select e.siren as siren, e.nom as raison_sociale, e.nature as nature_juridique,
+           '{}' as geojson
+    from epci e
+    where e.collectivite_id = colid
+    on conflict do nothing;
+    insert into stats.commune_geojson (insee, libelle, geojson)
+    select c.code as insee, c.nom as libelle,
+           '{}' as geojson
+    from commune c
+    where c.collectivite_id = colid
+    on conflict do nothing ;
+    insert into stats.region_geojson (insee, libelle, geojson)
+    values ('76', 'Occitanie', '{}')
+    on conflict do nothing ;
 end;
 $$language plpgsql security definer;
 comment on function private.confidentialite_init_test_collectivite

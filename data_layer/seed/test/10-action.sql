@@ -13,7 +13,7 @@ from public.action_commentaire;
 comment on table test.action_commentaire is
     'Copie de la table action_commentaire.';
 
-create function
+create or replace function
     test_reset_action_statut_and_desc()
     returns void
 as
@@ -35,6 +35,7 @@ $$
     -- Vide les tables
     truncate action_statut;
     truncate action_commentaire;
+    truncate justification_ajustement;
 
     -- Restaure les copies
     insert into public.action_statut
