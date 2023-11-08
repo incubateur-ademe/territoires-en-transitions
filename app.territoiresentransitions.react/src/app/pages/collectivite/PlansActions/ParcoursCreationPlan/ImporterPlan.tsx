@@ -20,8 +20,9 @@ const ImporterPlan = () => {
           <div className="mb-1 text-sm">Étape 1</div>
           <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
           <p className="!mb-0">
-            Ce modèle correspond au format des fiches proposé dans la
-            plateforme.
+            Pour importer votre plan, utilisez notre fichier modèle en
+            téléchargement ci-dessous. Il correspond au format des fiches
+            proposé dans la plateforme.
           </p>
           <div className="h-[1px] my-8 bg-gray-300" />
 
@@ -30,8 +31,21 @@ const ImporterPlan = () => {
             Adaptez votre plan d’action existant au format requis
           </h6>
           <p>
-            Renommez les colonnes de votre document tableur en suivant le modèle
-            ; rassemblez plusieurs contenus si nécessaire.
+            Vous avez le choix entre :
+            <ul>
+              <li>
+                La version flash (onglet 2), pour importer en priorité la
+                structure de votre plan et les informations clés pour le
+                pilotage.
+              </li>
+              <li>
+                La version complète (onglet 3) pour détailler et importer
+                l’ensemble des informations de vos fiches action. Si vous
+                choisissez celle-ci, remplissez tout ce que vous pouvez !
+              </li>
+            </ul>
+            Attention à bien respecter le format proposé pour que l’importation
+            fonctionne !
           </p>
           <Alerte
             state="information"
