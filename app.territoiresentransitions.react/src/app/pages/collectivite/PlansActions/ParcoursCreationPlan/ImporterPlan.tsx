@@ -4,6 +4,7 @@ import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link} from 'react-router-dom';
 import Alerte from 'ui/shared/Alerte';
 import ContextMenu from 'ui/shared/select/ContextMenu';
+import {MenuTriggerButton} from 'ui/shared/select/MenuTriggerButton';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   {value: 'xlsx', label: 'Format Excel (.xlsx)'},
@@ -36,20 +37,19 @@ const ImporterPlan = () => {
           <h6 className="mb-4">
             Adaptez votre plan d’action existant au format requis
           </h6>
+          <p>Vous avez le choix entre :</p>
+          <ul>
+            <li>
+              La version flash (onglet 2), pour importer en priorité la
+              structure de votre plan et les informations clés pour le pilotage.
+            </li>
+            <li>
+              La version complète (onglet 3) pour détailler et importer
+              l’ensemble des informations de vos fiches action. Si vous
+              choisissez celle-ci, remplissez tout ce que vous pouvez !
+            </li>
+          </ul>
           <p>
-            Vous avez le choix entre :
-            <ul>
-              <li>
-                La version flash (onglet 2), pour importer en priorité la
-                structure de votre plan et les informations clés pour le
-                pilotage.
-              </li>
-              <li>
-                La version complète (onglet 3) pour détailler et importer
-                l’ensemble des informations de vos fiches action. Si vous
-                choisissez celle-ci, remplissez tout ce que vous pouvez !
-              </li>
-            </ul>
             Attention à bien respecter le format proposé pour que l’importation
             fonctionne !
           </p>
@@ -91,9 +91,9 @@ const ImporterPlan = () => {
                 );
               }}
             >
-              <button className="fr-btn fr-btn--icon-left fr-icon-download-line">
+              <MenuTriggerButton className="fr-btn fr-btn--icon-left fr-icon-download-line">
                 Télécharger le modèle
-              </button>
+              </MenuTriggerButton>
             </ContextMenu>
           </div>
         </div>

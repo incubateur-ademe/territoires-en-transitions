@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
 import {TOption} from './commons';
 import ContextMenu from './ContextMenu';
+import {MenuTriggerButton} from './MenuTriggerButton';
 
 type TOptionWithIcon = TOption & {icon?: string};
 
@@ -35,19 +36,19 @@ const SmallIconContextMenu = ({
 }) => {
   return (
     <ContextMenu dataTest={dataTest} options={options} onSelect={onSelect}>
-      <button
-        data-test={dataTestButton}
+      <MenuTriggerButton
         className={classNames(
           'border border-solid border-gray-200 p-1 text-bf500 h-8 w-8',
           buttonClassname
         )}
-        title={title}
+        data-test={dataTestButton}
         disabled={disabled}
+        title={title}
       >
         {!hideDefaultIcon && (
           <IconThreeDotHorizontal className="w-5 h-5 fill-bf500" />
         )}
-      </button>
+      </MenuTriggerButton>
     </ContextMenu>
   );
 };
