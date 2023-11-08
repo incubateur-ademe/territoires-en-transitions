@@ -3,6 +3,12 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link} from 'react-router-dom';
 import Alerte from 'ui/shared/Alerte';
+import ContextMenu from 'ui/shared/select/ContextMenu';
+
+const DOWNLOAD_TEMPLATE_OPTIONS = [
+  {value: 'xlsx', label: 'Format Excel (.xlsx)'},
+  {value: 'ods', label: 'Format OpenDocument (.ods)'},
+];
 
 const ImporterPlan = () => {
   const collectivite_id = useCollectiviteId();
@@ -75,18 +81,20 @@ const ImporterPlan = () => {
             >
               Revenir à l’étape précédente
             </Link>
-            <a
-              className="!bg-none after:!hidden fr-btn"
-              onClick={() =>
-                tracker({fonction: 'modele_import', action: 'telechargement'})
-              }
-              href="/20231107-Fichier-Import-PA-NEW.xlsx"
-              target="_blank"
-              rel="noopener noreferrer"
+            <ContextMenu
+              options={DOWNLOAD_TEMPLATE_OPTIONS}
+              onSelect={(format: string) => {
+                tracker({fonction: 'modele_import', action: 'telechargement'});
+                window.open(
+                  `/20231107-Fichier-Import-PA-NEW.${format}`,
+                  '_blank'
+                );
+              }}
             >
-              <span className="mr-2 fr-icon-download-line scale-75" />
-              Télécharger le modèle
-            </a>
+              <button className="fr-btn fr-btn--icon-left fr-icon-download-line">
+                Télécharger le modèle
+              </button>
+            </ContextMenu>
           </div>
         </div>
       </div>
