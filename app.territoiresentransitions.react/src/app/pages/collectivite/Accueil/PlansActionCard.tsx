@@ -14,8 +14,9 @@ import {usePlansActionsListe} from '../PlansActions/PlanAction/data/usePlansActi
 import {usePlanActionTableauDeBord} from '../PlansActions/Synthese/data/usePlanActionTableauDeBord';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import KeyNumbers from '../../../../ui/score/KeyNumbers';
+import KeyNumbers from 'ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useHistory} from 'react-router-dom';
 
 type PlanActionCardProps = {
@@ -154,6 +155,7 @@ const EmptyPlansActionCard = ({
   collectiviteId,
 }: EmptyPlansActionCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
+  const collectivite = useCurrentCollectivite();
 
   return (
     <AccueilEmptyCardWithPicto picto={<PictoPlansAction />}>
@@ -169,15 +171,17 @@ const EmptyPlansActionCard = ({
             <b>Visualisez votre progression</b> sur les graphiques
           </li>
         </ul>
-        <ButtonWithLink
-          onClick={() =>
-            tracker({fonction: 'cta_plan_creation', action: 'clic'})
-          }
-          href={makeCollectivitePlansActionsNouveauUrl({collectiviteId})}
-          rounded
-        >
-          Créer ou importer un plan d'action
-        </ButtonWithLink>
+        {collectivite && !collectivite.readonly && (
+          <ButtonWithLink
+            onClick={() =>
+              tracker({fonction: 'cta_plan_creation', action: 'clic'})
+            }
+            href={makeCollectivitePlansActionsNouveauUrl({collectiviteId})}
+            rounded
+          >
+            Créer ou importer un plan d'action
+          </ButtonWithLink>
+        )}
       </>
     </AccueilEmptyCardWithPicto>
   );
