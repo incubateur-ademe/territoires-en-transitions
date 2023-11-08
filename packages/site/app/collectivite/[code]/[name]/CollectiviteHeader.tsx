@@ -15,6 +15,7 @@ type CollectiviteHeaderProps = {
   population?: number;
   url?: string;
   couverture?: StrapiItem;
+  couvertureDefaut?: StrapiItem;
   logo?: StrapiItem;
 };
 
@@ -28,6 +29,7 @@ const CollectiviteHeader = ({
   population,
   url,
   couverture,
+  couvertureDefaut,
   logo,
 }: CollectiviteHeaderProps) => {
   return (
@@ -48,13 +50,26 @@ const CollectiviteHeader = ({
                 contact@territoiresentransitions.fr
               </p>
             </div>
-            <Image
-              src="/collectivites/placeholder.jpg"
-              alt=""
-              fill={true}
-              style={{objectFit: 'cover', minHeight: '100%', minWidth: '100%'}}
-              className="hover:opacity-10 transition-opacity duration-500"
-            />
+            {couvertureDefaut ? (
+              <StrapiImage
+                data={couvertureDefaut}
+                className="object-cover min-h-full min-w-full"
+                containerClassName="h-full w-full hover:opacity-10 transition-opacity duration-500 relative z-10"
+                displayCaption={false}
+              />
+            ) : (
+              <Image
+                src="/collectivites/placeholder.jpg"
+                alt=""
+                fill={true}
+                style={{
+                  objectFit: 'cover',
+                  minHeight: '100%',
+                  minWidth: '100%',
+                }}
+                className="hover:opacity-10 transition-opacity duration-500"
+              />
+            )}
           </div>
         )}
       </div>

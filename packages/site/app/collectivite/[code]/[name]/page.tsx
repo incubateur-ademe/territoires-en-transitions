@@ -55,6 +55,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
           population={collectiviteData.population_totale ?? undefined}
           url={strapiData?.url}
           couverture={strapiData?.couverture}
+          couvertureDefaut={strapiDefaultData?.couverture}
           logo={strapiData?.logo}
         />
       </div>

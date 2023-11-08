@@ -108,15 +108,17 @@ export const getStrapiData = async (codeSirenInsee: string) => {
 };
 
 export const getStrapiDefaultData = async () => {
-  const data = await fetchSingle('indicateurs-collectivite', [
-    ['populate[0]', 'gaz_effet_serre'],
-    ['populate[1]', 'gaz_effet_serre.illustration_encadre'],
+  const data = await fetchSingle('page-collectivite', [
+    ['populate[0]', 'couverture'],
+    ['populate[1]', 'gaz_effet_serre'],
+    ['populate[2]', 'gaz_effet_serre.illustration_encadre'],
   ]);
 
   if (data) {
     const gaz_effet_serre = data.attributes.gaz_effet_serre;
 
     return {
+      couverture: data.attributes.couverture.data as unknown as StrapiItem,
       inscription: {
         description:
           (data.attributes.inscription_description as unknown as string) ??
@@ -139,6 +141,8 @@ export const getStrapiDefaultData = async () => {
               gaz_effet_serre.description_encadre as unknown as string,
             illustration_encadre: gaz_effet_serre.illustration_encadre
               .data as unknown as StrapiItem,
+            details:
+              (gaz_effet_serre.details as unknown as string) ?? undefined,
           }
         : undefined,
     };
