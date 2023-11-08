@@ -1,10 +1,10 @@
 {
   "kind": "singleType",
-  "collectionName": "indicateurs_collectivites",
+  "collectionName": "page_collectivites",
   "info": {
-    "singularName": "indicateurs-collectivite",
-    "pluralName": "indicateurs-collectivites",
-    "displayName": "Indicateurs Collectivité",
+    "singularName": "page-collectivite",
+    "pluralName": "page-collectivites",
+    "displayName": "Page Collectivité",
     "description": ""
   },
   "options": {
@@ -12,6 +12,12 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "couverture": {
+      "allowedTypes": ["images"],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    },
     "inscription_description": {
       "type": "string",
       "required": true,

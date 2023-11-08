@@ -9,6 +9,7 @@ export type IndicateurDefaultData = {
   titre_encadre: string;
   description_encadre: string;
   illustration_encadre: StrapiItem;
+  details?: string;
 };
 
 type IndicateursCollectiviteProps = {

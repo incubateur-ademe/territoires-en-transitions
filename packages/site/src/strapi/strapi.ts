@@ -22,7 +22,7 @@ type Single =
   | 'accueil'
   | 'contact'
   | 'metadata'
-  | 'indicateurs-collectivite'
+  | 'page-collectivite'
   | 'programme';
 
 export async function fetchCollection(

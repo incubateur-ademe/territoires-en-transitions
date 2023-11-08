@@ -3,6 +3,8 @@
 import DonutChartWithLegend from '@components/charts/DonutChartWithLegend';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {Indicateurs} from 'app/collectivite/utils';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
 import {secteurIdToLabel} from './labels';
 
@@ -59,6 +61,16 @@ const IndicateurCard = ({
           </p>
         </div>
       </div>
+
+      {/* Détails */}
+      {defaultData.details && (
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          className="text-primary-9 text-[14px] leading-[25px] font-[500px]"
+        >
+          {defaultData.details}
+        </Markdown>
+      )}
 
       {/* Graphe */}
       <p className="text-[12px] leading-[20px] text-grey-8 mb-0">{`${graphTitle} en ${year}`}</p>
