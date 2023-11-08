@@ -60,6 +60,7 @@ $$
 declare
     colid integer;
     current_audit labellisation.audit;
+    current_audit_cae labellisation.audit;
 begin
     colid = collectivite_id;
     -- LABELLISATION --
@@ -91,6 +92,26 @@ begin
     end if;
     if restreint then
         perform test_changer_acces_restreint_collectivite(collectivite_id, true);
+    end if;
+
+    select *
+    into current_audit_cae
+    from labellisation.current_audit(colid, 'cae');
+    if current_audit_cae.demande_id is null
+    then
+        with demande as (
+            insert into labellisation.demande (collectivite_id, referentiel, etoiles, sujet)
+                values (colid, 'cae', null, 'cot')
+                returning id),
+             audit as (
+                 update labellisation.audit
+                     set demande_id = demande.id
+                     from demande
+                     where audit.id = current_audit_cae.id
+                     returning *)
+        select audit.*
+        from audit
+        into current_audit_cae;
     end if;
 
     -- REFERENTIEL --
@@ -385,8 +406,8 @@ begin
     insert into indicateur_resultat_commentaire(collectivite_id, indicateur_id, commentaire, modified_by, modified_at)
     values (colid, 'eci_5', 'test', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now());
     -- indicateur_resultat_import
-    insert into indicateur_resultat_import(collectivite_id, indicateur_id, annee, valeur, source, modified_at)
-    values (colid, 'eci_5', 2020, 1.0, 'source', now());
+    insert into indicateur_resultat_import(collectivite_id, indicateur_id, annee, valeur, source, source_id, modified_at)
+    values (colid, 'eci_5', 2020, 1.0, 'source', 'citepa', now());
     -- indicateur_personnalise_definition (2ème valeur pour insert un nouveau indicateur_personnalise_objectif)
     insert into indicateur_personnalise_definition(id, collectivite_id, titre, description, unite, commentaire, modified_by)
     values (colid, colid, 'titre', 'description', 'unite', 'commentaire', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
@@ -406,6 +427,10 @@ begin
     insert into indicateur_perso_resultat_commentaire(collectivite_id, indicateur_id, annee, commentaire, modified_by, modified_at)
     values (colid, colid, 2020, 'test', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now());
     alter table indicateur_perso_resultat_commentaire enable trigger modified_by;
+    insert into indicateur_artificialisation(collectivite_id, total, activite, habitat, mixte, routiere, ferroviaire, inconnue)
+    values (colid, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    on conflict do nothing;
+    -- Suite indicateur après plan action
 
     -- PLAN ACTION --
     -- fiche_action -> fiche_id (2ème valeur pour les inserts des tables liées)
@@ -419,9 +444,9 @@ begin
            (colid*10+2, colid),
            (colid*10+4, colid);
     -- axe -> axe_id (2ème valeur pour un nouveau insert de fiche_action_axe)
-    insert into axe (id, collectivite_id, nom)
-    values (colid, colid, 'plan'),
-           (colid*10, colid, 'plan');
+    insert into axe (id, collectivite_id, nom, type)
+    values (colid, colid, 'plan', 1),
+           (colid*10, colid, 'plan', 1);
     -- fiche_action_axe
     insert into fiche_action_axe(fiche_id, axe_id) values (colid, colid);
     -- financeur_tag -> financeur_tag_id (2ème valeur pour un nouveau insert de fiche_action_financeur_tag)
@@ -464,12 +489,17 @@ begin
     -- fiche_action_indicateur
     insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
     values (colid, null, colid);
+    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
+    values (colid, 'eci_5', null);
+    insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
+    values (colid*10, 'eci_5', null);
     -- fiche_action_lien
     insert into fiche_action_lien(fiche_une, fiche_deux) values (colid*10+1, colid*10+2);
     -- fiche_action_thematique
-    insert into fiche_action_thematique(fiche_id, thematique) values (colid, 'Énergie et climat');
+    insert into fiche_action_thematique(fiche_id, thematique_id) values (colid, 5);
     -- fiche_action_sous_thematique
     insert into fiche_action_sous_thematique(fiche_id, thematique_id) values (colid, 44);
+
     -- PERSONNALISATION
     -- reponse_binaire
     insert into reponse_binaire(collectivite_id, question_id, reponse) values (colid, 'dechets_1', true);
@@ -482,11 +512,48 @@ begin
     insert into justification(collectivite_id, question_id, texte, modified_at, modified_by)
     values (colid, 'dechets_1', 'texte', now(), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
     alter table justification enable trigger modified_by;
+    -- justification_ajustement
+    alter table justification_ajustement disable trigger modified_by;
+    insert into justification_ajustement (collectivite_id, action_id, texte, modified_at, modified_by)
+    values (colid, 'eci_2.1','texte', now(), '17440546-f389-4d4f-bfdb-b0c94a1bd0f9');
+    alter table justification_ajustement enable trigger modified_by;
+
+    -- INDICATEURS 2
+-- indicateur_pilote
+    alter table indicateur_pilote disable trigger rewrite_indicateur_id;
+    insert into indicateur_pilote (indicateur_id, collectivite_id, user_id, tag_id)
+    values ('eci_5', colid, null, colid);
+    alter table indicateur_pilote enable trigger rewrite_indicateur_id;
+    -- indicateur_service_tag
+    insert into indicateur_service_tag(indicateur_id, collectivite_id, service_tag_id)
+    values ('eci_5', colid, colid);
+    -- indicateur_personnalise_thematique
+    insert into indicateur_personnalise_thematique (indicateur_id, thematique_id)
+    values (colid, 5);
+    -- indicateur_confidentiel
+    insert into indicateur_confidentiel (indicateur_id, indicateur_perso_id, collectivite_id)
+    values ('eci_7', null, colid);
 
     -- AUTRE
     -- cot
     insert into cot(collectivite_id, actif, signataire)
     values (colid, true, null);
+    -- geojson
+    insert into stats.epci_geojson (siren, raison_sociale, nature_juridique, geojson)
+    select e.siren as siren, e.nom as raison_sociale, e.nature as nature_juridique,
+           '{}' as geojson
+    from epci e
+    where e.collectivite_id = colid
+    on conflict do nothing;
+    insert into stats.commune_geojson (insee, libelle, geojson)
+    select c.code as insee, c.nom as libelle,
+           '{}' as geojson
+    from commune c
+    where c.collectivite_id = colid
+    on conflict do nothing ;
+    insert into stats.region_geojson (insee, libelle, geojson)
+    values ('76', 'Occitanie', '{}')
+    on conflict do nothing ;
 end;
 $$language plpgsql security definer;
 comment on function private.confidentialite_init_test_collectivite
