@@ -12,16 +12,23 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
     "couverture": {
-      "allowedTypes": ["images"],
       "type": "media",
       "multiple": false,
-      "required": true
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "inscription_description": {
       "type": "string",
       "required": true,
-      "default": "faites un pas supplémentaire vers la transition écologique en créant un compte gratuit"
+      "default": "Faites un pas supplémentaire vers la transition écologique en créant un compte gratuit"
     },
     "inscription_cta": {
       "type": "string",

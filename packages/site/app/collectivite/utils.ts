@@ -51,12 +51,14 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
 export const getStrapiData = async (codeSirenInsee: string) => {
   const data = await fetchCollection('collectivites', [
     ['filters[code_siren_insee]', `${codeSirenInsee}`],
-    ['populate[0]', 'couverture'],
-    ['populate[1]', 'logo'],
-    ['populate[2]', 'temoignages'],
-    ['populate[3]', 'temoignages.portrait'],
-    ['populate[4]', 'actions'],
-    ['populate[5]', 'actions.image'],
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'couverture'],
+    ['populate[3]', 'logo'],
+    ['populate[4]', 'temoignages'],
+    ['populate[5]', 'temoignages.portrait'],
+    ['populate[6]', 'actions'],
+    ['populate[7]', 'actions.image'],
   ]);
 
   if (data && data.length) {
@@ -64,7 +66,30 @@ export const getStrapiData = async (codeSirenInsee: string) => {
     const isContentDefined =
       (collectiviteData.actions as unknown as {}[]).length > 0;
 
+    const metaImage =
+      (collectiviteData.seo?.metaImage.data as unknown as StrapiItem)
+        ?.attributes ??
+      (collectiviteData?.attributes.couverture.data as unknown as StrapiItem)
+        ?.attributes;
+
     return {
+      seo: {
+        metaTitle:
+          (collectiviteData.seo?.metaTitle as unknown as string) ??
+          (collectiviteData.nom as unknown as string),
+        metaDescription:
+          (collectiviteData.seo?.metaDescription as unknown as string) ??
+          undefined,
+        metaImage: metaImage
+          ? {
+              url: metaImage.url as unknown as string,
+              width: metaImage.width as unknown as number,
+              height: metaImage.height as unknown as number,
+              type: metaImage.mime as unknown as string,
+              alt: metaImage.alternativeText as unknown as string,
+            }
+          : undefined,
+      },
       nom: collectiviteData.nom as unknown as string,
       code_siren_insee: collectiviteData.code_siren_insee as unknown as string,
       couverture:
@@ -109,15 +134,36 @@ export const getStrapiData = async (codeSirenInsee: string) => {
 
 export const getStrapiDefaultData = async () => {
   const data = await fetchSingle('page-collectivite', [
-    ['populate[0]', 'couverture'],
-    ['populate[1]', 'gaz_effet_serre'],
-    ['populate[2]', 'gaz_effet_serre.illustration_encadre'],
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'couverture'],
+    ['populate[3]', 'gaz_effet_serre'],
+    ['populate[4]', 'gaz_effet_serre.illustration_encadre'],
   ]);
 
   if (data) {
+    const seo = data.attributes.seo;
     const gaz_effet_serre = data.attributes.gaz_effet_serre;
 
+    const metaImage =
+      (seo?.metaImage.data as unknown as StrapiItem)?.attributes ??
+      (data?.attributes.couverture.data as unknown as StrapiItem)?.attributes;
+
     return {
+      seo: {
+        metaTitle: (seo?.metaTitle as unknown as string) ?? undefined,
+        metaDescription:
+          (seo?.metaDescription as unknown as string) ?? undefined,
+        metaImage: metaImage
+          ? {
+              url: metaImage.url as unknown as string,
+              width: metaImage.width as unknown as number,
+              height: metaImage.height as unknown as number,
+              type: metaImage.mime as unknown as string,
+              alt: metaImage.alternativeText as unknown as string,
+            }
+          : undefined,
+      },
       couverture: data.attributes.couverture.data as unknown as StrapiItem,
       inscription: {
         description:
