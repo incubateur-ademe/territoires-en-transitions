@@ -69,7 +69,7 @@ export const getStrapiData = async (codeSirenInsee: string) => {
     const metaImage =
       (collectiviteData.seo?.metaImage.data as unknown as StrapiItem)
         ?.attributes ??
-      (collectiviteData?.attributes.couverture.data as unknown as StrapiItem)
+      (collectiviteData?.attributes?.couverture.data as unknown as StrapiItem)
         ?.attributes;
 
     return {
