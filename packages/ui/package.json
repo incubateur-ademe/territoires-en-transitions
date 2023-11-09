@@ -26,6 +26,7 @@
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.2",
     "@storybook/addon-essentials": "^7.5.1",
+    "@storybook/addon-styling-webpack": "^0.0.5",
     "@storybook/preset-create-react-app": "^7.5.1",
     "@storybook/react": "^7.5.1",
     "@storybook/react-webpack5": "^7.5.1",
