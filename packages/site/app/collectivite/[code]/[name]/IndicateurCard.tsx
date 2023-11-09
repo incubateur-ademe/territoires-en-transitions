@@ -5,6 +5,7 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {Indicateurs} from 'app/collectivite/utils';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
 import {secteurIdToLabel} from './labels';
 
@@ -34,7 +35,11 @@ const IndicateurCard = ({
     d => d.annee === year && secteurIdToLabel[d.indicateur_id] !== 'Total',
   );
 
-  if (filteredData.length <= 1) return null;
+  const total = data.find(
+    d => d.annee === year && secteurIdToLabel[d.indicateur_id] === 'Total',
+  );
+
+  if (filteredData.length <= 1 && !total) return null;
 
   return (
     <div className="flex flex-col bg-white md:rounded-[10px] py-10 px-8 lg:p-8">
@@ -54,7 +59,9 @@ const IndicateurCard = ({
         />
         <div>
           <p className="text-[24px] leading-[39px] text-primary-10 font-bold mb-2">
-            {defaultData.titre_encadre}
+            {`${
+              total ? `${getFormattedNumber(Math.round(total?.valeur))} ` : ''
+            }${defaultData.titre_encadre}`}
           </p>
           <p className="text-[13px] leading-[18px] text-primary-8 font-bold mb-0">
             {defaultData.description_encadre}
@@ -73,23 +80,27 @@ const IndicateurCard = ({
       )}
 
       {/* Graphe */}
-      <p className="text-[12px] leading-[20px] text-grey-8 mb-0">{`${graphTitle} en ${year}`}</p>
-      <div className="mb-6">
-        <DonutChartWithLegend
-          graphContainerClassname="h-[300px] -mx-8"
-          data={filteredData.map(d => ({
-            id: secteurIdToLabel[d.indicateur_id],
-            value: d.valeur,
-          }))}
-          customMargin={{top: 40, right: 100, bottom: 40, left: 100}}
-          unit={unit}
-          unitSingular={unitSingular}
-        />
-      </div>
+      {filteredData.length > 1 && (
+        <>
+          <p className="text-[12px] leading-[20px] text-grey-8 mb-0">{`${graphTitle} en ${year}`}</p>
+          <div className="mb-6">
+            <DonutChartWithLegend
+              graphContainerClassname="h-[300px] -mx-8"
+              data={filteredData.map(d => ({
+                id: secteurIdToLabel[d.indicateur_id],
+                value: d.valeur,
+              }))}
+              customMargin={{top: 40, right: 100, bottom: 40, left: 100}}
+              unit={unit}
+              unitSingular={unitSingular}
+            />
+          </div>
 
-      <p className="text-[12px] leading-[17px] text-grey-6 mb-0">
-        Source : {filteredData[0].source}
-      </p>
+          <p className="text-[12px] leading-[17px] text-grey-6 mb-0">
+            Source : {filteredData[0].source}
+          </p>
+        </>
+      )}
     </div>
   );
 };
