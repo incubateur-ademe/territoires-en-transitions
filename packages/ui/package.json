@@ -8,8 +8,8 @@
     "node": "20"
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w",
+    "build": "webpack --env production",
+    "dev": "webpack --env dev --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
     "lint": "eslint \"src/**/*.ts?(x)\"",
