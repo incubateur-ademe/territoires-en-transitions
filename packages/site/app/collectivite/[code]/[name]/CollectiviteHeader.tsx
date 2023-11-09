@@ -88,14 +88,16 @@ const CollectiviteHeader = ({
               <>
                 <a href={`/stats/region/${regionCode}`}>{region}</a>
                 {' / '}
-                <a href={`/stats/department/${departementCode}`}>
+                <a href={`/stats/departement/${departementCode}`}>
                   {departement}
                 </a>
               </>
             ) : region ? (
               <a href={`/stats/region/${regionCode}`}>{region}</a>
             ) : departement ? (
-              <a href={`/stats/department/${departementCode}`}>{departement}</a>
+              <a href={`/stats/departement/${departementCode}`}>
+                {departement}
+              </a>
             ) : (
               ''
             )}

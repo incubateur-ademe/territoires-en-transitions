@@ -18,4 +18,5 @@ export const natureCollectiviteToLabel: Record<string, string> = {
   EPT: 'Etablissement Public Territorial',
   METRO: 'Métropole',
   PETR: "Pôle d'équilibre territorial rural",
+  POLEM: 'Pôle métropolitain',
 };
