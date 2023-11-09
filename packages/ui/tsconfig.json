@@ -1,32 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es6",
     "target": "es5",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "noEmit": false,
-    "moduleResolution": "node",
     "isolatedModules": true,
-    "composite": true,
-    "allowJs": true,
-    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
     "outDir": "dist"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "**/*.stories.tsx"]
 }
