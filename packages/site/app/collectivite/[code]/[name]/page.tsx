@@ -63,7 +63,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
           departement={collectiviteData.departement_name ?? undefined}
           departementCode={collectiviteData.departement_code ?? undefined}
           type={
-            ['commune', 'CC', 'CA', 'CU', 'EPT', 'METRO', 'PETR'].includes(
+            (Object.keys(natureCollectiviteToLabel) as Array<string>).includes(
               collectiviteData.nature_collectivite,
             )
               ? natureCollectiviteToLabel[collectiviteData.nature_collectivite]
