@@ -80,21 +80,18 @@ function Body(props: MenuProps) {
         <div className="fr-header__body-row">
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
-            <div className="fr-header__service">
+            <div className="fr-header__service max-md:text-center">
               <a
                 href="/"
                 aria-current="page"
                 title="Accueil - Territoires en Transitions"
                 className="router-link-exact-active router-link-active"
               >
-                <p className="fr-header__service-title">
-                  <span style={{fontSize: 'x-large', fontWeight: 'bold'}}>
-                    Territoires en Transitions
-                  </span>
-                  <br />
-                  <span style={{fontSize: 'small', fontWeight: 'normal'}}>
-                    Accompagner la transition écologique des collectivités
-                  </span>
+                <p className="fr-header__service-title mb-0 text-primary-8 text-[20px] md:text-[25px]">
+                  Territoires en Transitions
+                </p>
+                <p className="fr-header__service-tagline mb-0 text-grey-8 text-[14px] md:text-[13px] font-[500]">
+                  Accompagner la transition écologique des collectivités
                 </p>
               </a>
             </div>
