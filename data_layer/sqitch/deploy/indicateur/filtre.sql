@@ -46,18 +46,34 @@ end;
 comment on function axe is
     'L''axe d''un indicateur, pour filtrer par son plan.';
 
--- todo fusionner indicateur_pilote et indicateur_personnalise_pilote
 
-create or replace function
+create type pilote as
+(
+    indicateur_id       indicateur_id,
+    collectivite_id     integer,
+    indicateur_perso_id integer,
+    user_id             uuid,
+    tag_id              integer
+);
+
+create function
     pilote(indicateur_definitions)
-    returns setof indicateur_pilote
+    returns setof pilote
     language sql
     stable
 begin
     atomic
-    select ip
-    from indicateur_pilote ip
-    where ip.indicateur_id = $1.indicateur_id;
+    select case
+               when $1.indicateur_id is not null -- indicateur prédéfini
+                   then
+                   (select row (ip.indicateur_id, ip.collectivite_id, null::integer, ip.user_id, ip.tag_id)::pilote
+                    from indicateur_pilote ip
+                    where ip.indicateur_id = $1.indicateur_id)
+               else -- indicateur personnalisé
+                   (select row (null::integer, null::integer, ipp.indicateur_id, ipp.user_id, ipp.tag_id)::pilote
+                    from indicateur_personnalise_pilote ipp
+                    where ipp.indicateur_id = $1.indicateur_perso_id)
+               end;
 end;
 comment on function pilote is
     'Le pilote d''un indicateur, pour filtrer par son user_id ou son tag_id.';
