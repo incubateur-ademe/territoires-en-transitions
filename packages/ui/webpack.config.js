@@ -45,6 +45,8 @@ module.exports = function (env, argv) {
     externals: {
       react: 'react',
       'react-dom': 'react-dom',
+      classnames: 'classnames',
+      '@floating-ui/react': '@floating-ui/react',
     },
 
     // configuration de la génération
