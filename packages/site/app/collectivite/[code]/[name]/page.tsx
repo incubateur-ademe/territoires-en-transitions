@@ -47,7 +47,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
 
   return (
     <Section
-      containerClassName="bg-primary-1 max-md:!py-0"
+      containerClassName="grow bg-primary-1 max-md:!py-0"
       className="max-md:px-0 grid grid-cols-11 !gap-0 md:!gap-10 xl:!gap-12"
     >
       {/* Bannière avec nom de la collectivité et photo */}
