@@ -7,7 +7,7 @@ import Section from '@components/sections/Section';
 import BlogCard from '@components/cards/BlogCard';
 import Gallery from '@components/gallery/Gallery';
 import {Metadata} from 'next';
-import {convertNameToSlug} from 'app/utils';
+import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

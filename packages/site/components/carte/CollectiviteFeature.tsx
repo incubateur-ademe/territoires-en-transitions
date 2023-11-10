@@ -5,7 +5,7 @@ import {GeoJsonObject} from 'geojson';
 import {Database, Json} from '../../app/database.types';
 import {PathOptions} from 'leaflet';
 import {useRouter} from 'next/navigation';
-import {convertNameToSlug} from 'app/utils';
+import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
 type labellisation_w_geojson =
   Database['public']['Views']['site_labellisation']['Row'] & {geojson?: Json};

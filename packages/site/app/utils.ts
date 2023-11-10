@@ -1,5 +1,6 @@
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
+import {sortByRank} from 'src/utils/sortByRank';
 import {AccueilData} from './types';
 
 export const getMetaData = async () => {
@@ -30,17 +31,6 @@ export const getMetaData = async () => {
       : undefined,
   };
 };
-
-export const sortByRank = (array: StrapiItem[]): StrapiItem[] =>
-  array.sort((a, b) => {
-    const aRank = (a.attributes.Rang as unknown as number) ?? undefined;
-    const bRank = (b.attributes.Rang as unknown as number) ?? undefined;
-
-    if (aRank && bRank) return aRank - bRank;
-    else if (aRank && !bRank) return -1;
-    else if (!aRank && bRank) return 1;
-    else return a.id - b.id;
-  });
 
 export const getData = async (): Promise<AccueilData | null> => {
   // Fetch du contenu de la page d'accueil
@@ -130,24 +120,3 @@ export const getData = async (): Promise<AccueilData | null> => {
 
   return formattedData;
 };
-
-export const convertNameToSlug = (name: string) => {
-  return name
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-zA-Z0-9 ]/g, '')
-    .trim()
-    .toLowerCase()
-    .split(' ')
-    .filter(el => el.length > 0)
-    .join('-');
-};
-
-// Copié depuis l'app
-/**
- * Formate un nombre avec le nombre de décimales voulu et en tenant compte de la
- * langue du navigateur (utilise la virgule comme séparateur des décimales, et
- * l'espace comme séparateur des milliers en français)
- */
-export const toLocaleFixed = (n: number, maximumFractionDigits = 1): string =>
-  n ? n.toLocaleString(undefined, {maximumFractionDigits}) : '0';

@@ -12,7 +12,7 @@ import CollectiviteHeader from './CollectiviteHeader';
 import LabellisationLogo from './LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
-import {natureCollectiviteToLabel} from './labels';
+import {natureCollectiviteToLabel} from '../../labels';
 import AccesCompte from './AccesCompte';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 

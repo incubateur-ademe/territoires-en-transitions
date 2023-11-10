@@ -1,9 +1,9 @@
 'use server';
 
 import {redirect} from 'next/navigation';
-import {convertNameToSlug} from 'app/utils';
 import {Metadata} from 'next';
 import {fetchCollectivite} from '../utils';
+import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

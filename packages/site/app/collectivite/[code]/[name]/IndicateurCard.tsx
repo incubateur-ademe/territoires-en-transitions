@@ -7,7 +7,7 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
-import {secteurIdToLabel} from './labels';
+import {secteurIdToLabel} from '../../labels';
 
 type IndicateurCardProps = {
   defaultData?: IndicateurDefaultData;

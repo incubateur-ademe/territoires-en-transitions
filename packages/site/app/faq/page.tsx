@@ -4,11 +4,11 @@
 import Accordion from '@components/accordion/Accordion';
 import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
-import {sortByRank} from 'app/utils';
 import {Metadata} from 'next';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 import {fetchCollection} from 'src/strapi/strapi';
+import {sortByRank} from 'src/utils/sortByRank';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
