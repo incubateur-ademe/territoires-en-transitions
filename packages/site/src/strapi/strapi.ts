@@ -19,11 +19,11 @@ type Collection =
   | 'temoignages';
 
 type Single =
-  | 'accueil'
-  | 'contact'
   | 'metadata'
+  | 'page-accueil'
   | 'page-collectivite'
-  | 'programme';
+  | 'page-contact'
+  | 'page-programme';
 
 export async function fetchCollection(
   path: Collection,

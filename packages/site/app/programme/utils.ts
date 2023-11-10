@@ -52,7 +52,7 @@ export const getData = async () => {
     : null;
 
   // Fetch du contenu de la page programme
-  const data = await fetchSingle('programme');
+  const data = await fetchSingle('page-programme');
 
   // Formattage de la data
   const formattedData: ProgrammeData | null = data
