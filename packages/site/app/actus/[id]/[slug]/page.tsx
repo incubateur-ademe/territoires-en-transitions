@@ -12,11 +12,7 @@ import {ParagrapheCustomArticleData} from 'app/types';
 import {Metadata, ResolvingMetadata} from 'next';
 
 export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: {id: string};
-  },
+  {params}: {params: {id: string}},
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const data = await getMetaData(parseInt(params.id));

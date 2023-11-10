@@ -4,29 +4,28 @@ import {sortByRank} from 'src/utils/sortByRank';
 import {AccueilData} from './types';
 
 export const getMetaData = async () => {
-  const data = await fetchSingle('metadata', [
-    ['populate[0]', 'Metadata'],
-    ['populate[1]', 'Metadata.Titre'],
-    ['populate[2]', 'Metadata.Description'],
-    ['populate[3]', 'Metadata.Image'],
+  const data = await fetchSingle('page-accueil', [
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
   ]);
 
-  const image = (
-    data?.attributes.Metadata?.Image?.data as unknown as StrapiItem
-  )?.attributes;
+  const metaImage =
+    (data?.attributes?.seo?.metaImage?.data as unknown as StrapiItem)
+      ?.attributes ?? undefined;
 
   return {
-    title: (data?.attributes.Metadata?.Titre as unknown as string) ?? undefined,
-    description:
-      (data?.attributes.Metadata?.Description as unknown as string) ??
+    metaTitle:
+      (data?.attributes?.seo?.metaTitle as unknown as string) ?? undefined,
+    metaDescription:
+      (data?.attributes?.seo?.metaDescription as unknown as string) ??
       undefined,
-    image: image
+    metaImage: metaImage
       ? {
-          url: image.url as unknown as string,
-          width: image.width as unknown as number,
-          height: image.height as unknown as number,
-          type: image.mime as unknown as string,
-          alt: image.alternativeText as unknown as string,
+          url: metaImage.url as unknown as string,
+          width: metaImage.width as unknown as number,
+          height: metaImage.height as unknown as number,
+          type: metaImage.mime as unknown as string,
+          alt: metaImage.alternativeText as unknown as string,
         }
       : undefined,
   };
