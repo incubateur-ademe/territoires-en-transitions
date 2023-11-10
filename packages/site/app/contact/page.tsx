@@ -26,7 +26,7 @@ type ContactData = {
 };
 
 const getData = async () => {
-  const data = await fetchSingle('contact');
+  const data = await fetchSingle('page-contact');
 
   const formattedData = data
     ? {

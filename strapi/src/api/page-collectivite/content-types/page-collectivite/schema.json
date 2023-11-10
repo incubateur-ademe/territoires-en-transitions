@@ -4,7 +4,7 @@
   "info": {
     "singularName": "page-collectivite",
     "pluralName": "page-collectivites",
-    "displayName": "Page Collectivité",
+    "displayName": "3. Collectivité",
     "description": ""
   },
   "options": {
@@ -21,9 +21,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "inscription_description": {
       "type": "string",

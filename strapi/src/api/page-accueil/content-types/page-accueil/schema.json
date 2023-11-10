@@ -1,0 +1,52 @@
+{
+  "kind": "singleType",
+  "collectionName": "page_accueils",
+  "info": {
+    "singularName": "page-accueil",
+    "pluralName": "page-accueils",
+    "displayName": "1. Accueil",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true,
+      "default": "Accélérez la transition écologique de votre collectivité",
+      "maxLength": 100
+    },
+    "Couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "Accompagnement": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.accompagnement",
+      "required": true
+    },
+    "Temoignages": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.description",
+      "required": true
+    },
+    "Informations": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.description",
+      "required": true
+    },
+    "Newsletter": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.description",
+      "required": true
+    }
+  }
+}

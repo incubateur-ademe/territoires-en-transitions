@@ -34,7 +34,7 @@ export const getMetaData = async () => {
 
 export const getData = async (): Promise<AccueilData | null> => {
   // Fetch du contenu de la page d'accueil
-  const data = await fetchSingle('accueil', [
+  const data = await fetchSingle('page-accueil', [
     ['populate[0]', 'Titre'],
     ['populate[1]', 'Couverture'],
     ['populate[2]', 'Accompagnement'],
