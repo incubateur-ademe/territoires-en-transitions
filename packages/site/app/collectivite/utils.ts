@@ -67,7 +67,7 @@ export const getStrapiData = async (codeSirenInsee: string) => {
       (collectiviteData.actions as unknown as {}[]).length > 0;
 
     const metaImage =
-      (collectiviteData.seo?.metaImage.data as unknown as StrapiItem)
+      (collectiviteData.seo?.metaImage?.data as unknown as StrapiItem)
         ?.attributes ??
       (collectiviteData?.attributes?.couverture.data as unknown as StrapiItem)
         ?.attributes;
@@ -146,7 +146,7 @@ export const getStrapiDefaultData = async () => {
     const gaz_effet_serre = data.attributes.gaz_effet_serre;
 
     const metaImage =
-      (seo?.metaImage.data as unknown as StrapiItem)?.attributes ??
+      (seo?.metaImage?.data as unknown as StrapiItem)?.attributes ??
       (data?.attributes.couverture.data as unknown as StrapiItem)?.attributes;
 
     return {

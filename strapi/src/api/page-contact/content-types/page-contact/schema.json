@@ -12,34 +12,39 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Titre": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "titre": {
       "type": "string",
       "required": true,
       "maxLength": 255,
       "default": "Contacter l'équipe"
     },
-    "Description": {
+    "description": {
       "type": "text",
-      "default": "Des questions sur le programme ou sur la plateforme ? Écrivez-nous et nous vous répondrons dès que possible, en 48h ouvrées."
+      "default": "Des questions sur le programme ou sur la plateforme ? Écrivez-nous et nous vous répondrons dès que possible."
     },
-    "Couverture": {
+    "couverture": {
       "type": "media",
       "multiple": false,
       "required": false,
       "allowedTypes": ["images"]
     },
-    "Telephone": {
+    "telephone": {
       "type": "string",
       "default": "04 15 09 82 07",
       "required": true
     },
-    "Horaires": {
+    "horaires": {
       "type": "string",
       "default": "Permanence de 9h à 12h30 et de 14h à 16h30, du lundi au vendredi",
       "required": true,
       "maxLength": 255
     },
-    "LegendeVisible": {
+    "legende_visible": {
       "type": "boolean",
       "default": false
     }

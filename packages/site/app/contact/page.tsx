@@ -1,70 +1,50 @@
-/* eslint-disable react/no-unescaped-entities */
 'use server';
 
 import NoResult from '@components/info/NoResult';
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import PhoneIcon from '@components/icones/PhoneIcon';
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
 import ContactForm from './ContactForm';
-import {Metadata} from 'next';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getStrapiData} from './utils';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: 'Contact',
-  };
+export async function generateMetadata(
+  params: {params: {}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getStrapiData();
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle ?? 'Contact',
+    description: strapiData?.seo.metaDescription,
+    image: strapiData?.seo.metaImage,
+  });
 }
 
-type ContactData = {
-  titre: string;
-  description: string;
-  telephone: string;
-  horaires: string;
-  couverture?: StrapiItem;
-  legendeVisible?: boolean;
-};
-
-const getData = async () => {
-  const data = await fetchSingle('page-contact');
-
-  const formattedData = data
-    ? {
-        titre: data.attributes.Titre as unknown as string,
-        description: data.attributes.Description as unknown as string,
-        telephone: data.attributes.Telephone as unknown as string,
-        horaires: data.attributes.Horaires as unknown as string,
-        couverture:
-          (data.attributes.Couverture.data as unknown as StrapiItem) ??
-          undefined,
-        legendeVisible:
-          (data.attributes.LegendeVisinle as unknown as boolean) ?? false,
-      }
-    : null;
-
-  return formattedData;
-};
-
 const Contact = async () => {
-  const data: ContactData | null = await getData();
+  const data = await getStrapiData();
 
   return data ? (
     <Section>
-      <h1>{data.titre}</h1>
+      <h1>{data.titre ?? "Contacter l'équipe"}</h1>
 
-      <p className="text-xl">{data.description}</p>
+      {data.description && <p className="text-xl">{data.description}</p>}
 
       <div className="p-4 md:p-14 lg:px-28 bg-gray-100 mb-6">
         <p className="text-sm">Tous les champs sont obligatoires</p>
         <ContactForm />
       </div>
-      <div>
-        <p className="font-bold flex gap-2 mb-0">
-          <PhoneIcon />
-          Tél. : {data.telephone}
-        </p>
-        <p className="text-[#666]">{data.horaires}</p>
-      </div>
+      {data.telephone && (
+        <div>
+          <p className="font-bold flex gap-2 mb-0">
+            <PhoneIcon />
+            Tél. : {data.telephone}
+          </p>
+          <p className="text-[#666]">{data.horaires}</p>
+        </div>
+      )}
 
       {!!data.couverture && (
         <StrapiImage

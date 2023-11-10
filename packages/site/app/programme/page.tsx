@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 'use server';
 
 import Services from './Services';
@@ -7,20 +6,28 @@ import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
 import Compte from './Compte';
 import Ressources from './Ressources';
-import {ProgrammeData} from './types';
 import NoResult from '@components/info/NoResult';
-import {getData} from './utils';
+import {getStrapiData} from './utils';
 import Carte from './Carte';
-import {Metadata} from 'next';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: 'Programme',
-  };
+export async function generateMetadata(
+  params: {params: {}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getStrapiData();
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle ?? 'Le programme',
+    description: strapiData?.seo.metaDescription,
+    image: strapiData?.seo.metaImage,
+  });
 }
 
 const Programme = async () => {
-  const data: ProgrammeData | null = await getData();
+  const data = await getStrapiData();
 
   return data ? (
     <>

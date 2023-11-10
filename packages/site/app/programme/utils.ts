@@ -1,9 +1,9 @@
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import {sortByRank} from 'src/utils/sortByRank';
-import {Content, ProgrammeData} from './types';
+import {Content} from './types';
 
-export const getData = async () => {
+export const getStrapiData = async () => {
   // Fetch de la liste des objectifs
   const objectifs = await fetchCollection('objectifs');
 
@@ -52,64 +52,88 @@ export const getData = async () => {
     : null;
 
   // Fetch du contenu de la page programme
-  const data = await fetchSingle('page-programme');
+  const data = await fetchSingle('page-programme', [
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'Objectifs'],
+    ['populate[3]', 'Services'],
+    ['populate[4]', 'Compte'],
+    ['populate[5]', 'Benefices'],
+    ['populate[6]', 'Etapes'],
+    ['populate[7]', 'Ressources'],
+  ]);
 
   // Formattage de la data
-  const formattedData: ProgrammeData | null = data
-    ? {
-        titre: data.attributes.Titre as unknown as string,
-        description:
-          (data.attributes.Description as unknown as string) ?? undefined,
-        couvertureURL:
-          (data.attributes.VideoURL as unknown as string) ?? undefined,
-        objectifs: {
-          titre: data.attributes.Objectifs.Titre as unknown as string,
-          description: data.attributes.Objectifs
-            .Description as unknown as string,
-          contenu: formattedObjectifs,
-        },
-        services: {
-          titre: data.attributes.Services.Titre as unknown as string,
-          description: data.attributes.Services
-            .Description as unknown as string,
-          contenu: formattedServices,
-        },
-        compte: {
-          description: data.attributes.Compte.Description as unknown as string,
-        },
-        benefices: {
-          titre: data.attributes.Benefices.Titre as unknown as string,
-          description: data.attributes.Benefices
-            .Description as unknown as string,
-          contenu: formattedBenefices,
-        },
-        etapes: {
-          titre: data.attributes.Etapes.Titre as unknown as string,
-          description: data.attributes.Etapes.Description as unknown as string,
-          contenu: formattedEtapes,
-        },
-        ressources: {
-          description: data.attributes.Ressources
-            .Description as unknown as string,
-          buttons: [
-            {
-              titre: 'Règlement CAE',
-              href: data.attributes.Ressources
-                .ReglementCaeURL as unknown as string,
-            },
-            {
-              titre: 'Règlement ECI',
-              href: data.attributes.Ressources
-                .ReglementEciURL as unknown as string,
-            },
-            {
-              titre: 'Annuaire des conseillers',
-              href: data.attributes.Ressources.AnnuaireURL as unknown as string,
-            },
-          ],
-        },
-      }
-    : null;
+  if (data) {
+    const metaImage =
+      (data.attributes.seo?.metaImage?.data as unknown as StrapiItem)
+        ?.attributes ?? undefined;
 
-  return formattedData;
+    return {
+      seo: {
+        metaTitle:
+          (data.attributes.seo?.metaTitle as unknown as string) ?? undefined,
+        metaDescription:
+          (data.attributes.seo?.metaDescription as unknown as string) ??
+          undefined,
+        metaImage: metaImage
+          ? {
+              url: metaImage.url as unknown as string,
+              width: metaImage.width as unknown as number,
+              height: metaImage.height as unknown as number,
+              type: metaImage.mime as unknown as string,
+              alt: metaImage.alternativeText as unknown as string,
+            }
+          : undefined,
+      },
+      titre: data.attributes.Titre as unknown as string,
+      description:
+        (data.attributes.Description as unknown as string) ?? undefined,
+      couvertureURL:
+        (data.attributes.VideoURL as unknown as string) ?? undefined,
+      objectifs: {
+        titre: data.attributes.Objectifs.Titre as unknown as string,
+        description: data.attributes.Objectifs.Description as unknown as string,
+        contenu: formattedObjectifs,
+      },
+      services: {
+        titre: data.attributes.Services.Titre as unknown as string,
+        description: data.attributes.Services.Description as unknown as string,
+        contenu: formattedServices,
+      },
+      compte: {
+        description: data.attributes.Compte.Description as unknown as string,
+      },
+      benefices: {
+        titre: data.attributes.Benefices.Titre as unknown as string,
+        description: data.attributes.Benefices.Description as unknown as string,
+        contenu: formattedBenefices,
+      },
+      etapes: {
+        titre: data.attributes.Etapes.Titre as unknown as string,
+        description: data.attributes.Etapes.Description as unknown as string,
+        contenu: formattedEtapes,
+      },
+      ressources: {
+        description: data.attributes.Ressources
+          .Description as unknown as string,
+        buttons: [
+          {
+            titre: 'Règlement CAE',
+            href: data.attributes.Ressources
+              .ReglementCaeURL as unknown as string,
+          },
+          {
+            titre: 'Règlement ECI',
+            href: data.attributes.Ressources
+              .ReglementEciURL as unknown as string,
+          },
+          {
+            titre: 'Annuaire des conseillers',
+            href: data.attributes.Ressources.AnnuaireURL as unknown as string,
+          },
+        ],
+      },
+    };
+  } else return null;
 };
