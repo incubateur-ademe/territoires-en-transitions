@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import Tag from 'ui/shared/Tag';
+import {Tag} from '@tet/ui';
 import {getOptionLabel, getOptions, TSelectBase} from './commons';
 import MultiSelectDropdown from './MultiSelectDropdown';
 
@@ -37,7 +37,7 @@ const MultiSelectTagsDropdown = <T extends string>({
             <Tag
               key={v}
               title={getOptionLabel(v, getOptions(options))}
-              onCloseClick={() => onSelect(values.filter(val => val !== v))}
+              onClose={() => onSelect(values.filter(val => val !== v))}
               disabled={disabled}
             />
           ))}
