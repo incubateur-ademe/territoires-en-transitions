@@ -17,7 +17,7 @@ export default async function Home() {
       <p>
         Territoires en transitions{' '}
         <a href="/">(https://territoiresentransitions.fr)</a> est un service
-        créé par{' '}
+        édité par{' '}
         <a href="https://www.ademe.fr/" rel="external">
           l’ADEME
         </a>{' '}
