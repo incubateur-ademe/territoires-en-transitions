@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create or replace function
+create function
     thematique(indicateur_definitions)
     returns setof thematique
     language sql
@@ -29,7 +29,7 @@ end;
 comment on function thematique is
     'La thématique d''un indicateur, pour filtrer.';
 
-create or replace function
+create function
     axe(indicateur_definitions)
     returns setof axe
     language sql
@@ -46,8 +46,7 @@ end;
 comment on function axe is
     'L''axe d''un indicateur, pour filtrer par son plan.';
 
-
-create or replace function
+create function
     pilote(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
@@ -67,22 +66,18 @@ comment on function pilote is
     'Le pilote d''un indicateur, pour filtrer par son user_id ou son tag_id.';
 
 create function
-    personne_pilote(indicateur_definitions)
+    personne(indicateur_pilote)
     returns setof personne
+    language sql
+    stable
 begin
     atomic
-    select private.get_personne(ip)
-    from indicateur_pilote ip
-    where ($1.indicateur_id is not null
-        and ip.indicateur_id = $1.indicateur_id
-        and collectivite_id = $1.collectivite_id)
-       or ($1.indicateur_perso_id is not null
-        and ip.indicateur_perso_id = $1.indicateur_perso_id);
+    select private.get_personne($1);
 end;
-comment on function personne_pilote is
-    'Les personnes pilotes pour un indicateur.';
+comment on function personne(indicateur_pilote) is
+    'Les personnes associée à un indicateur.';
 
-create or replace function
+create function
     service(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
@@ -96,7 +91,7 @@ end;
 comment on function service is
     'Le service d''un indicateur, pour filtrer par son tag_id.';
 
-create or replace function
+create function
     definition_referentiel(indicateur_definitions)
     returns setof indicateur_definition
     language sql
@@ -110,7 +105,7 @@ end;
 comment on function definition_referentiel is
     'La définition de l''indicateur provenant du référentiel.';
 
-create or replace function
+create function
     rempli(indicateur_definitions)
     returns bool
     language sql
