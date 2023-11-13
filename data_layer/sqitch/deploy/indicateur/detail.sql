@@ -144,6 +144,8 @@ drop table indicateur_personnalise_service_tag;
 create or replace function
     private.get_personne(indicateur_pilote)
     returns personne
+    language sql
+    stable
     security definer
 begin
     atomic
