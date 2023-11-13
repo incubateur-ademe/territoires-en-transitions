@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {TMultiSelectDropdownProps} from 'ui/shared/select/MultiSelectDropdown';
-import Tag from 'ui/shared/Tag';
+import {Tag} from '@tet/ui';
 import Options from '../Options';
 
 import {
@@ -224,7 +224,7 @@ const SelectCreateTagsButton = forwardRef(
                 <Tag
                   key={v}
                   title={getOptionLabel(v, getOptions(options))}
-                  onCloseClick={() =>
+                  onClose={() =>
                     onSelect(sortedValues.filter(value => value !== v))
                   }
                   isUserCreated={isUserCreatedOption(v, userCreatedTagIds)}

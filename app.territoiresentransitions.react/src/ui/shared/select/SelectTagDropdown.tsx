@@ -1,4 +1,4 @@
-import Tag from 'ui/shared/Tag';
+import {Tag} from '@tet/ui';
 import {getOptionLabel, getOptions, TSelectBase} from './commons';
 import SelectDropdown from './SelectDropdown';
 
@@ -28,7 +28,7 @@ const SelectTagDropdown = <T extends string>({
       renderSelection={v => (
         <Tag
           title={getOptionLabel(v, getOptions(options))}
-          onCloseClick={() => onSelect(null)}
+          onClose={() => onSelect(null)}
         />
       )}
       renderOption={option => (
