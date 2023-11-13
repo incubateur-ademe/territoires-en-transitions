@@ -7,25 +7,24 @@ import {signIn, signOut} from '../../lib/auth.ts';
 import {
   assertEquals,
 } from 'https://deno.land/std@0.198.0/assert/assert_equals.ts';
-import {
-  assertNotEquals,
-} from 'https://deno.land/std@0.198.0/assert/assert_not_equals.ts';
-import {testReset} from '../../lib/rpcs/testReset.ts';
+import {equal} from 'https://deno.land/std@0.198.0/assert/equal.ts';
 
 await new Promise((r) => setTimeout(r, 0));
 
-type pilotes = Database['public']['Tables']['personne_tag']['Row'];
-type services = Database['public']['Tables']['service_tag']['Row'];
-type thematiques = Database['public']['Tables']['thematique']['Row'];
+type Indicateur = Database['public']['Views']['indicateur_definitions']['Row'];
+type Pilote = Database['public']['Tables']['personne_tag']['Row'];
+type Service = Database['public']['Tables']['service_tag']['Row'];
+type Thematique = Database['public']['Tables']['thematique']['Row'];
 
 type IndicateurDetail =
-  & Database['public']['Views']['indicateur_definitions']['Row']
+  & Indicateur
   & {
-  pilotes: pilotes[];
-  services: services[];
-  thematiques: thematiques[];
+  pilotes: Pilote[];
+  services: Service[];
+  thematiques: Thematique[];
 };
 
+// Le filtre à passer au fetch.
 type Filter = {
   collectivite_id: number,
   thematique_ids?: number[],
@@ -38,37 +37,41 @@ type Filter = {
   rempli?: boolean,
 }
 
-type Relation = 'thematiques' | 'pilotes';
+// Associe les parties requises aux champs sur lesquels on filtre.
+const filterParts: { [key in keyof Filter]?: string } = {
+  'thematique_ids': 'thematique!inner(id)',
+  'plan_ids': 'axe!inner(id)',
+  'pilote_user_ids': 'pilote!inner(user_id, tag_id, personne)',
+  'pilote_tag_ids': 'pilote!inner(user_id, tag_id, personne)',
+  'service_ids': 'service!inner(service_tag_id)',
+  'type': 'definition_referentiel!inner(type, participation_score)',
+  'participation_score': 'definition_referentiel!inner(type, participation_score)',
+  'rempli': 'rempli',
+};
 
 /**
  * Récupère les indicateurs et des relations
  *
  * @param {Filter} filter - Le filtre à appliquer
- * @param {Relation[] | null} relations -
- * Les relations additionnelles à ajouter aux résultats
  *
  * @returns {T} - Les indicateurs castés en T.
  */
-function fetchIndicateurs<T>(filter: Filter, relations: Relation[] | null) {
+function fetchIndicateurs<T>(filter: Filter) {
+  const parts = new Set<string>();
+
+  let key: keyof Filter;
+  for (key in filter) {
+    if (filter[key] !== undefined) {
+      const part = filterParts[key];
+      if (part) parts.add(part);
+    }
+  }
 
   let select = supabase
     // Depuis les définitions des indicateurs personnalisés et prédéfinis
     .from('indicateur_definitions').select(
-      // on sélectionne la définition
-      '*, '
-      // et les relations nécessaires au filtrage {relation}!inner({colonne})
-      + (filter.thematique_ids ? 'thematique!inner(id), ' : '')
-      + (filter.plan_ids ? 'axe!inner(plan), ' : '')
-      + ((filter.pilote_user_ids ?? filter.pilote_tag_ids) ?
-        'pilote!inner(user_id, tag_id), ' :
-        '')
-      + (filter.service_ids ? 'service!inner(service_tag_id), ' : '')
-      + ((filter.type || filter.participation_score !== undefined) ?
-        'definition_referentiel!inner(type, participation_score), ' :
-        '')
-      + (filter.rempli !== undefined ? 'rempli,' : '')
-      // et les relations additionnelles
-      + (relations ? relations.join(', ') : ''),
+      // on ajoute les `parts` au select
+      ['*'].concat([...parts]).join(','),
     )
     // on filtre toujours sur la collectivité
     .eq('collectivite_id', filter.collectivite_id);
@@ -91,7 +94,8 @@ function fetchIndicateurs<T>(filter: Filter, relations: Relation[] | null) {
   }
 
   if (filter.participation_score !== undefined) {
-    select = select.eq('definition_referentiel.participation_score', filter.participation_score);
+    select = select.eq('definition_referentiel.participation_score',
+      filter.participation_score);
   }
 
   if (filter.rempli !== undefined) {
@@ -124,141 +128,134 @@ function fetchIndicateurs<T>(filter: Filter, relations: Relation[] | null) {
   return select.returns<T>();
 }
 
+const expectations: {
+  filter: Filter,
+  count?: number,
+  examples?: any[]
+}[] =
+  [
+    {
+      filter: {
+        collectivite_id: 1,
+      },
+      count: 191,
+      examples: [
+        {
+          'collectivite_id': 1,
+          'indicateur_id': 'cae_1.i',
+          'indicateur_perso_id': null,
+          'nom': 'Emissions de gaz à effet de serre - industrie hors branche énergie',
+          'description': '',
+          'unite': 'teq CO2',
+        },
+      ],
+    },
+    {
+      filter: {
+        collectivite_id: 1,
+        pilote_tag_ids: [1],
+      },
+      count: 1,
+    },
+    {
+      filter: {
+        collectivite_id: 1,
+        pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+      },
+      count: 1,
+    },
+    {
+      filter: {
+        collectivite_id: 1,
+        pilote_tag_ids: [1],
+        pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+      },
+      count: 1,
+    },
+    {
+      filter: {
+        collectivite_id: 1,
+        // pour s'assurer de ne pas dédoublonner les résultats
+        pilote_tag_ids: [1],
+        pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+      },
+      count: 1,
+    },
+    {
+      filter: {
+        collectivite_id: 1,
+        plan_ids: [1],
+      },
+      count: 1,
+    },
+
+    {
+      filter: {
+        collectivite_id: 1,
+        service_ids: [1],
+      },
+      count: 1,
+    },
+  ];
+
 Deno.test('Filtres multicritère', async () => {
+  // await testReset();
   await signIn('yolododo');
 
-  const select = await fetchIndicateurs<IndicateurDetail[]>(
+  // On upsert les indicateurs pilotes en plusieurs fois, plutôt qu'en une seule,
+  // car les cléfs doivent être les mêmes pour envoyer une liste.
+  let upsert = await supabase.from('indicateur_pilote').upsert(
     {
       collectivite_id: 1,
-      // pilote_user_ids: ['298235a0-60e7-4ceb-9172-0a991cce0386'],
-      // pilote_tag_ids: [1],
-      // plan_ids: [1],
-      // service_ids: [1],
-      // type: 'impact',
-      // participation_score: true,
-      rempli: true
-    },
-    ['thematiques', 'pilotes'],
-  );
-  console.log(select);
-  assertEquals(select.status, 200);
-  const indicateurs = select.data;
-  assertExists(indicateurs,
-    'Le filtre devait renvoyer une liste d\'indicateurs');
-
-  await signOut();
-});
-
-Deno.test('Filtres sur plusieurs pilotes.', {ignore: true}, async () => {
-  await signIn('yolododo');
-
-  const select = await fetchIndicateurs<IndicateurDetail[]>(
-    {
-      collectivite_id: 1,
-      pilote_user_ids: ['298235a0-60e7-4ceb-9172-0a991cce0386'],
-      pilote_tag_ids: [1],
-    },
-    ['thematiques', 'pilotes'],
-  );
-  assertEquals(select.status, 200);
-  const indicateurs = select.data;
-  assertExists(indicateurs,
-    'Le filtre devait renvoyer une liste d\'indicateurs');
-  assertNotEquals(indicateurs.length, 0, 'La liste ne devrait pas être vide');
-
-  await signOut();
-});
-
-Deno.test('Filtres sur une thématique.', {ignore: true}, async () => {
-  await signIn('yolododo');
-
-  const select = await supabase
-    // Depuis les définitions des indicateurs personnalisés et prédéfinis
-    .from('indicateur_definitions')
-    // on sélectionne 3 items :
-    // - la définition '*'
-    // - l'id de la thématique sur laquelle filtrer
-    // - la liste des thématiques pour les afficher
-    .select('*, thematique!inner(id), thematiques')
-    // on filtre sur la collectivité
-    .eq('collectivite_id', 1)
-    // l'id de la thématique
-    .eq('thematique.id', 8)
-    // un cast
-    .returns<IndicateurDetail[]>();
-  assertEquals(select.status, 200);
-  const indicateurs = select.data;
-  assertExists(indicateurs,
-    'Le filtre devait renvoyer une liste d\'indicateurs');
-  assertNotEquals(indicateurs.length, 0, 'La liste ne devrait pas être vide');
-
-  await signOut();
-});
-
-Deno.test('Filtres sur 2 thématiques.', {ignore: true}, async () => {
-  await signIn('yolododo');
-
-  const select = await supabase
-    // Depuis les définitions des indicateurs personnalisés et prédéfinis
-    .from('indicateur_definitions')
-    // on sélectionne 3 items :
-    // - la définition '*'
-    // - l'id de la thématique sur laquelle filtrer
-    // - la liste des thématiques pour les afficher
-    .select('*, thematique!inner(id), thematiques')
-    // on filtre sur la collectivité
-    .eq('collectivite_id', 1)
-    // les ids des thématiques
-    .eq('thematique.id', 8).eq('thematique.id', 5)
-    // un cast
-    .returns<IndicateurDetail[]>();
-  assertEquals(select.status, 200);
-  const indicateurs = select.data;
-  assertExists(indicateurs,
-    'Le filtre devait renvoyer une liste d\'indicateurs');
-  assertEquals(indicateurs.length, 0, 'La liste devrait être vide');
-
-  await signOut();
-});
-Deno.test('Filtre par plan.', {ignore: true}, async () => {
-  await testReset();
-  await signIn('yolododo');
-
-  const insert = await supabase
-    // on associe une fiche à un indicateur
-    .from('fiche_action_indicateur')
-    // en insérant une relation
-    .upsert({
-      fiche_id: 1,
       indicateur_id: 'eci_24',
-    });
-  assertEquals(insert.status, 201);
+      user_id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+    }).select();
+  assertEquals(upsert.status, 201);
+  upsert = await supabase.from('indicateur_pilote').upsert(
+    {
+      indicateur_id: 'eci_24',
+      collectivite_id: 1,
+      tag_id: 1,
+    }).select();
+  assertEquals(upsert.status, 201);
+  upsert = await supabase.from('indicateur_pilote').upsert(
+    {
+      indicateur_id: 'eci_24',
+      collectivite_id: 1,
+      tag_id: 1,
+    }).select();
+  assertEquals(upsert.status, 201);
+  upsert = await supabase.from('indicateur_service_tag').upsert(
+    {
+      indicateur_id: 'eci_24',
+      collectivite_id: 1,
+      service_tag_id: 1,
+    }).select();
+  assertEquals(upsert.status, 201);
 
-  const select = await supabase
-    // Depuis les définitions des indicateurs personnalisés et prédéfinis
-    .from('indicateur_definitions')
-    // on sélectionne 3 items :
-    // - la définition '*'
-    // - l'id du plan sur lequel filtrer
-    // - la liste des thématiques pour les afficher
-    .select('*, axe!inner(plan), thematiques')
-    // on filtre sur la collectivité
-    .eq('collectivite_id', 1)
-    // l'id du plan
-    .eq('axe.plan', 1)
-    // un cast
-    .returns<IndicateurDetail[]>();
-  assertEquals(select.status, 200);
-  const indicateurs = select.data;
-  assertExists(indicateurs,
-    'Le filtre devait renvoyer une liste d\'indicateurs');
-  assertEquals(indicateurs.length, 1,
-    'La liste devrait comporter un indicateur');
-  assertEquals(
-    indicateurs[0].indicateur_id,
-    'eci_24',
-    'L\'indicateur devrait être le même que celui de la relation',
-  );
+  for (const expectation of expectations.reverse()) {
+    const select = await fetchIndicateurs<IndicateurDetail[]>(
+      expectation.filter,
+    );
+    assertEquals(select.status, 200);
+    const indicateurs = select.data;
+
+    assertExists(indicateurs,
+      'Le fetch devrait renvoyer une liste d\'indicateurs');
+    if (expectation.count) {
+      assertEquals(indicateurs.length, expectation.count,
+        `Le fetch devrait renvoyer ${expectation.count} indicateurs`);
+    }
+    if (expectation.examples) {
+      expectation.examples.forEach(ex => {
+        const match = indicateurs.find(i => equal(i, ex));
+        assertExists(match,
+          `Pas d'indicateur correspondant à l'exemple\n ${JSON.stringify(ex,
+            null, 2)}`);
+      });
+    }
+  }
 
   await signOut();
 });
+
