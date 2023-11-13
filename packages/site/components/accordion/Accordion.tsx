@@ -26,18 +26,22 @@ const Accordion = ({
 
   return (
     <div className="fr-accordion">
-      <h3 className="fr-accordion__title">
+      <h6 className="fr-accordion__title">
         <button
-          className="fr-accordion__btn"
+          className="fr-accordion__btn bg-white text-primary-9 text-[18px] leading-[22px] font-bold"
           aria-controls={id}
           aria-expanded={expanded}
           onClick={() => setExpanded(prevState => !prevState)}
         >
           {title}
         </button>
-      </h3>
+      </h6>
       <div className={contentClassName} id={id}>
-        {typeof content === 'string' ? <Markdown texte={content} /> : content}
+        {typeof content === 'string' ? (
+          <Markdown texte={content} className="paragraphe-16" />
+        ) : (
+          content
+        )}
       </div>
     </div>
   );

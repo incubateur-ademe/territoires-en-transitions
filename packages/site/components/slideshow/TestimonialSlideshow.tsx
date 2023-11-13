@@ -10,7 +10,7 @@ type TestimonialSlideshowProps = {
     auteur: string;
     role: string;
     temoignage: string;
-    portrait: StrapiItem;
+    portrait?: StrapiItem;
   }[];
   autoSlide?: boolean;
   autoSlideDelay?: number;
@@ -31,12 +31,12 @@ const TestimonialSlideshow = ({
 }: TestimonialSlideshowProps) => {
   return (
     <Slideshow
-      className={classNames('p-8', className)}
+      className={classNames('p-8 bg-grey-1', className)}
       slides={contenu.map(t => (
         <div
           key={t.id}
           className={classNames(
-            'flex max-lg:flex-col justify-start items-start',
+            'flex max-lg:flex-col justify-start items-start bg-grey-1',
             {'gap-8': t.portrait},
           )}
         >

@@ -23,6 +23,7 @@ module.exports = {
         // Nouvelles couleurs
         // Déclinaisons couleur principale
         primary: {
+          0: '#FBFCFE',
           1: '#F4F5FD',
           2: '#F0F0FE',
           3: '#E1E1FD',
