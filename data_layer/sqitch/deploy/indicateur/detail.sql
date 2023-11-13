@@ -21,9 +21,11 @@ create table if not exists migration.indicateur_personnalise_pilote as
 create table if not exists migration.indicateur_pilote as
     table indicateur_pilote;
 
--- - indicateur_id peut être null si on référence un indicateur perso
+-- - indicateur_id et collectivite_id peuvent être null si on référence un indicateur perso
 alter table indicateur_pilote
     alter column indicateur_id drop not null;
+alter table indicateur_pilote
+    alter column collectivite_id drop not null;
 
 -- - ajoute indicateur_perso_id pour référencer un indicateur perso
 alter table indicateur_pilote
