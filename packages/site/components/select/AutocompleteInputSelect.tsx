@@ -6,7 +6,7 @@ import {useDebouncedCallback} from 'use-debounce';
 
 import DropdownFloater from '../floating-ui/DropdownFloater';
 import {TMultiSelectDropdownProps} from './MultiSelectDropdown';
-import Tag from '@components/tag/Tag';
+import {Tag} from '@tet/ui';
 
 import {
   buttonDisplayedClassname,
