@@ -2,67 +2,27 @@
 
 BEGIN;
 
-drop function private.get_personne(indicateur_pilote);
-
-drop table indicateur_pilote;
-create table indicateur_pilote
-(
-    indicateur_id   indicateur_id not null
-        references indicateur_definition,
-    collectivite_id integer       not null
-        references collectivite,
-    user_id         uuid
-        references auth.users,
-    tag_id          integer
-        references personne_tag
-            on delete cascade,
-    constraint indicateur_pilote_indicateur_id_collectivite_id_user_id_tag_key
-        unique (indicateur_id, collectivite_id, user_id, tag_id)
-);
-
-create table indicateur_personnalise_pilote
-(
-    indicateur_id integer not null
-        references indicateur_personnalise_definition,
-    user_id       uuid
-        references auth.users,
-    tag_id        integer
-        references personne_tag
-            on delete cascade,
-    unique (indicateur_id, user_id, tag_id)
-);
-
-
-insert into indicateur_personnalise_pilote
-table migration.indicateur_personnalise_pilote;
-
-insert into indicateur_pilote
-table migration.indicateur_pilote;
-
-drop table indicateur_service_tag;
-
-create table indicateur_service_tag
-(
-    indicateur_id   indicateur_id not null
-        references indicateur_definition,
-    collectivite_id integer       not null
-        references collectivite,
-    service_tag_id  integer       not null
-        references service_tag
-            on delete cascade,
-    primary key (indicateur_id, collectivite_id, service_tag_id)
-);
-
-create table indicateur_personnalise_service_tag
-(
-    indicateur_id  integer not null
-        references indicateur_personnalise_definition,
-    service_tag_id integer not null
-        references service_tag
-            on delete cascade,
-    primary key (indicateur_id, service_tag_id)
-);
-
+create view indicateur_definitions
+as
+select c.id           as collectivite_id,
+       definition.id  as indicateur_id,
+       null::integer  as indicateur_perso_id,
+       definition.nom as nom,
+       definition.description,
+       definition.unite
+from collectivite c
+         cross join indicateur_definition definition
+union all
+select definition.collectivite_id as collectivite_id,
+       null::indicateur_id        as indicateur_id,
+       definition.id              as indicateur_perso_id,
+       definition.titre,
+       definition.description,
+       definition.unite
+from indicateur_personnalise_definition definition
+where have_edition_acces(collectivite_id);
+comment on view indicateur_definitions
+    is 'Les définitions des indicateurs prédéfinis et personnalisés';
 
 create function
     services(indicateur_definitions)
