@@ -47,38 +47,40 @@ comment on function axe is
     'L''axe d''un indicateur, pour filtrer par son plan.';
 
 
-create type pilote as
-(
-    indicateur_id       indicateur_id,
-    collectivite_id     integer,
-    indicateur_perso_id integer,
-    user_id             uuid,
-    tag_id              integer
-);
-
-create function
+create or replace function
     pilote(indicateur_definitions)
-    returns setof pilote
+    returns setof indicateur_pilote
     language sql
     stable
 begin
     atomic
-    select case
-               when $1.indicateur_id is not null -- indicateur prédéfini
-                   then
-                   (select row (ip.indicateur_id, ip.collectivite_id, null::integer, ip.user_id, ip.tag_id)::pilote
-                    from indicateur_pilote ip
-                    where ip.indicateur_id = $1.indicateur_id)
-               else -- indicateur personnalisé
-                   (select row (null::integer, null::integer, ipp.indicateur_id, ipp.user_id, ipp.tag_id)::pilote
-                    from indicateur_personnalise_pilote ipp
-                    where ipp.indicateur_id = $1.indicateur_perso_id)
-               end;
+    -- indicateur prédéfini
+    select ip
+    from indicateur_pilote ip
+    where ($1.indicateur_id is not null
+        and ip.indicateur_id = $1.indicateur_id
+        and collectivite_id = $1.collectivite_id)
+       or ($1.indicateur_perso_id is not null
+        and ip.indicateur_perso_id = $1.indicateur_perso_id);
 end;
 comment on function pilote is
     'Le pilote d''un indicateur, pour filtrer par son user_id ou son tag_id.';
 
--- todo fusionner indicateur_service_tag et indicateur_perso_service_tag
+create function
+    personne_pilote(indicateur_definitions)
+    returns setof personne
+begin
+    atomic
+    select private.get_personne(ip)
+    from indicateur_pilote ip
+    where ($1.indicateur_id is not null
+        and ip.indicateur_id = $1.indicateur_id
+        and collectivite_id = $1.collectivite_id)
+       or ($1.indicateur_perso_id is not null
+        and ip.indicateur_perso_id = $1.indicateur_perso_id);
+end;
+comment on function personne_pilote is
+    'Les personnes pilotes pour un indicateur.';
 
 create or replace function
     service(indicateur_definitions)
