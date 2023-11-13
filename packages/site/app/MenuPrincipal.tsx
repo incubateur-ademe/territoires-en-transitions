@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'; // pour utiliser `usePathname`
 
 import {usePathname} from 'next/navigation';
@@ -39,6 +40,9 @@ export function MenuPrincipal(props: MenuProps) {
       </MenuItem>
       <MenuItem href="/programme" {...props}>
         Le programme Territoire Engagé
+      </MenuItem>
+      <MenuItem href="/outil-numerique" {...props}>
+        L'outil numérique
       </MenuItem>
       <MenuItem href="/actus" {...props}>
         Actualités
