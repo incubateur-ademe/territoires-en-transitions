@@ -2,7 +2,7 @@
 
 BEGIN;
 
-create or replace view indicateur_definitions
+create view indicateur_definitions
 as
 select c.id           as collectivite_id,
        definition.id  as indicateur_id,
@@ -12,7 +12,6 @@ select c.id           as collectivite_id,
        definition.unite
 from collectivite c
          cross join indicateur_definition definition
-where is_authenticated()
 union all
 select definition.collectivite_id as collectivite_id,
        null::indicateur_id        as indicateur_id,
@@ -25,7 +24,7 @@ where have_edition_acces(collectivite_id);
 comment on view indicateur_definitions
     is 'Les définitions des indicateurs prédéfinis et personnalisés';
 
-create or replace function
+create function
     services(indicateur_definitions)
     returns setof service_tag[]
     rows 1
@@ -47,12 +46,56 @@ begin
                                     where ist.indicateur_id = $1.indicateur_perso_id)
                                end),
                    '{}'::service_tag[]
-           ) where can_read_acces_restreint($1.collectivite_id);
+           );
 end;
 comment on function services is
     'La liste de services pilotes rattachés à un indicateur.';
 
-create or replace function
+create function
+    private.get_personne(indicateur_pilote)
+    returns personne
+    security definer
+begin
+    atomic
+    select case
+               when $1.tag_id is not null
+                   then (select row (pt.nom, pt.collectivite_id, $1.tag_id, null::uuid)::personne
+                         from personne_tag pt
+                         where pt.id = $1.tag_id)
+               else (select row (u.prenom || ' ' || u.nom, $1.collectivite_id, null::integer, u.user_id)::personne
+                     from utilisateur.dcp_display u
+                     where u.user_id = $1.user_id)
+               end;
+end;
+comment on function private.get_personne(indicateur_pilote) is
+    'Renvoie la personne pilote d''un indicateur.';
+
+
+create function
+    private.get_personne(indicateur_personnalise_pilote)
+    returns personne
+    security definer
+begin
+    atomic
+    select case
+               when $1.tag_id is not null
+                   then (select (select row (pt.nom, pt.collectivite_id, $1.tag_id, null::uuid)::personne
+                                 from personne_tag pt
+                                 where pt.id = $1.tag_id))
+               else (select row (u.prenom || ' ' || u.nom,
+                                (select collectivite_id
+                                 from indicateur_personnalise_definition d
+                                 where d.id = $1.indicateur_id),
+                                null::integer,
+                                u.user_id)::personne
+                     from utilisateur.dcp_display u
+                     where u.user_id = $1.user_id)
+               end;
+end;
+comment on function private.get_personne(indicateur_personnalise_pilote) is
+    'Renvoie la personne pilote d''un indicateur personnalisé.';
+
+create function
     pilotes(indicateur_definitions)
     returns setof personne[]
     rows 1
@@ -72,7 +115,7 @@ begin
                                     where pilote.indicateur_id = $1.indicateur_perso_id)
                                end),
                    '{}'::personne[]
-           ) where can_read_acces_restreint($1.collectivite_id);
+           );
 end;
 comment on function pilotes is
     'La liste des personnes pilotes pour un indicateur.';
@@ -101,7 +144,7 @@ begin
                                     where definition.id = $1.indicateur_perso_id)
                                end),
                    '{}'::thematique[]
-           ) where can_read_acces_restreint($1.collectivite_id);
+           );
 end;
 comment on function thematiques is
     'La listes des thématiques d''un indicateur.';

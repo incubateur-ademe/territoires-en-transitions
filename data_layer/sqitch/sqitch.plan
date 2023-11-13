@@ -545,3 +545,6 @@ taxonomie/personne 2023-11-07T08:58:36Z Florian <florian@derfurth.com> # Répare
 
 indicateur/artificialisation 2023-11-16T13:12:35Z Florian <florian@derfurth.com> # Artificialisation des sols de 2009 à 2022
 @v2.81.0 2023-11-16T14:13:44Z Florian <florian@derfurth.com> # Indicateur d'artificialisation des sols pour le site
+
+indicateur/detail [indicateur/detail@v2.80.0] 2023-11-13T17:18:58Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des droits
+plan_action/fiches [plan_action/fiches@v2.80.0] 2023-11-13T17:33:13Z Amandine Jacquelin <conta@LanceLibre> # Corrige create_fiche

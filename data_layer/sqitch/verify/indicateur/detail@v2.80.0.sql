@@ -9,5 +9,7 @@ where false;
 select has_function_privilege('services(indicateur_definitions)', 'execute');
 select has_function_privilege('pilotes(indicateur_definitions)', 'execute');
 select has_function_privilege('thematiques(indicateur_definitions)', 'execute');
+select has_function_privilege('private.get_personne(indicateur_pilote)', 'execute');
+select has_function_privilege('private.get_personne(indicateur_personnalise_pilote)', 'execute');
 
 ROLLBACK;
