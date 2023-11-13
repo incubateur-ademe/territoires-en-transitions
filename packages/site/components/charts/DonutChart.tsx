@@ -126,7 +126,7 @@ const DonutChart = ({
       activeOuterRadiusOffset={zoomEffect ? 8 : 0}
       borderWidth={0}
       enableArcLinkLabels={true}
-      arcLinkLabelsSkipAngle={30}
+      arcLinkLabelsSkipAngle={40}
       arcLinkLabelsDiagonalLength={10}
       arcLinkLabelsStraightLength={10}
       arcLinkLabelsThickness={1}
@@ -134,6 +134,7 @@ const DonutChart = ({
       arcLinkLabelsTextOffset={5}
       arcLinkLabelsTextColor="#2A2A62"
       arcLinkLabelComponent={datum => {
+        const splitedLabel = splitLabel(datum.label);
         return (
           <animated.g opacity={datum.style.opacity}>
             <animated.path
@@ -143,7 +144,7 @@ const DonutChart = ({
               d={datum.style.path}
               offset={10}
             />
-            {splitLabel(datum.label).map((segment, i) => (
+            {splitedLabel.slice(0, 2).map((segment, i) => (
               <animated.text
                 y={i * 12}
                 key={`arcLinkLabel_segment_${segment}`}
@@ -157,11 +158,13 @@ const DonutChart = ({
                   fill: '#2A2A62',
                 }}
               >
-                {segment}
+                {splitedLabel.length >= 2 && i === 1
+                  ? `${segment}...`
+                  : segment}
               </animated.text>
             ))}
             <animated.text
-              y={splitLabel(datum.label).length * 12 + 6}
+              y={splitedLabel.length < 2 ? splitedLabel.length * 12 + 6 : 30}
               transform={datum.style.textPosition}
               textAnchor={datum.style.textAnchor}
               dominantBaseline="center"
@@ -172,7 +175,10 @@ const DonutChart = ({
                 fill: '#5555C3',
               }}
             >
-              {getFormattedNumber(Math.round(datum.datum.value * 10) / 10)}
+              {`${getPercentage(
+                datum.datum.value,
+                localData.map(d => d.value),
+              )} %`}
             </animated.text>
           </animated.g>
         );
