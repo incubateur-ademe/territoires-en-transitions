@@ -197,6 +197,61 @@ insert into indicateur_service_tag (service_tag_id, indicateur_perso_id)
 select service_tag_id, indicateur_id
 from indicateur_personnalise_service_tag as ipp;
 
+-- - on crée les RLS
+create function
+    private.can_write(indicateur_service_tag)
+    returns bool
+    language sql
+    volatile
+begin
+    atomic
+    select case
+               when $1.indicateur_id is not null -- indicateur prédéfini
+                   then
+                       have_edition_acces($1.collectivite_id)
+                       or private.est_auditeur($1.collectivite_id)
+               else -- indicateur personnalisé
+                       have_edition_acces((select collectivite_id
+                                           from indicateur_personnalise_definition d
+                                           where d.id = $1.indicateur_perso_id))
+                       or private.est_auditeur((select collectivite_id
+                                                from indicateur_personnalise_definition d
+                                                where d.id = $1.indicateur_perso_id))
+               end;
+end;
+comment on function private.can_write(indicateur_service_tag) is
+    'Vrai si l''utilisateur peut écrire un `indicateur_service_tag`.';
+
+create function
+    private.can_read(indicateur_service_tag)
+    returns bool
+    language sql
+    volatile
+begin
+    atomic
+    select case
+               when $1.indicateur_id is not null -- indicateur prédéfini
+                   then
+                   can_read_acces_restreint($1.collectivite_id)
+               else -- indicateur personnalisé
+                   can_read_acces_restreint((select collectivite_id
+                                             from indicateur_personnalise_definition d
+                                             where d.id = $1.indicateur_perso_id))
+               end;
+end;
+comment on function private.can_read(indicateur_service_tag) is
+    'Vrai si l''utilisateur peut lire un `indicateur_service_tag`.';
+
+create policy allow_insert on indicateur_service_tag
+    for insert with check (private.can_write(indicateur_service_tag));
+create policy allow_read on indicateur_service_tag
+    for select using (private.can_read(indicateur_service_tag));
+create policy allow_update on indicateur_service_tag
+    for update using (private.can_write(indicateur_service_tag));
+create policy allow_delete on indicateur_service_tag
+    for delete using (private.can_write(indicateur_service_tag));
+alter table indicateur_service_tag enable row level security;
+
 -- - on supprime la table désormais redondante
 drop table indicateur_personnalise_service_tag;
 
