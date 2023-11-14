@@ -55,6 +55,13 @@ insert into indicateur_personnalise_pilote
 insert into indicateur_pilote
     table migration.indicateur_pilote;
 
+
+drop policy allow_insert on indicateur_service_tag;
+drop policy allow_read on indicateur_service_tag;
+drop policy allow_update on indicateur_service_tag;
+drop policy allow_delete on indicateur_service_tag;
+drop function private.can_write(indicateur_service_tag);
+drop function private.can_read(indicateur_service_tag);
 drop table indicateur_service_tag;
 
 create table indicateur_service_tag
