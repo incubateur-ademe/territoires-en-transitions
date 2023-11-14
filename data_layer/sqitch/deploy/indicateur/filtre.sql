@@ -94,7 +94,7 @@ comment on function service is
 
 create function
     definition_referentiel(indicateur_definitions)
-    returns setof indicateur_definition
+    returns setof indicateur_definition rows 1
     language sql
     stable
 begin
