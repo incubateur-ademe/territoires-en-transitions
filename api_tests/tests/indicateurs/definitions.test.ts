@@ -93,35 +93,87 @@ Deno.test('Personne pilotes pour les indicateur prédéfinis.', async () => {
   await signOut();
 });
 
+Deno.test('Personne pilotes pour les indicateurs personnalisés.', async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  const upsert = await supabase
+    .from('indicateur_pilote')
+    .upsert({
+      indicateur_perso_id: 0,
+      user_id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+    })
+    .select()
+    .returns<IndicateurDefinition[]>();
+  assertEquals(upsert.status, 201);
+
+  const { data } = await supabase
+    .from('indicateur_definitions')
+    .select('*, pilote(personne)')
+    .eq('collectivite_id', 1)
+    .eq('indicateur_perso_id', 0)
+    .returns<IndicateurDefinition[]>();
+  assertExists(data);
+  const pilotes = data[0].pilote;
+  assertExists(pilotes);
+  assertEquals(pilotes[0]?.personne?.nom, 'Yala Dada');
+
+  await signOut();
+});
+
 Deno.test(
-  'Personne pilotes pour les indicateurs personnalisés.',
-  { ignore: true }, // TODO: réparer l'insertion de pilote sur un indicateur perso
+  'Services pilotes pour les indicateurs prédéfinis.',
+  { only: true },
   async () => {
     await testReset();
     await signIn('yolododo');
 
     const upsert = await supabase
-      .from('indicateur_pilote')
+      .from('indicateur_service_tag')
       .upsert({
-        indicateur_perso_id: 0,
-        user_id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+        collectivite_id: 1,
+        indicateur_id: 'cae_8',
+        service_tag_id: 1,
       })
       .select()
       .returns<IndicateurDefinition[]>();
-    console.log(upsert.error);
     assertEquals(upsert.status, 201);
 
     const { data } = await supabase
       .from('indicateur_definitions')
-      .select('*, pilote(personne)')
+      .select('*, service(...service_tag(nom))')
       .eq('collectivite_id', 1)
-      .eq('indicateur_perso_id', 0)
+      .eq('indicateur_id', 'cae_8')
       .returns<IndicateurDefinition[]>();
     assertExists(data);
-    const pilotes = data[0].pilote;
-    assertExists(pilotes);
-    assertEquals(pilotes[0]?.personne?.nom, 'Yala Dada');
+    const services = data[0].service;
+    assertExists(services);
+    assertEquals(services[0]?.nom, 'Super service');
 
     await signOut();
   }
 );
+
+Deno.test('Services pilotes pour les indicateurs personnalisés.', async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  const upsert = await supabase.from('indicateur_service_tag').upsert({
+    indicateur_perso_id: 0,
+    service_tag_id: 2,
+  });
+  assertEquals(upsert.status, 201);
+
+  const { data } = await supabase
+    .from('indicateur_definitions')
+    .select('*, service(...service_tag(nom))')
+    .eq('collectivite_id', 1)
+    .eq('indicateur_perso_id', 0)
+    .returns<IndicateurDefinition[]>();
+  assertExists(data);
+  const services = data[0].service;
+  assertExists(services);
+  assertEquals(services[0]?.nom, 'Ultra service');
+
+  await signOut();
+});
