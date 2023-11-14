@@ -86,7 +86,8 @@ begin
     atomic
     select ist
     from indicateur_service_tag ist
-    where ist.indicateur_id = $1.indicateur_id;
+    where ist.indicateur_id = $1.indicateur_id
+       or ist.indicateur_perso_id = $1.indicateur_perso_id;
 end;
 comment on function service is
     'Le service d''un indicateur, pour filtrer par son tag_id.';
