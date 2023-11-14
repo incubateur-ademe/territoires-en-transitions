@@ -35,6 +35,7 @@ type Filter = {
   type?: Database['public']['Enums']['indicateur_referentiel_type']
   participation_score?: boolean,
   rempli?: boolean,
+  indicateur_id?: string
 }
 
 // Associe les parties requises aux champs sur lesquels on filtre.
@@ -89,6 +90,9 @@ function fetchIndicateurs<T>(filter: Filter) {
     select = select.eq('service.service_tag_id', id);
   });
 
+  if (filter.indicateur_id) {
+    select = select.eq('indicateur_id', filter.indicateur_id);
+  }
   if (filter.type) {
     select = select.eq('definition_referentiel.type', filter.type);
   }
@@ -196,6 +200,13 @@ const expectations: {
       },
       count: 1,
     },
+    {
+      filter: {
+        collectivite_id: 1,
+        thematique_ids: [8],
+      },
+      count: 3, // deux prédéfinis et un perso
+    }
   ];
 
 Deno.test('Filtres multicritère', async () => {
@@ -239,6 +250,13 @@ Deno.test('Filtres multicritère', async () => {
     }).select();
   assertEquals(upsert.status, 201);
 
+  upsert = await supabase.from('indicateur_personnalise_thematique').upsert(
+    {
+      indicateur_id: 0,
+      thematique_id: 8,
+    }).select();
+  assertEquals(upsert.status, 201);
+
   for (const expectation of expectations.reverse()) {
     const select = await fetchIndicateurs<IndicateurDetail[]>(
       expectation.filter,
@@ -251,7 +269,8 @@ Deno.test('Filtres multicritère', async () => {
 
     if (expectation.count) {
       assertEquals(indicateurs.length, expectation.count,
-        `Le fetch devrait renvoyer ${expectation.count} indicateurs pour le filtre \n ${JSON.stringify(expectation.filter,
+        `Le fetch devrait renvoyer ${expectation.count} indicateurs pour le filtre \n ${JSON.stringify(
+          expectation.filter,
           null, 2)}`);
     }
     if (expectation.examples) {
