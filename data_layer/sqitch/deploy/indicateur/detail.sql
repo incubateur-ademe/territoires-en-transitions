@@ -81,6 +81,65 @@ insert into indicateur_pilote (user_id, tag_id, indicateur_perso_id)
 select user_id, tag_id, indicateur_id
 from indicateur_personnalise_pilote as ipp;
 
+-- - on mets à jour les RLS
+drop policy allow_insert on indicateur_pilote;
+drop policy allow_read on indicateur_pilote;
+drop policy allow_update on indicateur_pilote;
+drop policy allow_delete on indicateur_pilote;
+
+create function
+    private.can_write(indicateur_pilote)
+    returns bool
+    language sql
+    volatile
+begin
+    atomic
+    select case
+               when $1.indicateur_id is not null -- indicateur prédéfini
+                   then
+                       have_edition_acces($1.collectivite_id)
+                       or private.est_auditeur($1.collectivite_id)
+               else -- indicateur personnalisé
+                       have_edition_acces((select collectivite_id
+                                           from indicateur_personnalise_definition d
+                                           where d.id = $1.indicateur_perso_id))
+                       or private.est_auditeur((select collectivite_id
+                                                from indicateur_personnalise_definition d
+                                                where d.id = $1.indicateur_perso_id))
+               end;
+end;
+comment on function private.can_write(indicateur_pilote) is
+    'Vrai si l''utilisateur peut écrire un `indicateur_pilote`.';
+
+create function
+    private.can_read(indicateur_pilote)
+    returns bool
+    language sql
+    volatile
+begin
+    atomic
+    select case
+               when $1.indicateur_id is not null -- indicateur prédéfini
+                   then
+                   can_read_acces_restreint($1.collectivite_id)
+               else -- indicateur personnalisé
+                   can_read_acces_restreint((select collectivite_id
+                                             from indicateur_personnalise_definition d
+                                             where d.id = $1.indicateur_perso_id))
+               end;
+end;
+comment on function private.can_read(indicateur_pilote) is
+    'Vrai si l''utilisateur peut lire un `indicateur_pilote`.';
+
+create policy allow_insert on indicateur_pilote
+    for insert with check (private.can_write(indicateur_pilote));
+create policy allow_read on indicateur_pilote
+    for select using (private.can_read(indicateur_pilote));
+create policy allow_update on indicateur_pilote
+    for update using (private.can_write(indicateur_pilote));
+create policy allow_delete on indicateur_pilote
+    for delete using (private.can_write(indicateur_pilote));
+
 -- - on supprime la table désormais redondante
 drop table indicateur_personnalise_pilote;
 

@@ -4,6 +4,12 @@ BEGIN;
 
 drop function private.get_personne(indicateur_pilote);
 
+drop policy allow_insert on indicateur_pilote;
+drop policy allow_read on indicateur_pilote;
+drop policy allow_update on indicateur_pilote;
+drop policy allow_delete on indicateur_pilote;
+drop function private.can_write(indicateur_pilote);
+drop function private.can_read(indicateur_pilote);
 drop table indicateur_pilote;
 create table indicateur_pilote
 (
@@ -19,6 +25,16 @@ create table indicateur_pilote
     constraint indicateur_pilote_indicateur_id_collectivite_id_user_id_tag_key
         unique (indicateur_id, collectivite_id, user_id, tag_id)
 );
+alter table indicateur_pilote
+    enable row level security;
+create policy allow_insert on indicateur_pilote
+    for insert with check (have_edition_acces(collectivite_id) OR private.est_auditeur(collectivite_id));
+create policy allow_read on indicateur_pilote
+    for select using (can_read_acces_restreint(collectivite_id));
+create policy allow_update on indicateur_pilote
+    for update using (have_edition_acces(collectivite_id) OR private.est_auditeur(collectivite_id));
+create policy allow_delete on indicateur_pilote
+    for delete using (have_edition_acces(collectivite_id) OR private.est_auditeur(collectivite_id));
 
 create table indicateur_personnalise_pilote
 (
@@ -34,10 +50,10 @@ create table indicateur_personnalise_pilote
 
 
 insert into indicateur_personnalise_pilote
-table migration.indicateur_personnalise_pilote;
+    table migration.indicateur_personnalise_pilote;
 
 insert into indicateur_pilote
-table migration.indicateur_pilote;
+    table migration.indicateur_pilote;
 
 drop table indicateur_service_tag;
 
