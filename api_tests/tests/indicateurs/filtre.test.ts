@@ -232,6 +232,12 @@ Deno.test('Filtres multicritère', async () => {
       service_tag_id: 1,
     }).select();
   assertEquals(upsert.status, 201);
+  upsert = await supabase.from('fiche_action_indicateur').upsert(
+    {
+      indicateur_id: 'eci_24',
+      fiche_id: 1,
+    }).select();
+  assertEquals(upsert.status, 201);
 
   for (const expectation of expectations.reverse()) {
     const select = await fetchIndicateurs<IndicateurDetail[]>(
@@ -242,9 +248,11 @@ Deno.test('Filtres multicritère', async () => {
 
     assertExists(indicateurs,
       'Le fetch devrait renvoyer une liste d\'indicateurs');
+
     if (expectation.count) {
       assertEquals(indicateurs.length, expectation.count,
-        `Le fetch devrait renvoyer ${expectation.count} indicateurs`);
+        `Le fetch devrait renvoyer ${expectation.count} indicateurs pour le filtre \n ${JSON.stringify(expectation.filter,
+          null, 2)}`);
     }
     if (expectation.examples) {
       expectation.examples.forEach(ex => {
