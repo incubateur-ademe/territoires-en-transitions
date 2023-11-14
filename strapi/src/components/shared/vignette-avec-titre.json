@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_shared_vignette_avec_titres",
+  "info": {
+    "displayName": "vignette_avec_titre",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "legende": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

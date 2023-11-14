@@ -1,0 +1,109 @@
+{
+  "kind": "singleType",
+  "collectionName": "page_outils_numeriques",
+  "info": {
+    "singularName": "page-outils-numerique",
+    "pluralName": "page-outils-numeriques",
+    "displayName": "3. Outils numérique",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "accroche": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "cta_incription": {
+      "type": "string",
+      "required": true,
+      "default": "Je m’inscris",
+      "maxLength": 50
+    },
+    "cta_demo": {
+      "type": "string",
+      "default": "Je participe à une démo",
+      "required": true,
+      "maxLength": 50
+    },
+    "couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "avantages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette",
+      "min": 2,
+      "max": 4
+    },
+    "fonctionnalites_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "fonctionnalites_contenu": {
+      "type": "richtext",
+      "required": true
+    },
+    "fonctionnalites_image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "temoignages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.temoignage",
+      "min": 1
+    },
+    "equipe_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "equipe_citation": {
+      "type": "text"
+    },
+    "equipe_description": {
+      "type": "text"
+    },
+    "equipe_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre",
+      "min": 1
+    },
+    "questions_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "questions_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.paragraphe",
+      "min": 1
+    }
+  }
+}

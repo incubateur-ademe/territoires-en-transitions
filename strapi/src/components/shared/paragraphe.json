@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_paragraphes",
+  "info": {
+    "displayName": "paragraphe",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "contenu": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}
