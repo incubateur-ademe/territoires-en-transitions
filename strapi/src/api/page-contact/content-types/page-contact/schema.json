@@ -4,7 +4,7 @@
   "info": {
     "singularName": "page-contact",
     "pluralName": "page-contacts",
-    "displayName": "4. Contact",
+    "displayName": "5. Contact",
     "description": ""
   },
   "options": {
@@ -31,7 +31,9 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "telephone": {
       "type": "string",

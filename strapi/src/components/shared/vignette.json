@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_vignettes",
+  "info": {
+    "displayName": "vignette",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "legende": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

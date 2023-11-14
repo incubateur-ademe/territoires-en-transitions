@@ -31,13 +31,17 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "couverture": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "url": {
       "type": "string"
@@ -53,7 +57,7 @@
     "temoignages": {
       "type": "component",
       "repeatable": true,
-      "component": "contenu.temoignage",
+      "component": "shared.temoignage",
       "max": 3,
       "min": 1
     },

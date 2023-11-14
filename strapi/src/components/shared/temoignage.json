@@ -1,8 +1,9 @@
 {
-  "collectionName": "components_contenu_temoignages",
+  "collectionName": "components_shared_temoignages",
   "info": {
-    "displayName": "Temoignage",
-    "description": ""
+    "displayName": "temoignage",
+    "description": "",
+    "icon": "discuss"
   },
   "options": {},
   "attributes": {
@@ -25,9 +26,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     }
   }
 }
