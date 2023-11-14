@@ -16,13 +16,16 @@ type Pilote = Database['public']['Tables']['personne_tag']['Row'] & {
 };
 type Service = Database['public']['Tables']['service_tag']['Row'];
 type Thematique = Database['public']['Tables']['thematique']['Row'];
+type IndicateurPredefini =
+  Database['public']['Tables']['indicateur_definition']['Row'];
 
 type IndicateurDefinition =
   Database['public']['Views']['indicateur_definitions']['Row'] & {
     pilote?: Pilote[];
     service?: Service[];
     thematique?: Thematique[];
-    enfants?: IndicateurDefinition[];
+    enfants?: IndicateurPredefini[];
+    definition_referentiel?: IndicateurPredefini;
   };
 
 Deno.test(
@@ -44,6 +47,47 @@ Deno.test(
     assertGreaterOrEqual(data.length, 30);
     assertLessOrEqual(data.length, 40);
     assertExists(data[0].thematique?.[0].nom);
+
+    await signOut();
+  }
+);
+
+Deno.test("Propriétés supplémentaires d'un indicateur prédéfini", async () => {
+  await signIn('yolododo');
+
+  const query = supabase
+    .from('indicateur_definitions')
+    .select('*, definition_referentiel(titre_long,participation_score)')
+    .eq('collectivite_id', 1)
+    .eq('indicateur_id', 'cae_18');
+
+  const { data } = await query.returns<IndicateurDefinition[]>();
+  assertExists(data);
+  assertEquals(data.length, 1);
+  assertExists(data[0].definition_referentiel?.titre_long);
+  assertExists(data[0].definition_referentiel?.participation_score);
+
+  await signOut();
+});
+
+Deno.test(
+  "Propagation des propriétés supplémentaires d'un indicateur prédéfini",
+  async () => {
+    await signIn('yolododo');
+
+    const query = supabase
+      .from('indicateur_definitions')
+      .select('*, ...definition_referentiel(titre_long,participation_score)')
+      .eq('collectivite_id', 1)
+      .eq('indicateur_id', 'cae_18');
+
+    const { data } = await query.returns<
+      Array<IndicateurDefinition & IndicateurPredefini>
+    >();
+    assertExists(data);
+    assertEquals(data.length, 1);
+    assertExists(data[0].titre_long);
+    assertExists(data[0].participation_score);
 
     await signOut();
   }
@@ -121,38 +165,34 @@ Deno.test('Personne pilotes pour les indicateurs personnalisés.', async () => {
   await signOut();
 });
 
-Deno.test(
-  'Services pilotes pour les indicateurs prédéfinis.',
-  { only: true },
-  async () => {
-    await testReset();
-    await signIn('yolododo');
+Deno.test('Services pilotes pour les indicateurs prédéfinis.', async () => {
+  await testReset();
+  await signIn('yolododo');
 
-    const upsert = await supabase
-      .from('indicateur_service_tag')
-      .upsert({
-        collectivite_id: 1,
-        indicateur_id: 'cae_8',
-        service_tag_id: 1,
-      })
-      .select()
-      .returns<IndicateurDefinition[]>();
-    assertEquals(upsert.status, 201);
+  const upsert = await supabase
+    .from('indicateur_service_tag')
+    .upsert({
+      collectivite_id: 1,
+      indicateur_id: 'cae_8',
+      service_tag_id: 1,
+    })
+    .select()
+    .returns<IndicateurDefinition[]>();
+  assertEquals(upsert.status, 201);
 
-    const { data } = await supabase
-      .from('indicateur_definitions')
-      .select('*, service(...service_tag(nom))')
-      .eq('collectivite_id', 1)
-      .eq('indicateur_id', 'cae_8')
-      .returns<IndicateurDefinition[]>();
-    assertExists(data);
-    const services = data[0].service;
-    assertExists(services);
-    assertEquals(services[0]?.nom, 'Super service');
+  const { data } = await supabase
+    .from('indicateur_definitions')
+    .select('*, service(...service_tag(nom))')
+    .eq('collectivite_id', 1)
+    .eq('indicateur_id', 'cae_8')
+    .returns<IndicateurDefinition[]>();
+  assertExists(data);
+  const services = data[0].service;
+  assertExists(services);
+  assertEquals(services[0]?.nom, 'Super service');
 
-    await signOut();
-  }
-);
+  await signOut();
+});
 
 Deno.test('Services pilotes pour les indicateurs personnalisés.', async () => {
   await testReset();
