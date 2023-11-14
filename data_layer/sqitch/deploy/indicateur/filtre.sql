@@ -120,4 +120,18 @@ end;
 comment on function rempli is
     'Vrai si l''indicateur est rempli.';
 
+create function
+    enfants(indicateur_definitions)
+    returns setof indicateur_definition
+    language sql
+    stable
+begin
+    atomic
+    select ist
+    from indicateur_definition ist
+    where ist.parent = $1.indicateur_id;
+end;
+comment on function enfants is
+    'Définitions des indicateurs enfants d''un indicateur composé.';
+
 COMMIT;
