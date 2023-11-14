@@ -197,7 +197,12 @@ insert into indicateur_service_tag (service_tag_id, indicateur_perso_id)
 select service_tag_id, indicateur_id
 from indicateur_personnalise_service_tag as ipp;
 
--- - on crée les RLS
+-- - on remplace les RLS
+drop policy allow_insert on indicateur_service_tag;
+drop policy allow_read on indicateur_service_tag;
+drop policy allow_update on indicateur_service_tag;
+drop policy allow_delete on indicateur_service_tag;
+
 create function
     private.can_write(indicateur_service_tag)
     returns bool
