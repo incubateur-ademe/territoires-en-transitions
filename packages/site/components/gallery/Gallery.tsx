@@ -48,7 +48,7 @@ const Gallery = ({
         else setColumns(1);
       }
     }
-  }, [windowWidth]);
+  }, [windowWidth, breakpoints.md, breakpoints.lg]);
 
   // Organise les élémnents par colonne
   useEffect(() => {

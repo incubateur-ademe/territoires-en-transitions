@@ -1,8 +1,7 @@
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import {ButtonVariant} from '@components/dstet/buttons/utils';
+import Markdown from '@components/markdown/Markdown';
 
 type CardProps = {
   title?: string;
@@ -69,15 +68,13 @@ const Card = ({
             </p>
           )}
           <Markdown
-            remarkPlugins={[remarkGfm]}
+            texte={description}
             className={classNames(
               'paragraphe-16',
               {'no-margin': !button},
               textClassName,
             )}
-          >
-            {description}
-          </Markdown>
+          />
         </div>
 
         {button && (

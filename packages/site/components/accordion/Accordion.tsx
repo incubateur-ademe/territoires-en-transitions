@@ -1,9 +1,8 @@
 'use client';
 
 import {useState} from 'react';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
+import Markdown from '@components/markdown/Markdown';
 
 type AccordionType = {
   id: string;
@@ -38,11 +37,7 @@ const Accordion = ({
         </button>
       </h3>
       <div className={contentClassName} id={id}>
-        {typeof content === 'string' ? (
-          <Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
-        ) : (
-          content
-        )}
+        {typeof content === 'string' ? <Markdown texte={content} /> : content}
       </div>
     </div>
   );

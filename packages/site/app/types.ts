@@ -208,3 +208,5 @@ export type InfoFetchedData = {
   __component: string;
   Texte: string;
 };
+
+export type EtoilesLabel = 0 | 1 | 2 | 3 | 4 | 5;
