@@ -123,6 +123,47 @@ Deno.test(
   }
 );
 
+Deno.test("Propriétés supplémentaires d'un indicateur prédéfini", async () => {
+  await signIn('yolododo');
+
+  const query = supabase
+    .from('indicateur_definitions')
+    .select('*, definition_referentiel(titre_long,participation_score)')
+    .eq('collectivite_id', 1)
+    .eq('indicateur_id', 'cae_18');
+
+  const { data } = await query.returns<IndicateurDefinition[]>();
+  assertExists(data);
+  assertEquals(data.length, 1);
+  assertExists(data[0].definition_referentiel?.titre_long);
+  assertExists(data[0].definition_referentiel?.participation_score);
+
+  await signOut();
+});
+
+Deno.test(
+  "Propagation des propriétés supplémentaires d'un indicateur prédéfini",
+  async () => {
+    await signIn('yolododo');
+
+    const query = supabase
+      .from('indicateur_definitions')
+      .select('*, ...definition_referentiel(titre_long,participation_score)')
+      .eq('collectivite_id', 1)
+      .eq('indicateur_id', 'cae_18');
+
+    const { data } = await query.returns<
+      Array<IndicateurDefinition & IndicateurPredefini>
+    >();
+    assertExists(data);
+    assertEquals(data.length, 1);
+    assertExists(data[0].titre_long);
+    assertExists(data[0].participation_score);
+
+    await signOut();
+  }
+);
+
 Deno.test('Un indicateur prédéfini et ses enfants', async () => {
   await testReset();
   await signIn('yolododo');
