@@ -6,31 +6,35 @@ import {StrapiItem} from 'src/strapi/StrapiItem';
 import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 
 type CollectiviteHeaderProps = {
-  nom: string;
-  region?: string;
-  regionCode?: string;
-  departement?: string;
-  departementCode?: string;
-  type?: string;
-  population?: number;
-  url?: string;
-  couverture?: StrapiItem;
-  couvertureDefaut?: StrapiItem;
-  logo?: StrapiItem;
+  collectivite: {
+    nom: string;
+    region_name?: string;
+    region_code?: string;
+    departement_name?: string;
+    departement_code?: string;
+    type?: string;
+    population_totale?: number;
+    url?: string;
+    couverture?: StrapiItem;
+    couvertureDefaut?: StrapiItem;
+    logo?: StrapiItem;
+  };
 };
 
 const CollectiviteHeader = ({
-  nom,
-  region,
-  regionCode,
-  departement,
-  departementCode,
-  type,
-  population,
-  url,
-  couverture,
-  couvertureDefaut,
-  logo,
+  collectivite: {
+    nom,
+    region_name,
+    region_code,
+    departement_name,
+    departement_code,
+    type,
+    population_totale,
+    url,
+    couverture,
+    couvertureDefaut,
+    logo,
+  },
 }: CollectiviteHeaderProps) => {
   return (
     <div className="flex flex-col md:rounded-[10px] bg-primary-7">
@@ -84,19 +88,19 @@ const CollectiviteHeader = ({
 
           {/* Région et département */}
           <p className="text-white font-bold text-[16px] lg:text-[18px] leading-[18px] lg:leading-[22px]">
-            {region && departement ? (
+            {region_name && departement_name ? (
               <>
-                <a href={`/stats/region/${regionCode}`}>{region}</a>
+                <a href={`/stats/region/${region_code}`}>{region_name}</a>
                 {' / '}
-                <a href={`/stats/departement/${departementCode}`}>
-                  {departement}
+                <a href={`/stats/departement/${departement_code}`}>
+                  {departement_name}
                 </a>
               </>
-            ) : region ? (
-              <a href={`/stats/region/${regionCode}`}>{region}</a>
-            ) : departement ? (
-              <a href={`/stats/departement/${departementCode}`}>
-                {departement}
+            ) : region_name ? (
+              <a href={`/stats/region/${region_code}`}>{region_name}</a>
+            ) : departement_name ? (
+              <a href={`/stats/departement/${departement_code}`}>
+                {departement_name}
               </a>
             ) : (
               ''
@@ -105,9 +109,9 @@ const CollectiviteHeader = ({
 
           {/* Badges avec nombre d'habitants et type de collectivité */}
           <div className={classNames('flex gap-2 flex-wrap', {'mb-6': !!url})}>
-            {population && (
+            {population_totale && (
               <Badge
-                content={`${getFormattedNumber(population)} habitants`}
+                content={`${getFormattedNumber(population_totale)} habitants`}
                 status="new"
                 className="text-primary-7"
               />

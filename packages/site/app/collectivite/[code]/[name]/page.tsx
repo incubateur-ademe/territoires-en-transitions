@@ -9,7 +9,7 @@ import {
 } from '../../utils';
 import Section from '@components/sections/Section';
 import CollectiviteHeader from './CollectiviteHeader';
-import LabellisationLogo from './LabellisationLogo';
+import LabellisationLogo from '@components/labellisation/LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
 import {natureCollectiviteToLabel} from '../../labels';
@@ -57,23 +57,16 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
         })}
       >
         <CollectiviteHeader
-          nom={collectiviteData.nom}
-          region={collectiviteData.region_name ?? undefined}
-          regionCode={collectiviteData.region_code ?? undefined}
-          departement={collectiviteData.departement_name ?? undefined}
-          departementCode={collectiviteData.departement_code ?? undefined}
-          type={
-            (Object.keys(natureCollectiviteToLabel) as Array<string>).includes(
-              collectiviteData.nature_collectivite,
-            )
+          collectivite={{
+            ...collectiviteData,
+            ...strapiData,
+            type: (
+              Object.keys(natureCollectiviteToLabel) as Array<string>
+            ).includes(collectiviteData.nature_collectivite)
               ? natureCollectiviteToLabel[collectiviteData.nature_collectivite]
-              : collectiviteData.type_collectivite
-          }
-          population={collectiviteData.population_totale ?? undefined}
-          url={strapiData?.url}
-          couverture={strapiData?.couverture}
-          couvertureDefaut={strapiDefaultData?.couverture}
-          logo={strapiData?.logo}
+              : collectiviteData.type_collectivite,
+            couvertureDefaut: strapiDefaultData?.couverture,
+          }}
         />
       </div>
 
@@ -87,14 +80,8 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
         {collectiviteData.labellisee && (
           <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
             <LabellisationLogo
-              cae={
-                (collectiviteData.cae_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
-                undefined
-              }
-              eci={
-                (collectiviteData.eci_etoiles as 0 | 1 | 2 | 3 | 4 | 5) ??
-                undefined
-              }
+              cae={collectiviteData.cae_etoiles ?? undefined}
+              eci={collectiviteData.eci_etoiles ?? undefined}
             />
           </div>
         )}

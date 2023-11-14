@@ -3,11 +3,10 @@
 import DonutChartWithLegend from '@components/charts/DonutChartWithLegend';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {Indicateurs} from 'app/collectivite/utils';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
 import {secteurIdToLabel} from '../../labels';
+import Markdown from '@components/markdown/Markdown';
 
 type IndicateurCardProps = {
   defaultData?: IndicateurDefaultData;
@@ -16,6 +15,11 @@ type IndicateurCardProps = {
   unit?: string;
   unitSingular?: boolean;
 };
+
+/**
+ * Affichage des données de la dernière année disponible
+ * pour un indicateur donné
+ */
 
 const IndicateurCard = ({
   defaultData,
@@ -26,20 +30,17 @@ const IndicateurCard = ({
 }: IndicateurCardProps) => {
   if (!defaultData || data.length === 0) return null;
 
-  const year = data.reduce((lastYear, currValue) => {
-    if (currValue.annee > lastYear) return currValue.annee;
-    else return lastYear;
-  }, 1900);
+  const lastYear = Math.max(...data.map(d => d.annee));
 
-  const filteredData = data.filter(
-    d => d.annee === year && secteurIdToLabel[d.indicateur_id] !== 'Total',
+  const lastYearData = data.filter(
+    d => d.annee === lastYear && secteurIdToLabel[d.indicateur_id] !== 'Total',
   );
 
-  const total = data.find(
-    d => d.annee === year && secteurIdToLabel[d.indicateur_id] === 'Total',
+  const lastYearTotal = data.find(
+    d => d.annee === lastYear && secteurIdToLabel[d.indicateur_id] === 'Total',
   );
 
-  if (filteredData.length <= 1 && !total) return null;
+  if (lastYearData.length <= 1 && !lastYearTotal) return null;
 
   return (
     <div className="flex flex-col bg-white md:rounded-[10px] py-10 px-8 lg:p-8">
@@ -60,7 +61,9 @@ const IndicateurCard = ({
         <div>
           <p className="text-[24px] leading-[39px] text-primary-10 font-bold mb-2">
             {`${
-              total ? `${getFormattedNumber(Math.round(total?.valeur))} ` : ''
+              lastYearTotal
+                ? `${getFormattedNumber(Math.round(lastYearTotal?.valeur))} `
+                : ''
             }${defaultData.titre_encadre}`}
           </p>
           <p className="text-[13px] leading-[18px] text-primary-8 font-bold mb-0">
@@ -72,21 +75,19 @@ const IndicateurCard = ({
       {/* Détails */}
       {defaultData.details && (
         <Markdown
-          remarkPlugins={[remarkGfm]}
+          texte={defaultData.details}
           className="text-primary-9 text-[14px] leading-[25px] font-[500px]"
-        >
-          {defaultData.details}
-        </Markdown>
+        />
       )}
 
       {/* Graphe */}
-      {filteredData.length > 1 && (
+      {lastYearData.length > 1 && (
         <>
-          <p className="text-[12px] leading-[20px] text-grey-8 mb-0">{`${graphTitle} en ${year}`}</p>
+          <p className="text-[12px] leading-[20px] text-grey-8 mb-0">{`${graphTitle} en ${lastYear}`}</p>
           <div className="mb-6">
             <DonutChartWithLegend
               graphContainerClassname="h-[300px] -mx-8"
-              data={filteredData.map(d => ({
+              data={lastYearData.map(d => ({
                 id: secteurIdToLabel[d.indicateur_id],
                 value: d.valeur,
               }))}
@@ -97,7 +98,7 @@ const IndicateurCard = ({
           </div>
 
           <p className="text-[12px] leading-[17px] text-grey-6 mb-0">
-            Source : {filteredData[0].source}
+            Source : {lastYearData[0].source}
           </p>
         </>
       )}

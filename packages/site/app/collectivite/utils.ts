@@ -1,5 +1,6 @@
 import {Database} from 'app/database.types';
 import {supabase} from 'app/initSupabase';
+import {EtoilesLabel} from 'app/types';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
@@ -22,11 +23,11 @@ type Collectivite = {
   engagee: true;
   labellisee: true;
   cae_obtenue_le: string;
-  cae_etoiles: number;
+  cae_etoiles: EtoilesLabel;
   cae_score_realise: number;
   cae_score_programme: number;
   eci_obtenue_le: string;
-  eci_etoiles: number;
+  eci_etoiles: EtoilesLabel;
   eci_score_realise: number;
   eci_score_programme: number;
   indicateurs_gaz_effet_serre: Indicateurs[];

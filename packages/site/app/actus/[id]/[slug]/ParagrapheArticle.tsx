@@ -1,8 +1,7 @@
+import Markdown from '@components/markdown/Markdown';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {ParagrapheCustomArticleData} from 'app/types';
 import classNames from 'classnames';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 type ParagrapheArticleProps = {
   paragraphe: ParagrapheCustomArticleData;
@@ -50,11 +49,9 @@ const ParagrapheArticle = ({
           {/* Texte */}
           {texte && (
             <Markdown
-              remarkPlugins={[remarkGfm]}
+              texte={texte}
               className="text-lg break-words sm:break-normal"
-            >
-              {texte}
-            </Markdown>
+            />
           )}
         </div>
       )}

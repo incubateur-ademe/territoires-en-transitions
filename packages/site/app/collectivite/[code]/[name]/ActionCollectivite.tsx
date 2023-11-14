@@ -1,12 +1,11 @@
 'use client';
 
 import {useState} from 'react';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import classNames from 'classnames';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import AnchorAsButton from '@components/buttons/AnchorAsButton';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import Markdown from '@components/markdown/Markdown';
 
 const splitContent = (content: string, limit: number) => {
   let newContent = content.slice(0, limit);
@@ -52,11 +51,14 @@ const ActionCollectivite = ({
         })}
       >
         <h3>{titre}</h3>
-        <Markdown remarkPlugins={[remarkGfm]} className="paragraphe-16">
-          {contenu.length <= limitContent || contenuOpen
-            ? contenu
-            : `${splitContent(contenu, limitContent)}...`}
-        </Markdown>
+        <Markdown
+          texte={
+            contenu.length <= limitContent || contenuOpen
+              ? contenu
+              : `${splitContent(contenu, limitContent)}...`
+          }
+          className="paragraphe-16"
+        />
 
         {contenu.length > limitContent && (
           <AnchorAsButton
