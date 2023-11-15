@@ -1,33 +1,29 @@
-/* eslint-disable react/no-unescaped-entities */
+import Markdown from '@components/markdown/Markdown';
 import Section from '@components/sections/Section';
+import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import {StrapiItem} from 'src/strapi/StrapiItem';
+import './styles.css';
 
-const FonctionnalitesPlateforme = () => {
+type FonctionnalitesPlateformeProps = {
+  titre: string;
+  contenu: string;
+  image: StrapiItem;
+};
+
+const FonctionnalitesPlateforme = ({
+  titre,
+  contenu,
+  image,
+}: FonctionnalitesPlateformeProps) => {
   return (
     <Section>
-      <h2 className="text-center">
-        Organisez le travail et atteignez vos objectifs !
-      </h2>
-      <div>
-        <ul className="text-primary-10 text-[21px] leading-[32px] font-[500]">
-          <li className="marker:text-primary-6 pb-6">
-            Accélérez votre diagnostique grâce aux actions à impact
-          </li>
-          <li className="marker:text-primary-6 pb-6">
-            Centralisez vos données et pilotez vos plans d’actions
-          </li>
-          <li className="marker:text-primary-6 pb-6">
-            Bénéficiez d’une aide précieuse dans la collecte de données grâce à
-            l’Open Data
-          </li>
-          <li className="marker:text-primary-6 pb-6">
-            Collaborez avec vos collègues pour le suivi des actions et la mise à
-            jour des indicateurs
-          </li>
-          <li className="marker:text-primary-6 pb-6">
-            Evaluez la progression et l'impact de vos actions via vos tableaux
-            de bord
-          </li>
-        </ul>
+      <h2 className="text-center">{titre}</h2>
+      <div className="flex max-md:flex-col justify-between items-center gap-8 md:gap-20">
+        <StrapiImage data={image} />
+        <Markdown
+          texte={contenu}
+          className="fonctionnalites text-primary-10 text-[16px] !leading-[20px] md:text-[21px] md:!leading-[32px] font-[500] max-md:pl-8"
+        />
       </div>
     </Section>
   );

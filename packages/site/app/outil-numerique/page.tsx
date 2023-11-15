@@ -1,25 +1,33 @@
+'use server';
+
+import NoResult from '@components/info/NoResult';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';
 import FonctionnalitesPlateforme from './FonctionnalitesPlateforme';
 import HeaderPlateforme from './HeaderPlateforme';
 import QuestionsPlateforme from './QuestionsPlateforme';
 import TemoignagesPlateforme from './TemoignagesPlateforme';
+import {getStrapiData} from './utils';
 
-const OutilNumerique = () => {
-  return (
+const OutilNumerique = async () => {
+  const strapiData = await getStrapiData();
+
+  return strapiData ? (
     <div className="grow">
-      <HeaderPlateforme />
+      <HeaderPlateforme {...strapiData.header} />
 
-      <AvantagesPlateforme />
+      <AvantagesPlateforme avantages={strapiData.avantages} />
 
-      <FonctionnalitesPlateforme />
+      <FonctionnalitesPlateforme {...strapiData.fonctionnalites} />
 
-      <TemoignagesPlateforme />
+      <TemoignagesPlateforme temoignages={strapiData.temoignages} />
 
-      <EquipePlateforme />
+      <EquipePlateforme {...strapiData.equipe} />
 
-      <QuestionsPlateforme />
+      <QuestionsPlateforme {...strapiData.questions} />
     </div>
+  ) : (
+    <NoResult />
   );
 };
 

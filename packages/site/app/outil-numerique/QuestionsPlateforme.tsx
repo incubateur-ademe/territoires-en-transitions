@@ -1,15 +1,29 @@
 import Accordion from '@components/accordion/Accordion';
 import Section from '@components/sections/Section';
 
-const QuestionsPlateforme = () => {
+type QuestionsPlateformeProps = {
+  titre: string;
+  liste: {
+    id: number;
+    titre: string;
+    contenu: string;
+  }[];
+};
+
+const QuestionsPlateforme = ({titre, liste}: QuestionsPlateformeProps) => {
   return (
     <Section containerClassName="bg-primary-0">
-      <h2 className="text-center">Question fréquentes</h2>
-      <Accordion
-        id="1"
-        title="Faut-il être engagé dans le programme Territoire Engagé Transition Ecologique pour pouvoir utiliser la plateforme ?"
-        content="Non, ce n'est pas obligatoire. L'outil Territoires en Transitions est accessible gratuitement à toutes les collectivités sans distinction !"
-      />
+      <h2 className="text-center">{titre}</h2>
+      <div>
+        {liste.map(l => (
+          <Accordion
+            key={l.id}
+            id={l.id.toString()}
+            title={l.titre}
+            content={l.contenu}
+          />
+        ))}
+      </div>
     </Section>
   );
 };

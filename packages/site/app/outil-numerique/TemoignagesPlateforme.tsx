@@ -1,20 +1,26 @@
 import Section from '@components/sections/Section';
 import TestimonialSlideshow from '@components/slideshow/TestimonialSlideshow';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
-const TemoignagesPlateforme = () => {
+type TemoignagesPlateformeProps = {
+  temoignages: {
+    id: number;
+    auteur: string;
+    role: string;
+    temoignage: string;
+    portrait?: StrapiItem;
+  }[];
+};
+
+const TemoignagesPlateforme = ({temoignages}: TemoignagesPlateformeProps) => {
   return (
-    <Section containerClassName="bg-primary-7">
+    <Section
+      containerClassName="md:bg-primary-7 max-md:!p-0"
+      className="max-md:p-0"
+    >
       <TestimonialSlideshow
-        contenu={[
-          {
-            id: 1,
-            auteur: 'Vincent FRISTOT',
-            role: 'Adjoint au Maire chargé de l’Urbanisme et de la Transition énergétique',
-            temoignage:
-              'La Ville de Grenoble est clairement engagée dans la transition énergétique. Avec une culture transversale des enjeux, elle adopte des objectifs ambitieux pour la santé, l’air, l’énergie et le climat. Pour aller plus loin, elle mobilise ',
-          },
-        ]}
-        className="rounded-[10px] w-3/4 mx-auto"
+        contenu={temoignages}
+        className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 md:w-3/4 mx-auto"
         dotsColor="orange"
         displayButtons={false}
         autoSlide

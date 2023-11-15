@@ -23,7 +23,8 @@ type Single =
   | 'page-accueil'
   | 'page-collectivite'
   | 'page-contact'
-  | 'page-programme';
+  | 'page-programme'
+  | 'page-outils-numerique';
 
 export async function fetchCollection(
   path: Collection,
