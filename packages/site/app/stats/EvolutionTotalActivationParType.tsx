@@ -22,9 +22,9 @@ import {addLocalFilters} from './utils';
  * @param codeRegion le code de la région ou ''
  * @param codeDepartement le code du département ou ''
  */
-function useEvolutionTotalActivation(
+export function useEvolutionTotalActivation(
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) {
   return useSWR(
     `stats_locales_evolution_total_activation-${codeRegion}-${codeDepartement}`,
@@ -64,7 +64,7 @@ function useEvolutionTotalActivation(
           },
         ],
       };
-    }
+    },
   );
 }
 
