@@ -1,8 +1,11 @@
-/* eslint-disable react/no-unescaped-entities */
+'use client';
+
 import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/strapi/StrapiItem';
+import EquipeListe from './EquipeListe';
+import EquipeCarousel from './EquipeCarousel';
+import {useEffect, useRef, useState} from 'react';
 
 type EquipePlateformeProps = {
   titre: string;
@@ -24,9 +27,29 @@ const EquipePlateforme = ({
   liste,
   cta_contact,
 }: EquipePlateformeProps) => {
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Initialisation de carouselWidth au chargement de la page
+    if (ref && ref.current) {
+      const element = ref.current;
+      setCarouselWidth(element.clientWidth);
+
+      // Détecte le changement de taille de la fenêtre
+      window.addEventListener('resize', () =>
+        setCarouselWidth(element.clientWidth),
+      );
+      return () =>
+        window.removeEventListener('resize', () =>
+          setCarouselWidth(element.clientWidth),
+        );
+    }
+  }, []);
+
   return (
     <Section>
-      <h2 className="md:text-center mb-1">{titre}</h2>
+      <h2 className="md:text-center mb-1 p-">{titre}</h2>
       {citation && (
         <h4 className="text-primary-7 md:text-center text-[24px] leading-[32px] mb-1">
           {citation}
@@ -37,27 +60,17 @@ const EquipePlateforme = ({
           {description}
         </p>
       )}
-      <div className="flex gap-4 flex-wrap justify-center my-12">
-        {liste.map(l => (
-          <div
-            key={l.id}
-            className="w-[169px] h-[195px] border border-primary-5 rounded-[10px] flex flex-col items-center justify-start gap-4 py-4 px-2"
-          >
-            <StrapiImage
-              data={l.image}
-              className="rounded-full w-[83px] h-[83px] border border-primary-4"
-            />
-            <div className="flex flex-col gap-1">
-              <p className="text-primary-9 text-[14px] text-center leading-[19px] font-[500] mb-0">
-                {l.titre}
-              </p>
-              <p className="text-primary-6 text-[12px] text-center leading-[16px] font-[500] mb-0">
-                {l.legende}
-              </p>
-            </div>
-          </div>
-        ))}
+
+      {/* Affichage de la liste en version desktop */}
+      <div className="max-md:hidden flex gap-4 flex-wrap justify-center my-12">
+        <EquipeListe liste={liste} />
       </div>
+
+      {/* Affichage de la liste en version mobile */}
+      <div ref={ref} className="md:hidden">
+        <EquipeCarousel liste={liste} width={carouselWidth} />
+      </div>
+
       <div className="flex gap-8 justify-center">
         <ButtonWithLink href="/contact" size="big">
           {cta_contact}
