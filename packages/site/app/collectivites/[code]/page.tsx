@@ -20,7 +20,7 @@ const DetailCodeCollectivite = async ({params}: {params: {code: string}}) => {
   const data = await fetchCollectivite(params.code);
 
   redirect(
-    `/collectivite/${params.code}/${convertNameToSlug(data?.nom ?? '')}`,
+    `/collectivites/${params.code}/${convertNameToSlug(data?.nom ?? '')}`,
   );
 };
 

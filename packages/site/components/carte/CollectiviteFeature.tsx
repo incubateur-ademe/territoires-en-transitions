@@ -35,7 +35,7 @@ const CollectiviteFeature = ({collectivite}: CollectiviteFeatureProps) => {
         eventHandlers={{
           click: () => {
             router.push(
-              `/collectivite/${
+              `/collectivites/${
                 collectivite.code_siren_insee
               }/${convertNameToSlug(collectivite.nom ?? '')}`,
             );

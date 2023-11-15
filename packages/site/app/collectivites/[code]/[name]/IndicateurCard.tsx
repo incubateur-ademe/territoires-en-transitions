@@ -2,7 +2,7 @@
 
 import DonutChartWithLegend from '@components/charts/DonutChartWithLegend';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Indicateurs} from 'app/collectivite/utils';
+import {Indicateurs} from 'app/collectivites/utils';
 import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
 import {secteurIdToLabel} from 'src/utils/labels';
