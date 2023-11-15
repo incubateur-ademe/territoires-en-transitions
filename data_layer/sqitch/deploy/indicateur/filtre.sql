@@ -23,10 +23,10 @@ begin
     where definition.id = $1.indicateur_perso_id;
 end;
 comment on function thematiques(indicateur_definitions) is
-    'La thématique d''un indicateur, pour filtrer.';
+    'Les thématiques associées à un indicateur.';
 
 create function
-    axe(indicateur_definitions)
+    axes(indicateur_definitions)
     returns setof axe
     language sql
     stable
@@ -39,11 +39,11 @@ begin
     where fai.indicateur_id = $1.indicateur_id
        or fai.indicateur_personnalise_id = $1.indicateur_perso_id;
 end;
-comment on function axe is
-    'L''axe d''un indicateur, pour filtrer par son plan.';
+comment on function axes(indicateur_definitions) is
+    'Les axes (plans d''action) associés à un indicateur.';
 
 create function
-    pilote(indicateur_definitions)
+    pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
     stable
@@ -58,12 +58,12 @@ begin
        or ($1.indicateur_perso_id is not null
         and ip.indicateur_perso_id = $1.indicateur_perso_id);
 end;
-comment on function pilote is
-    'Le pilote d''un indicateur, pour filtrer par son user_id ou son tag_id.';
+comment on function pilotes(indicateur_definitions) is
+    'Les personnes pilotes associées à un indicateur.';
 
 create function
     personne(indicateur_pilote)
-    returns setof personne
+    returns setof personne rows 1
     language sql
     stable
 begin
@@ -71,10 +71,10 @@ begin
     select private.get_personne($1);
 end;
 comment on function personne(indicateur_pilote) is
-    'Les personnes associée à un indicateur.';
+    'Une personne associée comme personne pilote d''un indicateur.';
 
 create function
-    service(indicateur_definitions)
+    services(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
     stable
@@ -85,8 +85,8 @@ begin
     where ist.indicateur_id = $1.indicateur_id
        or ist.indicateur_perso_id = $1.indicateur_perso_id;
 end;
-comment on function service is
-    'Le service d''un indicateur, pour filtrer par son tag_id.';
+comment on function services(indicateur_definitions) is
+    'Les services associés à un indicateur.';
 
 create function
     definition_referentiel(indicateur_definitions)
@@ -99,7 +99,7 @@ begin
     from indicateur_definition ist
     where ist.id = $1.indicateur_id;
 end;
-comment on function definition_referentiel is
+comment on function definition_referentiel(indicateur_definitions) is
     'La définition de l''indicateur provenant du référentiel.';
 
 create function
@@ -114,7 +114,7 @@ begin
     where ir.indicateur_id = $1.indicateur_id
        or ir.perso_id = $1.indicateur_perso_id;
 end;
-comment on function rempli is
+comment on function rempli(indicateur_definitions) is
     'Vrai si l''indicateur est rempli.';
 
 create function
@@ -128,7 +128,7 @@ begin
     from indicateur_definition ist
     where ist.parent = $1.indicateur_id;
 end;
-comment on function enfants is
+comment on function enfants(indicateur_definitions) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
 
 COMMIT;
