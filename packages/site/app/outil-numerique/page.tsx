@@ -12,7 +12,7 @@ import {getStrapiData} from './utils';
 const OutilNumerique = async () => {
   const strapiData = await getStrapiData();
 
-  return strapiData ? (
+  return strapiData && strapiData.avantages.length > 0 ? (
     <div className="grow">
       <HeaderPlateforme {...strapiData.header} />
 
@@ -20,11 +20,15 @@ const OutilNumerique = async () => {
 
       <FonctionnalitesPlateforme {...strapiData.fonctionnalites} />
 
-      <TemoignagesPlateforme temoignages={strapiData.temoignages} />
+      {strapiData.temoignages.length > 0 && (
+        <TemoignagesPlateforme temoignages={strapiData.temoignages} />
+      )}
 
       <EquipePlateforme {...strapiData.equipe} />
 
-      <QuestionsPlateforme {...strapiData.questions} />
+      {strapiData.questions.liste.length > 0 && (
+        <QuestionsPlateforme {...strapiData.questions} />
+      )}
     </div>
   ) : (
     <NoResult />
