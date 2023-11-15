@@ -1,4 +1,5 @@
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
+import {TablesInsert} from "../_shared/typeUtils.ts";
 
 /**
  * Sauvegarde un résultat d'indicateur
@@ -15,11 +16,10 @@ export const resultat = async(
     indicateur_id : string,
     annee : string,
     valeur : number,
-    resultats : Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Insert"]>
-):
-    Promise<boolean> => {
+    resultats : Map<string, TablesInsert<"indicateur_resultat">>
+)=> {
 
-    let indicateurToSave : Database["public"]["Tables"]["indicateur_resultat"]["Insert"]=
+    let indicateurToSave : TablesInsert<"indicateur_resultat">=
         resultats.get(indicateur_id + ' - ' +annee);
     // On n'écrase pas les indicateurs déjà renseignés.
     if(!indicateurToSave) {
@@ -54,12 +54,11 @@ export const commentaire = async(
     indicateur_id : string,
     annee : string,
     commentaire :string,
-    commentaires : Map<string, Database["public"]["Tables"]["indicateur_resultat_import"]["Insert"]>,
+    commentaires : Map<string, TablesInsert<"indicateur_resultat_import">>,
     tetId : string
-):
-    Promise<boolean> => {
+)=> {
 
-    let commentaireToSave : Database["public"]["Tables"]["indicateur_resultat_commentaire"]["Insert"]
+    let commentaireToSave : TablesInsert<"indicateur_resultat_import">
         = commentaires.get(annee?(indicateur_id +' ' +annee):indicateur_id);
     if(commentaireToSave) {
         commentaireToSave.commentaire = commentaire +'\n---\n' +commentaireToSave.commentaire;

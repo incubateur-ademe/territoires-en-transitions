@@ -1,3 +1,4 @@
+import {Tables} from "../_shared/typeUtils.ts";
 
 /**
  * Récupère l'indicateur_id
@@ -11,7 +12,7 @@ export const id = async (
     id : string,
     nom : string,
     referentiel : string,
-    definitions : Map<string, Database["public"]["Tables"]["indicateur_definition"]["Row"]>
+    definitions : Map<string, Tables<"indicateur_definition">>
 ): Promise<any | null> => {
     // Cellules fusionnées et dont la valeur ne se retrouve que sur la première cellule
     if(!id){
@@ -58,7 +59,7 @@ export const id = async (
 export const valeur = async (
     valeur : any,
     indicateur_id : string,
-    definitons : Map<string, Database["public"]["Tables"]["indicateur_definition"]["Row"]>
+    definitons : Map<string, Tables<"indicateur_definition">>
 ): Promise<number | null> => {
     if(!valeur){
         return null;
