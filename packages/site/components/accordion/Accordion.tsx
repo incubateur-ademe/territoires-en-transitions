@@ -36,7 +36,7 @@ const Accordion = ({
           {title}
         </button>
       </h6>
-      <div className={contentClassName} id={id}>
+      <div className={classNames('bg-white', contentClassName)} id={id}>
         {typeof content === 'string' ? (
           <Markdown texte={content} className="paragraphe-16" />
         ) : (

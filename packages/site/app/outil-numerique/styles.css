@@ -1,0 +1,12 @@
+.fonctionnalites ul {
+  list-style-position: outside;
+  margin-bottom: 0;
+}
+
+.fonctionnalites li:not(:last-of-type) {
+  padding-bottom: 24px;
+}
+
+.fonctionnalites li::marker {
+  @apply text-primary-6;
+}

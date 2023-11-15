@@ -27,7 +27,7 @@
       "required": true,
       "maxLength": 255
     },
-    "cta_incription": {
+    "cta_inscription": {
       "type": "string",
       "required": true,
       "default": "Je m’inscris",
@@ -43,9 +43,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "avantages": {
       "type": "component",
@@ -67,9 +65,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "temoignages": {
       "type": "component",
@@ -93,6 +89,12 @@
       "repeatable": true,
       "component": "shared.vignette-avec-titre",
       "min": 1
+    },
+    "cta_contact": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "Je contacte l'équipe"
     },
     "questions_titre": {
       "type": "string",
