@@ -8,6 +8,22 @@ import HeaderPlateforme from './HeaderPlateforme';
 import QuestionsPlateforme from './QuestionsPlateforme';
 import TemoignagesPlateforme from './TemoignagesPlateforme';
 import {getStrapiData} from './utils';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+
+export async function generateMetadata(
+  {params}: {params: {}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getStrapiData();
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle ?? "L'outil numérique",
+    description: strapiData?.seo.metaDescription,
+    image: strapiData?.seo.metaImage,
+  });
+}
 
 const OutilNumerique = async () => {
   const strapiData = await getStrapiData();
