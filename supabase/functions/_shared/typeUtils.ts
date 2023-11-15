@@ -7,6 +7,8 @@ export type Views<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row'];
 export type Enums<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T];
+export type TablesInsert<T extends keyof Database['public']['Tables']> =
+    Database['public']['Tables'][T]['Insert'];
 
 // Génère, à partir d'un type, un nouveau type dont tous les champs sont non
 // null. Utile pour caster le typage de certaines Views exportées par supabase
