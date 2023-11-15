@@ -1,5 +1,5 @@
 import Gallery from '@components/gallery/Gallery';
-import {Indicateurs} from 'app/collectivite/utils';
+import {Indicateurs} from 'app/collectivites/utils';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import IndicateurCard from './IndicateurCard';
 

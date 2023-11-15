@@ -34,7 +34,7 @@ const FiltreLabels = ({selectedFilter, onChangeFilter}: FiltreLabelsProps) => {
       />
       <RadioAsButton
         id="cot"
-        label="Signataires d'un COT"
+        label="Collectivités non labellisées"
         name="filtre"
         checked={selectedFilter === 'cot'}
         onCheck={() => onChangeFilter('cot')}

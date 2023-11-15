@@ -30,7 +30,7 @@ const CollectiviteSearch = ({
         onSelect={values => {
           const name =
             filteredCollectivites.find(c => c.value === values[0])?.label ?? '';
-          router.push(`/collectivite/${values[0]}/${convertNameToSlug(name)}`);
+          router.push(`/collectivites/${values[0]}/${convertNameToSlug(name)}`);
         }}
         onInputChange={value => setSearch(value)}
         placeholderText="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
