@@ -5,7 +5,7 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {Indicateurs} from 'app/collectivite/utils';
 import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
-import {secteurIdToLabel} from '../../labels';
+import {secteurIdToLabel} from 'src/utils/labels';
 import Markdown from '@components/markdown/Markdown';
 
 type IndicateurCardProps = {

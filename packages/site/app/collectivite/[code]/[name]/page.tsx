@@ -12,7 +12,7 @@ import CollectiviteHeader from './CollectiviteHeader';
 import LabellisationLogo from '@components/labellisation/LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
-import {natureCollectiviteToLabel} from '../../labels';
+import {natureCollectiviteToLabel} from 'src/utils/labels';
 import AccesCompte from './AccesCompte';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 
@@ -60,11 +60,9 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
           collectivite={{
             ...collectiviteData,
             ...strapiData,
-            type: (
-              Object.keys(natureCollectiviteToLabel) as Array<string>
-            ).includes(collectiviteData.nature_collectivite)
-              ? natureCollectiviteToLabel[collectiviteData.nature_collectivite]
-              : collectiviteData.type_collectivite,
+            type:
+              natureCollectiviteToLabel[collectiviteData.nature_collectivite] ??
+              collectiviteData.type_collectivite,
             couvertureDefaut: strapiDefaultData?.couverture,
           }}
         />

@@ -1,15 +1,15 @@
-import Markdown from 'react-markdown';
+import MarkdownBase from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-type CustomMarkdownProps = {
+type MarkdownProps = {
   texte: string;
   className?: string;
 };
 
-const CustomMarkdown = ({texte, className}: CustomMarkdownProps) => (
-  <Markdown remarkPlugins={[remarkGfm]} className={className}>
+const Markdown = ({texte, className}: MarkdownProps) => (
+  <MarkdownBase remarkPlugins={[remarkGfm]} className={className}>
     {texte}
-  </Markdown>
+  </MarkdownBase>
 );
 
-export default CustomMarkdown;
+export default Markdown;

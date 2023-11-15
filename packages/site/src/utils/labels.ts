@@ -20,3 +20,8 @@ export const natureCollectiviteToLabel: Record<string, string> = {
   PETR: "Pôle d'équilibre territorial rural",
   POLEM: 'Pôle métropolitain',
 };
+
+export const referentielToLabel: Record<string, string> = {
+  cae: 'Climat Air Énergie',
+  eci: 'Économie Circulaire',
+};
