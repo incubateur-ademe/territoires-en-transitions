@@ -548,3 +548,6 @@ indicateur/artificialisation 2023-11-16T13:12:35Z Florian <florian@derfurth.com>
 
 indicateur/artificialisation [indicateur/artificialisation@v2.81.0] 2023-11-20T14:17:42Z Florian <florian@derfurth.com> # Change le type des colonnes en "double precision"
 @v2.82.0 2023-11-20T16:02:54Z Florian <florian@derfurth.com> # Change l'indicateur artificialisation avec des chiffres après la virgule
+
+stats/vues_BI [stats/vues_BI@v2.80.0] 2023-11-15T15:35:38Z Amandine Jacquelin <conta@LanceLibre> # Remplace certains modified_at par created_at
+stats/locales [stats/locales@v2.80.0] 2023-11-15T15:36:21Z Amandine Jacquelin <conta@LanceLibre> # Remplace certains modified_at par created_at
