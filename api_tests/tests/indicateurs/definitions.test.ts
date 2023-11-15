@@ -16,14 +16,16 @@ type Pilote = Database['public']['Tables']['personne_tag']['Row'] & {
 };
 type Service = Database['public']['Tables']['service_tag']['Row'];
 type Thematique = Database['public']['Tables']['thematique']['Row'];
+type Axe = Database['public']['Tables']['axe']['Row'];
 type IndicateurPredefini =
   Database['public']['Tables']['indicateur_definition']['Row'];
 
 type IndicateurDefinition =
   Database['public']['Views']['indicateur_definitions']['Row'] & {
-    pilote?: Pilote[];
-    service?: Service[];
-    thematique?: Thematique[];
+    pilotes?: Pilote[];
+    services?: Service[];
+    thematiques?: Thematique[];
+    axes?: Axe[];
     enfants?: IndicateurPredefini[];
     definition_referentiel?: IndicateurPredefini;
   };
@@ -31,28 +33,55 @@ type IndicateurDefinition =
 Deno.test(
   'Indicateurs prédéfinis par programme et thématique md_id',
   async () => {
+    await testReset();
     await signIn('yolododo');
 
     const query = supabase
       .from('indicateur_definitions')
       .select(
-        'id:indicateur_id, nom, definition_referentiel!inner(), thematique!inner(nom)'
+        'id:indicateur_id, nom, definition_referentiel!inner(), thematiques!inner(nom)'
       )
       .contains('definition_referentiel.programmes', ['cae'])
-      .eq('thematique.md_id', 'energie_et_climat')
+      .eq('thematiques.md_id', 'energie_et_climat')
       .eq('collectivite_id', 1);
 
     const { data } = await query.returns<IndicateurDefinition[]>();
     assertExists(data);
     assertGreaterOrEqual(data.length, 30);
     assertLessOrEqual(data.length, 40);
-    assertExists(data[0].thematique?.[0].nom);
+    assertExists(data[0].thematiques?.[0].nom);
 
     await signOut();
   }
 );
 
+Deno.test('Thématiques associées à un indicateur personnalisé', async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  await supabase.from('indicateur_personnalise_thematique').upsert([
+    { indicateur_id: 0, thematique_id: 1 },
+    { indicateur_id: 0, thematique_id: 2 },
+  ]);
+
+  const { data } = await supabase
+    .from('indicateur_definitions')
+    .select('nom, thematiques!inner(id,nom)')
+    .eq('indicateur_perso_id', 0)
+    .eq('collectivite_id', 1)
+    .returns<IndicateurDefinition[]>();
+
+  assertExists(data);
+  assertEquals(data.length, 1);
+  assertEquals(data[0].thematiques?.length, 2);
+  assertExists(data[0].thematiques?.[0].nom);
+  assertExists(data[0].thematiques?.[1].nom);
+
+  await signOut();
+});
+
 Deno.test("Propriétés supplémentaires d'un indicateur prédéfini", async () => {
+  await testReset();
   await signIn('yolododo');
 
   const query = supabase
@@ -73,6 +102,7 @@ Deno.test("Propriétés supplémentaires d'un indicateur prédéfini", async () 
 Deno.test(
   "Propagation des propriétés supplémentaires d'un indicateur prédéfini",
   async () => {
+    await testReset();
     await signIn('yolododo');
 
     const query = supabase
@@ -94,6 +124,7 @@ Deno.test(
 );
 
 Deno.test('Un indicateur prédéfini et ses enfants', async () => {
+  await testReset();
   await signIn('yolododo');
 
   const query = supabase
@@ -109,7 +140,7 @@ Deno.test('Un indicateur prédéfini et ses enfants', async () => {
   await signOut();
 });
 
-Deno.test('Personne pilotes pour les indicateur prédéfinis.', async () => {
+Deno.test('Personnes pilotes pour les indicateur prédéfinis.', async () => {
   await testReset();
   await signIn('yolododo');
 
@@ -125,19 +156,19 @@ Deno.test('Personne pilotes pour les indicateur prédéfinis.', async () => {
   const { data } = await supabase
     .from('indicateur_definitions')
     // Ajoute la relation pilotes
-    .select('*, pilote!inner(personne)')
+    .select('*, pilotes!inner(personne)')
     .eq('collectivite_id', 1)
     .eq('indicateur_id', 'cae_8')
     .returns<IndicateurDefinition[]>();
   assertExists(data);
-  const pilotes = data[0].pilote;
+  const pilotes = data[0].pilotes;
   assertExists(pilotes);
   assertEquals(pilotes[0]?.personne?.nom, 'Yala Dada');
 
   await signOut();
 });
 
-Deno.test('Personne pilotes pour les indicateurs personnalisés.', async () => {
+Deno.test('Personnes pilotes pour les indicateurs personnalisés.', async () => {
   await testReset();
   await signIn('yolododo');
 
@@ -153,12 +184,12 @@ Deno.test('Personne pilotes pour les indicateurs personnalisés.', async () => {
 
   const { data } = await supabase
     .from('indicateur_definitions')
-    .select('*, pilote(personne)')
+    .select('*, pilotes(personne)')
     .eq('collectivite_id', 1)
     .eq('indicateur_perso_id', 0)
     .returns<IndicateurDefinition[]>();
   assertExists(data);
-  const pilotes = data[0].pilote;
+  const pilotes = data[0].pilotes;
   assertExists(pilotes);
   assertEquals(pilotes[0]?.personne?.nom, 'Yala Dada');
 
@@ -182,12 +213,12 @@ Deno.test('Services pilotes pour les indicateurs prédéfinis.', async () => {
 
   const { data } = await supabase
     .from('indicateur_definitions')
-    .select('*, service(...service_tag(nom))')
+    .select('*, services(...service_tag(nom))')
     .eq('collectivite_id', 1)
     .eq('indicateur_id', 'cae_8')
     .returns<IndicateurDefinition[]>();
   assertExists(data);
-  const services = data[0].service;
+  const services = data[0].services;
   assertExists(services);
   assertEquals(services[0]?.nom, 'Super service');
 
@@ -206,12 +237,12 @@ Deno.test('Services pilotes pour les indicateurs personnalisés.', async () => {
 
   const { data } = await supabase
     .from('indicateur_definitions')
-    .select('*, service(...service_tag(nom))')
+    .select('*, services(...service_tag(nom))')
     .eq('collectivite_id', 1)
     .eq('indicateur_perso_id', 0)
     .returns<IndicateurDefinition[]>();
   assertExists(data);
-  const services = data[0].service;
+  const services = data[0].services;
   assertExists(services);
   assertEquals(services[0]?.nom, 'Ultra service');
 
