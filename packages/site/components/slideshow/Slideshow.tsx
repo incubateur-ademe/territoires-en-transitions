@@ -4,6 +4,7 @@ import Button from '@components/dstet/buttons/Button';
 import {ButtonVariant} from '@components/dstet/buttons/utils';
 import classNames from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
+import {useSwipeable} from 'react-swipeable';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
@@ -30,6 +31,7 @@ const Slideshow = ({
 }: SlideshowProps) => {
   const [slideIndex, setSlideIndex] = useState(0);
 
+  // Changement forcé du slide affiché
   const handleChangeIndex = useCallback(
     (increment: 'next' | 'previous') => {
       const index = slideIndex + (increment === 'next' ? 1 : -1);
@@ -40,6 +42,7 @@ const Slideshow = ({
     [slideIndex, slides.length],
   );
 
+  // Changement automatique du slide affiché
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
 
@@ -52,8 +55,20 @@ const Slideshow = ({
     return () => clearInterval(interval);
   }, [slideIndex, autoSlide, autoSlideDelay, handleChangeIndex]);
 
+  // Permet le swipe
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleChangeIndex('next'),
+    onSwipedRight: () => handleChangeIndex('previous'),
+    swipeDuration: 500,
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  });
+
   return (
-    <div className={classNames('flex flex-col gap-12', className)}>
+    <div
+      {...handlers}
+      className={classNames('flex flex-col gap-12', className)}
+    >
       <div className="overflow-hidden">
         <div
           className="whitespace-nowrap h-full"
@@ -67,7 +82,7 @@ const Slideshow = ({
               key={index}
               className="inline-block whitespace-normal w-full h-full mt-0"
             >
-              <div className="flex justify-center">{slide}</div>
+              <div className="flex">{slide}</div>
             </div>
           ))}
         </div>

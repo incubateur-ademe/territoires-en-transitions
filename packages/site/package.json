@@ -37,6 +37,7 @@
     "react-dom": "18.2.0",
     "react-leaflet": "^4.2.1",
     "react-markdown": "^9.0.0",
+    "react-swipeable": "^7.0.1",
     "rehype-external-links": "^2.1.0",
     "rehype-slug": "^5.1.0",
     "rehype-toc": "^3.0.2",
