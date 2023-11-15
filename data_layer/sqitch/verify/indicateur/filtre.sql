@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select has_function_privilege('thematiques(indicateur_definitions)', 'execute');
 
 ROLLBACK;

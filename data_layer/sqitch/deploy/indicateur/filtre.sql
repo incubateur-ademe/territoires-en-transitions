@@ -2,31 +2,27 @@
 
 BEGIN;
 
-create function
-    thematique(indicateur_definitions)
+create or replace function
+    thematiques(indicateur_definitions)
     returns setof thematique
     language sql
     stable
 begin
     atomic
-    select case
-               when $1.indicateur_id is not null -- indicateur prédéfini
-                   then
-                   (select thematique
-                    from indicateur_definition definition
-                             join thematique
-                                  on thematique.md_id = any (definition.thematiques)
-                    where definition.id = $1.indicateur_id)
-               else -- indicateur personnalisé
-                   (select thematique
-                    from indicateur_personnalise_definition definition
-                             join indicateur_personnalise_thematique it
-                                  on definition.id = it.indicateur_id
-                             join thematique on it.thematique_id = thematique.id
-                    where definition.id = $1.indicateur_perso_id)
-               end;
+    select thematique
+    from indicateur_definition definition
+             join thematique
+                  on thematique.md_id = any (definition.thematiques)
+    where definition.id = $1.indicateur_id
+    union
+    select thematique
+    from indicateur_personnalise_definition definition
+             join indicateur_personnalise_thematique it
+                  on definition.id = it.indicateur_id
+             join thematique on it.thematique_id = thematique.id
+    where definition.id = $1.indicateur_perso_id;
 end;
-comment on function thematique is
+comment on function thematiques(indicateur_definitions) is
     'La thématique d''un indicateur, pour filtrer.';
 
 create function

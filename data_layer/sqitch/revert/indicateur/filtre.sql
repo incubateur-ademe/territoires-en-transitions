@@ -2,7 +2,7 @@
 
 BEGIN;
 
-drop function thematique(indicateur_definitions);
+drop function thematiques(indicateur_definitions);
 drop function axe(indicateur_definitions);
 drop function pilote(indicateur_definitions);
 drop function service(indicateur_definitions);
