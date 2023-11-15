@@ -1653,8 +1653,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1979,8 +1979,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3142,8 +3142,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3168,8 +3168,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3194,8 +3194,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3220,8 +3220,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3246,8 +3246,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3272,8 +3272,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3371,8 +3371,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3811,6 +3811,126 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.a",
+      "identifiant": "11.a",
+      "nom": "Artificialisation destin\u00e9e \u00e0 l\u2019activit\u00e9",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation destin\u00e9e \u00e0 l\u2019activit\u00e9",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.b",
+      "identifiant": "11.b",
+      "nom": "Artificialisation destin\u00e9e \u00e0 l\u2019habitat",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation destin\u00e9e \u00e0 l\u2019habitat",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.c",
+      "identifiant": "11.c",
+      "nom": "Artificialisation destin\u00e9e au mixte",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation destin\u00e9e au mixte",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.d",
+      "identifiant": "11.d",
+      "nom": "Artificialisation destin\u00e9e aux infrastructures routi\u00e8res",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation destin\u00e9e aux infrastructures routi\u00e8res",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.e",
+      "identifiant": "11.e",
+      "nom": "Artificialisation destin\u00e9e aux infrastructures ferroviaires",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation destin\u00e9e aux infrastructures ferroviaires",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_11.f",
+      "identifiant": "11.f",
+      "nom": "Artificialisation dont la destination est inconnue",
+      "parent": "cae_11",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Artificialisation dont la destination est inconnue",
+      "type": null,
+      "unite": "ha/an",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_5.1.1"
       ],
@@ -3894,8 +4014,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef",
-        "pcaet"
+        "pcaet",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4453,8 +4573,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
-        "crte"
+        "crte",
+        "clef"
       ],
       "sans_valeur": true,
       "selection": false,
