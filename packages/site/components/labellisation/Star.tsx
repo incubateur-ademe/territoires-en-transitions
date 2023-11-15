@@ -1,39 +1,28 @@
-// Composant copié depuis l'app
-
-export const Star = ({
-  fill,
-  title,
-  className,
-}: {
+type StarProps = {
   fill: string;
-  title?: string;
   className?: string;
-}) => (
+};
+
+const Star = ({fill, className}: StarProps) => (
   <svg
-    width="39"
-    height="38"
-    viewBox="0 0 39 38"
+    className={className}
+    width="17"
+    height="17"
+    viewBox="0 0 17 17"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className={className}
   >
-    {title ? <title>{title}</title> : null}
     <path
-      d="M19.5002 30.434L7.74518 37.014L10.3702 23.8006L0.478516 14.654L13.8569 13.0673L19.5002 0.833984L25.1435 13.0673L38.5219 14.654L28.6302 23.8006L31.2552 37.014L19.5002 30.434Z"
+      d="M8.96037 14.0249C8.64731 13.8407 8.25894 13.8407 7.94588 14.0249L4.79024 15.8823C4.04986 16.3181 3.14088 15.679 3.30038 14.8349L4.03355 10.9542C4.09585 10.6245 3.98863 10.2855 3.74805 10.0516L0.946063 7.32722C0.344674 6.74248 0.687073 5.72174 1.51942 5.61794L5.21926 5.15654C5.56885 5.11294 5.86972 4.8886 6.01126 4.56598L7.53738 1.08735C7.88732 0.289687 9.01893 0.289686 9.36887 1.08735L10.895 4.56598C11.0365 4.8886 11.3374 5.11294 11.687 5.15654L15.3868 5.61794C16.2192 5.72174 16.5616 6.74248 15.9602 7.32722L13.1582 10.0516C12.9176 10.2855 12.8104 10.6245 12.8727 10.9542L13.6059 14.8349C13.7654 15.679 12.8564 16.3181 12.116 15.8823L8.96037 14.0249Z"
       fill={fill}
     />
   </svg>
 );
 
-export const GreyStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#e5e5e5" />
+export const GreyStar = (props: {className?: string}) => (
+  <Star {...props} fill="#C5C5C5" />
 );
-export const BlueStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#0063CB" />
-);
-export const GreenStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#00A95F" />
-);
-export const RedStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#FF5655" />
+
+export const RedStar = (props: {className?: string}) => (
+  <Star {...props} fill="#E40D18" />
 );

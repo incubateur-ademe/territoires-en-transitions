@@ -1,6 +1,6 @@
 'use client';
 
-import {GreenStar} from '@components/labellisation/Star';
+import {RedStar} from '@components/labellisation/Star';
 import {useEffect, useState} from 'react';
 
 type FiltreEtoilesProps = {
@@ -54,7 +54,7 @@ const FiltreEtoiles = ({initEtoiles, onChangeEtoiles}: FiltreEtoilesProps) => {
             {[1, 2, 3, 4, 5]
               .filter(e => e <= index + 1)
               .map(e => (
-                <GreenStar key={e} className="h-[23px] w-[26px]" />
+                <RedStar key={e} className="h-[23px] w-[26px]" />
               ))}
           </label>
         </div>

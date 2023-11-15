@@ -1,7 +1,6 @@
 import {EtoilesLabel} from 'app/types';
-import LogoCAE from './LogoCAE';
-import LogoCaeEci from './LogoCaeEci';
-import LogoECI from './LogoECI';
+import LabelReferentiel from './LabelReferentiel';
+import LogoTeTe from './LogoTeTe';
 
 type CodingPictoProps = {
   cae?: EtoilesLabel;
@@ -9,13 +8,18 @@ type CodingPictoProps = {
   className?: string;
 };
 
-const LabellisationLogo = ({cae, eci, className}: CodingPictoProps) =>
-  cae && eci ? (
-    <LogoCaeEci cae={cae} eci={eci} className={className} />
-  ) : cae ? (
-    <LogoCAE cae={cae} className={className} />
-  ) : eci ? (
-    <LogoECI eci={eci} className={className} />
-  ) : null;
+const LabellisationLogo = ({cae, eci, className}: CodingPictoProps) => {
+  if (!cae && !eci) return null;
+
+  return (
+    <div className={className}>
+      <LogoTeTe />
+      <div className="flex flex-col gap-4">
+        {cae && <LabelReferentiel referentiel="cae" etoiles={cae} />}
+        {eci && <LabelReferentiel referentiel="eci" etoiles={eci} />}
+      </div>
+    </div>
+  );
+};
 
 export default LabellisationLogo;
