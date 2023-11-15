@@ -1,4 +1,5 @@
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
+import {Tables, TablesInsert} from "../_shared/typeUtils.ts";
 
 
 /**
@@ -7,8 +8,7 @@ import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
  * @param collectivite_id
  * @return commentaires
  */
-export const commentaires = async(supabaseClient : TSupabaseClient, collectivite_id : number):
-    Promise<Map<string, Database["public"]["Tables"]["indicateur_resultat_commentaire"]["Insert"]>> => {
+export const commentaires = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
     const query = supabaseClient
         .from('indicateur_resultat_commentaire')
         .select()
@@ -18,9 +18,9 @@ export const commentaires = async(supabaseClient : TSupabaseClient, collectivite
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Database["public"]["Tables"]["indicateur_resultat_commentaire"]["Insert"]>();
+    const toReturn = new Map<string, TablesInsert<"indicateur_resultat_commentaire">>();
     for(let i=0; i<data.length; i++){
-        const commentaire : Database["public"]["Tables"]["indicateur_resultat_commentaire"]["Insert"] = data[i];
+        const commentaire : TablesInsert<"indicateur_resultat_commentaire"> = data[i];
         toReturn.set(
             (commentaire.annee?commentaire.indicateur_id +' ' +commentaire.annee:commentaire.indicateur_id),
             commentaire
@@ -34,8 +34,7 @@ export const commentaires = async(supabaseClient : TSupabaseClient, collectivite
  * @param supabaseClient
  * @return definitions
  */
-export const definitions = async(supabaseClient : TSupabaseClient):
-    Promise<Map<string, Database["public"]["Tables"]["indicateur_definition"]["Row"]>> => {
+export const definitions = async(supabaseClient : TSupabaseClient)=> {
     const query = supabaseClient
         .from('indicateur_definition')
         .select();
@@ -44,9 +43,9 @@ export const definitions = async(supabaseClient : TSupabaseClient):
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Database["public"]["Tables"]["indicateur_definition"]["Row"]>();
+    const toReturn = new Map<string, Tables<"indicateur_definition">>();
     for(let i=0; i<data.length; i++){
-        const definition : Database["public"]["Tables"]["indicateur_definition"]["Row"] = data[i];
+        const definition : Tables<"indicateur_definition"> = data[i];
         toReturn.set(definition.id, definition);
     }
     return toReturn;
@@ -58,8 +57,7 @@ export const definitions = async(supabaseClient : TSupabaseClient):
  * @param collectivite_id
  * @return definitions
  */
-export const resultats = async(supabaseClient : TSupabaseClient, collectivite_id : number):
-    Promise<Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Row"]>> => {
+export const resultats = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
     const query = supabaseClient
         .from('indicateur_resultat')
         .select()
@@ -69,9 +67,9 @@ export const resultats = async(supabaseClient : TSupabaseClient, collectivite_id
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Database["public"]["Tables"]["indicateur_resultat"]["Row"]>();
+    const toReturn = new Map<string, Tables<"indicateur_resultat">>();
     for(let i=0; i<data.length; i++){
-        const resultat : Database["public"]["Tables"]["indicateur_resultat"]["Row"] = data[i];
+        const resultat : Tables<"indicateur_resultat"> = data[i];
         toReturn.set(resultat.indicateur_id +' - '+ resultat.annee, resultat);
     }
     return toReturn;

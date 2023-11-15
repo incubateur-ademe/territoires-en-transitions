@@ -1,4 +1,5 @@
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
+import {TablesInsert} from "../_shared/typeUtils.ts";
 
 /**
  * Récupère les commentaires de la collectivité
@@ -6,8 +7,7 @@ import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
  * @param collectivite_id
  * @return commentaires
  */
-export const commentaires = async(supabaseClient : TSupabaseClient, collectivite_id : number):
-    Promise<Map<string, Database["public"]["Tables"]["action_commentaire"]["Insert"]>> => {
+export const commentaires = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
     const query = supabaseClient
         .from('action_commentaire')
         .select()
@@ -17,9 +17,9 @@ export const commentaires = async(supabaseClient : TSupabaseClient, collectivite
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Database["public"]["Tables"]["action_commentaire"]["Insert"]>();
+    const toReturn = new Map<string, TablesInsert<"action_commentaire">>();
     for(let i=0; i<data.length; i++){
-        const commentaire : Database["public"]["Tables"]["action_commentaire"]["Insert"] = data[i];
+        const commentaire : TablesInsert<"action_commentaire"> = data[i];
         toReturn.set(commentaire.action_id, commentaire);
     }
     return toReturn;
@@ -30,8 +30,7 @@ export const commentaires = async(supabaseClient : TSupabaseClient, collectivite
  * @param supabaseClient
  * @param collectivite_id
  */
-export const statuts = async(supabaseClient : TSupabaseClient, collectivite_id : number):
-    Promise<Map<string, Database["public"]["Tables"]["action_statut"]["Insert"]>> => {
+export const statuts = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
     const query = supabaseClient
         .from('action_statut')
         .select()
@@ -41,9 +40,9 @@ export const statuts = async(supabaseClient : TSupabaseClient, collectivite_id :
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Database["public"]["Tables"]["action_statut"]["Insert"]>();
+    const toReturn = new Map<string, TablesInsert<"action_statut">>();
     for(let i=0; i<data.length; i++){
-        const statut : Database["public"]["Tables"]["action_statut"]["Insert"] = data[i];
+        const statut : TablesInsert<"action_statut"> = data[i];
         toReturn.set(statut.action_id, statut);
     }
     return toReturn;

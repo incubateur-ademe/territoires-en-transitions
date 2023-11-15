@@ -1,4 +1,5 @@
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
+import {TablesInsert} from "../_shared/typeUtils.ts";
 
 /**
  * Sauvegarde un commentaire
@@ -14,11 +15,11 @@ export const commentaire = async(
     collectivite_id : number,
     action_id : string,
     commentaire : string,
-    commentaires : Map<string, Database["public"]["Tables"]["action_commentaire"]["Insert"]>,
+    commentaires : Map<string, TablesInsert<"action_commentaire">>,
     tetId: string
 ):
     Promise<boolean> => {
-    let commentaireToSave : Database["public"]["Tables"]["action_commentaire"]["Insert"]= commentaires.get(action_id);
+    let commentaireToSave : TablesInsert<"action_commentaire"> = commentaires.get(action_id);
     if(commentaireToSave) {
         commentaireToSave.commentaire = commentaire +'\n---\n' +commentaireToSave.commentaire;
     }else{
@@ -52,18 +53,17 @@ export const statut = async(
     collectivite_id : number,
     action_id : string,
     statut : string,
-    statuts : Map<string, Database["public"]["Tables"]["action_statut"]["Insert"]>,
+    statuts : Map<string, TablesInsert<"action_statut">>,
     tetId : string
 ):
     Promise<boolean> => {
-    let statutToSave : Database["public"]["Tables"]["action_statut"]["Insert"]= statuts.get(action_id);
+    let statutToSave : TablesInsert<"action_statut"> = statuts.get(action_id);
     // On n'écrase pas les statuts déjà renseignés.
     if(!statutToSave) {
         statutToSave = {
             action_id: action_id,
             collectivite_id: collectivite_id,
             avancement: statut,
-            modified_by = tetId,
             concerne: true
         }
         // Erreur "msg":"InvalidWorkerCreation: worker boot error" si ajouté dans l'instruction précédente

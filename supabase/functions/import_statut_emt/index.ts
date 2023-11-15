@@ -1,9 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import {
-  getSupabaseClient,
-  getSupabaseClientWithServiceRole,
-  TSupabaseClient,
+  getSupabaseClientWithServiceRole
 } from '../_shared/getSupabaseClient.ts';
 import * as xlsx from "https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs";
 import * as cptable from "https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs";
