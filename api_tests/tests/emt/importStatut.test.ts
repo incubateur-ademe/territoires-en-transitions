@@ -27,8 +27,8 @@ Deno.test("Importer des nouveaux statuts emt", dirtyOptions, async (t) => {
 
     const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/import_statut_emt`;
     const headers = {
-        apikey: Deno.env.get("SERVICE_ROLE_KEY")!,
-        Authorization: `Bearer ${Deno.env.get("SERVICE_ROLE_KEY")}`,
+      apikey: Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
     };
     const path = "./ressources/ImportStatutEMT.xlsx";
 
