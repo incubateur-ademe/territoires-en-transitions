@@ -37,7 +37,7 @@ serve(async (req) => {
     const data = await req.formData();
     const collectivite_id = parseInt(data.get("collectivite_id") as string);
     const file = data.get("file") as File;
-    const test = data.get("test") as boolean;
+    const test = data.get("test") as boolean | null;
 
     // Ouvre le fichier
     const workbook = xlsx.read(await file.arrayBuffer(), { type: "array" });
@@ -107,8 +107,11 @@ serve(async (req) => {
  * @param ligne
  * @param colonne
  */
-const getCelluleValue = async (sheet : any, ligne : integer, colonne : integer)
-    : Promise<any | null> => {
-  const coord = xlsx.utils.encode_cell({r: ligne, c: colonne});
-  return !sheet[coord]?null:sheet[coord].v;
-}
+const getCelluleValue = async (
+    sheet: any,
+    ligne: number,
+    colonne: number
+): Promise<any | null> => {
+    const coord = xlsx.utils.encode_cell({ r: ligne, c: colonne });
+    return !sheet[coord] ? null : sheet[coord].v;
+};
