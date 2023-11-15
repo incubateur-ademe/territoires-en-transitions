@@ -3,9 +3,9 @@
 BEGIN;
 
 drop function thematiques(indicateur_definitions);
-drop function axe(indicateur_definitions);
-drop function pilote(indicateur_definitions);
-drop function service(indicateur_definitions);
+drop function axes(indicateur_definitions);
+drop function pilotes(indicateur_definitions);
+drop function services(indicateur_definitions);
 drop function definition_referentiel(indicateur_definitions);
 drop function rempli(indicateur_definitions);
 drop function enfants(indicateur_definitions);
