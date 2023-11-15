@@ -144,7 +144,7 @@ const addIndicateurPersoToWorkbook = (
 
   // complète la feuille avec les thématiques
   const definitionRows = [
-    ['Thématiques', thematiques.map((t) => t.nom)?.join(',')],
+    ['Thématiques', thematiques?.map((t) => t.nom)?.join(',')],
   ];
   wsDef.addRows(definitionRows);
 

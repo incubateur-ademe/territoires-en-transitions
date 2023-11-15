@@ -135,7 +135,7 @@ const fetchDefinitionIndicateursPersos = async (
 ) => {
   const { data, error } = await supabaseClient
     .from('indicateur_definitions')
-    .select('id:indicateur_perso_id,nom,description,unite,thematiques')
+    .select('id:indicateur_perso_id,nom,description,unite,thematiques(nom)')
     .in('indicateur_perso_id', indicateur_ids)
     .order('nom', { ascending: true })
     .returns<TIndicateurDef<'indicateur_perso_id'>[]>();
