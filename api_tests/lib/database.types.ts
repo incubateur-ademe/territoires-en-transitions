@@ -19788,6 +19788,7 @@ export interface Database {
       confidentialite_fonctions_a_tester: {
         Row: {
           element: unknown | null
+          id_element: unknown | null
         }
         Relationships: []
       }
@@ -19802,6 +19803,7 @@ export interface Database {
       confidentialite_tables_a_tester: {
         Row: {
           element: unknown | null
+          id_element: string | null
         }
         Relationships: []
       }
@@ -19825,6 +19827,7 @@ export interface Database {
           c: string | null
           d: string | null
           element: unknown | null
+          id_element: string | null
           u: string | null
         }
         Relationships: []
@@ -24053,13 +24056,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
@@ -26660,89 +26663,6 @@ export interface Database {
       time_bucket:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
               offset: unknown
@@ -26754,6 +26674,51 @@ export interface Database {
               bucket_width: unknown
               ts: string
               offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
             }
             Returns: string
           }
@@ -26779,6 +26744,44 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
             }
             Returns: number
           }
