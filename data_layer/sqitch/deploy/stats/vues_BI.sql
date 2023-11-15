@@ -2,28 +2,45 @@
 
 BEGIN;
 
-drop view stats_engagement_collectivite;
-drop materialized view stats.engagement_collectivite;
+-- evolution_collectivite_avec_minimum_fiches
+drop view stats_evolution_collectivite_avec_minimum_fiches;
+drop materialized view stats.evolution_collectivite_avec_minimum_fiches;
 
-create materialized view stats.engagement_collectivite
+create materialized view stats.evolution_collectivite_avec_minimum_fiches as
+WITH fiche_collectivite AS (SELECT mb.first_day                                          AS mois,
+                                   ca.collectivite_id,
+                                   count(*) FILTER (WHERE fa.created_at <= mb.last_day) AS fiches
+                            FROM stats.monthly_bucket mb
+                                     JOIN stats.collectivite_active ca ON true
+                                     JOIN fiche_action fa USING (collectivite_id)
+                            GROUP BY mb.first_day, ca.collectivite_id)
+SELECT fiche_collectivite.mois,
+       count(*) FILTER (WHERE fiche_collectivite.fiches > 5) AS collectivites
+FROM fiche_collectivite
+GROUP BY fiche_collectivite.mois
+ORDER BY fiche_collectivite.mois;
+
+create view stats_evolution_collectivite_avec_minimum_fiches
 as
-select collectivite_id,
-       coalesce(cot.actif, false) as cot,
-       coalesce(eci.etoiles, 0)   as etoiles_eci,
-       coalesce(cae.etoiles, 0)   as etoiles_cae
-from stats.collectivite c
-         left join cot using (collectivite_id)
-         left join lateral (select etoiles
-                            from labellisation l
-                            where l.collectivite_id = c.collectivite_id
-                              and referentiel = 'eci'
-                            order by l.obtenue_le desc
-                            limit 1) eci on true
-         left join lateral (select etoiles
-                            from labellisation l
-                            where l.collectivite_id = c.collectivite_id
-                              and referentiel = 'cae'
-                            order by l.obtenue_le desc
-                            limit 1) cae on true;
+select *
+from stats.evolution_collectivite_avec_minimum_fiches;
+
+-- evolution_nombre_fiches
+drop view stats_evolution_nombre_fiches;
+drop materialized view stats.evolution_nombre_fiches;
+
+create materialized view stats.evolution_nombre_fiches as
+SELECT mb.first_day                                          AS mois,
+       count(*) FILTER (WHERE fa.created_at <= mb.last_day) AS fiches
+FROM stats.monthly_bucket mb
+         JOIN stats.collectivite_active ca ON true
+         JOIN fiche_action fa USING (collectivite_id)
+GROUP BY mb.first_day
+ORDER BY mb.first_day;
+
+create view stats_evolution_nombre_fiches
+as
+select *
+from stats.evolution_nombre_fiches;
 
 COMMIT;
