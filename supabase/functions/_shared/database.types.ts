@@ -3297,6 +3297,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }
         Insert: {
           collectivite_id: number
@@ -3306,6 +3308,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Update: {
           collectivite_id?: number
@@ -3315,6 +3319,8 @@ export interface Database {
           modified_by?: string | null
           nom?: string | null
           parent?: number | null
+          plan?: number | null
+          type?: number | null
         }
         Relationships: [
           {
@@ -3639,6 +3645,30 @@ export interface Database {
             foreignKeyName: "axe_parent_fkey"
             columns: ["parent"]
             referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "axe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_plan_fkey"
+            columns: ["plan"]
+            referencedRelation: "plan_action_profondeur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_type_fkey"
+            columns: ["type"]
+            referencedRelation: "plan_action_type"
             referencedColumns: ["id"]
           }
         ]
@@ -6316,6 +6346,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6346,6 +6377,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -6376,6 +6408,7 @@ export interface Database {
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
           ressources?: string | null
+          restreint?: boolean | null
           resultats_attendus?:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -7550,6 +7583,340 @@ export interface Database {
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
+          }
+        ]
+      }
+      indicateur_artificialisation: {
+        Row: {
+          activite: number
+          collectivite_id: number
+          ferroviaire: number
+          habitat: number
+          inconnue: number
+          mixte: number
+          routiere: number
+          total: number
+        }
+        Insert: {
+          activite: number
+          collectivite_id: number
+          ferroviaire: number
+          habitat: number
+          inconnue: number
+          mixte: number
+          routiere: number
+          total: number
+        }
+        Update: {
+          activite?: number
+          collectivite_id?: number
+          ferroviaire?: number
+          habitat?: number
+          inconnue?: number
+          mixte?: number
+          routiere?: number
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
           }
         ]
       }
@@ -13036,6 +13403,46 @@ export interface Database {
           collectivite_id?: number
           id?: number
           nom?: string
+        }
+        Relationships: []
+      }
+      plan_action_type: {
+        Row: {
+          categorie: string
+          detail: string | null
+          id: number
+          type: string
+        }
+        Insert: {
+          categorie: string
+          detail?: string | null
+          id?: number
+          type: string
+        }
+        Update: {
+          categorie?: string
+          detail?: string | null
+          id?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_action_type_categorie_fkey"
+            columns: ["categorie"]
+            referencedRelation: "plan_action_type_categorie"
+            referencedColumns: ["categorie"]
+          }
+        ]
+      }
+      plan_action_type_categorie: {
+        Row: {
+          categorie: string
+        }
+        Insert: {
+          categorie: string
+        }
+        Update: {
+          categorie?: string
         }
         Relationships: []
       }
@@ -19925,6 +20332,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -20268,6 +20676,7 @@ export interface Database {
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           referents: Database["public"]["CompositeTypes"]["personne"][] | null
           ressources: string | null
+          restreint: boolean | null
           resultats_attendus:
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
@@ -24281,6 +24690,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }
@@ -24322,6 +24732,12 @@ export interface Database {
       delete_axe_all: {
         Args: {
           axe_id: number
+        }
+        Returns: undefined
+      }
+      delete_collectivite_test: {
+        Args: {
+          collectivite_id: number
         }
         Returns: undefined
       }
@@ -24518,6 +24934,7 @@ export interface Database {
                 | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
+              restreint: boolean | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
               titre: string | null
             }[]
@@ -24536,6 +24953,7 @@ export interface Database {
                 | null
               pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
               plans: unknown[] | null
+              restreint: boolean | null
               statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
               titre: string | null
             }[]
@@ -24572,6 +24990,7 @@ export interface Database {
             | null
           pilotes: Database["public"]["CompositeTypes"]["personne"][] | null
           plans: unknown[] | null
+          restreint: boolean | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
           titre: string | null
         }[]
@@ -25336,6 +25755,21 @@ export interface Database {
         }
         Returns: string
       }
+      indicateur_artificialisation: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          activite: number
+          collectivite_id: number
+          ferroviaire: number
+          habitat: number
+          inconnue: number
+          mixte: number
+          routiere: number
+          total: number
+        }[]
+      }
       indicateurs_gaz_effet_serre: {
         Args: {
           "": unknown
@@ -25811,6 +26245,8 @@ export interface Database {
           modified_by: string | null
           nom: string | null
           parent: number | null
+          plan: number | null
+          type: number | null
         }[]
       }
       preuve_count: {
@@ -25894,6 +26330,13 @@ export interface Database {
           chunk: unknown
           index?: unknown
           verbose?: boolean
+        }
+        Returns: undefined
+      }
+      restreindre_plan: {
+        Args: {
+          plan_id: number
+          restreindre: boolean
         }
         Returns: undefined
       }
