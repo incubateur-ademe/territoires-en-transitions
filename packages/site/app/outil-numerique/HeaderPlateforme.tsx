@@ -12,7 +12,9 @@ type HeaderPlateformeProps = {
   titre: string;
   accroche: string;
   cta_inscription: string;
+  url_inscription: string;
   cta_demo: string;
+  url_demo: string;
   couverture: StrapiItem;
 };
 
@@ -20,7 +22,9 @@ const HeaderPlateforme = ({
   titre,
   accroche,
   cta_inscription,
+  url_inscription,
   cta_demo,
+  url_demo,
   couverture,
 }: HeaderPlateformeProps) => {
   const {data} = useEvolutionTotalActivation('', '');
@@ -36,10 +40,7 @@ const HeaderPlateforme = ({
       </p>
       <div className="flex max-md:flex-col gap-y-4 gap-x-8 justify-center items-center">
         <div className="max-md:flex max-md:flex-col max-md:items-center">
-          <ButtonWithLink
-            href="https://app.territoiresentransitions.fr/auth/signup"
-            size="big"
-          >
+          <ButtonWithLink href={url_inscription} size="big">
             {cta_inscription}
           </ButtonWithLink>
           {collectivitesActivees && (
@@ -49,11 +50,7 @@ const HeaderPlateforme = ({
           )}
         </div>
 
-        <ButtonWithLink
-          href="https://calendly.com/territoiresentransitions"
-          size="big"
-          variant="outlined"
-        >
+        <ButtonWithLink href={url_demo} size="big" variant="outlined">
           <div className="flex gap-3 justify-center items-center">
             <PlayCircleIcon fill="#6A6AF4" /> {cta_demo}
           </div>
