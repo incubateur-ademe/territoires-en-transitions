@@ -2,6 +2,8 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select id, thematique_id, sous_thematique
+from sous_thematique
+where false;
 
 ROLLBACK;
