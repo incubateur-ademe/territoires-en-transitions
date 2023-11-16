@@ -542,3 +542,5 @@ indicateur/personnalise [indicateur/personnalise@v2.69.0] 2023-10-30T10:18:28Z F
 indicateur/detail 2023-10-31T14:03:49Z Florian <florian@derfurth.com> # Pilotes, services et thématiques
 taxonomie/personne 2023-11-07T08:58:36Z Florian <florian@derfurth.com> # Répare la liste des personnes de la collectivité
 @v2.80.0 2023-11-07T16:28:26Z Florian <florian@derfurth.com> # Améliorations des collectivités de test et nouvelles fonctionnalités indicateurs
+
+indicateur/artificialisation 2023-11-16T13:12:35Z Florian <florian@derfurth.com> # Artificialisation des sols de 2009 à 2022
