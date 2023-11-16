@@ -553,5 +553,6 @@ stats/vues_BI [stats/vues_BI@v2.80.0] 2023-11-15T15:35:38Z Amandine Jacquelin <c
 stats/locales [stats/locales@v2.80.0] 2023-11-15T15:36:21Z Amandine Jacquelin <conta@LanceLibre> # Remplace certains modified_at par created_at
 @v2.83.0 2023-11-24T10:14:51Z Florian <florian@derfurth.com> # Ajoute et corrige des vues pour les pages statistiques du site
 
+text_search_config 2023-11-16T15:25:00Z Marc Rutkowski <marc@attractive-media.fr> # Configuration pour enlever les accents lors des recherches FTS
 indicateur/detail [indicateur/detail@v2.80.0] 2023-11-09T19:11:22Z Florian <florian@derfurth.com> # fusionne des tables
 indicateur/filtre 2023-11-08T09:53:54Z Florian <florian@derfurth.com> # Permet de filtrer les indicateurs
