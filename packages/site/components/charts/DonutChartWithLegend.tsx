@@ -20,10 +20,12 @@ const DonutChartWithLegend = ({
   data,
   ...otherProps
 }: DonutChartWithLegendProps) => {
-  let dataWithColor = data.map((d, index) => ({
-    ...d,
-    color: d.color ? d.color : defaultColors[index % defaultColors.length],
-  }));
+  let dataWithColor = data
+    .filter(d => d.value !== 0)
+    .map((d, index) => ({
+      ...d,
+      color: d.color ? d.color : defaultColors[index % defaultColors.length],
+    }));
 
   return (
     <div>

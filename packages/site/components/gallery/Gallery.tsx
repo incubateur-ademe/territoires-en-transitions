@@ -56,9 +56,11 @@ const Gallery = ({
     for (let i = 0; i < columns; i++) newGalleryContent.push([]);
 
     if (data) {
-      data.forEach((element, index) => {
-        newGalleryContent[index % columns].push(element);
-      });
+      data
+        .filter(d => d !== null)
+        .forEach((element, index) => {
+          newGalleryContent[index % columns].push(element);
+        });
     }
 
     setDataGallery(newGalleryContent);

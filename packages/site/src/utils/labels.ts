@@ -10,6 +10,15 @@ export const secteurIdToLabel: Record<string, string> = {
   'cae_1.g': 'Agriculture',
 };
 
+export const fluxToLabel: Record<string, string> = {
+  activite: 'Activité',
+  habitat: 'Habitat',
+  mixte: 'Mixte',
+  routiere: 'Routière',
+  ferroviaire: 'Ferroviaire',
+  inconnue: 'Inconnue',
+};
+
 export const natureCollectiviteToLabel: Record<string, string> = {
   commune: 'Commune',
   CC: 'Communauté de communes',

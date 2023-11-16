@@ -71,7 +71,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       {/* Colonne de droite avec niveau de labellisation et bloc de connexion */}
       <div
         className={classNames(
-          'col-span-full md:col-span-4 lg:col-span-3 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
+          'col-span-full md:col-span-4 lg:col-span-3 lg:row-span-2 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
           {'lg:order-last': !collectiviteData.labellisee},
         )}
       >
@@ -109,8 +109,10 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
         <ContenuCollectivite contenu={strapiData.contenu} />
       ) : strapiDefaultData ? (
         <IndicateursCollectivite
-          defaultData={strapiDefaultData}
+          defaultData={strapiDefaultData.indicateurs}
           indicateurs={{
+            artificialisation_sols:
+              collectiviteData.indicateur_artificialisation,
             gaz_effet_serre: collectiviteData.indicateurs_gaz_effet_serre,
           }}
         />

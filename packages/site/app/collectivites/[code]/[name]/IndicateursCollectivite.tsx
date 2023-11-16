@@ -1,7 +1,11 @@
 import Gallery from '@components/gallery/Gallery';
-import {Indicateurs} from 'app/collectivites/utils';
+import {
+  IndicateurArtificialisation,
+  Indicateurs,
+} from 'app/collectivites/utils';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import IndicateurCard from './IndicateurCard';
+import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
+import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
 
 export type IndicateurDefaultData = {
   titre: string;
@@ -14,10 +18,12 @@ export type IndicateurDefaultData = {
 
 type IndicateursCollectiviteProps = {
   defaultData: {
+    artificialisation_sols?: IndicateurDefaultData;
     gaz_effet_serre?: IndicateurDefaultData;
   };
   indicateurs: {
-    gaz_effet_serre: Indicateurs[];
+    artificialisation_sols: IndicateurArtificialisation | null;
+    gaz_effet_serre: Indicateurs[] | null;
   };
 };
 
@@ -32,13 +38,15 @@ const IndicateursCollectivite = ({
       breakpoints={{md: 768, lg: 1024}}
       gap="gap-0 md:gap-10 xl:gap-12"
       data={[
-        <IndicateurCard
+        <IndicateurArtificialisationSols
+          key="artificialisation_sols"
+          defaultData={defaultData.artificialisation_sols}
+          data={indicateurs.artificialisation_sols}
+        />,
+        <IndicateurGazEffetSerre
           key="gaz_effet_serre"
           defaultData={defaultData.gaz_effet_serre}
           data={indicateurs.gaz_effet_serre}
-          graphTitle="Répartition des émissions de gaz à effet de serre (hors puits) par secteur"
-          unit="t CO₂eq"
-          unitSingular={true}
         />,
       ]}
     />
