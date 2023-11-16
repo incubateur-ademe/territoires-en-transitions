@@ -10,12 +10,8 @@ export function SectionHead({children}: Props) {
 }
 
 // titre au dessus d'un groupe de graphes
-const chartHeadStyle = {
-  marginTop: '2rem',
-  textAlign: 'center' as TextAlign,
-};
 export function ChartHead({children}: Props) {
-  return <h6 style={chartHeadStyle}>{children}</h6>;
+  return <h5 className="text-primary-9">{children}</h5>;
 }
 
 // titre d'un graphe faisant parti d'un groupe

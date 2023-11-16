@@ -18,7 +18,7 @@ import {addLocalFilters} from './utils';
 
 function useNombreUtilisateurParCollectivite(
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) {
   return useSWR(
     `stats_locales_evolution_nombre_utilisateur_par_collectivite-${codeRegion}-${codeDepartement}`,
@@ -53,7 +53,7 @@ function useNombreUtilisateurParCollectivite(
           },
         ],
       };
-    }
+    },
   );
 }
 
@@ -79,14 +79,13 @@ export default function NombreUtilisateurParCollectivite({
     <div>
       <ChartHead>
         Chaque collectivité compte en moyenne&nbsp;
-        {courant?.moyen?.toFixed(2)} utilisateur{courant?.moyen !== 1 && 's'}
-        <br />
-        Avec un maximum de {courant?.maximum} utilisateur
+        {courant?.moyen?.toFixed(2)} utilisateur{courant?.moyen !== 1 && 's'},
+        avec un maximum de {courant?.maximum} utilisateur
         {courant?.maximum !== 1 && 's'} 💪
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center"></div>
 
-      <div style={{height: 300}}>
+      <div className="h-[400px] mt-8">
         <ResponsiveLine
           colors={colors}
           theme={theme}

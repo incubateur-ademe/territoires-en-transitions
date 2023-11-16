@@ -128,60 +128,76 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   if (!regions || !departments) return null;
 
   return (
-    <div
-      className="fr-select-group"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        columnGap: '50px',
-        rowGap: '20px',
-        justifyItems: 'start',
-        alignItems: 'end',
-      }}
-    >
-      <Select
-        name="region"
-        label="Région"
-        emptyOptionLabel="Toutes les régions"
-        // @ts-ignore
-        options={regions.map(region => ({
-          value: region.code,
-          name: region.libelle,
-        }))}
-        value={selectedRegion}
-        style={{width: '100%'}}
-        onChange={setSelectedRegion}
-      />
-
-      <Select
-        name="department"
-        label="Département"
-        emptyOptionLabel="Tous les départements"
-        // @ts-ignore
-        options={departments.map(department => ({
-          value: department.code,
-          name: department.libelle,
-        }))}
-        value={selectedDepartment}
-        style={{width: '100%'}}
-        onChange={setSelectedDepartment}
-      />
-
-      <Button
-        size="big"
-        variant="grey"
-        onClick={() => {
-          setSelectedRegion(emptyString);
-          setSelectedDepartment(emptyString);
-        }}
+    <>
+      {selectedDepartment || selectedRegion ? (
+        <p className="paragraphe-22">
+          Cette page présente les statistiques de déploiement et d’usage{' '}
+          {!!selectedDepartment ? 'départementales' : 'régionales'} de la
+          plateforme Territoires en Transitions.
+        </p>
+      ) : (
+        <p className="paragraphe-22">
+          Territoires en Transitions est une plateforme publique gratuite et
+          open-source développée avec ses utilisateurs afin d’aider les
+          collectivités dans le pilotage et la priorisation de leur transition
+          écologique.
+        </p>
+      )}
+      <div
+        className="fr-select-group"
         style={{
-          visibility:
-            selectedDepartment || selectedRegion ? 'visible' : 'hidden',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          columnGap: '50px',
+          rowGap: '20px',
+          justifyItems: 'start',
+          alignItems: 'end',
         }}
       >
-        Désactiver tous les filtres
-      </Button>
-    </div>
+        <Select
+          name="region"
+          label="Région"
+          emptyOptionLabel="Toutes les régions"
+          // @ts-ignore
+          options={regions.map(region => ({
+            value: region.code,
+            name: region.libelle,
+          }))}
+          value={selectedRegion}
+          style={{width: '100%'}}
+          onChange={setSelectedRegion}
+        />
+
+        <Select
+          name="department"
+          label="Département"
+          emptyOptionLabel="Tous les départements"
+          // @ts-ignore
+          options={departments.map(department => ({
+            value: department.code,
+            name: department.libelle,
+          }))}
+          value={selectedDepartment}
+          style={{width: '100%'}}
+          onChange={setSelectedDepartment}
+        />
+
+        <Button
+          size="big"
+          variant="outlined"
+          onClick={() => {
+            setSelectedRegion(emptyString);
+            setSelectedDepartment(emptyString);
+          }}
+          style={{
+            visibility:
+              selectedDepartment || selectedRegion ? 'visible' : 'hidden',
+          }}
+        >
+          Désactiver tous les filtres
+        </Button>
+      </div>
+    </>
   );
 };
 

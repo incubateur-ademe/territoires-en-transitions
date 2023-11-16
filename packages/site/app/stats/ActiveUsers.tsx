@@ -15,6 +15,7 @@ import {
 } from './shared';
 import {SliceTooltip} from './SliceTooltip';
 import {addLocalFilters} from './utils';
+import {ChartHead} from './headings';
 
 export function useActiveUsers(codeRegion: string, codeDepartement: string) {
   return useSWR(
@@ -76,17 +77,15 @@ export default function ActiveUsers({
 
   return (
     <div>
-      <div className="fr-grid-row fr-grid-row--center">
-        <h6>
-          La plateforme est utilisée par&nbsp;
-          {courant?.total_utilisateurs} personne
-          {courant?.total_utilisateurs !== 1 && 's'}, dont&nbsp;
-          {precedent?.utilisateurs}
-          {precedent?.utilisateurs === 1 ? ' nous a' : ' nous ont'} rejoint le
-          mois dernier
-        </h6>
-      </div>
-      <div style={{height: 400}}>
+      <ChartHead>
+        La plateforme est utilisée par&nbsp;
+        {courant?.total_utilisateurs} personne
+        {courant?.total_utilisateurs !== 1 && 's'}, dont&nbsp;
+        {precedent?.utilisateurs}
+        {precedent?.utilisateurs === 1 ? ' nous a' : ' nous ont'} rejoint le
+        mois dernier
+      </ChartHead>
+      <div className="h-[400px] mt-8 mb-12">
         <ResponsiveLine
           theme={theme}
           colors={colors}

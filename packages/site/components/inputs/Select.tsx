@@ -24,13 +24,16 @@ const Select = ({
 }: SelectProps) => {
   return (
     <div style={style}>
-      <label className="fr-label" htmlFor={name}>
+      <label
+        className="fr-label text-grey-8 text-[16px] font-[500]"
+        htmlFor={name}
+      >
         {label}
       </label>
       <select
         onChange={e => onChange(e.target.value)}
         value={value}
-        className="fr-select"
+        className="fr-select bg-grey-1 text-grey-8 text-[14px] border border-grey-4 rounded-[10px] h-[50px] shadow-none outline-none"
         id={name}
         name={name}
       >
