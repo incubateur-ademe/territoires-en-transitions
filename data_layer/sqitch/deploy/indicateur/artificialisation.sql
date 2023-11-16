@@ -17,4 +17,18 @@ alter table indicateur_artificialisation
     enable row level security;
 create policy allow_read on indicateur_artificialisation for select using (true);
 
+create function
+    indicateur_artificialisation(site_labellisation)
+    returns setof indicateur_artificialisation
+    rows 1
+    security definer
+begin
+    atomic
+    select ia
+    from indicateur_artificialisation ia
+    where ia.collectivite_id = $1.collectivite_id;
+end;
+comment on function indicateur_artificialisation(site_labellisation) is
+    'Flux de consommation d’espaces, par destination entre 2009 et 2022';
+
 COMMIT;
