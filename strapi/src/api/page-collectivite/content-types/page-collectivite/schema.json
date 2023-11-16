@@ -51,6 +51,11 @@
       "repeatable": false,
       "component": "contenu.indicateur",
       "required": false
+    },
+    "artificialisation_sols": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contenu.indicateur"
     }
   }
 }

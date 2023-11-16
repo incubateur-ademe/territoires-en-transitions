@@ -6,6 +6,8 @@ import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type Indicateurs =
   Database['public']['Tables']['indicateur_resultat_import']['Row'];
+export type IndicateurArtificialisation =
+  Database['public']['Tables']['indicateur_artificialisation']['Row'];
 
 type Collectivite = {
   collectivite_id: number;
@@ -30,13 +32,14 @@ type Collectivite = {
   eci_etoiles: EtoilesLabel;
   eci_score_realise: number;
   eci_score_programme: number;
-  indicateurs_gaz_effet_serre: Indicateurs[];
+  indicateurs_gaz_effet_serre: Indicateurs[] | null;
+  indicateur_artificialisation: IndicateurArtificialisation | null;
 };
 
 export const fetchCollectivite = async (code_siren_insee: string) => {
   const {data, error} = await supabase
     .from('site_labellisation')
-    .select('*, indicateurs_gaz_effet_serre')
+    .select('*, indicateurs_gaz_effet_serre, indicateur_artificialisation')
     .match({code_siren_insee});
 
   if (error) {
@@ -138,12 +141,15 @@ export const getStrapiDefaultData = async () => {
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'couverture'],
-    ['populate[3]', 'gaz_effet_serre'],
-    ['populate[4]', 'gaz_effet_serre.illustration_encadre'],
+    ['populate[3]', 'artificialisation_sols'],
+    ['populate[4]', 'artificialisation_sols.illustration_encadre'],
+    ['populate[5]', 'gaz_effet_serre'],
+    ['populate[6]', 'gaz_effet_serre.illustration_encadre'],
   ]);
 
   if (data) {
     const seo = data.attributes.seo;
+    const artificialisation_sols = data.attributes.artificialisation_sols;
     const gaz_effet_serre = data.attributes.gaz_effet_serre;
 
     const metaImage =
@@ -179,19 +185,37 @@ export const getStrapiDefaultData = async () => {
           undefined,
         cta: (data.attributes.connexionn_cta as unknown as string) ?? undefined,
       },
-      gaz_effet_serre: gaz_effet_serre
-        ? {
-            titre: gaz_effet_serre.titre as unknown as string,
-            description: gaz_effet_serre.description as unknown as string,
-            titre_encadre: gaz_effet_serre.titre_encadre as unknown as string,
-            description_encadre:
-              gaz_effet_serre.description_encadre as unknown as string,
-            illustration_encadre: gaz_effet_serre.illustration_encadre
-              .data as unknown as StrapiItem,
-            details:
-              (gaz_effet_serre.details as unknown as string) ?? undefined,
-          }
-        : undefined,
+      indicateurs: {
+        artificialisation_sols: artificialisation_sols
+          ? {
+              titre: artificialisation_sols.titre as unknown as string,
+              description:
+                artificialisation_sols.description as unknown as string,
+              titre_encadre:
+                artificialisation_sols.titre_encadre as unknown as string,
+              description_encadre:
+                artificialisation_sols.description_encadre as unknown as string,
+              illustration_encadre: artificialisation_sols.illustration_encadre
+                .data as unknown as StrapiItem,
+              details:
+                (artificialisation_sols.details as unknown as string) ??
+                undefined,
+            }
+          : undefined,
+        gaz_effet_serre: gaz_effet_serre
+          ? {
+              titre: gaz_effet_serre.titre as unknown as string,
+              description: gaz_effet_serre.description as unknown as string,
+              titre_encadre: gaz_effet_serre.titre_encadre as unknown as string,
+              description_encadre:
+                gaz_effet_serre.description_encadre as unknown as string,
+              illustration_encadre: gaz_effet_serre.illustration_encadre
+                .data as unknown as StrapiItem,
+              details:
+                (gaz_effet_serre.details as unknown as string) ?? undefined,
+            }
+          : undefined,
+      },
     };
   } else return null;
 };
