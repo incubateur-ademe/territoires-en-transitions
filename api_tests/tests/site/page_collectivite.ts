@@ -50,7 +50,7 @@ Deno.test(
 );
 
 Deno.test(
-  'Indicateurs gaz effet de serre.',
+  'Indicateur artificialisation.',
   // ignoré, car le seed ne contient pas les données.
   {ignore: true},
   async () => {
