@@ -19,7 +19,7 @@ const FonctionnalitesPlateforme = ({
     <Section>
       <h2 className="text-center">{titre}</h2>
       <div className="flex max-md:flex-col justify-between items-center gap-8 md:gap-20">
-        <StrapiImage data={image} />
+        <StrapiImage data={image} containerClassName="max-w-[595px]" />
         <Markdown
           texte={contenu}
           className="fonctionnalites text-primary-10 text-[16px] !leading-[20px] md:text-[21px] md:!leading-[32px] font-[500] max-md:pl-8"

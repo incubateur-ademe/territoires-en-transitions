@@ -68,12 +68,12 @@ const HeaderPlateforme = ({
       </div>
       <div
         style={{boxShadow: '0px 4px 50px 0px #0000000D'}}
-        className="w-fit h-fit mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4 mx-auto"
+        className="md:w-4/5 h-fit mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4 mx-auto"
       >
         <StrapiImage
           data={couverture}
           className="w-auto mx-auto"
-          containerClassName="w-full min-w-[350px]  "
+          containerClassName="w-full min-w-[350px]"
           displayCaption={false}
         />
       </div>
