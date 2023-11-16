@@ -14,6 +14,7 @@ import {
   theme,
 } from './shared';
 import {addLocalFilters} from './utils';
+import {ChartHead} from './headings';
 
 /**
  * L'évolution des activations par type de collectivité
@@ -87,20 +88,18 @@ export default function EvolutionTotalActivationParType({
 
   return (
     <div>
-      <div className="fr-grid-row fr-grid-row--center">
-        <h6>
-          {courant.total}{' '}
-          {courant.total !== 1
-            ? 'collectivités activées'
-            : 'collectivité activée'}{' '}
-          dont {courant.total_epci} EPCI,&nbsp;
-          {courant.total_syndicat} syndicat{courant.total_syndicat !== 1 && 's'}{' '}
-          et&nbsp;
-          {courant.total_commune} commune{courant.total_commune !== 1 && 's'}
-        </h6>
-      </div>
+      <ChartHead>
+        {courant.total}{' '}
+        {courant.total !== 1
+          ? 'collectivités activées'
+          : 'collectivité activée'}{' '}
+        dont {courant.total_epci} EPCI,&nbsp;
+        {courant.total_syndicat} syndicat{courant.total_syndicat !== 1 && 's'}{' '}
+        et&nbsp;
+        {courant.total_commune} commune{courant.total_commune !== 1 && 's'}
+      </ChartHead>
 
-      <div style={{height: 400}}>
+      <div className="h-[400px] mt-8 mb-12">
         <ResponsiveLine
           colors={colors}
           theme={theme}

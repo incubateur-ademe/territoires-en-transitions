@@ -33,27 +33,12 @@ const StatisticsDisplay = ({
 
   return (
     <>
-      <Section>
-        {nationalStats ? (
-          <p>
-            Territoires en Transitions est une plateforme publique gratuite et
-            open-source développée avec ses utilisateurs afin d’aider les
-            collectivités dans le pilotage et la priorisation de leur transition
-            écologique.
-          </p>
-        ) : (
-          <p>
-            Cette page présente les statistiques de déploiement et d’usage{' '}
-            {!!regionCode ? 'régionales' : 'départementales'} de la plateforme
-            Territoires en Transitions.
-          </p>
-        )}
-
+      <Section containerClassName="!py-28">
         <SectionHead>
           Déployer la transition écologique sur la totalité du territoire
           {nationalStats && ' national'}
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           La transition écologique nécessite d’être déployée sur la totalité des
           intercommunalités (1254 EPCI à fiscalité propre au 1er janvier 2022)
           ainsi que leurs communes et syndicats associés qui ont une
@@ -98,11 +83,11 @@ const StatisticsDisplay = ({
         </div>
       </Section>
 
-      <Section>
+      <Section containerClassName="bg-primary-0 !py-28">
         <SectionHead>
           Outiller les personnes chargées de la planification écologique
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           La transition écologique est un sujet transversal et systémique qui
           concerne de nombreuses personnes au sein d’une collectivité : les
           différent(e)s chargé(e)s de mission (climat, économie circulaire,
@@ -119,12 +104,12 @@ const StatisticsDisplay = ({
         />
       </Section>
 
-      <Section className="flex-col">
+      <Section className="flex-col !py-28">
         <SectionHead>
           Connaître l’état des lieux des forces et faiblesses de chaque
           territoire
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           L’état des lieux est une étape incontournable dans toute démarche de
           planification. Pour accompagner les collectivités dans cet exercice,
           la plateforme Territoires en Transitions s’appuie sur les référentiels
@@ -133,12 +118,12 @@ const StatisticsDisplay = ({
         <EtatDesLieux region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section>
+      <Section containerClassName="bg-primary-0 !py-28">
         <SectionHead>
           Planifier et prioriser les actions en faveur de la transition
           écologique
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           Pour suivre la progression des actions décidées, les collectivités
           sont amenées à suivre de nombreux plans d’actions politiques et
           réglementaires tels que des Plans de Transition Écologique, Plans
@@ -150,12 +135,12 @@ const StatisticsDisplay = ({
         <EvolutionPlansAction region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section>
+      <Section containerClassName="!py-28">
         <SectionHead>
           Suivre les indicateurs clés de réalisation et d’impact de la
           transition écologique
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           Afin d’objectiver la progression des actions les collectivités
           mesurent la progression au moyen d’indicateurs de réalisation et
           d’impact de référence ou personnalisés.
@@ -163,11 +148,11 @@ const StatisticsDisplay = ({
         <EvolutionIndicateurs region={regionCode} department={departmentCode} />
       </Section>
 
-      <Section>
+      <Section containerClassName="bg-primary-0 !py-28">
         <SectionHead>
           Partager et valoriser la progression de chaque territoire
         </SectionHead>
-        <p>
+        <p className="paragraphe-18">
           Lorsqu’elles réalisent leur état des lieux sur la plateforme, les
           collectivités évaluent leur performance au regard des référentiels
           nationaux. Elles obtiennent ainsi un score qui leur permet d’accéder à

@@ -15,7 +15,7 @@ const StatsLayout = ({children}: {children: React.ReactNode}) => {
 
   return (
     <>
-      <Section containerClassName="!pb-0">
+      <Section containerClassName="bg-primary-1 !py-28" className="!gap-0">
         <h1>Statistiques{title ? ` - ${title}` : ''}</h1>
         <RegionAndDeptFilters onChange={setTitle} />
       </Section>
