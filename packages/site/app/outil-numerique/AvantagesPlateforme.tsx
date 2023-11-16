@@ -14,7 +14,7 @@ const AvantagesPlateforme = ({avantages}: AvantagesPlateformeProps) => {
   return (
     <Section
       containerClassName="bg-primary-1 !py-24"
-      className="md:!flex-row justify-center !gap-14 md:!gap-32 px-12 md:px-24"
+      className="md:!flex-row justify-center !gap-14 lg:!gap-32 px-12 md:px-24"
     >
       {avantages.map(avantage => (
         <div
@@ -23,9 +23,9 @@ const AvantagesPlateforme = ({avantages}: AvantagesPlateformeProps) => {
         >
           <StrapiImage
             data={avantage.image}
-            containerClassName="bg-white p-10 rounded-full"
+            containerClassName="bg-white p-10 rounded-full w-[196px]"
           />
-          <h6 className="text-primary-9 text-center text-[16px] md:text-[18px] leading-[22px] mb-0">
+          <h6 className="text-primary-9 text-center text-[16px] md:text-[18px] leading-[22px] mb-0 max-md:max-w-[300px]">
             {avantage.legende}
           </h6>
         </div>
