@@ -43,7 +43,9 @@ export const getStrapiData = async () => {
         titre: outilData.titre as unknown as string,
         accroche: outilData.accroche as unknown as string,
         cta_inscription: outilData.cta_inscription as unknown as string,
+        url_inscription: outilData.url_inscription as unknown as string,
         cta_demo: outilData.cta_demo as unknown as string,
+        url_demo: outilData.url_demo as unknown as string,
         couverture: outilData.couverture.data as unknown as StrapiItem,
       },
       avantages: (

@@ -33,11 +33,19 @@
       "default": "Je m’inscris",
       "maxLength": 50
     },
+    "url_inscription": {
+      "type": "string",
+      "required": true
+    },
     "cta_demo": {
       "type": "string",
       "default": "Je participe à une démo",
       "required": true,
       "maxLength": 50
+    },
+    "url_demo": {
+      "type": "string",
+      "required": true
     },
     "couverture": {
       "type": "media",
