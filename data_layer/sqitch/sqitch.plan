@@ -544,3 +544,4 @@ taxonomie/personne 2023-11-07T08:58:36Z Florian <florian@derfurth.com> # Répare
 @v2.80.0 2023-11-07T16:28:26Z Florian <florian@derfurth.com> # Améliorations des collectivités de test et nouvelles fonctionnalités indicateurs
 
 indicateur/artificialisation 2023-11-16T13:12:35Z Florian <florian@derfurth.com> # Artificialisation des sols de 2009 à 2022
+@v2.81.0 2023-11-16T14:13:44Z Florian <florian@derfurth.com> # Indicateur d'artificialisation des sols pour le site
