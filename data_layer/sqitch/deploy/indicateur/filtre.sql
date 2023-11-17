@@ -124,9 +124,9 @@ create function
     stable
 begin
     atomic
-    select ist
-    from indicateur_definition ist
-    where ist.parent = $1.indicateur_id;
+    select def
+    from indicateur_definition def
+    where def.parent = $1.indicateur_id;
 end;
 comment on function enfants(indicateur_definitions) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
