@@ -131,4 +131,18 @@ end;
 comment on function enfants(indicateur_definitions) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
 
+create function
+    rempli(indicateur_definition)
+    returns bool
+    language sql
+    stable
+begin
+    atomic
+    select rempli
+    from indicateur_rempli ir
+    where ir.indicateur_id = $1.id;
+end;
+comment on function rempli(indicateur_definition) is
+    'Vrai si l''indicateur prédéfini est rempli.';
+
 COMMIT;
