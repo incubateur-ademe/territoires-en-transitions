@@ -15,6 +15,7 @@ import IndicateursCollectivite from './IndicateursCollectivite';
 import {natureCollectiviteToLabel} from 'src/utils/labels';
 import AccesCompte from './AccesCompte';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import HistoriqueLabellisation from './HistoriqueLabellisation';
 
 export async function generateMetadata(
   {params}: {params: {code: string}},
@@ -82,6 +83,22 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
               eci={collectiviteData.eci_etoiles ?? undefined}
             />
           </div>
+        )}
+        {collectiviteData.labellisations.length > 0 && (
+          <>
+            <HistoriqueLabellisation
+              referentiel="cae"
+              historique={collectiviteData.labellisations.filter(
+                label => label.referentiel === 'cae' && label.annee !== null,
+              )}
+            />
+            <HistoriqueLabellisation
+              referentiel="eci"
+              historique={collectiviteData.labellisations.filter(
+                label => label.referentiel === 'eci' && label.annee !== null,
+              )}
+            />
+          </>
         )}
         {collectiviteData.active ? (
           <AccesCompte

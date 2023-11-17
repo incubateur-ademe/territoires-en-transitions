@@ -4,6 +4,8 @@ import {EtoilesLabel} from 'app/types';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
+export type Labellisations =
+  Database['public']['Tables']['labellisation']['Row'];
 export type Indicateurs =
   Database['public']['Tables']['indicateur_resultat_import']['Row'];
 export type IndicateurArtificialisation =
@@ -32,6 +34,7 @@ type Collectivite = {
   eci_etoiles: EtoilesLabel;
   eci_score_realise: number;
   eci_score_programme: number;
+  labellisations: Labellisations[];
   indicateurs_gaz_effet_serre: Indicateurs[] | null;
   indicateur_artificialisation: IndicateurArtificialisation | null;
 };
@@ -39,7 +42,9 @@ type Collectivite = {
 export const fetchCollectivite = async (code_siren_insee: string) => {
   const {data, error} = await supabase
     .from('site_labellisation')
-    .select('*, indicateurs_gaz_effet_serre, indicateur_artificialisation')
+    .select(
+      '*,labellisations, indicateurs_gaz_effet_serre, indicateur_artificialisation',
+    )
     .match({code_siren_insee});
 
   if (error) {
