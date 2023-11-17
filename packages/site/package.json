@@ -13,6 +13,7 @@
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\""
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.3.5",
     "@floating-ui/react": "^0.25.2",
     "@gouvfr/dsfr": "^1.10.0",
     "@mdx-js/loader": "^2.3.0",
