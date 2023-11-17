@@ -5,6 +5,7 @@ import {Footer} from '@components/footer/Footer';
 import {Metadata} from 'next';
 import {headers} from 'next/headers';
 import {getMetaData} from './utils';
+import {Amplitude} from "./Amplitude";
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getMetaData();
@@ -82,6 +83,7 @@ export default function RootLayout({children}: {children: JSX.Element}) {
           </div>
         </div>
         <Footer />
+        <Amplitude />
       </body>
     </html>
   );
