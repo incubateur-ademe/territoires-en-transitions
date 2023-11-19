@@ -4,7 +4,8 @@ const key = process.env.NEXT_PUBLIC_AMPLITUDE_KEY;
 const url = 'https://api.eu.amplitude.com/2/httpapi';
 
 /**
- * Envoi les événements à Amplitude
+ * Fait suivre les événements à Amplitude
+ * Renvoi la réponse d'Amplitude en cas de succès.
  *
  * @param request La requête avec la payload Amplitude
  */
