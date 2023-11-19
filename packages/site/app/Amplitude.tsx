@@ -4,7 +4,12 @@ import {useEffect} from "react";
 
 const key = process.env.NEXT_PUBLIC_AMPLITUDE_KEY;
 
-
+/**
+ * Initialise Amplitude pour une utilisation dans le navigateur.
+ *
+ * Ce composant doit être monté sur chaque page pour que la SDK soit bien initialisée.
+ * Le tracking en tant que tel est fait par la SDK Amplitude.
+ */
 export function Amplitude() {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.origin && key && key.length == 32) {
