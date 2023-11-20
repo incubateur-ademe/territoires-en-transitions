@@ -2,33 +2,25 @@
 
 BEGIN;
 
-create table indicateur_artificialisation
-(
-    collectivite_id integer references collectivite primary key,
-    total           integer not null,
-    activite        integer not null,
-    habitat         integer not null,
-    mixte           integer not null,
-    routiere        integer not null,
-    ferroviaire     integer not null,
-    inconnue        integer not null
-);
 alter table indicateur_artificialisation
-    enable row level security;
-create policy allow_read on indicateur_artificialisation for select using (true);
+    alter column total type double precision using total::double precision;
 
-create function
-    indicateur_artificialisation(site_labellisation)
-    returns setof indicateur_artificialisation
-    rows 1
-    security definer
-begin
-    atomic
-    select ia
-    from indicateur_artificialisation ia
-    where ia.collectivite_id = $1.collectivite_id;
-end;
-comment on function indicateur_artificialisation(site_labellisation) is
-    'Flux de consommation d’espaces, par destination entre 2009 et 2022';
+alter table indicateur_artificialisation
+    alter column activite type double precision using activite::double precision;
+
+alter table indicateur_artificialisation
+    alter column habitat type double precision using habitat::double precision;
+
+alter table indicateur_artificialisation
+    alter column mixte type double precision using mixte::double precision;
+
+alter table indicateur_artificialisation
+    alter column routiere type double precision using routiere::double precision;
+
+alter table indicateur_artificialisation
+    alter column ferroviaire type double precision using ferroviaire::double precision;
+
+alter table indicateur_artificialisation
+    alter column inconnue type double precision using inconnue::double precision;
 
 COMMIT;
