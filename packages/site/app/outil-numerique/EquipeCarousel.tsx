@@ -16,30 +16,40 @@ type EquipeCarouselProps = {
 };
 
 const EquipeCarousel = ({liste, width}: EquipeCarouselProps) => {
+  // Constantes à mettre à jour en cas de changement de format des cartes
+  const cardWidth = 169;
+  const gapWidth = 16;
+  const initDelta = cardWidth / 2 - gapWidth;
+  const cardWithGapWidth = cardWidth + gapWidth;
+  // cardWidth / 2 = 84.5 = milieu d'une carte
+  // cardWithGapWidth = 185 = largeur de la carte 169px + largeur du gap 16px
+
   const [maxPosition, setMaxPosition] = useState(
-    -(width / 2) + 84.5 - 16 + 185 * (liste.length - 1),
+    -(width / 2) + initDelta + cardWithGapWidth * (liste.length - 1),
   );
-  const [minPosition, setMinPosition] = useState(-(width / 2) + 84.5 - 16);
+  const [minPosition, setMinPosition] = useState(-(width / 2) + initDelta);
   const [position, setPosition] = useState(minPosition);
 
   useEffect(() => {
-    setMaxPosition(-(width / 2) + 84.5 - 16 + 185 * (liste.length - 1));
-    setMinPosition(-(width / 2) + 84.5 - 16);
-    setPosition(-(width / 2) + 84.5 - 16);
-    // 185 = largeur de la carte 169px + largeur du gap 16px
-    // 84.5 = milieu d'une carte
-  }, [width, liste.length]);
+    setMaxPosition(
+      -(width / 2) + initDelta + cardWithGapWidth * (liste.length - 1),
+    );
+    setMinPosition(-(width / 2) + initDelta);
+    setPosition(-(width / 2) + initDelta);
+  }, [width, liste.length, initDelta, cardWithGapWidth]);
 
   // Calcul de la nouvelle position dans le carousel
   const handleChangeCard = useCallback(
     (increment: 'next' | 'previous') => {
-      const newPosition = position + (increment === 'next' ? 185 : -185);
+      const newPosition =
+        position +
+        (increment === 'next' ? cardWithGapWidth : -cardWithGapWidth);
 
       if (newPosition < minPosition) setPosition(maxPosition);
       else if (newPosition > maxPosition) setPosition(minPosition);
       else setPosition(newPosition);
     },
-    [position, minPosition, maxPosition],
+    [position, minPosition, maxPosition, cardWithGapWidth],
   );
 
   // Changement automatique de la position dans le carousel
