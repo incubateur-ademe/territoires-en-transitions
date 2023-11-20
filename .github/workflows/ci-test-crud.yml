@@ -129,7 +129,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud fonctions
         run: >
           docker run --rm \
                --name api_crud_test_tet \
@@ -189,7 +189,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud vues
         run: >
           docker run --rm \
                --name api_crud_test_tet \
@@ -249,7 +249,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud table 1-4
         run: >
           docker run --rm \
                --name api_crud_test_tet \
@@ -309,7 +309,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud table 2-4
         run: >
           docker run --rm \
                --name api_crud_test_tet \
@@ -370,7 +370,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud table 3-4
         run: >
           docker run --rm \
                --name api_crud_test_tet \
@@ -430,7 +430,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test API
+      - name: Test api crud table 4-4
         run: >
           docker run --rm \
                --name api_crud_test_tet \
