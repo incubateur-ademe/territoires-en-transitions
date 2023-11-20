@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 until curl --fail -X POST "$URL/rest/v1/rpc/is_authenticated" \
             -H "Content-Type: application/json" \
             -H "apikey: $API_KEY" \
