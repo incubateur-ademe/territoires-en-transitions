@@ -40,7 +40,8 @@ const ContenuCollectivite = ({
       {temoignages.length > 0 && (
         <TestimonialSlideshow
           contenu={temoignages}
-          className="rounded-[10px] bg-white border-x-[3px] border-orange-1"
+          className="rounded-[10px] bg-grey-1 border-x-[3px] border-orange-1"
+          autoSlideDelay={12000}
           autoSlide
         />
       )}

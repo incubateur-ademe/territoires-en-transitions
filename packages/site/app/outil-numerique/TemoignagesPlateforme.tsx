@@ -23,6 +23,7 @@ const TemoignagesPlateforme = ({temoignages}: TemoignagesPlateformeProps) => {
         className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 md:w-3/4 mx-auto"
         dotsColor="orange"
         displayButtons={false}
+        autoSlideDelay={12000}
         autoSlide
       />
     </Section>
