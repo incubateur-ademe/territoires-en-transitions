@@ -34,8 +34,8 @@ const ActionCollectivite = ({
         <div className="h-[450px] w-full overflow-hidden relative">
           <StrapiImage
             data={image}
-            className="object-cover min-h-full min-w-full"
-            containerClassName="w-full h-full"
+            className="object-cover object-center h-full w-full"
+            containerClassName="object-cover object-center h-full w-full"
           />
           {(image.attributes.caption as unknown as string) && (
             <div className="text-right text-grey-1 text-[14px] leading-4 py-1 px-2 absolute right-0 top-[426px] bg-grey-8/50 rounded-tl-sm">
