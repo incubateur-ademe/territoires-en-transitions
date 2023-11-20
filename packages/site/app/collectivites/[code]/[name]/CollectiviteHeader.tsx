@@ -42,8 +42,8 @@ const CollectiviteHeader = ({
         {couverture ? (
           <StrapiImage
             data={couverture}
-            className="object-cover min-h-full min-w-full"
-            containerClassName="h-full w-full"
+            className="object-cover object-center h-full w-full"
+            containerClassName="h-full w-full object-cover object-center"
             displayCaption={false}
           />
         ) : (
@@ -57,8 +57,8 @@ const CollectiviteHeader = ({
             {couvertureDefaut ? (
               <StrapiImage
                 data={couvertureDefaut}
-                className="object-cover min-h-full min-w-full"
-                containerClassName="h-full w-full hover:opacity-10 transition-opacity duration-500 relative z-10"
+                className="object-cover object-center h-full w-full"
+                containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10"
                 displayCaption={false}
               />
             ) : (
@@ -68,6 +68,7 @@ const CollectiviteHeader = ({
                 fill={true}
                 style={{
                   objectFit: 'cover',
+                  objectPosition: 'center',
                   minHeight: '100%',
                   minWidth: '100%',
                 }}
@@ -137,13 +138,13 @@ const CollectiviteHeader = ({
         {/* Logo de la collectivité */}
         {logo && (
           <div
-            className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit w-fit"
+            className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit max-w-[250px]"
             style={{boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)'}}
           >
             <StrapiImage
               data={logo}
               className="max-h-[70px] sm:max-h-[100px] lg:max-h-[150px] "
-              containerClassName="h-fit "
+              containerClassName="h-fit"
               displayCaption={false}
             />
           </div>
