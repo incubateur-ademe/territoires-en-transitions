@@ -504,6 +504,20 @@ api-test:
               api-test:latest test -A tests/$test/*.test.ts --location 'http://localhost'
     END
 
+api-crud-test:
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG network=host
+    LOCALLY
+    RUN earthly +api-test-build
+    RUN echo "Running tests crud'"
+    RUN docker run --rm \
+      --name api_crud_test_tet \
+      --network $network \
+      --env SUPABASE_URL=$API_URL \
+      --env SUPABASE_KEY=$ANON_KEY \
+      api-test:latest test -A tests/crud/crud.test.ts --location 'http://localhost' -- elements:axe
+
 cypress-wip:
     FROM cypress/included:12.3.0
     ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
