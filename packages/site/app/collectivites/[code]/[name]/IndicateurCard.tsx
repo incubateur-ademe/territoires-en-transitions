@@ -13,6 +13,7 @@ type IndicateurCardProps = {
   source?: string;
   unit?: string;
   unitSingular?: boolean;
+  decimals?: number;
 };
 
 /**
@@ -28,6 +29,7 @@ const IndicateurCard = ({
   source,
   unit,
   unitSingular,
+  decimals,
 }: IndicateurCardProps) => {
   return (
     <div className="flex flex-col bg-white md:rounded-[10px] py-10 px-8 lg:p-8 max-md:even:bg-primary-0">
@@ -76,6 +78,8 @@ const IndicateurCard = ({
               customMargin={{top: 40, right: 100, bottom: 40, left: 100}}
               unit={unit}
               unitSingular={unitSingular}
+              decimals={decimals}
+              displayPercentageValue={true}
             />
           </div>
         </>

@@ -45,6 +45,7 @@ const IndicateurGazEffetSerre = ({
       }
       unit="t CO₂eq"
       unitSingular={true}
+      decimals={0}
     />
   );
 };

@@ -35,6 +35,15 @@ const getPercentage = (value: number, data: number[]) => {
 };
 
 /**
+ * Formattage de la valeur
+ */
+const getAbsolute = (value: number, decimals: number) => {
+  return getFormattedNumber(
+    Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals),
+  );
+};
+
+/**
  * Construction de la tooltip
  */
 const getTooltip = (
@@ -46,6 +55,7 @@ const getTooltip = (
   }[],
   unit: string,
   unitSingular: boolean,
+  decimals: number,
 ) => {
   return (
     <div
@@ -71,7 +81,10 @@ const getTooltip = (
       <span style={{paddingBottom: '3px'}}>
         {id} :{' '}
         <strong>
-          {getFormattedNumber(Math.round(value * 10) / 10)} {unit}
+          {value < 1
+            ? getAbsolute(value, decimals < 2 ? 2 : decimals)
+            : getAbsolute(value, decimals)}{' '}
+          {unit}
           {!!unit && value > 1 && !unitSingular ? 's' : ''} (
           {getPercentage(
             value,
@@ -92,6 +105,7 @@ export type DonutChartProps = {
   }[];
   unit?: string;
   unitSingular?: boolean;
+  decimals?: number;
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
@@ -105,6 +119,7 @@ const DonutChart = ({
   data,
   unit = '',
   unitSingular = false,
+  decimals = 1,
   customMargin,
   zoomEffect = true,
   displayPercentageValue = false,
@@ -175,24 +190,40 @@ const DonutChart = ({
                 fill: '#5555C3',
               }}
             >
-              {`${getPercentage(
-                datum.datum.value,
-                localData.map(d => d.value),
-              )} %`}
+              {displayPercentageValue
+                ? `${getPercentage(
+                    datum.datum.value,
+                    localData.map(d => d.value),
+                  )} %`
+                : `${
+                    datum.datum.value < 1
+                      ? getAbsolute(
+                          datum.datum.value,
+                          decimals < 2 ? 2 : decimals,
+                        )
+                      : getAbsolute(datum.datum.value, decimals)
+                  } ${unit}
+                ${!!unit && datum.datum.value > 1 && !unitSingular ? 's' : ''}`}
             </animated.text>
           </animated.g>
         );
       }}
       enableArcLabels={false}
       animate={true}
-      tooltip={datum => getTooltip(datum, localData, unit, unitSingular)}
+      tooltip={datum =>
+        getTooltip(datum, localData, unit, unitSingular, decimals)
+      }
       valueFormat={value =>
         displayPercentageValue
           ? `${getPercentage(
               value,
               localData.map(d => d.value),
             )} %`
-          : `${getFormattedNumber(Math.round(value))}`
+          : `${
+              value < 1
+                ? getAbsolute(value, decimals < 2 ? 2 : decimals)
+                : getAbsolute(value, decimals)
+            }`
       }
     />
   );
