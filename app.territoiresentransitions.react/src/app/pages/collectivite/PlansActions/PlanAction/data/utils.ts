@@ -3,10 +3,9 @@ import {FlatAxe, PlanNode} from './types';
 import {TProfondeurAxe} from './types';
 
 /**
- * Vérifie si des fiches sont présentes dans un axe et ses sous-axes.
+ * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
  * Dès que le script rencontre une fiche dans l'arbre, il retourne `true`.
- * @param axe l'axe à partir duquel nous voulons vérifier si il ou un de ses enfants contient une fiche
- * @param axes la liste de tous les axes d'un plan
+ * @param plan plan ou axe sous forme de PlanAction
  * @return boolean
  */
 export const checkAxeHasFiche = (axe: PlanNode, axes: PlanNode[]): boolean => {
@@ -16,8 +15,9 @@ export const checkAxeHasFiche = (axe: PlanNode, axes: PlanNode[]): boolean => {
   }
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      const childAxe = children[i];
-      return checkAxeHasFiche(childAxe, axes);
+      if (checkAxeHasFiche(children[i], axes)) {
+        return true;
+      }
     }
   }
   return false;
