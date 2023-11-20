@@ -10,6 +10,7 @@ type DonutChartWithLegendProps = {
   }[];
   unit?: string;
   unitSingular?: boolean;
+  decimals?: number;
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;

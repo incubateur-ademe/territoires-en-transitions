@@ -9,10 +9,21 @@ type IndicateurArtificialisationSolsProps = {
   data: IndicateurArtificialisation | null;
 };
 
+const getBoxTitle = (total: number, decimals: number, title: string) => {
+  if (total === 0) return `0 ${title}`;
+  else if (total > 0 && total < 1) return 'moins d’un hectare';
+  else
+    return `+${getFormattedNumber(
+      Math.round(total * Math.pow(10, decimals)) / Math.pow(10, decimals),
+    )} ${title}`;
+};
+
 const IndicateurArtificialisationSols = ({
   defaultData,
   data,
 }: IndicateurArtificialisationSolsProps) => {
+  const decimals = 2;
+
   if (!defaultData || !data || !data.total) return null;
 
   const localData = data as {[key: string]: number};
@@ -30,13 +41,12 @@ const IndicateurArtificialisationSols = ({
     <IndicateurCard
       defaultData={defaultData}
       data={formattedData}
-      boxTitle={`+${getFormattedNumber(Math.floor(data.total))} ${
-        defaultData.titre_encadre
-      }`}
+      boxTitle={getBoxTitle(data.total, decimals, defaultData.titre_encadre)}
       graphTitle="Répartition du flux de consommation d'espaces, par destination entre 2009 et 2022."
       source="Cerema, Consommation d'espaces naturels, agricoles et forestiers"
       unit="ha"
       unitSingular={true}
+      decimals={decimals}
     />
   );
 };
