@@ -145,4 +145,33 @@ end;
 comment on function rempli(indicateur_definition) is
     'Vrai si l''indicateur prédéfini est rempli.';
 
+create function
+    action_ids(indicateur_definitions)
+    returns action_id[]
+    language sql
+    stable
+begin
+    atomic
+    select array_agg(action_id)
+    from indicateur_action ia
+    where ia.indicateur_id = $1.indicateur_id;
+end;
+comment on function action_ids(indicateur_definitions) is
+    'Les ids des actions associées à un indicateur.';
+
+drop function action_ids(indicateur_definition);
+create function
+    action_ids(indicateur_definition)
+    returns action_id[]
+    language sql
+    stable
+begin
+    atomic
+    select array_agg(action_id)
+    from indicateur_action ia
+    where ia.indicateur_id = $1.id;
+end;
+comment on function action_ids(indicateur_definition) is
+    'Les ids des actions associées à un indicateur.';
+
 COMMIT;
