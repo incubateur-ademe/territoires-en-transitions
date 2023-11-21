@@ -92,6 +92,11 @@ export const Footer = () => {
                 Conditions générales d’utilisation
               </a>
             </li>
+            <li className="fr-footer__bottom-item">
+              <a className="fr-footer__bottom-link" href="/budget">
+                Budget
+              </a>
+            </li>
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
