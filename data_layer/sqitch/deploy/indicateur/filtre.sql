@@ -63,7 +63,8 @@ comment on function pilotes(indicateur_definitions) is
 
 create function
     personne(indicateur_pilote)
-    returns setof personne rows 1
+    returns setof personne
+    rows 1
     language sql
     stable
 begin
@@ -90,7 +91,8 @@ comment on function services(indicateur_definitions) is
 
 create function
     definition_referentiel(indicateur_definitions)
-    returns setof indicateur_definition rows 1
+    returns setof indicateur_definition
+    rows 1
     language sql
     stable
 begin
@@ -109,41 +111,71 @@ create function
     stable
 begin
     atomic
-    select rempli
-    from indicateur_rempli ir
-    where ir.indicateur_id = $1.indicateur_id
-       or ir.perso_id = $1.indicateur_perso_id;
+    with remplissage as (
+        -- indicateur référentiel, résultats saisis
+        select count(valeur) > 0 as rempli
+        from indicateur_resultat ir
+        where ir.collectivite_id = $1.collectivite_id
+          and ir.indicateur_id = $1.indicateur_id
+          and valeur is not null
+
+        union
+
+        -- indicateur référentiel, résultats saisis, valeur alternative
+        select count(valeur) > 0 as rempli
+        from indicateur_resultat ir
+                 join indicateur_definition def on ir.indicateur_id = def.valeur_indicateur
+        where ir.collectivite_id = $1.collectivite_id
+          and def.id = $1.indicateur_id
+          and valeur is not null
+
+        union
+
+        -- indicateur référentiel, résultats importés
+        select count(valeur) > 0
+        from indicateur_resultat_import iri
+        where iri.collectivite_id = $1.collectivite_id
+          and iri.indicateur_id = $1.indicateur_id
+
+        union
+
+        -- indicateur référentiel, résultats importés, valeur alternative
+        select count(valeur) > 0
+        from indicateur_resultat_import iri
+                 join indicateur_definition def on iri.indicateur_id = def.valeur_indicateur
+        where iri.collectivite_id = $1.collectivite_id
+          and def.id = $1.indicateur_id
+
+        union
+
+        -- indicateur perso
+        select count(valeur) > 0
+        from indicateur_personnalise_resultat ipr
+        where ipr.indicateur_id = $1.indicateur_perso_id)
+    select bool_or(rempli)
+    from remplissage;
 end;
 comment on function rempli(indicateur_definitions) is
     'Vrai si l''indicateur est rempli.';
 
 create function
     enfants(indicateur_definitions)
-    returns setof indicateur_definition
+    returns setof indicateur_definitions
     language sql
     stable
 begin
     atomic
-    select def
-    from indicateur_definition def
-    where def.parent = $1.indicateur_id;
+    select $1.collectivite_id as collectivite_id,
+           definition.id      as indicateur_id,
+           null::integer      as indicateur_perso_id,
+           definition.nom     as nom,
+           definition.description,
+           definition.unite
+    from indicateur_definition definition
+    where definition.parent = $1.indicateur_id;
 end;
 comment on function enfants(indicateur_definitions) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
-
-create function
-    rempli(indicateur_definition)
-    returns bool
-    language sql
-    stable
-begin
-    atomic
-    select rempli
-    from indicateur_rempli ir
-    where ir.indicateur_id = $1.id;
-end;
-comment on function rempli(indicateur_definition) is
-    'Vrai si l''indicateur prédéfini est rempli.';
 
 create function
     enfants(indicateur_definition)
