@@ -1,0 +1,103 @@
+{
+  "kind": "singleType",
+  "collectionName": "page_budgets",
+  "info": {
+    "singularName": "page-budget",
+    "pluralName": "page-budgets",
+    "displayName": "6. Budget",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "titre_secondaire": {
+      "type": "string"
+    },
+    "titre_principal": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "fonctionnement_titre": {
+      "type": "string",
+      "required": true
+    },
+    "fonctionnalites_description": {
+      "type": "richtext",
+      "required": true
+    },
+    "principes_titre": {
+      "type": "string",
+      "required": true
+    },
+    "principes_description": {
+      "type": "richtext"
+    },
+    "principes_liste": {
+      "type": "component",
+      "required": true,
+      "repeatable": true,
+      "component": "shared.vignette",
+      "min": 2,
+      "max": 5
+    },
+    "budget_titre": {
+      "type": "string",
+      "required": true
+    },
+    "budget_description": {
+      "type": "richtext",
+      "required": true
+    },
+    "budget_tableau": {
+      "type": "json",
+      "required": true
+    },
+    "repartition_titre": {
+      "type": "string",
+      "required": true
+    },
+    "description_titre": {
+      "type": "string",
+      "required": true
+    },
+    "description_liste": {
+      "type": "component",
+      "required": true,
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre",
+      "min": 1,
+      "max": 5
+    },
+    "tva_titre": {
+      "type": "string",
+      "required": true
+    },
+    "tva_description": {
+      "type": "richtext",
+      "required": true
+    },
+    "performance_titre": {
+      "type": "string",
+      "required": true
+    },
+    "performance_edl_titre": {
+      "type": "string",
+      "required": true
+    },
+    "performance_fa_titre": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
