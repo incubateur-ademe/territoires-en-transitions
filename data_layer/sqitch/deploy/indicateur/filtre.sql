@@ -146,6 +146,20 @@ comment on function rempli(indicateur_definition) is
     'Vrai si l''indicateur prédéfini est rempli.';
 
 create function
+    enfants(indicateur_definition)
+    returns setof indicateur_definition
+    language sql
+    stable
+begin
+    atomic
+    select def
+    from indicateur_definition def
+    where def.parent = $1.id;
+end;
+comment on function enfants(indicateur_definition) is
+    'Définitions des indicateurs enfants d''un indicateur composé.';
+
+create function
     action_ids(indicateur_definitions)
     returns action_id[]
     language sql
@@ -159,7 +173,6 @@ end;
 comment on function action_ids(indicateur_definitions) is
     'Les ids des actions associées à un indicateur.';
 
-drop function action_ids(indicateur_definition);
 create function
     action_ids(indicateur_definition)
     returns action_id[]
