@@ -104,6 +104,20 @@ end;
 comment on function definition_referentiel(indicateur_definitions) is
     'La définition de l''indicateur provenant du référentiel.';
 
+create function
+    definition_perso(indicateur_definitions)
+    returns setof indicateur_personnalise_definition
+    rows 1
+    language sql
+    stable
+begin
+    atomic
+    select ipd
+    from indicateur_personnalise_definition ipd
+    where ipd.id = $1.indicateur_perso_id;
+end;
+comment on function definition_perso(indicateur_definitions) is
+    'La définition de l''indicateur personnalisé.';
 
 create function
     private.rempli(collectivite_id integer, indicateur_id indicateur_id)
