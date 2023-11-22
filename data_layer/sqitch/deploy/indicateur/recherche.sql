@@ -9,7 +9,7 @@ create function
     cherchable(indicateur_definition)
     returns text
     language sql
-    stable
+    immutable
 begin
     atomic
     return $1.nom || ' ' || $1.description;
@@ -25,7 +25,7 @@ create function
     cherchable(indicateur_personnalise_definition)
     returns text
     language sql
-    stable
+    immutable
 begin
     atomic
     return $1.titre || ' ' || $1.description;
@@ -33,7 +33,7 @@ end;
 comment on function cherchable(indicateur_personnalise_definition) is
     'Le champ sur lequel effectuer la recherche.';
 
-create index indicateur_personnalise_definition_collectivite  on public.indicateur_personnalise_definition using btree (collectivite_id);
+create index indicateur_personnalise_definition_collectivite on public.indicateur_personnalise_definition using btree (collectivite_id);
 
 create index indicateur_personnalise_definition_fts
     on indicateur_personnalise_definition
@@ -43,7 +43,7 @@ create function
     cherchable(indicateur_definitions)
     returns text
     language sql
-    stable
+    immutable
 begin
     atomic
     return $1.nom || ' ' || $1.description;
