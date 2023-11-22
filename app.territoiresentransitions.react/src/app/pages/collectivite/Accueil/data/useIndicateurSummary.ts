@@ -1,18 +1,20 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIndicateursParentsGroup} from '../../Indicateurs/useIndicateurDefinitions';
-import {useIndicateursPersoDefinitions} from '../../Indicateurs/useIndicateursPersoDefinitions';
+import {ValuesToUnion} from 'types/utils';
+
+const CATEGORIES = ['cae', 'eci', 'perso'] as const;
+type Categorie = ValuesToUnion<typeof CATEGORIES>;
 
 /**
- * Récupère les summary des indicateurs d'un groupe et d'une collectivité données
+ * Récupère les summary des indicateurs d'une catégorie et d'une collectivité données
  */
-
-const fetchIndicateurSummary = async (collectivite_id: number | null) => {
+const fetchIndicateurSummary = async (collectivite_id: number) => {
   const {error, data} = await supabaseClient
     .from('indicateur_summary')
-    .select()
-    .match({collectivite_id});
+    .select('*')
+    .match({collectivite_id})
+    .in('categorie', CATEGORIES);
 
   if (error) throw new Error(error.message);
 
@@ -22,62 +24,31 @@ const fetchIndicateurSummary = async (collectivite_id: number | null) => {
 /**
  * Récupère les summary des indicateurs d'un groupe et d'une collectivité données
  */
-
-export const useIndicateurSummary = () => {
+const useIndicateurSummary = () => {
   const collectiviteId = useCollectiviteId();
 
-  // Chargement des données
-  const {data} = useQuery(['indicateur_summary', collectiviteId], () =>
-    fetchIndicateurSummary(collectiviteId)
-  );
-
-  return data;
+  return useQuery(['indicateur_summary', collectiviteId], () => {
+    if (!collectiviteId) return;
+    return fetchIndicateurSummary(collectiviteId);
+  });
 };
 
 /**
  * Renvoie les compteurs pour tous les indicateurs
  */
-
 export const useIndicateursCount = () => {
-  const collectiviteId = useCollectiviteId();
+  const {data, isLoading} = useIndicateurSummary();
 
-  const caeIndicateurs = useIndicateursParentsGroup('cae');
-  const eciIndicateurs = useIndicateursParentsGroup('eci');
-  const crteIndicateurs = useIndicateursParentsGroup('crte');
-  const persoIndicateurs = useIndicateursPersoDefinitions(collectiviteId!);
+  if (isLoading || !data) {
+    return;
+  }
 
-  const indicateursWithValue = useIndicateurSummary();
-  const caeIndicateursWithValue = [];
-  const eciIndicateursWithValue = [];
-  const crteIndicateursWithValue = [];
-
-  indicateursWithValue?.forEach(ind => {
-    if (ind.programmes?.includes('cae')) {
-      caeIndicateursWithValue.push(ind);
-    }
-    if (ind.programmes?.includes('eci')) {
-      eciIndicateursWithValue.push(ind);
-    }
-    if (ind.programmes?.includes('crte')) {
-      crteIndicateursWithValue.push(ind);
-    }
+  const parCategorie = new Map();
+  data?.forEach(d => {
+    parCategorie.set(d.categorie, {total: d.nombre, withValue: d.rempli});
   });
-
-  return {
-    cae: {
-      total: caeIndicateurs.length,
-      withValue: caeIndicateursWithValue?.length ?? 0,
-    },
-    eci: {
-      total: eciIndicateurs.length,
-      withValue: eciIndicateursWithValue?.length ?? 0,
-    },
-    crte: {
-      total: crteIndicateurs.length,
-      withValue: crteIndicateursWithValue?.length ?? 0,
-    },
-    perso: {
-      total: persoIndicateurs?.length ?? 0,
-    },
-  };
+  return Object.fromEntries(parCategorie.entries()) as Record<
+    Categorie,
+    {total: number; withValue: number}
+  >;
 };

@@ -30,28 +30,30 @@ type EmptyIndicateursCardProps = {
  * Carte "indicateurs"
  */
 
-const IndicateursCard = ({
-  collectiviteId,
-}: IndicateursCardProps): JSX.Element => {
+const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
   const indicateurs = useIndicateursCount();
+  if (!indicateurs) {
+    return null;
+  }
+  const {cae, eci, perso} = indicateurs;
 
   const indicateursToDisplay = [
     {
-      value: indicateurs.cae.withValue,
-      totalValue: indicateurs.cae.total,
+      value: cae?.withValue,
+      totalValue: cae?.total,
       firstLegend: 'indicateurs',
       secondLegend: referentielToName.cae,
     },
     {
-      value: indicateurs.eci.withValue,
-      totalValue: indicateurs.eci.total,
+      value: eci?.withValue,
+      totalValue: eci?.total,
       firstLegend: 'indicateurs',
       secondLegend: referentielToName.eci,
     },
     {
-      value: indicateurs.perso.total,
-      firstLegend: `indicateur${indicateurs.perso.total > 1 ? 's' : ''}`,
-      secondLegend: `personnalisé${indicateurs.perso.total > 1 ? 's' : ''}`,
+      value: perso?.total,
+      firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
+      secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
     },
     // {
     //   value: indicateurs.crte.withValue,
@@ -65,7 +67,7 @@ const IndicateursCard = ({
     indicateurs.cae.withValue ||
     indicateurs.eci.withValue ||
     // indicateurs.crte.withValue ||
-    indicateurs.perso.total;
+    indicateurs.perso?.total;
 
   return isDisplayingIndicateurs ? (
     <FilledIndicateursCard
