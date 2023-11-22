@@ -4,9 +4,7 @@ import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import FormField from 'ui/shared/form/FormField';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
-import {TIndicateurPersoDefinition} from './types';
-import {useIndicateurPersoDefinition} from './useIndicateursPersoDefinitions';
-import {useIndicateurACompleter} from './useIndicateurACompleter';
+import {TIndicateurPersonnalise} from './types';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
 import {useExportIndicateurs} from './useExportIndicateurs';
 import IndicateurChart from './charts/IndicateurChart';
@@ -14,16 +12,16 @@ import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {IndicateurLinkedInfo} from './detail/IndicateurLinkedInfo';
+import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
+import {useIndicateurPersonnalise} from './useIndicateurDefinition';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
   definition,
 }: {
-  definition: TIndicateurPersoDefinition;
+  definition: TIndicateurPersonnalise;
 }) => {
-  const {id, titre, description, unite} = definition;
-  const a_completer = useIndicateurACompleter(id);
+  const {description, unite, nom, rempli} = definition;
   const {mutate: saveDefinition} = useUpsertIndicateurPersoDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
@@ -31,25 +29,33 @@ const IndicateurPersonnaliseBase = ({
     definition,
   ]);
 
-  // l'objet à enregistrer ne peut pas contenir `isPerso` qui est un champ ajouté
-  // lors du chargement pour des besoins internes au front
-  const {isPerso, ...definitionToUpdate} = definition;
-
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
     name: 'description' | 'unite' | 'titre',
     value: string
   ) => {
+    const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
-    if (nouveau !== definition[name]) {
-      saveDefinition({definition: {...definitionToUpdate, [name]: nouveau}});
+    if (collectivite_id && nouveau !== definition[name]) {
+      const {id, description, commentaire, unite, titre} = definition;
+      saveDefinition({
+        definition: {
+          collectivite_id,
+          id,
+          commentaire,
+          description,
+          unite,
+          titre,
+          [name]: nouveau,
+        },
+      });
     }
   };
 
   return (
     <>
       <HeaderIndicateur
-        title={titre}
+        title={nom}
         isReadonly={isReadonly}
         onUpdate={value => handleUpdate('titre', value)}
       />
@@ -64,10 +70,7 @@ const IndicateurPersonnaliseBase = ({
           />
         </div>
         <IndicateurChart variant="zoomed" definition={definition} />
-        <BadgeACompleter
-          a_completer={a_completer}
-          className="fr-mt-5w fr-mb-3w"
-        />
+        <BadgeACompleter a_completer={!rempli} className="fr-mt-5w fr-mb-3w" />
         <IndicateurValuesTabs definition={definition} />
         <FormField
           className="fr-mt-5w"
@@ -81,7 +84,7 @@ const IndicateurPersonnaliseBase = ({
             onBlur={e => handleUpdate('description', e.target.value)}
           />
         </FormField>
-        <IndicateurLinkedInfo definition={definition} />
+        <IndicateurInfoLiees definition={definition} />
         <FichesActionLiees definition={definition} />
         <FormField label="Unité" className="fr-mt-3w fr-label">
           <InputControlled
@@ -103,7 +106,7 @@ export const IndicateurPersonnalise = ({
 }: {
   indicateurId: string;
 }) => {
-  const definition = useIndicateurPersoDefinition(parseInt(indicateurId));
+  const {data: definition} = useIndicateurPersonnalise(parseInt(indicateurId));
   if (!definition) return null;
 
   return <IndicateurPersonnaliseBase definition={definition} />;
