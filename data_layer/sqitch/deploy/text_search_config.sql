@@ -7,6 +7,8 @@ BEGIN;
 create text search configuration fr ( copy = french );
 alter text search configuration fr
         alter mapping for hword, hword_part, word
-        with unaccent, french_stem;
+        with french_stem, unaccent;
+
+set default_text_search_config = 'fr';
 
 COMMIT;
