@@ -39,7 +39,7 @@ export const IndicateurPersoNouveauForm = (props: {
   return (
     <Formik<TIndicateurPersoDefinitionWrite>
       initialValues={indicateur}
-      isInitialValid={false}
+      validateOnMount
       validationSchema={validation}
       onSubmit={handleSave}
     >
@@ -56,7 +56,7 @@ export const IndicateurPersoNouveauForm = (props: {
             <FormikInput type="area" name="description" label="Description" />
             <FormField className="fr-mt-4w" label="Thématique">
               <ThematiquesDropdown
-                thematiques={thematiques}
+                values={thematiques?.map(t => t.id.toString())}
                 onSelect={setThematiques}
                 isReadonly={false}
               />
