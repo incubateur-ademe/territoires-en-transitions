@@ -3,15 +3,15 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
 import IndicateurChart from '../charts/IndicateurChart';
 import {TIndicateurChartProps} from '../charts/types';
-import {TIndicateurDefinition, TIndicateurProgramme} from '../types';
+import {TIndicateurListItem} from '../types';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
 
 type TIndicateurChartsGridProps = {
-  definitions: TIndicateurDefinition[];
-  view?: IndicateurViewParamOption;
+  definitions: TIndicateurListItem[];
+  view: IndicateurViewParamOption;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
@@ -31,28 +31,9 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   );
 };
 
-// renvoi la vue par défaut associée à une définition d'indicateur (pour construire son url)
-const VUES_PROGRAMME = ['cae', 'eci', 'crte'];
-const getViewId = (definition: TIndicateurDefinition) => {
-  // indicateur perso
-  if (definition.isPerso) return 'perso';
-
-  // indicateur faisant partie d'un programme avec une vue associée
-  const vue = VUES_PROGRAMME.find(g =>
-    definition.programmes.includes(g as TIndicateurProgramme)
-  );
-  if (vue) return vue as IndicateurViewParamOption;
-
-  // indicateur clé
-  if (definition.programmes?.includes('clef')) return 'cles';
-
-  // par défaut => vue "sélection"
-  /* if (definition.selection) */ return 'selection';
-};
-
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
-  props: TIndicateurChartProps & {view?: IndicateurViewParamOption}
+  props: TIndicateurChartProps & {view: IndicateurViewParamOption}
 ) => {
   const {ref, entry} = useIntersectionObserver();
   const collectiviteId = useCollectiviteId()!;
@@ -60,7 +41,7 @@ const IndicateurChartContainer = (
   const {definition, view} = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
-    indicateurView: view || getViewId(definition),
+    indicateurView: view,
     indicateurId: definition.id,
   });
 
