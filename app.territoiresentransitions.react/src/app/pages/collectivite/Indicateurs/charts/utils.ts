@@ -1,7 +1,8 @@
 import {Datum, Serie} from '@nivo/line';
 import {dedup} from 'utils/dedup';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurPredefini} from '../types';
+import {TIndicateurChartBaseProps} from './types';
 
 // libellé par défaut pour les séries objectifs/résultats
 const SERIE_LABELS = {
@@ -54,14 +55,11 @@ const toDatum = ({annee: x, valeur: y}: TIndicateurValeur): Datum => ({
 
 // fourni le titre du graphe à partir d'une définition (perso ou prédéfinie)
 export const getChartTitle = (
-  definition: TIndicateurDefinition,
+  definition: TIndicateurChartBaseProps['definition'],
   isZoomed?: boolean
 ) => {
-  const {isPerso, nom, titre} = definition;
-  if (isPerso) {
-    return titre;
-  }
-  return isZoomed && definition.titre_long ? definition.titre_long : nom;
+  const {nom} = definition;
+  return (isZoomed && (definition as TIndicateurPredefini).titre_long) || nom;
 };
 
 // détermine la fréquence des graduations pour l'axe des abscisses
