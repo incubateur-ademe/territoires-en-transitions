@@ -9,14 +9,14 @@ import {useActionListe} from '../data/options/useActionListe';
 export const ActionsLieesCards = ({
   actions,
 }: {
-  actions: {id: string}[] | null;
+  actions: string[] | null | undefined;
 }) => {
   const {data: actionListe} = useActionListe();
   const collectiviteId = useCollectiviteId()!;
 
   const actionsLiees =
     actionListe?.filter((action: TActionStatutsRow) =>
-      actions?.some(v => v.id === action.action_id)
+      actions?.some(id => id === action.action_id)
     ) ?? [];
 
   return actionsLiees.length > 0 ? (

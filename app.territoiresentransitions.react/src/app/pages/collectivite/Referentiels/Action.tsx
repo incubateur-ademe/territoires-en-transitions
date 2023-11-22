@@ -26,7 +26,7 @@ import ActionFollowUp from '../EtatDesLieux/Referentiel/SuiviAction/ActionFollow
 import {FichesActionLiees} from './FichesActionLiees';
 import {useScoreRealise} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
-import {useIndicateursAction} from '../Indicateurs/useIndicateurDefinitions';
+import {useFilteredIndicateurDefinitions} from '../Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurChartsGrid from '../Indicateurs/lists/IndicateurChartsGrid';
 
 // index des onglets de la page Action
@@ -48,7 +48,10 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const preuvesCount = useActionPreuvesCount(action);
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
-  const indicateursLies = useIndicateursAction(action.id);
+  const {data: indicateursLies} = useFilteredIndicateurDefinitions(
+    referentielId,
+    {action_id: action.id}
+  );
 
   const actionScores = useScoreRealise(action);
 
@@ -147,10 +150,13 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
           <Tab label="Indicateurs" icon="line-chart">
             {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
               <section>
-                {indicateursLies.length === 0 ? (
+                {indicateursLies?.length === 0 ? (
                   <p>Cette action ne comporte pas d'indicateur</p>
                 ) : (
-                  <IndicateurChartsGrid definitions={indicateursLies} />
+                  <IndicateurChartsGrid
+                    definitions={indicateursLies!}
+                    view={referentielId}
+                  />
                 )}
               </section>
             ) : (

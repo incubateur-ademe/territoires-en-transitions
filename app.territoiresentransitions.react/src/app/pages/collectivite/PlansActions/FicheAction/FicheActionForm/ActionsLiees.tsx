@@ -53,7 +53,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
           disabled={isReadonly}
         />
       </FormField>
-      <ActionsLieesCards actions={actions} />
+      <ActionsLieesCards actions={actions?.map(action => action.id)} />
     </>
   );
 };
