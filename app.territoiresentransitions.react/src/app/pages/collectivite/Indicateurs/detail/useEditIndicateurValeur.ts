@@ -145,21 +145,36 @@ const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 const useOnSuccess = (args: TEditIndicateurValeurArgs) => {
   const {collectivite_id, definition, type} = args;
   const {id: indicateur_id} = definition;
+  const parent = (definition as TIndicateurPredefini).parent;
 
   const queryClient = useQueryClient();
   return () => {
     if (!collectivite_id) return;
+    // pour actualiser le graphe
+    queryClient.invalidateQueries([
+      'indicateur_chart_info',
+      collectivite_id,
+      indicateur_id,
+    ]);
     queryClient.invalidateQueries([
       'indicateur_valeurs',
       collectivite_id,
       indicateur_id,
     ]);
+    // pour actualiser le tableau
     queryClient.invalidateQueries([
       'indicateur_valeurs_detail',
       collectivite_id,
       indicateur_id,
       type,
     ]);
-    queryClient.invalidateQueries(['indicateur_rempli', collectivite_id]);
+    // pour actualiser le badge 'à compléter / complété'
+    queryClient.invalidateQueries([
+      'indicateur_definition',
+      collectivite_id,
+      // pour les indicateurs composés on doit recharger la définition parente
+      // pour que le flag 'rempli' de l'indicateur enfant modifié soit actualisé
+      parent || indicateur_id,
+    ]);
   };
 };
