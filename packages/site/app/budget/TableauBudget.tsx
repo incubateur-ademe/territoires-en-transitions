@@ -1,35 +1,102 @@
-const TableauBudget = () => {
+import classNames from 'classnames';
+import {TTableauBudget} from './utils';
+import {getFormattedNumber} from 'src/utils/getFormattedNumber';
+
+type TableauBudgetProps = {
+  data: TTableauBudget;
+};
+
+const getColumns = (data: {[key: string]: string}) => {
+  let columns = [];
+
+  for (const index in data) {
+    columns.push({
+      index,
+      value: data[index],
+    });
+  }
+
+  return columns.sort((a, b) => parseInt(a.index) - parseInt(b.index));
+};
+
+const getTotal = (
+  data: {[key: string]: {[key: string]: number}},
+  index: string,
+) => {
+  let total = 0;
+  for (const line in data) {
+    total += data[line][index];
+  }
+  return total;
+};
+
+const TableauBudget = ({data}: TableauBudgetProps) => {
+  const colonnes = getColumns(data.années);
+  const lignes = Object.keys(data.tableau);
+
+  const columnWidth = `${100 / (colonnes.length + 1)}%`;
+
   return (
     <table className="w-full border border-primary-3 text-primary-10 text-[12px] leading-[15px] font-[500] my-10">
-      <tr className="h-[36px] bg-primary-2 border border-primary-3">
-        <th className="w-1/5 border border-primary-3 text-left p-3"></th>
-        <th className="w-1/5 border border-primary-3 text-left p-3">2021</th>
-        <th className="w-1/5 border border-primary-3 text-left p-3">2022</th>
-        <th className="w-1/5 border border-primary-3 text-left p-3">2023</th>
-        <th className="w-1/5 bg-primary-4 border border-primary-3 text-left p-3">
-          Prévisionnel S1 2024
-        </th>
-      </tr>
-      <tr className="h-[36px] border border-primary-3">
-        <td className="border border-primary-3 text-primary-9 p-3">
-          Développement
-        </td>
-        <td className="border border-primary-3 p-3">392 604 €</td>
-        <td className="border border-primary-3 p-3">519 590 €</td>
-        <td className="border border-primary-3 p-3">893 693 €</td>
-        <td className="bg-primary-0 border border-primary-3 p-3">400 000 €</td>
-      </tr>
-      <tr className="h-[36px] bg-primary-0 border border-primary-3">
-        <td className="border border-primary-3 text-primary-9 p-3">
-          Total TTC
-        </td>
-        <td className="border border-primary-3 font-bold p-3">598 405 €</td>
-        <td className="border border-primary-3 font-bold p-3">812 486 €</td>
-        <td className="border border-primary-3 font-bold p-3">1 457 988 €</td>
-        <td className="bg-primary-0 border border-primary-3 font-bold p-3">
-          820 000 €
-        </td>
-      </tr>
+      {/* Première ligne - Années */}
+      <thead>
+        <tr className="h-[36px] bg-primary-2 border border-primary-3">
+          <th
+            className="border border-primary-3 text-left max-md:p-1 p-3"
+            style={{width: columnWidth}}
+          ></th>
+          {colonnes.map(c => (
+            <th
+              key={c.index}
+              className={classNames(
+                'border border-primary-3 text-left max-md:max-w-[60px] max-md:break-words max-md:p-1 p-3',
+                {
+                  'bg-primary-4': parseInt(c.index) === colonnes.length,
+                },
+              )}
+              style={{width: columnWidth}}
+            >
+              {c.value}
+            </th>
+          ))}
+        </tr>
+      </thead>
+
+      {/* Lignes de données */}
+      <tbody>
+        {lignes.map(ligne => (
+          <tr key={ligne} className="h-[36px] border border-primary-3">
+            <td className="border border-primary-3 text-primary-9 max-md:p-1 p-3">
+              {ligne}
+            </td>
+            {colonnes.map(c => (
+              <td
+                key={`${ligne}-${c.index}`}
+                className={classNames('border border-primary-3max-md:p-1 p-3', {
+                  'bg-primary-0': parseInt(c.index) === colonnes.length,
+                })}
+              >
+                {getFormattedNumber(data.tableau[ligne][c.index])} €
+              </td>
+            ))}
+          </tr>
+        ))}
+
+        {/* Dernière ligne - Total TTC */}
+        <tr className="h-[36px] bg-primary-0 border border-primary-3">
+          <td className="border border-primary-3 text-primary-9 max-md:p-1 p-3">
+            Total TTC
+          </td>
+          {colonnes.map(c => (
+            <td
+              key={`Total-${c.index}`}
+              className="border border-primary-3 font-bold max-md:p-1 p-3"
+            >
+              {getFormattedNumber(getTotal(data.tableau, c.index))} €
+            </td>
+          ))}
+        </tr>
+      </tbody>
     </table>
   );
 };

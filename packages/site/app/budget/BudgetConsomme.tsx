@@ -1,29 +1,43 @@
-/* eslint-disable react/no-unescaped-entities */
-
-import InfoTva from './InfoTva';
+import InfoTva, {InfoTvaProps} from './InfoTva';
 import TableauBudget from './TableauBudget';
-import RepartitionCouts from './RepartitionCouts';
-import DescriptionCouts from './DescriptionCouts';
+import RepartitionCouts, {RepartitionCoutsProps} from './RepartitionCouts';
+import DescriptionCouts, {DescriptionCoutsProps} from './DescriptionCouts';
+import {TTableauBudget} from './utils';
+import Markdown from '@components/markdown/Markdown';
 
-const BudgetConsomme = () => {
+type BudgetConsommeProps = {
+  titre: string;
+  description: string;
+  tableau: TTableauBudget;
+  repartitionCouts: RepartitionCoutsProps;
+  descriptionCouts: DescriptionCoutsProps;
+  infoTva: InfoTvaProps;
+};
+
+const BudgetConsomme = ({
+  titre,
+  description,
+  tableau,
+  repartitionCouts,
+  descriptionCouts,
+  infoTva,
+}: BudgetConsommeProps) => {
   return (
     <div className="bg-white md:rounded-[10px] py-8 md:py-12 px-6 md:px-10">
-      <h2 className="text-primary-9 mb-10">Budget consommé</h2>
-      <p className="paragraphe-16 text-primary-11 mb-8">
-        Territoires en Transitions est un service en accélération ayant démarré
-        son développement en janvier 2021. Le budget présenté est le réel
-        consommé sur les années passées. Pour les budgets en cours de
-        consommation, c'est le budget prévisionnel en portefeuille qui est
-        présenté.
-      </p>
+      <h2 className="text-primary-9">{titre}</h2>
+      {/* <p className="paragraphe-16 text-primary-11 mb-8">{description}</p> */}
+      <Markdown
+        texte={description}
+        className="paragraphe-16 paragraphe-primary-11"
+      />
 
-      <TableauBudget />
+      <TableauBudget data={tableau} />
 
-      <RepartitionCouts />
+      <RepartitionCouts {...repartitionCouts} />
 
-      <DescriptionCouts />
+      <DescriptionCouts {...descriptionCouts} />
 
-      <InfoTva />
+      <InfoTva {...infoTva} />
     </div>
   );
 };

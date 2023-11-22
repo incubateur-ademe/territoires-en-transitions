@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_shared_vignette_avec_markdowns",
+  "info": {
+    "displayName": "vignette_avec_markdown",
+    "icon": "layout",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "legende": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

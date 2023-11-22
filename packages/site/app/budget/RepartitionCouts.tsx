@@ -1,14 +1,16 @@
 import Image from 'next/image';
 
-const RepartitionCouts = () => {
+export type RepartitionCoutsProps = {
+  titre: string;
+};
+
+const RepartitionCouts = ({titre}: RepartitionCoutsProps) => {
   return (
     <>
-      <h5 className="mb-10">
-        Répartition des coûts totaux par catégorie de dépenses
-      </h5>
+      <h5>{titre}</h5>
       <Image
         src="/budget/graph1.png"
-        alt="Répartition des coûts totaux par catégorie de dépenses"
+        alt={titre}
         width={827}
         height={427}
         className="my-20"
