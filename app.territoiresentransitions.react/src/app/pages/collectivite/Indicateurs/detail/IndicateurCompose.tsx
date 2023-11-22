@@ -1,5 +1,5 @@
 import {IndicateurEnfant} from './IndicateurEnfant';
-import {TIndicateurReferentielDefinition} from '../types';
+import {TIndicateurPredefini} from '../types';
 
 /**
  * Affiche le détail d'un indicateur composé
@@ -7,7 +7,7 @@ import {TIndicateurReferentielDefinition} from '../types';
 export const IndicateurCompose = ({
   definition,
 }: {
-  definition: TIndicateurReferentielDefinition;
+  definition: TIndicateurPredefini;
 }) => {
   const {enfants} = definition;
   if (!enfants?.length) return null;
@@ -51,11 +51,9 @@ export const IndicateurCompose = ({
   );
 };
 // détermine les actions liées communes à un ensemble de définitions
-const findCommonLinkedActions = (
-  definitions: TIndicateurReferentielDefinition[]
-) => {
+const findCommonLinkedActions = (definitions: TIndicateurPredefini[]) => {
   // extrait les tableaux d'ids
-  const actionsIds = definitions.map(({actions}) => actions);
+  const actionsIds = definitions.map(({action_ids}) => action_ids);
 
   return (
     actionsIds

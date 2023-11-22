@@ -4,12 +4,12 @@ import {TThematiqueRow} from 'types/alias';
 import {useThematiqueListe} from '../../PlansActions/FicheAction/data/options/useThematiqueListe';
 
 type Props = {
-  thematiques: TThematiqueRow[] | null;
+  values: string[] | undefined;
   onSelect: (thematique: TThematiqueRow[]) => void;
   isReadonly: boolean;
 };
 
-const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
+const ThematiquesDropdown = ({values, onSelect, isReadonly}: Props) => {
   const {data: thematiqueListe} = useThematiqueListe();
 
   const options: TOption[] = thematiqueListe
@@ -28,7 +28,7 @@ const ThematiquesDropdown = ({thematiques, onSelect, isReadonly}: Props) => {
     <MultiSelectTagsDropdown
       data-test="thematiques"
       buttonClassName={DSFRbuttonClassname}
-      values={thematiques?.map((t: TThematiqueRow) => `${t.id}`)}
+      values={values}
       options={options}
       onSelect={values => onSelect(formatThematiques(values))}
       disabled={isReadonly}
