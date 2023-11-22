@@ -3,15 +3,11 @@ import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
 import {Footer} from '@components/footer/Footer';
 import {Metadata} from 'next';
-import {headers} from 'next/headers';
 import {getMetaData} from './utils';
-import {Amplitude} from "./Amplitude";
+import {Amplitude} from './Amplitude';
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getMetaData();
-  const headersList = headers();
-  const baseUrl = headersList.get('host') ?? '';
-  const pathname = headersList.get('x-invoke-path') ?? '';
 
   return {
     title: {
@@ -53,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: data.metaTitle ?? 'Territoires en Transitions',
       description: data.metaDescription,
-      url: `${baseUrl}${pathname !== '/' ? pathname : ''}`,
+      url: 'https://www.territoiresentransitions.fr',
       siteName: data.metaTitle ?? 'Territoires en Transitions',
       images: data.metaImage
         ? [

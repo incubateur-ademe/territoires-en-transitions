@@ -8,6 +8,24 @@ import BudgetConsomme from './BudgetConsomme';
 import PerformanceBudget from './PerformanceBudget';
 import {getStrapiData} from './utils';
 import NoResult from '@components/info/NoResult';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+
+export async function generateMetadata(
+  {params}: {params: {}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getStrapiData();
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle ?? 'Budget',
+    networkTitle: strapiData?.seo.metaTitle,
+    description:
+      strapiData?.seo.metaDescription ?? strapiData?.header.description,
+    image: strapiData?.seo.metaImage,
+  });
+}
 
 const Budget = async () => {
   const strapiData = await getStrapiData();

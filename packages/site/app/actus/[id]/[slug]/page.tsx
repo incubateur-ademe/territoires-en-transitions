@@ -10,6 +10,7 @@ import GallerieArticle from './GallerieArticle';
 import EmbededVideo from '@components/video/EmbededVideo';
 import {ParagrapheCustomArticleData} from 'app/types';
 import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 
 export async function generateMetadata(
   {params}: {params: {id: string}},
@@ -18,37 +19,20 @@ export async function generateMetadata(
   const data = await getMetaData(parseInt(params.id));
   const metadata = (await parent) as Metadata;
 
+  let newMetaData = getUpdatedMetadata(metadata, {
+    title: data.title ?? 'Actualités',
+    networkTitle: data.title,
+    description: data.description,
+    image: data.image,
+  });
+
   return {
-    ...metadata,
-    title: data.title ? {absolute: data.title} : 'Actualités',
-    description: data.description ? data.description : metadata.description,
+    ...newMetaData,
     openGraph: {
-      ...metadata.openGraph,
-      title: data.title ? data.title : metadata.openGraph?.title,
-      description: data.description
-        ? data.description
-        : metadata.openGraph?.description,
-      images: data.image
-        ? [
-            {
-              url: data.image.url,
-              width: data.image.width,
-              height: data.image.height,
-              type: data.image.type,
-              alt: data.image.alt,
-            },
-          ]
-        : metadata.openGraph?.images,
+      ...newMetaData.openGraph,
       type: 'article',
       publishedTime: data.publishedAt,
       modifiedTime: data.updatedAt,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
     },
   };
 }
