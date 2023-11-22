@@ -4,13 +4,7 @@ import {
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  useIndicateursParentsCles,
-  useIndicateursParentsGroup,
-  useIndicateursParentsSelection,
-} from '../useIndicateurDefinitions';
-import {useIndicateursPersoDefinitions} from '../useIndicateursPersoDefinitions';
-import {TIndicateurDefinition} from '../types';
+import {useFilteredIndicateurDefinitions} from '../lists/useFilteredIndicateurDefinitions';
 
 /**
  * Génération des liens "Indicateur précédent" et "Indicateur suivant"
@@ -24,22 +18,17 @@ export const usePrevAndNextIndicateurLinks = () => {
   }>();
 
   // définitions
-  const groups = useIndicateursParentsGroup(vue);
-  const cles = useIndicateursParentsCles();
-  const selection = useIndicateursParentsSelection();
-  const persos = useIndicateursPersoDefinitions(collectiviteId);
-  let definitions: TIndicateurDefinition[] | undefined = [];
+  const {data} = useFilteredIndicateurDefinitions(vue, {});
+
+  let definitions = data;
   if (['cae', 'eci', 'crte'].includes(vue)) {
-    definitions = groups?.sort((a, b) =>
+    definitions = definitions?.sort((a, b) =>
       // les liens doivent être dans l'ordre de la numérotation pour cae/eci/crte
-      a.id.localeCompare(b.id, 'fr', {ignorePunctuation: true, numeric: true})
+      (a.id as string).localeCompare(b.id as string, 'fr', {
+        ignorePunctuation: true,
+        numeric: true,
+      })
     );
-  } else if (vue === 'cles') {
-    definitions = cles;
-  } else if (vue === 'selection') {
-    definitions = selection;
-  } else if (vue === 'perso') {
-    definitions = persos;
   }
 
   if (!definitions?.length) return {};

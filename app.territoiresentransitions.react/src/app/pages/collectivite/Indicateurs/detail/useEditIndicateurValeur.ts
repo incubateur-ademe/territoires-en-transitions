@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurDefinition, TIndicateurPredefini} from '../types';
 
 type TypeValeur = 'resultat' | 'objectif';
 
@@ -43,7 +43,7 @@ const tableCommentaire = (type: TypeValeur, isPerso?: boolean) =>
 const getIndicateurId = (definition: TIndicateurDefinition) => {
   const {id, isPerso} = definition;
   if (!isPerso) {
-    return definition.valeur_indicateur || id;
+    return (definition as TIndicateurPredefini).valeur_indicateur || id;
   }
   return id;
 };

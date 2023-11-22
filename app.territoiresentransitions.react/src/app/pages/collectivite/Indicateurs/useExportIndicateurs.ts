@@ -4,11 +4,11 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import {TIndicateurDefinition} from './types';
+import {TIndicateurListItem} from './types';
 import {IndicateurViewParamOption} from 'app/paths';
 
 export const useExportIndicateurs = (
-  definitions: TIndicateurDefinition[],
+  definitions?: TIndicateurListItem[],
   view?: IndicateurViewParamOption
 ) => {
   const tracker = useFonctionTracker();
@@ -48,7 +48,7 @@ export const useExportIndicateurs = (
 
 // détermine le nom du fichier généré
 const useFilename = (
-  definitions: TIndicateurDefinition[],
+  definitions?: TIndicateurListItem[],
   view?: IndicateurViewParamOption
 ) => {
   const exportedAt = formatDate(new Date(), 'yyyy-MM-dd');
@@ -61,8 +61,8 @@ const useFilename = (
 
   if (definitions.length === 1) {
     const def = definitions[0];
-    if (def.isPerso) {
-      return `${def.titre} - ${exportedAt}.xlsx`;
+    if (typeof def.id === 'number') {
+      return `${def.nom} - ${exportedAt}.xlsx`;
     }
     return `${def.id} - ${def.nom} - ${exportedAt}.xlsx`;
   }

@@ -12,21 +12,19 @@ export const useUpsertIndicateurPilote = (
   const collectivite_id = useCollectiviteId();
 
   const {id: indicateur_id, isPerso} = definition;
-  const table = isPerso
-    ? 'indicateur_personnalise_pilote'
-    : 'indicateur_pilote';
 
   return useMutation({
-    mutationKey: `upsert_${table}`,
+    mutationKey: `upsert_indicateur_pilote`,
     mutationFn: async (variables: Personne[]) => {
       if (!collectivite_id) return;
 
       // supprime les éventuelles ref. vers les users ou tags qui ne sont plus associés à l'indicateur
       const {userIds, tagIds, tagsToAdd} = splitTagsAndUsers(variables);
+      const idCol = isPerso ? 'indicateur_perso_id' : 'indicateur_id';
       const query = supabaseClient
-        .from(table)
+        .from('indicateur_pilote')
         .delete()
-        .eq('indicateur_id', indicateur_id)
+        .eq(idCol, indicateur_id)
         .or(
           `user_id.not.in.(${userIds.join(',')}), tag_id.not.in.(${tagIds.join(
             ','
@@ -50,14 +48,20 @@ export const useUpsertIndicateurPilote = (
         ...tagIds.concat(newTagIds).map(tag_id => ({user_id: null, tag_id})),
       ].map(p =>
         // et ajoute l'id de l'indicateur (et de la collectivité si nécessaire)
-        isPerso ? {...p, indicateur_id} : {...p, collectivite_id, indicateur_id}
+        isPerso
+          ? {...p, indicateur_perso_id: indicateur_id, indicateur_id: null}
+          : {
+              ...p,
+              collectivite_id,
+              indicateur_perso_id: null,
+              indicateur_id: indicateur_id as string,
+            }
       );
 
       // ajoute les nouvelles entrées si elles n'existent pas déjà
-      return supabaseClient.from(table).upsert(merged, {
-        onConflict: `${
-          isPerso ? '' : 'collectivite_id,'
-        }indicateur_id,user_id,tag_id`,
+      return supabaseClient.from('indicateur_pilote').upsert(merged, {
+        onConflict:
+          'indicateur_id, indicateur_perso_id, collectivite_id, user_id, tag_id',
       });
     },
     onSuccess: (data, variables) => {
