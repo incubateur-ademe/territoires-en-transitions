@@ -68,7 +68,7 @@ export const searchParamsToObject = <T extends TParams>(
   const ret: TParams = {};
   params.forEach((value, key) => {
     if (shortNameToName[key]) {
-      ret[shortNameToName[key]] = value?.split(',');
+      ret[shortNameToName[key]] = value?.split(',')?.filter(s => s !== '');
     }
   });
   return {...initialParams, ...ret};
