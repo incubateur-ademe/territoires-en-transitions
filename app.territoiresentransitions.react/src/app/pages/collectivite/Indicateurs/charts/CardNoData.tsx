@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import {getChartTitle} from './utils';
 import {Card} from './Card';
-import {TIndicateurChartProps} from './types';
+import {TIndicateurChartBaseProps} from './types';
 
 // indique qu'il n'y a pas de suffisamment de données pour afficher le graphe
 export const CardNoData = ({
@@ -11,7 +11,7 @@ export const CardNoData = ({
   className,
   isReadonly,
   aCompleter,
-}: TIndicateurChartProps & {
+}: Omit<TIndicateurChartBaseProps, 'valeurs'> & {
   isReadonly: boolean;
   aCompleter?: {count?: number; total?: number};
 }) => {

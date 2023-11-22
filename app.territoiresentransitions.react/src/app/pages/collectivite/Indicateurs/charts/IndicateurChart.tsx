@@ -8,10 +8,8 @@ import LineChart, {
   getLabelsBySerieId,
 } from 'ui/charts/LineChart';
 import {defaultColors} from 'ui/charts/chartsTheme';
-import {
-  useIndicateurGrapheInfo,
-  useIndicateurValeurs,
-} from '../useIndicateurValeurs';
+import {useIndicateurValeurs} from '../useIndicateurValeurs';
+import {useIndicateurChartInfo} from './useIndicateurChartInfo';
 import {
   getChartTitle,
   getDistinctYears,
@@ -150,23 +148,30 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
   const {isPerso} = definition;
 
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
-  const {id: grapheId, count, total} = useIndicateurGrapheInfo(definition);
+  // lit les données nécessaires à l'affichage du graphe
+  const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
+    definition.id
+  );
+  const {id: grapheId, count, total} = (chartInfo as any) || {};
 
   // charge les valeurs à afficher dans le graphe
   const {data: valeurs, isLoading} = useIndicateurValeurs(
     {id: grapheId, isPerso},
     true
   );
-  const noDataAvailable = !isLoading && !valeurs?.length;
+  const noDataAvailable = !isLoading && !isLoadingInfo && !valeurs?.length;
+
+  if (!chartInfo) return null;
 
   return noDataAvailable ? (
     <CardNoData
-      {...props}
+      definition={chartInfo}
+      variant={variant}
       isReadonly={isReadonly}
       aCompleter={{count, total}}
     />
   ) : (
-    <IndicateurChartBase {...props} valeurs={valeurs!} />
+    <IndicateurChartBase {...props} definition={chartInfo} valeurs={valeurs!} />
   );
 };
 
