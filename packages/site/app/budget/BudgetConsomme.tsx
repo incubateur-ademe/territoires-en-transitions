@@ -1,6 +1,6 @@
 import InfoTva, {InfoTvaProps} from './InfoTva';
 import TableauBudget from './TableauBudget';
-import RepartitionCouts, {RepartitionCoutsProps} from './RepartitionCouts';
+import RepartitionCouts from './RepartitionCouts';
 import DescriptionCouts, {DescriptionCoutsProps} from './DescriptionCouts';
 import {TTableauBudget} from './utils';
 import Markdown from '@components/markdown/Markdown';
@@ -9,7 +9,9 @@ type BudgetConsommeProps = {
   titre: string;
   description: string;
   tableau: TTableauBudget;
-  repartitionCouts: RepartitionCoutsProps;
+  repartitionCouts: {
+    titre: string;
+  };
   descriptionCouts: DescriptionCoutsProps;
   infoTva: InfoTvaProps;
 };
@@ -33,7 +35,7 @@ const BudgetConsomme = ({
 
       <TableauBudget data={tableau} />
 
-      <RepartitionCouts {...repartitionCouts} />
+      <RepartitionCouts {...repartitionCouts} data={tableau} />
 
       <DescriptionCouts {...descriptionCouts} />
 
