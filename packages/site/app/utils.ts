@@ -7,17 +7,21 @@ export const getMetaData = async () => {
   const data = await fetchSingle('page-accueil', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'Couverture'],
   ]);
 
   const metaImage =
     (data?.attributes?.seo?.metaImage?.data as unknown as StrapiItem)
-      ?.attributes ?? undefined;
+      ?.attributes ??
+    (data.attributes.Couverture.data as unknown as StrapiItem)?.attributes ??
+    undefined;
 
   return {
     metaTitle:
       (data?.attributes?.seo?.metaTitle as unknown as string) ?? undefined,
     metaDescription:
       (data?.attributes?.seo?.metaDescription as unknown as string) ??
+      (data.attributes.Titre as unknown as string) ??
       undefined,
     metaImage: metaImage
       ? {

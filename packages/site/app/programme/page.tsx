@@ -20,8 +20,9 @@ export async function generateMetadata(
   const strapiData = await getStrapiData();
 
   return getUpdatedMetadata(metadata, {
-    title: strapiData?.seo.metaTitle ?? 'Le programme',
-    description: strapiData?.seo.metaDescription,
+    title: strapiData?.seo.metaTitle ?? 'Programme',
+    networkTitle: strapiData?.seo.metaTitle,
+    description: strapiData?.seo.metaDescription ?? strapiData?.description,
     image: strapiData?.seo.metaImage,
   });
 }

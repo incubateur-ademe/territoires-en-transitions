@@ -18,6 +18,7 @@ export async function generateMetadata(
 
   return getUpdatedMetadata(metadata, {
     title: strapiData?.seo.metaTitle ?? 'Contact',
+    networkTitle: strapiData?.seo.metaTitle,
     description: strapiData?.seo.metaDescription,
     image: strapiData?.seo.metaImage,
   });
