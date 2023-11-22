@@ -21,6 +21,7 @@ type Collection =
 type Single =
   | 'metadata'
   | 'page-accueil'
+  | 'page-budget'
   | 'page-collectivite'
   | 'page-contact'
   | 'page-programme'

@@ -25,14 +25,14 @@
       "required": true
     },
     "description": {
-      "type": "richtext",
+      "type": "text",
       "required": true
     },
     "fonctionnement_titre": {
       "type": "string",
       "required": true
     },
-    "fonctionnalites_description": {
+    "fonctionnement_description": {
       "type": "richtext",
       "required": true
     },
@@ -41,14 +41,14 @@
       "required": true
     },
     "principes_description": {
-      "type": "richtext"
+      "type": "text"
     },
     "principes_liste": {
       "type": "component",
       "required": true,
       "repeatable": true,
       "component": "shared.vignette",
-      "min": 2,
+      "min": 1,
       "max": 5
     },
     "budget_titre": {
@@ -73,11 +73,9 @@
     },
     "description_liste": {
       "type": "component",
-      "required": true,
       "repeatable": true,
-      "component": "shared.vignette-avec-titre",
-      "min": 1,
-      "max": 5
+      "component": "shared.vignette-avec-markdown",
+      "min": 1
     },
     "tva_titre": {
       "type": "string",

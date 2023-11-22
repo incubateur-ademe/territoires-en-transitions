@@ -152,6 +152,26 @@
     line-height: 36px;
   }
 
+  .paragraphe-primary-11,
+  .paragraphe-primary-11 > p {
+    @apply text-primary-11;
+  }
+
+  .paragraphe-grey-1,
+  .paragraphe-grey-1 > p {
+    @apply text-grey-1;
+  }
+
+  .paragraphe-info-1,
+  .paragraphe-info-1 > p {
+    @apply text-info-1;
+  }
+
+  .paragraphe-medium,
+  .paragraphe-medium > p {
+    font-weight: 500;
+  }
+
   .fr-checkbox-group input[type='checkbox']:checked + label::before {
     @apply bg-primary-7;
   }
