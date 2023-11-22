@@ -1,18 +1,18 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
-import {useIndicateur} from './useIndicateurDefinitions';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurDetail} from './detail/IndicateurDetail';
 import {IndicateurCompose} from './detail/IndicateurCompose';
 import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
-import {TIndicateurReferentielDefinition} from './types';
+import {TIndicateurPredefini} from './types';
 import {useExportIndicateurs} from './useExportIndicateurs';
+import {useIndicateurPredefini} from './useIndicateurDefinition';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
   definition,
 }: {
-  definition: TIndicateurReferentielDefinition;
+  definition: TIndicateurPredefini;
 }) => {
   const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
     definition,
@@ -46,7 +46,7 @@ export const IndicateurPredefiniBase = ({
 };
 
 export const IndicateurPredefini = ({indicateurId}: {indicateurId: string}) => {
-  const definition = useIndicateur(indicateurId);
+  const definition = useIndicateurPredefini(indicateurId);
   if (!definition) return null;
 
   return <IndicateurPredefiniBase definition={definition} />;
