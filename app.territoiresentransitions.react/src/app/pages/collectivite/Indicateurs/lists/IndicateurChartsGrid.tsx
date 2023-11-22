@@ -47,10 +47,12 @@ const IndicateurChartContainer = (
 
   return (
     <div className="h-80" ref={ref}>
-      {entry?.isIntersecting && (
+      {entry?.isIntersecting ? (
         <Link to={url} className="focus-visible:ring">
           <IndicateurChart {...props} />
         </Link>
+      ) : (
+        definition.nom
       )}
     </div>
   );
