@@ -46,6 +46,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Et Des 
               className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div
@@ -2982,6 +2983,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Avec Des Résultats Sans Fi
               className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div
@@ -5898,6 +5900,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites Sans Résultats 1`] = `
               className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div

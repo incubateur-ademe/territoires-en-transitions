@@ -33,6 +33,7 @@ export const InputSearch = ({
       <div className="flex items-center w-full border-b-2 border-bf500">
         <input
           className="bg-beige p-2 w-full placeholder-gray-500"
+          type="search"
           value={value || ''}
           placeholder={placeholder}
           onChange={onChange}
