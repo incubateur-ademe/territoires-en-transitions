@@ -17,11 +17,11 @@ export type TIndicateurListItem = {
 /** Item détaillé pour la vignette graphique dans une liste d'indicateurs */
 export type TIndicateurChartInfo = {
   nom: string;
-  titre_long?: string;
   unite: string;
   rempli: Rempli;
+  titre_long?: string;
   sans_valeur?: boolean | null;
-  enfants: {id: string; rempli: Rempli}[] | null;
+  enfants?: {id: string; rempli: Rempli}[] | null;
 };
 
 /**
@@ -49,10 +49,11 @@ export type TIndicateurPredefini = Pick<
   ValuesToUnion<typeof INDICATEUR_PREDEFINI_COLS>
 > & {
   action_ids: string[];
-  enfants: TIndicateurPredefini[];
+  enfants: (TIndicateurPredefini & {parent: string})[];
   thematiques: Thematique[];
   rempli: Rempli;
   isPerso: undefined;
+  parent: string | null | undefined;
 };
 
 /**
