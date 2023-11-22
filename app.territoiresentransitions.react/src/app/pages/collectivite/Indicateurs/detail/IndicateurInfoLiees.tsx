@@ -1,7 +1,7 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import FormField from 'ui/shared/form/FormField';
 import {TIndicateurDefinition} from '../types';
-import {useIndicateurResume} from './useIndicateurResume';
+import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
 import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
 import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
@@ -9,18 +9,18 @@ import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionFo
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
 import ThematiquesDropdown from './ThematiquesDropdown';
 
-export type TIndicateurLinkedInfoProps = {
+export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
 };
 
 /**
  * Affiche les informations complémentaires (pilotes, etc.) associées à un indicateur
  */
-export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
+export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   const {definition} = props;
 
   // charge les informations complémentaires associées à l'indicateur
-  const {data: resume} = useIndicateurResume(definition);
+  const {data: resume} = useIndicateurInfoLiees(definition);
 
   // fonctions de mise à jour des données
   const {mutate: upsertIndicateurPilote} =
@@ -40,7 +40,11 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
       <FormField className="fr-mt-4w" label="Personne pilote">
         <PersonnePiloteDropdown
           keysToInvalidate={[
-            ['indicateur_resume', collectivite.collectivite_id, definition.id],
+            [
+              'indicateur_info_liees',
+              collectivite.collectivite_id,
+              definition.id,
+            ],
           ]}
           personnes={resume?.pilotes || []}
           onSelect={upsertIndicateurPilote}
@@ -59,7 +63,7 @@ export const IndicateurLinkedInfo = (props: TIndicateurLinkedInfoProps) => {
       {definition.isPerso && (
         <FormField className="fr-mt-4w" label="Thématique">
           <ThematiquesDropdown
-            thematiques={resume?.thematiques || []}
+            values={resume?.thematiques?.map(t => t.id.toString()) || []}
             onSelect={upsertIndicateurPersoThematique}
             isReadonly={isReadonly}
           />
