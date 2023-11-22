@@ -41,7 +41,7 @@ export const useUpsertIndicateurPersoThematique = (
     onSuccess: (data, variables) => {
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries([
-        'indicateur_resume',
+        'indicateur_info_liees',
         collectivite_id,
         indicateur_id,
       ]);
