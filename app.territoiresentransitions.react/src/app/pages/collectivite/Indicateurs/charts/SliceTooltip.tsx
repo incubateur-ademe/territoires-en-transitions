@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {SliceTooltipProps} from '@nivo/line';
 import {theme} from 'ui/charts/chartsTheme';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurChartInfo} from '../types';
 import {CSSProperties} from 'react';
 
 // Affiche une ligne (pleine ou hachée) dans la légende et l'infobulle
@@ -48,7 +48,7 @@ export const getLineStyleBySerieId = (
 export const SliceTooltip = (
   props: SliceTooltipProps & {
     labels: Record<string, string>;
-    indicateur: TIndicateurDefinition;
+    indicateur: TIndicateurChartInfo;
   }
 ) => {
   const {slice, labels, indicateur} = props;
