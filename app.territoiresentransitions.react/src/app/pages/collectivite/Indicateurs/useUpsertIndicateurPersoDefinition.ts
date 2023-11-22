@@ -60,10 +60,16 @@ export const useUpsertIndicateurPersoDefinition = (options?: {
       success: "L'indicateur personnalisé est enregistré",
       error: "L'indicateur personnalisé n'a pas été enregistré",
     },
-    onSuccess: (data, {definition: {collectivite_id}}) => {
+    onSuccess: (data, {definition: {collectivite_id, id}}) => {
       queryClient.invalidateQueries([
-        'indicateur_personnalise_definition',
+        'indicateur_definition',
         collectivite_id,
+        id,
+      ]);
+      queryClient.invalidateQueries([
+        'indicateur_chart_info',
+        collectivite_id,
+        id,
       ]);
       if (options?.onSuccess && data?.[0]) {
         options.onSuccess(data[0]);
