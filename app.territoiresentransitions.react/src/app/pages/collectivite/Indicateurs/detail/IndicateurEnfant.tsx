@@ -1,25 +1,17 @@
 import classNames from 'classnames';
-import {TIndicateurReferentielDefinition} from '../types';
-import {Badge} from 'ui/shared/Badge';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
+import {TIndicateurPredefini} from '../types';
 import {useToggle} from 'ui/shared/useToggle';
-import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import FormField from 'ui/shared/form/FormField';
-import {Spacer} from 'ui/dividers/Spacer';
-import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
-import {useIndicateurACompleter} from '../useIndicateurACompleter';
-import IndicateurChart from '../charts/IndicateurChart';
-import {FichesActionLiees} from '../FichesActionLiees';
-import {IndicateurValuesTabs} from './IndicateurValuesTabs';
-import {IndicateurLinkedInfo} from './IndicateurLinkedInfo';
+import {IndicateurEnfantHeader} from './IndicateurEnfantHeader';
+import {IndicateurEnfantContent} from './IndicateurEnfantContent';
 
+/** Affiche le détail d'un indicateur enfant */
 export const IndicateurEnfant = ({
   definition,
   actionsLieesCommunes,
   isOpen,
   className,
 }: {
-  definition: TIndicateurReferentielDefinition;
+  definition: TIndicateurPredefini;
   actionsLieesCommunes: string[];
   isOpen?: boolean;
   className?: string;
@@ -44,87 +36,6 @@ export const IndicateurEnfant = ({
           actionsLieesCommunes={actionsLieesCommunes}
         />
       )}
-    </div>
-  );
-};
-/** Affiche l'en-tête du détail d'un indicateur enfant */
-const IndicateurEnfantHeader = ({
-  definition,
-  open,
-  toggle,
-}: {
-  definition: TIndicateurReferentielDefinition;
-  open: boolean;
-  toggle: () => void;
-}) => {
-  const a_completer = useIndicateurACompleter(definition.id);
-
-  return (
-    <div
-      className={classNames(
-        'flex justify-between items-center px-6 py-4 rounded-lg cursor-pointer sticky top-[86px] z-30',
-        {
-          'bg-[#f5f5fE]': open,
-          'hover:bg-grey975': !open,
-        }
-      )}
-      onClick={toggle}
-    >
-      <div>
-        <ExpandToggle open={open} />
-        <span className="font-bold">{definition.nom}</span>
-      </div>
-      <div>
-        {definition.participation_score && (
-          <Badge status="no-icon" className="fr-mr-1w">
-            Participe au score
-          </Badge>
-        )}
-        <BadgeACompleter className="min-w-max" a_completer={a_completer} />
-      </div>
-    </div>
-  );
-};
-/** Affiche le contenu du détail d'un indicateur enfant */
-const IndicateurEnfantContent = ({
-  definition,
-  actionsLieesCommunes,
-}: {
-  definition: TIndicateurReferentielDefinition;
-  actionsLieesCommunes: string[];
-}) => {
-  // charge les actions liées à l'indicateur
-  const actionsLiees = definition.actions
-    ?.filter(action_id => !actionsLieesCommunes.includes(action_id))
-    .map(id => ({id}));
-
-  return (
-    <div className="p-6">
-      <IndicateurChart
-        className="fr-mb-3w"
-        variant="zoomed"
-        definition={definition}
-      />
-      <IndicateurValuesTabs definition={definition} />
-      {
-        /** actions liées */
-        actionsLiees?.length ? (
-          <FormField
-            className="fr-mt-4w"
-            label={
-              actionsLiees.length > 1
-                ? 'Actions référentiel liées'
-                : 'Action référentiel liée'
-            }
-          >
-            <ActionsLieesCards actions={actionsLiees} />
-          </FormField>
-        ) : (
-          <Spacer size={3} />
-        )
-      }
-      <IndicateurLinkedInfo definition={definition} />
-      <FichesActionLiees definition={definition} />
     </div>
   );
 };
