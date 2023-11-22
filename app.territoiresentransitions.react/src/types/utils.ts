@@ -17,3 +17,14 @@ export type NonNullableFields<T> = {
  * Ref: https://stackoverflow.com/questions/73135992/add-a-prefix-to-each-type-in-a-string-union-type
  */
 export type Prefix<P extends string, S extends string> = `${P}${S}`;
+
+/**
+ * Génère un type union à partir des valeurs d'un tableau de chaînes.
+ * 
+ * Exemple :
+ * ```
+ * const myArray = ['val1', 'val2'] as const
+ * type MyUnion = ValuesToUnion<typeof myArray> // = 'val1' | 'val2
+ * ```
+ */
+export type ValuesToUnion<T extends readonly string[]> = T[number];
