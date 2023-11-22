@@ -104,8 +104,9 @@ end;
 comment on function definition_referentiel(indicateur_definitions) is
     'La définition de l''indicateur provenant du référentiel.';
 
+
 create function
-    rempli(indicateur_definitions)
+    private.rempli(collectivite_id integer, indicateur_id indicateur_id)
     returns bool
     language sql
     stable
@@ -115,8 +116,8 @@ begin
         -- indicateur référentiel, résultats saisis
         select count(valeur) > 0 as rempli
         from indicateur_resultat ir
-        where ir.collectivite_id = $1.collectivite_id
-          and ir.indicateur_id = $1.indicateur_id
+        where ir.collectivite_id = $1
+          and ir.indicateur_id = $2
           and valeur is not null
 
         union
@@ -125,8 +126,8 @@ begin
         select count(valeur) > 0 as rempli
         from indicateur_resultat ir
                  join indicateur_definition def on ir.indicateur_id = def.valeur_indicateur
-        where ir.collectivite_id = $1.collectivite_id
-          and def.id = $1.indicateur_id
+        where ir.collectivite_id = $1
+          and def.id = $2
           and valeur is not null
 
         union
@@ -134,8 +135,8 @@ begin
         -- indicateur référentiel, résultats importés
         select count(valeur) > 0
         from indicateur_resultat_import iri
-        where iri.collectivite_id = $1.collectivite_id
-          and iri.indicateur_id = $1.indicateur_id
+        where iri.collectivite_id = $1
+          and iri.indicateur_id = $2
 
         union
 
@@ -143,17 +144,43 @@ begin
         select count(valeur) > 0
         from indicateur_resultat_import iri
                  join indicateur_definition def on iri.indicateur_id = def.valeur_indicateur
-        where iri.collectivite_id = $1.collectivite_id
-          and def.id = $1.indicateur_id
-
-        union
-
-        -- indicateur perso
-        select count(valeur) > 0
-        from indicateur_personnalise_resultat ipr
-        where ipr.indicateur_id = $1.indicateur_perso_id)
+        where iri.collectivite_id = $1
+          and def.id = $2)
     select bool_or(rempli)
     from remplissage;
+end;
+comment on function private.rempli(integer, indicateur_id) is
+    'Vrai si l''indicateur est rempli.';
+
+create function
+    private.rempli(indicateur_perso_id integer)
+    returns bool
+    language sql
+    stable
+begin
+    atomic
+    select count(valeur) > 0
+    from indicateur_personnalise_resultat ipr
+    where ipr.indicateur_id = $1;
+end;
+comment on function private.rempli(integer) is
+    'Vrai si l''indicateur est rempli.';
+
+
+create function
+    rempli(indicateur_definitions)
+    returns bool
+    language sql
+    stable
+begin
+    atomic
+    return case
+               when $1.indicateur_perso_id is null
+                   then
+                   private.rempli($1.collectivite_id, $1.indicateur_id)
+               else
+                   private.rempli($1.indicateur_perso_id)
+        end;
 end;
 comment on function rempli(indicateur_definitions) is
     'Vrai si l''indicateur est rempli.';
