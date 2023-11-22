@@ -1,9 +1,6 @@
 import {Link, useParams} from 'react-router-dom';
 import {indicateurIdParam} from 'app/paths';
-import {IndicateursPersonnalisesList} from './lists/IndicateursPersonnalisesList';
-import {IndicateursPredefinisList} from './lists/IndicateursPredefinisList';
-import {IndicateursClesList} from './lists/IndicateursClesList';
-import {IndicateursSelectionList} from './lists/IndicateursSelectionList';
+import {FiltersAndGrid} from './lists/FiltersAndGrid';
 import {IndicateurPersonnalise} from './IndicateurPersonnalise';
 import {IndicateurPredefini} from './IndicateurPredefini';
 import {HeaderIndicateursList} from './Header';
@@ -22,7 +19,6 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
   selection: 'Indicateurs prioritaires',
   cles: 'Indicateurs clés',
-  //  tous: 'Tous les indicateurs',
   perso: 'Indicateurs personnalisés',
   cae: `Indicateurs ${referentielToName.cae}`,
   eci: `Indicateurs ${referentielToName.eci}`,
@@ -50,17 +46,6 @@ const generateIndicateursNavLinks = (collectiviteId: number): SideNavLinks => {
 export const viewTitles: Record<IndicateurViewParamOption, string> = {
   ...VIEW_TITLES,
   crte: 'Indicateurs CRTE',
-};
-
-/**
- * Affiche la liste des indicateurs
- */
-const IndicateursList = (props: {view: IndicateurViewParamOption}) => {
-  const {view} = props;
-  if (view === 'perso') return <IndicateursPersonnalisesList />;
-  if (view === 'cles') return <IndicateursClesList />;
-  if (view === 'selection') return <IndicateursSelectionList />;
-  return <IndicateursPredefinisList referentiel={view} />;
 };
 
 /** Affiche le détail d'un indicateur */
@@ -124,7 +109,7 @@ const Indicateurs = () => {
             <HeaderIndicateursList view={view} />
             <div className="px-10 py-8">
               <section className="flex flex-col">
-                <IndicateursList view={view} />
+                <FiltersAndGrid view={view} />
               </section>
             </div>
           </>
