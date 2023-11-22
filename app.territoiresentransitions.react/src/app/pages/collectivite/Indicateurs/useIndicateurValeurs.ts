@@ -2,8 +2,7 @@ import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Database} from 'types/database.types';
-import {TIndicateurDefinition, TIndicateurReferentielDefinition} from './types';
-import {useIndicateursRemplis} from './useIndicateurACompleter';
+import {TIndicateurDefinition} from './types';
 
 export type TIndicateurValeur = {
   annee: number;
@@ -50,55 +49,6 @@ export const useIndicateurValeurs = (
     autoRefetch ? undefined : DISABLE_AUTO_REFETCH
   );
 };
-
-/**
- * Détermine l'id à utiliser pour lire les valeurs à afficher dans le graphe
- * ou le décompte à afficher à la place du graphe.
- */
-// TODO: utiliser un champ distinct dans les markdowns plutôt que hardcoder un ID
-const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
-export const useIndicateurGrapheInfo = (definition: TIndicateurDefinition) => {
-  const {id, enfants, sans_valeur} =
-    definition as TIndicateurReferentielDefinition;
-  const indicateursRemplis = useIndicateursRemplis(true);
-
-  // pour un indicateur composé (sans parent)
-  if (sans_valeur && enfants?.length) {
-    const count = nombreIndicateursRemplis(enfants, indicateursRemplis);
-    const total = enfants.length;
-
-    // afficher le graphique du 1er enfant rempli pour
-    // 1. COMPACITÉ DES FORMES URBAINES : au moins 1 des enfants est “complété”
-    if (
-      (id === ID_COMPACITE_FORMES_URBAINES && count >= 1) ||
-      // 2. OU si tous les enfants sont remplis
-      count === total
-    ) {
-      const premierRempli = enfants.find(definition =>
-        indicateursRemplis?.includes(definition.id)
-      );
-      return {id: premierRempli?.id || id};
-    }
-
-    // sinon renvoi le décompte des indicateurs restants à compléter
-    return {count, total};
-  }
-
-  // dans tous les autres cas utilise l'id de la définition
-  return {id};
-};
-
-// compte dans une liste d'indicateurs ceux qui sont remplis
-const nombreIndicateursRemplis = (
-  liste: TIndicateurReferentielDefinition[],
-  indicateursRemplis: (string | number)[] | undefined
-) =>
-  indicateursRemplis?.length
-    ? liste.reduce(
-        (count, d) => count + (indicateursRemplis.includes(d.id) ? 1 : 0),
-        0
-      )
-    : 0;
 
 /** Charge les valeurs et les commentaires associées à un indicateur (pour les tableaux) */
 export const useIndicateurValeursEtCommentaires = ({
