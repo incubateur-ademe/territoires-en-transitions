@@ -16,7 +16,7 @@ import {
 import {SliceTooltip} from './SliceTooltip';
 import {addLocalFilters} from './utils';
 
-function useActiveUsers(codeRegion: string, codeDepartement: string) {
+export function useActiveUsers(codeRegion: string, codeDepartement: string) {
   return useSWR(
     `stats_locales_evolution_utilisateur-${codeRegion}-${codeDepartement}`,
     async () => {
@@ -51,7 +51,7 @@ function useActiveUsers(codeRegion: string, codeDepartement: string) {
           },
         ],
       };
-    }
+    },
   );
 }
 
