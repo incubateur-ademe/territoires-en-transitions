@@ -119,11 +119,6 @@ const fetchFilteredIndicateurs = (
     // que les indicateurs avec un id non null
     query.not('indicateur_id', 'is', null);
 
-    // et uniquement les indicateurs parent (sauf pour CRTE)
-    if (subset !== 'crte') {
-      query.is('definition_referentiel.parent', null);
-    }
-
     if (subset === 'selection') {
       query.is('definition_referentiel.selection', true);
     } else if (subset === 'cles') {
@@ -133,18 +128,36 @@ const fetchFilteredIndicateurs = (
     }
   }
 
-  // recherche dans le nom ou la description
-  if (filters.text) {
-    query.textSearch(
-      'cherchable',
-      filters.text
-        .split(' ')
-        .map(s => s.trim())
-        .filter(s => !!s)
-        .map(s => `'${s}':*`)
-        .join(' & ')
-      //{config: 'fr'}
-    );
+  // recherche par texte
+  const text = decodeURIComponent(filters.text?.trim() || '');
+  let searchById = false;
+  if (text) {
+    // par identifiant si le texte recherché commence par un #
+    if (text.startsWith('#') && !isPerso) {
+      const idToSearch = text.replaceAll(/[#\s]/g, '');
+      if (idToSearch) {
+        searchById = true;
+        query.ilike('definition_referentiel.identifiant', `${idToSearch}%`);
+      }
+    } else {
+      // ou dans le nom ou la description
+      query.textSearch(
+        'cherchable',
+        text
+          .split(' ')
+          .map(s => s.trim())
+          .filter(s => !!s)
+          .map(s => `'${s}':*`)
+          .join(' & ')
+        //{config: 'fr'}
+      );
+    }
+  }
+
+  // uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
+  // une recherche par id)
+  if (subset !== 'crte' && subset !== 'perso' && !searchById) {
+    query.is('definition_referentiel.parent', null);
   }
 
   // par thématique
