@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 
 import {ToolbarIconToggleButton} from 'ui/buttons/ToolbarIconButton';
 import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
-import {TIndicateurReferentielDefinition} from './types';
+import {TIndicateurPredefini} from './types';
 import {
   usePanelDispatch,
   usePanelState,
@@ -17,7 +17,7 @@ const panelIdToTrackerId: Record<string, 'informations'> = {
 };
 
 type TIndicateurSidePanelToolbarProps = {
-  definition: TIndicateurReferentielDefinition;
+  definition: TIndicateurPredefini;
 };
 
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
