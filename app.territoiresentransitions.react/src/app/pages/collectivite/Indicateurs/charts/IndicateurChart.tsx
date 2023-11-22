@@ -103,17 +103,15 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
 
   return (
     <Card
-      className={classNames({'rounded-none h-[540px]': isZoomed}, className)}
+      className={classNames({'rounded-none h-[35rem]': isZoomed}, className)}
       dataTest={`chart-${definition.id}`}
     >
       <ChartCardContent
         chart={chart}
         chartInfo={{
           title,
-          chartClassname: isZoomed ? 'h-[440px]' : 'h-48',
-          downloadedFileName: isZoomed
-            ? definition.nom || definition.titre
-            : undefined,
+          chartClassname: isZoomed ? 'h-[28rem]' : 'h-[14.5rem]',
+          downloadedFileName: isZoomed ? definition.nom : undefined,
         }}
       />
     </Card>
@@ -144,10 +142,10 @@ export const generateStyledLines =
 
 /** Charge les données et affiche le graphique */
 const IndicateurChart = (props: TIndicateurChartProps) => {
-  const {definition} = props;
-  const {isPerso} = definition;
+  const {definition, variant} = props;
 
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
+
   // lit les données nécessaires à l'affichage du graphe
   const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
     definition.id
@@ -156,8 +154,8 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
 
   // charge les valeurs à afficher dans le graphe
   const {data: valeurs, isLoading} = useIndicateurValeurs(
-    {id: grapheId, isPerso},
-    true
+    {id: grapheId, isPerso: typeof definition.id === 'number'},
+    variant === 'zoomed'
   );
   const noDataAvailable = !isLoading && !isLoadingInfo && !valeurs?.length;
 
