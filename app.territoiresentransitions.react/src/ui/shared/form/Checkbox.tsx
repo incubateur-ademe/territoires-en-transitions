@@ -1,13 +1,29 @@
+import classNames from 'classnames';
+
 type TCheckbox = {
   label: string;
   onCheck: () => void;
   checked: boolean;
   disabled?: boolean;
+  className?: string;
+  labelClassName?: string;
 };
 
-const Checkbox = ({label, checked, onCheck, disabled}: TCheckbox) => {
+const Checkbox = ({
+  label,
+  checked,
+  onCheck,
+  disabled,
+  className,
+  labelClassName,
+}: TCheckbox) => {
   return (
-    <div className="fr-checkbox-group fr-checkbox-group--sm">
+    <div
+      className={classNames(
+        'fr-checkbox-group fr-checkbox-group--sm',
+        className
+      )}
+    >
       <input
         type="checkbox"
         id="checkbox"
@@ -17,7 +33,10 @@ const Checkbox = ({label, checked, onCheck, disabled}: TCheckbox) => {
         checked={checked}
         disabled={disabled}
       />
-      <label className="fr-label !text-sm" htmlFor="checkbox">
+      <label
+        className={classNames('fr-label', labelClassName)}
+        htmlFor="checkbox"
+      >
         {label}
       </label>
     </div>

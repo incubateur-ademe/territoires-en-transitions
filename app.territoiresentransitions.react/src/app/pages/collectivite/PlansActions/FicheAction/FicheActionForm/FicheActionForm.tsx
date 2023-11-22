@@ -348,6 +348,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             <div className="mt-2">
               <Checkbox
                 label="Action en amélioration continue, sans date de fin"
+                labelClassName="!text-sm"
                 onCheck={() => {
                   updateFiche({
                     ...fiche,
