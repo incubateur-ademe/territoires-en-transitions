@@ -1,33 +1,32 @@
 import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
 
 /**
  * Affiche le nombre de résultats du filtrage et un bouton pour réinitialiser les filtres
  */
 export const FilterSummary = ({
   count,
-  resetSelection,
-  selection,
+  resetFilterParams,
+  filterParamsCount,
 }: {
   count: number;
-  resetSelection: () => void;
-  selection: string[];
+  resetFilterParams: () => void;
+  filterParamsCount: number;
 }) => (
   <div className="flex flex-row">
-    <span className="fr-mr-2w">{getLabel(count, selection)}</span>
-    {count && !selection.includes(ITEM_ALL) ? (
+    <span className="fr-mr-2w">{getLabel(count, filterParamsCount)}</span>
+    {filterParamsCount ? (
       <DisableAllFilters
-        filtersCount={selection?.length}
-        onClick={resetSelection}
+        filtersCount={filterParamsCount}
+        onClick={resetFilterParams}
         label="Réinitialiser les filtres"
       />
     ) : null}
   </div>
 );
 
-const getLabel = (count: number, selection: string[]) => {
-  if (!count) return '';
-  if (selection.includes(ITEM_ALL)) {
+const getLabel = (count: number, filterParamsCount: number) => {
+  if (!count) return 'Aucun indicateur trouvé';
+  if (!filterParamsCount) {
     return `${count} indicateur${count > 1 ? 's' : ''}`;
   }
   return `${count} ${count > 1 ? 'indicateurs trouvés' : 'indicateur trouvé'}`;

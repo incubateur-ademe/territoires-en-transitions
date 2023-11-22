@@ -5,10 +5,9 @@ import {referentielToName} from 'app/labels';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import IndicateurChart from '../charts/IndicateurChart';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
-import {TIndicateurReferentielDefinition} from '../types';
+import {TIndicateurPredefini} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
-import {useIndicateurACompleter} from '../useIndicateurACompleter';
-import {IndicateurLinkedInfo} from './IndicateurLinkedInfo';
+import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -16,19 +15,15 @@ import {IndicateurLinkedInfo} from './IndicateurLinkedInfo';
 export const IndicateurDetail = ({
   definition,
 }: {
-  definition: TIndicateurReferentielDefinition;
+  definition: TIndicateurPredefini;
 }) => {
-  const {actions} = definition;
-  const a_completer = useIndicateurACompleter(definition.id);
-
-  // converti la liste d'id en liste d'objets pour être compatible avec `ActionsLieesCards`
-  const actionsLiees = actions?.map(id => ({id}));
+  const {action_ids} = definition;
 
   return (
     <>
       <IndicateurChart variant="zoomed" definition={definition} />
       <div className="flex items-center fr-mt-5w fr-mb-3w gap-4">
-        <BadgeACompleter a_completer={a_completer} />
+        <BadgeACompleter a_completer={!definition.rempli} />
         {definition.participation_score && (
           <Badge className="!normal-case" status="no-icon">
             Participe au score {referentielToName.cae}
@@ -37,15 +32,15 @@ export const IndicateurDetail = ({
       </div>
       <IndicateurValuesTabs definition={definition} />
       <div className="fr-mt-5w ">
-        <IndicateurLinkedInfo definition={definition} />
+        <IndicateurInfoLiees definition={definition} />
         {
           /** actions liées */
-          actionsLiees?.length ? (
+          action_ids?.length ? (
             <FormField
               className="fr-mb-1w"
-              label={actionsLiees.length > 1 ? 'Actions liées' : 'Action liée'}
+              label={action_ids.length > 1 ? 'Actions liées' : 'Action liée'}
             >
-              <ActionsLieesCards actions={actionsLiees} />
+              <ActionsLieesCards actions={action_ids} />
             </FormField>
           ) : null
         }
