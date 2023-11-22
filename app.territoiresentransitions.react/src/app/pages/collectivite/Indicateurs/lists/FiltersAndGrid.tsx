@@ -1,29 +1,20 @@
-import MultiTagFilters from 'ui/shared/filters/MultiTagFilters';
+import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
-import {TFilteredDefinitions} from './useFilteredDefinitions';
 import {useExportIndicateurs} from '../useExportIndicateurs';
 import {FilterSummary} from './FilterSummary';
 import {IndicateurViewParamOption} from 'app/paths';
-import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
+import {FiltresIndicateurs} from './FiltresIndicateurs';
+import {useFilteredIndicateurDefinitions} from './useFilteredIndicateurDefinitions';
+import {useIndicateursFilterState} from './useIndicateursFilterState';
 
 /** Affiche les filtres et la grille d'indicateurs donnés */
-export const FiltersAndGrid = ({
-  filteredDefinitions,
-  view,
-}: {
-  /** données fournies par `useFilteredDefinitions` */
-  filteredDefinitions: TFilteredDefinitions;
-  view?: IndicateurViewParamOption;
-}) => {
+export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
+  const filterState = useIndicateursFilterState();
+  const {filters, resetFilterParams, filterParamsCount} = filterState;
+
   // charge et filtre les définitions
-  const {
-    definitions,
-    options,
-    optionsWithoutResults,
-    selection,
-    updateSelection,
-    resetSelection,
-  } = filteredDefinitions;
+  const {data: definitions} = useFilteredIndicateurDefinitions(view, filters);
+
   const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs(
     definitions,
     view
@@ -31,30 +22,34 @@ export const FiltersAndGrid = ({
 
   return (
     <>
-      <MultiTagFilters
-        className="fr-mb-4w"
-        options={options}
-        disabledOptions={optionsWithoutResults}
-        values={selection}
-        onChange={updateSelection}
-      />
-      <div className="flex flex-row items-center justify-between fr-mb-3w">
-        <FilterSummary
-          count={definitions.length}
-          resetSelection={resetSelection}
-          selection={selection}
-        />
-        <ToolbarIconButton
-          className="fr-mr-1w"
-          disabled={isLoading}
-          icon="download"
-          title={`Exporter ${definitions.length} indicateur${
-            definitions.length > 1 ? 's' : ''
-          }`}
-          onClick={() => exportIndicateurs()}
-        />
-      </div>
-      <IndicateurChartsGrid definitions={definitions} view={view} />
+      {view !== 'cles' && (
+        <FiltresIndicateurs view={view} state={filterState} />
+      )}
+
+      {definitions && (
+        <>
+          <div className="flex flex-row items-center justify-between fr-mb-3w">
+            <FilterSummary
+              count={definitions.length}
+              resetFilterParams={resetFilterParams}
+              filterParamsCount={filterParamsCount}
+            />
+            {definitions?.length ? (
+              <ToolbarIconButton
+                className="fr-mr-1w"
+                disabled={isLoading}
+                icon="download"
+                title={`Exporter ${definitions.length} indicateur${
+                  definitions.length > 1 ? 's' : ''
+                }`}
+                onClick={() => exportIndicateurs()}
+              />
+            ) : null}
+          </div>
+
+          <IndicateurChartsGrid definitions={definitions} view={view} />
+        </>
+      )}
     </>
   );
 };
