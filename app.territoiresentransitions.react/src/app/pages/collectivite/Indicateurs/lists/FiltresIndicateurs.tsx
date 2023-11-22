@@ -48,8 +48,10 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
               <UiSearchBar
                 debouncePeriod={500}
                 placeholder=""
-                value={text?.[0] || ''}
-                search={value => updateFilterParam('text', [value])}
+                value={decodeURIComponent(text?.[0] || '')}
+                search={value =>
+                  updateFilterParam('text', [encodeURIComponent(value)])
+                }
               />
             </FormField>
             <FormField label="Thématique">
