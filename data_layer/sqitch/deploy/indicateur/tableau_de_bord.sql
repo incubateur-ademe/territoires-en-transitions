@@ -14,7 +14,7 @@ from collectivite c
          join lateral (select count(*)                                             as nombre,
                               count(*) filter (where private.rempli(c.id, def.id)) as rempli
                        from indicateur_definition def
-                       where programme = any (def.programmes)) digest on true
+                       where parent is null and programme = any (def.programmes)) digest on true
 union all
 select perso.collectivite_id,
        'perso',
