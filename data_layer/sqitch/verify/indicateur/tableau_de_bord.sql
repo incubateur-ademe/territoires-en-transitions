@@ -2,7 +2,7 @@
 
 BEGIN;
 
-select collectivite_id, indicateur_id, programmes, resultats
+select collectivite_id, categorie, nombre, rempli
 from indicateur_summary
 where false;
 
