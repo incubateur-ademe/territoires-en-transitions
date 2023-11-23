@@ -14,7 +14,6 @@ drop function private.rempli(integer);
 drop function enfants(indicateur_definitions);
 drop function enfants(indicateur_definition);
 drop function personne(indicateur_pilote);
-drop function action_ids(indicateur_definitions);
-drop function action_ids(indicateur_definition);
+drop function indicateur_action(indicateur_definitions);
 
 COMMIT;
