@@ -19,9 +19,14 @@ export type FiltresLabels =
 type CarteCollectivitesProps = {
   filtre: FiltresLabels;
   etoiles: number[];
+  forcedZoom?: number;
 };
 
-const CarteCollectivites = ({filtre, etoiles}: CarteCollectivitesProps) => {
+const CarteCollectivites = ({
+  filtre,
+  etoiles,
+  forcedZoom,
+}: CarteCollectivitesProps) => {
   const {data} = useCarteCollectivitesEngagees();
   const [localData, setLocalData] = useState(data);
 
@@ -94,7 +99,7 @@ const CarteCollectivites = ({filtre, etoiles}: CarteCollectivitesProps) => {
   if (!localData) return null;
 
   return (
-    <CarteContainer>
+    <CarteContainer forcedZoom={forcedZoom}>
       {localData.regions
         .filter(r => !!r.geojson)
         .map(r => (

@@ -2,7 +2,6 @@
 
 import Section from '@components/sections/Section';
 import ActiveUsers from './ActiveUsers';
-import CarteEpciParDepartement from './CarteEpciParDepartement';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
 import {EtatDesLieux} from './EtatDesLieux';
@@ -12,6 +11,7 @@ import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
 import {ChartHead, ChartTitle, SectionHead} from './headings';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
+import dynamic from 'next/dynamic';
 
 /**
  * Affiche le contenu de la page statisques
@@ -30,6 +30,18 @@ const StatisticsDisplay = ({
   departmentCode,
 }: StatisticsDisplayProps) => {
   const nationalStats: boolean = !regionCode && !departmentCode;
+
+  const CarteCollectivites = dynamic(
+    () => import('../../components/carte/CarteCollectivites'),
+    {
+      ssr: false,
+      loading: () => (
+        <div className="w-[420px] h-[420px] mx-auto mt-14 flex items-center justify-center">
+          <p>Chargement...</p>
+        </div>
+      ),
+    },
+  );
 
   return (
     <>
@@ -60,17 +72,14 @@ const StatisticsDisplay = ({
           Progression de l’activation des EPCI à fiscalité propre
           {nationalStats && ' sur le territoire national'}
         </ChartHead>
-        <div className="fr-grid-row fr-grid-row--center">
+        <div className="flex justify-around flex-wrap gap-y-20">
           {nationalStats && (
-            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
-              <ChartTitle>Nombre EPCI actifs</ChartTitle>
-              <CarteEpciParDepartement valeur="actives" maximum="actives_max" />
-            </div>
-          )}
-          {nationalStats && (
-            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
-              <ChartTitle>Pourcentage EPCI actifs</ChartTitle>
-              <CarteEpciParDepartement valeur="ratio" maximum="ratio_max" />
+            <div className="w-[420px] h-[420px] mt-14">
+              <CarteCollectivites
+                filtre={'engagees'}
+                etoiles={[1, 2, 3, 4, 5]}
+                forcedZoom={5.3}
+              />
             </div>
           )}
           <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">

@@ -8,6 +8,7 @@ type ChartWithLegendProps = {
   containerClassname?: string;
   graphContainerClassname?: string;
   legendContainerClassname?: string;
+  legendSize?: 'small' | 'default';
 };
 
 const ChartWithLegend = ({
@@ -17,6 +18,7 @@ const ChartWithLegend = ({
   containerClassname,
   graphContainerClassname = 'h-[300px]',
   legendContainerClassname,
+  legendSize = 'default',
 }: ChartWithLegendProps) => {
   const getColor = (index: number) => {
     if (customColors && customColors.length) {
@@ -51,7 +53,12 @@ const ChartWithLegend = ({
                 backgroundColor: getColor(index),
               }}
             />
-            <div className="text-[#333333] text-[11px] leading-[13px]">
+            <div
+              className={classNames('text-[#333333] ', {
+                'text-[11px] leading-[13px]': legendSize === 'small',
+                'text-[16px] leading-[20px]': legendSize === 'default',
+              })}
+            >
               {label}
             </div>
           </div>

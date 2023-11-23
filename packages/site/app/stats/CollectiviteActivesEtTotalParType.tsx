@@ -3,12 +3,13 @@
 import useSWR from 'swr';
 import {ResponsiveWaffle} from '@nivo/waffle';
 import {supabase} from '../initSupabase';
-import {bottomLegend, theme} from './shared';
 import {addLocalFilters} from './utils';
+import ChartWithLegend from '@components/charts/ChartWithLegend';
+import {theme} from '@components/charts/chartsTheme';
 
 function useCollectiviteActivesEtTotalParType(
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) {
   return useSWR(
     `stats_locales_collectivite_actives_et_total_par_type-${codeRegion}-${codeDepartement}`,
@@ -45,7 +46,7 @@ function useCollectiviteActivesEtTotalParType(
         ],
         total: epcis.total,
       };
-    }
+    },
   );
 }
 
@@ -65,19 +66,24 @@ export default function CollectiviteActivesEtTotalParType({
   const {categories, total} = data;
 
   return (
-    <div style={{height: 400}}>
-      <ResponsiveWaffle
-        colors={['#21AB8E', '#FF732C']}
-        theme={theme}
-        data={categories}
-        total={total || 0}
-        rows={10}
-        columns={10}
-        margin={{top: 0, right: 30, bottom: 10, left: 30}}
-        animate={false}
-        // @ts-ignore: la propriété `legends` est absente du typage (@nivo/waffle:0.80.0) mais bien supportée
-        legends={[{...bottomLegend, translateY: 5}]}
-      />
-    </div>
+    <ChartWithLegend
+      graph={colors => (
+        <ResponsiveWaffle
+          colors={colors}
+          theme={theme}
+          data={categories}
+          total={total || 0}
+          rows={10}
+          columns={10}
+          margin={{top: 0, right: 30, bottom: 10, left: 30}}
+          animate={false}
+        />
+      )}
+      labels={categories.map(c => c.id)}
+      customColors={['#889FC2', '#D9D9D9']}
+      containerClassname="mt-6"
+      graphContainerClassname="h-[400px]"
+      legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+    />
   );
 }
