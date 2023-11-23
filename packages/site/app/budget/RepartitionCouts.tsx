@@ -26,18 +26,18 @@ const getChartData = (data: {[key: string]: {[key: string]: number}}) => {
 const RepartitionCouts = ({titre, data}: RepartitionCoutsProps) => {
   const chartData = getChartData(data.tableau);
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
-  // 640px = breakpoint sm
+
+  const smBreakpoint = 640; // 640px = breakpoint sm dans tailwind
 
   useEffect(() => {
+    const setWidth = () => setWindowWidth(window.innerWidth);
+
     // Initialisation de windowWith au chargement de la page
-    setWindowWidth(window.innerWidth);
+    setWidth();
 
     // Détecte le changement de taille de la fenêtre
-    window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-    return () =>
-      window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth),
-      );
+    window.addEventListener('resize', setWidth);
+    return () => window.removeEventListener('resize', setWidth);
   }, []);
 
   return (
@@ -58,12 +58,12 @@ const RepartitionCouts = ({titre, data}: RepartitionCoutsProps) => {
           spaceBetweenPads
           displayValueInArcLinkLabel={false}
           arcLinkLabelOnSeveralLines={
-            windowWidth && windowWidth > 640 ? false : true
+            windowWidth && windowWidth > smBreakpoint ? false : true
           }
           startAngle={-10}
           arcLinkLabelsSkipAngle={0}
           arcLinkLabelFontSize={
-            windowWidth && windowWidth > 640 ? 14 : undefined
+            windowWidth && windowWidth > smBreakpoint ? 14 : undefined
           }
         />
       </div>

@@ -180,35 +180,36 @@
     background-image: radial-gradient(
         at 5px 4px,
         transparent 4px,
-        #6a6af4 4px,
-        #6a6af4 5px,
+        theme('colors.primary.7') 4px,
+        theme('colors.primary.7') 5px,
         transparent 6px
       ),
-      linear-gradient(#6a6af4, #6a6af4),
+      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
       radial-gradient(
         at calc(100% - 5px) 4px,
         transparent 4px,
-        #6a6af4 4px,
-        #6a6af4 5px,
+        theme('colors.primary.7') 4px,
+        theme('colors.primary.7') 5px,
         transparent 6px
       ),
-      linear-gradient(#6a6af4, #6a6af4),
+      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
       radial-gradient(
         at calc(100% - 5px) calc(100% - 4px),
         transparent 4px,
-        #6a6af4 4px,
-        #6a6af4 5px,
+        theme('colors.primary.7') 4px,
+        theme('colors.primary.7') 5px,
         transparent 6px
       ),
-      linear-gradient(#6a6af4, #6a6af4),
+      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
       radial-gradient(
         at 5px calc(100% - 4px),
         transparent 4px,
-        #6a6af4 4px,
-        #6a6af4 5px,
+        theme('colors.primary.7') 4px,
+        theme('colors.primary.7') 5px,
         transparent 6px
       ),
-      linear-gradient(#6a6af4, #6a6af4), var(--data-uri-svg);
+      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
+      var(--data-uri-svg);
   }
 }
 
