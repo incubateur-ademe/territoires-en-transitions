@@ -61,6 +61,7 @@ const filterParts: {[key in keyof Filters]?: string} = {
   pilote_user_ids: 'pilotes!inner()',
   pilote_tag_ids: 'pilotes!inner()',
   service_ids: 'services!inner()',
+  action_id: 'indicateur_action!inner()',
 };
 
 /**
@@ -167,7 +168,7 @@ const fetchFilteredIndicateurs = (
 
   // par action du référentiel
   if (filters.action_id) {
-    query.contains('action_ids', [filters.action_id]);
+    query.in('indicateur_action.action_id', [filters.action_id]);
   }
 
   // par plan
