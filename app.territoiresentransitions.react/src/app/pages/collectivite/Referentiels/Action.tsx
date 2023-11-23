@@ -63,7 +63,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   // le contenu de l'onglet Indicateurs n'est pas affiché si la collectivité est
   // en accès restreint
   const noIndicateursTab =
-    collectivite.acces_restreint && collectivite.readonly;
+    collectivite.acces_restreint && collectivite.niveau_acces===null;
 
   // synchronise l'url lors du passage d'un onglet à l'autre
   const handleChange = (activeTab: number) => {

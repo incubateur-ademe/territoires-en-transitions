@@ -28,7 +28,7 @@ const makeNavItemsBase = (
   user: UserData | null
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
-  const acces_restreint = collectivite.acces_restreint && collectivite.readonly;
+  const acces_restreint = collectivite.acces_restreint && collectivite.niveau_acces===null;
 
   // items communs qque soient les droits de l'utilisateur courant
   const common = [
