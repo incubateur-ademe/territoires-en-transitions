@@ -1,5 +1,9 @@
 {
   "extends": ["react-app", "react-app/jest", "plugin:storybook/recommended"],
+  "plugins": ["jsx-expressions"],
+  "rules": {
+    "jsx-expressions/strict-logical-expressions": "warn"
+  },
   "overrides": [
     {
       "files": ["**/*.ts?(x)"],
