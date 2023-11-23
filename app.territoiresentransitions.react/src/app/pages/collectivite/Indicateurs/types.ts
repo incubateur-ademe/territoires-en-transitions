@@ -44,12 +44,16 @@ export const INDICATEUR_PREDEFINI_COLS = [
   'type',
 ] as const;
 
+export type TIndicateurPredefiniEnfant = TIndicateurPredefini & {
+  parent: string;
+};
+
 export type TIndicateurPredefini = Pick<
   Tables<'indicateur_definition'>,
   ValuesToUnion<typeof INDICATEUR_PREDEFINI_COLS>
 > & {
   action_ids: string[];
-  enfants: (TIndicateurPredefini & {parent: string})[];
+  enfants: TIndicateurPredefiniEnfant[] | undefined;
   thematiques: Thematique[];
   rempli: Rempli;
   isPerso: undefined;
