@@ -6,7 +6,17 @@ import {
   INDICATEUR_PREDEFINI_COLS,
   TIndicateurPersonnalise,
   TIndicateurPredefini,
+  TIndicateurPredefiniEnfant,
 } from './types';
+
+// type des données lues depuis le back avant transformation
+type TIndicateurPredefiniRead = Omit<
+  TIndicateurPredefini,
+  'action_ids' | 'enfants'
+> & {
+  indicateur_action: {action_id: string}[];
+  enfants: (TIndicateurPredefiniRead & {parent: string})[] | undefined;
+};
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurPredefini = (indicateur_id: string) => {
@@ -22,20 +32,34 @@ export const useIndicateurPredefini = (indicateur_id: string) => {
       const {data, error} = await supabaseClient
         .from('indicateur_definitions')
         .select(
-          `...definition_referentiel(${cols}), rempli, enfants(...definition_referentiel(${cols},parent), rempli), thematiques(id, nom), action_ids`
+          `...definition_referentiel(${cols}, indicateur_action(action_id)), rempli, enfants(...definition_referentiel(${cols},parent, indicateur_action(action_id)), rempli), thematiques(id, nom)`
         )
         .match({collectivite_id, indicateur_id})
-        .returns<TIndicateurPredefini[]>();
+        .returns<TIndicateurPredefiniRead[]>();
 
       if (error) {
         throw new Error(error.message);
       }
 
-      return data?.[0];
+      return transform(data?.[0]);
     },
     DISABLE_AUTO_REFETCH
   );
   return data;
+};
+
+// transforme le tableau `indicateur_action` en  `action_ids`
+// sur la définition principale et les éventuelles définitions enfants
+const transform = (
+  definition: TIndicateurPredefiniRead
+): TIndicateurPredefini => {
+  const {indicateur_action, enfants, ...unchanged} = definition;
+
+  return {
+    ...unchanged,
+    action_ids: indicateur_action.map(a => a.action_id),
+    enfants: enfants?.map(e => transform(e) as TIndicateurPredefiniEnfant),
+  };
 };
 
 /** Charge la définition détaillée d'un indicateur personnalisé */
