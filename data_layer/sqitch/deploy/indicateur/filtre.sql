@@ -233,31 +233,17 @@ comment on function enfants(indicateur_definition) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
 
 create function
-    action_ids(indicateur_definitions)
-    returns action_id[]
+    indicateur_action(indicateur_definitions)
+    returns setof indicateur_action
     language sql
     stable
 begin
     atomic
-    select array_agg(action_id)
+    select ia
     from indicateur_action ia
     where ia.indicateur_id = $1.indicateur_id;
 end;
-comment on function action_ids(indicateur_definitions) is
-    'Les ids des actions associées à un indicateur.';
-
-create function
-    action_ids(indicateur_definition)
-    returns action_id[]
-    language sql
-    stable
-begin
-    atomic
-    select array_agg(action_id)
-    from indicateur_action ia
-    where ia.indicateur_id = $1.id;
-end;
-comment on function action_ids(indicateur_definition) is
-    'Les ids des actions associées à un indicateur.';
+comment on function indicateur_action(indicateur_definitions) is
+    'La relation entre un indicateur prédéfini et des actions des référentiels.';
 
 COMMIT;
