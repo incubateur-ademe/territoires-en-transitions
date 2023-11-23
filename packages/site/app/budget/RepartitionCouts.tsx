@@ -20,7 +20,7 @@ const getChartData = (data: {[key: string]: {[key: string]: number}}) => {
     chartData.push({id: line, value: total});
   }
 
-  return chartData;
+  return chartData.sort((a, b) => b.value - a.value);
 };
 
 const RepartitionCouts = ({titre, data}: RepartitionCoutsProps) => {
@@ -62,9 +62,6 @@ const RepartitionCouts = ({titre, data}: RepartitionCoutsProps) => {
           }
           startAngle={-10}
           arcLinkLabelsSkipAngle={0}
-          arcLinkLabelsThickness={
-            windowWidth && windowWidth > 640 ? 0 : undefined
-          }
           arcLinkLabelFontSize={
             windowWidth && windowWidth > 640 ? 14 : undefined
           }

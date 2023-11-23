@@ -183,13 +183,14 @@ const DonutChart = ({
       arcLinkLabelsOffset={5}
       arcLinkLabelsTextOffset={5}
       arcLinkLabelsTextColor="#2A2A62"
+      arcLinkLabelsColor={{from: 'color'}}
       arcLinkLabelComponent={datum => {
         const splitedLabel = splitLabel(datum.label);
         return (
           <animated.g opacity={datum.style.opacity}>
             <animated.path
               fill="none"
-              stroke="#2A2A62"
+              stroke={datum.style.linkColor}
               strokeWidth={datum.style.thickness}
               d={datum.style.path}
               offset={10}
