@@ -17,7 +17,7 @@ const PerformanceBudget = ({
 
       <h5>{titre_edl}</h5>
       <Image
-        src="/budget/Graph2.png"
+        src="/budget/graph2.png"
         alt={titre_edl}
         width={861}
         height={391}
@@ -26,7 +26,7 @@ const PerformanceBudget = ({
 
       <h5>{titre_fa}</h5>
       <Image
-        src="/budget/Graph3.png"
+        src="/budget/graph3.png"
         alt={titre_fa}
         width={839}
         height={383}

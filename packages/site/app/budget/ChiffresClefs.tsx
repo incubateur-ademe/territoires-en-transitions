@@ -16,7 +16,7 @@ const ChiffresClefs = () => {
 
   return (
     <div className="grid sm:max-lg:grid-cols-2 xl:grid-cols-2 md:gap-10">
-      {collectivitesActivees && (
+      {!!collectivitesActivees && (
         <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-[10px] py-8 px-6 flex flex-col max-md:items-center justify-center">
           <span className="text-primary-7 text-[48px] leading-[32px] font-bold">
             {collectivitesActivees}
@@ -35,7 +35,7 @@ const ChiffresClefs = () => {
         </div>
       )}
 
-      {totalUtilisateurs && (
+      {!!totalUtilisateurs && (
         <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-[10px] py-9 px-8 flex flex-col max-md:items-center justify-center">
           <span className="text-primary-7 text-[48px] leading-[32px] font-bold">
             {totalUtilisateurs}
