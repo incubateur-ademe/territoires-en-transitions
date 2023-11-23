@@ -21,6 +21,7 @@ function Debugger() {
 type CarteContainerProps = {
   children: ReactNode;
   style?: CSSProperties;
+  forcedZoom?: number;
 };
 
 /**
@@ -34,7 +35,7 @@ type CarteContainerProps = {
  *
  */
 
-const CarteContainer = ({children, style}: CarteContainerProps) => {
+const CarteContainer = ({children, style, forcedZoom}: CarteContainerProps) => {
   const [windowWidth, setWindowWidth] = useState<number | undefined>(
     window.innerWidth,
   );
@@ -51,7 +52,9 @@ const CarteContainer = ({children, style}: CarteContainerProps) => {
     <MapContainer
       center={[46.3, 2.3]}
       zoom={
-        windowWidth && windowWidth < 500
+        forcedZoom
+          ? forcedZoom
+          : windowWidth && windowWidth < 500
           ? 4.6
           : windowWidth &&
             (windowWidth < 768 || (windowWidth >= 1024 && windowWidth < 1280))
