@@ -2,6 +2,9 @@
 
 BEGIN;
 
+drop view stats_evolution_nombre_labellisations;
+drop materialized view stats.evolution_nombre_labellisations;
+
 drop view stats_evolution_nombre_plans;
 drop materialized view stats.evolution_nombre_plans;
 

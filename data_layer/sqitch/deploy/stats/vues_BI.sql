@@ -43,8 +43,9 @@ as
 select *
 from stats.evolution_nombre_fiches;
 
-create materialized view stats.evolution_nombre_plans as
-select mb.first_day                                         as mois,
+create materialized view stats.evolution_nombre_plans
+as
+select mb.first_day                                        as mois,
        count(*) filter (where a.created_at <= mb.last_day) as plans
 from stats.monthly_bucket mb
          join stats.collectivite_active ca on true
@@ -57,6 +58,25 @@ create view stats_evolution_nombre_plans
 as
 select *
 from stats.evolution_nombre_plans;
+
+-- évolution des labellisations
+create materialized view stats.evolution_nombre_labellisations
+as
+select mb.first_day                                                            as mois,
+       count(*) filter (where l.obtenue_le <= mb.last_day and l.etoiles = '1') as etoile_1,
+       count(*) filter (where l.obtenue_le <= mb.last_day and l.etoiles = '2') as etoile_2,
+       count(*) filter (where l.obtenue_le <= mb.last_day and l.etoiles = '3') as etoile_3,
+       count(*) filter (where l.obtenue_le <= mb.last_day and l.etoiles = '4') as etoile_4,
+       count(*) filter (where l.obtenue_le <= mb.last_day and l.etoiles = '5') as etoile_5
+from stats.monthly_bucket mb
+         join labellisation l on true
+group by mb.first_day
+order by mb.first_day;
+
+create view stats_evolution_nombre_labellisations
+as
+select *
+from stats.evolution_nombre_labellisations;
 
 
 create or replace function
@@ -90,6 +110,7 @@ begin
     refresh materialized view stats.engagement_collectivite;
     refresh materialized view stats.evolution_nombre_fiches;
     refresh materialized view stats.evolution_nombre_plans;
+    refresh materialized view stats.evolution_nombre_labellisations;
 end ;
 $$ language plpgsql security definer;
 
