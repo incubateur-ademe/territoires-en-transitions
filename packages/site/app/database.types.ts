@@ -23702,6 +23702,24 @@ export interface Database {
         }
         Relationships: []
       }
+      stats_evolution_nombre_labellisations: {
+        Row: {
+          etoile_1: number | null
+          etoile_2: number | null
+          etoile_3: number | null
+          etoile_4: number | null
+          etoile_5: number | null
+          mois: string | null
+        }
+        Relationships: []
+      }
+      stats_evolution_nombre_plans: {
+        Row: {
+          mois: string | null
+          plans: number | null
+        }
+        Relationships: []
+      }
       stats_evolution_nombre_utilisateur_par_collectivite: {
         Row: {
           maximum: number | null
@@ -23843,6 +23861,7 @@ export interface Database {
           code_region: string | null
           mois: string | null
           total: number | null
+          total_autre: number | null
           total_commune: number | null
           total_epci: number | null
           total_syndicat: number | null
@@ -26892,13 +26911,13 @@ export interface Database {
       }
       todo_start:
         | {
-            Args: {
-              "": string
-            }
+            Args: Record<PropertyKey, never>
             Returns: boolean[]
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              "": string
+            }
             Returns: boolean[]
           }
       types_are: {
