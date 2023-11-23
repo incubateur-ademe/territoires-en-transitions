@@ -21,7 +21,7 @@ const PerformanceBudget = ({
         alt={titre_edl}
         width={861}
         height={391}
-        className="my-20"
+        className="mt-10 mb-20"
       />
 
       <h5>{titre_fa}</h5>
@@ -30,7 +30,7 @@ const PerformanceBudget = ({
         alt={titre_fa}
         width={839}
         height={383}
-        className="mt-20"
+        className="mt-10"
       />
     </div>
   );
