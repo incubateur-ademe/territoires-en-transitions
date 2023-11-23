@@ -12,7 +12,7 @@ create function
     immutable
 begin
     atomic
-    return $1.nom || ' ' || $1.description;
+    return unaccent($1.nom || ' ' || $1.description);
 end;
 comment on function cherchable(indicateur_definition) is
     'Le champ sur lequel effectuer la recherche.';
@@ -28,7 +28,7 @@ create function
     immutable
 begin
     atomic
-    return $1.titre || ' ' || $1.description;
+    return unaccent($1.titre || ' ' || $1.description);
 end;
 comment on function cherchable(indicateur_personnalise_definition) is
     'Le champ sur lequel effectuer la recherche.';
@@ -46,7 +46,7 @@ create function
     immutable
 begin
     atomic
-    return $1.nom || ' ' || $1.description;
+    return unaccent($1.nom || ' ' || $1.description);
 end;
 comment on function cherchable(indicateur_definitions) is
     'Le champ sur lequel effectuer la recherche.';
