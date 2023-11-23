@@ -13,7 +13,7 @@ export const theme: Theme = {
   },
   legends: {
     text: {
-      fontSize: 12,
+      fontSize: 14,
     },
   },
   tooltip: {
@@ -42,4 +42,12 @@ export const defaultColors = [
   '#BCBDDC',
   '#DADAEB',
   '#EFEDF5',
+];
+
+export const statsColors = [
+  '#21AB8E',
+  '#FFCA00',
+  '#FF732C',
+  '#FFB7AE',
+  '#34BAB5',
 ];

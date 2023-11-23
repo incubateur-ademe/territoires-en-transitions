@@ -1,7 +1,10 @@
+/**
+ * Ajout des filtres département et région
+ */
 export const addLocalFilters = (
   select: any,
   codeDepartement: string,
-  codeRegion: string
+  codeRegion: string,
 ) => {
   if (codeDepartement) {
     return select.eq('code_departement', codeDepartement);
