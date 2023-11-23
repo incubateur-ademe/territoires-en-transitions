@@ -7,18 +7,18 @@ drop view stats_evolution_collectivite_avec_minimum_fiches;
 drop materialized view stats.evolution_collectivite_avec_minimum_fiches;
 
 create materialized view stats.evolution_collectivite_avec_minimum_fiches as
-WITH fiche_collectivite AS (SELECT mb.first_day                                          AS mois,
+with fiche_collectivite as (select mb.first_day                                         as mois,
                                    ca.collectivite_id,
-                                   count(*) FILTER (WHERE fa.created_at <= mb.last_day) AS fiches
-                            FROM stats.monthly_bucket mb
-                                     JOIN stats.collectivite_active ca ON true
-                                     JOIN fiche_action fa USING (collectivite_id)
-                            GROUP BY mb.first_day, ca.collectivite_id)
-SELECT fiche_collectivite.mois,
-       count(*) FILTER (WHERE fiche_collectivite.fiches > 5) AS collectivites
-FROM fiche_collectivite
-GROUP BY fiche_collectivite.mois
-ORDER BY fiche_collectivite.mois;
+                                   count(*) filter (where fa.created_at <= mb.last_day) as fiches
+                            from stats.monthly_bucket mb
+                                     join stats.collectivite_active ca on true
+                                     join fiche_action fa using (collectivite_id)
+                            group by mb.first_day, ca.collectivite_id)
+select fiche_collectivite.mois,
+       count(*) filter (where fiche_collectivite.fiches > 5) as collectivites
+from fiche_collectivite
+group by fiche_collectivite.mois
+order by fiche_collectivite.mois;
 
 create view stats_evolution_collectivite_avec_minimum_fiches
 as
@@ -30,13 +30,13 @@ drop view stats_evolution_nombre_fiches;
 drop materialized view stats.evolution_nombre_fiches;
 
 create materialized view stats.evolution_nombre_fiches as
-SELECT mb.first_day                                          AS mois,
-       count(*) FILTER (WHERE fa.created_at <= mb.last_day) AS fiches
-FROM stats.monthly_bucket mb
-         JOIN stats.collectivite_active ca ON true
-         JOIN fiche_action fa USING (collectivite_id)
-GROUP BY mb.first_day
-ORDER BY mb.first_day;
+select mb.first_day                                         as mois,
+       count(*) filter (where fa.created_at <= mb.last_day) as fiches
+from stats.monthly_bucket mb
+         join stats.collectivite_active ca on true
+         join fiche_action fa using (collectivite_id)
+group by mb.first_day
+order by mb.first_day;
 
 create view stats_evolution_nombre_fiches
 as
