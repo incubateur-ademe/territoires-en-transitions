@@ -2,6 +2,7 @@ import {useQuery} from 'react-query';
 import {Enums} from 'types/alias';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {unaccent} from 'utils/unaccent';
 import {IndicateurViewParamOption} from 'app/paths';
 import {TIndicateurListItem} from '../types';
 
@@ -130,7 +131,7 @@ const fetchFilteredIndicateurs = (
   }
 
   // recherche par texte
-  const text = decodeURIComponent(filters.text?.trim() || '');
+  const text = filters.text?.trim() || '';
   let searchById = false;
   if (text) {
     // par identifiant si le texte recherché commence par un #
@@ -144,7 +145,7 @@ const fetchFilteredIndicateurs = (
       // ou dans le nom ou la description
       query.textSearch(
         'cherchable',
-        text
+        unaccent(text)
           .split(' ')
           .map(s => s.trim())
           .filter(s => !!s)
