@@ -1,6 +1,11 @@
+'use client';
+
 import LogoRepubliqueFrancaise from 'components/logo/LogoRepubliqueFrancaise';
+import {usePathname} from 'next/navigation';
 
 export const Footer = () => {
+  const pathname = usePathname();
+
   return (
     <footer className="fr-footer" role="contentinfo" id="footer">
       <div className="fr-container">
@@ -92,11 +97,13 @@ export const Footer = () => {
                 Conditions générales d’utilisation
               </a>
             </li>
-            <li className="fr-footer__bottom-item">
-              <a className="fr-footer__bottom-link" href="/budget">
-                Budget
-              </a>
-            </li>
+            {pathname === '/outil-numerique' && (
+              <li className="fr-footer__bottom-item">
+                <a className="fr-footer__bottom-link" href="/budget">
+                  Budget
+                </a>
+              </li>
+            )}
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
