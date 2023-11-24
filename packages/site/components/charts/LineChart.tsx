@@ -1,40 +1,7 @@
 import {ResponsiveLine, SliceTooltipProps} from '@nivo/line';
 import {defaultColors, theme} from './chartsTheme';
 import {axisBottomAsDate, axisLeftMiddleLabel} from './utils';
-
-const getTooltip = (
-  {slice}: SliceTooltipProps,
-  data: {
-    id: string;
-    color?: string;
-    data: {
-      x: string | null;
-      y: number | null;
-    }[];
-  }[],
-) => {
-  return (
-    <div style={theme.tooltip?.container}>
-      <div>
-        <strong>
-          {slice.points.map(p => p.data.y as number).reduce((a, b) => a + b, 0)}
-        </strong>{' '}
-        collectivités, dont :
-      </div>
-      {slice.points.map(point => (
-        <div
-          key={point.id}
-          style={{
-            color: point.serieColor,
-            padding: '3px 0',
-          }}
-        >
-          {point.data.yFormatted} {point.serieId}
-        </div>
-      ))}
-    </div>
-  );
-};
+import Tooltip from './Tooltip';
 
 type LineChartProps = {
   data: {
@@ -45,22 +12,26 @@ type LineChartProps = {
       y: number | null;
     }[];
   }[];
+  yFormat?: string;
   customColors?: string[];
   customMargin?: {top: number; right: number; bottom: number; left: number};
   stacked?: boolean;
   enableArea?: boolean;
   enablePoints?: boolean;
   axisLeftLabel?: string;
+  customTooltip?: ({slice}: SliceTooltipProps) => JSX.Element;
 };
 
 const LineChart = ({
   data,
+  yFormat = ' >-.0f',
   customColors,
   customMargin,
   stacked = false,
   enablePoints = false,
   enableArea = false,
   axisLeftLabel,
+  customTooltip,
 }: LineChartProps) => {
   return (
     <ResponsiveLine
@@ -75,18 +46,22 @@ const LineChart = ({
         max: 'auto',
         stacked: stacked,
       }}
-      yFormat=" >-.0f"
+      yFormat={yFormat}
       axisBottom={axisBottomAsDate}
       axisLeft={axisLeftLabel ? axisLeftMiddleLabel(axisLeftLabel) : undefined}
       enableArea={enableArea} // surfaces sous les lignes
       areaOpacity={0.9}
       curve="monotoneX" // on interpole la ligne de façon bien passer sur les points
       enablePoints={enablePoints}
+      lineWidth={!enableArea ? 4 : undefined}
+      pointSize={enablePoints ? 4 : undefined}
       pointColor={{theme: 'background'}}
-      pointBorderWidth={3}
+      pointBorderWidth={4}
       pointBorderColor={{from: 'serieColor'}}
       enableSlices="x"
-      sliceTooltip={slice => getTooltip(slice, data)}
+      sliceTooltip={slice =>
+        customTooltip ? customTooltip(slice) : <Tooltip {...slice} />
+      }
       animate={true}
       motionConfig="slow"
     />

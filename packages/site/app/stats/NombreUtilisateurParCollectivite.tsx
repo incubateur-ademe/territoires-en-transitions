@@ -1,20 +1,12 @@
 'use client';
 
 import useSWR from 'swr';
-import {ResponsiveLine} from '@nivo/line';
 import {supabase} from '../initSupabase';
-import {
-  axisBottomAsDate,
-  axisLeftMiddleLabel,
-  bottomLegend,
-  fromMonth,
-  getLabelsById,
-  getLegendData,
-  theme,
-} from './shared';
-import {SliceTooltip} from './SliceTooltip';
+import {fromMonth} from './shared';
 import {ChartHead} from './headings';
 import {addLocalFilters} from './utils';
+import ChartWithLegend from '@components/charts/ChartWithLegend';
+import LineChart from '@components/charts/LineChart';
 
 function useNombreUtilisateurParCollectivite(
   codeRegion: string,
@@ -42,13 +34,11 @@ function useNombreUtilisateurParCollectivite(
         courant: data[data.length - 1],
         evolution: [
           {
-            id: 'moyen',
-            label: "Nombre moyen d'utilisateurs",
+            id: "Nombre moyen d'utilisateurs",
             data: data.map(d => ({x: d.mois, y: d.moyen})),
           },
           {
-            id: 'maximum',
-            label: "Nombre maximum d'utilisateurs",
+            id: "Nombre maximum d'utilisateurs",
             data: data.map(d => ({x: d.mois, y: d.maximum})),
           },
         ],
@@ -72,8 +62,6 @@ export default function NombreUtilisateurParCollectivite({
 
   const {courant, evolution} = data;
   const colors = ['#FF732C', '#7AB1E8'];
-  const legendData = getLegendData(evolution, colors);
-  const labelById = getLabelsById(evolution);
 
   return (
     <div>
@@ -85,47 +73,22 @@ export default function NombreUtilisateurParCollectivite({
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center"></div>
 
-      <div className="h-[400px] mt-8">
-        <ResponsiveLine
-          colors={colors}
-          theme={theme}
-          data={evolution}
-          // les marges servent aux légendes
-          margin={{top: 5, right: 5, bottom: 120, left: 50}}
-          xScale={{type: 'point'}}
-          yScale={{
-            type: 'linear',
-            min: 0,
-            max: 'auto',
-            stacked: false,
-          }}
-          // on interpole la ligne de façon bien passer sur les points
-          curve="monotoneX"
-          lineWidth={2}
-          pointSize={0}
-          enableGridY={false}
-          yFormat=" >-.2f"
-          axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel('Utilisateurs/collectivité')}
-          pointColor={{theme: 'background'}}
-          pointBorderWidth={4}
-          pointBorderColor={{from: 'serieColor'}}
-          pointLabelYOffset={-12}
-          enableSlices="x"
-          sliceTooltip={props => <SliceTooltip {...props} labels={labelById} />}
-          legends={[
-            {
-              ...bottomLegend,
-              data: legendData,
-              direction: 'column',
-              translateX: -20,
-              translateY: 120,
-              itemWidth: 230,
-            },
-          ]}
-          animate={false}
-        />
-      </div>
+      <ChartWithLegend
+        graph={colors => (
+          <LineChart
+            data={evolution}
+            yFormat=" >-.2f"
+            customColors={colors}
+            axisLeftLabel="Utilisateurs / collectivité"
+            enablePoints
+          />
+        )}
+        labels={evolution.map(e => e.id)}
+        customColors={colors}
+        containerClassname="mt-8"
+        graphContainerClassname="h-[400px]"
+        legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+      />
     </div>
   );
 }

@@ -1,18 +1,11 @@
 'use client';
 
 import useSWR from 'swr';
-import {ResponsiveLine} from '@nivo/line';
 import {supabase} from '../initSupabase';
-import {
-  axisBottomAsDate,
-  axisLeftMiddleLabel,
-  colors,
-  formatInteger,
-  fromMonth,
-  theme,
-} from './shared';
+import {colors, formatInteger, fromMonth} from './shared';
 import {ChartTitle} from './headings';
 import {addLocalFilters} from './utils';
+import LineChart from '@components/charts/LineChart';
 
 function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
   return useSWR(
@@ -41,7 +34,7 @@ function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
           last: data[data.length - 1].indicateurs,
         },
       ];
-    }
+    },
   );
 }
 type IndicateursRenseignesProps = {
@@ -63,37 +56,13 @@ export default function IndicateursRenseignes({
         <b>{formatInteger(data[0].last)}</b> indicateurs des référentiels
         renseignés
       </ChartTitle>
-      <div style={{height: '400px'}}>
-        <ResponsiveLine
-          colors={colors}
-          theme={theme}
+
+      <div className="h-[400px]">
+        <LineChart
           data={data}
-          // les marges servent aux légendes
-          margin={{top: 5, right: 5, bottom: 85, left: 55}}
-          xScale={{type: 'point'}}
-          yScale={{
-            type: 'linear',
-            min: 'auto',
-            max: 'auto',
-            stacked: false,
-          }}
-          // on interpole la ligne de façon bien passer sur les points
-          curve="monotoneX"
-          lineWidth={4}
-          pointSize={4}
-          yFormat={formatInteger}
-          axisBottom={axisBottomAsDate}
-          axisLeft={{
-            ...axisLeftMiddleLabel(
-              'Nombre d’indicateurs des référentiels renseignés'
-            ),
-            legendOffset: -50,
-          }}
-          pointBorderWidth={4}
-          pointBorderColor={{from: 'serieColor'}}
-          pointLabelYOffset={-12}
-          enableSlices="x"
-          animate={false}
+          customColors={colors}
+          axisLeftLabel="Nombre d’indicateurs des référentiels renseignés"
+          enablePoints
         />
       </div>
     </>
