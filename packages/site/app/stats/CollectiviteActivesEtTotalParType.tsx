@@ -3,56 +3,45 @@
 import useSWR from 'swr';
 import {ResponsiveWaffle} from '@nivo/waffle';
 import {supabase} from '../initSupabase';
-import {addLocalFilters} from './utils';
 import ChartWithLegend from '@components/charts/ChartWithLegend';
 import {theme} from '@components/charts/chartsTheme';
 
 function useCollectiviteActivesEtTotalParType(
-  codeRegion: string,
-  codeDepartement: string,
 ) {
   return useSWR(
-    `stats_locales_collectivite_actives_et_total_par_type-${codeRegion}-${codeDepartement}`,
+    `stats_locales_collectivite_actives_et_total_par_type`,
     async () => {
       let select = supabase
-        .from('stats_locales_collectivite_actives_et_total_par_type')
-        .select();
-
-      select = addLocalFilters(select, codeDepartement, codeRegion);
+        .from('stats_locales_evolution_total_activation')
+        .select('total_epci')
+        .order('mois', {ascending: false})
+        .limit(1)
+        .single();
 
       const {data, error} = await select;
 
       if (error) {
         throw new Error(error.message);
       }
-      if (!data || !data.length) {
+      if (!data) {
         return null;
       }
 
-      const epcis = data.filter(d => d.typologie === 'EPCI')[0];
+      const epcis_active = data.total_epci!;
+      const epcis_totales = 1253;
 
       return {
         categories: [
           {
-            id: 'Collectivités actives',
-            value: data.reduce(
-              (total, currValue) => total + (currValue.actives ?? 0),
-              0,
-            ),
+            id: 'EPCI à fiscalité propre actives',
+            value: epcis_active,
           },
           {
-            id: 'Collectivités inactives',
-            value: data.reduce(
-              (total, currValue) =>
-                total + ((currValue.total ?? 0) - (currValue.actives ?? 0)),
-              0,
-            ),
+            id: 'EPCI à fiscalité propre inactives',
+            value: epcis_totales - epcis_active,
           },
         ],
-        total: data.reduce(
-          (total, currValue) => total + (currValue.total ?? 0),
-          0,
-        ),
+        total: epcis_totales,
       };
     },
   );
@@ -63,11 +52,8 @@ type CollectiviteActivesEtTotalParTypeProps = {
   department?: string;
 };
 
-export default function CollectiviteActivesEtTotalParType({
-  region = '',
-  department = '',
-}: CollectiviteActivesEtTotalParTypeProps) {
-  const {data} = useCollectiviteActivesEtTotalParType(region, department);
+export default function CollectiviteActivesEtTotalParType() {
+  const {data} = useCollectiviteActivesEtTotalParType();
 
   if (!data) return null;
 
