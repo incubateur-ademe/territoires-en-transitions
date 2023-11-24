@@ -1,7 +1,7 @@
 import {ResponsiveLine, SliceTooltipProps} from '@nivo/line';
 import {defaultColors, theme} from './chartsTheme';
 import {axisBottomAsDate, axisLeftMiddleLabel} from './utils';
-import Tooltip from './Tooltip';
+import LineChartTooltip from './LineChartTooltip';
 
 type LineChartProps = {
   data: {
@@ -60,7 +60,7 @@ const LineChart = ({
       pointBorderColor={{from: 'serieColor'}}
       enableSlices="x"
       sliceTooltip={slice =>
-        customTooltip ? customTooltip(slice) : <Tooltip {...slice} />
+        customTooltip ? customTooltip(slice) : <LineChartTooltip {...slice} />
       }
       animate={true}
       motionConfig="slow"

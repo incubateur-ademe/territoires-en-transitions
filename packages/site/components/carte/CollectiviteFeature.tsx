@@ -12,18 +12,28 @@ type labellisation_w_geojson =
 
 type CollectiviteFeatureProps = {
   collectivite: labellisation_w_geojson;
+  displayLabellisee?: boolean;
 };
 
 /**
  * Une feature est un élément affiché dans une carte
  */
-const CollectiviteFeature = ({collectivite}: CollectiviteFeatureProps) => {
+const CollectiviteFeature = ({
+  collectivite,
+  displayLabellisee,
+}: CollectiviteFeatureProps) => {
   const router = useRouter();
   const geojson = collectivite.geojson as unknown as GeoJsonObject;
+
+  const fillColor =
+    (displayLabellisee && collectivite.labellisee) || !displayLabellisee
+      ? '#4D75AC'
+      : '#9E9E9E';
+
   const style: PathOptions = {
-    fillColor: '#4D75AC',
+    fillColor: fillColor,
     fillOpacity: 0.7,
-    color: '#4D75AC',
+    color: fillColor,
     weight: 1.5,
   };
 

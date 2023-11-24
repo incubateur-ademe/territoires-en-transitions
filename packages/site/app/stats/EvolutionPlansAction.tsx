@@ -14,17 +14,22 @@ export function EvolutionPlansAction({
   const {data: collectivites} = useEvolutionFiches(
     'stats_locales_evolution_collectivite_avec_minimum_fiches',
     region,
-    department
+    department,
   );
   const {data: fiches} = useEvolutionFiches(
     'stats_locales_evolution_nombre_fiches',
     region,
-    department
+    department,
+  );
+  const {data: plans} = useEvolutionFiches(
+    'stats_evolution_nombre_plans',
+    region,
+    department,
   );
 
   return (
     <>
-      {collectivites && fiches && (
+      {collectivites && fiches && plans && (
         <ChartHead>
           <>
             Évolution de l&apos;utilisation des plans d&apos;action
@@ -32,9 +37,9 @@ export function EvolutionPlansAction({
             {collectivites.last} collectivité
             {collectivites.last !== 1 && 's'}
             {collectivites.last === 1 ? ' a ' : ' ont '}
-            créé des plans d’actions et {fiches.last} fiche
+            créé {plans.last} plan{plans.last !== 1 && 's'} d’actions et{' '}
+            {fiches.last} fiche
             {fiches.last !== 1 && 's'} actions
-            {fiches.last === 1 ? ' a été créée' : ' ont été créées'}
           </>
         </ChartHead>
       )}
@@ -54,6 +59,16 @@ export function EvolutionPlansAction({
             <ChartTitle>Nombre de fiches action créées</ChartTitle>
             <EvolutionFiches
               vue="stats_locales_evolution_nombre_fiches"
+              region={region}
+              department={department}
+            />
+          </div>
+        )}
+        {plans && region === '' && department === '' && (
+          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
+            <ChartTitle>Historique du nombre de plans</ChartTitle>
+            <EvolutionFiches
+              vue="stats_evolution_nombre_plans"
               region={region}
               department={department}
             />

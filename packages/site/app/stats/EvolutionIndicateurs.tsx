@@ -9,7 +9,7 @@ import {addLocalFilters} from './utils';
 
 const useCollectivitesAvecIndicateur = (
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) => {
   const date = new Date();
   const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-01`;
@@ -32,7 +32,7 @@ const useCollectivitesAvecIndicateur = (
       if (!data || !data.length) return null;
 
       return data[0].collectivites;
-    }
+    },
   );
 };
 
@@ -50,9 +50,8 @@ export function EvolutionIndicateurs({
   return (
     <>
       <ChartHead>
-        Évolution de l’utilisation des indicateurs
-        <br />
-        {data} collectivité{data !== 1 && 's'}
+        Évolution de l’utilisation des indicateurs - {data} collectivité
+        {data !== 1 && 's'}
         {data === 1 ? ' a' : ' ont'} renseigné des indicateurs
       </ChartHead>
       <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">

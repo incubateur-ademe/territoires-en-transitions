@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import Section from '@components/sections/Section';
@@ -8,10 +9,11 @@ import {EtatDesLieux} from './EtatDesLieux';
 import {EvolutionIndicateurs} from './EvolutionIndicateurs';
 import {EvolutionPlansAction} from './EvolutionPlansAction';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
-import {ChartHead, ChartTitle, SectionHead} from './headings';
+import {ChartTitle, SectionHead} from './headings';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 import dynamic from 'next/dynamic';
+import EvolutionCollectivitesLabellisees from './EvolutionCollectivitesLabellisees';
 
 /**
  * Affiche le contenu de la page statisques
@@ -68,22 +70,21 @@ const StatisticsDisplay = ({
           department={departmentCode}
         />
 
-        <ChartHead>
-          Progression de l’activation des EPCI à fiscalité propre
-          {nationalStats && ' sur le territoire national'}
-        </ChartHead>
         <div className="flex justify-around flex-wrap gap-y-20">
           {nationalStats && (
-            <div className="w-[420px] h-[420px] mt-14">
-              <CarteCollectivites
-                filtre={'engagees'}
-                etoiles={[1, 2, 3, 4, 5]}
-                forcedZoom={5.3}
-              />
+            <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
+              <ChartTitle>Collectivités engagées</ChartTitle>
+              <div className="w-[420px] h-[420px] mt-14">
+                <CarteCollectivites
+                  filtre={'engagees'}
+                  etoiles={[1, 2, 3, 4, 5]}
+                  forcedZoom={5.3}
+                />
+              </div>
             </div>
           )}
           <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
-            <ChartTitle>Progression globale</ChartTitle>
+            <ChartTitle>Progression globale de l'activation</ChartTitle>
             <CollectiviteActivesEtTotalParType
               region={regionCode}
               department={departmentCode}
@@ -193,6 +194,12 @@ const StatisticsDisplay = ({
             />
           </div>
         </div>
+        {!regionCode && !departmentCode && (
+          <EvolutionCollectivitesLabellisees
+            region={regionCode}
+            department={departmentCode}
+          />
+        )}
       </Section>
     </>
   );
