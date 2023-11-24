@@ -1,22 +1,15 @@
 'use client';
 
 import useSWR from 'swr';
-import {ResponsiveLine} from '@nivo/line';
 import {supabase} from '../initSupabase';
-import {
-  axisBottomAsDate,
-  axisLeftMiddleLabel,
-  colors,
-  formatInteger,
-  fromMonth,
-  theme,
-} from './shared';
+import {colors, formatInteger, fromMonth} from './shared';
 import {ChartTitle} from './headings';
 import {addLocalFilters} from './utils';
+import LineChart from '@components/charts/LineChart';
 
 function useValeursIndicateursRenseignees(
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) {
   return useSWR(
     `stats_locales_evolution_resultat_indicateur_referentiel-${codeRegion}-${codeDepartement}`,
@@ -32,7 +25,7 @@ function useValeursIndicateursRenseignees(
 
       if (error) {
         throw new Error(
-          'stats_locales_evolution_resultat_indicateur_referentiel'
+          'stats_locales_evolution_resultat_indicateur_referentiel',
         );
       }
       if (!data || !data.length) {
@@ -45,7 +38,7 @@ function useValeursIndicateursRenseignees(
           last: data[data.length - 1].indicateurs,
         },
       ];
-    }
+    },
   );
 }
 
@@ -68,35 +61,13 @@ export default function ValeursIndicateursRenseignees({
         <b>{formatInteger(data[0].last)}</b> valeurs d’indicateurs des
         référentiels renseignés
       </ChartTitle>
-      <div style={{height: '400px'}}>
-        <ResponsiveLine
-          colors={colors}
-          theme={theme}
+
+      <div className="h-[400px]">
+        <LineChart
           data={data}
-          // les marges servent aux légendes
-          margin={{top: 5, right: 5, bottom: 85, left: 60}}
-          xScale={{type: 'point'}}
-          yScale={{
-            type: 'linear',
-            min: 'auto',
-            max: 'auto',
-            stacked: false,
-          }}
-          // on interpole la ligne de façon bien passer sur les points
-          curve="monotoneX"
-          lineWidth={4}
-          pointSize={4}
-          yFormat={formatInteger}
-          axisBottom={axisBottomAsDate}
-          axisLeft={{
-            ...axisLeftMiddleLabel('Valeurs d’indicateurs renseignées'),
-            legendOffset: -55,
-          }}
-          pointBorderWidth={4}
-          pointBorderColor={{from: 'serieColor'}}
-          pointLabelYOffset={-12}
-          enableSlices="x"
-          animate={false}
+          customColors={colors}
+          axisLeftLabel="Valeurs d’indicateurs renseignées"
+          enablePoints
         />
       </div>
     </>

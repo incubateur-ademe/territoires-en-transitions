@@ -2,15 +2,9 @@
 
 import useSWR from 'swr';
 import {supabase} from '../initSupabase';
-import {ResponsiveLine} from '@nivo/line';
-import {
-  axisBottomAsDate,
-  axisLeftMiddleLabel,
-  colors,
-  fromMonth,
-  theme,
-} from './shared';
+import {colors, fromMonth} from './shared';
 import {addLocalFilters} from './utils';
+import LineChart from '@components/charts/LineChart';
 
 type Vue =
   | 'stats_locales_evolution_nombre_fiches'
@@ -35,7 +29,7 @@ const labels = {
 export function useEvolutionFiches(
   vue: Vue,
   codeRegion: string,
-  codeDepartement: string
+  codeDepartement: string,
 ) {
   return useSWR(`${vue}-${codeRegion}-${codeDepartement}`, async () => {
     let select = supabase.from(vue).select().gte('mois', fromMonth);
@@ -78,35 +72,12 @@ export default function EvolutionFiches({
   }
 
   return (
-    <div style={{height: 100 + '%', maxHeight: 400 + 'px'}}>
-      <ResponsiveLine
-        colors={colors}
-        theme={theme}
+    <div className="h-[400px]">
+      <LineChart
         data={data.evolution}
-        // les marges servent aux légendes
-        margin={{top: 5, right: 5, bottom: 55, left: 50}}
-        xScale={{type: 'point'}}
-        yScale={{
-          type: 'linear',
-          min: 'auto',
-          max: 'auto',
-          stacked: false,
-        }}
-        // on interpole la ligne de façon bien passer sur les points
-        curve="monotoneX"
-        lineWidth={4}
-        enablePoints={true}
-        yFormat=" >-.0f"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={axisBottomAsDate}
-        axisLeft={axisLeftMiddleLabel(legende[vue])}
-        pointColor={{theme: 'background'}}
-        pointBorderWidth={4}
-        pointBorderColor={{from: 'serieColor'}}
-        pointLabelYOffset={-12}
-        enableSlices="x"
-        animate={false}
+        customColors={colors}
+        axisLeftLabel={legende[vue]}
+        enablePoints
       />
     </div>
   );

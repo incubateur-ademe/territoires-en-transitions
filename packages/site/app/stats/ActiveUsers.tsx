@@ -1,21 +1,12 @@
 'use client';
 
 import useSWR from 'swr';
-import {ResponsiveLine} from '@nivo/line';
 import {supabase} from '../initSupabase';
-import {
-  axisBottomAsDate,
-  axisLeftMiddleLabel,
-  bottomLegend,
-  colors,
-  fromMonth,
-  getLabelsById,
-  getLegendData,
-  theme,
-} from './shared';
-import {SliceTooltip} from './SliceTooltip';
+import {colors, fromMonth} from './shared';
 import {addLocalFilters} from './utils';
 import {ChartHead} from './headings';
+import LineChart from '@components/charts/LineChart';
+import ChartWithLegend from '@components/charts/ChartWithLegend';
 
 export function useActiveUsers(codeRegion: string, codeDepartement: string) {
   return useSWR(
@@ -41,13 +32,11 @@ export function useActiveUsers(codeRegion: string, codeDepartement: string) {
         courant: data[data.length - 1],
         evolution: [
           {
-            id: 'utilisateurs',
-            label: 'Nouveaux utilisateurs',
+            id: 'Nouveaux utilisateurs',
             data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
           },
           {
-            id: 'total_utilisateurs',
-            label: 'Total utilisateurs',
+            id: 'Total utilisateurs',
             data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
           },
         ],
@@ -72,8 +61,6 @@ export default function ActiveUsers({
   }
 
   const {precedent, courant, evolution} = data;
-  const legendData = getLegendData(evolution);
-  const labelById = getLabelsById(evolution);
 
   return (
     <div>
@@ -85,44 +72,22 @@ export default function ActiveUsers({
         {precedent?.utilisateurs === 1 ? ' nous a' : ' nous ont'} rejoint le
         mois dernier
       </ChartHead>
-      <div className="h-[400px] mt-8 mb-12">
-        <ResponsiveLine
-          theme={theme}
-          colors={colors}
-          data={evolution}
-          // les marges servent aux légendes
-          margin={{top: 5, right: 5, bottom: 85, left: 50}}
-          xScale={{type: 'point'}}
-          yScale={{
-            type: 'linear',
-            min: 0,
-            max: 'auto',
-            stacked: false,
-          }}
-          // on interpole la ligne de façon bien passer sur les points
-          curve="monotoneX"
-          lineWidth={4}
-          pointSize={4}
-          yFormat=" >-.0f"
-          axisBottom={axisBottomAsDate}
-          axisLeft={axisLeftMiddleLabel("Nombre d'utilisateurs actifs")}
-          pointColor={{theme: 'background'}}
-          pointBorderWidth={4}
-          pointBorderColor={{from: 'serieColor'}}
-          pointLabelYOffset={-12}
-          enableSlices="x"
-          sliceTooltip={props => <SliceTooltip {...props} labels={labelById} />}
-          legends={[
-            {
-              ...bottomLegend,
-              data: legendData,
-              translateY: 85,
-              itemWidth: 180,
-            },
-          ]}
-          animate={false}
-        />
-      </div>
+
+      <ChartWithLegend
+        graph={colors => (
+          <LineChart
+            data={evolution}
+            customColors={colors}
+            axisLeftLabel="Nombre d'utilisateurs actifs"
+            enablePoints
+          />
+        )}
+        labels={evolution.map(e => e.id)}
+        customColors={colors}
+        containerClassname="mt-8 mb-12"
+        graphContainerClassname="h-[400px]"
+        legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+      />
     </div>
   );
 }
