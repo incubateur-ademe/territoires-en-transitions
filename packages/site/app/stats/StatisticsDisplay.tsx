@@ -85,10 +85,7 @@ const StatisticsDisplay = ({
           )}
           <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
             <ChartTitle>Progression globale de l'activation</ChartTitle>
-            <CollectiviteActivesEtTotalParType
-              region={regionCode}
-              department={departmentCode}
-            />
+            <CollectiviteActivesEtTotalParType />
           </div>
         </div>
       </Section>
