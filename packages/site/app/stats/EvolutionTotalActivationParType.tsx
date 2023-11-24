@@ -44,7 +44,7 @@ export function useEvolutionTotalActivation(
         courant: data[data.length - 1],
         evolution: [
           {
-            id: 'EPCI',
+            id: 'EPCI à fiscalité propre',
             data: data.map(d => ({x: d.mois, y: d.total_epci})),
           },
           {
@@ -54,6 +54,10 @@ export function useEvolutionTotalActivation(
           {
             id: 'Syndicats',
             data: data.map(d => ({x: d.mois, y: d.total_syndicat})),
+          },
+          {
+            id: 'Autres collectivités',
+            data: data.map(d => ({x: d.mois, y: d.total_autre})),
           },
         ],
       };
@@ -84,9 +88,9 @@ export default function EvolutionTotalActivationParType({
           ? 'collectivités activées'
           : 'collectivité activée'}{' '}
         dont {courant.total_epci} EPCI,&nbsp;
+        {courant.total_commune} commune{courant.total_commune !== 1 && 's'},{' '}
         {courant.total_syndicat} syndicat{courant.total_syndicat !== 1 && 's'}{' '}
-        et&nbsp;
-        {courant.total_commune} commune{courant.total_commune !== 1 && 's'}
+        et {courant.total_autre} autre{courant.total_autre !== 1 && 's'}
       </ChartHead>
 
       <ChartWithLegend

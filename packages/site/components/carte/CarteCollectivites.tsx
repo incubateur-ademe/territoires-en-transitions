@@ -20,12 +20,14 @@ type CarteCollectivitesProps = {
   filtre: FiltresLabels;
   etoiles: number[];
   forcedZoom?: number;
+  displayLabellisee?: boolean;
 };
 
 const CarteCollectivites = ({
   filtre,
   etoiles,
   forcedZoom,
+  displayLabellisee = false,
 }: CarteCollectivitesProps) => {
   const {data} = useCarteCollectivitesEngagees();
   const [localData, setLocalData] = useState(data);
@@ -108,7 +110,11 @@ const CarteCollectivites = ({
       {localData.collectivites
         .filter(c => !!c.geojson)
         .map(c => (
-          <CollectiviteFeature collectivite={c} key={c.collectivite_id} />
+          <CollectiviteFeature
+            collectivite={c}
+            key={c.collectivite_id}
+            displayLabellisee={displayLabellisee}
+          />
         ))}
     </CarteContainer>
   );

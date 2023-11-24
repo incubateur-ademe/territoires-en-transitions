@@ -34,17 +34,25 @@ function useCollectiviteActivesEtTotalParType(
       return {
         categories: [
           {
-            id: epcis.typologie + ' activés',
-            label: epcis.typologie + ' activés',
-            value: epcis.actives,
+            id: 'Collectivités actives',
+            value: data.reduce(
+              (total, currValue) => total + (currValue.actives ?? 0),
+              0,
+            ),
           },
           {
-            id: epcis.typologie + ' inactifs',
-            label: epcis.typologie + ' inactifs',
-            value: (epcis.total || 0) - (epcis.actives || 0),
+            id: 'Collectivités inactives',
+            value: data.reduce(
+              (total, currValue) =>
+                total + ((currValue.total ?? 0) - (currValue.actives ?? 0)),
+              0,
+            ),
           },
         ],
-        total: epcis.total,
+        total: data.reduce(
+          (total, currValue) => total + (currValue.total ?? 0),
+          0,
+        ),
       };
     },
   );
@@ -75,15 +83,15 @@ export default function CollectiviteActivesEtTotalParType({
           total={total || 0}
           rows={10}
           columns={10}
-          margin={{top: 0, right: 30, bottom: 10, left: 30}}
-          animate={false}
+          margin={{top: 10, right: 10, bottom: 10, left: 10}}
+          animate={true}
         />
       )}
       labels={categories.map(c => c.id)}
       customColors={['#889FC2', '#D9D9D9']}
       containerClassname="mt-6"
       graphContainerClassname="h-[400px]"
-      legendContainerClassname="md:grid-flow-col max-md:mx-6 max-md:flex"
+      legendContainerClassname="flex-col"
     />
   );
 }
