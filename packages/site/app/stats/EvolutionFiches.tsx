@@ -36,7 +36,7 @@ export function useEvolutionFiches(
   codeDepartement: string,
 ) {
   return useSWR(`${vue}-${codeRegion}-${codeDepartement}`, async () => {
-    let select = supabase.from(vue).select().gte('mois', fromMonth);
+    let select = supabase.from(vue).select().gte('mois', '2023-01-01');
 
     if (vue !== 'stats_evolution_nombre_plans') {
       select = addLocalFilters(select, codeDepartement, codeRegion);

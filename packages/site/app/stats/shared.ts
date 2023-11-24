@@ -12,7 +12,7 @@ import { Serie } from '@nivo/line';
 export const colors = ['#21AB8E', '#FFCA00', '#FF732C', '#FFB7AE', '#34BAB5'];
 const fontFamily = '"Marianne", arial, sans-serif';
 
-export const fromMonth = '2023-01-01';
+export const fromMonth = '2022-01-01';
 
 export const theme: Theme = {
   fontFamily,
