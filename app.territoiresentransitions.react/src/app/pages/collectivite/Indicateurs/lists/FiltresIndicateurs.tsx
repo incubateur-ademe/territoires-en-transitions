@@ -10,6 +10,7 @@ import FiltreServices from './FiltreServices';
 import FiltrePlans from './FiltrePlans';
 import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
+import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 //import FiltreType from './FiltreType';
 
 export type FiltresIndicateursProps = {
@@ -92,17 +93,28 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                 </FormField>
               )*/}
               {view === 'cae' && (
-                <Checkbox
-                  className="mt-2 font-medium"
-                  label="Participe au score"
-                  checked={participation_score?.includes('oui') || false}
-                  onCheck={() =>
-                    updateFilterParam(
-                      'participation_score',
-                      participation_score?.includes('oui') ? [] : ['oui']
-                    )
-                  }
-                />
+                <div className="flex flex-row">
+                  <Checkbox
+                    className="mt-2 font-medium"
+                    label="Participe au score"
+                    checked={participation_score?.includes('oui') || false}
+                    onCheck={() =>
+                      updateFilterParam(
+                        'participation_score',
+                        participation_score?.includes('oui') ? [] : ['oui']
+                      )
+                    }
+                  />
+                  <InfoTooltip
+                    className="pt-2"
+                    label={() => (
+                      <p>
+                        Indicateur dont les résultats conditionnent certains
+                        points dans le référentiel CAE
+                      </p>
+                    )}
+                  />
+                </div>
               )}
             </div>
           </>
