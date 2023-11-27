@@ -37,7 +37,7 @@ describe('objectToSearchParams', () => {
       },
       {prop1: 'p1', prop2: 'p2', prop3: 'p3'}
     );
-    expect(result).toEqual('p1=v1&p2=v2,v3&p3=v4');
+    expect(result).toEqual('p1=v1&p2=v2%2Cv3&p3=v4');
   });
 
   it('doit filtrer les paramètres non définis dans la table de correspondances', () => {
@@ -49,6 +49,6 @@ describe('objectToSearchParams', () => {
       },
       {prop1: 'p1', prop2: 'p2'}
     );
-    expect(result).toEqual('p1=v1&p2=v2,v3');
+    expect(result).toEqual('p1=v1&p2=v2%2Cv3');
   });
 });
