@@ -2,7 +2,8 @@
 
 BEGIN;
 
-create materialized view labellisation.export_score_audit_par_action as
+
+create materialized view labellisation.export_score_audit as
 with
     score_audit as (
         with
@@ -36,10 +37,9 @@ with
                          join private.convert_client_scores(pas.scores) ccs on true
                 where a.date_fin is not null
             )
-        -- Récupérer les scores d'audit
+            -- Récupérer les scores d'audit
         select a.collectivite_id,
                a.referentiel,
-               s.action_id,
                a.date_fin,
                case
                    when (s.point_potentiel)::float = 0.0
@@ -53,7 +53,19 @@ with
                    end as programme,
                (s.point_potentiel)::float as points
         from last_audit a
-                 join table_scores s on s.audit_id = a.id
+                 join table_scores s on s.audit_id = a.id and s.action_id::text = a.referentiel::text
+    ),
+    score_audit_eci as (
+        -- Score d'audit pour eci
+        select *
+        from score_audit
+        where referentiel = 'eci'
+    ),
+    score_audit_cae as (
+        -- Score d'audit pour cae
+        select *
+        from score_audit
+        where referentiel = 'cae'
     ),
     collectivite_active as (
         -- Récupérer les collectivités actives :
@@ -70,27 +82,29 @@ with
         group by named_collectivite.collectivite_id
     )
 -- Créer la vue
-select
-    cci.collectivite_id as collectivite_id,
-    cci.nom as collectivite,
-    cci.region_name as region,
-    cot is not null as cot,
-    nc.nom as signataire,
-    sa.action_id as action_id,
-    sa.realise as realise,
-    sa.programme as programme,
-    sa.points as points,
-    sa.date_fin as date_cloture
+select cci.nom as collectivite,
+       cci.region_name as region,
+       cot is not null as cot,
+       nc.nom as signataire,
+       sae.realise as realise_eci,
+       sae.programme as programme_eci,
+       sae.points as points_eci,
+       sae.date_fin as date_cloture_eci,
+       sac.realise as realise_cae,
+       sac.programme as programme_cae,
+       sac.points as points_cae,
+       sac.date_fin as date_cloture_cae
 from collectivite_carte_identite cci
          join collectivite_active ca on cci.collectivite_id = ca.collectivite_id
          left join cot on cci.collectivite_id = cot.collectivite_id
          left join named_collectivite nc on cot.signataire = nc.collectivite_id
-         left join score_audit sa on cci.collectivite_id = sa.collectivite_id
-ORDER BY cci.nom;
+         left join score_audit_eci sae on cci.collectivite_id = sae.collectivite_id
+         left join score_audit_cae sac on cci.collectivite_id = sac.collectivite_id
+order by cci.nom;
 
-create view public.export_score_audit_par_action as
+create view public.export_score_audit as
 select *
-from labellisation.export_score_audit_par_action
+from labellisation.export_score_audit
 where is_service_role();
 
 COMMIT;

@@ -2,34 +2,32 @@
 
 BEGIN;
 
-select collectivite,
+select
+       collectivite_id,
+       collectivite,
        region,
        cot,
        signataire,
-       realise_eci,
-       programme_eci,
-       points_eci,
-       date_cloture_eci,
-       realise_cae,
-       programme_cae,
-       points_cae,
-       date_cloture_cae
-from labellisation.export_score_audit
+       action_id,
+       realise,
+       programme,
+       points,
+       date_cloture
+from labellisation.export_score_audit_par_action
 where false;
 
-select collectivite,
-       region,
-       cot,
-       signataire,
-       realise_eci,
-       programme_eci,
-       points_eci,
-       date_cloture_eci,
-       realise_cae,
-       programme_cae,
-       points_cae,
-       date_cloture_cae
-from public.export_score_audit
+select
+    collectivite_id,
+    collectivite,
+    region,
+    cot,
+    signataire,
+    action_id,
+    realise,
+    programme,
+    points,
+    date_cloture
+from public.export_score_audit_par_action
 where false;
 
 ROLLBACK;
