@@ -38,53 +38,54 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
   } = filterParams;
 
   return (
-    <AccordionControlled
-      id="filtres-indicateurs"
-      className="mb-8"
-      titre="Filtrer"
-      html={
-        isOpen && (
-          <>
-            <FormField label="Nom ou description">
-              <UiSearchBar
-                debouncePeriod={500}
-                placeholder=""
-                value={text?.[0] || ''}
-                search={value => updateFilterParam('text', [value])}
-              />
-            </FormField>
-            <FormField label="Thématique">
-              <FiltreThematiques
-                values={thematiques}
-                onSelect={values => updateFilterParam('thematiques', values)}
-              />
-            </FormField>
-            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-0">
-              <FormField label="Personne pilote">
-                <FiltrePersonnes
-                  values={pilotes}
-                  onSelect={values => updateFilterParam('pilotes', values)}
+    <>
+      <FormField label="Filtrer par nom ou description">
+        <UiSearchBar
+          debouncePeriod={500}
+          placeholder=""
+          value={text?.[0] || ''}
+          search={value => updateFilterParam('text', [value])}
+        />
+      </FormField>
+      <AccordionControlled
+        id="filtres-indicateurs"
+        className="mb-8"
+        titre="Filtres complémentaires"
+        html={
+          isOpen && (
+            <>
+              <FormField label="Thématique">
+                <FiltreThematiques
+                  values={thematiques}
+                  onSelect={values => updateFilterParam('thematiques', values)}
                 />
               </FormField>
-              <FormField label="Direction ou service pilote">
-                <FiltreServices
-                  values={services}
-                  onSelect={values => updateFilterParam('services', values)}
-                />
-              </FormField>
-              <FormField label="Plan d'action">
-                <FiltrePlans
-                  values={plans}
-                  onSelect={values => updateFilterParam('plans', values)}
-                />
-              </FormField>
-              <FormField label="Indicateur complété">
-                <FiltreComplet
-                  values={rempli}
-                  onSelect={values => updateFilterParam('rempli', values)}
-                />
-              </FormField>
-              {/*view !== 'perso' && (
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-0">
+                <FormField label="Personne pilote">
+                  <FiltrePersonnes
+                    values={pilotes}
+                    onSelect={values => updateFilterParam('pilotes', values)}
+                  />
+                </FormField>
+                <FormField label="Direction ou service pilote">
+                  <FiltreServices
+                    values={services}
+                    onSelect={values => updateFilterParam('services', values)}
+                  />
+                </FormField>
+                <FormField label="Plan d'action">
+                  <FiltrePlans
+                    values={plans}
+                    onSelect={values => updateFilterParam('plans', values)}
+                  />
+                </FormField>
+                <FormField label="Indicateur complété">
+                  <FiltreComplet
+                    values={rempli}
+                    onSelect={values => updateFilterParam('rempli', values)}
+                  />
+                </FormField>
+                {/*view !== 'perso' && (
                 <FormField label="Type">
                   <FiltreType
                     values={type}
@@ -92,36 +93,37 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                   />
                 </FormField>
               )*/}
-              {view === 'cae' && (
-                <div className="flex flex-row">
-                  <Checkbox
-                    className="mt-2 font-medium"
-                    label="Participe au score"
-                    checked={participation_score?.includes('oui') || false}
-                    onCheck={() =>
-                      updateFilterParam(
-                        'participation_score',
-                        participation_score?.includes('oui') ? [] : ['oui']
-                      )
-                    }
-                  />
-                  <InfoTooltip
-                    className="pt-2"
-                    label={() => (
-                      <p>
-                        Indicateur dont les résultats conditionnent certains
-                        points dans le référentiel CAE
-                      </p>
-                    )}
-                  />
-                </div>
-              )}
-            </div>
-          </>
-        )
-      }
-      expanded={isOpen}
-      setExpanded={setIsOpen}
-    />
+                {view === 'cae' && (
+                  <div className="flex flex-row">
+                    <Checkbox
+                      className="mt-2 font-medium"
+                      label="Participe au score"
+                      checked={participation_score?.includes('oui') || false}
+                      onCheck={() =>
+                        updateFilterParam(
+                          'participation_score',
+                          participation_score?.includes('oui') ? [] : ['oui']
+                        )
+                      }
+                    />
+                    <InfoTooltip
+                      className="pt-2"
+                      label={() => (
+                        <p>
+                          Indicateur dont les résultats conditionnent certains
+                          points dans le référentiel CAE
+                        </p>
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
+          )
+        }
+        expanded={isOpen}
+        setExpanded={setIsOpen}
+      />
+    </>
   );
 };
