@@ -248,3 +248,85 @@ Deno.test('Services pilotes pour les indicateurs personnalisés.', async () => {
 
   await signOut();
 });
+
+const indicateursParPlan = (planId: number) =>
+  supabase
+    .from('indicateur_definitions')
+    .select('indicateur_id, axes!inner()')
+    .eq('collectivite_id', 1)
+    .eq('axes.plan', planId)
+    .returns<{ indicateur_id: string }[]>();
+
+const indicateursParFichesNonClassees = () =>
+  supabase
+    .from('indicateur_definitions')
+    .select('indicateur_id, fiches_non_classees!inner(fiche_id)')
+    .eq('collectivite_id', 1)
+    .returns<
+      { indicateur_id: string; fiches_non_classees: { fiche_id: number }[] }[]
+    >();
+
+Deno.test("Indicateurs attachés à un plan d'action", async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // aucun indicateurs liés au plan #1
+  const { data: data1 } = await indicateursParPlan(1);
+  assertEquals(data1?.length, 0);
+
+  // ni aux fiches non classées
+  const { data: fichesNonClassees } = await indicateursParFichesNonClassees();
+  assertEquals(fichesNonClassees?.length, 0);
+
+  // insère une relation entre l'indicateur 'cae_7' et la fiche 6 (du plan 1)
+  const upsert = await supabase.from('fiche_action_indicateur').insert({
+    indicateur_personnalise_id: null,
+    indicateur_id: 'cae_7',
+    fiche_id: 6,
+  });
+  assertEquals(upsert.status, 201);
+
+  // 1 indicateur lié au plan #1
+  const { data: data2 } = await indicateursParPlan(1);
+  assertEquals(data2?.length, 1);
+  assertEquals(data2?.[0].indicateur_id, 'cae_7');
+
+  // et toujours aucun aux fiches non classées
+  const { data: fichesNonClassees2 } = await indicateursParFichesNonClassees();
+  assertEquals(fichesNonClassees2?.length, 0);
+
+  await signOut();
+});
+
+Deno.test('Indicateurs attachés à une fiche action "non classée"', async () => {
+  await testReset();
+  await signIn('yolododo');
+
+  // aucun indicateurs aux fiches non classées
+  const { data: fichesNonClassees } = await indicateursParFichesNonClassees();
+  assertEquals(fichesNonClassees?.length, 0);
+
+  // insère une relation entre l'indicateur 'cae_7' et la fiche 13 (non classée)
+  const upsert = await supabase.from('fiche_action_indicateur').insert({
+    indicateur_personnalise_id: null,
+    indicateur_id: 'cae_7',
+    fiche_id: 13,
+  });
+  assertEquals(upsert.status, 201);
+
+  // insère une relation entre l'indicateur 'cae_7' et la fiche 6 (du plan 1)
+  const upsert2 = await supabase.from('fiche_action_indicateur').insert({
+    indicateur_personnalise_id: null,
+    indicateur_id: 'cae_7',
+    fiche_id: 6,
+  });
+  assertEquals(upsert2.status, 201);
+
+  // 1 indicateur lié aux fiches non classées
+  const { data: data2 } = await indicateursParFichesNonClassees();
+  assertEquals(data2?.length, 1);
+  assertEquals(data2?.[0].indicateur_id, 'cae_7');
+  assertEquals(data2?.[0].fiches_non_classees?.[0]?.fiche_id, 13);
+
+  await signOut();
+});
