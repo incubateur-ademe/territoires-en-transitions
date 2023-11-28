@@ -255,7 +255,8 @@ create policy allow_update on indicateur_service_tag
     for update using (private.can_write(indicateur_service_tag));
 create policy allow_delete on indicateur_service_tag
     for delete using (private.can_write(indicateur_service_tag));
-alter table indicateur_service_tag enable row level security;
+alter table indicateur_service_tag
+    enable row level security;
 
 -- - on supprime la table désormais redondante
 drop table indicateur_personnalise_service_tag;
@@ -283,22 +284,29 @@ end;
 comment on function private.get_personne(indicateur_pilote) is
     'Renvoie la personne pilote d''un indicateur.';
 
+-- Triggers pour les tables de passages
 create trigger rewrite_indicateur_id
     before insert or update
     on indicateur_pilote
     for each row
 execute procedure rewrite_indicateur_id();
+comment on trigger rewrite_indicateur_id on indicateur_pilote is
+    'Remplace les `indicateur_id` des indicateurs `sans valeur` de la même manière que pour les valeurs';
 
 create trigger rewrite_indicateur_id
     before insert or update
     on indicateur_service_tag
     for each row
 execute procedure rewrite_indicateur_id();
+comment on trigger rewrite_indicateur_id on indicateur_service_tag is
+    'Remplace les `indicateur_id` des indicateurs `sans valeur` de la même manière que pour les valeurs';
 
 create trigger rewrite_indicateur_id
     before insert or update
     on fiche_action_indicateur
     for each row
 execute procedure rewrite_indicateur_id();
+comment on trigger rewrite_indicateur_id on indicateur_service_tag is
+    'Remplace les `indicateur_id` des indicateurs `sans valeur` de la même manière que pour les valeurs';
 
 COMMIT;
