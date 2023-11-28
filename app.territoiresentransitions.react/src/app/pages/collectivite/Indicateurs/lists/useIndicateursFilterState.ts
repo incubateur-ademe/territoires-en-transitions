@@ -2,6 +2,7 @@ import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {Filters} from './useFilteredIndicateurDefinitions';
 import {Enums} from 'types/alias';
+import {ITEM_FICHES_NON_CLASSEES} from './FiltrePlans';
 
 // valeurs par défaut des filtres
 type TFilters = {
@@ -65,13 +66,20 @@ export const useIndicateursFilterState = () => {
   // on sépare les identifiants des tags et les id. utilisateurs
   const {tag_ids, user_ids} = splitTagsAndUsers(filterParams.pilotes);
 
+  // cas particulier : le choix "fiches non classées" dans le filtre par plan est exclusif
+  const filtreFichesNonClassees =
+    filterParams.plans?.includes(ITEM_FICHES_NON_CLASSEES) || undefined;
+
   // extrait les paramètres au format attendu par la requête de filtrage
   const filters: Filters = {
     thematique_ids: stringsToInts(filterParams.thematiques),
     pilote_user_ids: user_ids,
     pilote_tag_ids: stringsToInts(tag_ids),
     service_ids: stringsToInts(filterParams.services),
-    plan_ids: stringsToInts(filterParams.plans),
+    plan_ids: filtreFichesNonClassees
+      ? undefined
+      : stringsToInts(filterParams.plans),
+    fiches_non_classees: filtreFichesNonClassees,
     rempli:
       (filterParams?.rempli?.length || 0) !== 1
         ? undefined
