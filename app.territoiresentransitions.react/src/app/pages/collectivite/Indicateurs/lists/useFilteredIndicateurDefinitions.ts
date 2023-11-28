@@ -52,6 +52,7 @@ export type Filters = {
   type?: Enums<'indicateur_referentiel_type'>[];
   participation_score?: boolean;
   rempli?: boolean;
+  fiches_non_classees?: boolean;
   text?: string;
 };
 
@@ -63,6 +64,7 @@ const filterParts: {[key in keyof Filters]?: string} = {
   pilote_tag_ids: 'pilotes!inner()',
   service_ids: 'services!inner()',
   action_id: 'indicateur_action!inner()',
+  fiches_non_classees: 'fiches_non_classees!inner()',
 };
 
 /**
