@@ -43,6 +43,23 @@ comment on function axes(indicateur_definitions) is
     'Les axes (plans d''action) associés à un indicateur.';
 
 create function
+    fiches_non_classees(indicateur_definitions)
+    returns setof fiche_action_indicateur
+    language sql
+    stable
+begin
+    atomic
+    select fai
+    from fiche_action_indicateur fai
+        join fiche_action fa on fa.id = fai.fiche_id and fa.collectivite_id = $1.collectivite_id
+    where not exists (select from fiche_action_axe faa where faa.fiche_id = fai.fiche_id)
+        and (fai.indicateur_id = $1.indicateur_id
+        or fai.indicateur_personnalise_id = $1.indicateur_perso_id);
+end;
+comment on function fiches_non_classees(indicateur_definitions) is
+    'Les fiches non classées (sans plan d''action) associées à un indicateur.';
+
+create function
     pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql

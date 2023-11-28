@@ -4,6 +4,7 @@ BEGIN;
 
 drop function thematiques(indicateur_definitions);
 drop function axes(indicateur_definitions);
+drop function fiches_non_classees(indicateur_definitions);
 drop function pilotes(indicateur_definitions);
 drop function services(indicateur_definitions);
 drop function definition_referentiel(indicateur_definitions);
