@@ -283,4 +283,22 @@ end;
 comment on function private.get_personne(indicateur_pilote) is
     'Renvoie la personne pilote d''un indicateur.';
 
+create trigger rewrite_indicateur_id
+    before insert or update
+    on indicateur_pilote
+    for each row
+execute procedure rewrite_indicateur_id();
+
+create trigger rewrite_indicateur_id
+    before insert or update
+    on indicateur_service_tag
+    for each row
+execute procedure rewrite_indicateur_id();
+
+create trigger rewrite_indicateur_id
+    before insert or update
+    on fiche_action_indicateur
+    for each row
+execute procedure rewrite_indicateur_id();
+
 COMMIT;

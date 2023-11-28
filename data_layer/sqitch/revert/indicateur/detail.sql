@@ -2,6 +2,10 @@
 
 BEGIN;
 
+drop trigger rewrite_indicateur_id on indicateur_pilote;
+drop trigger rewrite_indicateur_id on indicateur_service_tag;
+drop trigger rewrite_indicateur_id on fiche_action_indicateur;
+
 drop function private.get_personne(indicateur_pilote);
 
 drop policy allow_insert on indicateur_pilote;
