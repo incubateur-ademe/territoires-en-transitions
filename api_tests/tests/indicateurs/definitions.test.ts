@@ -129,7 +129,7 @@ Deno.test('Un indicateur prédéfini et ses enfants', async () => {
 
   const query = supabase
     .from('indicateur_definitions')
-    .select('id:indicateur_id, nom, enfants(id)')
+    .select('id:indicateur_id, nom, enfants(indicateur_id)')
     .eq('indicateur_id', 'cae_1.a')
     .eq('collectivite_id', 1);
 
