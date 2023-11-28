@@ -3,6 +3,7 @@
 BEGIN;
 
 alter type stats.amplitude_content_event add attribute collectivite_id int;
+alter type stats.amplitude_event add attribute groups jsonb;
 
 create or replace function
     stats.amplitude_build_crud_events(
@@ -33,17 +34,17 @@ begin
                    'auditeur',
                    ((ev).user_id in (table auditeurs))
            )                                              as user_properties,
+           (select v.name
+            from stats.release_version v
+            where time < (ev).time
+            order by time desc
+            limit 1)                                      as app_version,
            jsonb_build_object(
                    'collectivite_id',
                    (ev).collectivite_id,
                    'collectivite_nom',
                    (select nom from named_collectivite nc where collectivite_id = (ev).collectivite_id)
-           )                                              as groups,
-           (select v.name
-            from stats.release_version v
-            where time < (ev).time
-            order by time desc
-            limit 1)                                      as app_version
+           )                                              as groups
 
     from (select unnest(events) as ev) as e
     where (ev).user_id is not null

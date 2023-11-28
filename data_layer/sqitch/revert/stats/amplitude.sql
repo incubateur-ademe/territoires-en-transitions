@@ -3,6 +3,7 @@
 BEGIN;
 
 alter type stats.amplitude_content_event drop attribute collectivite_id;
+alter type stats.amplitude_event drop attribute groups;
 
 create or replace function
     stats.amplitude_build_crud_events(
