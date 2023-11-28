@@ -26,6 +26,21 @@ comment on function thematiques(indicateur_definitions) is
     'Les thématiques associées à un indicateur.';
 
 create function
+    definition_referentiel(indicateur_definitions)
+    returns setof indicateur_definition
+    rows 1
+    language sql
+    stable
+begin
+    atomic
+    select ist
+    from indicateur_definition ist
+    where ist.id = $1.indicateur_id;
+end;
+comment on function definition_referentiel(indicateur_definitions) is
+    'La définition de l''indicateur provenant du référentiel.';
+
+create or replace function
     axes(indicateur_definitions)
     returns setof axe
     language sql
@@ -34,10 +49,21 @@ begin
     atomic
     select axe
     from fiche_action_indicateur fai
+             join definition_referentiel($1) def on true
              join fiche_action_axe faa using (fiche_id)
              join axe on faa.axe_id = axe.id
-    where fai.indicateur_id = $1.indicateur_id
-       or fai.indicateur_personnalise_id = $1.indicateur_perso_id;
+    where
+       -- indicateur prédéfini
+        ($1.indicateur_id is not null
+            and fai.indicateur_id = $1.indicateur_id
+            and collectivite_id = $1.collectivite_id)
+       -- indicateur prédéfini dont les valeurs sont celles d'un autre
+       or ($1.indicateur_id is not null
+        and fai.indicateur_id = def.valeur_indicateur
+        and collectivite_id = $1.collectivite_id)
+       -- indicateur perso
+       or ($1.indicateur_perso_id is not null
+        and fai.indicateur_personnalise_id = $1.indicateur_perso_id);
 end;
 comment on function axes(indicateur_definitions) is
     'Les axes (plans d''action) associés à un indicateur.';
@@ -51,27 +77,41 @@ begin
     atomic
     select fai
     from fiche_action_indicateur fai
-        join fiche_action fa on fa.id = fai.fiche_id and fa.collectivite_id = $1.collectivite_id
+             join fiche_action fa on fa.id = fai.fiche_id and fa.collectivite_id = $1.collectivite_id
+             join lateral (select * from definition_referentiel($1)) def on true
     where not exists (select from fiche_action_axe faa where faa.fiche_id = fai.fiche_id)
-        and (fai.indicateur_id = $1.indicateur_id
-        or fai.indicateur_personnalise_id = $1.indicateur_perso_id);
+      and (
+        -- indicateur prédéfini
+                fai.indicateur_id = $1.indicateur_id
+            -- indicateur perso
+            or fai.indicateur_personnalise_id = $1.indicateur_perso_id
+            -- indicateur prédéfini dont les valeurs sont celles d'un autre
+            or def.valeur_indicateur = $1.indicateur_id
+        );
 end;
 comment on function fiches_non_classees(indicateur_definitions) is
     'Les fiches non classées (sans plan d''action) associées à un indicateur.';
 
-create function
+create or replace function
     pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
     stable
 begin
     atomic
-    -- indicateur prédéfini
     select ip
     from indicateur_pilote ip
-    where ($1.indicateur_id is not null
-        and ip.indicateur_id = $1.indicateur_id
+             join definition_referentiel($1) def on true
+    where
+       -- indicateur prédéfini
+        ($1.indicateur_id is not null
+            and ip.indicateur_id = $1.indicateur_id
+            and collectivite_id = $1.collectivite_id)
+       -- indicateur prédéfini dont les valeurs sont celles d'un autre
+       or ($1.indicateur_id is not null
+        and ip.indicateur_id = def.valeur_indicateur
         and collectivite_id = $1.collectivite_id)
+       -- indicateur perso
        or ($1.indicateur_perso_id is not null
         and ip.indicateur_perso_id = $1.indicateur_perso_id);
 end;
@@ -91,7 +131,7 @@ end;
 comment on function personne(indicateur_pilote) is
     'Une personne associée comme personne pilote d''un indicateur.';
 
-create function
+create or replace function
     services(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
@@ -100,26 +140,23 @@ begin
     atomic
     select ist
     from indicateur_service_tag ist
-    where ist.indicateur_id = $1.indicateur_id
-       or ist.indicateur_perso_id = $1.indicateur_perso_id;
+             join definition_referentiel($1) def on true
+    where
+       -- indicateur prédéfini
+        ($1.indicateur_id is not null
+            and ist.indicateur_id = $1.indicateur_id
+            and collectivite_id = $1.collectivite_id)
+       -- indicateur prédéfini dont les valeurs sont celles d'un autre
+       or ($1.indicateur_id is not null
+        and ist.indicateur_id = def.valeur_indicateur
+        and collectivite_id = $1.collectivite_id)
+       -- indicateur perso
+       or ($1.indicateur_perso_id is not null
+        and ist.indicateur_perso_id = $1.indicateur_perso_id);
 end;
 comment on function services(indicateur_definitions) is
     'Les services associés à un indicateur.';
 
-create function
-    definition_referentiel(indicateur_definitions)
-    returns setof indicateur_definition
-    rows 1
-    language sql
-    stable
-begin
-    atomic
-    select ist
-    from indicateur_definition ist
-    where ist.id = $1.indicateur_id;
-end;
-comment on function definition_referentiel(indicateur_definitions) is
-    'La définition de l''indicateur provenant du référentiel.';
 
 create function
     definition_perso(indicateur_definitions)
