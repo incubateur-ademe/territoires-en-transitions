@@ -157,8 +157,15 @@ const fetchFilteredIndicateurs = (
   }
 
   // uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
-  // une recherche par id)
-  if (subset !== 'crte' && subset !== 'perso' && !searchById) {
+  // une recherche par id ou par "participation au score")
+  const filtreParParticipationAuScore =
+    subset === 'cae' && filters.participation_score !== undefined;
+  if (
+    subset !== 'crte' &&
+    subset !== 'perso' &&
+    !searchById &&
+    !filtreParParticipationAuScore
+  ) {
     query.is('definition_referentiel.parent', null);
   }
 
@@ -188,10 +195,10 @@ const fetchFilteredIndicateurs = (
   }
 
   // participation au score CAE
-  if (subset === 'cae' && filters.participation_score !== undefined) {
+  if (filtreParParticipationAuScore) {
     query.is(
       'definition_referentiel.participation_score',
-      filters.participation_score
+      filters.participation_score!
     );
   }
 
