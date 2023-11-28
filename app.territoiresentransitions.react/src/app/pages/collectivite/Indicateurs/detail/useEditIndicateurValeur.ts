@@ -39,20 +39,12 @@ const tableCommentaire = (type: TypeValeur, isPerso?: boolean) =>
   isPerso
     ? `indicateur_perso_${type}_commentaire`
     : `indicateur_${type}_commentaire`;
-// avec quel id écrire (cas d'un indicateur lié à un autre)
-const getIndicateurId = (definition: TIndicateurDefinition) => {
-  const {id, isPerso} = definition;
-  if (!isPerso) {
-    return (definition as TIndicateurPredefini).valeur_indicateur || id;
-  }
-  return id;
-};
 
 /** Met à jour la valeur d'un indicateur */
 const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
   const {collectivite_id, definition, type} = args;
   const {isPerso} = definition;
-  const indicateur_id = getIndicateurId(definition);
+  const indicateur_id = definition.id;
 
   return useMutation({
     mutationKey: 'upsert_indicateur_valeur',
@@ -85,7 +77,7 @@ const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 const useUpsertIndicateurCommentaire = (args: TEditIndicateurValeurArgs) => {
   const {collectivite_id, definition, type} = args;
   const {isPerso} = definition;
-  const indicateur_id = getIndicateurId(definition);
+  const indicateur_id = definition.id;
 
   return useMutation({
     mutationKey: 'upsert_indicateur_commentaire',
@@ -117,7 +109,7 @@ const useUpsertIndicateurCommentaire = (args: TEditIndicateurValeurArgs) => {
 const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
   const {collectivite_id, definition, type} = args;
   const {isPerso} = definition;
-  const indicateur_id = getIndicateurId(definition);
+  const indicateur_id = definition.id;
 
   return useMutation({
     mutationKey: 'delete_indicateur_valeur',
