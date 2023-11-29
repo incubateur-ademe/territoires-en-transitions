@@ -60,7 +60,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                   onSelect={values => updateFilterParam('thematiques', values)}
                 />
               </FormField>
-              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-0">
+              <div className="grid lg:grid-cols-2 gap-x-8 gap-y-0">
                 <FormField label="Personne pilote">
                   <FiltrePersonnes
                     values={pilotes}
