@@ -153,7 +153,6 @@ const fetchFilteredIndicateurs = (
           .filter(s => !!s)
           .map(s => `'${s}':*`)
           .join(' & ')
-        //{config: 'fr'}
       );
     }
   }
