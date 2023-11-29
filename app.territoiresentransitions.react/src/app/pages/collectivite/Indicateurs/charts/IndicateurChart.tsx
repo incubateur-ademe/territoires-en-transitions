@@ -163,6 +163,7 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
 
   return noDataAvailable ? (
     <CardNoData
+      className={props.className}
       definition={chartInfo}
       variant={variant}
       isReadonly={isReadonly}
