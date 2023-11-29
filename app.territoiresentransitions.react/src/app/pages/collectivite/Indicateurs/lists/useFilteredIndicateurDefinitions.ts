@@ -158,16 +158,27 @@ const fetchFilteredIndicateurs = (
     }
   }
 
-  // uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
-  // une recherche par id ou par "participation au score")
-  const filtreParParticipationAuScore =
-    subset === 'cae' && filters.participation_score !== undefined;
-  if (
+  // détermine certains des filtres complémentaires à appliquer :
+  // si une de ces conditions est vraie alors le filtre "parent uniquement" sera désactivé
+  const filtrerPar = {
+    participationAuScore:
+      subset === 'cae' && filters.participation_score !== undefined,
+    planAction: !!filters.plan_ids?.length,
+    service: !!filters.service_ids?.length,
+    personne:
+      !!filters.pilote_user_ids?.length || !!filters.pilote_tag_ids?.length,
+    fichesNonClassees: !!filters.fiches_non_classees,
+  };
+
+  // sélectionne uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
+  // une recherche par id ou si un des filtres complémentaires est actif)
+  const filtrerParParent =
     subset !== 'crte' &&
     subset !== 'perso' &&
     !searchById &&
-    !filtreParParticipationAuScore
-  ) {
+    !Object.values(filtrerPar).find(v => !!v);
+
+  if (filtrerParParent) {
     query.is('definition_referentiel.parent', null);
   }
 
@@ -176,19 +187,19 @@ const fetchFilteredIndicateurs = (
     query.in('thematiques.id', filters.thematique_ids);
   }
 
-  // par action du référentiel
+  // par action du référentiel (ne remonte que les parents)
   if (filters.action_id) {
     query.in('indicateur_action.action_id', [filters.action_id]);
   }
 
   // par plan
-  if (filters.plan_ids?.length) {
-    query.in('axes.plan', filters.plan_ids);
+  if (filtrerPar.planAction) {
+    query.in('axes.plan', filters.plan_ids!);
   }
 
   // par service pilote
-  if (filters.service_ids?.length) {
-    query.in('services.service_tag_id', filters.service_ids);
+  if (filtrerPar.service) {
+    query.in('services.service_tag_id', filters.service_ids!);
   }
 
   // par type
@@ -197,7 +208,7 @@ const fetchFilteredIndicateurs = (
   }
 
   // participation au score CAE
-  if (filtreParParticipationAuScore) {
+  if (filtrerPar.participationAuScore) {
     query.is(
       'definition_referentiel.participation_score',
       filters.participation_score!
@@ -206,11 +217,11 @@ const fetchFilteredIndicateurs = (
 
   // filtre les indicateurs complétés / à compléter
   if (filters.rempli !== undefined) {
-    query.is('rempli', filters.rempli);
+    query.is('rempli', filters.rempli!);
   }
 
   // par personne pilote
-  if (filters.pilote_user_ids?.length || filters.pilote_tag_ids?.length) {
+  if (filtrerPar.personne) {
     const filterParams: string[] = [];
 
     // cumule les user_ids
