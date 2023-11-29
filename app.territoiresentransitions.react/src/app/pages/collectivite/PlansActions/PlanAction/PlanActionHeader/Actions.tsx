@@ -44,7 +44,10 @@ const Actions = ({
   return (
     <div className="flex items-center gap-3 ml-auto">
       <ModifierPlanModale axe={axe} isAxePage={isAxePage}>
-        <button className="py-1.5 px-4 text-sm text-principale-7 font-bold bg-white rounded-lg">
+        <button
+          data-test="ModifierPlanBouton"
+          className="py-1.5 px-4 text-sm text-principale-7 font-bold bg-white rounded-lg"
+        >
           Modifier
         </button>
       </ModifierPlanModale>

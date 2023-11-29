@@ -41,6 +41,7 @@ const ModifierPlanModale = ({children, axe, isAxePage}: Props) => {
             >
               <Form>
                 <FormikInput
+                  data-test="PlanNomInput"
                   name="titre"
                   label="Nom du plan d'action"
                   placeholder="Sans titre"

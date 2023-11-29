@@ -87,6 +87,12 @@ When(/je crée le plan "([^"]*)"/, titre => {
   cy.get('button').contains('Valider').click();
 });
 
+When(/je renomme le plan en "([^"]*)"/, titre => {
+  cy.get('[data-test=ModifierPlanBouton]').click();
+  cy.get('[data-test=PlanNomInput]').clear().type(titre);
+  cy.get('button').contains('Valider').click();
+});
+
 When(
   /le nom du plan d'action est changé en "([^"]*)" dans la navigation/,
   titre => {
