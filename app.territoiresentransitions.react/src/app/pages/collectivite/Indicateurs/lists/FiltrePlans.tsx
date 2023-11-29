@@ -4,6 +4,7 @@ import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {usePlansActionsListe} from '../../PlansActions/PlanAction/data/usePlansActionsListe';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {generateTitle} from '../../PlansActions/FicheAction/data/utils';
+import {useFichesNonClasseesCount} from '../../PlansActions/FicheAction/data/useFichesNonClasseesCount';
 
 export const ITEM_FICHES_NON_CLASSEES = 'nc';
 
@@ -15,18 +16,27 @@ type Props = {
 const FiltrePlans = ({values, onSelect}: Props) => {
   const collectivite_id = useCollectiviteId();
   const data = usePlansActionsListe(collectivite_id!);
+  const {data: fichesNonClasseesCount} =
+    useFichesNonClasseesCount(collectivite_id);
   const plans = data?.plans;
 
   const options: TOption[] = plans
     ? [
         {value: ITEM_ALL, label: 'Tous'},
-        {value: ITEM_FICHES_NON_CLASSEES, label: 'Fiches non classées'},
         ...plans.map(plan => ({
           value: `${plan.id}`,
           label: generateTitle(plan.nom),
         })),
       ]
     : [];
+
+  // insère l'option "fiches non classées" si il y en a
+  if (fichesNonClasseesCount) {
+    options.splice(1, 0, {
+      value: ITEM_FICHES_NON_CLASSEES,
+      label: 'Fiches non classées',
+    });
+  }
 
   const handleSelect = (newValues: string[]) => {
     // supprime le choix ITEM_FICHES_NON_CLASSEES quand on sélectionne d'autres options
