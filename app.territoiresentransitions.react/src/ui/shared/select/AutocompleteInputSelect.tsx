@@ -47,7 +47,7 @@ const AutocompleteInputSelect = <T extends string>({
     <DropdownFloater
       containerWidthMatchButton={containerWidthMatchButton}
       placement={placement}
-      toggle={false}
+      toggle={true}
       enterToToggle={false}
       disabled={disabled}
       render={() => (
