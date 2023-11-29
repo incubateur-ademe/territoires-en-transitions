@@ -71,7 +71,13 @@ export const searchParamsToObject = <T extends TParams>(
       ret[shortNameToName[key]] = value
         ?.split(',')
         ?.filter(s => s !== '')
-        .map(s => decodeURIComponent(s));
+        .map(s => {
+          try {
+            return decodeURIComponent(s);
+          } catch (e) {
+            return s;
+          }
+        });
     }
   });
   return {...initialParams, ...ret};
