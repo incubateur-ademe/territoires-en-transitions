@@ -106,8 +106,12 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Et que je crée le plan "Plan test"
+    Et que je crée le plan "Plan testy"
     Alors le "Plan action" est visible
+    Alors le nom du plan d'action est changé en "Plan testy" dans la navigation
+
+    # renommer un plan
+    Quand je renomme le plan en "Plan test"
     Alors le nom du plan d'action est changé en "Plan test" dans la navigation
 
     # ajouter une fiche au plan d'action
