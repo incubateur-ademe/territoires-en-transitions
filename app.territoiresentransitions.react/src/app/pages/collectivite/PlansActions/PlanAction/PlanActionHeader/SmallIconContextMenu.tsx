@@ -1,8 +1,7 @@
-import classNames from 'classnames';
 import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
-import {TOption} from './commons';
-import ContextMenu from './ContextMenu';
-import {MenuTriggerButton} from './MenuTriggerButton';
+import {TOption} from '../../../../../../ui/shared/select/commons';
+import ContextMenu from '../../../../../../ui/shared/select/ContextMenu';
+import {MenuTriggerButton} from '../../../../../../ui/shared/select/MenuTriggerButton';
 
 type TOptionWithIcon = TOption & {icon?: string};
 
@@ -37,10 +36,7 @@ const SmallIconContextMenu = ({
   return (
     <ContextMenu dataTest={dataTest} options={options} onSelect={onSelect}>
       <MenuTriggerButton
-        className={classNames(
-          'border border-solid border-gray-200 p-1 text-bf500 h-8 w-8',
-          buttonClassname
-        )}
+        className={buttonClassname}
         data-test={dataTestButton}
         disabled={disabled}
         title={title}
