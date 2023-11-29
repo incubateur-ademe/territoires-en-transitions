@@ -1,8 +1,7 @@
 import {useState} from 'react';
 import {useParams} from 'react-router-dom';
 
-import HeaderTitle from 'ui/HeaderTitle';
-import PlanActionHeader from './PlanActionHeader';
+import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 import PlanActionFooter from './PlanActionFooter';
 import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
@@ -10,8 +9,10 @@ import Arborescence from './DragAndDropNestedContainers/Arborescence';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {checkAxeHasFiche} from './data/utils';
 import {usePlanAction} from './data/usePlanAction';
-import {useEditAxe} from './data/useEditAxe';
 import {PlanNode} from './data/types';
+import FilAriane from 'ui/shared/FilAriane';
+import {makeCollectivitePlanActionUrl} from 'app/paths';
+import {generateTitle} from '../FicheAction/data/utils';
 
 type PlanActionProps = {
   /** Axe racine du plan d'action (depth = 0) */
@@ -25,8 +26,6 @@ type PlanActionProps = {
 export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
   const collectivite = useCurrentCollectivite();
 
-  const {mutate: updateAxe} = useEditAxe(axe.id);
-
   const isReadonly = collectivite?.readonly ?? false;
 
   // Permet de différentier une page axe d'une page plan
@@ -38,26 +37,34 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
 
   return (
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
-      {/** Titre page */}
-      <HeaderTitle
-        customClass={
-          isAxePage ? {text: '!text-[1.75rem]'} : {text: '!text-[2rem]'}
-        }
-        titre={axe.nom}
-        onUpdate={nom => updateAxe({...axe, nom})}
+      {/** Header */}
+      <PlanActionHeader
+        collectivite_id={collectivite?.collectivite_id!}
+        plan={plan}
+        axe={axe}
+        axes={axes}
+        isAxePage={isAxePage}
+        axeHasFiches={axeHasFiche}
         isReadonly={isReadonly}
       />
       <div className="mx-auto px-10">
-        {/** Header */}
-        <PlanActionHeader
-          collectivite_id={collectivite?.collectivite_id!}
-          plan={plan}
-          axe={axe}
-          axes={axes}
-          isAxePage={isAxePage}
-          axeHasFiches={axeHasFiche}
-          isReadonly={isReadonly}
-        />
+        {/** Lien plan d'action page axe */}
+        {isAxePage && (
+          <div className="py-6">
+            <FilAriane
+              links={[
+                {
+                  path: makeCollectivitePlanActionUrl({
+                    collectiviteId: collectivite?.collectivite_id!,
+                    planActionUid: axe.id.toString(),
+                  }),
+                  displayedName: generateTitle(plan.nom),
+                },
+                {displayedName: generateTitle(axe.nom)},
+              ]}
+            />
+          </div>
+        )}
         {/**
          * Filtres
          * On vérifie si le plan ou l'axe contient des fiches pour afficher les filtres de fiche
