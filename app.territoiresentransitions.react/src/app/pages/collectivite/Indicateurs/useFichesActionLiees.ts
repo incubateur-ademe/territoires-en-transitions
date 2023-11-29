@@ -3,7 +3,7 @@ import {diff} from 'utils/diff';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from './types';
+import {TIndicateurDefinition, TIndicateurPredefini} from './types';
 
 /**
  * Charge la liste des fiches action liées à un indicateur
@@ -21,7 +21,12 @@ export const useFichesActionLiees = (definition: TIndicateurDefinition) => {
         .select('fiche_resume(*)')
         .eq('fiche_resume.collectivite_id', collectivite_id)
         .match(
-          isPerso ? {indicateur_personnalise_id: id} : {indicateur_id: id}
+          isPerso
+            ? {indicateur_personnalise_id: id}
+            : {
+                indicateur_id:
+                  (definition as TIndicateurPredefini).valeur_indicateur || id,
+              }
         );
       return (
         data
@@ -63,7 +68,10 @@ export const useUpdateFichesActionLiees = (
         if (isPerso) {
           query.eq('indicateur_personnalise_id', id);
         } else {
-          query.eq('indicateur_id', id);
+          query.eq(
+            'indicateur_id',
+            (definition as TIndicateurPredefini).valeur_indicateur || id
+          );
         }
         await query;
       }
