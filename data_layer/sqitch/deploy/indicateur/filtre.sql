@@ -49,9 +49,9 @@ begin
     atomic
     select axe
     from fiche_action_indicateur fai
-             join definition_referentiel($1) def on true
              join fiche_action_axe faa using (fiche_id)
              join axe on faa.axe_id = axe.id
+             left join definition_referentiel($1) def on true
     where
        -- indicateur prédéfini
         ($1.indicateur_id is not null
@@ -78,7 +78,7 @@ begin
     select fai
     from fiche_action_indicateur fai
              join fiche_action fa on fa.id = fai.fiche_id and fa.collectivite_id = $1.collectivite_id
-             join lateral (select * from definition_referentiel($1)) def on true
+             left join definition_referentiel($1) def on true
     where not exists (select from fiche_action_axe faa where faa.fiche_id = fai.fiche_id)
       and (
         -- indicateur prédéfini
@@ -92,7 +92,7 @@ end;
 comment on function fiches_non_classees(indicateur_definitions) is
     'Les fiches non classées (sans plan d''action) associées à un indicateur.';
 
-create or replace function
+create function
     pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
@@ -101,7 +101,7 @@ begin
     atomic
     select ip
     from indicateur_pilote ip
-             join definition_referentiel($1) def on true
+             left join definition_referentiel($1) def on true
     where
        -- indicateur prédéfini
         ($1.indicateur_id is not null
@@ -131,7 +131,7 @@ end;
 comment on function personne(indicateur_pilote) is
     'Une personne associée comme personne pilote d''un indicateur.';
 
-create or replace function
+create function
     services(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
@@ -140,7 +140,7 @@ begin
     atomic
     select ist
     from indicateur_service_tag ist
-             join definition_referentiel($1) def on true
+             left join definition_referentiel($1) def on true
     where
        -- indicateur prédéfini
         ($1.indicateur_id is not null
