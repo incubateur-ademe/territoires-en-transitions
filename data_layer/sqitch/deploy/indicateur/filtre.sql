@@ -6,6 +6,7 @@ create or replace function
     thematiques(indicateur_definitions)
     returns setof thematique
     language sql
+    security definer
     stable
 begin
     atomic
@@ -30,6 +31,7 @@ create function
     returns setof indicateur_definition
     rows 1
     language sql
+    security definer
     stable
 begin
     atomic
@@ -44,6 +46,7 @@ create or replace function
     axes(indicateur_definitions)
     returns setof axe
     language sql
+    security definer
     stable
 begin
     atomic
@@ -72,6 +75,7 @@ create function
     fiches_non_classees(indicateur_definitions)
     returns setof fiche_action_indicateur
     language sql
+    security definer
     stable
 begin
     atomic
@@ -96,6 +100,7 @@ create function
     pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
+    security definer
     stable
 begin
     atomic
@@ -123,6 +128,7 @@ create function
     returns setof personne
     rows 1
     language sql
+    security definer
     stable
 begin
     atomic
@@ -135,6 +141,7 @@ create function
     services(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
+    security definer
     stable
 begin
     atomic
@@ -163,6 +170,7 @@ create function
     returns setof indicateur_personnalise_definition
     rows 1
     language sql
+    security definer
     stable
 begin
     atomic
@@ -177,6 +185,7 @@ create function
     private.rempli(collectivite_id integer, indicateur_id indicateur_id)
     returns bool
     language sql
+    security definer
     stable
 begin
     atomic
@@ -224,6 +233,7 @@ create function
     private.rempli(indicateur_perso_id integer)
     returns bool
     language sql
+    security definer
     stable
 begin
     atomic
@@ -239,6 +249,7 @@ create function
     rempli(indicateur_definitions)
     returns bool
     language sql
+    security definer
     stable
 begin
     atomic
@@ -257,6 +268,7 @@ create function
     enfants(indicateur_definitions)
     returns setof indicateur_definitions
     language sql
+    security definer
     stable
 begin
     atomic
@@ -276,6 +288,7 @@ create function
     enfants(indicateur_definition)
     returns setof indicateur_definition
     language sql
+    security definer
     stable
 begin
     atomic
@@ -290,6 +303,7 @@ create function
     indicateur_action(indicateur_definitions)
     returns setof indicateur_action
     language sql
+    security definer
     stable
 begin
     atomic
