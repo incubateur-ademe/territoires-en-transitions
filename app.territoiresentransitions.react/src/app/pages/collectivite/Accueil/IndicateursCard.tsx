@@ -51,7 +51,7 @@ const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
       secondLegend: referentielToName.eci,
     },
     {
-      value: perso?.total,
+      value: perso?.total || 0,
       firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
       secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
     },
