@@ -25,6 +25,19 @@ const nextConfig = {
 
     return config;
   },
+  // en-têtes http
+  headers: async () => [
+    {
+      source: '/(.*)', // pour toutes les routes
+      headers: [
+        // Ref: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+        {
+          key: 'Strict-Transport-Security',
+          value: 'max-age=63072000; includeSubDomains; preload',
+        },
+      ],
+    },
+  ],
 };
 
 // ajoute le traitement des fichiers mdx
