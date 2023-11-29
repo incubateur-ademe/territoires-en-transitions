@@ -33,7 +33,12 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
   }
 
   // affiche un CTA quand il n'y a encore aucun indicateur perso
-  if (view === 'perso' && definitions?.length === 0 && !collectivite.readonly) {
+  if (
+    view === 'perso' &&
+    definitions?.length === 0 &&
+    !filterParamsCount &&
+    !collectivite.readonly
+  ) {
     return (
       <div className="flex flex-col items-center mt-8 gap-8">
         <p>Aucun indicateur personnalisé</p>
