@@ -54,6 +54,8 @@ with
                (s.point_potentiel)::float as points
         from last_audit a
                  join table_scores s on s.audit_id = a.id
+                 join action_definition_summary ads on s.action_id = ads.id
+        where ads.type not in ('referentiel', 'tache')
     ),
     collectivite_active as (
         -- Récupérer les collectivités actives :
@@ -76,7 +78,7 @@ select
     cci.region_name as region,
     cot is not null as cot,
     nc.nom as signataire,
-    sa.action_id as action_id,
+    sa.action_id,
     sa.realise as realise,
     sa.programme as programme,
     sa.points as points,
@@ -86,6 +88,7 @@ from collectivite_carte_identite cci
          left join cot on cci.collectivite_id = cot.collectivite_id
          left join named_collectivite nc on cot.signataire = nc.collectivite_id
          left join score_audit sa on cci.collectivite_id = sa.collectivite_id
+where sa is not null
 ORDER BY cci.nom;
 
 create view public.export_score_audit_par_action as
