@@ -1,6 +1,3 @@
-// utilitaires tailwind
-import 'css/tailwind.css';
-
 // feuille de styles globale du dsfr
 import '@gouvfr/dsfr/dist/dsfr.css';
 
@@ -14,6 +11,9 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.css';
+
+// utilitaires tailwind
+import 'css/tailwind.css';
 
 // patches
 import 'css/app.css';
