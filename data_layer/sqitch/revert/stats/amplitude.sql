@@ -2,10 +2,19 @@
 
 BEGIN;
 
+drop function stats.amplitude_send_yesterday_creations;
+drop function
+    stats.amplitude_build_crud_events(
+    events stats.amplitude_content_event[],
+    name text,
+    type stats.amplitude_crud_type,
+    question_id question_id
+);
+
 alter type stats.amplitude_content_event drop attribute collectivite_id;
 alter type stats.amplitude_event drop attribute groups;
 
-create or replace function
+create function
     stats.amplitude_build_crud_events(
     events stats.amplitude_content_event[],
     name text,
@@ -32,7 +41,7 @@ begin
                       and m.fonction is not null
                       and pud.active),
                    'auditeur', ((ev).user_id in (table auditeurs))
-               )                                          as user_properties,
+           )                                              as user_properties,
 
            (select v.name
             from stats.release_version v
@@ -45,7 +54,7 @@ begin
       and (ev).time is not null;
 end;
 
-create or replace function
+create function
     stats.amplitude_send_yesterday_creations()
     returns void
 as
@@ -63,7 +72,7 @@ begin
                   -- transforme les content events en crud events,
                   crud as (select stats.amplitude_build_crud_events(array_agg(ce.events), 'fiche', 'created') as events
                            from ce)
-                  -- envoie les crud event et spécifie le range pour le log.
+             -- envoie les crud event et spécifie le range pour le log.
              select stats.amplitude_send_events(array_agg(crud.events), yesterday)
              from crud);
 
@@ -76,7 +85,7 @@ begin
                   -- transforme les content events en crud events,
                   crud as (select stats.amplitude_build_crud_events(array_agg(ce.events), 'plan', 'created') as events
                            from ce)
-                  -- envoie les crud event et spécifie le range pour le log.
+             -- envoie les crud event et spécifie le range pour le log.
              select stats.amplitude_send_events(array_agg(crud.events), yesterday)
              from crud);
 
@@ -106,7 +115,7 @@ begin
                                           question_id := ce.question_id) as events
                            from ce
                            group by ce.question_id)
-                  -- envoie les crud event et spécifie le range pour le log.
+             -- envoie les crud event et spécifie le range pour le log.
              select stats.amplitude_send_events(array_agg(crud.events), yesterday)
              from crud);
 
@@ -124,7 +133,7 @@ begin
                                           question_id := ce.question_id) as events
                            from ce
                            group by ce.question_id)
-                  -- envoie les crud event et spécifie le range pour le log.
+             -- envoie les crud event et spécifie le range pour le log.
              select stats.amplitude_send_events(array_agg(crud.events), yesterday)
              from crud);
 end;
