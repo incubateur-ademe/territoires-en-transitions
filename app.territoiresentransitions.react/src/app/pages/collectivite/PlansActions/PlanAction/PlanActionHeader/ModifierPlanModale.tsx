@@ -30,7 +30,7 @@ const ModifierPlanModale = ({children, axe, isAxePage}: Props) => {
         return (
           <div data-test="ModifierPlanTitreModale" className="mt-2">
             <h4 id={labelId} className="fr-h4 text-center !mb-8">
-              {isAxePage ? "Modifier l'axe" : 'Modifier mon plan d’action'}
+              {isAxePage ? "Modifier l'axe" : 'Modifier le plan d’action'}
             </h4>
             <Formik<ModifierPlanProps>
               initialValues={{titre: axe.nom}}
