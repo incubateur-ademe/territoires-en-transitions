@@ -568,3 +568,4 @@ plan_action/type 2023-12-04T16:57:09Z Florian <florian@derfurth.com> # La relati
 
 stats/posthog 2023-12-06T14:08:54Z Florian <florian@derfurth.com> # Ajoute PostHog pour le suivi de l'utilisation de notre produit
 labellisation/export [labellisation/export@v2.83.0] 2023-11-27T15:21:30Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une vue pour exporter les scores d'audits par action
+cron/referesh_export_score_audit_par_action 2023-11-30T14:07:17Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le cron pour la vue matérialisé export_score_audit_par_action
