@@ -2,27 +2,37 @@
 
 BEGIN;
 
-select key,
-       collectivite_id,
-       nom,
-       type_collectivite,
-       nature_collectivite,
-       code_siren_insee,
-       region_name,
-       region_code,
-       departement_name,
-       departement_code,
-       population_totale,
-       cot,
-       lab_cae_etoiles,
-       lab_cae_programme,
-       lab_cae_realise,
-       lab_cae_annee,
-       lab_eci_etoiles,
-       lab_eci_programme,
-       lab_eci_realise,
-       lab_eci_annee
-from crm_collectivites
+select collectivite_id,
+       key,
+       completude_eci,
+       completude_cae,
+       fiches,
+       plans,
+       resultats_indicateurs,
+       indicateurs_perso,
+       resultats_indicateurs_perso,
+       premier_rattachement,
+       fiches_initiees,
+       fiches_pilotage,
+       fiches_indicateur,
+       fiches_action_referentiel,
+       fiches_fiche_liee,
+       fiches_mod_1mois,
+       fiches_mod_3mois,
+       fiches_mod_6mois,
+       pa_date_creation,
+       pa_view_1mois,
+       pa_view_3mois,
+       pa_view_6mois,
+       pa_non_vides,
+       pa_pilotables,
+       fiches_non_vides,
+       fiches_pilotables,
+       _5fiches_1pilotage,
+       fiches_changement_statut,
+       pourcentage_fa_privee,
+       pourcentage_fa_pilotable_privee
+from crm_usages
 where false;
 
 ROLLBACK;
