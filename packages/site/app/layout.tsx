@@ -1,6 +1,5 @@
-import AppHeader from './AppHeader';
-import '@gouvfr/dsfr/dist/dsfr.css';
 import './global.css';
+import AppHeader from './AppHeader';
 import {Footer} from '@components/footer/Footer';
 import {Metadata} from 'next';
 import {getMetaData} from './utils';
