@@ -2,8 +2,6 @@
 
 import Image from 'next/image';
 import {MenuPrincipal} from './MenuPrincipal';
-import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.css';
 import {Dispatch, SetStateAction, useState} from 'react';
 import classNames from 'classnames';
 
