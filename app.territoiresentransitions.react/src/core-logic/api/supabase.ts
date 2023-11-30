@@ -12,8 +12,8 @@ export const supabaseClient = createClient<Database>(
   {
     global: {
       // intercepte les requêtes pour traiter les erreurs globalement
-      fetch: (...args) => {
-        return fetch(...args).then(res => {
+      fetch: (input, init) => {
+        return fetch(input as RequestInfo | URL, init).then(res => {
           // en cas d'erreur
           if (res.status >= 400) {
             res
