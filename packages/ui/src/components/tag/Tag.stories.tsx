@@ -26,6 +26,6 @@ export const CreeParUtilisateur = () => (
 
 export const StylePersonnalise = () => (
   <div className="flex">
-    <Tag title="Yolo" className="bg-error-1 font-bold" />
+    <Tag title="Yolo" className="!bg-error-1 font-bold" />
   </div>
 );
