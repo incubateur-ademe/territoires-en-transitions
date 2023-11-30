@@ -45,6 +45,7 @@ const ModifierPlanModale = ({children, axe, isAxePage}: Props) => {
                   name="titre"
                   label="Nom du plan d'action"
                   placeholder="Sans titre"
+                  autoFocus
                 />
                 <div className="mt-12 fr-btns-group fr-btns-group--right fr-btns-group--inline-lg">
                   <button
