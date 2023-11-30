@@ -30,7 +30,7 @@ export const Tag = ({
   return (
     <div
       className={classNames(
-        'flex items-center px-3 py-0.5 text-white bg-principale rounded-full',
+        'flex items-center px-3 py-0.5 text-white bg-primary rounded-full',
         { 'pr-2': canClose },
         {
           '!bg-white !border !border-gray-300 !text-gray-900': isUserCreated,
