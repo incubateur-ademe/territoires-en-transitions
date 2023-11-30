@@ -567,3 +567,4 @@ plan_action/type 2023-12-04T16:57:09Z Florian <florian@derfurth.com> # La relati
 @v2.86.0 2023-12-07T16:49:24Z Florian <florian@derfurth.com> # Permet de typer les plans
 
 stats/posthog 2023-12-06T14:08:54Z Florian <florian@derfurth.com> # Ajoute PostHog pour le suivi de l'utilisation de notre produit
+plan_action/historique 2023-11-29T13:24:11Z Amandine Jacquelin <conta@LanceLibre> # Ajoute l'historisation des fiches action
