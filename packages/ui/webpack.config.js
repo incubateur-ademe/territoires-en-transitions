@@ -51,11 +51,16 @@ module.exports = function (env, argv) {
 
     // configuration de la génération
     output: {
+      // le point d'entrée de notre module
       filename: 'index.js',
+      // le chemin du répertoire cible du build
       path: path.resolve(__dirname, 'dist'),
+      // vide le répertoire cible avant chaque build
       clean: true,
+      // permet que le build UMD soit compatible node & browser
+      globalObject: 'this',
       // type d'exports générés
-      library: { type: 'umd' },
+      library: { type: 'umd', name: 'ui', umdNamedDefine: true },
     },
   };
 };
