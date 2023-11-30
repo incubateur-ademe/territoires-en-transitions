@@ -95,5 +95,6 @@ create view public.export_score_audit_par_action as
 select *
 from labellisation.export_score_audit_par_action
 where is_service_role();
+comment on view public.export_score_audit_par_action is 'Donne les scores du dernier audit par collectivité et par action.';
 
 COMMIT;
