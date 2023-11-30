@@ -189,9 +189,7 @@ const AutocompleteButton = forwardRef(
                 <Tag
                   key={v}
                   title={getOptionLabel(v, getOptions(options))}
-                  onCloseClick={() =>
-                    onSelect(values.filter(value => value !== v))
-                  }
+                  onClose={() => onSelect(values.filter(value => value !== v))}
                 />
               ))}
             <input
