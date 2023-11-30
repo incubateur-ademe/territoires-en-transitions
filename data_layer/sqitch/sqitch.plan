@@ -558,3 +558,4 @@ indicateur/detail [indicateur/detail@v2.80.0] 2023-11-09T19:11:22Z Florian <flor
 indicateur/filtre 2023-11-08T09:53:54Z Florian <florian@derfurth.com> # Permet de filtrer les indicateurs
 indicateur/recherche 2023-11-21T15:47:12Z Florian <florian@derfurth.com> # Ajoute des colonnes de type ts_vector pour la recherche textuelle
 indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.80.0] 2023-11-22T15:41:28Z Florian <florian@derfurth.com> # Améliore la vue `indicateur_summary`
+@v2.84.0 2023-11-30T17:31:51Z Florian <florian@derfurth.com> # Filtres indicateurs
