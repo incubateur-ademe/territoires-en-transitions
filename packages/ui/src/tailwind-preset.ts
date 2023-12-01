@@ -1,7 +1,8 @@
 import { Config } from 'tailwindcss';
 
 /** Configuration Tailwind */
-export const preset: Omit<Config, 'content'> = {
+export const preset = {
+  content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
     maxHeight: { '80vh': '80vh' },
     extend: {
@@ -87,4 +88,4 @@ export const preset: Omit<Config, 'content'> = {
       },
     },
   },
-};
+} satisfies Config;
