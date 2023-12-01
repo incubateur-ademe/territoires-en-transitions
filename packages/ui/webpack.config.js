@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 /** Configuration Webpack */
 module.exports = function (env, argv) {
@@ -21,20 +22,15 @@ module.exports = function (env, argv) {
           use: 'ts-loader',
           exclude: /node_modules/,
         },
-        // traitement des fichiers css
-        {
-          test: /\.css$/,
-          use: [
-            'style-loader',
-            {
-              loader: 'css-loader',
-              options: { importLoaders: 1 },
-            },
-            'postcss-loader',
-          ],
-        },
       ],
     },
+
+    // exporte la feuille de styles globale sans traitement
+    plugins: [
+      new CopyPlugin({
+        patterns: [{ from: 'src/global.css', to: '' }],
+      }),
+    ],
 
     // ordre de résolution des modules js par extension
     resolve: {
