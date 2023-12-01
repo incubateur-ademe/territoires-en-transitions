@@ -1,2 +1,2 @@
 // charge les styles globaux
-import '../src/css';
+import '../src/global.css';
