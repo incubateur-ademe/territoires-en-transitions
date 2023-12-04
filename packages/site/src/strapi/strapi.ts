@@ -19,7 +19,6 @@ type Collection =
   | 'temoignages';
 
 type Single =
-  | 'metadata'
   | 'page-accueil'
   | 'page-budget'
   | 'page-collectivite'
