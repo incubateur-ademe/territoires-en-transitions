@@ -48,9 +48,9 @@ const Item = (
   });
 
   return (
-    <li className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925">
+    <li className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1">
       <a
-        className="flex justify-between"
+        className="flex justify-between items-center"
         style={{boxShadow: 'none'}}
         href={url}
       >
