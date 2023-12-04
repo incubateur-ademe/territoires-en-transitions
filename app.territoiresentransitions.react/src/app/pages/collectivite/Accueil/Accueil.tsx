@@ -1,3 +1,4 @@
+import {ReactNode} from 'react';
 import {referentielToName} from 'app/labels';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
@@ -5,6 +6,9 @@ import EtatDesLieuxCard from './EtatDesLieuxCard';
 import IndicateursCard from './IndicateursCard';
 import PlansActionCard from './PlansActionCard';
 
+/**
+ * Affiche la page d'accueil d'une collectivité
+ */
 const Accueil = (): JSX.Element => {
   const collectiviteId = useCollectiviteId();
   const {
@@ -23,20 +27,18 @@ const Accueil = (): JSX.Element => {
           {/* Première ligne - Plans d'action et Indicateurs */}
           <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
             <div className="flex flex-col">
-              <h5 className="text-xl leading-5 font-extrabold">
-                Plans d'action
-              </h5>
+              <TitreCarte>Plans d'action</TitreCarte>
               <PlansActionCard collectiviteId={collectiviteId} />
             </div>
             <div className="flex flex-col">
-              <h5 className="text-xl leading-5 font-extrabold">Indicateurs</h5>
+              <TitreCarte>Indicateurs</TitreCarte>
               <IndicateursCard collectiviteId={collectiviteId} />
             </div>
           </div>
 
           {/* Deuxième ligne - États des lieux */}
           <div>
-            <h5 className="text-xl leading-5 font-extrabold">État des lieux</h5>
+            <TitreCarte>État des lieux</TitreCarte>
             <div className="grid lg:grid-cols-2 gap-6">
               <EtatDesLieuxCard
                 collectiviteId={collectiviteId}
@@ -63,5 +65,10 @@ const Accueil = (): JSX.Element => {
     </main>
   );
 };
+
+// affiche un titre au-dessus d'une carte
+const TitreCarte = ({children}: {children: ReactNode}) => (
+  <h5 className="text-xl leading-5 font-extrabold">{children}</h5>
+);
 
 export default Accueil;
