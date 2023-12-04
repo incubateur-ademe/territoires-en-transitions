@@ -10,9 +10,8 @@ drop function
     type stats.amplitude_crud_type,
     question_id question_id
 );
-drop function
-stats.amplitude_build_crud_events(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type);
-
+drop function stats.amplitude_build_crud_events(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type);
+drop function stats.amplitude_visite(range tstzrange);
 alter type stats.amplitude_content_event drop attribute collectivite_id;
 alter type stats.amplitude_event drop attribute groups;
 
@@ -176,5 +175,61 @@ begin
              from crud);
 end;
 $$ language plpgsql;
+
+
+create function
+    stats.amplitude_visite(range tstzrange)
+    returns setof stats.amplitude_event
+begin
+    atomic
+    with auditeurs as (select aa.auditeur as user_id
+                       from audit_auditeur aa)
+
+    select v.user_id                                                  as user_id,
+           v.page || '_viewed'                                        as event_type,
+           extract(epoch from v.time)::int                            as time,
+           md5('visite' || v.page || v.user_id::text || v.time::text) as insert_id,
+           jsonb_build_object(
+                   'page', v.page,
+                   'tag', v.tag,
+                   'onglet', v.onglet,
+                   'collectivite_id', v.collectivite_id,
+                   'niveau_acces', pud.niveau_acces,
+                   'fonction', pcm.fonction,
+                   'champ_intervention', pcm.champ_intervention,
+                   'collectivite', to_json(c)
+           )                                                      as
+                                                                         event_properties,
+
+           jsonb_build_object(
+                   'fonctions',
+                   (select array_agg(distinct m.fonction)
+                    from private_collectivite_membre m
+                             join private_utilisateur_droit pud
+                                  on m.user_id = pud.user_id and m.collectivite_id = pud.collectivite_id
+                    where m.user_id = v.user_id
+                      and m.fonction is not null
+                      and pud.active),
+                   'auditeur', (v.user_id in ( table auditeurs))
+           )                                                      as user_properties,
+
+           (select name
+            from stats.release_version
+            where time < v.time
+            order by time desc
+            limit 1)                                                  as
+                                                                         app_version
+
+    from visite v
+             left join private_utilisateur_droit pud
+                       on v.user_id = pud.user_id and v.collectivite_id = pud.collectivite_id
+             left join private_collectivite_membre pcm
+                       on v.collectivite_id = pcm.collectivite_id and v.user_id = pcm.user_id
+             left join stats.collectivite c on v.collectivite_id = c.collectivite_id
+    where amplitude_visite.range @> v.time;
+end;
+comment on function stats.amplitude_visite is
+    'Les `events` Amplitude construits à partir des visites.';
+
 
 COMMIT;
