@@ -562,3 +562,5 @@ indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.80.0] 2023-11-22T15:41
 
 stats/amplitude [stats/amplitude@v2.83.0] 2023-11-27T14:52:26Z Florian <florian@derfurth.com> # Utilisation de la fonctionnalité `account`
 @v2.85.0 2023-12-04T18:18:04Z Florian <florian@derfurth.com> # Envoi les infos sur la collectivité dans les events Amplitude
+
+plan_action/type 2023-12-04T16:57:09Z Florian <florian@derfurth.com> # La relation entre un plan et son type
