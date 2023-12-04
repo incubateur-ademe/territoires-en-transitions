@@ -131,7 +131,7 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
         className="w-[1px] mr-[-1px]"
       />
       <textarea
-        className="resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 disabled:text-gray-900 fr-input !outline-none"
+        className="resize-none w-full py-2 px-3 text-sm cursor-text outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 disabled:text-gray-900 fr-input !outline-none"
         id="textarea"
         label="Text area"
         name="textarea"
