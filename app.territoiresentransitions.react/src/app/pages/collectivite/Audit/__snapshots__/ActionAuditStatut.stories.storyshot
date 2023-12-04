@@ -21,11 +21,11 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Audite 1`] = 
       <span
         className="mr-auto"
       >
-        <p
+        <span
           className="fr-badge fr-badge--success fr-badge--no-icon fr-text--xs"
         >
           Audité
-        </p>
+        </span>
       </span>
       <span
         className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
@@ -56,11 +56,11 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut En Cours 1`] 
       <span
         className="mr-auto"
       >
-        <p
+        <span
           className="fr-badge fr-badge--info fr-badge--no-icon fr-text--xs"
         >
           Audit en cours
-        </p>
+        </span>
       </span>
       <span
         className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
@@ -91,11 +91,11 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Non Audite 1`
       <span
         className="mr-auto"
       >
-        <p
+        <span
           className="fr-badge fr-badge--warning fr-badge--no-icon fr-text--xs"
         >
           Non audité
-        </p>
+        </span>
       </span>
       <span
         className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
@@ -113,11 +113,11 @@ exports[`Storyshots app/pages/collectivite/Audit/ActionAuditStatut Read Only 1`]
     className="fr-py-1w"
     data-test="action-audit-statut-ro"
   >
-    <p
+    <span
       className="fr-badge fr-badge--success fr-badge--no-icon fr-text--xs"
     >
       Audité
-    </p>
+    </span>
   </div>
 </div>
 `;
