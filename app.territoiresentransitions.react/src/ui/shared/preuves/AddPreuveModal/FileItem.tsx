@@ -57,7 +57,7 @@ const FileItemRunning = (props: TFileItemProps) => {
         >
           {file.name}
         </div>
-        <div data-test="size" className="min-w-max text-sm text-grey625 pl-2">
+        <div data-test="size" className="min-w-max text-sm text-grey-6 pl-2">
           ({formatFileSize(file.size)})
         </div>
       </div>
@@ -113,7 +113,7 @@ const FileItemFailed = (props: TFileItemProps) => {
           >
             {file.name}
           </div>
-          <div data-test="size" className="text-sm min-w-max text-grey625 pl-2">
+          <div data-test="size" className="text-sm min-w-max text-grey-6 pl-2">
             ({formatFileSize(file.size)})
           </div>
         </div>

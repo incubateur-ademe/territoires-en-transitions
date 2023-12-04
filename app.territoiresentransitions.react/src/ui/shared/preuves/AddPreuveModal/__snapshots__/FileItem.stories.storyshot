@@ -44,7 +44,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed Duplicate 1
           fichier.xls
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -95,7 +95,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed Duplicated 
           nouveau nom.xls
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -151,7 +151,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed Format And 
           mauvais format et taille.exe
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -201,7 +201,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed To Upload 1
           fichier.doc
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -251,7 +251,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed Too Big 1`]
           Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -301,7 +301,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Failed Unknown For
           Logo-comcom.SVG
         </div>
         <div
-          className="text-sm min-w-max text-grey625 pl-2"
+          className="text-sm min-w-max text-grey-6 pl-2"
           data-test="size"
         >
           (
@@ -348,7 +348,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 1`] = `
         Délibération-Engagement-PCAET.pdf
       </div>
       <div
-        className="min-w-max text-sm text-grey625 pl-2"
+        className="min-w-max text-sm text-grey-6 pl-2"
         data-test="size"
       >
         (
@@ -366,7 +366,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 1`] = `
           className="w-full h-full bg-grey925"
         >
           <div
-            className="h-full bg-bf525 max-w-full"
+            className="h-full bg-primary max-w-full"
             style={
               Object {
                 "width": "0%",
@@ -407,7 +407,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 2 1`] = `
         Rapport d’activités 2019-2020 et rapport DD 2020.doc
       </div>
       <div
-        className="min-w-max text-sm text-grey625 pl-2"
+        className="min-w-max text-sm text-grey-6 pl-2"
         data-test="size"
       >
         (
@@ -425,7 +425,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItem Running 2 1`] = `
           className="w-full h-full bg-grey925"
         >
           <div
-            className="h-full bg-bf525 max-w-full"
+            className="h-full bg-primary max-w-full"
             style={
               Object {
                 "width": "0%",

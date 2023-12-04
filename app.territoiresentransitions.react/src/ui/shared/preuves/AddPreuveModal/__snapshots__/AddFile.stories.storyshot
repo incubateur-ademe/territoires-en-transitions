@@ -60,7 +60,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
                 Rapport d’activités 2019-2020 et rapport DD 2020 nom vraiment trop long.doc
               </div>
               <div
-                className="text-sm min-w-max text-grey625 pl-2"
+                className="text-sm min-w-max text-grey-6 pl-2"
                 data-test="size"
               >
                 (
@@ -98,7 +98,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
                 Logo-comcom.SVG
               </div>
               <div
-                className="text-sm min-w-max text-grey625 pl-2"
+                className="text-sm min-w-max text-grey-6 pl-2"
                 data-test="size"
               >
                 (
@@ -136,7 +136,7 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
                 mauvais format et taille.exe
               </div>
               <div
-                className="text-sm min-w-max text-grey625 pl-2"
+                className="text-sm min-w-max text-grey-6 pl-2"
                 data-test="size"
               >
                 (
