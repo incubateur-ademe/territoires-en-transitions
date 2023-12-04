@@ -5,10 +5,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
   className="w-full border pl-0 "
 >
   <li
-    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1"
   >
     <a
-      className="flex justify-between"
+      className="flex justify-between items-center"
       href="/collectivite/1/personnalisation/dechets"
       style={
         Object {
@@ -17,18 +17,18 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
       }
     >
       Déchets
-      <p
+      <span
         className="fr-badge fr-badge--success fr-badge--no-icon"
       >
         Complété
-      </p>
+      </span>
     </a>
   </li>
   <li
-    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1"
   >
     <a
-      className="flex justify-between"
+      className="flex justify-between items-center"
       href="/collectivite/1/personnalisation/energie"
       style={
         Object {
@@ -37,18 +37,18 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
       }
     >
       Énergie
-      <p
+      <span
         className="fr-badge fr-badge--info fr-badge--no-icon"
       >
         À compléter
-      </p>
+      </span>
     </a>
   </li>
   <li
-    className="list-none px-2 py-3 border-b last:border-none hover:bg-grey925"
+    className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1"
   >
     <a
-      className="flex justify-between"
+      className="flex justify-between items-center"
       href="/collectivite/1/personnalisation/mobilite"
       style={
         Object {
@@ -57,11 +57,11 @@ exports[`Storyshots app/pages/collectivite/PersoReferentiel/ThematiqueList Exemp
       }
     >
       Mobilité
-      <p
+      <span
         className="fr-badge fr-badge--success fr-badge--no-icon"
       >
         Complété
-      </p>
+      </span>
     </a>
   </li>
 </ul>
