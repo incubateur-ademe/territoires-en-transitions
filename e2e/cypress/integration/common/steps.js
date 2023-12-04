@@ -4,7 +4,7 @@
 
 import {Selectors} from './selectors';
 import {Expectations} from './expectations';
-import {waitForApp, logout} from './shared';
+import {waitForApp, logout, clickOutside} from './shared';
 import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 function testReset(retry = 0) {
@@ -241,9 +241,7 @@ function fillInput(value, input) {
   );
 }
 
-When('je clique en dehors de la boîte de dialogue', () =>
-  cy.get('body').click(10, 10)
-);
+When('je clique en dehors de la boîte de dialogue', clickOutside);
 
 When('je valide le formulaire', () => cy.get('button[type=submit]').click());
 
@@ -341,7 +339,7 @@ When(
       '{selectall}{backspace}' + tag
     );
     cy.get(`[data-test=${selecteur}-creer-tag]`).click();
-    cy.get('body').click(10, 10);
+    clickOutside();
     cy.get(`[data-test=${selecteur}]`).contains(tag).should('be.visible');
   }
 );

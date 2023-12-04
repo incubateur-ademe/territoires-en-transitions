@@ -1,5 +1,6 @@
 import {When} from '@badeball/cypress-cucumber-preprocessor';
 import {LocalSelectors} from './selectors';
+import {clickOutside} from '../common/shared';
 
 beforeEach(() => {
   // enregistre les définitions locales
@@ -49,7 +50,7 @@ When("j'ajoute le commentaire {string} à la ligne {int}", (comment, row) => {
   cy.get(`[label=Résultats] table tbody tr:nth(${row}) td:nth(2) textarea`)
     .click()
     .type(comment);
-  cy.get('body').click(10, 10);
+    clickOutside();
 });
 
 When("le tableau des résultats de l'indicateur contient :", dataTable => {
