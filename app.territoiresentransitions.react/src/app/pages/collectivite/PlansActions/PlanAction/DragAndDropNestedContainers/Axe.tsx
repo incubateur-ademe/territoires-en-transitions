@@ -204,7 +204,7 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
           )}
         </div>
         {isDroppable && (
-          <span className="block mt-2 mb-2 mx-12 p-4 text-sm text-indigo-400 rounded-md border border-dashed border-bf525">
+          <span className="block mt-2 mb-2 mx-12 p-4 text-sm text-indigo-400 rounded-md border border-dashed border-primary">
             Déplacer dans cet axe
           </span>
         )}

@@ -8,7 +8,7 @@ export const ProgressBar = ({
   <div className={className}>
     <div className="w-full h-full bg-grey925">
       <div
-        className="h-full bg-bf525 max-w-full"
+        className="h-full bg-primary max-w-full"
         style={{width: `${value}%`}}
       ></div>
     </div>

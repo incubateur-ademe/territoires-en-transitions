@@ -26,7 +26,7 @@ const TableauAxe = ({
         'flex items-center gap-1 py-2 px-4 text-sm text-left rounded-lg',
         {
           'bg-gray-200': containSelectedAxe && !isSelected,
-          'bg-bf500 text-white hover:!bg-bf525': isSelected,
+          'bg-bf500 text-white hover:!bg-primary': isSelected,
         }
       )}
       onClick={() => selectAxe(axe)}
