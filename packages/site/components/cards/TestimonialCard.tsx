@@ -30,7 +30,7 @@ const TestimonialCard = ({
       ) : (
         <picture>
           <img
-            className="w-[185px] h-[185px] object-cover rounded-full"
+            className="w-[185px] h-[185px] object-cover rounded-full block"
             src="placeholder.png"
             alt="pas d'image disponible"
           />

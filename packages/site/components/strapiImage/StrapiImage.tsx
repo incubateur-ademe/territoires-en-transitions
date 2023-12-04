@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import classNames from 'classnames';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
@@ -30,7 +31,7 @@ export function StrapiImage({
   return (
     <picture className={containerClassName}>
       <img
-        className={className}
+        className={classNames('block', className)}
         src={url.startsWith('http') ? url : `${baseURL}${url}`}
         alt={`${attributes.alternativeText ?? ''}`}
       />
