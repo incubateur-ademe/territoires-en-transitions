@@ -31,7 +31,7 @@ const ToggleButton = forwardRef(
       >
         <div
           className={classNames('p-1 rounded-full bg-grey-4', {
-            'bg-principale': checked,
+            'bg-primary': checked,
           })}
         >
           <div className="w-8">
@@ -43,9 +43,7 @@ const ToggleButton = forwardRef(
                 }
               )}
             >
-              {checked && (
-                <IconCheck className="w-3 h-3 m-auto fill-principale" />
-              )}
+              {checked && <IconCheck className="w-3 h-3 m-auto fill-primary" />}
             </span>
           </div>
         </div>

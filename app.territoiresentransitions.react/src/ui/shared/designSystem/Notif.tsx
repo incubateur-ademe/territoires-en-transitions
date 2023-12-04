@@ -12,7 +12,7 @@ type Props = {
  * donner le bon statut pour avoir la couleur voulue en fonction du statut */
 const Notif = ({status = 'default', icon, number}: Props) => {
   const statusToColor: Record<Status, string> = {
-    default: 'text-principale fill-principale bg-principale-3',
+    default: 'text-primary fill-primary bg-primary-3',
     warning: 'text-white fill-white bg-warning-1',
     info: 'text-white fill-white bg-info-1',
     error: 'text-white fill-white bg-error-1',

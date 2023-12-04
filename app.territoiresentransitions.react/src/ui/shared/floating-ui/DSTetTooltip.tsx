@@ -6,7 +6,7 @@ const DSTetTooltip = ({children, ...props}: TTooltipProps) => {
     <Tooltip
       {...props}
       className={classNames(
-        '!p-2 !text-grey-8 border-t border-principale rounded bg-white shadow-lg',
+        '!p-2 !text-grey-8 border-t border-primary rounded bg-white shadow-lg',
         props.className
       )}
       offsetValue={props.offsetValue ?? 10}

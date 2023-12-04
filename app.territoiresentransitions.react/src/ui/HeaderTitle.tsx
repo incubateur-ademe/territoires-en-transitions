@@ -69,7 +69,7 @@ const HeaderTitle = ({
       className={classNames(
         'group flex items-center mx-auto py-6 px-10',
         {'cursor-text': !isReadonly},
-        customClass?.container || 'bg-bf525',
+        customClass?.container || 'bg-primary',
         {'!py-2': isScrolled}
       )}
       onClick={!isReadonly ? handleEditFocus : undefined}

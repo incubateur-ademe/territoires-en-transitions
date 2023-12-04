@@ -52,7 +52,7 @@ function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
         <div
           ref={droppableRef}
           className={classNames(
-            'p-6 text-sm text-center text-indigo-400 rounded-md border border-dashed border-bf525',
+            'p-6 text-sm text-center text-indigo-400 rounded-md border border-dashed border-primary',
             {'bg-bf925': isOver}
           )}
         >
