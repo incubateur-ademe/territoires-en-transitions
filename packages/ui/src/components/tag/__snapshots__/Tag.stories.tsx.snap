@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/tag/Tag AvecBoutonFermer smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary pr-2">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+    <div class="ml-1 rounded-full cursor-pointer">
+      <div class="fr-fi-close-line flex m-auto scale-75">
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`components/tag/Tag CreeParUtilisateur smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-gray-900 bg-white border border-gray-300 pr-2">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+    <div class="ml-1 rounded-full cursor-pointer">
+      <div class="fr-fi-close-line flex m-auto scale-75">
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`components/tag/Tag Default smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+  </div>
+</div>
+`;
+
+exports[`components/tag/Tag StylePersonnalise smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary !bg-error-1 font-bold">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+  </div>
+</div>
+`;
