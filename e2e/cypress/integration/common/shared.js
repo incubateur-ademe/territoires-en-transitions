@@ -15,3 +15,8 @@ export function logout() {
   cy.get('.fr-header__tools-links [data-test=connectedMenu]').click();
   cy.get('[data-test=logoutBtn]').click();
 }
+
+// clic en-dehors d'une boîte de dialogue
+export function clickOutside() {
+  cy.get('body').click(1, 1);
+}

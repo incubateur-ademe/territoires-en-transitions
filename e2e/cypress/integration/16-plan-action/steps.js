@@ -1,6 +1,7 @@
 import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
+import {clickOutside} from '../common/shared';
 
 beforeEach(() => {
   // enregistre les définitions locales
@@ -120,7 +121,7 @@ When(/je le nomme "([^"]*)"/, titre => {
         '{selectall}{backspace}' + titre
       );
     });
-  cy.get('body').click(10, 10);
+  clickOutside();
 });
 
 When(/j'ajoute une fiche au plan d'action/, () => {
@@ -233,7 +234,7 @@ When(
   (value, filtre) => {
     cy.get(`[data-test=filtre-${filtre}]`).click();
     cy.root().contains(value).click();
-    cy.get('body').click(10, 10);
+    clickOutside();
   }
 );
 
