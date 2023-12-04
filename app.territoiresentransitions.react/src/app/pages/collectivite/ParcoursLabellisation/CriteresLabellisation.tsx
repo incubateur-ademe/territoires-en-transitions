@@ -28,7 +28,7 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 
   return (
     <>
-      <p className="text-grey625">
+      <p className="text-grey-6">
         Le premier niveau de labellisation ne nécessite pas d’audit et sera
         validé rapidement et directement par l’ADEME ! Les étoiles supérieures
         sont conditionnées à un audit réalisé par une personne experte mandatée

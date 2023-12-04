@@ -2,7 +2,7 @@
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Barre 1`] = `
 <span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey625 bg-white border border-grey925 line-through"
+  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey925 line-through"
   data-test="ActionStatutBadge"
 >
   Non renseigné
@@ -38,7 +38,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Concerne 1`] = `
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Renseigne 1`] = `
 <span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey625 bg-white border border-grey925"
+  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey925"
   data-test="ActionStatutBadge"
 >
   Non renseigné
@@ -65,7 +65,7 @@ exports[`Storyshots ui/shared/actions/ActionStatutBadge Programme 1`] = `
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Small 1`] = `
 <span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey625 bg-white border border-grey925 !text-xs !px-1"
+  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey925 !text-xs !px-1"
   data-test="ActionStatutBadge"
 >
   Non renseigné

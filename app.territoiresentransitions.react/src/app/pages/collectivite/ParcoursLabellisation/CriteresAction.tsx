@@ -86,7 +86,7 @@ const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
           })}
         />
       </td>
-      <td className="text-right text-xs w-[40px] text-grey625">
+      <td className="text-right text-xs w-[40px] text-grey-6">
         <span>{action_identifiant}</span>
       </td>
       <td className="pl-4 pr-8">

@@ -99,7 +99,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       {showWarning && (
         <>
           <YellowDivider />
-          <p className="text-xs grey625 py-4 mb-0">
+          <p className="text-xs grey-6 py-4 mb-0">
             Tous les documents ajoutés seront visibles par les membres de la
             communauté Territoires en Transitions
           </p>

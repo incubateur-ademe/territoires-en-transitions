@@ -33,7 +33,7 @@ exports[`Storyshots ui/shared/actions/ActionPreuvePanel Default 1`] = `
     className="border-solid border-t border-[#FCC63A] my-4"
   />
   <p
-    className="text-xs grey625 py-4 mb-0"
+    className="text-xs grey-6 py-4 mb-0"
   >
     Tous les documents ajoutés seront visibles par les membres de la communauté Territoires en Transitions
   </p>

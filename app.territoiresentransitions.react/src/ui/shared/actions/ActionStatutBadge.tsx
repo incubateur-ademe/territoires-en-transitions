@@ -12,7 +12,7 @@ type Props = {
 };
 
 const statusToClassNames = {
-  non_renseigne: 'text-grey625 bg-white border border-grey925',
+  non_renseigne: 'text-grey-6 bg-white border border-grey925',
   pas_fait: 'text-error425 bg-[#FFE9E9]',
   programme: 'text-tDefaultInfo bg-[#E8EDFF]',
   detaille: 'text-bf500 bg-bf925',

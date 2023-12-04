@@ -59,7 +59,7 @@ const FicheActionSupprimerModal = ({
       <button
         data-test="SupprimerFicheBouton"
         className={classNames(
-          'fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line hover:!bg-principale-3',
+          'fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line hover:!bg-primary-3',
           buttonClassname
         )}
         title="Supprimer la fiche"

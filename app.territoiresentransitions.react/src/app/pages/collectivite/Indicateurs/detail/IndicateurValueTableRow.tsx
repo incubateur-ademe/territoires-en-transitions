@@ -100,7 +100,7 @@ export const IndicateurValueTableRow = ({
         >
           {isImport ? (
             row?.source && (
-              <span className="text-grey625">Source : {row?.source}</span>
+              <span className="text-grey-6">Source : {row?.source}</span>
             )
           ) : (
             <Textarea
@@ -130,7 +130,7 @@ export const IndicateurValueTableRow = ({
 /** Affiche une valeur importée */
 const ValueImported = ({valeur}: {valeur: string}) => (
   <>
-    <span className="text-grey625 font-bold w-fit">{valeur}</span>
+    <span className="text-grey-6 font-bold w-fit">{valeur}</span>
     <InfoTooltip
       label={() => (
         <span>
@@ -166,7 +166,7 @@ export const ValueTableRowReadOnly = ({
       <td>
         {isImport
           ? row?.source && (
-              <span className="text-grey625">Source : {source}</span>
+              <span className="text-grey-6">Source : {source}</span>
             )
           : commentaire}
       </td>
