@@ -24,7 +24,7 @@ values ('Plan Vélo 2020-2024',1,null, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1
        ('4.3 : Développer l’activité physique pour la santé', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12), -- id 21
        ('4.4 : Inclure de nouvelles mobilités dans l’organisation de la mobilité', 1, 16, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 12); -- id 22
 
-
+alter table fiche_action disable trigger save_history;
 insert into fiche_action (titre, description, piliers_eci, collectivite_id, modified_by)
 values ('Permis vélo CM2 école TET 2020-2024',
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
@@ -46,6 +46,7 @@ values ('Permis vélo CM2 école TET 2020-2024',
        ('Arranger la piste cyclable 2024-2028', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'), -- id 12
        ('Envoyer les nouvelles consignes de tri', '', array []::fiche_action_piliers_eci[], 1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9') -- id 13
 ;
+alter table fiche_action enable trigger save_history;
 
 select private.ajouter_thematique(1, 'Activités économiques');
 select private.ajouter_thematique(2, 'Activités économiques');
@@ -141,11 +142,13 @@ select private.ajouter_service(11, (select pt.*::service_tag from (select null a
 select private.ajouter_service(12, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
 select private.ajouter_service(13, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
 
+alter table fiche_action_pilote disable trigger save_history;
 select private.ajouter_pilote(1, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
 select private.ajouter_pilote(2, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(3, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(4, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
+alter table fiche_action_pilote enable trigger save_history;
 
 select private.ajouter_referent(1, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_referent(2, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));

@@ -138,9 +138,10 @@ truncate fiche_action_thematique;
 truncate thematique cascade;
 truncate fiche_action cascade;
 
-
+alter table fiche_action disable trigger save_history;
 insert into public.fiche_action
 select * from test.fiche_action;
+alter table fiche_action enable trigger save_history;
 
 insert into public.thematique
 select * from test.thematique;
@@ -178,8 +179,10 @@ select * from test.fiche_action_structure_tag;
 insert into public.personne_tag
 select * from test.personne_tag;
 
+alter table fiche_action_pilote disable trigger save_history;
 insert into public.fiche_action_pilote
 select * from test.fiche_action_pilote;
+alter table fiche_action_pilote enable trigger save_history;
 
 insert into public.fiche_action_referent
 select * from test.fiche_action_referent;
