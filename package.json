@@ -34,8 +34,7 @@
   },
   "homepage": "https://github.com/betagouv/territoires-en-transitions#readme",
   "workspaces": [
-    "packages/ui",
-    "packages/site",
+    "packages/*",
     "app.territoiresentransitions.react"
   ],
   "overrides": {
