@@ -77,7 +77,7 @@ const Titre = ({fiche, axeId, isEdit, setIsEdit}: Props) => {
         ref={inputRef}
         id={`fiche-titre-${fiche.id?.toString()}`}
         className={classNames(
-          'grow !p-0 !min-h-0 !text-base text-left !leading-relaxed !outline-none !resize-none placeholder:text-principale-9 disabled:pointer-events-none disabled:cursor-pointer disabled:text-principale-9',
+          'grow !p-0 !min-h-0 !text-base text-left !leading-relaxed !outline-none !resize-none placeholder:text-primary-9 disabled:pointer-events-none disabled:cursor-pointer disabled:text-primary-9',
           {
             'placeholder:!text-gray-400': isFocus,
           }

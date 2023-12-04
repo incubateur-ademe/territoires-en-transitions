@@ -88,7 +88,7 @@ const FicheActionCard = ({
       id={carteId}
       className={classNames(
         'relative group h-full rounded-xl border border-grey-3',
-        {'hover:border-principale-3 hover:bg-principale-1': !isNotClickable}
+        {'hover:border-primary-3 hover:bg-primary-1': !isNotClickable}
       )}
     >
       {/** Cadenas accès restreint */}
@@ -116,7 +116,7 @@ const FicheActionCard = ({
                 }
               )}
             >
-              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line !bg-white hover:!bg-principale-3 rounded-lg" />
+              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line !bg-white hover:!bg-primary-3 rounded-lg" />
             </NavLink>
           ) : (
             <button
@@ -125,7 +125,7 @@ const FicheActionCard = ({
               title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
               className={classNames(
-                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-principale-3 rounded-lg'
+                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-primary-3 rounded-lg'
               )}
             />
           )}
@@ -179,7 +179,7 @@ const FicheActionCard = ({
             </div>
           )}
           {(ficheAction.pilotes || ficheAction.date_fin_provisoire) && (
-            <div className="flex items-center gap-4 flex-wrap text-sm text-principale-7">
+            <div className="flex items-center gap-4 flex-wrap text-sm text-primary-7">
               {ficheAction.pilotes && (
                 <div className="flex items-start" title="Pilotes">
                   <span className="fr-icon-user-line mr-1.5 before:!w-4" />
