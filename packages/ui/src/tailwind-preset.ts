@@ -48,6 +48,7 @@ export const preset = {
         },
         // Couleurs success
         success: {
+          DEFAULT: '#48A775',
           1: '#48A775',
           2: '#E4FCEF',
           3: '#3AD483',
