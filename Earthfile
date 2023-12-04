@@ -16,6 +16,8 @@ ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
+ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
+ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
 ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
@@ -311,14 +313,15 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     COPY $APP_DIR $APP_DIR
     COPY $UI_DIR $UI_DIR
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/app
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
+    ARG network=supabase_network_tet
     LOCALLY
     RUN earthly +app-test-build
     RUN docker run --rm \
         --name app-test_tet \
+        --network $network \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
         --env REACT_APP_SUPABASE_URL='http://fake' \
         --env REACT_APP_SUPABASE_KEY='fake' \
@@ -356,6 +359,64 @@ site-run: ## construit et lance l'image du site en local
         --network $network \
         --publish 3001:80 \
         $SITE_IMG_NAME
+
+storybook-build: ## construit l'image du storybook du module `ui`
+    ARG PLATFORM
+    ARG PORT=6007
+    FROM +front-deps
+    COPY $UI_DIR/. $UI_DIR
+    RUN npm run build-storybook -w @tet/ui
+    EXPOSE $PORT
+    #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
+    WORKDIR $UI_DIR
+    CMD ["npx", "serve", "-p", "6007", "./storybook-static"]
+    SAVE IMAGE --cache-from=$STORYBOOK_IMG_NAME --push $STORYBOOK_IMG_NAME
+
+storybook-run: ## construit et lance l'image du storybook du module `ui` en local
+    ARG network=supabase_network_tet
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+    DO +BUILD_IF_NO_IMG --IMG_NAME=storybook --IMG_TAG=$STORYBOOK_TAG --BUILD_TARGET=storybook-build
+    RUN docker run -d --rm \
+        --name storybook_tet \
+        --network $network \
+        --publish 6007:6007 \
+        $STORYBOOK_IMG_NAME
+
+storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
+    ARG PORT=6007
+    ARG STORYBOOK_URL=http://storybook_tet:$PORT
+    # pour avoir playwright déjà pré-installé
+    FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+    # installe les outils de build nécessaire à l'installation de certains packages npm
+    RUN apt update
+    RUN apt install -y build-essential
+    # répertoire de travail
+    RUN mkdir storybook
+    WORKDIR storybook
+    # installe les deps
+    COPY ./package.json ./
+    COPY ./package-lock.json ./
+    COPY $UI_DIR/package.json $UI_DIR/
+    RUN npm i
+    # réinstalle swc pour avoir le bon bindings natif
+    RUN npm i -D @swc/cli @swc/core
+    # installe le navigateur utilisé pour les tests
+    RUN npx playwright install --with-deps chromium
+    # copie les sources
+    COPY $UI_DIR $UI_DIR
+    # commande utilisée pour exécuter les tests 
+    CMD npm run test -w @tet/ui -- --no-index-json --url $STORYBOOK_URL
+    SAVE IMAGE storybook-test:latest
+
+storybook-test-run: # lance les tests du module `ui`
+    ARG network=supabase_network_tet
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
+    RUN docker run --rm \
+        --name storybook_test \
+        --network $network \
+        storybook-test:latest
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
