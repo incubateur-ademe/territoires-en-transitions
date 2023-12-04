@@ -44,7 +44,7 @@ const Textarea = forwardRef(
         <textarea
           ref={textareaRef}
           className={classNames(
-            `resize-none w-full py-2 px-3 text-sm cursor-text rounded-lg outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 disabled:text-gray-900 ${className}`
+            `resize-none w-full py-2 px-3 text-sm cursor-text outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 disabled:text-gray-900 ${className}`
           )}
           onChange={textareaChange}
           value={value}
