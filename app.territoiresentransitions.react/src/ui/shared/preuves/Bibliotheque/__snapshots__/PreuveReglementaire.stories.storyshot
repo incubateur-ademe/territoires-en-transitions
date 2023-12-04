@@ -20,11 +20,11 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action De
         (
         1.1.2
         )
-        <p
+        <span
           className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
         >
           Non concerné
-        </p>
+        </span>
       </span>
       <span
         className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
@@ -74,11 +74,11 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action No
         (
         1.1.2
         )
-        <p
+        <span
           className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
         >
           Non concerné
-        </p>
+        </span>
       </span>
       <span
         className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
