@@ -51,6 +51,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
         id="filtres-indicateurs"
         className="mb-8"
         titre="Filtres complémentaires"
+        icon={`fr-icon-filter-${filterParamsCount > 0 ? 'fill' : 'line'}`}
         html={
           isOpen && (
             <>
