@@ -10,9 +10,47 @@ drop function
     type stats.amplitude_crud_type,
     question_id question_id
 );
+drop function
+stats.amplitude_build_crud_events(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type);
 
 alter type stats.amplitude_content_event drop attribute collectivite_id;
 alter type stats.amplitude_event drop attribute groups;
+
+create function
+    stats.amplitude_build_crud_events(events stats.amplitude_content_event[], name text, type stats.amplitude_crud_type)
+    returns setof stats.amplitude_event
+begin
+    atomic
+    with auditeurs as (select aa.auditeur as user_id
+                       from audit_auditeur aa)
+    select (ev).user_id                       as user_id,
+           name || '_' || type                as event_type,
+           extract(epoch from (ev).time)::int as time,
+           md5(name || type || (ev).user_id)  as insert_id,
+           null::jsonb                        as event_properties,
+           jsonb_build_object(
+                   'fonctions',
+                   (select array_agg(distinct m.fonction)
+                    from private_collectivite_membre m
+                             join private_utilisateur_droit pud
+                                  on m.user_id = pud.user_id and m.collectivite_id = pud.collectivite_id
+                    where m.user_id = (ev).user_id
+                      and m.fonction is not null
+                      and pud.active),
+                   'auditeur', ((ev).user_id in (table auditeurs))
+           )                              as user_properties,
+
+           (select v.name
+            from stats.release_version v
+            where time < (ev).time
+            order by time desc
+            limit 1)                          as
+                                                 app_version
+
+    from (select unnest(events) as ev) as e
+    where (ev).user_id is not null
+      and (ev).time is not null;
+end;
 
 create function
     stats.amplitude_build_crud_events(
