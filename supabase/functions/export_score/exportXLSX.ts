@@ -30,6 +30,7 @@ export const exportXLSX = async (
     commentairesParActionId,
     getPreuvesParActionId,
     scores,
+    getSubActionScore,
   } = data;
 
   // crée le classeur et la feuille de calcul
@@ -68,7 +69,8 @@ export const exportXLSX = async (
       score,
       actionsParId[score.action_id],
       commentairesParActionId[score.action_id]?.commentaire,
-      getPreuvesParActionId(score.action_id)
+      getPreuvesParActionId(score.action_id),
+      getSubActionScore(score.action_id)
     )
   );
 
@@ -183,9 +185,10 @@ export const exportXLSX = async (
 const getRowValues = (
   referentiel: Enums<'referentiel'>,
   { action_id, ...score }: TExportData['scores'][0],
-  action?: TActionReferentiel,
-  commentaire?: string,
-  preuves?: TPreuve[]
+  action: TActionReferentiel | undefined,
+  commentaire: string | undefined,
+  preuves: TPreuve[] | undefined,
+  parentScore: TExportData['scores'][0] | undefined
 ) => {
   const values = [
     // id
@@ -204,7 +207,7 @@ const getRowValues = (
     score.score_realise,
     score.points_programmes,
     score.score_programme,
-    action && !action.have_children ? formatActionStatut(score) : '',
+    formatActionStatut(score, action, parentScore),
 
     // commentaires et documents,
     commentaire || '',
