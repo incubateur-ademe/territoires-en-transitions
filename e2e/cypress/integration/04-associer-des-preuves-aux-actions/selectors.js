@@ -10,13 +10,13 @@ export const LocalSelectors = {
     children: {
       titre: 'input[name=titre]',
       lien: 'input[name=url]',
-      Ajouter: 'button[type=submit]',
+      Ajouter: 'button[data-test=ok]',
     },
   },
   'formulaire Fichier': {
     selector: '[data-test=AddPreuveModal] [data-test=AddFile]',
     children: {
-      Ajouter: 'button[type=submit]',
+      Ajouter: 'button[data-test=ok]',
     },
   },
   'Télécharger toutes les preuves': {

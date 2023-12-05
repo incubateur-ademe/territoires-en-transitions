@@ -31,7 +31,7 @@ export const Selectors = {
     children: {
       email: 'input[name=email]',
       mdp: 'input[name=password]',
-      Valider: 'button[type=submit]',
+      Valider: 'button[data-test=ok]',
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
     },
   },
@@ -40,7 +40,7 @@ export const Selectors = {
     children: {
       email: 'input[name=email]',
       code: 'input[name=code]',
-      Valider: 'button[type=submit]',
+      Valider: 'button[data-test=ok]',
     },
   },
   'formulaire de création de compte': {
@@ -51,7 +51,7 @@ export const Selectors = {
       nom: 'input[name=nom]',
       prenom: 'input[name=prenom]',
       cgu: 'input[name=vie_privee_conditions]',
-      Valider: 'button[type=submit]',
+      Valider: 'button[data-test=ok]',
     },
   },
   'tableau des membres': {
