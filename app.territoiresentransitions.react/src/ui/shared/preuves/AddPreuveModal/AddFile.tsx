@@ -89,7 +89,7 @@ export const AddFile = (props: TAddFileProps) => {
         onRunningStopped={onRunningStopped}
         onRemoveFailed={onRemoveFailed}
       />
-      <button className="fr-btn mt-2" disabled={isDisabled}>
+      <button className="fr-btn mt-2" disabled={isDisabled} data-test="ok">
         Ajouter
       </button>
     </form>

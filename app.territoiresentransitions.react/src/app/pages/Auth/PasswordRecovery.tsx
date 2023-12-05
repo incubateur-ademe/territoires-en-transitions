@@ -88,7 +88,7 @@ export const PasswordRecovery = ({
           {error ? <ErrorMessage message={error} /> : null}
           <Spacer size={4} />
           <div className="flex justify-between">
-            <button type="submit" className="fr-btn">
+            <button className="fr-btn" data-test="ok">
               Réinitialiser mon mot de passe
             </button>
             <button
