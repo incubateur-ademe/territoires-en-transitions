@@ -28,7 +28,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "Resume": {
       "type": "string",
@@ -50,6 +52,11 @@
         "contenu.info"
       ],
       "required": false
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

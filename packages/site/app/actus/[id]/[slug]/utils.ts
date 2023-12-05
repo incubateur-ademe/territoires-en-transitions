@@ -20,20 +20,28 @@ export const getMetaData = async (id: number) => {
     ['populate[2]', 'Metadata.Description'],
     ['populate[3]', 'Metadata.Image'],
     ['populate[4]', 'Couverture'],
+    ['populate[5]', 'seo'],
+    ['populate[6]', 'seo.metaImage'],
   ]);
 
   const image =
+    (data?.attributes.seo?.metaImage?.data as unknown as StrapiItem)
+      ?.attributes ??
     (data?.attributes.Metadata?.Image?.data as unknown as StrapiItem)
       ?.attributes ??
     (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes;
 
   return {
-    title: (data?.attributes.Metadata?.Titre as unknown as string)
-      ? (data?.attributes.Metadata?.Titre as unknown as string)
-      : (data?.attributes.Titre as unknown as string) ?? undefined,
-    description: (data?.attributes.Metadata?.Description as unknown as string)
-      ? (data?.attributes.Metadata?.Description as unknown as string)
-      : (data?.attributes.Resume as unknown as string) ?? undefined,
+    title:
+      (data?.attributes.seo?.metaTitle as unknown as string) ??
+      (data?.attributes.Metadata?.Titre as unknown as string) ??
+      (data?.attributes.Titre as unknown as string) ??
+      undefined,
+    description:
+      (data?.attributes.seo?.metaDescription as unknown as string) ??
+      (data?.attributes.Metadata?.Description as unknown as string) ??
+      (data?.attributes.Resume as unknown as string) ??
+      undefined,
     image: image
       ? {
           url: image.url as unknown as string,
