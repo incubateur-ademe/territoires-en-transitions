@@ -27,7 +27,6 @@ const CollectiviteSelectionee = ({
         />
         <button
           data-test="BtnActiverCollectivite"
-          type="button"
           onClick={submitForm}
           className="fr-btn mt-6"
           disabled={isSubmitting}

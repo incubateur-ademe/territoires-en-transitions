@@ -54,7 +54,6 @@ export const AddLink = (props: TAddLinkProps) => {
             <button
               className="fr-btn fr-mt-2w"
               disabled={!values.titre || !values.url || !isValid}
-              type="submit"
             >
               Ajouter
             </button>
