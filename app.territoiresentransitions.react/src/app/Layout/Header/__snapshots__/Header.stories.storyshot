@@ -69,12 +69,12 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               title="Accueil - Territoires en Transitions"
             >
               <p
-                className="fr-header__service-title"
+                className="fr-header__service-title m-0"
               >
                 Territoires en Transitions
               </p>
               <p
-                className="fr-header__service-tagline"
+                className="fr-header__service-tagline m-0"
               >
                 Accompagner la transition écologique des collectivités
               </p>
@@ -562,12 +562,12 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
               title="Accueil - Territoires en Transitions"
             >
               <p
-                className="fr-header__service-title"
+                className="fr-header__service-title m-0"
               >
                 Territoires en Transitions
               </p>
               <p
-                className="fr-header__service-tagline"
+                className="fr-header__service-tagline m-0"
               >
                 Accompagner la transition écologique des collectivités
               </p>
@@ -996,12 +996,12 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
               title="Accueil - Territoires en Transitions"
             >
               <p
-                className="fr-header__service-title"
+                className="fr-header__service-title m-0"
               >
                 Territoires en Transitions
               </p>
               <p
-                className="fr-header__service-tagline"
+                className="fr-header__service-tagline m-0"
               >
                 Accompagner la transition écologique des collectivités
               </p>
@@ -1489,12 +1489,12 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
               title="Accueil - Territoires en Transitions"
             >
               <p
-                className="fr-header__service-title"
+                className="fr-header__service-title m-0"
               >
                 Territoires en Transitions
               </p>
               <p
-                className="fr-header__service-tagline"
+                className="fr-header__service-tagline m-0"
               >
                 Accompagner la transition écologique des collectivités
               </p>

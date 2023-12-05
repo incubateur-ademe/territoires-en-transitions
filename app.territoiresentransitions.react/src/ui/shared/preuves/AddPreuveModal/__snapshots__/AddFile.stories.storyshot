@@ -161,8 +161,8 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFile Exemple 1 1`] = `
     </div>
     <button
       className="fr-btn mt-2"
+      data-test="ok"
       disabled={true}
-      type="submit"
     >
       Ajouter
     </button>

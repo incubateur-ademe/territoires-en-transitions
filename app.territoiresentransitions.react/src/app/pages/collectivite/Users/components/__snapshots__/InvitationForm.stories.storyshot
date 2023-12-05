@@ -92,8 +92,8 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ad
     </div>
     <button
       className="fr-btn md:mt-7 md:mb-auto"
+      data-test="ok"
       disabled={false}
-      type="submit"
     >
       Ajouter
     </button>
@@ -193,8 +193,8 @@ exports[`Storyshots app/pages/collectivite/Users/components/InvitationForm As Ed
     </div>
     <button
       className="fr-btn md:mt-7 md:mb-auto"
+      data-test="ok"
       disabled={false}
-      type="submit"
     >
       Ajouter
     </button>

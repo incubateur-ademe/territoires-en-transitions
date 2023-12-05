@@ -601,8 +601,8 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       </div>
       <button
         className="fr-btn md:mt-7 md:mb-auto"
+        data-test="ok"
         disabled={false}
-        type="submit"
       >
         Ajouter
       </button>
@@ -1212,8 +1212,8 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       </div>
       <button
         className="fr-btn md:mt-7 md:mb-auto"
+        data-test="ok"
         disabled={false}
-        type="submit"
       >
         Ajouter
       </button>
@@ -1823,8 +1823,8 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       </div>
       <button
         className="fr-btn md:mt-7 md:mb-auto"
+        data-test="ok"
         disabled={false}
-        type="submit"
       >
         Ajouter
       </button>
