@@ -48,13 +48,12 @@ export const getData = async (): Promise<AccueilData | null> => {
     ['populate[7]', 'Temoignages'],
     ['populate[8]', 'Informations'],
     ['populate[9]', 'Newsletter'],
+    ['populate[10]', 'temoignages_liste.temoignage'],
+    ['populate[11]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
-  // Fetch de la liste des témoignages
-  const temoignages = await fetchCollection('temoignages', [
-    ['populate[0]', 'Image'],
-    ['sort[0]', 'Rang:asc'],
-  ]);
+  const temoignages = data.attributes.temoignages_liste
+    .data as unknown as StrapiItem[];
 
   // Formattage de la data
   const formattedData: AccueilData | null = data
@@ -91,23 +90,26 @@ export const getData = async (): Promise<AccueilData | null> => {
             },
           ],
         },
-        temoignages: temoignages
-          ? {
-              titre: data.attributes.Temoignages.Titre as unknown as string,
-              description: data.attributes.Temoignages
-                .Description as unknown as string,
-              contenu: sortByRank(temoignages).map(d => ({
-                id: d.id,
-                auteur: d.attributes.Auteur as unknown as string,
-                description:
-                  (d.attributes.Description as unknown as string) ?? undefined,
-                contenu: d.attributes.Contenu as unknown as string,
-                image:
-                  (d.attributes.Image.data as unknown as StrapiItem) ??
-                  undefined,
-              })),
-            }
-          : null,
+        temoignages:
+          temoignages && temoignages.length > 0
+            ? {
+                titre: data.attributes.Temoignages.Titre as unknown as string,
+                description: data.attributes.Temoignages
+                  .Description as unknown as string,
+                contenu: temoignages.map(d => ({
+                  id: d.id,
+                  auteur: d.attributes.temoignage?.auteur as unknown as string,
+                  description:
+                    (d.attributes.temoignage?.role as unknown as string) ??
+                    undefined,
+                  contenu: d.attributes.temoignage
+                    ?.temoignage as unknown as string,
+                  image:
+                    (d.attributes.temoignage?.portrait
+                      .data as unknown as StrapiItem) ?? undefined,
+                })),
+              }
+            : null,
         informations: {
           titre: data.attributes.Informations.Titre as unknown as string,
           description: data.attributes.Informations

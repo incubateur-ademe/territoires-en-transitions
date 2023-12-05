@@ -9,8 +9,8 @@ export const getStrapiData = async () => {
     ['populate[3]', 'avantages'],
     ['populate[4]', 'avantages.image'],
     ['populate[5]', 'fonctionnalites_image'],
-    ['populate[6]', 'temoignages'],
-    ['populate[7]', 'temoignages.portrait'],
+    ['populate[6]', 'temoignages_liste.temoignage'],
+    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
     ['populate[8]', 'equipe_liste'],
     ['populate[9]', 'equipe_liste.image'],
     ['populate[10]', 'questions_liste'],
@@ -64,16 +64,15 @@ export const getStrapiData = async () => {
         image: outilData.fonctionnalites_image.data as unknown as StrapiItem,
       },
       temoignages: (
-        outilData.temoignages as unknown as {
-          id: number;
-          auteur: string;
-          role: string;
-          temoignage: string;
-          portrait: {data: StrapiItem};
-        }[]
-      ).map(temoignage => ({
-        ...temoignage,
-        portrait: temoignage.portrait.data,
+        (outilData.temoignages_liste.data as unknown as StrapiItem[]) ?? []
+      ).map(t => ({
+        id: t.id,
+        auteur: t.attributes.temoignage?.auteur as unknown as string,
+        role: t.attributes.temoignage?.role as unknown as string,
+        temoignage: t.attributes.temoignage?.temoignage as unknown as string,
+        portrait:
+          (t.attributes.temoignage?.portrait.data as unknown as StrapiItem) ??
+          undefined,
       })),
       equipe: {
         titre: outilData.equipe_titre as unknown as string,

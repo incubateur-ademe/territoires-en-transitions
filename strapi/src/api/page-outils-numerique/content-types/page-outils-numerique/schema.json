@@ -81,6 +81,11 @@
       "component": "shared.temoignage",
       "min": 1
     },
+    "temoignages_liste": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::temoignage.temoignage"
+    },
     "equipe_titre": {
       "type": "string",
       "required": true,
