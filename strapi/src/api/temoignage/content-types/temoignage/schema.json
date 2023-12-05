@@ -4,7 +4,7 @@
   "info": {
     "singularName": "temoignage",
     "pluralName": "temoignages",
-    "displayName": "[Accueil] Témoignages",
+    "displayName": "Témoignages",
     "description": ""
   },
   "options": {
@@ -34,7 +34,20 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "temoignage": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.temoignage"
+    },
+    "identifiant": {
+      "type": "string",
+      "required": true,
+      "private": true,
+      "unique": true
     }
   }
 }
