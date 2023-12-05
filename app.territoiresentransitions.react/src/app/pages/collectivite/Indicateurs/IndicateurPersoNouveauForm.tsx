@@ -69,7 +69,6 @@ export const IndicateurPersoNouveauForm = (props: {
               </button>
             )}
             <button
-              type="submit"
               className={classNames('fr-btn', {
                 'fr-btn--icon-right fr-icon-arrow-right-line': !isSaving,
               })}
