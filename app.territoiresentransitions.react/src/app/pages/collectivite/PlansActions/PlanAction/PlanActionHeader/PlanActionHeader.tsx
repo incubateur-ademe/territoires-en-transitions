@@ -27,7 +27,7 @@ const PlanActionHeader = ({
   return (
     <div
       className={classNames(
-        'flex items-center gap-12 mx-auto py-8 px-11 bg-bf525',
+        'flex items-center gap-12 mx-auto py-8 px-11 bg-primary',
         {
           'mb-8': !isAxePage,
         }
