@@ -7,7 +7,7 @@ export const LocalSelectors = {
     selector: '[data-test=PasswordRecovery]',
     children: {
       email: 'input[name=email]',
-      Valider: 'button[type=submit]',
+      Valider: 'button[data-test=ok]',
     },
   },
   'message lien envoyé': {
@@ -23,7 +23,7 @@ export const LocalSelectors = {
     selector: '[data-test=ResetPassword]',
     children: {
       mdp: 'input[name=password]',
-      Valider: 'button[type=submit]',
+      Valider: 'button[data-test=ok]',
     },
   },
   'réinitialisation du mot de passe réussie': {

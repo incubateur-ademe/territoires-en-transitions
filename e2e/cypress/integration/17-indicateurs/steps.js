@@ -114,5 +114,5 @@ When("je crée l'indicateur avec les données suivantes :", dataTable => {
   cy.get('textarea#description').click().type(desc);
   cy.get(LocalSelectors['Thématique'].selector).click();
   cy.get(`[data-test=thematiques-options] button`).contains(thematique).click();
-  cy.get('button[type=submit]').click({force: true});
+  cy.get('button[data-test=ok]').click({force: true});
 });

@@ -243,7 +243,7 @@ function fillInput(value, input) {
 
 When('je clique en dehors de la boîte de dialogue', clickOutside);
 
-When('je valide le formulaire', () => cy.get('button[type=submit]').click());
+When('je valide le formulaire', () => cy.get('button[data-test=ok]').click());
 
 const transateTypes = {
   succès: 'success',
