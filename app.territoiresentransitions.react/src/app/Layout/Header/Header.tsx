@@ -51,10 +51,10 @@ const Body = (props: HeaderPropsWithModalState) => {
             <Brand {...props} />
             <div className="fr-header__service">
               <Link to="/" title="Accueil - Territoires en Transitions">
-                <p className="fr-header__service-title">
+                <p className="fr-header__service-title m-0">
                   Territoires en Transitions
                 </p>
-                <p className="fr-header__service-tagline">
+                <p className="fr-header__service-tagline m-0">
                   Accompagner la transition écologique des collectivités
                 </p>
               </Link>
