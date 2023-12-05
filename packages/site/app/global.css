@@ -2,7 +2,33 @@
 @import '@tet/ui/dist/global.css';
 
 /*** CSS spécifique au site ***/
+@media (min-width: 78em) {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
+    max-width: 100%;
+  }
+}
 
+@media (min-width: 1280px) {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1350px) {
+  .fr-container,
+  .fr-container-sm,
+  .fr-container-md,
+  .fr-container-lg {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
 
 /** cartes dsfr */
 .fr-card.fr-enlarge-link:hover {
