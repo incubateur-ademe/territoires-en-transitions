@@ -72,6 +72,7 @@ export const IndicateurPersoNouveauForm = (props: {
               className={classNames('fr-btn', {
                 'fr-btn--icon-right fr-icon-arrow-right-line': !isSaving,
               })}
+              data-test="ok"
               disabled={isSaving || !isValid}
             >
               {isSaving ? 'Enregistrement en cours...' : 'Valider et compléter'}

@@ -113,7 +113,7 @@ const InvitationForm = ({
             options={accesOptions}
           />
           <button
-            type="submit"
+            data-test="ok"
             className="fr-btn md:mt-7 md:mb-auto"
             disabled={!formIsFilling}
           >
