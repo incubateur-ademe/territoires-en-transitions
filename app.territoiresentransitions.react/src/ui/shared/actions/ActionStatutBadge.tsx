@@ -12,12 +12,12 @@ type Props = {
 };
 
 const statusToClassNames = {
-  non_renseigne: 'text-grey-6 bg-white border border-grey925',
-  pas_fait: 'text-error425 bg-[#FFE9E9]',
-  programme: 'text-tDefaultInfo bg-[#E8EDFF]',
-  detaille: 'text-bf500 bg-bf925',
-  fait: 'text-success bg-[#B8FEC9]',
-  non_concerne: 'text-grey425 bg-[#EEEEEE]',
+  non_renseigne: 'text-grey-6 bg-white border border-grey-5',
+  pas_fait: 'text-error-1 bg-error-2',
+  programme: 'text-info-1 bg-info-2',
+  detaille: 'text-primary bg-primary-2',
+  fait: 'text-success-1 bg-success-2',
+  non_concerne: 'text-grey-6 bg-grey-3',
 };
 
 const ActionStatutBadge = ({className, statut, barre, small}: Props) => {

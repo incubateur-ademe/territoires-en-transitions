@@ -77,7 +77,9 @@ const CreerPlan = () => {
                   Revenir à l’étape précédente
                 </Link>
 
-                <button className="fr-btn !mb-0">Valider</button>
+                <button className="fr-btn !mb-0" type="submit">
+                  Valider
+                </button>
               </div>
             </Form>
           </Formik>

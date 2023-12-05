@@ -47,7 +47,7 @@ const ToggleButton = forwardRef(
             </span>
           </div>
         </div>
-        {description && <span className="text-grey-7">{description}</span>}
+        {description && <span className="text-grey-8">{description}</span>}
       </button>
     );
   }
