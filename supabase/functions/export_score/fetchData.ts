@@ -5,6 +5,7 @@ import {
   fetchActionsReferentiel,
   fetchCommentaires,
   fetchPreuves,
+  getActionParentId,
 } from '../_shared/fetchActionsReferentiel.ts';
 import { fetchCollectivite } from '../_shared/fetchCollectivite.ts';
 
@@ -36,12 +37,21 @@ export const fetchData = async (
     referentiel
   );
 
+  const actionsParId = indexBy(actions || [], 'action_id');
+  const scoresParId = indexBy(scores || [], 'action_id');
+  const getSubActionScore = (taskId: string) => {
+    if (actionsParId[taskId]?.type !== 'tache') return;
+    const parentId = getActionParentId(taskId);
+    return scoresParId[parentId];
+  };
+
   return {
     collectivite,
-    actionsParId: indexBy(actions || [], 'action_id'),
+    actionsParId,
     commentairesParActionId: indexBy(commentaires || [], 'action_id'),
     scores,
     getPreuvesParActionId,
+    getSubActionScore,
   };
 };
 
@@ -58,7 +68,7 @@ export const fetchCurrentScores = async (
   const { error, data } = await supabaseClient
     .from('action_statuts')
     .select(
-      'action_id,points_max_referentiel,points_max_personnalises,points_realises,score_realise,points_programmes,score_programme,avancement,concerne,desactive'
+      'action_id,points_max_referentiel,points_max_personnalises,points_realises,score_realise,points_programmes,score_programme,avancement,avancement_descendants,concerne,desactive'
     )
     .match({ collectivite_id, referentiel });
 

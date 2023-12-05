@@ -84,3 +84,7 @@ export const fetchPreuves = async (
     getPreuvesParActionId,
   };
 };
+
+/** Renvoi l'id parent d'une action */
+export const getActionParentId = (actionId: string) =>
+  actionId.split('.').toSpliced(-1, 1).join('.');
