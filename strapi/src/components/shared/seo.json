@@ -10,7 +10,7 @@
     "metaTitle": {
       "required": false,
       "type": "string",
-      "maxLength": 60
+      "maxLength": 65
     },
     "metaDescription": {
       "type": "string",

@@ -19,14 +19,16 @@
     },
     "temoignage": {
       "type": "text",
-      "maxLength": 500,
+      "maxLength": 700,
       "required": true
     },
     "portrait": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
