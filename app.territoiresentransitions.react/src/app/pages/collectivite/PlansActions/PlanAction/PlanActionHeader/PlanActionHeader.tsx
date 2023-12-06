@@ -4,6 +4,7 @@ import Actions from './Actions';
 
 import {PlanNode} from '../data/types';
 import {generateTitle} from '../../FicheAction/data/utils';
+import {usePlanType} from '../data/usePlanType';
 
 type TPlanActionHeader = {
   collectivite_id: number;
@@ -24,6 +25,8 @@ const PlanActionHeader = ({
   axeHasFiches,
   isReadonly,
 }: TPlanActionHeader) => {
+  const type = usePlanType(plan.id);
+
   return (
     <div
       className={classNames(
@@ -33,14 +36,23 @@ const PlanActionHeader = ({
         }
       )}
     >
-      {/** Header titre */}
-      <span
-        className={classNames('text-[2rem] text-white font-bold leading-snug', {
-          'text-[1.75rem]': isAxePage,
-        })}
-      >
-        {generateTitle(axe.nom)}
-      </span>
+      <div className="flex flex-col gap-3 grow">
+        {/** Header titre */}
+        <span
+          className={classNames(
+            'text-[1.75rem] text-white font-bold leading-snug',
+            {
+              '!text-[1.5rem]': isAxePage,
+            }
+          )}
+        >
+          {generateTitle(axe.nom)}
+        </span>
+        {/** Type plan d'action */}
+        {!isAxePage && type && (
+          <span className="font-bold text-lg text-white">{type.type}</span>
+        )}
+      </div>
       {/** Actions */}
       {!isReadonly && (
         <Actions
