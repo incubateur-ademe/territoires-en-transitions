@@ -490,14 +490,13 @@ cypress-wip:
 gen-types: ## génère le typage à partir de la base de données
     LOCALLY
     IF [ "$CI" = "true" ]
-        RUN supabase gen types typescript --local --schema public --schema labellisation > $APP_DIR/src/types/database.types.ts
+        RUN supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     ELSE
-        RUN npx supabase gen types typescript --local --schema public --schema labellisation > $APP_DIR/src/types/database.types.ts
+        RUN npx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     END
-    RUN cp $APP_DIR/src/types/database.types.ts ./api_tests/lib/database.types.ts
-    RUN cp $APP_DIR/src/types/database.types.ts ./supabase/functions/_shared/database.types.ts
-    RUN cp $APP_DIR/src/types/database.types.ts $SITE_DIR/app/database.types.ts
-    RUN cp $APP_DIR/src/types/database.types.ts $API_DIR/src/database.types.ts
+    RUN cp $API_DIR/src/database.types.ts ./api_tests/lib/database.types.ts
+    RUN cp $API_DIR/src/database.types.ts ./supabase/functions/_shared/database.types.ts
+    RUN cp $API_DIR/src/database.types.ts $SITE_DIR/app/database.types.ts
 
 setup-env:
     LOCALLY
