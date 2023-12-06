@@ -313,15 +313,14 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     COPY $APP_DIR $APP_DIR
     COPY $UI_DIR $UI_DIR
     # la commande utilisée pour lancer les tests
+    CMD npm run test -w @tet/app
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
-    ARG network=supabase_network_tet
     LOCALLY
     RUN earthly +app-test-build
     RUN docker run --rm \
         --name app-test_tet \
-        --network $network \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
         --env REACT_APP_SUPABASE_URL='http://fake' \
         --env REACT_APP_SUPABASE_KEY='fake' \
