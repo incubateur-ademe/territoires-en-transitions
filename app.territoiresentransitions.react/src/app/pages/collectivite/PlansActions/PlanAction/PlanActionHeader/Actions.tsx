@@ -46,7 +46,7 @@ const Actions = ({
       <ModifierPlanModale axe={axe} isAxePage={isAxePage}>
         <button
           data-test="ModifierPlanBouton"
-          className="py-1.5 px-4 text-sm text-principale-7 font-bold bg-white rounded-lg"
+          className="py-1.5 px-4 text-sm text-primary font-bold bg-white rounded-lg"
         >
           Modifier
         </button>
@@ -57,7 +57,7 @@ const Actions = ({
           title="Exporter"
           disabled={isLoading}
           options={EXPORT_OPTIONS}
-          buttonClassname="flex p-2 bg-white hover:bg-principale-1 rounded-lg fr-icon-download-line text-principale-7 before:!w-4 before:!h-4"
+          buttonClassname="flex p-2 bg-white hover:bg-primary-1 rounded-lg fr-icon-download-line text-primary before:!w-4 before:!h-4"
           hideDefaultIcon
           onSelect={format => exportPlanAction(format as any)}
         />
@@ -79,7 +79,7 @@ const Actions = ({
       >
         <button
           data-test="SupprimerPlanBouton"
-          className="p-2 bg-white hover:!bg-principale-1 rounded-lg"
+          className="p-2 bg-white hover:!bg-primary-1 rounded-lg"
           title={isAxePage ? 'Supprimer cet axe' : "Supprimer ce plan d'action"}
         >
           <span className="flex fr-fi-delete-line before:!h-4 before:!w-4 before:text-error-1"></span>
@@ -94,7 +94,7 @@ const Actions = ({
           >
             <button
               data-test="BoutonToutesFichesPubliques"
-              className="p-2 bg-white hover:bg-principale-1 rounded-lg"
+              className="p-2 bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
               <DSTetTooltip
@@ -116,7 +116,7 @@ const Actions = ({
           <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
             <button
               data-test="BoutonToutesFichesPrivees"
-              className="p-2 bg-white hover:bg-principale-1 rounded-lg"
+              className="p-2 bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
               <DSTetTooltip
@@ -127,7 +127,7 @@ const Actions = ({
               >
                 <div>
                   <IconLockFill
-                    className={classNames('h-4 w-4 fill-principale', {
+                    className={classNames('h-4 w-4 fill-primary', {
                       'fill-grey-5': !axeHasFiches,
                     })}
                   />

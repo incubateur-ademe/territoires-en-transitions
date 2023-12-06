@@ -179,7 +179,7 @@ const FicheActionCard = ({
             </div>
           )}
           {(ficheAction.pilotes || ficheAction.date_fin_provisoire) && (
-            <div className="flex items-center gap-4 flex-wrap text-sm text-primary-7">
+            <div className="flex items-center gap-4 flex-wrap text-sm text-primary">
               {ficheAction.pilotes && (
                 <div className="flex items-start" title="Pilotes">
                   <span className="fr-icon-user-line mr-1.5 before:!w-4" />
