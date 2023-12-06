@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 export interface InscriptionUtilisateur {
   email: string;

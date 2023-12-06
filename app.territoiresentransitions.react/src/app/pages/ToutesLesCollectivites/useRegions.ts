@@ -1,6 +1,6 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {NonNullableFields} from 'types/utils';
 
 /**

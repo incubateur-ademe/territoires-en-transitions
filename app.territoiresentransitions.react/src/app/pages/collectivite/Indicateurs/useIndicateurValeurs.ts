@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {TIndicateurDefinition} from './types';
 import {
   SOURCE_COLLECTIVITE,

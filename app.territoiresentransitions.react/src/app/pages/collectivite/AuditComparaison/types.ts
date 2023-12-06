@@ -1,4 +1,4 @@
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
 
 // alias et règle les imperfections du typage auto-généré
