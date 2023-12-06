@@ -1,6 +1,5 @@
-import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
+import {fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import {sortByRank} from 'src/utils/sortByRank';
 import {AccueilData} from './types';
 
 export const getMetaData = async () => {
