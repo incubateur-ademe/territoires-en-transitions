@@ -1,4 +1,4 @@
-import {Database} from 'app/database.types';
+import {Database} from '@tet/api';
 import {supabase} from 'app/initSupabase';
 import {EtoilesLabel} from 'app/types';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';

@@ -1,2 +1,2 @@
 export * from './typeUtils';
-export type { Database } from './database.types';
+export type { Database, Json } from './database.types';

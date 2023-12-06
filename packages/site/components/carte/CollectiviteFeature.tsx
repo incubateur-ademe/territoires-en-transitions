@@ -2,7 +2,7 @@
 
 import {FeatureGroup, GeoJSON, Tooltip} from 'react-leaflet';
 import {GeoJsonObject} from 'geojson';
-import {Database, Json} from '../../app/database.types';
+import {Database, Json} from '@tet/api';
 import {PathOptions} from 'leaflet';
 import {useRouter} from 'next/navigation';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';

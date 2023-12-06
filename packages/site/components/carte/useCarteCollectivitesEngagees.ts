@@ -1,4 +1,4 @@
-import {Database, Json} from 'app/database.types';
+import {Database, Json} from '@tet/api';
 import {supabase} from 'app/initSupabase';
 import useSWR from 'swr';
 
