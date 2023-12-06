@@ -12,6 +12,7 @@ const SelectTagDropdown = <T extends string>({
   options,
   buttonClassName,
   placeholderText,
+  containerWidthMatchButton,
   onSelect,
   disabled,
   'data-test': dataTest,
@@ -20,6 +21,7 @@ const SelectTagDropdown = <T extends string>({
     <SelectDropdown
       data-test={dataTest}
       buttonClassName={buttonClassName}
+      containerWidthMatchButton={containerWidthMatchButton}
       value={value}
       options={options}
       onSelect={onSelect}
