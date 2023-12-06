@@ -587,21 +587,20 @@ BUILD_IF_NO_IMG:
     ARG --required IMG_TAG
     ARG --required BUILD_TARGET
     ARG pull=yes
-    ARG push=yes
     RUN echo "Searching for image $IMG_NAME:$IMG_TAG ..."
     IF [ "docker image ls | grep $IMG_NAME | grep $IMG_TAG" ]
         RUN echo "Image found, skipping"
     ELSE
         IF [ "$pull" = "yes" ]
             RUN echo "Image not found, trying to pull $REG_TARGET/$IMG_NAME:$IMG_TAG"
-            IF [ "$push" = "yes" ]
+            IF [ "$CI" = "true" ]
                 RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly --push +$BUILD_TARGET
             ELSE
                 RUN docker pull $REG_TARGET/$IMG_NAME:$IMG_TAG || earthly +$BUILD_TARGET
             END
         ELSE
             RUN echo "Image not found, building +$BUILD_TARGET"
-            IF [ "$push" = "yes" ]
+            IF [ "$CI" = "true" ]
                 RUN earthly --push +$BUILD_TARGET
             ELSE
                 RUN earthly +$BUILD_TARGET
