@@ -2,7 +2,7 @@ import {useLocation} from 'react-router-dom';
 import {useAuth} from '../core-logic/api/auth/AuthProvider';
 import {useEffect} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useLocalisation} from 'core-logic/hooks/useLocalisation';
 import {ENV} from 'environmentVariables';

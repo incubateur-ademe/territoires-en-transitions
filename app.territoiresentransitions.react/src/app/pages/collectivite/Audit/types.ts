@@ -1,4 +1,4 @@
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {Referentiel} from 'types/litterals';
 
 export type TAuditStatut = 'non_audite' | 'en_cours' | 'audite';

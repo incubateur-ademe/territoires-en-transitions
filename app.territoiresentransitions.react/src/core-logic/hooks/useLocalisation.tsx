@@ -1,6 +1,6 @@
 import {authBasePath} from 'app/paths';
 import {useMemo} from 'react';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {useLocation} from 'react-router-dom';
 
 /**

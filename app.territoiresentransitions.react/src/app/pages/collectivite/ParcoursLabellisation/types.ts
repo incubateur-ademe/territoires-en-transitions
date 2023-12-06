@@ -1,4 +1,4 @@
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];

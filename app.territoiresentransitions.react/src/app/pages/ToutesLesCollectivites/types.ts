@@ -1,4 +1,4 @@
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {NonNullableFields} from 'types/utils';
 
 /**

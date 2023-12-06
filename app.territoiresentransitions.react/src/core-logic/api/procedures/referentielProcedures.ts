@@ -3,7 +3,7 @@ import {Referentiel} from 'types/litterals';
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 type RPC_KEY = keyof Database['public']['Functions'];
 

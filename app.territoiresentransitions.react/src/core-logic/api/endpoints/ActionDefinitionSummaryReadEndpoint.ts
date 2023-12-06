@@ -2,7 +2,7 @@ import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {Referentiel} from 'types/litterals';
 import {ActionType} from 'types/action_referentiel';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 export interface ActionDefinitionSummaryParams {
   referentiel: Referentiel;

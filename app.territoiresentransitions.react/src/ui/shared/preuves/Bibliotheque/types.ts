@@ -1,5 +1,5 @@
 import {TEditState} from 'core-logic/hooks/useEditState';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 // un fichier de la bibliothèque

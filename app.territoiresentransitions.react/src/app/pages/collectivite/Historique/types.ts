@@ -1,5 +1,5 @@
 import {TFilters, TInitialFilters} from './filters';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 /* type de modification enregistrée dans l'historique */
 export type HistoriqueType =

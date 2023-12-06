@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {TReponseRead} from 'types/personnalisation';
 
 type TJustification = Database['public']['Tables']['justification']['Insert'];

@@ -1,6 +1,6 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 export type TQuestionThematiqueRead =
   Database['public']['Tables']['question_thematique']['Row'];

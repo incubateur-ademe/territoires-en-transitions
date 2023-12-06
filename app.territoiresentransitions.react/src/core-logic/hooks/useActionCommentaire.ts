@@ -1,7 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.

@@ -1,5 +1,5 @@
 import {TActionAvancement, TActionAvancementExt} from 'types/alias';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 
 export const phaseToLabel: Record<
   Database['public']['Enums']['action_categorie'] | string,

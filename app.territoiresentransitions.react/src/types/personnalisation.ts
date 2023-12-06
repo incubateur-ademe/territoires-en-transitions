@@ -2,7 +2,7 @@
  * Typage des questions/réponses pour la personnalisation des référentiels
  */
 
-import {Database} from './database.types';
+import {Database} from '@tet/api';
 
 /** Question */
 export type TQuestionRead = {

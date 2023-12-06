@@ -3,7 +3,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCurrentCollectivite} from './useCurrentCollectivite';
 import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 import {useActionScore} from './scoreHooks';
-import {Database} from 'types/database.types';
+import {Database} from '@tet/api';
 import {useCollectiviteId} from './params';
 import {TActionAvancement} from 'types/alias';
 
