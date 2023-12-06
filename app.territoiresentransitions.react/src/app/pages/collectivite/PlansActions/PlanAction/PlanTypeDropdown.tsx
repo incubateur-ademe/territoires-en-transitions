@@ -37,6 +37,7 @@ const PlanTypeDropdown = ({type, onSelect}: Props) => {
   return (
     <FormField label="Type de plan d’action">
       <SelectDropdown
+        data-test="Type"
         containerWidthMatchButton
         buttonClassName={DSFRbuttonClassname + 'bg-white'}
         options={options ?? []}

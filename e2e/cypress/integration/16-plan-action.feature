@@ -32,7 +32,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je suis sur la page "Plans action" de la collectivité "1"
     # ajouter un nouveau plan d'action
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Et que je crée le plan "Plan test"
+    Et que je crée le plan "Plan test" avec le type "Plan CTE/CRTE"
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
     Et que je le nomme "Axe 1: les tests passent"
@@ -68,7 +68,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je suis sur la page "Plans action" de la collectivité "1"
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Et que je crée le plan "Plan test"
+    Et que je crée le plan "Plan test" avec le type "Plan CTE/CRTE"
     # ajouter une fiche au plan d'action
     Quand j'ajoute une fiche au plan d'action
     Et que je nomme la carte "Fiche test 1"
@@ -106,8 +106,9 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Et que je crée le plan "Plan testy"
+    Et que je crée le plan "Plan testy" avec le type "Plan CTE/CRTE"
     Alors le "Plan action" est visible
+    Alors le texte "Plan CTE/CRTE" est visible
     Alors le nom du plan d'action est changé en "Plan testy" dans la navigation
 
     # renommer un plan
@@ -153,7 +154,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un plan d'action depuis la barre de navigation latérale
     Quand je clique sur le bouton "Ajouter un plan d'action"
-    Et que je crée le plan "Plan test"
+    Et que je crée le plan "Plan test" avec le type "Plan CTE/CRTE"
 
     # ajouter un nouveau titre et lui donner ce contenu "Axe 1: les tests passent"
     Quand j'ajoute un nouveau titre
