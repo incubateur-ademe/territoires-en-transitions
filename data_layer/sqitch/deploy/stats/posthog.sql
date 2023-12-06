@@ -128,18 +128,22 @@ select 'reponse'       as type,
        modified_by     as user_id,
        collectivite_id as collectivite_id
 from historique.reponse_binaire
+         join stats.collectivite_active using (collectivite_id)
 where modified_by is not null
 union all
 select 'reponse', modified_at, modified_by, collectivite_id
 from historique.reponse_choix
+         join stats.collectivite_active using (collectivite_id)
 where modified_by is not null
 union all
 select 'reponse', modified_at, modified_by, collectivite_id
 from historique.reponse_proportion
+         join stats.collectivite_active using (collectivite_id)
 where modified_by is not null
 union all
 select 'justification', modified_at, modified_by, collectivite_id
 from historique.justification
+         join stats.collectivite_active using (collectivite_id)
 where modified_by is not null;
 
 create view stats.creation_event
@@ -149,10 +153,12 @@ select 'fiche'         as type,
        modified_by     as user_id,
        collectivite_id as collectivite_id
 from fiche_action
+         join stats.collectivite_active using (collectivite_id)
 where modified_by is not null
 union all
 select 'plan', created_at, modified_by, collectivite_id
 from axe
+         join stats.collectivite_active using (collectivite_id)
 where parent is null
   and modified_by is not null
 union all
