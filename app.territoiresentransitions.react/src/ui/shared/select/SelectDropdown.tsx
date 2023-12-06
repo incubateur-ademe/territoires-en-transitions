@@ -38,6 +38,7 @@ const SelectDropdown = <T extends string>({
   options,
   onSelect,
   buttonClassName,
+  containerWidthMatchButton,
   renderSelection,
   renderOption,
   placeholderText,
@@ -48,6 +49,7 @@ const SelectDropdown = <T extends string>({
 }: TSelectDropdownProps<T>) => {
   return (
     <DropdownFloater
+      containerWidthMatchButton={containerWidthMatchButton}
       placement={placement}
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
