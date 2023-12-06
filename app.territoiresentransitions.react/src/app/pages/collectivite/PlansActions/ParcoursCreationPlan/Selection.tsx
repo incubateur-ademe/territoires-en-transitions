@@ -2,6 +2,7 @@ import {
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from 'app/paths';
+import classNames from 'classnames';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link, useHistory} from 'react-router-dom';
@@ -15,24 +16,25 @@ const Selection = () => {
   return (
     <div className="max-w-3xl mx-auto flex flex-col grow py-12">
       <div className="w-full mx-auto">
-        <h3 className="mb-8">Ajouter un plan d’action</h3>
-        <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
-          <h6>Vous souhaitez</h6>
-          <div className="flex justify-between gap-6">
+        <div className="flex flex-col mt-2 mb-10 py-14 px-24 text-center bg-primary-0">
+          <h3 className="mb-4">Ajouter un plan d’action</h3>
+          <p className="text-lg text-grey-6">Vous souhaitez</p>
+          <div className="flex justify-between gap-6 mt-4">
             <SelectFlowButton
               dataTest="ImporterPlan"
               title="Importer un plan d’action"
               subTitle="à partir d’un modèle"
-              iconClass="fr-icon-upload-fill"
+              iconClass="fr-icon-file-add-line"
               url={makeCollectivitePlansActionsImporterUrl({
                 collectiviteId: collectivite_id!,
               })}
             />
             <SelectFlowButton
+              isPrimary
               dataTest="CreerPlan"
               title="Créer un plan d’action"
               subTitle="suivez le guide, pas à pas"
-              iconClass="fr-icon-edit-box-fill"
+              iconClass="fr-icon-draft-line"
               url={makeCollectivitePlansActionsCreerUrl({
                 collectiviteId: collectivite_id!,
               })}
@@ -61,6 +63,7 @@ type SelectFlowButtonProps = {
   iconClass: string;
   title: string;
   subTitle: string;
+  isPrimary?: boolean;
 };
 
 const SelectFlowButton = ({
@@ -69,18 +72,32 @@ const SelectFlowButton = ({
   iconClass,
   title,
   subTitle,
+  isPrimary = false,
 }: SelectFlowButtonProps) => (
-  <div className="grow bg-white border border-gray-200 border-b-4 border-b-bf500 hover:bg-[#EEEEEE]">
+  <div
+    className={classNames(
+      'grow bg-white border border-gray-200 rounded-lg hover:bg-primary-0',
+      {'!bg-primary hover:!bg-primary-6': isPrimary}
+    )}
+  >
     <Link
       data-test={dataTest}
       className="flex flex-col w-full p-6 text-center !bg-none"
       to={url}
     >
       <div
-        className={`${iconClass} flex !w-20 !h-20 mx-auto mb-6 before:!h-8 before:!w-8 before:!m-auto text-bf500`}
+        className={`${iconClass} flex !w-20 !h-20 mx-auto mt-3 mb-6 before:!h-16 before:!w-16 before:!m-auto text-primary-4`}
       />
-      <div className="mb-2 font-bold">{title}</div>
-      <div className="text-gray-500">{subTitle}</div>
+      <div
+        className={classNames('m-1 font-bold text-primary-8', {
+          '!text-primary-0': isPrimary,
+        })}
+      >
+        {title}
+      </div>
+      <div className={classNames('text-grey-7', {'!text-grey-1': isPrimary})}>
+        {subTitle}
+      </div>
     </Link>
   </div>
 );
