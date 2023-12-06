@@ -1,5 +1,6 @@
 // exporte les presets tailwind
-export { preset } from './tailwind-preset';
+export {preset} from './tailwind-preset';
 
 // composants exportés
-export { Tag } from './components/tag/Tag';
+export {Button} from './design-system/buttons/button/Button';
+export {Tag} from './components/tag/Tag';
