@@ -2,24 +2,29 @@
 
 BEGIN;
 
-create function stats.posthog_properties(dcp) returns jsonb
+create function stats.posthog_properties(dcp) returns setof jsonb
     language sql
-    stable security definer
+    stable
+    security definer
+    rows 1
 begin
     atomic
-    return json_build_object(
-            'email', $1.email,
-            'name', $1.prenom || ' ' || $1.nom,
-            'fonctions',
-            (select array_agg(distinct m.fonction)
-             from private_collectivite_membre m
-                      join private_utilisateur_droit pud
-                           on m.user_id = pud.user_id and m.collectivite_id = pud.collectivite_id
-             where m.user_id = $1.user_id
-               and m.fonction is not null
-               and pud.active),
-            'auditeur', ($1.user_id in (table auditeurs))
-           );
+    with f as (select array_agg(distinct m.fonction) as list
+               from private_utilisateur_droit pud
+                        join stats.collectivite_active ca using (collectivite_id)
+                        join private_collectivite_membre m using (user_id, collectivite_id)
+               where m.user_id = $1.user_id)
+    select json_build_object(
+                   'email', $1.email,
+                   'name', $1.prenom || ' ' || $1.nom,
+                   'auditeur', exists((select a.auditeur from audit_auditeur a where a.auditeur = $1.user_id)),
+                   'fonction_referent', coalesce('referent' = any (f.list), false),
+                   'fonction_conseiller', coalesce('conseiller' = any (f.list), false),
+                   'fonction_technique', coalesce('technique' = any (f.list), false),
+                   'fonction_politique', coalesce('politique' = any (f.list), false),
+                   'fonction_partenaire', coalesce('partenaire' = any (f.list), false)
+           )
+    from f;
 end;
 
 create function
@@ -27,7 +32,7 @@ create function
     returns table
             (
                 event       text,
-                timestamp   text,
+                "timestamp" text,
                 distinct_id text,
                 properties  jsonb
             )
@@ -37,34 +42,33 @@ create function
     rows 1
 begin
     atomic
-    select '$pageview'     as event,
-           v.user_id       as distinct_id,
-           to_json(v.time) as timestamp,
+    select '$pageview'      as event,
+           $1.user_id       as distinct_id,
+           to_json($1.time) as timestamp,
            json_build_object(
                    '$current_url',
-                   'app/' || (case when v.collectivite_id is null then '' else 'collectivite/' end) || v.page,
-                   'page', v.page,
-                   'tag', v.tag,
-                   'onglet', v.onglet,
-                   'collectivite_id', v.collectivite_id::text,
-                   'niveau_acces', d.niveau_acces,
+                   'app/' || (case when $1.collectivite_id is null then '' else 'collectivite/' end) || $1.page,
+                   'page', $1.page,
+                   'tag', $1.tag,
+                   'onglet', $1.onglet,
+                   'collectivite_id', $1.collectivite_id::text,
+                   'niveau_acces', (select niveau_acces
+                                    from private_utilisateur_droit pud
+                                    where pud.collectivite_id = $1.collectivite_id
+                                      and pud.user_id = $1.user_id),
                    '$set', stats.posthog_properties(p),
-                   '$groups', json_build_object('collectivite', c.collectivite_id::text)
-           )               as properties
-
-    from $1 v
-             join collectivite c using (collectivite_id)
-             join private_utilisateur_droit d using (user_id, collectivite_id)
-             join dcp p using (user_id);
+                   '$groups', json_build_object('collectivite', $1.collectivite_id::text)
+           )                as properties
+    from dcp p
+    where p.user_id = $1.user_id;
 end;
-
 
 create function
     stats.posthog_event(usage)
     returns table
             (
                 event       text,
-                timestamp   text,
+                "timestamp" text,
                 distinct_id text,
                 properties  jsonb
             )
@@ -74,28 +78,28 @@ create function
     rows 1
 begin
     atomic
-    select u.fonction || '_' || u.action as event,
-           u.user_id                     as distinct_id,
-           to_json(u.time)               as timestamp,
+    select $1.fonction || '_' || $1.action as event,
+           $1.user_id                      as distinct_id,
+           to_json($1.time)                as timestamp,
            json_build_object(
                    '$current_url',
-                   'app/' || (case when u.collectivite_id is null then '' else 'collectivite/' end) || u.page,
-                   'page', u.page,
-                   'collectivite_id', u.collectivite_id::text,
-                   'niveau_acces', d.niveau_acces,
+                   'app/' || (case when $1.collectivite_id is null then '' else 'collectivite/' end) || $1.page,
+                   'page', $1.page,
+                   'collectivite_id', $1.collectivite_id::text,
+                   'niveau_acces', (select niveau_acces
+                                    from private_utilisateur_droit pud
+                                    where pud.collectivite_id = $1.collectivite_id
+                                      and pud.user_id = $1.user_id),
                    '$set', stats.posthog_properties(p),
-                   '$groups', json_build_object('collectivite', c.collectivite_id::text)
-           )                             as properties
-
-    from $1 u
-             join collectivite c using (collectivite_id)
-             join private_utilisateur_droit d using (user_id, collectivite_id)
-             join dcp p using (user_id);
+                   '$groups', json_build_object('collectivite', $1.collectivite_id::text)
+           )                               as properties
+    from dcp p
+    where p.user_id = $1.user_id;
 end;
 
 
 create function
-    stats.posthog_event(collectivite)
+    stats.posthog_event(public.collectivite)
     returns table
             (
                 event       text,
@@ -108,16 +112,16 @@ create function
     rows 1
 begin
     atomic
-    select '$groupidentify'        as event,
-           c.collectivite_id::text as distinct_id,
+    select '$groupidentify' as event,
+           $1.id::text      as distinct_id,
            json_build_object(
                    '$group_type', 'collectivite',
-                   '$group_key', c.collectivite_id::text,
-                   '$group_set', to_jsonb(c) || to_jsonb(scu)
-           )                       as properties
-    from $1 c
-             join stats.crm_usages scu on c.id = scu.collectivite_id
-             join stats.collectivite sc using (collectivite_id);
+                   '$group_key', $1.id::text,
+                   '$group_set', to_jsonb(sc) || to_jsonb(scu)
+           )                as properties
+    from stats.collectivite sc
+             join stats.crm_usages scu using (collectivite_id)
+    where $1.id = scu.collectivite_id;
 end;
 
 
@@ -170,7 +174,7 @@ create function
     returns table
             (
                 event       text,
-                timestamp   text,
+                "timestamp" text,
                 distinct_id text,
                 properties  jsonb
             )
@@ -180,21 +184,20 @@ create function
     rows 1
 begin
     atomic
-    select ev.type || '_' || 'creation' as event,
-           ev.user_id                   as distinct_id,
-           to_json(ev.time)             as timestamp,
-           json_object(
-                   'collectivite_id', ev.collectivite_id::text,
+    select $1.type || '_' || 'creation' as event,
+           $1.user_id                   as distinct_id,
+           to_json($1.time)             as timestamp,
+           json_build_object(
+                   'collectivite_id', $1.collectivite_id::text,
                    'niveau_acces', d.niveau_acces,
-                   '$set', json_object('email', p.email, 'name', p.prenom || ' ' || p.nom),
-                   '$groups', json_object('collectivite', c.collectivite_id::text)
+                   '$set', json_build_object('email', p.email, 'name', p.prenom || ' ' || p.nom),
+                   '$groups', json_build_object('collectivite', $1.collectivite_id::text)
            )                            as properties
 
-    from $1 ev
-             join collectivite c using (collectivite_id)
-             join private_utilisateur_droit d using (user_id, collectivite_id)
+    from private_utilisateur_droit d
              join dcp p using (user_id)
-    order by ev.time;
+    where $1.collectivite_id = d.collectivite_id
+      and $1.user_id = d.user_id;
 end;
 
 create function
@@ -202,7 +205,7 @@ create function
     returns table
             (
                 event       text,
-                timestamp   text,
+                "timestamp" text,
                 distinct_id text,
                 properties  jsonb
             )
@@ -212,21 +215,20 @@ create function
     rows 1
 begin
     atomic
-    select ev.type || '_' || 'modification' as event,
-           ev.user_id                       as distinct_id,
-           to_json(ev.time)                 as timestamp,
-           json_object(
-                   'collectivite_id', ev.collectivite_id::text,
+    select $1.type || '_' || 'modification' as event,
+           $1.user_id                       as distinct_id,
+           to_json($1.time)                 as timestamp,
+           json_build_object(
+                   'collectivite_id', $1.collectivite_id::text,
                    'niveau_acces', d.niveau_acces,
-                   '$set', json_object('email', p.email, 'name', p.prenom || ' ' || p.nom),
-                   '$groups', json_object('collectivite', c.collectivite_id::text)
+                   '$set', json_build_object('email', p.email, 'name', p.prenom || ' ' || p.nom),
+                   '$groups', json_build_object('collectivite', $1.collectivite_id::text)
            )                                as properties
 
-    from $1 ev
-             join collectivite c using (collectivite_id)
-             join private_utilisateur_droit d using (user_id, collectivite_id)
+    from private_utilisateur_droit d
              join dcp p using (user_id)
-    order by ev.time;
+    where $1.collectivite_id = d.collectivite_id
+      and $1.user_id = d.user_id;
 end;
 
 
@@ -242,7 +244,6 @@ create function
     returns bigint
 begin
     atomic
-
     select net.http_post(
                    url := conf.api_url,
                    body := jsonb_build_object(
