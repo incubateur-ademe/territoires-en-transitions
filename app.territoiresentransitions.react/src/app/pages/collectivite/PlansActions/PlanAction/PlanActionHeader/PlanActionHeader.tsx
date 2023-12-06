@@ -58,6 +58,7 @@ const PlanActionHeader = ({
         <Actions
           collectivite_id={collectivite_id}
           plan={plan}
+          type={type}
           axe={axe}
           axes={axes}
           isAxePage={isAxePage}

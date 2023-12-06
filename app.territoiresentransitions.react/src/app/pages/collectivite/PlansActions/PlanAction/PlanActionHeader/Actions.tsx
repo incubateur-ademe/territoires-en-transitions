@@ -15,6 +15,7 @@ import {
 import {PlanNode} from '../data/types';
 import {useExportPlanAction} from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
+import {TPlanType} from 'types/alias';
 
 const EXPORT_OPTIONS = [
   {value: 'xlsx', label: 'Format Excel (.xlsx)'},
@@ -24,6 +25,7 @@ const EXPORT_OPTIONS = [
 type Props = {
   collectivite_id: number;
   plan: PlanNode;
+  type?: TPlanType;
   axe: PlanNode;
   axes: PlanNode[];
   isAxePage: boolean;
@@ -34,6 +36,7 @@ type Props = {
 const Actions = ({
   collectivite_id,
   plan,
+  type,
   axe,
   axes,
   isAxePage,
@@ -43,7 +46,7 @@ const Actions = ({
 
   return (
     <div className="flex items-center gap-3 ml-auto">
-      <ModifierPlanModale axe={axe} isAxePage={isAxePage}>
+      <ModifierPlanModale type={type} axe={axe} isAxePage={isAxePage}>
         <button
           data-test="ModifierPlanBouton"
           className="py-1.5 px-4 text-sm text-primary font-bold bg-white rounded-lg"
