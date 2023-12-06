@@ -18,6 +18,8 @@ export type CompositeTypes<
 
 export type TFlatAxe = Database['public']['CompositeTypes']['flat_axe_node'];
 
+export type TPlanType = Tables<'plan_action_type'>;
+
 export type TFicheAction = Views<'fiches_action'>;
 export type TFicheActionInsert = TablesInsert<'fiche_action'>;
 export type TFicheActionUpdate = TablesUpdate<'fiche_action'>;

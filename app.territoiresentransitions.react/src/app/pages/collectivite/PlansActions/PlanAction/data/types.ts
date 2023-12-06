@@ -1,11 +1,7 @@
-import {TAxeRow, TFlatAxe, TPlanActionProfondeur} from 'types/alias';
-import {FicheAction} from '../../FicheAction/data/types';
+import {TAxeRow, TFlatAxe, TPlanActionProfondeur, TPlanType} from 'types/alias';
 
-/** Pour typer la RPC plan_action utilisée pour afficher la page plan action */
-export type PlanAction = {
-  axe: TAxeRow;
-  fiches: FicheAction[] | null;
-  enfants?: PlanAction[];
+export type PlanType = TAxeRow & {
+  type?: TPlanType;
 };
 
 export type FlatAxe = Omit<TFlatAxe, 'fiches' | 'ancestors'> & {
