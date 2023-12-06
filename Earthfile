@@ -4,6 +4,7 @@ LOCALLY
 ARG --global APP_DIR='./app.territoiresentransitions.react'
 ARG --global SITE_DIR='./packages/site'
 ARG --global UI_DIR='./packages/ui'
+ARG --global API_DIR='./packages/api'
 ARG --global BUSINESS_DIR='./business'
 # paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
@@ -260,6 +261,7 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     COPY $APP_DIR/package.json ./$APP_DIR/
     COPY $SITE_DIR/package.json ./$SITE_DIR/
     COPY $UI_DIR/package.json ./$UI_DIR/
+    COPY $API_DIR/package.json ./$API_DIR/
     # installe les dépendances
     RUN npm ci
     SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
@@ -283,7 +285,8 @@ app-build: ## construit l'image de l'app
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
-    RUN npm run build -w @tet/ui -w @tet/app
+    COPY $API_DIR/. $API_DIR
+    RUN npm run build:app
     EXPOSE 3000
     WORKDIR $APP_DIR
     CMD ["dumb-init", "node", "server.js"]
@@ -347,7 +350,8 @@ site-build: ## construit l'image du site
     # copie les sources des modules à construire
     COPY $SITE_DIR $SITE_DIR
     COPY $UI_DIR $UI_DIR
-    RUN npm run build -w @tet/ui -w @tet/site
+    COPY $API_DIR $API_DIR
+    RUN npm run build:site
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
     SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
 
