@@ -3,6 +3,7 @@ import {useMutation, useQueryClient} from 'react-query';
 
 import {PlanNode} from './types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TPlanType} from 'types/alias';
 
 /**
  * Édite un axe dans un plan d'action
@@ -14,19 +15,25 @@ export const useEditAxe = (planId: number) => {
   // clés dans le cache
   const flat_axes_key = ['flat_axes', planId];
   const navigation_key = ['plans_navigation', collectivite_id];
+  const plan_type_key = ['plan_type', planId];
 
   return useMutation(
-    async (axe: PlanNode) => {
-      await supabaseClient.from('axe').update({nom: axe.nom}).eq('id', axe.id);
+    async (axe: PlanNode & {type?: TPlanType}) => {
+      await supabaseClient
+        .from('axe')
+        .update({nom: axe.nom, type: axe.type?.id})
+        .eq('id', axe.id);
     },
     {
       onMutate: async axe => {
         await queryClient.cancelQueries({queryKey: flat_axes_key});
         await queryClient.cancelQueries({queryKey: navigation_key});
+        await queryClient.cancelQueries({queryKey: plan_type_key});
 
         const previousData = [
           [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
           [navigation_key, queryClient.getQueryData(navigation_key)],
+          [plan_type_key, queryClient.getQueryData(plan_type_key)],
         ];
 
         // update les axes d'un plan
@@ -41,6 +48,12 @@ export const useEditAxe = (planId: number) => {
             old ? old.map(a => (a.id !== axe.id ? a : axe)) : []
         );
 
+        // update le type d'un plan
+        queryClient.setQueryData(
+          plan_type_key,
+          (): TPlanType | undefined => axe.type
+        );
+
         return previousData;
       },
       onError: (err, axe, previousData) => {
@@ -51,6 +64,7 @@ export const useEditAxe = (planId: number) => {
       onSettled: () => {
         queryClient.invalidateQueries(flat_axes_key);
         queryClient.invalidateQueries(navigation_key);
+        queryClient.invalidateQueries(plan_type_key);
       },
     }
   );
