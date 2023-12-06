@@ -256,5 +256,29 @@ begin
     limit 1;
 end;
 
+create function
+    stats.posthog_event(range tstzrange)
+    returns setof jsonb
+    language sql
+    stable
+    security definer
+begin
+    atomic
+    select to_jsonb(stats.posthog_event(v))
+    from visite v
+    where $1 @> time
+    union all
+    select to_jsonb(stats.posthog_event(u))
+    from usage u
+    where $1 @> time
+    union all
+    select to_jsonb(stats.posthog_event(e))
+    from stats.modification_event e
+    where $1 @> time
+    union all
+    select to_jsonb(stats.posthog_event(e))
+    from stats.creation_event e
+    where $1 @> time;
+end;
 
 COMMIT;
