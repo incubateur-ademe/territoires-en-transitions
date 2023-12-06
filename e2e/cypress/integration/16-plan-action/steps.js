@@ -82,9 +82,12 @@ When(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
 });
 
 /** PLAN D'ACTION */
-When(/je crée le plan "([^"]*)"/, titre => {
+When(/je crée le plan "([^"]*)" avec le type "([^"]*)"/, (titre, type) => {
   cy.get('[data-test=CreerPlan]').click();
   cy.get('[data-test=PlanNomInput]').clear().type(titre);
+  cy.get(`[data-test=Type]`).click();
+  cy.get(`[data-test=Type-options]`).contains(type).click();
+  cy.get(`[data-test=Type]`).contains(type).should('be.visible');
   cy.get('button').contains('Valider').click();
 });
 

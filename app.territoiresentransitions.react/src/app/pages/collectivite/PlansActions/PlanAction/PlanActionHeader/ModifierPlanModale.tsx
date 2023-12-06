@@ -51,6 +51,7 @@ const ModifierPlanModale = ({children, type, axe, isAxePage}: Props) => {
               }
             >
               <input
+                data-test="PlanNomInput"
                 className="fr-input"
                 value={typedPlan.nom}
                 onChange={e =>

@@ -36,6 +36,7 @@ const CreerPlan = () => {
             hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
           >
             <input
+              data-test="PlanNomInput"
               className="fr-input"
               onChange={e => setPlan({...plan, nom: e.target.value})}
             />
