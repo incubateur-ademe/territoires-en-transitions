@@ -497,6 +497,7 @@ gen-types: ## génère le typage à partir de la base de données
     RUN cp $APP_DIR/src/types/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp $APP_DIR/src/types/database.types.ts ./supabase/functions/_shared/database.types.ts
     RUN cp $APP_DIR/src/types/database.types.ts $SITE_DIR/app/database.types.ts
+    RUN cp $APP_DIR/src/types/database.types.ts $API_DIR/src/database.types.ts
 
 setup-env:
     LOCALLY
