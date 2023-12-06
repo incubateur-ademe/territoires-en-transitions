@@ -2,7 +2,7 @@
 
 import {FeatureGroup, GeoJSON} from 'react-leaflet';
 import {GeoJsonObject} from 'geojson';
-import {Database, Json} from '../../app/database.types';
+import {Database, Json} from '@tet/api';
 import {PathOptions} from 'leaflet';
 
 type region_w_geojson = Database['public']['Views']['site_region']['Row'] & {
