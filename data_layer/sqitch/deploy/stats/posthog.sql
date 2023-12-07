@@ -28,6 +28,7 @@ begin
            )
     from f;
 end;
+comment on function posthog.properties(dcp) is 'Les user properties pour PostHog.';
 
 create function
     posthog.event(visite)
@@ -64,6 +65,7 @@ begin
     from dcp p
     where p.user_id = $1.user_id;
 end;
+comment on function posthog.event(visite) is 'Un event de type pageview.';
 
 create function
     posthog.event(usage)
@@ -98,6 +100,7 @@ begin
     from dcp p
     where p.user_id = $1.user_id;
 end;
+comment on function posthog.event(usage) is 'Un event de type pageview.';
 
 
 create function
@@ -125,6 +128,7 @@ begin
              join stats.crm_usages scu using (collectivite_id)
     where $1.id = scu.collectivite_id;
 end;
+comment on function posthog.event(visite) is 'Un event de type $groupidentify pour mettre à jour les données sur PostHog.';
 
 
 create view posthog.modification
@@ -151,6 +155,7 @@ select 'justification', modified_at, modified_by, collectivite_id
 from historique.justification
          join stats.collectivite_active using (collectivite_id)
 where modified_by is not null;
+comment on view posthog.modification is 'Les actions de modification destinées à être transformées en events.';
 
 create view posthog.creation
 as
@@ -170,6 +175,7 @@ where parent is null
 union all
 select 'discussion', created_at, created_by, collectivite_id
 from action_discussion;
+comment on view posthog.creation is 'Les actions de creation destinées à être transformées en events.';
 
 create function
     posthog.event(posthog.creation)
@@ -201,6 +207,7 @@ begin
     where $1.collectivite_id = d.collectivite_id
       and $1.user_id = d.user_id;
 end;
+comment on function posthog.event(posthog.creation) is 'Événement de creation.';
 
 create function
     posthog.event(posthog.modification)
@@ -232,9 +239,10 @@ begin
     where $1.collectivite_id = d.collectivite_id
       and $1.user_id = d.user_id;
 end;
+comment on function posthog.event(posthog.modification) is 'Événement de modification.';
 
 create function
-    posthog.event(range tstzrange)
+    posthog.event(tstzrange)
     returns setof jsonb
     language sql
     stable
@@ -257,6 +265,8 @@ begin
     from posthog.creation e
     where $1 @> time;
 end;
+comment on function posthog.event(tstzrange) is 'Événement(s) en jsonb pour une plage de temps.';
+
 
 create table posthog.configuration
 (
@@ -264,6 +274,7 @@ create table posthog.configuration
     api_url text not null,
     api_key text not null
 );
+comment on table posthog.configuration is 'La configuration de PostHog.';
 
 create function
     posthog.send_events(events jsonb[])
@@ -281,5 +292,6 @@ begin
     order by id desc
     limit 1;
 end;
+comment on function posthog.send_events is 'Envoie un lot d''événements à PostHog.';
 
 COMMIT;
