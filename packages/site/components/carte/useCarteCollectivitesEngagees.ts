@@ -1,14 +1,14 @@
-import {Database, Json} from '@tet/api';
+import {Views, Json} from '@tet/api';
 import {supabase} from 'app/initSupabase';
 import useSWR from 'swr';
 
-export type labellisation_w_geojson =
-  Database['public']['Views']['site_labellisation']['Row'] & {geojson?: Json};
+export type labellisation_w_geojson = Views<'site_labellisation'> & {
+  geojson?: Json;
+};
 
-export type region_w_geojson =
-  Database['public']['Views']['site_region']['Row'] & {
-    geojson?: Json;
-  };
+export type region_w_geojson = Views<'site_region'> & {
+  geojson?: Json;
+};
 
 export const useCarteCollectivitesEngagees = () => {
   return useSWR('site_labellisation-carte-engagees', async () => {
