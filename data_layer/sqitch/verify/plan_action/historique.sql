@@ -45,14 +45,16 @@ select id,
  modified_by,
  previous_modified_by,
  restreint,
- previous_restreint
+ previous_restreint,
+ deleted
 from historique.fiche_action
 where false;
 
 select id,
  fiche_historise_id,
  user_id,
- tag_nom
+ tag_nom,
+ previous
 from historique.fiche_action_pilote
 where false;
 
