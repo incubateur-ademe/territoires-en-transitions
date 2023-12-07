@@ -300,7 +300,7 @@ create table posthog.configuration
 comment on table posthog.configuration is 'La configuration de PostHog.';
 
 create function
-    posthog.send_events(events jsonb[])
+    posthog.send_events(events jsonb)
     returns bigint
 begin
     atomic
