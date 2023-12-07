@@ -31,6 +31,29 @@ end;
 comment on function posthog.properties(dcp) is 'Les user properties pour PostHog.';
 
 create function
+    posthog.event(dcp)
+    returns table
+            (
+                event       text,
+                "timestamp" text,
+                distinct_id text,
+                properties  jsonb
+            )
+    language sql
+    stable
+    security definer
+    rows 1
+begin
+    atomic
+    select '$identify'                                       as event,
+           to_json($1.modified_at)                           as timestamp,
+           $1.user_id                                        as distinct_id,
+           json_build_object('$set', posthog.properties($1)) as properties;
+end;
+comment on function posthog.event(dcp) is 'Un event de type identify pour mettre à jour les données sur PostHog.';
+
+
+create function
     posthog.event(visite)
     returns table
             (
