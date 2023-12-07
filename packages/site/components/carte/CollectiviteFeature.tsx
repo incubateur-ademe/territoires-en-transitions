@@ -2,13 +2,12 @@
 
 import {FeatureGroup, GeoJSON, Tooltip} from 'react-leaflet';
 import {GeoJsonObject} from 'geojson';
-import {Database, Json} from '@tet/api';
+import {Views, Json} from '@tet/api';
 import {PathOptions} from 'leaflet';
 import {useRouter} from 'next/navigation';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
-type labellisation_w_geojson =
-  Database['public']['Views']['site_labellisation']['Row'] & {geojson?: Json};
+type labellisation_w_geojson = Views<'site_labellisation'> & {geojson?: Json};
 
 type CollectiviteFeatureProps = {
   collectivite: labellisation_w_geojson;

@@ -1,15 +1,13 @@
-import {Database} from '@tet/api';
+import {Tables} from '@tet/api';
 import {supabase} from 'app/initSupabase';
 import {EtoilesLabel} from 'app/types';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
-export type Labellisations =
-  Database['public']['Tables']['labellisation']['Row'];
-export type Indicateurs =
-  Database['public']['Tables']['indicateur_resultat_import']['Row'];
+export type Labellisations = Tables<'labellisation'>;
+export type Indicateurs = Tables<'indicateur_resultat_import'>;
 export type IndicateurArtificialisation =
-  Database['public']['Tables']['indicateur_artificialisation']['Row'];
+  Tables<'indicateur_artificialisation'>;
 
 type Collectivite = {
   collectivite_id: number;
