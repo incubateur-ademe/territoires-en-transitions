@@ -1,4 +1,8 @@
-import { Database } from './database.types';
+import {createClient} from '@supabase/supabase-js';
+import {Database} from './database.types';
+
+// client supabase avec le typage de la base
+export type DBClient = ReturnType<typeof createClient<Database>>;
 
 // Alias génériques sur le typage de la base
 export type Tables<T extends keyof Database['public']['Tables']> =
@@ -39,7 +43,7 @@ export type Prefix<P extends string, S extends string> = `${P}${S}`;
 
 /**
  * Génère un type union à partir des valeurs d'un tableau de chaînes.
- * 
+ *
  * Exemple :
  * ```
  * const myArray = ['val1', 'val2'] as const
