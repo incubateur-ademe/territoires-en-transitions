@@ -151,7 +151,7 @@ begin
              join stats.crm_usages scu using (collectivite_id)
     where $1.id = scu.collectivite_id;
 end;
-comment on function posthog.event(visite) is 'Un event de type $groupidentify pour mettre à jour les données sur PostHog.';
+comment on function posthog.event(public.collectivite) is 'Un event de type $groupidentify pour mettre à jour les données sur PostHog.';
 
 
 create view posthog.modification
