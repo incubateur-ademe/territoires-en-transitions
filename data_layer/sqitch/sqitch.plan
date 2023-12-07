@@ -585,3 +585,5 @@ indicateur/referentiel [indicateur/referentiel@v2.88.0] 2023-12-22T09:51:15Z Flo
 indicateur/personnalise [indicateur/personnalise@v2.88.0] 2023-12-22T14:42:05Z Florian <florian@derfurth.com> # Ajoute des colonnes modified_by pour les résultats et les objectifs et audit les tables
 stats/posthog [stats/posthog@v2.88.0] 2023-12-22T16:17:23Z Florian <florian@derfurth.com> # Événements de création d'objectifs futurs
 @v2.89.0 2023-12-22T17:19:22Z Florian <florian@derfurth.com> # Permet de suivre notre OKR indicateur
+
+automatisation/newsletters 2023-12-05T15:54:02Z Amandine Jacquelin <conta@LanceLibre> # Automatise l'envoie des utilisateurs à Brevo
