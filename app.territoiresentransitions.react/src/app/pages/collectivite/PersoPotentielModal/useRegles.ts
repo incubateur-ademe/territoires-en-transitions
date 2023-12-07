@@ -1,9 +1,8 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {Tables} from '@tet/api';
 
-export type TPersonnalisationRegleRead =
-  Database['public']['Tables']['personnalisation_regle']['Row'];
+export type TPersonnalisationRegleRead = Tables<'personnalisation_regle'>;
 
 type TUseRegles = (action_id: string) => TPersonnalisationRegleRead[];
 

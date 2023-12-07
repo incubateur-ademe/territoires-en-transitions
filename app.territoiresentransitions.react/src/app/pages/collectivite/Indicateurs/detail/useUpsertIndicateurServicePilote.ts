@@ -2,7 +2,7 @@ import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TIndicateurDefinition} from '../types';
-import {TablesInsert} from 'types/alias';
+import {TablesInsert} from '@tet/api';
 
 type TService = TablesInsert<'service_tag'>;
 

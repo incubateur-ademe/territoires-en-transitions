@@ -2,7 +2,7 @@ import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
 import {PostgrestResponse} from '@supabase/supabase-js';
 import {Referentiel} from 'types/litterals';
 import {ActionType} from 'types/action_referentiel';
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 
 export interface ActionDefinitionSummaryParams {
   referentiel: Referentiel;
@@ -28,7 +28,7 @@ export interface ActionDefinitionSummary {
   have_questions: boolean;
   have_reduction_potentiel: boolean;
   have_perimetre_evaluation: boolean;
-  phase: Database['public']['Enums']['action_categorie'];
+  phase: Enums<'action_categorie'>;
 }
 
 class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<

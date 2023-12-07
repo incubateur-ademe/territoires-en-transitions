@@ -1,11 +1,10 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {Referentiel} from 'types/litterals';
-import {NonNullableFields} from 'types/utils';
-import {Database} from '@tet/api';
+import {NonNullableFields, Views} from '@tet/api';
 
 export type TQuestionThematiqueCompletudeRead = NonNullableFields<
-  Database['public']['Views']['question_thematique_completude']['Row']
+  Views<'question_thematique_completude'>
 >;
 
 type TUseQuestionThematiqueCompletude = (

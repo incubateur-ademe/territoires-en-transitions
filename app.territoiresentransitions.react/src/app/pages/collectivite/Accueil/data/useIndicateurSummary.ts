@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ValuesToUnion} from 'types/utils';
+import {ValuesToUnion} from '@tet/api';
 
 const CATEGORIES = ['cae', 'eci', 'perso'] as const;
 type Categorie = ValuesToUnion<typeof CATEGORIES>;

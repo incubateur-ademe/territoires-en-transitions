@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 
 export type TStartAudit = ReturnType<typeof useStartAudit>['mutate'];
 
@@ -30,7 +30,7 @@ const startAudit = async ({
   audit_id,
 }: {
   collectivite_id: number;
-  referentiel: Database['public']['Enums']['referentiel'];
+  referentiel: Enums<'referentiel'>;
   audit_id: number;
 }) =>
   supabaseClient.rpc('labellisation_commencer_audit', {audit_id} as {

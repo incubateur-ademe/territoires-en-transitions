@@ -1,11 +1,8 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
-import {NonNullableFields} from 'types/utils';
+import {NonNullableFields, Views} from '@tet/api';
 
-export type TCollectivite = NonNullableFields<
-  Database['public']['Views']['named_collectivite']['Row']
->;
+export type TCollectivite = NonNullableFields<Views<'named_collectivite'>>;
 
 type TUseAllCollectivites = () => TCollectivite[];
 

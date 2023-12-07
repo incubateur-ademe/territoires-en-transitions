@@ -2,7 +2,7 @@ import {useLocation} from 'react-router-dom';
 import {useAuth} from '../core-logic/api/auth/AuthProvider';
 import {useEffect} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useLocalisation} from 'core-logic/hooks/useLocalisation';
 import {ENV} from 'environmentVariables';
@@ -10,7 +10,7 @@ import {ENV} from 'environmentVariables';
 /**
  * Représente la visite d'une page.
  */
-type Visite = Database['public']['Tables']['visite']['Insert'];
+type Visite = TablesInsert<'visite'>;
 
 /**
  * Enregistre une visite.

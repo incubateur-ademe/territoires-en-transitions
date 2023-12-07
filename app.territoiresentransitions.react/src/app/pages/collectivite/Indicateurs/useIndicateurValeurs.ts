@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 import {TIndicateurDefinition} from './types';
 import {
   SOURCE_COLLECTIVITE,
@@ -10,7 +10,7 @@ import {
 
 export type TIndicateurValeur = {
   annee: number;
-  type: Database['public']['Enums']['indicateur_valeur_type'];
+  type: Enums<'indicateur_valeur_type'>;
   valeur: number;
 };
 

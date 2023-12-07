@@ -1,6 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TThematiqueRow, Tables, TablesInsert} from 'types/alias';
+import {TThematiqueRow} from 'types/alias';
+import {Tables, TablesInsert} from '@tet/api';
 
 export type TIndicateurPersoDefinitionWrite =
   TablesInsert<'indicateur_personnalise_definition'> & {

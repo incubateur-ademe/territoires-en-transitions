@@ -1,14 +1,12 @@
 import {TActionAvancement, TActionAvancementExt} from 'types/alias';
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 
-export const phaseToLabel: Record<
-  Database['public']['Enums']['action_categorie'] | string,
-  string
-> = {
-  bases: "S'engager",
-  'mise en œuvre': 'Concrétiser',
-  effets: 'Consolider',
-};
+export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
+  {
+    bases: "S'engager",
+    'mise en œuvre': 'Concrétiser',
+    effets: 'Consolider',
+  };
 
 // Valeurs par défaut de l'avancement détaillé par statut d'avancement
 export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<

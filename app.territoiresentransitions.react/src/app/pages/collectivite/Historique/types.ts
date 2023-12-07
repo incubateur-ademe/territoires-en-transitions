@@ -1,5 +1,5 @@
 import {TFilters, TInitialFilters} from './filters';
-import {Database} from '@tet/api';
+import {Views} from '@tet/api';
 
 /* type de modification enregistrée dans l'historique */
 export type HistoriqueType =
@@ -14,12 +14,11 @@ export type HistoriqueType =
   | 'plan_action_fiche';
 
 /** un item de l'historique */
-export type THistoriqueItem =
-  Database['public']['Views']['historique']['Row'] & {
-    collectivite_id: number;
-    type: HistoriqueType;
-    modified_at: string;
-  };
+export type THistoriqueItem = Views<'historique'> & {
+  collectivite_id: number;
+  type: HistoriqueType;
+  modified_at: string;
+};
 
 export type THistoriqueItemProps = {
   item: THistoriqueItem;

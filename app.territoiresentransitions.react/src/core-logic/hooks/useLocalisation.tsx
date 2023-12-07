@@ -1,6 +1,6 @@
 import {authBasePath} from 'app/paths';
 import {useMemo} from 'react';
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 import {useLocation} from 'react-router-dom';
 
 /**
@@ -20,9 +20,9 @@ export type Localisation = {
   onglet: Onglet | null;
 };
 
-type Page = Database['public']['Enums']['visite_page'];
-type Tag = Database['public']['Enums']['visite_tag'];
-type Onglet = Database['public']['Enums']['visite_onglet'];
+type Page = Enums<'visite_page'>;
+type Tag = Enums<'visite_tag'>;
+type Onglet = Enums<'visite_onglet'>;
 
 /**
  * Extrait les informations sur la page à partir du chemin.

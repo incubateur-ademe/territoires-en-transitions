@@ -1,7 +1,6 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
-import {NonNullableFields} from 'types/utils';
+import {NonNullableFields, Views} from '@tet/api';
 
 /**
  * Charge la liste des départements.
@@ -23,6 +22,4 @@ const fetch = async () => {
   return data;
 };
 
-export type TDepartement = NonNullableFields<
-  Database['public']['Views']['departement']['Row']
->;
+export type TDepartement = NonNullableFields<Views<'departement'>>;

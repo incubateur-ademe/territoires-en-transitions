@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {Enums} from 'types/alias';
+import {Enums} from '@tet/api';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {unaccent} from 'utils/unaccent';
