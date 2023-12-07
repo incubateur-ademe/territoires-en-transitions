@@ -2,7 +2,9 @@
 
 BEGIN;
 
-create function stats.posthog_properties(dcp) returns setof jsonb
+create schema posthog;
+
+create function posthog.properties(dcp) returns setof jsonb
     language sql
     stable
     security definer
@@ -18,17 +20,17 @@ begin
                    'email', $1.email,
                    'name', $1.prenom || ' ' || $1.nom,
                    'auditeur', exists((select a.auditeur from audit_auditeur a where a.auditeur = $1.user_id)),
-                   'fonction_referent', coalesce('referent' = any (f.list), false),
-                   'fonction_conseiller', coalesce('conseiller' = any (f.list), false),
-                   'fonction_technique', coalesce('technique' = any (f.list), false),
-                   'fonction_politique', coalesce('politique' = any (f.list), false),
-                   'fonction_partenaire', coalesce('partenaire' = any (f.list), false)
+                   'fonction_referent', 'referent' = any (f.list),
+                   'fonction_conseiller', 'conseiller' = any (f.list),
+                   'fonction_technique', 'technique' = any (f.list),
+                   'fonction_politique', 'politique' = any (f.list),
+                   'fonction_partenaire', 'partenaire' = any (f.list)
            )
     from f;
 end;
 
 create function
-    stats.posthog_event(visite)
+    posthog.event(visite)
     returns table
             (
                 event       text,
@@ -56,7 +58,7 @@ begin
                                     from private_utilisateur_droit pud
                                     where pud.collectivite_id = $1.collectivite_id
                                       and pud.user_id = $1.user_id),
-                   '$set', stats.posthog_properties(p),
+                   '$set', posthog.properties(p),
                    '$groups', json_build_object('collectivite', $1.collectivite_id::text)
            )                as properties
     from dcp p
@@ -64,7 +66,7 @@ begin
 end;
 
 create function
-    stats.posthog_event(usage)
+    posthog.event(usage)
     returns table
             (
                 event       text,
@@ -90,7 +92,7 @@ begin
                                     from private_utilisateur_droit pud
                                     where pud.collectivite_id = $1.collectivite_id
                                       and pud.user_id = $1.user_id),
-                   '$set', stats.posthog_properties(p),
+                   '$set', posthog.properties(p),
                    '$groups', json_build_object('collectivite', $1.collectivite_id::text)
            )                               as properties
     from dcp p
@@ -99,7 +101,7 @@ end;
 
 
 create function
-    stats.posthog_event(public.collectivite)
+    posthog.event(public.collectivite)
     returns table
             (
                 event       text,
@@ -125,7 +127,7 @@ begin
 end;
 
 
-create view stats.modification_event
+create view posthog.modification
 as
 select 'reponse'       as type,
        modified_at     as time,
@@ -150,7 +152,7 @@ from historique.justification
          join stats.collectivite_active using (collectivite_id)
 where modified_by is not null;
 
-create view stats.creation_event
+create view posthog.creation
 as
 select 'fiche'         as type,
        created_at      as time,
@@ -170,7 +172,7 @@ select 'discussion', created_at, created_by, collectivite_id
 from action_discussion;
 
 create function
-    stats.posthog_event(stats.creation_event)
+    posthog.event(posthog.creation)
     returns table
             (
                 event       text,
@@ -201,7 +203,7 @@ begin
 end;
 
 create function
-    stats.posthog_event(stats.modification_event)
+    posthog.event(posthog.modification)
     returns table
             (
                 event       text,
@@ -231,8 +233,32 @@ begin
       and $1.user_id = d.user_id;
 end;
 
+create function
+    posthog.event(range tstzrange)
+    returns setof jsonb
+    language sql
+    stable
+    security definer
+begin
+    atomic
+    select to_jsonb(posthog.event(v))
+    from visite v
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(u))
+    from usage u
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(e))
+    from posthog.modification e
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(e))
+    from posthog.creation e
+    where $1 @> time;
+end;
 
-create table stats.posthog_configuration
+create table posthog.configuration
 (
     id      serial primary key,
     api_url text not null,
@@ -240,7 +266,7 @@ create table stats.posthog_configuration
 );
 
 create function
-    stats.send_posthog_events(events jsonb[])
+    posthog.send_events(events jsonb[])
     returns bigint
 begin
     atomic
@@ -251,34 +277,9 @@ begin
                            'batch', $1
                            )
            )
-    from stats.posthog_configuration conf
+    from posthog.configuration conf
     order by id desc
     limit 1;
-end;
-
-create function
-    stats.posthog_event(range tstzrange)
-    returns setof jsonb
-    language sql
-    stable
-    security definer
-begin
-    atomic
-    select to_jsonb(stats.posthog_event(v))
-    from visite v
-    where $1 @> time
-    union all
-    select to_jsonb(stats.posthog_event(u))
-    from usage u
-    where $1 @> time
-    union all
-    select to_jsonb(stats.posthog_event(e))
-    from stats.modification_event e
-    where $1 @> time
-    union all
-    select to_jsonb(stats.posthog_event(e))
-    from stats.creation_event e
-    where $1 @> time;
 end;
 
 COMMIT;
