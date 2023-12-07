@@ -1,7 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.
@@ -83,8 +83,7 @@ export const useSaveActionCommentaire = () => {
   };
 };
 
-type ActionCommentaireWrite =
-  Database['public']['Tables']['action_commentaire']['Insert'];
+type ActionCommentaireWrite = TablesInsert<'action_commentaire'>;
 const write = async (commentaire: ActionCommentaireWrite) =>
   supabaseClient.from('action_commentaire').upsert([commentaire], {
     onConflict: 'collectivite_id,action_id',

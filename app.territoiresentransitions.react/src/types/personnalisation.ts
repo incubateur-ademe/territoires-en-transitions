@@ -2,7 +2,7 @@
  * Typage des questions/réponses pour la personnalisation des référentiels
  */
 
-import {Database} from '@tet/api';
+import {Enums} from '@tet/api';
 
 /** Question */
 export type TQuestionRead = {
@@ -15,7 +15,7 @@ export type TQuestionRead = {
   choix?: TListeChoix;
 };
 
-export type TQuestionType = Database['public']['Enums']['question_type'];
+export type TQuestionType = Enums<'question_type'>;
 export type TListeChoix = {id: string; label: string}[];
 
 /** Réponse */

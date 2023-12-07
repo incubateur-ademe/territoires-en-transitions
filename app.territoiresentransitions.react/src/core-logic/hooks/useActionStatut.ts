@@ -3,7 +3,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCurrentCollectivite} from './useCurrentCollectivite';
 import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
 import {useActionScore} from './scoreHooks';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 import {useCollectiviteId} from './params';
 import {TActionAvancement} from 'types/alias';
 
@@ -90,8 +90,7 @@ export const useSaveActionStatut = () => {
   };
 };
 
-type TActionStatutWrite =
-  Database['public']['Tables']['action_statut']['Insert'];
+type TActionStatutWrite = TablesInsert<'action_statut'>;
 const write = async (statut: TActionStatutWrite) => {
   delete statut.modified_at;
   delete statut.modified_by;

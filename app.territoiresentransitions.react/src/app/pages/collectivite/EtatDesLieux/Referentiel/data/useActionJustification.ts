@@ -1,7 +1,7 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 
 const fetchJustification = async (
   collectivite_id: number | null,
@@ -55,8 +55,7 @@ export const useSaveActionJustification = () => {
   };
 };
 
-type ActionJustificationWrite =
-  Database['public']['Tables']['justification_ajustement']['Insert'];
+type ActionJustificationWrite = TablesInsert<'justification_ajustement'>;
 const write = async (justification: ActionJustificationWrite) =>
   supabaseClient.from('justification_ajustement').upsert([justification], {
     onConflict: 'collectivite_id,action_id',

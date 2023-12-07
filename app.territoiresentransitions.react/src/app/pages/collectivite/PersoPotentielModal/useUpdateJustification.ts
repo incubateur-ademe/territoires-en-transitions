@@ -1,9 +1,9 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 import {TReponseRead} from 'types/personnalisation';
 
-type TJustification = Database['public']['Tables']['justification']['Insert'];
+type TJustification = TablesInsert<'justification'>;
 
 /**
  * Met à jour la justification d'une réponse à une question de personnalisation

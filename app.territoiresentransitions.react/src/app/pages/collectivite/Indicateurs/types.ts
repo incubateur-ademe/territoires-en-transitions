@@ -1,5 +1,4 @@
-import {Tables} from 'types/alias';
-import {ValuesToUnion} from '../../../../types/utils';
+import {ValuesToUnion, Tables} from '@tet/api';
 
 type Rempli = boolean | null;
 

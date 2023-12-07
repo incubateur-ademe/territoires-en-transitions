@@ -1,4 +1,4 @@
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -9,7 +9,7 @@ import {useMemo, useRef} from 'react';
 /**
  * Représente l'utilisation d'une fonctionnalité
  */
-type Usage = Database['public']['Tables']['usage']['Insert'];
+type Usage = TablesInsert<'usage'>;
 
 /**
  * Enregistre un usage.

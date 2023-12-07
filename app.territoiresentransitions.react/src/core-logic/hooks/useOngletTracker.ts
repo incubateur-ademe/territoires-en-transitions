@@ -1,4 +1,4 @@
-import {Database} from '@tet/api';
+import {Enums, TablesInsert} from '@tet/api';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -9,12 +9,12 @@ import {useMemo, useRef} from 'react';
 /**
  * Représente la visite d'une page.
  */
-type Visite = Database['public']['Tables']['visite']['Insert'];
+type Visite = TablesInsert<'visite'>;
 
 /**
  * Les différents onglets possibles.
  */
-type Onglet = Database['public']['Enums']['visite_onglet'];
+type Onglet = Enums<'visite_onglet'>;
 
 /**
  * Enregistre une visite.

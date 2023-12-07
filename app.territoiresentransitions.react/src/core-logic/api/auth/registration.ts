@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {TablesInsert} from '@tet/api';
 
 export interface InscriptionUtilisateur {
   email: string;
@@ -13,7 +13,7 @@ export interface InscriptionUtilisateur {
 export const politique_vie_privee =
   'https://www.ademe.fr/lademe/infos-pratiques/politique-protection-donnees-a-caractere-personnel';
 
-type DcpWrite = Database['public']['Tables']['dcp']['Insert'];
+type DcpWrite = TablesInsert<'dcp'>;
 
 export const registerUser = async (inscription: InscriptionUtilisateur) => {
   if (!inscription.vie_privee_conditions)

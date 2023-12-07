@@ -1,9 +1,8 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {Views} from '@tet/api';
 
-export type TCarteIdentite =
-  Database['public']['Views']['collectivite_carte_identite']['Row'];
+export type TCarteIdentite = Views<'collectivite_carte_identite'>;
 type TUseCarteIdentite = (
   collectivite_id?: number | null
 ) => TCarteIdentite | null;

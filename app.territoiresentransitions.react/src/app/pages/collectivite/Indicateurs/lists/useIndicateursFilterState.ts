@@ -1,8 +1,8 @@
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {Filters} from './useFilteredIndicateurDefinitions';
-import {Enums} from 'types/alias';
 import {ITEM_FICHES_NON_CLASSEES} from './FiltrePlans';
+import {Enums} from '@tet/api';
 
 // valeurs par défaut des filtres
 type TFilters = {

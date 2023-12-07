@@ -1,16 +1,12 @@
-import {Database} from '@tet/api';
-import {NonNullableFields} from 'types/utils';
+import {Enums, NonNullableFields, Views} from '@tet/api';
 
 /**
  * Element de la liste `collectivite_card`, utilisée par la vue toutes les
  * collectivités.
  */
-export type TCollectiviteCarte = NonNullableFields<
-  Database['public']['Views']['collectivite_card']['Row']
->;
+export type TCollectiviteCarte = NonNullableFields<Views<'collectivite_card'>>;
 
-export type TTypeCollectivite =
-  Database['public']['Enums']['filterable_type_collectivite'];
+export type TTypeCollectivite = Enums<'filterable_type_collectivite'>;
 
 export type TSelectOption<T extends string> = {
   id: T;

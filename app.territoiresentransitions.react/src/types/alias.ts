@@ -1,22 +1,14 @@
-import {Database} from '@tet/api';
-import {NonNullableFields} from './utils';
+import {
+  Enums,
+  CompositeTypes,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+  Views,
+  NonNullableFields,
+} from '@tet/api';
 
-// Alias génériques sur le typage de la base
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type TablesInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update'];
-export type Views<T extends keyof Database['public']['Views']> =
-  Database['public']['Views'][T]['Row'];
-export type Enums<T extends keyof Database['public']['Enums']> =
-  Database['public']['Enums'][T];
-export type CompositeTypes<
-  T extends keyof Database['public']['CompositeTypes']
-> = Database['public']['CompositeTypes'][T];
-
-export type TFlatAxe = Database['public']['CompositeTypes']['flat_axe_node'];
+export type TFlatAxe = CompositeTypes<'flat_axe_node'>;
 
 export type TPlanType = Tables<'plan_action_type'>;
 
@@ -63,11 +55,9 @@ export type TPersonneTagInsert = TablesInsert<'personne_tag'>;
 
 export type TFicheResume = Views<'fiche_resume'>;
 
-export type TPersonne = Database['public']['CompositeTypes']['personne'];
-export type TIndicateur =
-  Database['public']['CompositeTypes']['indicateur_generique'];
-export type TFinanceurMontant =
-  Database['public']['CompositeTypes']['financeur_montant'];
+export type TPersonne = CompositeTypes<'personne'>;
+export type TIndicateur = CompositeTypes<'indicateur_generique'>;
+export type TFinanceurMontant = CompositeTypes<'financeur_montant'>;
 
 export type TFicheActionCibles = Enums<'fiche_action_cibles'>;
 export type TFicheActionNiveauxPriorite =

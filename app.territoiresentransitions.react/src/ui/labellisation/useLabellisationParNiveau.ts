@@ -1,10 +1,10 @@
 import {useQuery} from 'react-query';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
+import {Enums, Tables} from '@tet/api';
 
 export const useLabellisationParNiveau = (
-  referentiel: Database['public']['Enums']['referentiel']
+  referentiel: Enums<'referentiel'>
 ) => {
   const collectivite_id = useCollectiviteId()!;
   const {data} = useQuery(
@@ -21,7 +21,7 @@ export const useLabellisationParNiveau = (
   return data || {};
 };
 
-type TLabellisation = Database['public']['Tables']['labellisation']['Row'];
+type TLabellisation = Tables<'labellisation'>;
 
 export type LabellisationParNiveauRead = {
   [key: number]: TLabellisation;

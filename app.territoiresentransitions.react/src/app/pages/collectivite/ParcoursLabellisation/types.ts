@@ -1,4 +1,4 @@
-import {Database} from '@tet/api';
+import {Database, Tables} from '@tet/api';
 import {TAudit} from 'app/pages/collectivite/Audit/types';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
@@ -37,7 +37,7 @@ export type TLabellisationParcours = {
   /** Demande de labellisation associée au parcours */
   demande: TDemandeAudit | null;
   /** Dernière labellisation obtenue */
-  labellisation: Database['public']['Tables']['labellisation']['Row'] | null;
+  labellisation: Tables<'labellisation'> | null;
   /** Audit associée à la demande */
   audit: TAudit | null;
 };

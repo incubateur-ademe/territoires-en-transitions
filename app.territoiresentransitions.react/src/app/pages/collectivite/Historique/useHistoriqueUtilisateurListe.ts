@@ -1,10 +1,10 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useQuery} from 'react-query';
-import {Database} from '@tet/api';
+import {Views} from '@tet/api';
 
 type TFetchedData = {
-  modified_by_id: Database['public']['Views']['historique_utilisateur']['Row']['modified_by_id'];
-  modified_by_nom: Database['public']['Views']['historique_utilisateur']['Row']['modified_by_nom'];
+  modified_by_id: Views<'historique_utilisateur'>['modified_by_id'];
+  modified_by_nom: Views<'historique_utilisateur'>['modified_by_nom'];
 }[];
 
 export const fetchHistoriqueUtilisateur = async (

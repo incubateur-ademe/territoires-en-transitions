@@ -1,7 +1,6 @@
 import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
-import {NonNullableFields} from 'types/utils';
+import {NonNullableFields, Views} from '@tet/api';
 
 /**
  * Charge la liste des régions.
@@ -23,6 +22,4 @@ const fetch = async () => {
   return data;
 };
 
-export type TRegion = NonNullableFields<
-  Database['public']['Views']['region']['Row']
->;
+export type TRegion = NonNullableFields<Views<'region'>>;
