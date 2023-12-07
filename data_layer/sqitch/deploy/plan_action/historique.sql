@@ -47,7 +47,8 @@ create table historique.fiche_action
     modified_by           uuid,
     previous_modified_by  uuid,
     restreint             boolean,
-    previous_restreint    boolean
+    previous_restreint    boolean,
+    deleted              boolean default false
 );
 alter table historique.fiche_action enable row level security;
 
@@ -56,7 +57,8 @@ create table historique.fiche_action_pilote
     id serial primary key,
     fiche_historise_id integer references historique.fiche_action,
     user_id uuid,
-    tag_nom text
+    tag_nom text,
+    previous boolean not null
 );
 comment on column historique.fiche_action_pilote.fiche_historise_id is
     'On veut les pilotes à l''instant T d''une fiche';
@@ -69,7 +71,10 @@ as
 $$
 declare
     updated integer;
+    id_fiche integer;
+    previous_fiche integer;
 begin
+    id_fiche = coalesce(new.id, old.id);
     update historique.fiche_action
     set
         titre = new.titre,
@@ -91,10 +96,11 @@ begin
         maj_termine = new.maj_termine,
         modified_at = new.modified_at,
         modified_by = new.modified_by,
-        restreint = new.restreint
+        restreint = new.restreint,
+        deleted = new is null
     where id in (select id
                  from historique.fiche_action
-                 where fiche_id = new.id
+                 where fiche_id = id_fiche
                    and modified_at > new.modified_at - interval '1 hour'
                  order by modified_by desc
                  limit 1)
@@ -104,7 +110,7 @@ begin
     then
         insert into historique.fiche_action
         values (default,
-                new.id,
+                id_fiche,
                 new.titre,
                 old.titre,
                 new.description,
@@ -146,17 +152,33 @@ begin
                 auth.uid(),
                 old.modified_by,
                 new.restreint,
-                old.restreint)
+                old.restreint,
+                new is null)
         returning id into updated;
+
+        select id
+        from historique.fiche_action faa
+        where fiche_id = id_fiche
+        and id <> updated
+        order by faa.modified_at desc
+        limit 1 into previous_fiche;
+
+        if previous_fiche is not null then
+            insert into historique.fiche_action_pilote (fiche_historise_id, user_id, tag_nom, previous)
+            select updated, fap.user_id, fap.tag_nom, true
+            from historique.fiche_action_pilote fap
+            where fap.fiche_historise_id = previous_fiche;
+        end if;
+
     else
-        delete from historique.fiche_action_pilote where fiche_historise_id = updated;
+        delete from historique.fiche_action_pilote where fiche_historise_id = updated and previous = false;
     end if;
 
-    insert into historique.fiche_action_pilote (fiche_historise_id, user_id, tag_nom)
-    select updated, fap.user_id, pt.nom
+    insert into historique.fiche_action_pilote (fiche_historise_id, user_id, tag_nom, previous)
+    select updated, fap.user_id, pt.nom, false
     from public.fiche_action_pilote fap
     left join personne_tag pt on fap.tag_id = pt.id
-    where fiche_id = new.id;
+    where fiche_id = id_fiche;
 
     return new;
 end ;
@@ -173,7 +195,7 @@ $$ language plpgsql security definer;
 
 
 create trigger save_history
-    after insert or update
+    after insert or update or delete
     on fiche_action
     for each row
 execute procedure historique.save_fiche_action();
