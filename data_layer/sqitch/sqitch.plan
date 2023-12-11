@@ -570,3 +570,6 @@ stats/posthog 2023-12-06T14:08:54Z Florian <florian@derfurth.com> # Ajoute PostH
 plan_action/historique 2023-11-29T13:24:11Z Amandine Jacquelin <conta@LanceLibre> # Ajoute l'historisation des fiches action
 automatisation/crm [automatisation/crm@v2.83.0] 2023-11-29T16:39:29Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des colonnes aux stats d'usages
 @v2.87.0 2023-12-11T17:17:11Z Florian <florian@derfurth.com> # Améliorations outillage interne
+
+stats/posthog [stats/posthog@v2.87.0] 2023-12-11T17:45:58Z Florian <florian@derfurth.com> # hotfix
+@v2.87.1 2023-12-11T17:49:23Z Florian <florian@derfurth.com> # Hotfix PostHog

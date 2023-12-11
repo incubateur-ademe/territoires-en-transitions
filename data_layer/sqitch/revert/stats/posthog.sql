@@ -1,7 +1,7 @@
--- Revert tet:stats/posthog from pg
+-- Deploy tet:stats/posthog to pg
 
 BEGIN;
 
-drop schema posthog cascade;
+-- on ne veut pas revert le bug
 
 COMMIT;
