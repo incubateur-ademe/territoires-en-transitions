@@ -12,6 +12,8 @@ type TagProps = {
   /** Change la couleur par défaut pour distinguer les étiquettes prédéfinies
    * des étiquettes utilisateur */
   isUserCreated?: boolean;
+  /** Restreint le titre à une seule ligne */
+  trim?: boolean;
 };
 
 /** Affiche une étiquette */
@@ -21,6 +23,7 @@ export const Tag = ({
   disabled,
   onClose,
   isUserCreated,
+  trim = false,
 }: TagProps) => {
   if (!title || title.length === 0) {
     return null;
@@ -34,15 +37,17 @@ export const Tag = ({
         isUserCreated
           ? 'text-gray-900 bg-white border border-gray-300'
           : 'text-white bg-primary',
-        { 'pr-2': canClose },
+        {'pr-2': canClose},
         className
       )}
     >
-      <span className="py-0.5 text-sm">{title}</span>
+      <span className={classNames('py-0.5 text-sm', {'line-clamp-1': trim})}>
+        {title}
+      </span>
       {canClose && (
         <div
           className="ml-1 rounded-full cursor-pointer"
-          onClick={(evt) => {
+          onClick={evt => {
             evt.stopPropagation();
             onClose();
           }}
