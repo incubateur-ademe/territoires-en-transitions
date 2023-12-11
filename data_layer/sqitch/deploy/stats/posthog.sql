@@ -138,19 +138,19 @@ create function
     stable
     security definer
     rows 1
-begin
-    atomic
-    select '$groupidentify' as event,
-           $1.id::text      as distinct_id,
-           json_build_object(
-                   '$group_type', 'collectivite',
-                   '$group_key', $1.id::text,
-                   '$group_set', to_jsonb(sc) || to_jsonb(scu)
-           )                as properties
-    from stats.collectivite sc
-             join stats.crm_usages scu using (collectivite_id)
-    where $1.id = scu.collectivite_id;
-end;
+as
+$$ -- `crm_usages` étant amené à changer on utilise une chaine de caractères
+select '$groupidentify' as event,
+       $1.id::text      as distinct_id,
+       json_build_object(
+               '$group_type', 'collectivite',
+               '$group_key', $1.id::text,
+               '$group_set', to_jsonb(sc) || to_jsonb(scu)
+       )                as properties
+from stats.collectivite sc
+         join stats.crm_usages scu using (collectivite_id)
+where $1.id = scu.collectivite_id;
+$$;
 comment on function posthog.event(public.collectivite) is 'Un event de type $groupidentify pour mettre à jour les données sur PostHog.';
 
 
