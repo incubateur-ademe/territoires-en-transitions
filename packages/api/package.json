@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
+    "typecheck": "tsc --noEmit",
     "test": "node --env-file .env --import tsx --test ./src/**/*.test.ts",
     "test:watch": "node --env-file .env --import tsx --test --test-only --watch ./src/**/*.test.ts",
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
