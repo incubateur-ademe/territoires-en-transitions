@@ -33,7 +33,7 @@ export const usePrevAndNextIndicateurLinks = () => {
 
   if (!definitions?.length) return {};
 
-  // index de l'indicateur courante
+  // index de l'indicateur courant
   const currentIndicateurIndex = definitions.findIndex(
     ({id}) => id.toString() === indicateurId
   );
