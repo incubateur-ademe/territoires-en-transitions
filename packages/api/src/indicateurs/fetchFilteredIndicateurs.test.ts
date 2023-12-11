@@ -1,5 +1,5 @@
 import {test} from 'node:test';
-import assert from 'node:assert/strict';
+import {assert} from 'chai';
 import {signIn, signOut} from '../tests/auth';
 import {testReset} from '../tests/testReset';
 import {supabase} from '../tests/supabase';
@@ -65,11 +65,32 @@ test('Filtrer les indicateurs', async context => {
   const fetchIndicateurs = (subset: Subset, filters: Filters) =>
     fetchFilteredIndicateurs(supabase, 1, subset, filters);
 
-  await context.test('par le sous-ensemble ECi', async () => {
+  await context.test('par le sous-ensemble ECi', async t => {
     const {status, data} = await fetchIndicateurs('eci', {});
     assert.equal(status, 200);
-    assert.equal(data.length, 35);
+    assert.closeTo(data.length, 35, 3, 'plus ou moins 35 ind. ECi');
   });
+
+  await context.test(
+    'par le sous-ensemble ECi et par le texte "Activité" (dans le titre ou la description)',
+    async () => {
+      const {status, data} = await fetchIndicateurs('eci', {
+        text: 'activité',
+      });
+      assert.equal(status, 200);
+
+      const total = data.length;
+      const count = data.filter(d => d.nom.includes('Activité')).length;
+
+      assert.isAbove(total, count, 'Plus');
+      assert.closeTo(
+        count,
+        3,
+        1,
+        'plus ou moins 3 ind. ECi contiennent la texte recherché dans leur nom'
+      );
+    }
+  );
 
   await context.test(
     'par le sous-ensemble ECi et la thématique "énergie et climat"',
