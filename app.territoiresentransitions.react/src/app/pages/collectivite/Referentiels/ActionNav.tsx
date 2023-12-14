@@ -21,7 +21,7 @@ export const ActionTopNav = ({
     ) : (
       <div />
     )}
-    {nextActionLink && (
+    {!!nextActionLink && (
       <Link
         to={nextActionLink}
         className="justify-self-end fr-fi-arrow-right-line fr-btn--icon-right active-transparent"
@@ -43,7 +43,7 @@ export const ActionBottomNav = ({
   nextActionLink: string | undefined;
 }) => (
   <div className="flex justify-end mt-8 gap-4">
-    {prevActionLink && (
+    {!!prevActionLink && (
       <Link
         to={prevActionLink}
         className="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
@@ -51,7 +51,7 @@ export const ActionBottomNav = ({
         Action précédente
       </Link>
     )}
-    {nextActionLink && (
+    {!!nextActionLink && (
       <Link
         to={nextActionLink}
         className="fr-btn fr-btn fr-fi-arrow-right-line fr-btn--icon-right"

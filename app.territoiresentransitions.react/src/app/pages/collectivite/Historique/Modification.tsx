@@ -117,7 +117,7 @@ const Modification = ({
               )}
             </div>
           )}
-          {pageLink && (
+          {!!pageLink && (
             <Link
               to={pageLink}
               className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"

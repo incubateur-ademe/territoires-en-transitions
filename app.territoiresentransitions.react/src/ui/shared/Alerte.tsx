@@ -33,7 +33,7 @@ const Alerte = ({
       'fr-alert--sm': small,
     })}
   >
-    {titre && <h3 className="fr-alert__title">{titre}</h3>}
+    {!!titre && <h3 className="fr-alert__title">{titre}</h3>}
     {children
       ? children
       : description && (

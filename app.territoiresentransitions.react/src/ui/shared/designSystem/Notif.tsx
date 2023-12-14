@@ -24,7 +24,9 @@ const Notif = ({status = 'default', icon, number}: Props) => {
         'inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow'
       )}
     >
-      {number && <span className="font-extrabold leading-none">{number}</span>}
+      {!!number && (
+        <span className="font-extrabold leading-none">{number}</span>
+      )}
       {icon}
     </div>
   );

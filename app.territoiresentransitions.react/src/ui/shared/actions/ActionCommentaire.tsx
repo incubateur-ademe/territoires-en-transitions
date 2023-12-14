@@ -88,8 +88,8 @@ export const ActionCommentaireField = ({
 
   return collectivite ? (
     <>
-      {title && <p className="text-neutral-900 !mb-2">{title}</p>}
-      {subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
+      {!!title && <p className="text-neutral-900 !mb-2">{title}</p>}
+      {!!subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
       <Textarea
         data-test={dataTest}
         className={classNames('fr-input !outline-none', backgroundClassName, {
