@@ -116,7 +116,7 @@ const Article = async ({params}: {params: {id: string}}) => {
       ))}
 
       <Section className="!flex-row flex-wrap justify-between gap-y-14">
-        {data.prevId && (
+        {!!data.prevId && (
           <a
             className="fr-link fr-icon-arrow-left-line fr-link--icon-left order-1"
             href={`/actus/${data.prevId}`}
@@ -130,7 +130,7 @@ const Article = async ({params}: {params: {id: string}}) => {
         >
           Retour à la liste des articles
         </a>
-        {data.nextId && (
+        {!!data.nextId && (
           <a
             className="fr-link fr-icon-arrow-right-line fr-link--icon-right order-3"
             href={`/actus/${data.nextId}`}

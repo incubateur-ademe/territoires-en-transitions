@@ -29,7 +29,7 @@ const ContenuCollectivite = ({
 }: ContenuCollectiviteProps) => {
   return (
     <div className="col-span-full md:col-span-7 lg:col-span-8 flex flex-col gap-10 xl:gap-12">
-      {video && (
+      {!!video && (
         <EmbededVideo
           url={video}
           className={classNames('w-full md:rounded-[10px]', {

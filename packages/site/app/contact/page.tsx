@@ -31,13 +31,13 @@ const Contact = async () => {
     <Section>
       <h1>{data.titre ?? "Contacter l'équipe"}</h1>
 
-      {data.description && <p className="text-xl">{data.description}</p>}
+      {!!data.description && <p className="text-xl">{data.description}</p>}
 
       <div className="p-4 md:p-14 lg:px-28 bg-gray-100 mb-6">
         <p className="text-sm">Tous les champs sont obligatoires</p>
         <ContactForm />
       </div>
-      {data.telephone && (
+      {!!data.telephone && (
         <div>
           <p className="font-bold flex gap-2 mb-0">
             <PhoneIcon />

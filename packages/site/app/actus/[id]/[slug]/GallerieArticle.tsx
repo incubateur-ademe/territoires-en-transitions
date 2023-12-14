@@ -32,7 +32,7 @@ const GallerieArticle = ({
           />
         ))}
       </div>
-      {legende && legendeVisible && (
+      {!!legende && !!legendeVisible && (
         <span className="!text-sm text-[#666] mt-4 w-full text-center">
           {legende}
         </span>

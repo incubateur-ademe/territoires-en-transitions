@@ -50,7 +50,7 @@ const BlogCard = ({
               <>{title}</>
             )}
           </h5>
-          {description && (
+          {!!description && (
             <p className="fr-card__desc text-primary-10 leading-[30px]">
               {description}
             </p>
@@ -81,7 +81,7 @@ const BlogCard = ({
             </picture>
           )}
         </div>
-        {badge && (
+        {!!badge && (
           <div className="fr-badges-group">
             <p className="fr-badge text-primary-8 bg-primary-1">{badge}</p>
           </div>

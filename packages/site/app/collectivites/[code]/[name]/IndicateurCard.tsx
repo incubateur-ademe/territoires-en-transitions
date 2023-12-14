@@ -58,7 +58,7 @@ const IndicateurCard = ({
       </div>
 
       {/* Détails */}
-      {defaultData.details && (
+      {!!defaultData.details && (
         <Markdown
           texte={defaultData.details}
           className="text-primary-9 text-[14px] leading-[25px] font-[500px]"
@@ -86,7 +86,7 @@ const IndicateurCard = ({
       )}
 
       {/* Source */}
-      {source && (
+      {!!source && (
         <p className="text-[12px] leading-[17px] text-grey-6 mb-0">
           Source : {source}
         </p>
