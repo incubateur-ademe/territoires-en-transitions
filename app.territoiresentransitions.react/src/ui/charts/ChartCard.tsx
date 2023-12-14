@@ -98,7 +98,7 @@ const ChartCardModalContent = ({
           )}
 
           {/* Sous-titre du graphe */}
-          {chartInfo?.subtitle && (
+          {!!chartInfo?.subtitle && (
             <h4 className="m-0 pt-2 font-medium text-[#666]">
               {chartInfo.subtitle}
             </h4>
@@ -122,7 +122,7 @@ const ChartCardModalContent = ({
         {chartInfo?.legend && <Legend legend={chartInfo.legend} />}
 
         {/* Info additionelles */}
-        {chartInfo?.additionalInfo && (
+        {!!chartInfo?.additionalInfo && (
           <div className="flex flex-col mt-12 text-[#666]">
             {Array.isArray(chartInfo.additionalInfo) ? (
               chartInfo.additionalInfo.map((info, index) => (
@@ -158,7 +158,7 @@ export const ChartCardContent = ({
 
       <div ref={chartWrapperRef} className="p-3">
         {/* Titre du graphe */}
-        {chartInfo?.title && (
+        {!!chartInfo?.title && (
           <p className={classNames('font-bold', {'mr-12': downloadable})}>
             {chartInfo.title}
           </p>
@@ -248,11 +248,11 @@ const ChartCard = ({
       <div className="flex flex-row justify-between px-6">
         <div className="pb-3">
           {/* Titre du graphe */}
-          {chartInfo?.title && (
+          {!!chartInfo?.title && (
             <div className="font-bold">{chartInfo.title}</div>
           )}
           {/* Sous-titre du graphe */}
-          {chartInfo?.subtitle && (
+          {!!chartInfo?.subtitle && (
             <div className="pt-1 font-medium text-[#666]">
               {chartInfo.subtitle}
             </div>

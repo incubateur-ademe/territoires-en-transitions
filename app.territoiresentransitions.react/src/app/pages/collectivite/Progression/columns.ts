@@ -1,4 +1,4 @@
-import {CellProps, Column} from 'react-table';
+import {Column} from 'react-table';
 import {CellAction} from '../ReferentielTable/CellAction';
 import {CellPercent, CellPoints} from '../AidePriorisation/Cells';
 import {makeFiltrePourcentage} from '../AidePriorisation/FiltrePourcentage';

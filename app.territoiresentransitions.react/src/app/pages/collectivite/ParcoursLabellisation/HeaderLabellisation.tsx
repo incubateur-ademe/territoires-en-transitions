@@ -92,7 +92,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           Commencer l'audit
         </button>
       ) : null}
-      {headerMessageContent && (
+      {!!headerMessageContent && (
         <HeaderMessage>{headerMessageContent}</HeaderMessage>
       )}
       {status === 'audit_en_cours' && isAuditeur ? (

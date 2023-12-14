@@ -33,7 +33,7 @@ const InputFile = ({
     <div {...remainingProps} className={_className}>
       <label className="fr-label" htmlFor="file-upload">
         {label}
-        {hint && <p className="fr-hint-text">{hint}</p>}
+        {!!hint && <p className="fr-hint-text">{hint}</p>}
       </label>
       <input
         onChange={onChange}
@@ -43,7 +43,7 @@ const InputFile = ({
         multiple={multiple}
         accept={accept}
       />
-      {errorMessage && (
+      {!!errorMessage && (
         <p id="file-upload-with-error-desc-error" className="fr-error-text">
           {errorMessage}
         </p>

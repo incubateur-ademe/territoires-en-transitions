@@ -32,10 +32,10 @@ const FormField = ({
     >
       <label htmlFor={htmlFor} className="fr-label mb-2">
         <div className="font-medium">{label}</div>
-        {hint && <span className="fr-hint-text !mt-1 !mb-0">{hint}</span>}
+        {!!hint && <span className="fr-hint-text !mt-1 !mb-0">{hint}</span>}
       </label>
       {children}
-      {errorMessage && <p className="fr-error-text">{errorMessage}</p>}
+      {!!errorMessage && <p className="fr-error-text">{errorMessage}</p>}
     </div>
   );
 };
