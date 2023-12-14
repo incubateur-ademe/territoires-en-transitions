@@ -43,7 +43,7 @@ const HeaderPlateforme = ({
           <ButtonWithLink href={url_inscription} size="big">
             {cta_inscription}
           </ButtonWithLink>
-          {collectivitesActivees && (
+          {!!collectivitesActivees && (
             <p className="md:hidden text-primary-9 text-[13px] font-bold mb-0 pt-2">
               Déjà {collectivitesActivees} collectivités utilisatrices
             </p>
@@ -57,7 +57,7 @@ const HeaderPlateforme = ({
         </ButtonWithLink>
       </div>
       <div className="max-md:hidden flex justify-center gap-4 h-[32px] mt-2">
-        {collectivitesActivees && (
+        {!!collectivitesActivees && (
           <>
             <Arrow />
             <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">

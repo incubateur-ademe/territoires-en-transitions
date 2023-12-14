@@ -56,13 +56,13 @@ const Card = ({
         })}
       >
         <div>
-          {step && (
+          {!!step && (
             <div className="w-[40px] h-[40px] rounded-full bg-primary-6 text-white text-center text-[22px] leading-[40px] font-bold mb-6">
               {step}
             </div>
           )}
-          {title && <h4>{title}</h4>}
-          {subtitle && (
+          {!!title && <h4>{title}</h4>}
+          {!!subtitle && (
             <p className="text-primary-8 text-[17px] leading-[24px] font-bold mb-3">
               {subtitle}
             </p>

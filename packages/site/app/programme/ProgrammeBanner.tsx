@@ -24,10 +24,10 @@ const ProgrammeBanner = ({
   return (
     <Section>
       <h1 className="text-center">{titre}</h1>
-      {description && (
+      {!!description && (
         <p className="text-[1.375rem] text-grey-8 text-center">{description}</p>
       )}
-      {couvertureURL && (
+      {!!couvertureURL && (
         <EmbededVideo
           url={couvertureURL}
           title="Découvrez le programme Territoire Engagé Transition Écologique"

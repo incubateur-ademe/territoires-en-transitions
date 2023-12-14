@@ -28,7 +28,7 @@ const CardsSection = ({
     className={classNames(className)}
   >
     <h2 className={textClassname}>{title}</h2>
-    {description && (
+    {!!description && (
       <p className={classNames('text-xl', textClassname)}>{description}</p>
     )}
     {cardsList}

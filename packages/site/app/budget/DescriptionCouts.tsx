@@ -25,7 +25,7 @@ const DescriptionCouts = ({titre, liste}: DescriptionCoutsProps) => {
               className="w-full f-full"
             />
             <div>
-              {description.titre && (
+              {!!description.titre && (
                 <h4 className="text-primary-9 mb-1">{description.titre}</h4>
               )}
               <Markdown

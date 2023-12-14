@@ -50,12 +50,12 @@ const EquipePlateforme = ({
   return (
     <Section>
       <h2 className="md:text-center mb-1 p-">{titre}</h2>
-      {citation && (
+      {!!citation && (
         <h4 className="text-primary-7 md:text-center text-[24px] leading-[32px] mb-1">
           {citation}
         </h4>
       )}
-      {description && (
+      {!!description && (
         <p className="text-primary-10 md:text-center md:text-[18px] leading-[30px] mb-0">
           {description}
         </p>

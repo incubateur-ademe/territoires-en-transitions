@@ -15,8 +15,8 @@ const LabellisationLogo = ({cae, eci, className}: CodingPictoProps) => {
     <div className={className}>
       <LogoTeTe />
       <div className="flex flex-col gap-4">
-        {cae && <LabelReferentiel referentiel="cae" etoiles={cae} />}
-        {eci && <LabelReferentiel referentiel="eci" etoiles={eci} />}
+        {!!cae && <LabelReferentiel referentiel="cae" etoiles={cae} />}
+        {!!eci && <LabelReferentiel referentiel="eci" etoiles={eci} />}
       </div>
     </div>
   );

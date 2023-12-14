@@ -110,20 +110,20 @@ const CollectiviteHeader = ({
 
           {/* Badges avec nombre d'habitants et type de collectivité */}
           <div className={classNames('flex gap-2 flex-wrap', {'mb-6': !!url})}>
-            {population_totale && (
+            {!!population_totale && (
               <Badge
                 content={`${getFormattedNumber(population_totale)} habitants`}
                 status="new"
                 className="text-primary-7"
               />
             )}
-            {type && (
+            {!!type && (
               <Badge content={type} status="info" className="text-primary-7" />
             )}
           </div>
 
           {/* URL */}
-          {url && (
+          {!!url && (
             <a
               href={url}
               target="_blank"

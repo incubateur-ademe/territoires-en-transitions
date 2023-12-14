@@ -42,7 +42,7 @@ const TestimonialCard = ({
         <p className="text-xl font-bold leading-8">« {content} »</p>
         <div>
           <p className="mb-1 font-bold">{author}</p>
-          {role && <p className="mb-0 text-xs text-[#666666] italic">{role}</p>}
+          {!!role && <p className="mb-0 text-xs text-[#666666] italic">{role}</p>}
         </div>
       </div>
     </div>

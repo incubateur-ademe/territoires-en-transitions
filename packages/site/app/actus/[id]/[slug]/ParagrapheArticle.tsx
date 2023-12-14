@@ -13,7 +13,7 @@ const ParagrapheArticle = ({
   return (
     <div className="flex flex-col w-full">
       {/* Titre du paragraphe */}
-      {titre && <h2 className="text-center w-full mt-8 mb-6">{titre}</h2>}
+      {!!titre && <h2 className="text-center w-full mt-8 mb-6">{titre}</h2>}
 
       {/* Image si alignement au centre haut */}
       {image && alignementImage === 'Centre Haut' && (
@@ -25,7 +25,7 @@ const ParagrapheArticle = ({
       )}
 
       {/* Contenu du paragraphe */}
-      {(texte ||
+      {(!!texte ||
         (image &&
           (alignementImage === 'Gauche' || alignementImage === 'Droite'))) && (
         <div className="flex flex-col md:block">
@@ -47,7 +47,7 @@ const ParagrapheArticle = ({
             )}
 
           {/* Texte */}
-          {texte && (
+          {!!texte && (
             <Markdown
               texte={texte}
               className="text-lg break-words sm:break-normal"
