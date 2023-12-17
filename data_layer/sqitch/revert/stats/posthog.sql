@@ -2,6 +2,6 @@
 
 BEGIN;
 
--- on ne veut pas revert le bug
+-- on ne revert pas vers des événements mal formatés.
 
 COMMIT;
