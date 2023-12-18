@@ -3,21 +3,24 @@ import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
 
 import DropdownFloater from '../../floating-ui/DropdownFloater';
-import Options, {SelectOption} from './Options';
+import Options, {OptionValue, SelectOption} from './Options';
+
 import {getOptions} from './utils';
 import {Tag} from '../../tag/Tag';
 
-type SelectProps<T extends string> = {
+type SelectProps<T extends OptionValue> = {
   /** Donne un id pour les tests e2e */
   dataTest?: string;
   /** Liste des options */
   options: Array<SelectOption>;
-  /** Appelée quand les options sélectionnées changent (reçoit les nouvelles valeurs) */
-  onSelect: (values: T[]) => void;
+  /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
+  onChange: (value: T) => void;
   /** Valeurs sélectionnées, peut recevoir une valeur seule ou un tableau de valeurs */
   values?: T | T[];
   /** Active la multi sélection */
-  isMulti?: boolean;
+  multiple?: boolean;
+  /** Afin de couplet avec un label */
+  name?: string;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
   /** Change l'emplacement du dropdown menu */
@@ -36,19 +39,20 @@ type SelectProps<T extends string> = {
  * Input select /
  * Create option select
  */
-const Select = <T extends string>(props: SelectProps<T>) => {
+export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const {
     dataTest,
     values,
     options,
-    onSelect,
+    onChange,
     placeholder,
     placement,
-    isMulti = false,
+    multiple = false,
     containerWidthMatchButton = true,
     disabled = false,
   } = props;
 
+  /** Transforme une valeur simple en tableau */
   const arrayValues = values
     ? Array.isArray(values)
       ? values
@@ -70,9 +74,9 @@ const Select = <T extends string>(props: SelectProps<T>) => {
             dataTest={dataTest}
             values={arrayValues}
             options={options}
-            onSelect={values => {
-              onSelect(isMulti ? values : [values[values.length - 1]]);
-              if (!isMulti) {
+            onChange={value => {
+              onChange(value);
+              if (!multiple) {
                 close();
               }
             }}
@@ -86,28 +90,26 @@ const Select = <T extends string>(props: SelectProps<T>) => {
         options={options}
         placeholder={placeholder}
         disabled={disabled}
-        onSelect={onSelect as (values: string | string[]) => void}
+        onChange={onChange}
       />
     </DropdownFloater>
   );
 };
 
-export default Select;
-
-type SelectButtonProps<T extends string> = SelectProps<T> & {
+type SelectButtonProps<T extends OptionValue> = SelectProps<T> & {
   /** Donné par le DropdownFloater */
   isOpen?: boolean;
 };
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
 const SelectButton = forwardRef(
-  <T extends string>(
+  <T extends OptionValue>(
     {
       dataTest,
       isOpen,
       values,
       options,
-      isMulti,
+      multiple,
       placeholder,
       disabled,
       ...props
@@ -115,13 +117,7 @@ const SelectButton = forwardRef(
     ref?: Ref<HTMLButtonElement>
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {onSelect, ...otherProps} = props;
-
-    const arrayValues = values
-      ? Array.isArray(values)
-        ? values
-        : [values]
-      : undefined;
+    const {onChange, ...otherProps} = props;
 
     return (
       <button
@@ -138,25 +134,36 @@ const SelectButton = forwardRef(
       >
         <div className="flex mr-4">
           {/** Listes des valeurs sélectionnées */}
-          {arrayValues && arrayValues.length > 0 ? (
-            <div className="flex items-center gap-2">
+          {values ? (
+            // si le sélecteur multiple
+            Array.isArray(values) ? (
+              <div className="flex items-center gap-2">
+                <Tag
+                  trim
+                  title={
+                    getOptions(options).find(({value: v}) => v === values[0])
+                      ?.label || ''
+                  }
+                  onClose={() => onChange(values[0])}
+                />
+                {values.length > 1 && (
+                  <Tag
+                    title={`+${values.length - 1}`}
+                    className="bg-info-2 text-info-1"
+                  />
+                )}
+              </div>
+            ) : (
+              // si sélecteur simple
               <Tag
                 trim
                 title={
-                  getOptions(options).find(({value: v}) => v === arrayValues[0])
+                  getOptions(options).find(({value: v}) => v === values)
                     ?.label || ''
                 }
-                onClose={() =>
-                  onSelect(arrayValues.filter(v => v !== arrayValues[0]))
-                }
+                onClose={() => onChange(values)}
               />
-              {arrayValues.length > 1 && (
-                <Tag
-                  title={`+${arrayValues.length - 1}`}
-                  className="bg-info-2 text-info-1"
-                />
-              )}
-            </div>
+            )
           ) : (
             /** Placeholder */
             <span
@@ -164,7 +171,7 @@ const SelectButton = forwardRef(
                 '!text-grey-5': disabled,
               })}
             >
-              {placeholder ?? isMulti
+              {placeholder ?? multiple
                 ? 'Sélectionner une ou plusieurs options'
                 : 'Sélectionner une option'}
             </span>
