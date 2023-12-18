@@ -10,22 +10,23 @@ import {isOptionSection} from './utils';
  * Types partagés entre tous les composants selects
  * (Select, MultiSelect, MultiSelectFilter)
  */
-export type SelectOption = Option | OptionSection;
-export type Option = {value: string; label: string};
+export type OptionValue = number | string;
+export type Option = {value: OptionValue | number; label: string};
 export type OptionSection = {
   title: string;
   options: Option[];
 };
+export type SelectOption = Option | OptionSection;
 
 type RenderOptionMenuProps = {
   option: Option;
   close?: () => void;
 };
 
-type Props<T extends string> = {
+type Props<T extends OptionValue> = {
   values?: T[];
   options: SelectOption[];
-  onSelect: (values: T[]) => void;
+  onChange: (value: T) => void;
   renderOption?: (option: Option) => React.ReactElement;
   renderOptionMenu?: (
     props: RenderOptionMenuProps
@@ -35,10 +36,10 @@ type Props<T extends string> = {
 };
 
 /** Liste d'options pouvant être de simples options ou des sections */
-const Options = <T extends string>({
+const Options = <T extends OptionValue>({
   values,
   options,
-  onSelect,
+  onChange,
   renderOption,
   renderOptionMenu,
   noOptionPlaceholder,
@@ -64,7 +65,7 @@ const Options = <T extends string>({
                       key={`${option.value}`}
                       option={option}
                       values={values}
-                      onSelect={onSelect}
+                      onChange={onChange}
                       renderOption={renderOption}
                       renderOptionMenu={renderOptionMenu}
                     />
@@ -79,7 +80,7 @@ const Options = <T extends string>({
                 key={option.value}
                 option={option}
                 values={values}
-                onSelect={onSelect}
+                onChange={onChange}
                 renderOption={renderOption}
                 renderOptionMenu={renderOptionMenu}
               />
@@ -97,10 +98,10 @@ const Options = <T extends string>({
 
 export default Options;
 
-type OptionProps<T extends string> = {
+type OptionProps<T extends OptionValue> = {
   values?: T[];
   option: Option;
-  onSelect: (values: T[]) => void;
+  onChange: (value: T) => void;
   renderOption?: (option: Option) => React.ReactElement;
   renderOptionMenu?: (
     props: RenderOptionMenuProps
@@ -108,10 +109,10 @@ type OptionProps<T extends string> = {
 };
 
 /** Option pour les sélecteurs */
-const Option = <T extends string>({
+const Option = <T extends OptionValue>({
   values,
   option,
-  onSelect,
+  onChange,
   renderOption,
   renderOptionMenu,
 }: OptionProps<T>) => {
@@ -120,19 +121,7 @@ const Option = <T extends string>({
     <button
       data-test={option.value}
       className="flex items-start w-full p-2 text-left text-sm hover:!bg-primary-0"
-      onClick={() => {
-        if (values?.includes(option.value as T)) {
-          // retrait d'une valeur
-          onSelect(
-            values.filter(
-              selectedValue => selectedValue !== (option.value as T)
-            )
-          );
-        } else {
-          // ajoût d'une valeur
-          onSelect([...(values || []), option.value as T]);
-        }
-      }}
+      onClick={() => onChange(option.value as T)}
     >
       <div className="flex w-6 mr-2 shrink-0">
         {isActive && (

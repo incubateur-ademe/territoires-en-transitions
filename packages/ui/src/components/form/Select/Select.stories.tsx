@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
-
-import Select from './Select';
 import {Meta, StoryObj} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
+
+import {Select} from './Select';
+import Field from '../Field/Field';
+import {OptionValue} from './Options';
+import {onSelectMultiple, onSelectSingle} from './utils';
 
 const options = [
   {value: 'option1', label: 'Option 1'},
@@ -49,13 +53,14 @@ type Story = StoryObj<typeof Select>;
 export const Default: Story = {
   args: {options},
   render: args => {
-    const [value, setValue] = useState<string | undefined>(undefined);
+    const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
         values={value}
-        onSelect={v => {
-          setValue(v[0]);
+        onChange={v => {
+          setValue(onSelectSingle(v, value));
+          action('onChange');
         }}
       />
     );
@@ -63,19 +68,19 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
-  args: {options, onSelect: () => null, disabled: true},
+  args: {options, onChange: () => null, disabled: true},
 };
 
 export const MultiSelectWithSectionOptions: Story = {
-  args: {options: optionsWithSections, isMulti: true},
+  args: {options: optionsWithSections, multiple: true},
   render: args => {
-    const [values, setValues] = useState<string[] | undefined>(undefined);
+    const [values, setValues] = useState<OptionValue[] | undefined>(undefined);
     return (
       <Select
         {...args}
         values={values}
-        onSelect={v => {
-          setValues(v);
+        onChange={v => {
+          setValues(onSelectMultiple(v, values));
         }}
       />
     );
@@ -83,12 +88,36 @@ export const MultiSelectWithSectionOptions: Story = {
 };
 
 export const InputSelect: Story = {
-  args: {options: optionsWithSections, isMulti: true},
+  args: {options: optionsWithSections, multiple: true},
   render: () => <div>TODO</div>,
 };
 
 // ne pas oublier le menu sur chaque option
-export const CreateOptionSelect: Story = {
-  args: {options: optionsWithSections, isMulti: true},
+export const CreateOptionChange: Story = {
+  args: {options: optionsWithSections, multiple: true},
   render: () => <div>TODO</div>,
+};
+
+export const WithField: Story = {
+  args: {options},
+  render: args => {
+    const [value, setValue] = useState<OptionValue | undefined>(undefined);
+    return (
+      <Field
+        title="Description de l'action"
+        hint="Texte description additionnel"
+        state="info"
+        message="Message d’information"
+      >
+        <Select
+          {...args}
+          values={value}
+          onChange={v => {
+            setValue(onSelectSingle(v, value));
+            action('onChange');
+          }}
+        />
+      </Field>
+    );
+  },
 };
