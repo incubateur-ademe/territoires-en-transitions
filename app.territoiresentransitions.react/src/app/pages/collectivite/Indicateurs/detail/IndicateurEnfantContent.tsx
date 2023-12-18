@@ -6,6 +6,8 @@ import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
+import {useIndicateurImportSources} from './useImportSources';
+import {ImportSourcesDropdown} from './ImportSourcesDropdown';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
 export const IndicateurEnfantContent = ({
@@ -19,15 +21,27 @@ export const IndicateurEnfantContent = ({
   const actionsLiees = definition.action_ids?.filter(
     action_id => !actionsLieesCommunes.includes(action_id)
   );
+  const {sources, currentSource, setCurrentSource} = useIndicateurImportSources(
+    definition.id
+  );
 
   return (
     <div className="p-6">
+      <ImportSourcesDropdown
+        sources={sources}
+        currentSource={currentSource}
+        setCurrentSource={setCurrentSource}
+      />
       <IndicateurChart
         className="fr-mb-3w"
         variant="zoomed"
         definition={definition}
+        importSource={currentSource}
       />
-      <IndicateurValuesTabs definition={definition} />
+      <IndicateurValuesTabs
+        definition={definition}
+        importSource={currentSource}
+      />
       {
         /** actions liées */
         actionsLiees?.length ? (
