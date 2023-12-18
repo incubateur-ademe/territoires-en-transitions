@@ -142,7 +142,7 @@ export const generateStyledLines =
 
 /** Charge les données et affiche le graphique */
 const IndicateurChart = (props: TIndicateurChartProps) => {
-  const {definition, variant} = props;
+  const {definition, importSource, variant} = props;
 
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
 
@@ -153,10 +153,11 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
   const {id: grapheId, count, total} = (chartInfo as any) || {};
 
   // charge les valeurs à afficher dans le graphe
-  const {data: valeurs, isLoading} = useIndicateurValeurs(
-    {id: grapheId, isPerso: typeof definition.id === 'number'},
-    variant === 'zoomed'
-  );
+  const {data: valeurs, isLoading} = useIndicateurValeurs({
+    id: grapheId,
+    importSource,
+    isDetail: variant === 'zoomed',
+  });
   const noDataAvailable = !isLoading && !isLoadingInfo && !valeurs?.length;
 
   if (!chartInfo) return null;
