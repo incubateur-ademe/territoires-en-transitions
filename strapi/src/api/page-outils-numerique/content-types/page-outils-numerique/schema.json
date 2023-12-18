@@ -51,7 +51,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "avantages": {
       "type": "component",
@@ -73,13 +75,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
-    },
-    "temoignages": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.temoignage",
-      "min": 1
+      "allowedTypes": [
+        "images"
+      ]
     },
     "temoignages_liste": {
       "type": "relation",

@@ -1180,10 +1180,6 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       }>;
     fonctionnalites_contenu: Attribute.RichText & Attribute.Required;
     fonctionnalites_image: Attribute.Media & Attribute.Required;
-    temoignages: Attribute.Component<'shared.temoignage', true> &
-      Attribute.SetMinMax<{
-        min: 1;
-      }>;
     temoignages_liste: Attribute.Relation<
       'api::page-outils-numerique.page-outils-numerique',
       'oneToMany',
@@ -1333,23 +1329,7 @@ export interface ApiTemoignageTemoignage extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    Rang: Attribute.Integer & Attribute.Unique;
-    Auteur: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    Description: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-    Contenu: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 300;
-      }>;
-    Image: Attribute.Media;
-    temoignage: Attribute.Component<'shared.temoignage'>;
+    temoignage: Attribute.Component<'shared.temoignage'> & Attribute.Required;
     identifiant: Attribute.String &
       Attribute.Required &
       Attribute.Private &
