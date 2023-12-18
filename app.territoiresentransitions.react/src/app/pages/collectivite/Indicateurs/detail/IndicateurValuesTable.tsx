@@ -15,18 +15,25 @@ import {
   IndicateurValueTableRow,
 } from './IndicateurValueTableRow';
 import {useEffect, useState} from 'react';
+import {SOURCE_COLLECTIVITE} from './useImportSources';
 
 /** Charge les données et affiche le tableau des valeurs */
 export const IndicateurValuesTable = ({
   definition,
   type,
   isReadonly,
+  importSource,
 }: {
   definition: TIndicateurDefinition;
   type: 'resultat' | 'objectif';
+  importSource?: string;
   isReadonly: boolean;
 }) => {
-  const {data: values} = useIndicateurValeursEtCommentaires({definition, type});
+  const {data: values} = useIndicateurValeursEtCommentaires({
+    definition,
+    type,
+    importSource,
+  });
   const editHandlers = useEditIndicateurValeur({definition, type});
 
   return values ? (
@@ -36,6 +43,7 @@ export const IndicateurValuesTable = ({
       isReadonly={isReadonly}
       definition={definition}
       editHandlers={editHandlers}
+      importSource={importSource}
     />
   ) : null;
 };
@@ -50,12 +58,14 @@ const ValuesTableBase = ({
   definition,
   isReadonly,
   editHandlers,
+  importSource,
 }: {
   type: 'resultat' | 'objectif';
   definition: TIndicateurDefinition;
   values: TIndicateurValeurEtCommentaires[];
   isReadonly: boolean;
   editHandlers: TEditIndicateurValeurHandlers;
+  importSource?: string;
 }) => {
   const {unite} = definition;
   const [showAll, toggleShowAll] = useToggle(false);
@@ -95,12 +105,14 @@ const ValuesTableBase = ({
           ))
         ) : (
           <>
-            <IndicateurValueTableRow
-              key="new"
-              values={values}
-              editHandlers={editHandlers}
-              onValueSaved={setLastAddedYear}
-            />
+            {!importSource || importSource === SOURCE_COLLECTIVITE ? (
+              <IndicateurValueTableRow
+                key="new"
+                values={values}
+                editHandlers={editHandlers}
+                onValueSaved={setLastAddedYear}
+              />
+            ) : null}
             {valuesToShow.map(row => (
               <IndicateurValueTableRow
                 key={`${row.type}-${row.annee}`}

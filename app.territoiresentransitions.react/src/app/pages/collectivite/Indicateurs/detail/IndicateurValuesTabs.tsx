@@ -6,8 +6,10 @@ import {IndicateurValuesTable} from './IndicateurValuesTable';
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
   definition,
+  importSource,
 }: {
   definition: TIndicateurDefinition;
+  importSource?: string;
 }) => {
   const {activeTab, onChangeTab} = useActiveTab();
   const collectivite = useCurrentCollectivite();
@@ -21,6 +23,7 @@ export const IndicateurValuesTabs = ({
             definition={definition}
             type="resultat"
             isReadonly={isReadonly}
+            importSource={importSource}
           />
         )}
       </Tab>
