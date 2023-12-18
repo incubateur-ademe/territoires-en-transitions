@@ -8,6 +8,8 @@ import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurPredefini} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
+import {useIndicateurImportSources} from './useImportSources';
+import {ImportSourcesDropdown} from './ImportSourcesDropdown';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -17,11 +19,22 @@ export const IndicateurDetail = ({
 }: {
   definition: TIndicateurPredefini;
 }) => {
-  const {action_ids} = definition;
+  const {id, action_ids} = definition;
+  const {sources, currentSource, setCurrentSource} =
+    useIndicateurImportSources(id);
 
   return (
     <>
-      <IndicateurChart variant="zoomed" definition={definition} />
+      <ImportSourcesDropdown
+        sources={sources}
+        currentSource={currentSource}
+        setCurrentSource={setCurrentSource}
+      />
+      <IndicateurChart
+        variant="zoomed"
+        definition={definition}
+        importSource={currentSource}
+      />
       <div className="flex items-center fr-mt-5w fr-mb-3w gap-4">
         <BadgeACompleter a_completer={!definition.rempli} />
         {definition.participation_score && (
@@ -30,7 +43,10 @@ export const IndicateurDetail = ({
           </Badge>
         )}
       </div>
-      <IndicateurValuesTabs definition={definition} />
+      <IndicateurValuesTabs
+        definition={definition}
+        importSource={currentSource}
+      />
       <div className="fr-mt-5w ">
         <IndicateurInfoLiees definition={definition} />
         {
