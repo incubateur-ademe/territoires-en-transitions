@@ -1,17 +1,67 @@
+import {useEffect, useState} from 'react';
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {naturalSort} from 'utils/naturalSort';
 
+export const SOURCE_COLLECTIVITE = '$sc';
+
+/**
+ * Fourni la liste des sources de données d'un indicateur ainsi que la source
+ * courante et une fonction pour changer la source courante.
+ */
+export const useIndicateurImportSources = (indicateur_id: string | number) => {
+  const collectivite_id = useCollectiviteId();
+  // charge la liste des sources disponibles
+  const {data: sources, isLoading: isLoading1} = useImportSources(
+    collectivite_id,
+    indicateur_id
+  );
+
+  // détermine si il y a des valeurs saisies manuellement
+  const {data: hasCustomValues, isLoading: isLoading2} = useHasCustomValues(
+    collectivite_id,
+    indicateur_id
+  );
+
+  // la source par défaut est les valeurs de la collectivité sauf si il n'y en a
+  // pas mais qu'il y a des valeurs importées
+  const defaultSource =
+    !hasCustomValues && sources?.length ? sources[0] : SOURCE_COLLECTIVITE;
+
+  // source sélectionnée
+  const [currentSource, setCurrentSource] = useState(defaultSource);
+
+  // synchronise la source sélectionnée avec la source par défaut
+  useEffect(() => {
+    setCurrentSource(defaultSource);
+  }, [defaultSource]);
+
+  return {
+    isLoading: isLoading1 || isLoading2,
+    sources,
+    defaultSource,
+    currentSource,
+    setCurrentSource,
+  };
+};
+
 /**
  * Charge la liste des différentes sources de données d'un indicateur
  */
-export const useIndicateurImportSources = (indicateur_id: string) => {
-  const collectivite_id = useCollectiviteId();
+const useImportSources = (
+  collectivite_id: number | null,
+  indicateur_id: string | number
+) => {
   return useQuery(
     ['indicateur_import_sources', collectivite_id, indicateur_id],
     async () => {
-      if (!collectivite_id || !indicateur_id) return;
+      if (
+        !collectivite_id ||
+        !indicateur_id ||
+        typeof indicateur_id !== 'string'
+      )
+        return;
       const {data} = await supabaseClient
         .from('indicateur_definitions')
         .select('import_sources')
@@ -19,6 +69,33 @@ export const useIndicateurImportSources = (indicateur_id: string) => {
         .returns<Array<{import_sources: string[]}>>();
 
       return data?.[0]?.import_sources?.sort(naturalSort) || null;
+    }
+  );
+};
+
+/**
+ * Détermine si un indicateur prédéini a des valeurs saisies manuellement.
+ */
+const useHasCustomValues = (
+  collectivite_id: number | null,
+  indicateur_id: string | number
+) => {
+  return useQuery(
+    ['indicateur_has_custom_values', collectivite_id, indicateur_id],
+    async () => {
+      if (
+        !collectivite_id ||
+        !indicateur_id ||
+        typeof indicateur_id !== 'string'
+      )
+        return;
+      const {count} = await supabaseClient
+        .from('indicateur_resultat')
+        .select('', {count: 'exact', head: true})
+        .match({collectivite_id, indicateur_id})
+        .not('valeur', 'is', null);
+
+      return count !== null && count > 0;
     }
   );
 };
