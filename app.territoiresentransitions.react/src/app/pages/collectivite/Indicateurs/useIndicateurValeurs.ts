@@ -3,6 +3,10 @@ import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Database} from 'types/database.types';
 import {TIndicateurDefinition} from './types';
+import {
+  SOURCE_COLLECTIVITE,
+  useIndicateurImportSources,
+} from './detail/useImportSources';
 
 export type TIndicateurValeur = {
   annee: number;
@@ -16,21 +20,27 @@ export type TIndicateurValeurEtCommentaires = TIndicateurValeur & {
 };
 
 /** Charge toutes les valeurs associées à un indicateur (pour le graphe) */
-export const useIndicateurValeurs = (
-  {id, isPerso}: {id: number | string | undefined; isPerso?: boolean},
-  /** passer `true` pour le cas où le graphe est sur la page détail car
-   * les valeurs peuvent être éditées dans un autre onglet et un autre
-   * indicateur (cas indicateur lié à un autre) */
-  autoRefetch?: boolean,
-  /** désactive le fetch */
-  disabled?: boolean
-) => {
+export const useIndicateurValeurs = ({
+  id,
+  importSource,
+  isDetail,
+}: {
+  /** Identifiant indicateur perso ou prédéfini */
+  id: number | string;
+  /** Source des données à utiliser */
+  importSource?: string;
+  /** Indique si le graphique est en mode "détail" (ou en vignette) */
+  isDetail: boolean;
+}) => {
   const collectivite_id = useCollectiviteId();
-  return useQuery(
-    ['indicateur_valeurs', collectivite_id, id, disabled],
-    async () => {
-      if (collectivite_id === undefined || id === undefined || disabled) return;
+  const isPerso = typeof id === 'number';
+  const {defaultSource} = useIndicateurImportSources(id);
+  const source = importSource || defaultSource;
 
+  return useQuery(
+    ['indicateur_valeurs', collectivite_id, id, source],
+    async () => {
+      if (collectivite_id === undefined || id === undefined) return;
       const query = supabaseClient
         .from('indicateurs')
         .select('type,annee,valeur')
@@ -39,14 +49,23 @@ export const useIndicateurValeurs = (
             ? {collectivite_id, indicateur_perso_id: id}
             : {collectivite_id, indicateur_id: id}
         )
-        .not('valeur', 'is', null)
+        .not('valeur', 'is', null);
+
+      if (source && source !== SOURCE_COLLECTIVITE) {
+        query.eq('source', source);
+      } else {
+        query.is('source', null);
+      }
+
+      const {data} = await query
         .order('annee', {ascending: false})
         .returns<TIndicateurValeur[]>();
-
-      const {data} = await query;
-      return filtreImportOuResultat(data);
+      return data;
     },
-    autoRefetch ? undefined : DISABLE_AUTO_REFETCH
+    /** il faut recharger plus souvent quand le graphe est sur la page détail car
+     * les valeurs peuvent être éditées dans un autre onglet et un autre
+     * indicateur (cas indicateur lié à un autre) */
+    isDetail ? undefined : DISABLE_AUTO_REFETCH
   );
 };
 
@@ -54,15 +73,17 @@ export const useIndicateurValeurs = (
 export const useIndicateurValeursEtCommentaires = ({
   definition,
   type,
+  importSource,
 }: {
   definition: TIndicateurDefinition;
   type: 'resultat' | 'objectif';
+  importSource?: string;
 }) => {
   const {id, isPerso} = definition;
   const collectivite_id = useCollectiviteId();
 
   return useQuery(
-    ['indicateur_valeurs_detail', collectivite_id, id, type],
+    ['indicateur_valeurs_detail', collectivite_id, id, type, importSource],
     async () => {
       if (collectivite_id === undefined || id === undefined) return;
 
@@ -78,29 +99,20 @@ export const useIndicateurValeursEtCommentaires = ({
         .order('annee', {ascending: false});
 
       if (type === 'objectif') {
+        query.is('source', null);
         query.eq('type', type);
       } else {
-        query.in('type', ['resultat', 'import']);
+        if (importSource && importSource !== SOURCE_COLLECTIVITE) {
+          query.eq('source', importSource);
+          query.eq('type', 'import');
+        } else {
+          query.is('source', null);
+          query.eq('type', 'resultat');
+        }
       }
 
       const {data} = await query.returns<TIndicateurValeurEtCommentaires[]>();
-      return filtreImportOuResultat(data);
+      return data;
     }
-  );
-};
-
-// filtre une liste de valeurs pour ne conserver que la valeur "resultat" quand
-// il y a aussi une valeur "import" pour la même date
-const filtreImportOuResultat = <
-  T extends Pick<TIndicateurValeur, 'annee' | 'type'>
->(
-  valeurs: T[] | null
-) => {
-  return valeurs?.filter(
-    v =>
-      v.type !== 'import' ||
-      valeurs.findIndex(
-        vv => vv.annee === v.annee && vv.type === 'resultat'
-      ) === -1
   );
 };
