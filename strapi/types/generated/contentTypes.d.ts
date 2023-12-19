@@ -1251,10 +1251,14 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       Attribute.DefaultTo<"L'outil op\u00E9rationnel de planification \u00E9cologique qui met \u00E0 votre disposition une ing\u00E9nierie territoriale et un accompagnement personnalis\u00E9.">;
     VideoURL: Attribute.String;
     Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
+    objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
     Services: Attribute.Component<'bloc.description'> & Attribute.Required;
+    services_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
     Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
+    benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
+    etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

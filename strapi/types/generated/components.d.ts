@@ -317,6 +317,7 @@ export interface SharedVignetteAvecTitre extends Schema.Component {
   info: {
     displayName: 'vignette_avec_titre';
     icon: 'landscape';
+    description: '';
   };
   attributes: {
     titre: Attribute.String &
@@ -329,7 +330,7 @@ export interface SharedVignetteAvecTitre extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    image: Attribute.Media & Attribute.Required;
+    image: Attribute.Media;
   };
 }
 

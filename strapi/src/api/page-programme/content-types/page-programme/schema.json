@@ -36,11 +36,21 @@
       "component": "bloc.description",
       "required": true
     },
+    "objectifs_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown"
+    },
     "Services": {
       "type": "component",
       "repeatable": false,
       "component": "bloc.description",
       "required": true
+    },
+    "services_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre"
     },
     "Compte": {
       "displayName": "Compte",
@@ -55,11 +65,21 @@
       "component": "bloc.description",
       "required": true
     },
+    "benefices_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre"
+    },
     "Etapes": {
       "type": "component",
       "repeatable": false,
       "component": "bloc.description",
       "required": true
+    },
+    "etapes_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre"
     },
     "Ressources": {
       "displayName": "Ressources",
