@@ -3299,6 +3299,7 @@ export interface Database {
           parent: number | null
           plan: number | null
           type: number | null
+          plan_action_type: unknown | null
         }
         Insert: {
           collectivite_id: number
@@ -11420,6 +11421,7 @@ export interface Database {
           indicateur_id: string
           modified_at: string
           source: string
+          source_id: string
           valeur: number
         }
         Insert: {
@@ -11428,6 +11430,7 @@ export interface Database {
           indicateur_id: string
           modified_at: string
           source: string
+          source_id: string
           valeur: number
         }
         Update: {
@@ -11436,6 +11439,7 @@ export interface Database {
           indicateur_id?: string
           modified_at?: string
           source?: string
+          source_id?: string
           valeur?: number
         }
         Relationships: [
@@ -11743,6 +11747,12 @@ export interface Database {
             foreignKeyName: "indicateur_resultat_import_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_import_source_id_fkey"
+            columns: ["source_id"]
+            referencedRelation: "indicateur_source"
             referencedColumns: ["id"]
           }
         ]
@@ -12086,6 +12096,21 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      indicateur_source: {
+        Row: {
+          id: string
+          libelle: string
+        }
+        Insert: {
+          id: string
+          libelle: string
+        }
+        Update: {
+          id?: string
+          libelle?: string
+        }
+        Relationships: []
       }
       indicateur_terristory_json: {
         Row: {
@@ -20191,21 +20216,33 @@ export interface Database {
       }
       crm_usages: {
         Row: {
+          _5fiches_1pilotage: boolean | null
           collectivite_id: number | null
           completude_cae: number | null
           completude_eci: number | null
           fiches: number | null
           fiches_action_referentiel: number | null
+          fiches_changement_statut: number | null
           fiches_fiche_liee: number | null
           fiches_indicateur: number | null
           fiches_initiees: number | null
           fiches_mod_1mois: number | null
           fiches_mod_3mois: number | null
           fiches_mod_6mois: number | null
+          fiches_non_vides: number | null
+          fiches_pilotables: number | null
           fiches_pilotage: number | null
           indicateurs_perso: number | null
           key: string | null
+          pa_date_creation: string | null
+          pa_non_vides: number | null
+          pa_pilotables: number | null
+          pa_view_1mois: number | null
+          pa_view_3mois: number | null
+          pa_view_6mois: number | null
           plans: number | null
+          pourcentage_fa_pilotable_privee: number | null
+          pourcentage_fa_privee: number | null
           premier_rattachement: string | null
           resultats_indicateurs: number | null
           resultats_indicateurs_perso: number | null
@@ -25530,6 +25567,15 @@ export interface Database {
         }
         Returns: number
       }
+      import_sources: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          id: string
+          libelle: string
+        }[]
+      }
       in_todo: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -26045,6 +26091,17 @@ export interface Database {
           sans_plan?: boolean
         }
         Returns: Database["public"]["CompositeTypes"]["plan_action_tableau_de_bord"]
+      }
+      plan_action_type: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          categorie: string
+          detail: string | null
+          id: number
+          type: string
+        }[]
       }
       plans_action_collectivite: {
         Args: {
@@ -26690,12 +26747,6 @@ export interface Database {
       todo:
         | {
             Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -26711,6 +26762,12 @@ export interface Database {
         | {
             Args: {
               why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              how_many: number
             }
             Returns: boolean[]
           }
