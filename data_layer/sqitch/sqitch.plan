@@ -576,3 +576,5 @@ stats/posthog [stats/posthog@v2.87.0] 2023-12-11T17:45:58Z Florian <florian@derf
 
 stats/posthog [stats/posthog@v2.87.1] 2023-12-17T14:46:32Z Florian <florian@derfurth.com> # Répare les événements de type CRUD
 @v2.87.2 2023-12-17T15:01:24Z Florian <florian@derfurth.com> # Hotfix PostHog
+
+indicateur/source 2023-12-19T10:18:35Z Florian <florian@derfurth.com> # Permet de filtrer les valeurs des indicateurs par source
