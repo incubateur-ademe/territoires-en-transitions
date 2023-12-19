@@ -15,31 +15,23 @@ import {
 
 export const getMetaData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
-    ['populate[0]', 'Metadata'],
-    ['populate[1]', 'Metadata.Titre'],
-    ['populate[2]', 'Metadata.Description'],
-    ['populate[3]', 'Metadata.Image'],
-    ['populate[4]', 'Couverture'],
-    ['populate[5]', 'seo'],
-    ['populate[6]', 'seo.metaImage'],
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'Couverture'],
   ]);
 
   const image =
     (data?.attributes.seo?.metaImage?.data as unknown as StrapiItem)
-      ?.attributes ??
-    (data?.attributes.Metadata?.Image?.data as unknown as StrapiItem)
       ?.attributes ??
     (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes;
 
   return {
     title:
       (data?.attributes.seo?.metaTitle as unknown as string) ??
-      (data?.attributes.Metadata?.Titre as unknown as string) ??
       (data?.attributes.Titre as unknown as string) ??
       undefined,
     description:
       (data?.attributes.seo?.metaDescription as unknown as string) ??
-      (data?.attributes.Metadata?.Description as unknown as string) ??
       (data?.attributes.Resume as unknown as string) ??
       undefined,
     image: image
