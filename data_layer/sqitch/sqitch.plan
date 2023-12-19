@@ -587,3 +587,4 @@ stats/posthog [stats/posthog@v2.88.0] 2023-12-22T16:17:23Z Florian <florian@derf
 @v2.89.0 2023-12-22T17:19:22Z Florian <florian@derfurth.com> # Permet de suivre notre OKR indicateur
 
 automatisation/newsletters 2023-12-05T15:54:02Z Amandine Jacquelin <conta@LanceLibre> # Automatise l'envoie des utilisateurs à Brevo
+cron/send_pa_users_to_brevo 2023-12-19T17:14:10Z Amandine Jacquelin <conta@LanceLibre> # Crée un cron pour envoyer les utilisateurs à Brevo 
