@@ -19,8 +19,8 @@ type DropdownFloaterProps = {
   children: JSX.Element;
   render: (data: {close: () => void}) => React.ReactNode;
   placement?: Placement;
-  /** Toggle l'état d'ouverture avec des clics répétés sur le bouton d'ouverture. Défaut `true` */
-  toggle?: boolean;
+  /** Autorise l'ouverture du sélecteur avec des clics répétés sur le bouton d'ouverture. Défaut `true` */
+  multipleClickToggle?: boolean;
   /** Toggle l'état d'ouverture en appuyant sur la touche 'enter'. Défaut `true` */
   enterToToggle?: boolean;
   /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
@@ -32,25 +32,27 @@ type DropdownFloaterProps = {
   /** Supprime les styles du dropdown */
   noDropdownStyles?: boolean;
   'data-test'?: string;
+  disabled?: boolean;
 };
 
 const DropdownFloater = ({
   render,
   children,
   placement,
-  toggle = true,
+  multipleClickToggle = true,
   enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
   zIndex = 1200,
   noDropdownStyles = false,
+  disabled,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const {x, y, strategy, refs, context} = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
+    open: disabled ? false : isOpen,
+    onOpenChange: disabled ? () => null : setIsOpen,
     placement: placement ?? 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -71,7 +73,10 @@ const DropdownFloater = ({
     ],
   });
 
-  const click = useClick(context, {keyboardHandlers: false, toggle});
+  const click = useClick(context, {
+    keyboardHandlers: false,
+    toggle: multipleClickToggle,
+  });
   const dismiss = useDismiss(context);
 
   const {getReferenceProps, getFloatingProps} = useInteractions([

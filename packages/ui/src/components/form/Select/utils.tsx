@@ -19,6 +19,10 @@ export const getOptions = (selectOptions: SelectOption[]): Option[] =>
     []
   );
 
+/** Extrait le label d'une option dans une liste d'options */
+export const getOptionLabel = (optionValue: OptionValue, options: Option[]) =>
+  options.find((v: Option) => v.value === optionValue).label;
+
 /** Gère la sélection/désélection d'une valeur simple pour le composant Select */
 export const onSelectSingle = (
   optionValue: OptionValue,
@@ -58,3 +62,41 @@ export const onSelectMultiple = (
     return [optionValue];
   }
 };
+
+/**
+ * Filtre les options, quelles soient dans une section ou non.
+ * Utilisée dans les sélecteurs avec saisie.
+ * Renvoi une liste d'options ou des sections avec les options filtrées
+ */
+export const filterOptions = (
+  options: SelectOption[],
+  filterValue: string
+): SelectOption[] =>
+  options.reduce((acc: SelectOption[], currentOption) => {
+    if (isOption(currentOption)) {
+      if (
+        currentOption.label.toLowerCase().includes(filterValue.toLowerCase())
+      ) {
+        return [...acc, currentOption];
+      }
+    }
+
+    if (isOptionSection(currentOption)) {
+      const filteredOptions = currentOption.options.filter(option =>
+        option.label.toLowerCase().includes(filterValue.toLowerCase())
+      );
+      if (filteredOptions.length > 0) {
+        return [
+          ...acc,
+          {
+            title: currentOption.title,
+            options: filteredOptions,
+          },
+        ];
+      } else {
+        return acc;
+      }
+    }
+
+    return acc;
+  }, []);

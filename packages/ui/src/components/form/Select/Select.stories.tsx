@@ -74,7 +74,7 @@ export const Disabled: Story = {
 export const MultiSelectWithSectionOptions: Story = {
   args: {options: optionsWithSections, multiple: true},
   render: args => {
-    const [values, setValues] = useState<OptionValue[] | undefined>(undefined);
+    const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
       <Select
         {...args}
@@ -87,8 +87,53 @@ export const MultiSelectWithSectionOptions: Story = {
   },
 };
 
-export const InputSelect: Story = {
-  args: {options: optionsWithSections, multiple: true},
+export const SearchableMultiSelect: Story = {
+  args: {
+    options: optionsWithSections,
+    multiple: true,
+    hasSearch: true,
+    emptySearchPlaceholder:
+      "Placeholder custom pour la liste d'option sans résultat",
+  },
+  render: args => {
+    const [values, setValues] = useState<OptionValue[] | undefined>();
+    return (
+      <Select
+        {...args}
+        values={values}
+        onChange={v => {
+          setValues(onSelectMultiple(v, values));
+        }}
+      />
+    );
+  },
+};
+
+export const DisabledSearchableSelectWithValue: Story = {
+  args: {
+    options: optionsWithSections,
+    disabled: true,
+    hasSearch: true,
+  },
+  render: args => {
+    const [value, setValue] = useState<OptionValue | undefined>('option1');
+    return (
+      <Select
+        {...args}
+        values={value}
+        onChange={v => {
+          setValue(onSelectSingle(v, value));
+        }}
+      />
+    );
+  },
+};
+
+export const SearchableSelectWithApiCallOnInputType: Story = {
+  args: {
+    options: optionsWithSections,
+    hasSearch: true,
+  },
   render: () => <div>TODO</div>,
 };
 
@@ -101,7 +146,7 @@ export const CreateOptionChange: Story = {
 export const WithField: Story = {
   args: {options},
   render: args => {
-    const [value, setValue] = useState<OptionValue | undefined>(undefined);
+    const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Field
         title="Description de l'action"
