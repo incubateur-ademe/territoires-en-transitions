@@ -6,6 +6,11 @@ import {naturalSort} from 'utils/naturalSort';
 
 export const SOURCE_COLLECTIVITE = '$sc';
 
+export type IndicateurImportSource = {
+  id: string;
+  libelle: string;
+};
+
 /**
  * Fourni la liste des sources de données d'un indicateur ainsi que la source
  * courante et une fonction pour changer la source courante.
@@ -27,7 +32,7 @@ export const useIndicateurImportSources = (indicateur_id: string | number) => {
   // la source par défaut est les valeurs de la collectivité sauf si il n'y en a
   // pas mais qu'il y a des valeurs importées
   const defaultSource =
-    !hasCustomValues && sources?.length ? sources[0] : SOURCE_COLLECTIVITE;
+    !hasCustomValues && sources?.length ? sources[0]?.id : SOURCE_COLLECTIVITE;
 
   // source sélectionnée
   const [currentSource, setCurrentSource] = useState(defaultSource);
@@ -62,13 +67,18 @@ const useImportSources = (
         typeof indicateur_id !== 'string'
       )
         return;
+
       const {data} = await supabaseClient
         .from('indicateur_definitions')
-        .select('import_sources')
+        .select('import_sources(*)')
         .match({collectivite_id, indicateur_id})
-        .returns<Array<{import_sources: string[]}>>();
+        .returns<Array<{import_sources: IndicateurImportSource[]}>>();
 
-      return data?.[0]?.import_sources?.sort(naturalSort) || null;
+      return (
+        data?.[0]?.import_sources?.sort((a, b) =>
+          naturalSort(a.libelle, b.libelle)
+        ) || null
+      );
     }
   );
 };
