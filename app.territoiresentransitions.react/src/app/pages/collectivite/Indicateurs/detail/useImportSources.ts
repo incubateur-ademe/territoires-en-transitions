@@ -100,9 +100,9 @@ const useHasCustomValues = (
       )
         return;
       const {count} = await supabaseClient
-        .from('indicateur_resultat')
+        .from('indicateurs')
         .select('', {count: 'exact', head: true})
-        .match({collectivite_id, indicateur_id})
+        .match({collectivite_id, indicateur_id, type: 'resultat'})
         .not('valeur', 'is', null);
 
       return count !== null && count > 0;
