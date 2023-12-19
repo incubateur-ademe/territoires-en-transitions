@@ -1,5 +1,5 @@
 import FormField from 'ui/shared/form/FormField';
-import {SOURCE_COLLECTIVITE} from './useImportSources';
+import {IndicateurImportSource, SOURCE_COLLECTIVITE} from './useImportSources';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 
@@ -12,7 +12,7 @@ export const ImportSourcesDropdown = ({
   currentSource,
   setCurrentSource,
 }: {
-  sources?: string[] | null;
+  sources?: IndicateurImportSource[] | null;
   currentSource?: string;
   setCurrentSource?: (value: string) => void;
 }) => {
@@ -22,7 +22,7 @@ export const ImportSourcesDropdown = ({
         buttonClassName={DSFRbuttonClassname}
         options={[
           {label: 'Données de la collectivité', value: SOURCE_COLLECTIVITE},
-          ...sources.map(label => ({label, value: label})),
+          ...sources.map(({id, libelle}) => ({label: libelle, value: id})),
         ]}
         value={currentSource}
         onSelect={setCurrentSource}

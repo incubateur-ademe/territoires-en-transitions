@@ -52,9 +52,9 @@ export const useIndicateurValeurs = ({
         .not('valeur', 'is', null);
 
       if (source && source !== SOURCE_COLLECTIVITE) {
-        query.eq('source', source);
+        query.eq('source_id', source);
       } else {
-        query.is('source', null);
+        query.is('source_id', null);
       }
 
       const {data} = await query
@@ -99,14 +99,14 @@ export const useIndicateurValeursEtCommentaires = ({
         .order('annee', {ascending: false});
 
       if (type === 'objectif') {
-        query.is('source', null);
+        query.is('source_id', null);
         query.eq('type', type);
       } else {
         if (importSource && importSource !== SOURCE_COLLECTIVITE) {
-          query.eq('source', importSource);
+          query.eq('source_id', importSource);
           query.eq('type', 'import');
         } else {
-          query.is('source', null);
+          query.is('source_id', null);
           query.eq('type', 'resultat');
         }
       }
