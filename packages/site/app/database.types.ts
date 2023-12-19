@@ -21077,6 +21077,7 @@ export interface Database {
           indicateur_id: string | null
           indicateur_perso_id: number | null
           source: string | null
+          source_id: string | null
           type: Database["public"]["Enums"]["indicateur_valeur_type"] | null
           valeur: number | null
         }
