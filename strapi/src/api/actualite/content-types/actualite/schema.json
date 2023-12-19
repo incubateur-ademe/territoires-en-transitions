@@ -12,6 +12,11 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
     "Titre": {
       "type": "string",
       "required": true,
@@ -28,19 +33,12 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "Resume": {
       "type": "string",
       "required": false,
       "maxLength": 255
-    },
-    "Metadata": {
-      "type": "component",
-      "repeatable": false,
-      "component": "contenu.metadata"
     },
     "Sections": {
       "type": "dynamiczone",
@@ -52,11 +50,6 @@
         "contenu.info"
       ],
       "required": false
-    },
-    "seo": {
-      "type": "component",
-      "repeatable": false,
-      "component": "shared.seo"
     }
   }
 }

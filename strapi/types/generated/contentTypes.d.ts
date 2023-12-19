@@ -689,6 +689,7 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
+    seo: Attribute.Component<'shared.seo'>;
     Titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -701,7 +702,6 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    Metadata: Attribute.Component<'contenu.metadata'>;
     Sections: Attribute.DynamicZone<
       [
         'contenu.paragraphe',
@@ -711,7 +711,6 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
         'contenu.info'
       ]
     >;
-    seo: Attribute.Component<'shared.seo'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

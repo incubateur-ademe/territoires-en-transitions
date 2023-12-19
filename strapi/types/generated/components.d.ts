@@ -184,22 +184,6 @@ export interface ContenuInfo extends Schema.Component {
   };
 }
 
-export interface ContenuMetadata extends Schema.Component {
-  collectionName: 'components_contenu_metadata';
-  info: {
-    displayName: 'Metadata';
-    description: '';
-  };
-  attributes: {
-    Titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    Description: Attribute.Text;
-    Image: Attribute.Media;
-  };
-}
-
 export interface ContenuParagraphe extends Schema.Component {
   collectionName: 'components_contenu_paragraphes';
   info: {
@@ -378,7 +362,6 @@ declare module '@strapi/types' {
       'contenu.image': ContenuImage;
       'contenu.indicateur': ContenuIndicateur;
       'contenu.info': ContenuInfo;
-      'contenu.metadata': ContenuMetadata;
       'contenu.paragraphe': ContenuParagraphe;
       'contenu.texte-collectivite': ContenuTexteCollectivite;
       'contenu.video': ContenuVideo;
