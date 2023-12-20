@@ -26,7 +26,7 @@ end;
 comment on function thematiques(indicateur_definitions) is
     'Les thématiques associées à un indicateur.';
 
-create or replace function
+create function
     definition_referentiel(indicateur_definitions)
     returns setof indicateur_definition
     rows 1
@@ -71,7 +71,7 @@ end;
 comment on function axes(indicateur_definitions) is
     'Les axes (plans d''action) associés à un indicateur.';
 
-create or replace function
+create function
     fiches_non_classees(indicateur_definitions)
     returns setof fiche_action_indicateur
     language sql
@@ -96,7 +96,7 @@ end;
 comment on function fiches_non_classees(indicateur_definitions) is
     'Les fiches non classées (sans plan d''action) associées à un indicateur.';
 
-create or replace function
+create function
     pilotes(indicateur_definitions)
     returns setof indicateur_pilote
     language sql
@@ -123,7 +123,7 @@ end;
 comment on function pilotes(indicateur_definitions) is
     'Les personnes pilotes associées à un indicateur.';
 
-create or replace function
+create function
     personne(indicateur_pilote)
     returns setof personne
     rows 1
@@ -137,7 +137,7 @@ end;
 comment on function personne(indicateur_pilote) is
     'Une personne associée comme personne pilote d''un indicateur.';
 
-create or replace function
+create function
     services(indicateur_definitions)
     returns setof indicateur_service_tag
     language sql
@@ -165,7 +165,7 @@ comment on function services(indicateur_definitions) is
     'Les services associés à un indicateur.';
 
 
-create or replace function
+create function
     definition_perso(indicateur_definitions)
     returns setof indicateur_personnalise_definition
     rows 1
@@ -181,8 +181,90 @@ end;
 comment on function definition_perso(indicateur_definitions) is
     'La définition de l''indicateur personnalisé.';
 
+create function
+    private.rempli(collectivite_id integer, indicateur_id indicateur_id)
+    returns bool
+    language sql
+    security definer
+    stable
+begin
+    atomic
+    with remplissage as (
+        -- indicateur référentiel, résultats saisis
+        select count(valeur) > 0 as rempli
+        from indicateur_resultat ir
+        where ir.collectivite_id = $1
+          and ir.indicateur_id = $2
+          and valeur is not null
 
-create or replace function
+        union
+
+        -- indicateur référentiel, résultats saisis, valeur alternative
+        select count(valeur) > 0 as rempli
+        from indicateur_resultat ir
+                 join indicateur_definition def on ir.indicateur_id = def.valeur_indicateur
+        where ir.collectivite_id = $1
+          and def.id = $2
+          and valeur is not null
+
+        union
+
+        -- indicateur référentiel, résultats importés
+        select count(valeur) > 0
+        from indicateur_resultat_import iri
+        where iri.collectivite_id = $1
+          and iri.indicateur_id = $2
+
+        union
+
+        -- indicateur référentiel, résultats importés, valeur alternative
+        select count(valeur) > 0
+        from indicateur_resultat_import iri
+                 join indicateur_definition def on iri.indicateur_id = def.valeur_indicateur
+        where iri.collectivite_id = $1
+          and def.id = $2)
+    select bool_or(rempli)
+    from remplissage;
+end;
+comment on function private.rempli(integer, indicateur_id) is
+    'Vrai si l''indicateur est rempli.';
+
+create function
+    private.rempli(indicateur_perso_id integer)
+    returns bool
+    language sql
+    security definer
+    stable
+begin
+    atomic
+    select count(valeur) > 0
+    from indicateur_personnalise_resultat ipr
+    where ipr.indicateur_id = $1;
+end;
+comment on function private.rempli(integer) is
+    'Vrai si l''indicateur est rempli.';
+
+
+create function
+    rempli(indicateur_definitions)
+    returns bool
+    language sql
+    security definer
+    stable
+begin
+    atomic
+    return case
+               when $1.indicateur_perso_id is null
+                   then
+                   private.rempli($1.collectivite_id, $1.indicateur_id)
+               else
+                   private.rempli($1.indicateur_perso_id)
+        end;
+end;
+comment on function rempli(indicateur_definitions) is
+    'Vrai si l''indicateur est rempli.';
+
+create function
     enfants(indicateur_definitions)
     returns setof indicateur_definitions
     language sql
@@ -202,7 +284,7 @@ end;
 comment on function enfants(indicateur_definitions) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
 
-create or replace function
+create function
     enfants(indicateur_definition)
     returns setof indicateur_definition
     language sql
@@ -217,7 +299,7 @@ end;
 comment on function enfants(indicateur_definition) is
     'Définitions des indicateurs enfants d''un indicateur composé.';
 
-create or replace function
+create function
     indicateur_action(indicateur_definitions)
     returns setof indicateur_action
     language sql

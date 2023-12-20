@@ -599,3 +599,7 @@ indicateur/confidentialite [indicateur/confidentialite@v2.92.0] 2024-01-15T15:37
 collectivite/bucket [collectivite/bucket@v2.93.0] 2024-01-18T14:51:54Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les droits d'écriture à l'auditeur
 labellisation/audit [labellisation/audit@v2.93.0] 2024-01-18T15:23:40Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les droits à l'auditeur pour upsert_action_audit
 @v2.94.0 2024-01-22T09:38:04Z Florian <florian@derfurth.com> # Répare le flow d'audit
+
+indicateur/detail [indicateur/detail@v2.87.2] 2023-12-20T10:18:20Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des droits
+plan_action/fiches [plan_action/fiches@v2.80.0] 2023-11-13T17:33:13Z Amandine Jacquelin <conta@LanceLibre> # Corrige create_fiche
+indicateur/filtre [indicateur/filtre@v2.87.2] 2023-12-21T10:10:13Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des restrictions de droits
