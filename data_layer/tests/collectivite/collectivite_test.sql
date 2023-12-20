@@ -77,8 +77,8 @@ alter table indicateur_objectif_commentaire enable trigger modified_by;
 insert into indicateur_resultat_commentaire(collectivite_id, indicateur_id, commentaire, modified_by, modified_at)
 values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'eci_5', 'test', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now());
 -- indicateur_resultat_import
-insert into indicateur_resultat_import(collectivite_id, indicateur_id, annee, valeur, source, modified_at)
-values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'eci_5', 2020, 1.0, 'source', now());
+insert into indicateur_resultat_import(collectivite_id, indicateur_id, annee, valeur, source, source_id, modified_at)
+values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'eci_5', 2020, 1.0, 'source', 'cerema', now());
 -- indicateur_personnalise_definition (2ème valeur pour insert un nouveau indicateur_personnalise_objectif)
 insert into indicateur_personnalise_definition(id, collectivite_id, titre, description, unite, commentaire, modified_by)
 values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), (select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'titre', 'description', 'unite', 'commentaire', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'),
