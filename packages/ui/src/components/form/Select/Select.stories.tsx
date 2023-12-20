@@ -4,10 +4,10 @@ import {action} from '@storybook/addon-actions';
 
 import {Select} from './Select';
 import Field from '../Field/Field';
-import {OptionValue} from './Options';
-import {onSelectMultiple, onSelectSingle} from './utils';
+import {OptionValue, SelectOption} from './Options';
+import {getFlatOptions, onSelectMultiple, onSelectSingle} from './utils';
 
-const options = [
+const singleOptions: SelectOption[] = [
   {value: 'option1', label: 'Option 1'},
   {value: 'option2', label: 'Option 2'},
   {
@@ -17,7 +17,7 @@ const options = [
   },
 ];
 
-const optionsWithSections = [
+const optionsWithSections: SelectOption[] = [
   {value: 'ss1', label: 'Option sans section 1'},
   {value: 'ss2', label: 'Option sans section 2'},
   {
@@ -51,7 +51,7 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 export const Default: Story = {
-  args: {options},
+  args: {options: singleOptions},
   render: args => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
@@ -68,7 +68,7 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
-  args: {options, onChange: () => null, disabled: true},
+  args: {options: singleOptions, onChange: () => null, disabled: true},
 };
 
 export const MultiSelectWithSectionOptions: Story = {
@@ -111,7 +111,7 @@ export const SearchableMultiSelect: Story = {
 
 export const DisabledSearchableSelectWithValue: Story = {
   args: {
-    options: optionsWithSections,
+    options: singleOptions,
     disabled: true,
     hasSearch: true,
   },
@@ -129,22 +129,64 @@ export const DisabledSearchableSelectWithValue: Story = {
   },
 };
 
-export const SearchableSelectWithApiCallOnInputType: Story = {
+export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
   args: {
-    options: optionsWithSections,
+    options: singleOptions,
+    disabled: true,
     hasSearch: true,
   },
-  render: () => <div>TODO</div>,
+  render: args => {
+    const [value, setValue] = useState<OptionValue | undefined>();
+    return (
+      <Select
+        {...args}
+        values={value}
+        onChange={v => {
+          setValue(onSelectSingle(v, value));
+        }}
+      />
+    );
+  },
 };
 
-// ne pas oublier le menu sur chaque option
-export const CreateOptionChange: Story = {
-  args: {options: optionsWithSections, multiple: true},
-  render: () => <div>TODO</div>,
+export const CreateOption: Story = {
+  args: {
+    multiple: true,
+    hasSearch: true,
+  },
+  render: args => {
+    const [values, setValues] = useState<OptionValue[] | undefined>();
+    const [options, setOptions] = useState(singleOptions);
+    const userCreatedOptions = getFlatOptions(options)
+      .filter(o => typeof o.value === 'number')
+      .map(o => o.value);
+
+    return (
+      <Select
+        {...args}
+        options={options}
+        values={values}
+        onChange={v => {
+          setValues(onSelectMultiple(v, values));
+        }}
+        createProps={{
+          userCreatedOptions,
+          onCreate: label => {
+            const newOption: SelectOption = {
+              label,
+              value: Date.now(),
+            };
+            setOptions([...options, newOption]);
+            setValues(onSelectMultiple(newOption.value, values));
+          },
+        }}
+      />
+    );
+  },
 };
 
 export const WithField: Story = {
-  args: {options},
+  args: {options: singleOptions},
   render: args => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (

@@ -1,36 +1,28 @@
-import {forwardRef, Fragment, Ref} from 'react';
+import {Fragment} from 'react';
 import classNames from 'classnames';
 
-import DropdownFloater from '../../floating-ui/DropdownFloater';
-// import IconThreeDotHorizontal from '../../icons/IconThreeDotHorizontal';
-
 import {isOptionSection} from './utils';
+import {OptionMenu} from './OptionMenu';
+import {CreateOption} from './Select';
 
 /**
  * Types partagés entre tous les composants selects
  * (Select, MultiSelect, MultiSelectFilter)
  */
 export type OptionValue = number | string;
-export type Option = {value: OptionValue | number; label: string};
+export type Option = {value: OptionValue; label: string};
 export type OptionSection = {
   title: string;
   options: Option[];
 };
 export type SelectOption = Option | OptionSection;
 
-type RenderOptionMenuProps = {
-  option: Option;
-  close?: () => void;
-};
-
 type Props<T extends OptionValue> = {
   values?: T[];
   options: SelectOption[];
   onChange: (value: T) => void;
+  createProps?: CreateOption;
   renderOption?: (option: Option) => React.ReactElement;
-  renderOptionMenu?: (
-    props: RenderOptionMenuProps
-  ) => React.ReactElement | null;
   noOptionPlaceholder?: string;
   dataTest?: string;
 };
@@ -41,7 +33,7 @@ const Options = <T extends OptionValue>({
   options,
   onChange,
   renderOption,
-  renderOptionMenu,
+  createProps,
   noOptionPlaceholder,
   dataTest,
 }: Props<T>) => {
@@ -67,7 +59,7 @@ const Options = <T extends OptionValue>({
                       values={values}
                       onChange={onChange}
                       renderOption={renderOption}
-                      renderOptionMenu={renderOptionMenu}
+                      createProps={createProps}
                     />
                   ))}
                 </div>
@@ -82,13 +74,13 @@ const Options = <T extends OptionValue>({
                 values={values}
                 onChange={onChange}
                 renderOption={renderOption}
-                renderOptionMenu={renderOptionMenu}
+                createProps={createProps}
               />
             );
           }
         })
       ) : (
-        <div className="p-4 text-sm text-gray-500">
+        <div className="py-4 px-6 text-sm text-gray-500">
           {noOptionPlaceholder || 'Aucune option disponible'}
         </div>
       )}
@@ -103,9 +95,7 @@ type OptionProps<T extends OptionValue> = {
   option: Option;
   onChange: (value: T) => void;
   renderOption?: (option: Option) => React.ReactElement;
-  renderOptionMenu?: (
-    props: RenderOptionMenuProps
-  ) => React.ReactElement | null;
+  createProps?: CreateOption;
 };
 
 /** Option pour les sélecteurs */
@@ -114,13 +104,13 @@ const Option = <T extends OptionValue>({
   option,
   onChange,
   renderOption,
-  renderOptionMenu,
+  createProps,
 }: OptionProps<T>) => {
   const isActive = values?.includes(option.value as T);
   return (
     <button
       data-test={option.value}
-      className="flex items-start w-full p-2 text-left text-sm hover:!bg-primary-0"
+      className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
       onClick={() => onChange(option.value as T)}
     >
       <div className="flex w-6 mr-2 shrink-0">
@@ -141,54 +131,10 @@ const Option = <T extends OptionValue>({
           </span>
         )}
       </div>
-      {/** on appelle renderOptionMenu pour savoir si la fonction renvoi quelque chose afin d'afficher les menu ou non.
-        Ces conditions sont gérés dans les composants parents */}
-      {renderOptionMenu &&
-        renderOptionMenu({
-          option,
-        }) && (
-          <DropdownFloater
-            placement="top"
-            offsetValue={{mainAxis: 8}}
-            render={({close}) => (
-              <div onClick={e => e.stopPropagation()}>
-                {renderOptionMenu({
-                  option,
-                  close,
-                })}
-              </div>
-            )}
-          >
-            <OptionOpenFloaterButton />
-          </DropdownFloater>
+      {createProps &&
+        createProps.userCreatedOptions.some(o => o === option.value) && (
+          <OptionMenu option={option} createProps={createProps} />
         )}
     </button>
   );
 };
-
-type OptionOpenFloaterButtonProps = {
-  isOpen?: boolean;
-};
-
-/** Bouton pour ouvrir le menu d'une option */
-const OptionOpenFloaterButton = forwardRef(
-  (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    {isOpen, ...props}: OptionOpenFloaterButtonProps,
-    ref?: Ref<HTMLDivElement>
-  ) => (
-    <div
-      ref={ref}
-      className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
-      onClick={evt => {
-        evt.stopPropagation();
-      }}
-    >
-      {/** Donne les props à un élément enfant afin de pouvoir donner le stopPropagation au parent */}
-      <div {...props}>
-        {/* <IconThreeDotHorizontal className="w-4 h-4 fill-bf500" /> */}
-      </div>
-    </div>
-  )
-);
-OptionOpenFloaterButton.displayName = 'OptionOpenFloaterButton';

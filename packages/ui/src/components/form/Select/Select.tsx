@@ -5,8 +5,20 @@ import classNames from 'classnames';
 import DropdownFloater from '../../floating-ui/DropdownFloater';
 import Options, {OptionValue, SelectOption} from './Options';
 
-import {filterOptions, getOptionLabel, getOptions} from './utils';
+import {
+  filterOptions,
+  getOptionLabel,
+  getFlatOptions,
+  sortOptionByAlphabet,
+} from './utils';
 import {Tag} from '../../tag/Tag';
+
+export type CreateOption = {
+  userCreatedOptions: OptionValue[];
+  onCreate: (inputValue: string) => void;
+  onDelete?: (id: OptionValue) => void;
+  onUpdate?: (id: OptionValue, inputValue: string) => void;
+};
 
 type SelectProps<T extends OptionValue> = {
   /** Donne un id pour les tests e2e */
@@ -21,6 +33,8 @@ type SelectProps<T extends OptionValue> = {
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
   hasSearch?: boolean;
+  /** Les fonction permettant la création de nouvelles options */
+  createProps?: CreateOption;
   /** Afin de couplet avec un label */
   name?: string;
   /** Texte affiché quand rien n'est sélectionné */
@@ -40,8 +54,12 @@ type SelectProps<T extends OptionValue> = {
  *
  * Select /
  * Multi select /
- * Input select /
+ * Searchable select /
  * Create option select
+ *
+ * Mettre `hasSearch` à `true` pour faire un Searchable select
+ *
+ * Donner `createProps` pour faire un Create option select, cela active `hasSearch' automatiquement
  */
 export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const {
@@ -49,6 +67,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     values,
     options,
     onChange,
+    createProps,
     placeholder,
     emptySearchPlaceholder,
     placement,
@@ -63,6 +82,16 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const onInputChange = (value: string) => {
     setInputValue(value);
   };
+
+  const filteredOptions = filterOptions(options, inputValue);
+
+  /** TODO: implémenter les action update et delete pour autoriser l'utilisation de ce cas */
+  const isCreateOptionSelect = createProps !== undefined;
+  // const isCreateOptionSelect = false;
+
+  const isNotSimilar =
+    inputValue.toLowerCase().trim() !==
+    getFlatOptions(filteredOptions)[0]?.label.toLowerCase().trim();
 
   /** Transforme une valeur simple en tableau, qui est plus facile à traiter dans les sous composants */
   const arrayValues = values
@@ -85,10 +114,31 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
           data-test={`${dataTest}-options`}
           className="bg-white rounded-b-lg border border-grey-4 border-t-0 overflow-hidden"
         >
+          {/** Bouton de création d'une option */}
+          {isCreateOptionSelect &&
+            inputValue.trim().length > 0 &&
+            isNotSimilar && (
+              <button
+                data-test={`${dataTest}-create-option`}
+                className="flex items-start justify-between w-full py-2 pl-10 pr-6 text-left text-sm hover:!bg-primary-0"
+                onClick={() => {
+                  createProps.onCreate(inputValue);
+                  onInputChange('');
+                }}
+              >
+                <Tag title={inputValue} />
+                <span className="mt-1 ml-6">Créer</span>
+              </button>
+            )}
+          {/** Liste des options */}
           <Options
             dataTest={dataTest}
             values={arrayValues}
-            options={filterOptions(options, inputValue)}
+            options={
+              isCreateOptionSelect
+                ? sortOptionByAlphabet(filteredOptions)
+                : filteredOptions
+            }
             onChange={value => {
               onChange(value);
               setInputValue('');
@@ -96,6 +146,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
                 close();
               }
             }}
+            createProps={createProps}
             noOptionPlaceholder={emptySearchPlaceholder}
           />
         </div>
@@ -185,7 +236,7 @@ const SelectButton = forwardRef(
                 <Tag
                   className="text-left"
                   trim
-                  title={getOptionLabel(values[0], getOptions(options))}
+                  title={getOptionLabel(values[0], getFlatOptions(options))}
                   onClose={() => onChange(values[0])}
                   disabled={disabled}
                 />
