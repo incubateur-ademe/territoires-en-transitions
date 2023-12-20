@@ -2,6 +2,7 @@ import {Tab, Tabs, useActiveTab} from 'ui/shared/Tabs';
 import {TIndicateurDefinition} from '../types';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurValuesTable} from './IndicateurValuesTable';
+import {SOURCE_COLLECTIVITE} from './useImportSources';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
@@ -27,15 +28,17 @@ export const IndicateurValuesTabs = ({
           />
         )}
       </Tab>
-      <Tab label="Objectifs" icon="calendar-2">
-        {activeTab === 1 && (
-          <IndicateurValuesTable
-            definition={definition}
-            type="objectif"
-            isReadonly={isReadonly}
-          />
-        )}
-      </Tab>
+      {!importSource || importSource === SOURCE_COLLECTIVITE ? (
+        <Tab label="Objectifs" icon="calendar-2">
+          {activeTab === 1 && (
+            <IndicateurValuesTable
+              definition={definition}
+              type="objectif"
+              isReadonly={isReadonly}
+            />
+          )}
+        </Tab>
+      ) : null}
     </Tabs>
   );
 };
