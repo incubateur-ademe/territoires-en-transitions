@@ -13,7 +13,7 @@ export const ImportSourcesDropdown = ({
   setCurrentSource,
 }: {
   sources?: IndicateurImportSource[] | null;
-  currentSource?: string;
+  currentSource: string;
   setCurrentSource?: (value: string) => void;
 }) => {
   return sources?.length && setCurrentSource ? (
