@@ -578,3 +578,4 @@ stats/posthog [stats/posthog@v2.87.1] 2023-12-17T14:46:32Z Florian <florian@derf
 @v2.87.2 2023-12-17T15:01:24Z Florian <florian@derfurth.com> # Hotfix PostHog
 
 indicateur/source 2023-12-19T10:18:35Z Florian <florian@derfurth.com> # Permet de filtrer les valeurs des indicateurs par source
+@v2.88.0 2023-12-20T15:57:31Z Florian <florian@derfurth.com> # Filtre les valeurs des indicateurs par source
