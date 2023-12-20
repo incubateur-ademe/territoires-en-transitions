@@ -1,3 +1,4 @@
+import {naturalSort} from '../../../utils/naturalSort';
 import {Option, OptionSection, OptionValue, SelectOption} from './Options';
 
 /** Option section type guards */
@@ -12,7 +13,7 @@ export function isOption(option: SelectOption): option is Option {
 }
 
 /** Renvoie un tableau d'options, quelles soient dans une section ou non */
-export const getOptions = (selectOptions: SelectOption[]): Option[] =>
+export const getFlatOptions = (selectOptions: SelectOption[]): Option[] =>
   selectOptions.reduce(
     (acc: Option[], curr) =>
       acc.concat(isOptionSection(curr) ? curr.options : curr),
@@ -38,6 +39,37 @@ export const onSelectSingle = (
   } else {
     return undefined;
   }
+};
+
+/** Tri de façon naturelle (1, 2, 11, 40, 'a', 'b') une liste d'options par ordre alpha-numérique */
+export const sortOptionByAlphabet = (
+  options: SelectOption[]
+): SelectOption[] => {
+  // crée 2 tableaux pour les options et les section afin de leur appliquer le sort
+  const optionArray: Option[] = [];
+  const sectionArray: OptionSection[] = [];
+
+  options.forEach(option => {
+    if (isOption(option)) {
+      optionArray.push(option);
+    } else {
+      sectionArray.push(option);
+    }
+  });
+
+  // sort options
+  optionArray.sort((a, b) =>
+    naturalSort(a.label.toUpperCase(), b.label.toUpperCase())
+  );
+
+  // sort sections
+  sectionArray.forEach(section => {
+    section.options.sort((a, b) =>
+      naturalSort(a.label.toUpperCase(), b.label.toUpperCase())
+    );
+  });
+
+  return [...optionArray, ...sectionArray];
 };
 
 /** Gère la sélection/désélection d'un tableau de valeurs pour le composant Select */
