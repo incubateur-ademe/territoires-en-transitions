@@ -4,14 +4,12 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TActionStatutsRow} from 'types/alias';
 
-type TFetchedData = TActionStatutsRow[];
-
-const fetchActionListe = async (
-  collectivite_id: number
-): Promise<TFetchedData> => {
+const fetchActionListe = async (collectivite_id: number) => {
   const query = supabaseClient
     .from('action_statuts')
-    .select('action_id, referentiel, nom, identifiant, avancement')
+    .select(
+      'action_id, referentiel, nom, identifiant, avancement, avancement_descendants, desactive, concerne'
+    )
     .eq('collectivite_id', collectivite_id)
     .in('type', ['action', 'sous-action'])
     .order('action_id', {ascending: true});
@@ -22,7 +20,7 @@ const fetchActionListe = async (
     throw new Error(error.message);
   }
 
-  return data as any;
+  return data as TActionStatutsRow[];
 };
 
 export const useActionListe = () => {
