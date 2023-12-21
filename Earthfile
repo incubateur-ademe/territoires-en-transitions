@@ -345,12 +345,14 @@ package-api-test: ## lance les tests d'intégration de l'api
     ARG --required API_URL
     ARG --required ANON_KEY
     ARG --required SERVICE_ROLE_KEY
+    ARG network=host
     LOCALLY
     RUN earthly +package-api-test-build
     RUN docker run --rm \
         --name package-api-test_tet \
+        --network $network \
         --env SUPABASE_URL=$API_URL \
-        --env SUPABASE_ANON_KEY=$ANON_KEY \
+        --env SUPABASE_KEY=$ANON_KEY \
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
 
