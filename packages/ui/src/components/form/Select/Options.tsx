@@ -21,6 +21,7 @@ type Props<T extends OptionValue> = {
   values?: T[];
   options: SelectOption[];
   onChange: (value: T) => void;
+  isLoading: boolean;
   createProps?: CreateOption;
   renderOption?: (option: Option) => React.ReactElement;
   noOptionPlaceholder?: string;
@@ -32,6 +33,7 @@ const Options = <T extends OptionValue>({
   values,
   options,
   onChange,
+  isLoading,
   renderOption,
   createProps,
   noOptionPlaceholder,
@@ -39,7 +41,9 @@ const Options = <T extends OptionValue>({
 }: Props<T>) => {
   return (
     <div data-test={`${dataTest}-options`}>
-      {options.length > 0 ? (
+      {isLoading ? (
+        <div className="p-4 text-sm text-gray-500">Chargement...</div>
+      ) : options.length > 0 ? (
         options.map((option, i) => {
           /** Section */
           if (isOptionSection(option)) {
