@@ -131,8 +131,6 @@ export const DisabledSearchableSelectWithValue: Story = {
 
 export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
   args: {
-    options: singleOptions,
-    disabled: true,
     hasSearch: true,
   },
   render: args => {
@@ -140,10 +138,13 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
     return (
       <Select
         {...args}
+        options={singleOptions}
         values={value}
         onChange={v => {
           setValue(onSelectSingle(v, value));
         }}
+        onInputChange={v => console.log(v)}
+        debounce={500}
       />
     );
   },

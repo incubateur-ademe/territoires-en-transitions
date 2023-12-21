@@ -1,6 +1,7 @@
 import {Placement} from '@floating-ui/react';
 import {Ref, forwardRef, useEffect, useRef, useState} from 'react';
 import classNames from 'classnames';
+import {useDebouncedCallback} from 'use-debounce';
 
 import DropdownFloater from '../../floating-ui/DropdownFloater';
 import Options, {OptionValue, SelectOption} from './Options';
@@ -33,8 +34,16 @@ type SelectProps<T extends OptionValue> = {
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
   hasSearch?: boolean;
+  /** Fonction exécutée lorsque l'utilisateur fait une recherche, reçoit la valeur de l'input */
+  onInputChange?: (v: string) => void;
+  /** Temps du debounce appliqué à onInputChange */
+  debounce?: number;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
+  /** Fait apparaître un état de chargement à la place des options */
+  isLoading?: boolean;
+  /** Permet de désactiver le bouton d'ouverture */
+  disabled?: boolean;
   /** Afin de couplet avec un label */
   name?: string;
   /** Texte affiché quand rien n'est sélectionné */
@@ -45,8 +54,6 @@ type SelectProps<T extends OptionValue> = {
   placement?: Placement;
   /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
   containerWidthMatchButton?: boolean;
-  /** Permet de désactiver le bouton d'ouverture */
-  disabled?: boolean;
 };
 
 /**
@@ -68,27 +75,56 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     options,
     onChange,
     createProps,
+    onInputChange,
+    debounce = 0,
     placeholder,
     emptySearchPlaceholder,
     placement,
     multiple = false,
     hasSearch = false,
+    isLoading = false,
     containerWidthMatchButton = true,
     disabled = false,
   } = props;
 
+  /** Recherche textuelle locale car `onInputChange` n'est pas obligatoire */
   const [inputValue, setInputValue] = useState('');
 
-  const onInputChange = (value: string) => {
+  /**
+   * Permet de profiter du debounce de l'input et d'afficher un text de chargement
+   * quand l'utilisateur est entrain de faire une saisie.
+   */
+  const [loading, setLoading] = useState(isLoading);
+  // synchronise l'état de loading interne avec l'externe
+  useEffect(() => setLoading(isLoading), [isLoading]);
+
+  /** Fonction de debounce */
+  const handleDebouncedInputChange = useDebouncedCallback(v => {
+    onInputChange(v);
+    setLoading(false);
+  }, debounce);
+
+  /** Permet synchroniser les différents inputChange */
+  const handleInputChange = (value: string) => {
     setInputValue(value);
+    // uniquement si la fonction `onInputchange` est donnée
+    // on applique la fonction de `debounce`, par défaut le debounce est à 0
+    if (onInputChange) {
+      // on active le loading sachant qu'on le désactive à la fin de la fct de debounce
+      setLoading(true);
+      handleDebouncedInputChange(value);
+    }
   };
 
+  /** Liste d'option filtrée par la saisie de l'utilisateur */
   const filteredOptions = filterOptions(options, inputValue);
 
   /** TODO: implémenter les action update et delete pour autoriser l'utilisation de ce cas */
-  const isCreateOptionSelect = createProps !== undefined;
-  // const isCreateOptionSelect = false;
+  // const isCreateOptionSelect = createProps !== undefined;
+  const isCreateOptionSelect = false;
 
+  /** Compare la valeur de l'input de recherche avec la première optin de la liste
+   * pour afficher le bouton de création d'une option */
   const isNotSimilar =
     inputValue.toLowerCase().trim() !==
     getFlatOptions(filteredOptions)[0]?.label.toLowerCase().trim();
@@ -123,7 +159,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
                 className="flex items-start justify-between w-full py-2 pl-10 pr-6 text-left text-sm hover:!bg-primary-0"
                 onClick={() => {
                   createProps.onCreate(inputValue);
-                  onInputChange('');
+                  handleInputChange('');
                 }}
               >
                 <Tag title={inputValue} />
@@ -146,6 +182,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
                 close();
               }
             }}
+            isLoading={loading}
             createProps={createProps}
             noOptionPlaceholder={emptySearchPlaceholder}
           />
@@ -159,7 +196,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         onChange={onChange}
         hasSearch={hasSearch}
         inputValue={inputValue}
-        onInputChange={onInputChange}
+        onInputChange={handleInputChange}
         placeholder={placeholder}
         disabled={disabled}
       />
