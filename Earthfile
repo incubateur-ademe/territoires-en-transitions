@@ -330,6 +330,30 @@ app-test: ## lance les tests unitaires de l'app
         --env REACT_APP_SUPABASE_KEY='fake' \
         app-test:latest
 
+package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
+    FROM +front-deps
+    ENV SUPABASE_URL
+    ENV SUPABASE_ANON_KEY
+    ENV SUPABASE_SERVICE_ROLE_KEY
+    # copie les sources du module à tester
+    COPY $API_DIR $API_DIR
+    # la commande utilisée pour lancer les tests
+    CMD npm run test -w @tet/api
+    SAVE IMAGE package-api-test:latest
+
+package-api-test: ## lance les tests d'intégration de l'api
+    ARG --required API_URL
+    ARG --required ANON_KEY
+    ARG --required SERVICE_ROLE_KEY
+    LOCALLY
+    RUN earthly +package-api-test-build
+    RUN docker run --rm \
+        --name package-api-test_tet \
+        --env SUPABASE_URL=$API_URL \
+        --env SUPABASE_ANON_KEY=$ANON_KEY \
+        --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+        package-api-test:latest
+
 site-build: ## construit l'image du site
     ARG PLATFORM
     ARG --required ANON_KEY
@@ -409,7 +433,7 @@ storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec
     RUN npx playwright install --with-deps chromium
     # copie les sources
     COPY $UI_DIR $UI_DIR
-    # commande utilisée pour exécuter les tests 
+    # commande utilisée pour exécuter les tests
     CMD npm run test -w @tet/ui -- --no-index-json --url $STORYBOOK_URL
     SAVE IMAGE storybook-test:latest
 
