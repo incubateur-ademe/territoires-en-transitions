@@ -52,8 +52,8 @@ export const badgeClassnames: Record<
     icon: 'text-info-1',
   },
   grey: {
-    text: 'text-info-1',
-    background: 'bg-info-2',
-    icon: 'text-info-1',
+    text: 'text-grey-6',
+    background: 'bg-grey-3',
+    icon: 'text-grey-6',
   },
 };

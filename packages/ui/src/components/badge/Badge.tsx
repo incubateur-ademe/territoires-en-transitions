@@ -47,7 +47,8 @@ export const Badge = ({
   trim = true,
   dataTest,
 }: Props) => {
-  const {text, background, border, icon} = badgeClassnames[state];
+  const {text, background, border, icon} =
+    badgeClassnames[disabled ? 'grey' : state];
 
   return (
     <div
@@ -55,7 +56,7 @@ export const Badge = ({
       className={classNames(
         background,
         border,
-        'flex items-center gap-1 w-max px-3 py-0.5 rounded',
+        'flex items-center gap-1 max-w-max px-3 py-0.5 rounded',
         {
           'flex-row-reverse': iconPosition === 'left',
           '!px-2': size === 'sm',
@@ -65,7 +66,7 @@ export const Badge = ({
       )}
     >
       <span
-        className={classNames(text, 'font-bold uppercase text-sm', {
+        className={classNames(text, 'font-bold uppercase text-sm text-left', {
           'line-clamp-1': trim,
           '!text-xs': size === 'sm',
         })}
