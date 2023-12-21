@@ -403,7 +403,7 @@ storybook-build: ## construit l'image du storybook du module `ui`
     SAVE IMAGE --cache-from=$STORYBOOK_IMG_NAME --push $STORYBOOK_IMG_NAME
 
 storybook-run: ## construit et lance l'image du storybook du module `ui` en local
-    ARG network=supabase_network_tet
+    ARG network=host
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
     DO +BUILD_IF_NO_IMG --IMG_NAME=storybook --IMG_TAG=$STORYBOOK_TAG --BUILD_TARGET=storybook-build
@@ -415,7 +415,6 @@ storybook-run: ## construit et lance l'image du storybook du module `ui` en loca
 
 storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
     ARG PORT=6007
-    ARG STORYBOOK_URL=http://storybook_tet:$PORT
     # pour avoir playwright déjà pré-installé
     FROM mcr.microsoft.com/playwright:v1.40.0-jammy
     # installe les outils de build nécessaire à l'installation de certains packages npm
@@ -436,11 +435,11 @@ storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec
     # copie les sources
     COPY $UI_DIR $UI_DIR
     # commande utilisée pour exécuter les tests
-    CMD npm run test -w @tet/ui -- --no-index-json --url $STORYBOOK_URL
+    CMD npm run test -w @tet/ui -- --no-index-json
     SAVE IMAGE storybook-test:latest
 
 storybook-test-run: # lance les tests du module `ui`
-    ARG network=supabase_network_tet
+    ARG network=host
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
     RUN docker run --rm \
