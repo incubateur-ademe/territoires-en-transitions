@@ -5,6 +5,7 @@ import {useDebouncedCallback} from 'use-debounce';
 
 import DropdownFloater from '../../floating-ui/DropdownFloater';
 import Options, {OptionValue, SelectOption} from './Options';
+import {Badge} from '../../badge/Badge';
 
 import {
   filterOptions,
@@ -12,7 +13,6 @@ import {
   getFlatOptions,
   sortOptionByAlphabet,
 } from './utils';
-import {Tag} from '../../tag/Tag';
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];
@@ -162,8 +162,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
                   handleInputChange('');
                 }}
               >
-                <Tag title={inputValue} />
-                <span className="mt-1 ml-6">Créer</span>
+                <Badge title={inputValue} state="standard" />
+                <span className="mt-1 ml-6 font-medium text-grey-8">Créer</span>
               </button>
             )}
           {/** Liste des options */}
@@ -270,19 +270,14 @@ const SelectButton = forwardRef(
             {values && Array.isArray(values) ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
-                <Tag
-                  className="text-left"
-                  trim
+                <Badge
                   title={getOptionLabel(values[0], getFlatOptions(options))}
                   onClose={() => onChange(values[0])}
                   disabled={disabled}
                 />
                 {/** Nombre de valeurs sélectionnées supplémentaires */}
                 {values.length > 1 && (
-                  <Tag
-                    title={`+${values.length - 1}`}
-                    className="bg-info-2 text-info-1"
-                  />
+                  <Badge title={`+${values.length - 1}`} state="info" />
                 )}
               </div>
             ) : (
