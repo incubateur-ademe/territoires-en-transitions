@@ -43,8 +43,8 @@ export const preset = {
         },
         // Couleurs new
         new: {
-          1: '#FFE8BD',
-          2: '#66543D',
+          1: '#B88729',
+          2: '#FFE8BD',
         },
         // Couleurs success
         success: {
