@@ -47,6 +47,7 @@ export const Grid: Story = {
               disabled
               onClose={action('onClose')}
             />
+            <Badge {...args} disabled light />
           </div>
         ))}
       </div>
