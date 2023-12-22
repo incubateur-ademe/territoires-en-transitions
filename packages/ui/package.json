@@ -59,5 +59,8 @@
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "remixicon": "^4.0.1"
+  }
 }

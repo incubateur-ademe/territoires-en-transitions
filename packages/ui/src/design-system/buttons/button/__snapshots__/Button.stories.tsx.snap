@@ -23,7 +23,7 @@ exports[`Design System/Buttons/Button AnchorButtons smoke-test 1`] = `
         <div>
           External link
         </div>
-        <div class="fr-icon-external-link-line before:block h-4 w-4 before:h-4 before:w-4">
+        <div class="ri-external-link-line font-normal">
         </div>
       </div>
     </div>
@@ -86,35 +86,35 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
 <div class="grid gap-5 items-end"
      style="grid-template-columns: repeat(4, fit-content(0px));"
 >
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-xs py-2 px-2 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-1">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal h-4 w-4 text-base leading-4">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-sm py-3 px-3 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-1">
-      <div class="fr-icon-building-line before:block h-5 w-5 before:h-5 before:w-5">
+      <div class="ri-leaf-line font-normal h-5 w-5 text-xl leading-5">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
-          class="rounded-lg w-fit border border-solid font-bold group text-2xl py-4 px-4 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
+  <button icon="leaf-line"
+          class="rounded-lg w-fit border border-solid font-bold group text-2xl py-5 px-5 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-8 w-8 before:h-8 before:w-8">
+      <div class="ri-leaf-line font-normal h-8 w-8 text-3xl leading-8">
       </div>
     </div>
   </button>
@@ -145,20 +145,20 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button class="rounded-lg w-fit border border-solid font-bold group text-2xl py-4 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4">
+  <button class="rounded-lg w-fit border border-solid font-bold group text-2xl py-5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4">
     <div class="flex items-center gap-2">
       <div class="flex items-center gap-2">
         <div>
-          Large
+          XLarge
         </div>
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-xs py-2 px-5 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-1">
-      <div class="fr-icon-building-line before:block h-3 w-3 before:h-3 before:w-3">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-1">
         <div>
@@ -167,11 +167,11 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-sm py-3 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-1">
-      <div class="fr-icon-building-line before:block h-3.5 w-3.5 before:h-3.5 before:w-3.5">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-1">
         <div>
@@ -180,11 +180,11 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -193,15 +193,15 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
-          class="rounded-lg w-fit border border-solid font-bold group text-2xl py-4 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
+  <button icon="leaf-line"
+          class="rounded-lg w-fit border border-solid font-bold group text-2xl py-5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
-          Large
+          XLarge
         </div>
       </div>
     </div>
@@ -213,98 +213,98 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
 <div class="grid gap-5 items-end bg-grey-2 p-10"
      style="grid-template-columns: repeat(5, fit-content(0px));"
 >
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="primary"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="secondary"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-white hover:!text-white disabled:!text-grey-1 bg-secondary-1 hover:!bg-secondary-2 disabled:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 disabled:!border-secondary-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="outlined"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-3 bg-white hover:!bg-primary-1 disabled:!bg-white border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="white"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-white hover:!bg-primary-1 disabled:!bg-white border-white hover:!border-primary-1 disabled:!border-white"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="grey"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-grey-1 hover:!bg-grey-2 disabled:!bg-white border-grey-4 hover:!border-grey-4 disabled:!border-grey-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="primary"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-not-allowed text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="secondary"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-not-allowed text-white hover:!text-white disabled:!text-grey-1 bg-secondary-1 hover:!bg-secondary-2 disabled:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 disabled:!border-secondary-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="outlined"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-3 bg-white hover:!bg-primary-1 disabled:!bg-white border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="white"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-white hover:!bg-primary-1 disabled:!bg-white border-white hover:!border-primary-1 disabled:!border-white"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           variant="grey"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-3.5 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-grey-1 hover:!bg-grey-2 disabled:!bg-white border-grey-4 hover:!border-grey-4 disabled:!border-grey-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-6 w-6 before:h-6 before:w-6">
+      <div class="ri-leaf-line font-normal h-6 w-6 text-2xl leading-6">
       </div>
     </div>
   </button>
@@ -423,13 +423,13 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="primary"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -438,13 +438,13 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="secondary"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-grey-1 bg-secondary-1 hover:!bg-secondary-2 disabled:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 disabled:!border-secondary-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -453,13 +453,13 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="outlined"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-3 bg-white hover:!bg-primary-1 disabled:!bg-white border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -468,13 +468,13 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="white"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-white hover:!bg-primary-1 disabled:!bg-white border-white hover:!border-primary-1 disabled:!border-white"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -483,13 +483,13 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="grey"
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-grey-1 hover:!bg-grey-2 disabled:!bg-white border-grey-4 hover:!border-grey-4 disabled:!border-grey-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -498,14 +498,14 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="primary"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -514,14 +514,14 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="secondary"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-white hover:!text-white disabled:!text-grey-1 bg-secondary-1 hover:!bg-secondary-2 disabled:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 disabled:!border-secondary-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -530,14 +530,14 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="outlined"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-3 bg-white hover:!bg-primary-1 disabled:!bg-white border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -546,14 +546,14 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="white"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-white hover:!bg-primary-1 disabled:!bg-white border-white hover:!border-primary-1 disabled:!border-white"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -562,14 +562,14 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
       </div>
     </div>
   </button>
-  <button icon="fr-icon-building-line"
+  <button icon="leaf-line"
           iconposition="left"
           variant="grey"
           disabled
           class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-primary-7 hover:!text-primary-8 disabled:!text-primary-4 bg-grey-1 hover:!bg-grey-2 disabled:!bg-white border-grey-4 hover:!border-grey-4 disabled:!border-grey-2"
   >
     <div class="flex items-center gap-2">
-      <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+      <div class="ri-leaf-line font-normal">
       </div>
       <div class="flex items-center gap-2">
         <div>
@@ -605,17 +605,17 @@ exports[`Design System/Buttons/Button WithCustomSVGIcon smoke-test 1`] = `
 </button>
 `;
 
-exports[`Design System/Buttons/Button WithDSFRIcon smoke-test 1`] = `
-<button icon="fr-icon-building-line"
+exports[`Design System/Buttons/Button WithRemixIcon smoke-test 1`] = `
+<button icon="leaf-line"
         iconposition="left"
         class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
 >
   <div class="flex items-center gap-2">
-    <div class="fr-icon-building-line before:block h-4 w-4 before:h-4 before:w-4">
+    <div class="ri-leaf-line font-normal">
     </div>
     <div class="flex items-center gap-2">
       <div>
-        DSFR Icon
+        Remix Icon
       </div>
     </div>
   </div>

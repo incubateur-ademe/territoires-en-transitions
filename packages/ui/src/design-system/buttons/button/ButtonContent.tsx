@@ -4,17 +4,28 @@ import {buttonThemeClassnames} from '../utils';
 import classNames from 'classnames';
 import {IconSize} from '../../icons/types';
 
-const getIconSize = (size: ButtonSize, isIconButton: boolean): IconSize => {
-  switch (size) {
-    case 'xs':
-      return isIconButton ? 'md' : 'xs';
-    case 'sm':
-      return isIconButton ? 'lg' : 'sm';
-    case 'md':
-      return isIconButton ? 'xl' : 'md';
-    case 'xl':
-      return isIconButton ? '2xl' : 'xl';
-  }
+const getIconSize = (
+  size: ButtonSize,
+  isIconButton: boolean,
+  isRemixIcon: boolean
+): IconSize => {
+  // Les icônes remix ont la taille définie par le font size
+  // Dans le cas des icon buttons, une taille est définie pour forcer la largeur
+  // et avoir un bouton carré
+  if (isIconButton) {
+    switch (size) {
+      case 'xs':
+        return 'md';
+      case 'sm':
+        return 'lg';
+      case 'md':
+        return 'xl';
+      case 'xl':
+        return '2xl';
+    }
+  } else if (!isRemixIcon) {
+    return size;
+  } else return undefined;
 };
 
 const ButtonContent = (props: ButtonProps) => {
@@ -31,7 +42,7 @@ const ButtonContent = (props: ButtonProps) => {
       {!!icon && iconPosition === 'left' && (
         <Icon
           icon={icon}
-          size={getIconSize(size, isIconButton)}
+          size={getIconSize(size, isIconButton, typeof icon === 'string')}
           svgClassName={buttonThemeClassnames[variant].icon}
         />
       )}
@@ -45,7 +56,7 @@ const ButtonContent = (props: ButtonProps) => {
         >
           <div>{children}</div>
           {isAnchorButton(props) && props.external && (
-            <Icon icon="fr-icon-external-link-line" size={size} />
+            <Icon icon="external-link-line" />
           )}
         </div>
       )}
@@ -53,7 +64,7 @@ const ButtonContent = (props: ButtonProps) => {
       {!!icon && iconPosition === 'right' && (
         <Icon
           icon={icon}
-          size={getIconSize(size, isIconButton)}
+          size={getIconSize(size, isIconButton, typeof icon === 'string')}
           svgClassName={buttonThemeClassnames[variant].icon}
         />
       )}

@@ -1,7 +1,6 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {Button} from './Button';
 import DoubleCheckIcon from '../../../assets/DoubleCheckIcon';
-import classNames from 'classnames';
 
 const meta: Meta<typeof Button> = {
   title: 'Design System/Buttons/Button',
@@ -41,11 +40,11 @@ export const Disabled: Story = {
   },
 };
 
-/** Bouton avec icône DSFR. */
-export const WithDSFRIcon: Story = {
+/** Bouton avec icône Remix. */
+export const WithRemixIcon: Story = {
   args: {
-    children: 'DSFR Icon',
-    icon: 'fr-icon-building-line',
+    children: 'Remix Icon',
+    icon: 'leaf-line',
     iconPosition: 'left',
   },
 };
@@ -54,7 +53,7 @@ export const WithDSFRIcon: Story = {
 export const WithCustomSVGIcon: Story = {
   args: {
     children: 'SVG Icon',
-    icon: className => <DoubleCheckIcon className={classNames(className)} />,
+    icon: className => <DoubleCheckIcon className={className} />,
     iconPosition: 'left',
   },
 };
@@ -62,38 +61,36 @@ export const WithCustomSVGIcon: Story = {
 /** Différentes valeurs pour la props size. */
 export const Sizes: Story = {
   render: () => (
-    <>
-      <div
-        className="grid gap-5 items-end"
-        style={{gridTemplateColumns: 'repeat(4,fit-content(0))'}}
-      >
-        {/* Icon Buttons */}
-        <Button size="xs" icon="fr-icon-building-line" />
-        <Button size="sm" icon="fr-icon-building-line" />
-        <Button size="md" icon="fr-icon-building-line" />
-        <Button size="xl" icon="fr-icon-building-line" />
+    <div
+      className="grid gap-5 items-end"
+      style={{gridTemplateColumns: 'repeat(4,fit-content(0))'}}
+    >
+      {/* Icon Buttons */}
+      <Button size="xs" icon="leaf-line" />
+      <Button size="sm" icon="leaf-line" />
+      <Button size="md" icon="leaf-line" />
+      <Button size="xl" icon="leaf-line" />
 
-        {/* Buttons */}
-        <Button size="xs">XSmall</Button>
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="xl">Large</Button>
+      {/* Buttons */}
+      <Button size="xs">XSmall</Button>
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="xl">XLarge</Button>
 
-        {/* Buttons with icons */}
-        <Button size="xs" icon="fr-icon-building-line">
-          XSmall
-        </Button>
-        <Button size="sm" icon="fr-icon-building-line">
-          Small
-        </Button>
-        <Button size="md" icon="fr-icon-building-line">
-          Medium
-        </Button>
-        <Button size="xl" icon="fr-icon-building-line">
-          Large
-        </Button>
-      </div>
-    </>
+      {/* Buttons with icons */}
+      <Button size="xs" icon="leaf-line">
+        XSmall
+      </Button>
+      <Button size="sm" icon="leaf-line">
+        Small
+      </Button>
+      <Button size="md" icon="leaf-line">
+        Medium
+      </Button>
+      <Button size="xl" icon="leaf-line">
+        XLarge
+      </Button>
+    </div>
   ),
 };
 
@@ -106,18 +103,18 @@ export const Variants: Story = {
       style={{gridTemplateColumns: 'repeat(5,fit-content(0))'}}
     >
       {/* Icon buttons */}
-      <Button icon="fr-icon-building-line" variant="primary" />
-      <Button icon="fr-icon-building-line" variant="secondary" />
-      <Button icon="fr-icon-building-line" variant="outlined" />
-      <Button icon="fr-icon-building-line" variant="white" />
-      <Button icon="fr-icon-building-line" variant="grey" />
+      <Button icon="leaf-line" variant="primary" />
+      <Button icon="leaf-line" variant="secondary" />
+      <Button icon="leaf-line" variant="outlined" />
+      <Button icon="leaf-line" variant="white" />
+      <Button icon="leaf-line" variant="grey" />
 
       {/* Disabled icon buttons */}
-      <Button icon="fr-icon-building-line" variant="primary" disabled />
-      <Button icon="fr-icon-building-line" variant="secondary" disabled />
-      <Button icon="fr-icon-building-line" variant="outlined" disabled />
-      <Button icon="fr-icon-building-line" variant="white" disabled />
-      <Button icon="fr-icon-building-line" variant="grey" disabled />
+      <Button icon="leaf-line" variant="primary" disabled />
+      <Button icon="leaf-line" variant="secondary" disabled />
+      <Button icon="leaf-line" variant="outlined" disabled />
+      <Button icon="leaf-line" variant="white" disabled />
+      <Button icon="leaf-line" variant="grey" disabled />
 
       {/* Default buttons */}
       <Button variant="primary">Primary</Button>
@@ -144,73 +141,36 @@ export const Variants: Story = {
       </Button>
 
       {/* Buttons with icon */}
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="primary"
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="primary">
         Primary
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="secondary"
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="secondary">
         Secondary
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="outlined"
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="outlined">
         Outlined
       </Button>
-      <Button icon="fr-icon-building-line" iconPosition="left" variant="white">
+      <Button icon="leaf-line" iconPosition="left" variant="white">
         White
       </Button>
-      <Button icon="fr-icon-building-line" iconPosition="left" variant="grey">
+      <Button icon="leaf-line" iconPosition="left" variant="grey">
         Grey
       </Button>
 
       {/* Disabled buttons with icon */}
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="primary"
-        disabled
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="primary" disabled>
         Primary
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="secondary"
-        disabled
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="secondary" disabled>
         Secondary
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="outlined"
-        disabled
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="outlined" disabled>
         Outlined
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="white"
-        disabled
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="white" disabled>
         White
       </Button>
-      <Button
-        icon="fr-icon-building-line"
-        iconPosition="left"
-        variant="grey"
-        disabled
-      >
+      <Button icon="leaf-line" iconPosition="left" variant="grey" disabled>
         Grey
       </Button>
     </div>
