@@ -3,7 +3,7 @@ import {Button} from './Button';
 import DoubleCheckIcon from '../../../assets/DoubleCheckIcon';
 
 const meta: Meta<typeof Button> = {
-  title: 'Design System/Buttons/Button',
+  title: 'Design System/Button',
   component: Button,
   argTypes: {
     variant: {
