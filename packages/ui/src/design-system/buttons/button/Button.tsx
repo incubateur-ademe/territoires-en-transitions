@@ -25,17 +25,17 @@ export const Button = (props: ButtonProps) => {
       'text-xs py-2': size === 'xs',
       'text-sm py-3': size === 'sm',
       'text-base py-3.5': size === 'md',
-      'text-2xl py-4': size === 'xl',
+      'text-2xl py-5': size === 'xl',
 
       // Padding en fonction de la taille choisie
-      'px-5': size === 'xs' && !isIconButton,
+      'px-5':
+        (size === 'xs' && !isIconButton) || (size === 'xl' && isIconButton),
       'px-6': size !== 'xs' && !isIconButton,
 
       // Padding sur les boutons ne contenant qu'une icône
       'px-2': size === 'xs' && isIconButton,
       'px-3': size === 'sm' && isIconButton,
       'px-3.5': size === 'md' && isIconButton,
-      'px-4': size === 'xl' && isIconButton,
 
       // Styles du curseur
       'cursor-pointer': !disabled,
