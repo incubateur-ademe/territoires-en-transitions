@@ -18,7 +18,7 @@ type CommonButtonProps = {
   variant?: ButtonVariant;
   /** Taille du bouton */
   size?: ButtonSize;
-  /** Icône à intégrer au bouton, au format SVG ou avec la nomenclature DSFR */
+  /** Icône à intégrer au bouton, au format SVG ou avec la nomenclature Remix Icon */
   icon?: JSX.Element | ((className: string) => JSX.Element) | string;
   /** Position de l'icône dans le bouton */
   iconPosition?: IconPosition;

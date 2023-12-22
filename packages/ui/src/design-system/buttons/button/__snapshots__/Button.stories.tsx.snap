@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Buttons/Button AnchorButtons smoke-test 1`] = `
+exports[`Design System/Button AnchorButtons smoke-test 1`] = `
 <div class="flex items-end gap-5">
   <a href="https://territoiresentransitions.fr/"
      class="inline-block w-fit bg-none after:hidden rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
@@ -31,7 +31,7 @@ exports[`Design System/Buttons/Button AnchorButtons smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Buttons/Button CustomStyles smoke-test 1`] = `
+exports[`Design System/Button CustomStyles smoke-test 1`] = `
 <div class="flex items-end gap-5">
   <button class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4 !bg-success-3 !border-success-3 hover:!bg-success hover:!border-success">
     <div class="flex items-center gap-2">
@@ -56,7 +56,7 @@ exports[`Design System/Buttons/Button CustomStyles smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Buttons/Button Default smoke-test 1`] = `
+exports[`Design System/Button Default smoke-test 1`] = `
 <button class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4">
   <div class="flex items-center gap-2">
     <div class="flex items-center gap-2">
@@ -68,7 +68,7 @@ exports[`Design System/Buttons/Button Default smoke-test 1`] = `
 </button>
 `;
 
-exports[`Design System/Buttons/Button Disabled smoke-test 1`] = `
+exports[`Design System/Button Disabled smoke-test 1`] = `
 <button disabled
         class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-not-allowed text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
 >
@@ -82,7 +82,7 @@ exports[`Design System/Buttons/Button Disabled smoke-test 1`] = `
 </button>
 `;
 
-exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
+exports[`Design System/Button Sizes smoke-test 1`] = `
 <div class="grid gap-5 items-end"
      style="grid-template-columns: repeat(4, fit-content(0px));"
 >
@@ -209,7 +209,7 @@ exports[`Design System/Buttons/Button Sizes smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
+exports[`Design System/Button Variants smoke-test 1`] = `
 <div class="grid gap-5 items-end bg-grey-2 p-10"
      style="grid-template-columns: repeat(5, fit-content(0px));"
 >
@@ -581,7 +581,7 @@ exports[`Design System/Buttons/Button Variants smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Buttons/Button WithCustomSVGIcon smoke-test 1`] = `
+exports[`Design System/Button WithCustomSVGIcon smoke-test 1`] = `
 <button iconposition="left"
         class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
 >
@@ -605,7 +605,7 @@ exports[`Design System/Buttons/Button WithCustomSVGIcon smoke-test 1`] = `
 </button>
 `;
 
-exports[`Design System/Buttons/Button WithRemixIcon smoke-test 1`] = `
+exports[`Design System/Button WithRemixIcon smoke-test 1`] = `
 <button icon="leaf-line"
         iconposition="left"
         class="rounded-lg w-fit border border-solid font-bold group text-base py-3.5 px-6 cursor-pointer text-white hover:!text-white disabled:!text-primary-3 bg-primary-7 hover:!bg-primary-8 disabled:!bg-primary-4 border-primary-7 hover:!border-primary-8 disabled:!border-primary-4"
