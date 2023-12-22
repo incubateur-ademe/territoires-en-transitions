@@ -2,9 +2,9 @@
 
 BEGIN;
 
-drop table indicateur_personnalise_service_tag;
-drop table indicateur_personnalise_pilote;
-drop table indicateur_personnalise_thematique;
-drop function private.indicateur_personnalise_collectivite_id;
+drop trigger modified_by on indicateur_personnalise_resultat;
+alter table indicateur_personnalise_resultat drop column modified_by;
+drop trigger modified_by on indicateur_personnalise_objectif;
+alter table indicateur_personnalise_objectif drop column modified_by;
 
 COMMIT;

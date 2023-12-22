@@ -579,3 +579,6 @@ stats/posthog [stats/posthog@v2.87.1] 2023-12-17T14:46:32Z Florian <florian@derf
 
 indicateur/source 2023-12-19T10:18:35Z Florian <florian@derfurth.com> # Permet de filtrer les valeurs des indicateurs par source
 @v2.88.0 2023-12-20T15:57:31Z Florian <florian@derfurth.com> # Filtre les valeurs des indicateurs par source
+
+indicateur/referentiel [indicateur/referentiel@v2.88.0] 2023-12-22T09:51:15Z Florian <florian@derfurth.com> # Ajoute des colonnes modified_by pour les résultats et les objectifs
+indicateur/personnalise [indicateur/personnalise@v2.88.0] 2023-12-22T14:42:05Z Florian <florian@derfurth.com> # Ajoute des colonnes modified_by pour les résultats et les objectifs

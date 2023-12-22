@@ -2,12 +2,12 @@
 
 BEGIN;
 
-select indicateur_id, collectivite_id, user_id, tag_id
-from indicateur_pilote
+select modified_by
+from indicateur_resultat
 where false;
 
-select indicateur_id, collectivite_id, service_tag_id
-from indicateur_service_tag
+select modified_by
+from indicateur_objectif
 where false;
 
 
