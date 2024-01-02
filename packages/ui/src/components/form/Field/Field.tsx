@@ -1,5 +1,25 @@
 import classNames from 'classnames';
 
+type State = 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
+
+const stateToColor: Record<State, string> = {
+  info: 'text-info-1',
+  error: 'text-error-1',
+  success: 'text-success-1',
+  warning: 'text-warning-1',
+  default: '',
+  disabled: '',
+};
+
+const stateToIcon: Record<State, string> = {
+  info: 'fr-icon-info-fill',
+  error: 'fr-icon-error-fill',
+  success: 'fr-icon-success-fill',
+  warning: 'fr-icon-warning-fill',
+  default: '',
+  disabled: '',
+};
+
 type Props = {
   /** Titre */
   title: string;
@@ -12,7 +32,7 @@ type Props = {
   /** Pour lier le libellé et le champ qu'il contient */
   htmlFor?: string;
   /** État */
-  state?: 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
+  state?: State;
   /** Message d'état affiché en dessous du champ */
   message?: string;
 };
@@ -51,21 +71,12 @@ const Field = ({
       </label>
       {children}
       {message !== undefined && (
-        <div
-          className={classNames('flex items-center', {
-            'text-info-1': state === 'info',
-            'text-error-1': state === 'error',
-            'text-success-1': state === 'success',
-            'text-warning-1': state === 'warning',
-          })}
-        >
+        <div className={classNames('flex items-center', stateToColor[state])}>
           <span
-            className={classNames('flex mr-1 before:h-4 before:w-4', {
-              'fr-icon-info-fill': state === 'info',
-              'fr-icon-error-fill': state === 'error',
-              'fr-icon-success-fill': state === 'success',
-              'fr-icon-warning-fill': state === 'warning',
-            })}
+            className={classNames(
+              'flex mr-1 before:h-4 before:w-4',
+              stateToIcon[state]
+            )}
           />
           <span className="text-xs">{message}</span>
         </div>
