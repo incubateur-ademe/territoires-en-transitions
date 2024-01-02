@@ -34,6 +34,7 @@ type TSelectCreateTagsDropdown<T extends string> =
     userCreatedTagIds?: string[];
     closeOptionsOnSelect?: boolean;
     noOptionPlaceholder?: string;
+    disableDropdown?: boolean;
   };
 
 /** Sélecteur de Tag(s) avec un input dans le bouton d'ouverture pour créer un tag */
@@ -49,6 +50,7 @@ const SelectCreateTagsDropdown = <T extends string>({
   placeholderText,
   noOptionPlaceholder,
   disabled,
+  disableDropdown,
   closeOptionsOnSelect,
   containerWidthMatchButton = true,
   'data-test': dataTest,
@@ -71,7 +73,7 @@ const SelectCreateTagsDropdown = <T extends string>({
       placement={placement}
       toggle={false}
       enterToToggle={false}
-      disabled={disabled}
+      disabled={disabled || disableDropdown}
       render={({close}) => (
         <div>
           {inputValue.trim().length > 0 && isNotSimilar && (
@@ -133,6 +135,7 @@ const SelectCreateTagsDropdown = <T extends string>({
         onSelect={onSelect as (values: string[]) => void}
         placeholderText={placeholderText}
         disabled={disabled}
+        disableDropdown={disableDropdown}
         userCreatedTagIds={userCreatedTagIds}
       />
     </DropdownFloater>
@@ -151,6 +154,7 @@ export type TSelectCreateTagsButtonProps<T extends string> = TSelectBase &
     onSelect: (values: T[]) => void;
     /** tableau d'id des options crées par un utilisateur */
     userCreatedTagIds?: string[];
+    disableDropdown?: boolean;
   };
 
 /**
@@ -171,6 +175,7 @@ const SelectCreateTagsButton = forwardRef(
       onInputChange,
       onSelect,
       disabled,
+      disableDropdown,
       ...props
     }: TSelectCreateTagsButtonProps<T>,
     ref?: Ref<HTMLDivElement>
@@ -213,7 +218,7 @@ const SelectCreateTagsButton = forwardRef(
       >
         <div
           className={classNames(buttonDisplayedClassname, buttonClassName, {
-            'cursor-not-allowed': disabled,
+            'cursor-not-allowed': disabled || disableDropdown,
           })}
           onClick={handleWrapperClick}
         >
@@ -231,7 +236,7 @@ const SelectCreateTagsButton = forwardRef(
                   disabled={disabled}
                 />
               ))}
-            {!disabled && (
+            {disabled || disableDropdown ? null : (
               <input
                 data-test={`${dataTest}-input`}
                 type="text"
