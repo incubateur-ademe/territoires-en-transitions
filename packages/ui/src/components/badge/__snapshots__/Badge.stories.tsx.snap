@@ -1,0 +1,380 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/badge/Badge CustomIcon smoke-test 1`] = `
+<div data-test="Badge-undefined"
+     class="bg-grey-1 border-grey-5 !border flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+>
+  <span class="text-grey-8 font-bold uppercase text-sm text-left line-clamp-1">
+    Badge
+  </span>
+  <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-alert-fill text-primary-7">
+  </div>
+</div>
+`;
+
+exports[`components/badge/Badge Default smoke-test 1`] = `
+<div data-test="Badge-undefined"
+     class="bg-grey-1 border-grey-5 !border flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+>
+  <span class="text-grey-8 font-bold uppercase text-sm text-left line-clamp-1">
+    Badge
+  </span>
+</div>
+`;
+
+exports[`components/badge/Badge Grid smoke-test 1`] = `
+<div class="flex gap-16 flex-wrap">
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      default
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-1 border-grey-5 !border flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-8 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-1 border-grey-5 !border flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-8 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-primary-7">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-1 border-grey-5 !border flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-grey-8 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-primary-7">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      standard
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-primary-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-primary-7 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-primary-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-primary-7 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-primary-7">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-primary-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-primary-7 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-primary-7">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      success
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-success-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-success-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-success-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-success-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-success-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-success-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-success-1 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-success-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      warning
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-warning-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-warning-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-warning-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-warning-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-warning-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-warning-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-warning-1 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-warning-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      new
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-new-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-new-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-new-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-new-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-new-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-new-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-new-1 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-new-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      error
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-error-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-error-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-error-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-error-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-error-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-error-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-error-1 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-error-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      info
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-info-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-info-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-info-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-info-1 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-info-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-info-2 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-info-1 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-info-1">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+  <div class="col-span-1 flex flex-col gap-4">
+    <div class="capitalize text-sm font-medium">
+      grey
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer fr-icon-close-circle-fill text-grey-6">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded flex-row-reverse !px-2"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1 !text-xs">
+        Badge
+      </span>
+      <div class="flex before:w-4 before:h-4 rounded-full cursor-pointer before:!w-3 before:!h-3 fr-icon-close-circle-fill text-grey-6">
+      </div>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+    <div data-test="Badge-undefined"
+         class="bg-grey-3 flex items-center gap-1 max-w-max px-3 py-0.5 rounded border border-solid border-grey-4 !bg-white"
+    >
+      <span class="text-grey-6 font-bold uppercase text-sm text-left line-clamp-1">
+        Badge
+      </span>
+    </div>
+  </div>
+</div>
+`;
