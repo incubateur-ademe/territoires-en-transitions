@@ -104,7 +104,8 @@ const Financeurs = ({fiche, onUpdate, isReadonly}: Props) => {
               }
               options={options}
               onSelect={values => onSelect(values, financeur)}
-              disabled={(financeur.financeur_tag && true) || isReadonly}
+              disabled={isReadonly}
+              disableDropdown={financeur.financeur_tag && true}
               onCreateClick={() => null}
               userCreatedTagIds={userCreatedTagIds}
             />
