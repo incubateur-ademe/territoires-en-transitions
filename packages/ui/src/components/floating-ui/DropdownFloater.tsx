@@ -16,8 +16,11 @@ import {
 import classNames from 'classnames';
 
 type DropdownFloaterProps = {
+  /** Élement qui reçoit la fonction d'ouverture du dropdown */
   children: JSX.Element;
+  /** Permet de définir et d'afficher le contenu du dropdown */
   render: (data: {close: () => void}) => React.ReactNode;
+  /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
   placement?: Placement;
   /** Autorise l'ouverture du sélecteur avec des clics répétés sur le bouton d'ouverture. Défaut `true` */
   multipleClickToggle?: boolean;
@@ -35,6 +38,7 @@ type DropdownFloaterProps = {
   disabled?: boolean;
 };
 
+/** Affiche un élement volant (dropdown, modal...) avec une configuration floating-ui prédéfinie */
 const DropdownFloater = ({
   render,
   children,

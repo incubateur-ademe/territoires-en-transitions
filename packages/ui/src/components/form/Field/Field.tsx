@@ -5,15 +5,15 @@ type Props = {
   title: string;
   /** Enfant: input, select... */
   children: React.ReactNode;
-  /** class donnée au container */
+  /** Pour surcharger les styles du container */
   className?: string;
   /** Complément d'informations */
   hint?: string;
-  /** Pour lier à un formulaire */
+  /** Pour lier le libellé et le champ qu'il contient */
   htmlFor?: string;
   /** État */
   state?: 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
-  /** Message de l'état afficher dessous */
+  /** Message d'état affiché en dessous du champ */
   message?: string;
 };
 

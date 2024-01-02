@@ -22,7 +22,7 @@ export type CreateOption = {
 };
 
 type SelectProps<T extends OptionValue> = {
-  /** Donne un id pour les tests e2e */
+  /** Id pour les tests e2e */
   dataTest?: string;
   /** Liste des options */
   options: Array<SelectOption>;
@@ -38,7 +38,7 @@ type SelectProps<T extends OptionValue> = {
   onInputChange?: (v: string) => void;
   /** Temps du debounce appliqué à onInputChange */
   debounce?: number;
-  /** Les fonction permettant la création de nouvelles options */
+  /** Les propriétés permettant la création de nouvelles options */
   createProps?: CreateOption;
   /** Fait apparaître un état de chargement à la place des options */
   isLoading?: boolean;
@@ -50,7 +50,7 @@ type SelectProps<T extends OptionValue> = {
   placeholder?: string;
   /** Texte affiché quand aucune option ne correspond à la recherche */
   emptySearchPlaceholder?: string;
-  /** Change l'emplacement du dropdown menu */
+  /** Change le positionnement du dropdown menu */
   placement?: Placement;
   /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
   containerWidthMatchButton?: boolean;
@@ -63,6 +63,8 @@ type SelectProps<T extends OptionValue> = {
  * Multi select /
  * Searchable select /
  * Create option select
+ *
+ * Mettre `multiple` à `true` pour faire un multi select
  *
  * Mettre `isSearcheable` à `true` pour faire un Searchable select
  *
