@@ -313,15 +313,13 @@ const SelectButton = forwardRef(
             )}
           </div>
           {/** Icône flèche d'ouverture */}
-          <div className="mt-2 ml-auto">
-            <span
-              className={classNames(
-                'flex fr-icon-arrow-down-s-line text-primary-9 before:h-4 before:w-4',
-                {'rotate-180': isOpen},
-                {'text-grey-4': disabled}
-              )}
-            />
-          </div>
+          <span
+            className={classNames(
+              'flex mt-2 ml-auto fr-icon-arrow-down-s-line text-primary-9 before:h-4 before:w-4',
+              {'before:rotate-180': isOpen},
+              {'before:text-grey-5': disabled}
+            )}
+          />
         </div>
       </button>
     );
