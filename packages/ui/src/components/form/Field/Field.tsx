@@ -40,13 +40,13 @@ const Field = ({
         </div>
         {/** Hint */}
         {hint !== undefined && (
-          <div
-            className={classNames('mt-2 text-xs text-grey-6', {
+          <span
+            className={classNames('block mt-2 text-xs text-grey-6', {
               '!text-grey-5': state === 'disabled',
             })}
           >
             {hint}
-          </div>
+          </span>
         )}
       </label>
       {children}
