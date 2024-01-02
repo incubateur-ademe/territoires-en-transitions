@@ -76,7 +76,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     onChange,
     createProps,
     onInputChange,
-    debounce = 0,
+    debounce = onInputChange ? 250 : 0,
     placeholder,
     emptySearchPlaceholder,
     placement,
