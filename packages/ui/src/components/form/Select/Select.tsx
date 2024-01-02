@@ -44,8 +44,6 @@ type SelectProps<T extends OptionValue> = {
   isLoading?: boolean;
   /** Permet de désactiver le bouton d'ouverture */
   disabled?: boolean;
-  /** Afin de couplet avec un label */
-  name?: string;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
   /** Texte affiché quand aucune option ne correspond à la recherche */
