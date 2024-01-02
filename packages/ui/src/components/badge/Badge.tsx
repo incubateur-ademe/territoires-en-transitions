@@ -22,6 +22,8 @@ type Props = {
   size?: 'sm' | 'md';
   /** Affiche le badge en style light */
   light?: boolean;
+  /** Icône à afficher dans le badge, au format SVG ou avec la nomenclature DSFR */
+  icon?: string;
   /** Position de l'icon dans le badge, à droite par défaut */
   iconPosition?: 'left' | 'right';
   /** Appelée lors du clic sur le bouton "Fermer". Ne pas spécifier pour masquer le bouton. */
@@ -40,6 +42,7 @@ export const Badge = ({
   onClose,
   state = 'default',
   size = 'md',
+  icon = 'fr-icon-close-circle-fill',
   iconPosition = 'right',
   light = false,
   disabled,
@@ -79,8 +82,9 @@ export const Badge = ({
       {onClose && !disabled && (
         <div
           className={classNames(
-            'flex fr-icon-close-circle-fill before:w-4 before:h-4 rounded-full cursor-pointer',
+            'flex before:w-4 before:h-4 rounded-full cursor-pointer',
             {'before:!w-3 before:!h-3': size === 'sm'},
+            icon,
             styles.icon
           )}
           onClick={evt => {
