@@ -197,6 +197,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         isSearcheable={isSearcheable}
         inputValue={inputValue}
         onInputChange={handleInputChange}
+        multiple={multiple}
         placeholder={placeholder}
         disabled={disabled}
       />
