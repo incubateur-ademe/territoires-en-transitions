@@ -63,7 +63,7 @@ const Options = <T extends OptionValue>({
                   {/** options */}
                   {option.options.map(option => (
                     <Option
-                      key={`${option.value}`}
+                      key={option.value}
                       option={option}
                       values={values}
                       onChange={onChange}
