@@ -27,8 +27,12 @@ export const Default: Story = {
   ),
 };
 
-export const Disabled: Story = {
-  args: {title: "Description de l'action", state: 'disabled'},
+export const DisabledWithHint: Story = {
+  args: {
+    title: "Description de l'action",
+    state: 'disabled',
+    hint: 'Texte description additionnel',
+  },
   render: args => (
     <Field {...args}>
       <FakeInput />
