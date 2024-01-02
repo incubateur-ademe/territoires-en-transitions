@@ -22,15 +22,26 @@ export type OptionSection = {
 /** Type d'une option dans un sélecteur, peut être une simple option ou une liste d'options */
 export type SelectOption = Option | OptionSection;
 
-type Props<T extends OptionValue> = {
+type BaseProps<T extends OptionValue> = {
+  /** Liste des valeurs sélectionnées dans le sélecteur parent */
   values?: T[];
-  options: SelectOption[];
+  /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
   onChange: (value: T) => void;
-  isLoading: boolean;
+  /** Permet de customiser le label d'une option */
+  optionItem?: (option: Option) => React.ReactElement;
+  /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
-  renderOption?: (option: Option) => React.ReactElement;
-  noOptionPlaceholder?: string;
+};
+
+type OptionsListProps<T extends OptionValue> = BaseProps<T> & {
+  /** Id pour les tests e2e */
   dataTest?: string;
+  /** Liste des options */
+  options: SelectOption[];
+  /** Fait apparaître un état de chargement à la place des options */
+  isLoading: boolean;
+  /** Texte affiché quand il n'y a aucune option fournie */
+  noOptionPlaceholder?: string;
 };
 
 /** Liste d'options pouvant être de simples options ou des sections */
@@ -39,11 +50,11 @@ const Options = <T extends OptionValue>({
   options,
   onChange,
   isLoading,
-  renderOption,
+  optionItem,
   createProps,
   noOptionPlaceholder,
   dataTest,
-}: Props<T>) => {
+}: OptionsListProps<T>) => {
   return (
     <div data-test={`${dataTest}-options`}>
       {isLoading ? (
@@ -67,7 +78,7 @@ const Options = <T extends OptionValue>({
                       option={option}
                       values={values}
                       onChange={onChange}
-                      renderOption={renderOption}
+                      optionItem={optionItem}
                       createProps={createProps}
                     />
                   ))}
@@ -82,7 +93,7 @@ const Options = <T extends OptionValue>({
                 option={option}
                 values={values}
                 onChange={onChange}
-                renderOption={renderOption}
+                optionItem={optionItem}
                 createProps={createProps}
               />
             );
@@ -99,12 +110,8 @@ const Options = <T extends OptionValue>({
 
 export default Options;
 
-type OptionProps<T extends OptionValue> = {
-  values?: T[];
+type OptionProps<T extends OptionValue> = BaseProps<T> & {
   option: Option;
-  onChange: (value: T) => void;
-  renderOption?: (option: Option) => React.ReactElement;
-  createProps?: CreateOption;
 };
 
 /** Option pour les sélecteurs */
@@ -112,7 +119,7 @@ const Option = <T extends OptionValue>({
   values,
   option,
   onChange,
-  renderOption,
+  optionItem,
   createProps,
 }: OptionProps<T>) => {
   const isActive = values?.includes(option.value as T);
@@ -128,8 +135,8 @@ const Option = <T extends OptionValue>({
         )}
       </div>
       <div className="flex mr-auto">
-        {renderOption ? (
-          renderOption(option)
+        {optionItem ? (
+          optionItem(option)
         ) : (
           <span
             className={classNames('leading-6 text-grey-8', {
