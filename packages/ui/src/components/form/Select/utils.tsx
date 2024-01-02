@@ -7,7 +7,7 @@ export function isOptionSection(option: SelectOption): option is OptionSection {
 }
 
 /** Option type guards */
-export function isOption(option: SelectOption): option is Option {
+export function isSingleOption(option: SelectOption): option is Option {
   type NewType = Option;
   return (option as NewType).value !== undefined;
 }
@@ -50,7 +50,7 @@ export const sortOptionByAlphabet = (
   const sectionArray: OptionSection[] = [];
 
   options.forEach(option => {
-    if (isOption(option)) {
+    if (isSingleOption(option)) {
       optionArray.push(option);
     } else {
       sectionArray.push(option);
@@ -105,7 +105,7 @@ export const filterOptions = (
   filterValue: string
 ): SelectOption[] =>
   options.reduce((acc: SelectOption[], currentOption) => {
-    if (isOption(currentOption)) {
+    if (isSingleOption(currentOption)) {
       if (
         currentOption.label.toLowerCase().includes(filterValue.toLowerCase())
       ) {
