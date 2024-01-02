@@ -297,20 +297,21 @@ const SelectButton = forwardRef(
                 </span>
               )
             )}
-            {isSearcheable && (
-              <input
-                ref={inputRef}
-                type="text"
-                className={classNames(
-                  'w-full text-sm outline-0 placeholder:text-grey-6',
-                  {hidden: disabled && values} // on n'affiche pas l'input si le sélecteur est désactivé et possède une valeur
-                )}
-                value={inputValue}
-                onChange={e => onInputChange(e.target.value)}
-                placeholder={placeholder ?? 'Rechercher par mots-clés'}
-                disabled={disabled}
-              />
-            )}
+            {
+              // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
+              // afin d'afficher le placeholder de l'input
+              isSearcheable && !(disabled && values) && (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="w-full text-sm outline-0 placeholder:text-grey-6"
+                  value={inputValue}
+                  onChange={e => onInputChange(e.target.value)}
+                  placeholder={placeholder ?? 'Rechercher par mots-clés'}
+                  disabled={disabled}
+                />
+              )
+            }
           </div>
           {/** Icône flèche d'ouverture */}
           <span
