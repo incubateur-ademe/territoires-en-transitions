@@ -12,7 +12,7 @@ export type BadgeState =
   | 'grey';
 
 type Props = {
-  /** Donne un id pour les tests e2e */
+  /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
   title: string;
