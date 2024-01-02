@@ -47,15 +47,14 @@ export const Badge = ({
   trim = true,
   dataTest,
 }: Props) => {
-  const {text, background, border, icon} =
-    badgeClassnames[disabled ? 'grey' : state];
+  const styles = badgeClassnames[disabled ? 'grey' : state];
 
   return (
     <div
       data-test={`Badge-${dataTest}`}
       className={classNames(
-        background,
-        border,
+        styles.background,
+        styles.border,
         'flex items-center gap-1 max-w-max px-3 py-0.5 rounded',
         {
           'flex-row-reverse': iconPosition === 'left',
@@ -66,10 +65,14 @@ export const Badge = ({
       )}
     >
       <span
-        className={classNames(text, 'font-bold uppercase text-sm text-left', {
-          'line-clamp-1': trim,
-          '!text-xs': size === 'sm',
-        })}
+        className={classNames(
+          styles.text,
+          'font-bold uppercase text-sm text-left',
+          {
+            'line-clamp-1': trim,
+            '!text-xs': size === 'sm',
+          }
+        )}
       >
         {title}
       </span>
@@ -78,7 +81,7 @@ export const Badge = ({
           className={classNames(
             'flex fr-icon-close-circle-fill before:w-4 before:h-4 rounded-full cursor-pointer',
             {'before:!w-3 before:!h-3': size === 'sm'},
-            icon
+            styles.icon
           )}
           onClick={evt => {
             evt.stopPropagation();
