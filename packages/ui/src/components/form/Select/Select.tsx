@@ -33,7 +33,7 @@ type SelectProps<T extends OptionValue> = {
   /** Active la multi sélection */
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
-  hasSearch?: boolean;
+  isSearcheable?: boolean;
   /** Fonction exécutée lorsque l'utilisateur fait une recherche, reçoit la valeur de l'input */
   onInputChange?: (v: string) => void;
   /** Temps du debounce appliqué à onInputChange */
@@ -64,9 +64,9 @@ type SelectProps<T extends OptionValue> = {
  * Searchable select /
  * Create option select
  *
- * Mettre `hasSearch` à `true` pour faire un Searchable select
+ * Mettre `isSearcheable` à `true` pour faire un Searchable select
  *
- * Donner `createProps` pour faire un Create option select, cela active `hasSearch' automatiquement
+ * Donner `createProps` pour faire un Create option select, cela active `isSearcheable' automatiquement
  */
 export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const {
@@ -81,7 +81,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     emptySearchPlaceholder,
     placement,
     multiple = false,
-    hasSearch = false,
+    isSearcheable = false,
     isLoading = false,
     containerWidthMatchButton = true,
     disabled = false,
@@ -120,8 +120,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const filteredOptions = filterOptions(options, inputValue);
 
   /** TODO: implémenter les action update et delete pour autoriser l'utilisation de ce cas */
-  // const isCreateOptionSelect = createProps !== undefined;
-  const isCreateOptionSelect = false;
+  const isCreateOptionSelect = createProps !== undefined;
+  // const isCreateOptionSelect = false;
 
   /** Compare la valeur de l'input de recherche avec la première optin de la liste
    * pour afficher le bouton de création d'une option */
@@ -142,8 +142,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
       noDropdownStyles
-      multipleClickToggle={!hasSearch}
-      enterToToggle={!hasSearch}
+      multipleClickToggle={!isSearcheable}
+      enterToToggle={!isSearcheable}
       disabled={disabled}
       render={({close}) => (
         <div
@@ -194,7 +194,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         values={arrayValues}
         options={options}
         onChange={onChange}
-        hasSearch={hasSearch}
+        isSearcheable={isSearcheable}
         inputValue={inputValue}
         onInputChange={handleInputChange}
         placeholder={placeholder}
@@ -222,7 +222,7 @@ const SelectButton = forwardRef(
       values,
       options,
       inputValue,
-      hasSearch,
+      isSearcheable,
       onInputChange,
       multiple,
       placeholder,
@@ -282,7 +282,7 @@ const SelectButton = forwardRef(
               </div>
             ) : (
               /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
-              !hasSearch && (
+              !isSearcheable && (
                 <span
                   className={classNames(
                     'my-auto text-xs text-grey-6 line-clamp-1',
@@ -297,7 +297,7 @@ const SelectButton = forwardRef(
                 </span>
               )
             )}
-            {hasSearch && (
+            {isSearcheable && (
               <input
                 ref={inputRef}
                 type="text"

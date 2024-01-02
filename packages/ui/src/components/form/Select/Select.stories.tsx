@@ -91,7 +91,7 @@ export const SearchableMultiSelect: Story = {
   args: {
     options: optionsWithSections,
     multiple: true,
-    hasSearch: true,
+    isSearcheable: true,
     emptySearchPlaceholder:
       "Placeholder custom pour la liste d'option sans résultat",
   },
@@ -113,7 +113,7 @@ export const DisabledSearchableSelectWithValue: Story = {
   args: {
     options: singleOptions,
     disabled: true,
-    hasSearch: true,
+    isSearcheable: true,
   },
   render: args => {
     const [value, setValue] = useState<OptionValue | undefined>('option1');
@@ -131,7 +131,7 @@ export const DisabledSearchableSelectWithValue: Story = {
 
 export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
   args: {
-    hasSearch: true,
+    isSearcheable: true,
   },
   render: args => {
     const [value, setValue] = useState<OptionValue | undefined>();
@@ -153,7 +153,7 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
 export const CreateOption: Story = {
   args: {
     multiple: true,
-    hasSearch: true,
+    isSearcheable: true,
   },
   render: args => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
