@@ -28,6 +28,7 @@ const FiltreThematiques = ({values, onSelect}: Props) => {
       values={values?.includes(ITEM_ALL) ? [] : values}
       options={options}
       onSelect={values => onSelect(values)}
+      toggle
     />
   );
 };

@@ -20,6 +20,7 @@ import Options from './Options';
 type TAutocompleteInputSelectProps<T extends string> =
   TMultiSelectDropdownProps<T> & {
     noOptionPlaceholder?: string;
+    toggle?: boolean;
   };
 
 /** Sélecteur avec un input dans le bouton d'ouverture pour faire une recherche dans la liste d'options */
@@ -34,6 +35,7 @@ const AutocompleteInputSelect = <T extends string>({
   placeholderText,
   noOptionPlaceholder,
   containerWidthMatchButton,
+  toggle = false,
   disabled,
   'data-test': dataTest,
 }: TAutocompleteInputSelectProps<T>) => {
@@ -47,7 +49,7 @@ const AutocompleteInputSelect = <T extends string>({
     <DropdownFloater
       containerWidthMatchButton={containerWidthMatchButton}
       placement={placement}
-      toggle={true}
+      toggle={toggle}
       enterToToggle={false}
       disabled={disabled}
       render={() => (
