@@ -35,8 +35,8 @@ type SelectProps<T extends OptionValue> = {
   /** Permet la recherche dans la liste d'option */
   isSearcheable?: boolean;
   /** Fonction exécutée lorsque l'utilisateur fait une recherche, reçoit la valeur de l'input */
-  onInputChange?: (v: string) => void;
-  /** Temps du debounce appliqué à onInputChange */
+  onSearch?: (v: string) => void;
+  /** Temps du debounce appliqué à onSearch */
   debounce?: number;
   /** Les propriétés permettant la création de nouvelles options */
   createProps?: CreateOption;
@@ -75,8 +75,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     options,
     onChange,
     createProps,
-    onInputChange,
-    debounce = onInputChange ? 250 : 0,
+    onSearch,
+    debounce = onSearch ? 250 : 0,
     placeholder,
     emptySearchPlaceholder,
     placement,
@@ -87,7 +87,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     disabled = false,
   } = props;
 
-  /** Recherche textuelle locale car `onInputChange` n'est pas obligatoire */
+  /** Recherche textuelle locale car `onSearch` n'est pas obligatoire */
   const [inputValue, setInputValue] = useState('');
 
   /**
@@ -100,16 +100,16 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
 
   /** Fonction de debounce */
   const handleDebouncedInputChange = useDebouncedCallback(v => {
-    onInputChange(v);
+    onSearch(v);
     setLoading(false);
   }, debounce);
 
   /** Permet synchroniser les différents inputChange */
   const handleInputChange = (value: string) => {
     setInputValue(value);
-    // uniquement si la fonction `onInputchange` est donnée
+    // uniquement si la fonction `onSearch` est donnée
     // on applique la fonction de `debounce`, par défaut le debounce est à 0
-    if (onInputChange) {
+    if (onSearch) {
       // on active le loading sachant qu'on le désactive à la fin de la fct de debounce
       setLoading(true);
       handleDebouncedInputChange(value);
@@ -196,7 +196,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         onChange={onChange}
         isSearcheable={isSearcheable}
         inputValue={inputValue}
-        onInputChange={handleInputChange}
+        onSearch={handleInputChange}
         multiple={multiple}
         placeholder={placeholder}
         disabled={disabled}
@@ -211,7 +211,7 @@ type SelectButtonProps<T extends OptionValue> = SelectProps<T> & {
   /** Valeur de la saisie */
   inputValue: string;
   /** Change la valeur de saisie */
-  onInputChange: (value: string) => void;
+  onSearch: (value: string) => void;
 };
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
@@ -224,7 +224,7 @@ const SelectButton = forwardRef(
       options,
       inputValue,
       isSearcheable,
-      onInputChange,
+      onSearch,
       multiple,
       placeholder,
       disabled,
@@ -242,7 +242,7 @@ const SelectButton = forwardRef(
 
     useEffect(() => {
       if (!isOpen) {
-        onInputChange('');
+        onSearch('');
       }
     }, [isOpen]);
 
@@ -306,7 +306,7 @@ const SelectButton = forwardRef(
                   type="text"
                   className="w-full text-sm outline-0 placeholder:text-grey-6"
                   value={inputValue}
-                  onChange={e => onInputChange(e.target.value)}
+                  onChange={e => onSearch(e.target.value)}
                   placeholder={placeholder ?? 'Rechercher par mots-clés'}
                   disabled={disabled}
                 />
