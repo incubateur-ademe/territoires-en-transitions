@@ -109,20 +109,24 @@ export const SearchableMultiSelect: Story = {
   },
 };
 
-export const DisabledSearchableSelectWithValue: Story = {
+export const DisabledSearchableMultiSelectWithValue: Story = {
   args: {
     options: singleOptions,
     disabled: true,
     isSearcheable: true,
+    multiple: true,
   },
   render: args => {
-    const [value, setValue] = useState<OptionValue | undefined>('option1');
+    const [values, setValues] = useState<OptionValue[] | undefined>([
+      'option1',
+      'option2',
+    ]);
     return (
       <Select
         {...args}
-        values={value}
+        values={values}
         onChange={v => {
-          setValue(onSelectSingle(v, value));
+          setValues(onSelectMultiple(v, values));
         }}
       />
     );

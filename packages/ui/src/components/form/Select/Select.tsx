@@ -273,8 +273,7 @@ const SelectButton = forwardRef(
               <div className="flex items-center gap-2 grow">
                 <Badge
                   title={getOptionLabel(values[0], getFlatOptions(options))}
-                  onClose={() => onChange(values[0])}
-                  disabled={disabled}
+                  onClose={!disabled && (() => onChange(values[0]))}
                 />
                 {/** Nombre de valeurs sélectionnées supplémentaires */}
                 {values.length > 1 && (
