@@ -1,10 +1,10 @@
-import { Config } from 'tailwindcss';
+import {Config} from 'tailwindcss';
 
 /** Configuration Tailwind */
 export const preset = {
   content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
-    maxHeight: { '80vh': '80vh' },
+    maxHeight: {'80vh': '80vh'},
     extend: {
       colors: {
         // Anciennes couleurs, à modifier avec l'harmonisation
@@ -86,6 +86,7 @@ export const preset = {
         },
         // Autres couleurs
         'orange-1': '#F28E40',
+        overlay: 'hsla(240, 40%, 27%, 0.5)',
       },
     },
   },
