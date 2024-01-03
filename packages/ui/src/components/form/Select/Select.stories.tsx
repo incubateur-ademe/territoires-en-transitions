@@ -135,20 +135,19 @@ export const DisabledSearchableMultiSelectWithValue: Story = {
 
 export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
   args: {
-    isSearcheable: true,
+    debounce: 500,
+    options: singleOptions,
   },
   render: args => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
-        options={singleOptions}
         values={value}
         onChange={v => {
           setValue(onSelectSingle(v, value));
         }}
         onSearch={v => console.log(v)}
-        debounce={500}
       />
     );
   },
@@ -157,7 +156,6 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
 export const CreateOption: Story = {
   args: {
     multiple: true,
-    isSearcheable: true,
   },
   render: args => {
     const [values, setValues] = useState<OptionValue[] | undefined>();

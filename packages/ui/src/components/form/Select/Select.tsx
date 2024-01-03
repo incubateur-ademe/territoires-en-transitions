@@ -64,7 +64,7 @@ type SelectProps<T extends OptionValue> = {
  *
  * Mettre `multiple` à `true` pour faire un multi select
  *
- * Mettre `isSearcheable` à `true` pour faire un Searchable select
+ * Ajouter `isSearcheable`, `createProps` ou `onSearch` pour faire un Searchable select
  *
  * Donner `createProps` pour faire un Create option select, cela active `isSearcheable' automatiquement
  */
@@ -86,6 +86,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     containerWidthMatchButton = true,
     disabled = false,
   } = props;
+
+  const hasSearch = isSearcheable || !!createProps || !!onSearch;
 
   /** Recherche textuelle locale car `onSearch` n'est pas obligatoire */
   const [inputValue, setInputValue] = useState('');
@@ -142,8 +144,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
       noDropdownStyles
-      multipleClickToggle={!isSearcheable}
-      enterToToggle={!isSearcheable}
+      multipleClickToggle={!hasSearch}
+      enterToToggle={!hasSearch}
       disabled={disabled}
       render={({close}) => (
         <div
@@ -194,7 +196,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         values={arrayValues}
         options={options}
         onChange={onChange}
-        isSearcheable={isSearcheable}
+        isSearcheable={hasSearch}
         inputValue={inputValue}
         onSearch={handleInputChange}
         multiple={multiple}
