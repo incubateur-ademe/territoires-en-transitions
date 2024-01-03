@@ -147,7 +147,7 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
         onChange={v => {
           setValue(onSelectSingle(v, value));
         }}
-        onInputChange={v => console.log(v)}
+        onSearch={v => console.log(v)}
         debounce={500}
       />
     );
