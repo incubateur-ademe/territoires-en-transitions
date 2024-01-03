@@ -158,13 +158,19 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
             isNotSimilar && (
               <button
                 data-test={`${dataTest}-create-option`}
-                className="flex items-start justify-between w-full py-2 pl-10 pr-6 text-left text-sm hover:!bg-primary-0"
+                className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate(inputValue);
                   handleInputChange('');
                 }}
               >
-                <Badge title={inputValue} state="standard" />
+                <span className="fr-icon-add-line flex w-6 shrink-0 mt-1 mr-2 text-primary-7 before:m-auto before:!h-4 before:!w-4" />
+                <Badge
+                  title={inputValue}
+                  state="standard"
+                  size="sm"
+                  className="my-auto mr-auto"
+                />
                 <span className="mt-1 ml-6 font-medium text-grey-8">Créer</span>
               </button>
             )}
