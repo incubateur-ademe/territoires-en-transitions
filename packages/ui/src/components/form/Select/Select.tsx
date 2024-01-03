@@ -122,7 +122,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   const filteredOptions = filterOptions(options, inputValue);
 
   /** TODO: implémenter les action update et delete pour autoriser l'utilisation de ce cas */
-  const isCreateOptionSelect = createProps !== undefined;
+  const isCreateOptionSelect = !!createProps;
   // const isCreateOptionSelect = false;
 
   /** Compare la valeur de l'input de recherche avec la première optin de la liste
@@ -199,6 +199,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         isSearcheable={hasSearch}
         inputValue={inputValue}
         onSearch={handleInputChange}
+        createProps={createProps}
         multiple={multiple}
         placeholder={placeholder}
         disabled={disabled}
@@ -212,8 +213,6 @@ type SelectButtonProps<T extends OptionValue> = SelectProps<T> & {
   isOpen?: boolean;
   /** Valeur de la saisie */
   inputValue: string;
-  /** Change la valeur de saisie */
-  onSearch: (value: string) => void;
 };
 
 /* Création d'un composant séparé pour passer la ref du boutton au floater */
@@ -222,15 +221,16 @@ const SelectButton = forwardRef(
     {
       dataTest,
       isOpen,
-      values,
       options,
+      values,
+      onChange,
       inputValue,
       isSearcheable,
       onSearch,
+      createProps,
       multiple,
       placeholder,
       disabled,
-      onChange,
       ...props
     }: SelectButtonProps<T>,
     ref?: Ref<HTMLButtonElement>
@@ -274,6 +274,12 @@ const SelectButton = forwardRef(
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
                 <Badge
+                  state={
+                    createProps &&
+                    createProps.userCreatedOptions.includes(values[0])
+                      ? 'standard'
+                      : 'default'
+                  }
                   title={getOptionLabel(values[0], getFlatOptions(options))}
                   onClose={!disabled && (() => onChange(values[0]))}
                 />
