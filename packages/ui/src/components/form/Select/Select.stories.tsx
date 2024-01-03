@@ -71,6 +71,28 @@ export const Disabled: Story = {
   args: {options: singleOptions, onChange: () => null, disabled: true},
 };
 
+export const CustomItem: Story = {
+  args: {options: singleOptions},
+  render: args => {
+    const [value, setValue] = useState<OptionValue | undefined>();
+    return (
+      <Select
+        {...args}
+        values={value}
+        onChange={v => {
+          setValue(onSelectSingle(v, value));
+          action('onChange');
+        }}
+        customItem={option => (
+          <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
+            {option.label}
+          </div>
+        )}
+      />
+    );
+  },
+};
+
 export const MultiSelectWithSectionOptions: Story = {
   args: {options: optionsWithSections, multiple: true},
   render: args => {
