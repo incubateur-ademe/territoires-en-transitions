@@ -28,8 +28,8 @@ type BaseProps<T extends OptionValue> = {
   values?: T[];
   /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
   onChange: (value: T) => void;
-  /** Permet de customiser le label d'une option */
-  optionItem?: (option: Option) => React.ReactElement;
+  /** Permet de customiser l'item (label) d'une option */
+  customItem?: (option: Option) => React.ReactElement;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
 };
@@ -51,7 +51,7 @@ const Options = <T extends OptionValue>({
   options,
   onChange,
   isLoading,
-  optionItem,
+  customItem,
   createProps,
   noOptionPlaceholder,
   dataTest,
@@ -79,7 +79,7 @@ const Options = <T extends OptionValue>({
                       option={option}
                       values={values}
                       onChange={onChange}
-                      optionItem={optionItem}
+                      customItem={customItem}
                       createProps={createProps}
                     />
                   ))}
@@ -94,7 +94,7 @@ const Options = <T extends OptionValue>({
                 option={option}
                 values={values}
                 onChange={onChange}
-                optionItem={optionItem}
+                customItem={customItem}
                 createProps={createProps}
               />
             );
@@ -120,7 +120,7 @@ const Option = <T extends OptionValue>({
   values,
   option,
   onChange,
-  optionItem,
+  customItem,
   createProps,
 }: OptionProps<T>) => {
   const isActive = values?.includes(option.value as T);
@@ -137,8 +137,8 @@ const Option = <T extends OptionValue>({
         )}
       </div>
       <div className="flex mr-auto my-auto">
-        {optionItem ? (
-          optionItem(option)
+        {customItem ? (
+          customItem(option)
         ) : createProps ? (
           <Badge
             title={option.label}

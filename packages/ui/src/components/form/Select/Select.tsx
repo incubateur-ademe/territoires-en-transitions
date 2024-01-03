@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 
 import DropdownFloater from '../../floating-ui/DropdownFloater';
-import Options, {OptionValue, SelectOption} from './Options';
+import Options, {OptionValue, SelectOption, Option} from './Options';
 import {Badge} from '../../badge/Badge';
 
 import {
@@ -46,6 +46,8 @@ type SelectProps<T extends OptionValue> = {
   disabled?: boolean;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
+  /** Permet de customiser l'item (label) d'une option */
+  customItem?: (option: Option) => React.ReactElement;
   /** Texte affiché quand aucune option ne correspond à la recherche */
   emptySearchPlaceholder?: string;
   /** Change le positionnement du dropdown menu */
@@ -83,6 +85,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     multiple = false,
     isSearcheable = false,
     isLoading = false,
+    customItem,
     containerWidthMatchButton = true,
     disabled = false,
   } = props;
@@ -192,6 +195,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
             }}
             isLoading={loading}
             createProps={createProps}
+            customItem={customItem}
             noOptionPlaceholder={emptySearchPlaceholder}
           />
         </div>
@@ -207,6 +211,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         onSearch={handleInputChange}
         createProps={createProps}
         multiple={multiple}
+        customItem={customItem}
         placeholder={placeholder}
         disabled={disabled}
       />
@@ -235,6 +240,7 @@ const SelectButton = forwardRef(
       onSearch,
       createProps,
       multiple,
+      customItem,
       placeholder,
       disabled,
       ...props
@@ -279,16 +285,25 @@ const SelectButton = forwardRef(
             {values && Array.isArray(values) ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
-                <Badge
-                  state={
-                    createProps &&
-                    createProps.userCreatedOptions.includes(values[0])
-                      ? 'standard'
-                      : 'default'
-                  }
-                  title={getOptionLabel(values[0], getFlatOptions(options))}
-                  onClose={!disabled && (() => onChange(values[0]))}
-                />
+                {customItem ? (
+                  // Item custom
+                  customItem({
+                    value: values[0],
+                    label: getOptionLabel(values[0], getFlatOptions(options)),
+                  })
+                ) : (
+                  // Badge par défaut
+                  <Badge
+                    state={
+                      createProps &&
+                      createProps.userCreatedOptions.includes(values[0])
+                        ? 'standard'
+                        : 'default'
+                    }
+                    title={getOptionLabel(values[0], getFlatOptions(options))}
+                    onClose={!disabled && (() => onChange(values[0]))}
+                  />
+                )}
                 {/** Nombre de valeurs sélectionnées supplémentaires */}
                 {values.length > 1 && (
                   <Badge title={`+${values.length - 1}`} state="info" />
