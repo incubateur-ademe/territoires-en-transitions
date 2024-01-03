@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {isOptionSection} from './utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './Select';
+import {Badge} from '../../badge/Badge';
 
 /**
  * Types partagés entre tous les composants selects
@@ -123,6 +124,7 @@ const Option = <T extends OptionValue>({
   createProps,
 }: OptionProps<T>) => {
   const isActive = values?.includes(option.value as T);
+  const isUserCreated = createProps?.userCreatedOptions.includes(option.value);
   return (
     <button
       data-test={option.value}
@@ -137,6 +139,11 @@ const Option = <T extends OptionValue>({
       <div className="flex mr-auto">
         {optionItem ? (
           optionItem(option)
+        ) : createProps ? (
+          <Badge
+            title={option.label}
+            state={isUserCreated ? 'standard' : 'default'}
+          />
         ) : (
           <span
             className={classNames('leading-6 text-grey-8', {
