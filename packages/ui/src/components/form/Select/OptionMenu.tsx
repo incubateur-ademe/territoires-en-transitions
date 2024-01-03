@@ -56,7 +56,7 @@ const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLDivElement>) => (
       {...props}
       className="my-auto p-1 rounded-lg cursor-pointer hover:bg-primary-2"
     >
-      <span className="flex fr-icon-more-line before:w-5 before:h-5" />
+      <span className="flex fr-icon-more-line before:w-4 before:h-4" />
     </div>
   </div>
 ));

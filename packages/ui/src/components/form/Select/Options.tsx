@@ -136,13 +136,14 @@ const Option = <T extends OptionValue>({
           <span className="fr-icon-check-line flex mt-1 mx-auto text-primary-7 before:m-auto before:!h-4 before:!w-4" />
         )}
       </div>
-      <div className="flex mr-auto">
+      <div className="flex mr-auto my-auto">
         {optionItem ? (
           optionItem(option)
         ) : createProps ? (
           <Badge
             title={option.label}
             state={isUserCreated ? 'standard' : 'default'}
+            size="sm"
           />
         ) : (
           <span
