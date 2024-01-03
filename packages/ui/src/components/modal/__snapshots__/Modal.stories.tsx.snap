@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/modal/Modal Default smoke-test 1`] = `
+<div class="p-8">
+  <button text="Ouvrir la modale"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+  >
+    Ouvrir la modale
+  </button>
+</div>
+`;
+
+exports[`components/modal/Modal Size smoke-test 1`] = `
+<div class="p-8">
+  <div class="flex items-center gap-6">
+    <button text="sm"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+    >
+      sm
+    </button>
+    <button text="md"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+    >
+      md
+    </button>
+    <button text="lg"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+    >
+      lg
+    </button>
+    <button text="xl"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+            class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+    >
+      xl
+    </button>
+  </div>
+</div>
+`;
+
+exports[`components/modal/Modal WithRender smoke-test 1`] = `
+<div class="p-8">
+  <button text="Ouvrir la modale"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+  >
+    Ouvrir la modale
+  </button>
+</div>
+`;
+
+exports[`components/modal/Modal onlyRender smoke-test 1`] = `
+<div class="p-8">
+  <button text="Ouvrir la modale"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
+  >
+    Ouvrir la modale
+  </button>
+</div>
+`;
