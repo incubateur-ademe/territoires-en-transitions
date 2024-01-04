@@ -1,5 +1,7 @@
 import {AnchorHTMLAttributes, ButtonHTMLAttributes} from 'react';
 
+export type ButtonState = 'default' | 'disabled';
+
 export type ButtonVariant =
   | 'primary'
   | 'secondary'
@@ -22,11 +24,11 @@ export type ButtonContentProps = {
   icon?: JSX.Element | ((className: string) => JSX.Element) | string;
   /** Position de l'icône dans le bouton */
   iconPosition?: IconPosition;
+  /** Désactive les interractions avec le bouton */
+  disabled?: boolean;
 };
 
 type BaseButtonProps = {
-  /** Désactive les interractions avec le bouton */
-  disabled?: boolean;
   /** Lien externe */
   external?: boolean;
 } & ButtonContentProps;
