@@ -103,6 +103,8 @@ export const Button = ({
       >
         <ButtonContent
           {...buttonContentProps}
+          icon={openInNewTab ? 'external-link-line' : icon}
+          iconPosition="right"
         />
       </a>
     );
