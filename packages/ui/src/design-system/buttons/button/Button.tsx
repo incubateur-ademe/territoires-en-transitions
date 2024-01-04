@@ -1,21 +1,32 @@
 import classNames from 'classnames';
 import {buttonThemeClassnames} from '../utils';
 import ButtonContent from './ButtonContent';
-import {ButtonProps, isAnchorButton, isDefaultButton} from '../types';
+import {
+  AnchorHTMLProps,
+  ButtonContentProps,
+  ButtonHTMLProps,
+  ButtonProps,
+  isAnchor,
+} from '../types';
 
 /**
  * Composant bouton par défaut, ayant pour props toutes les props habituelles d'un button tag.
  * */
-export const Button = (props: ButtonProps) => {
-  const {
-    children,
-    disabled = false,
-    variant = 'primary',
-    size = 'md',
-    className,
-  } = props;
-
+// On déstructure toutes les props rajoutées qui ne sont pas des props des tags HTML <button> ou <a>
+// Ce qui nous permet de ne donner que les props restantes natives au tag HTML
+export const Button = ({
+  children,
+  disabled = false,
+  variant = 'primary',
+  size = 'md',
+  className,
+  icon,
+  iconPosition,
+  external,
+  ...props
+}: ButtonProps) => {
   const isIconButton = !children;
+
   const {text, background, border} = buttonThemeClassnames[variant];
 
   const buttonClassname = classNames(
@@ -46,18 +57,37 @@ export const Button = (props: ButtonProps) => {
     border
   );
 
-  if (isDefaultButton(props)) {
+  /** Reconstitution des props données au contenu du bouton */
+  const buttonContentProps: ButtonContentProps = {
+    children,
+    variant,
+    size,
+    icon,
+    iconPosition,
+  };
+
+  const isButton = !isAnchor(props);
+
+  /** On affiche un bouton par défaut */
+  if (isButton) {
+    // On réintegre la prop disabled qui a été déstructurée plus haut
+    const buttonProps = {...props, disabled} as ButtonHTMLProps;
     return (
-      <button {...props} className={classNames(buttonClassname, className)}>
-        <ButtonContent {...{...props, children, disabled, variant, size}} />
+      <button
+        {...buttonProps}
+        className={classNames(buttonClassname, className)}
+      >
+        <ButtonContent {...buttonContentProps} />
       </button>
     );
-  } else if (isAnchorButton(props)) {
-    const {external = false} = props;
 
+    /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
+  } else {
+    const anchorProps = props as AnchorHTMLProps;
+    const openInNewTab = external || props.target === '_blank';
     return (
       <a
-        {...props}
+        {...anchorProps}
         // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
         // after:hidden supprime l'icône external par défaut du dsfr
         className={classNames(
@@ -65,15 +95,14 @@ export const Button = (props: ButtonProps) => {
           buttonClassname,
           className
         )}
-        target={external ? '_blank' : props.target}
-        rel={external ? 'noreferrer noopener' : props.rel}
+        target={openInNewTab ? '_blank' : props.target}
+        rel={openInNewTab ? 'noreferrer noopener' : props.rel}
         onClick={evt => {
           if (disabled) evt.preventDefault();
         }}
       >
         <ButtonContent
-          {...{...props, children, disabled, variant, size}}
-          external={external || props.target === '_blank'}
+          {...buttonContentProps}
         />
       </a>
     );

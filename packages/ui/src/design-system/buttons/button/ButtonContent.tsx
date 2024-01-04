@@ -1,8 +1,9 @@
-import {ButtonProps, ButtonSize, isAnchorButton} from '../types';
+import classNames from 'classnames';
+
 import {Icon} from '../../icons/Icon';
 import {buttonThemeClassnames} from '../utils';
-import classNames from 'classnames';
 import {IconSize} from '../../icons/types';
+import {ButtonContentProps, ButtonSize} from '../types';
 
 const getIconSize = (
   size: ButtonSize,
@@ -28,8 +29,13 @@ const getIconSize = (
   } else return undefined;
 };
 
-const ButtonContent = (props: ButtonProps) => {
-  const {variant, size, icon, iconPosition = 'left', children} = props;
+const ButtonContent = ({
+  variant,
+  size,
+  icon,
+  iconPosition = 'left',
+  children,
+}: ButtonContentProps) => {
   const isIconButton = !children;
 
   return (
