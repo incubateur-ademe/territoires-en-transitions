@@ -27,7 +27,10 @@ export const Button = ({
 }: ButtonProps) => {
   const isIconButton = !children;
 
-  const {text, background, border} = buttonThemeClassnames[variant];
+  const buttonState = disabled ? 'disabled' : 'default';
+
+  const {text, background, border} =
+    buttonThemeClassnames[variant][buttonState];
 
   const buttonClassname = classNames(
     'rounded-lg w-fit border border-solid font-bold group',
@@ -64,6 +67,7 @@ export const Button = ({
     size,
     icon,
     iconPosition,
+    disabled,
   };
 
   const isButton = !isAnchor(props);

@@ -35,8 +35,11 @@ const ButtonContent = ({
   icon,
   iconPosition = 'left',
   children,
+  disabled,
 }: ButtonContentProps) => {
   const isIconButton = !children;
+
+  const buttonState = disabled ? 'disabled' : 'default';
 
   return (
     <div
@@ -49,7 +52,7 @@ const ButtonContent = ({
         <Icon
           icon={icon}
           size={getIconSize(size, isIconButton, typeof icon === 'string')}
-          svgClassName={buttonThemeClassnames[variant].icon}
+          svgClassName={buttonThemeClassnames[variant][buttonState].icon}
         />
       )}
 
@@ -59,7 +62,7 @@ const ButtonContent = ({
         <Icon
           icon={icon}
           size={getIconSize(size, isIconButton, typeof icon === 'string')}
-          svgClassName={buttonThemeClassnames[variant].icon}
+          svgClassName={buttonThemeClassnames[variant][buttonState].icon}
         />
       )}
     </div>
