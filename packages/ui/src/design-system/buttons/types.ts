@@ -11,9 +11,9 @@ export type ButtonSize = 'xs' | 'sm' | 'md' | 'xl';
 
 type IconPosition = 'left' | 'right';
 
-type CommonButtonProps = {
-  /** Désactive les interractions avec le bouton */
-  disabled?: boolean;
+export type ButtonContentProps = {
+  /** Enfant du bouton */
+  children?: React.ReactNode;
   /** Thème de couleur utilisé sur le bouton */
   variant?: ButtonVariant;
   /** Taille du bouton */
@@ -24,23 +24,25 @@ type CommonButtonProps = {
   iconPosition?: IconPosition;
 };
 
-type DefaultButtonProps = CommonButtonProps &
-  ButtonHTMLAttributes<HTMLButtonElement>;
-
-type AnchorButtonProps = {
+type BaseButtonProps = {
+  /** Désactive les interractions avec le bouton */
+  disabled?: boolean;
   /** Lien externe */
   external?: boolean;
-} & CommonButtonProps &
-  AnchorHTMLAttributes<HTMLAnchorElement>;
+} & ButtonContentProps;
 
+// On définit les types des props des éléments HTML
+export type ButtonHTMLProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type AnchorHTMLProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type UnknownHTMLProps = ButtonHTMLProps | AnchorHTMLProps;
+
+// On définit les types des props du composant <Button>
+type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
+type AnchorButtonProps = BaseButtonProps & AnchorHTMLProps;
+/** Props données au composant générique <Button> */
 export type ButtonProps = DefaultButtonProps | AnchorButtonProps;
 
-export function isAnchorButton(props: ButtonProps): props is AnchorButtonProps {
-  return (props as AnchorButtonProps).href !== undefined;
-}
-
-export function isDefaultButton(
-  props: ButtonProps
-): props is DefaultButtonProps {
-  return !isAnchorButton(props as DefaultButtonProps);
+/** Permet de déterminer si l'élément HTML est une ancre ou un bouton */
+export function isAnchor(props: UnknownHTMLProps): props is AnchorHTMLProps {
+  return (props as AnchorHTMLProps).href !== undefined;
 }
