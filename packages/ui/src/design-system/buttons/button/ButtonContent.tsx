@@ -53,19 +53,7 @@ const ButtonContent = ({
         />
       )}
 
-      {!!children && (
-        <div
-          className={classNames('flex items-center', {
-            'gap-1': size === 'xs' || size === 'sm',
-            'gap-2': size === 'md' || size === 'xl',
-          })}
-        >
-          <div>{children}</div>
-          {isAnchorButton(props) && props.external && (
-            <Icon icon="external-link-line" />
-          )}
-        </div>
-      )}
+      {!!children && <div>{children}</div>}
 
       {!!icon && iconPosition === 'right' && (
         <Icon
