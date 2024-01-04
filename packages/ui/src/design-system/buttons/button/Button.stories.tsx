@@ -158,19 +158,24 @@ export const Variants: Story = {
       </Button>
 
       {/* Disabled buttons with icon */}
-      <Button icon="leaf-line" iconPosition="left" variant="primary" disabled>
+      <Button icon="leaf-line" iconPosition="right" variant="primary" disabled>
         Primary
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="secondary" disabled>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="secondary"
+        disabled
+      >
         Secondary
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="outlined" disabled>
+      <Button icon="leaf-line" iconPosition="right" variant="outlined" disabled>
         Outlined
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="white" disabled>
+      <Button icon="leaf-line" iconPosition="right" variant="white" disabled>
         White
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="grey" disabled>
+      <Button icon="leaf-line" iconPosition="right" variant="grey" disabled>
         Grey
       </Button>
     </div>
