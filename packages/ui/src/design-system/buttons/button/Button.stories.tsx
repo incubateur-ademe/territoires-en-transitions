@@ -187,9 +187,22 @@ export const AnchorButtons: Story = {
   render: () => (
     <div className="flex items-end gap-5">
       <Button href="https://territoiresentransitions.fr/">Internal link</Button>
+      <Button
+        href="https://territoiresentransitions.fr/"
+        icon="leaf-line"
+        variant="outlined"
+      />
+      <Button
+        href="https://territoiresentransitions.fr/"
+        variant="outlined"
+        disabled
+      >
+        Disabled link
+      </Button>
       <Button href="https://territoiresentransitions.fr/" external>
         External link
       </Button>
+      <Button href="https://territoiresentransitions.fr/" external />
     </div>
   ),
 };
