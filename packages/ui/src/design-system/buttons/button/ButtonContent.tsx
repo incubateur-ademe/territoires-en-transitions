@@ -46,9 +46,10 @@ const ButtonContent = ({
       className={classNames('flex items-center', {
         'gap-1': size === 'xs' || size === 'sm',
         'gap-2': size === 'md' || size === 'xl',
+        'flex-row-reverse': iconPosition === 'right',
       })}
     >
-      {!!icon && iconPosition === 'left' && (
+      {!!icon && (
         <Icon
           icon={icon}
           size={getIconSize(size, isIconButton, typeof icon === 'string')}
@@ -57,14 +58,6 @@ const ButtonContent = ({
       )}
 
       {!!children && <div>{children}</div>}
-
-      {!!icon && iconPosition === 'right' && (
-        <Icon
-          icon={icon}
-          size={getIconSize(size, isIconButton, typeof icon === 'string')}
-          svgClassName={buttonThemeClassnames[variant][buttonState].icon}
-        />
-      )}
     </div>
   );
 };
