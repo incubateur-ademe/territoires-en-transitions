@@ -195,6 +195,7 @@ export const AnchorButtons: Story = {
       <Button
         href="https://territoiresentransitions.fr/"
         variant="outlined"
+        icon="leaf-line"
         disabled
       >
         Disabled link
