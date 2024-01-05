@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import {buttonThemeClassnames} from '../utils';
 import ButtonContent from './ButtonContent';
 import {
-  AnchorHTMLProps,
   ButtonContentProps,
   ButtonHTMLProps,
   ButtonProps,
@@ -87,7 +86,7 @@ export const Button = ({
 
     /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
   } else {
-    const anchorProps = props as AnchorHTMLProps;
+    const anchorProps = props;
     const openInNewTab = external || props.target === '_blank';
     return (
       <a
