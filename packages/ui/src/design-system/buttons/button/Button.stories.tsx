@@ -1,4 +1,6 @@
+import {useRef} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
+
 import {Button} from './Button';
 import DoubleCheckIcon from '../../../assets/DoubleCheckIcon';
 
@@ -206,6 +208,31 @@ export const AnchorButtons: Story = {
       <Button href="https://territoiresentransitions.fr/" external />
     </div>
   ),
+};
+
+/** Customisation du bouton avec des classes ou des inline styles. */
+export const WithRef: Story = {
+  render: () => {
+    const buttonRef = useRef();
+    const anchorRef = useRef();
+    const onButtonClick = () => console.log(buttonRef.current);
+    const onAnchorClick = () => console.log(anchorRef.current);
+    return (
+      <div className="flex items-end gap-5">
+        <Button ref={buttonRef} onClick={onButtonClick}>
+          Button with ref
+        </Button>
+        <Button
+          ref={anchorRef}
+          onClick={onAnchorClick}
+          href="https://territoiresentransitions.fr/"
+          external
+        >
+          Anchor with ref
+        </Button>
+      </div>
+    );
+  },
 };
 
 /** Customisation du bouton avec des classes ou des inline styles. */

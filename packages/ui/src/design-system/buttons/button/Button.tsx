@@ -1,4 +1,6 @@
+import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
+
 import {buttonThemeClassnames} from '../utils';
 import ButtonContent from './ButtonContent';
 import {
@@ -13,103 +15,111 @@ import {
  * */
 // On déstructure toutes les props rajoutées qui ne sont pas des props des tags HTML <button> ou <a>
 // Ce qui nous permet de ne donner que les props restantes natives au tag HTML
-export const Button = ({
-  children,
-  disabled = false,
-  variant = 'primary',
-  size = 'md',
-  className,
-  icon,
-  iconPosition,
-  external,
-  ...props
-}: ButtonProps) => {
-  const isIconButton = !children;
-
-  const buttonState = disabled ? 'disabled' : 'default';
-
-  const {text, background, border} =
-    buttonThemeClassnames[variant][buttonState];
-
-  const buttonClassname = classNames(
-    'rounded-lg w-fit border border-solid font-bold group',
+export const Button = forwardRef(
+  (
     {
-      // Format du bouton en fonction de la taille choisie
-      'text-xs py-2': size === 'xs',
-      'text-sm py-3': size === 'sm',
-      'text-base py-3.5': size === 'md',
-      'text-2xl py-5': size === 'xl',
+      children,
+      disabled = false,
+      variant = 'primary',
+      size = 'md',
+      className,
+      icon,
+      iconPosition,
+      external,
+      ...props
+    }: ButtonProps,
+    ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    const isIconButton = !children;
 
-      // Padding en fonction de la taille choisie
-      'px-5':
-        (size === 'xs' && !isIconButton) || (size === 'xl' && isIconButton),
-      'px-6': size !== 'xs' && !isIconButton,
+    const buttonState = disabled ? 'disabled' : 'default';
 
-      // Padding sur les boutons ne contenant qu'une icône
-      'px-2': size === 'xs' && isIconButton,
-      'px-3': size === 'sm' && isIconButton,
-      'px-3.5': size === 'md' && isIconButton,
+    const {text, background, border} =
+      buttonThemeClassnames[variant][buttonState];
 
-      // Styles du curseur
-      'cursor-pointer': !disabled,
-      'cursor-not-allowed': disabled,
-    },
-    text,
-    background,
-    border
-  );
+    const buttonClassname = classNames(
+      'rounded-lg w-fit border border-solid font-bold group',
+      {
+        // Format du bouton en fonction de la taille choisie
+        'text-xs py-2': size === 'xs',
+        'text-sm py-3': size === 'sm',
+        'text-base py-3.5': size === 'md',
+        'text-2xl py-5': size === 'xl',
 
-  /** Reconstitution des props données au contenu du bouton */
-  const buttonContentProps: ButtonContentProps = {
-    children,
-    variant,
-    size,
-    icon,
-    iconPosition,
-    disabled,
-  };
+        // Padding en fonction de la taille choisie
+        'px-5':
+          (size === 'xs' && !isIconButton) || (size === 'xl' && isIconButton),
+        'px-6': size !== 'xs' && !isIconButton,
 
-  const isButton = !isAnchor(props);
+        // Padding sur les boutons ne contenant qu'une icône
+        'px-2': size === 'xs' && isIconButton,
+        'px-3': size === 'sm' && isIconButton,
+        'px-3.5': size === 'md' && isIconButton,
 
-  /** On affiche un bouton par défaut */
-  if (isButton) {
-    // On réintegre la prop disabled qui a été déstructurée plus haut
-    const buttonProps = {...props, disabled} as ButtonHTMLProps;
-    return (
-      <button
-        {...buttonProps}
-        className={classNames(buttonClassname, className)}
-      >
-        <ButtonContent {...buttonContentProps} />
-      </button>
+        // Styles du curseur
+        'cursor-pointer': !disabled,
+        'cursor-not-allowed': disabled,
+      },
+      text,
+      background,
+      border
     );
 
-    /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
-  } else {
-    const anchorProps = props;
-    const openInNewTab = external || props.target === '_blank';
-    return (
-      <a
-        {...anchorProps}
-        // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
-        // after:hidden supprime l'icône external par défaut du dsfr
-        className={classNames(
-          'inline-block w-fit bg-none after:hidden',
-          buttonClassname,
-          className
-        )}
-        target={openInNewTab ? '_blank' : props.target}
-        rel={openInNewTab ? 'noreferrer noopener' : props.rel}
-        onClick={evt => {
-          if (disabled) evt.preventDefault();
-        }}
-      >
-        <ButtonContent
-          {...buttonContentProps}
-          icon={openInNewTab ? 'external-link-line' : icon}
-          iconPosition={openInNewTab ? 'right' : iconPosition}
-        />
-      </a>
-    );
+    /** Reconstitution des props données au contenu du bouton */
+    const buttonContentProps: ButtonContentProps = {
+      children,
+      variant,
+      size,
+      icon,
+      iconPosition,
+      disabled,
+    };
+
+    const isButton = !isAnchor(props);
+
+    /** On affiche un bouton par défaut */
+    if (isButton) {
+      // On réintegre la prop disabled qui a été déstructurée plus haut
+      const buttonProps = {...props, disabled} as ButtonHTMLProps;
+      return (
+        <button
+          ref={ref as Ref<HTMLButtonElement>}
+          {...buttonProps}
+          className={classNames(buttonClassname, className)}
+        >
+          <ButtonContent {...buttonContentProps} />
+        </button>
+      );
+
+      /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
+    } else {
+      const anchorProps = props;
+      const openInNewTab = external || props.target === '_blank';
+      return (
+        <a
+          {...anchorProps}
+          // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
+          // after:hidden supprime l'icône external par défaut du dsfr
+          ref={ref as Ref<HTMLAnchorElement>}
+          className={classNames(
+            'inline-block w-fit bg-none after:hidden',
+            buttonClassname,
+            className
+          )}
+          target={openInNewTab ? '_blank' : props.target}
+          rel={openInNewTab ? 'noreferrer noopener' : props.rel}
+          onClick={evt => {
+            if (disabled) evt.preventDefault();
+            else props.onClick(evt);
+          }}
+        >
+          <ButtonContent
+            {...buttonContentProps}
+            icon={openInNewTab ? 'external-link-line' : icon}
+            iconPosition={openInNewTab ? 'right' : iconPosition}
+          />
+        </a>
+      );
+    }
   }
-};
+);
