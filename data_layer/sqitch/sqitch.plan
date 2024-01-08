@@ -603,3 +603,4 @@ labellisation/audit [labellisation/audit@v2.93.0] 2024-01-18T15:23:40Z Amandine 
 indicateur/detail [indicateur/detail@v2.87.2] 2023-12-20T10:18:20Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des droits
 plan_action/fiches [plan_action/fiches@v2.80.0] 2023-11-13T17:33:13Z Amandine Jacquelin <conta@LanceLibre> # Corrige create_fiche
 indicateur/filtre [indicateur/filtre@v2.87.2] 2023-12-21T10:10:13Z Amandine Jacquelin <conta@LanceLibre> # Ajoute des restrictions de droits
+indicateur/source [indicateur/source@v2.89.0] 2024-01-08T15:02:55Z Amandine Jacquelin <conta@LanceLibre> # Ajoute row level security à indicateur_source
