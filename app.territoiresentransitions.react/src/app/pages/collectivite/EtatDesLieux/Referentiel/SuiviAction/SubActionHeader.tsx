@@ -121,13 +121,15 @@ const SubActionHeader = ({
             action={action}
             backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
           />
-          {action.referentiel === 'cae' && actionAvancement === 'detaille' && (
+          {action.referentiel === 'cae' &&
+          actionAvancement === 'detaille' &&
+          action.children?.length ? (
             <ActionJustification
               action={action}
               className="mt-10"
               title="Justification de l’ajustement manuel du score"
             />
-          )}
+          ) : null}
         </div>
       )}
     </div>
