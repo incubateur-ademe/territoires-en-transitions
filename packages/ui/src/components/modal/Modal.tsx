@@ -172,7 +172,7 @@ const Modal = ({
                     })}
                   >
                     {title && (
-                      <h3 id={labelId} className="mb-0 text-primary-6">
+                      <h3 id={labelId} className="mb-0 text-primary-10">
                         {title}
                       </h3>
                     )}
