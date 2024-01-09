@@ -76,6 +76,7 @@ const Modal = ({
   render,
   children,
   title,
+  subTitle,
   description,
   textAlign = 'center',
   openState,
@@ -159,7 +160,7 @@ const Modal = ({
                     <span className="flex fr-icon-close-line before:w-4 before:h-4 text-primary-7" />
                   </button>
                 )}
-                {(title || description) && (
+                {(title || subTitle || description) && (
                   <div
                     className={classNames('flex flex-col gap-4', {
                       'text-left': textAlign === 'left',
@@ -168,9 +169,12 @@ const Modal = ({
                     })}
                   >
                     {title && (
-                      <h3 id={labelId} className="mb-0">
+                      <h3 id={labelId} className="mb-0 text-primary-6">
                         {title}
                       </h3>
+                    )}
+                    {subTitle && (
+                      <p className="mb-0 font-medium text-grey-6">{subTitle}</p>
                     )}
                     {description && (
                       <p id={descriptionId} className="mb-0">
