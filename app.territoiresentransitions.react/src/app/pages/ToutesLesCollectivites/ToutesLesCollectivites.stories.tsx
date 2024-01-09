@@ -3,8 +3,8 @@ import {
   RenderToutesLesCollectivites,
   TRenderToutesCollectivitesProps,
 } from './ToutesLesCollectivites';
-import fixture from './fixture.json';
-import type {TCollectivitesFilters} from './filtreLibelles';
+import fixture from './data/fixture.json';
+import type {TCollectivitesFilters} from './data/filtreLibelles';
 
 export default {
   component: RenderToutesLesCollectivites,

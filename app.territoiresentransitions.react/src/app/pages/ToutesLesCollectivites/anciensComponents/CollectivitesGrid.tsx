@@ -1,6 +1,6 @@
-import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/components/CollectiviteCarte';
+import {CollectiviteCarte} from 'app/pages/ToutesLesCollectivites/anciensComponents/CollectiviteCarte';
 import {TCollectiviteCarte} from '../types';
-import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
+import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
 import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
 
 const AucuneCollectivite = () => (

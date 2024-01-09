@@ -5,14 +5,14 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
   trierParOptions,
-} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
-import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes';
+} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
+import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/anciensComponents/MultiSelectCheckboxes';
 import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 
-import {TDepartement} from '../useDepartements';
-import {TRegion} from '../useRegions';
+import {TDepartement} from '../data/useDepartements';
+import {TRegion} from '../data/useRegions';
 
 export const TypeCollectiviteFiltre = (props: {
   selected: string[];

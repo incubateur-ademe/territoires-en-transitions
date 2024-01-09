@@ -6,12 +6,12 @@ import {
   RegionFiltre,
   TauxRemplissageCollectiviteFiltre,
   TypeCollectiviteFiltre,
-} from 'app/pages/ToutesLesCollectivites/components/Filtres';
-import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
+} from 'app/pages/ToutesLesCollectivites/anciensComponents/Filtres';
+import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
 import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {TDepartement} from '../useDepartements';
-import {TRegion} from '../useRegions';
+import {TDepartement} from '../data/useDepartements';
+import {TRegion} from '../data/useRegions';
 
 type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
 
