@@ -7,6 +7,7 @@ type TFetchedData = {
   pilotes: CompositeTypes<'personne'>[];
   services: Tables<'service_tag'>[];
   thematiques: Tables<'thematique'>[];
+  confidentiel: boolean;
 };
 
 /**
@@ -27,7 +28,7 @@ export const useIndicateurInfoLiees = ({
     const query = supabaseClient
       .from('indicateur_definitions')
       .select(
-        'pilotes(tag_id,user_id),services(id:service_tag_id),thematiques(id)'
+        'pilotes(tag_id,user_id),services(id:service_tag_id),thematiques(id), confidentiel'
       )
       .match(
         isPerso
