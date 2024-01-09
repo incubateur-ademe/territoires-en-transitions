@@ -589,3 +589,5 @@ stats/posthog [stats/posthog@v2.88.0] 2023-12-22T16:17:23Z Florian <florian@derf
 automatisation/newsletters 2023-12-05T15:54:02Z Amandine Jacquelin <conta@LanceLibre> # Automatise l'envoie des utilisateurs à Brevo
 cron/send_pa_users_to_brevo 2023-12-19T17:14:10Z Amandine Jacquelin <conta@LanceLibre> # Crée un cron pour envoyer les utilisateurs à Brevo
 @v2.90.0 2024-01-12T13:53:27Z Florian <florian@derfurth.com> # Integration avec Brevo
+
+indicateur/confidentialite 2024-01-08T15:37:24Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la gestion des indicateurs confidentiels
