@@ -1,6 +1,5 @@
 import {FC} from 'react';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Pagination} from 'app/pages/ToutesLesCollectivites/anciensComponents/Pagination';
 import {useHistoriqueItemListe} from 'app/pages/collectivite/Historique/useHistoriqueItemListe';
 import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import HistoriqueItemActionPrecision from 'app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
@@ -9,6 +8,7 @@ import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 import {NB_ITEMS_PER_PAGE} from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
+import {Pagination} from 'ui/shared/Pagination';
 
 /**
  * Affiche l'historique des modifications
