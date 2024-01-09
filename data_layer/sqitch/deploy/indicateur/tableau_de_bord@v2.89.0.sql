@@ -2,7 +2,8 @@
 
 BEGIN;
 
-create or replace view indicateur_summary
+drop view indicateur_summary;
+create view indicateur_summary
 as
 select c.id            as collectivite_id,
        programme::text as categorie,
@@ -14,14 +15,13 @@ from collectivite c
                               count(*) filter (where private.rempli(c.id, def.id)) as rempli
                        from indicateur_definition def
                        where parent is null and programme = any (def.programmes)) digest on true
-where can_read_acces_restreint(c.id)
 union all
 select perso.collectivite_id,
        'perso',
        count(*),
        count(*) filter (where private.rempli(perso.id))
 from indicateur_personnalise_definition perso
-where have_lecture_acces(collectivite_id)
+where have_edition_acces(collectivite_id)
 group by collectivite_id;
 comment on view indicateur_summary is 'Permet d''obtenir le nombre de résultats saisis par indicateur pour chaque collectivité.';
 
