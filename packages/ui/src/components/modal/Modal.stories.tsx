@@ -1,6 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
-import Modal from './Modal';
 import {forwardRef} from 'react';
+
+import Modal from './Modal';
 
 const meta: Meta<typeof Modal> = {
   component: Modal,
@@ -24,8 +25,9 @@ const OpenButton = forwardRef((props: any, ref) => (
 
 export const Default: Story = {
   args: {
+    textAlign: 'left',
     title: 'Un titre simple',
-    textCenter: false,
+    subTitle: 'Un petit sous titre',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
@@ -38,11 +40,38 @@ export const Default: Story = {
   },
 };
 
+export const LongContent: Story = {
+  args: {
+    textAlign: 'left',
+    title: 'Un titre simple',
+    subTitle: 'Un petit sous titre',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+  },
+  render: args => {
+    return (
+      <Modal
+        {...args}
+        render={() => (
+          <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
+            <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
+            <p>Un autre paragraphe.</p>
+            <button className="ml-auto p-2 text-white bg-primary-7 hover:!bg-primary-8 rounded-lg">
+              Un bouton
+            </button>
+          </div>
+        )}
+      >
+        <OpenButton text="Ouvrir la modale" />
+      </Modal>
+    );
+  },
+};
+
 export const WithRender: Story = {
   args: {
     title: 'Un titre simple',
-    description: 'Un petit sous titre',
-    textCenter: true,
+    subTitle: 'Un petit sous titre',
   },
   render: args => {
     return (
@@ -84,8 +113,8 @@ export const onlyRender: Story = {
 
 export const Size: Story = {
   args: {
+    textAlign: 'left',
     title: 'Un titre simple',
-    textCenter: false,
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
