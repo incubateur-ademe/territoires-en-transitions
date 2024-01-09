@@ -49,12 +49,13 @@ export type ModalProps = {
   description?: string;
   /** Titre et description centrés par défaut, mettre à false pour aligner à gauche */
   textCenter?: boolean;
-  /** s'il n'y a pas d'élément permettant d'afficher la modale,
-     on peut lui passer un booléen mais celui ci doit être accompagné d'un setter (setIsOpen)
-     afin de pouvoir la fermer */
-  isOpen?: boolean;
-  /* accompagne "isOpen" afin de pouvoir fermer la modale */
-  setIsOpen?: (opened: boolean) => void;
+  /** Permet de contrôler l'ouverture de la modale */
+  openState?: {
+    /** état d'ouverture de la modale */
+    isOpen: boolean;
+    /* accompagne "isOpen" afin de pouvoir fermer la modale */
+    setIsOpen: (opened: boolean) => void;
+  };
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
   /** max-width prédéfinies dans le DSFR, valeur par défaut "md" */
@@ -77,25 +78,28 @@ const Modal = ({
   title,
   description,
   textCenter = true,
-  isOpen,
-  setIsOpen,
+  openState,
   onClose,
   size = 'md',
   disableDismiss,
   noCloseButton,
   zIndex,
 }: ModalProps) => {
+  const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = () => {
-    setIsOpen ? setIsOpen(!isOpen) : setOpen(!open);
-    if (isOpen || open) {
-      onClose && onClose();
+    if (isControlled) {
+      openState.setIsOpen(!openState.isOpen);
+      openState.isOpen && onClose && onClose();
+    } else {
+      setOpen(!open);
+      open && onClose && onClose();
     }
   };
 
   const {refs, context} = useFloating({
-    open: isOpen ?? open,
+    open: isControlled ? openState.isOpen : open,
     onOpenChange: handleOpenChange,
   });
 
@@ -117,7 +121,7 @@ const Modal = ({
           getReferenceProps({ref: refs.setReference, ...children.props})
         )}
       <FloatingPortal>
-        {(open || isOpen) && (
+        {(open || (isControlled && openState.isOpen)) && (
           <FloatingOverlay
             lockScroll
             style={{
