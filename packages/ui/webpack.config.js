@@ -28,13 +28,17 @@ module.exports = function (env, argv) {
     // exporte la feuille de styles globale sans traitement
     plugins: [
       new CopyPlugin({
-        patterns: [{ from: 'src/global.css', to: '' }],
+        patterns: [{from: 'src/global.css', to: ''}],
       }),
     ],
 
     // ordre de résolution des modules js par extension
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
+      // alias pour éviter des chemins relatifs dans les imports
+      alias: {
+        '@ds': './src/design-system',
+      },
     },
 
     // exclut du bundle les bibliothèques externes
@@ -56,7 +60,7 @@ module.exports = function (env, argv) {
       // permet que le build UMD soit compatible node & browser
       globalObject: 'this',
       // type d'exports générés
-      library: { type: 'umd', name: 'ui', umdNamedDefine: true },
+      library: {type: 'umd', name: 'ui', umdNamedDefine: true},
     },
   };
 };
