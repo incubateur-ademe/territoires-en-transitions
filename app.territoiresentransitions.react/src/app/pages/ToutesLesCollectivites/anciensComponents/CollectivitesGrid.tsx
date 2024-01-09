@@ -42,7 +42,7 @@ export const CollectivitesGrid = (props: {
       {props.collectivites.length === 0 ? (
         <AucuneCollectivite />
       ) : (
-        <div className="grid lg:grid-cols-2 gap-4">
+        <div className="grid xl:grid-cols-2 gap-4">
           {props.collectivites.map(collectivite => (
             <CollectiviteCarte
               key={collectivite.collectivite_id}
