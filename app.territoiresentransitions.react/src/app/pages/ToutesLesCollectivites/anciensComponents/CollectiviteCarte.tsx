@@ -1,14 +1,14 @@
+import classNames from 'classnames';
+import {Link} from 'react-router-dom';
+
 import {TCollectiviteCarte} from '../types';
 import {Referentiel} from 'types/litterals';
 import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
 import {NIVEAUX} from 'ui/labellisation/getNiveauInfo';
-import {GreenStar, GreyStar} from 'ui/labellisation/Star';
-import {Link} from 'react-router-dom';
+import {GreyStar, RedStar} from 'ui/labellisation/Star';
 import {makeCollectiviteAccueilUrl} from 'app/paths';
-import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {IconDoubleCheck} from 'ui/icons/IconDoubleCheck';
 
 export type TCollectiviteCarteProps = {
   collectivite: TCollectiviteCarte;
@@ -28,6 +28,7 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
 
   return (
     <Link
+      data-test="CollectiviteCarte"
       onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
       to={
         props.isCardClickable
@@ -36,42 +37,30 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
             })
           : '#'
       }
-      className={classNames(
-        '!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400',
-        {
-          'cursor-default, pointer-events-none': !props.isCardClickable,
-        }
-      )}
+      className={classNames('p-8 !bg-none rounded-xl border border-primary-3', {
+        'cursor-default, pointer-events-none': !props.isCardClickable,
+        'hover:!bg-primary-1': props.isCardClickable,
+      })}
     >
-      <div
-        data-test="CollectiviteCarte"
-        className={classNames(
-          'flex flex-col w-full max-w-full h-full p-3 md:p-6',
-          {
-            'hover:bg-gray-100': props.isCardClickable,
-          }
-        )}
-      >
-        <div className="md:text-lg text-base font-bold mb-4">
-          {collectivite.nom}
-        </div>
-        <div className="flex justify-between gap-1 sm:gap-4 mt-auto">
-          <ReferentielCol
-            referentiel={'cae'}
-            etoiles={collectivite.etoiles_cae}
-            scoreRealise={collectivite.score_fait_cae}
-            scoreProgramme={collectivite.score_programme_cae}
-            concerne={collectivite.type_collectivite !== 'syndicat'}
-          />
-          <div className="w-px bg-gray-200"></div>
-          <ReferentielCol
-            referentiel={'eci'}
-            etoiles={collectivite.etoiles_eci}
-            scoreRealise={collectivite.score_fait_eci}
-            scoreProgramme={collectivite.score_programme_eci}
-            concerne={true}
-          />
-        </div>
+      <div className="mb-4 text-lg font-bold text-primary-9">
+        {collectivite.nom}
+      </div>
+      <div className="flex justify-between gap-4 sm:gap-8 xl:gap-8">
+        <ReferentielCol
+          referentiel={'cae'}
+          etoiles={collectivite.etoiles_cae}
+          scoreRealise={collectivite.score_fait_cae}
+          scoreProgramme={collectivite.score_programme_cae}
+          concerne={collectivite.type_collectivite !== 'syndicat'}
+        />
+        <div className="w-px mx-auto flex-shrink-0 bg-gray-200"></div>
+        <ReferentielCol
+          referentiel={'eci'}
+          etoiles={collectivite.etoiles_eci}
+          scoreRealise={collectivite.score_fait_eci}
+          scoreProgramme={collectivite.score_programme_eci}
+          concerne={true}
+        />
       </div>
     </Link>
   );
@@ -90,31 +79,30 @@ export type TReferentielColProps = {
  */
 export const ReferentielCol = (props: TReferentielColProps) => {
   return (
-    <div style={{color: '#666666'}} className="flex flex-col flex-1 gap-2 ">
-      <div style={{fontSize: '14px'}}>
+    <div className="flex flex-col gap-3 flex-1">
+      <div className="text-sm font-bold text-primary-7">
         {referentielToName[props.referentiel]}
       </div>
       {props.concerne ? (
-        <div style={{fontSize: '12px'}} className="flex flex-col gap-1">
+        <>
           <CinqEtoiles etoiles={props.etoiles} />
-          <div>
-            {' '}
-            <IconDoubleCheck className="inline-block mr-3" />
-            <span className="font-semibold">
+          <div className="flex items-center text-xs text-grey-6">
+            <i className="inline-flex mr-1.5 fr-icon-line-chart-line before:h-4 before:w-4" />
+            <span className="mr-1 font-semibold">
               {toPercentString(props.scoreRealise)}
-            </span>{' '}
+            </span>
             réalisé courant
           </div>
-          <div>
-            <i className="fr-icon fr-fi-calendar-line before:text-[#417DC4] mr-2"></i>{' '}
-            <span className="font-semibold">
+          <div className="flex items-center text-xs text-grey-6">
+            <i className="inline-flex mr-1.5 fr-icon-calendar-line before:h-4 before:w-4" />
+            <span className="mr-1 font-semibold">
               {toPercentString(props.scoreProgramme)}
-            </span>{' '}
+            </span>
             programmé
           </div>
-        </div>
+        </>
       ) : (
-        <div className="my-auto mr-auto font-light italic text-center">
+        <div className="my-auto mr-auto font-light italic text-grey-6">
           Non concerné
         </div>
       )}
@@ -130,19 +118,14 @@ export type TCinqEtoilesProps = {
  * Les étoiles affichées dans la colonne des informations relative au
  * référentiel.
  */
-const CinqEtoiles = (props: TCinqEtoilesProps) => {
-  const {etoiles} = props;
-
+const CinqEtoiles = ({etoiles}: TCinqEtoilesProps) => {
   return (
-    <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1">
+    <div className="flex gap-2">
+      {/* <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"> */}
       {NIVEAUX.map(niveau => {
         const obtenue = etoiles >= niveau;
-        const Star = obtenue ? GreenStar : GreyStar;
-        return (
-          <div className="scale-75" key={niveau}>
-            <Star key={`n${niveau}`} />
-          </div>
-        );
+        const Star = obtenue ? RedStar : GreyStar;
+        return <Star key={niveau} className="!w-6 !h-6" />;
       })}
     </div>
   );
