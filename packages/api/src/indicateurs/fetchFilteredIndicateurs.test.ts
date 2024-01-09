@@ -50,6 +50,9 @@ const FIXTURE = {
       indicateur_id: 'cae_2.b',
       collectivite_id: 1,
     },
+    {
+      indicateur_perso_id: 0,
+    },
   ],
 };
 
@@ -215,6 +218,14 @@ describe('Filtrer les indicateurs', async () => {
     });
     assert.equal(status, 200);
     assert.equal(data.length, 2);
+  });
+
+  it('par indicateur perso et confidentiel', async () => {
+    const {status, data} = await fetchIndicateurs('perso', {
+      confidentiel: true,
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
   });
 
   after(async function () {
