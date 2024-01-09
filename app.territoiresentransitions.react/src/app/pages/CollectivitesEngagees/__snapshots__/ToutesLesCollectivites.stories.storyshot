@@ -1,48 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites Avec Des Resultats Et Des Filtres 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage Avec Des Résultats Et Des Filtres 1`] = `
 <div
-  className="app fr-container mt-5"
-  data-test="ToutesLesCollectivites"
+  className="app fr-container my-16"
+  data-test="CollectivitesEngageesPage"
 >
   <div
-    className="text-center"
+    className="text-center mb-8 md:mb-16"
   >
     <div
-      className="font-bold text-black md:text-4xl text-3xl my-4 "
+      className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités
     </div>
-    <p>
-      Consultez les 
+    <p
+      className="mb-0"
+    >
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div
     className="md:flex"
   >
     <div
-      className="md:w-3/12 hidden"
+      className="flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14 hidden"
     >
       <div
         className="flex flex-col gap-8"
       >
         <div
-          className="flex"
+          className="border border-bf500 rounded-tr rounded-tl"
         >
           <div
-            className=" border-b-2 border-bf500 flex items-center w-full"
+            className="flex items-center w-full border-b-2 border-bf500"
           >
             <input
-              className="bg-beige p-2 w-full"
+              className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div
@@ -54,176 +58,62 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
             </div>
           </div>
         </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Région
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto flex line-clamp-1"
             >
-              <span
-                className="text-gray-800 font-normal"
-              >
+              <span>
                 Auvergne-Rhône-Alpes
               </span>
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value="69"
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-13 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-14"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+          </button>
+        </fieldset>
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Département
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto text-grey425 line-clamp-1"
             >
-              <span
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "&#8203;",
-                  }
-                }
-              />
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value=""
+              Sélectionnez un ou plusieurs départements
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-13 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-14"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
+          </button>
+        </fieldset>
         <div>
           <div
             className="font-semibold text-md mb-2"
@@ -809,151 +699,96 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
       </div>
     </div>
     <div
-      className="ml-6 w-full "
+      className="fixed bottom-0 inset-x-0 z-10 md:hidden"
+    >
+      <button
+        className="fr-btn justify-center !py-6 text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
+        onClick={[Function]}
+      >
+        Filtrer (6)
+      </button>
+    </div>
+    <div
+      className="w-full"
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4 scroll"
+        className="flex flex-col mb-6 md:flex-row md:justify-between"
       >
-        <div>
-          <div
-            className="mb-2 font-semibold"
-          >
-            Trier par
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root select"
-            onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "minWidth": "200px",
-              }
-            }
-          >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
-            >
-              <span
-                className="text-gray-800 font-normal"
-              >
-                % Réalisé courant
-              </span>
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value="score"
-            />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-13 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-14"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
-        <div>
+        <div
+          className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0"
+        >
           <p
-            className="text-gray-500"
+            className="mb-0 text-center text-gray-500 md:text-left"
           >
-             collectivités correspondent à votre recherche
+            7 collectivités correspondent
+             
+            à votre recherche
           </p>
           <div
-            className="flex"
+            className="w-max mt-4 border-b border-bf500 md:mt-auto"
           >
-            <a
-              className="text-sm"
-              href="/toutes_collectivites"
+            <button
+              className="flex items-center text-bf500 hover:!bg-none"
+              data-test="desactiver-les-filtres"
+              onClick={[Function]}
             >
-              <div
-                className="text-bf500 border-bf500"
+              <span
+                className="fr-icon-close-circle-fill mr-1 scale-90"
+              />
+              <span
+                className="text-sm"
               >
-                <span
-                  className="fr-icon-close-circle-fill mr-1"
-                  style={
-                    Object {
-                      "fontSize": ".7rem",
-                    }
-                  }
-                />
-                <span
-                  className="text-xs"
-                >
-                  Désactiver tous les filtres
-                </span>
-              </div>
-            </a>
+                Désactiver tous les filtres
+              </span>
+            </button>
           </div>
         </div>
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
+          >
+            Trier par
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          >
+            <span
+              className="mr-auto flex line-clamp-1"
+            >
+              % Réalisé courant
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            />
+          </button>
+        </fieldset>
       </div>
       <div
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
-          href="/collectivite/2/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/1/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               Ploemeur
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -981,10 +816,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1000,7 +835,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1016,7 +851,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1032,7 +867,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1048,7 +883,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1131,10 +966,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1150,7 +985,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1166,7 +1001,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1182,7 +1017,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1198,7 +1033,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1256,24 +1091,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/2/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/2/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -1301,10 +1133,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1320,7 +1152,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1336,7 +1168,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1352,7 +1184,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1368,7 +1200,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1451,10 +1283,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1470,7 +1302,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1486,7 +1318,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1502,7 +1334,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1518,7 +1350,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1576,24 +1408,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/3/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/3/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -1613,7 +1442,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   Climat Air Énergie
                 </div>
                 <div
-                  className="font-light italic text-center"
+                  className="my-auto mr-auto font-light italic text-center"
                 >
                   Non concerné
                 </div>
@@ -1647,10 +1476,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1666,7 +1495,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1682,7 +1511,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1698,7 +1527,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1714,7 +1543,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1772,24 +1601,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/4/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/4/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CA CAP Excellence
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -1817,10 +1643,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1836,7 +1662,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1852,7 +1678,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1868,7 +1694,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1884,7 +1710,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1967,10 +1793,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -1986,7 +1812,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2002,7 +1828,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2018,7 +1844,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2034,7 +1860,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2092,24 +1918,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/5/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/5/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CA Ventoux-Comtat-Venaissin (COVE)
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -2137,10 +1960,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2156,7 +1979,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2172,7 +1995,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2188,7 +2011,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2204,7 +2027,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2287,10 +2110,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2306,7 +2129,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2322,7 +2145,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2338,7 +2161,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2354,7 +2177,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2412,24 +2235,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/6/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/6/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -2457,10 +2277,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2476,7 +2296,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2492,7 +2312,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2508,7 +2328,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2524,7 +2344,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2607,10 +2427,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2626,7 +2446,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2642,7 +2462,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2658,7 +2478,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2674,7 +2494,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2732,24 +2552,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/7/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/7/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -2777,10 +2594,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2796,7 +2613,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2812,7 +2629,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2828,7 +2645,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2844,7 +2661,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2927,10 +2744,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2946,7 +2763,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2962,7 +2779,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2978,7 +2795,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -2994,7 +2811,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -3052,120 +2869,123 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
       </div>
-    </div>
-  </div>
-  <div
-    className="md:hidden w-full my-4"
-  >
-    <button
-      className="fr-btn text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
-      onClick={[Function]}
-    >
-      Filtrer (6)
-    </button>
-  </div>
-  <div
-    className="flex justify-center mt-3"
-  >
-    <nav
-      aria-label="Pagination"
-      className="fr-pagination"
-      role="navigation"
-    >
-      <ul
-        className="fr-pagination__list"
+      <div
+        className="flex justify-center mt-6 md:mt-12"
       >
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--first"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
+        <nav
+          aria-label="Pagination"
+          className="fr-pagination"
+          role="navigation"
         >
-          Première page
-        </button>
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
-        >
-          Page précédente
-        </button>
-        <div
-          className=""
-        >
-          <button
-            className="fr-pagination__link fr-displayed-lg"
-            disabled={true}
+          <ul
+            className="fr-pagination__list"
           >
-            …
-          </button>
-        </div>
-        <button
-          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Page suivante
-        </button>
-        <button
-          className="fr-pagination__link fr-pagination__link--last"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Dernière page
-        </button>
-      </ul>
-    </nav>
+            <li>
+              <button
+                aria-disabled="true"
+                className="fr-pagination__link fr-pagination__link--first"
+                disabled={true}
+                onClick={[Function]}
+                role="link"
+              >
+                Première page
+              </button>
+            </li>
+            <button
+              aria-disabled="true"
+              className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+              disabled={true}
+              onClick={[Function]}
+              role="link"
+            >
+              Page précédente
+            </button>
+            <button
+              aria-current="page"
+              className="fr-pagination__link"
+              title="Page 1"
+            >
+              1
+            </button>
+            <div
+              className="hidden"
+            >
+              <button
+                className="fr-pagination__link fr-displayed-lg"
+                disabled={true}
+              >
+                …
+              </button>
+            </div>
+            <button
+              className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+              disabled={true}
+              onClick={[Function]}
+            >
+              Page suivante
+            </button>
+            <button
+              className="fr-pagination__link fr-pagination__link--last"
+              disabled={true}
+              onClick={[Function]}
+            >
+              Dernière page
+            </button>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites Avec Des Resultats Sans Filtres 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage Avec Des Résultats Sans Filtres 1`] = `
 <div
-  className="app fr-container mt-5"
-  data-test="ToutesLesCollectivites"
+  className="app fr-container my-16"
+  data-test="CollectivitesEngageesPage"
 >
   <div
-    className="text-center"
+    className="text-center mb-8 md:mb-16"
   >
     <div
-      className="font-bold text-black md:text-4xl text-3xl my-4 "
+      className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités
     </div>
-    <p>
-      Consultez les 
+    <p
+      className="mb-0"
+    >
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div
     className="md:flex"
   >
     <div
-      className="md:w-3/12 hidden"
+      className="flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14 hidden"
     >
       <div
         className="flex flex-col gap-8"
       >
         <div
-          className="flex"
+          className="border border-bf500 rounded-tr rounded-tl"
         >
           <div
-            className=" border-b-2 border-bf500 flex items-center w-full"
+            className="flex items-center w-full border-b-2 border-bf500"
           >
             <input
-              className="bg-beige p-2 w-full"
+              className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div
@@ -3177,178 +2997,60 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
             </div>
           </div>
         </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Région
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto text-grey425 line-clamp-1"
             >
-              <span
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "&#8203;",
-                  }
-                }
-              />
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value=""
+              Sélectionnez une ou plusieurs options
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-9 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-10"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+          </button>
+        </fieldset>
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Département
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto text-grey425 line-clamp-1"
             >
-              <span
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "&#8203;",
-                  }
-                }
-              />
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value=""
+              Sélectionnez un ou plusieurs départements
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-9 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-10"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
+          </button>
+        </fieldset>
         <div>
           <div
             className="font-semibold text-md mb-2"
@@ -3934,126 +3636,76 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
       </div>
     </div>
     <div
-      className="ml-6 w-full "
+      className="fixed bottom-0 inset-x-0 z-10 md:hidden"
+    >
+      <button
+        className="fr-btn justify-center !py-6 text-center fr-fi-filter-line fr-fi--sm min-w-full text-center"
+        onClick={[Function]}
+      >
+        Filtrer
+      </button>
+    </div>
+    <div
+      className="w-full"
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4 scroll"
+        className="flex flex-col mb-6 md:flex-row md:justify-between"
       >
-        <div>
-          <div
-            className="mb-2 font-semibold"
-          >
-            Trier par
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root select"
-            onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "minWidth": "200px",
-              }
-            }
-          >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
-            >
-              <span
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "&#8203;",
-                  }
-                }
-              />
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-            />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-9 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-10"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
-        <div>
+        <div
+          className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0"
+        >
           <p
-            className="text-gray-500"
+            className="mb-0 text-center text-gray-500 md:text-left"
           >
-             collectivités correspondent à votre recherche
+            7 collectivités correspondent
+             
+            à votre recherche
           </p>
         </div>
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
+          >
+            Trier par
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          >
+            <span
+              className="mr-auto text-grey425 line-clamp-1"
+            />
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            />
+          </button>
+        </fieldset>
       </div>
       <div
         className="grid lg:grid-cols-2 gap-4"
       >
         <a
-          href="/collectivite/2/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/1/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               Ploemeur
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -4081,10 +3733,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4100,7 +3752,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4116,7 +3768,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4132,7 +3784,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4148,7 +3800,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4231,10 +3883,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4250,7 +3902,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4266,7 +3918,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4282,7 +3934,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4298,7 +3950,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4356,24 +4008,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/2/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/2/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               SI de l'Entre-deux-Mers Ouest pour la collecte et le traitement des ordures ménagères (SEMOCTOM)
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -4401,10 +4050,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4420,7 +4069,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4436,7 +4085,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4452,7 +4101,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4468,7 +4117,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4551,10 +4200,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4570,7 +4219,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4586,7 +4235,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4602,7 +4251,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4618,7 +4267,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4676,24 +4325,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/3/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/3/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               SYTEVOM SYndicat Transfert Elimination Valorisation des Ordures ménagères
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -4713,7 +4359,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   Climat Air Énergie
                 </div>
                 <div
-                  className="font-light italic text-center"
+                  className="my-auto mr-auto font-light italic text-center"
                 >
                   Non concerné
                 </div>
@@ -4747,10 +4393,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4766,7 +4412,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4782,7 +4428,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4798,7 +4444,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4814,7 +4460,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4872,24 +4518,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/4/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/4/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CA CAP Excellence
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -4917,10 +4560,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4936,7 +4579,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4952,7 +4595,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4968,7 +4611,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -4984,7 +4627,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5067,10 +4710,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5086,7 +4729,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5102,7 +4745,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5118,7 +4761,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5134,7 +4777,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5192,24 +4835,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/5/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/5/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CA Ventoux-Comtat-Venaissin (COVE)
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -5237,10 +4877,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5256,7 +4896,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5272,7 +4912,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5288,7 +4928,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5304,7 +4944,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5387,10 +5027,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5406,7 +5046,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5422,7 +5062,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5438,7 +5078,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5454,7 +5094,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5512,24 +5152,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/6/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/6/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -5557,10 +5194,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5576,7 +5213,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5592,7 +5229,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5608,7 +5245,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5624,7 +5261,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5707,10 +5344,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5726,7 +5363,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5742,7 +5379,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5758,7 +5395,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5774,7 +5411,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5832,24 +5469,21 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
         <a
-          href="/collectivite/7/tableau_bord"
+          className="!bg-none shadow-sm rounded-md border border-gray-200 border-b-gray-400"
+          href="/collectivite/7/accueil"
           onClick={[Function]}
-          style={
-            Object {
-              "boxShadow": "none",
-            }
-          }
         >
           <div
-            className="MuiPaper-root MuiCard-root collectiviteCard md:p-6 p-3 w-full MuiPaper-elevation1 MuiPaper-rounded"
+            className="flex flex-col w-full max-w-full h-full p-3 md:p-6 hover:bg-gray-100"
+            data-test="CollectiviteCarte"
           >
             <div
-              className="md:text-lg text-base font-bold md:h-24 h-12"
+              className="md:text-lg text-base font-bold mb-4"
             >
               CC du Pays de Villeneuve en Armagnac Landais
             </div>
             <div
-              className="flex justify-between md:gap-4 gap-1"
+              className="flex justify-between gap-1 sm:gap-4 mt-auto"
             >
               <div
                 className="flex flex-col flex-1 gap-2 "
@@ -5877,10 +5511,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5896,7 +5530,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5912,7 +5546,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5928,7 +5562,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -5944,7 +5578,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6027,10 +5661,10 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                   }
                 >
                   <div
-                    className="flex space-x-2"
+                    className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"
                   >
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6046,7 +5680,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6062,7 +5696,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6078,7 +5712,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6094,7 +5728,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
                       </svg>
                     </div>
                     <div
-                      className="w-6 scale-75 -ml-1"
+                      className="scale-75"
                     >
                       <svg
                         fill="none"
@@ -6152,120 +5786,123 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
           </div>
         </a>
       </div>
-    </div>
-  </div>
-  <div
-    className="md:hidden w-full my-4"
-  >
-    <button
-      className="fr-btn text-center fr-fi-filter-line fr-fi--sm min-w-full text-center"
-      onClick={[Function]}
-    >
-      Filtrer
-    </button>
-  </div>
-  <div
-    className="flex justify-center mt-3"
-  >
-    <nav
-      aria-label="Pagination"
-      className="fr-pagination"
-      role="navigation"
-    >
-      <ul
-        className="fr-pagination__list"
+      <div
+        className="flex justify-center mt-6 md:mt-12"
       >
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--first"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
+        <nav
+          aria-label="Pagination"
+          className="fr-pagination"
+          role="navigation"
         >
-          Première page
-        </button>
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
-        >
-          Page précédente
-        </button>
-        <div
-          className=""
-        >
-          <button
-            className="fr-pagination__link fr-displayed-lg"
-            disabled={true}
+          <ul
+            className="fr-pagination__list"
           >
-            …
-          </button>
-        </div>
-        <button
-          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Page suivante
-        </button>
-        <button
-          className="fr-pagination__link fr-pagination__link--last"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Dernière page
-        </button>
-      </ul>
-    </nav>
+            <li>
+              <button
+                aria-disabled="true"
+                className="fr-pagination__link fr-pagination__link--first"
+                disabled={true}
+                onClick={[Function]}
+                role="link"
+              >
+                Première page
+              </button>
+            </li>
+            <button
+              aria-disabled="true"
+              className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+              disabled={true}
+              onClick={[Function]}
+              role="link"
+            >
+              Page précédente
+            </button>
+            <button
+              aria-current="page"
+              className="fr-pagination__link"
+              title="Page 1"
+            >
+              1
+            </button>
+            <div
+              className="hidden"
+            >
+              <button
+                className="fr-pagination__link fr-displayed-lg"
+                disabled={true}
+              >
+                …
+              </button>
+            </div>
+            <button
+              className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+              disabled={true}
+              onClick={[Function]}
+            >
+              Page suivante
+            </button>
+            <button
+              className="fr-pagination__link fr-pagination__link--last"
+              disabled={true}
+              onClick={[Function]}
+            >
+              Dernière page
+            </button>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </div>
 </div>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites Sans Resultats 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage Sans Résultats 1`] = `
 <div
-  className="app fr-container mt-5"
-  data-test="ToutesLesCollectivites"
+  className="app fr-container my-16"
+  data-test="CollectivitesEngageesPage"
 >
   <div
-    className="text-center"
+    className="text-center mb-8 md:mb-16"
   >
     <div
-      className="font-bold text-black md:text-4xl text-3xl my-4 "
+      className="font-bold text-black md:text-4xl text-3xl mb-6"
     >
-      Toutes les collectivités
+      Collectivités
     </div>
-    <p>
-      Consultez les 
+    <p
+      className="mb-0"
+    >
+      Consultez les
+       
       <a
-        href="/statistics"
-        onClick={[Function]}
+        href="https://territoiresentransitions.fr/stats"
       >
         statistiques
       </a>
-       d'utilisation de la plateforme.
+       
+      d'utilisation de la plateforme.
     </p>
   </div>
   <div
     className="md:flex"
   >
     <div
-      className="md:w-3/12 hidden"
+      className="flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14 hidden"
     >
       <div
         className="flex flex-col gap-8"
       >
         <div
-          className="flex"
+          className="border border-bf500 rounded-tr rounded-tl"
         >
           <div
-            className=" border-b-2 border-bf500 flex items-center w-full"
+            className="flex items-center w-full border-b-2 border-bf500"
           >
             <input
-              className="bg-beige p-2 w-full"
+              className="bg-beige p-2 w-full placeholder-gray-500"
               onChange={[Function]}
               placeholder="Rechercher par nom"
+              type="search"
               value=""
             />
             <div
@@ -6277,176 +5914,62 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
             </div>
           </div>
         </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Région
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto flex line-clamp-1"
             >
-              <span
-                className="text-gray-800 font-normal"
-              >
+              <span>
                 Auvergne-Rhône-Alpes
               </span>
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value="69"
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-17 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-18"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
-        <div>
-          <div
-            className="mb-2 font-semibold"
+          </button>
+        </fieldset>
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
             Département
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root"
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
             onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "width": "100%",
-              }
-            }
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+            type="button"
           >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <span
+              className="mr-auto text-grey425 line-clamp-1"
             >
-              <span
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "&#8203;",
-                  }
-                }
-              />
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value=""
+              Sélectionnez un ou plusieurs départements
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
             />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
-              />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-17 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-18"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
-              >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
-          </div>
-        </div>
+          </button>
+        </fieldset>
         <div>
           <div
             className="font-semibold text-md mb-2"
@@ -7032,105 +6555,72 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
       </div>
     </div>
     <div
-      className="ml-6 w-full "
+      className="fixed bottom-0 inset-x-0 z-10 md:hidden"
+    >
+      <button
+        className="fr-btn justify-center !py-6 text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
+        onClick={[Function]}
+      >
+        Filtrer (6)
+      </button>
+    </div>
+    <div
+      className="w-full"
     >
       <div
-        className="flex flex-row-reverse justify-between mb-4 scroll"
+        className="flex flex-col mb-6 md:flex-row md:justify-between"
       >
-        <div>
+        <div
+          className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0"
+        >
           <div
-            className="mb-2 font-semibold"
+            className="w-max mt-4 border-b border-bf500 md:mt-auto"
           >
-            Trier par
-          </div>
-          <div
-            className="MuiInputBase-root MuiOutlinedInput-root select"
-            onClick={[Function]}
-            style={
-              Object {
-                "borderBottomColor": "black",
-                "borderBottomWidth": "0.7px",
-                "borderColor": "lightgray",
-                "borderRadius": "0.2rem",
-                "borderStyle": "solid",
-                "borderWidth": "0.6px",
-                "maxHeight": "45px",
-                "minWidth": "200px",
-              }
-            }
-          >
-            <div
-              aria-haspopup="listbox"
-              className="MuiSelect-root MuiSelect-select MuiSelect-selectMenu MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input"
-              onBlur={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              role="button"
-              tabIndex={0}
+            <button
+              className="flex items-center text-bf500 hover:!bg-none"
+              data-test="desactiver-les-filtres"
+              onClick={[Function]}
             >
               <span
-                className="text-gray-800 font-normal"
-              >
-                % Réalisé courant
-              </span>
-            </div>
-            <input
-              aria-hidden={true}
-              className="MuiSelect-nativeInput"
-              onAnimationStart={[Function]}
-              onChange={[Function]}
-              tabIndex={-1}
-              value="score"
-            />
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiSelect-icon MuiSelect-iconOutlined"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M7 10l5 5 5-5z"
+                className="fr-icon-close-circle-fill mr-1 scale-90"
               />
-            </svg>
-            <fieldset
-              aria-hidden={true}
-              className="PrivateNotchedOutline-root-17 MuiOutlinedInput-notchedOutline"
-              style={
-                Object {
-                  "paddingLeft": 8,
-                }
-              }
-            >
-              <legend
-                className="PrivateNotchedOutline-legend-18"
-                style={
-                  Object {
-                    "width": 0.01,
-                  }
-                }
+              <span
+                className="text-sm"
               >
-                <span
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "&#8203;",
-                    }
-                  }
-                />
-              </legend>
-            </fieldset>
+                Désactiver tous les filtres
+              </span>
+            </button>
           </div>
         </div>
-        <div>
-          <p
-            className="text-gray-500"
+        <fieldset>
+          <label
+            className="font-semibold mb-2 ml-0"
           >
-             collectivités correspondent à votre recherche
-          </p>
-        </div>
+            Trier par
+          </label>
+          <button
+            aria-expanded={false}
+            aria-label="ouvrir le menu"
+            className="flex items-center w-full p-2 text-left text-sm fr-select !flex !px-4 !bg-none !bg-grey975"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onPointerDown={[Function]}
+          >
+            <span
+              className="mr-auto flex line-clamp-1"
+            >
+              % Réalisé courant
+            </span>
+            <span
+              className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            />
+          </button>
+        </fieldset>
       </div>
       <div
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 mt-10 md:mt-16"
         style={
           Object {
             "color": "#6A6AF4",
@@ -7159,32 +6649,6 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
            
           Modifiez ou désactivez les filtres pour obtenir plus de résultats
         </div>
-        <div
-          className="flex"
-        >
-          <a
-            className="text-sm"
-            href="/toutes_collectivites"
-          >
-            <div
-              className="text-bf500 border-bf500"
-            >
-              <span
-                className="fr-icon-close-circle-fill mr-1"
-                style={
-                  Object {
-                    "fontSize": ".7rem",
-                  }
-                }
-              />
-              <span
-                className="text-xs"
-              >
-                Désactiver tous les filtres
-              </span>
-            </div>
-          </a>
-        </div>
         <img
           alt=""
           src="no-results-astronaut-bro.svg"
@@ -7197,72 +6661,6 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/PageToutesLesCollectivites 
         />
       </div>
     </div>
-  </div>
-  <div
-    className="md:hidden w-full my-4"
-  >
-    <button
-      className="fr-btn text-center fr-fi-filter-fill fr-fi--sm min-w-full text-center"
-      onClick={[Function]}
-    >
-      Filtrer (6)
-    </button>
-  </div>
-  <div
-    className="flex justify-center mt-3"
-  >
-    <nav
-      aria-label="Pagination"
-      className="fr-pagination"
-      role="navigation"
-    >
-      <ul
-        className="fr-pagination__list"
-      >
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--first"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
-        >
-          Première page
-        </button>
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
-        >
-          Page précédente
-        </button>
-        <div
-          className=""
-        >
-          <button
-            className="fr-pagination__link fr-displayed-lg"
-            disabled={true}
-          >
-            …
-          </button>
-        </div>
-        <button
-          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Page suivante
-        </button>
-        <button
-          className="fr-pagination__link fr-pagination__link--last"
-          disabled={false}
-          onClick={[Function]}
-        >
-          Dernière page
-        </button>
-      </ul>
-    </nav>
   </div>
 </div>
 `;

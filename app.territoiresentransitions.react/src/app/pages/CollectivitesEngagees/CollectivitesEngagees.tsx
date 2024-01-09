@@ -11,7 +11,7 @@ import {useFilteredCollectivites} from './data/useFilteredCollectivites';
 import {TCollectivitesFilters} from './data/filtreLibelles';
 import {TSetFilters, initialFilters, nameToShortNames} from './data/filters';
 
-export type TRenderToutesCollectivitesProps = {
+export type TRenderCollectivitesEngageesPage = {
   collectivites: TCollectiviteCarte[];
   collectivitesCount: number;
   filters: TCollectivitesFilters;
@@ -19,8 +19,8 @@ export type TRenderToutesCollectivitesProps = {
   isLoading: boolean;
 };
 
-export const RenderToutesLesCollectivites = (
-  props: TRenderToutesCollectivitesProps
+export const RenderCollectivitesEngageesPage = (
+  props: TRenderCollectivitesEngageesPage
 ) => {
   const ownedCollectivites = useOwnedCollectivites();
 
@@ -55,7 +55,7 @@ export const RenderToutesLesCollectivites = (
   );
 };
 
-const ToutesLesCollectivites = () => {
+const CollectivitesEngageesPage = () => {
   // filtre initial
   const [filters, setFilters] = useSearchParams<TCollectivitesFilters>(
     'collectivites',
@@ -66,7 +66,7 @@ const ToutesLesCollectivites = () => {
     useFilteredCollectivites(filters);
 
   return (
-    <RenderToutesLesCollectivites
+    <RenderCollectivitesEngageesPage
       collectivites={collectivites}
       collectivitesCount={collectivitesCount}
       filters={filters}
@@ -76,4 +76,4 @@ const ToutesLesCollectivites = () => {
   );
 };
 
-export default ToutesLesCollectivites;
+export default CollectivitesEngageesPage;

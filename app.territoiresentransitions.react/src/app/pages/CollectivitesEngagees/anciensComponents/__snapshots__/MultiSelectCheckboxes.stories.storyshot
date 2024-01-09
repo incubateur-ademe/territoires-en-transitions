@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Multiple 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage/components/MultiSelectCheckboxes Selection Multiple 1`] = `
 <ul>
   <div>
     <div
@@ -135,7 +135,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheck
 </ul>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
 <ul>
   <div>
     <div
@@ -270,7 +270,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheck
 </ul>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Multiple 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage/components/MultiSelectCheckboxes Selection Multiple 1`] = `
 <ul>
   <div>
     <div
@@ -405,7 +405,7 @@ exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheck
 </ul>
 `;
 
-exports[`Storyshots app/pages/ToutesLesCollectivites/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
+exports[`Storyshots app/pages/CollectivitesEngageesPage/components/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
 <ul>
   <div>
     <div

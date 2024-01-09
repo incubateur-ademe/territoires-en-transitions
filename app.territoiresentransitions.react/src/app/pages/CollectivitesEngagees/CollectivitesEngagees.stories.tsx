@@ -1,13 +1,13 @@
 import {Meta} from '@storybook/react';
 import {
-  RenderToutesLesCollectivites,
-  TRenderToutesCollectivitesProps,
-} from './ToutesLesCollectivites';
+  RenderCollectivitesEngageesPage,
+  TRenderCollectivitesEngageesPage,
+} from './CollectivitesEngagees';
 import fixture from './data/fixture.json';
 import type {TCollectivitesFilters} from './data/filtreLibelles';
 
 export default {
-  component: RenderToutesLesCollectivites,
+  component: RenderCollectivitesEngageesPage,
 } as Meta;
 
 const emptyFilters: TCollectivitesFilters = {
@@ -37,7 +37,7 @@ const fakeDepartements = [
   {code: '28', region_code: '28', libelle: 'Normandie'},
 ];
 
-const avecDesRésultatsSansFiltresArgs: TRenderToutesCollectivitesProps = {
+const avecDesRésultatsSansFiltresArgs: TRenderCollectivitesEngageesPage = {
   collectivites: fixture.collectivites,
   collectivitesCount: fixture.collectivites.length,
   filters: emptyFilters,
@@ -64,7 +64,7 @@ const activeFilters: TCollectivitesFilters = {
   trierPar: ['score'],
 };
 
-const avecDesRésultatsEtDesArgs: TRenderToutesCollectivitesProps = {
+const avecDesRésultatsEtDesArgs: TRenderCollectivitesEngageesPage = {
   collectivites: fixture.collectivites,
   collectivitesCount: fixture.collectivites.length,
   filters: activeFilters,
@@ -79,7 +79,7 @@ export const AvecDesRésultatsEtDesFiltres = {
   args: avecDesRésultatsEtDesArgs,
 };
 
-const sansRésultatsArgs: TRenderToutesCollectivitesProps = {
+const sansRésultatsArgs: TRenderCollectivitesEngageesPage = {
   collectivites: [],
   collectivitesCount: 0,
   filters: activeFilters,

@@ -5,8 +5,8 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
   trierParOptions,
-} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
-import {MultiSelectCheckboxes} from 'app/pages/ToutesLesCollectivites/anciensComponents/MultiSelectCheckboxes';
+} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
+import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/anciensComponents/MultiSelectCheckboxes';
 import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
 import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';

@@ -1,4 +1,4 @@
-import {TOption} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
+import {TOption} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
 
 export type TMultiSelectCheckboxesProps = {
   htmlId: string;

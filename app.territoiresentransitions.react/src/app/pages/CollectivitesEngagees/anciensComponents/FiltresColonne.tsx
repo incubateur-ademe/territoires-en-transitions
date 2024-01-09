@@ -6,8 +6,8 @@ import {
   RegionFiltre,
   TauxRemplissageCollectiviteFiltre,
   TypeCollectiviteFiltre,
-} from 'app/pages/ToutesLesCollectivites/anciensComponents/Filtres';
-import type {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
+} from 'app/pages/CollectivitesEngagees/anciensComponents/Filtres';
+import type {TCollectivitesFilters} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
 import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {TDepartement} from '../data/useDepartements';
