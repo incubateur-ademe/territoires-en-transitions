@@ -11,6 +11,8 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+
+import {Button} from '../buttons/button/Button';
 import {preset} from '../../tailwind-preset';
 
 type Size = 'sm' | 'md' | 'lg' | 'xl';
@@ -154,14 +156,15 @@ export const Modal = ({
                 })}
               >
                 {!noCloseButton && (
-                  <button
-                    onClick={handleOpenChange}
-                    className="absolute top-8 right-8 p-2 rounded-lg border border-solid border-grey-3"
-                    title="Fermer"
+                  <Button
                     data-test={`close-${dataTest}`}
-                  >
-                    <span className="flex fr-icon-close-line before:w-4 before:h-4 text-primary-7" />
-                  </button>
+                    title="Fermer"
+                    onClick={handleOpenChange}
+                    icon="close-line"
+                    variant="grey"
+                    size="xs"
+                    className="absolute top-8 right-8"
+                  />
                 )}
                 {(title || subTitle || description) && (
                   <div
