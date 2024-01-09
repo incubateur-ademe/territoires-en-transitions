@@ -4,6 +4,7 @@ import {forwardRef} from 'react';
 import {Modal} from './Modal';
 
 const meta: Meta<typeof Modal> = {
+  title: 'Design System/Modale',
   component: Modal,
   decorators: [story => <div className="p-8">{story()}</div>],
 };
