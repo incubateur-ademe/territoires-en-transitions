@@ -23,7 +23,7 @@ import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
-import {ToutesLesCollectivitesPage} from '../ToutesLesCollectivites/ToutesLesCollectivitesPage';
+import {CollectivitesEngageesPage} from '../CollectivitesEngagees/CollectivitesEngageesPage';
 import {JournalActivitePage} from './Historique/JournalActivitePage';
 import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
@@ -74,7 +74,7 @@ export const CollectiviteRoutes = () => {
         <ParcoursLabellisationPage />
       </Route>
       <Route path={collectiviteAllCollectivitesPath}>
-        <ToutesLesCollectivitesPage />
+        <CollectivitesEngageesPage />
       </Route>
     </>
   );
@@ -93,7 +93,7 @@ const RouteEnAccesRestreint = (props: RouteProps) => {
     <Route
       {...other}
       render={({location}) =>
-        collectivite.acces_restreint && collectivite.niveau_acces===null ? (
+        collectivite.acces_restreint && collectivite.niveau_acces === null ? (
           <Redirect
             to={makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,

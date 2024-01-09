@@ -11,7 +11,7 @@ import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
 import {allCollectivitesPath, authBasePath, profilPath} from 'app/paths';
-import {ToutesLesCollectivitesPage} from 'app/pages/ToutesLesCollectivites/ToutesLesCollectivitesPage';
+import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
 import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
@@ -56,7 +56,7 @@ export const App = () => {
                   </Route>
 
                   <Route path={allCollectivitesPath}>
-                    <ToutesLesCollectivitesPage />
+                    <CollectivitesEngageesPage />
                   </Route>
                   <Route path={'/collectivite/:collectiviteId'}>
                     <CollectiviteRoutes />
