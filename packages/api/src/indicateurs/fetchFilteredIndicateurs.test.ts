@@ -1,13 +1,8 @@
-import {test} from 'node:test';
 import {assert} from 'chai';
 import {signIn, signOut} from '../tests/auth';
 import {testReset} from '../tests/testReset';
 import {supabase} from '../tests/supabase';
-import {
-  Filters,
-  Subset,
-  fetchFilteredIndicateurs,
-} from './fetchFilteredIndicateurs';
+import {fetchFilteredIndicateurs, Filters, Subset,} from './fetchFilteredIndicateurs';
 
 const FIXTURE = {
   indicateur_pilote: [
@@ -48,34 +43,38 @@ const FIXTURE = {
   ],
 };
 
-test('Filtrer les indicateurs', async context => {
-  await testReset();
-  await signIn('yolododo');
+// wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
+const fetchIndicateurs = (subset: Subset, filters: Filters) =>
+  fetchFilteredIndicateurs(supabase, 1, subset, filters);
+describe('Filtrer les indicateurs', async () => {
 
-  // insère les données de test
-  await Promise.all(
-    Object.entries(FIXTURE).map(async ([tableName, entries]) => {
-      console.log(`insert fixture into ${tableName}`);
-      const upsert = await supabase.from(tableName).upsert(entries);
-      assert.equal(
-        upsert.status,
-        201,
-        `insertion de ${JSON.stringify(entries)} dans ${tableName}`
-      );
-    })
-  );
+  before(async function () {
+    await testReset();
+    await signIn('yolododo');
 
-  // wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
-  const fetchIndicateurs = (subset: Subset, filters: Filters) =>
-    fetchFilteredIndicateurs(supabase, 1, subset, filters);
+    // insère les données de test
+    await Promise.all(
+      Object.entries(FIXTURE).map(async ([tableName, entries]) => {
+        console.log(`insert fixture into ${tableName}`);
+        const upsert = await supabase.from(tableName).upsert(entries);
+        assert.equal(
+          upsert.status,
+          201,
+          `insertion de ${JSON.stringify(entries)} dans ${tableName}`
+        );
+      })
+    );
 
-  await context.test('par le sous-ensemble ECi', async t => {
+  });
+
+
+  it('par le sous-ensemble ECi', async () => {
     const {status, data} = await fetchIndicateurs('eci', {});
     assert.equal(status, 200);
     assert.closeTo(data.length, 35, 3, 'plus ou moins 35 ind. ECi');
   });
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par texte (dans le titre ou la description)',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -106,7 +105,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par identifiant',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -118,7 +117,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par une thématique',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -129,7 +128,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par plusieurs thématiques',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -145,7 +144,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par personne pilote',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -156,7 +155,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par tag de personne pilote',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -167,7 +166,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par personne et tag pilote',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -179,7 +178,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par action du référentiel',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -190,7 +189,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     "par le sous-ensemble ECi et par id de plan d'actions",
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -201,7 +200,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble ECi et par id de service',
     async () => {
       const {status, data} = await fetchIndicateurs('eci', {
@@ -212,13 +211,13 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test('par le sous-ensemble CAE', async () => {
+  it('par le sous-ensemble CAE', async () => {
     const {status, data} = await fetchIndicateurs('cae', {});
     assert.equal(status, 200);
     assert.closeTo(data.length, 65, 3);
   });
 
-  await context.test(
+  it(
     'par le sous-ensemble CAE et par le flag "participation au score"',
     async () => {
       const {status, data} = await fetchIndicateurs('cae', {
@@ -229,7 +228,7 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await context.test(
+  it(
     'par le sous-ensemble CAE et l\'état "complété"',
     async () => {
       const {status, data} = await fetchIndicateurs('cae', {rempli: true});
@@ -238,5 +237,8 @@ test('Filtrer les indicateurs', async context => {
     }
   );
 
-  await signOut();
+  after(async function () {
+    // runs once after the last test in this block
+    await signOut();
+  });
 });
