@@ -2,6 +2,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {forwardRef} from 'react';
 
 import {Modal} from './Modal';
+import {Button} from '../buttons/button/Button';
 
 const meta: Meta<typeof Modal> = {
   title: 'Design System/Modale',
@@ -15,20 +16,16 @@ type Story = StoryObj<typeof Modal>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const OpenButton = forwardRef((props: any, ref) => (
-  <button
-    {...props}
-    ref={ref}
-    className="min-w-[5rem] p-2 rounded-lg border border-solid border-grey-5"
-  >
+  <Button {...props} ref={ref} variant="outlined">
     {props.text ? props.text : 'Open'}
-  </button>
+  </Button>
 ));
 
 export const Default: Story = {
   args: {
     textAlign: 'left',
     title: 'Un titre simple',
-    subTitle: 'Un petit sous titre',
+    subTitle: 'Un sous titre',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
@@ -45,7 +42,7 @@ export const LongContent: Story = {
   args: {
     textAlign: 'left',
     title: 'Un titre simple',
-    subTitle: 'Un petit sous titre',
+    subTitle: 'Un sous titre',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
@@ -53,13 +50,16 @@ export const LongContent: Story = {
     return (
       <Modal
         {...args}
-        render={() => (
+        render={({close}) => (
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
             <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
             <p>Un autre paragraphe.</p>
-            <button className="ml-auto p-2 text-white bg-primary-7 hover:!bg-primary-8 rounded-lg">
-              Un bouton
-            </button>
+            <div className="flex gap-6 mt-2 ml-auto">
+              <Button variant="grey" onClick={() => close()}>
+                Annuler
+              </Button>
+              <Button>Valider</Button>
+            </div>
           </div>
         )}
       >
@@ -72,7 +72,7 @@ export const LongContent: Story = {
 export const WithRender: Story = {
   args: {
     title: 'Un titre simple',
-    subTitle: 'Un petit sous titre',
+    subTitle: 'Un sous titre',
   },
   render: args => {
     return (
@@ -82,9 +82,7 @@ export const WithRender: Story = {
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
             <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
             <p>Un autre paragraphe.</p>
-            <button className="ml-auto p-2 text-white bg-primary-7 hover:!bg-primary-8 rounded-lg">
-              Un bouton
-            </button>
+            <Button className="ml-auto">Valider</Button>
           </div>
         )}
       >
