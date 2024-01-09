@@ -47,8 +47,8 @@ export type ModalProps = {
   subTitle?: string;
   /** Description de la modale, n'est pas affichée si non définie. Elle est placée sous le titre */
   description?: string;
-  /** Titre et description centrés par défaut, mettre à false pour aligner à gauche */
-  textCenter?: boolean;
+  /** Titre et description centrés par défaut */
+  textAlign?: 'left' | 'center' | 'right';
   /** Permet de contrôler l'ouverture de la modale */
   openState?: {
     /** état d'ouverture de la modale */
@@ -77,7 +77,7 @@ const Modal = ({
   children,
   title,
   description,
-  textCenter = true,
+  textAlign = 'center',
   openState,
   onClose,
   size = 'md',
@@ -162,7 +162,9 @@ const Modal = ({
                 {(title || description) && (
                   <div
                     className={classNames('flex flex-col gap-4', {
-                      'text-center': textCenter,
+                      'text-left': textAlign === 'left',
+                      'text-center': textAlign === 'center',
+                      'text-right': textAlign === 'right',
                     })}
                   >
                     {title && (
