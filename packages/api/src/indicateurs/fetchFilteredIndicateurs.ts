@@ -21,6 +21,7 @@ export type Filters = {
   type?: Enums<'indicateur_referentiel_type'>[];
   participation_score?: boolean;
   rempli?: boolean;
+  confidentiel?: boolean;
   fiches_non_classees?: boolean;
   text?: string;
 };
@@ -187,6 +188,11 @@ export const fetchFilteredIndicateurs = (
   // filtre les indicateurs complétés / à compléter
   if (filters.rempli !== undefined) {
     query.is('rempli', filters.rempli!);
+  }
+
+  // filtre les indicateurs confidentiels
+  if (filters.confidentiel !== undefined) {
+    query.is('confidentiel', filters.confidentiel!);
   }
 
   // par personne pilote

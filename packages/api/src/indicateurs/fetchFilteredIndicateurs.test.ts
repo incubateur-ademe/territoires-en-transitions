@@ -41,11 +41,18 @@ const FIXTURE = {
       thematique_id: 8,
     },
   ],
+  indicateur_confidentiel: [
+    {
+      indicateur_id: 'cae_1.a',
+      collectivite_id: 1,
+    },
+  ],
 };
 
 // wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
 const fetchIndicateurs = (subset: Subset, filters: Filters) =>
   fetchFilteredIndicateurs(supabase, 1, subset, filters);
+
 describe('Filtrer les indicateurs', async () => {
 
   before(async function () {
@@ -66,7 +73,6 @@ describe('Filtrer les indicateurs', async () => {
     );
 
   });
-
 
   it('par le sous-ensemble ECi', async () => {
     const {status, data} = await fetchIndicateurs('eci', {});
@@ -234,6 +240,17 @@ describe('Filtrer les indicateurs', async () => {
       const {status, data} = await fetchIndicateurs('cae', {rempli: true});
       assert.equal(status, 200);
       assert.closeTo(data.length, 2, 1);
+    }
+  );
+
+  it(
+    'par le sous-ensemble CAE et l\'état "confidentiel"',
+    async () => {
+      const {status, data} = await fetchIndicateurs('cae', {
+        confidentiel: true,
+      });
+      assert.equal(status, 200);
+      assert.equal(data.length, 1);
     }
   );
 
