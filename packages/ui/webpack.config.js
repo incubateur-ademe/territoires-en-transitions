@@ -35,10 +35,6 @@ module.exports = function (env, argv) {
     // ordre de résolution des modules js par extension
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
-      // alias pour éviter des chemins relatifs dans les imports
-      alias: {
-        '@ds': './src/design-system',
-      },
     },
 
     // exclut du bundle les bibliothèques externes
