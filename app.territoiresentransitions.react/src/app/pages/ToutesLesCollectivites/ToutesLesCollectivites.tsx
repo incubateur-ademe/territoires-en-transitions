@@ -67,7 +67,7 @@ export const RenderToutesLesCollectivites = (
           {/* Filters column */}
           <div
             className={classNames(
-              'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-3/12 xl:mr-14',
+              'flex flex-col bg-white z-20 md:mr-6 md:!block md:w-4/12 xl:w-3/12 xl:mr-14',
               {
                 hidden: !isMobileFilterOpen,
                 'collectivites-filter-column-mobile': isMobileFilterOpen,
@@ -111,7 +111,7 @@ export const RenderToutesLesCollectivites = (
             handleOpenFilter={() => setIsMobileFilterOpen(true)}
           />
           {/* Collectivites column */}
-          <div className="w-full">
+          <div className="grow">
             <div className="flex flex-col mb-6 md:flex-row md:justify-between">
               <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
                 {props.collectivitesCount > 0 && (
