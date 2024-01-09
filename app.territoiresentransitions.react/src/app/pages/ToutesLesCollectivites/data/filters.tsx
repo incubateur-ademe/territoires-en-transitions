@@ -1,6 +1,6 @@
 import {TCollectivitesFilters} from './filtreLibelles';
 
-export type TSetFilters = (newFilter: TCollectivitesFilters | null) => void;
+export type TSetFilters = (newFilters: TCollectivitesFilters) => void;
 
 // valeurs par défaut des filtres
 export const initialFilters: TCollectivitesFilters = {
