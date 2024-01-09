@@ -86,7 +86,7 @@ const Modal = ({
   size = 'md',
   disableDismiss,
   noCloseButton,
-  zIndex,
+  zIndex = 1000,
   dataTest = 'Modal',
 }: ModalProps) => {
   const isControlled = !!openState;
@@ -132,7 +132,7 @@ const Modal = ({
               display: 'grid',
               placeItems: 'center',
               background: preset.theme.extend.colors.overlay,
-              zIndex: zIndex ?? 1100,
+              zIndex,
             }}
           >
             <FloatingFocusManager context={context}>
