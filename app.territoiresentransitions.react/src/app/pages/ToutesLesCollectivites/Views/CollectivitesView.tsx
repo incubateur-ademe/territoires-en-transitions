@@ -1,12 +1,12 @@
 import {TrierParFiltre} from '../anciensComponents/Filtres';
 import {CollectivitesGrid} from '../anciensComponents/CollectivitesGrid';
-import {Pagination} from '../anciensComponents/Pagination';
 import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 
 import {NB_CARDS_PER_PAGE} from '../data/useFilteredCollectivites';
 import {TSetFilters, getNumberOfActiveFilters} from '../data/filters';
 import {TCollectivitesFilters} from '../data/filtreLibelles';
 import {TCollectiviteCarte} from '../types';
+import {Pagination} from 'ui/shared/Pagination';
 
 type View = {
   initialFilters: TCollectivitesFilters;
