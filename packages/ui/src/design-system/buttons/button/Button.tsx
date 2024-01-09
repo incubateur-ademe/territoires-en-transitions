@@ -1,7 +1,7 @@
 import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
 
-import {buttonThemeClassnames} from '../utils';
+import {buttonThemeClassnames} from '../theme';
 import ButtonContent from './ButtonContent';
 import {
   ButtonContentProps,

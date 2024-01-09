@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import {IconSize} from './types';
+
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 type IconProps = {
   icon: JSX.Element | ((className: string) => JSX.Element) | string;
@@ -30,7 +31,9 @@ export const Icon = ({icon, size, svgClassName}: IconProps) => {
         })}
       />
     );
-  } else if (typeof icon === 'function') {
+  }
+  if (typeof icon === 'function') {
     return icon(classNames(sizeClassnames, svgClassName));
-  } else return icon;
+  }
+  return icon;
 };

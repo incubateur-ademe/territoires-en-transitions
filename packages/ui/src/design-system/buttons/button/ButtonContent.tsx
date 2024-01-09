@@ -1,15 +1,14 @@
 import classNames from 'classnames';
 
-import {Icon} from '../../icons/Icon';
-import {buttonThemeClassnames} from '../utils';
-import {IconSize} from '../../icons/types';
+import {Icon, IconSize} from '../../icons/Icon';
+import {buttonThemeClassnames} from '../theme';
 import {ButtonContentProps, ButtonSize} from '../types';
 
 const getIconSize = (
   size: ButtonSize,
   isIconButton: boolean,
   isRemixIcon: boolean
-): IconSize => {
+): IconSize | undefined => {
   // Les icônes remix ont la taille définie par le font size
   // Dans le cas des icon buttons, une taille est définie pour forcer la largeur
   // et avoir un bouton carré
@@ -30,8 +29,8 @@ const getIconSize = (
 };
 
 const ButtonContent = ({
-  variant,
-  size,
+  variant = 'primary',
+  size = 'md',
   icon,
   iconPosition = 'left',
   children,
