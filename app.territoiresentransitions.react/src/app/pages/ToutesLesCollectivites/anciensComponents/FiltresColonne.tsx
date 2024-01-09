@@ -12,14 +12,13 @@ import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {TDepartement} from '../data/useDepartements';
 import {TRegion} from '../data/useRegions';
-
-type UpdateFilters = (newFilters: TCollectivitesFilters) => void;
+import {TSetFilters} from '../data/filters';
 
 export const FiltresColonne = (props: {
   departments: TDepartement[];
   regions: TRegion[];
   filters: TCollectivitesFilters;
-  setFilters: UpdateFilters;
+  setFilters: TSetFilters;
 }) => {
   const tracker = useFonctionTracker();
 
