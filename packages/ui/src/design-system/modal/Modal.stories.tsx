@@ -1,7 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {forwardRef} from 'react';
 
-import Modal from './Modal';
+import {Modal} from './Modal';
 
 const meta: Meta<typeof Modal> = {
   component: Modal,

@@ -74,7 +74,7 @@ export type ModalProps = {
  * Basic modal
  * If you provide isOpen you must add the corresponding setState function.
  */
-const Modal = ({
+export const Modal = ({
   render,
   children,
   title,
@@ -200,5 +200,3 @@ const Modal = ({
     </>
   );
 };
-
-export default Modal;
