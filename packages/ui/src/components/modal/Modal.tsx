@@ -66,6 +66,8 @@ export type ModalProps = {
   noCloseButton?: boolean;
   /** z-index de la modale, est placé sur l'overlay */
   zIndex?: string | number;
+  /** Id de test */
+  dataTest?: string;
 };
 
 /*
@@ -85,6 +87,7 @@ const Modal = ({
   disableDismiss,
   noCloseButton,
   zIndex,
+  dataTest = 'Modal',
 }: ModalProps) => {
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
@@ -134,7 +137,7 @@ const Modal = ({
           >
             <FloatingFocusManager context={context}>
               <div
-                data-test="Modal"
+                data-test={dataTest}
                 {...getFloatingProps({
                   ref: refs.setFloating,
                   'aria-labelledby': labelId,
@@ -155,7 +158,7 @@ const Modal = ({
                     onClick={handleOpenChange}
                     className="absolute top-8 right-8 p-2 rounded-lg border border-solid border-grey-3"
                     title="Fermer"
-                    data-test="close-modal"
+                    data-test={`close-${dataTest}`}
                   >
                     <span className="flex fr-icon-close-line before:w-4 before:h-4 text-primary-7" />
                   </button>
