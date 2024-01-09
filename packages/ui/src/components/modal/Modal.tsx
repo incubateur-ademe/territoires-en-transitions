@@ -37,12 +37,14 @@ export type RenderProps = {
 
 /** Types des props du composant générique Modal */
 export type ModalProps = {
-  /** où il faut mettre le contenu de la modale */
+  /** Fonction de rendu du contenu de la modale */
   render?: (props: RenderProps) => React.ReactNode;
   /** l'élément qui permet d'afficher la modale au click, généralement un bouton */
   children?: JSX.Element;
   /** Titre de la modale, n'est pas affiché si non défini */
   title?: string;
+  /** Sous-titre de la modale, n'est pas affiché si non défini */
+  subTitle?: string;
   /** Description de la modale, n'est pas affichée si non définie. Elle est placée sous le titre */
   description?: string;
   /** Titre et description centrés par défaut, mettre à false pour aligner à gauche */

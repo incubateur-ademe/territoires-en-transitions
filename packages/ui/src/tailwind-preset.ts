@@ -86,6 +86,7 @@ export const preset = {
         },
         // Autres couleurs
         'orange-1': '#F28E40',
+        // Couleur de fond pour les modales ou panneaux latéraux
         overlay: 'hsla(240, 40%, 27%, 0.5)',
       },
     },
