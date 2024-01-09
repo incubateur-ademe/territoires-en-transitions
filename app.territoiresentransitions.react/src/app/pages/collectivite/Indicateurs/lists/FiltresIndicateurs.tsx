@@ -34,6 +34,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
     plans,
     rempli,
     participation_score,
+    confidentiel,
     //    type,
   } = filterParams;
 
@@ -94,6 +95,18 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                   />
                 </FormField>
               )*/}
+                <Checkbox
+                  className="mt-2 font-medium"
+                  label="Indicateurs privés"
+                  checked={confidentiel?.includes('oui') || false}
+                  onCheck={() =>
+                    updateFilterParam(
+                      'confidentiel',
+                      confidentiel?.includes('oui') ? [] : ['oui']
+                    )
+                  }
+                />
+
                 {view === 'cae' && (
                   <div className="flex flex-row">
                     <Checkbox

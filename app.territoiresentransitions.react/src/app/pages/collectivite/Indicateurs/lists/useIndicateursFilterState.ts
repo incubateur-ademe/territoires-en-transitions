@@ -13,6 +13,7 @@ type TFilters = {
   rempli?: string[];
   type?: string[];
   participation_score?: string[];
+  confidentiel?: string[];
   text?: string[];
 };
 const initialFilters: TFilters = {};
@@ -26,6 +27,7 @@ const nameToShortNames: {[K in keyof TFilters]?: string} = {
   rempli: 'r',
   type: 'ty',
   participation_score: 'ps',
+  confidentiel: 'c',
   text: 'tx',
 };
 
@@ -87,6 +89,7 @@ export const useIndicateursFilterState = () => {
     type: filterParams.type as Enums<'indicateur_referentiel_type'>[],
     participation_score:
       filterParams.participation_score?.includes('oui') || undefined,
+    confidentiel: filterParams.confidentiel?.includes('oui') || undefined,
     text: filterParams?.text?.[0]?.trim() || undefined,
   };
 
