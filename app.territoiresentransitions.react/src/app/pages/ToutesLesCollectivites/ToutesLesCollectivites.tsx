@@ -1,24 +1,29 @@
 import {useMemo, useState} from 'react';
-import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/components/CollectivitesGrid';
+import classNames from 'classnames';
+
+import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
+import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+
+import {useSearchParams} from 'core-logic/hooks/query';
+import {TCollectiviteCarte} from './types';
 import {
   NB_CARDS_PER_PAGE,
   useFilteredCollectivites,
-} from './useFilteredCollectivites';
-import {TDepartement, useDepartements} from './useDepartements';
-import {TRegion, useRegions} from './useRegions';
-import {TCollectivitesFilters} from './filtreLibelles';
-import {FiltresColonne} from './components/FiltresColonne';
-import {TCollectiviteCarte} from './types';
-import {TrierParFiltre} from './components/Filtres';
-import {Pagination} from './components/Pagination';
-import {getNumberOfActiveFilters} from './getNumberOfActiveFilters';
-import classNames from 'classnames';
-import './ToutesLesCollectivites.css';
-import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
+} from './data/useFilteredCollectivites';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
-import {initialFilters, nameToShortNames} from './filters';
-import {useSearchParams} from 'core-logic/hooks/query';
+import {TDepartement, useDepartements} from './data/useDepartements';
+import {TRegion, useRegions} from './data/useRegions';
+import {TCollectivitesFilters} from './data/filtreLibelles';
+import {
+  getNumberOfActiveFilters,
+  initialFilters,
+  nameToShortNames,
+} from './data/filters';
+
+import {CollectivitesGrid} from 'app/pages/ToutesLesCollectivites/anciensComponents/CollectivitesGrid';
+import {FiltresColonne} from './anciensComponents/FiltresColonne';
+import {TrierParFiltre} from './anciensComponents/Filtres';
+import {Pagination} from './anciensComponents/Pagination';
 
 export type TRenderToutesCollectivitesProps = {
   regions: TRegion[];

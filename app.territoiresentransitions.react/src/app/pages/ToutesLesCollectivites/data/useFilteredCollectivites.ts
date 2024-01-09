@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TCollectiviteCarte} from './types';
-import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/filtreLibelles';
+import {TCollectiviteCarte} from '../types';
+import {TCollectivitesFilters} from 'app/pages/ToutesLesCollectivites/data/filtreLibelles';
 
 const screenIsMobile = () =>
   window.innerHeight <= 800 && window.innerWidth <= 600;

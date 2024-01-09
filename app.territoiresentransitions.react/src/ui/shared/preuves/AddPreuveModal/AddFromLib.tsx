@@ -1,6 +1,6 @@
 import {ChangeEvent, FormEvent, useState} from 'react';
 import {UiSearchBar} from 'ui/UiSearchBar';
-import {Pagination} from 'app/pages/ToutesLesCollectivites/components/Pagination';
+import {Pagination} from 'app/pages/ToutesLesCollectivites/anciensComponents/Pagination';
 import {TBibliothequeFichier} from '../Bibliotheque/types';
 import {
   useFichiers,
