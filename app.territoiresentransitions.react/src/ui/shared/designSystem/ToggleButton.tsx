@@ -1,10 +1,12 @@
 import classNames from 'classnames';
-import {Ref, forwardRef, useState} from 'react';
+import {Ref, forwardRef} from 'react';
 import IconCheck from 'ui/shared/designSystem/icons/IconCheck';
 
 type Props = {
   isChecked?: boolean | null;
-  onClick: () => void;
+  className?: string;
+  disabled?: boolean;
+  onClick: (newValue: boolean) => void;
   description?: string;
   'data-test'?: string;
 };
@@ -12,26 +14,35 @@ type Props = {
 /** Boutton toggle avec description */
 const ToggleButton = forwardRef(
   (
-    {isChecked = false, description, onClick, 'data-test': dataTest}: Props,
+    {
+      isChecked = false,
+      className,
+      disabled,
+      description,
+      onClick,
+      'data-test': dataTest,
+    }: Props,
     ref: Ref<HTMLButtonElement>
   ) => {
-    const [checked, setChecked] = useState(isChecked);
-
     const handleClick = () => {
-      onClick();
-      setChecked(!checked);
+      onClick(!isChecked);
     };
 
     return (
       <button
         data-test={dataTest}
         ref={ref}
-        className="flex items-center gap-3 !bg-transparent"
+        className={classNames(
+          'flex items-center gap-3 !bg-transparent',
+          className
+        )}
+        disabled={disabled}
         onClick={handleClick}
       >
         <div
           className={classNames('p-1 rounded-full bg-grey-4', {
-            'bg-primary': checked,
+            'bg-primary': isChecked,
+            'opacity-50': disabled,
           })}
         >
           <div className="w-8">
@@ -39,11 +50,13 @@ const ToggleButton = forwardRef(
               className={classNames(
                 'flex w-4 h-4 rounded-full bg-grey-1 transition',
                 {
-                  'translate-x-4': checked,
+                  'translate-x-4': isChecked,
                 }
               )}
             >
-              {checked && <IconCheck className="w-3 h-3 m-auto fill-primary" />}
+              {isChecked && (
+                <IconCheck className="w-3 h-3 m-auto fill-primary" />
+              )}
             </span>
           </div>
         </div>
