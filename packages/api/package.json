@@ -11,8 +11,8 @@
     "build": "tsc",
     "dev": "tsc -w",
     "typecheck": "tsc --noEmit",
-    "test": "mocha -r dotenv/config --require ts-node/register --test ./src/**/*.test.ts",
-    "test:watch": "mocha -r dotenv/config --require ts-node/register --watch --test ./src/**/*.test.ts",
+    "test": "mocha -r dotenv/config --require ts-node/register ./src/**/*.test.ts",
+    "test:watch": "mocha -r dotenv/config --require ts-node/register --watch ./src/**/*.test.ts",
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\"",
     "lint": "eslint \"src/**/*.ts?(x)\""
   },
