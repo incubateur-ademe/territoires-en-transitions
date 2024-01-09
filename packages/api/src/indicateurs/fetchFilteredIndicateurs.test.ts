@@ -46,6 +46,10 @@ const FIXTURE = {
       indicateur_id: 'cae_1.a',
       collectivite_id: 1,
     },
+    {
+      indicateur_id: 'cae_2.b',
+      collectivite_id: 1,
+    },
   ],
 };
 
@@ -54,7 +58,6 @@ const fetchIndicateurs = (subset: Subset, filters: Filters) =>
   fetchFilteredIndicateurs(supabase, 1, subset, filters);
 
 describe('Filtrer les indicateurs', async () => {
-
   before(async function () {
     await testReset();
     await signIn('yolododo');
@@ -71,7 +74,6 @@ describe('Filtrer les indicateurs', async () => {
         );
       })
     );
-
   });
 
   it('par le sous-ensemble ECi', async () => {
@@ -80,142 +82,112 @@ describe('Filtrer les indicateurs', async () => {
     assert.closeTo(data.length, 35, 3, 'plus ou moins 35 ind. ECi');
   });
 
-  it(
-    'par le sous-ensemble ECi et par texte (dans le titre ou la description)',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        text: 'activité',
-      });
-      assert.equal(status, 200);
+  it('par le sous-ensemble ECi et par texte (dans le titre ou la description)', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      text: 'activité',
+    });
+    assert.equal(status, 200);
 
-      const total = data.length;
-      const count = data.filter(d => d.nom.includes('Activité')).length;
+    const total = data.length;
+    const count = data.filter(d => d.nom.includes('Activité')).length;
 
-      assert.isAbove(
-        total,
-        count,
-        "nb. d'occurences dans le nom ou la description > nb. dans le nom seulement"
-      );
-      assert.closeTo(
-        total,
-        5,
-        2,
-        'plus ou moins 5 ind. ECi contiennent le texte recherché dans leur nom ou leur description'
-      );
-      assert.closeTo(
-        count,
-        4,
-        2,
-        'plus ou moins 4 ind. ECi contiennent le texte recherché dans leur nom'
-      );
-    }
-  );
+    assert.isAbove(
+      total,
+      count,
+      "nb. d'occurences dans le nom ou la description > nb. dans le nom seulement"
+    );
+    assert.closeTo(
+      total,
+      5,
+      2,
+      'plus ou moins 5 ind. ECi contiennent le texte recherché dans leur nom ou leur description'
+    );
+    assert.closeTo(
+      count,
+      4,
+      2,
+      'plus ou moins 4 ind. ECi contiennent le texte recherché dans leur nom'
+    );
+  });
 
-  it(
-    'par le sous-ensemble ECi et par identifiant',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        text: '#10',
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-      assert.equal(data[0].id, 'eci_10');
-    }
-  );
+  it('par le sous-ensemble ECi et par identifiant', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      text: '#10',
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+    assert.equal(data[0].id, 'eci_10');
+  });
 
-  it(
-    'par le sous-ensemble ECi et par une thématique',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        thematique_ids: [5],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 4, 'ind. ECi dans la thématique');
-    }
-  );
+  it('par le sous-ensemble ECi et par une thématique', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      thematique_ids: [5],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 4, 'ind. ECi dans la thématique');
+  });
 
-  it(
-    'par le sous-ensemble ECi et par plusieurs thématiques',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        thematique_ids: [5, 4],
-      });
-      assert.equal(status, 200);
-      assert.closeTo(
-        data.length,
-        17,
-        3,
-        'plus ou moins 17 ind. ECi dans les thématiques'
-      );
-    }
-  );
+  it('par le sous-ensemble ECi et par plusieurs thématiques', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      thematique_ids: [5, 4],
+    });
+    assert.equal(status, 200);
+    assert.closeTo(
+      data.length,
+      17,
+      3,
+      'plus ou moins 17 ind. ECi dans les thématiques'
+    );
+  });
 
-  it(
-    'par le sous-ensemble ECi et par personne pilote',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it('par le sous-ensemble ECi et par personne pilote', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+  });
 
-  it(
-    'par le sous-ensemble ECi et par tag de personne pilote',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        pilote_tag_ids: [1],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it('par le sous-ensemble ECi et par tag de personne pilote', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      pilote_tag_ids: [1],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+  });
 
-  it(
-    'par le sous-ensemble ECi et par personne et tag pilote',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
-        pilote_tag_ids: [1],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it('par le sous-ensemble ECi et par personne et tag pilote', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      pilote_user_ids: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+      pilote_tag_ids: [1],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+  });
 
-  it(
-    'par le sous-ensemble ECi et par action du référentiel',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        action_id: 'eci_1.2',
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 2);
-    }
-  );
+  it('par le sous-ensemble ECi et par action du référentiel', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      action_id: 'eci_1.2',
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 2);
+  });
 
-  it(
-    "par le sous-ensemble ECi et par id de plan d'actions",
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        plan_ids: [1],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it("par le sous-ensemble ECi et par id de plan d'actions", async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      plan_ids: [1],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+  });
 
-  it(
-    'par le sous-ensemble ECi et par id de service',
-    async () => {
-      const {status, data} = await fetchIndicateurs('eci', {
-        service_ids: [1],
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it('par le sous-ensemble ECi et par id de service', async () => {
+    const {status, data} = await fetchIndicateurs('eci', {
+      service_ids: [1],
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 1);
+  });
 
   it('par le sous-ensemble CAE', async () => {
     const {status, data} = await fetchIndicateurs('cae', {});
@@ -223,36 +195,27 @@ describe('Filtrer les indicateurs', async () => {
     assert.closeTo(data.length, 65, 3);
   });
 
-  it(
-    'par le sous-ensemble CAE et par le flag "participation au score"',
-    async () => {
-      const {status, data} = await fetchIndicateurs('cae', {
-        participation_score: true,
-      });
-      assert.equal(status, 200);
-      assert.closeTo(data.length, 44, 3);
-    }
-  );
+  it('par le sous-ensemble CAE et par le flag "participation au score"', async () => {
+    const {status, data} = await fetchIndicateurs('cae', {
+      participation_score: true,
+    });
+    assert.equal(status, 200);
+    assert.closeTo(data.length, 44, 3);
+  });
 
-  it(
-    'par le sous-ensemble CAE et l\'état "complété"',
-    async () => {
-      const {status, data} = await fetchIndicateurs('cae', {rempli: true});
-      assert.equal(status, 200);
-      assert.closeTo(data.length, 2, 1);
-    }
-  );
+  it('par le sous-ensemble CAE et l\'état "complété"', async () => {
+    const {status, data} = await fetchIndicateurs('cae', {rempli: true});
+    assert.equal(status, 200);
+    assert.closeTo(data.length, 2, 1);
+  });
 
-  it(
-    'par le sous-ensemble CAE et l\'état "confidentiel"',
-    async () => {
-      const {status, data} = await fetchIndicateurs('cae', {
-        confidentiel: true,
-      });
-      assert.equal(status, 200);
-      assert.equal(data.length, 1);
-    }
-  );
+  it('par le sous-ensemble CAE et l\'état "confidentiel"', async () => {
+    const {status, data} = await fetchIndicateurs('cae', {
+      confidentiel: true,
+    });
+    assert.equal(status, 200);
+    assert.equal(data.length, 2);
+  });
 
   after(async function () {
     // runs once after the last test in this block

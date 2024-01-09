@@ -133,6 +133,7 @@ export const fetchFilteredIndicateurs = (
   const filtrerPar = {
     participationAuScore:
       subset === 'cae' && filters.participation_score !== undefined,
+    confidentiel: filters.confidentiel,
     planAction: !!filters.plan_ids?.length,
     service: !!filters.service_ids?.length,
     personne:
