@@ -5,10 +5,10 @@ export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 type IconProps = {
   icon: JSX.Element | ((className: string) => JSX.Element) | string;
   size?: IconSize;
-  svgClassName?: string;
+  className?: string;
 };
 
-export const Icon = ({icon, size, svgClassName}: IconProps) => {
+export const Icon = ({icon, size = 'md', className}: IconProps) => {
   const sizeClassnames = {
     // 14px
     'h-3.5 w-3.5': size === 'xs',
@@ -49,12 +49,13 @@ export const Icon = ({icon, size, svgClassName}: IconProps) => {
             //32px
             'text-[2rem] leading-[2rem]': size === '2xl',
           },
+          className
         )}
       />
     );
   }
   if (typeof icon === 'function') {
-    return icon(classNames(sizeClassnames, svgClassName));
+    return icon(classNames(sizeClassnames, className));
   }
   return icon;
 };
