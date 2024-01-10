@@ -51,7 +51,7 @@ export const Badge = ({
   trim = true,
   dataTest,
 }: Props) => {
-  const styles = badgeClassnames[disabled ? 'grey' : state];
+  const styles = badgeClassnames[state];
 
   return (
     <div
@@ -59,11 +59,11 @@ export const Badge = ({
       className={classNames(
         styles.background,
         styles.border,
-        'flex items-center gap-1 max-w-max px-3 py-0.5 rounded',
+        'flex items-center gap-1 max-w-max px-3 py-1 rounded',
         {
           'flex-row-reverse': iconPosition === 'left',
-          '!px-2': size === 'sm',
-          'border border-solid border-grey-4 !bg-white': light,
+          'border border-solid border-grey-4 bg-white': light,
+          '!px-1.5 !py-0.5': size === 'sm',
         },
         className
       )}
@@ -71,10 +71,11 @@ export const Badge = ({
       <span
         className={classNames(
           styles.text,
-          'font-bold uppercase text-sm text-left',
+          'font-bold uppercase text-sm leading-4 text-left',
           {
             'line-clamp-1': trim,
-            '!text-xs': size === 'sm',
+            '!text-xs !leading-4': size === 'sm',
+            'mt-0.5': size === 'md',
           }
         )}
       >
