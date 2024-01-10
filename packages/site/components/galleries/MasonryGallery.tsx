@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import {Fragment, ReactNode, useEffect, useState} from 'react';
 
-type GalleryProps = {
+type MasonryGalleryProps = {
   data: ReactNode[];
   maxCols?: 1 | 2 | 3;
   breakpoints?: {md: number; lg: number};
@@ -11,13 +11,13 @@ type GalleryProps = {
   className?: string;
 };
 
-const Gallery = ({
+const MasonryGallery = ({
   data,
   maxCols = 3,
   breakpoints = {md: 768, lg: 1280},
   gap = 'gap-8',
   className,
-}: GalleryProps) => {
+}: MasonryGalleryProps) => {
   const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(maxCols));
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
   const [columns, setColumns] = useState(3);
@@ -90,4 +90,4 @@ const Gallery = ({
   );
 };
 
-export default Gallery;
+export default MasonryGallery;

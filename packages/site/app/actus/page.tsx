@@ -5,7 +5,7 @@ import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import Section from '@components/sections/Section';
 import BlogCard from '@components/cards/BlogCard';
-import Gallery from '@components/gallery/Gallery';
+import MasonryGallery from '@components/galleries/MasonryGallery';
 import {Metadata} from 'next';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
@@ -62,7 +62,7 @@ const Actualites = async () => {
   return data ? (
     <Section>
       <h1>Actualités</h1>
-      <Gallery
+      <MasonryGallery
         data={data.map(actu => (
           <BlogCard
             key={actu.id}

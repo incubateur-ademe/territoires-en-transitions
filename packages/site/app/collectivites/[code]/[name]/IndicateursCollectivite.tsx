@@ -1,4 +1,4 @@
-import Gallery from '@components/gallery/Gallery';
+import MasonryGallery from '@components/galleries/MasonryGallery';
 import {
   IndicateurArtificialisation,
   Indicateurs,
@@ -32,7 +32,7 @@ const IndicateursCollectivite = ({
   indicateurs,
 }: IndicateursCollectiviteProps) => {
   return (
-    <Gallery
+    <MasonryGallery
       className="col-span-full md:col-span-7 lg:col-span-8"
       maxCols={2}
       breakpoints={{md: 768, lg: 1024}}
