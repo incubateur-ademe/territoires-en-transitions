@@ -1,5 +1,5 @@
 import {Ref, forwardRef} from 'react';
-import DropdownFloater from '../../floating-ui/DropdownFloater';
+import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
 
 import {CreateOption} from './Select';
 import {Option} from './Options';
