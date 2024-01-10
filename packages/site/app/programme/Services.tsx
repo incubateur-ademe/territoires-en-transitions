@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import BlogCard from '@components/cards/BlogCard';
 import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
 import Section from '@components/sections/Section';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {Content} from './types';
+import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 
 type ServicesProps = {
   titre: string;
@@ -42,7 +42,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                   />
                 ) : undefined
               }
-              href={c.href}
+              href={`/programme/${convertNameToSlug(c.titre ?? '')}`}
             />
           ))}
       </CardsWrapper>
