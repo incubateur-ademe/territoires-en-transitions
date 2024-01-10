@@ -729,47 +729,6 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
   };
 }
 
-export interface ApiBeneficeBenefice extends Schema.CollectionType {
-  collectionName: 'benefices';
-  info: {
-    singularName: 'benefice';
-    pluralName: 'benefices';
-    displayName: '[Programme] B\u00E9n\u00E9fices';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Rang: Attribute.Integer & Attribute.Unique;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    Contenu: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 350;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::benefice.benefice',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::benefice.benefice',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiCollectiviteCollectivite extends Schema.CollectionType {
   collectionName: 'collectivites';
   info: {
@@ -820,47 +779,6 @@ export interface ApiCollectiviteCollectivite extends Schema.CollectionType {
   };
 }
 
-export interface ApiEtapeEtape extends Schema.CollectionType {
-  collectionName: 'etapes';
-  info: {
-    singularName: 'etape';
-    pluralName: 'etapes';
-    displayName: '[Programme] \u00C9tapes';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Rang: Attribute.Integer & Attribute.Unique;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    Contenu: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 250;
-      }>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::etape.etape',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::etape.etape',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiFaqFaq extends Schema.CollectionType {
   collectionName: 'faqs';
   info: {
@@ -882,43 +800,6 @@ export interface ApiFaqFaq extends Schema.CollectionType {
     createdBy: Attribute.Relation<'api::faq.faq', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::faq.faq', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiObjectifObjectif extends Schema.CollectionType {
-  collectionName: 'objectifs';
-  info: {
-    singularName: 'objectif';
-    pluralName: 'objectifs';
-    displayName: '[Programme] Objectifs';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Rang: Attribute.Integer & Attribute.Unique;
-    Description: Attribute.RichText &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 75;
-      }>;
-    Pictogramme: Attribute.Media & Attribute.Required;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::objectif.objectif',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::objectif.objectif',
-      'oneToOne',
-      'admin::user'
-    > &
       Attribute.Private;
   };
 }
@@ -1278,48 +1159,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
   };
 }
 
-export interface ApiServiceService extends Schema.CollectionType {
-  collectionName: 'services';
-  info: {
-    singularName: 'service';
-    pluralName: 'services';
-    displayName: '[Programme] Services';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    Rang: Attribute.Integer & Attribute.Unique;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    Description: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 250;
-      }>;
-    Image: Attribute.Media;
-    URL: Attribute.String;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::service.service',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::service.service',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiTemoignageTemoignage extends Schema.CollectionType {
   collectionName: 'temoignages';
   info: {
@@ -1372,18 +1211,14 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::actualite.actualite': ApiActualiteActualite;
-      'api::benefice.benefice': ApiBeneficeBenefice;
       'api::collectivite.collectivite': ApiCollectiviteCollectivite;
-      'api::etape.etape': ApiEtapeEtape;
       'api::faq.faq': ApiFaqFaq;
-      'api::objectif.objectif': ApiObjectifObjectif;
       'api::page-accueil.page-accueil': ApiPageAccueilPageAccueil;
       'api::page-budget.page-budget': ApiPageBudgetPageBudget;
       'api::page-collectivite.page-collectivite': ApiPageCollectivitePageCollectivite;
       'api::page-contact.page-contact': ApiPageContactPageContact;
       'api::page-outils-numerique.page-outils-numerique': ApiPageOutilsNumeriquePageOutilsNumerique;
       'api::page-programme.page-programme': ApiPageProgrammePageProgramme;
-      'api::service.service': ApiServiceService;
       'api::temoignage.temoignage': ApiTemoignageTemoignage;
     }
   }
