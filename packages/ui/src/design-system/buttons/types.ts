@@ -1,4 +1,5 @@
 import {AnchorHTMLAttributes, ButtonHTMLAttributes} from 'react';
+import {Icon} from '../icons/Icon';
 
 export type ButtonState = 'default' | 'disabled';
 
@@ -21,7 +22,7 @@ export type ButtonContentProps = {
   /** Taille du bouton */
   size?: ButtonSize;
   /** Icône à intégrer au bouton, au format SVG ou avec la nomenclature Remix Icon */
-  icon?: JSX.Element | ((className: string) => JSX.Element) | string;
+  icon?: Icon;
   /** Position de l'icône dans le bouton */
   iconPosition?: IconPosition;
   /** Désactive les interractions avec le bouton */

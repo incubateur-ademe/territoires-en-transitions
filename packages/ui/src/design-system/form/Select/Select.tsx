@@ -13,6 +13,7 @@ import {
   getFlatOptions,
   sortOptionByAlphabet,
 } from './utils';
+import {Icon} from '../../icons/Icon';
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];
@@ -167,7 +168,13 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
                   handleInputChange('');
                 }}
               >
-                <span className="fr-icon-add-line flex w-6 shrink-0 mt-1 mr-2 text-primary-7 before:m-auto before:!h-4 before:!w-4" />
+                <div className="flex w-6 shrink-0 mt-1 mr-2">
+                  <Icon
+                    icon="add-line"
+                    size="sm"
+                    className="m-auto text-primary-7"
+                  />
+                </div>
                 <Badge
                   title={inputValue}
                   state="standard"
@@ -343,11 +350,13 @@ const SelectButton = forwardRef(
             }
           </div>
           {/** Icône flèche d'ouverture */}
-          <span
+          <Icon
+            icon="arrow-down-s-line"
+            size="sm"
             className={classNames(
-              'flex mt-2 ml-auto fr-icon-arrow-down-s-line text-primary-9 before:h-4 before:w-4',
-              {'before:rotate-180': isOpen},
-              {'before:text-grey-5': disabled}
+              'mt-2 ml-auto text-primary-9',
+              {'rotate-180': isOpen},
+              {'!text-grey-5': disabled}
             )}
           />
         </div>
