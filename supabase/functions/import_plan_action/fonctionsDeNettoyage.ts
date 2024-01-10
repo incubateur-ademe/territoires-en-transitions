@@ -235,11 +235,13 @@ export const tags = async (
     memoire : TMemoire
 ) : Promise<TTag[]> => {
     const toReturn = [];
+    const tagDone = [];
     if(tags){
         const tab :string[] = String(tags).split(regexSplit);
         for(let element of tab){
             const elem = await texte(element, true);
-            if(elem && !element.match(regexSplit)){
+            if(elem && !element.match(regexSplit) && !tagDone.includes(elem)){
+                tagDone.push(elem);
                 const tag: TTag = {
                     nom : elem,
                     collectivite_id : memoire.collectivite_id
