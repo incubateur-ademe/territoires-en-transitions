@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurDefinition, TIndicateurPredefini} from '../types';
 
 /** Met à jour l'état "confidentiel" d'un indicateur */
 export const useToggleIndicateurConfidentiel = (
@@ -15,7 +15,9 @@ export const useToggleIndicateurConfidentiel = (
     isPerso && typeof id === 'number' ? (id as number) : null;
   const indicateur_id =
     !isPerso && typeof id === 'string' && collectivite_id
-      ? (id as string)
+      ? // pour les indicateurs prédéfinis utilise l'id de l'indicateur lié si nécessaire
+        // car le trigger ne fonctionne pas pour le delete
+        (definition as TIndicateurPredefini).valeur_indicateur || (id as string)
       : null;
 
   return useMutation({
@@ -27,7 +29,7 @@ export const useToggleIndicateurConfidentiel = (
           return supabaseClient
             .from('indicateur_confidentiel')
             .delete()
-            .eq(isPerso ? 'indicateur_perso_id' : 'indicateur_id', id);
+            .match(isPerso ? {indicateur_perso_id} : {indicateur_id});
         }
 
         // ou ajoute la ligne
