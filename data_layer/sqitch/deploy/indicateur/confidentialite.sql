@@ -3,19 +3,19 @@
 BEGIN;
 
 --- liste les indicateurs marqués "confidentiel"
-create table indicateur_confidentiel 
+create table indicateur_confidentiel
 (
-    indicateur_id text references indicateur_definition,
+    indicateur_id       text references indicateur_definition,
     indicateur_perso_id integer references indicateur_personnalise_definition,
-    collectivite_id integer references collectivite,
-    unique(indicateur_id, collectivite_id, indicateur_perso_id)
+    collectivite_id     integer references collectivite,
+    unique (indicateur_id, collectivite_id, indicateur_perso_id)
 );
 
 --- vérifie que les colonnes sont cohérentes
 alter table indicateur_confidentiel
     add constraint perso_ou_predefini
         check ( -- prédéfini
-                (indicateur_id is not null and collectivite_id is not null and indicateur_perso_id is null)
+            (indicateur_id is not null and collectivite_id is not null and indicateur_perso_id is null)
                 -- personnalisé
                 or (indicateur_perso_id is not null and indicateur_id is null and collectivite_id is null)
             );
@@ -61,12 +61,12 @@ begin
     select case
                when $1.indicateur_id is not null -- indicateur prédéfini
                    then
-                       have_edition_acces($1.collectivite_id)
+                   have_edition_acces($1.collectivite_id)
                        or private.est_auditeur($1.collectivite_id)
                else -- indicateur personnalisé
-                       have_edition_acces((select collectivite_id
-                                           from indicateur_personnalise_definition d
-                                           where d.id = $1.indicateur_perso_id))
+                   have_edition_acces((select collectivite_id
+                                       from indicateur_personnalise_definition d
+                                       where d.id = $1.indicateur_perso_id))
                        or private.est_auditeur((select collectivite_id
                                                 from indicateur_personnalise_definition d
                                                 where d.id = $1.indicateur_perso_id))
@@ -105,5 +105,198 @@ create policy allow_delete on indicateur_confidentiel
     for delete using (private.can_write(indicateur_confidentiel));
 alter table indicateur_confidentiel
     enable row level security;
+
+
+create function
+    private.is_valeur_confidentielle(collectivite_id integer, indicateur_id indicateur_id, annee integer)
+    returns bool
+    language sql
+    stable
+    security definer
+begin
+    atomic
+    -- la valeur est confidentielle si
+    return
+        -- l'indicateur est confidentiel
+        exists (select *
+                from indicateur_confidentiel c
+                where c.indicateur_id = is_valeur_confidentielle.indicateur_id
+                  and c.collectivite_id = is_valeur_confidentielle.collectivite_id)
+            -- et l'année est la dernière
+            and annee = (select max(r.annee)
+                         from indicateur_resultat r
+                         where r.indicateur_id = is_valeur_confidentielle.indicateur_id
+                           and r.collectivite_id = is_valeur_confidentielle.collectivite_id);
+end;
+comment on function private.is_valeur_confidentielle(integer, indicateur_id, integer) is
+    'Vrai si la valeur annuelle de l''indicateur est confidentielle.';
+
+create function
+    private.is_valeur_confidentielle(indicateur_perso_id integer, annee integer)
+    returns bool
+    language sql
+    stable
+    security definer
+begin
+    atomic
+    -- la valeur est confidentielle si
+    return
+        -- l'indicateur est confidentiel
+        exists (select *
+                from indicateur_confidentiel c
+                where c.indicateur_perso_id = is_valeur_confidentielle.indicateur_perso_id)
+            -- et l'année est la dernière
+            and annee = (select max(r.annee)
+                         from indicateur_personnalise_resultat r
+                         where r.indicateur_id = is_valeur_confidentielle.indicateur_perso_id);
+end;
+comment on function private.is_valeur_confidentielle(integer, integer) is
+    'Vrai si la valeur annuelle de l''indicateur est confidentielle.';
+
+
+-- on recrée la vue indicateur afin de censurer la valeur la plus récente.
+drop view indicateurs;
+create view indicateurs
+as
+select 'resultat'::indicateur_valeur_type as type,
+       r.collectivite_id                  as collectivite_id,
+       r.indicateur_id                    as indicateur_id,
+       null::integer                      as indicateur_perso_id,
+       r.annee                            as annee,
+       r.valeur                           as valeur,
+       c.commentaire                      as commentaire,
+       null::text                         as source,
+       null::text                         as source_id
+from indicateur_resultat r
+         join indicateur_definition d on r.indicateur_id = d.id
+         left join indicateur_resultat_commentaire c
+                   on r.indicateur_id = c.indicateur_id
+                       and r.collectivite_id = c.collectivite_id
+                       and r.annee = c.annee
+where can_read_acces_restreint(r.collectivite_id)
+  and (have_lecture_acces(r.collectivite_id)
+    or not private.is_valeur_confidentielle(r.collectivite_id, r.indicateur_id, r.annee))
+
+union all
+--- indicateurs dont le résultat est en fait celui d'un autre.
+select 'resultat'::indicateur_valeur_type as type,
+       r.collectivite_id,
+       alt.id,
+       null::integer,
+       r.annee,
+       r.valeur,
+       c.commentaire,
+       null::text,
+       null::text
+from indicateur_resultat r
+         join indicateur_definition alt on r.indicateur_id = alt.valeur_indicateur
+         left join indicateur_confidentiel confidentiel
+                   on r.indicateur_id = confidentiel.indicateur_id
+                       and r.collectivite_id = confidentiel.collectivite_id
+         left join indicateur_resultat_commentaire c
+                   on r.indicateur_id = c.indicateur_id
+                       and r.collectivite_id = c.collectivite_id
+                       and r.annee = c.annee
+where can_read_acces_restreint(r.collectivite_id)
+  and (have_lecture_acces(r.collectivite_id)
+    or not private.is_valeur_confidentielle(r.collectivite_id, r.indicateur_id, r.annee))
+
+
+union all
+select 'objectif'::indicateur_valeur_type as type,
+       o.collectivite_id,
+       d.id,
+       null,
+       o.annee,
+       o.valeur,
+       c.commentaire,
+       null::text,
+       null::text
+from indicateur_objectif o
+         join indicateur_definition d on o.indicateur_id = d.id
+         left join indicateur_objectif_commentaire c
+                   on o.indicateur_id = c.indicateur_id
+                       and o.collectivite_id = c.collectivite_id
+                       and o.annee = c.annee
+where can_read_acces_restreint(o.collectivite_id)
+union all
+
+--- indicateurs dont l'objectif est en fait celui d'un autre.
+select 'objectif'::indicateur_valeur_type as type,
+       o.collectivite_id,
+       alt.id,
+       null,
+       o.annee,
+       o.valeur,
+       c.commentaire,
+       null::text,
+       null::text
+from indicateur_objectif o
+         join indicateur_definition alt on o.indicateur_id = alt.valeur_indicateur
+         left join indicateur_objectif_commentaire c
+                   on o.indicateur_id = c.indicateur_id
+                       and o.collectivite_id = c.collectivite_id
+                       and o.annee = c.annee
+where can_read_acces_restreint(o.collectivite_id)
+
+union all
+select 'import'::indicateur_valeur_type as type,
+       collectivite_id,
+       indicateur_id,
+       null,
+       annee,
+       valeur,
+       null,
+       source,
+       source_id
+from indicateur_resultat_import
+where can_read_acces_restreint(collectivite_id)
+
+union all
+--- indicateurs dont le résultat est en fait celui d'un autre.
+select 'import'::indicateur_valeur_type as type,
+       i.collectivite_id,
+       alt.id,
+       null::integer,
+       i.annee,
+       i.valeur,
+       null,
+       i.source,
+       i.source_id
+from indicateur_resultat_import i
+         join indicateur_definition alt on i.indicateur_id = alt.valeur_indicateur
+where can_read_acces_restreint(i.collectivite_id)
+
+union all
+select 'resultat'::indicateur_valeur_type as type,
+       collectivite_id,
+       null,
+       r.indicateur_id,
+       r.annee,
+       r.valeur,
+       c.commentaire,
+       null,
+       null
+from indicateur_personnalise_resultat r
+         left join indicateur_perso_resultat_commentaire c using (collectivite_id, indicateur_id, annee)
+where can_read_acces_restreint(collectivite_id)
+  and (have_lecture_acces(r.collectivite_id)
+    or not private.is_valeur_confidentielle(r.indicateur_id, r.annee))
+
+union all
+select 'objectif'::indicateur_valeur_type as type,
+       r.collectivite_id,
+       null,
+       r.indicateur_id,
+       r.annee,
+       r.valeur,
+       commentaire,
+       null,
+       null
+from indicateur_personnalise_objectif r
+         left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
+where can_read_acces_restreint(r.collectivite_id);
+
+-- todo modifier les RLS pour les tables de résultats et d'objectifs car on ne les utilise pas pour la lecture
 
 COMMIT;
