@@ -6,28 +6,36 @@ import {ButtonContentProps, ButtonSize} from '../types';
 
 const getIconSize = (
   size: ButtonSize,
-  isIconButton: boolean,
-  isRemixIcon: boolean
+  isIconButton: boolean
 ): IconSize | undefined => {
-  // Les icônes remix ont la taille définie par le font size
-  // Dans le cas des icon buttons, une taille est définie pour forcer la largeur
-  // et avoir un bouton carré
+  // Les sizes des icônes ne matchent pas celles des boutons
+  // et sont différentes en fonction du type de bouton (texte ou icône)
   if (isIconButton) {
     switch (size) {
       case 'xs':
-        return 'md';
+        return 'sm';
       case 'sm':
-        return 'lg';
+        return 'sm';
       case 'md':
-        return 'xl';
+        return 'md';
       case 'xl':
-        return '2xl';
+        return 'lg';
     }
-  } else if (!isRemixIcon) {
-    return size;
-  } else return undefined;
+  } else {
+    switch (size) {
+      case 'xs':
+        return 'sm';
+      case 'sm':
+        return 'md';
+      case 'md':
+        return 'md';
+      case 'xl':
+        return 'lg';
+    }
+  }
 };
 
+/** Affiche le contenu d'un bouton */
 const ButtonContent = ({
   variant = 'primary',
   size = 'md',
@@ -43,16 +51,16 @@ const ButtonContent = ({
   return (
     <div
       className={classNames('flex items-center', {
-        'gap-1': size === 'xs' || size === 'sm',
-        'gap-2': size === 'md' || size === 'xl',
+        'gap-1': size === 'xs',
+        'gap-2': size === 'sm' || size === 'md' || size === 'xl',
         'flex-row-reverse': iconPosition === 'right',
       })}
     >
       {!!icon && (
         <Icon
           icon={icon}
-          size={getIconSize(size, isIconButton, typeof icon === 'string')}
-          svgClassName={buttonThemeClassnames[variant][buttonState].icon}
+          size={getIconSize(size, isIconButton)}
+          className={buttonThemeClassnames[variant][buttonState].icon}
         />
       )}
 
