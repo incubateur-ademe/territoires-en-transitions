@@ -39,7 +39,7 @@ export const IndicateurValuesTabs = ({
           )}
         >
           <ToggleButton
-            className="mb-4"
+            className="mb-6"
             description="Le résultat le plus récent est en mode privé"
             isChecked={confidentiel}
             disabled={isLoading}
