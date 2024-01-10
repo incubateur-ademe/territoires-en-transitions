@@ -1,4 +1,4 @@
-import {ButtonState, ButtonVariant} from './types';
+import {ButtonSize, ButtonState, ButtonVariant} from './types';
 
 /**
  * Thème couleurs du composant Button
@@ -89,5 +89,35 @@ export const buttonThemeClassnames: Record<
       border: '!border-grey-2',
       icon: 'fill-primary-4',
     },
+  },
+};
+
+/**
+ * Tailles du composant Button
+ *
+ * Gère les tailles si le bouton est un bouton icon ou non
+ **/
+export const buttonSizeClassnames: Record<
+  ButtonSize,
+  {
+    textButton: string;
+    iconButton: string;
+  }
+> = {
+  xs: {
+    textButton: 'text-xs py-2 px-5',
+    iconButton: 'p-2',
+  },
+  sm: {
+    textButton: 'text-sm py-2.5 px-6',
+    iconButton: 'p-3',
+  },
+  md: {
+    textButton: 'text-base py-3 px-6',
+    iconButton: 'p-3.5',
+  },
+  xl: {
+    textButton: 'text-2xl py-4 px-6',
+    iconButton: 'p-5',
   },
 };

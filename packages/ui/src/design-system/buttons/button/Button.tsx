@@ -1,7 +1,7 @@
 import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
 
-import {buttonThemeClassnames} from '../theme';
+import {buttonSizeClassnames, buttonThemeClassnames} from '../theme';
 import ButtonContent from './ButtonContent';
 import {
   ButtonContentProps,
@@ -37,32 +37,20 @@ export const Button = forwardRef(
     const {text, background, border} =
       buttonThemeClassnames[variant][buttonState];
 
+    const sizeClassName =
+      buttonSizeClassnames[size][isIconButton ? 'iconButton' : 'textButton'];
+
     const buttonClassname = classNames(
       'rounded-lg w-fit border border-solid font-bold group',
       {
-        // Format du bouton en fonction de la taille choisie
-        'text-xs py-2': size === 'xs',
-        'text-sm py-3': size === 'sm',
-        'text-base py-3.5': size === 'md',
-        'text-2xl py-5': size === 'xl',
-
-        // Padding en fonction de la taille choisie
-        'px-5':
-          (size === 'xs' && !isIconButton) || (size === 'xl' && isIconButton),
-        'px-6': size !== 'xs' && !isIconButton,
-
-        // Padding sur les boutons ne contenant qu'une icône
-        'px-2': size === 'xs' && isIconButton,
-        'px-3': size === 'sm' && isIconButton,
-        'px-3.5': size === 'md' && isIconButton,
-
         // Styles du curseur
         'cursor-pointer': !disabled,
         'cursor-not-allowed': disabled,
       },
       text,
       background,
-      border
+      border,
+      sizeClassName
     );
 
     /** Reconstitution des props données au contenu du bouton */
