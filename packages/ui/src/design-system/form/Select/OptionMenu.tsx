@@ -4,6 +4,7 @@ import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
 import {CreateOption} from './Select';
 import {Option} from './Options';
 import {Icon} from '../../icons/Icon';
+import {Button} from '../../buttons/button/Button';
 
 type Props = {
   option: Option;
@@ -12,8 +13,8 @@ type Props = {
 
 export const OptionMenu = ({option, createProps}: Props) => (
   <DropdownFloater
-    placement="top"
-    offsetValue={{mainAxis: 8}}
+    offsetValue={{mainAxis: 6}}
+    placement="top-end"
     noDropdownStyles
     render={() => (
       <div
@@ -44,21 +45,16 @@ export const OptionMenu = ({option, createProps}: Props) => (
 );
 
 /** Bouton pour ouvrir le menu d'une option */
-const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLDivElement>) => (
-  <div
-    ref={ref}
-    className="flex ml-6"
-    onClick={evt => {
-      evt.stopPropagation();
-    }}
-  >
-    {/** Donne les props à un élément enfant afin de pouvoir donner le stopPropagation au onClick du parent */}
-    <div
+const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLButtonElement>) => (
+  <div className="flex px-3 py-1.5 my-auto group-hover:bg-primary-0 hover:!bg-white">
+    <Button
+      ref={ref}
+      icon="more-line"
+      size="xs"
+      variant="white"
+      className="!p-1 m-auto"
       {...props}
-      className="my-auto p-1 rounded-lg cursor-pointer hover:bg-primary-2"
-    >
-      <span className="flex fr-icon-more-line before:w-4 before:h-4" />
-    </div>
+    />
   </div>
 ));
 OptionMenuButton.displayName = 'OptionOpenFloaterButton';

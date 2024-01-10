@@ -5,6 +5,7 @@ import {isOptionSection} from './utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './Select';
 import {Badge} from '../../badge/Badge';
+import {Icon} from '../../icons/Icon';
 
 /**
  * Types partagés entre tous les composants selects
@@ -126,39 +127,46 @@ const Option = <T extends OptionValue>({
   const isActive = values?.includes(option.value as T);
   const isUserCreated = createProps?.userCreatedOptions.includes(option.value);
   return (
-    <button
-      data-test={option.value}
-      className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
-      onClick={() => onChange(option.value as T)}
-    >
-      <div className="flex w-6 mr-2 shrink-0">
-        {isActive && (
-          <span className="fr-icon-check-line flex mt-1 mx-auto text-primary-7 before:m-auto before:!h-4 before:!w-4" />
-        )}
-      </div>
-      <div className="flex mr-auto my-auto">
-        {customItem ? (
-          customItem(option)
-        ) : createProps ? (
-          <Badge
-            title={option.label}
-            state={isUserCreated ? 'standard' : 'default'}
-            size="sm"
-          />
-        ) : (
-          <span
-            className={classNames('leading-6 text-grey-8', {
-              'text-primary-7': isActive,
-            })}
-          >
-            {option.label}
-          </span>
-        )}
-      </div>
+    <div className="group flex w-full">
+      <button
+        data-test={option.value}
+        className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
+        onClick={() => onChange(option.value as T)}
+      >
+        <div className="flex w-6 mr-2 shrink-0">
+          {isActive && (
+            <Icon
+              icon="check-line"
+              size="sm"
+              className="mt-1 m-auto text-primary-7"
+            />
+          )}
+        </div>
+        <div className="flex mr-auto my-auto">
+          {customItem ? (
+            customItem(option)
+          ) : createProps ? (
+            <Badge
+              title={option.label}
+              state={isUserCreated ? 'standard' : 'default'}
+              size="sm"
+              trim={false}
+            />
+          ) : (
+            <span
+              className={classNames('leading-6 text-grey-8', {
+                'text-primary-7': isActive,
+              })}
+            >
+              {option.label}
+            </span>
+          )}
+        </div>
+      </button>
       {createProps &&
         createProps.userCreatedOptions.some(o => o === option.value) && (
           <OptionMenu option={option} createProps={createProps} />
         )}
-    </button>
+    </div>
   );
 };
