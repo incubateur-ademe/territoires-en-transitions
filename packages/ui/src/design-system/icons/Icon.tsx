@@ -10,25 +10,46 @@ type IconProps = {
 
 export const Icon = ({icon, size, svgClassName}: IconProps) => {
   const sizeClassnames = {
-    'h-3 w-3': size === 'xs',
-    'h-3.5 w-3.5': size === 'sm',
-    'h-4 w-4': size === 'md',
-    'h-5 w-5': size === 'lg',
-    'h-6 w-6': size === 'xl',
+    // 14px
+    'h-3.5 w-3.5': size === 'xs',
+    // 16px
+    'h-4 w-4': size === 'sm',
+    // 20px
+    'h-5 w-5': size === 'md',
+    // 24px
+    'h-6 w-6': size === 'lg',
+    // 28px
+    'h-7 w-7': size === 'xl',
+    // 32px
     'h-8 w-8': size === '2xl',
   };
 
+  // On utilise les icônes Remix lorsqu'on passe une string.
+  // Remix utilise la font-size pour définir la taille de l'icône,
+  // il faut donc fournir une font-size en rem.
+  // https://remixicon.com/
   if (typeof icon === 'string') {
     return (
-      <div
-        className={classNames(`ri-${icon}`, 'font-normal', sizeClassnames, {
-          'text-xs leading-3': size === 'xs',
-          'text-sm leading-3': size === 'sm',
-          'text-base leading-4': size === 'md',
-          'text-xl leading-5': size === 'lg',
-          'text-2xl leading-6': size === 'xl',
-          'text-3xl leading-8': size === '2xl',
-        })}
+      <span
+        className={classNames(
+          `ri-${icon}`,
+          'font-normal',
+          sizeClassnames,
+          {
+            // 14px
+            'text-[0.875rem] leading-[0.875rem]': size === 'xs',
+            // 16px
+            'text-[1rem] leading-[1rem]': size === 'sm',
+            // 20px
+            'text-[1.25rem] leading-[1.25rem]': size === 'md',
+            // 24px
+            'text-[1.5rem] leading-[1.5rem]': size === 'lg',
+            //28px
+            'text-[1.75rem] leading-[1.75rem]': size === 'xl',
+            //32px
+            'text-[2rem] leading-[2rem]': size === '2xl',
+          },
+        )}
       />
     );
   }
