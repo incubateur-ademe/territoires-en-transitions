@@ -22,6 +22,15 @@ alter table indicateur_confidentiel
 comment on constraint perso_ou_predefini on indicateur_confidentiel is
     'Vérifie que l''on référence un indicateur perso ou un indicateur prédéfini.';
 
+--- trigger pour la réécriture des id d'indicateurs liés
+create trigger rewrite_indicateur_id
+    before insert or update
+    on indicateur_confidentiel
+    for each row
+execute procedure rewrite_indicateur_id();
+comment on trigger rewrite_indicateur_id on indicateur_confidentiel is
+    'Remplace les `indicateur_id` des indicateurs `sans valeur` de la même manière que pour les valeurs';
+
 --- détermine si un indicateur est confidentiel
 create function
     confidentiel(indicateur_definitions)
