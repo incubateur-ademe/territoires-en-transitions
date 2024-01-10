@@ -11,14 +11,17 @@ export const useToggleIndicateurConfidentiel = (
   const collectivite_id = useCollectiviteId();
 
   const {id, isPerso} = definition;
+  const indicateur_perso_id =
+    isPerso && typeof id === 'number' ? (id as number) : null;
+  const indicateur_id =
+    !isPerso && typeof id === 'string' && collectivite_id
+      ? (id as string)
+      : null;
 
   return useMutation({
     mutationKey: 'toggle_indicateur_confidentiel',
     mutationFn: async (confidentiel: boolean) => {
-      if (
-        (isPerso && typeof id === 'number') ||
-        (!isPerso && typeof id === 'string' && collectivite_id)
-      ) {
+      if (indicateur_perso_id !== null || indicateur_id !== null) {
         // supprime la ligne
         if (confidentiel) {
           return supabaseClient
@@ -31,9 +34,7 @@ export const useToggleIndicateurConfidentiel = (
         return supabaseClient
           .from('indicateur_confidentiel')
           .upsert(
-            isPerso
-              ? {indicateur_perso_id: id}
-              : {indicateur_id: id, collectivite_id},
+            isPerso ? {indicateur_perso_id} : {indicateur_id, collectivite_id},
             {
               onConflict: 'indicateur_id,indicateur_perso_id,collectivite_id',
             }
