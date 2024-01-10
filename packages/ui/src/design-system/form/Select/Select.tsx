@@ -3,7 +3,7 @@ import {Ref, forwardRef, useEffect, useRef, useState} from 'react';
 import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 
-import DropdownFloater from '../../floating-ui/DropdownFloater';
+import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
 import Options, {OptionValue, SelectOption, Option} from './Options';
 import {Badge} from '../../badge/Badge';
 
