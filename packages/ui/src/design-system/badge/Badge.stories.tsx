@@ -16,7 +16,7 @@ export const Default: Story = {
 };
 
 export const CustomIcon: Story = {
-  args: {title: 'Badge', icon: 'fr-icon-alert-fill', onClose: () => null},
+  args: {title: 'Badge', icon: 'alert-fill', onClose: () => null},
 };
 
 export const Grid: Story = {

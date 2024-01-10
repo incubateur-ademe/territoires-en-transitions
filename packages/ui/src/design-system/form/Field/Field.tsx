@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import {Icon} from '../../icons/Icon';
 
 type State = 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
 
@@ -12,10 +13,10 @@ const stateToColor: Record<State, string> = {
 };
 
 const stateToIcon: Record<State, string> = {
-  info: 'fr-icon-info-fill',
-  error: 'fr-icon-error-fill',
-  success: 'fr-icon-success-fill',
-  warning: 'fr-icon-warning-fill',
+  info: 'information-fill',
+  error: 'spam-fill',
+  success: 'checkbox-circle-fill',
+  warning: 'alert-fill',
   default: '',
   disabled: '',
 };
@@ -72,12 +73,7 @@ const Field = ({
       {children}
       {message !== undefined && (
         <div className={classNames('flex items-center', stateToColor[state])}>
-          <span
-            className={classNames(
-              'flex mr-1 before:h-4 before:w-4',
-              stateToIcon[state]
-            )}
-          />
+          <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
           <span className="text-xs">{message}</span>
         </div>
       )}

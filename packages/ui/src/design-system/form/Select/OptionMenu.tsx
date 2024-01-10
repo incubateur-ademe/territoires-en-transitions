@@ -3,6 +3,7 @@ import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
 
 import {CreateOption} from './Select';
 import {Option} from './Options';
+import {Icon} from '../../icons/Icon';
 
 type Props = {
   option: Option;
@@ -25,14 +26,14 @@ export const OptionMenu = ({option, createProps}: Props) => (
           className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8"
           onClick={() => createProps.onUpdate(option.value, 'TODO')}
         >
-          <span className="flex fr-icon-edit-line before:w-4 before:h-4 mr-2" />
+          <Icon icon="edit-line" size="sm" className="mr-2" />
           Éditer
         </button>
         <button
           className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8"
           onClick={() => createProps.onDelete(option.value)}
         >
-          <span className="flex fr-icon-delete-line before:w-4 before:h-4 mr-2" />
+          <Icon icon="delete-bin-6-line" size="sm" className="mr-2" />
           Supprimer
         </button>
       </div>
