@@ -1,7 +1,6 @@
 import {Datum, Serie} from '@nivo/line';
 import {dedup} from 'utils/dedup';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
-import {TIndicateurPredefini} from '../types';
 import {TIndicateurChartBaseProps} from './types';
 
 // libellé par défaut pour les séries objectifs/résultats
@@ -59,7 +58,7 @@ export const getChartTitle = (
   isZoomed?: boolean
 ) => {
   const {nom} = definition;
-  return (isZoomed && (definition as TIndicateurPredefini).titre_long) || nom;
+  return (isZoomed && definition.titre_long) || nom;
 };
 
 // détermine la fréquence des graduations pour l'axe des abscisses

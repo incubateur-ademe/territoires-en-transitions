@@ -15,7 +15,9 @@ export type IndicateurImportSource = {
  * Fourni la liste des sources de données d'un indicateur ainsi que la source
  * courante et une fonction pour changer la source courante.
  */
-export const useIndicateurImportSources = (indicateur_id: string | number) => {
+export const useIndicateurImportSources = (
+  indicateur_id: string | number | undefined
+) => {
   const collectivite_id = useCollectiviteId();
   // charge la liste des sources disponibles
   const {data: sources, isLoading: isLoading1} = useImportSources(
@@ -56,7 +58,7 @@ export const useIndicateurImportSources = (indicateur_id: string | number) => {
  */
 const useImportSources = (
   collectivite_id: number | null,
-  indicateur_id: string | number
+  indicateur_id: string | number | undefined
 ) => {
   return useQuery(
     ['indicateur_import_sources', collectivite_id, indicateur_id],
@@ -88,14 +90,14 @@ const useImportSources = (
  */
 const useHasCustomValues = (
   collectivite_id: number | null,
-  indicateur_id: string | number
+  indicateur_id: string | number | undefined
 ) => {
   return useQuery(
     ['indicateur_has_custom_values', collectivite_id, indicateur_id],
     async () => {
       if (
         !collectivite_id ||
-        !indicateur_id ||
+        indicateur_id === undefined ||
         typeof indicateur_id !== 'string'
       )
         return;

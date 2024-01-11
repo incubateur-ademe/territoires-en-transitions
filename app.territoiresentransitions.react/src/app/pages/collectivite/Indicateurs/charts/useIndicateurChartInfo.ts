@@ -24,8 +24,8 @@ export const useIndicateurChartInfo = (indicateur_id: number | string) => {
 
       const isPerso = typeof indicateur_id === 'number';
       const colonnes = isPerso
-        ? 'nom, unite, rempli'
-        : 'nom, unite, rempli,...definition_referentiel(sans_valeur, titre_long), enfants(rempli)';
+        ? 'nom, unite, rempli, confidentiel'
+        : 'nom, unite, rempli, confidentiel,...definition_referentiel(sans_valeur, titre_long), enfants(rempli)';
 
       const {data, error} = await supabaseClient
         .from('indicateur_definitions')
