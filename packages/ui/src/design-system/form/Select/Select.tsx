@@ -125,9 +125,8 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
   /** Liste d'option filtrée par la saisie de l'utilisateur */
   const filteredOptions = filterOptions(options, inputValue);
 
-  /** TODO: implémenter les action update et delete pour autoriser l'utilisation de ce cas */
-  // const isCreateOptionSelect = !!createProps;
-  const isCreateOptionSelect = false;
+  /** Détermine si le Select permet la création d'option */
+  const isCreateOptionSelect = !!createProps;
 
   /** Compare la valeur de l'input de recherche avec la première optin de la liste
    * pour afficher le bouton de création d'une option */
