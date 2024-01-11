@@ -18,9 +18,12 @@ export type TIndicateurChartInfo = {
   nom: string;
   unite: string;
   rempli: Rempli;
+  confidentiel: boolean;
   titre_long?: string;
   sans_valeur?: boolean | null;
   enfants?: {id: string; rempli: Rempli}[] | null;
+  count?: number;
+  total?: number;
 };
 
 /**

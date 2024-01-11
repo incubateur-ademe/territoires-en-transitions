@@ -26,7 +26,7 @@ export const useIndicateurValeurs = ({
   isDetail,
 }: {
   /** Identifiant indicateur perso ou prédéfini */
-  id: number | string;
+  id: number | string | undefined;
   /** Source des données à utiliser */
   importSource?: string;
   /** Indique si le graphique est en mode "détail" (ou en vignette) */
