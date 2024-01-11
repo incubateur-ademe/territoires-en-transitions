@@ -12,8 +12,8 @@ import {
 } from '@floating-ui/react';
 import classNames from 'classnames';
 
-import {Button} from '../buttons/button/Button';
-import {preset} from '../../tailwind-preset';
+import {preset} from '@tailwind-preset';
+import {Button} from '@design-system/buttons/button/Button';
 
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 
