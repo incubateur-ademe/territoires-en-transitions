@@ -12,7 +12,13 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "./src/",
+    "paths": {
+      "@tailwind-preset": ["tailwind-preset.ts"],
+      "@design-system/*": ["design-system/*"],
+      "@assets/*": ["assets/*"]
+    }
   },
   "include": ["src/*.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
