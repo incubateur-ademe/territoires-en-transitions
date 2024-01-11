@@ -150,7 +150,7 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
   const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
     definition.id
   );
-  const {id: grapheId, count, total} = (chartInfo as any) || {};
+  const {id: grapheId, count, total, confidentiel} = chartInfo || {};
 
   // charge les valeurs à afficher dans le graphe
   const {data: valeurs, isLoading} = useIndicateurValeurs({
@@ -169,6 +169,7 @@ const IndicateurChart = (props: TIndicateurChartProps) => {
       variant={variant}
       isReadonly={isReadonly}
       aCompleter={{count, total}}
+      confidentiel={confidentiel}
     />
   ) : (
     <IndicateurChartBase {...props} definition={chartInfo} valeurs={valeurs!} />
