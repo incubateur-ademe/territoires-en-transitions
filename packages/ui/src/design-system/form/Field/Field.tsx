@@ -8,8 +8,8 @@ const stateToColor: Record<State, string> = {
   error: 'text-error-1',
   success: 'text-success-1',
   warning: 'text-warning-1',
-  default: '',
-  disabled: '',
+  default: 'text-grey-8',
+  disabled: 'text-grey-6',
 };
 
 const stateToIcon: Record<State, string> = {
@@ -54,7 +54,7 @@ const Field = ({
         {/** Title */}
         <div
           className={classNames('font-medium text-grey-8', {
-            '!text-grey-5': state === 'disabled',
+            'text-grey-5': state === 'disabled',
           })}
         >
           {title}
@@ -62,8 +62,8 @@ const Field = ({
         {/** Hint */}
         {hint !== undefined && (
           <span
-            className={classNames('block mt-2 text-xs text-grey-6', {
-              '!text-grey-5': state === 'disabled',
+            className={classNames('block mt-2 text-xs text-grey-7', {
+              'text-grey-5': state === 'disabled',
             })}
           >
             {hint}

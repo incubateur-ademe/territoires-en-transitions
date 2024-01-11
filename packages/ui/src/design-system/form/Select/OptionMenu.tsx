@@ -103,7 +103,7 @@ export const OptionMenu = ({option, createProps}: Props) => {
 
 /** Bouton pour ouvrir le menu d'une option */
 const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLButtonElement>) => (
-  <div className="flex px-3 py-1.5 my-auto group-hover:bg-primary-0 hover:!bg-white">
+  <div className="flex px-3 py-1.5 grow group-hover:bg-primary-0 hover:!bg-white">
     <Button
       {...props}
       ref={ref}

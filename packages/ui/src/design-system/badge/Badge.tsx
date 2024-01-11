@@ -71,11 +71,11 @@ export const Badge = ({
       <span
         className={classNames(
           styles.text,
-          'font-bold uppercase text-sm leading-4 text-left',
+          'font-bold uppercase leading-4 text-left',
           {
             'line-clamp-1': trim,
-            '!text-xs !leading-4': size === 'sm',
-            'mt-0.5': size === 'md',
+            'text-xs': size === 'sm',
+            'mt-0.5 text-sm': size === 'md',
           }
         )}
       >
