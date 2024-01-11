@@ -94,6 +94,8 @@ export const Modal = ({
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 
+  const isOpen = isControlled ? openState.isOpen : open;
+
   const handleOpenChange = () => {
     if (isControlled) {
       openState.setIsOpen(!openState.isOpen);
@@ -105,7 +107,7 @@ export const Modal = ({
   };
 
   const {refs, context} = useFloating({
-    open: isControlled ? openState.isOpen : open,
+    open: isOpen,
     onOpenChange: handleOpenChange,
   });
 
@@ -127,7 +129,7 @@ export const Modal = ({
           getReferenceProps({ref: refs.setReference, ...children.props})
         )}
       <FloatingPortal>
-        {(open || (isControlled && openState.isOpen)) && (
+        {isOpen && (
           <FloatingOverlay
             lockScroll
             style={{
