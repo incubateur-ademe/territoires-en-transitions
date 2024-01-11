@@ -4,13 +4,20 @@ import CardsWrapper from '@components/cards/CardsWrapper';
 import Section from '@components/sections/Section';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Content} from './types';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type ServicesProps = {
   titre: string;
   description?: string;
-  contenu: Content[] | null;
+  contenu:
+    | {
+        id: number;
+        titre: string;
+        description: string;
+        image: StrapiItem;
+      }[]
+    | null;
 };
 
 const Services = ({titre, description, contenu}: ServicesProps) => {
@@ -31,7 +38,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
           contenu.map(c => (
             <BlogCard
               key={c.id}
-              title={c.titre ?? ''}
+              title={c.titre}
               description={c.description}
               image={
                 c.image ? (
@@ -42,7 +49,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                   />
                 ) : undefined
               }
-              href={`/programme/${convertNameToSlug(c.titre ?? '')}`}
+              href={`/programme/${convertNameToSlug(c.titre)}`}
             />
           ))}
       </CardsWrapper>

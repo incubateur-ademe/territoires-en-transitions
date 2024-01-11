@@ -1141,6 +1141,11 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
     etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
+    services_liste_rel: Attribute.Relation<
+      'api::page-programme.page-programme',
+      'oneToMany',
+      'api::service.service'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1152,6 +1157,39 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::page-programme.page-programme',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiServiceService extends Schema.CollectionType {
+  collectionName: 'services';
+  info: {
+    singularName: 'service';
+    pluralName: 'services';
+    displayName: 'Services';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    titre: Attribute.String & Attribute.Required;
+    description: Attribute.String & Attribute.Required;
+    image: Attribute.Media & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::service.service',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::service.service',
       'oneToOne',
       'admin::user'
     > &
@@ -1219,6 +1257,7 @@ declare module '@strapi/types' {
       'api::page-contact.page-contact': ApiPageContactPageContact;
       'api::page-outils-numerique.page-outils-numerique': ApiPageOutilsNumeriquePageOutilsNumerique;
       'api::page-programme.page-programme': ApiPageProgrammePageProgramme;
+      'api::service.service': ApiServiceService;
       'api::temoignage.temoignage': ApiTemoignageTemoignage;
     }
   }

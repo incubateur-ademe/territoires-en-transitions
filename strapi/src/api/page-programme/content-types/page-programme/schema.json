@@ -87,6 +87,11 @@
       "repeatable": false,
       "component": "bloc.ressources",
       "required": true
+    },
+    "services_liste_rel": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::service.service"
     }
   }
 }
