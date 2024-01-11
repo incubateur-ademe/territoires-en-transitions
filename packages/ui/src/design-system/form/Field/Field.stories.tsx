@@ -32,6 +32,7 @@ export const DisabledWithHint: Story = {
     title: "Description de l'action",
     state: 'disabled',
     hint: 'Texte description additionnel',
+    message: 'Message d’information',
   },
   render: args => (
     <Field {...args}>
@@ -44,6 +45,7 @@ export const WithHint: Story = {
   args: {
     title: "Description de l'action",
     hint: 'Texte description additionnel',
+    message: 'Message d’information',
   },
   render: args => (
     <Field {...args}>
