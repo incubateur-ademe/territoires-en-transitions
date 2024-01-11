@@ -609,3 +609,5 @@ indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.89.0] 2024-01-08T17:38
 
 stats/posthog [stats/posthog@v2.93.0] 2024-01-18T14:39:10Z Florian <florian@derfurth.com> # Nouveaux événements
 @v2.96.0 2024-01-23T13:45:22Z Florian <florian@derfurth.com> # Événements de création de compte et de modification de score
+
+collectivite/toutes_les_collectivites [collectivite/toutes_les_collectivites@v2.89.0] 2024-01-11T17:07:39Z Florian <florian@derfurth.com> # Permet de filtrer par type de plan
