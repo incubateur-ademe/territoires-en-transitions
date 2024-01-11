@@ -1,6 +1,10 @@
 /**
  * Configuration générale du storybook
  */
+
+const path = require('path');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 module.exports = {
   // pattern de recherche des stories
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.tsx'],
@@ -20,7 +24,7 @@ module.exports = {
               require.resolve('style-loader'),
               {
                 loader: require.resolve('css-loader'),
-                options: { importLoaders: 1 },
+                options: {importLoaders: 1},
               },
               require.resolve('postcss-loader'),
             ],
@@ -29,6 +33,18 @@ module.exports = {
       },
     },
   ],
+
+  // ajoute les alias de chemins d'import définis dans la config TS
+  webpackFinal: config => {
+    config.resolve.plugins = config.resolve.plugins || [];
+    config.resolve.plugins.push(
+      new TsconfigPathsPlugin({
+        configFile: path.resolve(__dirname, '../tsconfig.json'),
+      })
+    );
+
+    return config;
+  },
 
   framework: '@storybook/react-webpack5',
 
