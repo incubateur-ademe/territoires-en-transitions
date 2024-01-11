@@ -88,7 +88,7 @@ export const Modal = ({
   size = 'md',
   disableDismiss,
   noCloseButton,
-  zIndex = 1000,
+  zIndex,
   dataTest = 'Modal',
 }: ModalProps) => {
   const isControlled = !!openState;
