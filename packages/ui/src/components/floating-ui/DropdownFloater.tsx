@@ -47,7 +47,7 @@ const DropdownFloater = ({
   enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
-  zIndex = 1200,
+  zIndex,
   noDropdownStyles = false,
   disabled,
   'data-test': dataTest,
