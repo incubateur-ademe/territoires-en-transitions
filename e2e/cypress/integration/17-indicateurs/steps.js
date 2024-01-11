@@ -40,17 +40,17 @@ When("le graphique de l'indicateur n'est pas vide", () => {
 
 When("j'ajoute le résultat {int} pour l'année {int}", (value, year) => {
   cy.get('[label=Résultats] table tbody tr:nth(0)').within(() => {
-    cy.get('td:nth(0) input').click().type(year);
-    cy.get('td:nth(1) input').click().type(value);
-    cy.get('td:nth(2)').click();
+    cy.get('td:nth(1) input').click().type(year);
+    cy.get('td:nth(2) input').click().type(value);
+    cy.get('td:nth(3)').click();
   });
 });
 
 When("j'ajoute le commentaire {string} à la ligne {int}", (comment, row) => {
-  cy.get(`[label=Résultats] table tbody tr:nth(${row}) td:nth(2) textarea`)
+  cy.get(`[label=Résultats] table tbody tr:nth(${row}) td:nth(3) textarea`)
     .click()
     .type(comment);
-    clickOutside();
+  clickOutside();
 });
 
 When("le tableau des résultats de l'indicateur contient :", dataTable => {
@@ -66,12 +66,12 @@ When("le tableau des résultats de l'indicateur contient :", dataTable => {
 
 const checkRow = ([annee, resultat, commentaire], index) =>
   cy.get(`tr:nth(${index + 1})`).within(() => {
-    cy.get('td:nth(0) input').should('have.value', annee);
-    cy.get('td:nth(1) input').should('have.value', resultat);
+    cy.get('td:nth(1) input').should('have.value', annee);
+    cy.get('td:nth(2) input').should('have.value', resultat);
     if (commentaire) {
-      cy.get('td:nth(2) textarea').should('have.value', commentaire);
+      cy.get('td:nth(3) textarea').should('have.value', commentaire);
     } else {
-      cy.get('td:nth(2) textarea').should('be.empty');
+      cy.get('td:nth(3) textarea').should('be.empty');
     }
 
     // le bouton "..." est présent
@@ -94,12 +94,12 @@ When(
 
 const checkRowReadOnly = ([annee, resultat, commentaire], index) =>
   cy.get(`tr:nth(${index})`).within(() => {
-    cy.get('td:nth(0)').should('have.text', annee);
-    cy.get('td:nth(1)').should('have.text', resultat);
+    cy.get('td:nth(1)').should('have.text', annee);
+    cy.get('td:nth(2)').should('have.text', resultat);
     if (commentaire) {
-      cy.get('td:nth(2)').should('have.text', commentaire);
+      cy.get('td:nth(3)').should('have.text', commentaire);
     } else {
-      cy.get('td:nth(2)').should('be.empty');
+      cy.get('td:nth(3)').should('be.empty');
     }
 
     // le bouton "..." est absent
