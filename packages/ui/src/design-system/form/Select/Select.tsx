@@ -1,5 +1,5 @@
 import {Placement} from '@floating-ui/react';
-import {Ref, forwardRef, useEffect, useRef, useState} from 'react';
+import {Ref, forwardRef, useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 
@@ -152,7 +152,6 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
       noDropdownStyles
-      multipleClickToggle={!hasSearch}
       enterToToggle={!hasSearch}
       disabled={disabled}
       render={({close}) => (
@@ -261,13 +260,6 @@ const SelectButton = forwardRef(
     }: SelectButtonProps<T>,
     ref?: Ref<HTMLButtonElement>
   ) => {
-    const inputRef: Ref<HTMLInputElement> = useRef(null);
-
-    /** donne le focus à l'input quand l'utilisateur click sur le bouton d'ouverture du Select */
-    const handleWrapperClick = () => {
-      inputRef?.current?.focus();
-    };
-
     useEffect(() => {
       if (!isOpen) {
         onSearch('');
@@ -287,16 +279,11 @@ const SelectButton = forwardRef(
         disabled={disabled}
         {...props}
       >
-        {/**
-         * Cette `div` englobant les sous composant permet d'appliquer la fonction pour forcer le focus sur l'input.
-         * On ne peut pas l'appliquer sur le bouton car il reçoit déjà une propriété `onClick` du dropdown floater
-         */}
         <div
           className={classNames('flex px-4', {
             'min-h-[2.5rem] py-1': small,
             'min-h-[3rem] py-2': !small,
           })}
-          onClick={handleWrapperClick}
         >
           <div className="flex grow flex-wrap gap-2 mr-4">
             {values && Array.isArray(values) ? (
@@ -348,11 +335,14 @@ const SelectButton = forwardRef(
               // afin d'afficher le placeholder de l'input
               isSearcheable && !(disabled && values) && (
                 <input
-                  ref={inputRef}
                   type="text"
-                  className="w-full text-sm outline-0 placeholder:text-grey-6"
+                  className={classNames(
+                    'w-full text-sm outline-0 placeholder:text-grey-6',
+                    {'py-1': values}
+                  )}
                   value={inputValue}
                   onChange={e => onSearch(e.target.value)}
+                  onClick={evt => isOpen && evt.stopPropagation()}
                   placeholder={placeholder ?? 'Rechercher par mots-clés'}
                   disabled={disabled}
                 />
