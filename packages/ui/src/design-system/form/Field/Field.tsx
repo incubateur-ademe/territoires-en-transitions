@@ -73,7 +73,9 @@ const Field = ({
       {children}
       {message !== undefined && (
         <div className={classNames('flex items-center', stateToColor[state])}>
-          <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
+          {state !== 'disabled' && state !== 'default' && (
+            <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
+          )}
           <span className="text-xs">{message}</span>
         </div>
       )}
