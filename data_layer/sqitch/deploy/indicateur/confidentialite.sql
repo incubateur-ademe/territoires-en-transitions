@@ -135,7 +135,8 @@ begin
             and annee = (select max(r.annee)
                          from indicateur_resultat r
                          where r.indicateur_id = is_valeur_confidentielle.indicateur_id
-                           and r.collectivite_id = is_valeur_confidentielle.collectivite_id);
+                           and r.collectivite_id = is_valeur_confidentielle.collectivite_id
+                           and r.valeur is not null);
 end;
 comment on function private.is_valeur_confidentielle(integer, indicateur_id, integer) is
     'Vrai si la valeur annuelle de l''indicateur est confidentielle.';
@@ -157,7 +158,8 @@ begin
             -- et l'année est la dernière
             and annee = (select max(r.annee)
                          from indicateur_personnalise_resultat r
-                         where r.indicateur_id = is_valeur_confidentielle.indicateur_perso_id);
+                         where r.indicateur_id = is_valeur_confidentielle.indicateur_perso_id
+                         and r.valeur is not null);
 end;
 comment on function private.is_valeur_confidentielle(integer, integer) is
     'Vrai si la valeur annuelle de l''indicateur est confidentielle.';
