@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/form/Field Default smoke-test 1`] = `
+exports[`design-system/form/Field Default smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -16,14 +16,14 @@ exports[`components/form/Field Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`components/form/Field DisabledWithHint smoke-test 1`] = `
+exports[`design-system/form/Field DisabledWithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
-      <div class="font-medium text-grey-8 !text-grey-5">
+      <div class="font-medium text-grey-8 text-grey-5">
         Description de l'action
       </div>
-      <span class="block mt-2 text-xs text-grey-6 !text-grey-5">
+      <span class="block mt-2 text-xs text-grey-7 text-grey-5">
         Texte description additionnel
       </span>
     </label>
@@ -31,11 +31,16 @@ exports[`components/form/Field DisabledWithHint smoke-test 1`] = `
            class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
            placeholder="Placeholder"
     >
+    <div class="flex items-center text-grey-6">
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
   </div>
 </div>
 `;
 
-exports[`components/form/Field WithError smoke-test 1`] = `
+exports[`design-system/form/Field WithError smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -48,7 +53,7 @@ exports[`components/form/Field WithError smoke-test 1`] = `
            placeholder="Placeholder"
     >
     <div class="flex items-center text-error-1">
-      <span class="flex mr-1 before:h-4 before:w-4 fr-icon-error-fill">
+      <span class="ri-spam-fill font-normal h-4 w-4 text-[1rem] leading-[1rem] mr-1">
       </span>
       <span class="text-xs">
         Message d'erreur
@@ -58,14 +63,14 @@ exports[`components/form/Field WithError smoke-test 1`] = `
 </div>
 `;
 
-exports[`components/form/Field WithHint smoke-test 1`] = `
+exports[`design-system/form/Field WithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
-      <span class="block mt-2 text-xs text-grey-6">
+      <span class="block mt-2 text-xs text-grey-7">
         Texte description additionnel
       </span>
     </label>
@@ -73,11 +78,16 @@ exports[`components/form/Field WithHint smoke-test 1`] = `
            class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
            placeholder="Placeholder"
     >
+    <div class="flex items-center text-grey-8">
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
   </div>
 </div>
 `;
 
-exports[`components/form/Field WithInfo smoke-test 1`] = `
+exports[`design-system/form/Field WithInfo smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -90,7 +100,7 @@ exports[`components/form/Field WithInfo smoke-test 1`] = `
            placeholder="Placeholder"
     >
     <div class="flex items-center text-info-1">
-      <span class="flex mr-1 before:h-4 before:w-4 fr-icon-info-fill">
+      <span class="ri-information-fill font-normal h-4 w-4 text-[1rem] leading-[1rem] mr-1">
       </span>
       <span class="text-xs">
         Message d’information
@@ -100,7 +110,7 @@ exports[`components/form/Field WithInfo smoke-test 1`] = `
 </div>
 `;
 
-exports[`components/form/Field WithSuccess smoke-test 1`] = `
+exports[`design-system/form/Field WithSuccess smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -113,7 +123,7 @@ exports[`components/form/Field WithSuccess smoke-test 1`] = `
            placeholder="Placeholder"
     >
     <div class="flex items-center text-success-1">
-      <span class="flex mr-1 before:h-4 before:w-4 fr-icon-success-fill">
+      <span class="ri-checkbox-circle-fill font-normal h-4 w-4 text-[1rem] leading-[1rem] mr-1">
       </span>
       <span class="text-xs">
         Message de succès
@@ -123,7 +133,7 @@ exports[`components/form/Field WithSuccess smoke-test 1`] = `
 </div>
 `;
 
-exports[`components/form/Field WithWarning smoke-test 1`] = `
+exports[`design-system/form/Field WithWarning smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -136,7 +146,7 @@ exports[`components/form/Field WithWarning smoke-test 1`] = `
            placeholder="Placeholder"
     >
     <div class="flex items-center text-warning-1">
-      <span class="flex mr-1 before:h-4 before:w-4 fr-icon-warning-fill">
+      <span class="ri-alert-fill font-normal h-4 w-4 text-[1rem] leading-[1rem] mr-1">
       </span>
       <span class="text-xs">
         Message d'avertissement
