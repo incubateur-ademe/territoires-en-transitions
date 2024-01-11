@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 /** Configuration Webpack */
 module.exports = function (env, argv) {
@@ -32,9 +33,11 @@ module.exports = function (env, argv) {
       }),
     ],
 
-    // ordre de résolution des modules js par extension
     resolve: {
+      // ordre de résolution des modules js par extension
       extensions: ['.tsx', '.ts', '.js'],
+      // ajoute les alias de chemins d'import définis dans la config TS
+      plugins: [new TsconfigPathsPlugin()],
     },
 
     // exclut du bundle les bibliothèques externes
