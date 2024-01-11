@@ -204,6 +204,16 @@ export const CreateOption: Story = {
             setOptions([...options, newOption]);
             setValues(onSelectMultiple(newOption.value, values));
           },
+          onUpdate: (value, label) =>
+            setOptions(
+              getFlatOptions(options).map(o =>
+                o.value !== value ? o : {label, value}
+              )
+            ),
+          onDelete: value => {
+            setOptions(getFlatOptions(options).filter(o => o.value !== value));
+            setValues(onSelectMultiple(value, values));
+          },
         }}
       />
     );
