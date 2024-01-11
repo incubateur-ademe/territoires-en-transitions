@@ -14,6 +14,9 @@ import {
   TUseTableRowStateArgs,
   useTableRowState,
 } from './useTableRowState';
+import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
+import Notif from 'ui/shared/designSystem/Notif';
+import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
 
 const PLACEHOLDER = 'Écrire ici...';
 const OPTIONS = [
@@ -29,6 +32,7 @@ export const IndicateurValueTableRow = ({
   row,
   autoFocus,
   values,
+  confidentiel,
   editHandlers,
   onValueSaved,
 }: TUseTableRowStateArgs & {
@@ -38,6 +42,8 @@ export const IndicateurValueTableRow = ({
   /** valeurs courantes pour pouvoir vérifier si une nouvelle ligne va écraser
    * une valeur existante */
   values?: TIndicateurValeurEtCommentaires[];
+  /*** affiche une icône devant la ligne quand elle est marquée "confidentiel" */
+  confidentiel?: boolean;
 }) => {
   const state = useTableRowState({row, editHandlers, onValueSaved, values});
   const {
@@ -67,6 +73,18 @@ export const IndicateurValueTableRow = ({
   return (
     <>
       <tr>
+        <td className="relative">
+          {confidentiel && (
+            <DSTetTooltip
+              className="min-w-max"
+              label={() => <p>Le résultat est en mode privé</p>}
+            >
+              <div className="absolute top-3 -left-5">
+                <Notif icon={<IconLockFill />} />
+              </div>
+            </DSTetTooltip>
+          )}
+        </td>
         <td>
           <input
             className={classNames({'font-bold': !!annee})}
@@ -155,6 +173,7 @@ export const ValueTableRowReadOnly = ({
   const isImport = type === 'import';
   return (
     <tr>
+      <td></td>
       <td className="font-bold">{annee}</td>
       <td>
         {isImport ? (

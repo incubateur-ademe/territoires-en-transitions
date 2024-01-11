@@ -17,18 +17,17 @@ import {
 import {useEffect, useState} from 'react';
 import {SOURCE_COLLECTIVITE} from './useImportSources';
 
-/** Charge les données et affiche le tableau des valeurs */
-export const IndicateurValuesTable = ({
-  definition,
-  type,
-  isReadonly,
-  importSource,
-}: {
+type IndicateurValuesTableProps = {
   definition: TIndicateurDefinition;
   type: 'resultat' | 'objectif';
   importSource?: string;
   isReadonly: boolean;
-}) => {
+  confidentiel?: boolean;
+};
+
+/** Charge les données et affiche le tableau des valeurs */
+export const IndicateurValuesTable = (props: IndicateurValuesTableProps) => {
+  const {definition, type, importSource} = props;
   const {data: values} = useIndicateurValeursEtCommentaires({
     definition,
     type,
@@ -37,14 +36,7 @@ export const IndicateurValuesTable = ({
   const editHandlers = useEditIndicateurValeur({definition, type});
 
   return values ? (
-    <ValuesTableBase
-      type={type}
-      values={values}
-      isReadonly={isReadonly}
-      definition={definition}
-      editHandlers={editHandlers}
-      importSource={importSource}
-    />
+    <ValuesTableBase values={values} editHandlers={editHandlers} {...props} />
   ) : null;
 };
 
@@ -52,21 +44,21 @@ export const IndicateurValuesTable = ({
 const SHOW_MORE_THRESHOLD = 2;
 
 /** Affiche le tableau des valeurs associées à un indicateur */
-const ValuesTableBase = ({
-  type,
-  values,
-  definition,
-  isReadonly,
-  editHandlers,
-  importSource,
-}: {
-  type: 'resultat' | 'objectif';
-  definition: TIndicateurDefinition;
-  values: TIndicateurValeurEtCommentaires[];
-  isReadonly: boolean;
-  editHandlers: TEditIndicateurValeurHandlers;
-  importSource?: string;
-}) => {
+const ValuesTableBase = (
+  props: IndicateurValuesTableProps & {
+    values: TIndicateurValeurEtCommentaires[];
+    editHandlers: TEditIndicateurValeurHandlers;
+  }
+) => {
+  const {
+    type,
+    values,
+    definition,
+    isReadonly,
+    confidentiel,
+    editHandlers,
+    importSource,
+  } = props;
   const {unite} = definition;
   const [showAll, toggleShowAll] = useToggle(false);
   const haveManyValues = values.length > SHOW_MORE_THRESHOLD;
@@ -90,6 +82,7 @@ const ValuesTableBase = ({
     <table className="w-full fr-table fr-table--bordered fr-mb-0">
       <thead>
         <tr>
+          <th className="w-2">&nbsp;</th>
           <th scope="col">Année</th>
           <th scope="col">
             {type === 'resultat' ? 'Résultat' : 'Objectif'}
@@ -100,7 +93,7 @@ const ValuesTableBase = ({
       </thead>
       <tbody>
         {isReadonly ? (
-          valuesToShow.map(row => (
+          valuesToShow.map((row, index) => (
             <ValueTableRowReadOnly key={`${row.type}-${row.annee}`} row={row} />
           ))
         ) : (
@@ -113,19 +106,20 @@ const ValuesTableBase = ({
                 onValueSaved={setLastAddedYear}
               />
             ) : null}
-            {valuesToShow.map(row => (
+            {valuesToShow.map((row, index) => (
               <IndicateurValueTableRow
                 key={`${row.type}-${row.annee}`}
                 row={row}
                 editHandlers={editHandlers}
                 autoFocus={row.annee === lastAddedYear}
+                confidentiel={confidentiel && index === 0}
               />
             ))}
           </>
         )}
         {haveManyValues && (
           <tr>
-            <td colSpan={3}>
+            <td colSpan={4}>
               <AnchorAsButton
                 className={classNames(
                   'fr-link--icon-right text-bf500',

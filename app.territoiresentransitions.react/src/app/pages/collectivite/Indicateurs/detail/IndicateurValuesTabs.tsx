@@ -55,6 +55,7 @@ export const IndicateurValuesTabs = ({
               type="resultat"
               isReadonly={isReadonly}
               importSource={importSource}
+              confidentiel={confidentiel}
             />
           )}
         </Tab>
