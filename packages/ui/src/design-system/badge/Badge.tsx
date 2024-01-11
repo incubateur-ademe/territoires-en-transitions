@@ -59,10 +59,10 @@ export const Badge = ({
       className={classNames(
         styles.background,
         styles.border,
-        'flex items-center gap-1 max-w-max px-3 py-1 rounded',
+        'flex items-center gap-1 max-w-max px-3 py-1 border border-solid rounded',
         {
           'flex-row-reverse': iconPosition === 'left',
-          'border border-solid border-grey-4 bg-white': light,
+          'border-grey-4 bg-white': light,
           '!px-1.5 !py-0.5': size === 'sm',
         },
         className
