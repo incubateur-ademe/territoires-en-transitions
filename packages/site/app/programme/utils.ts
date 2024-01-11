@@ -10,8 +10,8 @@ export const getStrapiData = async () => {
     ['populate[3]', 'objectifs_liste'],
     ['populate[4]', 'objectifs_liste.image'],
     ['populate[5]', 'Services'],
-    ['populate[6]', 'services_liste'],
-    ['populate[7]', 'services_liste.image'],
+    ['populate[6]', 'services_liste_rel'],
+    ['populate[7]', 'services_liste_rel.image'],
     ['populate[8]', 'Compte'],
     ['populate[9]', 'Benefices'],
     ['populate[10]', 'benefices_liste'],
@@ -72,19 +72,22 @@ export const getStrapiData = async () => {
         titre: programmeData.Services.Titre as unknown as string,
         description: programmeData.Services.Description as unknown as string,
         contenu:
-          !!programmeData.services_liste && programmeData.services_liste.length
+          !!programmeData.services_liste_rel.data &&
+          programmeData.services_liste_rel.data.length
             ? (
-                programmeData.services_liste as unknown as {
+                programmeData.services_liste_rel.data as unknown as {
                   id: number;
-                  titre: string;
-                  legende: string;
-                  image: {data: StrapiItem};
+                  attributes: {
+                    titre: string;
+                    description: string;
+                    image: {data: StrapiItem};
+                  };
                 }[]
               ).map(serv => ({
                 id: serv.id,
-                titre: serv.titre,
-                description: serv.legende,
-                image: serv.image.data,
+                titre: serv.attributes.titre,
+                description: serv.attributes.description,
+                image: serv.attributes.image.data,
               }))
             : null,
       },
