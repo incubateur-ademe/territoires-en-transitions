@@ -49,12 +49,15 @@ type SelectProps<T extends OptionValue> = {
   placeholder?: string;
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: Option) => React.ReactElement;
+  isBadgeItem?: boolean;
   /** Texte affiché quand aucune option ne correspond à la recherche */
   emptySearchPlaceholder?: string;
   /** Change le positionnement du dropdown menu */
   placement?: Placement;
   /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
   containerWidthMatchButton?: boolean;
+  /** Affiche une version plus petite du sélecteur */
+  small?: boolean;
 };
 
 /**
@@ -87,8 +90,10 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
     isSearcheable = false,
     isLoading = false,
     customItem,
+    isBadgeItem = false,
     containerWidthMatchButton = true,
     disabled = false,
+    small = false,
   } = props;
 
   const hasSearch = isSearcheable || !!createProps || !!onSearch;
@@ -202,6 +207,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
             isLoading={loading}
             createProps={createProps}
             customItem={customItem}
+            isBadgeItem={isBadgeItem}
             noOptionPlaceholder={emptySearchPlaceholder}
           />
         </div>
@@ -220,6 +226,7 @@ export const Select = <T extends OptionValue>(props: SelectProps<T>) => {
         customItem={customItem}
         placeholder={placeholder}
         disabled={disabled}
+        small={small}
       />
     </DropdownFloater>
   );
@@ -249,6 +256,7 @@ const SelectButton = forwardRef(
       customItem,
       placeholder,
       disabled,
+      small,
       ...props
     }: SelectButtonProps<T>,
     ref?: Ref<HTMLButtonElement>
@@ -284,7 +292,10 @@ const SelectButton = forwardRef(
          * On ne peut pas l'appliquer sur le bouton car il reçoit déjà une propriété `onClick` du dropdown floater
          */}
         <div
-          className="flex min-h-[3rem] py-2 px-4"
+          className={classNames('flex px-4', {
+            'min-h-[2.5rem] py-1': small,
+            'min-h-[3rem] py-2': !small,
+          })}
           onClick={handleWrapperClick}
         >
           <div className="flex grow flex-wrap gap-2 mr-4">

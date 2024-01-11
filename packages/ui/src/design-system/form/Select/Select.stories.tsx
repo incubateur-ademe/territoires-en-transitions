@@ -67,6 +67,23 @@ export const Default: Story = {
   },
 };
 
+export const SmallWithBadgeItems: Story = {
+  args: {options: singleOptions, small: true, isBadgeItem: true},
+  render: args => {
+    const [value, setValue] = useState<OptionValue | undefined>();
+    return (
+      <Select
+        {...args}
+        values={value}
+        onChange={v => {
+          setValue(onSelectSingle(v, value));
+          action('onChange');
+        }}
+      />
+    );
+  },
+};
+
 export const Disabled: Story = {
   args: {options: singleOptions, onChange: () => null, disabled: true},
 };
