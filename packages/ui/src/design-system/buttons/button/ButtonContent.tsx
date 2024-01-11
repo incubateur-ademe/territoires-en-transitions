@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {Icon, IconSize} from '../../icons/Icon';
+import {Icon, IconSize} from '@design-system/icons/Icon';
 import {buttonThemeClassnames} from '../theme';
 import {ButtonContentProps, ButtonSize} from '../types';
 
