@@ -2,150 +2,103 @@
 
 BEGIN;
 
-create table automatisation.supabase_function_url
-(
-    nom text primary key,
-    api_key text,
-    url text not null
-);
-
--- Envoie les utilisateurs qui utilisent les PA
-create or replace function automatisation.send_pa_users_newsletters() returns void as $$
+-- Envoie l'administrateur de la collectivité dont l'état des lieux vient d'être complété
+create or replace function automatisation.send_admin_edl_complete() returns trigger as $$
 declare
-    list_new_pa jsonb;
-    list_pa_filled jsonb;
-    list_pa_empty jsonb;
+    complete boolean;
     to_send jsonb;
     response bigint;
 begin
-    select jsonb_build_object('list', r.list, 'users', r.users)
-    from (
-             select  '75' as list, -- Nouveaux utilisateurs PA
-                     (
-                         select array_agg(distinct crm.*)
-                         from (
-                                  select dcp.email, min(axe.created_at) as first_date
-                                  from dcp
-                                           join axe on axe.modified_by = dcp.user_id
-                                  where axe.parent is null
-                                    and axe.collectivite_id not in (select collectivite_id from collectivite_test)
-                                  group by dcp.email
-                              ) u
-                                  join automatisation.users_crm crm on u.email = crm.email
-                         where date(u.first_date) >= date(now() - interval '1 day')
-                     ) as users ) r
-    into list_new_pa;
+    -- Regarde si le nouveau score indique que l'état des lieux est complété
+    with
+        score AS (
+            SELECT new.collectivite_id,
+                   jsonb_array_elements(new.scores) AS o
+        ),
+        completude AS (
+            SELECT score.collectivite_id,
+                   (score.o ->> 'completed_taches_count'::text)::integer   AS nb,
+                   (score.o ->> 'total_taches_count'::text)::integer       AS total
+            FROM score
+            WHERE case when new.referentiel = 'eci'then
+                           score.o @> '{"action_id": "eci"}'::jsonb
+                       else
+                           score.o @> '{"action_id": "cae"}'::jsonb
+                      end
+        )
+    select c.nb = c.total as complete
+    from completude c
+    into complete;
 
-    select jsonb_build_object('list', r.list, 'users', r.users)
-    from (
-             select  '76' as list, -- Utilisateurs PA J+30
-                     (
-                         select array_agg(distinct crm.*)
-                         from
-                             (
-                                 select plan.id, count(fa) as nb_fiches
-                                 from axe plan
-                                          left join axe on axe.plan = plan.id
-                                          left join fiche_action_axe faa on axe.id = faa.axe_id
-                                          left join fiche_action fa on faa.fiche_id = fa.id
-                                 where plan.parent is null
-                                   and plan.collectivite_id not in (select collectivite_id from collectivite_test)
-                                   and (fa.titre is not null or fa.titre != 'Nouvelle fiche')
-                                 group by plan.id
-                             ) plan
-                                 join axe on axe.id = plan.id
-                                 join dcp on axe.modified_by = dcp.user_id
-                                 join automatisation.users_crm crm on dcp.email = crm.email
-                         where date(axe.created_at) = date(now() - interval '30 day')
-                           and plan.nb_fiches >=5
-                     ) as users ) r
-    into list_pa_filled;
+    if complete then
+        if old is not null then
+            -- Regarde si l'ancien score indique que le référentiel n'était pas complété
+            with
+                score AS (
+                    SELECT old.collectivite_id,
+                           jsonb_array_elements(old.scores) AS o
+                ),
+                completude AS (
+                    SELECT score.collectivite_id,
+                           (score.o ->> 'completed_taches_count'::text)::integer   AS nb,
+                           (score.o ->> 'total_taches_count'::text)::integer       AS total
+                    FROM score
+                    WHERE case when old.referentiel = 'eci'then
+                                   score.o @> '{"action_id": "eci"}'::jsonb
+                               else
+                                   score.o @> '{"action_id": "cae"}'::jsonb
+                              end
+                )
+            select c.nb < c.total as complete
+            from completude c
+            into complete;
+        end if;
+    end if;
 
-    select jsonb_build_object('list', r.list, 'users', r.users)
-    from (
-             select  '77' as list, --Droppers PA J+30
-                     (
-                         select array_agg(distinct crm.*)
-                         from
-                             (
-                                 select plan.id, count(faa) as nb_fiches
-                                 from axe plan
-                                          left join axe on axe.plan = plan.id
-                                          left join fiche_action_axe faa on axe.id = faa.axe_id
-                                 where plan.parent is null
-                                   and plan.collectivite_id not in (select collectivite_id from collectivite_test)
-                                 group by plan.id
-                             ) plan
-                                 join axe on axe.id = plan.id
-                                 join dcp on axe.modified_by = dcp.user_id
-                                 join automatisation.users_crm crm on dcp.email = crm.email
-                         where date(axe.created_at) = date(now() - interval '30 day')
-                           and plan.nb_fiches <5
-                     ) as users ) r
-    into list_pa_empty;
+    if complete then
+        to_send =  to_jsonb((
+            select array_agg(r.*)
+            from (
+                     select '83' as list, -- Liste EDL terminé
+                            (
+                                select array_agg(crm.*)
+                                from private_utilisateur_droit pud
+                                         join dcp on pud.user_id = dcp.user_id
+                                         join automatisation.users_crm crm on dcp.email = crm.email
+                                where pud.active
+                                  and pud.niveau_acces = 'admin'
+                                  and pud.collectivite_id = new.collectivite_id
 
-    to_send = jsonb_build_array(list_new_pa, list_pa_empty, list_pa_filled);
+                            ) as users ) r
+        ));
 
-    select net.http_post(
-                   url := sfu.url,
-                   body := to_send,
-                   headers := jsonb_build_object(
-                           'Content-Type', 'application/json',
-                           'apikey' , sfu.api_key,
-                           'Authorization',  concat('Bearer ',sfu.api_key)
-                              )
-           )
-    from automatisation.supabase_function_url sfu
-    where sfu.nom = 'send_users_to_brevo'
-    limit 1 into response;
-end;
-$$ language plpgsql security definer;
-comment on function automatisation.send_pa_users_newsletters is
-    'Envoie les utilisateurs qui utilisent les PA';
-
--- Envoie le nouvel utilisateur
-create or replace function automatisation.send_insert_users_newsletters() returns trigger as $$
-declare
-    to_send jsonb;
-    response bigint;
-begin
-    to_send =  to_jsonb((
-        select array_agg(r.*)
-        from (
-                 select '18' as list, -- Liste parcours onboarding
-                        (
-                            select array_agg(u.*)
-                            from automatisation.users_crm u
-                            where u.email = new.email
-                        ) as users ) r
-    ));
-
-    select net.http_post(
-                   url := sfu.url,
-                   body := to_send,
-                   headers := jsonb_build_object(
-                           'Content-Type', 'application/json',
-                           'apikey' , sfu.api_key,
-                           'Authorization',  concat('Bearer ',sfu.api_key)
-                              )
-           )
-    from automatisation.supabase_function_url sfu
-    where sfu.nom = 'send_users_to_brevo'
-    limit 1 into response;
+        select net.http_post(
+                       url := sfu.url,
+                       body := to_send,
+                       headers := jsonb_build_object(
+                               'Content-Type', 'application/json',
+                               'apikey' , sfu.api_key,
+                               'Authorization',  concat('Bearer ',sfu.api_key)
+                                  )
+               )
+        from automatisation.supabase_function_url sfu
+        where sfu.nom = 'send_users_to_brevo'
+        limit 1 into response;
+    end if;
     return new;
 exception
-   when others then return new;
+    when others then return new;
 end;
 $$ language plpgsql security definer;
-comment on function automatisation.send_insert_users_newsletters is
-    'Envoie le nouvel utilisateur';
+comment on function automatisation.send_admin_edl_complete is
+    'Envoie l''administrateur de la collectivité dont l''état des lieux vient d''être complété';
 
 
 -- Trigger sur la table dcp
-create trigger dcp_insert_newsletters
-    after insert
-    on dcp
+create trigger client_score_edl_complete
+    before insert or update
+    on client_scores
     for each row
-execute procedure automatisation.send_insert_users_newsletters();
+execute procedure automatisation.send_admin_edl_complete();
 
 COMMIT;
