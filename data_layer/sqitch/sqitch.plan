@@ -591,3 +591,4 @@ cron/send_pa_users_to_brevo 2023-12-19T17:14:10Z Amandine Jacquelin <conta@Lance
 @v2.90.0 2024-01-12T13:53:27Z Florian <florian@derfurth.com> # Integration avec Brevo
 
 taxonomie/thematique [taxonomie/thematique@v2.80.0] 2023-11-15T16:47:33Z Amandine Jacquelin <conta@LanceLibre> # Lie les sous_thématiques aux thématiques
+@v2.91.0 2024-01-12T14:12:15Z Florian <florian@derfurth.com> # Lie les sous-thématiques à leur thématique
