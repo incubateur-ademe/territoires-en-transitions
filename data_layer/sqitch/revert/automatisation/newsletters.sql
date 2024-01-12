@@ -1,10 +1,8 @@
--- Revert tet:automatisation/newsletters from pg
+-- Deploy tet:automatisation/newsletters to pg
 
 BEGIN;
 
-drop trigger dcp_insert_newsletters on dcp;
-drop function automatisation.send_insert_users_newsletters;
-drop function automatisation.send_pa_users_newsletters;
-drop table automatisation.supabase_function_url;
+drop trigger client_score_edl_complete on client_scores;
+drop function automatisation.send_admin_edl_complete;
 
 COMMIT;
