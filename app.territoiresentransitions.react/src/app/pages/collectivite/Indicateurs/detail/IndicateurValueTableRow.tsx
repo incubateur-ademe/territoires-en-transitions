@@ -148,7 +148,9 @@ export const IndicateurValueTableRow = ({
 /** Affiche une valeur importée */
 const ValueImported = ({valeur}: {valeur: string}) => (
   <>
-    <span className="text-grey-6 font-bold w-fit">{valeur}</span>
+    <span className="text-grey-6 font-bold w-fit">
+      {parseFloat(valeur).toFixed(2)}
+    </span>
     <InfoTooltip
       label={() => (
         <span>
