@@ -1,38 +1,38 @@
 import classNames from 'classnames';
 import {Icon, IconValue} from '@design-system/icons/Icon';
 
-export type NotifVariant = 'default' | 'warning' | 'info' | 'error';
+export type NotificationVariant = 'default' | 'warning' | 'info' | 'error';
 
-export type NotifSize = 'xs' | 'sm' | 'md';
+export type NotificationSize = 'xs' | 'sm' | 'md';
 
 type Props = {
   /** Variante de couleur */
-  variant?: NotifVariant;
+  variant?: NotificationVariant;
   /** Variante de taille */
-  size?: NotifSize;
+  size?: NotificationSize;
   /**  Icône */
   icon?: IconValue;
   /** Nombre affiché dans le composant */
   number?: number;
 };
 
-const variantToClassname: Record<NotifVariant, string> = {
+const variantToClassname: Record<NotificationVariant, string> = {
   default: 'text-primary fill-primary bg-primary-3',
   warning: 'text-white fill-white bg-warning-1',
   info: 'text-white fill-white bg-info-1',
   error: 'text-white fill-white bg-error-1',
 };
 
-const sizeToClassname: Record<NotifSize, string> = {
+const sizeToClassname: Record<NotificationSize, string> = {
   md: 'text-md',
   sm: 'text-sm',
   xs: 'text-xs',
 };
 
 /**
- * Affiche un nombre et/ou un icon dans un cercle.
+ * Affiche un nombre et/ou une icône dans un cercle.
  */
-export const Notif = ({
+export const Notification = ({
   variant = 'default',
   size = 'md',
   icon,

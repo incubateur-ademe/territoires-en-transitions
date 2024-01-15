@@ -1,14 +1,18 @@
 import {Meta, StoryObj} from '@storybook/react';
-import {Notif, NotifSize, NotifVariant} from './Notif';
+import {
+  Notification,
+  NotificationSize,
+  NotificationVariant,
+} from './Notification';
 
-const meta: Meta<typeof Notif> = {
-  title: 'Design System/Notif',
-  component: Notif,
+const meta: Meta<typeof Notification> = {
+  title: 'Design System/Notification',
+  component: Notification,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Notif>;
+type Story = StoryObj<typeof Notification>;
 
 export const NombreUniquement: Story = {
   args: {number: 10},
@@ -32,11 +36,11 @@ export const Variantes: Story = {
       {['md', 'sm', 'xs'].map(size => (
         <div key={size} className="flex flex-col gap-5">
           {['default', 'warning', 'info', 'error'].map(variant => (
-            <Notif
+            <Notification
               number={10}
               icon="lock-fill"
-              variant={variant as NotifVariant}
-              size={size as NotifSize}
+              variant={variant as NotificationVariant}
+              size={size as NotificationSize}
             />
           ))}
         </div>

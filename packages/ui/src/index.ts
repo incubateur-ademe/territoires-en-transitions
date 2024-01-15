@@ -5,4 +5,4 @@ export {preset} from './tailwind-preset';
 export {Button} from './design-system/buttons/button/Button';
 export {Modal} from './design-system/modal/Modal';
 export {Tag} from './design-system/tag/Tag';
-export {Notif} from './design-system/notif/Notif';
+export {Notification} from './design-system/notification/Notification';
