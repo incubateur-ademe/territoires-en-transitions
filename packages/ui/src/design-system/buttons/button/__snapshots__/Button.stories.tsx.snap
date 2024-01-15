@@ -109,9 +109,9 @@ exports[`Design System/Button Sizes smoke-test 1`] = `
       </span>
     </div>
   </button>
-  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-3">
+  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-2.5">
     <div class="flex items-center gap-2">
-      <span class="ri-leaf-line font-normal h-4 w-4 text-[1rem] leading-[1rem] fill-white group-hover:fill-white">
+      <span class="ri-leaf-line font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
       </span>
     </div>
   </button>
