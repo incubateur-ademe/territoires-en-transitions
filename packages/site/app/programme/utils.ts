@@ -1,4 +1,4 @@
-import {fetchSingle} from 'src/strapi/strapi';
+import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
@@ -78,6 +78,7 @@ export const getStrapiData = async () => {
                 programmeData.services_liste_rel.data as unknown as {
                   id: number;
                   attributes: {
+                    uid: string;
                     titre: string;
                     description: string;
                     image: {data: StrapiItem};
@@ -86,6 +87,7 @@ export const getStrapiData = async () => {
                 }[]
               ).map(serv => ({
                 id: serv.id,
+                uid: serv.attributes.uid,
                 titre: serv.attributes.titre,
                 description: serv.attributes.description,
                 image: serv.attributes.image.data,
@@ -152,4 +154,12 @@ export const getStrapiData = async () => {
       },
     };
   } else return null;
+};
+
+export const getServiceStrapiData = async (uid: string) => {
+  const data = await fetchCollection('services', [['filters[uid]', `${uid}`]]);
+
+  if (data) {
+    console.log(data);
+  }
 };
