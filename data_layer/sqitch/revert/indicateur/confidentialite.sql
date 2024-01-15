@@ -2,6 +2,18 @@
 
 BEGIN;
 
+drop policy allow_read on indicateur_personnalise_resultat;
+create policy allow_read on indicateur_personnalise_resultat
+    as permissive
+    for select
+    using can_read_acces_restreint(collectivite_id);
+
+drop policy allow_read on indicateur_resultat;
+create policy allow_read on indicateur_resultat
+    as permissive
+    for select
+    using can_read_acces_restreint(collectivite_id);
+
 drop view indicateurs;
 drop function private.is_valeur_confidentielle(integer, indicateur_id, integer);
 drop function private.is_valeur_confidentielle(integer, integer);

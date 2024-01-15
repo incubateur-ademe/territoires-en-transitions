@@ -159,7 +159,7 @@ begin
             and annee = (select max(r.annee)
                          from indicateur_personnalise_resultat r
                          where r.indicateur_id = is_valeur_confidentielle.indicateur_perso_id
-                         and r.valeur is not null);
+                           and r.valeur is not null);
 end;
 comment on function private.is_valeur_confidentielle(integer, integer) is
     'Vrai si la valeur annuelle de l''indicateur est confidentielle.';
@@ -184,9 +184,6 @@ from indicateur_resultat r
                    on r.indicateur_id = c.indicateur_id
                        and r.collectivite_id = c.collectivite_id
                        and r.annee = c.annee
-where can_read_acces_restreint(r.collectivite_id)
-  and (have_lecture_acces(r.collectivite_id)
-    or not private.is_valeur_confidentielle(r.collectivite_id, r.indicateur_id, r.annee))
 
 union all
 --- indicateurs dont le résultat est en fait celui d'un autre.
@@ -208,10 +205,6 @@ from indicateur_resultat r
                    on r.indicateur_id = c.indicateur_id
                        and r.collectivite_id = c.collectivite_id
                        and r.annee = c.annee
-where can_read_acces_restreint(r.collectivite_id)
-  and (have_lecture_acces(r.collectivite_id)
-    or not private.is_valeur_confidentielle(r.collectivite_id, r.indicateur_id, r.annee))
-
 
 union all
 select 'objectif'::indicateur_valeur_type as type,
@@ -229,7 +222,7 @@ from indicateur_objectif o
                    on o.indicateur_id = c.indicateur_id
                        and o.collectivite_id = c.collectivite_id
                        and o.annee = c.annee
-where can_read_acces_restreint(o.collectivite_id)
+
 union all
 
 --- indicateurs dont l'objectif est en fait celui d'un autre.
@@ -248,7 +241,6 @@ from indicateur_objectif o
                    on o.indicateur_id = c.indicateur_id
                        and o.collectivite_id = c.collectivite_id
                        and o.annee = c.annee
-where can_read_acces_restreint(o.collectivite_id)
 
 union all
 select 'import'::indicateur_valeur_type as type,
@@ -261,7 +253,6 @@ select 'import'::indicateur_valeur_type as type,
        source,
        source_id
 from indicateur_resultat_import
-where can_read_acces_restreint(collectivite_id)
 
 union all
 --- indicateurs dont le résultat est en fait celui d'un autre.
@@ -276,7 +267,6 @@ select 'import'::indicateur_valeur_type as type,
        i.source_id
 from indicateur_resultat_import i
          join indicateur_definition alt on i.indicateur_id = alt.valeur_indicateur
-where can_read_acces_restreint(i.collectivite_id)
 
 union all
 select 'resultat'::indicateur_valeur_type as type,
@@ -290,9 +280,6 @@ select 'resultat'::indicateur_valeur_type as type,
        null
 from indicateur_personnalise_resultat r
          left join indicateur_perso_resultat_commentaire c using (collectivite_id, indicateur_id, annee)
-where can_read_acces_restreint(collectivite_id)
-  and (have_lecture_acces(r.collectivite_id)
-    or not private.is_valeur_confidentielle(r.indicateur_id, r.annee))
 
 union all
 select 'objectif'::indicateur_valeur_type as type,
@@ -305,9 +292,24 @@ select 'objectif'::indicateur_valeur_type as type,
        null,
        null
 from indicateur_personnalise_objectif r
-         left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee)
-where can_read_acces_restreint(r.collectivite_id);
+         left join indicateur_perso_objectif_commentaire c using (collectivite_id, indicateur_id, annee);
 
--- todo modifier les RLS pour les tables de résultats et d'objectifs car on ne les utilise pas pour la lecture
+drop policy allow_read on indicateur_resultat;
+create policy allow_read on indicateur_resultat
+    as permissive
+    for select
+    using ((select can_read_acces_restreint(collectivite_id)
+                       and (have_lecture_acces(collectivite_id)
+        or not private.is_valeur_confidentielle(collectivite_id, indicateur_id, annee)))
+    );
+
+drop policy allow_read on indicateur_personnalise_resultat;
+create policy allow_read on indicateur_personnalise_resultat
+    as permissive
+    for select
+    using ((select can_read_acces_restreint(collectivite_id)
+                       and
+                   (have_lecture_acces(collectivite_id)
+                       or not private.is_valeur_confidentielle(indicateur_id, annee))));
 
 COMMIT;
