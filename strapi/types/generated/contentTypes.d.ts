@@ -1176,6 +1176,7 @@ export interface ApiServiceService extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
+    uid: Attribute.UID<'api::service.service', 'titre'> & Attribute.Required;
     titre: Attribute.String & Attribute.Required;
     description: Attribute.String & Attribute.Required;
     image: Attribute.Media & Attribute.Required;

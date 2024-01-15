@@ -12,6 +12,11 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "uid": {
+      "type": "uid",
+      "targetField": "titre",
+      "required": true
+    },
     "titre": {
       "type": "string",
       "required": true
@@ -24,9 +29,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "sous_page": {
       "type": "boolean",

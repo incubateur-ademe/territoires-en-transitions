@@ -4,7 +4,6 @@ import CardsWrapper from '@components/cards/CardsWrapper';
 import Section from '@components/sections/Section';
 import CodingPicto from 'public/pictogrammes/CodingPicto';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type ServicesProps = {
@@ -13,6 +12,7 @@ type ServicesProps = {
   contenu:
     | {
         id: number;
+        uid: string;
         titre: string;
         description: string;
         image: StrapiItem;
@@ -50,11 +50,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                   />
                 ) : undefined
               }
-              href={
-                c.sousPage
-                  ? `/programme/${convertNameToSlug(c.titre)}`
-                  : undefined
-              }
+              href={c.sousPage && c.uid ? `/programme/${c.uid}` : undefined}
             />
           ))}
       </CardsWrapper>
