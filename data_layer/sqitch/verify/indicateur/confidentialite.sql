@@ -2,6 +2,5 @@
 
 BEGIN;
 
-select has_function_privilege('confidentiel(indicateur_definitions)', 'execute');
 
 ROLLBACK;

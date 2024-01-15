@@ -592,3 +592,5 @@ cron/send_pa_users_to_brevo 2023-12-19T17:14:10Z Amandine Jacquelin <conta@Lance
 
 indicateur/confidentialite 2024-01-08T15:37:24Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la gestion des indicateurs confidentiels
 @v2.92.0 2024-01-15T10:29:39Z Florian <florian@derfurth.com> # Confidentialité des indicateurs
+
+indicateur/confidentialite [indicateur/confidentialite@v2.92.0] 2024-01-15T15:37:25Z Florian <florian@derfurth.com> # Répare les droits de la vue `indicateurs`
