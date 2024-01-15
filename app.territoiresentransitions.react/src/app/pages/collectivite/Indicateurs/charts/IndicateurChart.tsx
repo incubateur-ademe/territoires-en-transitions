@@ -18,7 +18,7 @@ import {
 } from './utils';
 import {PathLine, SliceTooltip, getLineStyleBySerieId} from './SliceTooltip';
 import {Card} from './Card';
-import {CardNoData} from './CardNoData';
+import {CardNoData, IconIndicateurPrive} from './CardNoData';
 import {TIndicateurChartProps, TIndicateurChartBaseProps} from './types';
 
 /**
@@ -103,9 +103,13 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
 
   return (
     <Card
-      className={classNames({'rounded-none h-[35rem]': isZoomed}, className)}
+      className={classNames(
+        {'rounded-none h-[35rem]': isZoomed, relative: !isZoomed},
+        className
+      )}
       dataTest={`chart-${definition.id}`}
     >
+      {!isZoomed && definition.confidentiel && <IconIndicateurPrive />}
       <ChartCardContent
         chart={chart}
         chartInfo={{
