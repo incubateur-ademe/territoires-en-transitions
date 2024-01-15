@@ -4,8 +4,7 @@ import {getChartTitle} from './utils';
 import {Card} from './Card';
 import {TIndicateurChartBaseProps} from './types';
 import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
-import Notif from 'ui/shared/designSystem/Notif';
-import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
+import {Notification} from '@tet/ui';
 
 // indique qu'il n'y a pas de suffisamment de données pour afficher le graphe
 export const CardNoData = ({
@@ -62,7 +61,7 @@ export const IconIndicateurPrive = () => (
     label={() => <p>La dernière valeur de cet indicateur est en mode privé</p>}
   >
     <div className="absolute -top-5 left-5">
-      <Notif icon={<IconLockFill />} />
+      <Notification icon="lock-fill" />
     </div>
   </DSTetTooltip>
 );
