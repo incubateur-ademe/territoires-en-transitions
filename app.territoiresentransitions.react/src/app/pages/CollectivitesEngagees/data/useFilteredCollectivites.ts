@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {TCollectiviteCarte} from '../types';
-import {TCollectivitesFilters} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
+import {Tfilters} from 'app/pages/CollectivitesEngagees/data/filters';
 
 const screenIsMobile = () =>
   window.innerHeight <= 800 && window.innerWidth <= 600;
@@ -14,7 +14,7 @@ type FilterOperator = 'in' | 'ov';
 /**
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
  */
-export const useFilteredCollectivites = (args: TCollectivitesFilters) => {
+export const useFilteredCollectivites = (args: Tfilters) => {
   const {data, isLoading} = useQuery(['collectivite_card', args], () =>
     fetchCollectiviteCards(args)
   );
@@ -29,7 +29,7 @@ export const useFilteredCollectivites = (args: TCollectivitesFilters) => {
 /**
  * Construit la query en ajoutant des opérateurs Postgrest pour chaque filtre.
  */
-const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
+const buildQueryFromFilters = (filters: Tfilters) => {
   let query = supabaseClient
     .from('collectivite_card')
     .select('*', {count: 'exact'});
@@ -159,9 +159,7 @@ const buildQueryFromFilters = (filters: TCollectivitesFilters) => {
 /**
  * Télécharge les collectivités en fonction des filtres.
  */
-export const fetchCollectiviteCards = async (
-  filters: TCollectivitesFilters
-) => {
+export const fetchCollectiviteCards = async (filters: Tfilters) => {
   // la requête
   const query = buildQueryFromFilters(filters);
 

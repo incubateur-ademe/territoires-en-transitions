@@ -3,13 +3,12 @@ import classNames from 'classnames';
 
 import {FiltresColonne} from '../anciensComponents/FiltresColonne';
 
-import {TSetFilters, getNumberOfActiveFilters} from '../data/filters';
-import {TCollectivitesFilters} from '../data/filtreLibelles';
+import {Tfilters, TSetFilters, getNumberOfActiveFilters} from '../data/filters';
 import {useDepartements} from '../data/useDepartements';
 import {useRegions} from '../data/useRegions';
 
 type Props = {
-  filters: TCollectivitesFilters;
+  filters: Tfilters;
   setFilters: TSetFilters;
 };
 

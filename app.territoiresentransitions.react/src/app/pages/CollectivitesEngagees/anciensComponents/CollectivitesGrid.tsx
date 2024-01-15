@@ -1,7 +1,7 @@
 import {CollectiviteCarte} from 'app/pages/CollectivitesEngagees/anciensComponents/CollectiviteCarte';
 import {TCollectiviteCarte} from '../types';
-import {TCollectivitesFilters} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
 import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
+import {Tfilters} from 'app/pages/CollectivitesEngagees/data/filters';
 
 const AucuneCollectivite = () => (
   <div
@@ -28,7 +28,7 @@ export const CollectivitesGrid = (props: {
   isLoading?: boolean;
   collectivites: TCollectiviteCarte[];
   collectivitesCount: number;
-  filters: TCollectivitesFilters;
+  filters: Tfilters;
   isCardClickable: boolean;
 }) => {
   if (props.isLoading) {
