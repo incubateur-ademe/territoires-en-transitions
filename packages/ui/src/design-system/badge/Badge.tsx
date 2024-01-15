@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {badgeClassnames} from './utils';
-import {Icon} from '../icons/Icon';
+import {Icon, IconValue} from '../icons/Icon';
 
 export type BadgeState =
   | 'default'
@@ -24,7 +24,7 @@ type Props = {
   /** Affiche le badge en style light */
   light?: boolean;
   /** Icône à afficher dans le badge */
-  icon?: Icon;
+  icon?: IconValue;
   /** Position de l'icon dans le badge, à droite par défaut */
   iconPosition?: 'left' | 'right';
   /** Appelée lors du clic sur le bouton "Fermer". Ne pas spécifier pour masquer le bouton. */
