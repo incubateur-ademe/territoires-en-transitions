@@ -7,17 +7,16 @@ import {
   TauxRemplissageCollectiviteFiltre,
   TypeCollectiviteFiltre,
 } from 'app/pages/CollectivitesEngagees/anciensComponents/Filtres';
-import type {TCollectivitesFilters} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
 import {InputSearch} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {TDepartement} from '../data/useDepartements';
 import {TRegion} from '../data/useRegions';
-import {TSetFilters} from '../data/filters';
+import {Tfilters, TSetFilters} from '../data/filters';
 
 export const FiltresColonne = (props: {
   departments: TDepartement[];
   regions: TRegion[];
-  filters: TCollectivitesFilters;
+  filters: Tfilters;
   setFilters: TSetFilters;
 }) => {
   const tracker = useFonctionTracker();

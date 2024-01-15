@@ -1,4 +1,4 @@
-import {TOption} from 'app/pages/CollectivitesEngagees/data/filtreLibelles';
+import {TOption} from 'ui/shared/select/commons';
 
 export type TMultiSelectCheckboxesProps = {
   htmlId: string;
@@ -13,35 +13,35 @@ export type TMultiSelectCheckboxesProps = {
  */
 export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
   const {htmlId, selected, title, options, onChange} = props;
-  const optionsIncludingAll = [{id: 'all', libelle: 'Tous'}, ...options];
+  const optionsIncludingAll = [{value: 'all', label: 'Tous'}, ...options];
 
   return (
     <div>
       <div className="font-semibold text-md mb-2">{title}</div>
       <div className="small-checkbox  fr-checkbox-group text-sm">
         {optionsIncludingAll.map(option => (
-          <div className="my-2" key={option.id}>
+          <div className="my-2" key={option.value}>
             <input
               type="checkbox"
               className="fr-toggle__input"
-              id={htmlId + option.id}
-              disabled={option.id === 'all' && selected.length === 0}
+              id={htmlId + option.value}
+              disabled={option.value === 'all' && selected.length === 0}
               checked={
                 selected.length === 0
-                  ? option.id === 'all'
-                  : selected.includes(option.id as string)
+                  ? option.value === 'all'
+                  : selected.includes(option.value as string)
               }
               onChange={e => {
                 if (e.currentTarget.checked) {
-                  if (option.id === 'all') {
+                  if (option.value === 'all') {
                     onChange([]);
-                  } else onChange([...selected, option.id as string]);
+                  } else onChange([...selected, option.value as string]);
                 } else {
-                  onChange(selected.filter(s => s !== option.id));
+                  onChange(selected.filter(s => s !== option.value));
                 }
               }}
             />
-            <label htmlFor={htmlId + option.id}>{option.libelle}</label>
+            <label htmlFor={htmlId + option.value}>{option.label}</label>
           </div>
         ))}
       </div>

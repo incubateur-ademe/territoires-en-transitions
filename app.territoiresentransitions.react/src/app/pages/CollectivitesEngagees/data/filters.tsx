@@ -1,9 +1,21 @@
-import {TCollectivitesFilters} from './filtreLibelles';
+export type Tfilters = {
+  nom?: string;
+  types: string[];
+  regions: string[];
+  departments: string[];
+  population: string[];
+  referentiel: string[];
+  niveauDeLabellisation: string[];
+  realiseCourant: string[];
+  tauxDeRemplissage: string[];
+  trierPar?: string[];
+  page?: number;
+};
 
-export type TSetFilters = (newFilters: TCollectivitesFilters) => void;
+export type TSetFilters = (newFilters: Tfilters) => void;
 
 // valeurs par défaut des filtres
-export const initialFilters: TCollectivitesFilters = {
+export const initialFilters: Tfilters = {
   types: [],
   regions: [],
   departments: [],
@@ -30,9 +42,7 @@ export const nameToShortNames = {
 
 const notEmpty = (l: string[]): boolean => l.length > 0;
 
-export const getNumberOfActiveFilters = (
-  filtres: TCollectivitesFilters
-): number => {
+export const getNumberOfActiveFilters = (filtres: Tfilters): number => {
   return (
     Number(notEmpty(filtres.regions)) +
     Number(notEmpty(filtres.departments)) +

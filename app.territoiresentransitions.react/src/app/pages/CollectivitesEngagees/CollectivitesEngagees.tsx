@@ -7,8 +7,7 @@ import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBa
 import {useSearchParams} from 'core-logic/hooks/query';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {useFilteredCollectivites} from './data/useFilteredCollectivites';
-import {TCollectivitesFilters} from './data/filtreLibelles';
-import {initialFilters, nameToShortNames} from './data/filters';
+import {Tfilters, initialFilters, nameToShortNames} from './data/filters';
 
 const CollectivitesEngagees = () => {
   const ownedCollectivites = useOwnedCollectivites();
@@ -19,7 +18,7 @@ const CollectivitesEngagees = () => {
   );
 
   /** Filters */
-  const [filters, setFilters] = useSearchParams<TCollectivitesFilters>(
+  const [filters, setFilters] = useSearchParams<Tfilters>(
     'collectivites',
     initialFilters,
     nameToShortNames
