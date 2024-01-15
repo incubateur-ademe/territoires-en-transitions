@@ -60,6 +60,51 @@ const FIXTURE = {
 const fetchIndicateurs = (subset: Subset, filters: Filters) =>
   fetchFilteredIndicateurs(supabase, 1, subset, filters);
 
+describe('Confidentialité', async () => {
+  before(async () => {
+    await testReset();
+  });
+
+  it('Devrait pouvoir insérer des résultats', async () => {
+    await signIn('yolododo');
+    await supabase.from('indicateur_resultat').upsert([{
+      indicateur_id: 'eci_8',
+      collectivite_id: 1,
+      annee: 2023,
+      valeur: 999,
+    }, {
+      indicateur_id: 'eci_8',
+      collectivite_id: 1,
+      annee: 2024,
+      valeur: 666,
+    }])
+
+    await supabase.from('indicateur_confidentiel').upsert(
+      [{indicateur_id: 'cae_8', collectivite_id: 1}]
+    );
+
+    const {data, error} = await supabase.from('indicateur_resultat')
+      .select('*')
+      .eq('collectivite_id', 1)
+      .eq('indicateur_id', 'cae_8');
+
+    assert.equal(data.length, 2)
+    await signOut();
+
+  })
+
+  it('Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n\'ai pas de droits', async () => {
+    await signIn('yulududu');
+    const {data, error} = await supabase.from('indicateur_resultat')
+      .select('*')
+      .eq('collectivite_id', 1)
+      .eq('indicateur_id', 'cae_8');
+
+    assert.equal(data.length, 1)
+    await signOut();
+  });
+})
+
 describe('Filtrer les indicateurs', async () => {
   before(async function () {
     await testReset();
