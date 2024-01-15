@@ -81,6 +81,7 @@ export const getStrapiData = async () => {
                     titre: string;
                     description: string;
                     image: {data: StrapiItem};
+                    sous_page: boolean | undefined;
                   };
                 }[]
               ).map(serv => ({
@@ -88,6 +89,7 @@ export const getStrapiData = async () => {
                 titre: serv.attributes.titre,
                 description: serv.attributes.description,
                 image: serv.attributes.image.data,
+                sousPage: serv.attributes.sous_page ?? false,
               }))
             : null,
       },

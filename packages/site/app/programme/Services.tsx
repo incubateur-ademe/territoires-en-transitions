@@ -16,6 +16,7 @@ type ServicesProps = {
         titre: string;
         description: string;
         image: StrapiItem;
+        sousPage: boolean;
       }[]
     | null;
 };
@@ -49,7 +50,11 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                   />
                 ) : undefined
               }
-              href={`/programme/${convertNameToSlug(c.titre)}`}
+              href={
+                c.sousPage
+                  ? `/programme/${convertNameToSlug(c.titre)}`
+                  : undefined
+              }
             />
           ))}
       </CardsWrapper>
