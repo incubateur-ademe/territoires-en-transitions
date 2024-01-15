@@ -11,7 +11,7 @@ import Titre from './Titre';
 import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {Notif} from '@tet/ui';
+import {Notification} from '@tet/ui';
 
 type Props = {
   link?: string;
@@ -97,7 +97,7 @@ const FicheActionCard = ({
           title="Fiche en accès restreint"
           className="absolute -top-5 left-8"
         >
-          <Notif icon="lock-fill" />
+          <Notification icon="lock-fill" />
         </div>
       )}
       {/** Menu d'options */}
