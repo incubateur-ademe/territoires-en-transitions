@@ -15,8 +15,7 @@ import {
   useTableRowState,
 } from './useTableRowState';
 import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
-import Notif from 'ui/shared/designSystem/Notif';
-import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
+import {Notification} from '@tet/ui';
 
 const PLACEHOLDER = 'Écrire ici...';
 const OPTIONS = [
@@ -80,7 +79,7 @@ export const IndicateurValueTableRow = ({
               label={() => <p>Le résultat est en mode privé</p>}
             >
               <div className="absolute top-3 -left-5">
-                <Notif icon={<IconLockFill />} />
+                <Notification icon="lock-fill" />
               </div>
             </DSTetTooltip>
           )}
