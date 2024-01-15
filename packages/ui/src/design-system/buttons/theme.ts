@@ -110,7 +110,7 @@ export const buttonSizeClassnames: Record<
   },
   sm: {
     textButton: 'text-sm py-2.5 px-6',
-    iconButton: 'p-3',
+    iconButton: 'p-2.5',
   },
   md: {
     textButton: 'text-base py-3 px-6',
