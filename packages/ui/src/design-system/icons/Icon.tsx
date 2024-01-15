@@ -2,10 +2,13 @@ import classNames from 'classnames';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-export type Icon = JSX.Element | ((className: string) => JSX.Element) | string;
+export type IconValue =
+  | JSX.Element
+  | ((className: string) => JSX.Element)
+  | string;
 
 type IconProps = {
-  icon: Icon;
+  icon: IconValue;
   size?: IconSize;
   className?: string;
 };
