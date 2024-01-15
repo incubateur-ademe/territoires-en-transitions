@@ -33,15 +33,7 @@ export const CardNoData = ({
       )}
       dataTest={`chart-${definition.id}`}
     >
-      {confidentiel && isReadonly && (
-        <DSTetTooltip
-          label={() => <p>Les données de cet indicateur sont en mode privé</p>}
-        >
-          <div className="absolute -top-5 left-5">
-            <Notif icon={<IconLockFill />} />
-          </div>
-        </DSTetTooltip>
-      )}
+      {confidentiel && <IconIndicateurPrive />}
       <span className="font-bold text-[#161616]">
         {getChartTitle(definition, isZoomed)}
       </span>
@@ -64,3 +56,13 @@ export const CardNoData = ({
     </Card>
   );
 };
+
+export const IconIndicateurPrive = () => (
+  <DSTetTooltip
+    label={() => <p>La dernière valeur de cet indicateur est en mode privé</p>}
+  >
+    <div className="absolute -top-5 left-5">
+      <Notif icon={<IconLockFill />} />
+    </div>
+  </DSTetTooltip>
+);
