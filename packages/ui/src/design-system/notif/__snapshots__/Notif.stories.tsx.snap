@@ -2,7 +2,7 @@
 
 exports[`Design System/Notif IconeUniquement smoke-test 1`] = `
 <div class="text-primary fill-primary bg-primary-3 text-md inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-  <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+  <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
   </span>
 </div>
 `;
@@ -12,7 +12,7 @@ exports[`Design System/Notif NombreEtIconeUniquement smoke-test 1`] = `
   <span class="font-extrabold leading-none">
     10
   </span>
-  <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+  <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
   </span>
 </div>
 `;
@@ -34,28 +34,28 @@ exports[`Design System/Notif Variantes smoke-test 1`] = `
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-warning-1 text-md inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-info-1 text-md inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-error-1 text-md inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
   </div>
@@ -64,28 +64,28 @@ exports[`Design System/Notif Variantes smoke-test 1`] = `
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-4 w-4 text-[1rem] leading-[1rem]">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-warning-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-4 w-4 text-[1rem] leading-[1rem]">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-info-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-4 w-4 text-[1rem] leading-[1rem]">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-error-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-4 w-4 text-[1rem] leading-[1rem]">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
   </div>
@@ -94,28 +94,28 @@ exports[`Design System/Notif Variantes smoke-test 1`] = `
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-warning-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-info-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
     <div class="text-white fill-white bg-error-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
         10
       </span>
-      <span class="ri-lock-fill font-normal h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
   </div>
