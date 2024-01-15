@@ -18,7 +18,7 @@ export const IconeUniquement: Story = {
   args: {icon: 'lock-fill'},
 };
 
-export const NombreEtIconeUniquement: Story = {
+export const NombreEtIcone: Story = {
   args: {number: 10, icon: 'lock-fill'},
 };
 

@@ -7,7 +7,7 @@ exports[`Design System/Notif IconeUniquement smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Notif NombreEtIconeUniquement smoke-test 1`] = `
+exports[`Design System/Notif NombreEtIcone smoke-test 1`] = `
 <div class="text-primary fill-primary bg-primary-3 text-md inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
   <span class="font-extrabold leading-none">
     10
