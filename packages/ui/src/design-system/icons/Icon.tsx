@@ -38,7 +38,7 @@ export const Icon = ({icon, size = 'md', className}: IconProps) => {
       <span
         className={classNames(
           `ri-${icon}`,
-          'font-normal inline-flex items-center justify-center',
+          'font-normal text-center',
           sizeClassnames,
           {
             // 14px
