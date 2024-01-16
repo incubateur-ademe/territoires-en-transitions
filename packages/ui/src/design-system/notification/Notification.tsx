@@ -24,9 +24,9 @@ const variantToClassname: Record<NotificationVariant, string> = {
 };
 
 const sizeToClassname: Record<NotificationSize, string> = {
-  md: 'text-[1.25rem] leading-[1.25rem]',
-  sm: 'text-[1rem] leading-[1rem]',
-  xs: 'text-[0.875rem] leading-[0.875rem]',
+  md: 'text-md',
+  sm: 'text-sm',
+  xs: 'text-xs',
 };
 
 /**
