@@ -9,7 +9,7 @@ select test.create_copy('public', 'indicateur_objectif');
 select test.create_copy('public', 'indicateur_objectif_commentaire');
 select test.create_copy('public', 'indicateur_resultat_import');
 
-create function
+create or replace function
     test_reset_indicateurs()
     returns void
 as
@@ -25,6 +25,7 @@ begin
     perform test.reset_from_copy('public', 'indicateur_objectif');
     perform test.reset_from_copy('public', 'indicateur_objectif_commentaire');
     perform test.reset_from_copy('public', 'indicateur_resultat_import');
+    truncate indicateur_confidentiel cascade;
 end;
 $$ language plpgsql;
 comment on function test_reset_indicateurs is
