@@ -235,6 +235,23 @@ export interface ContenuVideo extends Schema.Component {
   };
 }
 
+export interface ServicesBenefices extends Schema.Component {
+  collectionName: 'components_services_benefices';
+  info: {
+    displayName: 'b\u00E9n\u00E9fices';
+    icon: 'thumbUp';
+    description: '';
+  };
+  attributes: {
+    benefices_liste: Attribute.Component<'shared.vignette', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 2;
+        max: 4;
+      }>;
+  };
+}
+
 export interface ServicesIntroduction extends Schema.Component {
   collectionName: 'components_services_introductions';
   info: {
@@ -387,6 +404,7 @@ declare module '@strapi/types' {
       'contenu.paragraphe': ContenuParagraphe;
       'contenu.texte-collectivite': ContenuTexteCollectivite;
       'contenu.video': ContenuVideo;
+      'services.benefices': ServicesBenefices;
       'services.introduction': ServicesIntroduction;
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;

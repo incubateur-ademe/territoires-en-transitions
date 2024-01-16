@@ -1181,7 +1181,9 @@ export interface ApiServiceService extends Schema.CollectionType {
     description: Attribute.String & Attribute.Required;
     image: Attribute.Media & Attribute.Required;
     sous_page: Attribute.Boolean & Attribute.DefaultTo<false>;
-    contenu: Attribute.DynamicZone<['services.introduction']>;
+    contenu: Attribute.DynamicZone<
+      ['services.introduction', 'services.benefices']
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
