@@ -29,11 +29,19 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "sous_page": {
       "type": "boolean",
       "default": false
+    },
+    "contenu": {
+      "type": "dynamiczone",
+      "components": [
+        "services.introduction"
+      ]
     }
   }
 }

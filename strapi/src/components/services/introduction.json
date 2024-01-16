@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_services_introductions",
+  "info": {
+    "displayName": "introduction",
+    "icon": "layer",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "image_titre": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "image_titre_taille": {
+      "type": "enumeration",
+      "enum": ["sm", "md", "lg"],
+      "default": "sm",
+      "required": false
+    },
+    "texte": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    }
+  }
+}
