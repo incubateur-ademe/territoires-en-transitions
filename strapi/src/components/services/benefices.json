@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_services_benefices",
+  "info": {
+    "displayName": "bénéfices",
+    "icon": "thumbUp",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "benefices_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette",
+      "max": 4,
+      "required": true,
+      "min": 2
+    }
+  }
+}

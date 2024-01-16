@@ -1,6 +1,9 @@
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
-export type ServicesFetchedData = IntroductionFetchedData[];
+export type ServicesFetchedData = (
+  | IntroductionFetchedData
+  | BeneficesFetchedData
+)[];
 
 export type IntroductionFetchedData = {
   __component: string;
@@ -18,4 +21,22 @@ export type IntroductionData = {
   image_titre_taille?: string;
   texte: string;
   image: StrapiItem;
+};
+
+export type BeneficesFetchedData = {
+  __component: string;
+  benefices_liste: {
+    id: number;
+    legende: string;
+    image: {data: StrapiItem};
+  }[];
+};
+
+export type BeneficesData = {
+  type: string;
+  liste: {
+    id: number;
+    legende: string;
+    image: StrapiItem;
+  }[];
 };
