@@ -26,7 +26,7 @@ begin
     atomic
     select t from plan_action_type t where t.id = $1.id;
 end;
-comment on function type is
+comment on function plan_action_type(axe) is
     'Le type du plan.';
 
 create function
