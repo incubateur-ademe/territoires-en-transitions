@@ -14,7 +14,7 @@ exports[`design-system/form/Select CreateOption smoke-test 1`] = `
                value
         >
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -33,7 +33,7 @@ exports[`design-system/form/Select CustomItem smoke-test 1`] = `
           Sélectionner une option
         </span>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -52,7 +52,7 @@ exports[`design-system/form/Select Default smoke-test 1`] = `
           Sélectionner une option
         </span>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -72,7 +72,7 @@ exports[`design-system/form/Select Disabled smoke-test 1`] = `
           Sélectionner une option
         </span>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
       </span>
     </div>
   </button>
@@ -105,7 +105,7 @@ exports[`design-system/form/Select DisabledSearchableMultiSelectWithValue smoke-
           </div>
         </div>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
       </span>
     </div>
   </button>
@@ -124,7 +124,7 @@ exports[`design-system/form/Select MultiSelectWithSectionOptions smoke-test 1`] 
           Sélectionner une ou plusieurs options
         </span>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -145,7 +145,7 @@ exports[`design-system/form/Select SearchableMultiSelect smoke-test 1`] = `
                value
         >
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -166,7 +166,7 @@ exports[`design-system/form/Select SearchableSelectWithDebouncedApiCallOnTyping 
                value
         >
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -185,7 +185,7 @@ exports[`design-system/form/Select SmallWithBadgeItems smoke-test 1`] = `
           Sélectionner une option
         </span>
       </div>
-      <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
       </span>
     </div>
   </button>
@@ -213,12 +213,12 @@ exports[`design-system/form/Select WithField smoke-test 1`] = `
             Sélectionner une option
           </span>
         </div>
-        <span class="ri-arrow-down-s-line font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+        <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
         </span>
       </div>
     </button>
     <div class="flex items-center text-info-1">
-      <span class="ri-information-fill font-normal inline-flex items-center justify-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
       </span>
       <span class="text-xs">
         Message d’information
