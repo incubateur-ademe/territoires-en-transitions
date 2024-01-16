@@ -8330,6 +8330,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: string
           modified_at: string
+          modified_by: string | null
           valeur: number | null
         }
         Insert: {
@@ -8337,6 +8338,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: string
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Update: {
@@ -8344,6 +8346,7 @@ export interface Database {
           collectivite_id?: number
           indicateur_id?: string
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Relationships: [
@@ -10040,6 +10043,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: number
           modified_at: string
+          modified_by: string | null
           valeur: number | null
         }
         Insert: {
@@ -10047,6 +10051,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: number
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Update: {
@@ -10054,6 +10059,7 @@ export interface Database {
           collectivite_id?: number
           indicateur_id?: number
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Relationships: [
@@ -10371,6 +10377,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: number
           modified_at: string
+          modified_by: string | null
           valeur: number | null
         }
         Insert: {
@@ -10378,6 +10385,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: number
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Update: {
@@ -10385,6 +10393,7 @@ export interface Database {
           collectivite_id?: number
           indicateur_id?: number
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Relationships: [
@@ -11080,6 +11089,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: string
           modified_at: string
+          modified_by: string | null
           valeur: number | null
         }
         Insert: {
@@ -11087,6 +11097,7 @@ export interface Database {
           collectivite_id: number
           indicateur_id: string
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Update: {
@@ -11094,6 +11105,7 @@ export interface Database {
           collectivite_id?: number
           indicateur_id?: string
           modified_at?: string
+          modified_by?: string | null
           valeur?: number | null
         }
         Relationships: [
@@ -20101,6 +20113,7 @@ export interface Database {
       confidentialite_fonctions_a_tester: {
         Row: {
           element: unknown | null
+          id_element: unknown | null
         }
         Relationships: []
       }
@@ -20115,6 +20128,7 @@ export interface Database {
       confidentialite_tables_a_tester: {
         Row: {
           element: unknown | null
+          id_element: string | null
         }
         Relationships: []
       }
@@ -20138,6 +20152,7 @@ export interface Database {
           c: string | null
           d: string | null
           element: unknown | null
+          id_element: string | null
           u: string | null
         }
         Relationships: []
@@ -25531,13 +25546,13 @@ export interface Database {
       geojson:
         | {
             Args: {
-              site_labellisation: unknown
+              site_region: unknown
             }
             Returns: Json[]
           }
         | {
             Args: {
-              site_region: unknown
+              site_labellisation: unknown
             }
             Returns: Json[]
           }
@@ -26885,51 +26900,6 @@ export interface Database {
             Args: {
               bucket_width: unknown
               ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
               offset: unknown
             }
             Returns: string
@@ -26939,6 +26909,51 @@ export interface Database {
               bucket_width: unknown
               ts: string
               offset: unknown
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
             }
             Returns: string
           }
