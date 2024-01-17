@@ -89,6 +89,10 @@ export const preset = {
         // Couleur de fond pour les modales ou panneaux latéraux
         overlay: 'hsla(240, 40%, 27%, 0.5)',
       },
+      boxShadow: {
+        // ombre pour certains types de boutons (Tab)
+        button: '0 2px 4px 0 rgba(0,0,0,0.05)',
+      },
     },
   },
 } satisfies Config;
