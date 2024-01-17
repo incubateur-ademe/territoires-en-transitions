@@ -3,6 +3,7 @@ import {Metadata} from 'next';
 import fs from 'fs'
 import path from 'path'
 import Link from 'next/link';
+import Markdown from 'react-markdown'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 type Directory = {
   name: string,
   path: string,
+  markdown?: string,
   filenames: string[]
   subDirectory: Directory[]
 }
@@ -44,8 +46,12 @@ async function fillDirectory(directory: Directory) {
       directory.subDirectory.push(subDirectory);
       await fillDirectory(subDirectory);
     } else {
-      if (!filePath.endsWith('.md'))
+      if (filePath.endsWith('.md')) {
+        const markdown = fs.readFileSync(filePath, 'utf8');
+        directory.markdown = markdown;
+      } else {
         directory.filenames.push(filePath);
+      }
     }
   }
 }
@@ -53,7 +59,7 @@ async function fillDirectory(directory: Directory) {
 export default async function Page() {
   const kit: Directory = {
     name: 'Kit de communication',
-    path: path.join(publicPath, 'fichiers/kit de communication'),
+    path: path.join(publicPath, 'fichiers/kit_de_communication'),
     filenames: [],
     subDirectory: []
   };
@@ -83,7 +89,7 @@ function Dossier({directory, depth}: { directory: Directory, depth: number }) {
   const H = `h${Math.min(depth, 6)}` as keyof JSX.IntrinsicElements;
 
   return <Section key={directory.path}>
-    <H>{directory.name}</H>
+    {directory.markdown ? <Markdown>{directory.markdown}</Markdown> : <H>{directory.name}</H>}
 
     {directory.filenames.map((filename, index) => {
       const href = filename.split(publicPath)[1];
