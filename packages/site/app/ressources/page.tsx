@@ -1,9 +1,9 @@
 import Section from '@components/sections/Section';
 import {Metadata} from 'next';
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 import Link from 'next/link';
-import Markdown from 'react-markdown'
+import Markdown from 'react-markdown';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -12,17 +12,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 type Directory = {
-  name: string,
-  path: string,
-  markdown?: string,
-  filenames: string[]
-  subDirectory: Directory[]
-}
+  name: string;
+  path: string;
+  markdown?: string;
+  filenames: string[];
+  subDirectory: Directory[];
+};
 
 // La solution telle que préconisée dans la doc https://vercel.com/guides/loading-static-file-nextjs-api-route
 // ne fonctionne pas dans le container, `process.cwd()` pointant alors vers `/app`.
 // On utilise une variable d'environnement pour contourner le problème, voir `+site-build`
-const publicPath = process.env.PUBLIC_PATH ?? path.join(process.cwd(), "./public");
+const publicPath =
+  process.env.PUBLIC_PATH ?? path.join(process.cwd(), './public');
 
 /**
  * Remplit un objet Directory avec ses fichiers et ses sous-dossiers.
@@ -41,7 +42,7 @@ async function fillDirectory(directory: Directory) {
         name: file,
         path: filePath,
         filenames: [],
-        subDirectory: []
+        subDirectory: [],
       };
       directory.subDirectory.push(subDirectory);
       await fillDirectory(subDirectory);
@@ -61,13 +62,13 @@ export default async function Page() {
     name: 'Kit de communication',
     path: path.join(publicPath, 'fichiers/kit_de_communication'),
     filenames: [],
-    subDirectory: []
+    subDirectory: [],
   };
   const reglement: Directory = {
     name: 'Règlement',
     path: path.join(publicPath, 'fichiers/reglement'),
     filenames: [],
-    subDirectory: []
+    subDirectory: [],
   };
 
   await fillDirectory(kit);
@@ -75,9 +76,9 @@ export default async function Page() {
 
   return (
     <Section>
-      <h1 className="fr-header__body">Ressources</h1>
-      <Dossier directory={reglement} depth={1}/>
-      <Dossier directory={kit} depth={1}/>
+      <h1 className="pb-8">Ressources</h1>
+      <Dossier directory={reglement} depth={1} />
+      <Dossier directory={kit} depth={1} />
     </Section>
   );
 }
@@ -85,20 +86,42 @@ export default async function Page() {
 /**
  * Affiche un dossier et son contenu de façon recursive.
  */
-function Dossier({directory, depth}: { directory: Directory, depth: number }) {
-  const H = `h${Math.min(depth, 6)}` as keyof JSX.IntrinsicElements;
+function Dossier({directory, depth}: {directory: Directory; depth: number}) {
+  const H = `h${Math.min(depth + 1, 6)}` as keyof JSX.IntrinsicElements;
 
-  return <Section key={directory.path}>
-    {directory.markdown ? <Markdown>{directory.markdown}</Markdown> : <H>{directory.name}</H>}
+  return (
+    <div key={directory.path} className="flex flex-col">
+      {directory.markdown ? (
+        <Markdown>{directory.markdown}</Markdown>
+      ) : (
+        <H>{directory.name}</H>
+      )}
 
-    {directory.filenames.map((filename, index) => {
-      const href = filename.split(publicPath)[1];
-      const name = path.basename(filename);
-      return <Link key={index} href={href}>{name}</Link>;
-    })}
+      {directory.filenames.length > 0 && (
+        <div className="flex flex-col gap-1 pb-12">
+          {directory.filenames.map((filename, index) => {
+            const href = filename.split(publicPath)[1];
+            const name = path.basename(filename);
+            return (
+              <Link
+                key={index}
+                href={href}
+                className="bg-none underline underline-offset-4"
+              >
+                {name}
+              </Link>
+            );
+          })}
+        </div>
+      )}
 
-    {directory.subDirectory.map((subdirectory, index) => {
-      return <Dossier directory={subdirectory} depth={depth + 1} key={index}/>;
-    })}
-  </Section>
+      <div className="pl-6">
+        {directory.subDirectory.map((subdirectory, index) => {
+          return (
+            <Dossier directory={subdirectory} depth={depth + 1} key={index} />
+          );
+        })}
+      </div>
+    </div>
+  );
 }
