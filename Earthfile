@@ -371,6 +371,7 @@ site-build: ## construit l'image du site
     ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
     ENV NEXT_PUBLIC_AMPLITUDE_KEY=$AMPLITUDE_KEY
     ENV NEXT_TELEMETRY_DISABLED=1
+    ENV PUBLIC_PATH="/app/packages/site/public"
     ENV PORT=80
     EXPOSE $PORT
     # copie les sources des modules à construire
