@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_services_paragraphes",
+  "info": {
+    "displayName": "paragraphe",
+    "icon": "layer",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "image_titre": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "image_titre_taille": {
+      "type": "enumeration",
+      "enum": ["sm", "md", "lg"],
+      "default": "sm",
+      "required": false
+    },
+    "texte": {
+      "type": "richtext",
+      "required": true
+    },
+    "alignement_image_droite": {
+      "type": "boolean",
+      "default": false
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

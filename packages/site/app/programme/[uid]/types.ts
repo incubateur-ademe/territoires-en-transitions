@@ -2,6 +2,7 @@ import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type ServicesFetchedData = (
   | IntroductionFetchedData
+  | ParagrapheFetchedData
   | BeneficesFetchedData
 )[];
 
@@ -17,10 +18,30 @@ export type IntroductionFetchedData = {
 export type IntroductionData = {
   type: string;
   titre: string;
-  image_titre?: StrapiItem;
-  image_titre_taille?: string;
+  imageTitre?: StrapiItem;
+  imageTitreTaille?: string;
   texte: string;
   image: StrapiItem;
+};
+
+export type ParagrapheFetchedData = {
+  __component: string;
+  titre?: string;
+  image_titre?: {data: StrapiItem};
+  image_titre_taille?: string;
+  texte: string;
+  images?: {data: StrapiItem[]};
+  alignement_image_droite?: boolean;
+};
+
+export type ParagrapheData = {
+  type: string;
+  titre?: string;
+  imageTitre?: StrapiItem;
+  imageTitreTaille?: string;
+  texte: string;
+  images?: StrapiItem[];
+  alignementImageDroite?: boolean;
 };
 
 export type BeneficesFetchedData = {

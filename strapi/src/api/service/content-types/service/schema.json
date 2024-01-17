@@ -41,7 +41,8 @@
       "type": "dynamiczone",
       "components": [
         "services.introduction",
-        "services.benefices"
+        "services.benefices",
+        "services.paragraphe"
       ]
     }
   }
