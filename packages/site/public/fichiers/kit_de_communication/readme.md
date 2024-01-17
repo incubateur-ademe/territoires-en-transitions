@@ -1,1 +1,3 @@
-Dans ce dossier sont disponibles les éléments de communication comme la charte graphique, les logos du programme, etc.
+## Kit de communication
+
+Les éléments de communication comme la charte graphique, les logos du programme, etc.
