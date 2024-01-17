@@ -1,5 +1,3 @@
-'use server';
-
 import Section from '@components/sections/Section';
 import {Metadata} from 'next';
 import fs from 'fs'
@@ -19,6 +17,10 @@ type Directory = {
   subDirectory: Directory[]
 }
 
+// La solution telle que préconisée dans la doc https://vercel.com/guides/loading-static-file-nextjs-api-route
+// ne fonctionne pas dans le container, `process.cwd()` pointant alors vers `/app`.
+// On utilise une variable d'environnement pour contourner le problème, voir `+site-build`
+const publicPath = process.env.PUBLIC_PATH ?? path.join(process.cwd(), "./public");
 
 /**
  * Remplit un objet Directory avec ses fichiers et ses sous-dossiers.
@@ -51,13 +53,13 @@ async function fillDirectory(directory: Directory) {
 export default async function Page() {
   const kit: Directory = {
     name: 'Kit de communication',
-    path: path.resolve('./public', 'fichiers/kit de communication'),
+    path: path.join(publicPath, 'fichiers/kit de communication'),
     filenames: [],
     subDirectory: []
   };
   const reglement: Directory = {
     name: 'Règlement',
-    path: path.resolve('./public', 'fichiers/reglement'),
+    path: path.join(publicPath, 'fichiers/reglement'),
     filenames: [],
     subDirectory: []
   };
@@ -79,8 +81,6 @@ export default async function Page() {
  */
 function Dossier({directory, depth}: { directory: Directory, depth: number }) {
   const H = `h${Math.min(depth, 6)}` as keyof JSX.IntrinsicElements;
-  const isEmpty = directory.filenames.length === 0;
-  const publicPath = path.resolve('./public');
 
   return <Section key={directory.path}>
     <H>{directory.name}</H>
