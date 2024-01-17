@@ -273,6 +273,27 @@ export interface ServicesIntroduction extends Schema.Component {
   };
 }
 
+export interface ServicesParagraphe extends Schema.Component {
+  collectionName: 'components_services_paragraphes';
+  info: {
+    displayName: 'paragraphe';
+    icon: 'layer';
+    description: '';
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    image_titre: Attribute.Media;
+    image_titre_taille: Attribute.Enumeration<['sm', 'md', 'lg']> &
+      Attribute.DefaultTo<'sm'>;
+    texte: Attribute.RichText & Attribute.Required;
+    alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
+    images: Attribute.Media;
+  };
+}
+
 export interface SharedParagraphe extends Schema.Component {
   collectionName: 'components_shared_paragraphes';
   info: {
@@ -406,6 +427,7 @@ declare module '@strapi/types' {
       'contenu.video': ContenuVideo;
       'services.benefices': ServicesBenefices;
       'services.introduction': ServicesIntroduction;
+      'services.paragraphe': ServicesParagraphe;
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
       'shared.temoignage': SharedTemoignage;
