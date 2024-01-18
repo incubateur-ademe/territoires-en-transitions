@@ -1182,7 +1182,12 @@ export interface ApiServiceService extends Schema.CollectionType {
     image: Attribute.Media & Attribute.Required;
     sous_page: Attribute.Boolean & Attribute.DefaultTo<false>;
     contenu: Attribute.DynamicZone<
-      ['services.introduction', 'services.benefices', 'services.paragraphe']
+      [
+        'services.introduction',
+        'services.benefices',
+        'services.paragraphe',
+        'services.liste'
+      ]
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

@@ -42,7 +42,8 @@
       "components": [
         "services.introduction",
         "services.benefices",
-        "services.paragraphe"
+        "services.paragraphe",
+        "services.liste"
       ]
     }
   }

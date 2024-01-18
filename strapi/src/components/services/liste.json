@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_services_listes",
+  "info": {
+    "displayName": "liste",
+    "icon": "bulletList",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "sous_titre": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255
+    },
+    "introduction": {
+      "type": "text"
+    },
+    "contenu": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown"
+    }
+  }
+}
