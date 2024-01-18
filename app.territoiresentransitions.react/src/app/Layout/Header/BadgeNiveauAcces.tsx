@@ -29,11 +29,11 @@ export const BadgeNiveauAcces = (props: Props) => {
 };
 
 const getLabel = ({acces, isAuditeur}: Props) => {
-  if (!acces) {
-    return 'visite';
-  }
   if (isAuditeur) {
     return 'audit';
+  }
+  if (!acces) {
+    return 'visite';
   }
   if (acces === 'edition') {
     return 'édition';
