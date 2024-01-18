@@ -273,6 +273,28 @@ export interface ServicesIntroduction extends Schema.Component {
   };
 }
 
+export interface ServicesListe extends Schema.Component {
+  collectionName: 'components_services_listes';
+  info: {
+    displayName: 'liste';
+    icon: 'bulletList';
+    description: '';
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    sous_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    introduction: Attribute.Text;
+    contenu: Attribute.Component<'shared.vignette-avec-markdown', true>;
+  };
+}
+
 export interface ServicesParagraphe extends Schema.Component {
   collectionName: 'components_services_paragraphes';
   info: {
@@ -427,6 +449,7 @@ declare module '@strapi/types' {
       'contenu.video': ContenuVideo;
       'services.benefices': ServicesBenefices;
       'services.introduction': ServicesIntroduction;
+      'services.liste': ServicesListe;
       'services.paragraphe': ServicesParagraphe;
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
