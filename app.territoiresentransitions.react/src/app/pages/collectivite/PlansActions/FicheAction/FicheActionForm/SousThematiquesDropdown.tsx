@@ -5,7 +5,7 @@ import {useSousThematiqueListe} from '../data/options/useSousThematiqueListe';
 import {TSousThematiqueRow} from 'types/alias';
 
 type Props = {
-  thematiques: string[];
+  thematiques: number[];
   sousThematiques: TSousThematiqueRow[] | null;
   onSelect: (thematique: TSousThematiqueRow[]) => void;
   isReadonly: boolean;
@@ -21,10 +21,10 @@ const SousThematiquesDropdown = ({
 
   const options: TOption[] = sousThematiqueListe
     ? sousThematiqueListe
-        .filter(st => thematiques.some(t => st.thematique === t))
-        .map(thematique => ({
-          value: thematique.id.toString(),
-          label: thematique.sous_thematique,
+        .filter(st => thematiques.some(t => st.thematique_id === t))
+        .map(st => ({
+          value: st.id.toString(),
+          label: st.sous_thematique,
         }))
     : [];
 
@@ -37,19 +37,17 @@ const SousThematiquesDropdown = ({
   useEffect(() => {
     if (sousThematiques) {
       // récupère la liste des thématiques incluent dans les sous-thématiques
-      const sousThematiqueThematiques: string[] = [];
+      const selectedThematiques: number[] = [];
       sousThematiques.forEach(st => {
-        if (!sousThematiqueThematiques.some(stt => stt === st.thematique)) {
-          sousThematiqueThematiques.push(st.thematique);
+        if (!selectedThematiques.some(stt => stt === st.thematique_id)) {
+          selectedThematiques.push(st.id);
         }
       });
 
       // si les listes sont différentes, on update la fiche
-      if (
-        sousThematiqueThematiques.some(stt => !thematiques.some(t => t === stt))
-      ) {
+      if (selectedThematiques.some(stt => !thematiques.some(t => t === stt))) {
         const newSousThematiques = sousThematiques.filter(st =>
-          thematiques.some(stt => stt === st.thematique)
+          thematiques.some(stt => stt === st.thematique_id)
         );
         onSelect(newSousThematiques);
       }
