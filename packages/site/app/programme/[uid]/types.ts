@@ -5,6 +5,7 @@ export type ServicesFetchedData = (
   | ParagrapheFetchedData
   | BeneficesFetchedData
   | ListeFetchedData
+  | ListeCartesFetchedData
 )[];
 
 export type IntroductionFetchedData = {
@@ -85,6 +86,32 @@ export type ListeData = {
     id: number;
     titre?: string;
     legende: string;
+    image: StrapiItem;
+  }[];
+};
+
+export type ListeCartesFetchedData = {
+  __component: string;
+  titre: string;
+  introduction?: string;
+  liste: {
+    id: number;
+    pre_titre?: string;
+    titre: string;
+    texte: string;
+    image: {data: StrapiItem};
+  }[];
+};
+
+export type ListeCartesData = {
+  type: string;
+  titre: string;
+  introduction?: string;
+  liste: {
+    id: number;
+    preTitre?: string;
+    titre: string;
+    texte: string;
     image: StrapiItem;
   }[];
 };

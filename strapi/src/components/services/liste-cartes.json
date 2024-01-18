@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_services_liste_cartes",
+  "info": {
+    "displayName": "liste cartes",
+    "icon": "grid",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "introduction": {
+      "type": "richtext"
+    },
+    "liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "services.carte"
+    }
+  }
+}
