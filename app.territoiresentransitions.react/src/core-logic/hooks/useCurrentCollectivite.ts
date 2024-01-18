@@ -33,8 +33,9 @@ const fetchCurrentCollectivite = async (collectivite_id: number) => {
         est_auditeur: collectivite.est_auditeur,
         acces_restreint: collectivite.access_restreint || false,
         readonly:
-          collectivite.niveau_acces === null ||
-          collectivite.niveau_acces === 'lecture',
+            (collectivite.niveau_acces === null
+                || collectivite.niveau_acces === 'lecture')
+            && !collectivite.est_auditeur,
       } as CurrentCollectivite)
     : null;
 };

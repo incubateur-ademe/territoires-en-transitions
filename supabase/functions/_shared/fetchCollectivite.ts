@@ -41,7 +41,7 @@ export const fetchCollectivite = async (
         isAdmin: niveau_acces === 'admin',
         est_auditeur,
         acces_restreint: access_restreint || false,
-        readonly: niveau_acces === null || niveau_acces === 'lecture',
+        readonly: (niveau_acces === null || niveau_acces === 'lecture') && !est_auditeur,
       } as Collectivite)
     : null;
 };
