@@ -73,7 +73,7 @@ export type ListeFetchedData = {
     id: number;
     titre?: string;
     legende: string;
-    image: {data: StrapiItem};
+    image?: {data: StrapiItem};
   }[];
 };
 
@@ -86,7 +86,7 @@ export type ListeData = {
     id: number;
     titre?: string;
     legende: string;
-    image: StrapiItem;
+    image?: StrapiItem;
   }[];
 };
 
@@ -99,8 +99,9 @@ export type ListeCartesFetchedData = {
     pre_titre?: string;
     titre: string;
     texte: string;
-    image: {data: StrapiItem};
+    image?: {data: StrapiItem};
   }[];
+  disposition_cartes: 'grille' | 'gallerie';
 };
 
 export type ListeCartesData = {
@@ -112,6 +113,7 @@ export type ListeCartesData = {
     preTitre?: string;
     titre: string;
     texte: string;
-    image: StrapiItem;
+    image?: StrapiItem;
   }[];
+  dispositionCartes: 'grille' | 'gallerie';
 };

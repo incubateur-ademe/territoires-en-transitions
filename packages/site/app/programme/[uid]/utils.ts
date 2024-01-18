@@ -77,7 +77,7 @@ export const getServiceStrapiData = async (uid: string) => {
                   id: ct.id,
                   titre: ct.titre,
                   legende: ct.legende,
-                  image: ct.image.data,
+                  image: ct.image?.data,
                 })),
               } as ListeData;
             case 'services.liste-cartes':
@@ -90,8 +90,10 @@ export const getServiceStrapiData = async (uid: string) => {
                   preTitre: ct.pre_titre,
                   titre: ct.titre,
                   texte: ct.texte,
-                  image: ct.image.data,
+                  image: ct.image?.data,
                 })),
+                dispositionCartes: (c as ListeCartesFetchedData)
+                  .disposition_cartes,
               } as ListeCartesData;
             default:
               return {

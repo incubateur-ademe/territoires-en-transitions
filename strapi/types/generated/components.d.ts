@@ -309,6 +309,8 @@ export interface ServicesListeCartes extends Schema.Component {
       }>;
     introduction: Attribute.RichText;
     liste: Attribute.Component<'services.carte', true>;
+    disposition_cartes: Attribute.Enumeration<['grille', 'gallerie']> &
+      Attribute.Required;
   };
 }
 

@@ -19,6 +19,14 @@
       "type": "component",
       "repeatable": true,
       "component": "services.carte"
+    },
+    "disposition_cartes": {
+      "type": "enumeration",
+      "enum": [
+        "grille",
+        "gallerie"
+      ],
+      "required": true
     }
   }
 }
