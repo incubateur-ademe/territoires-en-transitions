@@ -1186,7 +1186,8 @@ export interface ApiServiceService extends Schema.CollectionType {
         'services.introduction',
         'services.benefices',
         'services.paragraphe',
-        'services.liste'
+        'services.liste',
+        'services.liste-cartes'
       ]
     >;
     createdAt: Attribute.DateTime;

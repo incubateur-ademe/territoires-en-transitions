@@ -4,6 +4,9 @@ import {
   BeneficesFetchedData,
   IntroductionData,
   IntroductionFetchedData,
+  ListeCartesData,
+  ListeCartesFetchedData,
+  ListeData,
   ListeFetchedData,
   ParagrapheData,
   ParagrapheFetchedData,
@@ -21,6 +24,8 @@ export const getServiceStrapiData = async (uid: string) => {
     ['populate[5]', 'contenu.images'],
     ['populate[6]', 'contenu.contenu'],
     ['populate[7]', 'contenu.contenu.image'],
+    ['populate[8]', 'contenu.liste'],
+    ['populate[9]', 'contenu.liste.image'],
   ]);
 
   if (data) {
@@ -74,7 +79,20 @@ export const getServiceStrapiData = async (uid: string) => {
                   legende: ct.legende,
                   image: ct.image.data,
                 })),
-              };
+              } as ListeData;
+            case 'services.liste-cartes':
+              return {
+                type: 'listeCartes',
+                titre: (c as ListeCartesFetchedData).titre,
+                introduction: (c as ListeCartesFetchedData).introduction,
+                liste: (c as ListeCartesFetchedData).liste.map(ct => ({
+                  id: ct.id,
+                  preTitre: ct.pre_titre,
+                  titre: ct.titre,
+                  texte: ct.texte,
+                  image: ct.image.data,
+                })),
+              } as ListeCartesData;
             default:
               return {
                 type: 'autre',

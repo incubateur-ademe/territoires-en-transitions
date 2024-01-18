@@ -252,6 +252,27 @@ export interface ServicesBenefices extends Schema.Component {
   };
 }
 
+export interface ServicesCarte extends Schema.Component {
+  collectionName: 'components_services_cartes';
+  info: {
+    displayName: 'carte';
+    icon: 'grid';
+  };
+  attributes: {
+    pre_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    texte: Attribute.RichText & Attribute.Required;
+    image: Attribute.Media;
+  };
+}
+
 export interface ServicesIntroduction extends Schema.Component {
   collectionName: 'components_services_introductions';
   info: {
@@ -270,6 +291,24 @@ export interface ServicesIntroduction extends Schema.Component {
       Attribute.DefaultTo<'sm'>;
     texte: Attribute.RichText & Attribute.Required;
     image: Attribute.Media & Attribute.Required;
+  };
+}
+
+export interface ServicesListeCartes extends Schema.Component {
+  collectionName: 'components_services_liste_cartes';
+  info: {
+    displayName: 'liste cartes';
+    icon: 'grid';
+    description: '';
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    introduction: Attribute.RichText;
+    liste: Attribute.Component<'services.carte', true>;
   };
 }
 
@@ -448,7 +487,9 @@ declare module '@strapi/types' {
       'contenu.texte-collectivite': ContenuTexteCollectivite;
       'contenu.video': ContenuVideo;
       'services.benefices': ServicesBenefices;
+      'services.carte': ServicesCarte;
       'services.introduction': ServicesIntroduction;
+      'services.liste-cartes': ServicesListeCartes;
       'services.liste': ServicesListe;
       'services.paragraphe': ServicesParagraphe;
       'shared.paragraphe': SharedParagraphe;

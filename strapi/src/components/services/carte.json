@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_services_cartes",
+  "info": {
+    "displayName": "carte",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "pre_titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "texte": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

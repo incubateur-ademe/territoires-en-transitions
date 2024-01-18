@@ -3,12 +3,14 @@ import IntroductionService from './IntroductionService';
 import {
   BeneficesData,
   IntroductionData,
+  ListeCartesData,
   ListeData,
   ParagrapheData,
 } from './types';
 import BeneficesService from './BeneficesService';
 import ParagrapheService from './ParagrapheService';
 import ListeService from './ListeService';
+import ListeCartesService from './ListeCartesService';
 
 type ServiceProgrammeProps = {
   params: {uid: string};
@@ -31,6 +33,8 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
             return <BeneficesService liste={(c as BeneficesData).liste} />;
           case 'liste':
             return <ListeService {...(c as ListeData)} />;
+          case 'listeCartes':
+            return <ListeCartesService {...(c as ListeCartesData)} />;
           default:
             return null;
         }
