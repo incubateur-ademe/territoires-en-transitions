@@ -93,7 +93,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <SousThematiquesDropdown
             thematiques={
               fiche.thematiques
-                ? fiche.thematiques.map((t: TThematiqueRow) => t.nom)
+                ? fiche.thematiques.map((t: TThematiqueRow) => t.id)
                 : []
             }
             sousThematiques={fiche.sous_thematiques as TSousThematiqueRow[]}
