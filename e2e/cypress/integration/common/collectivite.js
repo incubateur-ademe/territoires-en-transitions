@@ -73,9 +73,9 @@ When("je me reconnecte en tant qu'auditeur de la collectivité", function () {
   loginAs.call(this, '@auditeur');
 });
 function addAuditeur() {
-  const {collectivite_id} = this.collectivite;
+  //const {collectivite_id} = this.collectivite;
   const {id: demande_id} = this.demande_envoyee;
-  addRandomUser(collectivite_id, 'edition', 'auditeur').then(auditeur =>
+  addRandomUser(null, null, 'auditeur').then(auditeur =>
     setAuditeur(demande_id, auditeur.user_id)
   );
 }
