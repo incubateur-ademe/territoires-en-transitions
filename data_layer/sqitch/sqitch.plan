@@ -595,3 +595,5 @@ indicateur/confidentialite 2024-01-08T15:37:24Z Marc Rutkowski <marc@attractive-
 
 indicateur/confidentialite [indicateur/confidentialite@v2.92.0] 2024-01-15T15:37:25Z Florian <florian@derfurth.com> # Répare les droits de la vue `indicateurs`
 @v2.93.0 2024-01-16T15:02:35Z Marc Rutkowski <marc@attractive-media.fr> # Confidentialité des indicateurs
+
+collectivite/bucket [collectivite/bucket@v2.93.0] 2024-01-18T14:51:54Z Amandine Jacquelin <conta@LanceLibre> # Ajoute les droits d'écriture à l'auditeur
