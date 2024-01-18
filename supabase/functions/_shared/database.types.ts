@@ -17806,19 +17806,26 @@ export interface Database {
         Row: {
           id: number
           sous_thematique: string
-          thematique: string
+          thematique_id: number
         }
         Insert: {
           id?: number
           sous_thematique: string
-          thematique: string
+          thematique_id: number
         }
         Update: {
           id?: number
           sous_thematique?: string
-          thematique?: string
+          thematique_id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sous_thematique_thematique_id_fkey"
+            columns: ["thematique_id"]
+            referencedRelation: "thematique"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       structure_tag: {
         Row: {
