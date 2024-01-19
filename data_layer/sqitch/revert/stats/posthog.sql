@@ -2,23 +2,35 @@
 
 BEGIN;
 
-create or replace view posthog.creation
-as
-select 'fiche'         as type,
-       created_at      as time,
-       modified_by     as user_id,
-       collectivite_id as collectivite_id
-from fiche_action
-         join stats.collectivite_active using (collectivite_id)
-where modified_by is not null
-union all
-select 'plan', created_at, modified_by, collectivite_id
-from axe
-         join stats.collectivite_active using (collectivite_id)
-where parent is null
-  and modified_by is not null
-union all
-select 'discussion', created_at, created_by, collectivite_id
-from action_discussion;
+drop function posthog.validate_event(jsonb);
+
+create or replace function
+    posthog.event(tstzrange)
+    returns setof jsonb
+    language sql
+    stable
+    security definer
+begin
+    atomic
+    select to_jsonb(posthog.event(v))
+    from visite v
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(u))
+    from usage u
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(e))
+    from posthog.modification e
+    where $1 @> time
+    union all
+    select to_jsonb(posthog.event(e))
+    from posthog.creation e
+    where $1 @> time;
+end;
+
+drop function posthog.event(posthog.latest_score_modification);
+drop view posthog.latest_score_modification;
+drop function posthog.creation_event(dcp);
 
 COMMIT;
