@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_services_infos",
+  "info": {
+    "displayName": "info",
+    "icon": "information",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "boutons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.bouton"
+    }
+  }
+}

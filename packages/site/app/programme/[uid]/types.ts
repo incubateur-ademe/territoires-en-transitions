@@ -57,3 +57,21 @@ export type ListeData = {
   liste: Liste;
   dispositionCartes: 'Gallerie' | 'Grille' | 'Verticale' | 'Vignettes';
 };
+
+export type InfoFetchedData = {
+  __component: 'services.info';
+  titre: string;
+  boutons: {
+    label: string;
+    url?: string;
+  }[];
+};
+
+export type InfoData = {
+  type: 'info';
+  titre: string;
+  boutons: {
+    label: string;
+    url?: string;
+  }[];
+};

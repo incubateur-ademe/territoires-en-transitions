@@ -110,7 +110,7 @@ export const Button = forwardRef(
           rel={openInNewTab ? 'noreferrer noopener' : props.rel}
           onClick={evt => {
             if (disabled) evt.preventDefault();
-            else props.onClick(evt);
+            else props.onClick?.(evt);
           }}
         >
           <ButtonContent
