@@ -21,10 +21,16 @@ create function
     plan_action_type(axe)
     returns setof plan_action_type
     language sql
-    stable
+    security definer
+    rows 1
 begin
     atomic
-    select t from plan_action_type t where t.id = $1.type;
+    select case
+               when $1.type is null then null
+               else (select t
+                     from plan_action_type t
+                     where id = $1.type)
+               end;
 end;
 comment on function plan_action_type(axe) is
     'Le type du plan.';
