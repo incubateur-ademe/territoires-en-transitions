@@ -1,5 +1,7 @@
 import {fetchCollection} from 'src/strapi/strapi';
 import {
+  InfoData,
+  InfoFetchedData,
   ListeData,
   ListeFetchedData,
   ParagrapheData,
@@ -15,6 +17,7 @@ export const getServiceStrapiData = async (uid: string) => {
     ['populate[2]', 'contenu.images'],
     ['populate[3]', 'contenu.liste'],
     ['populate[4]', 'contenu.liste.image'],
+    ['populate[5]', 'contenu.boutons'],
   ]);
 
   if (data) {
@@ -36,7 +39,7 @@ export const getServiceStrapiData = async (uid: string) => {
               images: paragrapheData.images?.data,
               alignementImageDroite: paragrapheData.alignement_image_droite,
             } as ParagrapheData;
-          } else {
+          } else if (c.__component === 'services.liste') {
             const listeData = c as ListeFetchedData;
             return {
               type: 'liste',
@@ -53,6 +56,13 @@ export const getServiceStrapiData = async (uid: string) => {
               })),
               dispositionCartes: listeData.disposition_cartes,
             } as ListeData;
+          } else {
+            const infoData = c as InfoFetchedData;
+            return {
+              type: 'info',
+              titre: infoData.titre,
+              boutons: infoData.boutons,
+            } as InfoData;
           }
         },
       ),

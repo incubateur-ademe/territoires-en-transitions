@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_boutons",
+  "info": {
+    "displayName": "bouton"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 255
+    }
+  }
+}

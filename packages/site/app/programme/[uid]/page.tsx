@@ -1,7 +1,8 @@
 import {getServiceStrapiData} from './utils';
-import {ListeData, ParagrapheData} from './types';
+import {InfoData, ListeData, ParagrapheData} from './types';
 import ParagrapheService from './ParagrapheService';
 import ListeService from './ListeService';
+import InfoService from './InfoService';
 
 type ServiceProgrammeProps = {
   params: {uid: string};
@@ -20,6 +21,8 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
             return <ParagrapheService {...(c as ParagrapheData)} />;
           case 'liste':
             return <ListeService {...(c as ListeData)} />;
+          case 'info':
+            return <InfoService {...(c as InfoData)} />;
           default:
             return null;
         }

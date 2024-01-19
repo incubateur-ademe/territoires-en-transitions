@@ -256,6 +256,23 @@ export interface ServicesCarte extends Schema.Component {
   };
 }
 
+export interface ServicesInfo extends Schema.Component {
+  collectionName: 'components_services_infos';
+  info: {
+    displayName: 'info';
+    icon: 'information';
+    description: '';
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    boutons: Attribute.Component<'shared.bouton', true>;
+  };
+}
+
 export interface ServicesListe extends Schema.Component {
   collectionName: 'components_services_listes';
   info: {
@@ -304,6 +321,24 @@ export interface ServicesParagraphe extends Schema.Component {
     texte: Attribute.RichText & Attribute.Required;
     alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
     images: Attribute.Media;
+  };
+}
+
+export interface SharedBouton extends Schema.Component {
+  collectionName: 'components_shared_boutons';
+  info: {
+    displayName: 'bouton';
+  };
+  attributes: {
+    label: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    url: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
   };
 }
 
@@ -439,8 +474,10 @@ declare module '@strapi/types' {
       'contenu.texte-collectivite': ContenuTexteCollectivite;
       'contenu.video': ContenuVideo;
       'services.carte': ServicesCarte;
+      'services.info': ServicesInfo;
       'services.liste': ServicesListe;
       'services.paragraphe': ServicesParagraphe;
+      'shared.bouton': SharedBouton;
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
       'shared.temoignage': SharedTemoignage;
