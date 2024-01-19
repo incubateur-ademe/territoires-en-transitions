@@ -1,35 +1,84 @@
 import Section from '@components/sections/Section';
 import {ListeData} from './types';
+import classNames from 'classnames';
 import Markdown from '@components/markdown/Markdown';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import ThumbnailsList from '@components/galleries/ThumbnailsList';
+import ListeVerticaleService from './ListeVerticaleService';
+import ListeGrilleService from './ListeGrilleService';
+import ListeGallerieService from './ListeGallerieService';
 
-const ListeService = ({titre, sousTitre, introduction, contenu}: ListeData) => {
+const ListeService = ({
+  tailleListe,
+  titre,
+  sousTitre,
+  introduction,
+  dispositionCartes,
+  liste,
+}: ListeData) => {
+  const Titre = (
+    tailleListe === 'md' ? 'h2' : 'h1'
+  ) as keyof JSX.IntrinsicElements;
+
   return (
-    <Section className="!gap-12">
+    <Section
+      containerClassName={classNames({
+        'bg-primary-1':
+          dispositionCartes === 'Grille' || dispositionCartes === 'Vignettes',
+        '!py-24': dispositionCartes === 'Vignettes',
+      })}
+      className={classNames({'!gap-12': dispositionCartes === 'Verticale'})}
+    >
       <div className="flex flex-col gap-4">
-        <h1 className="mb-0">{titre}</h1>
-        {!!sousTitre && <h3 className="text-primary mb-0">{sousTitre}</h3>}
-        {!!introduction && <p className="paragraphe-22 mb-0">{introduction}</p>}
+        <Titre
+          className={classNames('mb-0', {
+            'text-center': dispositionCartes === 'Vignettes',
+            'mb-8': dispositionCartes === 'Vignettes' && !sousTitre,
+          })}
+        >
+          {titre}
+        </Titre>
+        {!!sousTitre && (
+          <h3
+            className={classNames('text-primary', {
+              'mb-0': dispositionCartes !== 'Vignettes' || !!introduction,
+              'text-center': dispositionCartes === 'Vignettes',
+              'mb-8 ': dispositionCartes === 'Vignettes' && !introduction,
+            })}
+          >
+            {sousTitre}
+          </h3>
+        )}
+        {!!introduction && (
+          <Markdown
+            texte={introduction}
+            className={classNames('-mb-6', {
+              'paragraphe-22': tailleListe === 'lg' || !tailleListe,
+              'paragraphe-18': tailleListe === 'md',
+              'mb-8 text-center': dispositionCartes === 'Vignettes',
+            })}
+          />
+        )}
       </div>
 
-      {contenu.map(c => (
-        <div
-          key={c.id}
-          className="flex max-md:flex-col gap-6 bg-primary-1 rounded-2xl p-8"
-        >
-          <div className="flex-none w-[115px] h-[115px] max-md:mx-auto">
-            <StrapiImage
-              data={c.image}
-              containerClassName="h-full w-full"
-              className="rounded-2xl h-full w-full object-cover"
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            {!!c.titre && <h4 className="mb-0">{c.titre}</h4>}
-            <Markdown texte={c.legende} className="paragraphe-16 -mb-6" />
-          </div>
-        </div>
-      ))}
+      {/* Liste de cartes sous forme de masonry gallery */}
+      {dispositionCartes === 'Gallerie' && (
+        <ListeGallerieService liste={liste} />
+      )}
+
+      {/* Liste de cartes sous forme de grille */}
+      {dispositionCartes === 'Grille' && <ListeGrilleService liste={liste} />}
+
+      {/* Liste de cartes alignées verticalement */}
+      {dispositionCartes === 'Verticale' && (
+        <ListeVerticaleService liste={liste} />
+      )}
+
+      {/* Liste de vignettes alignées horizontalement */}
+      {dispositionCartes === 'Vignettes' && (
+        <ThumbnailsList
+          thumbnails={liste.map(l => ({...l, legend: l.texte}))}
+        />
+      )}
     </Section>
   );
 };
