@@ -40,7 +40,6 @@
     "contenu": {
       "type": "dynamiczone",
       "components": [
-        "services.introduction",
         "services.benefices",
         "services.paragraphe",
         "services.liste",

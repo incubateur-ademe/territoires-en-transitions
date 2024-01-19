@@ -2,8 +2,6 @@ import {fetchCollection} from 'src/strapi/strapi';
 import {
   BeneficesData,
   BeneficesFetchedData,
-  IntroductionData,
-  IntroductionFetchedData,
   ListeCartesData,
   ListeCartesFetchedData,
   ListeData,
@@ -36,23 +34,15 @@ export const getServiceStrapiData = async (uid: string) => {
       contenu: (serviceData.contenu as unknown as ServicesFetchedData)
         .map(c => {
           switch (c.__component) {
-            case 'services.introduction':
-              return {
-                type: 'introduction',
-                titre: (c as IntroductionFetchedData).titre,
-                imageTitre: (c as IntroductionFetchedData).image_titre?.data,
-                imageTitreTaille: (c as IntroductionFetchedData)
-                  .image_titre_taille,
-                texte: (c as IntroductionFetchedData).texte,
-                image: (c as IntroductionFetchedData).image.data,
-              } as IntroductionData;
             case 'services.paragraphe':
               return {
                 type: 'paragraphe',
+                tailleParagraphe: (c as ParagrapheFetchedData)
+                  .taille_paragraphe,
                 titre: (c as ParagrapheFetchedData).titre,
                 imageTitre: (c as ParagrapheFetchedData).image_titre?.data,
-                imageTitreTaille: (c as ParagrapheFetchedData)
-                  .image_titre_taille,
+                tailleImageTitre: (c as ParagrapheFetchedData)
+                  .taille_image_titre,
                 texte: (c as ParagrapheFetchedData).texte,
                 images: (c as ParagrapheFetchedData).images?.data,
                 alignementImageDroite: (c as ParagrapheFetchedData)
