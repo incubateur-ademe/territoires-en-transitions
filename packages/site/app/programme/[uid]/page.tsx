@@ -1,8 +1,6 @@
 import {getServiceStrapiData} from './utils';
-import IntroductionService from './IntroductionService';
 import {
   BeneficesData,
-  IntroductionData,
   ListeCartesData,
   ListeData,
   ParagrapheData,
@@ -25,8 +23,6 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
     <>
       {data.contenu.map(c => {
         switch (c.type) {
-          case 'introduction':
-            return <IntroductionService {...(c as IntroductionData)} />;
           case 'paragraphe':
             return <ParagrapheService {...(c as ParagrapheData)} />;
           case 'benefices':

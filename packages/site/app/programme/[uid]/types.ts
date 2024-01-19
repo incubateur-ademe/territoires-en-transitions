@@ -1,36 +1,18 @@
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type ServicesFetchedData = (
-  | IntroductionFetchedData
   | ParagrapheFetchedData
   | BeneficesFetchedData
   | ListeFetchedData
   | ListeCartesFetchedData
 )[];
 
-export type IntroductionFetchedData = {
-  __component: string;
-  titre: string;
-  image_titre?: {data: StrapiItem};
-  image_titre_taille?: string;
-  texte: string;
-  image: {data: StrapiItem};
-};
-
-export type IntroductionData = {
-  type: string;
-  titre: string;
-  imageTitre?: StrapiItem;
-  imageTitreTaille?: string;
-  texte: string;
-  image: StrapiItem;
-};
-
 export type ParagrapheFetchedData = {
   __component: string;
+  taille_paragraphe?: 'md' | 'lg';
   titre?: string;
   image_titre?: {data: StrapiItem};
-  image_titre_taille?: string;
+  taille_image_titre?: 'sm' | 'md' | 'lg';
   texte: string;
   images?: {data: StrapiItem[]};
   alignement_image_droite?: boolean;
@@ -38,9 +20,10 @@ export type ParagrapheFetchedData = {
 
 export type ParagrapheData = {
   type: string;
+  tailleParagraphe?: 'md' | 'lg';
   titre?: string;
   imageTitre?: StrapiItem;
-  imageTitreTaille?: string;
+  tailleImageTitre?: 'sm' | 'md' | 'lg';
   texte: string;
   images?: StrapiItem[];
   alignementImageDroite?: boolean;

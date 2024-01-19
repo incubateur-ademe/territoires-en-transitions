@@ -1183,7 +1183,6 @@ export interface ApiServiceService extends Schema.CollectionType {
     sous_page: Attribute.Boolean & Attribute.DefaultTo<false>;
     contenu: Attribute.DynamicZone<
       [
-        'services.introduction',
         'services.benefices',
         'services.paragraphe',
         'services.liste',

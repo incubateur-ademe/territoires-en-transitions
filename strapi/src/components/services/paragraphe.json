@@ -11,15 +11,28 @@
       "type": "string",
       "maxLength": 255
     },
+    "taille_paragraphe": {
+      "type": "enumeration",
+      "enum": [
+        "md",
+        "lg"
+      ]
+    },
     "image_titre": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "image_titre_taille": {
+    "taille_image_titre": {
       "type": "enumeration",
-      "enum": ["sm", "md", "lg"],
+      "enum": [
+        "sm",
+        "md",
+        "lg"
+      ],
       "default": "sm",
       "required": false
     },
@@ -35,7 +48,9 @@
       "type": "media",
       "multiple": true,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
