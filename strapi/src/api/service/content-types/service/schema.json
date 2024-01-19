@@ -40,10 +40,8 @@
     "contenu": {
       "type": "dynamiczone",
       "components": [
-        "services.benefices",
         "services.paragraphe",
-        "services.liste",
-        "services.liste-cartes"
+        "services.liste"
       ]
     }
   }

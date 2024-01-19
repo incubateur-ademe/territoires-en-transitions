@@ -235,28 +235,12 @@ export interface ContenuVideo extends Schema.Component {
   };
 }
 
-export interface ServicesBenefices extends Schema.Component {
-  collectionName: 'components_services_benefices';
-  info: {
-    displayName: 'b\u00E9n\u00E9fices';
-    icon: 'thumbUp';
-    description: '';
-  };
-  attributes: {
-    benefices_liste: Attribute.Component<'shared.vignette', true> &
-      Attribute.Required &
-      Attribute.SetMinMax<{
-        min: 2;
-        max: 4;
-      }>;
-  };
-}
-
 export interface ServicesCarte extends Schema.Component {
   collectionName: 'components_services_cartes';
   info: {
     displayName: 'carte';
     icon: 'grid';
+    description: '';
   };
   attributes: {
     pre_titre: Attribute.String &
@@ -264,32 +248,11 @@ export interface ServicesCarte extends Schema.Component {
         maxLength: 255;
       }>;
     titre: Attribute.String &
-      Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
     texte: Attribute.RichText & Attribute.Required;
     image: Attribute.Media;
-  };
-}
-
-export interface ServicesListeCartes extends Schema.Component {
-  collectionName: 'components_services_liste_cartes';
-  info: {
-    displayName: 'liste cartes';
-    icon: 'grid';
-    description: '';
-  };
-  attributes: {
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    introduction: Attribute.RichText;
-    liste: Attribute.Component<'services.carte', true>;
-    disposition_cartes: Attribute.Enumeration<['grille', 'gallerie']> &
-      Attribute.Required;
   };
 }
 
@@ -301,6 +264,8 @@ export interface ServicesListe extends Schema.Component {
     description: '';
   };
   attributes: {
+    taille_liste: Attribute.Enumeration<['md', 'lg']> &
+      Attribute.DefaultTo<'lg'>;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -310,8 +275,12 @@ export interface ServicesListe extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    introduction: Attribute.Text;
-    contenu: Attribute.Component<'shared.vignette-avec-markdown', true>;
+    introduction: Attribute.RichText;
+    liste: Attribute.Component<'services.carte', true>;
+    disposition_cartes: Attribute.Enumeration<
+      ['Gallerie', 'Grille', 'Verticale', 'Vignettes']
+    > &
+      Attribute.Required;
   };
 }
 
@@ -323,11 +292,12 @@ export interface ServicesParagraphe extends Schema.Component {
     description: '';
   };
   attributes: {
+    taille_paragraphe: Attribute.Enumeration<['md', 'lg']> &
+      Attribute.DefaultTo<'lg'>;
     titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    taille_paragraphe: Attribute.Enumeration<['md', 'lg']>;
     image_titre: Attribute.Media;
     taille_image_titre: Attribute.Enumeration<['sm', 'md', 'lg']> &
       Attribute.DefaultTo<'sm'>;
@@ -468,9 +438,7 @@ declare module '@strapi/types' {
       'contenu.paragraphe': ContenuParagraphe;
       'contenu.texte-collectivite': ContenuTexteCollectivite;
       'contenu.video': ContenuVideo;
-      'services.benefices': ServicesBenefices;
       'services.carte': ServicesCarte;
-      'services.liste-cartes': ServicesListeCartes;
       'services.liste': ServicesListe;
       'services.paragraphe': ServicesParagraphe;
       'shared.paragraphe': SharedParagraphe;

@@ -1,9 +1,5 @@
 import {fetchCollection} from 'src/strapi/strapi';
 import {
-  BeneficesData,
-  BeneficesFetchedData,
-  ListeCartesData,
-  ListeCartesFetchedData,
   ListeData,
   ListeFetchedData,
   ParagrapheData,
@@ -15,15 +11,10 @@ export const getServiceStrapiData = async (uid: string) => {
   const data = await fetchCollection('services', [
     ['filters[uid]', `${uid}`],
     ['populate[0]', 'contenu'],
-    ['populate[1]', 'contenu.image'],
-    ['populate[2]', 'contenu.image_titre'],
-    ['populate[3]', 'contenu.benefices_liste'],
-    ['populate[4]', 'contenu.benefices_liste.image'],
-    ['populate[5]', 'contenu.images'],
-    ['populate[6]', 'contenu.contenu'],
-    ['populate[7]', 'contenu.contenu.image'],
-    ['populate[8]', 'contenu.liste'],
-    ['populate[9]', 'contenu.liste.image'],
+    ['populate[1]', 'contenu.image_titre'],
+    ['populate[2]', 'contenu.images'],
+    ['populate[3]', 'contenu.liste'],
+    ['populate[4]', 'contenu.liste.image'],
   ]);
 
   if (data) {
@@ -31,67 +22,40 @@ export const getServiceStrapiData = async (uid: string) => {
 
     return {
       titre: serviceData.titre,
-      contenu: (serviceData.contenu as unknown as ServicesFetchedData)
-        .map(c => {
-          switch (c.__component) {
-            case 'services.paragraphe':
-              return {
-                type: 'paragraphe',
-                tailleParagraphe: (c as ParagrapheFetchedData)
-                  .taille_paragraphe,
-                titre: (c as ParagrapheFetchedData).titre,
-                imageTitre: (c as ParagrapheFetchedData).image_titre?.data,
-                tailleImageTitre: (c as ParagrapheFetchedData)
-                  .taille_image_titre,
-                texte: (c as ParagrapheFetchedData).texte,
-                images: (c as ParagrapheFetchedData).images?.data,
-                alignementImageDroite: (c as ParagrapheFetchedData)
-                  .alignement_image_droite,
-              } as ParagrapheData;
-            case 'services.benefices':
-              return {
-                type: 'benefices',
-                liste: (c as BeneficesFetchedData).benefices_liste.map(b => ({
-                  id: b.id,
-                  legende: b.legende,
-                  image: b.image.data,
-                })),
-              } as BeneficesData;
-            case 'services.liste':
-              return {
-                type: 'liste',
-                titre: (c as ListeFetchedData).titre,
-                sousTitre: (c as ListeFetchedData).sous_titre,
-                introduction: (c as ListeFetchedData).introduction,
-                contenu: (c as ListeFetchedData).contenu.map(ct => ({
-                  id: ct.id,
-                  titre: ct.titre,
-                  legende: ct.legende,
-                  image: ct.image?.data,
-                })),
-              } as ListeData;
-            case 'services.liste-cartes':
-              return {
-                type: 'listeCartes',
-                titre: (c as ListeCartesFetchedData).titre,
-                introduction: (c as ListeCartesFetchedData).introduction,
-                liste: (c as ListeCartesFetchedData).liste.map(ct => ({
-                  id: ct.id,
-                  preTitre: ct.pre_titre,
-                  titre: ct.titre,
-                  texte: ct.texte,
-                  image: ct.image?.data,
-                })),
-                dispositionCartes: (c as ListeCartesFetchedData)
-                  .disposition_cartes,
-              } as ListeCartesData;
-            default:
-              return {
-                type: 'autre',
-              };
+      contenu: (serviceData.contenu as unknown as ServicesFetchedData).map(
+        c => {
+          if (c.__component === 'services.paragraphe') {
+            const paragrapheData = c as ParagrapheFetchedData;
+            return {
+              type: 'paragraphe',
+              tailleParagraphe: paragrapheData.taille_paragraphe,
+              titre: paragrapheData.titre,
+              imageTitre: paragrapheData.image_titre?.data,
+              tailleImageTitre: paragrapheData.taille_image_titre,
+              texte: paragrapheData.texte,
+              images: paragrapheData.images?.data,
+              alignementImageDroite: paragrapheData.alignement_image_droite,
+            } as ParagrapheData;
+          } else {
+            const listeData = c as ListeFetchedData;
+            return {
+              type: 'liste',
+              tailleListe: listeData.taille_liste,
+              titre: listeData.titre,
+              sousTitre: listeData.sous_titre,
+              introduction: listeData.introduction,
+              liste: listeData.liste.map(ct => ({
+                id: ct.id,
+                preTitre: ct.pre_titre,
+                titre: ct.titre,
+                texte: ct.texte,
+                image: ct.image?.data,
+              })),
+              dispositionCartes: listeData.disposition_cartes,
+            } as ListeData;
           }
-        })
-        .filter(c => c.type !== 'autre'),
+        },
+      ),
     };
   } else return data;
 };

@@ -159,6 +159,11 @@
     line-height: 36px;
   }
 
+  .paragraphe-primary-9,
+  .paragraphe-primary-9 > p {
+    @apply text-primary-9;
+  }
+
   .paragraphe-primary-11,
   .paragraphe-primary-11 > p {
     @apply text-primary-11;

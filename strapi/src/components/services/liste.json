@@ -7,6 +7,11 @@
   },
   "options": {},
   "attributes": {
+    "taille_liste": {
+      "type": "enumeration",
+      "enum": ["md", "lg"],
+      "default": "lg"
+    },
     "titre": {
       "type": "string",
       "required": true,
@@ -14,16 +19,20 @@
     },
     "sous_titre": {
       "type": "string",
-      "required": false,
       "maxLength": 255
     },
     "introduction": {
-      "type": "text"
+      "type": "richtext"
     },
-    "contenu": {
+    "liste": {
       "type": "component",
       "repeatable": true,
-      "component": "shared.vignette-avec-markdown"
+      "component": "services.carte"
+    },
+    "disposition_cartes": {
+      "type": "enumeration",
+      "enum": ["Gallerie", "Grille", "Verticale", "Vignettes"],
+      "required": true
     }
   }
 }
