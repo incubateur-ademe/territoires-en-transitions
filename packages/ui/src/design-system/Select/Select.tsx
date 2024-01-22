@@ -3,17 +3,17 @@ import {Ref, forwardRef, useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 
-import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
-import Options, {OptionValue, SelectOption, Option} from './Options';
-import {Badge} from '../../badge/Badge';
+import {DropdownFloater} from '@components/floating-ui/DropdownFloater';
+import {Icon} from '@design-system/Icon';
+import {Badge} from '@design-system/Badge';
 
+import Options, {OptionValue, SelectOption, Option} from './Options';
 import {
   filterOptions,
   getOptionLabel,
   getFlatOptions,
   sortOptionByAlphabet,
 } from './utils';
-import {Icon} from '../../icons/Icon';
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];
@@ -318,7 +318,7 @@ const SelectButton = forwardRef(
               !isSearcheable && (
                 <span
                   className={classNames(
-                    'my-auto text-xs text-grey-6 line-clamp-1',
+                    'my-auto text-left text-xs text-grey-6 line-clamp-1',
                     {
                       '!text-grey-5': disabled,
                     }
@@ -338,7 +338,10 @@ const SelectButton = forwardRef(
                   type="text"
                   className={classNames(
                     'w-full text-sm outline-0 placeholder:text-grey-6',
-                    {'py-1': values}
+                    {
+                      'py-1': values,
+                      'text-xs': small,
+                    }
                   )}
                   value={inputValue}
                   onChange={e => onSearch(e.target.value)}
