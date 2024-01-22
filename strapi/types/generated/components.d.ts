@@ -243,6 +243,7 @@ export interface ServicesCarte extends Schema.Component {
     description: '';
   };
   attributes: {
+    icone: Attribute.String & Attribute.CustomField<'plugin::react-icons.icon'>;
     pre_titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;

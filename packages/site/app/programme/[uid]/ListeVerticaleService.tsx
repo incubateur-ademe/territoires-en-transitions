@@ -1,5 +1,6 @@
 import {Liste} from './types';
 import Markdown from '@components/markdown/Markdown';
+import ReactIcon from '@components/react-icons/ReactIcon';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 
 const ListeVerticaleService = ({liste}: {liste: Liste}) => {
@@ -18,7 +19,13 @@ const ListeVerticaleService = ({liste}: {liste: Liste}) => {
             />
           )}
           <div className="flex flex-col gap-4">
-            {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
+            <div className="flex items-center gap-2">
+              {!!l.icone && (
+                <ReactIcon icon={l.icone} className="text-3xl text-primary-9" />
+              )}
+              {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
+            </div>
+
             <Markdown texte={l.texte} className="paragraphe-16 -mb-6" />
           </div>
         </div>
