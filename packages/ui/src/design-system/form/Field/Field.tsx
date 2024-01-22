@@ -36,10 +36,12 @@ type Props = {
   state?: State;
   /** Message d'état affiché en dessous du champ */
   message?: string;
+  /** Réduit la taille du titre */
+  small?: boolean;
 };
 
 /** Wrapper pour élément de formulaire donnant des informations et un état */
-const Field = ({
+export const Field = ({
   title,
   className,
   hint,
@@ -47,6 +49,7 @@ const Field = ({
   state = 'default',
   message,
   children,
+  small,
 }: Props) => {
   return (
     <div className={classNames(`flex-grow flex flex-col gap-3`, className)}>
@@ -55,6 +58,7 @@ const Field = ({
         <div
           className={classNames('font-medium text-grey-8', {
             'text-grey-5': state === 'disabled',
+            'text-sm': small,
           })}
         >
           {title}
@@ -82,5 +86,3 @@ const Field = ({
     </div>
   );
 };
-
-export default Field;

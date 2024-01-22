@@ -21,9 +21,14 @@ const FakeInput = () => (
 export const Default: Story = {
   args: {title: "Description de l'action"},
   render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
+    <div className="flex flex-col gap-6 w-full max-w-sm">
+      <Field {...args}>
+        <FakeInput />
+      </Field>
+      <Field {...args} title="Small" small>
+        <FakeInput />
+      </Field>
+    </div>
   ),
 };
 
