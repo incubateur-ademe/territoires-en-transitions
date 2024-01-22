@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Design System/Select CreateOption smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <input type="text"
+               class="w-full text-sm outline-0 placeholder:text-grey-6"
+               placeholder="Rechercher par mots-clés"
+               value
+        >
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select CustomItem smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          Sélectionner une option
+        </span>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select Default smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          Sélectionner une option
+        </span>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select Disabled smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          disabled
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1 !text-grey-5">
+          Sélectionner une option
+        </span>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select DisabledSearchableMultiSelectWithValue smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          disabled
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <div class="flex items-center gap-2 grow">
+          <div data-test="Badge-undefined"
+               class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max px-3 py-1 border border-solid rounded"
+          >
+            <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+              Option 1
+            </span>
+          </div>
+          <div data-test="Badge-undefined"
+               class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max px-3 py-1 border border-solid rounded"
+          >
+            <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+              +1
+            </span>
+          </div>
+        </div>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9 !text-grey-5">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select MultiSelectWithSectionOptions smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          Sélectionner une ou plusieurs options
+        </span>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select SearchableMultiSelect smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <input type="text"
+               class="w-full text-sm outline-0 placeholder:text-grey-6"
+               placeholder="Rechercher par mots-clés"
+               value
+        >
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select SearchableSelectWithDebouncedApiCallOnTyping smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <input type="text"
+               class="w-full text-sm outline-0 placeholder:text-grey-6"
+               placeholder="Rechercher par mots-clés"
+               value
+        >
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select SmallWithBadgeItems smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+  >
+    <div class="flex px-4 min-h-[2.5rem] py-1">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          Sélectionner une option
+        </span>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Select WithField smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <div class="flex-grow flex flex-col gap-3">
+    <label>
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+      <span class="block mt-2 text-xs text-grey-7">
+        Texte description additionnel
+      </span>
+    </label>
+    <button aria-expanded="false"
+            aria-label="ouvrir le menu"
+            class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+    >
+      <div class="flex px-4 min-h-[3rem] py-2">
+        <div class="flex grow flex-wrap gap-2 mr-4">
+          <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+            Sélectionner une option
+          </span>
+        </div>
+        <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+        </span>
+      </div>
+    </button>
+    <div class="flex items-center text-info-1">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
+  </div>
+</div>
+`;
