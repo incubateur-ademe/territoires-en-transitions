@@ -1,7 +1,4 @@
-import {
-  SelectBase,
-  SelectProps,
-} from '@design-system/select/components/SelectBase';
+import {SelectBase, SelectProps} from './components/SelectBase';
 
 /**
  * Sélecteur de valeur unique

@@ -1,4 +1,4 @@
-import {Icon} from '@design-system/icons/Icon';
+import {Icon} from '@design-system/Icon';
 import classNames from 'classnames';
 import {Children, cloneElement, ReactElement, useState, useEffect} from 'react';
 
