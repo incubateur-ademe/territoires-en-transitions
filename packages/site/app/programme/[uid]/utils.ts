@@ -8,22 +8,44 @@ import {
   ParagrapheFetchedData,
   ServicesFetchedData,
 } from './types';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export const getServiceStrapiData = async (uid: string) => {
   const data = await fetchCollection('services', [
     ['filters[uid]', `${uid}`],
-    ['populate[0]', 'contenu'],
-    ['populate[1]', 'contenu.image_titre'],
-    ['populate[2]', 'contenu.images'],
-    ['populate[3]', 'contenu.liste'],
-    ['populate[4]', 'contenu.liste.image'],
-    ['populate[5]', 'contenu.boutons'],
+    ['populate[0]', 'seo'],
+    ['populate[1]', 'seo.metaImage'],
+    ['populate[2]', 'contenu'],
+    ['populate[3]', 'contenu.image_titre'],
+    ['populate[4]', 'contenu.images'],
+    ['populate[5]', 'contenu.liste'],
+    ['populate[6]', 'contenu.liste.image'],
+    ['populate[7]', 'contenu.boutons'],
   ]);
 
   if (data && data.length > 0 && data[0].attributes.contenu) {
     const serviceData = data[0].attributes;
 
+    const metaImage =
+      (serviceData.seo?.metaImage?.data as unknown as StrapiItem)?.attributes ??
+      undefined;
+
     return {
+      seo: {
+        metaTitle:
+          (serviceData.seo?.metaTitle as unknown as string) ?? undefined,
+        metaDescription:
+          (serviceData.seo?.metaDescription as unknown as string) ?? undefined,
+        metaImage: metaImage
+          ? {
+              url: metaImage.url as unknown as string,
+              width: metaImage.width as unknown as number,
+              height: metaImage.height as unknown as number,
+              type: metaImage.mime as unknown as string,
+              alt: metaImage.alternativeText as unknown as string,
+            }
+          : undefined,
+      },
       titre: serviceData.titre,
       contenu: (serviceData.contenu as unknown as ServicesFetchedData).map(
         c => {
