@@ -1,6 +1,7 @@
 import Markdown from '@components/markdown/Markdown';
 import {Liste} from './types';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import ReactIcon from '@components/react-icons/ReactIcon';
 
 const ListeGrilleService = ({liste}: {liste: Liste}) => {
   return (
@@ -9,11 +10,19 @@ const ListeGrilleService = ({liste}: {liste: Liste}) => {
         {liste.map(l => (
           <div key={l.id} className="rounded-2xl p-12 bg-white">
             <div>
-              {!!l.preTitre && (
-                <div className="text-primary-10 font-bold text-base">
-                  {l.preTitre}
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {!!l.icone && (
+                  <ReactIcon
+                    icon={l.icone}
+                    className="text-2xl text-primary-10"
+                  />
+                )}
+                {!!l.preTitre && (
+                  <div className="text-primary-10 font-bold text-base">
+                    {l.preTitre}
+                  </div>
+                )}
+              </div>
               {!!l.titre && (
                 <div className="text-orange-1 uppercase text-5xl font-extrabold mb-4">
                   {l.titre}
@@ -21,7 +30,7 @@ const ListeGrilleService = ({liste}: {liste: Liste}) => {
               )}
               <Markdown
                 texte={l.texte}
-                className="paragraphe-16 paragraphe-primary-9"
+                className="paragraphe-16 paragraphe-primary-9 -mb-6"
               />
               {!!l.image && (
                 <StrapiImage
