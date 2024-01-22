@@ -16,6 +16,10 @@
       "type": "string",
       "maxLength": 255
     },
+    "titre_centre": {
+      "type": "boolean",
+      "default": false
+    },
     "image_titre": {
       "type": "media",
       "multiple": false,
@@ -28,9 +32,12 @@
       "default": "sm",
       "required": false
     },
+    "sous_titre": {
+      "type": "string",
+      "maxLength": 255
+    },
     "texte": {
-      "type": "richtext",
-      "required": true
+      "type": "richtext"
     },
     "alignement_image_droite": {
       "type": "boolean",

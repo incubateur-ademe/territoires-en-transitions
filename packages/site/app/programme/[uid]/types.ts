@@ -10,9 +10,11 @@ export type ParagrapheFetchedData = {
   __component: 'services.paragraphe';
   taille_paragraphe?: 'md' | 'lg';
   titre?: string;
+  titre_centre?: boolean;
   image_titre?: {data: StrapiItem};
   taille_image_titre?: 'sm' | 'md' | 'lg';
-  texte: string;
+  sous_titre?: string;
+  texte?: string;
   images?: {data: StrapiItem[]};
   alignement_image_droite?: boolean;
 };
@@ -21,9 +23,11 @@ export type ParagrapheData = {
   type: 'paragraphe';
   tailleParagraphe?: 'md' | 'lg';
   titre?: string;
+  titreCentre?: boolean;
   imageTitre?: StrapiItem;
   tailleImageTitre?: 'sm' | 'md' | 'lg';
-  texte: string;
+  sousTitre?: string;
+  texte?: string;
   images?: StrapiItem[];
   alignementImageDroite?: boolean;
 };
