@@ -1,15 +1,8 @@
 import {Icon} from '@design-system/icons/Icon';
 import classNames from 'classnames';
-import {
-  Children,
-  cloneElement,
-  ReactElement,
-  KeyboardEvent,
-  useState,
-  useEffect,
-} from 'react';
+import {Children, cloneElement, ReactElement, useState, useEffect} from 'react';
 
-export type TabSize = 'xs' | 'sm';
+export type TabSize = 'xs' | 'sm' | 'md';
 
 type TabsProps = {
   /** Permet d'ajuster les styles de la liste d'onglets */
@@ -61,36 +54,6 @@ export const Tabs = ({
     })
   );
 
-  // interactions au clavier
-  // Ref: https://www.w3.org/WAI/ARIA/apg/patterns/tabs/#keyboardinteraction
-  const onKeyDownTab = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    switch (e.key) {
-      // onglet suivant ou le 1er
-      case 'ArrowRight':
-        e.preventDefault();
-        handleChange((index + 1) % tabsPanel.length);
-        break;
-
-      // onglet précédent ou le dernier
-      case 'ArrowLeft':
-        e.preventDefault();
-        handleChange(index - 1 < 0 ? tabsPanel.length - 1 : index - 1);
-        break;
-
-      // 1er onglet
-      case 'Home':
-        e.preventDefault();
-        handleChange(0);
-        break;
-
-      // dernier onglet
-      case 'End':
-        e.preventDefault();
-        handleChange(tabsPanel.length - 1);
-        break;
-    }
-  };
-
   return (
     <div className="overflow-hidden">
       <ul
@@ -125,10 +88,8 @@ export const Tabs = ({
                 type="button"
                 role="tab"
                 id={`tab-${index}`}
-                tabIndex={isActive ? 0 : -1}
                 aria-selected={isActive ? 'true' : 'false'}
                 onClick={() => handleChange(index)}
-                onKeyDown={e => onKeyDownTab(e, index)}
               >
                 {element.props.icon && (
                   <Icon
