@@ -1,36 +1,29 @@
 import {Meta, StoryObj} from '@storybook/react';
 
 import {Field} from '.';
+import { Input } from '../input';
 
 const meta: Meta<typeof Field> = {
   component: Field,
   decorators: [story => <div className="flex">{story()}</div>],
+  render: args => (
+    <Field {...args} htmlFor="un_nom">
+      <Input
+        id="un_nom"
+        placeholder="Placeholder"
+        state={args.state}
+        disabled={args.state === 'disabled'}
+      />
+    </Field>
+  ),
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Field>;
 
-const FakeInput = () => (
-  <input
-    type="text"
-    className="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
-    placeholder="Placeholder"
-  />
-);
-
 export const Default: Story = {
   args: {title: "Description de l'action"},
-  render: args => (
-    <div className="flex flex-col gap-6 w-full max-w-sm">
-      <Field {...args}>
-        <FakeInput />
-      </Field>
-      <Field {...args} title="Small" small>
-        <FakeInput />
-      </Field>
-    </div>
-  ),
 };
 
 export const DisabledWithHint: Story = {
@@ -40,11 +33,6 @@ export const DisabledWithHint: Story = {
     hint: 'Texte description additionnel',
     message: 'Message d’information',
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };
 
 export const WithHint: Story = {
@@ -53,11 +41,6 @@ export const WithHint: Story = {
     hint: 'Texte description additionnel',
     message: 'Message d’information',
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };
 
 export const WithInfo: Story = {
@@ -66,11 +49,6 @@ export const WithInfo: Story = {
     state: 'info',
     message: 'Message d’information',
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };
 
 export const WithError: Story = {
@@ -79,11 +57,6 @@ export const WithError: Story = {
     state: 'error',
     message: "Message d'erreur",
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };
 
 export const WithSuccess: Story = {
@@ -92,11 +65,6 @@ export const WithSuccess: Story = {
     state: 'success',
     message: 'Message de succès',
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };
 
 export const WithWarning: Story = {
@@ -105,9 +73,4 @@ export const WithWarning: Story = {
     state: 'warning',
     message: "Message d'avertissement",
   },
-  render: args => (
-    <Field {...args}>
-      <FakeInput />
-    </Field>
-  ),
 };

@@ -1,10 +1,15 @@
 import classNames from 'classnames';
-
 import {Icon} from '@design-system/Icon';
 
-type State = 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
+export type FieldState =
+  | 'default'
+  | 'info'
+  | 'error'
+  | 'success'
+  | 'warning'
+  | 'disabled';
 
-const stateToColor: Record<State, string> = {
+export const stateToTextColor: Record<FieldState, string> = {
   info: 'text-info-1',
   error: 'text-error-1',
   success: 'text-success-1',
@@ -13,7 +18,7 @@ const stateToColor: Record<State, string> = {
   disabled: 'text-grey-6',
 };
 
-const stateToIcon: Record<State, string> = {
+const stateToIcon: Record<FieldState, string> = {
   info: 'information-fill',
   error: 'spam-fill',
   success: 'checkbox-circle-fill',
@@ -34,7 +39,7 @@ type Props = {
   /** Pour lier le libellé et le champ qu'il contient */
   htmlFor?: string;
   /** État */
-  state?: State;
+  state?: FieldState;
   /** Message d'état affiché en dessous du champ */
   message?: string;
   /** Réduit la taille du titre */
@@ -77,7 +82,9 @@ export const Field = ({
       </label>
       {children}
       {message !== undefined && (
-        <div className={classNames('flex items-center', stateToColor[state])}>
+        <div
+          className={classNames('flex items-center', stateToTextColor[state])}
+        >
           {state !== 'disabled' && state !== 'default' && (
             <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
           )}
