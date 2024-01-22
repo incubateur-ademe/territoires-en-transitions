@@ -315,10 +315,15 @@ export interface ServicesParagraphe extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    titre_centre: Attribute.Boolean & Attribute.DefaultTo<false>;
     image_titre: Attribute.Media;
     taille_image_titre: Attribute.Enumeration<['sm', 'md', 'lg']> &
       Attribute.DefaultTo<'sm'>;
-    texte: Attribute.RichText & Attribute.Required;
+    sous_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    texte: Attribute.RichText;
     alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
     images: Attribute.Media;
   };
