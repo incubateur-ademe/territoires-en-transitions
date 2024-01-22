@@ -14,4 +14,4 @@ export * from '@design-system/Modal';
 export * from '@design-system/Tag';
 export * from '@design-system/Notification';
 export * from '@design-system/Field';
-export {Select} from '@design-system/form/Select/Select';
+export * from '@design-system/select';

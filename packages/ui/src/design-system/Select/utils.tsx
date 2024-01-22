@@ -1,4 +1,4 @@
-import {naturalSort} from '../../../utils/naturalSort';
+import {naturalSort} from '../../utils/naturalSort';
 import {Option, OptionSection, OptionValue, SelectOption} from './Options';
 
 /** Option section type guards */

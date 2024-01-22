@@ -4,7 +4,7 @@ import {action} from '@storybook/addon-actions';
 
 import {Field} from '@design-system/Field';
 
-import {Select} from './Select';
+import {Select} from '.';
 import {OptionValue, SelectOption} from './Options';
 import {getFlatOptions, onSelectMultiple, onSelectSingle} from './utils';
 
@@ -43,6 +43,7 @@ const optionsWithSections: SelectOption[] = [
 ];
 
 const meta: Meta<typeof Select> = {
+  title: 'Design System/Select',
   component: Select,
   decorators: [story => <div className="w-full max-w-[24rem]">{story()}</div>],
 };
