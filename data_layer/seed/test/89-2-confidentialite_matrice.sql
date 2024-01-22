@@ -1766,7 +1766,7 @@ values
     ('vue', 'action_audit_state', 'lecture', 'non', 'oui', 'non', 'non'),
     ('vue', 'action_audit_state', 'edition', 'non', 'oui', 'non', 'non'),
     ('vue', 'action_audit_state', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'action_audit_state', 'auditeur', 'non', 'oui', 'non', 'non'),
+    ('vue', 'action_audit_state', 'auditeur', 'oui', 'oui', 'non', 'non'),
     -- Vue action_children
     ('vue', 'action_children', 'public', 'non', 'oui', 'non', 'non'),
     ('vue', 'action_children', 'connecte', 'non', 'oui', 'non', 'non'),
