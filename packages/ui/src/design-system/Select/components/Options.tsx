@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Icon} from '@design-system/Icon';
 
-import {isOptionSection} from './utils';
+import {isOptionSection} from '../utils';
 import {OptionMenu} from './OptionMenu';
-import {CreateOption} from './Select';
+import {CreateOption} from './SelectBase';
 
 /**
  * Types partagés entre tous les composants selects
@@ -25,11 +25,11 @@ export type OptionSection = {
 /** Type d'une option dans un sélecteur, peut être une simple option ou une liste d'options */
 export type SelectOption = Option | OptionSection;
 
-type BaseProps<T extends OptionValue> = {
+type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
-  values?: T[];
+  values?: OptionValue[];
   /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
-  onChange: (value: T) => void;
+  onChange: (value: OptionValue) => void;
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: Option) => React.ReactElement;
   /** Permet d'afficher des badges dans les options */
@@ -38,7 +38,7 @@ type BaseProps<T extends OptionValue> = {
   createProps?: CreateOption;
 };
 
-type OptionsListProps<T extends OptionValue> = BaseProps<T> & {
+type OptionsListProps = BaseProps & {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Liste des options */
@@ -50,7 +50,7 @@ type OptionsListProps<T extends OptionValue> = BaseProps<T> & {
 };
 
 /** Liste d'options pouvant être de simples options ou des sections */
-const Options = <T extends OptionValue>({
+const Options = ({
   values,
   options,
   onChange,
@@ -60,7 +60,7 @@ const Options = <T extends OptionValue>({
   createProps,
   noOptionPlaceholder,
   dataTest,
-}: OptionsListProps<T>) => {
+}: OptionsListProps) => {
   return (
     <div data-test={`${dataTest}-options`}>
       {isLoading ? (
@@ -118,27 +118,27 @@ const Options = <T extends OptionValue>({
 
 export default Options;
 
-type OptionProps<T extends OptionValue> = BaseProps<T> & {
+type OptionProps = BaseProps & {
   option: Option;
 };
 
 /** Option pour les sélecteurs */
-const Option = <T extends OptionValue>({
+const Option = ({
   values,
   option,
   onChange,
   customItem,
   isBadgeItem,
   createProps,
-}: OptionProps<T>) => {
-  const isActive = values?.includes(option.value as T);
+}: OptionProps) => {
+  const isActive = values?.includes(option.value);
   const isUserCreated = createProps?.userCreatedOptions.includes(option.value);
   return (
     <div className="group flex w-full">
       <button
         data-test={option.value}
         className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
-        onClick={() => onChange(option.value as T)}
+        onClick={() => onChange(option.value)}
       >
         <div className="flex w-6 mr-2 shrink-0">
           {isActive && (
