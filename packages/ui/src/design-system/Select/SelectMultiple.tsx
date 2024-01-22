@@ -2,7 +2,7 @@ import {OptionValue} from '@design-system/select/components/Options';
 import {
   SelectBase,
   SelectProps,
-} from '@design-system/select/components/SelectBase';
+} from '@design-system/Select/components/SelectBase';
 
 type Props = Omit<SelectProps, 'onChange'> & {
   /**
