@@ -1,0 +1,4 @@
+/** cache l'icône du sélecteur de date (fonctionne uniquement pour chrome et probablement edge mais pas pour firefox ni safari) */
+.input-date input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+}
