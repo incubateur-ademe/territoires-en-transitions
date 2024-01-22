@@ -34,7 +34,7 @@ export const Tabs = ({
   tabPanelClassName,
   children,
   defaultActiveTab = 0,
-  size = 'sm',
+  size = 'md',
   onChange,
 }: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
@@ -112,6 +112,7 @@ export const Tabs = ({
                   'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
                   {
                     // variante de taille
+                    'text-md': size === 'md',
                     'text-sm': size === 'sm',
                     'text-xs': size === 'xs',
                     // variante pour l'onglet actif

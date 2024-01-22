@@ -53,6 +53,14 @@ export const AvecIcones: Story = {
   },
 };
 
+export const TailleSM: Story = {
+  args: {
+    defaultActiveTab: 1,
+    size: 'sm',
+    children: AvecIcones.args.children,
+  },
+};
+
 export const TailleXS: Story = {
   args: {
     defaultActiveTab: 1,
