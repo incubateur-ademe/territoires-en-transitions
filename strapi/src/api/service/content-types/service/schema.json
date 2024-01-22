@@ -12,6 +12,11 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
     "uid": {
       "type": "uid",
       "targetField": "titre",
@@ -29,9 +34,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "sous_page": {
       "type": "boolean",
@@ -39,11 +42,7 @@
     },
     "contenu": {
       "type": "dynamiczone",
-      "components": [
-        "services.paragraphe",
-        "services.liste",
-        "services.info"
-      ]
+      "components": ["services.paragraphe", "services.liste", "services.info"]
     }
   }
 }

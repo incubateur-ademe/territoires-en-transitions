@@ -1,9 +1,28 @@
+'use server';
+
 import {notFound} from 'next/navigation';
 import {getServiceStrapiData} from './utils';
 import {InfoData, ListeData, ParagrapheData} from './types';
 import ParagrapheService from './ParagrapheService';
 import ListeService from './ListeService';
 import InfoService from './InfoService';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+
+export async function generateMetadata(
+  {params}: {params: {uid: string}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getServiceStrapiData(params.uid);
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle,
+    networkTitle: strapiData?.seo.metaTitle,
+    description: strapiData?.seo.metaDescription,
+    image: strapiData?.seo.metaImage,
+  });
+}
 
 type ServiceProgrammeProps = {
   params: {uid: string};
