@@ -31,13 +31,11 @@ const ParagrapheService = ({
         (tailleParagraphe === 'md' ? (
           <ThreePicsMosaic images={images} />
         ) : (
-          <div className="lg:min-w-[35%] lg:max-w-[35%]">
-            <StrapiImage
-              data={images[0]}
-              containerClassName="h-full w-full"
-              className="rounded-3xl border-8 border-primary-3 h-full w-full object-cover"
-            />
-          </div>
+          <StrapiImage
+            data={images[0]}
+            containerClassName="w-[452px] max-w-full h-[419px] flex-none"
+            className="rounded-3xl border-8 border-primary-3 h-full w-full object-cover"
+          />
         ))}
 
       <div>
@@ -55,7 +53,8 @@ const ParagrapheService = ({
         <Markdown
           texte={texte}
           className={classNames('-mb-6', {
-            'paragraphe-22': tailleParagraphe === 'lg' || !tailleParagraphe,
+            'max-md:paragraphe-18 md:paragraphe-22':
+              tailleParagraphe === 'lg' || !tailleParagraphe,
             'paragraphe-18': tailleParagraphe === 'md',
           })}
         />

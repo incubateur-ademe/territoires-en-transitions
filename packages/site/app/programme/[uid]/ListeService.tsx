@@ -76,7 +76,7 @@ const ListeService = ({
       {/* Liste de vignettes alignées horizontalement */}
       {dispositionCartes === 'Vignettes' && (
         <ThumbnailsList
-          thumbnails={liste.map(l => ({...l, legend: l.texte}))}
+          thumbnails={liste.slice(0, 4).map(l => ({...l, legend: l.texte}))}
         />
       )}
     </Section>

@@ -1,6 +1,10 @@
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
-export type ServicesFetchedData = (ParagrapheFetchedData | ListeFetchedData)[];
+export type ServicesFetchedData = (
+  | ParagrapheFetchedData
+  | ListeFetchedData
+  | InfoFetchedData
+)[];
 
 export type ParagrapheFetchedData = {
   __component: 'services.paragraphe';
