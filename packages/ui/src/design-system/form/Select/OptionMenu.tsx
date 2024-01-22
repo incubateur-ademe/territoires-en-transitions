@@ -1,11 +1,12 @@
 import {Ref, forwardRef, useState} from 'react';
-import DropdownFloater from '../../../components/floating-ui/DropdownFloater';
+
+import {DropdownFloater} from '@components/floating-ui/DropdownFloater';
+import {Modal} from '@design-system/Modal';
+import {Icon} from '@design-system/Icon';
+import {Button} from '@design-system/buttons';
 
 import {CreateOption} from './Select';
 import {Option} from './Options';
-import {Icon} from '../../icons/Icon';
-import {Button} from '../../buttons/button/Button';
-import {Modal} from '../../modal/Modal';
 
 type Props = {
   option: Option;

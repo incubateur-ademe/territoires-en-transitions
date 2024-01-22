@@ -1,8 +1,9 @@
 import {useRef} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 
-import {Button} from '@design-system/buttons/button/Button';
 import DoubleCheckIcon from '@assets/DoubleCheckIcon';
+
+import {Button} from '.';
 
 const meta: Meta<typeof Button> = {
   title: 'Design System/Button',

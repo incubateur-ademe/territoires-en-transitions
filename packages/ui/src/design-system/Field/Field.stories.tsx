@@ -1,5 +1,6 @@
-import Field from './Field';
 import {Meta, StoryObj} from '@storybook/react';
+
+import {Field} from '.';
 
 const meta: Meta<typeof Field> = {
   component: Field,

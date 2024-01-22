@@ -13,7 +13,7 @@ import {
 import classNames from 'classnames';
 
 import {preset} from '@tailwind-preset';
-import {Button} from '@design-system/buttons/button/Button';
+import {Button} from '@design-system/buttons';
 
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 

@@ -39,7 +39,7 @@ type DropdownFloaterProps = {
 };
 
 /** Affiche un élement volant (dropdown, modal...) avec une configuration floating-ui prédéfinie */
-const DropdownFloater = ({
+export const DropdownFloater = ({
   render,
   children,
   placement,
@@ -145,5 +145,3 @@ const DropdownFloater = ({
     </>
   );
 };
-
-export default DropdownFloater;
