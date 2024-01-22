@@ -1,22 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`design-system/form/Field Default smoke-test 1`] = `
+exports[`design-system/Field Default smoke-test 1`] = `
 <div class="flex">
-  <div class="flex-grow flex flex-col gap-3">
-    <label>
-      <div class="font-medium text-grey-8">
-        Description de l'action
-      </div>
-    </label>
-    <input type="text"
-           class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
-           placeholder="Placeholder"
-    >
+  <div class="flex flex-col gap-6 w-full max-w-sm">
+    <div class="flex-grow flex flex-col gap-3">
+      <label>
+        <div class="font-medium text-grey-8">
+          Description de l'action
+        </div>
+      </label>
+      <input type="text"
+             class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex-grow flex flex-col gap-3">
+      <label>
+        <div class="font-medium text-grey-8 text-sm">
+          Small
+        </div>
+      </label>
+      <input type="text"
+             class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
+             placeholder="Placeholder"
+      >
+    </div>
   </div>
 </div>
 `;
 
-exports[`design-system/form/Field DisabledWithHint smoke-test 1`] = `
+exports[`design-system/Field DisabledWithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -40,7 +53,7 @@ exports[`design-system/form/Field DisabledWithHint smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/form/Field WithError smoke-test 1`] = `
+exports[`design-system/Field WithError smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -63,7 +76,7 @@ exports[`design-system/form/Field WithError smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/form/Field WithHint smoke-test 1`] = `
+exports[`design-system/Field WithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -87,7 +100,7 @@ exports[`design-system/form/Field WithHint smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/form/Field WithInfo smoke-test 1`] = `
+exports[`design-system/Field WithInfo smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -110,7 +123,7 @@ exports[`design-system/form/Field WithInfo smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/form/Field WithSuccess smoke-test 1`] = `
+exports[`design-system/Field WithSuccess smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -133,7 +146,7 @@ exports[`design-system/form/Field WithSuccess smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/form/Field WithWarning smoke-test 1`] = `
+exports[`design-system/Field WithWarning smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
     <label>
