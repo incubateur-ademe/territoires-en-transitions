@@ -20,7 +20,7 @@ export const getServiceStrapiData = async (uid: string) => {
     ['populate[5]', 'contenu.boutons'],
   ]);
 
-  if (data) {
+  if (data && data.length > 0 && data[0].attributes.contenu) {
     const serviceData = data[0].attributes;
 
     return {
@@ -67,5 +67,5 @@ export const getServiceStrapiData = async (uid: string) => {
         },
       ),
     };
-  } else return data;
+  } else return null;
 };

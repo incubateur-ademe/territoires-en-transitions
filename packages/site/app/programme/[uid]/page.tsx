@@ -1,3 +1,4 @@
+import {notFound} from 'next/navigation';
 import {getServiceStrapiData} from './utils';
 import {InfoData, ListeData, ParagrapheData} from './types';
 import ParagrapheService from './ParagrapheService';
@@ -11,7 +12,7 @@ type ServiceProgrammeProps = {
 const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
   const data = await getServiceStrapiData(uid);
 
-  if (!data || data.contenu.length === 0) return null;
+  if (!data || data.contenu.length === 0) return notFound();
 
   return (
     <>
@@ -24,7 +25,7 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
           case 'info':
             return <InfoService {...(c as InfoData)} />;
           default:
-            return null;
+            return notFound();
         }
       })}
     </>
