@@ -41,7 +41,7 @@ export type AnchorHTMLProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 type UnknownHTMLProps = ButtonHTMLProps | AnchorHTMLProps;
 
 // On définit les types des props du composant <Button>
-type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
+export type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
 type AnchorButtonProps = BaseButtonProps & AnchorHTMLProps;
 /** Props données au composant générique <Button> */
 export type ButtonProps = DefaultButtonProps | AnchorButtonProps;
