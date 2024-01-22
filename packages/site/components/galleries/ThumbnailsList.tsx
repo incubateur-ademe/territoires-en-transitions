@@ -15,7 +15,7 @@ const ThumbnailsList = ({thumbnails}: ThumbnailsListProps) => {
       {thumbnails.map(thumbnail => (
         <div
           key={thumbnail.id}
-          className="flex flex-col items-center gap-8 md:gap-10 w-fit max-md:mx-auto"
+          className="flex flex-col items-center gap-8 w-fit max-md:mx-auto"
         >
           {!!thumbnail.image && (
             <StrapiImage

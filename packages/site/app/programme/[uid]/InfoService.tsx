@@ -10,7 +10,7 @@ const InfoService = ({titre, boutons}: InfoData) => {
 
   return (
     <Section containerClassName="bg-primary-7">
-      <h2 className="text-white text-center">{titre}</h2>
+      <h2 className="text-white text-center lg:max-w-[70%] mx-auto">{titre}</h2>
 
       <div
         className={classNames(

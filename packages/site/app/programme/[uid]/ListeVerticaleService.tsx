@@ -11,13 +11,11 @@ const ListeVerticaleService = ({liste}: {liste: Liste}) => {
           className="flex max-md:flex-col gap-6 bg-primary-1 rounded-2xl p-8"
         >
           {!!l.image && (
-            <div className="flex-none w-[115px] h-[115px] max-md:mx-auto">
-              <StrapiImage
-                data={l.image}
-                containerClassName="h-full w-full"
-                className="rounded-2xl h-full w-full object-cover"
-              />
-            </div>
+            <StrapiImage
+              data={l.image}
+              containerClassName="flex-none w-[115px] h-[115px] max-md:mx-auto"
+              className="rounded-2xl h-full w-full object-cover"
+            />
           )}
           <div className="flex flex-col gap-4">
             {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
