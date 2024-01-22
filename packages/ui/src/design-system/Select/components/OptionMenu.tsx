@@ -5,7 +5,7 @@ import {Modal} from '@design-system/Modal';
 import {Icon} from '@design-system/Icon';
 import {Button} from '@design-system/buttons';
 
-import {CreateOption} from './Select';
+import {CreateOption} from './SelectBase';
 import {Option} from './Options';
 
 type Props = {

@@ -4,9 +4,9 @@ import {action} from '@storybook/addon-actions';
 
 import {Field} from '@design-system/Field';
 
-import {Select} from '.';
-import {OptionValue, SelectOption} from './Options';
-import {getFlatOptions, onSelectMultiple, onSelectSingle} from './utils';
+import {Select, SelectMultiple} from '.';
+import {OptionValue, SelectOption} from './components/Options';
+import {getFlatOptions} from './utils';
 
 const singleOptions: SelectOption[] = [
   {value: 'option1', label: 'Option 1'},
@@ -61,7 +61,7 @@ export const Default: Story = {
         {...args}
         values={value}
         onChange={v => {
-          setValue(onSelectSingle(v, value));
+          setValue(v);
           action('onChange');
         }}
       />
@@ -78,7 +78,7 @@ export const SmallWithBadgeItems: Story = {
         {...args}
         values={value}
         onChange={v => {
-          setValue(onSelectSingle(v, value));
+          setValue(v);
           action('onChange');
         }}
       />
@@ -99,7 +99,7 @@ export const CustomItem: Story = {
         {...args}
         values={value}
         onChange={v => {
-          setValue(onSelectSingle(v, value));
+          setValue(v);
           action('onChange');
         }}
         customItem={option => (
@@ -117,11 +117,11 @@ export const MultiSelectWithSectionOptions: Story = {
   render: args => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
-      <Select
+      <SelectMultiple
         {...args}
         values={values}
-        onChange={v => {
-          setValues(onSelectMultiple(v, values));
+        onChange={values => {
+          setValues(values);
         }}
       />
     );
@@ -139,11 +139,11 @@ export const SearchableMultiSelect: Story = {
   render: args => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
-      <Select
+      <SelectMultiple
         {...args}
         values={values}
-        onChange={v => {
-          setValues(onSelectMultiple(v, values));
+        onChange={values => {
+          setValues(values);
         }}
       />
     );
@@ -163,11 +163,11 @@ export const DisabledSearchableMultiSelectWithValue: Story = {
       'option2',
     ]);
     return (
-      <Select
+      <SelectMultiple
         {...args}
         values={values}
-        onChange={v => {
-          setValues(onSelectMultiple(v, values));
+        onChange={values => {
+          setValues(values);
         }}
       />
     );
@@ -186,7 +186,7 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
         {...args}
         values={value}
         onChange={v => {
-          setValue(onSelectSingle(v, value));
+          setValue(v);
         }}
         onSearch={v => console.log(v)}
       />
@@ -206,12 +206,12 @@ export const CreateOption: Story = {
       .map(o => o.value);
 
     return (
-      <Select
+      <SelectMultiple
         {...args}
         options={options}
         values={values}
-        onChange={v => {
-          setValues(onSelectMultiple(v, values));
+        onChange={values => {
+          setValues(values);
         }}
         createProps={{
           userCreatedOptions,
@@ -221,7 +221,9 @@ export const CreateOption: Story = {
               value: Date.now(),
             };
             setOptions([...options, newOption]);
-            setValues(onSelectMultiple(newOption.value, values));
+            values
+              ? setValues([...values, newOption.value])
+              : setValues([newOption.value]);
           },
           onUpdate: (value, label) =>
             setOptions(
@@ -231,7 +233,9 @@ export const CreateOption: Story = {
             ),
           onDelete: value => {
             setOptions(getFlatOptions(options).filter(o => o.value !== value));
-            setValues(onSelectMultiple(value, values));
+            setValues(
+              values.length > 1 ? values.filter(v => v !== value) : undefined
+            );
           },
         }}
       />
@@ -254,7 +258,7 @@ export const WithField: Story = {
           {...args}
           values={value}
           onChange={v => {
-            setValue(onSelectSingle(v, value));
+            setValue(v);
             action('onChange');
           }}
         />

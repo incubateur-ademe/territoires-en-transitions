@@ -1,5 +1,10 @@
 import {naturalSort} from '../../utils/naturalSort';
-import {Option, OptionSection, OptionValue, SelectOption} from './Options';
+import {
+  Option,
+  OptionSection,
+  OptionValue,
+  SelectOption,
+} from './components/Options';
 
 /** Option section type guards */
 export function isOptionSection(option: SelectOption): option is OptionSection {
@@ -23,23 +28,6 @@ export const getFlatOptions = (selectOptions: SelectOption[]): Option[] =>
 /** Extrait le label d'une option dans une liste d'options */
 export const getOptionLabel = (optionValue: OptionValue, options: Option[]) =>
   options.find((v: Option) => v.value === optionValue).label;
-
-/** Gère la sélection/désélection d'une valeur simple pour le composant Select */
-export const onSelectSingle = (
-  optionValue: OptionValue,
-  value: OptionValue | undefined
-) => {
-  // si la valeur de l'option sélectionnée est différente de la valeur du sélecteur
-  // (sélection)
-  if (optionValue !== value) {
-    // alors on renvoie la nouvelle valeur
-    return optionValue;
-    // sinon on retourne undefined
-    // (désélection)
-  } else {
-    return undefined;
-  }
-};
 
 /** Tri de façon naturelle (1, 2, 11, 40, 'a', 'b') une liste d'options par ordre alpha-numérique */
 export const sortOptionByAlphabet = (
@@ -70,29 +58,6 @@ export const sortOptionByAlphabet = (
   });
 
   return [...optionArray, ...sectionArray];
-};
-
-/** Gère la sélection/désélection d'un tableau de valeurs pour le composant Select */
-export const onSelectMultiple = (
-  optionValue: OptionValue,
-  values: OptionValue[] | undefined
-) => {
-  // si au moins une valeur est présente dans les valeurs du sélecteur
-  if (values) {
-    if (values.includes(optionValue)) {
-      // retrait d'une valeur
-      return values.length === 1
-        ? // renvoie undefined si la seule valeur présente dans les valeurs du sélecteur est la même que la valeur de l'option
-          undefined
-        : values.filter(v => v !== optionValue);
-    } else {
-      // ajoût d'une valeur
-      return [...values, optionValue];
-    }
-    // si aucune valeur n'était déjà sélectionnée alors on renvoie directement la veleur de l'option dans un tableau
-  } else {
-    return [optionValue];
-  }
 };
 
 /**
