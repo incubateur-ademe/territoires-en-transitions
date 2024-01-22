@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import {Icon} from '../../icons/Icon';
+
+import {Icon} from '@design-system/Icon';
 
 type State = 'default' | 'info' | 'error' | 'success' | 'warning' | 'disabled';
 

@@ -1,9 +1,5 @@
 import {Meta, StoryObj} from '@storybook/react';
-import {
-  Notification,
-  NotificationSize,
-  NotificationVariant,
-} from './Notification';
+import {Notification, NotificationSize, NotificationVariant} from '.';
 
 const meta: Meta<typeof Notification> = {
   title: 'Design System/Notification',

@@ -1,8 +1,8 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {forwardRef} from 'react';
 
-import {Modal} from './Modal';
-import {Button} from '@design-system/buttons/button/Button';
+import {Modal} from '.';
+import {Button} from '@design-system/buttons';
 
 const meta: Meta<typeof Modal> = {
   title: 'Design System/Modale',

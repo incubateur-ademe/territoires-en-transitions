@@ -1,4 +1,4 @@
-import {BadgeState} from './Badge';
+import {BadgeState} from './index';
 
 /**
  * Thème couleurs du composant Badge

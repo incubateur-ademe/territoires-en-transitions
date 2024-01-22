@@ -1,6 +1,8 @@
 import classNames from 'classnames';
+
+import {Icon, IconValue} from '@design-system/Icon';
+
 import {badgeClassnames} from './utils';
-import {Icon, IconValue} from '../icons/Icon';
 
 export type BadgeState =
   | 'default'

@@ -1,5 +1,6 @@
 import {AnchorHTMLAttributes, ButtonHTMLAttributes} from 'react';
-import {IconValue} from '../icons/Icon';
+
+import {IconValue} from '@design-system/Icon';
 
 export type ButtonState = 'default' | 'disabled';
 

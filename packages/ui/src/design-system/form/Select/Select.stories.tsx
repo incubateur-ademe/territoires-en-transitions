@@ -2,8 +2,9 @@ import {useState} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
+import {Field} from '@design-system/Field';
+
 import {Select} from './Select';
-import Field from '../Field/Field';
 import {OptionValue, SelectOption} from './Options';
 import {getFlatOptions, onSelectMultiple, onSelectSingle} from './utils';
 

@@ -1,11 +1,12 @@
 import {Fragment} from 'react';
 import classNames from 'classnames';
 
+import {Badge} from '@design-system/Badge';
+import {Icon} from '@design-system/Icon';
+
 import {isOptionSection} from './utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './Select';
-import {Badge} from '../../badge/Badge';
-import {Icon} from '../../icons/Icon';
 
 /**
  * Types partagés entre tous les composants selects
