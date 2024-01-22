@@ -17,6 +17,7 @@
     "paths": {
       "@tailwind-preset": ["tailwind-preset.ts"],
       "@design-system/*": ["design-system/*"],
+      "@components/*": ["components/*"],
       "@assets/*": ["assets/*"]
     }
   },
