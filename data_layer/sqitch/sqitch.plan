@@ -608,3 +608,4 @@ indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.89.0] 2024-01-08T17:38
 @v2.95.0 2024-01-22T13:49:08Z Florian <florian@derfurth.com> # Répare les droits des indicateurs
 
 stats/posthog [stats/posthog@v2.93.0] 2024-01-18T14:39:10Z Florian <florian@derfurth.com> # Nouveaux événements
+@v2.96.0 2024-01-23T13:45:22Z Florian <florian@derfurth.com> # Événements de création de compte et de modification de score
