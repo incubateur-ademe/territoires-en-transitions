@@ -126,7 +126,7 @@ end;
 
 create function
     posthog.validate_event(jsonb)
-    returns void
+    returns bool
     language plpgsql
     immutable strict
 as
@@ -135,9 +135,11 @@ begin
     if $1 ->> 'event' is null then
         raise 'Un événement doit avoir un type : %', $1::text;
     end if;
-    perform (select $1 ->> 'distinct_id')::uuid;
+    if $1 ->> 'event' != '$groupidentify' then
+        perform (select $1 ->> 'distinct_id')::uuid;
+    end if;
     perform (select $1 ->> 'timestamp')::date;
-    return;
+    return true;
 exception
     when invalid_text_representation then
         raise 'Un événement doit avoir un distinct_id valide : %', $1::text;
