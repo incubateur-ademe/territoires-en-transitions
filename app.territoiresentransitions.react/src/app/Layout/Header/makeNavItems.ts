@@ -153,7 +153,11 @@ const makeNavItemsBase = (
   ];
 
   // droit "visiteur" uniquement => renvoi que les items communs
-  if (collectivite.niveau_acces === null && !user?.isSupport) {
+  if (
+    collectivite.niveau_acces === null &&
+    !user?.isSupport &&
+    !collectivite.est_auditeur
+  ) {
     return common;
   }
 
