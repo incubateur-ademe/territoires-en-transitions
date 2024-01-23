@@ -5,49 +5,22 @@
 BEGIN;
 
 alter table labellisation.demande
-    add demandeur uuid references auth.users;
+    alter column sujet
+        drop default;
 
-create or replace function
-    labellisation_submit_demande(
-    collectivite_id integer,
-    referentiel referentiel,
-    sujet labellisation.sujet_demande,
-    etoiles labellisation.etoile default null
-)
-    returns labellisation.demande
-    security definer
-as
-$$
-declare
-    demande labellisation.demande;
-begin
-    if (labellisation_submit_demande.sujet = 'cot' and labellisation_submit_demande.etoiles is not null)
-        or (labellisation_submit_demande.sujet != 'cot' and labellisation_submit_demande.etoiles is null)
-    then
-        raise exception 'Seulement si le sujet de la demande est "cot", étoiles devrait être null.';
-    end if;
+alter table labellisation.demande
+    alter column sujet
+        drop not null;
 
-    select *
-    from labellisation_demande(
-            labellisation_submit_demande.collectivite_id,
-            labellisation_submit_demande.referentiel
-        )
-    into demande;
+-- Local
+alter table labellisation.demande
+    drop constraint if exists demande_collectivite_id_referentiel_etoiles_key;
+-- Prod
+alter table labellisation.demande
+    drop constraint if exists labellisation_collectivite_id_referentiel_etoiles_key;
 
-    update labellisation.demande ld
-    set etoiles  = labellisation_submit_demande.etoiles,
-        sujet    = labellisation_submit_demande.sujet,
-        en_cours = false,
-        demandeur = auth.uid()
-    where ld.id = demande.id
-    returning * into demande;
-
-    return demande;
-end ;
-$$
-    language plpgsql;
-comment on function labellisation_submit_demande is
-    'Soumet une demande de labellisation pour une collectivité, un référentiel et un nombre d''étoiles donnés.'
-        'Met à jour ou créé une demande qui n''est pas en cours.';
+update labellisation.demande
+set sujet = null
+where en_cours;
 
 COMMIT;
