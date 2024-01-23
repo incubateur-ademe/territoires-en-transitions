@@ -18,7 +18,6 @@ export const getUpdatedMetadata = (
   return {
     title: newData.title ?? metadata.title,
     description: newData.description ?? metadata.description,
-    viewport: metadata.viewport,
     icons: metadata.icons,
     robots: metadata.robots,
     twitter: metadata.twitter,
