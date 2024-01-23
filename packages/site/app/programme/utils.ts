@@ -137,20 +137,6 @@ export const getStrapiData = async () => {
       },
       ressources: {
         description: programmeData.Ressources.Description as unknown as string,
-        buttons: [
-          {
-            titre: 'Règlement CAE',
-            href: programmeData.Ressources.ReglementCaeURL as unknown as string,
-          },
-          {
-            titre: 'Règlement ECI',
-            href: programmeData.Ressources.ReglementEciURL as unknown as string,
-          },
-          {
-            titre: 'Annuaire des conseillers',
-            href: programmeData.Ressources.AnnuaireURL as unknown as string,
-          },
-        ],
       },
     };
   } else return null;
