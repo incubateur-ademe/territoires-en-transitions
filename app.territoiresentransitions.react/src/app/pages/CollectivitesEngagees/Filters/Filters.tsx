@@ -51,6 +51,7 @@ export const Filters = ({filters, setFilters}: Props) => {
   return (
     <div className="flex flex-col gap-8">
       <UiSearchBar
+        dataTest="CollectiviteSearchInput"
         value={filters.nom || ''}
         placeholder="Rechercher par nom de collectivité"
         search={v => {

@@ -89,6 +89,7 @@ const View = ({
           {/** Change view (collectivite | plan) */}
           <div className="flex items-center">
             <Button
+              data-test="ToggleVueCollectivite"
               variant="outlined"
               icon="layout-grid-line"
               className={classNames('rounded-r-none', {
@@ -99,6 +100,7 @@ const View = ({
               Collectivités
             </Button>
             <Button
+              data-test="ToggleVuePlan"
               disabled={!isConnected}
               variant="outlined"
               icon="list-unordered"
