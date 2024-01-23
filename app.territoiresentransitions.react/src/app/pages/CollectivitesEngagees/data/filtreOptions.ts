@@ -1,6 +1,5 @@
 import {TOption} from 'ui/shared/select/commons';
 
-// could be downloaded from `filtre_intervalle` where type = population.
 export const populationCollectiviteOptions: TOption[] = [
   {value: '<20000', label: 'Moins de 20 000'},
   {value: '20000-50000', label: '20 000 - 50 000'},
@@ -9,7 +8,6 @@ export const populationCollectiviteOptions: TOption[] = [
   {value: '>200000', label: 'Plus de 200 000'},
 ];
 
-// could be downloaded from `filtre_intervalle` where type = score.
 export const realiseCourantCollectiviteOptions: TOption[] = [
   {value: '0-34', label: '0 à 34 %'},
   {value: '35-49', label: '35 à 49 %'},
@@ -18,7 +16,6 @@ export const realiseCourantCollectiviteOptions: TOption[] = [
   {value: '75-100', label: '75 à 100 %'},
 ];
 
-// could be downloaded from `filtre_intervalle` where type = remplissage.
 export const tauxRemplissageCollectiviteOptions: TOption[] = [
   {value: '0', label: '0 %'},
   {value: '0-49', label: '1 à 49 %'},
