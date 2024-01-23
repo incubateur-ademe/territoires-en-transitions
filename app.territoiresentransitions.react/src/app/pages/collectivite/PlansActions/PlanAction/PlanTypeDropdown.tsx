@@ -1,5 +1,5 @@
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {DSFRbuttonClassname, TOptionSection} from 'ui/shared/select/commons';
+import {DSFRbuttonClassname} from 'ui/shared/select/commons';
 import {usePlanTypeListe} from './data/usePlanTypeListe';
 import FormField from 'ui/shared/form/FormField';
 import {TPlanType} from 'types/alias';
@@ -10,27 +10,7 @@ type Props = {
 };
 
 const PlanTypeDropdown = ({type, onSelect}: Props) => {
-  const liste = usePlanTypeListe();
-
-  const options = liste?.reduce((acc: TOptionSection[], curr) => {
-    if (!acc.some(v => v.title === curr.categorie)) {
-      acc.push({
-        title: curr.categorie,
-        options: [
-          {
-            value: curr.id.toString(),
-            label: `${curr.type}${curr.detail ? ` (${curr.detail})` : ''}`,
-          },
-        ],
-      });
-    } else {
-      acc[acc.findIndex(v => v.title === curr.categorie)].options.push({
-        value: curr.id.toString(),
-        label: `${curr.type}${curr.detail ? ` (${curr.detail})` : ''}`,
-      });
-    }
-    return acc;
-  }, []);
+  const {data: liste, options} = usePlanTypeListe();
 
   if (!liste) return null;
 
