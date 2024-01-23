@@ -3,7 +3,7 @@ import {Ref, forwardRef, useState} from 'react';
 import {DropdownFloater} from '@components/floating-ui/DropdownFloater';
 import {Modal} from '@design-system/Modal';
 import {Icon} from '@design-system/Icon';
-import {Button} from '@design-system/buttons';
+import {Button} from '@design-system/Button';
 
 import {CreateOption} from './SelectBase';
 import {Option} from './Options';

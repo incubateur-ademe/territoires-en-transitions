@@ -1,4 +1,4 @@
-import {OptionValue} from '@design-system/select/components/Options';
+import {OptionValue} from '@design-system/Select/components/Options';
 import {
   SelectBase,
   SelectProps,

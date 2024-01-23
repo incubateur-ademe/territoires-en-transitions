@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 
 import {Icon, IconSize} from '@design-system/Icon';
-import {buttonThemeClassnames} from '../theme';
-import {ButtonContentProps, ButtonSize} from '../types';
+import {buttonThemeClassnames} from './theme';
+import {ButtonContentProps, ButtonSize} from './types';
 
 const getIconSize = (size: ButtonSize): IconSize | undefined => {
   // Les sizes des icônes ne matchent pas celles des boutons

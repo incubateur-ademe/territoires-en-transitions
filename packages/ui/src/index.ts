@@ -7,11 +7,12 @@ export {preset} from './tailwind-preset';
 export * from './components/floating-ui/DropdownFloater';
 
 // dossier design-system
-export * from '@design-system/Badge';
-export * from '@design-system/Icon';
-export * from '@design-system/buttons';
-export * from '@design-system/Modal';
-export * from '@design-system/Tag';
-export * from '@design-system/Notification';
-export * from '@design-system/Field';
-export * from '@design-system/Select';
+export * from './design-system/Badge';
+export * from './design-system/Icon';
+export * from './design-system/Button';
+export * from './design-system/Modal';
+export * from './design-system/Tag';
+export * from './design-system/Tabs';
+export * from './design-system/Notification';
+export * from './design-system/Field';
+export * from './design-system/Select';
