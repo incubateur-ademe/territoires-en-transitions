@@ -1,12 +1,13 @@
 import {useMemo} from 'react';
 
 import Filters from './Filters/Filters';
-import CollectivitesView from './Views/CollectivitesView';
 import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
+import CollectivitesView from './Views/CollectivitesView';
 
 import {useSearchParams} from 'core-logic/hooks/query';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {useFilteredCollectivites} from './data/useFilteredCollectivites';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
+
 import {Tfilters, initialFilters, nameToShortNames} from './data/filters';
 
 const CollectivitesEngagees = () => {
@@ -17,6 +18,10 @@ const CollectivitesEngagees = () => {
     [ownedCollectivites]
   );
 
+  const auth = useAuth();
+
+  const {isConnected} = auth;
+
   /** Filters */
   const [filters, setFilters] = useSearchParams<Tfilters>(
     'collectivites',
@@ -24,9 +29,7 @@ const CollectivitesEngagees = () => {
     nameToShortNames
   );
 
-  /** Data */
-  const {collectivites, collectivitesCount, isLoading} =
-    useFilteredCollectivites(filters);
+  const vue = filters.vue[0];
 
   return (
     <>
@@ -38,16 +41,16 @@ const CollectivitesEngagees = () => {
         <div className="md:flex">
           {/* Filters column */}
           <Filters filters={filters} setFilters={setFilters} />
-          {/* Collectivites column */}
-          <CollectivitesView
-            initialFilters={initialFilters}
-            filters={filters}
-            setFilters={setFilters}
-            data={collectivites}
-            dataCount={collectivitesCount}
-            isLoading={isLoading}
-            canUserClickCard={hasCollectivites}
-          />
+          {/* Results column */}
+          {vue === 'collectivite' && (
+            <CollectivitesView
+              initialFilters={initialFilters}
+              filters={filters}
+              setFilters={setFilters}
+              isConnected={isConnected}
+              canUserClickCard={hasCollectivites && isConnected}
+            />
+          )}
         </div>
       </div>
     </>
