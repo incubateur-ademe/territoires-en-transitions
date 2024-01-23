@@ -9,7 +9,7 @@ import {
   collectivitePersoRefPath,
   collectivitePersoRefThematiquePath,
   collectiviteLabellisationPath,
-  collectiviteAllCollectivitesPath,
+  collectiviteCollectivitesEngageesPath,
   collectiviteJournalPath,
   collectiviteBibliothequePath,
   collectivitePlansActionsBasePath,
@@ -73,7 +73,7 @@ export const CollectiviteRoutes = () => {
       <Route path={collectiviteLabellisationPath}>
         <ParcoursLabellisationPage />
       </Route>
-      <Route path={collectiviteAllCollectivitesPath}>
+      <Route path={collectiviteCollectivitesEngageesPath}>
         <CollectivitesEngageesPage />
       </Route>
     </>

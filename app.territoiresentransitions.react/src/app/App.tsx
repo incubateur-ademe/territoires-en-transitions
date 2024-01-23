@@ -10,7 +10,7 @@ import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
-import {allCollectivitesPath, authBasePath, profilPath} from 'app/paths';
+import {collectivitesEngageesPath, authBasePath, profilPath} from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
@@ -55,7 +55,7 @@ export const App = () => {
                     <ProfilPage />
                   </Route>
 
-                  <Route path={allCollectivitesPath}>
+                  <Route path={collectivitesEngageesPath}>
                     <CollectivitesEngageesPage />
                   </Route>
                   <Route path={'/collectivite/:collectiviteId'}>

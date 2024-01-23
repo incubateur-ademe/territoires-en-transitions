@@ -16,10 +16,10 @@ export const monComptePath = `${profilPath}/mon-compte`;
 export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
 export const rejoindreUneCollectivitePath = `${profilPath}/rejoindre-une-collectivite`;
 
-export const allCollectivitesPath = '/toutes_collectivites';
+export const collectivitesEngageesPath = '/toutes_collectivites';
 
 // Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
-export const homePath = allCollectivitesPath;
+export const homePath = collectivitesEngageesPath;
 
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
@@ -32,6 +32,7 @@ const labellisationVueParam = 'labellisationVue';
 export const thematiqueParam = 'thematiqueId';
 
 export type ReferentielParamOption = 'cae' | 'eci';
+export type CollectivitesEngageesViewParamOption = 'collectivite' | 'plan';
 export type IndicateurViewParamOption =
   | 'cae'
   | 'eci'
@@ -59,7 +60,7 @@ export const collectiviteActionPath = `${collectivitePath}/action/:${referentiel
 export const collectiviteLabellisationRootPath = `${collectivitePath}/labellisation/:${referentielParam}`;
 export const collectiviteLabellisationPath = `${collectiviteLabellisationRootPath}/:${labellisationVueParam}?`;
 export const collectiviteUsersPath = `${collectivitePath}/users`;
-export const collectiviteAllCollectivitesPath = `${collectivitePath}/toutes_collectivites`;
+export const collectiviteCollectivitesEngageesPath = `${collectivitePath}${collectivitesEngageesPath}`;
 export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
