@@ -24,7 +24,7 @@ export const PlanCarte = ({plan, canUserClickCard}: Props) => {
 
   return (
     <Link
-      data-test="CollectiviteCarte"
+      data-test="PlanCarte"
       onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
       to={
         canUserClickCard
