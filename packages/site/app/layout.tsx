@@ -1,9 +1,14 @@
 import './global.css';
 import AppHeader from './AppHeader';
 import {Footer} from '@components/footer/Footer';
-import {Metadata} from 'next';
+import {Metadata, Viewport} from 'next';
 import {getMetaData} from './utils';
 import {Amplitude} from './Amplitude';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getMetaData();
@@ -14,10 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${data.metaTitle ?? 'Territoires en Transitions'}`,
     },
     description: data.metaDescription,
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-    },
     icons: {
       icon: '/favicon.ico',
       other: [
@@ -48,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: data.metaTitle ?? 'Territoires en Transitions',
       description: data.metaDescription,
-      url: 'https://www.territoiresentransitions.fr',
+      // url: 'https://www.territoiresentransitions.fr',
       siteName: data.metaTitle ?? 'Territoires en Transitions',
       images: data.metaImage
         ? [
