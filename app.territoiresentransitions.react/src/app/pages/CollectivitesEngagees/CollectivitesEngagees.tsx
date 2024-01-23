@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 
-import Filters from './Filters/Filters';
 import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
+import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
 
