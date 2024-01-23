@@ -3299,6 +3299,7 @@ export interface Database {
           parent: number | null
           plan: number | null
           type: number | null
+          collectivite_card: unknown | null
           plan_action_type: unknown | null
         }
         Insert: {
@@ -4324,6 +4325,7 @@ export interface Database {
           created_at: string
           id: number
           modified_at: string
+          active: unknown | null
         }
         Insert: {
           access_restreint?: boolean
@@ -24357,6 +24359,12 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      active: {
+        Args: {
+          "": unknown
+        }
+        Returns: boolean
+      }
       add_bibliotheque_fichier: {
         Args: {
           collectivite_id: number
@@ -24689,6 +24697,12 @@ export interface Database {
             }
             Returns: string
           }
+      collectivite_card: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
       collectivite_membres: {
         Args: {
           id: number
