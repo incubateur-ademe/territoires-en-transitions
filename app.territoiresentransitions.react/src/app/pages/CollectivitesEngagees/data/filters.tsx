@@ -1,23 +1,35 @@
-export type Tfilters = {
 export type TView = 'collectivite' | 'plan';
+
+export type TFilterPlan = {
+  typesPlan: string[];
+};
+
+export type TFilterCollectivite = {
   nom?: string;
-  types: string[];
   regions: string[];
   departments: string[];
+  typesCollectivite: string[];
   population: string[];
+};
+
+export type Tfilters = {
+  vue: TView[];
   referentiel: string[];
   niveauDeLabellisation: string[];
   realiseCourant: string[];
   tauxDeRemplissage: string[];
   trierPar?: string[];
   page?: number;
-};
+} & TFilterCollectivite &
+  TFilterPlan;
 
 export type TSetFilters = (newFilters: Tfilters) => void;
 
 // valeurs par défaut des filtres
 export const initialFilters: Tfilters = {
-  types: [],
+  vue: ['collectivite'],
+  typesPlan: [],
+  typesCollectivite: [],
   regions: [],
   departments: [],
   population: [],
@@ -30,7 +42,9 @@ export const initialFilters: Tfilters = {
 
 // mapping nom des filtres => params dans l'url
 export const nameToShortNames = {
-  types: 't',
+  vue: 'v',
+  typesPlan: 'tp',
+  typesCollectivite: 't',
   regions: 'r',
   departments: 'd',
   population: 'p',
@@ -51,7 +65,8 @@ export const getNumberOfActiveFilters = (filtres: Tfilters): number => {
     Number(notEmpty(filtres.niveauDeLabellisation)) +
     Number(notEmpty(filtres.population)) +
     Number(notEmpty(filtres.realiseCourant)) +
-    Number(notEmpty(filtres.types)) +
+    Number(notEmpty(filtres.typesCollectivite)) +
+    Number(notEmpty(filtres.typesPlan)) +
     Number(notEmpty(filtres.referentiel)) +
     Number(!!filtres.nom)
   );
