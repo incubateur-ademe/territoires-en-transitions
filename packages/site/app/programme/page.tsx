@@ -61,10 +61,7 @@ const Programme = async () => {
 
       <Carte />
 
-      <Ressources
-        description={data.ressources.description}
-        buttons={data.ressources.buttons}
-      />
+      <Ressources description={data.ressources.description} />
     </>
   ) : (
     <NoResult />
