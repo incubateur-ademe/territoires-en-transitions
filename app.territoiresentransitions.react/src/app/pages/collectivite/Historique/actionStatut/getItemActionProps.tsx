@@ -24,11 +24,16 @@ export const getItemActionProps = (item: THistoriqueItem) => {
     });
   }
   if (tache_identifiant && tache_nom) {
+    const referentiel = (action_id ?? '').split('_')[0];
+    const isSousAction =
+      (referentiel === 'cae' && tache_identifiant.split('.').length === 4) ||
+      (referentiel === 'eci' && tache_identifiant.split('.').length === 3);
+
     descriptions.push({
       // cas particulier : l'identifiant et le nom de l'action sont dans les
       // champs `tache_` pour la modification sur les précisions de l'action =>
       // on affiche alors "Action" au lieu de "Tâche"
-      titre: isValidAction ? 'Tâche' : 'Action',
+      titre: isSousAction ? 'Sous-action' : isValidAction ? 'Tâche' : 'Action',
       description: `${tache_identifiant} ${tache_nom}`,
     });
   }

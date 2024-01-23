@@ -32,8 +32,10 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
   const {
     previous_avancement,
     previous_avancement_detaille,
+    previous_concerne,
     avancement,
     avancement_detaille,
+    concerne,
   } = item;
 
   return (
@@ -46,7 +48,16 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
               avancementDetaille={previous_avancement_detaille}
             />
           ) : (
-            <ActionStatutBadge statut={previous_avancement} barre />
+            <ActionStatutBadge
+              statut={
+                (previous_avancement === 'non_renseigne' ||
+                  !previous_avancement) &&
+                previous_concerne === false
+                  ? 'non_concerne'
+                  : previous_avancement ?? 'non_renseigne'
+              }
+              barre
+            />
           )}
         </DetailPrecedenteModificationWrapper>
       ) : null}
@@ -56,7 +67,14 @@ const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
             avancementDetaille={avancement_detaille}
           />
         ) : (
-          <ActionStatutBadge statut={avancement ?? 'non_renseigne'} />
+          <ActionStatutBadge
+            statut={
+              (avancement === 'non_renseigne' || !avancement) &&
+              concerne === false
+                ? 'non_concerne'
+                : avancement ?? 'non_renseigne'
+            }
+          />
         )}
       </DetailNouvelleModificationWrapper>
     </>
