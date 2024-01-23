@@ -1,29 +1,28 @@
-import classNames from 'classnames';
 import {Link} from 'react-router-dom';
 
-import {TCollectiviteCarte} from '../types';
 import {Referentiel} from 'types/litterals';
 import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
 import {NIVEAUX} from 'ui/labellisation/getNiveauInfo';
 import {GreyStar, RedStar} from 'ui/labellisation/Star';
-import {makeCollectiviteAccueilUrl} from 'app/paths';
+import {TCollectiviteCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {makeCollectiviteAccueilUrl} from 'app/paths';
+import classNames from 'classnames';
 
-export type TCollectiviteCarteProps = {
+type Props = {
   collectivite: TCollectiviteCarte;
-  isCardClickable: boolean;
+  canUserClickCard: boolean;
 };
 
 /**
  * Carte représentant une collectivité.
- * Utilisée dans la vue toutes les collectivités.
+ * Utilisée dans la vue collectivités engagées.
  *
  * Affiche le nom et des éléments de scores.
- * Lie vers le tableau de bord de la collectivité.
+ * Lien vers le tableau de bord de la collectivité.
  */
-export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
-  const {collectivite} = props;
+export const CollectiviteCarte = ({collectivite, canUserClickCard}: Props) => {
   const tracker = useFonctionTracker();
 
   return (
@@ -31,16 +30,19 @@ export const CollectiviteCarte = (props: TCollectiviteCarteProps) => {
       data-test="CollectiviteCarte"
       onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
       to={
-        props.isCardClickable
+        canUserClickCard
           ? makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,
             })
           : '#'
       }
-      className={classNames('p-8 !bg-none rounded-xl border border-primary-3', {
-        'cursor-default, pointer-events-none': !props.isCardClickable,
-        'hover:!bg-primary-1': props.isCardClickable,
-      })}
+      className={classNames(
+        'p-8 !bg-none bg-white rounded-xl border border-primary-3',
+        {
+          'cursor-default, pointer-events-none': !canUserClickCard,
+          'hover:!bg-primary-2': canUserClickCard,
+        }
+      )}
     >
       <div className="mb-4 text-lg font-bold text-primary-9">
         {collectivite.nom}

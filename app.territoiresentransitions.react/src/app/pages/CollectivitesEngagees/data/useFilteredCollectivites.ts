@@ -1,12 +1,14 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TCollectiviteCarte} from '../types';
 import {Tfilters} from 'app/pages/CollectivitesEngagees/data/filters';
+import {NonNullableFields, Views} from '@tet/api';
+import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 
-const screenIsMobile = () =>
-  window.innerHeight <= 800 && window.innerWidth <= 600;
-
-export const NB_CARDS_PER_PAGE = screenIsMobile() ? 5 : 16;
+/**
+ * Element de la liste `collectivite_card`, utilisée par la vue toutes les
+ * collectivités.
+ */
+export type TCollectiviteCarte = NonNullableFields<Views<'collectivite_card'>>;
 
 // A subset of supabase FilterOperator as it not an exported type.
 type FilterOperator = 'in' | 'ov';
@@ -23,6 +25,25 @@ export const useFilteredCollectivites = (args: Tfilters) => {
     isLoading,
     collectivites: data?.collectivites || [],
     collectivitesCount: data?.collectivitesCount || 0,
+  };
+};
+
+/**
+ * Télécharge les collectivités en fonction des filtres.
+ */
+const fetchCollectiviteCards = async (filters: Tfilters) => {
+  // la requête
+  const query = buildQueryFromFilters(filters);
+
+  // attends les données
+  const {error, data, count} = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  return {
+    collectivites: (data as TCollectiviteCarte[]) || [],
+    collectivitesCount: count ?? 0,
   };
 };
 
@@ -56,7 +77,7 @@ const buildQueryFromFilters = (filters: Tfilters) => {
 
   filter('region_code', 'in', filters.regions);
   filter('departement_code', 'in', filters.departments);
-  filter('type_collectivite', 'in', filters.types);
+  filter('type_collectivite', 'in', filters.typesCollectivite);
   filter('population_intervalle', 'in', filters.population);
 
   // Taux de remplissage
@@ -154,23 +175,4 @@ const buildQueryFromFilters = (filters: Tfilters) => {
   }
   query.limit(NB_CARDS_PER_PAGE);
   return query;
-};
-
-/**
- * Télécharge les collectivités en fonction des filtres.
- */
-export const fetchCollectiviteCards = async (filters: Tfilters) => {
-  // la requête
-  const query = buildQueryFromFilters(filters);
-
-  // attends les données
-  const {error, data, count} = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  return {
-    collectivites: (data as TCollectiviteCarte[]) || [],
-    collectivitesCount: count ?? 0,
-  };
 };

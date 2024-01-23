@@ -1,73 +1,35 @@
-import {TrierParFiltre} from '../anciensComponents/Filtres';
-import {CollectivitesGrid} from '../anciensComponents/CollectivitesGrid';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import View, {
+  CollectivitesEngageesView,
+} from 'app/pages/CollectivitesEngagees/Views/View';
+import {CollectiviteCarte} from 'app/pages/CollectivitesEngagees/Views/CollectiviteCarte';
+import {
+  TCollectiviteCarte,
+  useFilteredCollectivites,
+} from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 
-import {NB_CARDS_PER_PAGE} from '../data/useFilteredCollectivites';
-import {TCollectiviteCarte} from '../types';
-import {Pagination} from 'ui/shared/Pagination';
+const CollectivitesView = (props: CollectivitesEngageesView) => {
+  /** Data */
+  const {collectivites, collectivitesCount, isLoading} =
+    useFilteredCollectivites(props.filters);
 
-type View = {
-  initialFilters: TCollectivitesFilters;
-  filters: TCollectivitesFilters;
-  setFilters: TSetFilters;
-  data: TCollectiviteCarte[];
-  dataCount: number;
-  isLoading: boolean;
-  canUserClickCard: boolean;
-};
-
-const CollectivitesView = ({
-  initialFilters,
-  filters,
-  setFilters,
-  data,
-  dataCount,
-  isLoading,
-  canUserClickCard,
-}: View) => {
   return (
-    <div className="grow">
-      <div className="flex flex-col mb-6 md:flex-row md:justify-between">
-        <div className="order-last mt-4 md:flex md:flex-col md:order-first md:mt-0">
-          {dataCount > 0 && (
-            <p className="mb-0 text-center text-gray-500 md:text-left">
-              {dataCount === 1
-                ? 'Une collectivité correspond'
-                : `${dataCount} collectivités correspondent`}{' '}
-              à votre recherche
-            </p>
-          )}
-          {getNumberOfActiveFilters(filters) > 0 && (
-            <DesactiverLesFiltres onClick={() => setFilters(initialFilters)} />
-          )}
-        </div>
-        <TrierParFiltre
-          onChange={selected =>
-            setFilters({
-              ...filters,
-              trierPar: selected ? [selected] : undefined,
-            })
-          }
-          selected={filters.trierPar?.[0]}
-        />
-      </div>
-      <CollectivitesGrid
-        isLoading={isLoading}
-        isCardClickable={canUserClickCard}
-        collectivites={data}
-        collectivitesCount={dataCount}
-        filters={filters}
-      />
-      {dataCount !== 0 && (
-        <div className="flex justify-center mt-6 md:mt-12">
-          <Pagination
-            nbOfPages={Math.ceil(dataCount / NB_CARDS_PER_PAGE)}
-            selectedPage={filters.page ?? 1}
-            onChange={selected => setFilters({...filters, page: selected})}
+    <View
+      {...props}
+      view="collectivite"
+      data={collectivites}
+      dataCount={collectivitesCount}
+      isLoading={isLoading}
+      renderCard={data => {
+        const collectivite = data as TCollectiviteCarte;
+        return (
+          <CollectiviteCarte
+            key={collectivite.collectivite_id}
+            collectivite={collectivite}
+            canUserClickCard={props.canUserClickCard}
           />
-        </div>
-      )}
-    </div>
+        );
+      }}
+    />
   );
 };
 

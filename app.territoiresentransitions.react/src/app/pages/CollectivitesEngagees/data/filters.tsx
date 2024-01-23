@@ -1,4 +1,5 @@
 export type Tfilters = {
+export type TView = 'collectivite' | 'plan';
   nom?: string;
   types: string[];
   regions: string[];
