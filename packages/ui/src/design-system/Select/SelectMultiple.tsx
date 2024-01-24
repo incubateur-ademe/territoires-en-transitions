@@ -40,9 +40,9 @@ export const SelectMultiple = ({values, onChange, ...props}: Props) => {
         } else {
           allValues = [v];
         }
-        console.log(allValues);
         onChange(allValues, v);
       }}
+      multiple
       values={values}
     />
   );
