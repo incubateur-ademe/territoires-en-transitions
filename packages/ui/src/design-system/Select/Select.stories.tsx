@@ -120,7 +120,7 @@ export const MultiSelectWithSectionOptions: Story = {
       <SelectMultiple
         {...args}
         values={values}
-        onChange={values => {
+        onChange={(v, values) => {
           setValues(values);
         }}
       />
@@ -142,7 +142,7 @@ export const SearchableMultiSelect: Story = {
       <SelectMultiple
         {...args}
         values={values}
-        onChange={values => {
+        onChange={(v, values) => {
           setValues(values);
         }}
       />
@@ -166,7 +166,7 @@ export const DisabledSearchableMultiSelectWithValue: Story = {
       <SelectMultiple
         {...args}
         values={values}
-        onChange={values => {
+        onChange={(v, values) => {
           setValues(values);
         }}
       />
@@ -210,7 +210,7 @@ export const CreateOption: Story = {
         {...args}
         options={options}
         values={values}
-        onChange={values => {
+        onChange={(v, values) => {
           setValues(values);
         }}
         createProps={{
