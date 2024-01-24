@@ -153,3 +153,34 @@ export const TypeSearchAvecValeur: Story = {
     onSearch: action('onSearch')
   },
 };
+
+
+/** Etat désactivé */
+export const AvecIconeEtDesactive: Story = {
+  args: {
+    disabled: true,
+    placeholder: 'placeholder',
+    icon: {value: 'search-line'},
+  },
+};
+export const AvecIconeBoutonEtDesactive: Story = {
+  args: {
+    disabled: true,
+    placeholder: 'placeholder',
+    icon: {
+      buttonProps: {
+        icon: 'search-line',
+        onClick: action('onClick'),
+        title: 'Rechercher',
+      },
+    },
+  },
+};
+export const AvecIconeTexteEtDesactive: Story = {
+  args: {
+    disabled: true,
+    placeholder: 'placeholder',
+    icon: {text: 'TTC'},
+  },
+};
+

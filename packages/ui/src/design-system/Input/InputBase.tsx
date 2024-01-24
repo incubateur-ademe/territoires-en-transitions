@@ -92,12 +92,19 @@ export const InputBase = forwardRef(
 /**
  * Affiche le contenu de la zone icône/texte/bouton à droite du champ.
  */
-const InputIconContent = ({icon, state, size = 'md'}: InputBaseProps) => {
+const InputIconContent = ({
+  disabled,
+  icon,
+  state,
+  size = 'md',
+}: InputBaseProps) => {
   if (!icon) {
     return;
   }
 
-  const iconColor = stateToTextColor[state] || 'text-primary';
+  const iconColor = disabled
+    ? 'text-grey-6'
+    : stateToTextColor[state] || 'text-primary';
 
   /** icône */
   if ('value' in icon) {
@@ -130,6 +137,7 @@ const InputIconContent = ({icon, state, size = 'md'}: InputBaseProps) => {
       <Button
         variant="white"
         size={size}
+        disabled={disabled}
         className={classNames('rounded-none border-none')}
         // change la couleur de l'icône du bouton pour refléter le `state`
         // TODO: enlever les !important de `Button` pour pouvoir styler le bouton par le className

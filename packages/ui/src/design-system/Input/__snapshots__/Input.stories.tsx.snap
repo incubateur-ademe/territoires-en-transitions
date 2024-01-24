@@ -45,6 +45,37 @@ exports[`Design System/Input AvecIconeBouton smoke-test 1`] = `
 </div>
 `;
 
+exports[`Design System/Input AvecIconeBoutonEtDesactive smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         disabled
+         placeholder="placeholder"
+  >
+  <button title="Rechercher"
+          disabled
+          class="rounded-lg w-fit border border-solid font-bold group cursor-not-allowed !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
+  >
+    <div class="flex items-center gap-2">
+      <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Design System/Input AvecIconeEtDesactive smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         disabled
+         placeholder="placeholder"
+  >
+  <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] self-center min-w-[3rem] text-grey-6">
+  </span>
+</div>
+`;
+
 exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
@@ -52,6 +83,19 @@ exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
          placeholder="placeholder"
   >
   <span class="self-center text-xs text-center font-bold min-w-[3rem] text-primary">
+    TTC
+  </span>
+</div>
+`;
+
+exports[`Design System/Input AvecIconeTexteEtDesactive smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         disabled
+         placeholder="placeholder"
+  >
+  <span class="self-center text-xs text-center font-bold min-w-[3rem] text-grey-6">
     TTC
   </span>
 </div>
