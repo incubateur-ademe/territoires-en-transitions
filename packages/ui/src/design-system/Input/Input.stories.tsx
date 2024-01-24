@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
@@ -6,8 +7,18 @@ import {Input} from './Input';
 const meta: Meta<typeof Input> = {
   title: 'Design System/Input',
   component: Input,
-  args: {
-    onChange: action('onChange'),
+  render: args => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <Input
+        {...args}
+        value={value}
+        onChange={e => {
+          action('onChange')(e.target.value);
+          setValue(e.target.value);
+        }}
+      />
+    );
   },
 };
 
@@ -139,10 +150,9 @@ export const TypePasswordAvecValeur: Story = {
   },
 };
 
-
-/** Recherche sans aucune props renseignée. */
+/** Valeur non renseignée. */
 export const TypeSearch: Story = {
-  args: {type: 'search'},
+  args: {type: 'search', onSearch: action('onSearch')},
 };
 
 /** Recherche avec une valeur renseignée. */
@@ -150,10 +160,19 @@ export const TypeSearchAvecValeur: Story = {
   args: {
     type: 'search',
     value: 'valeur recherchée',
-    onSearch: action('onSearch')
+    onSearch: action('onSearch'),
   },
 };
 
+/** Recherche en cours. */
+export const TypeSearchLoading: Story = {
+  args: {
+    type: 'search',
+    value: 'valeur recherchée',
+    isLoading: true,
+    onSearch: action('onSearch'),
+  },
+};
 
 /** Etat désactivé */
 export const AvecIconeEtDesactive: Story = {
@@ -183,4 +202,3 @@ export const AvecIconeTexteEtDesactive: Story = {
     icon: {text: 'TTC'},
   },
 };
-
