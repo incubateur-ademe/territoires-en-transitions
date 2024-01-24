@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import {Input, InputProps} from './Input';
+import {InputBase, InputBaseProps} from './InputBase';
 
-export type InputPasswordProps = Omit<InputProps, 'icon' | 'type'>;
+export type InputPasswordProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
 /**
  * Affiche un champ de saisie de mot de passe.
@@ -11,7 +11,7 @@ export const InputPassword = ({...remainingProps}: InputPasswordProps) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <Input
+    <InputBase
       type={passwordVisible ? 'text' : 'password'}
       icon={{
         buttonProps: {
