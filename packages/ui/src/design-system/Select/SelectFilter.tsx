@@ -8,9 +8,7 @@ import {OptionValue} from '@design-system/Select/components/Options';
 export const ITEM_ALL = 'tous';
 
 /**
- * Sélecteur de valeur multiple
- *
- * Ajouter `isSearcheable`, `createProps` ou `onSearch` pour faire un Searchable select
+ * Sélecteur multiple pour filtrer une liste avec option "Tous"
  */
 export const SelectFilter = ({
   values,
