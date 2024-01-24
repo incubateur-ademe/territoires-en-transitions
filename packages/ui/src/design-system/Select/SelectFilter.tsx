@@ -21,7 +21,6 @@ export const SelectFilter = ({
   // gère la sélection/déselection d'item dans la liste
   const handleChange = (selected: OptionValue, newValues?: OptionValue[]) => {
     if (selected === ITEM_ALL) {
-      // onChange(ITEM_ALL);
       onChange(ITEM_ALL);
     } else {
       onChange(selected, newValues);
