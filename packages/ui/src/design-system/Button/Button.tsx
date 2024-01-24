@@ -85,6 +85,10 @@ export const Button = forwardRef(
             {'flex-row-reverse': iconPosition === 'right'},
             className
           )}
+          onClick={evt => {
+            evt.stopPropagation();
+            buttonProps.onClick?.(evt);
+          }}
         >
           <ButtonContent {...buttonContentProps} />
         </button>
@@ -106,11 +110,12 @@ export const Button = forwardRef(
             {'flex-row-reverse': iconPosition === 'right' || openInNewTab},
             className
           )}
-          target={openInNewTab ? '_blank' : props.target}
-          rel={openInNewTab ? 'noreferrer noopener' : props.rel}
+          target={openInNewTab ? '_blank' : anchorProps.target}
+          rel={openInNewTab ? 'noreferrer noopener' : anchorProps.rel}
           onClick={evt => {
+            evt.stopPropagation();
             if (disabled) evt.preventDefault();
-            else props.onClick?.(evt);
+            else anchorProps.onClick?.(evt);
           }}
         >
           <ButtonContent
