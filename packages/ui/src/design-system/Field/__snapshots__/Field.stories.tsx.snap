@@ -2,26 +2,16 @@
 
 exports[`design-system/Field Default smoke-test 1`] = `
 <div class="flex">
-  <div class="flex flex-col gap-6 w-full max-w-sm">
-    <div class="flex-grow flex flex-col gap-3">
-      <label>
-        <div class="font-medium text-grey-8">
-          Description de l'action
-        </div>
-      </label>
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom">
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
       <input type="text"
-             class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
-             placeholder="Placeholder"
-      >
-    </div>
-    <div class="flex-grow flex flex-col gap-3">
-      <label>
-        <div class="font-medium text-grey-8 text-sm">
-          Small
-        </div>
-      </label>
-      <input type="text"
-             class="border border-solid border-grey-4 rounded-lg min-h-[3rem] px-4 placeholder:text-sm"
+             class="text-grey-8 px-4 py-3 outline-none text-md"
+             id="un_nom"
              placeholder="Placeholder"
       >
     </div>

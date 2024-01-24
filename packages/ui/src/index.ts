@@ -16,4 +16,4 @@ export * from './design-system/Tabs';
 export * from './design-system/Notification';
 export * from './design-system/Field';
 export * from './design-system/Select';
-export * from './design-system/input';
+export * from './design-system/Input';

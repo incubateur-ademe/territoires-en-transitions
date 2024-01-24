@@ -1,9 +1,9 @@
 import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
-import {Icon, IconValue} from '@design-system/icons/Icon';
-import {DefaultButtonProps} from '@design-system/buttons/types';
-import {Button} from '@design-system/buttons/button/Button';
-import {FieldState, stateToTextColor} from '@design-system/form/Field/Field';
+import {Icon, IconValue} from '@design-system/Icon';
+import {DefaultButtonProps} from '@design-system/Button/types';
+import {Button} from '@design-system/Button';
+import {FieldState, stateToTextColor} from '@design-system/Field';
 import {preset} from '@tailwind-preset';
 
 // variantes de taille
