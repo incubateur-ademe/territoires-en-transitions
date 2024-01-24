@@ -1,8 +1,8 @@
 import {useRef} from 'react';
-import {Input, InputProps} from './Input';
+import {InputBase, InputBaseProps} from './InputBase';
 import './InputDate.css';
 
-export type InputDateProps = Omit<InputProps, 'icon' | 'type'>;
+export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
 /**
  * Affiche un champ de saisie date
@@ -11,7 +11,7 @@ export const InputDate = (props: InputDateProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <Input
+    <InputBase
       type="date"
       ref={inputRef}
       className="input-date"

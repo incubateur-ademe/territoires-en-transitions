@@ -6,6 +6,9 @@ import {Input} from './Input';
 const meta: Meta<typeof Input> = {
   title: 'Design System/Input',
   component: Input,
+  args: {
+    onChange: action('onChange'),
+  },
 };
 
 export default meta;
@@ -105,5 +108,48 @@ export const VarianteSmallIconeTexte: Story = {
     size: 'sm',
     placeholder: 'placeholder',
     icon: {text: 'TTC'},
+  },
+};
+
+/** Date sans aucune props renseignée. */
+export const TypeDate: Story = {
+  args: {type: 'date'},
+};
+
+/** Avec une valeur renseignée. */
+export const TypeDateAvecValeur: Story = {
+  args: {
+    type: 'date',
+    value: '2024-01-17',
+    onChange: action('onChange'),
+  },
+};
+
+/** Mot de passe sans aucune props renseignée. */
+export const TypePassword: Story = {
+  args: {type: 'password'},
+};
+
+/** Mdp avec une valeur renseignée. */
+export const TypePasswordAvecValeur: Story = {
+  args: {
+    type: 'password',
+    value: 'hyper secret',
+    onChange: action('onChange'),
+  },
+};
+
+
+/** Recherche sans aucune props renseignée. */
+export const TypeSearch: Story = {
+  args: {type: 'search'},
+};
+
+/** Recherche avec une valeur renseignée. */
+export const TypeSearchAvecValeur: Story = {
+  args: {
+    type: 'search',
+    value: 'valeur recherchée',
+    onSearch: action('onSearch')
   },
 };

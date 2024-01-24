@@ -1,7 +1,7 @@
 import {useRef} from 'react';
-import {Input, InputProps} from './Input';
+import {InputBase, InputBaseProps} from './InputBase';
 
-export type InputSearchProps = Omit<InputProps, 'icon' | 'type'> & {
+export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
   onSearch: (value: string) => void;
 };
 
@@ -17,7 +17,7 @@ export const InputSearch = ({
   const disabled = !(remainingProps.value || inputRef.current?.value);
 
   return (
-    <Input
+    <InputBase
       type="search"
       ref={inputRef}
       icon={{
