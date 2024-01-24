@@ -7,6 +7,8 @@ import {Field} from '@design-system/Field';
 import {Select, SelectMultiple} from '.';
 import {OptionValue, SelectOption} from './components/Options';
 import {getFlatOptions} from './utils';
+import {SelectFilter} from '@design-system/Select/SelectFilter';
+import {SelectBase} from '@design-system/Select/components/SelectBase';
 
 const singleOptions: SelectOption[] = [
   {value: 'option1', label: 'Option 1'},
@@ -44,7 +46,7 @@ const optionsWithSections: SelectOption[] = [
 
 const meta: Meta<typeof Select> = {
   title: 'Design System/Select',
-  component: Select,
+  component: SelectBase,
   decorators: [story => <div className="w-full max-w-[24rem]">{story()}</div>],
 };
 
@@ -237,6 +239,23 @@ export const CreateOption: Story = {
               values.length > 1 ? values.filter(v => v !== value) : undefined
             );
           },
+        }}
+      />
+    );
+  },
+};
+
+export const Filter: Story = {
+  args: {options: optionsWithSections},
+  render: args => {
+    const [values, setValues] = useState<OptionValue[] | undefined>();
+    return (
+      <SelectFilter
+        {...args}
+        values={values}
+        onChange={(v, values) => {
+          setValues(values);
+          action('onChange');
         }}
       />
     );
