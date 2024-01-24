@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import {useEffect, useRef, useState} from 'react';
 import {useDebouncedCallback} from 'use-debounce';
 import {InputBase, InputBaseProps} from './InputBase';
+import './InputSearch.css';
 
 export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
   /** Fait apparaître un picto "chargement" à la place du picto "recherche" */
@@ -17,6 +19,7 @@ export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
  * La recherche se déclenche également automatiquement (avec un `debounce`) lors de la saisie
  */
 export const InputSearch = ({
+  className,
   isLoading = false,
   debounce = 500,
   onChange,
@@ -42,6 +45,7 @@ export const InputSearch = ({
 
   return (
     <InputBase
+      className={classNames('input-search', className)}
       type="search"
       ref={inputRef}
       onChange={e => {
