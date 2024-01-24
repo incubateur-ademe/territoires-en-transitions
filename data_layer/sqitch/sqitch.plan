@@ -623,3 +623,4 @@ automatisation/newsletters [automatisation/newsletters@v2.90.0] 2024-01-12T14:59
 @v2.99.0 2024-02-19T13:07:21Z Florian <florian@derfurth.com> # Améliorations intégration Brevo
 
 labellisation/demande [labellisation/demande@v2.95.0] 2024-01-23T13:19:20Z Amandine Jacquelin <conta@LanceLibre> # Remplace la valeur par défaut d'une demande par 'non defini' au lieu de 'cot'
+labellisation/audit [labellisation/audit@v2.95.0] 2024-01-23T14:33:16Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la validation CNL pour les audits de labellisation
