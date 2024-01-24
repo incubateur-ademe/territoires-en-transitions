@@ -1,4 +1,4 @@
-import {Field, Select} from '@tet/ui';
+import {Field, SelectMultiple} from '@tet/ui';
 
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
@@ -14,26 +14,6 @@ import {
 } from 'app/pages/CollectivitesEngagees/data/filtreOptions';
 import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
-
-// /** TODO: Ne plus avoir à utiliser cet utilitaire pour gérer les values d'un select */
-const onSelectMultiple = (optionValue: any, values: any[] | undefined) => {
-  // si au moins une valeur est présente dans les valeurs du sélecteur
-  if (values) {
-    if (values.includes(optionValue)) {
-      // retrait d'une valeur
-      return values.length === 1
-        ? // renvoie undefined si la seule valeur présente dans les valeurs du sélecteur est la même que la valeur de l'option
-          undefined
-        : values.filter(v => v !== optionValue);
-    } else {
-      // ajoût d'une valeur
-      return [...values, optionValue];
-    }
-    // si aucune valeur n'était déjà sélectionnée alors on renvoie directement la veleur de l'option dans un tableau
-  } else {
-    return [optionValue];
-  }
-};
 
 type Props = {
   filters: Tfilters;
@@ -63,16 +43,15 @@ export const Filters = ({filters, setFilters}: Props) => {
       {vue === 'plan' && (
         /** Type plan d'action */
         <Field title="Type de plan" small>
-          <Select
+          <SelectMultiple
             options={planTypeOptions ?? []}
-            onChange={selected => {
+            onChange={values => {
               setFilters({
                 ...filters,
-                typesPlan: onSelectMultiple(selected, filters.typesPlan) || [],
+                typesPlan: values ?? [],
               });
             }}
             values={filters.typesPlan?.length ? filters.typesPlan : undefined}
-            multiple
             small
           />
         </Field>
@@ -82,28 +61,26 @@ export const Filters = ({filters, setFilters}: Props) => {
       </div>
       {/** Région */}
       <Field title="Région" small>
-        <Select
+        <SelectMultiple
           options={regions.map(({code, libelle}) => ({
             value: code,
             label: libelle,
           }))}
-          onChange={selected => {
+          onChange={values => {
             setFilters({
               ...filters,
-              regions:
-                (onSelectMultiple(selected, filters.regions) as string[]) || [],
+              regions: values ?? [],
             });
             tracker({fonction: 'filtre_region', action: 'selection'});
           }}
           values={filters.regions?.length ? filters.regions : undefined}
-          multiple
           small
           isSearcheable
         />
       </Field>
       {/** Départements */}
       <Field title="Département" small>
-        <Select
+        <SelectMultiple
           options={departements
             .filter(
               dep =>
@@ -114,30 +91,26 @@ export const Filters = ({filters, setFilters}: Props) => {
               value: code,
               label: libelle,
             }))}
-          onChange={selected => {
+          onChange={values => {
             setFilters({
               ...filters,
-              departments:
-                (onSelectMultiple(selected, filters.departments) as string[]) ||
-                [],
+              departments: values ?? [],
             });
             tracker({fonction: 'filtre_departement', action: 'selection'});
           }}
           values={filters.departments?.length ? filters.departments : undefined}
-          multiple
           small
           isSearcheable
         />
       </Field>
       {/** Type de collectivité */}
       <Field title="Type de collectivité" small>
-        <Select
+        <SelectMultiple
           options={typeCollectiviteOptions}
-          onChange={selected => {
+          onChange={values => {
             setFilters({
               ...filters,
-              typesCollectivite:
-                onSelectMultiple(selected, filters.typesCollectivite) || [],
+              typesCollectivite: values ?? [],
             });
             tracker({fonction: 'filtre_type', action: 'selection'});
           }}
@@ -146,23 +119,21 @@ export const Filters = ({filters, setFilters}: Props) => {
               ? filters.typesCollectivite
               : undefined
           }
-          multiple
           small
         />
       </Field>
       {/** Population */}
       <Field title="Population" small>
-        <Select
+        <SelectMultiple
           options={populationCollectiviteOptions}
-          onChange={selected => {
+          onChange={values => {
             setFilters({
               ...filters,
-              population: onSelectMultiple(selected, filters.population) || [],
+              population: values ?? [],
             });
             tracker({fonction: 'filtre_population', action: 'selection'});
           }}
           values={filters.population?.length ? filters.population : undefined}
-          multiple
           small
         />
       </Field>

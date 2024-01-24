@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+
 import {Button, Select} from '@tet/ui';
 
 import {TCollectiviteCarte} from '../data/useFilteredCollectivites';
@@ -12,7 +14,6 @@ import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 import {TPlanCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
-import classNames from 'classnames';
 
 export type CollectivitesEngageesView = {
   initialFilters: Tfilters;
@@ -75,10 +76,10 @@ const View = ({
           <div className="mr-auto">
             <Select
               options={getTrierParOptions()}
-              onChange={selected =>
+              onChange={value =>
                 setFilters({
                   ...filters,
-                  trierPar: selected ? [selected] : undefined,
+                  trierPar: value ? [value as string] : undefined,
                 })
               }
               values={filters.trierPar?.[0]}
