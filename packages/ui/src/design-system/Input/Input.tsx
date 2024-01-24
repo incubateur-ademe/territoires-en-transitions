@@ -79,9 +79,9 @@ export const Input = forwardRef(
         <input
           type={type}
           ref={ref}
-          className={classNames('text-grey-8 px-4 py-3 outline-none', {
-            'text-sm': size === 'sm',
-            'text-md': size === 'md',
+          className={classNames('text-grey-8 px-4 outline-none', {
+            'text-sm py-2': size === 'sm',
+            'text-md py-3': size === 'md',
             'border-r border-solid': !!icon,
             [borderColor]: !!icon,
           })}
