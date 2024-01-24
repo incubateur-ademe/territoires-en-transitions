@@ -4,20 +4,24 @@ import {
   SelectProps,
 } from '@design-system/Select/components/SelectBase';
 
-type Props = Omit<SelectProps, 'onChange'> & {
+export type SelectMultipleProps = Omit<SelectProps, 'onChange'> & {
   /**
    * Appelée à la sélection d'une option.
-   * Reçoit la liste de toutes les valeurs sélectionnées finale,
-   * ainsi que la valeur de l'option cliquée.
+   * Reçoit la valeur de l'option cliquée,
+   * ainsi que la liste de toutes les valeurs sélectionnées finale.
    * */
-  onChange: (values: OptionValue[], selectedValue: OptionValue) => void;
+  onChange: (selectedValue: OptionValue, values?: OptionValue[]) => void;
 };
 /**
  * Sélecteur de valeur multiple
  *
  * Ajouter `isSearcheable`, `createProps` ou `onSearch` pour faire un Searchable select
  */
-export const SelectMultiple = ({values, onChange, ...props}: Props) => {
+export const SelectMultiple = ({
+  values,
+  onChange,
+  ...props
+}: SelectMultipleProps) => {
   return (
     <SelectBase
       {...props}
@@ -40,7 +44,7 @@ export const SelectMultiple = ({values, onChange, ...props}: Props) => {
         } else {
           allValues = [v];
         }
-        onChange(allValues, v);
+        onChange(v, allValues);
       }}
       multiple
       values={values}
