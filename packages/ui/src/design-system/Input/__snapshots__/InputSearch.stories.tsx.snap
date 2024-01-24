@@ -3,7 +3,7 @@
 exports[`Design System/InputSearch AvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
          value="valeur recherchée"
   >
   <button title="Rechercher"
@@ -20,7 +20,7 @@ exports[`Design System/InputSearch AvecValeur smoke-test 1`] = `
 exports[`Design System/InputSearch Default smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
          value
   >
   <button title="Rechercher"

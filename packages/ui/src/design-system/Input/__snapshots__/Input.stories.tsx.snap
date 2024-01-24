@@ -3,7 +3,7 @@
 exports[`Design System/Input AvecBordsColorés smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-error-1"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-error-1"
          placeholder="placeholder"
   >
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
@@ -20,7 +20,7 @@ exports[`Design System/Input AvecBordsColorés smoke-test 1`] = `
 exports[`Design System/Input AvecIcone smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
          placeholder="placeholder"
   >
   <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] self-center min-w-[3rem] text-primary">
@@ -31,7 +31,7 @@ exports[`Design System/Input AvecIcone smoke-test 1`] = `
 exports[`Design System/Input AvecIconeBouton smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
          placeholder="placeholder"
   >
   <button title="Rechercher"
@@ -48,7 +48,7 @@ exports[`Design System/Input AvecIconeBouton smoke-test 1`] = `
 exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
          placeholder="placeholder"
   >
   <span class="self-center text-xs text-center font-bold min-w-[3rem] text-primary">
@@ -60,7 +60,7 @@ exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
 exports[`Design System/Input AvecPlaceholder smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md"
+         class="text-grey-8 px-4 outline-none text-md py-3"
          placeholder="Saisir une valeur"
          data-test="ok"
   >
@@ -70,7 +70,7 @@ exports[`Design System/Input AvecPlaceholder smoke-test 1`] = `
 exports[`Design System/Input AvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md"
+         class="text-grey-8 px-4 outline-none text-md py-3"
          value="plop"
   >
 </div>
@@ -79,7 +79,7 @@ exports[`Design System/Input AvecValeur smoke-test 1`] = `
 exports[`Design System/Input Default smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-md"
+         class="text-grey-8 px-4 outline-none text-md py-3"
   >
 </div>
 `;
@@ -87,7 +87,7 @@ exports[`Design System/Input Default smoke-test 1`] = `
 exports[`Design System/Input VarianteSmall smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-sm"
+         class="text-grey-8 px-4 outline-none text-sm py-2"
          placeholder="placeholder"
   >
 </div>
@@ -96,7 +96,7 @@ exports[`Design System/Input VarianteSmall smoke-test 1`] = `
 exports[`Design System/Input VarianteSmallEtBouton smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-sm border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-sm py-2 border-r border-solid border-grey-4"
          placeholder="placeholder"
   >
   <button title="Rechercher"
@@ -113,7 +113,7 @@ exports[`Design System/Input VarianteSmallEtBouton smoke-test 1`] = `
 exports[`Design System/Input VarianteSmallIconeTexte smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
-         class="text-grey-8 px-4 py-3 outline-none text-sm border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-sm py-2 border-r border-solid border-grey-4"
          placeholder="placeholder"
   >
   <span class="self-center text-xs text-center font-bold min-w-[3rem] text-primary">
