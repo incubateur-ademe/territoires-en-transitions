@@ -22,7 +22,10 @@ const stateToBorderColor: Record<FieldState, string> = {
   warning: 'border-warning-1',
 };
 
-export type InputBaseProps = Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> & {
+export type InputBaseProps = Omit<
+  React.ComponentPropsWithoutRef<'input'>,
+  'type'
+> & {
   /** Type de saisie */
   type?: InputType;
   /** Valeur courante du champ */
@@ -72,7 +75,7 @@ export const InputBase = forwardRef(
           type={type}
           ref={ref}
           className={classNames(
-            'text-grey-8 px-4 outline-none',
+            'grow text-grey-8 px-4 outline-none',
             {
               'text-sm py-2': displaySize === 'sm',
               'text-md py-3': displaySize === 'md',
