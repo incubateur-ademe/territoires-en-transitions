@@ -7,5 +7,6 @@ BEGIN;
 
 drop function active(collectivite);
 drop function collectivite_card(axe);
+drop function vide(axe);
 
 COMMIT;
