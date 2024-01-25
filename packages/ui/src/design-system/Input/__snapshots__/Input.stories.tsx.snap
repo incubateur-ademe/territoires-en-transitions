@@ -177,11 +177,31 @@ exports[`Design System/Input TypeNumberFloat smoke-test 1`] = `
 </div>
 `;
 
+exports[`Design System/Input TypeNumberFloatAvecValeur smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="text-grey-8 px-4 outline-none text-md py-3"
+         value="12 345,67"
+         inputmode="numeric"
+  >
+</div>
+`;
+
 exports[`Design System/Input TypeNumberInt smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="text-grey-8 px-4 outline-none text-md py-3"
          value
+         inputmode="numeric"
+  >
+</div>
+`;
+
+exports[`Design System/Input TypeNumberIntAvecValeur smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="text-grey-8 px-4 outline-none text-md py-3"
+         value="12 345"
          inputmode="numeric"
   >
 </div>
