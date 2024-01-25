@@ -93,7 +93,7 @@ export const AvecBordsColorés: Story = {
 /** Variante small */
 export const VarianteSmall: Story = {
   args: {
-    size: 'sm',
+    displaySize: 'sm',
     placeholder: 'placeholder',
   },
 };
@@ -101,7 +101,7 @@ export const VarianteSmall: Story = {
 /** Variante small et bouton icône */
 export const VarianteSmallEtBouton: Story = {
   args: {
-    size: 'sm',
+    displaySize: 'sm',
     placeholder: 'placeholder',
     icon: {
       buttonProps: {
@@ -116,7 +116,7 @@ export const VarianteSmallEtBouton: Story = {
 /** Variante small et texte à la place de l'icône */
 export const VarianteSmallIconeTexte: Story = {
   args: {
-    size: 'sm',
+    displaySize: 'sm',
     placeholder: 'placeholder',
     icon: {text: 'TTC'},
   },
