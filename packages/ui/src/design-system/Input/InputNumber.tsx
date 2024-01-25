@@ -1,8 +1,9 @@
 import {NumericFormat, NumericFormatProps} from 'react-number-format';
-import {InputBase} from './InputBase';
+import {InputBase, InputBaseProps} from './InputBase';
 import {useEffect, useState} from 'react';
 
-export type InputNumberProps = Omit<NumericFormatProps, 'type'> & {
+export type InputNumberProps = Omit<NumericFormatProps, 'type' | 'value'> & {
+  value: InputBaseProps['value'];
   /** Type de saisie numérique attendue */
   numType?: 'float' | 'int';
 };

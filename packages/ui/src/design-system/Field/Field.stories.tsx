@@ -9,6 +9,7 @@ const meta: Meta<typeof Field> = {
   render: args => (
     <Field {...args} htmlFor="un_nom">
       <Input
+        type="text"
         id="un_nom"
         placeholder="Placeholder"
         state={args.state}

@@ -176,7 +176,7 @@ export const TypeNumberInt: Story = {
 export const TypeNumberIntAvecValeur: Story = {
   args: {
     type: 'number',
-    value: 12345, // on peut aussi passer une chaîne ici
+    value: '12345',
   },
 };
 
@@ -195,7 +195,7 @@ export const TypeNumberFloatAvecValeur: Story = {
   args: {
     type: 'number',
     numType: 'float',
-    value: 12345.67, // on peut aussi passer une chaîne ici
+    value: '12345.67',
   },
 };
 
