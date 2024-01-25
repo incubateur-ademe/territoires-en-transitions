@@ -2,19 +2,9 @@
 
 BEGIN;
 
-alter type visite_tag
-    add value if not exists 'statuts';
-
-alter type visite_tag
-    add value if not exists 'pilotes';
-
-alter type visite_tag
-    add value if not exists 'referents';
-
-alter type visite_tag
-    add value if not exists 'priorites';
-
-alter type visite_tag
-    add value if not exists 'echeances';
+alter type visite_onglet
+    add value if not exists 'collectivites';
+alter type visite_onglet
+    add value if not exists 'plans';
 
 COMMIT;
