@@ -35,8 +35,7 @@ end;
 comment on function plan_action_type(axe) is
     'Le type du plan.';
 
-
-create or replace function
+create function
     vide(axe)
     returns boolean
     language sql
@@ -46,12 +45,13 @@ begin
     return not exists(select
                       from axe a
                                join fiche_action_axe faa on faa.axe_id = a.id
-                      where a.plan = $1.id
-                         or a.id = $1.id);
+                      where a.plan = $1.id);
 end;
 comment on function vide is
     'Vrai si le plan ne comporte aucune fiche.';
 
+create index axe_plan_index
+    on axe (plan);
 
 create function
     collectivite_card(axe)
@@ -64,5 +64,8 @@ begin
 end;
 comment on function collectivite_card(axe) is
     'Le type du plan.';
+
+create unique index collectivite_card_collectivite_id
+    on collectivite_card (collectivite_id);
 
 COMMIT;

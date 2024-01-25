@@ -8,5 +8,7 @@ BEGIN;
 drop function active(collectivite);
 drop function collectivite_card(axe);
 drop function vide(axe);
+drop index axe_plan_index;
+drop index collectivite_card_collectivite_id;
 
 COMMIT;
