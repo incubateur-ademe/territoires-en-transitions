@@ -59,7 +59,8 @@ const buildQueryFromFilters = (filters: Tfilters) => {
       '*, type: plan_action_type, collectivite: collectivite_card!inner(*)',
       {count: 'exact'}
     )
-    .is('parent', null);
+    .is('parent', null)
+    .is('vide', false);
 
   // Type de plan
   if (filters.typesPlan.length) {
