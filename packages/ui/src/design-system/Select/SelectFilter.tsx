@@ -1,8 +1,8 @@
 import {
+  Args,
   SelectMultiple,
   SelectMultipleProps,
 } from '@design-system/Select/SelectMultiple';
-import {OptionValue} from '@design-system/Select/components/Options';
 import {useEffect, useState} from 'react';
 
 /** constante pour gérer la sélection de tous les filtres */
@@ -31,11 +31,11 @@ export const SelectFilter = ({
   }, [values]);
 
   // gère la sélection/déselection d'item dans la liste
-  const handleChange = (selected: OptionValue, newValues?: OptionValue[]) => {
-    if (selected === ITEM_ALL) {
-      onChange(ITEM_ALL);
+  const handleChange = (args: Args) => {
+    if (args.selectedValue === ITEM_ALL) {
+      onChange({selectedValue: ITEM_ALL});
     } else {
-      onChange(selected, newValues);
+      onChange(args);
     }
   };
 
