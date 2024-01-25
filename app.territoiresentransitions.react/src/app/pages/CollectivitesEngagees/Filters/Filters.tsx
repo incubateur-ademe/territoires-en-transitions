@@ -54,7 +54,7 @@ export const Filters = ({filters, setFilters}: Props) => {
             <Field title="Type de plan" small>
               <SelectMultiple
                 options={planTypeOptions ?? []}
-                onChange={values => {
+                onChange={(selected, values) => {
                   setFilters({
                     ...filters,
                     typesPlan: values ?? [],
@@ -77,7 +77,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                 value: code,
                 label: libelle,
               }))}
-              onChange={values => {
+              onChange={(selected, values) => {
                 setFilters({
                   ...filters,
                   regions: values ?? [],
@@ -102,7 +102,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                   value: code,
                   label: libelle,
                 }))}
-              onChange={values => {
+              onChange={(selected, values) => {
                 setFilters({
                   ...filters,
                   departments: values ?? [],
@@ -120,7 +120,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           <Field title="Type de collectivité" small>
             <SelectMultiple
               options={typeCollectiviteOptions}
-              onChange={values => {
+              onChange={(selected, values) => {
                 setFilters({
                   ...filters,
                   typesCollectivite: values ?? [],
@@ -139,7 +139,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           <Field title="Population" small>
             <SelectMultiple
               options={populationCollectiviteOptions}
-              onChange={values => {
+              onChange={(selected, values) => {
                 setFilters({
                   ...filters,
                   population: values ?? [],
@@ -177,19 +177,28 @@ export const Filters = ({filters, setFilters}: Props) => {
                 }}
                 selected={filters.niveauDeLabellisation}
               />
-              <MultiSelectCheckboxes
-                htmlId="tx"
-                title="Taux de remplissage"
-                options={tauxRemplissageCollectiviteOptions}
-                onChange={selected => {
-                  setFilters({...filters, tauxDeRemplissage: selected});
-                  tracker({
-                    fonction: 'filtre_remplissage',
-                    action: 'selection',
-                  });
-                }}
-                selected={filters.tauxDeRemplissage}
-              />
+              {/** Taux de remplissage */}
+              <Field title="Taux de remplissage" small>
+                <SelectMultiple
+                  options={tauxRemplissageCollectiviteOptions}
+                  onChange={(selected, values) => {
+                    setFilters({
+                      ...filters,
+                      tauxDeRemplissage: values ?? [],
+                    });
+                    tracker({
+                      fonction: 'filtre_remplissage',
+                      action: 'selection',
+                    });
+                  }}
+                  values={
+                    filters.tauxDeRemplissage?.length
+                      ? filters.tauxDeRemplissage
+                      : undefined
+                  }
+                  small
+                />
+              </Field>
             </>
           )}
         </>
