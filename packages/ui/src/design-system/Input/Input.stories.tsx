@@ -168,6 +168,15 @@ export const TypeSearchAvecValeur: Story = {
 export const TypeNumberInt: Story = {
   args: {
     type: 'number',
+    // `onChange` renvoi la valeur formatée sous forme de chaîne
+    // mais la valeur int sous-jacente peut être récupérée ainsi :
+    onValueChange: values => action('onValueChange')(Number(values.value)),
+  },
+};
+export const TypeNumberIntAvecValeur: Story = {
+  args: {
+    type: 'number',
+    value: 12345, // on peut aussi passer une chaîne ici
   },
 };
 
@@ -175,8 +184,19 @@ export const TypeNumberFloat: Story = {
   args: {
     type: 'number',
     numType: 'float',
+    // `onChange` renvoi la valeur formatée sous forme de chaîne
+    // mais la valeur float sous-jacente peut être récupérée ainsi :
+    onValueChange: values => action('onValueChange')(Number(values.floatValue)),
   },
   render: TypeNumberInt.render,
+};
+
+export const TypeNumberFloatAvecValeur: Story = {
+  args: {
+    type: 'number',
+    numType: 'float',
+    value: 12345.67, // on peut aussi passer une chaîne ici
+  },
 };
 
 /** Recherche en cours. */
