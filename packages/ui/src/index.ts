@@ -4,6 +4,7 @@ export {preset} from './tailwind-preset';
 /* composants exportés */
 
 // dossier composants
+export * from './components/panier-actions';
 
 // dossier design-system
 export * from './design-system/Alert';

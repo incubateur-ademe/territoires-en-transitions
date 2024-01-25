@@ -51,13 +51,13 @@ export const buttonThemeClassnames: Record<
   outlined: {
     default: {
       text: 'text-primary-7 hover:!text-primary-8',
-      background: 'bg-white hover:!bg-primary-1',
+      background: 'bg-primary-0 hover:!bg-primary-1',
       border: 'border-primary-7 hover:!border-primary-8',
       icon: 'fill-primary-7 group-hover:fill-primary-8',
     },
     disabled: {
       text: '!text-primary-3',
-      background: '!bg-white',
+      background: '!bg-primary-0',
       border: '!border-primary-4',
       icon: 'fill-primary-3',
     },
