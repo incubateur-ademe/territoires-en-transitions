@@ -164,6 +164,21 @@ export const TypeSearchAvecValeur: Story = {
   },
 };
 
+/** Saisie numérique */
+export const TypeNumberInt: Story = {
+  args: {
+    type: 'number',
+  },
+};
+
+export const TypeNumberFloat: Story = {
+  args: {
+    type: 'number',
+    numType: 'float',
+  },
+  render: TypeNumberInt.render,
+};
+
 /** Recherche en cours. */
 export const TypeSearchLoading: Story = {
   args: {

@@ -1,0 +1,50 @@
+import {NumericFormat, NumericFormatProps} from 'react-number-format';
+import {InputBase} from './InputBase';
+import {useEffect, useState} from 'react';
+
+export type InputNumberProps = Omit<NumericFormatProps, 'type'> & {
+  /** Type de saisie numérique attendue */
+  numType?: 'float' | 'int';
+};
+
+const DECIMAL_SEP = ',';
+const THOUSAND_SEP = ' ';
+
+/**
+ * Affiche un champ de saisie numérique.
+ *
+ * La saisie des caractères non valides est ignorée.
+ * La valeur est formatée automatiquement avec les séparateurs de milliers et de décimales FR.
+ */
+export const InputNumber = ({
+  numType = 'int',
+  defaultValue,
+  value,
+  ...remainingProps
+}: InputNumberProps) => {
+  const [currentValue, setCurrentValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
+
+  return (
+    <NumericFormat
+      customInput={InputBase}
+      thousandSeparator={THOUSAND_SEP}
+      decimalSeparator={DECIMAL_SEP}
+      onPaste={e => {
+        // rend la chaîne copiée compatible avec le `decimalSeparator` spécifié
+        const data = e.clipboardData.getData('text/plain');
+        if (typeof data === 'string' && data.includes('.')) {
+          e.preventDefault();
+          setCurrentValue(data.replace('.', DECIMAL_SEP));
+        }
+      }}
+      type="text"
+      value={currentValue}
+      {...(numType === 'int' ? {decimalScale: 0} : {})}
+      {...remainingProps}
+    />
+  );
+};
