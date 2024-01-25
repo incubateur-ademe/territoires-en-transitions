@@ -1,4 +1,4 @@
-import {Field, SelectMultiple, Input} from '@tet/ui';
+import {Field, SelectFilter, Input} from '@tet/ui';
 
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useDepartements} from '../data/useDepartements';
@@ -56,7 +56,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           {vue === 'plan' && (
             /** Type plan d'action */
             <Field title="Type de plan" small>
-              <SelectMultiple
+              <SelectFilter
                 options={planTypeOptions ?? []}
                 onChange={({values}) => {
                   setFilters({
@@ -76,7 +76,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           </div>
           {/** Région */}
           <Field title="Région" small>
-            <SelectMultiple
+            <SelectFilter
               options={regions.map(({code, libelle}) => ({
                 value: code,
                 label: libelle,
@@ -95,7 +95,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           </Field>
           {/** Départements */}
           <Field title="Département" small>
-            <SelectMultiple
+            <SelectFilter
               options={departements
                 .filter(
                   dep =>
@@ -122,7 +122,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           </Field>
           {/** Type de collectivité */}
           <Field title="Type de collectivité" small>
-            <SelectMultiple
+            <SelectFilter
               options={typeCollectiviteOptions}
               onChange={({values}) => {
                 setFilters({
@@ -141,7 +141,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           </Field>
           {/** Population */}
           <Field title="Population" small>
-            <SelectMultiple
+            <SelectFilter
               options={populationCollectiviteOptions}
               onChange={({values}) => {
                 setFilters({
@@ -183,7 +183,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               />
               {/** Taux de remplissage */}
               <Field title="Taux de remplissage" small>
-                <SelectMultiple
+                <SelectFilter
                   options={tauxRemplissageCollectiviteOptions}
                   onChange={({values}) => {
                     setFilters({
