@@ -1,6 +1,5 @@
-import {Field, SelectMultiple} from '@tet/ui';
+import {Field, SelectMultiple, Input} from '@tet/ui';
 
-import {UiSearchBar} from 'ui/UiSearchBar';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useDepartements} from '../data/useDepartements';
 import {useRegions} from '../data/useRegions';
@@ -15,6 +14,7 @@ import {
 import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import {useState} from 'react';
 
 type Props = {
   filters: Tfilters;
@@ -31,6 +31,8 @@ export const Filters = ({filters, setFilters}: Props) => {
 
   const isLoading = isRegionsLoading || isDepartementsLoading;
 
+  const [search, setSearch] = useState('');
+
   return (
     <div className="flex flex-col gap-8">
       {isLoading ? (
@@ -39,15 +41,17 @@ export const Filters = ({filters, setFilters}: Props) => {
         </div>
       ) : (
         <>
-          <UiSearchBar
-            dataTest="CollectiviteSearchInput"
-            value={filters.nom || ''}
-            placeholder="Rechercher par nom de collectivité"
-            search={v => {
+          <Input
+            data-test="CollectiviteSearchInput"
+            type="search"
+            onChange={e => setSearch(e.target.value)}
+            onSearch={v => {
               setFilters({...filters, nom: v});
               tracker({fonction: 'recherche', action: 'saisie'});
             }}
-            debouncePeriod={500}
+            value={search}
+            placeholder="Rechercher par nom de collectivité"
+            displaySize="sm"
           />
           {vue === 'plan' && (
             /** Type plan d'action */
