@@ -27422,6 +27422,8 @@ export interface Database {
         | "critere"
         | "informations"
         | "commentaires"
+        | "collectivites"
+        | "plans"
       visite_page:
         | "autre"
         | "signin"
