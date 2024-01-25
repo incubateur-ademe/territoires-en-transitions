@@ -1,7 +1,6 @@
 import {useRef} from 'react';
 import classNames from 'classnames';
 import {InputBase, InputBaseProps} from './InputBase';
-import './InputDate.css';
 
 export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
@@ -15,7 +14,11 @@ export const InputDate = ({className, ...props}: InputDateProps) => {
     <InputBase
       type="date"
       ref={inputRef}
-      className={classNames('input-date', className)}
+      className={classNames(
+        /** cache l'icône du sélecteur de date (fonctionne uniquement pour chrome et probablement edge mais pas pour firefox ni safari) */
+        '[&::-webkit-calendar-picker-indicator]:hidden',
+        className
+      )}
       icon={{
         buttonProps: {
           icon: 'calendar-line',

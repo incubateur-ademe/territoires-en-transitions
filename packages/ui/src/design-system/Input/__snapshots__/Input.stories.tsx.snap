@@ -138,9 +138,9 @@ exports[`Design System/Input Default smoke-test 1`] = `
 `;
 
 exports[`Design System/Input TypeDate smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 input-date">
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="date"
-         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
          value
   >
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
@@ -153,9 +153,9 @@ exports[`Design System/Input TypeDate smoke-test 1`] = `
 `;
 
 exports[`Design System/Input TypeDateAvecValeur smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 input-date">
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="date"
-         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
          value="2024-01-17"
   >
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
@@ -242,9 +242,9 @@ exports[`Design System/Input TypePasswordAvecValeur smoke-test 1`] = `
 `;
 
 exports[`Design System/Input TypeSearch smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 input-search">
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
-         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
          value
   >
   <button title="Rechercher"
@@ -260,9 +260,9 @@ exports[`Design System/Input TypeSearch smoke-test 1`] = `
 `;
 
 exports[`Design System/Input TypeSearchAvecValeur smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 input-search">
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
-         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
          value="valeur recherchée"
   >
   <button title="Rechercher"
@@ -277,9 +277,9 @@ exports[`Design System/Input TypeSearchAvecValeur smoke-test 1`] = `
 `;
 
 exports[`Design System/Input TypeSearchLoading smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 input-search">
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
-         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+         class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
          value="valeur recherchée"
   >
   <button title="Rechercher"
