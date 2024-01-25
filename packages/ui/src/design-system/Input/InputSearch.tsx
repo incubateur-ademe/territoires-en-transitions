@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {useEffect, useRef, useState} from 'react';
+import {useRef} from 'react';
 import {useDebouncedCallback} from 'use-debounce';
 import {InputBase, InputBaseProps} from './InputBase';
 
@@ -28,17 +28,8 @@ export const InputSearch = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const disabled = !(remainingProps.value || inputRef.current?.value);
 
-  /**
-   * Permet de profiter du debounce de l'input et d'afficher un text de chargement
-   * quand l'utilisateur est entrain de faire une saisie.
-   */
-  const [loading, setLoading] = useState(isLoading);
-  // synchronise l'état de loading interne avec l'externe
-  useEffect(() => setLoading(isLoading), [isLoading]);
-
   /** Debounce les appels à `onSearch` */
   const handleDebouncedInputChange = useDebouncedCallback(v => {
-    setLoading(true);
     onSearch(v);
   }, debounce);
 
@@ -55,14 +46,12 @@ export const InputSearch = ({
         const value = e.target.value;
         if (value) {
           handleDebouncedInputChange(value);
-        } else {
-          setLoading(false);
         }
       }}
       icon={{
         buttonProps: {
           disabled,
-          icon: loading ? 'loader-4-line animate-spin' : 'search-line',
+          icon: isLoading ? 'loader-4-line animate-spin' : 'search-line',
           onClick: () => handleDebouncedInputChange(inputRef.current.value),
           title: 'Rechercher',
         },
