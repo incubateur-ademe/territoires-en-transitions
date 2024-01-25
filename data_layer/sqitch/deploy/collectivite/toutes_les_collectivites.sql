@@ -39,6 +39,7 @@ create function
     vide(axe)
     returns boolean
     language sql
+    stable
     security definer
 begin
     atomic
