@@ -2,9 +2,11 @@ import {InputBase, InputBaseProps} from './InputBase';
 import {InputDate, InputDateProps} from './InputDate';
 import {InputSearch, InputSearchProps} from './InputSearch';
 import {InputPassword, InputPasswordProps} from './InputPassword';
+import {InputNumber, InputNumberProps} from './InputNumber';
 
 type InputProps =
   | (Omit<InputBaseProps, 'type'> & {type: 'text'})
+  | (InputNumberProps & {type: 'number'})
   | (InputDateProps & {type: 'date'})
   | (InputSearchProps & {type: 'search'})
   | (InputPasswordProps & {type: 'password'});
@@ -14,11 +16,10 @@ type InputProps =
  * texte) à droite du champ.
  * Toutes les props de l'élément HTML `input` sont acceptées à l'exception des changements suivants :
  * - type : restreint à un sous-ensemble des types standards
- * - size : utilisé pour indiquer la variante de taille et rester cohérent avec les autres compo du DS
  */
 export const Input = ({type = 'text', ...props}: InputProps) => {
   if (type === 'date') {
-    return <InputDate {...props} />;
+    return <InputDate {...(props as InputDateProps)} />;
   }
 
   if (type === 'search') {
@@ -26,8 +27,12 @@ export const Input = ({type = 'text', ...props}: InputProps) => {
   }
 
   if (type === 'password') {
-    return <InputPassword {...props} />;
+    return <InputPassword {...(props as InputPasswordProps)} />;
   }
 
-  return <InputBase type={type} {...props} />;
+  if (type === 'number') {
+    return <InputNumber {...(props as InputNumberProps)} />;
+  }
+
+  return <InputBase {...(props as InputBaseProps)} />;
 };
