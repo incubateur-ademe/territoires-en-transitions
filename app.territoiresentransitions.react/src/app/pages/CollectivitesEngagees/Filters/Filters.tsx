@@ -58,7 +58,7 @@ export const Filters = ({filters, setFilters}: Props) => {
             <Field title="Type de plan" small>
               <SelectMultiple
                 options={planTypeOptions ?? []}
-                onChange={(selected, values) => {
+                onChange={({values}) => {
                   setFilters({
                     ...filters,
                     typesPlan: values ?? [],
@@ -81,7 +81,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                 value: code,
                 label: libelle,
               }))}
-              onChange={(selected, values) => {
+              onChange={({values}) => {
                 setFilters({
                   ...filters,
                   regions: values ?? [],
@@ -106,7 +106,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                   value: code,
                   label: libelle,
                 }))}
-              onChange={(selected, values) => {
+              onChange={({values}) => {
                 setFilters({
                   ...filters,
                   departments: values ?? [],
@@ -124,7 +124,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           <Field title="Type de collectivité" small>
             <SelectMultiple
               options={typeCollectiviteOptions}
-              onChange={(selected, values) => {
+              onChange={({values}) => {
                 setFilters({
                   ...filters,
                   typesCollectivite: values ?? [],
@@ -143,7 +143,7 @@ export const Filters = ({filters, setFilters}: Props) => {
           <Field title="Population" small>
             <SelectMultiple
               options={populationCollectiviteOptions}
-              onChange={(selected, values) => {
+              onChange={({values}) => {
                 setFilters({
                   ...filters,
                   population: values ?? [],
@@ -185,7 +185,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               <Field title="Taux de remplissage" small>
                 <SelectMultiple
                   options={tauxRemplissageCollectiviteOptions}
-                  onChange={(selected, values) => {
+                  onChange={({values}) => {
                     setFilters({
                       ...filters,
                       tauxDeRemplissage: values ?? [],
