@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import classNames from 'classnames';
 
 import {Button, Select} from '@tet/ui';
@@ -14,6 +15,13 @@ import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 import {TPlanCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
+import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
+
+// correspondances entre les identifiants des vues et les identifiants de tracking
+const viewIdToTrackerId: Record<string, 'plans' | 'collectivites'> = {
+  plan: 'plans',
+  collectivite: 'collectivites',
+};
 
 export type CollectivitesEngageesView = {
   initialFilters: Tfilters;
@@ -45,6 +53,12 @@ const View = ({
   renderCard,
   isConnected,
 }: ViewProps) => {
+  const tracker = useOngletTracker();
+
+  useEffect(() => {
+    tracker(viewIdToTrackerId[view]);
+  }, [view]);
+
   const getSearcheableText = () => {
     switch (view) {
       case 'collectivite':
@@ -96,7 +110,9 @@ const View = ({
               className={classNames('rounded-r-none', {
                 '!bg-primary-2': view === 'collectivite',
               })}
-              onClick={() => setFilters({...filters, vue: ['collectivite']})}
+              onClick={() => {
+                setFilters({...filters, vue: ['collectivite']});
+              }}
             >
               Collectivités
             </Button>
@@ -108,7 +124,9 @@ const View = ({
               className={classNames('rounded-l-none border-l-0', {
                 '!bg-primary-2': view === 'plan',
               })}
-              onClick={() => setFilters({...filters, vue: ['plan']})}
+              onClick={() => {
+                setFilters({...filters, vue: ['plan']});
+              }}
             >
               Plans d'action
             </Button>
