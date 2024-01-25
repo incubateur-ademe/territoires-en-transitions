@@ -1,4 +1,5 @@
 import {Config} from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 /** Configuration Tailwind */
 export const preset = {
@@ -95,4 +96,10 @@ export const preset = {
       },
     },
   },
+  plugins: [
+    plugin(({addVariant}) => {
+      // pour cibler le bouton de ràz des input[type=search]
+      addVariant('search-reset', '&::-webkit-search-cancel-button');
+    }),
+  ],
 } satisfies Config;
