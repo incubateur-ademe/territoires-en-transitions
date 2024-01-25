@@ -35,6 +35,24 @@ end;
 comment on function plan_action_type(axe) is
     'Le type du plan.';
 
+
+create or replace function
+    vide(axe)
+    returns boolean
+    language sql
+    security definer
+begin
+    atomic
+    return not exists(select
+                      from axe a
+                               join fiche_action_axe faa on faa.axe_id = a.id
+                      where a.plan = $1.id
+                         or a.id = $1.id);
+end;
+comment on function vide is
+    'Vrai si le plan ne comporte aucune fiche.';
+
+
 create function
     collectivite_card(axe)
     returns collectivite_card
