@@ -22,16 +22,13 @@ const stateToBorderColor: Record<FieldState, string> = {
   warning: 'border-warning-1',
 };
 
-export type InputBaseProps = Omit<
-  React.ComponentPropsWithoutRef<'input'>,
-  'type' | 'size'
-> & {
+export type InputBaseProps = Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> & {
   /** Type de saisie */
   type?: InputType;
   /** Valeur courante du champ */
   value?: string;
   /** Taille d'affichage */
-  size?: InputSize;
+  displaySize?: InputSize;
   /** Id pour les tests */
   'data-test'?: string;
   /** Contenu optionnel pour la zone d'icône à droite du champ */
@@ -56,7 +53,7 @@ export const InputBase = forwardRef(
     const {
       className,
       type = 'text',
-      size = 'md',
+      displaySize = 'md',
       icon,
       state,
       ...remainingProps
@@ -76,8 +73,8 @@ export const InputBase = forwardRef(
           type={type}
           ref={ref}
           className={classNames('text-grey-8 px-4 outline-none', {
-            'text-sm py-2': size === 'sm',
-            'text-md py-3': size === 'md',
+            'text-sm py-2': displaySize === 'sm',
+            'text-md py-3': displaySize === 'md',
             'border-r border-solid': !!icon,
             [borderColor]: !!icon,
           })}
@@ -96,7 +93,7 @@ const InputIconContent = ({
   disabled,
   icon,
   state,
-  size = 'md',
+  displaySize: size = 'md',
 }: InputBaseProps) => {
   if (!icon) {
     return;
