@@ -6,7 +6,6 @@ import {Badge} from '@design-system/Badge';
 const meta: Meta<typeof Card> = {
   title: 'Design System/Card',
   component: Card,
-  argTypes: {},
 };
 
 export default meta;
