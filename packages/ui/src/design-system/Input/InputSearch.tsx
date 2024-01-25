@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import {useEffect, useRef, useState} from 'react';
 import {useDebouncedCallback} from 'use-debounce';
 import {InputBase, InputBaseProps} from './InputBase';
-import './InputSearch.css';
 
 export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
   /** Fait apparaître un picto "chargement" à la place du picto "recherche" */
@@ -45,7 +44,10 @@ export const InputSearch = ({
 
   return (
     <InputBase
-      className={classNames('input-search', className)}
+      className={classNames(
+        'search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill',
+        className
+      )}
       type="search"
       ref={inputRef}
       onChange={e => {

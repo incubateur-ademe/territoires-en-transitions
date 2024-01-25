@@ -65,19 +65,22 @@ export const InputBase = forwardRef(
       <div
         className={classNames(
           'inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5',
-          borderColor,
-          className
+          borderColor
         )}
       >
         <input
           type={type}
           ref={ref}
-          className={classNames('text-grey-8 px-4 outline-none', {
-            'text-sm py-2': displaySize === 'sm',
-            'text-md py-3': displaySize === 'md',
-            'border-r border-solid': !!icon,
-            [borderColor]: !!icon,
-          })}
+          className={classNames(
+            'text-grey-8 px-4 outline-none',
+            {
+              'text-sm py-2': displaySize === 'sm',
+              'text-md py-3': displaySize === 'md',
+              'border-r border-solid': !!icon,
+              [borderColor]: !!icon,
+            },
+            className
+          )}
           {...remainingProps}
         />
         <InputIconContent {...props} />
