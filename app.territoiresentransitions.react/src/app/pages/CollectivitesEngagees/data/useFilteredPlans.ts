@@ -57,7 +57,7 @@ const buildQueryFromFilters = (filters: Tfilters) => {
     .from('axe')
     .select(
       '*, type: plan_action_type, collectivite: collectivite_card!inner(*)',
-      {count: 'estimated'}
+      {count: 'exact'}
     )
     .is('parent', null)
     .is('vide', false);
