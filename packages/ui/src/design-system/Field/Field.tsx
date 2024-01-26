@@ -38,13 +38,9 @@ type Props = {
   hint?: string;
   /** Pour lier le libellé et le champ qu'il contient */
   htmlFor?: string;
-  /** État */
-  state?: FieldState;
-  /** Message d'état affiché en dessous du champ */
-  message?: string;
   /** Réduit la taille du titre */
   small?: boolean;
-};
+} & FieldMessageProps;
 
 /** Wrapper pour élément de formulaire donnant des informations et un état */
 export const Field = ({
@@ -81,16 +77,42 @@ export const Field = ({
         )}
       </label>
       {children}
-      {message !== undefined && (
-        <div
-          className={classNames('flex items-center', stateToTextColor[state])}
-        >
-          {state !== 'disabled' && state !== 'default' && (
-            <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
-          )}
-          <span className="text-xs">{message}</span>
-        </div>
-      )}
+      <FieldMessage state={state} message={message} />
     </div>
+  );
+};
+
+export type FieldMessageProps = {
+  /** État */
+  state?: FieldState;
+  /** Message d'état affiché en dessous du champ */
+  message?: string;
+  /** Pour surcharger les styles du container du message */
+  messageClassName?: string;
+};
+
+/**
+ * Affiche un message additionnel au-dessous d'un champ
+ */
+export const FieldMessage = ({
+  message,
+  state = 'default',
+  messageClassName,
+}: FieldMessageProps) => {
+  return (
+    message !== undefined && (
+      <div
+        className={classNames(
+          'flex items-center',
+          stateToTextColor[state],
+          messageClassName
+        )}
+      >
+        {state !== 'disabled' && state !== 'default' && (
+          <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
+        )}
+        <span className="text-xs">{message}</span>
+      </div>
+    )
   );
 };
