@@ -51,6 +51,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
                 ) : undefined
               }
               href={c.sousPage && c.uid ? `/programme/${c.uid}` : undefined}
+              externalPage
             />
           ))}
       </CardsWrapper>

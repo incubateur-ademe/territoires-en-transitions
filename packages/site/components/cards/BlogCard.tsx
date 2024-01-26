@@ -8,6 +8,7 @@ type BlogCardProps = {
   image?: React.ReactNode;
   badge?: string;
   href?: string;
+  externalPage?: boolean;
   backgroundColor?: string;
 };
 
@@ -23,6 +24,7 @@ const BlogCard = ({
   image,
   badge,
   href,
+  externalPage = false,
   backgroundColor,
 }: BlogCardProps) => {
   return (
@@ -43,7 +45,12 @@ const BlogCard = ({
         <div className="fr-card__content">
           <h5 className="fr-card__title !text-primary-8 leading-[35px]">
             {href ? (
-              <a href={href} className="!text-primary-8">
+              <a
+                href={href}
+                className="!text-primary-8"
+                target={externalPage ? '_blank' : undefined}
+                rel={externalPage ? 'noreferrer noopener' : undefined}
+              >
                 {title}
               </a>
             ) : (
