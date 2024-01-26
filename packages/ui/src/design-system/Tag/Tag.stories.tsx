@@ -1,6 +1,6 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
-import {Tag} from '.';
+import {Tag} from './Tag';
 
 const meta: Meta<typeof Tag> = {
   title: 'Design System/Tag',
