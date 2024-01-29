@@ -631,3 +631,4 @@ retool/audit [retool/audit@v2.96.0] 2024-02-06T10:04:24Z Amandine Jacquelin <con
 
 collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
 panier_action_impact/action_impact [collectivite/competence] 2024-01-24T10:56:06Z Florian <florian@derfurth.com> # Les actions à impact
+panier_action_impact/panier [panier_action_impact/action_impact] 2024-01-24T16:59:15Z Florian <florian@derfurth.com> # Le panier actions à impact
