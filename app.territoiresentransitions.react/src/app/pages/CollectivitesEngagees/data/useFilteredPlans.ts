@@ -59,6 +59,7 @@ const buildQueryFromFilters = (filters: Tfilters) => {
       '*, type: plan_action_type, collectivite: collectivite_card!inner(*)',
       {count: 'exact'}
     )
+    .neq('collectivite_card', null)
     .is('parent', null)
     .is('vide', false);
 
