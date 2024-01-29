@@ -640,3 +640,4 @@ utilisateur/droits_v2 [utilisateur/droits_v2@v2.101.0] 2024-02-27T13:13:59Z Aman
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.101.0] 2024-02-21T15:44:11Z Amandine Jacquelin <conta@LanceLibre> # Ajoute l'avancement du parent afin de corriger le filtre non_renseigne ne fonctionnant pas sur les sous_action
 @v2.102.0 2024-02-29T10:44:16Z Florian <florian@derfurth.com> # Amélioration audit, sécurité et thématiques
 
+collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
