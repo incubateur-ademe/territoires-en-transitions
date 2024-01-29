@@ -90,3 +90,39 @@ describe('État du panier', async () => {
 
 });
 
+
+describe('Temps réel', async () => {
+  it(`On devrait recevoir un événement par ajout d'action`, async () => {
+    const demandeInitiale = await supabase.rpc('panier_from_landing');
+    const panierId = demandeInitiale.data.id;
+    const payloads = [];
+
+    // On écoute les changements pour le panier que l'on vient de créer.
+    supabase.channel('panier-changes').on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'panier',
+        filter: `id=eq.${panierId}`,
+      },
+      function(payload) {
+        payloads.push(payload);
+      },
+    ).subscribe();
+
+    // On ajoute deux actions.
+    await supabase.from('action_impact_panier').insert({
+      action: 0,
+      panier: panierId,
+    });
+    await supabase.from('action_impact_panier').insert({
+      action: 1,
+      panier: panierId,
+    });
+
+    await new Promise(_ => setTimeout(_, 500));
+    assert.equal(payloads.length, 2,
+      `On devrait avoir reçu deux événements, un pour chaque action ajoutée au panier.`);
+  });
+});
