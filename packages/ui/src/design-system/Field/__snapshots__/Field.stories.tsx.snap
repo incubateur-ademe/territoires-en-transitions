@@ -91,7 +91,7 @@ exports[`design-system/Field WithHint smoke-test 1`] = `
              placeholder="Placeholder"
       >
     </div>
-    <div class="flex items-center text-grey-8">
+    <div class="flex items-center text-grey-7">
       <span class="text-xs">
         Message d’information
       </span>
