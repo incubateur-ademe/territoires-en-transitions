@@ -628,3 +628,5 @@ collectivite/mes_collectivites [collectivite/mes_collectivites@v2.95.0] 2024-01-
 labellisation/parcours [labellisation/parcours@v2.96.0] 2024-01-31T13:16:30Z Amandine Jacquelin <conta@LanceLibre> # Corrige la selection des critères
 retool/audit [retool/audit@v2.96.0] 2024-02-06T10:04:24Z Amandine Jacquelin <conta@LanceLibre> # Améliore la vue retool_audit
 @v2.100.0 2024-02-19T16:26:09Z Florian <florian@derfurth.com> # Complète et corrige tout le parcours d'audit
+
+collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
