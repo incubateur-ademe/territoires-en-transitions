@@ -26,12 +26,28 @@ comment on column panier.collectivite_preset is
 comment on column panier.private is
     'Vrai si le panier à été crée *par* une collectivité.';
 
+-- permet d'écouter la table panier
+alter publication supabase_realtime add table panier;
+
+-- RLS
+alter table panier
+    enable row level security;
+create policy allow_read
+    on panier
+    for select
+    to anon, authenticated
+    using (true);
+create policy allow_update
+    on panier
+    for update
+    to anon, authenticated
+    using (true);
 
 create table action_impact_panier
 (
     panier uuid references panier           not null,
     action integer references action_impact not null,
-    unique (panier, action)
+    primary key (panier, action)
 );
 comment on table action_impact_panier is
     'Une action dans son panier. '
@@ -60,7 +76,7 @@ create table action_impact_statut
     panier    uuid references panier                  not null,
     categorie text references action_impact_categorie not null,
     action    integer references action_impact        not null,
-    unique (panier, action)
+    primary key  (panier, action)
 );
 comment on table action_impact_statut is
     'Le statut d''une action dans un panier, ex "En cours". '
@@ -82,15 +98,7 @@ end;
 comment on function panier_from_landing is
     'Crée un nouveau panier.';
 
-
-select * from panier_from_landing(1);
-select *
-from panier p
-where p.collectivite_preset = 1
-  and p.collectivite_id is null
-  and p.created_at > current_timestamp - interval '1 month';
-
-create or replace function
+create function
     panier_from_landing(collectivite_id integer)
     returns panier
     language plpgsql
