@@ -9,6 +9,7 @@ drop table action_impact_panier;
 drop function panier_from_landing(integer);
 drop function panier_of_collectivite(integer);
 drop function panier_from_landing();
+alter publication supabase_realtime drop table panier;
 drop table panier;
 
 drop function panier_change_latest_update;
