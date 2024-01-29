@@ -641,3 +641,4 @@ referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.101.0] 2024-02-21T15:44:
 @v2.102.0 2024-02-29T10:44:16Z Florian <florian@derfurth.com> # Amélioration audit, sécurité et thématiques
 
 collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
+panier_action_impact/action_impact [collectivite/competence] 2024-01-24T10:56:06Z Florian <florian@derfurth.com> # Les actions à impact
