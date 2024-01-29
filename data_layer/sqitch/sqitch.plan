@@ -651,3 +651,4 @@ stats/vues_BI [stats/vues_BI@v2.106.0] 2024-04-22T16:39:26Z Amandine Jacquelin <
 @v2.107.0 2024-04-23T15:13:24Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count des étoiles sur les vues stats
 
 collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
+panier_action_impact/action_impact [collectivite/competence] 2024-01-24T10:56:06Z Florian <florian@derfurth.com> # Les actions à impact
