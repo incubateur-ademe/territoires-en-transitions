@@ -649,3 +649,5 @@ referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.102.0] 2024-03-12T18:05:
 stats/locales [stats/locales@v2.106.0] 2024-04-22T16:38:13Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count des étoiles de la vue stats.locales_labellisation_par_niveau
 stats/vues_BI [stats/vues_BI@v2.106.0] 2024-04-22T16:39:26Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count des étoiles de la vue stats.evolution_nombre_labellisations
 @v2.107.0 2024-04-23T15:13:24Z Amandine Jacquelin <conta@LanceLibre> # Corrige le count des étoiles sur les vues stats
+
+collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
