@@ -616,3 +616,4 @@ utilisateur/visite [utilisateur/visite@v2.96.0] 2024-01-25T09:31:49Z Florian <fl
 
 collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
 panier_action_impact/action_impact [collectivite/competence] 2024-01-24T10:56:06Z Florian <florian@derfurth.com> # Les actions à impact
+panier_action_impact/panier [panier_action_impact/action_impact] 2024-01-24T16:59:15Z Florian <florian@derfurth.com> # Le panier actions à impact
