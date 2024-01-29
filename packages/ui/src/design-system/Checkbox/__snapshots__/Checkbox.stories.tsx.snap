@@ -142,3 +142,18 @@ exports[`Design System/Checkbox VarianteSwitchChecked smoke-test 1`] = `
   </div>
 </div>
 `;
+
+exports[`Design System/Checkbox VarianteSwitchDisabled smoke-test 1`] = `
+<div class="flex flex-col">
+  <label class="inline-flex items-center text-grey-6">
+    <input type="checkbox"
+           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative cursor-pointer bg-grey-4 duration-300 rounded-[2rem] w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-300 before:rounded-[50%] checked:text-primary checked:before:translate-x-3.5 checked:before:flex checked:before:items-center checked:before:justify-center"
+           disabled
+           checked
+    >
+    <span class="pl-2">
+      Description de l'action
+    </span>
+  </label>
+</div>
+`;

@@ -90,3 +90,11 @@ export const VarianteSwitchChecked: Story = {
     variant: 'switch',
   },
 };
+
+export const VarianteSwitchDisabled: Story = {
+  args: {
+    disabled: true,
+    checked: true,
+    variant: 'switch',
+  },
+};
