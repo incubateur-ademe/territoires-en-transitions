@@ -613,3 +613,5 @@ stats/posthog [stats/posthog@v2.93.0] 2024-01-18T14:39:10Z Florian <florian@derf
 collectivite/toutes_les_collectivites [collectivite/toutes_les_collectivites@v2.89.0] 2024-01-11T17:07:39Z Florian <florian@derfurth.com> # Permet de filtrer par type de plan
 utilisateur/visite [utilisateur/visite@v2.96.0] 2024-01-25T09:31:49Z Florian <florian@derfurth.com> # Ajoute le tracking des onglets de la page collectivités
 @v2.97.0 2024-02-06T15:03:29Z Florian <florian@derfurth.com> # Permet de filtrer par type de plan
+
+collectivite/competence 2024-01-24T10:58:46Z Florian <florian@derfurth.com> # Les compétences Banatic
