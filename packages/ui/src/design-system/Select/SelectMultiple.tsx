@@ -4,7 +4,7 @@ import {
   SelectProps,
 } from '@design-system/Select/components/SelectBase';
 
-export type Args = {
+export type SelectMultipleOnChangeArgs = {
   selectedValue: OptionValue;
   values?: OptionValue[];
 };
@@ -15,7 +15,7 @@ export type SelectMultipleProps = Omit<SelectProps, 'onChange'> & {
    * Reçoit la valeur de l'option cliquée,
    * ainsi que la liste de toutes les valeurs sélectionnées finale.
    * */
-  onChange: (args: Args) => void;
+  onChange: (args: SelectMultipleOnChangeArgs) => void;
 };
 /**
  * Sélecteur de valeur multiple
