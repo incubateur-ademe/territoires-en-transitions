@@ -6,6 +6,7 @@ export {preset} from './tailwind-preset';
 // dossier composants
 
 // dossier design-system
+export * from './design-system/Alert';
 export * from './design-system/Badge';
 export * from './design-system/Button';
 export * from './design-system/Checkbox';

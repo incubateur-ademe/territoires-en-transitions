@@ -1,0 +1,66 @@
+import {Meta, StoryObj} from '@storybook/react';
+import {ControlledAlert, Alert} from './Alert';
+import {useState} from 'react';
+import {Button} from '@design-system/Button';
+
+const meta: Meta<typeof Alert> = {
+  title: 'Design System/Alert',
+  component: Alert,
+  argTypes: {
+    state: {control: 'select'},
+  },
+  args: {
+    title: 'Titre',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.',
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof Alert>;
+
+export const Default: Story = {};
+
+export const Error: Story = {
+  args: {state: 'error'},
+};
+
+export const Success: Story = {
+  args: {state: 'success'},
+};
+
+export const Warning: Story = {
+  args: {state: 'warning'},
+};
+
+export const WithClosingButton: Story = {
+  render: args => <ControlledAlert {...args} />,
+};
+
+export const ControlledByParent: Story = {
+  render: args => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    return isOpen ? (
+      <Alert {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    ) : (
+      <Button variant="outlined" onClick={() => setIsOpen(true)}>
+        Ouvrir l'alerte
+      </Button>
+    );
+  },
+};
+
+export const WithFooter: Story = {
+  args: {
+    footer: (
+      <div className="flex gap-4 my-2">
+        <Button size="xs">Valider</Button>
+        <Button size="xs" variant="outlined">
+          Annuler
+        </Button>
+      </div>
+    ),
+  },
+};
