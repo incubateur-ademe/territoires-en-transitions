@@ -103,65 +103,102 @@ export const Variants: Story = {
   render: () => (
     <div
       className="grid gap-5 items-end bg-grey-2 p-10"
-      style={{gridTemplateColumns: 'repeat(5,fit-content(0))'}}
+      style={{gridTemplateColumns: 'repeat(6,fit-content(0))'}}
     >
       {/* Icon buttons */}
-      <Button icon="leaf-line" variant="primary" />
-      <Button icon="leaf-line" variant="secondary" />
-      <Button icon="leaf-line" variant="outlined" />
-      <Button icon="leaf-line" variant="white" />
-      <Button icon="leaf-line" variant="grey" />
+      <Button icon="leaf-line" variant="primary" size="sm" />
+      <Button icon="leaf-line" variant="secondary" size="sm" />
+      <Button icon="leaf-line" variant="outlined" size="sm" />
+      <Button icon="leaf-line" variant="white" size="sm" />
+      <Button icon="leaf-line" variant="grey" size="sm" />
+      <Button icon="leaf-line" variant="underlined" size="sm" />
 
       {/* Disabled icon buttons */}
-      <Button icon="leaf-line" variant="primary" disabled />
-      <Button icon="leaf-line" variant="secondary" disabled />
-      <Button icon="leaf-line" variant="outlined" disabled />
-      <Button icon="leaf-line" variant="white" disabled />
-      <Button icon="leaf-line" variant="grey" disabled />
+      <Button icon="leaf-line" variant="primary" disabled size="sm" />
+      <Button icon="leaf-line" variant="secondary" disabled size="sm" />
+      <Button icon="leaf-line" variant="outlined" disabled size="sm" />
+      <Button icon="leaf-line" variant="white" disabled size="sm" />
+      <Button icon="leaf-line" variant="grey" disabled size="sm" />
+      <Button icon="leaf-line" variant="underlined" disabled size="sm" />
 
       {/* Default buttons */}
-      <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outlined">Outlined</Button>
-      <Button variant="white">White</Button>
-      <Button variant="grey">Grey</Button>
-
-      {/* Disabled default buttons */}
-      <Button variant="primary" disabled>
+      <Button variant="primary" size="sm">
         Primary
       </Button>
-      <Button variant="secondary" disabled>
+      <Button variant="secondary" size="sm">
         Secondary
       </Button>
-      <Button variant="outlined" disabled>
+      <Button variant="outlined" size="sm">
         Outlined
       </Button>
-      <Button variant="white" disabled>
+      <Button variant="white" size="sm">
         White
       </Button>
-      <Button variant="grey" disabled>
+      <Button variant="grey" size="sm">
         Grey
+      </Button>
+      <Button variant="underlined" size="sm">
+        Underlined
+      </Button>
+
+      {/* Disabled default buttons */}
+      <Button variant="primary" disabled size="sm">
+        Primary
+      </Button>
+      <Button variant="secondary" disabled size="sm">
+        Secondary
+      </Button>
+      <Button variant="outlined" disabled size="sm">
+        Outlined
+      </Button>
+      <Button variant="white" disabled size="sm">
+        White
+      </Button>
+      <Button variant="grey" disabled size="sm">
+        Grey
+      </Button>
+      <Button variant="underlined" disabled size="sm">
+        Underlined
       </Button>
 
       {/* Buttons with icon */}
-      <Button icon="leaf-line" iconPosition="left" variant="primary">
+      <Button icon="leaf-line" iconPosition="left" variant="primary" size="sm">
         Primary
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="secondary">
+      <Button
+        icon="leaf-line"
+        iconPosition="left"
+        variant="secondary"
+        size="sm"
+      >
         Secondary
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="outlined">
+      <Button icon="leaf-line" iconPosition="left" variant="outlined" size="sm">
         Outlined
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="white">
+      <Button icon="leaf-line" iconPosition="left" variant="white" size="sm">
         White
       </Button>
-      <Button icon="leaf-line" iconPosition="left" variant="grey">
+      <Button icon="leaf-line" iconPosition="left" variant="grey" size="sm">
         Grey
+      </Button>
+      <Button
+        icon="leaf-line"
+        iconPosition="left"
+        variant="underlined"
+        size="sm"
+      >
+        Underlined
       </Button>
 
       {/* Disabled buttons with icon */}
-      <Button icon="leaf-line" iconPosition="right" variant="primary" disabled>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="primary"
+        disabled
+        size="sm"
+      >
         Primary
       </Button>
       <Button
@@ -169,17 +206,45 @@ export const Variants: Story = {
         iconPosition="right"
         variant="secondary"
         disabled
+        size="sm"
       >
         Secondary
       </Button>
-      <Button icon="leaf-line" iconPosition="right" variant="outlined" disabled>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="outlined"
+        disabled
+        size="sm"
+      >
         Outlined
       </Button>
-      <Button icon="leaf-line" iconPosition="right" variant="white" disabled>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="white"
+        disabled
+        size="sm"
+      >
         White
       </Button>
-      <Button icon="leaf-line" iconPosition="right" variant="grey" disabled>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="grey"
+        disabled
+        size="sm"
+      >
         Grey
+      </Button>
+      <Button
+        icon="leaf-line"
+        iconPosition="right"
+        variant="underlined"
+        disabled
+        size="sm"
+      >
+        Underlined
       </Button>
     </div>
   ),
@@ -188,8 +253,11 @@ export const Variants: Story = {
 /** Boutons avec valeur href. */
 export const AnchorButtons: Story = {
   render: () => (
-    <div className="flex items-end gap-5">
+    <div className="flex flex-wrap items-end gap-5">
       <Button href="https://territoiresentransitions.fr/">Internal link</Button>
+      <Button href="https://territoiresentransitions.fr/" variant="underlined">
+        Internal link
+      </Button>
       <Button
         href="https://territoiresentransitions.fr/"
         icon="leaf-line"
@@ -203,10 +271,25 @@ export const AnchorButtons: Story = {
       >
         Disabled link
       </Button>
+      <Button
+        href="https://territoiresentransitions.fr/"
+        variant="underlined"
+        icon="leaf-line"
+        disabled
+      >
+        Disabled link
+      </Button>
       <Button href="https://territoiresentransitions.fr/" external>
         External link
       </Button>
       <Button href="https://territoiresentransitions.fr/" external />
+      <Button
+        href="https://territoiresentransitions.fr/"
+        variant="underlined"
+        external
+      >
+        External link
+      </Button>
     </div>
   ),
 };

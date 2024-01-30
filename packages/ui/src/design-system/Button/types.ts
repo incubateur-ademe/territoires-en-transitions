@@ -9,7 +9,8 @@ export type ButtonVariant =
   | 'secondary'
   | 'outlined'
   | 'white'
-  | 'grey';
+  | 'grey'
+  | 'underlined';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'xl';
 

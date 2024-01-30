@@ -41,11 +41,15 @@ export const Button = forwardRef(
       buttonSizeClassnames[size][isIconButton ? 'iconButton' : 'textButton'];
 
     const buttonClassname = classNames(
-      'rounded-lg w-fit border border-solid font-bold group',
+      'w-fit border-solid font-bold group',
       {
         // Styles du curseur
         'cursor-pointer': !disabled,
         'cursor-not-allowed': disabled,
+        // Bordures
+        'rounded-lg border': variant !== 'underlined',
+        'border-b border-t-0 border-x-0 !p-px': variant === 'underlined',
+        'hover:border-b-2 hover:!pb-0': variant === 'underlined' && !disabled,
       },
       text,
       background,
