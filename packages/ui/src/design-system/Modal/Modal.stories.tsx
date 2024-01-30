@@ -3,9 +3,10 @@ import {forwardRef} from 'react';
 
 import {Modal} from '.';
 import {Button} from '@design-system/Button';
+import {ModalFooter} from '@design-system/Modal/ModalFooter';
 
 const meta: Meta<typeof Modal> = {
-  title: 'Design System/Modale',
+  title: 'Design System/Modal',
   component: Modal,
   decorators: [story => <div className="p-8">{story()}</div>],
 };
@@ -28,6 +29,28 @@ export const Default: Story = {
     subTitle: 'Un sous titre',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+  },
+  render: args => {
+    return (
+      <Modal {...args}>
+        <OpenButton text="Ouvrir la modale" />
+      </Modal>
+    );
+  },
+};
+
+export const AvecFooter: Story = {
+  args: {
+    textAlign: 'left',
+    title: 'Un titre simple',
+    subTitle: 'Un sous titre',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+    renderFooter: ({close}) => (
+      <ModalFooter>
+        <Button onClick={close}>Fermer</Button>
+      </ModalFooter>
+    ),
   },
   render: args => {
     return (

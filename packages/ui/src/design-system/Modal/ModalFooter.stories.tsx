@@ -1,0 +1,39 @@
+import {Meta, StoryObj} from '@storybook/react';
+import {ModalFooter, ModalFooterSection} from './ModalFooter';
+import {Button} from '@design-system/Button';
+
+const meta: Meta<typeof ModalFooter> = {
+  component: ModalFooter,
+};
+
+export default meta;
+
+type Story = StoryObj<typeof ModalFooter>;
+
+export const Default: Story = {
+  args: {
+    variant: 'right',
+    children: [<Button variant="outlined">Cancel</Button>, <Button>OK</Button>],
+  },
+};
+
+export const Center: Story = {
+  args: {
+    variant: 'center',
+    children: <Button>OK</Button>,
+  },
+};
+
+export const Space: Story = {
+  args: {
+    variant: 'space',
+    children: [
+      <ModalFooterSection>
+        <Button variant="outlined">Non pertinent</Button>
+        <Button variant="outlined">En cours</Button>
+        <Button variant="outlined">Réalisé</Button>
+      </ModalFooterSection>,
+      <Button icon="file-add-fill">Ajouter</Button>,
+    ],
+  },
+};
