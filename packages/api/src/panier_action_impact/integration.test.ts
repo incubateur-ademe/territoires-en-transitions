@@ -55,7 +55,7 @@ describe('État du panier', async () => {
     async () => {
       const demandePanier = await supabase.rpc('panier_from_landing');
       const panierId = demandePanier.data.id!;
-      const actionId = 0;
+      const actionId = 1;
       const ajoutAction = await supabase.from('action_impact_panier').insert({
         action: actionId,
         panier: panierId,
@@ -71,11 +71,46 @@ describe('État du panier', async () => {
         `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`);
       assert.exists(selectPanierContenu.data,
         `Sélectionner un panier devrait renvoyer un panier.`);
-      assert.equal(selectPanierContenu.data.actions.length, 1,
+      assert.equal(selectPanierContenu.data.contenuPanier.length, 1,
         `Le panier devrait contenir une action.`);
     });
-
 });
+describe('État des actions', async () => {
+  it('On devrait pouvoir ajouter une action puis la retrouver dans le panier',
+    async () => {
+      const demandePanier = await supabase.rpc('panier_from_landing');
+      const panierId = demandePanier.data.id!;
+      const actionId = 1;
+      const ajoutAction = await supabase.from('action_impact_panier').insert({
+        action: actionId,
+        panier: panierId,
+      });
+      assert.isNull(ajoutAction.error,
+        `Ajouter une action au panier ne devrait pas renvoyer d'erreur`);
+
+      const selectPanierContenu = await supabase.from('panier').
+        select(panierSelect).
+        eq('id', panierId).single<Panier>();
+
+      assert.isNull(selectPanierContenu.error,
+        `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`);
+      assert.exists(selectPanierContenu.data,
+        `Sélectionner un panier devrait renvoyer un panier.`);
+      assert.equal(selectPanierContenu.data.contenuPanier.length, 1,
+        `Le panier devrait contenir une action.`);
+
+      const {error, data} = await supabase.from('panier').
+        select('*, states:action_impact_state(*)')
+          .eq('id', panierId);
+
+
+
+      assert.isNull(error);
+
+    });
+});
+
+
 
 describe('Temps réel', async () => {
   it(`On devrait recevoir un événement par ajout d'action`, async () => {
@@ -99,11 +134,11 @@ describe('Temps réel', async () => {
 
     // On ajoute deux actions.
     await supabase.from('action_impact_panier').insert({
-      action: 0,
+      action: 1,
       panier: panierId,
     });
     await supabase.from('action_impact_panier').insert({
-      action: 1,
+      action: 2,
       panier: panierId,
     });
 
