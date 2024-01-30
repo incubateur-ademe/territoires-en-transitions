@@ -90,6 +90,20 @@ export const buttonThemeClassnames: Record<
       icon: 'fill-primary-4',
     },
   },
+  underlined: {
+    default: {
+      text: 'text-primary-8',
+      background: '!bg-transparent',
+      border: 'border-primary-7',
+      icon: 'fill-primary-8',
+    },
+    disabled: {
+      text: '!text-primary-3',
+      background: 'bg-transparent',
+      border: 'border-primary-3',
+      icon: 'fill-primary-3',
+    },
+  },
 };
 
 /**
