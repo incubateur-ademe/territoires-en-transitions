@@ -3088,6 +3088,24 @@ export interface Database {
           }
         ]
       }
+      action_impact_state: {
+        Row: {
+          action: unknown | null
+          isinpanier: boolean | null
+          statut: unknown | null
+        }
+        Insert: {
+          action?: unknown | null
+          isinpanier?: boolean | null
+          statut?: unknown | null
+        }
+        Update: {
+          action?: unknown | null
+          isinpanier?: boolean | null
+          statut?: unknown | null
+        }
+        Relationships: []
+      }
       action_impact_statut: {
         Row: {
           action: number
@@ -13708,6 +13726,7 @@ export interface Database {
           id: string
           latest_update: string
           private: boolean | null
+          action_impact_state: unknown | null
         }
         Insert: {
           collectivite_id?: number | null
@@ -25370,6 +25389,16 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      action_impact_state: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          action: unknown | null
+          isinpanier: boolean | null
+          statut: unknown | null
+        }[]
+      }
       action_perimetre_evaluation: {
         Args: {
           id: unknown
@@ -27782,6 +27811,13 @@ export interface Database {
       skip:
         | {
             Args: {
+              why: string
+              how_many: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               "": string
             }
             Returns: string
@@ -27789,13 +27825,6 @@ export interface Database {
         | {
             Args: {
               "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              why: string
-              how_many: number
             }
             Returns: string
           }
