@@ -34,8 +34,8 @@ export function middleware(request: NextRequest) {
     font-src 'self';
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!} 
-      ${process.env.NEXT_PUBLIC_STRAPI_URL!}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
       ws://${request.nextUrl.host};
     base-uri 'self';
     form-action 'self';
