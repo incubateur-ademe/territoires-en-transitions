@@ -76,7 +76,7 @@ create table action_impact_statut
     panier    uuid references panier                  not null,
     categorie text references action_impact_categorie not null,
     action    integer references action_impact        not null,
-    primary key  (panier, action)
+    primary key (panier, action)
 );
 comment on table action_impact_statut is
     'Le statut d''une action dans un panier, ex "En cours". '
@@ -164,15 +164,24 @@ comment on function panier_of_collectivite(integer) is
 create function panier_change_latest_update() returns trigger as
 $$
 begin
-    update panier aip
-    set latest_update = current_timestamp
-    where aip.id = new.panier;
-    return new;
+    if new is not null
+    then
+        update panier aip
+        set latest_update = current_timestamp
+        where aip.id = new.panier;
+        return new;
+    elseif old is not null
+    then
+        update panier aip
+        set latest_update = current_timestamp
+        where aip.id = old.panier;
+        return old;
+    end if;
 end
 $$ language plpgsql;
 
 create trigger on_change_update_panier
-    after update or insert
+    after update or insert or delete
     on action_impact_panier
     for each row
 execute procedure panier_change_latest_update();
@@ -180,7 +189,7 @@ comment on trigger on_change_update_panier on action_impact_panier is
     'Mets à jour la propriété `latest_update` du panier pour notifier le client.';
 
 create trigger on_change_update_panier
-    after update or insert
+    after update or insert or delete
     on action_impact_statut
     for each row
 execute procedure panier_change_latest_update();
