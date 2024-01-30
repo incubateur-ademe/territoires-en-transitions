@@ -17,9 +17,11 @@
     "dev": "concurrently --names \"api,ui,app,site\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\" \"npm run dev -w @tet/site -- -p 3001\"",
     "dev:app": "concurrently --names \"api,ui,app\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\"",
     "dev:site": "concurrently --names \"api,ui,site\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/site -- -p 3001\"",
+    "dev:panier": "concurrently --names \"api,ui,panier\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/panier -- -p 3001\"",
     "build": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm run build:site; else npm run build:app; fi",
     "build:app": "npm run build -w @tet/api -w @tet/ui -w @tet/app",
     "build:site": "npm run build -w @tet/api -w @tet/ui -w @tet/site",
+    "build:panier": "npm run build -w @tet/api -w @tet/ui -w @tet/panier",
     "start": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm start -w @tet/site; else npm start -w @tet/app; fi"
   },
   "repository": {
