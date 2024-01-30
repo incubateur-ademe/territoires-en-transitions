@@ -2,6 +2,9 @@
 
 BEGIN;
 
+drop function action_impact_state(panier);
+drop table action_impact_state;
+
 drop table action_impact_statut;
 drop table action_impact_categorie;
 drop table action_impact_panier;
