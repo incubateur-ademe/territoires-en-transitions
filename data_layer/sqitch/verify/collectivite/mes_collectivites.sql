@@ -2,7 +2,8 @@
 
 BEGIN;
 
-select has_function_privilege('collectivite_user_list(integer)', 'execute');
-select has_function_privilege('remove_user_from_collectivite(integer, uuid)', 'execute');
+select collectivite_id, nom, niveau_acces, est_auditeur, access_restreint
+from mes_collectivites
+where false;
 
 ROLLBACK;
