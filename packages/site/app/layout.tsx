@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: data.metaTitle ?? 'Territoires en Transitions',
       description: data.metaDescription,
-      // url: 'https://www.territoiresentransitions.fr',
+      url: 'https://www.territoiresentransitions.fr',
       siteName: data.metaTitle ?? 'Territoires en Transitions',
       images: data.metaImage
         ? [

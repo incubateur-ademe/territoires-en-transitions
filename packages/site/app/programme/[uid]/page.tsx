@@ -35,14 +35,15 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
 
   return (
     <>
-      {data.contenu.map(c => {
+      {data.contenu.map((c, i) => {
+        const key = `${c.type}-${i}`;
         switch (c.type) {
           case 'paragraphe':
-            return <ParagrapheService {...(c as ParagrapheData)} />;
+            return <ParagrapheService key={key} {...(c as ParagrapheData)} />;
           case 'liste':
-            return <ListeService {...(c as ListeData)} />;
+            return <ListeService key={key} {...(c as ListeData)} />;
           case 'info':
-            return <InfoService {...(c as InfoData)} />;
+            return <InfoService key={key} {...(c as InfoData)} />;
           default:
             return notFound();
         }
