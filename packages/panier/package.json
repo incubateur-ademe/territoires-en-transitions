@@ -15,6 +15,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.25.2",
     "@mdx-js/loader": "^2.3.0",
+    "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/supabase-js": "^2.31.0",
     "@tet/ui": "^1.0.0",
     "classnames": "^2.3.2",
