@@ -42,11 +42,7 @@ const MasonryGallery = ({
       } else if (windowWidth <= breakpoints.lg) {
         if (maxCols === 3) setColumns(2);
         else setColumns(1);
-      } else {
-        if (maxCols === 3) setColumns(3);
-        else if (maxCols === 2) setColumns(2);
-        else setColumns(1);
-      }
+      } else setColumns(maxCols);
     }
   }, [windowWidth, breakpoints.md, breakpoints.lg, maxCols]);
 
