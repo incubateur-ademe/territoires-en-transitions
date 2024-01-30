@@ -212,4 +212,36 @@ execute procedure panier_set_latest_update();
 comment on trigger on_change_set_latest_update on panier is
     'Mets à jour la propriété `latest_update` à chaque modification.';
 
+
+create table action_impact_state
+(
+    action     action_impact,
+    statut     action_impact_statut,
+    isInPanier bool
+);
+alter table action_impact_state
+    enable row level security;
+comment on table action_impact_state is
+    'L''état d''une action par rapport à un panier. '
+        'On ne se sert pas de cette table pour stocker des données.';
+
+create function
+    action_impact_state(panier)
+    returns setof action_impact_state
+    language sql
+    stable
+begin
+    atomic
+    select a               as action,
+           ais             as statut,
+           aip is not null as isInPanier
+    from action_impact a
+             left join action_impact_panier aip
+                       on aip.action = a.id and aip.panier = $1.id
+             left join action_impact_statut ais
+                       on ais.action = a.id and ais.panier = $1.id;
+end;
+comment on function action_impact_state is
+    'La liste des actions et de leurs états pour un panier.';
+
 COMMIT;
