@@ -1,20 +1,7 @@
 import {assert} from 'chai';
 import {testReset} from '../tests/testReset';
 import {supabase} from '../tests/supabase';
-import {Database} from '../database.types';
-
-type Panier =
-/* Le panier en tant que tel */
-  Database['public']['Tables']['panier']['Row'] & {
-  /* Liste d'actions */
-  actions: Database['public']['Tables']['action_impact']['Row'][]
-}
-
-/**
- * On sélectionne toutes les colonnes du panier : *
- * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `actions`
- */
-const panierSelect = '*, actions:action_impact!action_impact_panier(*)';
+import {Panier, panierSelect} from '.';
 
 describe('Création de panier', async () => {
   before(async () => {
@@ -89,7 +76,6 @@ describe('État du panier', async () => {
     });
 
 });
-
 
 describe('Temps réel', async () => {
   it(`On devrait recevoir un événement par ajout d'action`, async () => {
