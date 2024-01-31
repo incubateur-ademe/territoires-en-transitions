@@ -57,8 +57,8 @@ describe('État du panier', async () => {
       const panierId = demandePanier.data.id!;
       const actionId = 1;
       const ajoutAction = await supabase.from('action_impact_panier').insert({
-        action: actionId,
-        panier: panierId,
+        action_id: actionId,
+        panier_id: panierId,
       });
       assert.isNull(ajoutAction.error,
         `Ajouter une action au panier ne devrait pas renvoyer d'erreur`);
@@ -82,8 +82,8 @@ describe('État des actions', async () => {
       const panierId = demandePanier.data.id!;
       const actionId = 1;
       const ajoutAction = await supabase.from('action_impact_panier').insert({
-        action: actionId,
-        panier: panierId,
+        action_id: actionId,
+        panier_id: panierId,
       });
       assert.isNull(ajoutAction.error,
         `Ajouter une action au panier ne devrait pas renvoyer d'erreur`);
@@ -100,17 +100,12 @@ describe('État des actions', async () => {
         `Le panier devrait contenir une action.`);
 
       const {error, data} = await supabase.from('panier').
-        select('*, states:action_impact_state(*)')
-          .eq('id', panierId);
-
-
+        select('*, states:action_impact_state(*)').eq('id', panierId);
 
       assert.isNull(error);
 
     });
 });
-
-
 
 describe('Temps réel', async () => {
   it(`On devrait recevoir un événement par ajout d'action`, async () => {
@@ -134,12 +129,12 @@ describe('Temps réel', async () => {
 
     // On ajoute deux actions.
     await supabase.from('action_impact_panier').insert({
-      action: 1,
-      panier: panierId,
+      action_id: 1,
+      panier_id: panierId,
     });
     await supabase.from('action_impact_panier').insert({
-      action: 2,
-      panier: panierId,
+      action_id: 2,
+      panier_id: panierId,
     });
 
     await new Promise(_ => setTimeout(_, 500));
