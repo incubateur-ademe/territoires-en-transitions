@@ -24,7 +24,7 @@ export const ModalFooter = ({
   return (
     <>
       <hr className="mt-4" />
-      <div className={classNames('flex gap-6', variantToClassnames[variant])}>
+      <div className={classNames('flex gap-4', variantToClassnames[variant])}>
         {children}
       </div>
     </>
