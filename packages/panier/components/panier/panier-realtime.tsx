@@ -44,7 +44,7 @@ export default function PanierRealtime({panier}: {
             onAdd={async () => {
               await supabase.from(
                 'action_impact_panier').
-                insert({'action': state.action.id, 'panier': panier.id});
+                insert({'action_id': state.action.id, 'panier_id': panier.id});
             }}
             onStatut={(statut) => {}}
             isInPanier={state.isinpanier} />
@@ -59,8 +59,8 @@ export default function PanierRealtime({panier}: {
               await supabase.from(
                 'action_impact_panier').
                 delete().
-                eq('action', action.id).
-                eq('panier', panier.id);
+                eq('action_id', action.id).
+                eq('panier_id', panier.id);
             }} />
         </ActionImpactCard>)}
     </div>
@@ -99,7 +99,7 @@ function ActionCardStatutBar({action, statut, onAdd, isInPanier}: {
   onAdd: () => void
   onStatut: (statut: string | null) => void
 }) {
-  const categorie = !statut ? '' : statut.categorie;
+  const categorie = !statut ? '' : statut.categorie_id;
 
   return (
     <div>
