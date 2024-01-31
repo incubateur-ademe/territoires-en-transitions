@@ -1,4 +1,4 @@
-import {ReactNode, cloneElement, useState} from 'react';
+import {cloneElement, useState} from 'react';
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -42,7 +42,7 @@ export type ModalProps = {
   /** Fonction de rendu du contenu de la modale */
   render?: (props: RenderProps) => React.ReactNode;
   /** Rendu pied de page optionnel */
-  renderFooter?: (props: RenderProps) => React.ReactNode;
+  renderFooter?: (props: Pick<RenderProps, 'close'>) => React.ReactNode;
   /** l'élément qui permet d'afficher la modale au click, généralement un bouton */
   children?: JSX.Element;
   /** Titre de la modale, n'est pas affiché si non défini */
@@ -201,8 +201,6 @@ export const Modal = ({
                 })}
                 {renderFooter?.({
                   close: () => setOpen(false),
-                  labelId,
-                  descriptionId,
                 })}
               </div>
             </FloatingFocusManager>
