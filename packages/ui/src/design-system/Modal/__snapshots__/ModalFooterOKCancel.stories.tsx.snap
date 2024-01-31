@@ -2,7 +2,7 @@
 
 exports[`design-system/Modal/ModalFooterOKCancel AnnulerValider smoke-test 1`] = `
 <hr class="mt-4">
-<div class="flex gap-6 justify-end">
+<div class="flex gap-4 justify-end">
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     <div class="flex items-center gap-2">
       <div>
@@ -22,7 +22,7 @@ exports[`design-system/Modal/ModalFooterOKCancel AnnulerValider smoke-test 1`] =
 
 exports[`design-system/Modal/ModalFooterOKCancel CustomLabels smoke-test 1`] = `
 <hr class="mt-4">
-<div class="flex gap-6 justify-end">
+<div class="flex gap-4 justify-end">
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     <div class="flex items-center gap-2">
       <div>
@@ -42,7 +42,7 @@ exports[`design-system/Modal/ModalFooterOKCancel CustomLabels smoke-test 1`] = `
 
 exports[`design-system/Modal/ModalFooterOKCancel Valider smoke-test 1`] = `
 <hr class="mt-4">
-<div class="flex gap-6 justify-end">
+<div class="flex gap-4 justify-end">
   <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     <div class="flex items-center gap-2">
       <div>
