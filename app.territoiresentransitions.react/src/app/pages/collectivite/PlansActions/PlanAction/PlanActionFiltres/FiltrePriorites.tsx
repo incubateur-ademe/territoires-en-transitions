@@ -59,7 +59,7 @@ const FiltrePriorites = ({filters, setFilters}: TFiltreProps) => {
               v === SANS_PRIORITE ? (
                 <span key={v}>Non priorisé</span>
               ) : (
-                <BadgePriorite key={v} priorite={v} small />
+                <BadgePriorite key={v} priorite={v} />
               )
             )}
           </div>
@@ -71,7 +71,6 @@ const FiltrePriorites = ({filters, setFilters}: TFiltreProps) => {
           return (
             <BadgePriorite
               priorite={option.value as TFicheActionNiveauxPriorite}
-              small
             />
           );
         }}

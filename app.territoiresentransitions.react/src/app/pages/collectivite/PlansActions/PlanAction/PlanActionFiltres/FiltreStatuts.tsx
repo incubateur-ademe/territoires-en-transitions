@@ -53,7 +53,7 @@ const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
               v === SANS_STATUT ? (
                 <span key={v}>Sans statut</span>
               ) : (
-                <BadgeStatut key={v} statut={v} small />
+                <BadgeStatut key={v} statut={v} />
               )
             )}
           </div>
@@ -62,9 +62,7 @@ const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
           if (option.value === ITEM_ALL || option.value === SANS_STATUT) {
             return <span>{option.label}</span>;
           }
-          return (
-            <BadgeStatut statut={option.value as TFicheActionStatuts} small />
-          );
+          return <BadgeStatut statut={option.value as TFicheActionStatuts} />;
         }}
         placeholderText="Sélectionner des options"
         disabled={options.length === 0}
