@@ -8,6 +8,7 @@ export type ActionImpactState =
     isinpanier: boolean,
     statut: ActionImpactStatut | null
   };
+export type Categorie = Database['public']['Tables']['action_impact_categorie']['Row']
 
 export type Panier =
 /* Le panier en tant que tel */
