@@ -25,13 +25,13 @@ export type ButtonContentProps = {
   size?: ButtonSize;
   /** Icône à intégrer au bouton, au format SVG ou avec la nomenclature Remix Icon */
   icon?: IconValue;
-  /** Position de l'icône dans le bouton */
-  iconPosition?: IconPosition;
   /** Désactive les interractions avec le bouton */
   disabled?: boolean;
 };
 
 type BaseButtonProps = {
+  /** Position de l'icône dans le bouton */
+  iconPosition?: IconPosition;
   /** Lien externe */
   external?: boolean;
 } & ButtonContentProps;

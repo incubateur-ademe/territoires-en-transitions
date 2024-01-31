@@ -24,7 +24,7 @@ export const Button = forwardRef(
       size = 'md',
       className,
       icon,
-      iconPosition,
+      iconPosition = 'left',
       external,
       ...props
     }: ButtonProps,
@@ -41,14 +41,18 @@ export const Button = forwardRef(
       buttonSizeClassnames[size][isIconButton ? 'iconButton' : 'textButton'];
 
     const buttonClassname = classNames(
-      'w-fit border-solid font-bold group',
+      'w-fit flex items-center border-solid group',
       {
+        // Layout du bouton
+        'gap-1': size === 'xs',
+        'gap-2': size === 'sm' || size === 'md' || size === 'xl',
         // Styles du curseur
         'cursor-pointer': !disabled,
         'cursor-not-allowed': disabled,
-        // Bordures
-        'rounded-lg border': variant !== 'underlined',
-        'border-b border-t-0 border-x-0 !p-px': variant === 'underlined',
+        // Bordures et polices
+        'rounded-lg border font-bold': variant !== 'underlined',
+        'border-b border-t-0 border-x-0 !p-px font-medium':
+          variant === 'underlined',
         'hover:border-b-2 hover:!pb-0': variant === 'underlined' && !disabled,
       },
       text,
@@ -63,7 +67,6 @@ export const Button = forwardRef(
       variant,
       size,
       icon,
-      iconPosition,
       disabled,
     };
 
@@ -77,7 +80,11 @@ export const Button = forwardRef(
         <button
           ref={ref as Ref<HTMLButtonElement>}
           {...buttonProps}
-          className={classNames(buttonClassname, className)}
+          className={classNames(
+            buttonClassname,
+            {'flex-row-reverse': iconPosition === 'right'},
+            className
+          )}
         >
           <ButtonContent {...buttonContentProps} />
         </button>
@@ -90,12 +97,13 @@ export const Button = forwardRef(
       return (
         <a
           {...anchorProps}
+          ref={ref as Ref<HTMLAnchorElement>}
           // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
           // after:hidden supprime l'icône external par défaut du dsfr
-          ref={ref as Ref<HTMLAnchorElement>}
           className={classNames(
-            'inline-block w-fit bg-none after:hidden',
+            'bg-none after:hidden',
             buttonClassname,
+            {'flex-row-reverse': iconPosition === 'right' || openInNewTab},
             className
           )}
           target={openInNewTab ? '_blank' : props.target}
@@ -108,7 +116,6 @@ export const Button = forwardRef(
           <ButtonContent
             {...buttonContentProps}
             icon={openInNewTab ? 'external-link-line' : icon}
-            iconPosition={openInNewTab ? 'right' : iconPosition}
           />
         </a>
       );

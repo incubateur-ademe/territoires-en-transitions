@@ -1,5 +1,3 @@
-import classNames from 'classnames';
-
 import {Icon, IconSize} from '@design-system/Icon';
 import {buttonThemeClassnames} from './theme';
 import {ButtonContentProps, ButtonSize} from './types';
@@ -23,20 +21,13 @@ const ButtonContent = ({
   variant = 'primary',
   size = 'md',
   icon,
-  iconPosition = 'left',
   children,
   disabled,
 }: ButtonContentProps) => {
   const buttonState = disabled ? 'disabled' : 'default';
 
   return (
-    <div
-      className={classNames('flex items-center', {
-        'gap-1': size === 'xs',
-        'gap-2': size === 'sm' || size === 'md' || size === 'xl',
-        'flex-row-reverse': iconPosition === 'right',
-      })}
-    >
+    <>
       {!!icon && (
         <Icon
           icon={icon}
@@ -45,8 +36,8 @@ const ButtonContent = ({
         />
       )}
 
-      {!!children && <div>{children}</div>}
-    </div>
+      {!!children && children}
+    </>
   );
 };
 
