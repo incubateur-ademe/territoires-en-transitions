@@ -45,9 +45,9 @@ create policy allow_update
 
 create table action_impact_panier
 (
-    panier uuid references panier           not null,
-    action integer references action_impact not null,
-    primary key (panier, action)
+    panier_id uuid references panier           not null,
+    action_id integer references action_impact not null,
+    primary key (panier_id, action_id)
 );
 comment on table action_impact_panier is
     'Une action dans son panier. '
@@ -73,10 +73,10 @@ create policy allow_read on
 
 create table action_impact_statut
 (
-    panier    uuid references panier                  not null,
-    categorie text references action_impact_categorie not null,
-    action    integer references action_impact        not null,
-    primary key (panier, action)
+    panier_id    uuid references panier                  not null,
+    action_id    integer references action_impact        not null,
+    categorie_id text references action_impact_categorie not null,
+    primary key (panier_id, action_id)
 );
 comment on table action_impact_statut is
     'Le statut d''une action dans un panier, ex "En cours". '
@@ -168,13 +168,13 @@ begin
     then
         update panier aip
         set latest_update = current_timestamp
-        where aip.id = new.panier;
+        where aip.id = new.panier_id;
         return new;
     elseif old is not null
     then
         update panier aip
         set latest_update = current_timestamp
-        where aip.id = old.panier;
+        where aip.id = old.panier_id;
         return old;
     end if;
 end
@@ -237,9 +237,9 @@ begin
            aip is not null as isInPanier
     from action_impact a
              left join action_impact_panier aip
-                       on aip.action = a.id and aip.panier = $1.id
+                       on aip.action_id = a.id and aip.panier_id = $1.id
              left join action_impact_statut ais
-                       on ais.action = a.id and ais.panier = $1.id;
+                       on ais.action_id = a.id and ais.panier_id = $1.id;
 end;
 comment on function action_impact_state is
     'La liste des actions et de leurs états pour un panier.';
