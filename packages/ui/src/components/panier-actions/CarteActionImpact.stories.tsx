@@ -2,7 +2,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {CarteActionImpact} from './CarteActionImpact';
 
 const meta: Meta<typeof CarteActionImpact> = {
-  title: "Composants métier/Panier d'actions/CarteActionImpact",
+  title: "Composants métier/Panier d'actions/Carte action à impact",
   component: CarteActionImpact,
   argTypes: {
     complexite: {
@@ -28,3 +28,7 @@ export default meta;
 type Story = StoryObj<typeof CarteActionImpact>;
 
 export const Default: Story = {};
+
+export const CarteSelectionnee: Story = {
+  render: args => <CarteActionImpact {...args} selectionnee={true} />,
+};

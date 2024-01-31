@@ -1,10 +1,10 @@
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
 import {Card} from '@design-system/Card';
-import {Icon} from '@design-system/Icon';
 import {Tooltip} from '@design-system/Tooltip';
 import classNames from 'classnames';
-import {useState} from 'react';
+import {valeurToBadge} from './utils';
+import {NiveauBudget} from './NiveauBudget';
 
 type CarteActionImpactProps = {
   /** Titre de l'action à impact */
@@ -32,67 +32,40 @@ export const CarteActionImpact = ({
   categorie,
   complexite,
   budget,
-  selectionnee = false,
+  selectionnee,
   onToggleSelected,
   onUpdateStatus,
 }: CarteActionImpactProps) => {
-  const [isSelected, setIsSelected] = useState(selectionnee);
-
-  const valeurBadge =
-    complexite === 1 ? 'simple' : complexite === 2 ? 'intermédiaire' : 'élevée';
-
-  const etatBadge =
-    complexite === 1 ? 'success' : complexite === 2 ? 'warning' : 'error';
-
-  const handleToggleSelect = value => {
-    setIsSelected(value);
-    onToggleSelected(value);
-  };
+  const handleToggleSelect = value => onToggleSelected(value);
 
   return (
     <Card
       style={{maxWidth: '400px'}}
       className="box-content"
-      isSelected={isSelected}
+      isSelected={selectionnee}
       header={
         <div className="flex justify-between">
           {/* Catégorie */}
           <div>{categorie}</div>
 
           {/* Budget */}
-          <div>
-            <Icon icon="money-euro-circle-fill" className="text-secondary-1" />
-            <Icon
-              icon="money-euro-circle-fill"
-              className={classNames({
-                'text-secondary-1': budget >= 2,
-                'text-grey-4': budget < 2,
-              })}
-            />
-            <Icon
-              icon="money-euro-circle-fill"
-              className={classNames({
-                'text-secondary-1': budget === 3,
-                'text-grey-4': budget < 3,
-              })}
-            />
-          </div>
+          <NiveauBudget budget={budget} />
         </div>
       }
       footer={
         <div className="flex justify-between items-center relative">
           {/* Badge de complexité */}
           <Badge
-            title={`Complexité ${valeurBadge}`}
+            title={`Complexité ${valeurToBadge[complexite].nom}`}
             size="sm"
-            state={etatBadge}
+            state={valeurToBadge[complexite].style}
             className={classNames('absolute', {
-              'group-hover:hidden': !isSelected,
+              'group-hover:hidden': !selectionnee,
             })}
           />
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          {isSelected ? (
+          {selectionnee ? (
             <Button
               size="xs"
               className="invisible group-hover:visible ml-auto"
