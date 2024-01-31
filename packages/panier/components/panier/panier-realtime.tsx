@@ -1,26 +1,27 @@
-'use client';
+"use client";
 
-import {ReactNode, useEffect} from 'react';
-import {useRouter} from 'next/navigation';
-import {PanierActionImpact} from '@tet/api';
-import {supabase} from 'lib/supabaseClient';
+import { ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { PanierActionImpact } from "@tet/api";
+import { supabase } from "lib/supabaseClient";
 import {
   ActionImpact,
   ActionImpactStatut,
-} from '@tet/api/dist/src/panier_action_impact/index';
+  Categorie,
+} from "@tet/api/dist/src/panier_action_impact/index";
 
-export default function PanierRealtime({panier}: {
-  panier: PanierActionImpact.Panier
+export default function PanierRealtime({ panier, categories }: {
+  panier: PanierActionImpact.Panier;
+  categories: Categorie[];
 }) {
   const router = useRouter();
-
   useEffect(() => {
-    const channel = supabase.channel('realtime todos').on(
-      'postgres_changes',
+    const channel = supabase.channel("realtime todos").on(
+      "postgres_changes",
       {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'panier',
+        event: "UPDATE",
+        schema: "public",
+        table: "panier",
         filter: `id=eq.${panier.id}`,
       },
       (payload) => {
@@ -36,42 +37,71 @@ export default function PanierRealtime({panier}: {
   return (
     <div>
       <h2>Actions</h2>
-      {panier.states.map((state) =>
+      {panier.states.map((state) => (
         <ActionImpactCard key={state.action.id} action={state.action}>
           <ActionCardStatutBar
-            action={state.action}
             statut={state.statut}
+            categories={categories}
             onAdd={async () => {
               await supabase.from(
-                'action_impact_panier').
-                insert({'action_id': state.action.id, 'panier_id': panier.id});
+                "action_impact_panier",
+              )
+                .insert({
+                  "action_id": state.action.id,
+                  "panier_id": panier.id,
+                });
             }}
-            onStatut={(statut) => {}}
-            isInPanier={state.isinpanier} />
-        </ActionImpactCard>)}
+            onCategory={async (category_id) => {
+              if (category_id) {
+                await supabase.from(
+                  "action_impact_statut",
+                )
+                  .upsert({
+                    "action_id": state.action.id,
+                    "panier_id": panier.id,
+                    "categorie_id": category_id,
+                  });
+              } else {
+                await supabase.from(
+                  "action_impact_statut",
+                )
+                  .delete()
+                  .eq("action_id", state.action.id)
+                  .eq("panier_id", panier.id);
+              }
+            }}
+            isInPanier={state.isinpanier}
+          />
+        </ActionImpactCard>
+      ))}
 
       <h2>Panier</h2>
-      {panier.contenu.map((action) =>
+      {panier.contenu.map((action) => (
         <ActionImpactCard key={action.id} action={action} isInPanier>
           <ActionCardRemoveBar
             action={action}
             onRemove={async () => {
               await supabase.from(
-                'action_impact_panier').
-                delete().
-                eq('action_id', action.id).
-                eq('panier_id', panier.id);
-            }} />
-        </ActionImpactCard>)}
+                "action_impact_panier",
+              )
+                .delete()
+                .eq("action_id", action.id)
+                .eq("panier_id", panier.id);
+            }}
+          />
+        </ActionImpactCard>
+      ))}
     </div>
   );
 }
 
-function ActionImpactCard({action, isInPanier, children}: {
-  action: ActionImpact,
-  isInPanier?: boolean,
-  children?: ReactNode
-}) {
+function ActionImpactCard(
+  { action, isInPanier, children }: {
+    action: ActionImpact;
+    isInPanier?: boolean;
+    children?: ReactNode;
+  },
+) {
   return (
     <div>
       <h4>{action.titre}</h4>
@@ -80,11 +110,10 @@ function ActionImpactCard({action, isInPanier, children}: {
   );
 }
 
-function ActionCardRemoveBar({action, onRemove}: {
-  action: ActionImpact,
-  onRemove: () => void
+function ActionCardRemoveBar({ action, onRemove }: {
+  action: ActionImpact;
+  onRemove: () => void;
 }) {
-
   return (
     <div>
       <button onClick={onRemove}>Retirer du panier</button>
@@ -92,22 +121,36 @@ function ActionCardRemoveBar({action, onRemove}: {
   );
 }
 
-function ActionCardStatutBar({action, statut, onAdd, isInPanier}: {
-  action: ActionImpact,
-  statut: ActionImpactStatut | null,
-  isInPanier?: boolean,
-  onAdd: () => void
-  onStatut: (statut: string | null) => void
-}) {
-  const categorie = !statut ? '' : statut.categorie_id;
-
+function ActionCardStatutBar(
+  {
+    onCategory,
+    categories,
+    statut,
+    onAdd,
+    isInPanier,
+  }: {
+    statut: ActionImpactStatut | null;
+    categories: Categorie[];
+    isInPanier?: boolean;
+    onAdd: () => void;
+    onCategory: (category_id: string | null) => void;
+  },
+) {
   return (
     <div>
-      <h5>{categorie}</h5>
+      {categories.map((category) => (
+        <button
+          key={category.id}
+          onClick={statut?.categorie_id == category.id
+            ? () => onCategory(null)
+            : () => onCategory(category.id)}
+        >
+          {statut?.categorie_id == category.id ? "X" : ""} {category.nom}
+        </button>
+      ))}
       <div>
         <button onClick={onAdd} disabled={isInPanier}>Ajouter au panier</button>
       </div>
     </div>
   );
 }
-
