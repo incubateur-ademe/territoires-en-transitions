@@ -625,3 +625,4 @@ automatisation/newsletters [automatisation/newsletters@v2.90.0] 2024-01-12T14:59
 labellisation/demande [labellisation/demande@v2.95.0] 2024-01-23T13:19:20Z Amandine Jacquelin <conta@LanceLibre> # Remplace la valeur par défaut d'une demande par 'non defini' au lieu de 'cot'
 labellisation/audit [labellisation/audit@v2.95.0] 2024-01-23T14:33:16Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la validation CNL pour les audits de labellisation
 collectivite/mes_collectivites [collectivite/mes_collectivites@v2.95.0] 2024-01-30T16:28:27Z Amandine Jacquelin <conta@LanceLibre> # Corrige la vue mes_collectivites pour les auditeurs
+labellisation/parcours [labellisation/parcours@v2.96.0] 2024-01-31T13:16:30Z Amandine Jacquelin <conta@LanceLibre> # Corrige la selection des critères
