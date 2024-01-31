@@ -19,6 +19,8 @@ export type Panier =
   states: ActionImpactState[]
 }
 
+export type Niveau = {niveau: number, nom: string};
+
 /**
  * On sélectionne toutes les colonnes du panier : *
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`

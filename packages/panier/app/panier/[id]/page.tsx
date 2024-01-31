@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Categorie,
+  Categorie, Niveau,
   panierSelect,
 } from "@tet/api/dist/src/panier_action_impact/index";
 import { PanierActionImpact } from "@tet/api";
@@ -34,9 +34,20 @@ const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
 async function fetchCategories(): Promise<Categorie[]> {
   const response = await fetch(`${apiUrl}/rest/v1/action_impact_categorie`, {
-    // todo @derfurth: use cache
-    cache: "no-store",
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
+  return await response.json();
+}
+
+async function fetchNiveaux(
+  table: 'action_impact_complexite' | 'action_impact_fourchette_budgetaire' | 'action_impact_tier',
+): Promise<Niveau[]> {
+  const response = await fetch(`${apiUrl}/rest/v1/${table}`, {
+    cache: 'no-store',
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${apiKey}`,
     },
