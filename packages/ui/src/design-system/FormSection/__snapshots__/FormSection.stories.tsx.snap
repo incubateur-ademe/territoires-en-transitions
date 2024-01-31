@@ -15,7 +15,7 @@ exports[`Design System/FormSection AvecDescription smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     </div>
   </div>
 </div>
@@ -38,8 +38,8 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
-      <div class="flex-grow flex flex-col gap-3 col-span-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="flex-grow flex flex-col gap-3 md:col-span-2">
         <label>
           <div class="font-medium text-grey-8">
             Titre du plan
@@ -109,7 +109,7 @@ exports[`Design System/FormSection AvecIcone smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     </div>
   </div>
 </div>
@@ -127,7 +127,7 @@ exports[`Design System/FormSection Default smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     </div>
   </div>
 </div>
@@ -150,8 +150,8 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
-      <div class="flex-grow flex flex-col gap-3 col-span-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="flex-grow flex flex-col gap-3 md:col-span-2">
         <label>
           <div class="font-medium text-grey-8">
             Titre du plan
@@ -211,8 +211,8 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
       <div class="h-px bg-primary-3">
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-6">
-      <div class="flex-grow flex flex-col gap-3 col-span-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="flex-grow flex flex-col gap-3 md:col-span-2">
         <label>
           <div class="font-medium text-grey-8">
             Titre du plan
