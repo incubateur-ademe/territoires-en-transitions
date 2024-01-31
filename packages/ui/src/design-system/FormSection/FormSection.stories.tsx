@@ -43,7 +43,7 @@ export const AvecFields: Story = {
     icon: 'leaf-fill',
     children: (
       <>
-        <Field title="Titre du plan" className="col-span-2">
+        <Field title="Titre du plan" className="md:col-span-2">
           <Input type="text" />
         </Field>
         <Field title="Statut">
@@ -66,7 +66,7 @@ export const PlusieursSections: Story = {
           title="Titre de la section"
           description="Description de la section"
         >
-          <Field title="Titre du plan" className="col-span-2">
+          <Field title="Titre du plan" className="md:col-span-2">
             <Input type="text" />
           </Field>
           <Field title="Statut">
@@ -77,7 +77,7 @@ export const PlusieursSections: Story = {
           </Field>
         </FormSection>
         <FormSection title="Le titre d'une autre section">
-          <Field title="Titre du plan" className="col-span-2">
+          <Field title="Titre du plan" className="md:col-span-2">
             <Input type="text" />
           </Field>
         </FormSection>
