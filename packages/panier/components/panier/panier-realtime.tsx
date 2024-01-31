@@ -104,7 +104,7 @@ function ActionImpactCard(
 ) {
   return (
     <div>
-      <h4>{action.titre}</h4>
+      <h4>{action.titre} <span>{action.fourchette_budgetaire}</span></h4>
       {children}
     </div>
   );
