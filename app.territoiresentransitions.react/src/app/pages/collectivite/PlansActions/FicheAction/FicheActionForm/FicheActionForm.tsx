@@ -289,12 +289,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               options={ficheActionStatutOptions}
               onSelect={value => updateFiche({...fiche, statut: value})}
               placeholderText="Sélectionnez une option"
-              renderSelection={v => <BadgeStatut statut={v} small />}
+              renderSelection={v => <BadgeStatut statut={v} />}
               renderOption={option => (
-                <BadgeStatut
-                  statut={option.value as TFicheActionStatuts}
-                  small
-                />
+                <BadgeStatut statut={option.value as TFicheActionStatuts} />
               )}
               disabled={isReadonly}
             />
@@ -307,11 +304,10 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               onSelect={value =>
                 updateFiche({...fiche, niveau_priorite: value})
               }
-              renderSelection={v => <BadgePriorite priorite={v} small />}
+              renderSelection={v => <BadgePriorite priorite={v} />}
               renderOption={option => (
                 <BadgePriorite
                   priorite={option.value as TFicheActionNiveauxPriorite}
-                  small
                 />
               )}
               placeholderText="Sélectionnez une option"

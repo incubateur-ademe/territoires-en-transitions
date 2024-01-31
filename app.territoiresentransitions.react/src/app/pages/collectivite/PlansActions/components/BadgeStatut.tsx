@@ -1,31 +1,31 @@
-import classNames from 'classnames';
+import {Badge, BadgeState} from '@tet/ui';
 
-import Badge from './Badge';
 import {TFicheActionStatuts} from 'types/alias';
 
-const statusToColor: Record<TFicheActionStatuts, string> = {
-  'À venir': 'text-blue-600 bg-blue-100',
-  'En cours': 'text-indigo-800 bg-indigo-100',
-  Réalisé: 'text-green-700 bg-green-200',
-  'En pause': 'text-amber-700 bg-orange-100',
-  Abandonné: 'text-rose-700 bg-rose-100',
+const statusToState: Record<TFicheActionStatuts, BadgeState> = {
+  'À venir': 'standard',
+  'En cours': 'info',
+  Réalisé: 'success',
+  'En pause': 'warning',
+  Abandonné: 'grey',
 };
 
 type Props = {
   className?: string;
   statut: TFicheActionStatuts;
   // Rend une version plus petite du composant
-  small?: boolean;
+  size?: 'sm' | 'md';
 };
 
-const BadgeStatut = ({className, statut, small}: Props) => {
+/** Badge représentant le statut d'une fiche action */
+const BadgeStatut = ({className, statut, size}: Props) => {
   return (
     <Badge
       dataTest="FicheActionBadgeStatut"
-      title="Statut"
-      className={classNames(statusToColor[statut], className)}
-      label={statut}
-      small={small}
+      className={className}
+      title={statut}
+      state={statusToState[statut]}
+      size={size}
     />
   );
 };

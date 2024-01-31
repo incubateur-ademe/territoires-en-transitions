@@ -1,27 +1,28 @@
-import classNames from 'classnames';
-import {TFicheActionNiveauxPriorite} from 'types/alias';
-import Badge from './Badge';
+import {Badge, BadgeState} from '@tet/ui';
 
-const prioritesToColor: Record<TFicheActionNiveauxPriorite, string> = {
-  Bas: 'text-success-1 bg-success-2',
-  Moyen: 'text-warning-1 bg-warning-2',
-  Élevé: 'text-error-1 bg-error-2',
+import {TFicheActionNiveauxPriorite} from 'types/alias';
+
+const prioritesToState: Record<TFicheActionNiveauxPriorite, BadgeState> = {
+  Bas: 'success',
+  Moyen: 'warning',
+  Élevé: 'error',
 };
 
 type Props = {
   className?: string;
   priorite: TFicheActionNiveauxPriorite;
   // Rend une version plus petite du composant
-  small?: boolean;
+  size?: 'sm' | 'md';
 };
 
-const BadgePriorite = ({className, priorite, small}: Props) => {
+const BadgePriorite = ({className, priorite, size}: Props) => {
   return (
     <Badge
-      title="Priorité"
-      className={classNames(prioritesToColor[priorite], className)}
-      label={priorite}
-      small={small}
+      className={className}
+      title={priorite}
+      state={prioritesToState[priorite]}
+      size={size}
+      light
     />
   );
 };
