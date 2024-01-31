@@ -2890,15 +2890,15 @@ export interface Database {
       action_impact_action: {
         Row: {
           action_id: string
-          action_impact: number
+          action_impact_id: number
         }
         Insert: {
           action_id: string
-          action_impact: number
+          action_impact_id: number
         }
         Update: {
           action_id?: string
-          action_impact?: number
+          action_impact_id?: number
         }
         Relationships: [
           {
@@ -2908,8 +2908,8 @@ export interface Database {
             referencedColumns: ["action_id"]
           },
           {
-            foreignKeyName: "action_impact_action_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_action_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           }
@@ -2917,27 +2917,27 @@ export interface Database {
       }
       action_impact_banatic_competence: {
         Row: {
-          action_impact: number
-          banatic_competence: number
+          action_impact_id: number
+          banatic_competence_id: number
         }
         Insert: {
-          action_impact: number
-          banatic_competence: number
+          action_impact_id: number
+          banatic_competence_id: number
         }
         Update: {
-          action_impact?: number
-          banatic_competence?: number
+          action_impact_id?: number
+          banatic_competence_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_banatic_competence_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_banatic_competence_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_banatic_competence_banatic_competence_fkey"
-            columns: ["banatic_competence"]
+            foreignKeyName: "action_impact_banatic_competence_banatic_competence_id_fkey"
+            columns: ["banatic_competence_id"]
             referencedRelation: "banatic_competence"
             referencedColumns: ["code"]
           }
@@ -2960,27 +2960,27 @@ export interface Database {
       }
       action_impact_categorie_fnv: {
         Row: {
-          action_impact: number
-          categorie_fnv: number
+          action_impact_id: number
+          categorie_fnv_id: number
         }
         Insert: {
-          action_impact: number
-          categorie_fnv: number
+          action_impact_id: number
+          categorie_fnv_id: number
         }
         Update: {
-          action_impact?: number
-          categorie_fnv?: number
+          action_impact_id?: number
+          categorie_fnv_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_categorie_fnv_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_categorie_fnv_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_categorie_fnv_categorie_fnv_fkey"
-            columns: ["categorie_fnv"]
+            foreignKeyName: "action_impact_categorie_fnv_categorie_fnv_id_fkey"
+            columns: ["categorie_fnv_id"]
             referencedRelation: "categorie_fnv"
             referencedColumns: ["id"]
           }
@@ -3018,21 +3018,21 @@ export interface Database {
       }
       action_impact_indicateur: {
         Row: {
-          action_impact: number
+          action_impact_id: number
           indicateur_id: string
         }
         Insert: {
-          action_impact: number
+          action_impact_id: number
           indicateur_id: string
         }
         Update: {
-          action_impact?: number
+          action_impact_id?: number
           indicateur_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_indicateur_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_indicateur_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
@@ -3046,27 +3046,27 @@ export interface Database {
       }
       action_impact_panier: {
         Row: {
-          action: number
-          panier: string
+          action_id: number
+          panier_id: string
         }
         Insert: {
-          action: number
-          panier: string
+          action_id: number
+          panier_id: string
         }
         Update: {
-          action?: number
-          panier?: string
+          action_id?: number
+          panier_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_panier_action_fkey"
-            columns: ["action"]
+            foreignKeyName: "action_impact_panier_action_id_fkey"
+            columns: ["action_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_panier_panier_fkey"
-            columns: ["panier"]
+            foreignKeyName: "action_impact_panier_panier_id_fkey"
+            columns: ["panier_id"]
             referencedRelation: "panier"
             referencedColumns: ["id"]
           }
@@ -3074,27 +3074,27 @@ export interface Database {
       }
       action_impact_sous_thematique: {
         Row: {
-          action_impact: number
-          sous_thematique: number
+          action_impact_id: number
+          sous_thematique_id: number
         }
         Insert: {
-          action_impact: number
-          sous_thematique: number
+          action_impact_id: number
+          sous_thematique_id: number
         }
         Update: {
-          action_impact?: number
-          sous_thematique?: number
+          action_impact_id?: number
+          sous_thematique_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_sous_thematique_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_sous_thematique_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_sous_thematique_sous_thematique_fkey"
-            columns: ["sous_thematique"]
+            foreignKeyName: "action_impact_sous_thematique_sous_thematique_id_fkey"
+            columns: ["sous_thematique_id"]
             referencedRelation: "sous_thematique"
             referencedColumns: ["id"]
           }
@@ -3120,36 +3120,36 @@ export interface Database {
       }
       action_impact_statut: {
         Row: {
-          action: number
-          categorie: string
-          panier: string
+          action_id: number
+          categorie_id: string
+          panier_id: string
         }
         Insert: {
-          action: number
-          categorie: string
-          panier: string
+          action_id: number
+          categorie_id: string
+          panier_id: string
         }
         Update: {
-          action?: number
-          categorie?: string
-          panier?: string
+          action_id?: number
+          categorie_id?: string
+          panier_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_statut_action_fkey"
-            columns: ["action"]
+            foreignKeyName: "action_impact_statut_action_id_fkey"
+            columns: ["action_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_statut_categorie_fkey"
-            columns: ["categorie"]
+            foreignKeyName: "action_impact_statut_categorie_id_fkey"
+            columns: ["categorie_id"]
             referencedRelation: "action_impact_categorie"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_statut_panier_fkey"
-            columns: ["panier"]
+            foreignKeyName: "action_impact_statut_panier_id_fkey"
+            columns: ["panier_id"]
             referencedRelation: "panier"
             referencedColumns: ["id"]
           }
@@ -3157,27 +3157,27 @@ export interface Database {
       }
       action_impact_thematique: {
         Row: {
-          action_impact: number
-          thematique: number
+          action_impact_id: number
+          thematique_id: number
         }
         Insert: {
-          action_impact: number
-          thematique: number
+          action_impact_id: number
+          thematique_id: number
         }
         Update: {
-          action_impact?: number
-          thematique?: number
+          action_impact_id?: number
+          thematique_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "action_impact_thematique_action_impact_fkey"
-            columns: ["action_impact"]
+            foreignKeyName: "action_impact_thematique_action_impact_id_fkey"
+            columns: ["action_impact_id"]
             referencedRelation: "action_impact"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "action_impact_thematique_thematique_fkey"
-            columns: ["thematique"]
+            foreignKeyName: "action_impact_thematique_thematique_id_fkey"
+            columns: ["thematique_id"]
             referencedRelation: "thematique"
             referencedColumns: ["id"]
           }
