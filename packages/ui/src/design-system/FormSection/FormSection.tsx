@@ -37,7 +37,12 @@ export const FormSection = ({
         <div className="h-px bg-primary-3" />
       </div>
       {/** Grille de children */}
-      <div className={classNames('grid grid-cols-2 gap-6', className)}>
+      <div
+        className={classNames(
+          'grid grid-cols-1 md:grid-cols-2 gap-6',
+          className
+        )}
+      >
         {children}
       </div>
     </div>
