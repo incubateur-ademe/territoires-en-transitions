@@ -71,7 +71,7 @@ describe('État du panier', async () => {
         `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`);
       assert.exists(selectPanierContenu.data,
         `Sélectionner un panier devrait renvoyer un panier.`);
-      assert.equal(selectPanierContenu.data.contenuPanier.length, 1,
+      assert.equal(selectPanierContenu.data.contenu.length, 1,
         `Le panier devrait contenir une action.`);
     });
 });
@@ -96,7 +96,7 @@ describe('État des actions', async () => {
         `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`);
       assert.exists(selectPanierContenu.data,
         `Sélectionner un panier devrait renvoyer un panier.`);
-      assert.equal(selectPanierContenu.data.contenuPanier.length, 1,
+      assert.equal(selectPanierContenu.data.contenu.length, 1,
         `Le panier devrait contenir une action.`);
 
       const {error, data} = await supabase.from('panier').
