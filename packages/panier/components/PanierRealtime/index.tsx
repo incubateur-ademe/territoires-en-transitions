@@ -112,7 +112,7 @@ function ActionImpactCard(
   return (
     <div>
       <h4 onClick={onOpen} style={{cursor: 'pointer'}}>{action.titre}
-        <span>{action.fourchette_budgetaire}</span></h4>
+        <span> {'€'.repeat(action.fourchette_budgetaire)}</span></h4>
       {children}
     </div>
   );
