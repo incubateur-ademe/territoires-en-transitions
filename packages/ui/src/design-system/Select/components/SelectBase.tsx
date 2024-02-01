@@ -7,12 +7,15 @@ import {DropdownFloater} from '@components/floating-ui/DropdownFloater';
 import {Icon} from '@design-system/Icon';
 import {Badge} from '@design-system/Badge';
 
-import Options, {OptionValue, SelectOption, Option} from './Options';
+import Options from './Options';
 import {
   filterOptions,
   getOptionLabel,
   getFlatOptions,
   sortOptionByAlphabet,
+  Option,
+  OptionValue,
+  SelectOption,
 } from '../utils';
 
 export type CreateOption = {
