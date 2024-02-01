@@ -54,8 +54,6 @@ module.exports = function (env, argv) {
       filename: 'index.js',
       // le chemin du répertoire cible du build
       path: path.resolve(__dirname, 'dist'),
-      // vide le répertoire cible avant chaque build
-      clean: true,
       // permet que le build UMD soit compatible node & browser
       globalObject: 'this',
       // type d'exports générés
