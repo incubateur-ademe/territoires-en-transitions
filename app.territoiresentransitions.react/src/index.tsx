@@ -1,9 +1,13 @@
+import React from 'react';
 import {createRoot} from 'react-dom/client';
 import * as Sentry from '@sentry/react';
 import {App} from 'app/App';
 import {ENV} from 'environmentVariables';
 import 'css';
-import React from 'react';
+import {Crisp} from 'crisp-sdk-web';
+
+// initialise la chatbox
+Crisp.configure(ENV.crispId || 'fake');
 
 // traçage des perf. et erreurs
 if (ENV.sentry_dsn) {

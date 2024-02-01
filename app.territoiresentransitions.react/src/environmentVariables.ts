@@ -4,6 +4,7 @@ export const ENV = {
   supabase_anon_key: process.env.REACT_APP_SUPABASE_KEY,
   supabase_url: process.env.REACT_APP_SUPABASE_URL,
   sentry_dsn: process.env.REACT_APP_SENTRY_DSN,
+  crispId: process.env.REACT_APP_CRISP_WEBSITE_ID,
 };
 
 if (ENV.node_env !== 'test') {
