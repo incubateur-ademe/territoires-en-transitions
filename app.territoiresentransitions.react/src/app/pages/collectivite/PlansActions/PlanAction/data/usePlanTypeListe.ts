@@ -1,7 +1,8 @@
 import {useQuery} from 'react-query';
 
+import {OptionSection} from '@tet/ui';
+
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TOptionSection} from 'ui/shared/select/commons';
 
 const fetchPlanTypeListe = async () => {
   const query = supabaseClient.from('plan_action_type').select();
@@ -18,20 +19,23 @@ const fetchPlanTypeListe = async () => {
 export const usePlanTypeListe = () => {
   const {data} = useQuery(['plan_action_type'], () => fetchPlanTypeListe());
 
-  const options = data?.reduce((acc: TOptionSection[], curr) => {
+  /** Formate la liste pour créer des options avec section */
+  const options = data?.reduce((acc: OptionSection[], curr) => {
+    /** Ajout des sections */
     if (!acc.some(v => v.title === curr.categorie)) {
       acc.push({
         title: curr.categorie,
         options: [
           {
-            value: curr.id.toString(),
+            value: curr.id,
             label: `${curr.type}${curr.detail ? ` (${curr.detail})` : ''}`,
           },
         ],
       });
     } else {
+      /** Ajout des options dans les sections */
       acc[acc.findIndex(v => v.title === curr.categorie)].options.push({
-        value: curr.id.toString(),
+        value: curr.id,
         label: `${curr.type}${curr.detail ? ` (${curr.detail})` : ''}`,
       });
     }
