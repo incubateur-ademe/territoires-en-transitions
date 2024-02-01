@@ -1,9 +1,9 @@
-import {TOption} from 'ui/shared/select/commons';
+import {Checkbox, Option} from '@tet/ui';
 
 export type TMultiSelectCheckboxesProps = {
   htmlId: string;
   title: string;
-  options: TOption[];
+  options: Option[];
   selected: string[];
   onChange: (selected: string[]) => void;
 };
@@ -12,37 +12,35 @@ export type TMultiSelectCheckboxesProps = {
  * Permet de sélectionner plusieurs options d'une liste via des checkboxes
  */
 export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
-  const {htmlId, selected, title, options, onChange} = props;
+  const {selected, title, options, onChange} = props;
   const optionsIncludingAll = [{value: 'all', label: 'Tous'}, ...options];
 
   return (
     <div>
-      <div className="font-bold py-4 border-b border-b-primary-3">{title}</div>
-      <div className="small-checkbox  fr-checkbox-group">
+      <div className="font-bold py-4 mb-6 border-b border-b-primary-3">
+        {title}
+      </div>
+      <div className="flex flex-col gap-4">
         {optionsIncludingAll.map(option => (
-          <div className="my-3.5" key={option.value}>
-            <input
-              type="checkbox"
-              className="fr-toggle__input !mt-0"
-              id={htmlId + option.value}
-              disabled={option.value === 'all' && selected.length === 0}
-              checked={
-                selected.length === 0
-                  ? option.value === 'all'
-                  : selected.includes(option.value as string)
+          <Checkbox
+            key={option.value}
+            label={option.label}
+            disabled={option.value === 'all' && selected.length === 0}
+            checked={
+              selected.length === 0
+                ? option.value === 'all'
+                : selected.includes(option.value as string)
+            }
+            onChange={e => {
+              if (e.currentTarget.checked) {
+                if (option.value === 'all') {
+                  onChange([]);
+                } else onChange([...selected, option.value as string]);
+              } else {
+                onChange(selected.filter(s => s !== option.value));
               }
-              onChange={e => {
-                if (e.currentTarget.checked) {
-                  if (option.value === 'all') {
-                    onChange([]);
-                  } else onChange([...selected, option.value as string]);
-                } else {
-                  onChange(selected.filter(s => s !== option.value));
-                }
-              }}
-            />
-            <label htmlFor={htmlId + option.value}>{option.label}</label>
-          </div>
+            }}
+          />
         ))}
       </div>
     </div>
