@@ -3,12 +3,8 @@
 exports[`design-system/Modal/ModalFooter Center smoke-test 1`] = `
 <hr class="mt-4">
 <div class="flex gap-4 justify-center">
-  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-    <div class="flex items-center gap-2">
-      <div>
-        OK
-      </div>
-    </div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    OK
   </button>
 </div>
 `;
@@ -16,19 +12,11 @@ exports[`design-system/Modal/ModalFooter Center smoke-test 1`] = `
 exports[`design-system/Modal/ModalFooter Default smoke-test 1`] = `
 <hr class="mt-4">
 <div class="flex gap-4 justify-end">
-  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-    <div class="flex items-center gap-2">
-      <div>
-        Cancel
-      </div>
-    </div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    Cancel
   </button>
-  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-    <div class="flex items-center gap-2">
-      <div>
-        OK
-      </div>
-    </div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    OK
   </button>
 </div>
 `;
@@ -37,36 +25,20 @@ exports[`design-system/Modal/ModalFooter Space smoke-test 1`] = `
 <hr class="mt-4">
 <div class="flex gap-4 justify-between">
   <div class="flex gap-4">
-    <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-      <div class="flex items-center gap-2">
-        <div>
-          Non pertinent
-        </div>
-      </div>
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      Non pertinent
     </button>
-    <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-      <div class="flex items-center gap-2">
-        <div>
-          En cours
-        </div>
-      </div>
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      En cours
     </button>
-    <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-      <div class="flex items-center gap-2">
-        <div>
-          Réalisé
-        </div>
-      </div>
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      Réalisé
     </button>
   </div>
-  <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-    <div class="flex items-center gap-2">
-      <span class="ri-file-add-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
-      </span>
-      <div>
-        Ajouter
-      </div>
-    </div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    <span class="ri-file-add-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Ajouter
   </button>
 </div>
 `;
