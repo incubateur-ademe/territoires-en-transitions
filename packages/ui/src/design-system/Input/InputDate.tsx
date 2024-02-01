@@ -23,6 +23,7 @@ export const InputDate = forwardRef(
         )}
         icon={{
           buttonProps: {
+            type: 'button',
             icon: 'calendar-line',
             onClick: () => {
               inputRef.current?.showPicker();

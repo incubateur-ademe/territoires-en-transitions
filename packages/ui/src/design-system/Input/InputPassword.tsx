@@ -16,6 +16,7 @@ export const InputPassword = forwardRef(
         type={passwordVisible ? 'text' : 'password'}
         icon={{
           buttonProps: {
+            type: 'button',
             icon: passwordVisible ? 'lock-password-line' : 'eye-line',
             title: passwordVisible
               ? 'Cacher le mot de passe'
