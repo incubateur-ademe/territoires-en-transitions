@@ -6,7 +6,7 @@ import {Icon} from '@design-system/Icon';
 import {Button} from '@design-system/Button';
 
 import {CreateOption} from './SelectBase';
-import {Option} from './Options';
+import {Option} from '../utils';
 
 type Props = {
   option: Option;
