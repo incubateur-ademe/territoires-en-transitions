@@ -47,7 +47,7 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="text"
-                 class="text-grey-8 px-4 outline-none text-md py-3"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3"
           >
         </div>
       </div>
@@ -59,7 +59,7 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="date"
-                 class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
           <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
             <div class="flex items-center gap-2">
@@ -77,7 +77,7 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="date"
-                 class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
           <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
             <div class="flex items-center gap-2">
@@ -159,7 +159,7 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="text"
-                 class="text-grey-8 px-4 outline-none text-md py-3"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3"
           >
         </div>
       </div>
@@ -171,7 +171,7 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="date"
-                 class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
           <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
             <div class="flex items-center gap-2">
@@ -189,7 +189,7 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="date"
-                 class="text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
           <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
             <div class="flex items-center gap-2">
@@ -220,7 +220,7 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="text"
-                 class="text-grey-8 px-4 outline-none text-md py-3"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3"
           >
         </div>
       </div>
