@@ -61,11 +61,9 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
           <input type="date"
                  class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
-          <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
-            <div class="flex items-center gap-2">
-              <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
-              </span>
-            </div>
+          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
+            <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+            </span>
           </button>
         </div>
       </div>
@@ -79,11 +77,9 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
           <input type="date"
                  class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
-          <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
-            <div class="flex items-center gap-2">
-              <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
-              </span>
-            </div>
+          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
+            <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+            </span>
           </button>
         </div>
       </div>
@@ -173,11 +169,9 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
           <input type="date"
                  class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
-          <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
-            <div class="flex items-center gap-2">
-              <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
-              </span>
-            </div>
+          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
+            <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+            </span>
           </button>
         </div>
       </div>
@@ -191,11 +185,9 @@ exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
           <input type="date"
                  class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
           >
-          <button class="rounded-lg w-fit border border-solid font-bold group cursor-pointer text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
-            <div class="flex items-center gap-2">
-              <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
-              </span>
-            </div>
+          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none">
+            <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+            </span>
           </button>
         </div>
       </div>
