@@ -384,31 +384,40 @@ export interface Database {
       }
       audit: {
         Row: {
+          clos: boolean
           collectivite_id: number
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide: boolean
+          valide_labellisation: boolean | null
         }
         Insert: {
+          clos?: boolean
           collectivite_id: number
+          date_cnl?: string | null
           date_debut?: string | null
           date_fin?: string | null
           demande_id?: number | null
           id?: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide?: boolean
+          valide_labellisation?: boolean | null
         }
         Update: {
+          clos?: boolean
           collectivite_id?: number
+          date_cnl?: string | null
           date_debut?: string | null
           date_fin?: string | null
           demande_id?: number | null
           id?: number
           referentiel?: Database["public"]["Enums"]["referentiel"]
           valide?: boolean
+          valide_labellisation?: boolean | null
         }
         Relationships: [
           {
@@ -1058,7 +1067,7 @@ export interface Database {
           id: number
           modified_at: string | null
           referentiel: Database["public"]["Enums"]["referentiel"]
-          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+          sujet: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
         Insert: {
           collectivite_id: number
@@ -1070,7 +1079,7 @@ export interface Database {
           id?: number
           modified_at?: string | null
           referentiel: Database["public"]["Enums"]["referentiel"]
-          sujet?: Database["labellisation"]["Enums"]["sujet_demande"]
+          sujet?: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
         Update: {
           collectivite_id?: number
@@ -1082,7 +1091,7 @@ export interface Database {
           id?: number
           modified_at?: string | null
           referentiel?: Database["public"]["Enums"]["referentiel"]
-          sujet?: Database["labellisation"]["Enums"]["sujet_demande"]
+          sujet?: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
         Relationships: [
           {
@@ -1820,19 +1829,23 @@ export interface Database {
           referentiel: Database["public"]["Enums"]["referentiel"]
         }
         Returns: {
+          clos: boolean
           collectivite_id: number
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide: boolean
+          valide_labellisation: boolean | null
         }
       }
       audit_evaluation_payload: {
         Args: {
           audit: unknown
           pre_audit: boolean
+          labellisation: boolean
         }
         Returns: Record<string, unknown>
       }
@@ -1889,13 +1902,16 @@ export interface Database {
           ref: Database["public"]["Enums"]["referentiel"]
         }
         Returns: {
+          clos: boolean
           collectivite_id: number
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide: boolean
+          valide_labellisation: boolean | null
         }
       }
       etoiles: {
@@ -24939,6 +24955,10 @@ export interface Database {
       }
       diag:
         | {
+            Args: Record<PropertyKey, never>
+            Returns: string
+          }
+        | {
             Args: {
               msg: string
             }
@@ -24948,10 +24968,6 @@ export interface Database {
             Args: {
               msg: unknown
             }
-            Returns: string
-          }
-        | {
-            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -26192,13 +26208,16 @@ export interface Database {
           date_fin?: string
         }
         Returns: {
+          clos: boolean
           collectivite_id: number
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide: boolean
+          valide_labellisation: boolean | null
         }
       }
       labellisation_commencer_audit: {
@@ -26207,13 +26226,16 @@ export interface Database {
           date_debut?: string
         }
         Returns: {
+          clos: boolean
           collectivite_id: number
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number
           referentiel: Database["public"]["Enums"]["referentiel"]
           valide: boolean
+          valide_labellisation: boolean | null
         }
       }
       labellisation_demande: {
@@ -26231,7 +26253,7 @@ export interface Database {
           id: number
           modified_at: string | null
           referentiel: Database["public"]["Enums"]["referentiel"]
-          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+          sujet: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
       }
       labellisation_parcours: {
@@ -26275,7 +26297,7 @@ export interface Database {
           id: number
           modified_at: string | null
           referentiel: Database["public"]["Enums"]["referentiel"]
-          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+          sujet: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
       }
       labellisations: {
