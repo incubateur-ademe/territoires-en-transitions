@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import {Filters} from './Filters';
 
 import {Tfilters, TSetFilters, getNumberOfActiveFilters} from '../data/filters';
+import {Button} from '@tet/ui';
 
 type Props = {
   filters: Tfilters;
@@ -29,27 +30,26 @@ const FiltersColonne = ({filters, setFilters}: Props) => {
         {isMobileFilterOpen && (
           <>
             {/* Close filters on mobile */}
-            <div className="w-max ml-auto mb-8 border-b border-bf500">
-              <button
-                onClick={() => setIsMobileFilterOpen(false)}
-                className="flex items-center text-bf500 hover:!bg-none"
-              >
-                <span className="text-md">Fermer</span>
-                <span className="fr-fi-close-line ml-1 mt-1 scale-90"></span>
-              </button>
-            </div>
+            <Button
+              onClick={() => setIsMobileFilterOpen(false)}
+              className="ml-auto mb-8"
+              icon="close-line"
+              iconPosition="right"
+              variant="outlined"
+              size="sm"
+            />
             <h4>Filtrer</h4>
           </>
         )}
         <Filters filters={filters} setFilters={setFilters} />
         {isMobileFilterOpen && (
           /* Display results button on mobile */
-          <button
-            className="fr-btn mt-8 mx-auto"
+          <Button
+            className="mt-8 mx-auto"
             onClick={() => setIsMobileFilterOpen(false)}
           >
             Afficher les résultats
-          </button>
+          </Button>
         )}
       </div>
       {/* Trigger filters on mobile */}
