@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {useRef} from 'react';
+import {Ref, forwardRef, useImperativeHandle, useRef} from 'react';
 import {useDebouncedCallback} from 'use-debounce';
 import {InputBase, InputBaseProps} from './InputBase';
 
@@ -17,43 +17,50 @@ export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
  * Un bouton permet de déclencher la recherche. Le bouton est désactivé si le champ est vide.
  * La recherche se déclenche également automatiquement (avec un `debounce`) lors de la saisie
  */
-export const InputSearch = ({
-  className,
-  isLoading = false,
-  debounce = 500,
-  onChange,
-  onSearch,
-  ...remainingProps
-}: InputSearchProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const disabled = !(remainingProps.value || inputRef.current?.value);
+export const InputSearch = forwardRef(
+  (
+    {
+      className,
+      isLoading = false,
+      debounce = 500,
+      onChange,
+      onSearch,
+      ...remainingProps
+    }: InputSearchProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => inputRef.current);
 
-  /** Debounce les appels à `onSearch` */
-  const handleDebouncedInputChange = useDebouncedCallback(v => {
-    onSearch(v);
-  }, debounce);
+    const disabled = !(remainingProps.value || inputRef.current?.value);
 
-  return (
-    <InputBase
-      className={classNames(
-        'search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill',
-        className
-      )}
-      type="search"
-      ref={inputRef}
-      onChange={e => {
-        onChange?.(e);
-        handleDebouncedInputChange(e.target.value);
-      }}
-      icon={{
-        buttonProps: {
-          disabled,
-          icon: isLoading ? 'loader-4-line animate-spin' : 'search-line',
-          onClick: () => handleDebouncedInputChange(inputRef.current.value),
-          title: 'Rechercher',
-        },
-      }}
-      {...remainingProps}
-    />
-  );
-};
+    /** Debounce les appels à `onSearch` */
+    const handleDebouncedInputChange = useDebouncedCallback(v => {
+      onSearch(v);
+    }, debounce);
+
+    return (
+      <InputBase
+        className={classNames(
+          'search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill',
+          className
+        )}
+        type="search"
+        ref={inputRef}
+        onChange={e => {
+          onChange?.(e);
+          handleDebouncedInputChange(e.target.value);
+        }}
+        icon={{
+          buttonProps: {
+            disabled,
+            icon: isLoading ? 'loader-4-line animate-spin' : 'search-line',
+            onClick: () => handleDebouncedInputChange(inputRef.current.value),
+            title: 'Rechercher',
+          },
+        }}
+        {...remainingProps}
+      />
+    );
+  }
+);

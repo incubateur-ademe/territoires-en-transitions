@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
@@ -8,12 +8,15 @@ const meta: Meta<typeof Input> = {
   component: Input,
   render: args => {
     const [value, setValue] = useState(args.value);
+    const inputRef = useRef(null);
     return (
       <Input
         {...args}
+        ref={inputRef}
         value={value}
         onChange={e => {
           action('onChange')(e.target.value);
+          action('inputRef.current.value')(inputRef.current.value);
           setValue(e.target.value);
         }}
       />
