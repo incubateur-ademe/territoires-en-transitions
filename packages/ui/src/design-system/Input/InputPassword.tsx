@@ -20,7 +20,10 @@ export const InputPassword = forwardRef(
             title: passwordVisible
               ? 'Cacher le mot de passe'
               : 'Voir le mot de passe',
-            onClick: () => setPasswordVisible(!passwordVisible),
+            onClick: e => {
+              e.preventDefault();
+              setPasswordVisible(!passwordVisible);
+            },
           },
         }}
         ref={ref}
