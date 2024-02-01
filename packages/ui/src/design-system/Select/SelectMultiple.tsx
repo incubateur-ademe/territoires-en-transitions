@@ -25,7 +25,6 @@ export const SelectMultiple = ({
   return (
     <SelectBase
       {...props}
-      //values sera toujours un OptionValue simple sans tableau
       onChange={v => {
         let allValues = values as OptionValue[];
 
