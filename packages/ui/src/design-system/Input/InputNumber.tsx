@@ -1,6 +1,6 @@
+import {Ref, forwardRef, useEffect, useState} from 'react';
 import {NumericFormat, NumericFormatProps} from 'react-number-format';
 import {InputBase, InputBaseProps} from './InputBase';
-import {useEffect, useState} from 'react';
 
 export type InputNumberProps = Omit<NumericFormatProps, 'type' | 'value'> & {
   value: InputBaseProps['value'];
@@ -17,35 +17,36 @@ const THOUSAND_SEP = ' ';
  * La saisie des caractères non valides est ignorée.
  * La valeur est formatée automatiquement avec les séparateurs de milliers et de décimales FR.
  */
-export const InputNumber = ({
-  numType = 'int',
-  defaultValue,
-  value,
-  ...remainingProps
-}: InputNumberProps) => {
-  const [currentValue, setCurrentValue] = useState(defaultValue);
+export const InputNumber = forwardRef(
+  (
+    {numType = 'int', defaultValue, value, ...remainingProps}: InputNumberProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
+    const [currentValue, setCurrentValue] = useState(defaultValue);
 
-  useEffect(() => {
-    setCurrentValue(value);
-  }, [value]);
+    useEffect(() => {
+      setCurrentValue(value);
+    }, [value]);
 
-  return (
-    <NumericFormat
-      customInput={InputBase}
-      thousandSeparator={THOUSAND_SEP}
-      decimalSeparator={DECIMAL_SEP}
-      onPaste={e => {
-        // rend la chaîne copiée compatible avec le `decimalSeparator` spécifié
-        const data = e.clipboardData.getData('text/plain');
-        if (typeof data === 'string' && data.includes('.')) {
-          e.preventDefault();
-          setCurrentValue(data.replace('.', DECIMAL_SEP));
-        }
-      }}
-      type="text"
-      value={currentValue}
-      {...(numType === 'int' ? {decimalScale: 0} : {})}
-      {...remainingProps}
-    />
-  );
-};
+    return (
+      <NumericFormat
+        customInput={InputBase}
+        getInputRef={ref}
+        thousandSeparator={THOUSAND_SEP}
+        decimalSeparator={DECIMAL_SEP}
+        onPaste={e => {
+          // rend la chaîne copiée compatible avec le `decimalSeparator` spécifié
+          const data = e.clipboardData.getData('text/plain');
+          if (typeof data === 'string' && data.includes('.')) {
+            e.preventDefault();
+            setCurrentValue(data.replace('.', DECIMAL_SEP));
+          }
+        }}
+        type="text"
+        value={currentValue}
+        {...(numType === 'int' ? {decimalScale: 0} : {})}
+        {...remainingProps}
+      />
+    );
+  }
+);

@@ -1,3 +1,4 @@
+import {Ref, forwardRef} from 'react';
 import {InputBase, InputBaseProps} from './InputBase';
 import {InputDate, InputDateProps} from './InputDate';
 import {InputSearch, InputSearchProps} from './InputSearch';
@@ -17,22 +18,24 @@ type InputProps =
  * Toutes les props de l'élément HTML `input` sont acceptées à l'exception des changements suivants :
  * - type : restreint à un sous-ensemble des types standards
  */
-export const Input = ({type = 'text', ...props}: InputProps) => {
-  if (type === 'date') {
-    return <InputDate {...(props as InputDateProps)} />;
-  }
+export const Input = forwardRef(
+  ({type = 'text', ...props}: InputProps, ref?: Ref<HTMLInputElement>) => {
+    if (type === 'date') {
+      return <InputDate {...(props as InputDateProps)} ref={ref} />;
+    }
 
-  if (type === 'search') {
-    return <InputSearch {...(props as InputSearchProps)} />;
-  }
+    if (type === 'search') {
+      return <InputSearch {...(props as InputSearchProps)} ref={ref} />;
+    }
 
-  if (type === 'password') {
-    return <InputPassword {...(props as InputPasswordProps)} />;
-  }
+    if (type === 'password') {
+      return <InputPassword {...(props as InputPasswordProps)} ref={ref} />;
+    }
 
-  if (type === 'number') {
-    return <InputNumber {...(props as InputNumberProps)} />;
-  }
+    if (type === 'number') {
+      return <InputNumber {...(props as InputNumberProps)} ref={ref} />;
+    }
 
-  return <InputBase {...(props as InputBaseProps)} />;
-};
+    return <InputBase {...(props as InputBaseProps)} ref={ref} />;
+  }
+);
