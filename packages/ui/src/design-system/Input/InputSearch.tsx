@@ -43,10 +43,7 @@ export const InputSearch = ({
       ref={inputRef}
       onChange={e => {
         onChange?.(e);
-        const value = e.target.value;
-        if (value) {
-          handleDebouncedInputChange(value);
-        }
+        handleDebouncedInputChange(e.target.value);
       }}
       icon={{
         buttonProps: {
