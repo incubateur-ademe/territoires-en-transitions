@@ -41,6 +41,7 @@
     "@zxcvbn-ts/language-fr": "^1.2.0",
     "archiver": "^5.3.1",
     "classnames": "^2.3.1",
+    "crisp-sdk-web": "^1.0.21",
     "d3-scale": "^4.0.2",
     "date-fns": "^2.16.1",
     "dompurify": "^2.4.0",
