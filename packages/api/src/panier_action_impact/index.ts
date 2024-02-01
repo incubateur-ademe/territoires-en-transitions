@@ -8,7 +8,8 @@ export type ActionImpactState =
     isinpanier: boolean,
     statut: ActionImpactStatut | null
   };
-export type Categorie = Database['public']['Tables']['action_impact_categorie']['Row']
+export type ActionImpactCategorie = Database['public']['Tables']['action_impact_categorie']['Row']
+export type FNV = Database['public']['Tables']['categorie_fnv']['Row']
 
 export type Panier =
 /* Le panier en tant que tel */
@@ -19,10 +20,13 @@ export type Panier =
   states: ActionImpactState[]
 }
 
-export type Niveau = {niveau: number, nom: string};
+export type Niveau = { niveau: number, nom: string };
+
+export type ActionImpactDetails = ActionImpact & { 'categoriesFNV': FNV[] };
 
 /**
  * On sélectionne toutes les colonnes du panier : *
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
 export const panierSelect = '*, contenu:action_impact!action_impact_panier(*), states:action_impact_state(*)';
+export const actionDetailsSelect = '*, categoriesFNV:categorie_fnv(*)';
