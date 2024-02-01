@@ -5,8 +5,7 @@ import {action} from '@storybook/addon-actions';
 import {Field} from '@design-system/Field';
 
 import {Select, SelectMultiple} from '.';
-import {OptionValue, SelectOption} from './components/Options';
-import {getFlatOptions} from './utils';
+import {OptionValue, SelectOption, getFlatOptions} from './utils';
 import {SelectFilter} from '@design-system/Select/SelectFilter';
 import {SelectBase} from '@design-system/Select/components/SelectBase';
 

@@ -4,26 +4,9 @@ import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Icon} from '@design-system/Icon';
 
-import {isOptionSection} from '../utils';
+import {OptionValue, Option, SelectOption, isOptionSection} from '../utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './SelectBase';
-
-/**
- * Types partagés entre tous les composants selects
- * (Select, MultiSelect, MultiSelectFilter)
- */
-
-/** Type du champ valeur d'une option */
-export type OptionValue = number | string;
-/** Type de base d'une option générique */
-export type Option = {value: OptionValue; label: string};
-/** Type d'une liste d'options dans un sélecteur */
-export type OptionSection = {
-  title: string;
-  options: Option[];
-};
-/** Type d'une option dans un sélecteur, peut être une simple option ou une liste d'options */
-export type SelectOption = Option | OptionSection;
 
 type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
