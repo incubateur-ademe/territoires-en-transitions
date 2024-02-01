@@ -18,15 +18,9 @@ export const Grid = ({
   data,
   renderCard,
 }: Props) => {
-  const getText = () => {
-    switch (view) {
-      case 'collectivite':
-        return 'aucune collectivité';
-      case 'plan':
-        return 'aucun plan';
-      default:
-        break;
-    }
+  const viewToText: Record<TView, string> = {
+    collectivite: 'aucune collectivité',
+    plan: 'aucun plan',
   };
 
   // Non connecté
@@ -59,7 +53,7 @@ export const Grid = ({
       {data.length === 0 ? (
         <div className="mt-10 md:mt-32 text-center text-primary-7">
           <div className="mb-4 text-2xl font-bold">
-            Oups... {getText()} ne correspond à votre recherche !
+            Oups... {viewToText[view]} ne correspond à votre recherche !
           </div>
           <div className="text-xl">
             Modifiez ou désactivez les filtres pour obtenir plus de résultats

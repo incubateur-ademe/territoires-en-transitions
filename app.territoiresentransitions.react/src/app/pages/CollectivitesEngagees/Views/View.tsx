@@ -59,27 +59,14 @@ const View = ({
     tracker(viewIdToTrackerId[view]);
   }, [view]);
 
-  const getSearcheableText = () => {
-    switch (view) {
-      case 'collectivite':
-        return 'collectivité';
-      case 'plan':
-        return 'plan';
-      default:
-        break;
-    }
+  const viewToText: Record<TView, string> = {
+    collectivite: 'collectivité',
+    plan: 'plan',
   };
 
   const getTrierParOptions = () => {
     const options = [{value: 'nom', label: 'Ordre alphabétique'}];
-    switch (view) {
-      case 'collectivite':
-        return trierParOptions;
-      case 'plan':
-        return options;
-      default:
-        return options;
-    }
+    return view === 'collectivite' ? trierParOptions : options;
   };
 
   return (
@@ -143,8 +130,8 @@ const View = ({
                   <h4 className="mb-0 text-center leading-10 text-gray-500 md:text-left">
                     <span className="text-primary-7">
                       {dataCount === 1
-                        ? `Une ${getSearcheableText()}`
-                        : `${dataCount} ${getSearcheableText()}s`}{' '}
+                        ? `Une ${viewToText[view]}`
+                        : `${dataCount} ${viewToText[view]}s`}{' '}
                     </span>
                     <span className="text-primary-10">
                       {dataCount === 1 ? 'correspond' : 'correspondent'} à votre
