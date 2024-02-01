@@ -22,7 +22,7 @@ export const SelectFilter = ({
   useEffect(() => {
     if (values) {
       setFilterOptions([
-        {label: 'Désélectionner toutes les options', value: ITEM_ALL},
+        {label: 'Désélectionner les options', value: ITEM_ALL},
         ...options,
       ]);
     } else {
