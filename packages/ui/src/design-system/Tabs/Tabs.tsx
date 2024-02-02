@@ -1,6 +1,7 @@
-import {Icon} from '@design-system/Icon';
 import classNames from 'classnames';
 import {Children, cloneElement, ReactElement, useState, useEffect} from 'react';
+
+import {Icon} from '../Icon';
 
 export type TabSize = 'xs' | 'sm' | 'md';
 

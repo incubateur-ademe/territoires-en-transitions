@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import {FieldMessage, FieldMessageProps} from '@design-system/Field';
+
+import {FieldMessage, FieldMessageProps} from '../Field';
 
 export type CheckboxProps = Omit<
   React.ComponentPropsWithoutRef<'input'>,

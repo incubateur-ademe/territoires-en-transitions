@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import {Icon} from '@design-system/Icon';
+
+import {Icon} from '../Icon';
 import {FieldState} from './Field';
 
 export const stateToTextColor: Record<FieldState, string> = {

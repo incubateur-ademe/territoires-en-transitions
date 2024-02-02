@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {Icon, IconValue} from '@design-system/Icon';
+import {Icon, IconValue} from '../Icon';
 
 type Props = {
   /** Titre de la section */

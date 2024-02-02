@@ -1,4 +1,4 @@
-import {IconValue} from '@design-system/Icon';
+import {IconValue} from '../Icon';
 
 type TabChildren = React.ReactNode[] | React.ReactNode | string;
 
