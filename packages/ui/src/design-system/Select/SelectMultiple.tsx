@@ -1,8 +1,5 @@
-import {OptionValue} from '@design-system/Select/components/Options';
-import {
-  SelectBase,
-  SelectProps,
-} from '@design-system/Select/components/SelectBase';
+import {SelectBase, SelectProps} from './components/SelectBase';
+import {OptionValue} from './utils';
 
 export type SelectMultipleOnChangeArgs = {
   selectedValue: OptionValue;

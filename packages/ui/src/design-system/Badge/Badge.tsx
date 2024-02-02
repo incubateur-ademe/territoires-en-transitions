@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {Icon, IconValue} from '@design-system/Icon';
+import {Icon, IconValue} from '../Icon';
 
 import {badgeClassnames} from './utils';
 

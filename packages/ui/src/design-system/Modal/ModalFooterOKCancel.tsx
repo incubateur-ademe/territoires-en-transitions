@@ -1,5 +1,5 @@
 import {Button} from '@design-system/Button';
-import {ButtonProps} from '@design-system/Button/types';
+import {ButtonProps} from '../Button/types';
 import {ModalFooter} from './ModalFooter';
 
 /**

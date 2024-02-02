@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {Icon, IconValue} from '@design-system/Icon';
+import {Icon, IconValue} from '../Icon';
 
 export type NotificationVariant = 'default' | 'warning' | 'info' | 'error';
 
