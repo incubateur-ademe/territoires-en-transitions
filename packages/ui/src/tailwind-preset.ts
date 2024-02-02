@@ -6,6 +6,7 @@ export const preset = {
   content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
     maxHeight: {'80vh': '80vh'},
+    zIndex: {modal: '4000'},
     extend: {
       colors: {
         // Anciennes couleurs, à modifier avec l'harmonisation
