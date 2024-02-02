@@ -4,7 +4,12 @@ import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Icon} from '@design-system/Icon';
 
-import {OptionValue, Option, SelectOption, isOptionSection} from '../utils';
+import {
+  OptionValue,
+  Option as TOption,
+  SelectOption,
+  isOptionSection,
+} from '../utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './SelectBase';
 
@@ -14,7 +19,7 @@ type BaseProps = {
   /** Appelée au click d'une option (reçoit la valeur de l'option cliquée) */
   onChange: (value: OptionValue) => void;
   /** Permet de customiser l'item (label) d'une option */
-  customItem?: (option: Option) => React.ReactElement;
+  customItem?: (option: TOption) => React.ReactElement;
   /** Permet d'afficher des badges dans les options */
   isBadgeItem?: boolean;
   /** Les fonction permettant la création de nouvelles options */
@@ -102,7 +107,7 @@ const Options = ({
 export default Options;
 
 type OptionProps = BaseProps & {
-  option: Option;
+  option: TOption;
 };
 
 /** Option pour les sélecteurs */
