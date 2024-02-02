@@ -284,3 +284,28 @@ export const WithField: Story = {
     );
   },
 };
+
+export const ZIndex: Story = {
+  args: {},
+  render: () => {
+    const [value, setValue] = useState<OptionValue | undefined>();
+    return (
+      <div className="h-screen">
+        <div className="relative h-full m-16">
+          <div className="absolute inset-0 z-20 bg-pink-100">
+            <Field title="Exemple">
+              <Select
+                options={optionsWithSections}
+                values={value}
+                onChange={v => {
+                  setValue(v);
+                  action('onChange');
+                }}
+              />
+            </Field>
+          </div>
+        </div>
+      </div>
+    );
+  },
+};
