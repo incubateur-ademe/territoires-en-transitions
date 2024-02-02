@@ -33,7 +33,7 @@ export const commentaire = async (
 
     const { error } = await supabaseClient.from("action_commentaire").upsert(commentaireToSave);
     if (error) {
-        throw new Error(error.message);
+        throw new Error(`action_commentaire ${action_id}: ${error.message}`);
     }
     return true;
 };
@@ -69,7 +69,7 @@ export const statut = async (
 
         const { error } = await supabaseClient.from("action_statut").upsert(statutToSave);
         if (error) {
-            throw new Error(`${action_id}: ${error.message}`);
+            throw new Error(`action_statut ${action_id}: ${error.message}`);
         }
     }
     return true;
