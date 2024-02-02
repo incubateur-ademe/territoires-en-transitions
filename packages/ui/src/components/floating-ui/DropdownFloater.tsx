@@ -1,4 +1,5 @@
 import {cloneElement, useState} from 'react';
+import {flushSync} from 'react-dom';
 import {
   useFloating,
   offset,
@@ -6,14 +7,11 @@ import {
   useDismiss,
   shift,
   useClick,
-  FloatingPortal,
-  FloatingFocusManager,
   Placement,
   autoUpdate,
   size,
   OffsetOptions,
 } from '@floating-ui/react';
-import classNames from 'classnames';
 
 type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */
@@ -30,10 +28,6 @@ type DropdownFloaterProps = {
   containerWidthMatchButton?: boolean;
   /** Placement offset */
   offsetValue?: OffsetOptions;
-  /** z-index */
-  zIndex?: number;
-  /** Supprime les styles du dropdown */
-  noDropdownStyles?: boolean;
   'data-test'?: string;
   disabled?: boolean;
 };
@@ -47,12 +41,12 @@ export const DropdownFloater = ({
   enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
-  zIndex,
-  noDropdownStyles = false,
   disabled,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const [maxHeight, setMaxHeight] = useState(null);
 
   const {x, y, strategy, refs, context} = useFloating({
     open: disabled ? false : isOpen,
@@ -64,9 +58,9 @@ export const DropdownFloater = ({
       shift(),
       size({
         apply({rects, elements, availableHeight}) {
+          // https://floating-ui.com/docs/size
+          flushSync(() => setMaxHeight(availableHeight));
           Object.assign(elements.floating.style, {
-            maxHeight: `${availableHeight}px`,
-            overflowY: 'auto',
             minWidth: `${rects.reference.width}px`,
             width: containerWidthMatchButton
               ? `${rects.reference.width}px`
@@ -114,33 +108,26 @@ export const DropdownFloater = ({
         })
       )}
       {isOpen && (
-        <FloatingPortal>
-          <FloatingFocusManager
-            context={context}
-            modal={false}
-            initialFocus={-1}
+        <div
+          data-test={dataTest}
+          {...getFloatingProps({
+            ref: refs.setFloating,
+            style: {
+              position: strategy,
+              top: y,
+              left: x,
+            },
+          })}
+        >
+          <div
+            className="overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0"
+            style={{maxHeight: maxHeight - 16}}
           >
-            <div
-              data-test={dataTest}
-              className={classNames({
-                'w-max bg-white shadow-md': !noDropdownStyles,
-              })}
-              {...getFloatingProps({
-                ref: refs.setFloating,
-                style: {
-                  position: strategy,
-                  top: y ?? '',
-                  left: x ?? '',
-                  zIndex,
-                },
-              })}
-            >
-              {render({
-                close: () => setIsOpen(false),
-              })}
-            </div>
-          </FloatingFocusManager>
-        </FloatingPortal>
+            {render({
+              close: () => setIsOpen(false),
+            })}
+          </div>
+        </div>
       )}
     </>
   );
