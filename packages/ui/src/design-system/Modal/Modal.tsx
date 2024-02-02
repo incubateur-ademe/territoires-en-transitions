@@ -91,7 +91,7 @@ export const Modal = ({
   disableDismiss,
   noCloseButton,
   renderFooter,
-  zIndex,
+  zIndex = preset.theme.zIndex.modal,
   dataTest = 'Modal',
 }: ModalProps) => {
   const isControlled = !!openState;
