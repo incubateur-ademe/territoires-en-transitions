@@ -69,7 +69,7 @@ export const statut = async (
 
         const { error } = await supabaseClient.from("action_statut").upsert(statutToSave);
         if (error) {
-            throw new Error(error.message);
+            throw new Error(`${action_id}: ${error.message}`);
         }
     }
     return true;
