@@ -246,3 +246,35 @@ exports[`Design System/Select WithField smoke-test 1`] = `
   </div>
 </div>
 `;
+
+exports[`Design System/Select ZIndex smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <div class="h-screen">
+    <div class="relative h-full m-16">
+      <div class="absolute inset-0 z-20 bg-pink-100">
+        <div class="flex-grow flex flex-col gap-3">
+          <label>
+            <div class="font-medium text-grey-8">
+              Exemple
+            </div>
+          </label>
+          <button aria-expanded="false"
+                  aria-label="ouvrir le menu"
+                  class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          >
+            <div class="flex px-4 min-h-[3rem] py-2">
+              <div class="flex grow flex-wrap gap-2 mr-4">
+                <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+                  Sélectionner une option
+                </span>
+              </div>
+              <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
