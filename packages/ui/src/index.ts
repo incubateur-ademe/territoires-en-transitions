@@ -4,7 +4,6 @@ export {preset} from './tailwind-preset';
 /* composants exportés */
 
 // dossier composants
-export * from './components/floating-ui/DropdownFloater';
 
 // dossier design-system
 export * from './design-system/Badge';

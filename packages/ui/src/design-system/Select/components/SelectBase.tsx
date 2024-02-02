@@ -3,7 +3,7 @@ import {Ref, forwardRef, useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 
-import {DropdownFloater} from '@components/floating-ui/DropdownFloater';
+import {DropdownFloater} from '@design-system/Select/components/DropdownFloater';
 import {Icon} from '@design-system/Icon';
 import {Badge} from '@design-system/Badge';
 
@@ -154,14 +154,10 @@ export const SelectBase = (props: SelectProps) => {
       placement={placement}
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
-      noDropdownStyles
       enterToToggle={!hasSearch}
       disabled={disabled}
       render={({close}) => (
-        <div
-          data-test={`${dataTest}-options`}
-          className="bg-white rounded-b-lg border border-grey-4 border-t-0 overflow-hidden"
-        >
+        <div data-test={`${dataTest}-options`}>
           {/** Bouton de création d'une option */}
           {isCreateOptionSelect &&
             inputValue.trim().length > 0 &&
