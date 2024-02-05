@@ -44,7 +44,7 @@ export const ModalFooter = ({
 export const ModalFooterSection = ({
   children,
 }: {
-  children: React.ReactNode[];
+  children: React.ReactNode | React.ReactNode[];
 }) => {
   return <div className="flex gap-4 flex-wrap">{children}</div>;
 };
