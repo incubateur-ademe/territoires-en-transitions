@@ -43,5 +43,9 @@ When('les données suivantes ont été envoyées à la chatbox :', dataTable => 
     'user:nickname',
     [`${prenom} ${nom}`],
   ]);
-  cy.get('@crisp.push').should('be.calledWith', ['set', 'user:email', [email]]);
+  cy.get('@crisp.push').should('be.calledWith', [
+    'set',
+    'user:email',
+    [email, undefined],
+  ]);
 });
