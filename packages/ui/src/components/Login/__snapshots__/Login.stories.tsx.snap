@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Login AvecMotDePasse smoke-test 1`] = `""`;
+
+exports[`components/Login Default smoke-test 1`] = `""`;
+
+exports[`components/Login MotDePasseOublie smoke-test 1`] = `""`;
+
+exports[`components/Login MsgInitMdp smoke-test 1`] = `""`;
+
+exports[`components/Login MsgLienEnvoye smoke-test 1`] = `""`;
