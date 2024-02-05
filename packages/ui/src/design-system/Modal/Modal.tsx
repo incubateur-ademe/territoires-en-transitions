@@ -151,7 +151,7 @@ export const Modal = ({
                   'aria-describedby': descriptionId,
                   className: classNames(
                     `
-                      relative flex flex-col self-end gap-8 w-full mt-8 mx-auto p-8
+                      relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
                       rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
                       sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
                       md:p-[4.5rem]
@@ -168,7 +168,7 @@ export const Modal = ({
                     icon="close-line"
                     variant="grey"
                     size="xs"
-                    className="absolute top-8 right-8"
+                    className="absolute max-md:top-4 top-8 max-md:right-4 right-8"
                   />
                 )}
                 {(title || subTitle || description) && (

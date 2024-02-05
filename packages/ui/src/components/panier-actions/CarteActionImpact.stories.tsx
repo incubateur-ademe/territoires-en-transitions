@@ -30,5 +30,5 @@ type Story = StoryObj<typeof CarteActionImpact>;
 export const Default: Story = {};
 
 export const CarteSelectionnee: Story = {
-  render: args => <CarteActionImpact {...args} selectionnee={true} />,
+  render: args => <CarteActionImpact {...args} isSelected={true} />,
 };

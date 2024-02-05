@@ -1,10 +1,9 @@
 import {Meta, StoryObj} from '@storybook/react';
-import {ModaleActionImpact} from './ModaleActionImpact';
-import {Button} from '@design-system/Button';
+import {ActionImpact} from './ActionImpact';
 
-const meta: Meta<typeof ModaleActionImpact> = {
-  title: "Composants métier/Panier d'actions/Modale action à impact",
-  component: ModaleActionImpact,
+const meta: Meta<typeof ActionImpact> = {
+  title: "Composants métier/Panier d'actions/Action à impact",
+  component: ActionImpact,
   argTypes: {
     complexite: {
       control: {type: 'select'},
@@ -31,12 +30,6 @@ const meta: Meta<typeof ModaleActionImpact> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ModaleActionImpact>;
+type Story = StoryObj<typeof ActionImpact>;
 
-export const Default: Story = {
-  render: args => (
-    <ModaleActionImpact {...args}>
-      <Button variant="outlined">Ouvrir la modale</Button>
-    </ModaleActionImpact>
-  ),
-};
+export const Default: Story = {};

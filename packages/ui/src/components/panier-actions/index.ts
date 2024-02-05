@@ -1,1 +1,1 @@
-export * from './CarteActionImpact';
+export * from './ActionImpact';
