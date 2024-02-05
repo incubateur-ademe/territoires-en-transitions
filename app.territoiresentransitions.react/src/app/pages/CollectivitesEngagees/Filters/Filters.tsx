@@ -61,7 +61,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                 onChange={({values}) => {
                   setFilters({
                     ...filters,
-                    typesPlan: values ?? [],
+                    typesPlan: (values as string[]) ?? [],
                   });
                 }}
                 values={
@@ -84,7 +84,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               onChange={({values}) => {
                 setFilters({
                   ...filters,
-                  regions: values ?? [],
+                  regions: (values as string[]) ?? [],
                 });
                 tracker({fonction: 'filtre_region', action: 'selection'});
               }}
@@ -109,7 +109,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               onChange={({values}) => {
                 setFilters({
                   ...filters,
-                  departments: values ?? [],
+                  departments: (values as string[]) ?? [],
                 });
                 tracker({fonction: 'filtre_departement', action: 'selection'});
               }}
@@ -127,7 +127,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               onChange={({values}) => {
                 setFilters({
                   ...filters,
-                  typesCollectivite: values ?? [],
+                  typesCollectivite: (values as string[]) ?? [],
                 });
                 tracker({fonction: 'filtre_type', action: 'selection'});
               }}
@@ -146,7 +146,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               onChange={({values}) => {
                 setFilters({
                   ...filters,
-                  population: values ?? [],
+                  population: (values as string[]) ?? [],
                 });
                 tracker({fonction: 'filtre_population', action: 'selection'});
               }}
@@ -188,7 +188,7 @@ export const Filters = ({filters, setFilters}: Props) => {
                   onChange={({values}) => {
                     setFilters({
                       ...filters,
-                      tauxDeRemplissage: values ?? [],
+                      tauxDeRemplissage: (values as string[]) ?? [],
                     });
                     tracker({
                       fonction: 'filtre_remplissage',
