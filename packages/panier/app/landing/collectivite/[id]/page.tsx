@@ -1,3 +1,5 @@
+"use server";
+
 import { supabase } from "@tet/api/dist/src/tests/supabase";
 import { redirect } from "next/navigation";
 
