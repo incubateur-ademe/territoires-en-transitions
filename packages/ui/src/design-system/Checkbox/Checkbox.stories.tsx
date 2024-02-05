@@ -60,6 +60,19 @@ export const CheckedAndDisabled: Story = {
   },
 };
 
+export const LongLabelAvecMessage: Story = {
+  args: {
+    label: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    message:
+      'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée',
+  },
+  render: args => (
+    <div className="max-w-[16rem]">
+      <Checkbox {...args} />
+    </div>
+  ),
+};
+
 export const AvecMessage: Story = {
   args: {
     message: 'Description additionnelle',
@@ -71,6 +84,15 @@ export const AvecMessageEtEtat: Story = {
     message: 'Description additionnelle',
     state: 'info',
   },
+};
+
+export const AvecMessageUniquement: Story = {
+  args: {
+    message:
+      'Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée',
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  render: ({label, ...args}) => <Checkbox {...args} />,
 };
 
 export const VarianteSwitch: Story = {

@@ -1,159 +1,228 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Design System/Checkbox AvecMessage smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+<div class="flex gap-2">
+  <input id="7ccd7a0c-cc39-499d-b294-8ec6c174614d"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+  >
+  <div class="flex flex-col gap-1">
+    <label for="7ccd7a0c-cc39-499d-b294-8ec6c174614d"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
-  <div class="flex items-center text-grey-7 pt-1 pl-7">
-    <span class="text-xs">
-      Description additionnelle
-    </span>
+    </label>
+    <div class="flex items-center text-grey-7 my-auto">
+      <span class="text-xs">
+        Description additionnelle
+      </span>
+    </div>
   </div>
 </div>
 `;
 
 exports[`Design System/Checkbox AvecMessageEtEtat smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+<div class="flex gap-2">
+  <input id="76592886-420f-4ff4-8415-337df08996e3"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+  >
+  <div class="flex flex-col gap-1">
+    <label for="76592886-420f-4ff4-8415-337df08996e3"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
-  <div class="flex items-center text-info-1 pt-1 pl-7">
-    <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
-    </span>
-    <span class="text-xs">
-      Description additionnelle
-    </span>
+    </label>
+    <div class="flex items-center text-info-1 my-auto">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Description additionnelle
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Design System/Checkbox AvecMessageUniquement smoke-test 1`] = `
+<div class="flex gap-2">
+  <input id="11e9c330-246f-46f4-8382-8b545e408235"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+  >
+  <div class="flex flex-col gap-1">
+    <div class="flex items-center text-grey-7 my-auto">
+      <span class="text-xs">
+        Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée
+      </span>
+    </div>
   </div>
 </div>
 `;
 
 exports[`Design System/Checkbox Checked smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
-           checked
+<div class="flex gap-2">
+  <input id="04d002cc-4467-43ad-b710-2e0789087299"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+         checked
+  >
+  <div class="flex flex-col gap-1">
+    <label for="04d002cc-4467-43ad-b710-2e0789087299"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
+    </label>
+  </div>
 </div>
 `;
 
 exports[`Design System/Checkbox CheckedAndDisabled smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-6">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
-           disabled
-           checked
+<div class="flex gap-2">
+  <input id="2c1a4115-f9c2-400f-811c-aa7c0154fdea"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+         disabled
+         checked
+  >
+  <div class="flex flex-col gap-1">
+    <label for="2c1a4115-f9c2-400f-811c-aa7c0154fdea"
+           class="inline-flex items-center cursor-pointer  text-grey-6"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`Design System/Checkbox LongLabelAvecMessage smoke-test 1`] = `
+<div class="max-w-[16rem]">
+  <div class="flex gap-2">
+    <input id="c446016f-cfc6-4483-abc4-305bcac683af"
+           type="checkbox"
+           class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+    >
+    <div class="flex flex-col gap-1">
+      <label for="c446016f-cfc6-4483-abc4-305bcac683af"
+             class="inline-flex items-center cursor-pointer  text-grey-8"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </label>
+      <div class="flex items-center text-grey-7 my-auto">
+        <span class="text-xs">
+          Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée
+        </span>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
 exports[`Design System/Checkbox SansLabel smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <input type="checkbox"
-         class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+<div class="flex gap-2">
+  <input id="7f4a4683-a9d2-4731-be4e-308455733d81"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
+  <div class="flex flex-col gap-1">
+  </div>
 </div>
 `;
 
 exports[`Design System/Checkbox Unchecked smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+<div class="flex gap-2">
+  <input id="eb791dd5-8bd1-4965-867a-6193501468df"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+  >
+  <div class="flex flex-col gap-1">
+    <label for="eb791dd5-8bd1-4965-867a-6193501468df"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
+    </label>
+  </div>
 </div>
 `;
 
 exports[`Design System/Checkbox UncheckedAndDisabled smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-6">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
-           disabled
+<div class="flex gap-2">
+  <input id="80f34d19-81eb-4c91-9f18-2d0c26f272d4"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+         disabled
+  >
+  <div class="flex flex-col gap-1">
+    <label for="80f34d19-81eb-4c91-9f18-2d0c26f272d4"
+           class="inline-flex items-center cursor-pointer  text-grey-6"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
+    </label>
+  </div>
 </div>
 `;
 
 exports[`Design System/Checkbox VarianteSwitch smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
+<div class="flex gap-2">
+  <input id="09fa715f-49a3-47fc-83a8-aafdcf2566ae"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
+  >
+  <div class="flex flex-col gap-1">
+    <label for="09fa715f-49a3-47fc-83a8-aafdcf2566ae"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
-  <div class="flex items-center text-info-1 pt-1 pl-12">
-    <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
-    </span>
-    <span class="text-xs">
-      Description additionnelle
-    </span>
+    </label>
+    <div class="flex items-center text-info-1 my-auto">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Description additionnelle
+      </span>
+    </div>
   </div>
 </div>
 `;
 
 exports[`Design System/Checkbox VarianteSwitchChecked smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-8">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
-           checked
+<div class="flex gap-2">
+  <input id="c8333910-93aa-4206-ad2f-b3ec9df9807b"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
+         checked
+  >
+  <div class="flex flex-col gap-1">
+    <label for="c8333910-93aa-4206-ad2f-b3ec9df9807b"
+           class="inline-flex items-center cursor-pointer  text-grey-8"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
-  <div class="flex items-center text-info-1 pt-1 pl-12">
-    <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
-    </span>
-    <span class="text-xs">
-      Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée
-    </span>
+    </label>
+    <div class="flex items-center text-info-1 my-auto">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée
+      </span>
+    </div>
   </div>
 </div>
 `;
 
 exports[`Design System/Checkbox VarianteSwitchDisabled smoke-test 1`] = `
-<div class="flex flex-col w-max">
-  <label class="inline-flex items-center cursor-pointer  text-grey-6">
-    <input type="checkbox"
-           class="!appearance-none checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
-           disabled
-           checked
+<div class="flex gap-2">
+  <input id="5d0ab82c-cdaa-41ce-ab9e-10fc283e21c0"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
+         disabled
+         checked
+  >
+  <div class="flex flex-col gap-1">
+    <label for="5d0ab82c-cdaa-41ce-ab9e-10fc283e21c0"
+           class="inline-flex items-center cursor-pointer  text-grey-6"
     >
-    <span class="pl-2">
       Description de l'action
-    </span>
-  </label>
+    </label>
+  </div>
 </div>
 `;
