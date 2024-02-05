@@ -20,10 +20,11 @@ const FiltersColonne = ({filters, setFilters}: Props) => {
     <>
       <div
         className={classNames(
-          'flex flex-col shrink-0 h-min bg-white md:py-10 md:px-8 md:rounded-xl md:!block md:w-5/12 lg:w-4/12 xl:w-3/12',
+          'flex flex-col shrink-0 h-min bg-white z-[1000] md:py-10 md:px-8 md:rounded-xl md:!block md:w-5/12 lg:w-4/12 xl:w-3/12',
           {
             hidden: !isMobileFilterOpen,
-            'fixed inset-0 top-44 p-4 pb-6 overflow-y-auto': isMobileFilterOpen,
+            'fixed inset-0 h-screen p-4 pb-6 overflow-y-auto':
+              isMobileFilterOpen,
           }
         )}
       >
@@ -54,7 +55,7 @@ const FiltersColonne = ({filters, setFilters}: Props) => {
       </div>
       {/* Trigger filters on mobile */}
       {!isMobileFilterOpen && (
-        <div className="fixed bottom-0 inset-x-0 z-10 md:hidden">
+        <div className="fixed bottom-0 inset-x-0 z-[1000] md:hidden">
           <button
             className={`fr-btn justify-center !py-6 text-center ${
               numberOfActiveFilters > 0
