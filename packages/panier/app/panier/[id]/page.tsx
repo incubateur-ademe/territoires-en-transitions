@@ -1,3 +1,5 @@
+"use server";
+
 import React from "react";
 import { ActionImpactCategorie, Niveau, Panier, panierSelect } from "@tet/api";
 import PanierRealtime from "@components/PanierRealtime";
