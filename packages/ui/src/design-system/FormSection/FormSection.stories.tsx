@@ -1,6 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 
 import {FormSection} from './FormSection';
+import {FormSectionGrid} from './FormSectionGrid';
 import {Field} from '@design-system/Field';
 import {Input} from '@design-system/Input';
 
@@ -83,4 +84,21 @@ export const PlusieursSections: Story = {
       </div>
     );
   },
+};
+
+
+export const SansHeader: Story = {
+  args: {},
+  render: () => (
+    <div className="w-full max-w-lg p-8">
+      <FormSectionGrid>
+        <Field title="Titre du plan" className="md:col-span-2">
+          <Input type="text" />
+        </Field>
+        <Field title="Statut" className="md:col-span-2">
+          <Input type="date" />
+        </Field>
+      </FormSectionGrid>
+    </div>
+  ),
 };

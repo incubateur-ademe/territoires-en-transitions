@@ -1,19 +1,14 @@
-import classNames from 'classnames';
+import {Icon, IconValue} from '@design-system/Icon';
+import {FormSectionGrid, FormSectionGridProps} from './FormSectionGrid';
 
-import {Icon, IconValue} from '../Icon';
-
-type Props = {
+type FormSectionProps = {
   /** Titre de la section */
   title: string;
-  /** Enfants à afficher dans la grille (généralement des Field) */
-  children: React.ReactNode;
-  /** Permet d'ajuster les styles de la grille d'enfant */
-  className?: string;
   /** Icône de la section */
   icon?: IconValue;
   /** Description optionnelle de la section */
   description?: string;
-};
+} & FormSectionGridProps;
 
 /** Affiche une section de formulaire */
 export const FormSection = ({
@@ -22,7 +17,7 @@ export const FormSection = ({
   description,
   icon,
   children,
-}: Props) => {
+}: FormSectionProps) => {
   return (
     <div className="flex flex-col gap-6">
       {/** Header */}
@@ -37,14 +32,7 @@ export const FormSection = ({
         <div className="h-px bg-primary-3" />
       </div>
       {/** Grille de children */}
-      <div
-        className={classNames(
-          'grid grid-cols-1 md:grid-cols-2 gap-6',
-          className
-        )}
-      >
-        {children}
-      </div>
+      <FormSectionGrid children={children} className={className} />
     </div>
   );
 };
