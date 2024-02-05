@@ -1,12 +1,5 @@
 import {When} from '@badeball/cypress-cucumber-preprocessor';
 
-import {LocalSelectors} from './selectors';
-
-beforeEach(() => {
-  // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
-});
-
 When(/la page contient au moins (\d+) collectivités?/, count => {
   cy.get('[data-test=CollectiviteCarte]').should('have.length.gt', count);
 });
