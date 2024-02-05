@@ -609,3 +609,4 @@ indicateur/tableau_de_bord [indicateur/tableau_de_bord@v2.89.0] 2024-01-08T17:38
 
 stats/posthog [stats/posthog@v2.93.0] 2024-01-18T14:39:10Z Florian <florian@derfurth.com> # Nouveaux événements
 @v2.96.0 2024-01-23T13:45:22Z Florian <florian@derfurth.com> # Événements de création de compte et de modification de score
+plan_action/fiches [plan_action/fiches@v2.96.0] 2024-02-05T09:57:28Z Amandine Jacquelin <conta@LanceLibre> # Ajoute amelioration continue à fiche resume
