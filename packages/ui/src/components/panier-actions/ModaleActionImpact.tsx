@@ -4,33 +4,12 @@ import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
 import {Icon} from '@design-system/Icon';
 import {NiveauBudget} from './NiveauBudget';
 import {valeurToBadge} from './utils';
+import {ModaleActionImpactProps} from './types';
+import {Tooltip} from '@design-system/Tooltip';
 
-type ModaleActionImpactProps = {
-  /** Composant enfant */
-  children: JSX.Element;
-  /** Titre de l'action à impact */
-  titre: string;
-  /** Catégorie de l'action à impact */
-  categorie: string;
-  /** Niveau de complexité de l'action : simple, intermédiaire ou élevée */
-  complexite: 1 | 2 | 3;
-  /** Budget de la mise en place de l'action : petit, moyen ou élevé */
-  budget: 1 | 2 | 3;
-  /** Description de l'action à impact */
-  description: string;
-  /** Lien vers les ressources externes */
-  ressources?: string;
-  /** Nombre de collectivités en train de faire l'action */
-  nbCollectivitesEnCours?: number;
-  /** Nombre de collectivités ayant fait l'action */
-  nbCollectivitesRealise?: number;
-  /** Initialisation de l'état sélectionné de la carte */
-  selectionnee?: boolean;
-  /** Détecte le changement de statut sélectionné ou non */
-  onToggleSelected: (value: boolean) => void;
-  /** Détecte le changement de statut de l'action : non pertinent, en cours, réalisé */
-  updateStatus: (status: string) => void;
-};
+/**
+ * Modale action à impact du panier d'actions
+ */
 
 export const ModaleActionImpact = ({
   children,
@@ -42,9 +21,9 @@ export const ModaleActionImpact = ({
   ressources,
   nbCollectivitesEnCours,
   nbCollectivitesRealise,
-  selectionnee,
+  isSelected,
   onToggleSelected,
-  updateStatus,
+  onUpdateStatus,
 }: ModaleActionImpactProps) => {
   return (
     <Modal
@@ -93,7 +72,7 @@ export const ModaleActionImpact = ({
 
           {/* Collectivités sur la même action */}
           {(!!nbCollectivitesEnCours || !!nbCollectivitesRealise) && (
-            <div className="grid grid-cols-2 gap-8 my-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mt-6">
               {!!nbCollectivitesEnCours && (
                 <div className="text-primary-9 text-sm font-medium border border-grey-3 rounded-md px-6 py-5 shadow">
                   <span className="font-bold">
@@ -116,44 +95,56 @@ export const ModaleActionImpact = ({
         </div>
       )}
       renderFooter={({close}) => (
-        <ModalFooter variant="space">
-          <ModalFooterSection>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                updateStatus('non pertinent');
-                close();
-              }}
-            >
-              Non pertinent
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                updateStatus('en cours');
-                close();
-              }}
-            >
-              En cours
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                updateStatus('réalisé');
-                close();
-              }}
-            >
-              Réalisé
-            </Button>
-          </ModalFooterSection>
+        <ModalFooter variant={isSelected ? 'right' : 'space'}>
+          {!isSelected && (
+            <ModalFooterSection>
+              <Tooltip
+                label={
+                  <div className="font-normal text-center w-48">
+                    Hors compétence de la collectivité ou non prioritaire
+                  </div>
+                }
+                placement="top"
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    onUpdateStatus('non pertinent');
+                    close();
+                  }}
+                >
+                  Non pertinent
+                </Button>
+              </Tooltip>
+
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  onUpdateStatus('en cours');
+                  close();
+                }}
+              >
+                En cours
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  onUpdateStatus('réalisé');
+                  close();
+                }}
+              >
+                Réalisé
+              </Button>
+            </ModalFooterSection>
+          )}
           <Button
-            icon={selectionnee ? 'file-reduce-fill' : 'file-add-fill'}
+            icon={isSelected ? 'file-reduce-fill' : 'file-add-fill'}
             onClick={() => {
-              onToggleSelected(!selectionnee);
+              onToggleSelected(!isSelected);
               close();
             }}
           >
-            {selectionnee ? 'Retirer du panier' : 'Ajouter'}
+            {isSelected ? 'Retirer du panier' : 'Ajouter'}
           </Button>
         </ModalFooter>
       )}

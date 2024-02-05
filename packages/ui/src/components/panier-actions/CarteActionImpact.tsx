@@ -5,23 +5,7 @@ import {Tooltip} from '@design-system/Tooltip';
 import classNames from 'classnames';
 import {valeurToBadge} from './utils';
 import {NiveauBudget} from './NiveauBudget';
-
-type CarteActionImpactProps = {
-  /** Titre de l'action à impact */
-  titre: string;
-  /** Catégorie de l'action à impact */
-  categorie: string;
-  /** Niveau de complexité de l'action : simple, intermédiaire ou élevée */
-  complexite: 1 | 2 | 3;
-  /** Budget de la mise en place de l'action : petit, moyen ou élevé */
-  budget: 1 | 2 | 3;
-  /** Initialisation de l'état sélectionné de la carte */
-  selectionnee?: boolean;
-  /** Détecte le changement de statut sélectionné ou non */
-  onToggleSelected: (value: boolean) => void;
-  /** Détecte le changement de statut de l'action : non pertinent, en cours, réalisé */
-  onUpdateStatus: (status: string) => void;
-};
+import {CarteActionImpactProps} from './types';
 
 /**
  * Carte action à impact du panier d'actions
@@ -32,7 +16,7 @@ export const CarteActionImpact = ({
   categorie,
   complexite,
   budget,
-  selectionnee,
+  isSelected,
   onToggleSelected,
   onUpdateStatus,
 }: CarteActionImpactProps) => {
@@ -42,7 +26,7 @@ export const CarteActionImpact = ({
     <Card
       style={{maxWidth: '400px'}}
       className="box-content"
-      isSelected={selectionnee}
+      isSelected={isSelected}
       header={
         <div className="flex justify-between">
           {/* Catégorie */}
@@ -60,12 +44,12 @@ export const CarteActionImpact = ({
             size="sm"
             state={valeurToBadge[complexite].style}
             className={classNames('absolute', {
-              'group-hover:hidden': !selectionnee,
+              'group-hover:hidden': !isSelected,
             })}
           />
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          {selectionnee ? (
+          {isSelected ? (
             <Button
               size="xs"
               className="invisible group-hover:visible ml-auto"

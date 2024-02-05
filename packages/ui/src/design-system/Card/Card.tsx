@@ -29,11 +29,12 @@ export const Card = ({
     <div
       {...otherProps}
       className={classNames(
-        'p-7 m-px bg-white border border-primary-3 rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group',
+        'p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group',
         {
           'hover:m-0 hover:cursor-pointer hover:shadow-md': hasHoverEffect,
           'hover:border-2 hover:border-primary-4':
             hasHoverEffect && !isSelected,
+          'border border-primary-3': !isSelected,
           '!m-0 border-2 border-info-1': isSelected,
         },
         className
