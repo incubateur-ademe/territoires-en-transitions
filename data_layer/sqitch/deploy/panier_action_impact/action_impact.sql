@@ -58,7 +58,7 @@ create table action_impact
     titre                    text    not null,
     description              text    not null,
 
-    ressources_externes      jsonb   not null                                                default '{}'::jsonb,
+    ressources_externes      text,
     nb_collectivite_en_cours integer not null                                                default 1,
     nb_collectivite_realise  integer not null                                                default 1,
     action_continue          boolean not null                                                default false,
