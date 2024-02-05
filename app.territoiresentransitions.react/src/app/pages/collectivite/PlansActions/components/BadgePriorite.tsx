@@ -1,4 +1,5 @@
 import {Badge, BadgeState} from '@tet/ui';
+import classNames from 'classnames';
 
 import {TFicheActionNiveauxPriorite} from 'types/alias';
 
@@ -18,7 +19,7 @@ type Props = {
 const BadgePriorite = ({className, priorite, size}: Props) => {
   return (
     <Badge
-      className={className}
+      className={classNames(className, '!border-grey-3 !bg-grey-1')}
       title={priorite}
       state={prioritesToState[priorite]}
       size={size}
