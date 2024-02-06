@@ -30,7 +30,7 @@ export const Checkbox = ({
   const inputId = id ?? useId();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 min-w-min">
       <input
         id={inputId}
         type="checkbox"
