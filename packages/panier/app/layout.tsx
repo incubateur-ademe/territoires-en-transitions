@@ -35,20 +35,20 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
     <html lang="fr">
     <PHProvider>
       <body className="min-h-screen flex flex-col">
-      <PostHogPageView />
-      <div className="flex flex-col grow">
-        <header className="px-4 lg:px-6 xl:px-2 py-8 text-center">
-          HEADER
-        </header>
-        <div className="bg-grey-2 grow">
-          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2">
-            {children}
+        <PostHogPageView />
+        <div className="flex flex-col grow">
+          <header className="px-4 lg:px-6 xl:px-2 py-8 text-center">
+            HEADER
+          </header>
+          <div className="bg-grey-2 grow flex flex-col">
+            <div className="grow flex flex-col w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2">
+              {children}
+            </div>
           </div>
         </div>
-      </div>
-      <footer className="px-4 lg:px-6 xl:px-2 py-8 text-center">
-        FOOTER
-      </footer>
+        <footer className="px-4 lg:px-6 xl:px-2 py-8 text-center">
+          FOOTER
+        </footer>
       </body>
     </PHProvider>
     </html>
