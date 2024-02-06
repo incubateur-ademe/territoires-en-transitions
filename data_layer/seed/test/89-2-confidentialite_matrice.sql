@@ -1596,6 +1596,15 @@ values
     ('fonction', 'plan_action_type', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_type', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_type', 'auditeur', 'non', 'oui', 'non', 'non'),
+    -- Fonction vide
+    ('fonction', 'vide', 'public', 'non', 'non', 'non', 'non'),
+    ('fonction', 'vide', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'vide', 'verifie', 'non', 'restreint', 'non', 'non'),
+    ('fonction', 'vide', 'support', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'vide', 'lecture', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'vide', 'edition', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'vide', 'admin', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'vide', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction plans_action_collectivite
     ('fonction', 'plans_action_collectivite', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'plans_action_collectivite', 'connecte', 'non', 'non', 'non', 'non'),
