@@ -1,0 +1,54 @@
+name: Déploiement à la demande du panier
+run-name: Déploiement du panier sur ${{ github.event.inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Où déployer
+        options:
+          - preprod
+          - prod
+
+jobs:
+  deploy-panier:
+    name: Déploie le panier
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push front deps image
+        run: >
+          earthly 
+          --use-inline-cache --save-inline-cache --push 
+          --platform=linux/amd64 
+          +front-deps-builder
+
+      - name: Build and push panier image
+        run: >
+          earthly 
+          --use-inline-cache --save-inline-cache --push 
+          --platform=linux/amd64 
+          +panier-build
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+
+      - name: Deploy panier on Koyeb
+        run: >
+          earthly 
+          --use-inline-cache 
+          +panier-deploy
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
