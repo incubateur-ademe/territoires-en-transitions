@@ -2,6 +2,7 @@ import {supabase} from "../supabase.ts";
 import {Database} from "../database.types.ts";
 import {testReset} from "./testReset.ts";
 import {signIn, signOut} from "../auth.ts";
+import * as retry from "https://deno.land/x/retry@v2.0.0/mod.ts";
 
 /**
  * Identifiant des collectivités de test :
@@ -161,6 +162,16 @@ async function confidentialiteTestTypeElement(
 }
 
 /**
+ * Lance les tests d'un élément.
+ *
+ * Permet de relancer la fonction `_confidentialiteTestElement` en cas d'échec
+ */
+const confidentialiteTestElement = retry.retryAsyncDecorator(_confidentialiteTestElement, {
+    delay: 200,
+    maxTry: 5,
+});
+
+/**
  * Lance les tests d'un élément
  *
  * @param typeElement table, fonction ou vue à tester
@@ -168,7 +179,7 @@ async function confidentialiteTestTypeElement(
  * @param idElement id de l'élément à tester (null hors fonction)
  * @return vrai si les tests de cet élément sont passés
  */
-async function confidentialiteTestElement(
+async function _confidentialiteTestElement(
     typeElement : Database["public"]["Enums"]["confidentialite_type_element"],
     nomElement : string,
     idElement : string|null
