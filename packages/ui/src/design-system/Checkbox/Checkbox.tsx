@@ -56,10 +56,13 @@ export const Checkbox = ({
           /** affiche l'input et le libellé */
           <label
             htmlFor={inputId}
-            className={classNames('inline-flex items-center cursor-pointer ', {
-              'text-grey-8': !remainingProps.disabled,
-              'text-grey-6': remainingProps.disabled,
-            })}
+            className={classNames(
+              'inline-flex items-center cursor-pointer ml-0',
+              {
+                'text-grey-8': !remainingProps.disabled,
+                'text-grey-6': remainingProps.disabled,
+              }
+            )}
           >
             {label}
           </label>
