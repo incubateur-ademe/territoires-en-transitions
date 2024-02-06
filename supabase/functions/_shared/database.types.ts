@@ -20682,6 +20682,7 @@ export interface Database {
       }
       fiche_resume: {
         Row: {
+          amelioration_continue: boolean | null
           collectivite_id: number | null
           date_fin_provisoire: string | null
           id: number | null
@@ -24123,13 +24124,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -24804,6 +24805,7 @@ export interface Database {
           indicateur_personnalise_id?: number
         }
         Returns: {
+          amelioration_continue: boolean | null
           collectivite_id: number | null
           date_fin_provisoire: string | null
           id: number | null
@@ -25127,6 +25129,7 @@ export interface Database {
               fiche_action_indicateur: unknown
             }
             Returns: {
+              amelioration_continue: boolean | null
               collectivite_id: number | null
               date_fin_provisoire: string | null
               id: number | null
@@ -25146,6 +25149,7 @@ export interface Database {
               fiche_action_action: unknown
             }
             Returns: {
+              amelioration_continue: boolean | null
               collectivite_id: number | null
               date_fin_provisoire: string | null
               id: number | null
@@ -25193,6 +25197,7 @@ export interface Database {
           limit?: number
         }
         Returns: {
+          amelioration_continue: boolean | null
           collectivite_id: number | null
           date_fin_provisoire: string | null
           id: number | null
@@ -26723,6 +26728,12 @@ export interface Database {
       skip:
         | {
             Args: {
+              "": number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               why: string
               how_many: number
             }
@@ -26731,12 +26742,6 @@ export interface Database {
         | {
             Args: {
               "": string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              "": number
             }
             Returns: string
           }
