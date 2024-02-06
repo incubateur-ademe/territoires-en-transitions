@@ -2,7 +2,7 @@ import {Config} from 'tailwindcss';
 import {preset} from '@tet/ui';
 
 export default {
-  presets: [preset],
+  presets: [preset as Config],
   content: [
     '../ui/src/**/*.{js,ts,jsx,tsx,mdx}',
     './app/*.{js,ts,jsx,tsx,mdx}',
