@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {v4 as uuid} from 'uuid';
+import {useId} from 'react';
 
 import {FieldMessage, FieldMessageProps} from '../Field';
 
@@ -27,7 +27,7 @@ export const Checkbox = ({
   id,
   ...remainingProps
 }: CheckboxProps) => {
-  const inputId = id ?? uuid();
+  const inputId = id ?? useId();
 
   return (
     <div className="flex gap-2">
