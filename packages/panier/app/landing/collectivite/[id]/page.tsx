@@ -1,6 +1,6 @@
 "use server";
 
-import { supabase } from "@tet/api/dist/src/tests/supabase";
+import { supabase } from "lib/supabaseServer";
 import { redirect } from "next/navigation";
 
 async function Landing({ params }: { params: { id: string } }) {
