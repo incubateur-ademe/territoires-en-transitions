@@ -365,4 +365,52 @@ FROM labellisation.audit a
 WHERE now() >= a.date_debut AND not a.clos
   AND est_verifie();
 
+create or replace view audit (id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide) as
+SELECT audit.id,
+       audit.collectivite_id,
+       audit.referentiel,
+       audit.demande_id,
+       audit.date_debut,
+       audit.date_fin,
+       audit.valide,
+       audit.date_cnl,
+       audit.valide_labellisation,
+       audit.clos
+FROM labellisation.audit
+WHERE is_authenticated()
+   OR is_service_role();
+
+create function update_audit_date_cnl(audit_id integer, date_cnl timestamptz) returns void
+    language plpgsql
+    security definer
+as
+$$
+begin
+    if not is_service_role() then
+        perform set_config('response.status', '401', true);
+        raise 'Seul le service role peut changer la date cnl';
+    end if;
+    update labellisation.audit
+    set date_cnl = update_audit_date_cnl.date_cnl
+    where id = update_audit_date_cnl.audit_id;
+end
+$$;
+
+create function update_audit_validation_labellisation(audit_id integer, validation boolean) returns void
+    language plpgsql
+    security definer
+as
+$$
+begin
+    if not is_service_role() then
+        perform set_config('response.status', '401', true);
+        raise 'Seul le service role peut changer la validation de la labellisation';
+    end if;
+    update labellisation.audit
+    set valide_labellisation = validation
+    where id = audit_id;
+end
+$$;
+
+
 COMMIT;
