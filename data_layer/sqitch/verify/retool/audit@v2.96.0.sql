@@ -7,15 +7,9 @@ select collectivite_id,
        referentiel,
        date_debut,
        date_fin,
-       date_cnl,
-       valide_labellisation,
-       clos,
        type_audit,
-       etoiles,
-       date_demande,
-       date_attribution_auditeur,
-       audit_id,
-       demande_id
+       envoyee_le,
+       date_attribution
 from retool_audit
 where false;
 
