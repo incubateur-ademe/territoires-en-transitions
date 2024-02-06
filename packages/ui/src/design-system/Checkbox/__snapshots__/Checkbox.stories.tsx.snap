@@ -2,12 +2,12 @@
 
 exports[`Design System/Checkbox AvecMessage smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="7ccd7a0c-cc39-499d-b294-8ec6c174614d"
+  <input id="cb7"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
   <div class="flex flex-col gap-1">
-    <label for="7ccd7a0c-cc39-499d-b294-8ec6c174614d"
+    <label for="cb7"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -23,12 +23,12 @@ exports[`Design System/Checkbox AvecMessage smoke-test 1`] = `
 
 exports[`Design System/Checkbox AvecMessageEtEtat smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="76592886-420f-4ff4-8415-337df08996e3"
+  <input id="cb8"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
   <div class="flex flex-col gap-1">
-    <label for="76592886-420f-4ff4-8415-337df08996e3"
+    <label for="cb8"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -46,7 +46,7 @@ exports[`Design System/Checkbox AvecMessageEtEtat smoke-test 1`] = `
 
 exports[`Design System/Checkbox AvecMessageUniquement smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="11e9c330-246f-46f4-8382-8b545e408235"
+  <input id="cb9"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
@@ -62,13 +62,13 @@ exports[`Design System/Checkbox AvecMessageUniquement smoke-test 1`] = `
 
 exports[`Design System/Checkbox Checked smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="04d002cc-4467-43ad-b710-2e0789087299"
+  <input id="cb3"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
          checked
   >
   <div class="flex flex-col gap-1">
-    <label for="04d002cc-4467-43ad-b710-2e0789087299"
+    <label for="cb3"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -79,14 +79,14 @@ exports[`Design System/Checkbox Checked smoke-test 1`] = `
 
 exports[`Design System/Checkbox CheckedAndDisabled smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="2c1a4115-f9c2-400f-811c-aa7c0154fdea"
+  <input id="cb5"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
          disabled
          checked
   >
   <div class="flex flex-col gap-1">
-    <label for="2c1a4115-f9c2-400f-811c-aa7c0154fdea"
+    <label for="cb5"
            class="inline-flex items-center cursor-pointer  text-grey-6"
     >
       Description de l'action
@@ -98,12 +98,12 @@ exports[`Design System/Checkbox CheckedAndDisabled smoke-test 1`] = `
 exports[`Design System/Checkbox LongLabelAvecMessage smoke-test 1`] = `
 <div class="max-w-[16rem]">
   <div class="flex gap-2">
-    <input id="c446016f-cfc6-4483-abc4-305bcac683af"
+    <input id="cb6"
            type="checkbox"
            class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
     >
     <div class="flex flex-col gap-1">
-      <label for="c446016f-cfc6-4483-abc4-305bcac683af"
+      <label for="cb6"
              class="inline-flex items-center cursor-pointer  text-grey-8"
       >
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -120,7 +120,7 @@ exports[`Design System/Checkbox LongLabelAvecMessage smoke-test 1`] = `
 
 exports[`Design System/Checkbox SansLabel smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="7f4a4683-a9d2-4731-be4e-308455733d81"
+  <input id="cb1"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
@@ -131,12 +131,12 @@ exports[`Design System/Checkbox SansLabel smoke-test 1`] = `
 
 exports[`Design System/Checkbox Unchecked smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="eb791dd5-8bd1-4965-867a-6193501468df"
+  <input id="cb2"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
   >
   <div class="flex flex-col gap-1">
-    <label for="eb791dd5-8bd1-4965-867a-6193501468df"
+    <label for="cb2"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -147,13 +147,13 @@ exports[`Design System/Checkbox Unchecked smoke-test 1`] = `
 
 exports[`Design System/Checkbox UncheckedAndDisabled smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="80f34d19-81eb-4c91-9f18-2d0c26f272d4"
+  <input id="cb4"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
          disabled
   >
   <div class="flex flex-col gap-1">
-    <label for="80f34d19-81eb-4c91-9f18-2d0c26f272d4"
+    <label for="cb4"
            class="inline-flex items-center cursor-pointer  text-grey-6"
     >
       Description de l'action
@@ -164,12 +164,12 @@ exports[`Design System/Checkbox UncheckedAndDisabled smoke-test 1`] = `
 
 exports[`Design System/Checkbox VarianteSwitch smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="09fa715f-49a3-47fc-83a8-aafdcf2566ae"
+  <input id="cb10"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
   >
   <div class="flex flex-col gap-1">
-    <label for="09fa715f-49a3-47fc-83a8-aafdcf2566ae"
+    <label for="cb10"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -187,13 +187,13 @@ exports[`Design System/Checkbox VarianteSwitch smoke-test 1`] = `
 
 exports[`Design System/Checkbox VarianteSwitchChecked smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="c8333910-93aa-4206-ad2f-b3ec9df9807b"
+  <input id="cb11"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
          checked
   >
   <div class="flex flex-col gap-1">
-    <label for="c8333910-93aa-4206-ad2f-b3ec9df9807b"
+    <label for="cb11"
            class="inline-flex items-center cursor-pointer  text-grey-8"
     >
       Description de l'action
@@ -211,14 +211,14 @@ exports[`Design System/Checkbox VarianteSwitchChecked smoke-test 1`] = `
 
 exports[`Design System/Checkbox VarianteSwitchDisabled smoke-test 1`] = `
 <div class="flex gap-2">
-  <input id="5d0ab82c-cdaa-41ce-ab9e-10fc283e21c0"
+  <input id="cb12"
          type="checkbox"
          class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 relative bg-grey-4 rounded-full w-10 h-6 before:absolute before:h-4 before:w-4 before:left-1 before:top-1 before:bg-white before:duration-200 before:rounded-full checked:text-primary checked:before:translate-x-4 checked:before:flex checked:before:items-center checked:before:justify-center"
          disabled
          checked
   >
   <div class="flex flex-col gap-1">
-    <label for="5d0ab82c-cdaa-41ce-ab9e-10fc283e21c0"
+    <label for="cb12"
            class="inline-flex items-center cursor-pointer  text-grey-6"
     >
       Description de l'action
