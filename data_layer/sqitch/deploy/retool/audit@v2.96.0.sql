@@ -2,8 +2,6 @@
 
 BEGIN;
 
-drop view retool_audit;
-
 create or replace view retool_audit as
 with auditeur as (select audit_id, min(created_at) as date_attribution
                   from audit_auditeur aa
@@ -27,7 +25,6 @@ from labellisation.audit a
     where en_cours = false
 ) d on a.demande_id = d.id
          left join auditeur on auditeur.audit_id = a.id
-where (a.date_debut is not null or d is not null)
-  and is_service_role();
+where (a.date_debut is not null or d is not null);
 
 COMMIT;
