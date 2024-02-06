@@ -6,7 +6,7 @@ import {
   Niveau,
   PanierAPI,
 } from '@tet/api';
-import PanierRealtime from "@components/PanierRealtime";
+import PanierRealtime from './PanierRealtime';
 import { notFound } from "next/navigation";
 import {cookies} from 'next/headers';
 import {createClient} from 'src/supabase/server';
@@ -24,15 +24,9 @@ async function Page({ params, searchParams }: {
 
   const categories = await fetchCategories();
 
-  if (panier) {
-    return (
-      <div>
-        <h1>Panier {panierId}</h1>
-        <PanierRealtime panier={panier} categories={categories} />
-      </div>
-    );
-  }
-  return notFound();
+  if (!panier) return notFound();
+
+  return <PanierRealtime panier={panier} categories={categories} />;
 }
 
 export default Page;
