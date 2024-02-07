@@ -18,11 +18,13 @@ export const ModalFooterOKCancel = (props: {
   return (
     <ModalFooter variant="right">
       {btnCancelProps && (
-        <Button variant="outlined" {...btnCancelRemainingProps}>
+        <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
           {cancel || 'Annuler'}
         </Button>
       )}
-      <Button {...btnOKRemainingProps}>{ok || 'Valider'}</Button>
+      <Button type="submit" {...btnOKRemainingProps}>
+        {ok || 'Valider'}
+      </Button>
     </ModalFooter>
   );
 };
