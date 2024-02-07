@@ -4,7 +4,7 @@ import {FicheResume} from './types';
 import {sortFichesResume} from './utils';
 
 /**
- * Édite un axe dans un plan d'action
+ * Édite une fiche résumé
  */
 export const useUpdateFicheResume = (axeId?: number) => {
   const queryClient = useQueryClient();
@@ -13,10 +13,22 @@ export const useUpdateFicheResume = (axeId?: number) => {
 
   return useMutation(
     async (fiche: FicheResume) => {
-      const {titre, statut, niveau_priorite, date_fin_provisoire} = fiche;
+      const {
+        titre,
+        statut,
+        niveau_priorite,
+        date_fin_provisoire,
+        amelioration_continue,
+      } = fiche;
       await supabaseClient
         .from('fiche_action')
-        .update({titre, statut, niveau_priorite, date_fin_provisoire})
+        .update({
+          titre,
+          statut,
+          niveau_priorite,
+          date_fin_provisoire,
+          amelioration_continue,
+        })
         .eq('id', fiche.id!);
     },
     {

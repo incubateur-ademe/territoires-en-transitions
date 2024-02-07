@@ -50,6 +50,7 @@ export const ficheResumeFactory = ({
     id: tempId,
     collectivite_id,
     date_fin_provisoire: null,
+    amelioration_continue: null,
     modified_at: null,
     niveau_priorite: null,
     pilotes: null,

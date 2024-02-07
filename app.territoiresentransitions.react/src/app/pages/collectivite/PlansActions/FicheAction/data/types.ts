@@ -65,6 +65,7 @@ export type Financeur = Omit<
   financeur_tag: TFinanceurTagInsert;
 };
 
-export type FicheResume = Omit<TFicheResume, 'plans'> & {
+export type FicheResume = Omit<TFicheResume, 'plans' | 'pilotes'> & {
   plans: TAxeInsert[] | [null] | null;
+  pilotes: Personne[] | null;
 };
