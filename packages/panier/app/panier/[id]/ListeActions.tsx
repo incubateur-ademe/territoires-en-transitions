@@ -1,5 +1,22 @@
 import {ActionImpactCategorie, ActionImpactState} from '@tet/api';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
+import {Tab, Tabs} from '@tet/ui';
+
+const getTabLabel = (
+  tab: {label: string; status: string | null},
+  actionsNb: number,
+) => {
+  if (tab.status !== null) {
+    if (actionsNb > 1 || tab.status === 'en_cours') {
+      return `${actionsNb} ${tab.label.toLowerCase()}`;
+    } else {
+      return `${actionsNb} ${tab.label
+        .slice(0, tab.label.length - 1)
+        .toLowerCase()}`;
+    }
+  }
+  return tab.label;
+};
 
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
@@ -14,16 +31,38 @@ const ListeActions = ({
   onToggleSelected,
   updateStatus,
 }: ListeActionsProps) => {
-  console.log(actionsListe);
+  const tabsList = [
+    {label: 'Sélection', status: null},
+    {label: 'Réalisées', status: 'realise'},
+    {label: 'En cours de réalisation', status: 'en_cours'},
+    {label: 'Non pertinentes', status: 'non_pertinent'},
+  ];
 
   return (
     <div className="my-4">
-      <ListeActionsFiltrees
-        actionsListe={actionsListe}
-        statuts={statuts}
-        updateStatus={updateStatus}
-        onToggleSelected={onToggleSelected}
-      />
+      <Tabs>
+        {...tabsList.map(tab => {
+          const actionsFiltrees = actionsListe.filter(
+            a =>
+              (!a.statut && a.statut === tab.status) ||
+              (a.statut && a.statut.categorie_id === tab.status),
+          );
+
+          return (
+            <Tab
+              key={tab.label}
+              label={getTabLabel(tab, actionsFiltrees.length)}
+            >
+              <ListeActionsFiltrees
+                actionsListe={actionsFiltrees}
+                statuts={statuts}
+                updateStatus={updateStatus}
+                onToggleSelected={onToggleSelected}
+              />
+            </Tab>
+          );
+        })}
+      </Tabs>
     </div>
   );
 };
