@@ -1,8 +1,7 @@
 -- Deploy tet:labellisation/audit to pg
 BEGIN;
 
-drop function update_audit_date_cnl;
-drop function update_audit_validation_labellisation;
+drop function labellisation_validate_audit;
 drop view retool_preuves;
 drop view preuve;
 drop view audit;

@@ -19,4 +19,7 @@ select collectivite_id,
 from retool_audit
 where false;
 
+select has_function_privilege('retool_update_audit(integer, timestamptz, timestamptz, timestamptz, boolean, boolean, boolean)', 'execute');
+
+
 ROLLBACK;

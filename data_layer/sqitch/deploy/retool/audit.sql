@@ -35,4 +35,62 @@ from labellisation.audit a
 where (a.date_debut is not null or d is not null)
 and is_service_role();
 
+create function retool_update_audit(
+    audit_id integer,
+    date_debut timestamptz,
+    date_fin timestamptz,
+    date_cnl timestamptz,
+    valide boolean,
+    valide_labellisation boolean,
+    clos boolean
+) returns void
+    language plpgsql
+    security definer
+as
+$$
+begin
+    if not is_service_role() then
+        perform set_config('response.status', '401', true);
+        raise 'Seul le service role peut modifier directement l''audit';
+    end if;
+
+    if date_debut is not null then
+        update labellisation.audit
+        set date_debut = retool_update_audit.date_debut
+        where id = retool_update_audit.audit_id;
+    end if;
+
+    if date_fin is not null then
+        update labellisation.audit
+        set date_fin = retool_update_audit.date_fin
+        where id = retool_update_audit.audit_id;
+    end if;
+
+    if date_cnl is not null then
+        update labellisation.audit
+        set date_cnl = retool_update_audit.date_cnl
+        where id = retool_update_audit.audit_id;
+    end if;
+
+    if valide is not null then
+        update labellisation.audit
+        set valide = retool_update_audit.valide
+        where id = retool_update_audit.audit_id;
+    end if;
+
+    if valide_labellisation is not null then
+        update labellisation.audit
+        set valide_labellisation = retool_update_audit.valide_labellisation
+        where id = retool_update_audit.audit_id;
+    end if;
+
+    if clos is not null then
+        update labellisation.audit
+        set clos = retool_update_audit.clos
+        where id = retool_update_audit.audit_id;
+    end if;
+
+end
+$$;
+
 COMMIT;

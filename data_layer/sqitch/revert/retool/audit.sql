@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop function retool_update_audit;
 drop view retool_audit;
 
 create or replace view retool_audit as
