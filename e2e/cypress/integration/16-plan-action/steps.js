@@ -136,10 +136,12 @@ When(/j'ajoute une fiche au plan d'action/, () => {
 
 When(/je nomme la carte "([^"]*)"/, titre => {
   cy.wait(50);
-  cy.get('[data-test=ActionCarte]')
-    .find('textarea')
-    .first()
-    .type(`${titre}{enter}`);
+  cy.get('[data-test=EditerFicheBouton]').first().click({force: true});
+  cy.get('[data-test=FicheNomInput]').clear().type(`${titre}`);
+  cy.get('[data-test=ModifierFicheModale]')
+    .find('button')
+    .contains('Valider')
+    .click();
 });
 
 When(/je navigue vers la fiche "([^"]*)"/, titre => {

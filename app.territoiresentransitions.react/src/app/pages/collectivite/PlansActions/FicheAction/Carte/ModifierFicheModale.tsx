@@ -38,6 +38,7 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
 
   return (
     <Modal
+      dataTest="ModifierFicheModale"
       size="md"
       onClose={() => setFiche(initialFiche)}
       title="Modifier la fiche action"
@@ -46,6 +47,7 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
           <div className="flex flex-col gap-6">
             <Field title="Nom de la fiche action">
               <Input
+                data-test="FicheNomInput"
                 type="text"
                 value={fiche.titre ?? undefined}
                 onChange={e => setFiche({...fiche, titre: e.target.value})}
