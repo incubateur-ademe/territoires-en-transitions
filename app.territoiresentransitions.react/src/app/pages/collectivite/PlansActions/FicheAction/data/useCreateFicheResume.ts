@@ -160,12 +160,6 @@ export const useCreateFicheResume = (args: Args) => {
             waitForMarkup(`#fiche-${newFiche.id}`).then(() => {
               // scroll au niveau de la nouvelle fiche créée
               dropAnimation(`fiche-${newFiche.id}`);
-              // on la rend éditable
-              document
-                .getElementById(`fiche-${newFiche.id}-edit-button`)
-                ?.click();
-              // donne le focus à son titre
-              document.getElementById(`fiche-titre-${newFiche.id}`)?.focus();
             });
           });
         }

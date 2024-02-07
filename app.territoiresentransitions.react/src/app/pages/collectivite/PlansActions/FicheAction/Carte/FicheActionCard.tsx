@@ -1,17 +1,17 @@
-import {useEffect, useRef, useState} from 'react';
 import {NavLink} from 'react-router-dom';
 import classNames from 'classnames';
 import {format, isBefore, startOfToday} from 'date-fns';
+
+import {Notification} from '@tet/ui';
 
 import {FicheResume} from '../data/types';
 import {generateTitle} from '../data/utils';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
-import Titre from './Titre';
 import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {Notification} from '@tet/ui';
+import ModifierFicheModale from './ModifierFicheModale';
 
 type Props = {
   link?: string;
@@ -42,44 +42,7 @@ const FicheActionCard = ({
     axeId: axeId || null,
   });
 
-  const editButtonRef = useRef<HTMLButtonElement>(null);
-
-  const [isEdit, _setIsEdit] = useState(false);
-
-  /**
-   * Fonction permettant d'update la ref afin d'avoir le state à jour
-   * dans la fct handleDetectOutsideClick de l'event listener window
-   */
-  const isEditRef = useRef(isEdit);
-  const setIsEdit = (isEdit: boolean) => {
-    isEditRef.current = isEdit;
-    _setIsEdit(isEdit);
-  };
-
   const carteId = `fiche-${ficheAction.id}`;
-
-  /** Fonction donné à l'event listener pour savoir où l'utilisateur à cliquer */
-  const handleDetectOutsideClick = (e: MouseEvent) => {
-    // Si l'utilisateur clique en dehors de la carte
-    if (!document.getElementById(carteId)?.contains(e.target as Node)) {
-      if (isEditRef.current) {
-        setIsEdit(false);
-      }
-    } else {
-      if (editButtonRef.current === e.target) {
-        setIsEdit(true);
-      }
-    }
-  };
-
-  /** Ajoute et supprime les events listener */
-  useEffect(() => {
-    window.addEventListener('click', handleDetectOutsideClick);
-
-    return () => {
-      window.removeEventListener('click', handleDetectOutsideClick);
-    };
-  }, []);
 
   return (
     <div
@@ -103,31 +66,16 @@ const FicheActionCard = ({
       {/** Menu d'options */}
       {!collectivite?.readonly && isEditable && (
         <div className="group absolute top-4 right-4 !flex gap-2">
-          {isEdit ? (
-            <NavLink
-              to={link || '#'}
-              target={openInNewTab ? '_blank' : undefined}
-              rel={openInNewTab ? 'noopener noreferrer' : undefined}
-              className={classNames(
-                'invisible group-hover:visible !bg-none rounded-lg',
-                {
-                  'after:!hidden': openInNewTab,
-                }
-              )}
-            >
-              <span className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-arrow-right-line !bg-white hover:!bg-primary-3 rounded-lg" />
-            </NavLink>
-          ) : (
+          <ModifierFicheModale initialFiche={ficheAction} axeId={axeId}>
             <button
               data-test="EditerFicheBouton"
-              ref={editButtonRef}
-              title="Éditer"
               id={`fiche-${ficheAction.id}-edit-button`}
+              title="Modifier"
               className={classNames(
                 'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-primary-3 rounded-lg'
               )}
             />
-          )}
+          </ModifierFicheModale>
           <FicheActionSupprimerModal
             buttonClassname="invisible group-hover:visible !bg-white rounded-lg"
             isInMultipleAxes={
@@ -139,18 +87,18 @@ const FicheActionCard = ({
       )}
       {/** Carte */}
       <NavLink
-        to={link || '#'}
+        to={link || ''}
         target={openInNewTab ? '_blank' : undefined}
         rel={openInNewTab ? 'noopener noreferrer' : undefined}
         className={classNames(
           'block bg-none',
           {'after:!hidden': openInNewTab},
-          {'cursor-default': isEdit || !ficheAction.id},
+          {'cursor-default': !ficheAction.id},
           {
             '!cursor-default, pointer-events-none': isNotClickable,
           }
         )}
-        onClick={e => isEdit && e.preventDefault()}
+        onClick={e => isNotClickable && e.preventDefault()}
       >
         <div className="flex flex-col gap-3 h-full p-6">
           {(ficheAction.niveau_priorite || ficheAction.statut) && (
@@ -163,12 +111,9 @@ const FicheActionCard = ({
               )}
             </div>
           )}
-          <Titre
-            fiche={ficheAction}
-            axeId={axeId}
-            isEdit={isEdit}
-            setIsEdit={setIsEdit}
-          />
+          <span className={classNames('font-medium text-primary-10')}>
+            {generateTitle(ficheAction.titre)}
+          </span>
           {ficheAction.plans?.length && (
             <div className="text-sm text-grey-6" title="Emplacements">
               {ficheAction.plans
