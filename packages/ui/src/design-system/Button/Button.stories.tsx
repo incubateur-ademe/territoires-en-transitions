@@ -276,7 +276,6 @@ export const AnchorButtons: Story = {
   ),
 };
 
-/** Customisation du bouton avec des classes ou des inline styles. */
 export const WithRef: Story = {
   render: () => {
     const buttonRef = useRef();
