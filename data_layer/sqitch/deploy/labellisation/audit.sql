@@ -41,7 +41,7 @@ begin
        (select sujet in ('labellisation', 'labellisation_cot')
         from labellisation.demande ld
         where ld.id = new.demande_id) and
-       new.valide_labellisation = true and old.valide_labellisation <> true
+       new.valide_labellisation = true and (old.valide_labellisation is null or not old.valide_labellisation)
     then -- alors on termine l'audit
         new.clos = true;
     end if;
@@ -293,10 +293,11 @@ execute procedure labellisation.update_audit_scores();
 
 create or replace function labellisation.update_labellisation_after_scores() returns trigger
     language plpgsql
+    security definer
 as
 $$
 declare
-    etoile int;
+    etoile integer;
 begin
     select etoiles::text::integer
     from labellisation.demande d
@@ -314,7 +315,6 @@ begin
            and l.referentiel = new.referentiel
            and l.etoiles = etoile)
     then
-
         with
             score AS (
                 SELECT Round((case
@@ -333,7 +333,8 @@ begin
                           end
             )
         insert into labellisation (collectivite_id, referentiel, obtenue_le, etoiles, score_realise, score_programme)
-        values (new.collectivite_id, new.referentiel, now(), etoile, score.score_realise, score.score_programme)
+        select new.collectivite_id, new.referentiel, now(), etoile, score.score_realise, score.score_programme
+        from score
         on conflict (collectivite_id, annee, referentiel) do update
             set obtenue_le = excluded.obtenue_le,
                 etoiles = excluded.etoiles,
@@ -380,37 +381,27 @@ FROM labellisation.audit
 WHERE is_authenticated()
    OR is_service_role();
 
-create function update_audit_date_cnl(audit_id integer, date_cnl timestamptz) returns void
+create function labellisation_validate_audit(
+    audit_id integer,
+    valide boolean
+) returns void
     language plpgsql
     security definer
 as
 $$
 begin
-    if not is_service_role() then
+    if not est_auditeur_audit(audit_id) then
         perform set_config('response.status', '401', true);
-        raise 'Seul le service role peut changer la date cnl';
+        raise 'Seul l''auditeur peut valider l''audit.';
     end if;
-    update labellisation.audit
-    set date_cnl = update_audit_date_cnl.date_cnl
-    where id = update_audit_date_cnl.audit_id;
+
+    if valide is not null then
+        update labellisation.audit
+        set valide = labellisation_validate_audit.valide
+        where id = labellisation_validate_audit.audit_id;
+    end if;
+
 end
 $$;
-
-create function update_audit_validation_labellisation(audit_id integer, validation boolean) returns void
-    language plpgsql
-    security definer
-as
-$$
-begin
-    if not is_service_role() then
-        perform set_config('response.status', '401', true);
-        raise 'Seul le service role peut changer la validation de la labellisation';
-    end if;
-    update labellisation.audit
-    set valide_labellisation = validation
-    where id = audit_id;
-end
-$$;
-
 
 COMMIT;
