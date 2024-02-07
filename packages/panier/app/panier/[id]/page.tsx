@@ -4,12 +4,14 @@ import React from "react";
 import { ActionImpactCategorie, Niveau, Panier, panierSelect } from "@tet/api";
 import PanierRealtime from "@components/PanierRealtime";
 import { notFound } from "next/navigation";
-import { supabase } from "lib/supabaseServer";
+import { createServerClient } from "lib/supabaseServer";
+import {cookies} from 'next/headers';
 
 async function Panier({ params, searchParams }: {
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const {supabase} = await createServerClient(cookies)
   const panierId = params.id;
   const { data, error } = await supabase.from("panier")
     .select(panierSelect)
