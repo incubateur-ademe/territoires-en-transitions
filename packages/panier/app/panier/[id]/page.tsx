@@ -41,6 +41,7 @@ async function fetchCategories(): Promise<ActionImpactCategorie[]> {
     method: "GET",
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      apiKey: apiKey,
     },
   });
   return await response.json();
@@ -57,6 +58,7 @@ async function fetchNiveaux(
     method: "GET",
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      apiKey: apiKey,
     },
   });
   return await response.json();
