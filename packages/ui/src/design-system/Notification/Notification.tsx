@@ -14,6 +14,8 @@ type Props = {
   icon?: IconValue;
   /** Nombre affiché dans le composant */
   number?: number;
+  /** Surcharge des classnames du composant */
+  classname?: string;
 };
 
 const variantToClassname: Record<NotificationVariant, string> = {
@@ -24,7 +26,7 @@ const variantToClassname: Record<NotificationVariant, string> = {
 };
 
 const sizeToClassname: Record<NotificationSize, string> = {
-  md: 'text-md',
+  md: 'text-base',
   sm: 'text-sm',
   xs: 'text-xs',
 };
@@ -37,16 +39,18 @@ export const Notification = ({
   size = 'md',
   icon,
   number,
+  classname,
 }: Props) => {
   return (
     <div
       className={classNames(
         variantToClassname[variant],
         sizeToClassname[size],
-        'inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow'
+        'inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow',
+        classname
       )}
     >
-      {!!number && (
+      {number !== undefined && (
         <span className="font-extrabold leading-none">{number}</span>
       )}
       <Icon icon={icon} size={size} />
