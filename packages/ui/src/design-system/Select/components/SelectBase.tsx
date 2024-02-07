@@ -163,6 +163,7 @@ export const SelectBase = (props: SelectProps) => {
             inputValue.trim().length > 0 &&
             isNotSimilar && (
               <button
+                type="button"
                 data-test={`${dataTest}-create-option`}
                 className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
@@ -276,6 +277,7 @@ const SelectButton = forwardRef(
           {'rounded-b-none': isOpen}
         )}
         disabled={disabled}
+        type="button"
         {...props}
       >
         <div
@@ -343,8 +345,15 @@ const SelectButton = forwardRef(
                     }
                   )}
                   value={inputValue}
-                  onChange={e => onSearch(e.target.value)}
-                  onClick={evt => isOpen && evt.stopPropagation()}
+                  onChange={e => {
+                    onSearch(e.target.value);
+                  }}
+                  onClick={evt => {
+                    evt.preventDefault();
+                    if (isOpen) {
+                      evt.stopPropagation();
+                    }
+                  }}
                   placeholder={placeholder ?? 'Rechercher par mots-clés'}
                   disabled={disabled}
                 />
