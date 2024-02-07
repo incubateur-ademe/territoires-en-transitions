@@ -1,6 +1,7 @@
+import {useState} from 'react';
 import {ActionImpactCategorie, ActionImpactState} from '@tet/api';
+import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
-import {Tab, Tabs} from '@tet/ui';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
@@ -31,6 +32,8 @@ const ListeActions = ({
   onToggleSelected,
   updateStatus,
 }: ListeActionsProps) => {
+  const [openAlert, setOpenAlert] = useState(true);
+
   const tabsList = [
     {label: 'Sélection', status: null},
     {label: 'Réalisées', status: 'realise'},
@@ -53,6 +56,13 @@ const ListeActions = ({
               key={tab.label}
               label={getTabLabel(tab, actionsFiltrees.length)}
             >
+              <Alert
+                isOpen={openAlert}
+                onClose={() => setOpenAlert(false)}
+                title="Nous avons personnalisé la liste selon votre territoire et vos
+                compétences. Vous pouvez modifier grâce aux filtres"
+                classname="mb-8"
+              />
               <ListeActionsFiltrees
                 actionsListe={actionsFiltrees}
                 statuts={statuts}
