@@ -27,10 +27,7 @@ export function middleware(request: NextRequest) {
     default-src 'self';
     script-src ${scriptSrc};
     style-src ${styleSrc};
-    img-src 'self' blob: data: ytimg.com ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
-      'strapiapp',
-      'media.strapiapp',
-    )};
+    img-src 'self' blob: data: ytimg.com;
     font-src 'self';
     object-src 'none';
     connect-src 'self'
