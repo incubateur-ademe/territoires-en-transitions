@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import {useEffect} from 'react';
@@ -68,7 +69,7 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, router, panier.id]);
+  }, [router, panier.id]);
 
   const handleToggleSelected = (actionId: number, selected: boolean) => {
     if (selected) {
