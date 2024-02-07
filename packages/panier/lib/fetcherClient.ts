@@ -12,10 +12,10 @@ export const singleFetcher = (path: string) => fetch(
     method: 'GET',
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      apiKey: apiKey,
       Accept: 'application/vnd.pgrst.object+json',
     },
   }).then((res) => res.json());
-
 
 /**
  * Fetch un point d'api supabase
@@ -27,6 +27,7 @@ export const fetcher = (path: string) => fetch(
     method: 'GET',
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      apiKey: apiKey,
       Accept: 'application/json',
     },
   }).then((res) => res.json());
