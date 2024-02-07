@@ -28,7 +28,7 @@ export type FieldMessageProps = {
   /** État */
   state?: FieldState;
   /** Message d'état affiché en dessous du champ */
-  message?: string;
+  message?: string | JSX.Element;
   /** Pour surcharger les styles du container du message */
   messageClassName?: string;
   /** Id pour les tests */
@@ -54,7 +54,11 @@ export const FieldMessage = ({
         {state !== 'disabled' && state !== 'default' && (
           <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
         )}
-        <span className="text-xs">{message}</span>
+        {typeof message === 'string' ? (
+          <span className="text-xs">{message}</span>
+        ) : (
+          message
+        )}
       </div>
     )
   );
