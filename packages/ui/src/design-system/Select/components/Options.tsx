@@ -126,7 +126,10 @@ const Option = ({
       <button
         data-test={option.value}
         className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
-        onClick={() => onChange(option.value)}
+        onClick={e => {
+          e.stopPropagation();
+          onChange(option.value);
+        }}
       >
         <div className="flex w-6 mr-2 shrink-0">
           {isActive && (
