@@ -32,9 +32,13 @@ export const InputEmail = forwardRef(
     );
 
     return (
-      <Field title="Email de connexion" {...messageProps} htmlFor="email">
+      <Field
+        className="md:col-span-2"
+        title="Email de connexion"
+        {...messageProps}
+        htmlFor="email"
+      >
         <Input
-          className="md:col-span-2"
           id="email"
           type="text"
           autoComplete="on"

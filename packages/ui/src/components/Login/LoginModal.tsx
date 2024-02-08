@@ -17,7 +17,7 @@ export const LoginModal = (props: Omit<LoginProps, 'onCancel'>) => {
     <Modal
       size={size}
       openState={{isOpen, setIsOpen}}
-      render={({close}) => <Login {...props} onCancel={close} />}
+      render={() => <Login {...props} onCancel={() => setIsOpen(false)} />}
     />
   );
 };

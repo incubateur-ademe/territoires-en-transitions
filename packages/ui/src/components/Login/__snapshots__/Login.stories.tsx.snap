@@ -6,7 +6,7 @@ exports[`components/Login AvecMotDePasse smoke-test 1`] = `
     Se connecter
   </h3>
   <div class="overflow-hidden">
-    <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto justify-center"
+    <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
         role="tablist"
     >
       <li role="presentation"
@@ -35,14 +35,13 @@ exports[`components/Login AvecMotDePasse smoke-test 1`] = `
       </li>
     </ul>
     <div id="tabpanel-1"
-         class
          role="tabpanel"
          aria-labelledby="tab-1"
          tabindex="1"
          label="Connexion avec mot de passe"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="flex-grow flex flex-col gap-3">
+        <div class="flex-grow flex flex-col gap-3 md:col-span-2">
           <label for="email">
             <div class="font-medium text-grey-8">
               Email de connexion
@@ -50,7 +49,7 @@ exports[`components/Login AvecMotDePasse smoke-test 1`] = `
           </label>
           <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
             <input type="text"
-                   class="grow text-grey-8 px-4 outline-none text-md py-3 md:col-span-2"
+                   class="grow text-grey-8 px-4 outline-none text-md py-3"
                    id="email"
                    autocomplete="on"
                    name="email"
@@ -106,7 +105,7 @@ exports[`components/Login Default smoke-test 1`] = `
     Se connecter
   </h3>
   <div class="overflow-hidden">
-    <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto justify-center"
+    <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
         role="tablist"
     >
       <li role="presentation"
@@ -135,13 +134,12 @@ exports[`components/Login Default smoke-test 1`] = `
       </li>
     </ul>
     <div id="tabpanel-0"
-         class
          role="tabpanel"
          aria-labelledby="tab-0"
          tabindex="0"
          label="Connexion sans mot de passe"
     >
-      <div class="flex-grow flex flex-col gap-3">
+      <div class="flex-grow flex flex-col gap-3 md:col-span-2">
         <label for="email">
           <div class="font-medium text-grey-8">
             Email de connexion
@@ -149,7 +147,7 @@ exports[`components/Login Default smoke-test 1`] = `
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
           <input type="text"
-                 class="grow text-grey-8 px-4 outline-none text-md py-3 md:col-span-2"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3"
                  id="email"
                  autocomplete="on"
                  name="email"
@@ -187,7 +185,7 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
   <h3 class="self-center">
     Mot de passe oublié ?
   </h3>
-  <div class="flex-grow flex flex-col gap-3">
+  <div class="flex-grow flex flex-col gap-3 md:col-span-2">
     <label for="email">
       <div class="font-medium text-grey-8">
         Email de connexion
@@ -195,7 +193,7 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3 md:col-span-2"
+             class="grow text-grey-8 px-4 outline-none text-md py-3"
              id="email"
              autocomplete="on"
              name="email"
@@ -247,21 +245,15 @@ exports[`components/Login MsgInitMdp smoke-test 1`] = `
        fill="none"
        xmlns="http://www.w3.org/2000/svg"
   >
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M97.1501 8.37502C96.2265 8.37502 95.4751 7.62362 95.4751 6.70002C95.4751 5.77635 96.2265 5.02502 97.1501 5.02502C98.0737 5.02502 98.8251 5.77635 98.8251 6.70002C98.8251 7.62362 98.0737 8.37502 97.1501 8.37502Z"
+    <path d="M97.1501 8.37502C96.2265 8.37502 95.4751 7.62362 95.4751 6.70002C95.4751 5.77635 96.2265 5.02502 97.1501 5.02502C98.0737 5.02502 98.8251 5.77635 98.8251 6.70002C98.8251 7.62362 98.0737 8.37502 97.1501 8.37502Z"
           fill="#E1E1FD"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M36.85 128.975C35.9265 128.975 35.175 128.224 35.175 127.3C35.175 126.376 35.9265 125.625 36.85 125.625C37.7736 125.625 38.5251 126.376 38.5251 127.3C38.5251 128.224 37.7736 128.975 36.85 128.975Z"
+    <path d="M36.85 128.975C35.9265 128.975 35.175 128.224 35.175 127.3C35.175 126.376 35.9265 125.625 36.85 125.625C37.7736 125.625 38.5251 126.376 38.5251 127.3C38.5251 128.224 37.7736 128.975 36.85 128.975Z"
           fill="#E1E1FD"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M20.1 21.775C19.1765 21.775 18.425 21.0236 18.425 20.1C18.425 19.1764 19.1765 18.425 20.1 18.425C21.0236 18.425 21.775 19.1764 21.775 20.1C21.775 21.0236 21.0236 21.775 20.1 21.775Z"
+    <path d="M20.1 21.775C19.1765 21.775 18.425 21.0236 18.425 20.1C18.425 19.1764 19.1765 18.425 20.1 18.425C21.0236 18.425 21.775 19.1764 21.775 20.1C21.775 21.0236 21.0236 21.775 20.1 21.775Z"
           fill="#E1E1FD"
     >
     </path>
@@ -269,9 +261,7 @@ exports[`components/Login MsgInitMdp smoke-test 1`] = `
           fill="#F4C447"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M56.8106 46.3821L56.9534 46.2695L74.7072 33.6618C75.9211 32.7997 77.5723 33.8315 77.3296 35.3005L73.7806 56.7843C73.5387 58.2486 71.6528 58.6982 70.7763 57.5006L65.8449 50.7621L57.6266 49.2837C56.2268 49.0319 55.7803 47.2837 56.8106 46.3821ZM71.125 52.3037L73.3692 38.7207L62.1447 46.6922L65.9801 47.3826L67.1544 45.5034C67.6446 44.7189 68.678 44.4803 69.4625 44.9705C70.191 45.4257 70.4487 46.3492 70.0893 47.107L69.9953 47.2786L68.8216 49.157L71.125 52.3037Z"
+    <path d="M56.8106 46.3821L56.9534 46.2695L74.7072 33.6618C75.9211 32.7997 77.5723 33.8315 77.3296 35.3005L73.7806 56.7843C73.5387 58.2486 71.6528 58.6982 70.7763 57.5006L65.8449 50.7621L57.6266 49.2837C56.2268 49.0319 55.7803 47.2837 56.8106 46.3821ZM71.125 52.3037L73.3692 38.7207L62.1447 46.6922L65.9801 47.3826L67.1544 45.5034C67.6446 44.7189 68.678 44.4803 69.4625 44.9705C70.191 45.4257 70.4487 46.3492 70.0893 47.107L69.9953 47.2786L68.8216 49.157L71.125 52.3037Z"
           fill="#F4C447"
     >
     </path>
@@ -321,21 +311,15 @@ exports[`components/Login MsgLienEnvoye smoke-test 1`] = `
        fill="none"
        xmlns="http://www.w3.org/2000/svg"
   >
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M97.1501 8.37502C96.2265 8.37502 95.4751 7.62362 95.4751 6.70002C95.4751 5.77635 96.2265 5.02502 97.1501 5.02502C98.0737 5.02502 98.8251 5.77635 98.8251 6.70002C98.8251 7.62362 98.0737 8.37502 97.1501 8.37502Z"
+    <path d="M97.1501 8.37502C96.2265 8.37502 95.4751 7.62362 95.4751 6.70002C95.4751 5.77635 96.2265 5.02502 97.1501 5.02502C98.0737 5.02502 98.8251 5.77635 98.8251 6.70002C98.8251 7.62362 98.0737 8.37502 97.1501 8.37502Z"
           fill="#E1E1FD"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M36.85 128.975C35.9265 128.975 35.175 128.224 35.175 127.3C35.175 126.376 35.9265 125.625 36.85 125.625C37.7736 125.625 38.5251 126.376 38.5251 127.3C38.5251 128.224 37.7736 128.975 36.85 128.975Z"
+    <path d="M36.85 128.975C35.9265 128.975 35.175 128.224 35.175 127.3C35.175 126.376 35.9265 125.625 36.85 125.625C37.7736 125.625 38.5251 126.376 38.5251 127.3C38.5251 128.224 37.7736 128.975 36.85 128.975Z"
           fill="#E1E1FD"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M20.1 21.775C19.1765 21.775 18.425 21.0236 18.425 20.1C18.425 19.1764 19.1765 18.425 20.1 18.425C21.0236 18.425 21.775 19.1764 21.775 20.1C21.775 21.0236 21.0236 21.775 20.1 21.775Z"
+    <path d="M20.1 21.775C19.1765 21.775 18.425 21.0236 18.425 20.1C18.425 19.1764 19.1765 18.425 20.1 18.425C21.0236 18.425 21.775 19.1764 21.775 20.1C21.775 21.0236 21.0236 21.775 20.1 21.775Z"
           fill="#E1E1FD"
     >
     </path>
@@ -343,9 +327,7 @@ exports[`components/Login MsgLienEnvoye smoke-test 1`] = `
           fill="#F4C447"
     >
     </path>
-    <path fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M56.8106 46.3821L56.9534 46.2695L74.7072 33.6618C75.9211 32.7997 77.5723 33.8315 77.3296 35.3005L73.7806 56.7843C73.5387 58.2486 71.6528 58.6982 70.7763 57.5006L65.8449 50.7621L57.6266 49.2837C56.2268 49.0319 55.7803 47.2837 56.8106 46.3821ZM71.125 52.3037L73.3692 38.7207L62.1447 46.6922L65.9801 47.3826L67.1544 45.5034C67.6446 44.7189 68.678 44.4803 69.4625 44.9705C70.191 45.4257 70.4487 46.3492 70.0893 47.107L69.9953 47.2786L68.8216 49.157L71.125 52.3037Z"
+    <path d="M56.8106 46.3821L56.9534 46.2695L74.7072 33.6618C75.9211 32.7997 77.5723 33.8315 77.3296 35.3005L73.7806 56.7843C73.5387 58.2486 71.6528 58.6982 70.7763 57.5006L65.8449 50.7621L57.6266 49.2837C56.2268 49.0319 55.7803 47.2837 56.8106 46.3821ZM71.125 52.3037L73.3692 38.7207L62.1447 46.6922L65.9801 47.3826L67.1544 45.5034C67.6446 44.7189 68.678 44.4803 69.4625 44.9705C70.191 45.4257 70.4487 46.3492 70.0893 47.107L69.9953 47.2786L68.8216 49.157L71.125 52.3037Z"
           fill="#F4C447"
     >
     </path>
