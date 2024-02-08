@@ -451,6 +451,9 @@ async function confidentialiteParametre(
                 params.data.push({colonne: 'tag_id', type: 'integer'});
             }
         }
+        if (nomElement == 'collectivite'){
+            params.data.push({colonne: 'id', type: 'integer'});
+        }
         for (let param of params.data) {
             if (param.colonne == null) {
                 relation = param.type;
