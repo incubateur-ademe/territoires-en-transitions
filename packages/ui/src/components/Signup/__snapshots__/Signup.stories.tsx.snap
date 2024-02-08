@@ -2,7 +2,7 @@
 
 exports[`components/Signup Default smoke-test 1`] = `
 <div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto justify-center"
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
       role="tablist"
   >
     <li role="presentation"
@@ -31,7 +31,6 @@ exports[`components/Signup Default smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-0"
-       class
        role="tabpanel"
        aria-labelledby="tab-0"
        tabindex="0"
@@ -155,7 +154,7 @@ exports[`components/Signup Default smoke-test 1`] = `
 
 exports[`components/Signup Etape1AvecMdp smoke-test 1`] = `
 <div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto justify-center"
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
       role="tablist"
   >
     <li role="presentation"
@@ -184,7 +183,6 @@ exports[`components/Signup Etape1AvecMdp smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
-       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"

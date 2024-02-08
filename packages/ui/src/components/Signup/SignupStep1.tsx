@@ -9,7 +9,7 @@ import {Input} from '@design-system/Input';
 import {Checkbox} from '@design-system/Checkbox';
 import {Select} from '@design-system/Select';
 import {Button} from '@design-system/Button';
-import {FormDataStep1, SignupPropsWithState} from './type';
+import {SignupDataStep1, SignupPropsWithState} from './type';
 import {useState} from 'react';
 
 const URL_CGU = 'https://territoiresentransitions.fr/cgu';
@@ -18,7 +18,7 @@ const URL_DCP = 'https://www.ademe.fr/donnees-personnelles/';
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (
   isPasswordless: boolean,
-  defaultValues: FormDataStep1
+  defaultValues: SignupDataStep1
 ) => {
   const validationSchema = z.object({
     collectivite_id: z.number({
