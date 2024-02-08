@@ -349,7 +349,7 @@ comment on function labellisation.update_labellisation_after_scores is
     'Ajoute automatiquement la labellisation si cette dernière a été validé et n''existe pas déjà';
 
 create trigger update_labellisation_after_scores
-    after insert
+    after insert or update
     on post_audit_scores
     for each row
 execute procedure labellisation.update_labellisation_after_scores();
