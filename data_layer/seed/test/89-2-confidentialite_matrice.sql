@@ -1029,6 +1029,15 @@ values
     ('fonction', 'action_ressources', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'action_ressources', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'action_ressources', 'auditeur', 'non', 'oui', 'non', 'non'),
+    -- Fonction active
+    ('fonction', 'active', 'public', 'non', 'non', 'non', 'non'),
+    ('fonction', 'active', 'connecte', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'verifie', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'support', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'lecture', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'edition', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'admin', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'active', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction add_bibliotheque_fichier
     ('fonction', 'add_bibliotheque_fichier', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'add_bibliotheque_fichier', 'connecte', 'non', 'non', 'non', 'non'),
@@ -1083,6 +1092,15 @@ values
     ('fonction', 'claim_collectivite', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'claim_collectivite', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'claim_collectivite', 'auditeur', 'non', 'oui', 'non', 'non'),
+    -- Fonction collectivite_card
+    ('fonction', 'collectivite_card', 'public', 'non', 'non', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'verifie', 'non', 'restreint', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'support', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'lecture', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'edition', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'admin', 'non', 'oui', 'non', 'non'),
+    ('fonction', 'collectivite_card', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction collectivite_membres
     ('fonction', 'collectivite_membres', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'collectivite_membres', 'connecte', 'non', 'non', 'non', 'non'),
