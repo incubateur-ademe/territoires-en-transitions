@@ -56,7 +56,7 @@ const buildQueryFromFilters = (filters: Tfilters) => {
   const query = supabaseClient
     .from('axe')
     .select(
-      '*, type: plan_action_type, collectivite: collectivite_card!inner(*).order=collectivite_card(nom)',
+      '*, type: plan_action_type, collectivite: collectivite_card!inner(*)&order=collectivite_card(nom)',
       {count: 'exact'}
     )
     .not('collectivite_card', 'is', null)
