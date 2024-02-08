@@ -44,7 +44,7 @@ const fetchPlans = async (filters: Tfilters) => {
   }
 
   return {
-    plans: (data as TPlanCarte[]) || [],
+    plans: (data as unknown as TPlanCarte[]) || [],
     plansCount: count ?? 0,
   };
 };
@@ -56,7 +56,7 @@ const buildQueryFromFilters = (filters: Tfilters) => {
   const query = supabaseClient
     .from('axe')
     .select(
-      '*, type: plan_action_type, collectivite: collectivite_card!inner(*)',
+      '*, type: plan_action_type, collectivite: collectivite_card!inner(*).order=collectivite.nom',
       {count: 'exact'}
     )
     .not('collectivite_card', 'is', null)
