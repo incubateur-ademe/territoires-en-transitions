@@ -122,24 +122,18 @@ const View = ({
         {/** Nombre de résultats | Désactiver les filtres */}
         <div className="flex flex-col gap-6 xl:flex-row xl:justify-between xl:items-center">
           <div className="grow min-h-[2.625rem] flex items-center">
-            {isLoading ? (
-              <h4 className="mb-0">Chargement...</h4>
-            ) : (
-              <>
-                {dataCount > 0 && (
-                  <h4 className="mb-0 text-center leading-10 text-gray-500 md:text-left">
-                    <span className="text-primary-7">
-                      {dataCount === 1
-                        ? `Une ${viewToText[view]}`
-                        : `${dataCount} ${viewToText[view]}s`}{' '}
-                    </span>
-                    <span className="text-primary-10">
-                      {dataCount === 1 ? 'correspond' : 'correspondent'} à votre
-                      recherche
-                    </span>
-                  </h4>
-                )}
-              </>
+            {dataCount > 0 && (
+              <h4 className="mb-0 text-center leading-10 text-gray-500 md:text-left">
+                <span className="text-primary-7">
+                  {dataCount === 1
+                    ? `Une ${viewToText[view]}`
+                    : `${dataCount} ${viewToText[view]}s`}{' '}
+                </span>
+                <span className="text-primary-10">
+                  {dataCount === 1 ? 'correspond' : 'correspondent'} à votre
+                  recherche
+                </span>
+              </h4>
             )}
           </div>
           {getNumberOfActiveFilters(filters) > 0 && (
