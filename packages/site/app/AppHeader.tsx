@@ -52,10 +52,7 @@ function Links() {
   return (
     <ul className="fr-btns-group">
       <li>
-        <a
-          href="https://app.territoiresentransitions.fr/auth/signup"
-          className="fr-btn fr-icon-add-circle-line"
-        >
+        <a href="/auth/signup" className="fr-btn fr-icon-add-circle-line">
           Créer un compte
         </a>
       </li>
