@@ -1,5 +1,7 @@
-import {Badge} from '@components/dstet/badge/Badge';
+'use client';
+
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import {Badge} from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
@@ -112,14 +114,11 @@ const CollectiviteHeader = ({
           <div className={classNames('flex gap-2 flex-wrap', {'mb-6': !!url})}>
             {!!population_totale && (
               <Badge
-                content={`${getFormattedNumber(population_totale)} habitants`}
-                status="new"
-                className="text-primary-7"
+                title={`${getFormattedNumber(population_totale)} habitants`}
+                state="new"
               />
             )}
-            {!!type && (
-              <Badge content={type} status="info" className="text-primary-7" />
-            )}
+            {!!type && <Badge title={type} state="info" />}
           </div>
 
           {/* URL */}
