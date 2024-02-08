@@ -52,7 +52,21 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
     return null;
   }
 
-  return data[0] as unknown as Collectivite;
+  const collectivite = data[0] as unknown as Collectivite;
+  let annuaireUrl = null;
+
+  if (collectivite.type_collectivite === 'commune') {
+    const response = await fetch(
+      `https://api.collectivite.fr/api/commune/url/${code_siren_insee}`,
+      {method: 'GET'},
+    );
+
+    if (response.status === 200) {
+      annuaireUrl = await response.text();
+    }
+  }
+
+  return {collectivite, annuaireUrl};
 };
 
 export const getStrapiData = async (codeSirenInsee: string) => {
