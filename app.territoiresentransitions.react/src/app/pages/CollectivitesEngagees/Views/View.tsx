@@ -98,7 +98,7 @@ const View = ({
                 '!bg-primary-2': view === 'collectivite',
               })}
               onClick={() => {
-                setFilters({...filters, vue: ['collectivite']});
+                setFilters({...filters, vue: ['collectivite'], page: 1});
               }}
             >
               Collectivités
@@ -112,7 +112,7 @@ const View = ({
                 '!bg-primary-2': view === 'plan',
               })}
               onClick={() => {
-                setFilters({...filters, vue: ['plan']});
+                setFilters({...filters, vue: ['plan'], page: 1});
               }}
             >
               Plans d'action
