@@ -142,7 +142,7 @@ const CollectiviteHeader = ({
           >
             <StrapiImage
               data={logo}
-              className="max-h-[70px] sm:max-h-[100px] lg:max-h-[150px] "
+              className="bg-white max-h-[70px] sm:max-h-[100px] lg:max-h-[150px]"
               containerClassName="h-fit"
               displayCaption={false}
             />
