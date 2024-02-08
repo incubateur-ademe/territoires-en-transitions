@@ -60,10 +60,7 @@ function Links() {
         </a>
       </li>
       <li>
-        <a
-          href="https://app.territoiresentransitions.fr/auth/signin"
-          className="fr-btn fr-icon-account-line"
-        >
+        <a href="/auth/login" className="fr-btn fr-icon-account-line">
           Se connecter
         </a>
       </li>
