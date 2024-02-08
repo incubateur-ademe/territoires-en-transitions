@@ -1,3 +1,6 @@
+'use client';
+
+import {Badge} from '@tet/ui';
 import classNames from 'classnames';
 import {getLocalDateString} from 'src/utils/getLocalDateString';
 
@@ -89,8 +92,8 @@ const BlogCard = ({
           )}
         </div>
         {!!badge && (
-          <div className="fr-badges-group">
-            <p className="fr-badge text-primary-8 bg-primary-1">{badge}</p>
+          <div className="absolute top-0 left-0 p-3">
+            <Badge title={badge} state="standard" />
           </div>
         )}
       </div>
