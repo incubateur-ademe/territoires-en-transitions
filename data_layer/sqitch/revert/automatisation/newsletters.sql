@@ -2,7 +2,39 @@
 
 BEGIN;
 
-drop trigger client_score_edl_complete on client_scores;
+create or replace function stats.refresh_views() returns void
+    security definer
+    language plpgsql
+as
+$$
+begin
+    refresh materialized view stats.collectivite;
+    refresh materialized view stats.collectivite_utilisateur;
+    refresh materialized view stats.collectivite_referentiel;
+    refresh materialized view stats.collectivite_labellisation;
+    refresh materialized view stats.collectivite_plan_action;
+    refresh materialized view stats.collectivite_action_statut;
+    refresh materialized view stats.evolution_activation;
+    refresh materialized view stats.rattachement;
+    refresh materialized view stats.utilisateur;
+    refresh materialized view stats.evolution_utilisateur;
+    refresh materialized view stats.connection;
+    refresh materialized view stats.evolution_connection;
+    refresh materialized view stats.carte_collectivite_active;
+    refresh materialized view stats.evolution_total_activation_par_type;
+    refresh materialized view stats.collectivite_actives_et_total_par_type;
+    refresh materialized view stats.evolution_nombre_utilisateur_par_collectivite;
+    refresh materialized view stats.carte_epci_par_departement;
+    refresh materialized view stats.pourcentage_completude;
+    refresh materialized view stats.evolution_collectivite_avec_minimum_fiches;
+    refresh materialized view stats.evolution_indicateur_referentiel;
+    refresh materialized view stats.evolution_resultat_indicateur_referentiel;
+    refresh materialized view stats.evolution_resultat_indicateur_personnalise;
+    refresh materialized view stats.engagement_collectivite;
+    refresh materialized view stats.evolution_nombre_fiches;
+end ;
+$$;
+
 drop function automatisation.send_admin_edl_complete;
 
 COMMIT;
