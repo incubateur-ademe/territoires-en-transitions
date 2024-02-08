@@ -1,6 +1,5 @@
 'use server';
 
-import {notFound} from 'next/navigation';
 import {getServiceStrapiData} from './utils';
 import {InfoData, ListeData, ParagrapheData} from './types';
 import ParagrapheService from './ParagrapheService';
@@ -8,6 +7,7 @@ import ListeService from './ListeService';
 import InfoService from './InfoService';
 import {Metadata, ResolvingMetadata} from 'next';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import NotFound from '@components/info/NotFound';
 
 export async function generateMetadata(
   {params}: {params: {uid: string}},
@@ -31,7 +31,7 @@ type ServiceProgrammeProps = {
 const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
   const data = await getServiceStrapiData(uid);
 
-  if (!data || data.contenu.length === 0) return notFound();
+  if (!data || data.contenu.length === 0) return <NotFound />;
 
   return (
     <>
@@ -45,7 +45,7 @@ const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
           case 'info':
             return <InfoService key={key} {...(c as InfoData)} />;
           default:
-            return notFound();
+            return <NotFound />;
         }
       })}
     </>

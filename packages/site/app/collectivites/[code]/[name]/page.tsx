@@ -16,6 +16,7 @@ import {natureCollectiviteToLabel} from 'src/utils/labels';
 import AccesCompte from './AccesCompte';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
+import NotFound from '@components/info/NotFound';
 
 export async function generateMetadata(
   {params}: {params: {code: string}},
@@ -59,7 +60,8 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   const strapiData = await getStrapiData(params.code);
   const strapiDefaultData = await getStrapiDefaultData();
 
-  if (!collectiviteData || !collectiviteData.collectivite.nom) return null;
+  if (!collectiviteData || !collectiviteData.collectivite.nom)
+    return <NotFound />;
 
   return (
     <Section

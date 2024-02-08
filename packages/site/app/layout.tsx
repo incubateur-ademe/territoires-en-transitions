@@ -74,9 +74,7 @@ export default function RootLayout({children}: {children: JSX.Element}) {
       <body className="min-h-screen flex flex-col justify-between">
         <div className="grow flex flex-col">
           <AppHeader />
-          <div className="grow fr-container-fluid flex flex-col">
-            {children}
-          </div>
+          <div className="grow flex flex-col">{children}</div>
         </div>
         <Footer />
         <Amplitude />

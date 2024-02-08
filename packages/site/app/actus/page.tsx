@@ -8,6 +8,7 @@ import BlogCard from '@components/cards/BlogCard';
 import MasonryGallery from '@components/galleries/MasonryGallery';
 import {Metadata} from 'next';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
+import NotFound from '@components/info/NotFound';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -85,7 +86,9 @@ const Actualites = async () => {
         ))}
       />
     </Section>
-  ) : null;
+  ) : (
+    <NotFound />
+  );
 };
 
 export default Actualites;
