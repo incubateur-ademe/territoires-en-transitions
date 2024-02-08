@@ -73,6 +73,10 @@ const CollectiviteHeader = ({
                   objectPosition: 'center',
                   minHeight: '100%',
                   minWidth: '100%',
+                  WebkitTransitionProperty: 'opacity',
+                  WebkitTransitionTimingFunction:
+                    'cubic-bezier(0.4, 0, 0.2, 1)',
+                  WebkitTransitionDuration: '500ms',
                 }}
                 className="hover:opacity-10 transition-opacity duration-500"
               />
