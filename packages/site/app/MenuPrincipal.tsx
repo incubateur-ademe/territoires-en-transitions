@@ -44,14 +44,17 @@ export function MenuPrincipal(props: MenuProps) {
       <MenuItem href="/outil-numerique" {...props}>
         L'outil numérique
       </MenuItem>
+      <MenuItem href="/faq" {...props}>
+        FAQ
+      </MenuItem>
       <MenuItem href="/actus" {...props}>
         Actualités
       </MenuItem>
-      <MenuItem href="/faq" {...props}>
-        Questions fréquentes
-      </MenuItem>
+      {/* <MenuItem href="/collectivites" {...props}>
+        Collectivités
+      </MenuItem> */}
       <MenuItem href="/stats" {...props}>
-        Statistiques
+        Les chiffres
       </MenuItem>
       <MenuItem href="/contact" {...props}>
         Contact
