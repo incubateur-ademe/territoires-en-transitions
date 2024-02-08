@@ -27,17 +27,17 @@ export async function generateMetadata(
   const strapiDefaultData = await getStrapiDefaultData();
   const couverture = strapiData?.couverture?.attributes ?? undefined;
 
-  if (!collectiviteData || !collectiviteData.nom) return metadata;
+  if (!collectiviteData || !collectiviteData.collectivite.nom) return metadata;
 
   return getUpdatedMetadata(metadata, {
     title:
       strapiData?.seo.metaTitle ??
       strapiDefaultData?.seo.metaTitle ??
-      collectiviteData.nom,
+      collectiviteData.collectivite.nom,
     networkTitle:
       strapiData?.seo.metaTitle ??
       strapiDefaultData?.seo.metaTitle ??
-      collectiviteData.nom,
+      collectiviteData.collectivite.nom,
     description:
       strapiData?.seo.metaDescription ?? strapiDefaultData?.seo.metaDescription,
     image: strapiData?.seo.metaImage
@@ -59,7 +59,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
   const strapiData = await getStrapiData(params.code);
   const strapiDefaultData = await getStrapiDefaultData();
 
-  if (!collectiviteData || !collectiviteData.nom) return null;
+  if (!collectiviteData || !collectiviteData.collectivite.nom) return null;
 
   return (
     <Section
@@ -69,17 +69,19 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       {/* Bannière avec nom de la collectivité et photo */}
       <div
         className={classNames('col-span-full', {
-          'lg:col-span-8': collectiviteData.labellisee,
+          'lg:col-span-8': collectiviteData.collectivite.labellisee,
         })}
       >
         <CollectiviteHeader
           collectivite={{
-            ...collectiviteData,
+            ...collectiviteData.collectivite,
             ...strapiData,
             type:
-              natureCollectiviteToLabel[collectiviteData.nature_collectivite] ??
-              collectiviteData.type_collectivite,
+              natureCollectiviteToLabel[
+                collectiviteData.collectivite.nature_collectivite
+              ] ?? collectiviteData.collectivite.type_collectivite,
             couvertureDefaut: strapiDefaultData?.couverture,
+            annuaireUrl: collectiviteData.annuaireUrl,
           }}
         />
       </div>
@@ -88,34 +90,34 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       <div
         className={classNames(
           'col-span-full md:col-span-4 lg:col-span-3 lg:row-span-2 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
-          {'lg:order-last': !collectiviteData.labellisee},
+          {'lg:order-last': !collectiviteData.collectivite.labellisee},
         )}
       >
-        {collectiviteData.labellisee && (
+        {collectiviteData.collectivite.labellisee && (
           <div className="flex flex-col items-center md:rounded-[10px] bg-white pt-6 pb-10 px-2">
             <LabellisationLogo
-              cae={collectiviteData.cae_etoiles ?? undefined}
-              eci={collectiviteData.eci_etoiles ?? undefined}
+              cae={collectiviteData.collectivite.cae_etoiles ?? undefined}
+              eci={collectiviteData.collectivite.eci_etoiles ?? undefined}
             />
           </div>
         )}
-        {collectiviteData.labellisations.length > 0 && (
+        {collectiviteData.collectivite.labellisations.length > 0 && (
           <>
             <HistoriqueLabellisation
               referentiel="cae"
-              historique={collectiviteData.labellisations.filter(
+              historique={collectiviteData.collectivite.labellisations.filter(
                 label => label.referentiel === 'cae' && label.annee !== null,
               )}
             />
             <HistoriqueLabellisation
               referentiel="eci"
-              historique={collectiviteData.labellisations.filter(
+              historique={collectiviteData.collectivite.labellisations.filter(
                 label => label.referentiel === 'eci' && label.annee !== null,
               )}
             />
           </>
         )}
-        {collectiviteData.active ? (
+        {collectiviteData.collectivite.active ? (
           <AccesCompte
             description={
               strapiDefaultData?.connexion?.description ??
@@ -144,8 +146,9 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
           defaultData={strapiDefaultData.indicateurs}
           indicateurs={{
             artificialisation_sols:
-              collectiviteData.indicateur_artificialisation,
-            gaz_effet_serre: collectiviteData.indicateurs_gaz_effet_serre,
+              collectiviteData.collectivite.indicateur_artificialisation,
+            gaz_effet_serre:
+              collectiviteData.collectivite.indicateurs_gaz_effet_serre,
           }}
         />
       ) : (

@@ -1,7 +1,7 @@
 'use client';
 
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Badge} from '@tet/ui';
+import {Badge, Icon} from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
@@ -20,6 +20,7 @@ type CollectiviteHeaderProps = {
     couverture?: StrapiItem;
     couvertureDefaut?: StrapiItem;
     logo?: StrapiItem;
+    annuaireUrl: string | null;
   };
 };
 
@@ -36,6 +37,7 @@ const CollectiviteHeader = ({
     couverture,
     couvertureDefaut,
     logo,
+    annuaireUrl,
   },
 }: CollectiviteHeaderProps) => {
   return (
@@ -89,8 +91,34 @@ const CollectiviteHeader = ({
       <div className="py-10 px-8 md:p-16 flex justify-between relative">
         <div>
           {/* Nom de la collectivité */}
-          <h1 className="text-grey-1 text-[25px] lg:text-[46px] leading-[30px] lg:leading-[48px] mb-3">
-            {nom}
+          <h1
+            className={classNames(
+              'text-grey-1 text-[25px] lg:text-[46px] leading-[30px] lg:leading-[48px] mb-3',
+              {
+                'pb-0.5 hover:p-0 hover:border-b-2 flex items-end gap-2 w-fit':
+                  !!annuaireUrl,
+              },
+            )}
+          >
+            {!!annuaireUrl ? (
+              <>
+                <a
+                  href={annuaireUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="bg-none active:!bg-transparent after:hidden"
+                >
+                  {nom}
+                </a>
+                <Icon
+                  icon="external-link-line"
+                  size="2xl"
+                  className="inline-block mb-1.5"
+                />
+              </>
+            ) : (
+              nom
+            )}
           </h1>
 
           {/* Région et département */}
