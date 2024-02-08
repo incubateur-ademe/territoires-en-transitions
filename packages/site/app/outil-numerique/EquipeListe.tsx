@@ -16,7 +16,7 @@ const EquipeListe = ({liste}: EquipeListeProps) => {
       {liste.map(l => (
         <div
           key={l.id}
-          className="w-[169px] h-[195px] border border-primary-5 rounded-[10px] flex flex-col items-center justify-start gap-4 py-4 px-2"
+          className="w-[169px] h-[204px] border border-primary-5 rounded-[10px] flex flex-col items-center justify-start gap-4 py-4 px-2"
         >
           <StrapiImage
             data={l.image}
