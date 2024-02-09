@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {ActionImpactCategorie, ActionImpactState} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
+import ListeVide from './ListeVide';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
@@ -63,12 +64,16 @@ const ListeActions = ({
                 compétences. Vous pouvez modifier grâce aux filtres"
                 classname="mb-8"
               />
-              <ListeActionsFiltrees
-                actionsListe={actionsFiltrees}
-                statuts={statuts}
-                updateStatus={updateStatus}
-                onToggleSelected={onToggleSelected}
-              />
+              {!tab.status && !actionsFiltrees.length ? (
+                <ListeVide />
+              ) : (
+                <ListeActionsFiltrees
+                  actionsListe={actionsFiltrees}
+                  statuts={statuts}
+                  updateStatus={updateStatus}
+                  onToggleSelected={onToggleSelected}
+                />
+              )}
             </Tab>
           );
         })}
