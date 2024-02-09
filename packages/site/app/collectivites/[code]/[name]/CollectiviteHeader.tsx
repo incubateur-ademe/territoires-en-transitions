@@ -63,6 +63,10 @@ const CollectiviteHeader = ({
                 data={couvertureDefaut}
                 className="object-cover object-center h-full w-full"
                 containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10"
+                containerStyle={{
+                  WebkitTransition:
+                    'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
                 displayCaption={false}
               />
             ) : (
@@ -75,10 +79,8 @@ const CollectiviteHeader = ({
                   objectPosition: 'center',
                   minHeight: '100%',
                   minWidth: '100%',
-                  WebkitTransitionProperty: 'opacity',
-                  WebkitTransitionTimingFunction:
-                    'cubic-bezier(0.4, 0, 0.2, 1)',
-                  WebkitTransitionDuration: '500ms',
+                  WebkitTransition:
+                    'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
                 className="hover:opacity-10 transition-opacity duration-500"
               />
@@ -100,7 +102,9 @@ const CollectiviteHeader = ({
               },
             )}
           >
-            {!!annuaireUrl ? (
+            {!annuaireUrl ? (
+              nom
+            ) : (
               <>
                 <a
                   href={annuaireUrl}
@@ -116,8 +120,6 @@ const CollectiviteHeader = ({
                   className="inline-block mb-1.5"
                 />
               </>
-            ) : (
-              nom
             )}
           </h1>
 
