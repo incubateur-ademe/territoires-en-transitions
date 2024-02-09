@@ -14,7 +14,7 @@ const PanierActions = ({
   onToggleSelected,
 }: PanierActionsProps) => {
   return (
-    <div className="h-full bg-white border border-primary-3">
+    <div className="h-full bg-white border-[0.5px] border-primary-3">
       {actionsListe.length === 0 ? (
         <div className="h-full">
           <Alert
