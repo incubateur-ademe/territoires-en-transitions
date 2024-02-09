@@ -1,7 +1,7 @@
 'use server';
 
-import NotFound from '@components/info/NotFound';
 import {Metadata} from 'next';
+import {notFound} from 'next/navigation';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -9,6 +9,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const Collectivite = () => <NotFound />;
+const Collectivite = () => notFound();
 
 export default Collectivite;

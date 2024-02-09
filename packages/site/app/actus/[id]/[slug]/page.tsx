@@ -10,7 +10,7 @@ import EmbededVideo from '@components/video/EmbededVideo';
 import {ParagrapheCustomArticleData} from 'app/types';
 import {Metadata, ResolvingMetadata} from 'next';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
-import NotFound from '@components/info/NotFound';
+import {notFound} from 'next/navigation';
 
 export async function generateMetadata(
   {params}: {params: {id: string}},
@@ -41,7 +41,7 @@ const Article = async ({params}: {params: {id: string}}) => {
   const id = parseInt(params.id);
   const data = await getData(id);
 
-  if (!data) return <NotFound />;
+  if (!data) return notFound();
 
   return (
     <>
