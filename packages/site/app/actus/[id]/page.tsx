@@ -1,9 +1,8 @@
 'use server';
 
-import {redirect} from 'next/navigation';
+import {notFound, redirect} from 'next/navigation';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 import {getData} from './[slug]/utils';
-import NotFound from '@components/info/NotFound';
 
 /**
  * Permet la redirection vers la page article lorsque seul
@@ -14,7 +13,7 @@ const ArticleParId = async ({params}: {params: {id: string}}) => {
   const id = parseInt(params.id);
   const data = await getData(id);
 
-  if (!data || !data.titre) return <NotFound />;
+  if (!data || !data.titre) return notFound();
   redirect(`/actus/${params.id}/${convertNameToSlug(data.titre)}`);
 };
 
