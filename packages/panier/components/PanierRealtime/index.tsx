@@ -24,7 +24,7 @@ export default function PanierRealtime({panier, categories}: {
       // @ts-ignore
       supabase.removeChannel(channel);
     };
-  }, [supabase, router, panier.id]);
+  }, [router, panier.id]);
 
   return (
     <div>
