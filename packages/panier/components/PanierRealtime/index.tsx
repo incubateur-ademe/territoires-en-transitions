@@ -8,7 +8,7 @@ import {
   ActionImpactStatut,
   Panier,
 } from '@tet/api';
-import {supabase} from 'lib/supabaseClient';
+import {panierAPI, supabase} from 'src/clientAPI';
 import ActionImpactDetails from '@components/ActionImpactDetails/index';
 
 export default function PanierRealtime({panier, categories}: {
@@ -18,20 +18,10 @@ export default function PanierRealtime({panier, categories}: {
   const router = useRouter();
   const [modalActionId, setModalActionId] = useState<null | number>(null);
   useEffect(() => {
-    const channel = supabase.channel('realtime todos').on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'panier',
-        filter: `id=eq.${panier.id}`,
-      },
-      (payload) => {
-        router.refresh();
-      },
-    ).subscribe();
+    const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
 
     return () => {
+      // @ts-ignore
       supabase.removeChannel(channel);
     };
   }, [supabase, router, panier.id]);
@@ -53,30 +43,12 @@ export default function PanierRealtime({panier, categories}: {
             statut={state.statut}
             categories={categories}
             onAdd={async () => {
-              await supabase.from(
-                'action_impact_panier',
-              ).insert({
-                'action_id': state.action.id,
-                'panier_id': panier.id,
-              });
+              await panierAPI.addActionToPanier(state.action.id, panier.id);
+              router.refresh();
             }}
             onCategory={async (category_id) => {
-              if (category_id) {
-                await supabase.from(
-                  'action_impact_statut',
-                ).upsert({
-                  'action_id': state.action.id,
-                  'panier_id': panier.id,
-                  'categorie_id': category_id,
-                });
-              } else {
-                await supabase.from(
-                  'action_impact_statut',
-                ).
-                  delete().
-                  eq('action_id', state.action.id).
-                  eq('panier_id', panier.id);
-              }
+              await panierAPI.setActionStatut(state.action.id,panier.id,category_id);
+              router.refresh();
             }}
             isInPanier={state.isinpanier}
           />
@@ -90,9 +62,8 @@ export default function PanierRealtime({panier, categories}: {
           <ActionCardRemoveBar
             action={action}
             onRemove={async () => {
-              await supabase.from(
-                'action_impact_panier',
-              ).delete().eq('action_id', action.id).eq('panier_id', panier.id);
+              await panierAPI.removeActionFromPanier(action.id, panier.id);
+              router.refresh();
             }}
           />
         </ActionImpactCard>
