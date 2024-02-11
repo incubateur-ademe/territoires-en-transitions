@@ -15,8 +15,6 @@
   "dependencies": {
     "@floating-ui/react": "^0.25.2",
     "@mdx-js/loader": "^2.3.0",
-    "@supabase/auth-helpers-nextjs": "^0.8.7",
-    "@supabase/supabase-js": "^2.31.0",
     "@tet/ui": "^1.0.0",
     "classnames": "^2.3.2",
     "encoding": "^0.1.13",
@@ -26,7 +24,9 @@
     "react-markdown": "^9.0.0",
     "swr": "^2.2.0",
     "tailwindcss": "^3.3.3",
-    "use-debounce": "^9.0.4"
+    "use-debounce": "^9.0.4",
+    "@supabase/ssr": "^0.1.0",
+    "@supabase/supabase-js": "^2.39.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.24",
