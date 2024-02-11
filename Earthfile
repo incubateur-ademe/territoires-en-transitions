@@ -363,10 +363,14 @@ panier-build: ## construit l'image du panier
     ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required API_URL
+    ARG POSTHOG_HOST
+    ARG POSTHOG_KEY
     ARG vars
     FROM +front-deps
     ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
     ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
     ENV NEXT_TELEMETRY_DISABLED=1
     ENV PUBLIC_PATH="/app/packages/panier/public"
     ENV PORT=80
