@@ -25,7 +25,9 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc};
+    script-src ${scriptSrc}
+      https://eu.posthog.com/static/surveys.js
+      https://eu.posthog.com/static/recorder-v2.js;
     style-src ${styleSrc};
     img-src 'self' blob: data: ytimg.com;
     font-src 'self';
@@ -33,7 +35,8 @@ export function middleware(request: NextRequest) {
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
-      ws://${request.nextUrl.host};
+      ws://${request.nextUrl.host}
+      eu.posthog.com;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
