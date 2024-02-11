@@ -1,6 +1,8 @@
 import {type CookieOptions, createServerClient} from '@supabase/ssr';
 import {cookies} from 'next/headers';
 import {NextRequest, NextResponse} from 'next/server';
+import {Database} from '@tet/api';
+import {SupabaseClient} from '@supabase/supabase-js';
 
 /**
  * Pour accéder à supabase depuis les Server Actions et les Route Handlers
@@ -8,8 +10,8 @@ import {NextRequest, NextResponse} from 'next/server';
 export function createClient(
   cookieStore: NextRequest['cookies'] | ReturnType<typeof cookies>,
   responseCookies?: NextResponse['cookies'],
-) {
-  return createServerClient(
+): SupabaseClient<Database> {
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
