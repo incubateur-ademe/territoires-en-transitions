@@ -6,7 +6,7 @@ import { Panier } from "./types";
  * On sélectionne toutes les colonnes du panier : *
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
-const panierSelect =
+export const panierSelect =
   "*, contenu:action_impact!action_impact_panier(*), states:action_impact_state(*)";
 
 type RealtimePayload<T> = {
