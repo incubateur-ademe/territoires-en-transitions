@@ -1,38 +1,41 @@
 "use server";
 
 import React from "react";
-import { ActionImpactCategorie, Niveau, Panier, panierSelect } from "@tet/api";
+import {
+  ActionImpactCategorie,
+  Niveau,
+  PanierAPI,
+} from '@tet/api';
 import PanierRealtime from "@components/PanierRealtime";
 import { notFound } from "next/navigation";
 import {cookies} from 'next/headers';
 import {createClient} from 'src/supabase/server';
 
 
-async function Panier({ params, searchParams }: {
+async function Page({ params, searchParams }: {
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const supabase = createClient(cookies())
+  // @ts-ignore
+  const api = new PanierAPI(supabase);
   const panierId = params.id;
-  const { data, error } = await supabase.from("panier")
-    .select(panierSelect)
-    .eq("id", panierId)
-    .single<Panier>();
+  const panier = await api.fetchPanier(panierId)
 
   const categories = await fetchCategories();
 
-  if (data) {
+  if (panier) {
     return (
       <div>
         <h1>Panier {panierId}</h1>
-        <PanierRealtime panier={data!} categories={categories} />
+        <PanierRealtime panier={panier} categories={categories} />
       </div>
     );
   }
   return notFound();
 }
 
-export default Panier;
+export default Page;
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -55,7 +58,6 @@ async function fetchNiveaux(
     | "action_impact_tier",
 ): Promise<Niveau[]> {
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, {
-    cache: "no-store",
     method: "GET",
     headers: {
       Authorization: `Bearer ${apiKey}`,
