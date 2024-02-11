@@ -1,17 +1,15 @@
-"use client"
-
-import {actionDetailsSelect, ActionImpactDetails} from '@tet/api';
+'use client';
 
 import useSWR from 'swr';
-import {singleFetcher} from 'lib/fetcherClient';
-
+import {ActionImpactDetails} from '@tet/api';
+import {actionImpactAPI} from 'src/clientAPI';
 
 
 export default function ActionImpactDetails({id}: { id: number }) {
   const {data, error} =
-    useSWR<ActionImpactDetails>(
-      `rest/v1/action_impact?id=eq.${id}&select=${actionDetailsSelect}`,
-      singleFetcher);
+    useSWR<ActionImpactDetails | null>(
+      ['ActionImpactDetails', id],
+      () => actionImpactAPI.fetchActionImpactDetails(id));
 
   if (!data) {
     return <div>Loading...</div>;
