@@ -1,11 +1,12 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "../database.types";
+import { Panier } from "./types";
 
 /**
  * On sélectionne toutes les colonnes du panier : *
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
-export const panierSelect =
+const panierSelect =
   "*, contenu:action_impact!action_impact_panier(*), states:action_impact_state(*)";
 
 type RealtimePayload<T> = {
@@ -60,10 +61,7 @@ export class PanierAPI {
   ): Promise<void> {
     await this.supabase.from(
       "action_impact_panier",
-    )
-      .delete()
-      .eq("action_id", action_id)
-      .eq("panier_id", panier_id);
+    ).delete().eq("action_id", action_id).eq("panier_id", panier_id);
   }
 
   async setActionStatut(
@@ -82,10 +80,16 @@ export class PanierAPI {
     } else {
       await this.supabase.from(
         "action_impact_statut",
-      )
-        .delete()
-        .eq("action_id", action_id)
-        .eq("panier_id", panier_id);
+      ).delete().eq("action_id", action_id).eq("panier_id", panier_id);
     }
+  }
+
+  async fetchPanier(panier_id: string): Promise<Panier | null> {
+    const { data, error } = await this.supabase.from("panier")
+      .select(panierSelect)
+      .eq("id", panier_id)
+      .single<Panier>();
+    if (error) throw error;
+    return data;
   }
 }
