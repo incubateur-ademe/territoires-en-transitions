@@ -70,7 +70,7 @@ const HeaderFixed = ({render}: Props) => {
       ref={headerRef}
       id="page-header-wrapper"
       style={{minHeight: `${controlledHeight}px`}}
-      className="sticky top-0 z-40 pointer-events-none"
+      className="sticky top-0 z-[40] pointer-events-none"
     >
       <div className="pointer-events-auto">
         {render({

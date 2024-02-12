@@ -17,7 +17,7 @@ export const IndicateurEnfantHeader = ({
   return (
     <div
       className={classNames(
-        'flex justify-between items-center px-6 py-4 rounded-lg cursor-pointer sticky top-[86px] z-30',
+        'flex justify-between items-center px-6 py-4 rounded-lg cursor-pointer sticky top-[86px] z-[30]',
         {
           'bg-[#f5f5fE]': open,
           'hover:bg-grey975': !open,
