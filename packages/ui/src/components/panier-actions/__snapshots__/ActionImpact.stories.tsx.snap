@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Composants métier/Panier d'actions/Action à impact Default smoke-test 1`] = `
+exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
 <div aria-expanded="false"
      aria-haspopup="dialog"
 >

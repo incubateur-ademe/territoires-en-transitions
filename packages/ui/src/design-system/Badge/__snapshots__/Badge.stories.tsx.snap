@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Badge CustomIcon smoke-test 1`] = `
+exports[`design-system/Badge CustomIcon smoke-test 1`] = `
 <div data-test="Badge-undefined"
      class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
 >
@@ -14,7 +14,7 @@ exports[`Design System/Badge CustomIcon smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Badge Default smoke-test 1`] = `
+exports[`design-system/Badge Default smoke-test 1`] = `
 <div data-test="Badge-undefined"
      class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
 >
@@ -24,7 +24,7 @@ exports[`Design System/Badge Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Badge Grid smoke-test 1`] = `
+exports[`design-system/Badge Grid smoke-test 1`] = `
 <div class="flex gap-16 flex-wrap">
   <div class="col-span-1 flex flex-col gap-4">
     <div class="capitalize text-sm font-medium">

@@ -4,7 +4,6 @@ import {useState} from 'react';
 import {Button} from '@design-system/Button';
 
 const meta: Meta<typeof Alert> = {
-  title: 'Design System/Alert',
   component: Alert,
   argTypes: {
     state: {control: 'select'},

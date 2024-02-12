@@ -3,7 +3,6 @@ import {action} from '@storybook/addon-actions';
 import {Tag} from './Tag';
 
 const meta: Meta<typeof Tag> = {
-  title: 'Design System/Tag',
   component: Tag,
   decorators: [story => <div className="flex">{story()}</div>],
 };

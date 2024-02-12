@@ -5,7 +5,6 @@ import {action} from '@storybook/addon-actions';
 import {Input} from './Input';
 
 const meta: Meta<typeof Input> = {
-  title: 'Design System/Input',
   component: Input,
   render: args => {
     const [value, setValue] = useState(args.value);

@@ -1,14 +1,18 @@
 import {Icon, IconSize} from '@design-system/Icon';
 import {buttonThemeClassnames} from './theme';
-import {ButtonContentProps, ButtonSize} from './types';
+import {ButtonContentProps, ButtonSize, ButtonVariant} from './types';
+import classNames from 'classnames';
 
-const getIconSize = (size: ButtonSize): IconSize | undefined => {
+const getIconSize = (
+  size: ButtonSize,
+  variant: ButtonVariant
+): IconSize | undefined => {
   // Les sizes des icônes ne matchent pas celles des boutons
   switch (size) {
     case 'xs':
-      return 'sm';
+      return variant === 'underlined' ? 'xs' : 'sm';
     case 'sm':
-      return 'md';
+      return variant === 'underlined' ? 'sm' : 'md';
     case 'md':
       return 'md';
     case 'xl':
@@ -31,8 +35,15 @@ const ButtonContent = ({
       {!!icon && (
         <Icon
           icon={icon}
-          size={getIconSize(size)}
-          className={buttonThemeClassnames[variant][buttonState].icon}
+          size={getIconSize(size, variant)}
+          className={classNames(
+            buttonThemeClassnames[variant][buttonState].icon,
+            {
+              'mb-1': variant === 'underlined' && size === 'sm',
+              'mb-0.5':
+                variant === 'underlined' && (size === 'xs' || size === 'md'),
+            }
+          )}
         />
       )}
 

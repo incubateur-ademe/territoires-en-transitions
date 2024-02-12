@@ -4,7 +4,6 @@ import {Tabs} from './Tabs';
 import {Tab} from './Tab';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Design System/Tabs',
   component: Tabs,
   args: {
     onChange: action('onChange'),
