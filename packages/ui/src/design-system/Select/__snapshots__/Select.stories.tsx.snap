@@ -251,7 +251,7 @@ exports[`Design System/Select ZIndex smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <div class="h-screen">
     <div class="relative h-full m-16">
-      <div class="absolute inset-0 z-20 bg-pink-100">
+      <div class="absolute inset-0 z-[20] bg-pink-100">
         <div class="flex-grow flex flex-col gap-3">
           <label>
             <div class="font-medium text-grey-8">
