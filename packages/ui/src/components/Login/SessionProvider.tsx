@@ -1,31 +1,39 @@
-'use client';
-
 import {ReactNode, createContext, useEffect, useState} from 'react';
-import {Session} from '@supabase/supabase-js';
-import {createClient} from 'src/supabase/client';
+import {Session, SupabaseClient} from '@supabase/supabase-js';
 import {clearAuthTokens, setAuthTokens} from './authTokens';
 
 const SessionContext = createContext<Session | null>(null);
 
-// const domain = location.hostname.split('.').toSpliced(0, 1).join('.');
-
 type SessionProviderProps = {
   children: ReactNode;
+  /** Nom du domaine principal auquel les cookies de session sont rattachés */
   domain: string;
+  /** Client sur lequel écouter les événements d'authentification */
+  supabase: SupabaseClient;
 };
 
-export const SessionProvider = ({children, domain}: SessionProviderProps) => {
+/**
+ * Ecoute les événements d'authentification et fourni les informations de session.
+ */
+export const SessionProvider = ({
+  children,
+  domain,
+  supabase,
+}: SessionProviderProps) => {
   const [currentSession, setCurrentSession] = useState<Session | null>(null);
-  const supabase = createClient();
 
+  // enregistre l'écouteur d'événements
   useEffect(() => {
     const {
       data: {subscription},
     } = supabase.auth.onAuthStateChange((event, session) => {
+      // efface la session et les cookies à la déconnexion
       if (event === 'SIGNED_OUT') {
         setCurrentSession(null);
         clearAuthTokens(domain);
-      } else if (
+      }
+      // enregistre la session et les cookies lors de la connexion
+      else if (
         session &&
         (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')
       ) {
@@ -34,11 +42,13 @@ export const SessionProvider = ({children, domain}: SessionProviderProps) => {
       }
     });
 
+    // supprime l'écouteur qd le compo est démonté
     return () => {
       subscription.unsubscribe();
     };
   }, [supabase.auth, domain]);
 
+  // expose la session
   return (
     <SessionContext.Provider value={currentSession}>
       {children}

@@ -23,8 +23,11 @@ export const setAuthTokens = (session: Session, domain: string) => {
   document.cookie = `${REFRESH_TOKEN}=${session.refresh_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
 };
 
-/** Restaure l'authentification depuis les tokens */
-export const restoreAuthTokens = async (supabase: SupabaseClient) => {
+/** Restaure la session depuis les tokens */
+export const restoreSessionFromAuthTokens = async (
+  supabase: SupabaseClient
+) => {
+  // recherche les cookies
   const cookies = document.cookie
     .split(/\s*;\s*/)
     .map(cookie => cookie.split('='));
