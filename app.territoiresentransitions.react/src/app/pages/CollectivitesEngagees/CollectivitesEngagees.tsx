@@ -9,7 +9,11 @@ import {useSearchParams} from 'core-logic/hooks/query';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
-import {Tfilters, initialFilters, nameToShortNames} from './data/filters';
+import { CollectiviteEngagee } from '@tet/api';
+import {
+  initialFilters,
+  nameToShortNames,
+} from 'app/pages/CollectivitesEngagees/data/filters';
 
 const CollectivitesEngagees = () => {
   const ownedCollectivites = useOwnedCollectivites();
@@ -24,7 +28,7 @@ const CollectivitesEngagees = () => {
   const {isConnected} = auth;
 
   /** Filters */
-  const [filters, setFilters] = useSearchParams<Tfilters>(
+  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
     'collectivites',
     initialFilters,
     nameToShortNames

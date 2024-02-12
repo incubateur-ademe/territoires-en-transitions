@@ -5,11 +5,11 @@ import {Badge} from '@tet/ui';
 
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
-import {TPlanCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {CollectiviteEngagee} from '@tet/api';
 
 type Props = {
-  plan: TPlanCarte;
+  plan: CollectiviteEngagee.TPlanCarte;
   canUserClickCard: boolean;
 };
 

@@ -3,9 +3,12 @@ import View, {
   CollectivitesEngageesView,
 } from 'app/pages/CollectivitesEngagees/Views/View';
 import {
-  TPlanCarte,
   useFilteredPlans,
+
 } from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
+import {CollectiviteEngagee} from '@tet/api';
+;
+
 
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */
@@ -19,7 +22,7 @@ const PlansView = (props: CollectivitesEngageesView) => {
       dataCount={plansCount}
       isLoading={isLoading}
       renderCard={data => {
-        const plan = data as TPlanCarte;
+        const plan = data as CollectiviteEngagee.TPlanCarte;
         return (
           <PlanCarte
             key={plan.id}

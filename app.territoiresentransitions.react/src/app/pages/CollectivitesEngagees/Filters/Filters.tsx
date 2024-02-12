@@ -3,7 +3,6 @@ import {Field, SelectFilter, Input} from '@tet/ui';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useDepartements} from '../data/useDepartements';
 import {useRegions} from '../data/useRegions';
-import {Tfilters, TSetFilters} from '../data/filters';
 import {
   niveauLabellisationCollectiviteOptions,
   populationCollectiviteOptions,
@@ -15,10 +14,13 @@ import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/d
 import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {useState} from 'react';
+import {CollectiviteEngagee} from '@tet/api';
+import {SetFilters} from 'app/pages/CollectivitesEngagees/data/filters';
+
 
 type Props = {
-  filters: Tfilters;
-  setFilters: TSetFilters;
+  filters: CollectiviteEngagee.Filters;
+  setFilters: SetFilters;
 };
 
 export const Filters = ({filters, setFilters}: Props) => {
