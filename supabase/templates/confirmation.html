@@ -4,9 +4,9 @@
 
 <p>Si vous n'êtes pas à l'origine de cette demande veuillez ignorer ce message.</p>
 
-<p>Suivez le lien ci-dessous pour vous valider votre inscription</p>
+<p>Sinon, suivez le lien ci-dessous pour valider votre inscription</p>
 <p>
-  <a href="http://localhost:3001/auth/confirm?token_hash={{ .TokenHash }}&type=signup"
+  <a href="http://localhost:3001/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next={{ .RedirectTo }}"
     >Valider mon inscription</a
   >
 </p>
