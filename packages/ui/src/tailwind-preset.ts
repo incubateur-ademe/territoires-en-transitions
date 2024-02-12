@@ -6,7 +6,6 @@ export const preset = {
   content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
     maxHeight: {'80vh': '80vh'},
-    zIndex: {modal: '4000'},
     extend: {
       colors: {
         // Anciennes couleurs, à modifier avec l'harmonisation
@@ -95,6 +94,7 @@ export const preset = {
         // ombre pour certains types de boutons (Tab)
         button: '0 2px 4px 0 rgba(0,0,0,0.05)',
       },
+      zIndex: {modal: '4000'},
       backgroundImage: {
         // malheureusement on n'arrive pas à styler le bouton de ràz des input.search directement avec remixicon
         // ni à exporter correctement des svg définis localement dans le package ui
