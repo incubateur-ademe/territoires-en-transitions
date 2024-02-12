@@ -15,7 +15,7 @@ const LandingPage = async () => {
       <p>
         Pour revenir sur un panier existant :
       </p>
-      <pre>/panier/[collectivite_id]</pre>
+      <pre>/panier/[panier_id]</pre>
     </main>
   );
 };
