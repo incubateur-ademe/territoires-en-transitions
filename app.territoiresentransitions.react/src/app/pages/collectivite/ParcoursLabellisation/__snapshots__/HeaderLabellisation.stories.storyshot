@@ -2,7 +2,7 @@
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit En Cours 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -39,7 +39,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit en cours (auditeur) 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -83,7 +83,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit validé (auditeur) 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -120,7 +120,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Audit validé 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -157,7 +157,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Criteres Remplis 2 Eme Etoile 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -196,7 +196,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Demande Envoyee 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -220,7 +220,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Demande Envoyee 2 Eme Etoile 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -257,7 +257,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Demande Envoyee COT 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -281,7 +281,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Labellisable 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -307,7 +307,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Labellisable COT 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -341,7 +341,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Non Auditable COT 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -375,7 +375,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Non Labellisable 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"
@@ -401,7 +401,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisation Non Labellisable COT 1`] = `
 <div
-  className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
+  className="sticky top-0 z-[40] bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w "
 >
   <div
     className="fr-container fr-my-2w"

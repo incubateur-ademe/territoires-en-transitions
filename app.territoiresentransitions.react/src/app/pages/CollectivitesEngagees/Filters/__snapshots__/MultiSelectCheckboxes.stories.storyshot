@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes Selection Multiple 1`] = `
+<ul>
+  <div>
+    <div
+      className="font-bold py-4 mb-6 border-b border-b-primary-3"
+    >
+      Niveau de labellisation
+    </div>
+    <div
+      className="flex flex-col gap-4"
+    >
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rc:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        >
+          <label
+            className="inline-flex items-center cursor-pointer  text-grey-8"
+            htmlFor=":rc:"
+          >
+            Tous
+          </label>
+        </div>
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rd:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":re:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rf:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rg:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rh:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":ri:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+    </div>
+  </div>
+</ul>
+`;
+
+exports[`Storyshots app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes Selection Tous Par Defaut 1`] = `
+<ul>
+  <div>
+    <div
+      className="font-bold py-4 mb-6 border-b border-b-primary-3"
+    >
+      Niveau de labellisation
+    </div>
+    <div
+      className="flex flex-col gap-4"
+    >
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={true}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={true}
+          id=":rj:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        >
+          <label
+            className="inline-flex items-center cursor-pointer  text-grey-6"
+            htmlFor=":rj:"
+          >
+            Tous
+          </label>
+        </div>
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rk:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rl:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rm:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rn:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":ro:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+      <div
+        className="flex gap-2 min-w-min"
+      >
+        <input
+          checked={false}
+          className="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+          disabled={false}
+          id=":rp:"
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <div
+          className="flex flex-col gap-1"
+        />
+      </div>
+    </div>
+  </div>
+</ul>
+`;
