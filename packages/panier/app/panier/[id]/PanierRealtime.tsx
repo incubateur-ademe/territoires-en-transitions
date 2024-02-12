@@ -1,47 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import {useEffect} from 'react';
-import {useRouter} from 'next/navigation';
-import {supabase} from 'lib/supabaseClient';
-import {ActionImpactCategorie, Panier} from '@tet/api';
 import PanierActions from './PanierActions';
 import ListeActions from './ListeActions';
 
-const addAction = async (panierId: string, actionId: number) => {
-  await supabase.from('action_impact_panier').insert({
-    action_id: actionId,
-    panier_id: panierId,
-  });
-};
-
-const removeAction = async (panierId: string, actionId: number) => {
-  await supabase
-    .from('action_impact_panier')
-    .delete()
-    .eq('action_id', actionId)
-    .eq('panier_id', panierId);
-};
-
-const updateStatus = async (
-  panierId: string,
-  actionId: number,
-  categoryId: string | null,
-) => {
-  if (categoryId) {
-    await supabase.from('action_impact_statut').upsert({
-      action_id: actionId,
-      panier_id: panierId,
-      categorie_id: categoryId,
-    });
-  } else {
-    await supabase
-      .from('action_impact_statut')
-      .delete()
-      .eq('action_id', actionId)
-      .eq('panier_id', panierId);
-  }
-};
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {
+  ActionImpactCategorie,
+  Panier,
+} from '@tet/api';
+import {panierAPI, supabase} from 'src/clientAPI';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -52,35 +21,27 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    const channel = supabase
-      .channel('realtime todos')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'panier',
-          filter: `id=eq.${panier.id}`,
-        },
-        payload => router.refresh(),
-      )
-      .subscribe();
+    const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
 
     return () => {
+      // @ts-ignore
       supabase.removeChannel(channel);
     };
   }, [router, panier.id]);
 
-  const handleToggleSelected = (actionId: number, selected: boolean) => {
+  const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {
-      addAction(panier.id, actionId);
+      await panierAPI.addActionToPanier(actionId, panier.id);
+      router.refresh();
     } else {
-      removeAction(panier.id, actionId);
+      await panierAPI.removeActionFromPanier(actionId, panier.id);
+      router.refresh();
     }
   };
 
-  const handleUpdateStatus = (actionId: number, statusId: string | null) => {
-    updateStatus(panier.id, actionId, statusId);
+  const handleUpdateStatus = async (actionId: number, statusId: string | null) => {
+    await panierAPI.setActionStatut(actionId, panier.id, statusId);
+    router.refresh();
   };
 
   return (
