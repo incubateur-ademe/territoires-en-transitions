@@ -44,8 +44,11 @@ export const Button = forwardRef(
       'w-fit flex items-center border-solid group',
       {
         // Layout du bouton
-        'gap-1': size === 'xs',
-        'gap-2': size === 'sm' || size === 'md' || size === 'xl',
+        'gap-1': size === 'xs' || (size === 'sm' && variant === 'underlined'),
+        'gap-2':
+          (size === 'sm' && variant !== 'underlined') ||
+          size === 'md' ||
+          size === 'xl',
         // Styles du curseur
         'cursor-pointer': !disabled,
         'cursor-not-allowed': disabled,

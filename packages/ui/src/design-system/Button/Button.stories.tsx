@@ -4,9 +4,9 @@ import {Meta, StoryObj} from '@storybook/react';
 import DoubleCheckIcon from '@assets/DoubleCheckIcon';
 
 import {Button} from './Button';
+import {BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Button> = {
-  title: 'Design System/Button',
   component: Button,
   argTypes: {
     variant: {
@@ -254,40 +254,22 @@ export const Variants: Story = {
 export const AnchorButtons: Story = {
   render: () => (
     <div className="flex flex-wrap items-end gap-5">
-      <Button href="https://territoiresentransitions.fr/">Internal link</Button>
-      <Button href="https://territoiresentransitions.fr/" variant="underlined">
+      <Button href={BASE_URL}>Internal link</Button>
+      <Button href={BASE_URL} variant="underlined">
         Internal link
       </Button>
-      <Button
-        href="https://territoiresentransitions.fr/"
-        icon="leaf-line"
-        variant="outlined"
-      />
-      <Button
-        href="https://territoiresentransitions.fr/"
-        variant="outlined"
-        icon="leaf-line"
-        disabled
-      >
+      <Button href={BASE_URL} icon="leaf-line" variant="outlined" />
+      <Button href={BASE_URL} variant="outlined" icon="leaf-line" disabled>
         Disabled link
       </Button>
-      <Button
-        href="https://territoiresentransitions.fr/"
-        variant="underlined"
-        icon="leaf-line"
-        disabled
-      >
+      <Button href={BASE_URL} variant="underlined" icon="leaf-line" disabled>
         Disabled link
       </Button>
-      <Button href="https://territoiresentransitions.fr/" external>
+      <Button href={BASE_URL} external>
         External link
       </Button>
-      <Button href="https://territoiresentransitions.fr/" external />
-      <Button
-        href="https://territoiresentransitions.fr/"
-        variant="underlined"
-        external
-      >
+      <Button href={BASE_URL} external />
+      <Button href={BASE_URL} variant="underlined" external>
         External link
       </Button>
     </div>
@@ -309,7 +291,7 @@ export const WithRef: Story = {
         <Button
           ref={anchorRef}
           onClick={onAnchorClick}
-          href="https://territoiresentransitions.fr/"
+          href={BASE_URL}
           external
         >
           Anchor with ref

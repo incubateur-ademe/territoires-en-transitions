@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Select CreateOption smoke-test 1`] = `
+exports[`design-system/Select CreateOption smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -21,7 +21,7 @@ exports[`Design System/Select CreateOption smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select CustomItem smoke-test 1`] = `
+exports[`design-system/Select CustomItem smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -40,7 +40,7 @@ exports[`Design System/Select CustomItem smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select Default smoke-test 1`] = `
+exports[`design-system/Select Default smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -59,7 +59,7 @@ exports[`Design System/Select Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select Disabled smoke-test 1`] = `
+exports[`design-system/Select Disabled smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -79,7 +79,7 @@ exports[`Design System/Select Disabled smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select DisabledSearchableMultiSelectWithValue smoke-test 1`] = `
+exports[`design-system/Select DisabledSearchableMultiSelectWithValue smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -112,7 +112,7 @@ exports[`Design System/Select DisabledSearchableMultiSelectWithValue smoke-test 
 </div>
 `;
 
-exports[`Design System/Select Filter smoke-test 1`] = `
+exports[`design-system/Select Filter smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -131,7 +131,7 @@ exports[`Design System/Select Filter smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select MultiSelectWithSectionOptions smoke-test 1`] = `
+exports[`design-system/Select MultiSelectWithSectionOptions smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -150,7 +150,7 @@ exports[`Design System/Select MultiSelectWithSectionOptions smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select SearchableMultiSelect smoke-test 1`] = `
+exports[`design-system/Select SearchableMultiSelect smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -171,7 +171,7 @@ exports[`Design System/Select SearchableMultiSelect smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select SearchableSelectWithDebouncedApiCallOnTyping smoke-test 1`] = `
+exports[`design-system/Select SearchableSelectWithDebouncedApiCallOnTyping smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -192,7 +192,7 @@ exports[`Design System/Select SearchableSelectWithDebouncedApiCallOnTyping smoke
 </div>
 `;
 
-exports[`Design System/Select SmallWithBadgeItems smoke-test 1`] = `
+exports[`design-system/Select SmallWithBadgeItems smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
@@ -211,7 +211,7 @@ exports[`Design System/Select SmallWithBadgeItems smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select WithField smoke-test 1`] = `
+exports[`design-system/Select WithField smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <div class="flex-grow flex flex-col gap-3">
     <label>
@@ -247,7 +247,7 @@ exports[`Design System/Select WithField smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Select ZIndex smoke-test 1`] = `
+exports[`design-system/Select ZIndex smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <div class="h-screen">
     <div class="relative h-full m-16">

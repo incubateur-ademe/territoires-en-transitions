@@ -5,7 +5,6 @@ import {Field} from '@design-system/Field';
 import {Input} from '@design-system/Input';
 
 const meta: Meta<typeof FormSection> = {
-  title: 'Design System/FormSection',
   component: FormSection,
   render: args => {
     return (

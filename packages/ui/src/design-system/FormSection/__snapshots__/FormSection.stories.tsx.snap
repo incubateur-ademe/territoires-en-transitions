@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/FormSection AvecDescription smoke-test 1`] = `
+exports[`design-system/FormSection AvecDescription smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">
@@ -21,7 +21,7 @@ exports[`Design System/FormSection AvecDescription smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/FormSection AvecFields smoke-test 1`] = `
+exports[`design-system/FormSection AvecFields smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">
@@ -88,7 +88,7 @@ exports[`Design System/FormSection AvecFields smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/FormSection AvecIcone smoke-test 1`] = `
+exports[`design-system/FormSection AvecIcone smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">
@@ -111,7 +111,7 @@ exports[`Design System/FormSection AvecIcone smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/FormSection Default smoke-test 1`] = `
+exports[`design-system/FormSection Default smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">
@@ -129,7 +129,7 @@ exports[`Design System/FormSection Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/FormSection PlusieursSections smoke-test 1`] = `
+exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
 <div class="w-full max-w-lg p-8 flex flex-col gap-10">
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4">

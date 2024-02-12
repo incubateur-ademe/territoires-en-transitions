@@ -3,7 +3,6 @@ import {action} from '@storybook/addon-actions';
 import {Badge, BadgeState} from './index';
 
 const meta: Meta<typeof Badge> = {
-  title: 'Design System/Badge',
   component: Badge,
 };
 

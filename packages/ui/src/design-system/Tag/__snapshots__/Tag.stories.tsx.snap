@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Tag AvecBoutonFermer smoke-test 1`] = `
+exports[`design-system/Tag AvecBoutonFermer smoke-test 1`] = `
 <div class="flex">
   <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary pr-2">
     <span class="py-0.5 text-sm">
@@ -14,7 +14,7 @@ exports[`Design System/Tag AvecBoutonFermer smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tag CreeParUtilisateur smoke-test 1`] = `
+exports[`design-system/Tag CreeParUtilisateur smoke-test 1`] = `
 <div class="flex">
   <div class="flex items-center px-3 py-0.5 rounded-full text-gray-900 bg-white border border-gray-300 pr-2">
     <span class="py-0.5 text-sm">
@@ -28,7 +28,7 @@ exports[`Design System/Tag CreeParUtilisateur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tag Default smoke-test 1`] = `
+exports[`design-system/Tag Default smoke-test 1`] = `
 <div class="flex">
   <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary">
     <span class="py-0.5 text-sm">
@@ -38,7 +38,7 @@ exports[`Design System/Tag Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tag StylePersonnalise smoke-test 1`] = `
+exports[`design-system/Tag StylePersonnalise smoke-test 1`] = `
 <div class="flex">
   <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary !bg-error-1 font-bold">
     <span class="py-0.5 text-sm">

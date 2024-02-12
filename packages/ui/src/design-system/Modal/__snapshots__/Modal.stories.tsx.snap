@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Modal AvecFooter smoke-test 1`] = `
+exports[`design-system/Modal AvecFooter smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
@@ -12,7 +12,7 @@ exports[`Design System/Modal AvecFooter smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal Default smoke-test 1`] = `
+exports[`design-system/Modal Default smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
@@ -24,7 +24,7 @@ exports[`Design System/Modal Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal LongContent smoke-test 1`] = `
+exports[`design-system/Modal LongContent smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
@@ -36,7 +36,7 @@ exports[`Design System/Modal LongContent smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal Size smoke-test 1`] = `
+exports[`design-system/Modal Size smoke-test 1`] = `
 <div class="p-8">
   <div class="flex items-center gap-6">
     <button text="sm"
@@ -71,7 +71,7 @@ exports[`Design System/Modal Size smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal WithRender smoke-test 1`] = `
+exports[`design-system/Modal WithRender smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
@@ -83,7 +83,7 @@ exports[`Design System/Modal WithRender smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal onlyRender smoke-test 1`] = `
+exports[`design-system/Modal onlyRender smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
