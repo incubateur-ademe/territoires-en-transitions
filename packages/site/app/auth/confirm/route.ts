@@ -26,17 +26,17 @@ export const GET = async (request: NextRequest) => {
     });
     if (!error && data.session) {
       // Enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
-      const cookieStore = cookies();
       const domain = hostname.split('.').toSpliced(0, 1).join('.');
-      cookieStore.set('tet-access-token', data.session.access_token, {
-        domain,
-        sameSite: 'lax',
-      });
-      cookieStore.set('tet-refresh-token', data.session.refresh_token, {
-        domain,
-        sameSite: 'lax',
-      });
-      return NextResponse.redirect(next);
+      const response = NextResponse.redirect(next)
+      response.headers.append(
+        'Set-Cookie',
+        `tet-access-token=${data.session.access_token}; Domain=${domain}; SameSite=Lax; Secure`
+      );
+      response.headers.append(
+        'Set-Cookie',
+        `tet-refresh-token=${data.session.refresh_token}; Domain=${domain}; SameSite=Lax; Secure`
+      );
+      return response;
     }
     console.log('/auth/confirm error:', error);
   }
