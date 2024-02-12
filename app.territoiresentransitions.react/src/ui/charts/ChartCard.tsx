@@ -81,7 +81,7 @@ const ChartCardModalContent = ({
   // Référence utilisée pour le téléchargement du graphe
   const {chartWrapperRef, DownloadChartButton} = useDownloadChartButton(
     chartInfo?.downloadedFileName,
-    'absolute -mr-2 right-0 top-3 z-10'
+    'absolute -mr-2 right-0 top-3'
   );
 
   return (
@@ -148,7 +148,7 @@ export const ChartCardContent = ({
   const {chartWrapperRef, downloadable, DownloadChartButton} =
     useDownloadChartButton(
       chartInfo?.downloadedFileName,
-      'absolute right-0 top-0 z-10'
+      'absolute right-0 top-0'
     );
 
   return (

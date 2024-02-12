@@ -35,7 +35,7 @@ const SyntheseVueGraph = ({vue, plan}: Props) => {
   return (
     <div className="relative">
       {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
-      <div className="absolute right-4 top-4 z-10">
+      <div className="absolute right-4 top-4">
         <DownloadButton
           containerRef={chartWrapperRef}
           fileName={`repartition-${graph.id}${
