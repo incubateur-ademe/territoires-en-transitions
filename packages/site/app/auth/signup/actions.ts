@@ -20,7 +20,7 @@ export const signup = async (formData: SignupData) => {
     // TODO: changer ça !
     const domain = headers().get('host');
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const emailRedirectTo = `${protocol}://${domain}/`;
+    const emailRedirectTo = `${protocol}://${domain}/auth/signup-succeed`;
 
     // envoi le mail contenant le lien d'auth.
     ret = await supabase.auth.signInWithOtp({

@@ -19,7 +19,7 @@ export const login = async (view: LoginView, credentials: Credentials) => {
     // génère l'url vers laquelle l'utilisateur sera redirigé à partir du lien d'auth.
     const domain = headers().get('host');
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const emailRedirectTo = `${protocol}://${domain}/`;
+    const emailRedirectTo = `${protocol}://${domain}/auth/login-succeed`;
 
     // envoi le mail contenant le lien d'auth.
     ret = await supabase.auth.signInWithOtp({
