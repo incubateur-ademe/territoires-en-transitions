@@ -38,7 +38,7 @@ function buildQueryFromFilters(
   limit: number,
 ) {
   const query = from.select(
-    '*, type: plan_action_type, collectivite: collectivite_card!inner(*)&order=collectivite_card(nom)',
+    '*, type: plan_action_type, collectivite: collectivite_card!inner(*)',
     {count: 'exact'},
   ).not('collectivite_card', 'is', null).is('parent', null).is('vide', false);
 
@@ -74,6 +74,9 @@ function buildQueryFromFilters(
       limit * filters.page - 1,
     );
   }
+
+  query.order('collectivite(nom)')
   query.limit(limit);
+
   return query;
 }
