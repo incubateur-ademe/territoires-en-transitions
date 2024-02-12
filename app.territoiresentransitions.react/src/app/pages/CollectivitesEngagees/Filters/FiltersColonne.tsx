@@ -3,12 +3,13 @@ import classNames from 'classnames';
 
 import {Filters} from './Filters';
 
-import {Tfilters, TSetFilters, getNumberOfActiveFilters} from '../data/filters';
 import {Button} from '@tet/ui';
+import {CollectiviteEngagee} from '@tet/api';
+import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
 
 type Props = {
-  filters: Tfilters;
-  setFilters: TSetFilters;
+  filters: CollectiviteEngagee.Filters;
+  setFilters: SetFilters;
 };
 
 const FiltersColonne = ({filters, setFilters}: Props) => {

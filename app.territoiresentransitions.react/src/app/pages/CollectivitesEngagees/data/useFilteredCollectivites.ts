@@ -1,8 +1,8 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {Tfilters} from 'app/pages/CollectivitesEngagees/data/filters';
-import {NonNullableFields, Views} from '@tet/api';
+import {NonNullableFields, Views, CollectiviteEngagee} from '@tet/api';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
+
 
 /**
  * Element de la liste `collectivite_card`, utilisée par la vue toutes les
@@ -16,7 +16,7 @@ type FilterOperator = 'in' | 'ov';
 /**
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
  */
-export const useFilteredCollectivites = (args: Tfilters) => {
+export const useFilteredCollectivites = (args: CollectiviteEngagee.Filters) => {
   const {data, isLoading} = useQuery(['collectivite_card', args], () =>
     fetchCollectiviteCards(args)
   );
@@ -31,7 +31,7 @@ export const useFilteredCollectivites = (args: Tfilters) => {
 /**
  * Télécharge les collectivités en fonction des filtres.
  */
-const fetchCollectiviteCards = async (filters: Tfilters) => {
+const fetchCollectiviteCards = async (filters: CollectiviteEngagee.Filters) => {
   // la requête
   const query = buildQueryFromFilters(filters);
 
@@ -50,7 +50,7 @@ const fetchCollectiviteCards = async (filters: Tfilters) => {
 /**
  * Construit la query en ajoutant des opérateurs Postgrest pour chaque filtre.
  */
-const buildQueryFromFilters = (filters: Tfilters) => {
+const buildQueryFromFilters = (filters: CollectiviteEngagee.Filters) => {
   let query = supabaseClient
     .from('collectivite_card')
     .select('*', {count: 'exact'});

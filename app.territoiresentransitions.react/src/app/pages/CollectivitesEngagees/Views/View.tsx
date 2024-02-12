@@ -5,17 +5,15 @@ import {Button, Select} from '@tet/ui';
 
 import {TCollectiviteCarte} from '../data/useFilteredCollectivites';
 import {
-  Tfilters,
-  TSetFilters,
-  getNumberOfActiveFilters,
+  getNumberOfActiveFilters, SetFilters,
   TView,
 } from '../data/filters';
 import {Pagination} from 'ui/shared/Pagination';
 import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
-import {TPlanCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
 import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
+import { CollectiviteEngagee } from '@tet/api';
 
 // correspondances entre les identifiants des vues et les identifiants de tracking
 const viewIdToTrackerId: Record<string, 'plans' | 'collectivites'> = {
@@ -24,14 +22,14 @@ const viewIdToTrackerId: Record<string, 'plans' | 'collectivites'> = {
 };
 
 export type CollectivitesEngageesView = {
-  initialFilters: Tfilters;
-  filters: Tfilters;
-  setFilters: TSetFilters;
+  initialFilters: CollectiviteEngagee.Filters;
+  filters: CollectiviteEngagee.Filters;
+  setFilters: SetFilters;
   canUserClickCard: boolean;
   isConnected: boolean;
 };
 
-export type Data = TCollectiviteCarte | TPlanCarte;
+export type Data = TCollectiviteCarte | CollectiviteEngagee.TPlanCarte;
 
 type ViewProps = CollectivitesEngageesView & {
   view: TView;
