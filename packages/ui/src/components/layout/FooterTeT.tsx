@@ -1,0 +1,72 @@
+import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
+import AdemeLogo from '@assets/AdemeLogo';
+import {Footer, LinkObject} from '../../design-system/Footer/Footer';
+import {Button} from '@design-system/Button';
+
+type FooterTeTProps = {
+  /** Liens supplémentaires à afficher en fonction de la page visitée */
+  customLinks?: LinkObject[];
+};
+
+/**
+ * Footer par défaut des applications Territoires en Transitions
+ */
+
+export const FooterTeT = ({customLinks}: FooterTeTProps) => {
+  return (
+    <Footer
+      logos={[
+        <RepubliqueFrancaiseLogo className="h-full" />,
+        <AdemeLogo className="h-full" />,
+      ]}
+      content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."
+      contentLinks={[
+        {label: 'ademe.fr', href: 'https://www.ademe.fr/', external: true},
+        {label: 'beta.gouv', href: 'https://beta.gouv.fr/', external: true},
+      ]}
+      bottomContent={
+        <div className="flex flex-wrap gap-x-1 mb-0">
+          Sauf mention contraire, tous les contenus de ce site sont sous
+          <Button
+            variant="underlined"
+            size="xs"
+            href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+            external
+            className="!text-grey-8 !font-normal !border-b-grey-8"
+          >
+            licence etalab-2.0
+          </Button>
+        </div>
+      }
+      bottomLinks={[
+        {
+          label: 'Accessibilité : non conforme',
+          href: 'https://territoiresentransitions.fr/accessibilite',
+        },
+        {
+          label: 'Mentions légales',
+          href: 'https://territoiresentransitions.fr/mentions',
+        },
+        {
+          label: 'Données personnelles',
+          href: 'https://www.ademe.fr/donnees-personnelles/',
+          external: true,
+        },
+        {
+          label: 'Gestion des cookies',
+          href: 'https://territoiresentransitions.fr/cookies',
+        },
+        {
+          label: 'Code source',
+          href: 'https://github.com/betagouv/territoires-en-transitions',
+          external: true,
+        },
+        {
+          label: 'Conditions générales d’utilisation',
+          href: 'https://territoiresentransitions.fr/cgu',
+        },
+        ...(customLinks ?? []),
+      ]}
+    />
+  );
+};

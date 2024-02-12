@@ -1,0 +1,110 @@
+import {Button} from '@design-system/Button';
+import classNames from 'classnames';
+
+export type LinkObject = {label: string; href: string; external?: boolean};
+
+type FooterProps = {
+  /** Liste de logos à afficher à gauche du footer.
+   * Utiliser de préférence des composants renvoyant un svg. */
+  logos?: React.ReactNode[];
+  /** Contenu principal, sous forme de chaine de caractères ou de noeud React. */
+  content: React.ReactNode;
+  /** Liste de liens affichés sous le contenu principal. */
+  contentLinks?: LinkObject[];
+  /** Contenu de la partie inférieure, sous forme de chaine de caractères ou de noeud React. */
+  bottomContent?: React.ReactNode;
+  /** Liste de liens affichés dans la partie inférieure du footer. */
+  bottomLinks?: LinkObject[];
+  /** Surcharge des classNames. */
+  className?: string;
+};
+
+/**
+ * Composant Footer générique
+ */
+
+export const Footer = ({
+  logos,
+  content,
+  contentLinks,
+  bottomContent,
+  bottomLinks,
+  className,
+}: FooterProps) => {
+  return (
+    <footer
+      className={classNames(
+        'w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-10 border-t-2 border-t-primary-8',
+        className
+      )}
+    >
+      {/* Partie suppérieure du footer */}
+      <div className="flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row pb-4 md:pb-6">
+        {/* Logos */}
+        {!!logos && (
+          <div className="flex h-36">
+            {logos.map((logo, i) => (
+              <div key={i} className="h-full">
+                {logo}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Contenu principal */}
+        <div>
+          {/* Description */}
+          <p className="text-sm leading-6 text-grey-9">{content}</p>
+
+          {/* Liste de liens */}
+          {!!contentLinks && (
+            <ul className="list-none flex flex-row gap-6 mb-0">
+              {contentLinks.map(link => (
+                <li key={link.label}>
+                  <Button
+                    variant="underlined"
+                    size="sm"
+                    href={link.href}
+                    external={link.external}
+                    className="!text-grey-10 border-b-transparent hover:border-b-grey-10 !font-bold"
+                  >
+                    {link.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Partie inférieure du footer */}
+      {(!!bottomLinks || !!bottomContent) && (
+        <div className="border-t border-t-grey-4 pt-4 md:pt-6">
+          {/* Liste de liens */}
+          {!!bottomLinks && (
+            <ul className="list-none flex flex-row flex-wrap gap-2 divide-x divide-grey-4">
+              {bottomLinks.map(link => (
+                <li key={link.label} className="pl-2 first-of-type:pl-0 pb-0">
+                  <Button
+                    variant="underlined"
+                    size="xs"
+                    href={link.href}
+                    external={link.external}
+                    className="!text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                  >
+                    {link.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Description */}
+          {!!bottomContent && (
+            <div className="text-xs leading-5 text-grey-8">{bottomContent}</div>
+          )}
+        </div>
+      )}
+    </footer>
+  );
+};
