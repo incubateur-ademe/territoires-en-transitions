@@ -35,8 +35,13 @@ const locationFromPath = (path: string): Localisation => {
   let tag: Tag | null = null;
   let onglet: Onglet | null = null;
 
-  if (path === '/toutes_collectivites') {
+  if (path.includes('/recherches/')) {
     page = 'toutes_collectivites';
+    if (path.endsWith('collectivites')) {
+      onglet = 'collectivites';
+    } else {
+      onglet = 'plans';
+    }
   } else if (path.startsWith(authBasePath)) {
     if (path.endsWith('signin')) page = 'signin';
     else if (path.endsWith('signup')) page = 'signup';

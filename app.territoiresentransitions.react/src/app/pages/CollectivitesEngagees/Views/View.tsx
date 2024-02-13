@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import classNames from 'classnames';
 
 import {Button, Select} from '@tet/ui';
@@ -9,21 +8,13 @@ import {Pagination} from 'ui/shared/Pagination';
 import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
-import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
 import {CollectiviteEngagee} from '@tet/api';
 import {
   recherchesCollectivitesUrl,
-  recherchesPath,
   recherchesPlansUrl,
   RecherchesViewParam,
 } from 'app/paths';
-import {useHistory, useLocation, useParams} from 'react-router-dom';
-
-// correspondances entre les identifiants des vues et les identifiants de tracking
-const viewIdToTrackerId: Record<string, 'plans' | 'collectivites'> = {
-  plan: 'plans',
-  collectivite: 'collectivites',
-};
+import {useHistory, useLocation} from 'react-router-dom';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -57,11 +48,6 @@ const View = ({
 }: ViewProps) => {
   const history = useHistory();
   const location = useLocation();
-  const tracker = useOngletTracker();
-
-  useEffect(() => {
-    tracker(viewIdToTrackerId[view]);
-  }, [view]);
 
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'collectivité',
