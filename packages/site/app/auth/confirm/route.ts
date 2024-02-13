@@ -26,7 +26,7 @@ export const GET = async (request: NextRequest) => {
     });
     if (!error && data.session) {
       // Enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
-      const domain = hostname.split('.').toSpliced(0, 1).join('.');
+      const domain = 'territoiresentransitions.fr';
       const response = NextResponse.redirect(next)
       response.headers.append(
         'Set-Cookie',
