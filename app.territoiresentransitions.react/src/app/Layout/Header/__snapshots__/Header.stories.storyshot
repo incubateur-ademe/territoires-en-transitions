@@ -93,7 +93,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               <li>
                 <a
                   className="fr-btn fr-icon-seedling-line"
-                  href="/toutes_collectivites"
+                  href="/recherches/collectivites"
                   onClick={[Function]}
                 >
                   Collectivités
@@ -440,7 +440,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           <li>
             <a
               className="fr-btn fr-icon-seedling-line"
-              href="/toutes_collectivites"
+              href="/recherches/collectivites"
               onClick={[Function]}
             >
               Collectivités
@@ -586,7 +586,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
               <li>
                 <a
                   className="fr-btn fr-icon-seedling-line"
-                  href="/toutes_collectivites"
+                  href="/recherches/collectivites"
                   onClick={[Function]}
                 >
                   Collectivités
@@ -874,7 +874,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
           <li>
             <a
               className="fr-btn fr-icon-seedling-line"
-              href="/toutes_collectivites"
+              href="/recherches/collectivites"
               onClick={[Function]}
             >
               Collectivités
@@ -1020,7 +1020,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
               <li>
                 <a
                   className="fr-btn fr-icon-seedling-line"
-                  href="/toutes_collectivites"
+                  href="/recherches/collectivites"
                   onClick={[Function]}
                 >
                   Collectivités
@@ -1367,7 +1367,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
           <li>
             <a
               className="fr-btn fr-icon-seedling-line"
-              href="/toutes_collectivites"
+              href="/recherches/collectivites"
               onClick={[Function]}
             >
               Collectivités
