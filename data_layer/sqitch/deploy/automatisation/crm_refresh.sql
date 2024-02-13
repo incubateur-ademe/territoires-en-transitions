@@ -9,6 +9,8 @@ as
 $$
 begin
     refresh materialized view stats.crm_usages;
+    refresh materialized view stats.crm_indicateurs;
+    refresh materialized view stats.crm_plans;
 end ;
 $$;
 
