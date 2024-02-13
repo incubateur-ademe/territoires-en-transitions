@@ -6,19 +6,24 @@ import {Login} from './Login';
 /**
  * Encapsule le panneau d'authentification dans une modale
  */
-export const LoginModal = (props: Omit<LoginProps, 'onCancel'>) => {
+export const LoginModal = (props: LoginProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const {defaultView} = props;
+  const {defaultView, onCancel} = props;
   const size =
     defaultView === 'msg_init_mdp' || defaultView === 'msg_lien_envoye'
       ? 'md'
       : 'lg';
+  const onClose = () => {
+    setIsOpen(false);
+    onCancel();
+  };
   return (
     <Modal
       backdropBlur
       size={size}
       openState={{isOpen, setIsOpen}}
-      render={() => <Login {...props} onCancel={() => setIsOpen(false)} />}
+      onClose={onClose}
+      render={() => <Login {...props} onCancel={() => onClose()} />}
     />
   );
 };

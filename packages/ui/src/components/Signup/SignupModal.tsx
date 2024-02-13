@@ -6,14 +6,20 @@ import {Signup} from './Signup';
 /**
  * Encapsule le panneau de création de compte dans une modale
  */
-export const SignupModal = (props: Omit<SignupProps, 'onCancel'>) => {
+export const SignupModal = (props: SignupProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const onClose = () => {
+    setIsOpen(false);
+    props.onCancel();
+  };
+
   return (
     <Modal
       backdropBlur
       size="lg"
       openState={{isOpen, setIsOpen}}
-      render={() => <Signup {...props} onCancel={() => setIsOpen(false)} />}
+      onClose={onClose}
+      render={() => <Signup {...props} onCancel={() => onClose()} />}
     />
   );
 };
