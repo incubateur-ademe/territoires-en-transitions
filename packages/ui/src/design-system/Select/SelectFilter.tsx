@@ -29,7 +29,7 @@ export const SelectFilter = ({
     } else {
       setFilterOptions(options);
     }
-  }, [values]);
+  }, [values, options]);
 
   // gère la sélection/déselection d'item dans la liste
   const handleChange = (args: SelectMultipleOnChangeArgs) => {
