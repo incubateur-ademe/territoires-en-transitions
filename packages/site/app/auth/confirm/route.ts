@@ -30,11 +30,11 @@ export const GET = async (request: NextRequest) => {
       const response = NextResponse.redirect(next)
       response.headers.append(
         'Set-Cookie',
-        `tet-access-token=${data.session.access_token}; Domain=${domain}; SameSite=Lax; Secure`
+        `tet-access-token=${data.session.access_token}; Domain=${domain}; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax; Secure`
       );
       response.headers.append(
         'Set-Cookie',
-        `tet-refresh-token=${data.session.refresh_token}; Domain=${domain}; SameSite=Lax; Secure`
+        `tet-refresh-token=${data.session.refresh_token}; Domain=${domain}; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax; Secure`
       );
       return response;
     }
