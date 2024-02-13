@@ -28,7 +28,7 @@ exports[`Design System/Button AnchorButtons smoke-test 1`] = `
   <a href="https://territoiresentransitions.fr/"
      class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-base py-3 px-6"
   >
-    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3 mb-0.5">
     </span>
     Disabled link
   </a>
@@ -54,7 +54,7 @@ exports[`Design System/Button AnchorButtons smoke-test 1`] = `
      target="_blank"
      rel="noreferrer noopener"
   >
-    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8">
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8 mb-0.5">
     </span>
     External link
   </a>
@@ -167,8 +167,8 @@ exports[`Design System/Button Variants smoke-test 1`] = `
     <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 p-2.5">
-    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8">
+  <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
     </span>
   </button>
   <button disabled
@@ -202,9 +202,9 @@ exports[`Design System/Button Variants smoke-test 1`] = `
     </span>
   </button>
   <button disabled
-          class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 p-2.5"
+          class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 p-2.5"
   >
-    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3 mb-1">
     </span>
   </button>
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
@@ -222,7 +222,7 @@ exports[`Design System/Button Variants smoke-test 1`] = `
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-grey-1 hover:!bg-grey-2 border-grey-4 hover:!border-grey-4 text-sm py-2.5 px-6">
     Grey
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
+  <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
     Underlined
   </button>
   <button disabled
@@ -251,7 +251,7 @@ exports[`Design System/Button Variants smoke-test 1`] = `
     Grey
   </button>
   <button disabled
-          class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6"
+          class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6"
   >
     Underlined
   </button>
@@ -280,8 +280,8 @@ exports[`Design System/Button Variants smoke-test 1`] = `
     </span>
     Grey
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
-    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8">
+  <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
     </span>
     Underlined
   </button>
@@ -321,9 +321,9 @@ exports[`Design System/Button Variants smoke-test 1`] = `
     Grey
   </button>
   <button disabled
-          class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6 flex-row-reverse"
+          class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6 flex-row-reverse"
   >
-    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3 mb-1">
     </span>
     Underlined
   </button>
