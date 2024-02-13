@@ -145,22 +145,30 @@ export const IndicateurValueTableRow = ({
 };
 
 /** Affiche une valeur importée */
-const ValueImported = ({valeur}: {valeur: string}) => (
-  <>
-    <span className="text-grey-6 font-bold w-fit">
-      {parseFloat(valeur).toFixed(2)}
-    </span>
-    <InfoTooltip
-      label={() => (
-        <span>
-          Cette valeur est renseignée <b>automatiquement</b>. Pour toute
-          question, l’équipe est à votre écoute sur
-          contact@territoiresentransitions.fr !
-        </span>
-      )}
-    />
-  </>
-);
+const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
+const ValueImported = ({valeur}: {valeur: string}) => {
+  // la valeur importée est une chaîne qui peut contenir beaucoup de chiffres
+  // après la virgule alors on essaye de la parser
+  const n = parseFloat(valeur?.replace(/\s/, '').replace(',', '.'));
+  // et si le résultat est valide on le formate avec maximum 3 digits (ou on
+  // utilise la chaîne d'origine)
+  const v = isNaN(n) ? valeur : NumFormat.format(n);
+
+  return (
+    <>
+      <span className="text-grey-6 font-bold w-fit">{v}</span>
+      <InfoTooltip
+        label={() => (
+          <span>
+            Cette valeur est renseignée <b>automatiquement</b>. Pour toute
+            question, l’équipe est à votre écoute sur
+            contact@territoiresentransitions.fr !
+          </span>
+        )}
+      />
+    </>
+  );
+};
 
 /** Affiche une ligne du tableau en lecture seule */
 export const ValueTableRowReadOnly = ({
