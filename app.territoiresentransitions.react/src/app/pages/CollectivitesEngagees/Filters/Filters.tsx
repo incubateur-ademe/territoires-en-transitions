@@ -87,11 +87,45 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 value: code,
                 label: libelle,
               }))}
-              onChange={({values}) => {
-                setFilters({
-                  ...filters,
-                  regions: (values as string[]) ?? [],
-                });
+              onChange={({values, selectedValue}) => {
+                // Désélection
+                if (!values?.includes(selectedValue)) {
+                  // départements sélectionnés associés à la région désélectionnée
+                  const deps = departements.filter(
+                    d => d.region_code === selectedValue
+                  );
+                  // on désélectionne aussi les départements associés à cette région
+                  setFilters({
+                    ...filters,
+                    regions: (values as string[]) ?? [],
+                    departments: filters.departments.filter(
+                      d => !deps.map(dep => dep.code).includes(d)
+                    ),
+                  });
+                  // Sélection
+                } else {
+                  // si un département est déjà sélectionné lorsqu'aucune région n'est sélectionnée
+                  if (
+                    filters.departments.length > 0 &&
+                    filters.regions.length === 0
+                  ) {
+                    // si ce département n'appartient pas à la région sélectionnée, on le déselectionne
+                    setFilters({
+                      ...filters,
+                      regions: (values as string[]) ?? [],
+                      departments: filters.departments.filter(
+                        d =>
+                          departements.find(dep => dep.code === d)
+                            ?.region_code === selectedValue
+                      ),
+                    });
+                  } else {
+                    setFilters({
+                      ...filters,
+                      regions: (values as string[]) ?? [],
+                    });
+                  }
+                }
                 tracker({fonction: 'filtre_region', action: 'selection'});
               }}
               values={filters.regions?.length ? filters.regions : undefined}
