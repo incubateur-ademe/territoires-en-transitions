@@ -1,4 +1,9 @@
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
 import {E2E} from './E2E';
@@ -10,7 +15,14 @@ import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
-import {collectivitesEngageesPath, authBasePath, profilPath} from 'app/paths';
+import {
+  authBasePath,
+  profilPath,
+  ancienRecherchesPath,
+  recherchesLandingPath,
+  recherchesPath,
+  recherchesCollectivitesUrl,
+} from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
@@ -54,8 +66,12 @@ export const App = () => {
                   <Route path={profilPath}>
                     <ProfilPage />
                   </Route>
-
-                  <Route path={collectivitesEngageesPath}>
+                  <Redirect
+                    exact
+                    from={ancienRecherchesPath}
+                    to={recherchesCollectivitesUrl}
+                  />
+                  <Route path={recherchesLandingPath}>
                     <CollectivitesEngageesPage />
                   </Route>
                   <Route path={'/collectivite/:collectiviteId'}>
