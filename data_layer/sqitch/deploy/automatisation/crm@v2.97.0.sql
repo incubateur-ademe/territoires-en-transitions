@@ -2,7 +2,7 @@
 
 BEGIN;
 
-drop view public.crm_usages;
+drop view crm_usages;
 drop materialized view stats.crm_usages;
 
 /*
@@ -147,7 +147,7 @@ select collectivite_id,
        (select count(*)
         from fiche_action f
         where f.collectivite_id = c.collectivite_id
-          and (titre is not null or titre != 'Nouvelle fiche')) as fiches_non_vides,
+            and (titre is not null or titre != 'Nouvelle fiche')) as fiches_non_vides,
        (select count(*)
         from fiche_action f
                  join fiche_action_pilote fap on f.id = fap.fiche_id
@@ -189,57 +189,7 @@ select collectivite_id,
                       and (f.titre is not null or f.titre != 'Nouvelle fiche')
                       and f.statut is not null
                    )::numeric /x.fiches::numeric) *100)
-           end) as pourcentage_FA_pilotable_privee,
-       (
-           select count(ic.*)
-           from indicateur_confidentiel ic
-           where ic.collectivite_id = c.collectivite_id
-       ) as indicateur_prive,
-       (
-           select count(ic.*) > 0
-           from indicateur_confidentiel ic
-           where ic.collectivite_id = c.collectivite_id
-       ) as min1_indicateur_prive,
-       (
-           select count(ic.*) > 0
-           from indicateur_confidentiel ic
-           where ic.collectivite_id = c.collectivite_id
-             and ic.indicateur_id is not null
-       ) as min1_indicateur_predef_prive,
-       (
-           select count(ic.*) > 0
-           from indicateur_confidentiel ic
-           where ic.collectivite_id = c.collectivite_id
-             and ic.indicateur_perso_id is not null
-       ) as min1_indicateur_perso_prive,
-       (
-           select i.pourcentage
-           from (
-                    select c.id as collectivite_id,
-                           (count(ic)::double precision / (select count(*) from indicateur_definition)::double precision
-                               * 100::double precision) as pourcentage
-                    from collectivite c
-                             left join indicateur_confidentiel ic on ic.collectivite_id = c.id
-                        and ic.indicateur_id is not null
-                    group by c.id
-                ) i
-           where i.collectivite_id = c.collectivite_id
-       ) as pourcentage_indicateur_predef_prives,
-       (select array_agg(distinct pat.type)
-        from (select p.id, count(f) as nb_fiche
-              from fiche_action f
-                       join fiche_action_pilote fap on f.id = fap.fiche_id
-                       join fiche_action_axe faa on f.id = faa.fiche_id
-                       join axe a on a.id = faa.axe_id
-                       join axe p on a.plan = p.id
-              where f.collectivite_id = c.collectivite_id
-                and (titre is not null or titre != 'Nouvelle fiche')
-                and f.statut is not null
-                and p.nom is not null
-              group by p.id) f
-                 join axe a on f.id = a.id
-                 left join plan_action_type pat on a.type = pat.id
-        where f.nb_fiche>4) as type_pa
+           end) as pourcentage_FA_pilotable_privee
 from stats.collectivite c
          join stats.collectivite_active using (collectivite_id)
          left join comptes x using (collectivite_id)
@@ -270,18 +220,6 @@ comment on column stats.crm_usages.pourcentage_FA_privee is
     '% de fiches action privées par collectivité';
 comment on column stats.crm_usages.pourcentage_FA_pilotable_privee is
     '% de fiches action pilotables privées (avec au moins un titre rempli, le pilote et le statut)';
-comment on column stats.crm_usages.indicateur_prive is
-    'Nombre d''indicateurs privés par collectivité';
-comment on column stats.crm_usages.min1_indicateur_prive is
-    'Vrai si au moins un indicateur privé';
-comment on column stats.crm_usages.min1_indicateur_predef_prive is
-    'Vrai si au moins un indicateur prédéfini privé';
-comment on column stats.crm_usages.min1_indicateur_perso_prive is
-    'Vrai si au moins un indicateur perso privé';
-comment on column stats.crm_usages.pourcentage_indicateur_predef_prives is
-    '% d''indicateur prédéfini privé par collectivité';
-comment on column stats.crm_usages.type_pa is
-    'Liste de tous les types des plans pilotables de la collectivité';
 
 
 
@@ -289,51 +227,6 @@ create view crm_usages
 as
 select *
 from stats.crm_usages
-where is_service_role();
-
-create materialized view stats.crm_indicateurs
-as
-select i.id,
-       id.nom,
-       i.nb_prive,
-       (
-           ( i.nb_prive::double precision / (select count(*) from indicateur_definition)::double precision)
-               *100::double precision) as pourcentage_prive
-from (
-         select id.id, count (ic) as nb_prive
-         from indicateur_definition id
-                  left join indicateur_confidentiel ic on id.id = ic.indicateur_id
-         group by id.id
-     ) i
-         join indicateur_definition id on i.id = id.id
-order by i.nb_prive desc;
-
-create view crm_indicateurs
-as
-select *
-from stats.crm_indicateurs
-where is_service_role();
-
-create materialized view stats.crm_plans as
-select pat.type,
-       (select count(*) from axe p where p.id = p.plan and (p.type = pat.id or (p.type is null and pat.id is null ))) as nb_plan,
-       count(f.*) as nb_plan_90pc_FA_privees
-from (select pat.id, pat.type from plan_action_type pat union select null as id, null as type) pat
-         left join axe p on pat.id = p.type or (p.type is null and p.id = p.plan)
-         left join (select p.id, count(f) as nb_fiche, count(f) FILTER ( WHERE f.restreint ) as nb_fiche_restreinte
-                    from fiche_action f
-                             join fiche_action_axe faa on f.id = faa.fiche_id
-                             join axe a on a.id = faa.axe_id
-                             join axe p on a.plan = p.id
-                    group by p.id) f on p.id = f.id
-    and (f.nb_fiche_restreinte::double precision /
-         f.nb_fiche::double precision *
-         100::double precision)>=90
-group by pat.id, pat.type;
-
-create view crm_plans as
-select *
-from stats.crm_plans
 where is_service_role();
 
 COMMIT;

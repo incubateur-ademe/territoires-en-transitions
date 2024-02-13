@@ -31,20 +31,8 @@ select collectivite_id,
        _5fiches_1pilotage,
        fiches_changement_statut,
        pourcentage_fa_privee,
-       pourcentage_fa_pilotable_privee,
-       indicateur_prive,
-       min1_indicateur_prive,
-       min1_indicateur_predef_prive,
-       min1_indicateur_perso_prive,
-       pourcentage_indicateur_predef_prives,
-       type_pa
+       pourcentage_fa_pilotable_privee
 from crm_usages
 where false;
-
-select id, nom, nb_prive, pourcentage_prive
-from crm_indicateurs;
-
-select type, nb_plan, nb_plan_90pc_fa_privees
-from crm_plans;
 
 ROLLBACK;
