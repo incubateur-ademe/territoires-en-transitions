@@ -38,6 +38,14 @@ export const Default: Story = {
   },
 };
 
+export const AvecBackdropBlur: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    backdropBlur: true,
+  },
+};
+
 export const AvecFooter: Story = {
   args: {
     textAlign: 'left',
