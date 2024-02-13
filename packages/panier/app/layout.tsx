@@ -35,7 +35,6 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
     <html lang="fr">
     <PHProvider>
       <body className="min-h-screen flex flex-col">
-        <PostHogPageView />
         <div className="flex flex-col grow">
           <header className="px-4 lg:px-6 xl:px-2 py-8 text-center">
             HEADER
