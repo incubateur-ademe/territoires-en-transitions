@@ -68,6 +68,8 @@ export type ModalProps = {
   disableDismiss?: boolean;
   /** n'affiche pas le bouton Fermer */
   noCloseButton?: boolean;
+  /** Ajoute un effet flouté sur l'overlay */
+  backdropBlur?: boolean;
   /** z-index de la modale, est placé sur l'overlay */
   zIndex?: string | number;
   /** Id de test */
@@ -91,6 +93,7 @@ export const Modal = ({
   disableDismiss,
   noCloseButton,
   renderFooter,
+  backdropBlur,
   zIndex = preset.theme.extend.zIndex.modal,
   dataTest = 'Modal',
 }: ModalProps) => {
@@ -140,6 +143,7 @@ export const Modal = ({
               placeItems: 'center',
               background: preset.theme.extend.colors.overlay,
               zIndex,
+              backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
             }}
           >
             <FloatingFocusManager context={context}>
