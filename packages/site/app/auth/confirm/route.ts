@@ -12,10 +12,15 @@ import {createClient} from 'src/supabase/server';
 export const GET = async (request: NextRequest) => {
   const cookieStore = cookies();
 
-  const {searchParams, hostname} = new URL(request.url);
+  const {searchParams, hostname, host} = new URL(request.url);
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
   const next = searchParams.get('next') ?? '/';
+
+  console.log(request.url);
+  console.log(searchParams, hostname, host);
+  console.log(request.nextUrl.searchParams, request.nextUrl.hostname,
+    request.nextUrl.host);
 
   if (token_hash && type) {
     const supabase = createClient(cookieStore);
