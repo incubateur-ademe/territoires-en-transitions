@@ -33,6 +33,8 @@ export type SignupProps = {
   defaultValues?: SignupDataStep1;
   /** Indique que l'option "avec mot de passe" est activée */
   withPassword?: boolean;
+  /** Indique que la sélection de collectivité n'est pas activée */
+  noCollectivite?: boolean;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
   /** Liste de collectivités auxquelles le compte peut être rattaché */

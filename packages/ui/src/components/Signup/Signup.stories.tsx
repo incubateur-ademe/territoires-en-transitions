@@ -37,6 +37,13 @@ export const Etape1AvecMdp: Story = {
   },
 };
 
+export const SansSelectionCollectivite: Story = {
+  args: {
+    noCollectivite: true,
+    defaultView: 'etape1',
+  },
+};
+
 export const Etape2: Story = {
   args: {
     defaultView: 'etape2',

@@ -417,3 +417,119 @@ exports[`components/Signup Etape2 smoke-test 1`] = `
   </div>
 </form>
 `;
+
+exports[`components/Signup SansSelectionCollectivite smoke-test 1`] = `
+<div class="overflow-hidden">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+      role="tablist"
+  >
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md border border-grey-3 rounded-md shadow-button bg-white text-primary-9"
+              type="button"
+              role="tab"
+              id="tab-0"
+              aria-selected="true"
+      >
+        Compte sans mot de passe
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-1"
+              aria-selected="false"
+      >
+        Compte avec mot de passe
+      </button>
+    </li>
+  </ul>
+  <div id="tabpanel-0"
+       role="tabpanel"
+       aria-labelledby="tab-0"
+       tabindex="0"
+       label="Compte sans mot de passe"
+  >
+    <form class="flex flex-col gap-4">
+      <div class="flex-grow flex flex-col gap-3">
+        <label for="email">
+          <div class="font-medium text-grey-8">
+            Email de connexion
+          </div>
+        </label>
+        <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+          <input type="text"
+                 class="grow text-grey-8 px-4 outline-none text-md py-3"
+                 id="email"
+                 name="email"
+          >
+        </div>
+      </div>
+      <hr class="mt-5">
+      <div class="flex gap-2 min-w-min">
+        <input id=":r6:"
+               type="checkbox"
+               class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4 font-medium"
+               name="cgu_acceptees"
+        >
+        <div class="flex flex-col gap-1">
+          <label for=":r6:"
+                 class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+          >
+            J’accepte le cadre d’utilisation de la plateforme (obligatoire)
+          </label>
+          <div class="flex items-center text-grey-7 my-auto">
+            <a href="https://territoiresentransitions.fr/cgu"
+               class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+            >
+              Les conditions générales
+            </a>
+            <span class="text-sm mx-2">
+              |
+            </span>
+            <a href="https://www.ademe.fr/donnees-personnelles/"
+               class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+            >
+              la politique de protection des données de l'ADEME
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 min-w-min">
+        <input id=":r7:"
+               type="checkbox"
+               class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+               name="collectivite_engagee"
+        >
+        <div class="flex flex-col gap-1">
+          <label for=":r7:"
+                 class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+          >
+            Collectivité engagée dans le programme Territoire Engagé Transition Ecologique
+          </label>
+        </div>
+      </div>
+      <hr class="mt-4">
+      <div class="flex gap-4 justify-end">
+        <button type="button"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+        >
+          Annuler
+        </button>
+        <button type="submit"
+                disabled
+                class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6 flex-row-reverse"
+        >
+          <span class="ri-arrow-right-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+          </span>
+          Passer à l'étape 2
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

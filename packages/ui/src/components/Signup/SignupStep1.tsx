@@ -18,12 +18,15 @@ const URL_DCP = 'https://www.ademe.fr/donnees-personnelles/';
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (
   isPasswordless: boolean,
-  defaultValues: SignupDataStep1
+  defaultValues: SignupDataStep1,
+  noCollectivite?: boolean
 ) => {
   const validationSchema = z.object({
-    collectivite_id: z.number({
-      invalid_type_error: 'Sélectionnez une collectivité',
-    }),
+    collectivite_id: noCollectivite
+      ? z.null()
+      : z.number({
+          invalid_type_error: 'Sélectionnez une collectivité',
+        }),
     email: z.string().email({message: 'Un email valide est requis'}),
     password: z
       .string()
@@ -53,10 +56,10 @@ const useSignupStep1 = (
  * Affiche l'étape 1 du panneau de création de compte
  */
 export const SignupStep1 = (props: SignupPropsWithState) => {
-  const {signupState, withPassword} = props;
+  const {signupState, withPassword, noCollectivite} = props;
   const {formData} = signupState;
   const [isPasswordless, setIsPasswordless] = useState(!withPassword);
-  const form = useSignupStep1(isPasswordless, formData);
+  const form = useSignupStep1(isPasswordless, formData, noCollectivite);
 
   return (
     <Tabs
@@ -94,6 +97,7 @@ const SignupStep1Form = (
   const {
     isLoading,
     isPasswordless,
+    noCollectivite,
     collectivites,
     onFilterCollectivites,
     onCancel,
@@ -116,37 +120,39 @@ const SignupStep1Form = (
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <Field
-        title="Nom de la collectivité"
-        state={errors.collectivite_id ? 'error' : undefined}
-        message={errors.collectivite_id?.message.toString()}
-      >
-        <Controller
-          name="collectivite_id"
-          control={control}
-          render={({field}) => {
-            return (
-              <Select
-                debounce={500}
-                options={collectivites}
-                values={field.value ? [field.value] : undefined}
-                isSearcheable
-                onSearch={onFilterCollectivites}
-                disabled={isLoading}
-                onChange={value => {
-                  setValue(
-                    field.name,
-                    field.value === value ? null : (value as number),
-                    {
-                      shouldValidate: true,
-                    }
-                  );
-                }}
-              />
-            );
-          }}
-        />
-      </Field>
+      {!noCollectivite && (
+        <Field
+          title="Nom de la collectivité"
+          state={errors.collectivite_id ? 'error' : undefined}
+          message={errors.collectivite_id?.message.toString()}
+        >
+          <Controller
+            name="collectivite_id"
+            control={control}
+            render={({field}) => {
+              return (
+                <Select
+                  debounce={500}
+                  options={collectivites}
+                  values={field.value ? [field.value] : undefined}
+                  isSearcheable
+                  onSearch={onFilterCollectivites}
+                  disabled={isLoading}
+                  onChange={value => {
+                    setValue(
+                      field.name,
+                      field.value === value ? null : (value as number),
+                      {
+                        shouldValidate: true,
+                      }
+                    );
+                  }}
+                />
+              );
+            }}
+          />
+        </Field>
+      )}
       <Field
         title="Email de connexion"
         htmlFor="email"
