@@ -20,7 +20,6 @@ import {
   profilPath,
   ancienRecherchesPath,
   recherchesLandingPath,
-  recherchesPath,
   recherchesCollectivitesUrl,
 } from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
