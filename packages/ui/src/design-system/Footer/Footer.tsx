@@ -76,7 +76,7 @@ export const Footer = ({
 
       {/* Partie inférieure du footer */}
       {(!!bottomLinks || !!bottomContent) && (
-        <div className="w-full border-t border-t-primary-4">
+        <div className="w-full border-t-[0.5px] border-t-primary-4">
           <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-6">
             {/* Liste de liens */}
             {!!bottomLinks && (
