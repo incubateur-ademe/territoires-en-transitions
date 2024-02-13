@@ -9,7 +9,6 @@ import {
   collectivitePersoRefPath,
   collectivitePersoRefThematiquePath,
   collectiviteLabellisationPath,
-  collectiviteCollectivitesEngageesPath,
   collectiviteJournalPath,
   collectiviteBibliothequePath,
   collectivitePlansActionsBasePath,
@@ -23,7 +22,6 @@ import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
-import {CollectivitesEngageesPage} from '../CollectivitesEngagees/CollectivitesEngageesPage';
 import {JournalActivitePage} from './Historique/JournalActivitePage';
 import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
@@ -72,9 +70,6 @@ export const CollectiviteRoutes = () => {
       </Route>
       <Route path={collectiviteLabellisationPath}>
         <ParcoursLabellisationPage />
-      </Route>
-      <Route path={collectiviteCollectivitesEngageesPath}>
-        <CollectivitesEngageesPage />
       </Route>
     </>
   );
