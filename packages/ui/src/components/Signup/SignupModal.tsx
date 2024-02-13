@@ -10,6 +10,7 @@ export const SignupModal = (props: Omit<SignupProps, 'onCancel'>) => {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <Modal
+      backdropBlur
       size="lg"
       openState={{isOpen, setIsOpen}}
       render={() => <Signup {...props} onCancel={() => setIsOpen(false)} />}

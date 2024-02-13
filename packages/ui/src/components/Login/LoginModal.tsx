@@ -15,6 +15,7 @@ export const LoginModal = (props: Omit<LoginProps, 'onCancel'>) => {
       : 'lg';
   return (
     <Modal
+      backdropBlur
       size={size}
       openState={{isOpen, setIsOpen}}
       render={() => <Login {...props} onCancel={() => setIsOpen(false)} />}
