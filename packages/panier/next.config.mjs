@@ -31,6 +31,7 @@ const nextConfig = {
       ],
     },
   ],
+  // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
   async rewrites() {
     return [
       {
