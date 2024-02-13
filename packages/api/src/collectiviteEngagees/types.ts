@@ -1,8 +1,6 @@
 import {Database} from '../database.types';
 import {NonNullableFields} from '../typeUtils';
 
-export type TView = 'collectivite' | 'plan';
-
 export type FilterPlan = {
   typesPlan: string[];
 };
@@ -14,7 +12,6 @@ export type FilterCollectivite = {
   population: string[];
 };
 export type Filters = {
-  vue: TView[];
   referentiel: string[];
   niveauDeLabellisation: string[];
   realiseCourant: string[];
@@ -32,7 +29,12 @@ export type TPlanCarte = PlanType & {
   collectivite: CollectiviteCarte;
 };
 
-export type PlanType = Omit<Database['public']['Tables']['axe']['Row'], 'type'> & {
-  type?: Database['public']['Tables']['plan_action_type']['Row']
+export type PlanType = Omit<
+  Database['public']['Tables']['axe']['Row'],
+  'type'
+> & {
+  type?: Database['public']['Tables']['plan_action_type']['Row'];
 };
-export type CollectiviteCarte = NonNullableFields<Database['public']['Views']['collectivite_card']['Row']>;
+export type CollectiviteCarte = NonNullableFields<
+  Database['public']['Views']['collectivite_card']['Row']
+>;

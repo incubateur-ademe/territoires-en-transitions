@@ -13,27 +13,31 @@ import {
 import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {CollectiviteEngagee} from '@tet/api';
 import {SetFilters} from 'app/pages/CollectivitesEngagees/data/filters';
-
+import {RecherchesViewParam} from 'app/paths';
 
 type Props = {
+  vue: RecherchesViewParam;
   filters: CollectiviteEngagee.Filters;
   setFilters: SetFilters;
 };
 
-export const Filters = ({filters, setFilters}: Props) => {
+export const Filters = ({vue, filters, setFilters}: Props) => {
   const tracker = useFonctionTracker();
   const {regions, isLoading: isRegionsLoading} = useRegions();
   const {departements, isLoading: isDepartementsLoading} = useDepartements();
   const {options: planTypeOptions} = usePlanTypeListe();
 
-  const vue = filters.vue[0];
-
   const isLoading = isRegionsLoading || isDepartementsLoading;
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(filters.nom);
+
+  // Afin de réinitialiser la recherche à la désactivation des filtres
+  useEffect(() => {
+    setSearch(filters.nom);
+  }, [filters.nom]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -55,7 +59,7 @@ export const Filters = ({filters, setFilters}: Props) => {
             placeholder="Rechercher par nom de collectivité"
             displaySize="sm"
           />
-          {vue === 'plan' && (
+          {vue === 'plans' && (
             /** Type plan d'action */
             <Field title="Type de plan" small>
               <SelectFilter
@@ -158,7 +162,7 @@ export const Filters = ({filters, setFilters}: Props) => {
               small
             />
           </Field>
-          {vue === 'collectivite' && (
+          {vue === 'collectivites' && (
             <>
               <MultiSelectCheckboxes
                 htmlId="ref"

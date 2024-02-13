@@ -15,7 +15,7 @@ const CollectivitesView = (props: CollectivitesEngageesView) => {
   return (
     <View
       {...props}
-      view="collectivite"
+      view="collectivites"
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}

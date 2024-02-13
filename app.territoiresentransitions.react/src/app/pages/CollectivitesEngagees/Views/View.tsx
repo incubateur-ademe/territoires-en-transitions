@@ -4,16 +4,20 @@ import classNames from 'classnames';
 import {Button, Select} from '@tet/ui';
 
 import {TCollectiviteCarte} from '../data/useFilteredCollectivites';
-import {
-  getNumberOfActiveFilters, SetFilters,
-  TView,
-} from '../data/filters';
+import {getNumberOfActiveFilters, SetFilters} from '../data/filters';
 import {Pagination} from 'ui/shared/Pagination';
 import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
 import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
-import { CollectiviteEngagee } from '@tet/api';
+import {CollectiviteEngagee} from '@tet/api';
+import {
+  recherchesCollectivitesUrl,
+  recherchesPath,
+  recherchesPlansUrl,
+  RecherchesViewParam,
+} from 'app/paths';
+import {useHistory, useLocation, useParams} from 'react-router-dom';
 
 // correspondances entre les identifiants des vues et les identifiants de tracking
 const viewIdToTrackerId: Record<string, 'plans' | 'collectivites'> = {
@@ -32,7 +36,7 @@ export type CollectivitesEngageesView = {
 export type Data = TCollectiviteCarte | CollectiviteEngagee.TPlanCarte;
 
 type ViewProps = CollectivitesEngageesView & {
-  view: TView;
+  view: RecherchesViewParam;
   data: Data[];
   dataCount: number;
   isLoading: boolean;
@@ -51,20 +55,22 @@ const View = ({
   renderCard,
   isConnected,
 }: ViewProps) => {
+  const history = useHistory();
+  const location = useLocation();
   const tracker = useOngletTracker();
 
   useEffect(() => {
     tracker(viewIdToTrackerId[view]);
   }, [view]);
 
-  const viewToText: Record<TView, string> = {
-    collectivite: 'collectivité',
-    plan: 'plan',
+  const viewToText: Record<RecherchesViewParam, string> = {
+    collectivites: 'collectivité',
+    plans: 'plan',
   };
 
   const getTrierParOptions = () => {
     const options = [{value: 'nom', label: 'Ordre alphabétique'}];
-    return view === 'collectivite' ? trierParOptions : options;
+    return view === 'collectivites' ? trierParOptions : options;
   };
 
   return (
@@ -83,7 +89,7 @@ const View = ({
               }
               values={filters.trierPar?.[0]}
               customItem={v => <span className="text-grey-9">{v.label}</span>}
-              disabled={view === 'plan'}
+              disabled={view === 'plans'}
             />
           </div>
           {/** Change view (collectivite | plan) */}
@@ -93,10 +99,11 @@ const View = ({
               variant="outlined"
               icon="layout-grid-line"
               className={classNames('rounded-r-none', {
-                '!bg-primary-2': view === 'collectivite',
+                '!bg-primary-2': view === 'collectivites',
               })}
               onClick={() => {
-                setFilters({...filters, vue: ['collectivite'], page: 1});
+                setFilters({...filters, page: 1});
+                history.push(`${recherchesCollectivitesUrl}${location.search}`);
               }}
             >
               Collectivités
@@ -107,10 +114,11 @@ const View = ({
               variant="outlined"
               icon="list-unordered"
               className={classNames('rounded-l-none border-l-0', {
-                '!bg-primary-2': view === 'plan',
+                '!bg-primary-2': view === 'plans',
               })}
               onClick={() => {
-                setFilters({...filters, vue: ['plan'], page: 1});
+                setFilters({...filters, page: 1});
+                history.push(`${recherchesPlansUrl}${location.search}`);
               }}
             >
               Plans d'action
@@ -137,7 +145,7 @@ const View = ({
           {getNumberOfActiveFilters(filters) > 0 && (
             <Button
               data-test="desactiver-les-filtres"
-              onClick={() => setFilters({...initialFilters, vue: [view]})}
+              onClick={() => setFilters(initialFilters)}
               icon="close-circle-fill"
               variant="outlined"
               size="sm"
