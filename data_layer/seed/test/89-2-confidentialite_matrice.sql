@@ -1956,6 +1956,15 @@ values
     ('vue', 'crm_droits', 'edition', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_droits', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_droits', 'auditeur', 'non', 'non', 'non', 'non'),
+    -- Vue crm_indicateurs
+    ('vue', 'crm_indicateurs', 'public', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'connecte', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'verifie', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'support', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'lecture', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'edition', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'admin', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_indicateurs', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue crm_labellisations
     ('vue', 'crm_labellisations', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_labellisations', 'connecte', 'non', 'non', 'non', 'non'),
@@ -1974,6 +1983,15 @@ values
     ('vue', 'crm_personnes', 'edition', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_personnes', 'admin', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_personnes', 'auditeur', 'non', 'non', 'non', 'non'),
+    -- Vue crm_plans
+    ('vue', 'crm_plans', 'public', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'connecte', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'verifie', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'support', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'lecture', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'edition', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'admin', 'non', 'non', 'non', 'non'),
+    ('vue', 'crm_plans', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Vue crm_usages
     ('vue', 'crm_usages', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'crm_usages', 'connecte', 'non', 'non', 'non', 'non'),
