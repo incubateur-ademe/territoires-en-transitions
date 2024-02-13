@@ -5,14 +5,16 @@ import {Filters} from './Filters';
 
 import {Button} from '@tet/ui';
 import {CollectiviteEngagee} from '@tet/api';
-import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
+import {SetFilters, getNumberOfActiveFilters} from '../data/filters';
+import {RecherchesViewParam} from 'app/paths';
 
 type Props = {
+  vue: RecherchesViewParam;
   filters: CollectiviteEngagee.Filters;
   setFilters: SetFilters;
 };
 
-const FiltersColonne = ({filters, setFilters}: Props) => {
+const FiltersColonne = ({vue, filters, setFilters}: Props) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const numberOfActiveFilters = getNumberOfActiveFilters(filters);
@@ -43,7 +45,7 @@ const FiltersColonne = ({filters, setFilters}: Props) => {
             <h4>Filtrer</h4>
           </>
         )}
-        <Filters filters={filters} setFilters={setFilters} />
+        <Filters vue={vue} filters={filters} setFilters={setFilters} />
         {isMobileFilterOpen && (
           /* Display results button on mobile */
           <Button

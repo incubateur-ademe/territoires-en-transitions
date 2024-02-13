@@ -1,10 +1,10 @@
 import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
-import {TView} from 'app/pages/CollectivitesEngagees/data/filters';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {Data} from 'app/pages/CollectivitesEngagees/Views/View';
+import {RecherchesViewParam} from 'app/paths';
 
 type Props = {
-  view: TView;
+  view: RecherchesViewParam;
   isLoading?: boolean;
   isConected?: boolean;
   data: Data[];
@@ -18,13 +18,13 @@ export const Grid = ({
   data,
   renderCard,
 }: Props) => {
-  const viewToText: Record<TView, string> = {
-    collectivite: 'aucune collectivité',
-    plan: 'aucun plan',
+  const viewToText: Record<RecherchesViewParam, string> = {
+    collectivites: 'aucune collectivité',
+    plans: 'aucun plan',
   };
 
   // Non connecté
-  if (view === 'plan' && !isConected) {
+  if (view === 'plans' && !isConected) {
     return (
       <div className="mt-10 md:mt-32 text-center text-primary-7">
         <div className="mb-4 text-2xl font-bold">

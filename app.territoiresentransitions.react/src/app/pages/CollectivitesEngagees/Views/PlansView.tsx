@@ -2,14 +2,8 @@ import {PlanCarte} from 'app/pages/CollectivitesEngagees/Views/PlanCarte';
 import View, {
   CollectivitesEngageesView,
 } from 'app/pages/CollectivitesEngagees/Views/View';
-import {
-  useFilteredPlans,
-
-} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
+import {useFilteredPlans} from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import {CollectiviteEngagee} from '@tet/api';
-;
-
-
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */
   const {plans, plansCount, isLoading} = useFilteredPlans(props.filters);
@@ -17,7 +11,7 @@ const PlansView = (props: CollectivitesEngageesView) => {
   return (
     <View
       {...props}
-      view="plan"
+      view="plans"
       data={plans}
       dataCount={plansCount}
       isLoading={isLoading}

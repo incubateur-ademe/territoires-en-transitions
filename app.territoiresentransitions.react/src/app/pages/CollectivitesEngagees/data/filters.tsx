@@ -1,9 +1,9 @@
 import {CollectiviteEngagee} from '@tet/api';
 
-export type TView = 'collectivite' | 'plan';
-
 const notEmpty = (l: string[]): boolean => l.length > 0;
-export const getNumberOfActiveFilters = (filtres: CollectiviteEngagee.Filters): number => {
+export const getNumberOfActiveFilters = (
+  filtres: CollectiviteEngagee.Filters
+): number => {
   return (
     Number(notEmpty(filtres.regions)) +
     Number(notEmpty(filtres.departments)) +
@@ -14,14 +14,14 @@ export const getNumberOfActiveFilters = (filtres: CollectiviteEngagee.Filters): 
     Number(notEmpty(filtres.typesCollectivite)) +
     Number(notEmpty(filtres.typesPlan)) +
     Number(notEmpty(filtres.referentiel)) +
-    Number(!!filtres.nom)
+    Number(filtres.nom && filtres.nom.length > 0)
   );
 };
 
 export type SetFilters = (newFilters: CollectiviteEngagee.Filters) => void;
 // valeurs par défaut des filtres
 export const initialFilters: CollectiviteEngagee.Filters = {
-  vue: ['collectivite'],
+  nom: '',
   typesPlan: [],
   typesCollectivite: [],
   regions: [],
@@ -35,7 +35,7 @@ export const initialFilters: CollectiviteEngagee.Filters = {
 };
 // mapping nom des filtres => params dans l'url
 export const nameToShortNames = {
-  vue: 'v',
+  nom: 'col',
   typesPlan: 'tp',
   typesCollectivite: 't',
   regions: 'r',
