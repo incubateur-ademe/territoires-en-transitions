@@ -1,6 +1,11 @@
 -- Deploy tet:labellisation/audit to pg
 BEGIN;
 
+alter table labellisation.audit
+    drop constraint if exists audit_en_attente;
+alter table labellisation.audit
+    drop constraint if exists audit_existant;
+
 drop trigger after_write_update_audit_scores on labellisation.audit;
 drop trigger after_write_update_audit_scores on personnalisation_consequence;
 drop function labellisation.update_audit_scores;
@@ -65,9 +70,6 @@ begin
     where a.collectivite_id = current_audit.col
       and a.referentiel = current_audit.ref
       and not a.clos
-    -- les audits avec une date de début sont prioritaires sur ceux avec une plage infinie,
-    -- ces derniers comprenant toujours `now()`.
-    order by date_debut desc nulls last
     limit 1;
 
     if found is null
@@ -80,7 +82,7 @@ begin
                null,
                null,
                null
-        on conflict do nothing
+        on conflict (collectivite_id, referentiel) where (not clos) do nothing
         returning * into found; -- null en cas de conflit
     end if;
 
@@ -94,7 +96,6 @@ begin
         where a.collectivite_id = current_audit.col
           and a.referentiel = current_audit.ref
           and not a.clos
-        order by date_debut desc nulls last
         limit 1;
     end if;
 
@@ -403,5 +404,8 @@ begin
 
 end
 $$;
+
+create unique index audit_existant on labellisation.audit (collectivite_id, referentiel) where (not clos);
+
 
 COMMIT;

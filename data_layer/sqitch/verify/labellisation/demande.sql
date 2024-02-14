@@ -15,4 +15,8 @@ select id,
 from labellisation.demande
 where false;
 
+select has_function_privilege('labellisation_demande(integer, referentiel)', 'execute');
+
+
+
 ROLLBACK;

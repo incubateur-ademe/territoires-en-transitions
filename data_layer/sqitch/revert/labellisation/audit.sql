@@ -403,4 +403,21 @@ WHERE (SELECT is_service_role() AS is_service_role)
 ORDER BY preuve.collectivite_id, (preuve.action ->> 'referentiel'::text),
          (naturalsort(preuve.action ->> 'identifiant'::text));
 
+drop index if exists labellisation.audit_existant;
+alter table labellisation.audit
+    add constraint
+        audit_en_attente
+        -- Contrainte complémentaire pour éviter la duplication de plage infinies.
+        -- Nouvelle feature de pg15, pour que unique s'applique aux nulls
+        -- https://www.postgresql.org/docs/15/ddl-constraints.html
+        unique nulls not distinct (collectivite_id, referentiel, date_debut, date_fin);
+
+alter table labellisation.audit
+add constraint audit_existant exclude using GIST (
+        -- Audit unique pour une collectivité, un référentiel, et une période de temps
+        collectivite_id with =,
+        referentiel with =,
+        tstzrange(date_debut, date_fin) with &&
+        );
+
 COMMIT;
