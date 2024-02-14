@@ -1,9 +1,8 @@
-import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Crisp} from 'crisp-sdk-web';
-import {Credentials, LoginProps, LoginView} from './type';
+import {Credentials, LoginProps} from './type';
 
 export type LoginState = ReturnType<typeof useLoginState>;
 
@@ -11,12 +10,7 @@ export type LoginState = ReturnType<typeof useLoginState>;
  * Gère l'état du formulaire de connexion
  */
 export const useLoginState = (props: LoginProps) => {
-  const {defaultView = 'par_lien', onSubmit} = props;
-
-  // la vue courante
-  const [view, setView] = useState<LoginView>(defaultView);
-  // synchronise l'état interne avec la vue voulue
-  useEffect(() => setView(defaultView), [defaultView]);
+  const {view = 'par_lien', onSubmit} = props;
 
   // déclenche l'ouverture de la chatbox
   const contactSupport = () => {
@@ -56,8 +50,6 @@ export const useLoginState = (props: LoginProps) => {
     form,
     emailProps,
     passwordProps,
-    view,
-    setView,
     contactSupport,
     onSubmitForm,
   };

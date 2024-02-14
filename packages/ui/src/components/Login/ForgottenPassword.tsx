@@ -9,10 +9,9 @@ import {InputEmail} from './InputEmail';
 
 /** Demande de réinitialisation du mot de passe */
 export const ForgottenPassword = (props: LoginPropsWithState) => {
-  const {isLoading, loginState, onCancel} = props;
+  const {isLoading, loginState, setView, onCancel} = props;
   const {
     contactSupport,
-    setView,
     onSubmitForm,
     form: {
       formState: {isValid},

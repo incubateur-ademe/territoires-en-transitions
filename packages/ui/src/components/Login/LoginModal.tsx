@@ -8,11 +8,9 @@ import {Login} from './Login';
  */
 export const LoginModal = (props: LoginProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const {defaultView, onCancel} = props;
+  const {view, onCancel} = props;
   const size =
-    defaultView === 'msg_init_mdp' || defaultView === 'msg_lien_envoye'
-      ? 'md'
-      : 'lg';
+    view === 'msg_init_mdp' || view === 'msg_lien_envoye' ? 'md' : 'lg';
   const onClose = () => {
     setIsOpen(false);
     onCancel();

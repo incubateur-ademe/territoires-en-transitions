@@ -11,11 +11,9 @@ import {LoginWithPassword} from './LoginWithPassword';
  * Affiche le panneau d'authentification et le formulaire "mot de passe oublié"
  */
 export const Login = (props: LoginProps) => {
-  const {onCancel, isLoading} = props;
+  const {onCancel, isLoading, view, setView} = props;
   const loginState = useLoginState(props);
   const {
-    view,
-    setView,
     onSubmitForm,
     form: {
       formState: {isValid},

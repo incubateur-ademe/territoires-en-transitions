@@ -1,11 +1,17 @@
+import {useState} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {Login} from './Login';
+import {LoginView} from './type';
 
 const meta: Meta<typeof Login> = {
   component: Login,
   args: {
     onSubmit: action('onSubmit'),
+  },
+  render: args => {
+    const [view, setView] = useState<LoginView>(args.view || 'par_lien');
+    return <Login {...args} view={view} setView={setView} />;
   },
 };
 
@@ -18,17 +24,17 @@ export const Default: Story = {
 };
 
 export const AvecMotDePasse: Story = {
-  args: {defaultView: 'par_mdp'},
+  args: {view: 'par_mdp'},
 };
 
 export const MotDePasseOublie: Story = {
-  args: {defaultView: 'mdp_oublie'},
+  args: {view: 'mdp_oublie'},
 };
 
 export const MsgLienEnvoye: Story = {
-  args: {defaultView: 'msg_lien_envoye'},
+  args: {view: 'msg_lien_envoye'},
 };
 
 export const MsgInitMdp: Story = {
-  args: {defaultView: 'msg_init_mdp'},
+  args: {view: 'msg_init_mdp'},
 };

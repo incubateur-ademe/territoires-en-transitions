@@ -8,8 +8,11 @@ import {LoginPropsWithState} from './type';
 /**
  * Affiche le formulaire de connexion avec mot de passe
  */
-export const LoginWithPassword = ({loginState}: LoginPropsWithState) => {
-  const {passwordProps, setView} = loginState;
+export const LoginWithPassword = ({
+  loginState,
+  setView,
+}: LoginPropsWithState) => {
+  const {passwordProps} = loginState;
 
   return (
     <FormSectionGrid>

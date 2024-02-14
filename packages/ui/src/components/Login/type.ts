@@ -10,8 +10,10 @@ export type LoginView =
 export type Credentials = {email: string; password?: string};
 
 export type LoginProps = {
-  /** Vue sélectionnée par défaut */
-  defaultView: LoginView;
+  /** Vue courante */
+  view: LoginView;
+  /** Permet de passer d'une vue à une autre */
+  setView: (view: LoginView) => void;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
   /** Fonction appelée à l'envoi du formulaire */
