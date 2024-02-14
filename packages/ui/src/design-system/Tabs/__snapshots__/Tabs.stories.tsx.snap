@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Tabs AvecIcones smoke-test 1`] = `
+exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto"
       role="tablist"
@@ -61,7 +61,7 @@ exports[`Design System/Tabs AvecIcones smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tabs AvecStyles smoke-test 1`] = `
+exports[`design-system/Tabs AvecStyles smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto bg-secondary-1 mb-0 rounded-none"
       role="tablist"
@@ -122,7 +122,7 @@ exports[`Design System/Tabs AvecStyles smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tabs Onglet2 smoke-test 1`] = `
+exports[`design-system/Tabs Onglet2 smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto"
       role="tablist"
@@ -176,7 +176,7 @@ exports[`Design System/Tabs Onglet2 smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tabs OngletParDefaut smoke-test 1`] = `
+exports[`design-system/Tabs OngletParDefaut smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto"
       role="tablist"
@@ -230,7 +230,7 @@ exports[`Design System/Tabs OngletParDefaut smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tabs TailleSM smoke-test 1`] = `
+exports[`design-system/Tabs TailleSM smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto"
       role="tablist"
@@ -291,7 +291,7 @@ exports[`Design System/Tabs TailleSM smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tabs TailleXS smoke-test 1`] = `
+exports[`design-system/Tabs TailleXS smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto"
       role="tablist"

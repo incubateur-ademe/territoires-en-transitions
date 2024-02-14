@@ -1,36 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Tooltip ActivatedByClick smoke-test 1`] = `
+exports[`design-system/Tooltip ActivatedByClick smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-10">
   Cliquer pour voir l'info bulle
 </div>
 `;
 
-exports[`Design System/Tooltip CustomContent smoke-test 1`] = `
+exports[`design-system/Tooltip CustomContent smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-32">
   Survoler pour voir l'info bulle
 </div>
 `;
 
-exports[`Design System/Tooltip Default smoke-test 1`] = `
+exports[`design-system/Tooltip Default smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-10">
   Survoler pour voir l'info bulle
 </div>
 `;
 
-exports[`Design System/Tooltip LongText smoke-test 1`] = `
+exports[`design-system/Tooltip LongText smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-20">
   Survoler pour voir l'info bulle
 </div>
 `;
 
-exports[`Design System/Tooltip LongTextWithFixedWidth smoke-test 1`] = `
+exports[`design-system/Tooltip LongTextWithFixedWidth smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-32">
   Survoler pour voir l'info bulle
 </div>
 `;
 
-exports[`Design System/Tooltip Placement smoke-test 1`] = `
+exports[`design-system/Tooltip Placement smoke-test 1`] = `
 <div class="flex items-center">
   <div class="my-10 flex flex-col gap-2">
     <div class="flex gap-2">
@@ -85,7 +85,7 @@ exports[`Design System/Tooltip Placement smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Tooltip WithoutArrow smoke-test 1`] = `
+exports[`design-system/Tooltip WithoutArrow smoke-test 1`] = `
 <div class="bg-primary-1 py-2 px-3 w-fit mb-10">
   Survoler pour voir l'info bulle
 </div>

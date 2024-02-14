@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Composants métier/Panier d'actions/Carte action à impact CarteSelectionnee smoke-test 1`] = `
+exports[`Components/Panier d'actions/Carte action à impact CarteSelectionnee smoke-test 1`] = `
 <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:m-0 hover:cursor-pointer hover:shadow-md !m-0 border-2 border-info-1 box-content"
      style="max-width: 400px;"
 >
@@ -37,7 +37,7 @@ exports[`Composants métier/Panier d'actions/Carte action à impact CarteSelecti
 </div>
 `;
 
-exports[`Composants métier/Panier d'actions/Carte action à impact Default smoke-test 1`] = `
+exports[`Components/Panier d'actions/Carte action à impact Default smoke-test 1`] = `
 <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border border-primary-3 box-content"
      style="max-width: 400px;"
 >

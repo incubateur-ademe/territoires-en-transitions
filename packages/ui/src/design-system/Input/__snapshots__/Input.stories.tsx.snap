@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Input AvecBordsColorés smoke-test 1`] = `
+exports[`design-system/Input AvecBordsColorés smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-error-1"
@@ -16,7 +16,7 @@ exports[`Design System/Input AvecBordsColorés smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIcone smoke-test 1`] = `
+exports[`design-system/Input AvecIcone smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -28,7 +28,7 @@ exports[`Design System/Input AvecIcone smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIconeBouton smoke-test 1`] = `
+exports[`design-system/Input AvecIconeBouton smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -44,7 +44,7 @@ exports[`Design System/Input AvecIconeBouton smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIconeBoutonEtDesactive smoke-test 1`] = `
+exports[`design-system/Input AvecIconeBoutonEtDesactive smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -62,7 +62,7 @@ exports[`Design System/Input AvecIconeBoutonEtDesactive smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIconeEtDesactive smoke-test 1`] = `
+exports[`design-system/Input AvecIconeEtDesactive smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -75,7 +75,7 @@ exports[`Design System/Input AvecIconeEtDesactive smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
+exports[`design-system/Input AvecIconeTexte smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -88,7 +88,7 @@ exports[`Design System/Input AvecIconeTexte smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecIconeTexteEtDesactive smoke-test 1`] = `
+exports[`design-system/Input AvecIconeTexteEtDesactive smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -102,7 +102,7 @@ exports[`Design System/Input AvecIconeTexteEtDesactive smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecPlaceholder smoke-test 1`] = `
+exports[`design-system/Input AvecPlaceholder smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -113,7 +113,7 @@ exports[`Design System/Input AvecPlaceholder smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input AvecValeur smoke-test 1`] = `
+exports[`design-system/Input AvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -122,7 +122,7 @@ exports[`Design System/Input AvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input Default smoke-test 1`] = `
+exports[`design-system/Input Default smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -131,7 +131,7 @@ exports[`Design System/Input Default smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeDate smoke-test 1`] = `
+exports[`design-system/Input TypeDate smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="date"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
@@ -144,7 +144,7 @@ exports[`Design System/Input TypeDate smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeDateAvecValeur smoke-test 1`] = `
+exports[`design-system/Input TypeDateAvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="date"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 [&amp;::-webkit-calendar-picker-indicator]:hidden"
@@ -157,7 +157,7 @@ exports[`Design System/Input TypeDateAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeNumberFloat smoke-test 1`] = `
+exports[`design-system/Input TypeNumberFloat smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -167,7 +167,7 @@ exports[`Design System/Input TypeNumberFloat smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeNumberFloatAvecValeur smoke-test 1`] = `
+exports[`design-system/Input TypeNumberFloatAvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -177,7 +177,7 @@ exports[`Design System/Input TypeNumberFloatAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeNumberInt smoke-test 1`] = `
+exports[`design-system/Input TypeNumberInt smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -187,7 +187,7 @@ exports[`Design System/Input TypeNumberInt smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeNumberIntAvecValeur smoke-test 1`] = `
+exports[`design-system/Input TypeNumberIntAvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-md py-3"
@@ -197,7 +197,7 @@ exports[`Design System/Input TypeNumberIntAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypePassword smoke-test 1`] = `
+exports[`design-system/Input TypePassword smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="password"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -212,7 +212,7 @@ exports[`Design System/Input TypePassword smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypePasswordAvecValeur smoke-test 1`] = `
+exports[`design-system/Input TypePasswordAvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="password"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -227,7 +227,7 @@ exports[`Design System/Input TypePasswordAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeSearch smoke-test 1`] = `
+exports[`design-system/Input TypeSearch smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
@@ -243,7 +243,7 @@ exports[`Design System/Input TypeSearch smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeSearchAvecValeur smoke-test 1`] = `
+exports[`design-system/Input TypeSearchAvecValeur smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
@@ -258,7 +258,7 @@ exports[`Design System/Input TypeSearchAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input TypeSearchLoading smoke-test 1`] = `
+exports[`design-system/Input TypeSearchLoading smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"
@@ -273,7 +273,7 @@ exports[`Design System/Input TypeSearchLoading smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input VarianteSmall smoke-test 1`] = `
+exports[`design-system/Input VarianteSmall smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-sm py-2"
@@ -283,7 +283,7 @@ exports[`Design System/Input VarianteSmall smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input VarianteSmallEtBouton smoke-test 1`] = `
+exports[`design-system/Input VarianteSmallEtBouton smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-sm py-2 border-r border-solid border-grey-4"
@@ -299,7 +299,7 @@ exports[`Design System/Input VarianteSmallEtBouton smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Input VarianteSmallIconeTexte smoke-test 1`] = `
+exports[`design-system/Input VarianteSmallIconeTexte smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"
          class="grow text-grey-8 px-4 outline-none text-sm py-2 border-r border-solid border-grey-4"
