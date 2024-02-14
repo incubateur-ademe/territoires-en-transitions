@@ -1,5 +1,111 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`components/Login AvecErreur smoke-test 1`] = `
+<form class="flex flex-col gap-4">
+  <h3 class="self-center">
+    Se connecter
+  </h3>
+  <div class="overflow-hidden">
+    <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+        role="tablist"
+    >
+      <li role="presentation"
+          class="p-0"
+      >
+        <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+                type="button"
+                role="tab"
+                id="tab-0"
+                aria-selected="false"
+        >
+          Connexion sans mot de passe
+        </button>
+      </li>
+      <li role="presentation"
+          class="p-0"
+      >
+        <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md border border-grey-3 rounded-md shadow-button bg-white text-primary-9"
+                type="button"
+                role="tab"
+                id="tab-1"
+                aria-selected="true"
+        >
+          Connexion avec mot de passe
+        </button>
+      </li>
+    </ul>
+    <div id="tabpanel-1"
+         role="tabpanel"
+         aria-labelledby="tab-1"
+         tabindex="1"
+         label="Connexion avec mot de passe"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex-grow flex flex-col gap-3 md:col-span-2">
+          <label for="email">
+            <div class="font-medium text-grey-8">
+              Email de connexion
+            </div>
+          </label>
+          <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+            <input type="text"
+                   class="grow text-grey-8 px-4 outline-none text-md py-3"
+                   id="email"
+                   autocomplete="on"
+                   name="email"
+            >
+          </div>
+        </div>
+        <div class="flex-grow flex flex-col gap-3 mb-6 md:col-span-2">
+          <label for="password">
+            <div class="font-medium text-grey-8">
+              Mot de passe
+            </div>
+          </label>
+          <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+            <input type="password"
+                   class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
+                   name="password"
+                   id="password"
+            >
+            <button title="Voir le mot de passe"
+                    class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+            >
+              <span class="ri-eye-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+              </span>
+            </button>
+          </div>
+        </div>
+        <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+          Mot de passe oublié ?
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center text-error-1 mt-4">
+    <span class="ri-spam-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+    </span>
+    <span class="text-xs">
+      Une erreur est survenue...
+    </span>
+  </div>
+  <hr class="mt-4">
+  <div class="flex gap-4 justify-end">
+    <button type="button"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+    >
+      Annuler
+    </button>
+    <button type="submit"
+            disabled
+            class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
+    >
+      Valider
+    </button>
+  </div>
+</form>
+`;
+
 exports[`components/Login AvecMotDePasse smoke-test 1`] = `
 <form class="flex flex-col gap-4">
   <h3 class="self-center">

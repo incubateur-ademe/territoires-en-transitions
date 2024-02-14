@@ -1,6 +1,6 @@
 import {ReactNode, createContext, useEffect, useState} from 'react';
 import {Session, SupabaseClient} from '@supabase/supabase-js';
-import {clearAuthTokens, setAuthTokens} from './authTokens';
+import {clearAuthTokens, setAuthTokens} from '@tet/api';
 
 const SessionContext = createContext<Session | null>(null);
 

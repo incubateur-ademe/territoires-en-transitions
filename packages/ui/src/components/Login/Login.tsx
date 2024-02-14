@@ -1,5 +1,6 @@
 import {Tab, Tabs} from '@design-system/Tabs';
 import {ModalFooterOKCancel} from '@design-system/Modal';
+import {FieldMessage} from '@design-system/Field';
 import {LoginProps} from './type';
 import {useLoginState} from './useLoginState';
 import {ForgottenPassword} from './ForgottenPassword';
@@ -11,7 +12,7 @@ import {LoginWithPassword} from './LoginWithPassword';
  * Affiche le panneau d'authentification et le formulaire "mot de passe oublié"
  */
 export const Login = (props: LoginProps) => {
-  const {onCancel, isLoading, view, setView} = props;
+  const {onCancel, isLoading, error, view, setView} = props;
   const loginState = useLoginState(props);
   const {
     onSubmitForm,
@@ -65,6 +66,13 @@ export const Login = (props: LoginProps) => {
               <LoginWithPassword {...props} loginState={loginState} />
             </Tab>
           </Tabs>
+          {error && (
+            <FieldMessage
+              messageClassName="mt-4"
+              state="error"
+              message={error}
+            />
+          )}
           <ModalFooterOKCancel
             btnOKProps={{
               onClick: onSubmitForm,

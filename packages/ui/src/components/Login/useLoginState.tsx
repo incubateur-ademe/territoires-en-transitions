@@ -2,7 +2,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Crisp} from 'crisp-sdk-web';
-import {Credentials, LoginProps} from './type';
+import {LoginProps} from './type';
 
 export type LoginState = ReturnType<typeof useLoginState>;
 
@@ -42,9 +42,7 @@ export const useLoginState = (props: LoginProps) => {
   const emailProps = register('email');
   const passwordProps = register('password');
 
-  const onSubmitForm = handleSubmit((values: Credentials) =>
-    onSubmit(view, values)
-  );
+  const onSubmitForm = handleSubmit(onSubmit);
 
   return {
     form,
