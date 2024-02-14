@@ -6,21 +6,36 @@
 */
 import {Session, SupabaseClient} from '@supabase/supabase-js';
 
-const ACCESS_TOKEN = 'tet-access-token';
-const REFRESH_TOKEN = 'tet-refresh-token';
+export const ACCESS_TOKEN = 'tet-access-token';
+export const REFRESH_TOKEN = 'tet-refresh-token';
 
 /** Enlève les tokens */
+const EXPIRED = new Date(0).toUTCString();
+const formatExpiredToken = (name: string, domain: string) =>
+  `${name}=; Domain=${domain}; path=/; expires=${EXPIRED}; SameSite=Lax; secure`;
 export const clearAuthTokens = (domain: string) => {
-  const expires = new Date(0).toUTCString();
-  document.cookie = `${ACCESS_TOKEN}=; Domain=${domain}; path=/; expires=${expires}; SameSite=Lax; secure`;
-  document.cookie = `${REFRESH_TOKEN}=; Domain=${domain}; path=/; expires=${expires}; SameSite=Lax; secure`;
+  document.cookie = formatExpiredToken(ACCESS_TOKEN, domain);
+  document.cookie = formatExpiredToken(REFRESH_TOKEN, domain);
 };
 
-/** Ajoute les tokens */
+/** Crée les tokens à partir de la session */
+const MAX_AGE = 60 * 60 * 24 * 365;
+export const formatAuthToken = (
+  name: string,
+  value: string,
+  domain: string,
+  maxAge: number = MAX_AGE
+) =>
+  `${name}=${value}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
+
+/** Crée et ajoute les tokens */
 export const setAuthTokens = (session: Session, domain: string) => {
-  const maxAge = 100 * 365 * 24 * 60 * 60; // 100 years, never expires
-  document.cookie = `${ACCESS_TOKEN}=${session.access_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
-  document.cookie = `${REFRESH_TOKEN}=${session.refresh_token}; Domain=${domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`;
+  document.cookie = formatAuthToken(ACCESS_TOKEN, session.access_token, domain);
+  document.cookie = formatAuthToken(
+    REFRESH_TOKEN,
+    session.refresh_token,
+    domain
+  );
 };
 
 /** Restaure la session depuis les tokens */
