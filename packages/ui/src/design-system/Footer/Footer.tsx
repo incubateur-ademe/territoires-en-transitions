@@ -33,16 +33,13 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <footer
-      className={classNames(
-        'w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-10 border-t-2 border-t-primary-8',
-        className
-      )}
+      className={classNames('w-full border-t-2 border-t-primary-8', className)}
     >
       {/* Partie suppérieure du footer */}
-      <div className="flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row pb-4 md:pb-6">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-8 flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row">
         {/* Logos */}
         {!!logos && (
-          <div className="flex h-36">
+          <div className="flex h-28 gap-x-1">
             {logos.map((logo, i) => (
               <div key={i} className="h-full">
                 {logo}
@@ -58,15 +55,15 @@ export const Footer = ({
 
           {/* Liste de liens */}
           {!!contentLinks && (
-            <ul className="list-none flex flex-row gap-6 mb-0">
+            <ul className="list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
               {contentLinks.map(link => (
-                <li key={link.label}>
+                <li key={link.label} className="pl-4 first-of-type:pl-0 pb-0">
                   <Button
                     variant="underlined"
                     size="sm"
                     href={link.href}
                     external={link.external}
-                    className="!text-grey-10 border-b-transparent hover:border-b-grey-10 !font-bold"
+                    className="!text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
                   >
                     {link.label}
                   </Button>
@@ -79,30 +76,34 @@ export const Footer = ({
 
       {/* Partie inférieure du footer */}
       {(!!bottomLinks || !!bottomContent) && (
-        <div className="border-t border-t-grey-4 pt-4 md:pt-6">
-          {/* Liste de liens */}
-          {!!bottomLinks && (
-            <ul className="list-none flex flex-row flex-wrap gap-2 divide-x divide-grey-4">
-              {bottomLinks.map(link => (
-                <li key={link.label} className="pl-2 first-of-type:pl-0 pb-0">
-                  <Button
-                    variant="underlined"
-                    size="xs"
-                    href={link.href}
-                    external={link.external}
-                    className="!text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-                  >
-                    {link.label}
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="w-full border-t border-t-primary-4">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-6">
+            {/* Liste de liens */}
+            {!!bottomLinks && (
+              <ul className="list-none flex flex-wrap gap-2 divide-x divide-grey-4">
+                {bottomLinks.map(link => (
+                  <li key={link.label} className="pl-2 first-of-type:pl-0 pb-0">
+                    <Button
+                      variant="underlined"
+                      size="xs"
+                      href={link.href}
+                      external={link.external}
+                      className="!text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                    >
+                      {link.label}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          {/* Description */}
-          {!!bottomContent && (
-            <div className="text-xs leading-5 text-grey-8">{bottomContent}</div>
-          )}
+            {/* Description */}
+            {!!bottomContent && (
+              <div className="text-xs leading-5 text-grey-8">
+                {bottomContent}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </footer>

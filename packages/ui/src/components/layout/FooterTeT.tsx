@@ -7,18 +7,21 @@ import {BASE_URL} from 'utils/constants';
 type FooterTeTProps = {
   /** Liens supplémentaires à afficher en fonction de la page visitée */
   customLinks?: LinkObject[];
+  /** Logos supplémentaires à afficher en fonction de la page visitée */
+  customLogos?: React.ReactNode[];
 };
 
 /**
  * Footer par défaut des applications Territoires en Transitions
  */
 
-export const FooterTeT = ({customLinks}: FooterTeTProps) => {
+export const FooterTeT = ({customLinks, customLogos}: FooterTeTProps) => {
   return (
     <Footer
       logos={[
         <RepubliqueFrancaiseLogo className="h-full" />,
         <AdemeLogo className="h-full" />,
+        ...(customLogos ?? []),
       ]}
       content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."
       contentLinks={[

@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
-<footer class="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-10 border-t-2 border-t-primary-8">
-  <div class="flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row pb-4 md:pb-6">
-    <div class="flex h-36">
+<footer class="w-full border-t-2 border-t-primary-8">
+  <div class="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-8 flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row">
+    <div class="flex h-28 gap-x-1">
       <div class="h-full">
         <svg class="h-full"
              xmlns="http://www.w3.org/2000/svg"
@@ -1043,10 +1043,10 @@ z"
       <p class="text-sm leading-6 text-grey-9">
         Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT).
       </p>
-      <ul class="list-none flex flex-row gap-6 mb-0">
-        <li>
+      <ul class="list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
+        <li class="pl-4 first-of-type:pl-0 pb-0">
           <a href="https://www.ademe.fr/"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-grey-10 border-b-transparent hover:border-b-grey-10 !font-bold"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -1055,9 +1055,9 @@ z"
             ademe.fr
           </a>
         </li>
-        <li>
+        <li class="pl-4 first-of-type:pl-0 pb-0">
           <a href="https://beta.gouv.fr/"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-grey-10 border-b-transparent hover:border-b-grey-10 !font-bold"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -1069,71 +1069,73 @@ z"
       </ul>
     </div>
   </div>
-  <div class="border-t border-t-grey-4 pt-4 md:pt-6">
-    <ul class="list-none flex flex-row flex-wrap gap-2 divide-x divide-grey-4">
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://territoiresentransitions.fr/accessibilite"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-        >
-          Accessibilité : non conforme
-        </a>
-      </li>
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://territoiresentransitions.fr/mentions"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-        >
-          Mentions légales
-        </a>
-      </li>
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://www.ademe.fr/donnees-personnelles/"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-           target="_blank"
-           rel="noreferrer noopener"
-        >
-          <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
-          </span>
-          Données personnelles
-        </a>
-      </li>
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://territoiresentransitions.fr/cookies"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-        >
-          Gestion des cookies
-        </a>
-      </li>
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://github.com/incubateur-ademe/territoires-en-transitions"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-           target="_blank"
-           rel="noreferrer noopener"
-        >
-          <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
-          </span>
-          Code source
-        </a>
-      </li>
-      <li class="pl-2 first-of-type:pl-0 pb-0">
-        <a href="https://territoiresentransitions.fr/cgu"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8  border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
-        >
-          Conditions générales d’utilisation
-        </a>
-      </li>
-    </ul>
-    <div class="text-xs leading-5 text-grey-8">
-      <div class="flex flex-wrap gap-x-1 mb-0">
-        Sauf mention contraire, tous les contenus de ce site sont sous
-        <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
-           target="_blank"
-           rel="noreferrer noopener"
-        >
-          <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
-          </span>
-          licence etalab-2.0
-        </a>
+  <div class="w-full border-t border-t-primary-4">
+    <div class="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-6">
+      <ul class="list-none flex flex-wrap gap-2 divide-x divide-grey-4">
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr/accessibilite"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+          >
+            Accessibilité : non conforme
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr/mentions"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+          >
+            Mentions légales
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://www.ademe.fr/donnees-personnelles/"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
+            </span>
+            Données personnelles
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr/cookies"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+          >
+            Gestion des cookies
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://github.com/incubateur-ademe/territoires-en-transitions"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
+            </span>
+            Code source
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr/cgu"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+          >
+            Conditions générales d’utilisation
+          </a>
+        </li>
+      </ul>
+      <div class="text-xs leading-5 text-grey-8">
+        <div class="flex flex-wrap gap-x-1 mb-0">
+          Sauf mention contraire, tous les contenus de ce site sont sous
+          <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
+            </span>
+            licence etalab-2.0
+          </a>
+        </div>
       </div>
     </div>
   </div>
