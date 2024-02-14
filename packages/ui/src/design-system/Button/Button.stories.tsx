@@ -7,7 +7,6 @@ import {Button} from './Button';
 import {BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Button> = {
-  title: 'Design System/Button',
   component: Button,
   argTypes: {
     variant: {

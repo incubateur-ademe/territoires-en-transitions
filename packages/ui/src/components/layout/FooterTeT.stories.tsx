@@ -2,7 +2,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {FooterTeT} from './FooterTeT';
 
 const meta: Meta<typeof FooterTeT> = {
-  title: 'Composants métier/Layout/Footer TeT',
+  title: 'Components/Layout/Footer TeT',
   component: FooterTeT,
 };
 

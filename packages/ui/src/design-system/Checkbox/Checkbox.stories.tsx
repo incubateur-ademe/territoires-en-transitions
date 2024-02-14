@@ -3,7 +3,6 @@ import {Meta, StoryObj} from '@storybook/react';
 import {Checkbox} from './Checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Design System/Checkbox',
   component: Checkbox,
   render: args => {
     const [checked, setChecked] = useState(args.checked || false);

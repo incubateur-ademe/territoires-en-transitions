@@ -3,7 +3,7 @@ import {ModaleActionImpact} from './ModaleActionImpact';
 import {Button} from '@design-system/Button';
 
 const meta: Meta<typeof ModaleActionImpact> = {
-  title: "Composants métier/Panier d'actions/Modale action à impact",
+  title: "Components/Panier d'actions/Modale action à impact",
   component: ModaleActionImpact,
   argTypes: {
     complexite: {

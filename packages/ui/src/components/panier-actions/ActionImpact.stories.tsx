@@ -2,7 +2,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {ActionImpact} from './ActionImpact';
 
 const meta: Meta<typeof ActionImpact> = {
-  title: "Composants métier/Panier d'actions/Action à impact",
+  title: "Components/Panier d'actions/Action à impact",
   component: ActionImpact,
   argTypes: {
     complexite: {

@@ -44,7 +44,6 @@ const optionsWithSections: SelectOption[] = [
 ];
 
 const meta: Meta<typeof Select> = {
-  title: 'Design System/Select',
   component: SelectBase,
   decorators: [story => <div className="w-full max-w-[24rem]">{story()}</div>],
 };

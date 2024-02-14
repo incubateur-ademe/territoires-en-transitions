@@ -3,7 +3,6 @@ import {Footer} from './Footer';
 import {APP_BASE_URL, BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Footer> = {
-  title: 'Design System/Footer',
   component: Footer,
   args: {
     logos: [<i className="ri-leaf-line text-primary-9 !text-8xl" />],

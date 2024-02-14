@@ -6,7 +6,6 @@ import {Button} from '@design-system/Button';
 import {ModalFooter} from '@design-system/Modal/ModalFooter';
 
 const meta: Meta<typeof Modal> = {
-  title: 'Design System/Modal',
   component: Modal,
   decorators: [story => <div className="p-8">{story()}</div>],
 };

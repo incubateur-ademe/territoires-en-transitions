@@ -4,7 +4,6 @@ import {Button} from '@design-system/Button';
 import {Badge} from '@design-system/Badge';
 
 const meta: Meta<typeof Card> = {
-  title: 'Design System/Card',
   component: Card,
 };
 
