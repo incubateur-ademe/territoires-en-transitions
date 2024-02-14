@@ -2,6 +2,7 @@ import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
 import AdemeLogo from '@assets/AdemeLogo';
 import {Footer, LinkObject} from '../../design-system/Footer/Footer';
 import {Button} from '@design-system/Button';
+import {BASE_URL} from 'utils/constants';
 
 type FooterTeTProps = {
   /** Liens supplémentaires à afficher en fonction de la page visitée */
@@ -41,11 +42,11 @@ export const FooterTeT = ({customLinks}: FooterTeTProps) => {
       bottomLinks={[
         {
           label: 'Accessibilité : non conforme',
-          href: 'https://territoiresentransitions.fr/accessibilite',
+          href: `${BASE_URL}/accessibilite`,
         },
         {
           label: 'Mentions légales',
-          href: 'https://territoiresentransitions.fr/mentions',
+          href: `${BASE_URL}/mentions`,
         },
         {
           label: 'Données personnelles',
@@ -54,16 +55,16 @@ export const FooterTeT = ({customLinks}: FooterTeTProps) => {
         },
         {
           label: 'Gestion des cookies',
-          href: 'https://territoiresentransitions.fr/cookies',
+          href: `${BASE_URL}/cookies`,
         },
         {
           label: 'Code source',
-          href: 'https://github.com/betagouv/territoires-en-transitions',
+          href: 'https://github.com/incubateur-ademe/territoires-en-transitions',
           external: true,
         },
         {
           label: 'Conditions générales d’utilisation',
-          href: 'https://territoiresentransitions.fr/cgu',
+          href: `${BASE_URL}/cgu`,
         },
         ...(customLinks ?? []),
       ]}

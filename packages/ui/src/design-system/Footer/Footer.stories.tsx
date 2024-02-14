@@ -1,6 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {Footer} from './Footer';
 import LeafIcon from '@assets/LeafIcon';
+import {APP_BASE_URL, BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Footer> = {
   title: 'Design System/Footer',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Footer> = {
     contentLinks: [
       {
         label: 'territoiresentransitions.fr',
-        href: 'https://www.territoiresentransitions.fr/',
+        href: BASE_URL,
         external: true,
       },
     ],
@@ -20,12 +21,12 @@ const meta: Meta<typeof Footer> = {
     bottomLinks: [
       {
         label: 'Site',
-        href: 'https://www.territoiresentransitions.fr/',
+        href: BASE_URL,
         external: true,
       },
       {
         label: 'Application',
-        href: 'https://app.territoiresentransitions.fr/',
+        href: APP_BASE_URL,
         external: true,
       },
     ],
