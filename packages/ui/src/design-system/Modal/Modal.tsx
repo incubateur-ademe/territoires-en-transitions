@@ -93,6 +93,7 @@ export const Modal = ({
   disableDismiss,
   noCloseButton,
   renderFooter,
+  backdropBlur,
   zIndex = preset.theme.extend.zIndex.modal,
   dataTest = 'Modal',
 }: ModalProps) => {
