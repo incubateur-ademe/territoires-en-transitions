@@ -94,7 +94,7 @@ exports[`components/Login AvecErreur smoke-test 1`] = `
   <hr class="mt-4">
   <div class="flex gap-4 justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Annuler
     </button>
@@ -195,7 +195,7 @@ exports[`components/Login AvecMotDePasse smoke-test 1`] = `
   <hr class="mt-4">
   <div class="flex gap-4 justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Annuler
     </button>
@@ -276,7 +276,7 @@ exports[`components/Login Default smoke-test 1`] = `
   <hr class="mt-4">
   <div class="flex gap-4 justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Annuler
     </button>
@@ -323,7 +323,7 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
     </button>
     <hr class="mt-4">
     <div class="flex gap-4 justify-between">
-      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
         <span class="ri-arrow-left-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
         </span>
         Se connecter
@@ -332,7 +332,7 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
         <hr class="mt-4">
         <div class="flex gap-4 justify-end">
           <button type="button"
-                  class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+                  class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
           >
             Annuler
           </button>

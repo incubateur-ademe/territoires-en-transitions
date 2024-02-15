@@ -52,7 +52,7 @@ exports[`components/Signup Default smoke-test 1`] = `
             <div class="flex grow flex-wrap gap-2 mr-4">
               <div class="flex items-center gap-2 grow">
                 <div data-test="Badge-undefined"
-                     class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max px-3 py-1 border border-solid rounded"
+                     class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
                 >
                   <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
                     Grenoble
@@ -135,7 +135,7 @@ exports[`components/Signup Default smoke-test 1`] = `
       <hr class="mt-4">
       <div class="flex gap-4 justify-end">
         <button type="button"
-                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
           Annuler
         </button>
@@ -294,7 +294,7 @@ exports[`components/Signup Etape1AvecMdp smoke-test 1`] = `
       <hr class="mt-4">
       <div class="flex gap-4 justify-end">
         <button type="button"
-                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
           Annuler
         </button>
@@ -404,7 +404,7 @@ exports[`components/Signup Etape2 smoke-test 1`] = `
   <hr class="mt-4">
   <div class="flex gap-4 justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Annuler
     </button>
@@ -516,7 +516,7 @@ exports[`components/Signup SansSelectionCollectivite smoke-test 1`] = `
       <hr class="mt-4">
       <div class="flex gap-4 justify-end">
         <button type="button"
-                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
           Annuler
         </button>
