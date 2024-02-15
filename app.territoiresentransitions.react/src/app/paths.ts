@@ -1,7 +1,13 @@
 import {Referentiel} from 'types/litterals';
 
-export const authBasePath = '/auth';
-export const signInPath = `${authBasePath}/signin`;
+export const domain =
+  document.location.hostname.split('.').toSpliced(0, 1).join('.') ||
+  'localhost';
+const protocol = document.location.protocol;
+
+const authPort = domain === 'localhost' ? ':3001' : '';
+export const authBasePath = `${protocol}//${domain}${authPort}/auth`;
+export const signInPath = `${authBasePath}/login`;
 export const signUpPath = `${authBasePath}/signup`;
 export const resetPwdPath = `${authBasePath}/recover`;
 export const recoverToken = 'token';
