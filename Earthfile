@@ -558,6 +558,8 @@ dev:
     ARG --required API_URL
     ARG --required ANON_KEY
     ARG --required SERVICE_ROLE_KEY
+    ARG STRAPI_KEY
+    ARG STRAPI_URL
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
@@ -566,6 +568,7 @@ dev:
     ARG eco=no
     ARG fast=no
     ARG faster=no
+    ARG site=no
     ARG version=HEAD # version du plan
 
     IF [ "$fast" = "yes" -a "$faster" = "yes" ]
@@ -621,6 +624,10 @@ dev:
 
     IF [ "$app" = "yes" ]
         RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+    END
+
+    IF [ "$site" = "yes" ]
+        RUN earthly +site-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY --STRAPI_KEY=${{ $STRAPI_KEY }} --STRAPI_URL=${{ $STRAPI_URL }}
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
