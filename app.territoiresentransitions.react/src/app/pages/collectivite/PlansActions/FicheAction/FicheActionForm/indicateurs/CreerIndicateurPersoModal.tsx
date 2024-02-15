@@ -1,11 +1,12 @@
 import Modal from 'ui/shared/floating-ui/Modal';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
-import {FicheAction} from '../PlansActions/FicheAction/data/types';
+import {FicheAction} from '../../data/types';
+import {Button} from '@tet/ui';
 
 /** Affiche le formulaire de création d'un indicateur personnalisé dans un
  * dialogue (pour ouverture depuis une fiche action) */
-export const IndicateurPersonnaliseCreationDialog = ({
+export const CreerIndicateurPersoModal = ({
   fiche,
 }: {
   /** Fiche action à laquelle rattacher le nouvel indicateur */
@@ -21,9 +22,7 @@ export const IndicateurPersonnaliseCreationDialog = ({
         <IndicateurPersoNouveau onClose={close} fiche={fiche} />
       )}
     >
-      <button className="fr-btn fr-btn--tertiary fr-mb-4w">
-        Créer un indicateur personnalisé
-      </button>
+      <Button variant="outlined">Créer un indicateur personnalisé</Button>
     </Modal>
   ) : null;
 };
