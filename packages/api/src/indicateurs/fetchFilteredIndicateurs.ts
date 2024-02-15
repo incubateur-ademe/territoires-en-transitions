@@ -2,6 +2,12 @@ import {Enums, DBClient} from '../typeUtils';
 import {unaccent} from '../utils/unaccent';
 
 // type renvoyé par la fonction de fetch
+type IndicateurItemFetched = {
+  indicateur_id: string;
+  indicateur_perso_id: number;
+  nom: string;
+};
+
 export type IndicateurItem = {
   id: string | number;
   nom: string;
@@ -44,17 +50,17 @@ const filterParts: {[key in keyof Filters]?: string} = {
  * @param filters Paramètres de filtrage
  * @returns Liste d'id de définitions d'indicateur
  */
-export const fetchFilteredIndicateurs = (
+export const fetchFilteredIndicateurs = async (
   dbClient: DBClient,
   collectivite_id: number,
-  subset: Subset,
+  subset: Subset | null,
   filters: Filters
 ) => {
   const parts = new Set<string>();
   const isPerso = subset === 'perso';
 
   // cas des indicateurs prédéfinis
-  if (!isPerso) {
+  if (subset && !isPerso) {
     parts.add('definition_referentiel!inner(programmes)');
   }
 
@@ -76,8 +82,8 @@ export const fetchFilteredIndicateurs = (
     .from('indicateur_definitions')
     .select(
       [
-        // la colonne `id` appropriée
-        `id: ${isPerso ? 'indicateur_perso_id' : 'indicateur_id'}`,
+        'indicateur_perso_id',
+        'indicateur_id',
         // le nom
         'nom',
         // et les relations supplémentaires nécessaires au filtrage
@@ -91,14 +97,11 @@ export const fetchFilteredIndicateurs = (
   if (isPerso) {
     query.not('indicateur_perso_id', 'is', null);
   } else {
-    // que les indicateurs avec un id non null
-    query.not('indicateur_id', 'is', null);
-
     if (subset === 'selection') {
       query.is('definition_referentiel.selection', true);
     } else if (subset === 'cles') {
       query.contains('definition_referentiel.programmes', ['clef']);
-    } else {
+    } else if (subset !== null) {
       query.contains('definition_referentiel.programmes', [subset]);
     }
   }
@@ -144,6 +147,7 @@ export const fetchFilteredIndicateurs = (
   // sélectionne uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
   // une recherche par id ou si un des filtres complémentaires est actif)
   const filtrerParParent =
+    subset !== null &&
     subset !== 'crte' &&
     subset !== 'perso' &&
     !searchById &&
@@ -213,5 +217,17 @@ export const fetchFilteredIndicateurs = (
     query.or(filterParams.join(','), {foreignTable: 'pilotes'});
   }
 
-  return query.returns<IndicateurItem[]>();
+  const {data, ...remaining} = await query.returns<IndicateurItemFetched[]>();
+
+  return {
+    ...remaining,
+    data: data
+      // tri par nom (pour que les diacritiques soient pris en compte)
+      ?.sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
+      // et conserve un id unique
+      .map(({indicateur_id, indicateur_perso_id, ...otherProps}) => ({
+        id: indicateur_id || indicateur_perso_id,
+        ...otherProps,
+      })),
+  };
 };
