@@ -1,21 +1,23 @@
 import FormField from 'ui/shared/form/FormField';
-import IndicateursDropdown from './IndicateursDropdown';
-
-import {Indicateur} from '../data/types';
+import {FicheAction, Indicateur} from '../../data/types';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {NavLink} from 'react-router-dom';
+import {Button} from '@tet/ui';
+import IndicateursPanel from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/Panel/Panel';
+import {CreerIndicateurPersoModal} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/CreerIndicateurPersoModal';
 
 type Props = {
+  fiche: FicheAction;
   indicateurs: Indicateur[] | null;
   onSelect: (indicateurs: Indicateur[]) => void;
   isReadonly: boolean;
 };
 
-const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
+const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
   const collectiviteId = useCollectiviteId();
 
   /**
@@ -34,13 +36,14 @@ const IndicateursLies = ({indicateurs, onSelect, isReadonly}: Props) => {
 
   return (
     <>
-      <FormField label="Indicateurs liés">
-        <IndicateursDropdown
-          indicateurs={indicateurs}
-          onSelect={onSelect}
-          isReadonly={isReadonly}
-        />
-      </FormField>
+      <hr />
+      <div className="flex items-center justify-between gap-8 mb-6">
+        <div>Indicateurs liés :</div>
+        <div className="flex gap-4">
+          <IndicateursPanel />
+          <CreerIndicateurPersoModal fiche={fiche} />
+        </div>
+      </div>
       {indicateurs && indicateurs.length > 0 && (
         <div className="grid grid-cols-2 gap-4 mb-8">
           {indicateurs.map(indicateur => (
