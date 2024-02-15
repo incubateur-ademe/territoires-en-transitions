@@ -6,11 +6,9 @@ import ListeActions from './ListeActions';
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {
-  ActionImpactCategorie,
-  Panier,
-} from '@tet/api';
+import {ActionImpactCategorie, Panier} from '@tet/api';
 import {panierAPI, supabase} from 'src/clientAPI';
+import {useEventTracker} from 'src/tracking/useEventTracker';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -19,6 +17,10 @@ type PanierRealtimeProps = {
 
 const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
   const router = useRouter();
+
+  // todo Passer le nom de l'onglet.
+  const tracker =
+    useEventTracker('panier', undefined);
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
@@ -32,9 +34,19 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {
       await panierAPI.addActionToPanier(actionId, panier.id);
+      await tracker('ajout', {
+        collectivite_preset: panier.collectivite_preset,
+        panier_id: panier.id,
+        action_id: actionId,
+      });
       router.refresh();
     } else {
       await panierAPI.removeActionFromPanier(actionId, panier.id);
+      await tracker('retrait', {
+        collectivite_preset: panier.collectivite_preset,
+        panier_id: panier.id,
+        action_id: actionId,
+      });
       router.refresh();
     }
   };
