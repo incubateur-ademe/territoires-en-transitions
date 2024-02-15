@@ -1,3 +1,5 @@
+import {Button} from '@tet/ui';
+
 type Props = {
   onClose: () => void;
   /** les boutons doivent être à l'intérieur d'un fragment <></> */
@@ -7,10 +9,7 @@ type Props = {
 const PanelToolbar = ({onClose, toolbar}: Props) => {
   return (
     <div className="min-h-[3rem] shrink-0 flex justify-between items-center p-4 border-b border-b-gray-200">
-      <button
-        className="text-gray-400 fr-icon-close-line hover:bg-gray-50"
-        onClick={onClose}
-      />
+      <Button icon="close-line" variant="grey" onClick={onClose} size="xs" />
       {toolbar}
     </div>
   );

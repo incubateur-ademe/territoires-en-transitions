@@ -43,8 +43,7 @@ import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {useAnnexesFicheAction} from '../data/useAnnexesFicheAction';
 import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
-import IndicateursLies from './IndicateursLies';
-import {IndicateurPersonnaliseCreationDialog} from 'app/pages/collectivite/Indicateurs/IndicateurPersoModal';
+import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
 
 type TFicheActionForm = {
@@ -125,11 +124,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </FormField>
         <IndicateursLies
+          fiche={fiche}
           indicateurs={fiche.indicateurs}
           onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
           isReadonly={isReadonly}
         />
-        <IndicateurPersonnaliseCreationDialog fiche={fiche} />
         <FormField label="Résultats attendus">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
