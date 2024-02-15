@@ -6,10 +6,11 @@ import {
 } from '@design-system/Modal';
 import {LoginPropsWithState} from './type';
 import {InputEmail} from './InputEmail';
+import {FieldMessage} from '@design-system/Field';
 
 /** Demande de réinitialisation du mot de passe */
 export const ForgottenPassword = (props: LoginPropsWithState) => {
-  const {isLoading, loginState, setView, onCancel} = props;
+  const {error, isLoading, loginState, setView, onCancel} = props;
   const {
     contactSupport,
     onSubmitForm,
@@ -33,6 +34,9 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
       >
         Contactez le support !
       </Button>
+      {error && (
+        <FieldMessage messageClassName="mt-4" state="error" message={error} />
+      )}
       <ModalFooter variant="space">
         <Button
           variant="outlined"
