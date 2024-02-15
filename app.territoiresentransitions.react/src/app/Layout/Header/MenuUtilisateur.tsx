@@ -1,11 +1,8 @@
 import {forwardRef, Ref} from 'react';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import classNames from 'classnames';
-import {
-  monComptePath,
-  signUpPath,
-  rejoindreUneCollectivitePath,
-} from 'app/paths';
+import {clearAuthTokens} from '@tet/api';
+import {domain, monComptePath, rejoindreUneCollectivitePath} from 'app/paths';
 import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
@@ -100,9 +97,12 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
       className="fr-nav__link"
       style={{backgroundImage: 'none'}}
       data-test="logoutBtn"
-      to={signUpPath}
+      to="/"
       onClick={() => {
-        auth.disconnect().then(() => history.push('/'));
+        auth.disconnect().then(() => {
+          history.push('/');
+          clearAuthTokens(domain);
+        });
       }}
     >
       <span className="px-6">Déconnexion</span>
