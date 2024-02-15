@@ -20,6 +20,7 @@ import {PathLine, SliceTooltip, getLineStyleBySerieId} from './SliceTooltip';
 import {Card} from './Card';
 import {CardNoData, IconIndicateurPrive} from './CardNoData';
 import {TIndicateurChartProps, TIndicateurChartBaseProps} from './types';
+import {Badge} from '@tet/ui';
 
 /**
  * Affiche un graphique de type "lignes" combinant les valeurs objectif/résultat
@@ -110,6 +111,9 @@ export const IndicateurChartBase = (props: TIndicateurChartBaseProps) => {
       dataTest={`chart-${definition.id}`}
     >
       {!isZoomed && definition.confidentiel && <IconIndicateurPrive />}
+      {!isZoomed && definition.participation_score && (
+        <Badge title="Participe au score CAE" state="standard" />
+      )}
       <ChartCardContent
         chart={chart}
         chartInfo={{
