@@ -76,7 +76,9 @@ exports[`components/Login AvecErreur smoke-test 1`] = `
             </button>
           </div>
         </div>
-        <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+        <button data-test="forgotten-pwd"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6"
+        >
           Mot de passe oublié ?
         </button>
       </div>
@@ -182,7 +184,9 @@ exports[`components/Login AvecMotDePasse smoke-test 1`] = `
             </button>
           </div>
         </div>
-        <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+        <button data-test="forgotten-pwd"
+                class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6"
+        >
           Mot de passe oublié ?
         </button>
       </div>
@@ -291,52 +295,54 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
   <h3 class="self-center">
     Mot de passe oublié ?
   </h3>
-  <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-    <label for="email">
-      <div class="font-medium text-grey-8">
-        Email de connexion
+  <div data-test="PasswordRecovery">
+    <div class="flex-grow flex flex-col gap-3 md:col-span-2">
+      <label for="email">
+        <div class="font-medium text-grey-8">
+          Email de connexion
+        </div>
+      </label>
+      <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+        <input type="text"
+               class="grow text-grey-8 px-4 outline-none text-md py-3"
+               id="email"
+               autocomplete="on"
+               name="email"
+        >
       </div>
-    </label>
-    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
-      <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
-             id="email"
-             autocomplete="on"
-             name="email"
-      >
+      <div class="flex items-center text-info-1">
+        <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+        </span>
+        <span class="text-xs">
+          Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail avec le nouveau mot de passe sinon contacter le support.
+        </span>
+      </div>
     </div>
-    <div class="flex items-center text-info-1">
-      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
-      </span>
-      <span class="text-xs">
-        Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail avec le nouveau mot de passe sinon contacter le support.
-      </span>
-    </div>
-  </div>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
-    Contactez le support !
-  </button>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-between">
-    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
-      <span class="ri-arrow-left-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
-      </span>
-      Se connecter
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+      Contactez le support !
     </button>
-    <div class="flex gap-4">
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
-        <button type="button"
-                class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
-        >
-          Annuler
-        </button>
-        <button type="submit"
-                disabled
-                class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
-        >
-          Valider
-        </button>
+    <hr class="mt-4">
+    <div class="flex gap-4 justify-between">
+      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+        <span class="ri-arrow-left-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+        </span>
+        Se connecter
+      </button>
+      <div class="flex gap-4">
+        <hr class="mt-4">
+        <div class="flex gap-4 justify-end">
+          <button type="button"
+                  class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          >
+            Annuler
+          </button>
+          <button type="submit"
+                  disabled
+                  class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
+          >
+            Valider
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -344,7 +350,9 @@ exports[`components/Login MotDePasseOublie smoke-test 1`] = `
 `;
 
 exports[`components/Login MsgInitMdp smoke-test 1`] = `
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center"
+     data-test="PasswordRecoverySucceed"
+>
   <svg width="134"
        height="134"
        viewbox="0 0 134 134"

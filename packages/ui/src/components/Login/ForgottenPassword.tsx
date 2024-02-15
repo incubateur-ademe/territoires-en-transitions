@@ -20,7 +20,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
   } = loginState;
 
   return (
-    <>
+    <div data-test="PasswordRecovery">
       <InputEmail
         loginState={loginState}
         infoMessage="Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail avec le nouveau mot de passe sinon contacter le support."
@@ -56,6 +56,6 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
           />
         </ModalFooterSection>
       </ModalFooter>
-    </>
+    </div>
   );
 };

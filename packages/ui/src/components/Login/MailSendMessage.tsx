@@ -5,12 +5,14 @@ import MailSend from '../../assets/MailSend';
 export const MailSendMessage = ({
   message1,
   message2,
+  'data-test': dataTest,
 }: {
   message1: string;
   message2: string;
+  'data-test'?: string;
 }) => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center" data-test={dataTest}>
       <MailSend />
       <p className="font-bold text-primary-9 text-center">
         {message1}{' '}

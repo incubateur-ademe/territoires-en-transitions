@@ -17,6 +17,7 @@ export const LoginModal = (props: LoginProps) => {
   };
   return (
     <Modal
+      dataTest="SignInPage"
       backdropBlur
       size={size}
       openState={{isOpen, setIsOpen}}

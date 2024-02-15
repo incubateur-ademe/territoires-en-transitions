@@ -25,6 +25,7 @@ export const LoginWithPassword = ({
         <Input type="password" {...passwordProps} id="password" />
       </Field>
       <Button
+        data-test="forgotten-pwd"
         variant="underlined"
         onClick={e => {
           e.preventDefault();

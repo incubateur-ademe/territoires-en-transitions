@@ -33,6 +33,7 @@ export const Login = (props: LoginProps) => {
   if (view === 'msg_init_mdp') {
     return (
       <MailSendMessage
+        data-test="PasswordRecoverySucceed"
         message1="Veuillez consultez votre boite mail pour"
         message2="réinitialiser votre mot de passe."
       />
@@ -85,3 +86,4 @@ export const Login = (props: LoginProps) => {
     </form>
   );
 };
+
