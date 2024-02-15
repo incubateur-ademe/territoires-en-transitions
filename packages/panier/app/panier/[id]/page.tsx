@@ -10,7 +10,11 @@ import PanierRealtime from './PanierRealtime';
 import { notFound } from "next/navigation";
 import {cookies} from 'next/headers';
 import {createClient} from 'src/supabase/server';
+import dynamic from 'next/dynamic';
 
+const TrackPageView = dynamic(() => import('components/TrackPageView'), {
+  ssr: false,
+});
 
 async function Page({ params, searchParams }: {
   params: { id: string };
@@ -26,7 +30,10 @@ async function Page({ params, searchParams }: {
 
   if (!panier) return notFound();
 
-  return <PanierRealtime panier={panier} categories={categories} />;
+  return <>
+    <TrackPageView pageName="panier" />
+    <PanierRealtime panier={panier} categories={categories} />
+  </>;
 }
 
 export default Page;
