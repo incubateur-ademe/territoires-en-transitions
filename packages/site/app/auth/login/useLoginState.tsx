@@ -75,8 +75,8 @@ export const useLoginState = (redirectTo: string) => {
       if (view === 'par_lien') {
         // indique que le mail a été envoyé
         setView('msg_lien_envoye');
-      } else if (view === 'par_mdp') {
-        const session = ret?.data as Session;
+      } else if (view === 'par_mdp' && 'session' in ret?.data) {
+        const session = ret.data.session;
         if (session) {
           // ou enregistre les coookies de session
           setAuthTokens(session, DOMAIN);
