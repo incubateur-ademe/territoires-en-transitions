@@ -31,7 +31,7 @@ export const Selectors = {
     children: {
       email: 'input[name=email]',
       mdp: 'input[name=password]',
-      Valider: 'button[data-test=ok]',
+      Valider: 'button[type=submit]',
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
     },
   },
