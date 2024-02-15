@@ -16,9 +16,6 @@ export const Redirector = () => {
   const {isConnected} = useAuth();
   const {invitationState} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
-  const isSigninPath = pathname === signInPath;
-  const isJustSignedIn = // L'utilisateur vient de se connecter.
-    isConnected && isSigninPath && userCollectivites !== null;
   const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
     isConnected && pathname === '/' && userCollectivites !== null;
   const isInvitationJustAccepted =
@@ -34,7 +31,7 @@ export const Redirector = () => {
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (isJustSignedIn || isLandingConnected || isInvitationJustAccepted) {
+    if (isLandingConnected || isInvitationJustAccepted) {
       if (
         userCollectivites &&
         userCollectivites.length >= 1 &&
@@ -49,7 +46,7 @@ export const Redirector = () => {
         history.push(homePath);
       }
     }
-  }, [isJustSignedIn, isLandingConnected, isInvitationJustAccepted]);
+  }, [isLandingConnected, isInvitationJustAccepted]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
