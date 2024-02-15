@@ -66,6 +66,9 @@ content_path = "./supabase/templates/magic_link.html"
 subject = "Connectez-vous à Territoires en Transitions"
 content_path = "./supabase/templates/confirmation.html"
 
+[auth.email.template.recovery]
+subject = "Connectez-vous à Territoires en Transitions"
+content_path = "./supabase/templates/recovery.html"
 
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `twitch`, `twitter`, `slack`, `spotify`.
