@@ -10,7 +10,7 @@ type Props = {
 const options: TOption[] = [
   {value: ITEM_ALL, label: 'Tous'},
   {value: 'oui', label: 'Complété'},
-  {value: 'non', label: 'A compléter'},
+  {value: 'non', label: 'À compléter'},
 ];
 
 const FiltreComplet = ({values, onSelect}: Props) => {
