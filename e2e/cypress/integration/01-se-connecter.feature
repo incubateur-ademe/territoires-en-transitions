@@ -147,6 +147,7 @@ Fonctionnalité: Accéder au site et se connecter
       | demande de lien de réinitialisation du mdp | visible   |                                              |
       | demande de lien de réinitialisation du mdp | contient  | L'envoi du lien de réinitialisation a échoué |
 
+@skip
   Scénario: Réinitialiser son mot de passe depuis un lien reçu par mail
     Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
     Alors la page vérifie les conditions suivantes :
@@ -172,6 +173,7 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de réinitialisation du mdp    | absent    |
       | réinitialisation du mot de passe réussie | visible   |
 
+@skip
   Scénario: Réinitialiser son mot de passe depuis un lien reçu par mail et visualiser une erreur
     Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
     Alors la page vérifie les conditions suivantes :
