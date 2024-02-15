@@ -4,8 +4,8 @@
 
 export const LocalMocks = {
   'auth.resetPasswordForEmail': {
-    ok: ['/auth/v*/recover', {statusCode: 200, body: {}}],
-    error: ['/auth/v*/recover', {statusCode: 400, body: {}}],
+    ok: ['/auth/v*/recover*', {statusCode: 200, body: {}}],
+    error: ['/auth/v*/recover*', {statusCode: 400, body: {}}],
   },
   'auth.updateUserPassword': {
     ok: ['PUT', '/auth/v*/user', {statusCode: 200, body: {}}],

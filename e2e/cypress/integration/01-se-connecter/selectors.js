@@ -7,7 +7,7 @@ export const LocalSelectors = {
     selector: '[data-test=PasswordRecovery]',
     children: {
       email: 'input[name=email]',
-      Valider: 'button[data-test=ok]',
+      Valider: 'button[type=submit]',
     },
   },
   'message lien envoyé': {
@@ -40,5 +40,8 @@ export const LocalSelectors = {
   },
   'Valider les CGU': {
     selector: '[data-test=AccepterCGUBtn]',
+  },
+  'Connexion avec mot de passe': {
+    selector: '[id="tab-1"]',
   },
 };
