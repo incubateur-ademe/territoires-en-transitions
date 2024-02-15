@@ -1,6 +1,5 @@
 import './global.css';
 import {PHProvider} from './providers';
-import dynamic from 'next/dynamic';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -25,10 +24,6 @@ export const metadata = {
     ],
   },
 };
-
-const PostHogPageView = dynamic(() => import('./PostHogPageView'), {
-  ssr: false,
-});
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
   return (
