@@ -19,6 +19,7 @@ export type TIndicateurChartInfo = {
   unite: string;
   rempli: Rempli;
   confidentiel: boolean;
+  participation_score: boolean;
   titre_long?: string;
   sans_valeur?: boolean | null;
   enfants?: {id: string; rempli: Rempli}[] | null;

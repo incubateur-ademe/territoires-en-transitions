@@ -12,7 +12,7 @@ export type Filters = Indicateurs.Filters;
  * @param filter Paramètres de filtrage
  */
 export const useFilteredIndicateurDefinitions = (
-  view: IndicateurViewParamOption,
+  view: IndicateurViewParamOption | null,
   filter: Filters
 ) => {
   const collectivite_id = useCollectiviteId();
@@ -32,11 +32,7 @@ export const useFilteredIndicateurDefinitions = (
         throw new Error(error.message);
       }
 
-      return (
-        data
-          // tri par nom (pour que les diacritiques soient pris en compte)
-          ?.sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
-      );
+      return data;
     },
     DISABLE_AUTO_REFETCH
   );
