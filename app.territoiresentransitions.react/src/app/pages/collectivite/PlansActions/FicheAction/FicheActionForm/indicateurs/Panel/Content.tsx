@@ -1,57 +1,26 @@
 import {useState} from 'react';
-import {useQuery} from 'react-query';
 
 import {Indicateurs} from '@tet/api';
 import {Checkbox, Field, Input, SelectFilter} from '@tet/ui';
 
 import {useThematiqueListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useThematiqueListe';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {supabaseClient} from 'core-logic/api/supabase';
+import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import IndicateurChartsGrid from './IndicateurChartsGrid';
 
 const Content = () => {
-  const collectivite_id = useCollectiviteId();
-
   const {data: thematiqueListe} = useThematiqueListe();
-
-  const [search, setSearch] = useState('');
-
-  const [subset, setSubset] = useState<Indicateurs.Subset>('selection');
 
   const [filters, setFilters] = useState<Indicateurs.Filters>({});
 
-  const data = useQuery(
-    ['indicateur_definitions', collectivite_id, subset, filters],
-    async () => {
-      if (!collectivite_id) return [];
-      const {data, error} = await Indicateurs.fetchFilteredIndicateurs(
-        supabaseClient,
-        collectivite_id,
-        subset,
-        filters
-      );
+  const {data: definitions} = useFilteredIndicateurDefinitions(null, filters);
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      return (
-        data
-          // tri par nom (pour que les diacritiques soient pris en compte)
-          ?.sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
-      );
-    }
-  );
-
-  console.log(data.data);
   return (
     <div className="grow p-4 overflow-y-auto">
       <div className="flex flex-col gap-4">
         <Field title="Rechercher par nom ou description" small>
           <Input
             type="search"
-            onChange={e => setSearch(e.target.value)}
-            onSearch={v => null}
-            value={search}
+            onSearch={text => setFilters({...filters, text})}
             placeholder="Rechercher"
             displaySize="sm"
           />
@@ -97,10 +66,7 @@ const Content = () => {
       </div>
       <hr className="p-0 my-8 w-full h-px" />
       <div className="mb-6 font-bold text-lg">X indicateur sélectionné</div>
-      <div className="flex flex-col gap-6">
-        <div className="h-64 bg-primary-1" />
-        <div className="h-64 bg-primary-1" />
-      </div>
+      {definitions && <IndicateurChartsGrid definitions={definitions} />}
     </div>
   );
 };
