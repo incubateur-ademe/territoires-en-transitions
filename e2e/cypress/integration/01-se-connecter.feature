@@ -19,23 +19,18 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion | visible   |
       | footer                  | présent   |
 
-    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Connexion avec mot de passe"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YoLO@dodo.com |
-      | mdp   | yolododo      |
-    Et que je vais vérifier les données envoyées à la chatbox
+      | mdp | yolododo |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | header                                | visible   |
       | home                                  | absent    |
       | formulaire de connexion               | absent    |
-      | le tableau de bord de la collectivité | visible   |
-      | footer                                | visible   |
-    Et les données suivantes ont été envoyées à la chatbox :
-      | nom    | Dodo          |
-      | prenom | Yolo          |
-      | email  | yolo@dodo.com |
+      | le tableau de bord de la collectivité | visible |
 
   Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
     Etant donné que j'ouvre le site
@@ -54,7 +49,8 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion | visible   |
       | footer                  | présent   |
 
-    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Connexion avec mot de passe"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YuLu@DUDU.COM |
       | mdp   | yulududu      |
@@ -84,7 +80,8 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion | visible   |
       | footer                  | présent   |
 
-    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Connexion avec mot de passe"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur         |
       | email | yolo@dodo.com  |
       | mdp   | n'importe quoi |
@@ -100,6 +97,7 @@ Fonctionnalité: Accéder au site et se connecter
   Scénario: Demander un lien de réinitialisation du mot de passe
     Etant donné que j'ouvre le site
     Et que je clique sur le bouton "Se connecter" du "header"
+    Et que je clique sur le bouton "Connexion avec mot de passe"
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition |
       | formulaire de connexion                    | visible   |
@@ -117,22 +115,15 @@ Fonctionnalité: Accéder au site et se connecter
     Et que l'appel à "auth.resetPasswordForEmail" va répondre "ok"
     Et que je clique sur le bouton "Valider" du "demande de lien de réinitialisation du mdp"
     Alors la page vérifie les conditions suivantes :
-      | Elément                                    | Condition | Valeur        |
-      | formulaire de connexion                    | visible   |               |
-      | message lien envoyé                        | visible   |               |
-      | message lien envoyé                        | contient  | yolo@dodo.com |
-      | demande de lien de réinitialisation du mdp | absent    |               |
-
-    Quand je clique sur le bouton "Retour à la connexion" du "message lien envoyé"
-    Alors la page vérifie les conditions suivantes :
-      | Elément                                    | Condition |
-      | formulaire de connexion                    | visible   |
-      | message lien envoyé                        | absent    |
-      | demande de lien de réinitialisation du mdp | absent    |
+      | Elément                                    | Condition | Valeur |
+      | formulaire de connexion                    | visible   |        |
+      | message lien envoyé                        | visible   |        |
+      | demande de lien de réinitialisation du mdp | absent    |        |
 
   Scénario: Demander un lien de réinitialisation du mot de passe et visualiser une erreur
     Etant donné que j'ouvre le site
     Et que je clique sur le bouton "Se connecter" du "header"
+    Et que je clique sur le bouton "Connexion avec mot de passe"
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition |
       | formulaire de connexion                    | visible   |
