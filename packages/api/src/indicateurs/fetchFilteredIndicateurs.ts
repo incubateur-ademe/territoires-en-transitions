@@ -60,7 +60,7 @@ export const fetchFilteredIndicateurs = async (
   const isPerso = subset === 'perso';
 
   // cas des indicateurs prédéfinis
-  if (subset && !isPerso) {
+  if (!isPerso && (subset || filters.text?.startsWith('#'))) {
     parts.add('definition_referentiel!inner(programmes)');
   }
 
