@@ -41,24 +41,24 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
       ) : (
         <>
           <li>
-            <Link
+            <a
               data-test="signup"
-              to={signUpPath}
+              href={signUpPath}
               className="fr-btn fr-icon-add-circle-line"
               onClick={() => setModalOpened(false)}
             >
               Créer un compte
-            </Link>
+            </a>
           </li>
           <li>
-            <Link
+            <a
               data-test="signin"
-              to={signInPath}
+              href={signInPath}
               className="fr-btn fr-icon-account-line"
               onClick={() => setModalOpened(false)}
             >
               Se connecter
-            </Link>
+            </a>
           </li>
         </>
       )}
