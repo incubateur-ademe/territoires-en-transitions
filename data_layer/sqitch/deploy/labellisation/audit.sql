@@ -309,7 +309,7 @@ begin
     if
         -- Vérifie si la labellisation de l'audit a été validé
         (select a.valide_labellisation from labellisation.audit a where a.id = new.audit_id) and
-        -- Vérifie si la labellisation n'existe pas déjà
+            -- Vérifie si la labellisation n'existe pas déjà
         (select count(*)=0
          from labellisation l
          where l.collectivite_id = new.collectivite_id
@@ -403,6 +403,76 @@ begin
     end if;
 
 end
+$$;
+
+do $$
+    begin
+        alter table labellisation.audit disable trigger after_write_update_audit_scores;
+        alter table labellisation.audit disable trigger on_audit_update;
+        alter table labellisation.demande disable trigger envoyee_le;
+        alter table labellisation.demande disable trigger modified_at;
+
+        -- Supprime les demandes sans audit et sans preuves
+        delete from labellisation.demande
+        where id not in (select distinct demande_id from labellisation.audit where demande_id is not null)
+          and id not in (select distinct demande_id from preuve_labellisation)
+          and id not in (select distinct demande_id from archive.labellisation_preuve_fichier);
+        -- Crée un audit clos pour les demandes sans audit avec preuve
+        insert into labellisation.audit (collectivite_id, referentiel, demande_id, clos)
+        select d.collectivite_id, d.referentiel, d.id, true
+        from labellisation.demande d
+                 join preuve_labellisation pl on d.id = pl.demande_id
+        where d.id not in (select distinct demande_id from labellisation.audit where demande_id is not null);
+        insert into labellisation.audit (collectivite_id, referentiel, demande_id, clos)
+        select d.collectivite_id, d.referentiel, d.id, true
+        from labellisation.demande d
+                 join archive.labellisation_preuve_fichier pl on d.id = pl.demande_id
+        where d.id not in (select distinct demande_id from labellisation.audit where demande_id is not null);
+        -- Supprime les audits sans demande_id et sans date
+        delete from labellisation.audit where demande_id is null and date_debut is null and date_fin is null;
+        -- Clos les autres audits sans demande (3015, 4657, 4509)
+        update labellisation.audit set clos = true where demande_id is null;
+        -- Passer en_cours = false à toutes les demandes avec un audit qui a des dates
+        update labellisation.demande
+        set en_cours = false
+        where id in (
+            select d.id
+            from labellisation.audit a
+                     join labellisation.demande d on a.demande_id = d.id
+            where d.en_cours = true
+              and (a.date_debut is not null  or a.date_fin is not null )
+        );
+        -- Clos les demandes cot avec une date de fin
+        update labellisation.audit
+        set clos = true
+        where date_fin is not null
+          and demande_id in (
+            select id
+            from labellisation.demande
+            where sujet = 'cot'
+        );
+        -- Clos les demandes labellisation dont une labellisation correspondante existe depuis moins de 4 ans
+        update labellisation.audit
+        set clos = true
+        where id in (
+            select a.id
+            from labellisation.audit a
+                     join labellisation.demande d on a.demande_id = d.id
+                     join labellisation l on d.collectivite_id = l.collectivite_id
+                and d.referentiel = l.referentiel
+                and d.etoiles::text = l.etoiles::text
+                and l.obtenue_le>(now()-interval '4 year')
+        );
+        -- Clos la demande eci cot en attente de la collectivite 4744
+        -- car il existe déjà une demande lab 1ere etoile non traité
+        update labellisation.audit set clos = true where id = 6636;
+        update labellisation.demande set en_cours = false where id = 219154;
+
+        alter table labellisation.audit enable trigger after_write_update_audit_scores;
+        alter table labellisation.audit enable trigger on_audit_update;
+        alter table labellisation.demande enable trigger envoyee_le;
+        alter table labellisation.demande enable trigger modified_at;
+    end;
 $$;
 
 create unique index audit_existant on labellisation.audit (collectivite_id, referentiel) where (not clos);
