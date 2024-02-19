@@ -19,8 +19,7 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
   const router = useRouter();
 
   // todo Passer le nom de l'onglet.
-  const tracker =
-    useEventTracker('panier', undefined);
+  const tracker = useEventTracker('panier', undefined);
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
@@ -51,7 +50,10 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
     }
   };
 
-  const handleUpdateStatus = async (actionId: number, statusId: string | null) => {
+  const handleUpdateStatus = async (
+    actionId: number,
+    statusId: string | null,
+  ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     router.refresh();
   };
@@ -71,7 +73,6 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
         </p>
         <ListeActions
           actionsListe={panier.states}
-          statuts={categories}
           onToggleSelected={handleToggleSelected}
           updateStatus={handleUpdateStatus}
         />

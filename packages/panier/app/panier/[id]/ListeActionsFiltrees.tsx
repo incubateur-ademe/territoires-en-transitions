@@ -1,65 +1,46 @@
-import classNames from 'classnames';
-import {ActionImpactCategorie, ActionImpactState} from '@tet/api';
+import {ActionImpactState} from '@tet/api';
+import {ActionImpact} from '@tet/ui';
 
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactState[];
-  statuts: ActionImpactCategorie[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   updateStatus: (actionId: number, statusId: string | null) => void;
 };
 
 const ListeActionsFiltrees = ({
   actionsListe,
-  statuts,
   onToggleSelected,
   updateStatus,
 }: ListeActionsFiltreesProps) => {
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
+    <div className="grid lg:grid-cols-2 gap-4">
       {actionsListe.map(action => (
-        <div
+        <ActionImpact
           key={action.action.id}
-          className={classNames('p-4', {
-            'bg-white': !action.isinpanier,
-            'bg-primary-2': action.isinpanier,
-          })}
-        >
-          <div>{action.action.titre}</div>
-          <div>{'€'.repeat(action.action.fourchette_budgetaire)}</div>
-          <div>Complexité : {action.action.niveau_complexite}</div>
-          <div>
-            Statut :{' '}
-            {action.statut
-              ? statuts.find(s => s.id === action.statut?.categorie_id)?.nom
-              : ''}
-          </div>
-          <button
-            onClick={() =>
-              onToggleSelected(action.action.id, !action.isinpanier)
-            }
-          >
-            {action.isinpanier ? 'Retirer' : 'Ajouter'}
-          </button>
-
-          <div className="flex gap-4">
-            {statuts.map(s => (
-              <button
-                key={s.id}
-                className={classNames({
-                  'bg-primary-4': action.statut?.categorie_id === s.id,
-                })}
-                onClick={() =>
-                  updateStatus(
-                    action.action.id,
-                    action.statut?.categorie_id === s.id ? null : s.id,
-                  )
-                }
-              >
-                {s.nom}
-              </button>
-            ))}
-          </div>
-        </div>
+          titre={action.action.titre}
+          categorie={''}
+          complexite={action.action.niveau_complexite as 1 | 2 | 3}
+          budget={action.action.fourchette_budgetaire as 1 | 2 | 3}
+          description={action.action.description}
+          statut={
+            action.statut?.categorie_id as
+              | 'non_pertinent'
+              | 'en_cours'
+              | 'realise'
+              | null
+          }
+          panier={action.isinpanier}
+          isSelected={action.isinpanier}
+          onToggleSelected={() =>
+            onToggleSelected(action.action.id, !action.isinpanier)
+          }
+          onUpdateStatus={statut =>
+            updateStatus(
+              action.action.id,
+              action.statut?.categorie_id === statut ? null : statut,
+            )
+          }
+        />
       ))}
     </div>
   );
