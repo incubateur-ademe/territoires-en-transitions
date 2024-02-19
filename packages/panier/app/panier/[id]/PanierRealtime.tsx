@@ -71,14 +71,8 @@ const PanierRealtime = ({
   };
 
   return (
-    <div
-      style={{height: 'calc(100vh - 128px)'}}
-      className="grow grid lg:grid-cols-3 gap-8 max-lg:!h-full max-lg:mb-6 "
-    >
-      <div
-        style={{height: 'calc(100vh - 128px)'}}
-        className="lg:col-span-2 max-lg:!h-full overflow-y-scroll py-12"
-      >
+    <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
+      <div className="lg:w-3/5 xl:w-2/3 py-12">
         <h1>
           Initiez{' '}
           <span className="text-secondary-1">des actions impactantes</span> et
