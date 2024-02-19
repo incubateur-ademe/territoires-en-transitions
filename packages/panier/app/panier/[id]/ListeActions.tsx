@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ActionImpactCategorie, ActionImpactState} from '@tet/api';
+import {ActionImpactState} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
@@ -22,14 +22,12 @@ const getTabLabel = (
 
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
-  statuts: ActionImpactCategorie[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   updateStatus: (actionId: number, statusId: string | null) => void;
 };
 
 const ListeActions = ({
   actionsListe,
-  statuts,
   onToggleSelected,
   updateStatus,
 }: ListeActionsProps) => {
@@ -69,7 +67,6 @@ const ListeActions = ({
               ) : (
                 <ListeActionsFiltrees
                   actionsListe={actionsFiltrees}
-                  statuts={statuts}
                   updateStatus={updateStatus}
                   onToggleSelected={onToggleSelected}
                 />

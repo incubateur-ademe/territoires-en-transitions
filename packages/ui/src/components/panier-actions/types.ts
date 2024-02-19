@@ -15,12 +15,16 @@ export type ActionImpactProps = {
   nbCollectivitesEnCours?: number;
   /** Nombre de collectivités ayant fait l'action */
   nbCollectivitesRealise?: number;
+  /** Statut de l'action */
+  statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
+  /** Indique si l'action est mise dans le panier */
+  panier: boolean;
   /** Initialisation de l'état sélectionné de la carte */
   isSelected?: boolean;
   /** Détecte le changement de statut sélectionné ou non */
   onToggleSelected: (value: boolean) => void;
   /** Détecte le changement de statut de l'action : non pertinent, en cours, réalisé */
-  onUpdateStatus: (status: string) => void;
+  onUpdateStatus?: (status: string) => void;
 };
 
 export type ModaleActionImpactProps = {
@@ -34,6 +38,8 @@ export type CarteActionImpactProps = Pick<
   | 'categorie'
   | 'complexite'
   | 'budget'
+  | 'statut'
+  | 'panier'
   | 'isSelected'
   | 'onToggleSelected'
   | 'onUpdateStatus'

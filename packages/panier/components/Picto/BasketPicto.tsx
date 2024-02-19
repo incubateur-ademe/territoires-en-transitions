@@ -48,7 +48,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(60.013 105.266 97.4404)"
           fill="url(#paint0_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.487568"
+          strokeWidth="0.487568"
         />
         <rect
           x="87.2671"
@@ -84,7 +84,7 @@ const BasketPicto = ({className}: {className?: string}) => {
         <path
           d="M89.2537 119.154C87.0749 119.59 73.6233 120.993 72.2441 123.751L99.5973 164.206L119.135 163.517L124.422 132.026V130.187L121.204 125.59L110.86 159.15L103.735 159.839L97.9883 127.889C97.9883 127.889 97.9883 123.522 95.9196 120.993C93.8509 118.465 91.5523 118.694 89.2537 119.154Z"
           fill="#544848"
-          fill-opacity="0.1"
+          fillOpacity="0.1"
         />
         <rect
           x="94.7931"
@@ -95,7 +95,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(81.6925 94.7931 120.564)"
           fill="url(#paint1_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.459717"
+          strokeWidth="0.459717"
         />
         <rect
           x="69.4771"
@@ -137,7 +137,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(104.602 164.522 130.339)"
           fill="url(#paint2_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.41601"
+          strokeWidth="0.41601"
         />
         <rect
           x="138.927"
@@ -164,7 +164,7 @@ const BasketPicto = ({className}: {className?: string}) => {
         <path
           d="M76.1517 163.517C64.0151 162.965 101.206 173.631 98.6778 163.977L59.6019 146.967C54.545 145.128 53.2424 146.507 53.6255 148.116L55.6943 162.368L76.1517 163.517Z"
           fill="#D9D9D9"
-          fill-opacity="0.39"
+          fillOpacity="0.39"
         />
       </g>
       <g filter="url(#filter1_d_534_9021)">
@@ -185,10 +185,10 @@ const BasketPicto = ({className}: {className?: string}) => {
           rx="3.24014"
           transform="rotate(32.9566 112.738 24.2359)"
           stroke="#F0F0FE"
-          stroke-width="0.341067"
+          strokeWidth="0.341067"
         />
       </g>
-      <g clip-path="url(#clip0_534_9021)">
+      <g clipPath="url(#clip0_534_9021)">
         <path
           d="M138.992 66.6546C139.509 65.8509 140.579 65.6182 141.383 66.135L151.023 72.3327C151.827 72.8495 152.059 73.92 151.543 74.7238L150.233 76.7613C149.716 77.565 148.645 77.7977 147.842 77.2809L138.202 71.0832C137.398 70.5664 137.165 69.4959 137.682 68.6922L138.992 66.6546Z"
           fill="#6A6AF4"
@@ -233,7 +233,7 @@ const BasketPicto = ({className}: {className?: string}) => {
         transform="rotate(-19.2516 25.1212 100.672)"
         fill="url(#paint3_linear_534_9021)"
         stroke="#A5A5F8"
-        stroke-width="0.190337"
+        strokeWidth="0.190337"
       />
       <rect
         x="31.9219"
@@ -285,7 +285,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(-2.11625 62.4135 70.5533)"
           fill="url(#paint4_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.103591"
+          strokeWidth="0.103591"
         />
         <rect
           x="64.5972"
@@ -338,7 +338,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(-15.3789 181.064 97.5579)"
           fill="url(#paint5_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.103591"
+          strokeWidth="0.103591"
         />
         <rect
           x="184.446"
@@ -391,7 +391,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(23.6867 24.2957 63.4332)"
           fill="url(#paint6_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.103591"
+          strokeWidth="0.103591"
         />
         <rect
           x="23.876"
@@ -444,7 +444,7 @@ const BasketPicto = ({className}: {className?: string}) => {
           transform="rotate(36.4098 87.6608 84.0221)"
           fill="url(#paint7_linear_534_9021)"
           stroke="#F0F0FE"
-          stroke-width="0.0518675"
+          strokeWidth="0.0518675"
         />
         <rect
           x="86.8066"
@@ -487,11 +487,11 @@ const BasketPicto = ({className}: {className?: string}) => {
           fill="#3F72B5"
         />
       </g>
-      <g clip-path="url(#clip1_534_9021)">
+      <g clipPath="url(#clip1_534_9021)">
         <path
           d="M55.0044 154.782L55.8844 165.17L154.661 167.654L157.521 156.589L55.0044 154.782Z"
           fill="#615858"
-          fill-opacity="0.1"
+          fillOpacity="0.1"
         />
         <path
           d="M137.248 225.551H74.6989C68.7869 225.551 63.776 221.207 62.9393 215.355L56.4849 170.123H155.462L149.003 215.355C148.166 221.202 143.155 225.547 137.248 225.551Z"
@@ -504,7 +504,7 @@ const BasketPicto = ({className}: {className?: string}) => {
             width="105.275"
             height="2.29859"
             fill="#426FA3"
-            fill-opacity="0.6"
+            fillOpacity="0.6"
           />
         </g>
         <path
@@ -552,9 +552,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="188.024"
           height="159.982"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -573,9 +573,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="121.393"
           height="111.51"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -608,9 +608,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="61.1509"
           height="50.0797"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -643,9 +643,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="62.5464"
           height="54.5052"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -678,9 +678,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="62.8101"
           height="56.8967"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -713,9 +713,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="51.1592"
           height="49.9422"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -748,9 +748,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           width="108.953"
           height="5.97632"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -770,9 +770,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="119.381"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_534_9021"
@@ -782,9 +782,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="142.83"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_534_9021"
@@ -794,9 +794,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="150.574"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_534_9021"
@@ -806,9 +806,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="109.309"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_534_9021"
@@ -818,9 +818,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="75.2358"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_534_9021"
@@ -830,9 +830,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="102.254"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_534_9021"
@@ -842,9 +842,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="68.0974"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_534_9021"
@@ -854,9 +854,9 @@ const BasketPicto = ({className}: {className?: string}) => {
           y2="86.3553"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="0.0001" stop-color="#FEF5F5" />
-          <stop offset="0.910425" stop-color="white" />
+          <stop stopColor="white" />
+          <stop offset="0.0001" stopColor="#FEF5F5" />
+          <stop offset="0.910425" stopColor="white" />
         </linearGradient>
         <clipPath id="clip0_534_9021">
           <path

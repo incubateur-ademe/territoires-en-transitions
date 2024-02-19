@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {CarteActionImpact} from './CarteActionImpact';
 import {ModaleActionImpact} from './ModaleActionImpact';
 import {ActionImpactProps} from './types';
@@ -8,11 +8,13 @@ import {ActionImpactProps} from './types';
  */
 
 export const ActionImpact = ({
-  isSelected,
+  panier,
   onToggleSelected,
   ...props
 }: ActionImpactProps) => {
-  const [isActionSelected, setIsActionSelected] = useState(isSelected ?? false);
+  const [isActionSelected, setIsActionSelected] = useState(panier);
+
+  useEffect(() => setIsActionSelected(panier), [panier]);
 
   const handleToggleSelect = value => {
     setIsActionSelected(value);
@@ -21,13 +23,14 @@ export const ActionImpact = ({
 
   return (
     <ModaleActionImpact
-      isSelected={isActionSelected}
+      panier={isActionSelected}
       onToggleSelected={handleToggleSelect}
       {...props}
     >
       <div>
         <CarteActionImpact
           isSelected={isActionSelected}
+          panier={isActionSelected}
           onToggleSelected={handleToggleSelect}
           {...props}
         />

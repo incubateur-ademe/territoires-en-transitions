@@ -1,11 +1,12 @@
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
 import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
-import {Icon} from '@design-system/Icon';
+// import {Icon} from '@design-system/Icon';
 import {NiveauBudget} from './NiveauBudget';
 import {valeurToBadge} from './utils';
 import {ModaleActionImpactProps} from './types';
 import {Tooltip} from '@design-system/Tooltip';
+import classNames from 'classnames';
 
 /**
  * Modale action à impact du panier d'actions
@@ -18,10 +19,10 @@ export const ModaleActionImpact = ({
   complexite,
   budget,
   description,
-  ressources,
   nbCollectivitesEnCours,
   nbCollectivitesRealise,
-  isSelected,
+  statut,
+  panier,
   onToggleSelected,
   onUpdateStatus,
 }: ModaleActionImpactProps) => {
@@ -52,7 +53,7 @@ export const ModaleActionImpact = ({
           <p className="paragraphe-18 mt-6">{description}</p>
 
           {/* Ressources externes */}
-          {!!ressources && (
+          {/* {!!ressources && (
             <div className="flex items-center gap-2">
               <Icon
                 icon="external-link-line"
@@ -68,7 +69,7 @@ export const ModaleActionImpact = ({
                 Consulter les ressources externes
               </a>
             </div>
-          )}
+          )} */}
 
           {/* Collectivités sur la même action */}
           {(!!nbCollectivitesEnCours || !!nbCollectivitesRealise) && (
@@ -95,56 +96,63 @@ export const ModaleActionImpact = ({
         </div>
       )}
       renderFooter={({close}) => (
-        <ModalFooter variant={isSelected ? 'right' : 'space'}>
-          {!isSelected && (
-            <ModalFooterSection>
-              <Tooltip
-                label={
-                  <div className="font-normal text-center w-48">
-                    Hors compétence de la collectivité ou non prioritaire
-                  </div>
-                }
-                placement="top"
+        <ModalFooter variant="space">
+          <ModalFooterSection>
+            <Tooltip
+              label={
+                <div className="font-normal text-center w-48">
+                  Hors compétence de la collectivité ou non prioritaire
+                </div>
+              }
+              placement="top"
+            >
+              <Button
+                variant="outlined"
+                className={classNames({
+                  'bg-primary-3': statut === 'non_pertinent',
+                })}
+                onClick={() => {
+                  onUpdateStatus?.('non_pertinent');
+                  close();
+                }}
               >
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    onUpdateStatus('non pertinent');
-                    close();
-                  }}
-                >
-                  Non pertinent
-                </Button>
-              </Tooltip>
+                Non pertinent
+              </Button>
+            </Tooltip>
 
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  onUpdateStatus('en cours');
-                  close();
-                }}
-              >
-                En cours
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  onUpdateStatus('réalisé');
-                  close();
-                }}
-              >
-                Réalisé
-              </Button>
-            </ModalFooterSection>
-          )}
+            <Button
+              variant="outlined"
+              className={classNames({
+                'bg-primary-3': statut === 'en_cours',
+              })}
+              onClick={() => {
+                onUpdateStatus?.('en_cours');
+                close();
+              }}
+            >
+              En cours
+            </Button>
+            <Button
+              variant="outlined"
+              className={classNames({
+                'bg-primary-3': statut === 'realise',
+              })}
+              onClick={() => {
+                onUpdateStatus?.('realise');
+                close();
+              }}
+            >
+              Réalisé
+            </Button>
+          </ModalFooterSection>
           <Button
-            icon={isSelected ? 'file-reduce-fill' : 'file-add-fill'}
+            icon={panier ? 'file-reduce-fill' : 'file-add-fill'}
             onClick={() => {
-              onToggleSelected(!isSelected);
+              onToggleSelected(!panier);
               close();
             }}
           >
-            {isSelected ? 'Retirer du panier' : 'Ajouter'}
+            {panier ? 'Retirer du panier' : 'Ajouter'}
           </Button>
         </ModalFooter>
       )}
