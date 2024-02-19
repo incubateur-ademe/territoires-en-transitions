@@ -14,14 +14,17 @@ const PanierActions = ({
   onToggleSelected,
 }: PanierActionsProps) => {
   return (
-    <div className="h-full bg-white border-[0.5px] border-primary-3">
+    <div
+      style={{height: 'calc(100vh - 128px)'}}
+      className="max-lg:!h-full bg-white border-[0.5px] border-primary-3"
+    >
       {actionsListe.length === 0 ? (
         <div className="h-full">
           <Alert
             title="Comment ajouter des actions ?"
             description={`Pour ajouter des actions à votre panier, veuillez cliquer sur le bouton "Ajouter" qui s'affiche au survol de chacune des vignettes d'action.`}
           />
-          <div className="flex flex-col items-center mt-32">
+          <div className="lg:h-full flex flex-col items-center justify-center py-4 lg:-mt-40">
             <EmptyBasketPicto />
             <span className="text-primary-8 text-lg font-bold text-center">
               Votre panier d'actions est vide !
@@ -30,12 +33,14 @@ const PanierActions = ({
         </div>
       ) : (
         <div className="h-full p-4 flex flex-col gap-8">
-          <BasketPicto className="mx-auto" />
+          <div className="h-56">
+            <BasketPicto className="mx-auto h-full" />
+          </div>
           <span className="text-primary-8 text-xl font-extrabold text-center">
             {actionsListe.length} action{actionsListe.length > 1 ? 's' : ''}{' '}
             dans mon panier
           </span>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 max-h-full overflow-y-scroll">
             {actionsListe.map(action => (
               <CarteActionImpact
                 key={action.id}
