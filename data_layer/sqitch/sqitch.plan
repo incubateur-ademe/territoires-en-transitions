@@ -620,3 +620,4 @@ cron/refresh_stats_views_crm 2024-02-12T13:33:26Z Amandine Jacquelin <conta@Lanc
 @v2.98.0 2024-02-19T10:23:12Z Florian <florian@derfurth.com> # Amélioration des données envoyées au CRM
 
 automatisation/newsletters [automatisation/newsletters@v2.90.0] 2024-01-12T14:59:43Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction lorsque l'état des lieux est terminé
+@v2.99.0 2024-02-19T13:07:21Z Florian <florian@derfurth.com> # Améliorations intégration Brevo
