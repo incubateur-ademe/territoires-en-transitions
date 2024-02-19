@@ -23,7 +23,8 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je valide le formulaire
     Alors une alerte de "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
 
-  Scénario: Inviter un email qui n'est encore associé à un compte utilisateur
+# TODO: scénario à revoir pour tester la création de compte...
+  Scénario: Inviter un email qui n'est pas encore associé à un compte utilisateur
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
@@ -46,7 +47,8 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je visite le lien copié
     Alors le "formulaire de connexion" est visible
 
-    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Connexion avec mot de passe"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | yulu@dudu.com |
       | mdp   | yulududu      |
@@ -57,6 +59,6 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
       | header                                | visible   |
       | home                                  | absent    |
       | formulaire de connexion               | absent    |
-      | le tableau de bord de la collectivité | visible   |
-      | footer                                | visible   |
+#      | le tableau de bord de la collectivité | visible   |
+#      | footer                                | visible   |
 
