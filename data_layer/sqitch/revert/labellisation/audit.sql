@@ -105,19 +105,21 @@ $$;
 -- Enlève la dépendance des nouveaux attribut dans un premier temps pour éviter de drop la fonction
 create or replace function labellisation.active_audit(collectivite_id integer, referentiel referentiel) returns labellisation.audit
     language sql
-BEGIN ATOMIC
-SELECT a.id,
-       a.collectivite_id,
-       a.referentiel,
-       a.demande_id,
-       a.date_debut,
-       a.date_fin,
-       a.valide,
-       null::timestamptz as date_cnl,
-       null::boolean as valide_labellisation,
-       false as clos
-FROM labellisation.audit a
-WHERE ((a.collectivite_id = active_audit.collectivite_id) AND (a.referentiel = active_audit.referentiel) AND (now() <@ tstzrange(a.date_debut, a.date_fin)) AND (a.date_debut IS NOT NULL));
+BEGIN
+    ATOMIC
+    SELECT a.id,
+           a.collectivite_id,
+           a.referentiel,
+           a.demande_id,
+           a.date_debut,
+           a.date_fin,
+           a.valide,
+           null::timestamptz as date_cnl,
+           null::boolean     as valide_labellisation,
+           false             as clos
+    FROM labellisation.audit a
+    WHERE ((a.collectivite_id = active_audit.collectivite_id) AND (a.referentiel = active_audit.referentiel) AND
+           (now() <@ tstzrange(a.date_debut, a.date_fin)) AND (a.date_debut IS NOT NULL));
 END;
 
 alter table labellisation.audit
@@ -127,16 +129,18 @@ alter table labellisation.audit
 
 create or replace function labellisation.active_audit(collectivite_id integer, referentiel referentiel) returns labellisation.audit
     language sql
-BEGIN ATOMIC
-SELECT a.id,
-       a.collectivite_id,
-       a.referentiel,
-       a.demande_id,
-       a.date_debut,
-       a.date_fin,
-       a.valide
-FROM labellisation.audit a
-WHERE ((a.collectivite_id = active_audit.collectivite_id) AND (a.referentiel = active_audit.referentiel) AND (now() <@ tstzrange(a.date_debut, a.date_fin)) AND (a.date_debut IS NOT NULL));
+BEGIN
+    ATOMIC
+    SELECT a.id,
+           a.collectivite_id,
+           a.referentiel,
+           a.demande_id,
+           a.date_debut,
+           a.date_fin,
+           a.valide
+    FROM labellisation.audit a
+    WHERE ((a.collectivite_id = active_audit.collectivite_id) AND (a.referentiel = active_audit.referentiel) AND
+           (now() <@ tstzrange(a.date_debut, a.date_fin)) AND (a.date_debut IS NOT NULL));
 END;
 
 
@@ -168,52 +172,63 @@ end;
 
 create or replace function labellisation.audit_personnalisation_payload(audit_id integer, pre_audit boolean, scores_table text) returns jsonb
     language sql
-BEGIN ATOMIC
-WITH la AS (
-    SELECT audit.id,
-           audit.collectivite_id,
-           audit.referentiel,
-           audit.demande_id,
-           audit.date_debut,
-           audit.date_fin,
-           audit.valide
-    FROM labellisation.audit
-    WHERE (audit.id = audit_personnalisation_payload.audit_id)
-), evaluation_payload AS (
-    SELECT transaction_timestamp() AS "timestamp",
-           audit_personnalisation_payload.audit_id AS audit_id,
-           la.collectivite_id,
-           la.referentiel,
-           audit_personnalisation_payload.scores_table AS scores_table,
-           to_jsonb(ep.*) AS payload
-    FROM (la
-        JOIN LATERAL labellisation.audit_evaluation_payload(ROW(la.id, la.collectivite_id, la.referentiel, la.demande_id, la.date_debut, la.date_fin, la.valide), audit_personnalisation_payload.pre_audit) ep(referentiel, statuts, consequences) ON (true))
-), personnalisation_payload AS (
-    SELECT transaction_timestamp() AS "timestamp",
-           la.collectivite_id,
-           ''::text AS consequences_table,
-           jsonb_build_object('identite', ( SELECT evaluation.identite(la.collectivite_id) AS identite), 'regles', ( SELECT evaluation.service_regles() AS service_regles), 'reponses', ( SELECT labellisation.json_reponses_at(la.collectivite_id,
-                                                                                                                                                                                                                                CASE
-                                                                                                                                                                                                                                    WHEN audit_personnalisation_payload.pre_audit THEN la.date_debut
-                                                                                                                                                                                                                                    ELSE la.date_fin
-                                                                                                                                                                                                                                    END) AS json_reponses_at)) AS payload,
-           ( SELECT array_agg(ep.*) AS array_agg
-             FROM evaluation_payload ep) AS evaluation_payloads
-    FROM la
-)
-SELECT to_jsonb(pp.*) AS to_jsonb
-FROM personnalisation_payload pp;
+BEGIN
+    ATOMIC
+    WITH la AS (SELECT audit.id,
+                       audit.collectivite_id,
+                       audit.referentiel,
+                       audit.demande_id,
+                       audit.date_debut,
+                       audit.date_fin,
+                       audit.valide
+                FROM labellisation.audit
+                WHERE (audit.id = audit_personnalisation_payload.audit_id)),
+         evaluation_payload AS (SELECT transaction_timestamp()                     AS "timestamp",
+                                       audit_personnalisation_payload.audit_id     AS audit_id,
+                                       la.collectivite_id,
+                                       la.referentiel,
+                                       audit_personnalisation_payload.scores_table AS scores_table,
+                                       to_jsonb(ep.*)                              AS payload
+                                FROM (la
+                                    JOIN LATERAL labellisation.audit_evaluation_payload(
+                                            ROW (la.id, la.collectivite_id, la.referentiel, la.demande_id, la.date_debut, la.date_fin, la.valide),
+                                            audit_personnalisation_payload.pre_audit) ep(referentiel, statuts, consequences)
+                                      ON (true))),
+         personnalisation_payload AS (SELECT transaction_timestamp()                                                       AS "timestamp",
+                                             la.collectivite_id,
+                                             ''::text                                                                      AS consequences_table,
+                                             jsonb_build_object('identite',
+                                                                (SELECT evaluation.identite(la.collectivite_id) AS identite),
+                                                                'regles',
+                                                                (SELECT evaluation.service_regles() AS service_regles),
+                                                                'reponses', (SELECT labellisation.json_reponses_at(
+                                                                                            la.collectivite_id,
+                                                                                            CASE
+                                                                                                WHEN audit_personnalisation_payload.pre_audit
+                                                                                                    THEN la.date_debut
+                                                                                                ELSE la.date_fin
+                                                                                                END) AS json_reponses_at)) AS payload,
+                                             (SELECT array_agg(ep.*) AS array_agg
+                                              FROM evaluation_payload ep)                                                  AS evaluation_payloads
+                                      FROM la)
+    SELECT to_jsonb(pp.*) AS to_jsonb
+    FROM personnalisation_payload pp;
 END;
 
-create or replace function labellisation.evaluate_audit_statuts(audit_id integer, pre_audit boolean, scores_table character varying, OUT request_id bigint) returns bigint
+create or replace function labellisation.evaluate_audit_statuts(audit_id integer, pre_audit boolean,
+                                                                scores_table character varying,
+                                                                OUT request_id bigint) returns bigint
     security definer
     language sql
-BEGIN ATOMIC
-SELECT post.post
-FROM ((evaluation.current_service_configuration() conf(evaluation_endpoint, personnalisation_endpoint, created_at)
-    JOIN labellisation.audit_personnalisation_payload(evaluate_audit_statuts.audit_id, evaluate_audit_statuts.pre_audit, (evaluate_audit_statuts.scores_table)::text) pp(pp) ON (true))
-    JOIN LATERAL net.http_post((conf.personnalisation_endpoint)::text, pp.pp) post(post) ON (true))
-WHERE (conf.* IS NOT NULL);
+BEGIN
+    ATOMIC
+    SELECT post.post
+    FROM ((evaluation.current_service_configuration() conf(evaluation_endpoint, personnalisation_endpoint, created_at)
+        JOIN labellisation.audit_personnalisation_payload(evaluate_audit_statuts.audit_id,
+                                                          evaluate_audit_statuts.pre_audit,
+                                                          (evaluate_audit_statuts.scores_table)::text) pp(pp) ON (true))
+        JOIN LATERAL net.http_post((conf.personnalisation_endpoint)::text, pp.pp) post(post) ON (true))
+    WHERE (conf.* IS NOT NULL);
 END;
 
 create or replace function labellisation.update_audit_score_on_personnalisation() returns trigger
@@ -221,23 +236,14 @@ create or replace function labellisation.update_audit_score_on_personnalisation(
 as
 $$
 begin
-    perform (
-        with
-            ref as (
-                select unnest(enum_range(null::referentiel)) as referentiel
-            ),
-            audit as (
-                select ca.id
-                from ref
-                         join labellisation.current_audit(new.collectivite_id, ref.referentiel) ca on true
-            ),
-            query as (
-                select labellisation.evaluate_audit_statuts(audit.id, true, 'pre_audit_scores') as id
-                from audit
-            )
-        select count(query)
-        from query
-    );
+    perform (with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+                  audit as (select ca.id
+                            from ref
+                                     join labellisation.current_audit(new.collectivite_id, ref.referentiel) ca on true),
+                  query as (select labellisation.evaluate_audit_statuts(audit.id, true, 'pre_audit_scores') as id
+                            from audit)
+             select count(query)
+             from query);
     return new;
 exception
     when others then return new;
@@ -413,11 +419,13 @@ alter table labellisation.audit
         unique nulls not distinct (collectivite_id, referentiel, date_debut, date_fin);
 
 alter table labellisation.audit
-add constraint audit_existant exclude using GIST (
+    add constraint audit_existant exclude using GIST (
         -- Audit unique pour une collectivité, un référentiel, et une période de temps
         collectivite_id with =,
         referentiel with =,
         tstzrange(date_debut, date_fin) with &&
-        );
+        )
+        -- on exclut les plages infinies qui se superposent à toutes les autres.
+        where (date_debut is not null and date_fin is not null);
 
 COMMIT;
