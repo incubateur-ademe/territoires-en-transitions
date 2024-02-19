@@ -4,9 +4,7 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
 <div aria-expanded="false"
      aria-haspopup="dialog"
 >
-  <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3 box-content"
-       style="max-width: 400px;"
-  >
+  <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border border-primary-3 box-content !px-5 !py-4 lg:min-h-[165px]">
     <div class="text-primary-8 text-sm font-bold">
       <div class="flex justify-between">
         <div>
@@ -33,16 +31,16 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
           </span>
         </div>
         <div class="flex gap-2 invisible group-hover:visible ml-auto">
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
             Non pertinent
           </button>
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
             En cours
           </button>
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
             Réalisé
           </button>
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
             Ajouter
           </button>
         </div>
