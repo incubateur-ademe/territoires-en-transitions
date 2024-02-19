@@ -41,41 +41,36 @@ const ListeActions = ({
   ];
 
   return (
-    <div className="my-4">
-      <Tabs>
-        {...tabsList.map(tab => {
-          const actionsFiltrees = actionsListe.filter(
-            a =>
-              (!a.statut && a.statut === tab.status) ||
-              (a.statut && a.statut.categorie_id === tab.status),
-          );
+    <Tabs>
+      {...tabsList.map(tab => {
+        const actionsFiltrees = actionsListe.filter(
+          a =>
+            (!a.statut && a.statut === tab.status) ||
+            (a.statut && a.statut.categorie_id === tab.status),
+        );
 
-          return (
-            <Tab
-              key={tab.label}
-              label={getTabLabel(tab, actionsFiltrees.length)}
-            >
-              <Alert
-                isOpen={openAlert}
-                onClose={() => setOpenAlert(false)}
-                title="Nous avons personnalisé la liste selon votre territoire et vos
+        return (
+          <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
+            <Alert
+              isOpen={openAlert}
+              onClose={() => setOpenAlert(false)}
+              title="Nous avons personnalisé la liste selon votre territoire et vos
                 compétences. Vous pouvez modifier grâce aux filtres"
-                classname="mb-8"
+              classname="mb-8"
+            />
+            {!tab.status && !actionsFiltrees.length ? (
+              <ListeVide />
+            ) : (
+              <ListeActionsFiltrees
+                actionsListe={actionsFiltrees}
+                updateStatus={updateStatus}
+                onToggleSelected={onToggleSelected}
               />
-              {!tab.status && !actionsFiltrees.length ? (
-                <ListeVide />
-              ) : (
-                <ListeActionsFiltrees
-                  actionsListe={actionsFiltrees}
-                  updateStatus={updateStatus}
-                  onToggleSelected={onToggleSelected}
-                />
-              )}
-            </Tab>
-          );
-        })}
-      </Tabs>
-    </div>
+            )}
+          </Tab>
+        );
+      })}
+    </Tabs>
   );
 };
 
