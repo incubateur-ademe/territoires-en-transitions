@@ -30,7 +30,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="fr">
       <PHProvider>
-        <body className="min-h-screen flex flex-col">
+        <body className="min-h-screen overflow-x-visible flex flex-col">
           <div className="flex flex-col grow">
             <Header />
             <div className="bg-grey-2 grow flex flex-col">
