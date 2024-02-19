@@ -2,7 +2,7 @@ import SuccessPicto from '@components/Picto/SuccessPicto';
 
 const ListeVide = () => {
   return (
-    <div className="bg-white rounded-lg border-[0.5px] border-primary-3 px-4 py-24 flex flex-col justify-center items-center">
+    <div className="h-[700px] bg-white rounded-lg border-[0.5px] border-primary-3 px-4 py-24 flex flex-col justify-center items-center">
       <SuccessPicto className="mb-4" />
       <h6 className="text-primary-8 text-lg font-bold text-center mb-0">
         Félicitations, votre politique de transition écologique semble bien

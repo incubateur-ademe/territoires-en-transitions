@@ -59,14 +59,20 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
   };
 
   return (
-    <div className="grow grid lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2">
-        <h1 className="mt-12">
+    <div
+      style={{height: 'calc(100vh - 128px)'}}
+      className="grow grid lg:grid-cols-3 gap-8 max-lg:!h-full max-lg:mb-6 "
+    >
+      <div
+        style={{height: 'calc(100vh - 128px)'}}
+        className="lg:col-span-2 max-lg:!h-full overflow-y-scroll py-12"
+      >
+        <h1>
           Initiez{' '}
           <span className="text-secondary-1">des actions impactantes</span> et
           valorisez le chemin déjà parcouru
         </h1>
-        <p className="text-grey-9 text-lg font-medium my-8">
+        <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
           Vous pouvez les ajouter à votre panier ou les définir comme déjà
           réalisées ou non pertinentes, auquel cas nous vous proposerons
           d'autres actions.
