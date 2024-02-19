@@ -617,3 +617,4 @@ utilisateur/visite [utilisateur/visite@v2.96.0] 2024-01-25T09:31:49Z Florian <fl
 automatisation/crm [automatisation/crm@v2.97.0] 2024-02-12T15:00:41Z Amandine Jacquelin <conta@LanceLibre> # Ajoute nouvelles stats
 automatisation/crm_refresh 2024-02-12T13:27:42Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction refresh pour les vues crm
 cron/refresh_stats_views_crm 2024-02-12T13:33:26Z Amandine Jacquelin <conta@LanceLibre> # Ajoute le cron des vues crm
+@v2.98.0 2024-02-19T10:23:12Z Florian <florian@derfurth.com> # Amélioration des données envoyées au CRM
