@@ -2,7 +2,7 @@
 import BasketPicto from '@components/Picto/BasketPicto';
 import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
 import {ActionImpact} from '@tet/api';
-import {Alert, Button} from '@tet/ui';
+import {Alert, Button, CarteActionImpact} from '@tet/ui';
 
 type PanierActionsProps = {
   actionsListe: ActionImpact[];
@@ -35,16 +35,19 @@ const PanierActions = ({
             {actionsListe.length} action{actionsListe.length > 1 ? 's' : ''}{' '}
             dans mon panier
           </span>
-          {actionsListe.map(action => (
-            <div key={action.id} className="p-4 bg-primary-2">
-              <div>{action.titre}</div>
-              <div>{'€'.repeat(action.fourchette_budgetaire)}</div>
-              <div>Complexité : {action.niveau_complexite}</div>
-              <button onClick={() => onToggleSelected(action.id, false)}>
-                Retirer
-              </button>
-            </div>
-          ))}
+          <div className="flex flex-col gap-4">
+            {actionsListe.map(action => (
+              <CarteActionImpact
+                key={action.id}
+                titre={action.titre}
+                categorie={''}
+                complexite={action.niveau_complexite as 1 | 2 | 3}
+                budget={action.fourchette_budgetaire as 1 | 2 | 3}
+                panier={true}
+                onToggleSelected={() => onToggleSelected(action.id, false)}
+              />
+            ))}
+          </div>
           <Button disabled className="w-full justify-center mt-auto">
             Valider la création
           </Button>

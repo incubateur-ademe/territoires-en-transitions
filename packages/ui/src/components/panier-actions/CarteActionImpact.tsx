@@ -16,7 +16,9 @@ export const CarteActionImpact = ({
   categorie,
   complexite,
   budget,
+  panier,
   isSelected,
+  statut,
   onToggleSelected,
   onUpdateStatus,
 }: CarteActionImpactProps) => {
@@ -24,8 +26,7 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      style={{maxWidth: '400px'}}
-      className="box-content"
+      className="box-content !px-5 !py-4 lg:min-h-[165px]"
       isSelected={isSelected}
       header={
         <div className="flex justify-between">
@@ -44,12 +45,12 @@ export const CarteActionImpact = ({
             size="sm"
             state={valeurToBadge[complexite].style}
             className={classNames('absolute', {
-              'group-hover:hidden': !isSelected,
+              'group-hover:hidden': !panier || (panier && !isSelected),
             })}
           />
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          {isSelected ? (
+          {panier ? (
             <Button
               size="xs"
               className="invisible group-hover:visible ml-auto"
@@ -70,8 +71,10 @@ export const CarteActionImpact = ({
                 <Button
                   variant="outlined"
                   size="xs"
-                  className="!px-4"
-                  onClick={() => onUpdateStatus('non pertient')}
+                  className={classNames('!px-2', {
+                    '!bg-primary-3': statut === 'non_pertinent',
+                  })}
+                  onClick={() => onUpdateStatus?.('non_pertient')}
                 >
                   Non pertinent
                 </Button>
@@ -79,23 +82,27 @@ export const CarteActionImpact = ({
               <Button
                 variant="outlined"
                 size="xs"
-                className="!px-4"
-                onClick={() => onUpdateStatus('en cours')}
+                className={classNames('!px-2', {
+                  '!bg-primary-3': statut === 'en_cours',
+                })}
+                onClick={() => onUpdateStatus?.('en_cours')}
               >
                 En cours
               </Button>
               <Button
                 variant="outlined"
                 size="xs"
-                className="!px-4"
-                onClick={() => onUpdateStatus('réalisé')}
+                className={classNames('!px-2', {
+                  '!bg-primary-3': statut === 'realise',
+                })}
+                onClick={() => onUpdateStatus?.('realise')}
               >
                 Réalisé
               </Button>
 
               <Button
                 size="xs"
-                className="!px-4"
+                className="!px-2"
                 onClick={() => handleToggleSelect(true)}
               >
                 Ajouter
