@@ -51,7 +51,9 @@ export const Redirector = () => {
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
     // si l'invitation requiert la connexion, on redirige sur "se connecter"
-    if (invitationState === 'waitingForLogin') history.push(signInPath);
+    if (invitationState === 'waitingForLogin') {
+      document.location.replace(signInPath);
+    }
   }, [invitationState]);
 
   // réagit aux changements de l'état utilisateur connecté/déconnecté
@@ -59,7 +61,7 @@ export const Redirector = () => {
     // si déconnecté on redirige sur la page d'accueil (ou la page "se
     // connecter" dans le cas d'une invitation en attente de connexion)
     if (!isConnected && invitationState === 'waitingForLogin') {
-      history.push(signInPath);
+      document.location.replace(signInPath);
     }
   }, [isConnected, invitationState]);
 
