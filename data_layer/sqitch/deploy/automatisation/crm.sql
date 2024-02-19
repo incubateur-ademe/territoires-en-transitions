@@ -2,6 +2,8 @@
 
 BEGIN;
 
+set statement_timeout to 3600000;
+
 drop view public.crm_usages;
 drop materialized view stats.crm_usages;
 
