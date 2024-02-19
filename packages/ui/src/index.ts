@@ -16,6 +16,7 @@ export * from './design-system/Checkbox';
 export * from './design-system/Field';
 export * from './design-system/Footer';
 export * from './design-system/FormSection';
+export * from './design-system/Header';
 export * from './design-system/Icon';
 export * from './design-system/Input';
 export * from './design-system/Modal';
