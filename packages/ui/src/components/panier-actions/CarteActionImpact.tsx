@@ -26,7 +26,7 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className="box-content !px-5 !py-4 lg:min-h-[165px]"
+      className="box-content !px-5 !py-4 h-[160px]"
       isSelected={isSelected}
       header={
         <div className="flex justify-between">
@@ -38,77 +38,72 @@ export const CarteActionImpact = ({
         </div>
       }
       footer={
-        <div className="flex justify-between items-center relative">
+        <div className="relative z-0">
           {/* Badge de complexité */}
           <Badge
             title={`Complexité ${valeurToBadge[complexite].nom}`}
             size="sm"
             state={valeurToBadge[complexite].style}
-            className={classNames('absolute', {
-              'group-hover:hidden': !panier || (panier && !isSelected),
-            })}
           />
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          {panier ? (
-            <Button
-              size="xs"
-              className="invisible group-hover:visible ml-auto"
-              onClick={() => handleToggleSelect(false)}
-            >
-              Retirer du panier
-            </Button>
-          ) : (
-            <div className="flex gap-2 invisible group-hover:visible ml-auto">
-              <Tooltip
-                label={
-                  <div className="font-normal text-center w-48">
-                    Hors compétence de la collectivité ou non prioritaire
-                  </div>
-                }
-                placement="top"
-              >
+          <div className="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
+            {panier ? (
+              <Button size="xs" onClick={() => handleToggleSelect(false)}>
+                Retirer du panier
+              </Button>
+            ) : (
+              <>
+                <Tooltip
+                  label={
+                    <div className="font-normal text-center w-48">
+                      Hors compétence de la collectivité ou non prioritaire
+                    </div>
+                  }
+                  placement="top"
+                >
+                  <Button
+                    variant="outlined"
+                    size="xs"
+                    className={classNames('!px-3', {
+                      '!bg-primary-2': statut === 'non_pertinent',
+                    })}
+                    onClick={() => onUpdateStatus?.('non_pertinent')}
+                  >
+                    Non pertinente
+                  </Button>
+                </Tooltip>
                 <Button
                   variant="outlined"
                   size="xs"
-                  className={classNames('!px-2', {
-                    '!bg-primary-3': statut === 'non_pertinent',
+                  className={classNames('!px-3', {
+                    '!bg-primary-2': statut === 'en_cours',
                   })}
-                  onClick={() => onUpdateStatus?.('non_pertient')}
+                  onClick={() => onUpdateStatus?.('en_cours')}
                 >
-                  Non pertinent
+                  En cours
                 </Button>
-              </Tooltip>
-              <Button
-                variant="outlined"
-                size="xs"
-                className={classNames('!px-2', {
-                  '!bg-primary-3': statut === 'en_cours',
-                })}
-                onClick={() => onUpdateStatus?.('en_cours')}
-              >
-                En cours
-              </Button>
-              <Button
-                variant="outlined"
-                size="xs"
-                className={classNames('!px-2', {
-                  '!bg-primary-3': statut === 'realise',
-                })}
-                onClick={() => onUpdateStatus?.('realise')}
-              >
-                Réalisé
-              </Button>
+                <Button
+                  variant="outlined"
+                  size="xs"
+                  className={classNames('!px-3', {
+                    '!bg-primary-2': statut === 'realise',
+                  })}
+                  onClick={() => onUpdateStatus?.('realise')}
+                >
+                  Réalisée
+                </Button>
 
-              <Button
-                size="xs"
-                className="!px-2"
-                onClick={() => handleToggleSelect(true)}
-              >
-                Ajouter
-              </Button>
-            </div>
-          )}
+                <Button
+                  size="xs"
+                  className="!px-2"
+                  onClick={() => handleToggleSelect(true)}
+                >
+                  Ajouter
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       }
     >

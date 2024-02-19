@@ -109,21 +109,21 @@ export const ModaleActionImpact = ({
               <Button
                 variant="outlined"
                 className={classNames({
-                  'bg-primary-3': statut === 'non_pertinent',
+                  'bg-primary-2': statut === 'non_pertinent',
                 })}
                 onClick={() => {
                   onUpdateStatus?.('non_pertinent');
                   close();
                 }}
               >
-                Non pertinent
+                Non pertinente
               </Button>
             </Tooltip>
 
             <Button
               variant="outlined"
               className={classNames({
-                'bg-primary-3': statut === 'en_cours',
+                'bg-primary-2': statut === 'en_cours',
               })}
               onClick={() => {
                 onUpdateStatus?.('en_cours');
@@ -135,14 +135,14 @@ export const ModaleActionImpact = ({
             <Button
               variant="outlined"
               className={classNames({
-                'bg-primary-3': statut === 'realise',
+                'bg-primary-2': statut === 'realise',
               })}
               onClick={() => {
                 onUpdateStatus?.('realise');
                 close();
               }}
             >
-              Réalisé
+              Réalisée
             </Button>
           </ModalFooterSection>
           <Button

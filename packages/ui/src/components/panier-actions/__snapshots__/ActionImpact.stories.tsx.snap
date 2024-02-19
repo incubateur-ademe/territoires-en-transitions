@@ -4,7 +4,7 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
 <div aria-expanded="false"
      aria-haspopup="dialog"
 >
-  <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border border-primary-3 box-content !px-5 !py-4 lg:min-h-[165px]">
+  <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border border-primary-3 box-content !px-5 !py-4 h-[160px]">
     <div class="text-primary-8 text-sm font-bold">
       <div class="flex justify-between">
         <div>
@@ -22,23 +22,23 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
     </div>
     Désigner une (ou plusieurs personnes) chef de projet transition écologique
     <div class="text-primary-8 text-sm font-bold mt-auto">
-      <div class="flex justify-between items-center relative">
+      <div class="relative z-0">
         <div data-test="Badge-undefined"
-             class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 absolute group-hover:hidden"
+             class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
         >
           <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
             Complexité simple
           </span>
         </div>
-        <div class="flex gap-2 invisible group-hover:visible ml-auto">
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
-            Non pertinent
+        <div class="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-3">
+            Non pertinente
           </button>
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-3">
             En cours
           </button>
-          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
-            Réalisé
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-3">
+            Réalisée
           </button>
           <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-2">
             Ajouter
