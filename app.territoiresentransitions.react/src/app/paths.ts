@@ -26,7 +26,7 @@ export const recherchesPlansUrl = `${recherchesPath}/plans`;
 export const ancienRecherchesPath = '/toutes_collectivites';
 
 // Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
-export const homePath = recherchesPath;
+export const homePath = recherchesCollectivitesUrl;
 
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
