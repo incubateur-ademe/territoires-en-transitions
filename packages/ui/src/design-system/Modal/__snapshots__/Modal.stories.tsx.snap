@@ -12,8 +12,7 @@ exports[`design-system/Modal AvecFooter smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/Modal Default smoke-test 1`] = `
-exports[`Design System/Modal Controlled smoke-test 1`] = `
+exports[`design-system/Modal Controlled smoke-test 1`] = `
 <div class="p-8">
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     Open
@@ -21,7 +20,7 @@ exports[`Design System/Modal Controlled smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal Default smoke-test 1`] = `
+exports[`design-system/Modal Default smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
