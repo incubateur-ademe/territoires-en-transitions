@@ -124,6 +124,18 @@ Pour une collectivité sans compétence voirie, le score de la 4.2.3 est réduit
 Pour une collectivité de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit de 50 %.
 Les réductions sont cumulables.
 
+# Désactivation cae 4.2.3 liee AMO, voirie et petites collectivites
+```yaml
+action_id: cae_4.2.3
+```
+## Règles 
+### Désactivation
+```formule
+si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors VRAI
+```
+Pour une collectivité non AOM, sans compétence voirie, de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit à 0 et l'action entière est "Non concernée".
+
+
 # Désactivation cae 4.2.3.5 liee stationnement
 ```yaml
 action_id: cae_4.2.3.5
