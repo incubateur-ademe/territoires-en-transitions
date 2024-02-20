@@ -59,6 +59,8 @@ const ListeActions = ({
               classname="mb-8"
             />
             {!tab.status && !actionsFiltrees.length ? (
+              <ListeVide success />
+            ) : !!tab.status && !actionsFiltrees.length ? (
               <ListeVide />
             ) : (
               <ListeActionsFiltrees
