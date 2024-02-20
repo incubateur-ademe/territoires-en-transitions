@@ -3,7 +3,6 @@ import {useRouter} from 'next/navigation';
 import {setAuthTokens} from '@tet/api';
 import {Credentials, LoginView, DOMAIN} from '@tet/ui';
 import {createClient} from 'src/supabase/client';
-import {Session} from '@supabase/supabase-js';
 
 const errorMessage = {
   par_mdp: "L'email et le mot de passe ne correspondent pas",
