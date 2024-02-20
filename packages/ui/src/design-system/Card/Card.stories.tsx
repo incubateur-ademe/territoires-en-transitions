@@ -21,6 +21,14 @@ export const Default: Story = {
   },
 };
 
+/** Carte clickable. */
+export const WithOnClick: Story = {
+  args: {
+    children: content,
+    onClick: () => alert('onClick'),
+  },
+};
+
 /** Carte sélectionnée, avec hovering effect. */
 export const WithSelect: Story = {
   args: {
@@ -29,11 +37,20 @@ export const WithSelect: Story = {
   },
 };
 
-/** Carte clickable. */
-export const WithOnClick: Story = {
+/** Carte désactivée. */
+export const Disabled: Story = {
   args: {
     children: content,
     onClick: () => alert('onClick'),
+    disabled: true,
+  },
+};
+
+/** Carte lien. */
+export const WithLink: Story = {
+  args: {
+    children: content,
+    href: '#',
   },
 };
 
