@@ -4,7 +4,7 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
 <div aria-expanded="false"
      aria-haspopup="dialog"
 >
-  <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:m-0 hover:cursor-pointer hover:shadow-md hover:border-2 hover:border-primary-4 border border-primary-3 box-content"
+  <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3 box-content"
        style="max-width: 400px;"
   >
     <div class="text-primary-8 text-sm font-bold">
