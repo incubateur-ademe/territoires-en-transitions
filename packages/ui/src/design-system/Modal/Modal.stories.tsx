@@ -1,5 +1,5 @@
 import {Meta, StoryObj} from '@storybook/react';
-import {forwardRef} from 'react';
+import {forwardRef, useState} from 'react';
 
 import {Modal} from '.';
 import {Button} from '@design-system/Button';
@@ -155,6 +155,31 @@ export const Size: Story = {
           <OpenButton text="xl" />
         </Modal>
       </div>
+    );
+  },
+};
+
+export const Controlled: Story = {
+  args: {
+    textAlign: 'left',
+    title: 'Un titre simple',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
+  },
+  render: args => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+      <>
+        <Modal
+          {...args}
+          openState={{
+            isOpen,
+            setIsOpen,
+          }}
+        />
+        <OpenButton onClick={() => setIsOpen(!isOpen)} />
+      </>
     );
   },
 };

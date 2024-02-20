@@ -195,12 +195,12 @@ export const Modal = ({
                   </div>
                 )}
                 {render?.({
-                  close: () => setOpen(false),
+                  close: handleOpenChange,
                   labelId,
                   descriptionId,
                 })}
                 {renderFooter?.({
-                  close: () => setOpen(false),
+                  close: handleOpenChange,
                 })}
               </div>
             </FloatingFocusManager>
