@@ -50,9 +50,10 @@ export const restoreSessionFromAuthTokens = async (
   const refreshTokenCookie = cookies.find(x => x[0] === REFRESH_TOKEN);
 
   if (accessTokenCookie && refreshTokenCookie) {
-    await supabase.auth.setSession({
+    return supabase.auth.setSession({
       access_token: accessTokenCookie[1],
       refresh_token: refreshTokenCookie[1],
     });
   }
+  return null;
 };

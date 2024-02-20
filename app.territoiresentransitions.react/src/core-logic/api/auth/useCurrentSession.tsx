@@ -6,14 +6,27 @@ import {ENV} from 'environmentVariables';
 export const useCurrentSession = () => {
   const {data, error} = useQuery(['session'], async () => {
     // restaure une éventuelle session précédente
-    await restoreSessionFromAuthTokens(supabaseClient);
+    const ret = await restoreSessionFromAuthTokens(supabaseClient);
+    if (ret) {
+      const {data, error} = ret;
+      if (data?.session) {
+        return data?.session;
+      }
+      throw error;
+    }
 
-    return supabaseClient.auth.getSession();
+    const {data, error} = await supabaseClient.auth.getSession();
+    if (data?.session) {
+      return data?.session;
+    }
+    throw error;
   });
-  if (error || !data?.data?.session) {
+
+  if (error || !data) {
     return null;
   }
-  return data.data.session;
+
+  return data;
 };
 
 export const useAuthHeaders = () => {
