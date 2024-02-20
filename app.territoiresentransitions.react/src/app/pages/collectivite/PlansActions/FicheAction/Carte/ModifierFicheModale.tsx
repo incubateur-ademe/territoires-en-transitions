@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import classNames from 'classnames';
 
 import {
   Checkbox,
@@ -19,20 +18,30 @@ import {
 import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgePriorite from '../../components/BadgePriorite';
 import {useUpdateFicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
+import {format} from 'date-fns';
 // import PersonnesPilotes from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PersonnesPilotes';
 // import PlansDropdown from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PlansDropdown';
 
 type Props = {
   initialFiche: FicheResume;
-  children: JSX.Element;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   axeId?: number;
 };
 
 /**
  * Modale pour modifier une fiche action.
  */
-const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
-  const {mutate: updateFiche} = useUpdateFicheResume(axeId);
+const ModifierFicheModale = ({
+  initialFiche,
+  axeId,
+  isOpen,
+  setIsOpen,
+}: Props) => {
+  const {mutate: updateFiche} = useUpdateFicheResume(
+    initialFiche.id!.toString(),
+    axeId
+  );
 
   const [fiche, setFiche] = useState(initialFiche);
 
@@ -40,6 +49,10 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
     <Modal
       dataTest="ModifierFicheModale"
       size="md"
+      openState={{
+        isOpen,
+        setIsOpen,
+      }}
       onClose={() => setFiche(initialFiche)}
       title="Modifier la fiche action"
       render={({close}) => {
@@ -109,7 +122,14 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
               <Field title="Date de fin prévisionnelle">
                 <Input
                   type="date"
-                  value={fiche.date_fin_provisoire ?? ''}
+                  value={
+                    fiche.date_fin_provisoire
+                      ? format(
+                          new Date(fiche.date_fin_provisoire),
+                          'yyyy-MM-dd'
+                        )
+                      : ''
+                  }
                   onChange={e =>
                     setFiche({
                       ...fiche,
@@ -130,7 +150,7 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
                         date_fin_provisoire: null,
                       });
                     }}
-                    checked={fiche.amelioration_continue ?? false}
+                    checked={!!fiche.amelioration_continue}
                   />
                 </div>
               </Field>
@@ -147,9 +167,7 @@ const ModifierFicheModale = ({initialFiche, axeId, children}: Props) => {
           </div>
         );
       }}
-    >
-      {children}
-    </Modal>
+    />
   );
 };
 

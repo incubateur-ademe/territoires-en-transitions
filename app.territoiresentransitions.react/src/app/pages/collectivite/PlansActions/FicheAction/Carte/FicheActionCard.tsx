@@ -12,6 +12,7 @@ import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import ModifierFicheModale from './ModifierFicheModale';
+import {useState} from 'react';
 
 type Props = {
   link?: string;
@@ -36,6 +37,8 @@ const FicheActionCard = ({
 
   const isNotClickable =
     collectivite?.niveau_acces === null && ficheAction.restreint;
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheAction.id!,
@@ -66,16 +69,25 @@ const FicheActionCard = ({
       {/** Menu d'options */}
       {!collectivite?.readonly && isEditable && (
         <div className="group absolute top-4 right-4 !flex gap-2">
-          <ModifierFicheModale initialFiche={ficheAction} axeId={axeId}>
+          <>
+            {isEditOpen && (
+              <ModifierFicheModale
+                initialFiche={ficheAction}
+                axeId={axeId}
+                isOpen={isEditOpen}
+                setIsOpen={() => setIsEditOpen(!isEditOpen)}
+              />
+            )}
             <button
               data-test="EditerFicheBouton"
               id={`fiche-${ficheAction.id}-edit-button`}
               title="Modifier"
+              onClick={() => setIsEditOpen(!isEditOpen)}
               className={classNames(
                 'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-primary-3 rounded-lg'
               )}
             />
-          </ModifierFicheModale>
+          </>
           <FicheActionSupprimerModal
             buttonClassname="invisible group-hover:visible !bg-white rounded-lg"
             isInMultipleAxes={
