@@ -1,16 +1,27 @@
+import SearchPicto from '@components/Picto/SearchPicto';
 import SuccessPicto from '@components/Picto/SuccessPicto';
 
-const ListeVide = () => {
+type ListeVideProps = {
+  success?: boolean;
+};
+
+const ListeVide = ({success}: ListeVideProps) => {
   return (
-    <div className="h-[700px] bg-white rounded-lg border-[0.5px] border-primary-3 px-4 py-24 flex flex-col justify-center items-center">
-      <SuccessPicto className="mb-4" />
+    <div className="bg-white rounded-lg px-4 pt-2 pb-8 flex flex-col justify-center items-center">
+      {success ? (
+        <SuccessPicto className="mb-6" />
+      ) : (
+        <SearchPicto className="my-6" />
+      )}
       <h6 className="text-primary-8 text-lg font-bold text-center mb-0">
-        Félicitations, votre politique de transition écologique semble bien
-        avancée.
+        {success
+          ? 'Félicitations, votre politique de transition écologique semble bien avancée.'
+          : "Désolé, aucune correspondance n'a été trouvée pour votre recherche !"}
       </h6>
       <h6 className="text-grey-6 text-lg font-bold text-center mb-0">
-        Toutes les actions à impact sont déjà mises en œuvre ou en cours dans
-        votre collectivité !
+        {success
+          ? 'Toutes les actions à impact sont déjà mises en œuvre ou en cours dans votre collectivité !'
+          : " Modifiez vos critères pour obtenir des résultats. Pour toute question, n'hésitez pas à nous contacter via le chat."}
       </h6>
     </div>
   );
