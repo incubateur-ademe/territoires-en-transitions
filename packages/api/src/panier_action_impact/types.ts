@@ -4,7 +4,7 @@ export type ActionImpactCategorie =
   Database["public"]["Tables"]["action_impact_categorie"]["Row"];
 
 export type ActionImpactThematique =
-  Database["public"]["Tables"]["action_impact_thematique"]["Row"];
+  Database["public"]["Tables"]["thematique"]["Row"];
 
 export type FNV = Database["public"]["Tables"]["categorie_fnv"]["Row"];
 
@@ -13,7 +13,8 @@ export type ActionImpact =
 
 /* Le resumé d'une action à impact, utilisé pour les cartes  */
 export type ActionImpactSnippet =
-  Omit<ActionImpact, 'description' | 'ressources_externes'> & {thematiques: ActionImpactThematique[]};
+// todo: Omit<ActionImpact, 'description' | 'ressources_externes'>
+  ActionImpact & {thematiques: ActionImpactThematique[]};
 
 /* Une action à impact avec des informations complémentaires, utilisé par la modale */
 export type ActionImpactDetails =
