@@ -468,6 +468,9 @@ do $$
         update labellisation.audit set clos = true where id = 6636;
         update labellisation.demande set en_cours = false where id = 219154;
 
+        update labellisation.audit set clos = true where valide;
+        update labellisation.audit set clos = true where date_fin < current_timestamp;
+
         alter table labellisation.audit enable trigger after_write_update_audit_scores;
         alter table labellisation.audit enable trigger on_audit_update;
         alter table labellisation.demande enable trigger envoyee_le;
