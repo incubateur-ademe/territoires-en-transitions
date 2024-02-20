@@ -1,3 +1,4 @@
+import Footer from './Footer';
 import Header from './Header';
 import './global.css';
 import {PHProvider} from './providers';
@@ -39,9 +40,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
               </div>
             </div>
           </div>
-          <footer className="px-4 lg:px-6 xl:px-2 py-8 text-center">
-            FOOTER
-          </footer>
+          <Footer />
         </body>
       </PHProvider>
     </html>
