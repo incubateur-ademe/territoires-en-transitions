@@ -1,5 +1,5 @@
 import {naturalSort} from 'utils/naturalSort';
-import {FicheResume, Personne} from './types';
+import {FicheAction, FicheResume, Personne} from './types';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -60,3 +60,18 @@ export const ficheResumeFactory = ({
     restreint: false,
   };
 };
+
+/** Transforme une fiche action en fiche résumée */
+export const ficheActionToResume = (fiche: FicheAction): FicheResume => ({
+  id: fiche.id,
+  collectivite_id: fiche.collectivite_id,
+  date_fin_provisoire: fiche.date_fin_provisoire,
+  amelioration_continue: fiche.amelioration_continue,
+  modified_at: fiche.modified_at,
+  niveau_priorite: fiche.niveau_priorite,
+  pilotes: fiche.pilotes,
+  plans: fiche.axes?.filter(axe => axe.parent === null) ?? null,
+  statut: fiche.statut,
+  titre: fiche.titre,
+  restreint: fiche.restreint,
+});
