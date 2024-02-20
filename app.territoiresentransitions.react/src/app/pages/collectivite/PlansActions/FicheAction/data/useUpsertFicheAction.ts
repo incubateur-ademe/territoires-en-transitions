@@ -3,8 +3,9 @@ import {useHistory} from 'react-router-dom';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheAction} from './types';
+import {FicheAction, FicheResume} from './types';
 import {makeCollectiviteFicheNonClasseeUrl} from 'app/paths';
+import {ficheActionToResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 
 /** Upsert une fiche action pour une collectivité */
 const upsertFicheAction = async (fiche: FicheAction) => {
@@ -57,15 +58,25 @@ export const useEditFicheAction = () => {
     mutationKey: 'edit_fiche',
     onMutate: async fiche => {
       const ficheActionKey = ['fiche_action', fiche.id?.toString()];
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
+
       await queryClient.cancelQueries({queryKey: ficheActionKey});
 
-      // Snapshot the previous value
-      const previousFiche: {fiche: FicheAction} | undefined =
-        queryClient.getQueryData(ficheActionKey);
+      // const previousData = [
+      //   [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
+      //   [ficheActionKey, queryClient.getQueryData(ficheActionKey)],
+      // ];
 
-      // Optimistically update to the new value
+      const previousData =
+        fiche.axes?.map(axeId => {
+          const key = ['axe_fiches', axeId || null];
+          return [key, queryClient.getQueryData(key)];
+        }) || [];
+
+      previousData.push([
+        ficheActionKey,
+        queryClient.getQueryData(ficheActionKey),
+      ]);
+
       queryClient.setQueryData(
         ficheActionKey,
         (old?: {fiche: FicheAction}) => ({
@@ -76,18 +87,32 @@ export const useEditFicheAction = () => {
         })
       );
 
-      // Return a context object with the snapshotted value
-      return {previousFiche};
-    },
-    onSettled: (data, err, fiche, context) => {
-      if (err) {
+      fiche.axes?.forEach(axeId => {
         queryClient.setQueryData(
-          ['fiche_action', fiche.id],
-          context?.previousFiche
+          ['axe_fiches', axeId || null],
+          (old: FicheResume[] | undefined): FicheResume[] => {
+            return (
+              old?.map(f =>
+                f.id !== fiche.id ? f : ficheActionToResume(fiche)
+              ) || []
+            );
+          }
+        );
+      });
+
+      return previousData;
+    },
+    onSettled: (data, err, fiche, previousData) => {
+      if (err) {
+        previousData?.forEach(([key, data]) =>
+          queryClient.setQueryData(key as string[], data)
         );
       }
       queryClient.invalidateQueries(['fiche_action', fiche.id?.toString()]);
-
+      fiche.axes?.forEach(axe =>
+        queryClient.invalidateQueries(['axe_fiches', axe.id])
+      );
+      // fiches non classées
       queryClient.invalidateQueries(['axe_fiches', null]);
       queryClient.invalidateQueries(['structures', collectivite_id]);
       queryClient.invalidateQueries(['partenaires', collectivite_id]);
