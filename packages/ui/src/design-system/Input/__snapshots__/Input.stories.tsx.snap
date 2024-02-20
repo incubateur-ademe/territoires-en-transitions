@@ -201,7 +201,27 @@ exports[`design-system/Input TypeNumberIntAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/Input TypePassword smoke-test 1`] = `
+exports[`Design System/Input TypeOTP smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="grow text-grey-8 px-4 outline-none text-md py-3 w-32 text-lg text-center"
+         inputmode="numeric"
+         value="_ _ _ _ _ _"
+  >
+</div>
+`;
+
+exports[`Design System/Input TypeOTPAvecValeur smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="grow text-grey-8 px-4 outline-none text-md py-3 w-32 text-lg text-center"
+         inputmode="numeric"
+         value="1 2 3 4 5 6"
+  >
+</div>
+`;
+
+exports[`Design System/Input TypePassword smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="password"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4"
@@ -231,7 +251,27 @@ exports[`design-system/Input TypePasswordAvecValeur smoke-test 1`] = `
 </div>
 `;
 
-exports[`design-system/Input TypeSearch smoke-test 1`] = `
+exports[`Design System/Input TypePattern smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="grow text-grey-8 px-4 outline-none text-md py-3"
+         inputmode="numeric"
+         value="_ _ _ _"
+  >
+</div>
+`;
+
+exports[`Design System/Input TypePatternAvecValeur smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="text"
+         class="grow text-grey-8 px-4 outline-none text-md py-3"
+         inputmode="numeric"
+         value="1 2 3 4"
+  >
+</div>
+`;
+
+exports[`Design System/Input TypeSearch smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="search"
          class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 search-reset:appearance-none search-reset:w-5 search-reset:h-5 search-reset:bg-close-circle-fill"

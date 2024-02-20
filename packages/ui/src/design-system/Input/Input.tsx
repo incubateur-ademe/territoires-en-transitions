@@ -4,13 +4,17 @@ import {InputDate, InputDateProps} from './InputDate';
 import {InputSearch, InputSearchProps} from './InputSearch';
 import {InputPassword, InputPasswordProps} from './InputPassword';
 import {InputNumber, InputNumberProps} from './InputNumber';
+import {InputPattern, InputPatternProps} from './InputPattern';
+import {InputOTP, InputOTPProps} from './InputOTP';
 
 type InputProps =
   | (Omit<InputBaseProps, 'type'> & {type: 'text'})
   | (InputNumberProps & {type: 'number'})
   | (InputDateProps & {type: 'date'})
   | (InputSearchProps & {type: 'search'})
-  | (InputPasswordProps & {type: 'password'});
+  | (InputPasswordProps & {type: 'password'})
+  | (InputPatternProps & {type: 'pattern'})
+  | (InputOTPProps & {type: 'otp'});
 
 /**
  * Affiche un champ de saisie, éventuellement combiné à une zone d'icône (ou de
@@ -34,6 +38,14 @@ export const Input = forwardRef(
 
     if (type === 'number') {
       return <InputNumber {...(props as InputNumberProps)} ref={ref} />;
+    }
+
+    if (type === 'pattern') {
+      return <InputPattern {...(props as InputPatternProps)} ref={ref} />;
+    }
+
+    if (type === 'otp') {
+      return <InputOTP {...(props as InputOTPProps)} ref={ref} />;
     }
 
     return <InputBase {...(props as InputBaseProps)} ref={ref} />;
