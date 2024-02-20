@@ -1,6 +1,5 @@
-import {AnchorHTMLAttributes, ButtonHTMLAttributes} from 'react';
-
 import {IconValue} from '@design-system/Icon';
+import {AnchorHTMLProps, ButtonHTMLProps} from 'utils/types';
 
 export type ButtonState = 'default' | 'disabled';
 
@@ -36,18 +35,9 @@ type BaseButtonProps = {
   external?: boolean;
 } & ButtonContentProps;
 
-// On définit les types des props des éléments HTML
-export type ButtonHTMLProps = ButtonHTMLAttributes<HTMLButtonElement>;
-export type AnchorHTMLProps = AnchorHTMLAttributes<HTMLAnchorElement>;
-type UnknownHTMLProps = ButtonHTMLProps | AnchorHTMLProps;
-
 // On définit les types des props du composant <Button>
 export type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
 type AnchorButtonProps = BaseButtonProps & AnchorHTMLProps;
+
 /** Props données au composant générique <Button> */
 export type ButtonProps = DefaultButtonProps | AnchorButtonProps;
-
-/** Permet de déterminer si l'élément HTML est une ancre ou un bouton */
-export function isAnchor(props: UnknownHTMLProps): props is AnchorHTMLProps {
-  return (props as AnchorHTMLProps).href !== undefined;
-}

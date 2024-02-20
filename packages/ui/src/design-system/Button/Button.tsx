@@ -1,14 +1,10 @@
 import {Ref, forwardRef} from 'react';
 import classNames from 'classnames';
 
+import {ButtonHTMLProps, isAnchor} from 'utils/types';
 import {buttonSizeClassnames, buttonThemeClassnames} from './theme';
 import ButtonContent from './ButtonContent';
-import {
-  ButtonContentProps,
-  ButtonHTMLProps,
-  ButtonProps,
-  isAnchor,
-} from './types';
+import {ButtonContentProps, ButtonProps} from './types';
 
 /**
  * Composant bouton par défaut, ayant pour props toutes les props habituelles d'un button tag.
