@@ -3,7 +3,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from '../database.types';
 import { ActionImpactDetails } from './types';
 
-export const actionDetailsSelect = "*, categoriesFNV:categorie_fnv(*)";
+export const actionDetailsSelect = "*, categoriesFNV:categorie_fnv(*), thematiques:thematique(*)";
 
 export class ActionImpactAPI {
   protected supabase: SupabaseClient<Database>;
