@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import {HTMLAttributes} from 'react';
 import {AnchorHTMLProps, DivHTMLProps, isAnchor} from 'utils/types';
 
 /** Types custom de Card */
@@ -14,6 +13,8 @@ type BaseCardProps = {
   isSelected?: boolean;
   /** Indique si la carte est désactivée */
   disabled?: boolean;
+  /** Pourque le lien ouvre un nouvel onglet */
+  external?: boolean;
 };
 
 /** Type carte bouton */
@@ -38,9 +39,14 @@ export const Card = ({
   className,
   onClick,
   disabled,
+  external,
   ...otherProps
-}: CardProps & HTMLAttributes<HTMLDivElement>) => {
-  const hasHoverEffect = (isSelected !== undefined || !!onClick) && !disabled;
+}: CardProps) => {
+  const isLink = isAnchor(otherProps);
+
+  const hasHoverEffect =
+    (isSelected !== undefined || !!onClick || (isLink && !!otherProps.href)) &&
+    !disabled;
 
   const appliedClassname = classNames(
     'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group',
@@ -54,21 +60,24 @@ export const Card = ({
     className
   );
 
-  if (isAnchor(otherProps)) {
+  if (isLink) {
     return (
       <a
         {...otherProps}
         className={classNames('bg-none after:hidden', appliedClassname)}
+        target={external ? '_blank' : otherProps.target}
+        rel={external ? 'noreferrer noopener' : otherProps.rel}
       >
         <CardContent header={header} footer={footer} children={children} />
       </a>
     );
   } else {
+    const divCardProps = {...otherProps} as DivHTMLProps;
     return (
       <div
-        {...otherProps}
+        {...divCardProps}
         className={appliedClassname}
-        onClick={!disabled ? onClick : undefined}
+        onClick={!disabled ? divCardProps.onClick : undefined}
       >
         <CardContent header={header} footer={footer} children={children} />
       </div>
