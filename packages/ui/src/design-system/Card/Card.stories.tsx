@@ -54,6 +54,15 @@ export const WithLink: Story = {
   },
 };
 
+/** Carte lien externe. */
+export const WithExternalLink: Story = {
+  args: {
+    children: content,
+    href: '#',
+    external: true,
+  },
+};
+
 /** Carte avec en-tête au format composant. */
 export const WithHeader: Story = {
   args: {
