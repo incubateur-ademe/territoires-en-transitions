@@ -118,7 +118,7 @@ const View = ({
               <h4 className="mb-0 text-center leading-10 text-gray-500 md:text-left">
                 <span className="text-primary-7">
                   {dataCount === 1
-                    ? `Une ${viewToText[view]}`
+                    ? `1 ${viewToText[view]}`
                     : `${dataCount} ${viewToText[view]}s`}{' '}
                 </span>
                 <span className="text-primary-10">
