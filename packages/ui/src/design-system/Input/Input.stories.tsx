@@ -201,6 +201,41 @@ export const TypeNumberFloatAvecValeur: Story = {
   },
 };
 
+/** Saisie avec pattern */
+export const TypePattern: Story = {
+  args: {
+    type: 'pattern',
+    format: '# # # #',
+    mask: '_',
+    allowEmptyFormatting: true
+  },
+};
+
+export const TypePatternAvecValeur: Story = {
+  args: {
+    type: 'pattern',
+    format: '# # # #',
+    mask: '_',
+    value: '1234'
+  },
+};
+
+/** Saisie OTP */
+export const TypeOTP: Story = {
+  args: {
+    type: 'otp',
+    onValidChange: action('onValidChange')
+  },
+};
+
+export const TypeOTPAvecValeur: Story = {
+  args: {
+    type: 'otp',
+    value: '123456',
+    onValidChange: action('onValidChange')
+  },
+};
+
 /** Recherche en cours. */
 export const TypeSearchLoading: Story = {
   args: {
