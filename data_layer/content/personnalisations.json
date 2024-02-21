@@ -1345,9 +1345,14 @@
           "description": "<p>Pour une collectivit\u00e9 non AOM, le score de la 4.2.3 est r\u00e9duit de 25 %.</p>\n<p>Pour une collectivit\u00e9 sans comp\u00e9tence voirie, le score de la 4.2.3 est r\u00e9duit de 25 %.</p>\n<p>Pour une collectivit\u00e9 de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est r\u00e9duit de 50 %.</p>\n<p>Les r\u00e9ductions sont cumulables.</p>\n",
           "formule": "si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors 0\nsinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors 0\nsinon si identite(population, moins_de_10000) et reponse(AOM_1, NON) alors 0.25\nsinon si reponse(centre_polarite, NON) et reponse(AOM_1, NON) alors 0.25\nsinon si identite(population, moins_de_10000) et reponse (voirie_1, voirie_1_c) alors 0.25\nsinon si reponse(centre_polarite, NON) et reponse (voirie_1, voirie_1_c) alors 0.25\nsinon si identite(population, moins_de_10000) ou reponse(centre_polarite, NON) alors 0.5\nsinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) alors 0.5 \nsinon si reponse(AOM_1, NON) alors 0.75\nsinon si reponse (voirie_1, voirie_1_c) alors 0.75\n",
           "type": "reduction"
+        },
+        {
+          "description": "<p>Pour une collectivit\u00e9 non AOM, sans comp\u00e9tence voirie, de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est r\u00e9duit \u00e0 0 et l'action enti\u00e8re est &quot;Non concern\u00e9e&quot;.</p>\n",
+          "formule": "si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors VRAI\nsinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors VRAI\n",
+          "type": "desactivation"
         }
       ],
-      "titre": "R\u00e9duction potentiel cae 4.2.3 liee AMO et voirie et population"
+      "titre": "R\u00e9duction de potentiel li\u00e9e AMO et voirie et population et d\u00e9sactivation li\u00e9e AMO, voirie et petites collectivites"
     },
     {
       "action_id": "cae_4.2.3.5",
