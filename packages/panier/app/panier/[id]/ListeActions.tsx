@@ -37,7 +37,6 @@ const ListeActions = ({
     {label: 'Sélection', status: null},
     {label: 'Réalisées', status: 'realise'},
     {label: 'En cours de réalisation', status: 'en_cours'},
-    {label: 'Non pertinentes', status: 'non_pertinent'},
   ];
 
   return (
@@ -54,8 +53,7 @@ const ListeActions = ({
             <Alert
               isOpen={openAlert}
               onClose={() => setOpenAlert(false)}
-              title="Nous avons personnalisé la liste selon votre territoire et vos
-                compétences. Vous pouvez modifier grâce aux filtres"
+              title="Nous avons personnalisé la liste selon votre territoire et votre domaine d'action. Vous pouvez élargir la sélection grâce aux filtres."
               classname="mb-8"
             />
             {!tab.status && !actionsFiltrees.length ? (
