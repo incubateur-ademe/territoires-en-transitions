@@ -2,7 +2,6 @@
 
 BEGIN;
 
-alter type usage_fonction add value if not exists 'export_xlsx';
-alter type usage_fonction add value if not exists 'export_docx';
+alter type usage_fonction add value if not exists 'filtre_type_de_plan';
 
 COMMIT;

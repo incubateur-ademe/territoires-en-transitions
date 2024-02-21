@@ -631,3 +631,5 @@ retool/audit [retool/audit@v2.96.0] 2024-02-06T10:04:24Z Amandine Jacquelin <con
 
 plan_action/fiches [plan_action/fiches@v2.96.0] 2024-02-05T09:57:28Z Amandine Jacquelin <conta@LanceLibre> # Ajoute amelioration continue à fiche resume
 @v2.101.0 2024-02-21T14:03:27Z Florian <florian@derfurth.com> # Permet d'éditer les fiches à partir des cartes
+
+utilisateur/usage [utilisateur/usage@v2.101.0] 2024-02-21T14:22:11Z Florian <florian@derfurth.com> # Ajoute le tracking du filtre par type de plan sur la page collectivités
