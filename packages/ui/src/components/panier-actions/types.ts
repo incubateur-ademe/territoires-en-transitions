@@ -23,7 +23,7 @@ export type ActionImpactProps = {
   isSelected?: boolean;
   /** Détecte le changement de statut sélectionné ou non */
   onToggleSelected: (value: boolean) => void;
-  /** Détecte le changement de statut de l'action : non pertinent, en cours, réalisé */
+  /** Détecte le changement de statut de l'action : en cours, réalisé */
   onUpdateStatus?: (status: string) => void;
 };
 

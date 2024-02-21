@@ -72,16 +72,15 @@ const PanierRealtime = ({
 
   return (
     <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-      <div className="lg:w-3/5 xl:w-2/3 py-12">
+      <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
         <h1>
           Initiez{' '}
           <span className="text-secondary-1">des actions impactantes</span> et
           valorisez le chemin déjà parcouru
         </h1>
         <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
-          Vous pouvez les ajouter à votre panier ou les définir comme déjà
-          réalisées ou non pertinentes, auquel cas nous vous proposerons
-          d'autres actions.
+          Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
+          fonction de leur état d'avancement.
         </p>
         <ListeActions
           actionsListe={panier.states}

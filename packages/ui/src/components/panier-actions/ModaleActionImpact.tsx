@@ -5,7 +5,6 @@ import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
 import {NiveauBudget} from './NiveauBudget';
 import {valeurToBadge} from './utils';
 import {ModaleActionImpactProps} from './types';
-import {Tooltip} from '@design-system/Tooltip';
 import classNames from 'classnames';
 
 /**
@@ -98,28 +97,6 @@ export const ModaleActionImpact = ({
       renderFooter={({close}) => (
         <ModalFooter variant="space">
           <ModalFooterSection>
-            <Tooltip
-              label={
-                <div className="font-normal text-center w-48">
-                  Hors compétence de la collectivité ou non prioritaire
-                </div>
-              }
-              placement="top"
-            >
-              <Button
-                variant="outlined"
-                className={classNames({
-                  'bg-primary-2': statut === 'non_pertinent',
-                })}
-                onClick={() => {
-                  onUpdateStatus?.('non_pertinent');
-                  close();
-                }}
-              >
-                Non pertinente
-              </Button>
-            </Tooltip>
-
             <Button
               variant="outlined"
               className={classNames({
