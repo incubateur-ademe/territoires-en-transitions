@@ -1,11 +1,19 @@
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
 import {Card} from '@design-system/Card';
-import {Tooltip} from '@design-system/Tooltip';
 import classNames from 'classnames';
 import {valeurToBadge} from './utils';
 import {NiveauBudget} from './NiveauBudget';
 import {CarteActionImpactProps} from './types';
+
+const maxLength = 130;
+
+const splitTitle = (title: string) => {
+  let newContent = title.slice(0, maxLength);
+  const contentEnd = title.slice(maxLength).split(' ')[0];
+  newContent += contentEnd;
+  return newContent;
+};
 
 /**
  * Carte action à impact du panier d'actions
@@ -54,29 +62,10 @@ export const CarteActionImpact = ({
               </Button>
             ) : (
               <>
-                <Tooltip
-                  label={
-                    <div className="font-normal text-center w-48">
-                      Hors compétence de la collectivité ou non prioritaire
-                    </div>
-                  }
-                  placement="top"
-                >
-                  <Button
-                    variant="outlined"
-                    size="xs"
-                    className={classNames('!px-3', {
-                      '!bg-primary-2': statut === 'non_pertinent',
-                    })}
-                    onClick={() => onUpdateStatus?.('non_pertinent')}
-                  >
-                    Non pertinente
-                  </Button>
-                </Tooltip>
                 <Button
                   variant="outlined"
                   size="xs"
-                  className={classNames('!px-3', {
+                  className={classNames({
                     '!bg-primary-2': statut === 'en_cours',
                   })}
                   onClick={() => onUpdateStatus?.('en_cours')}
@@ -86,7 +75,7 @@ export const CarteActionImpact = ({
                 <Button
                   variant="outlined"
                   size="xs"
-                  className={classNames('!px-3', {
+                  className={classNames({
                     '!bg-primary-2': statut === 'realise',
                   })}
                   onClick={() => onUpdateStatus?.('realise')}
@@ -94,11 +83,7 @@ export const CarteActionImpact = ({
                   Réalisée
                 </Button>
 
-                <Button
-                  size="xs"
-                  className="!px-2"
-                  onClick={() => handleToggleSelect(true)}
-                >
+                <Button size="xs" onClick={() => handleToggleSelect(true)}>
                   Ajouter
                 </Button>
               </>
@@ -107,7 +92,7 @@ export const CarteActionImpact = ({
         </div>
       }
     >
-      {titre}
+      {titre.length > maxLength ? `${splitTitle(titre)}...` : titre}
     </Card>
   );
 };

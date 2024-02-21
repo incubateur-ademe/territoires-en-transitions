@@ -53,7 +53,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     };
 
     /* les onglets principaux */
-    onglets: 'selection' | 'réalisées' | 'en cours' | 'non pertinentes';
+    onglets: 'selection' | 'réalisées' | 'en cours';
 
     /* les events du panier */
     events: {
