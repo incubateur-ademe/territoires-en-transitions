@@ -85,7 +85,10 @@ const ModifierFicheModale = ({
                   values={fiche.statut ?? undefined}
                   options={ficheActionStatutOptions}
                   onChange={statut =>
-                    setFiche({...fiche, statut: statut as TFicheActionStatuts})
+                    setFiche({
+                      ...fiche,
+                      statut: (statut as TFicheActionStatuts) ?? null,
+                    })
                   }
                   customItem={item => (
                     <BadgeStatut statut={item.value as TFicheActionStatuts} />
@@ -99,7 +102,8 @@ const ModifierFicheModale = ({
                   onChange={priorite =>
                     setFiche({
                       ...fiche,
-                      niveau_priorite: priorite as TFicheActionNiveauxPriorite,
+                      niveau_priorite:
+                        (priorite as TFicheActionNiveauxPriorite) ?? null,
                     })
                   }
                   customItem={item => (
