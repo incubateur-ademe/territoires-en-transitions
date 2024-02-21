@@ -75,6 +75,12 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "action_audit_state_audit_id_fkey"
+            columns: ["audit_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
+          },
+          {
             foreignKeyName: "action_audit_state_collectivite_id_fkey"
             columns: ["collectivite_id"]
             referencedRelation: "collectivite"
@@ -725,6 +731,12 @@ export interface Database {
             columns: ["demande_id"]
             referencedRelation: "demande"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_demande_id_fkey"
+            columns: ["demande_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["demande_id"]
           },
           {
             foreignKeyName: "audit_demande_id_fkey"
@@ -3295,6 +3307,12 @@ export interface Database {
             columns: ["audit_id"]
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_auditeur_audit_id_fkey"
+            columns: ["audit_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
           },
           {
             foreignKeyName: "audit_auditeur_auditeur_fkey"
@@ -7077,6 +7095,18 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fiche_action_indicateur_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_indicateur_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fiche_action_indicateur_indicateur_personnalise_id_fkey"
             columns: ["indicateur_personnalise_id"]
             referencedRelation: "indicateur_personnalise_definition"
@@ -7602,6 +7632,18 @@ export interface Database {
             foreignKeyName: "indicateur_action_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_action_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_action_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           }
         ]
@@ -8264,6 +8306,18 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "indicateur_confidentiel_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_confidentiel_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "indicateur_confidentiel_indicateur_perso_id_fkey"
             columns: ["indicateur_perso_id"]
             referencedRelation: "indicateur_personnalise_definition"
@@ -8339,6 +8393,18 @@ export interface Database {
             foreignKeyName: "indicateur_definition_valeur_indicateur_fkey"
             columns: ["valeur_indicateur"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_definition_valeur_indicateur_fkey"
+            columns: ["valeur_indicateur"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_definition_valeur_indicateur_fkey"
+            columns: ["valeur_indicateur"]
+            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           }
         ]
@@ -8674,6 +8740,18 @@ export interface Database {
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
           }
         ]
       }
@@ -9007,6 +9085,18 @@ export interface Database {
             foreignKeyName: "indicateur_objectif_commentaire_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_commentaire_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_objectif_commentaire_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -11083,6 +11173,18 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "indicateur_pilote_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_pilote_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "indicateur_pilote_indicateur_personnalise_definition_id_fk"
             columns: ["indicateur_perso_id"]
             referencedRelation: "indicateur_personnalise_definition"
@@ -11433,6 +11535,18 @@ export interface Database {
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
           }
         ]
       }
@@ -11766,6 +11880,18 @@ export interface Database {
             foreignKeyName: "indicateur_commentaire_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_commentaire_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_commentaire_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -12112,6 +12238,18 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "indicateur_resultat_import_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_resultat_import_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "indicateur_resultat_import_source_id_fkey"
             columns: ["source_id"]
             referencedRelation: "indicateur_source"
@@ -12443,6 +12581,18 @@ export interface Database {
             foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
             columns: ["indicateur_id"]
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -13839,6 +13989,12 @@ export interface Database {
             columns: ["audit_id"]
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_audit_scores_audit_id_fkey"
+            columns: ["audit_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
           }
         ]
       }
@@ -13891,6 +14047,12 @@ export interface Database {
             columns: ["audit_id"]
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_audit_scores_audit_id_fkey"
+            columns: ["audit_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
           }
         ]
       }
@@ -13983,6 +14145,12 @@ export interface Database {
             columns: ["audit_id"]
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "preuve_audit_audit_id_fkey"
+            columns: ["audit_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["audit_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -14975,6 +15143,12 @@ export interface Database {
             columns: ["demande_id"]
             referencedRelation: "demande"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "preuve_labellisation_demande_id_fkey"
+            columns: ["demande_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["demande_id"]
           },
           {
             foreignKeyName: "preuve_labellisation_demande_id_fkey"
@@ -18625,31 +18799,40 @@ export interface Database {
       }
       audit: {
         Row: {
+          clos: boolean | null
           collectivite_id: number | null
+          date_cnl: string | null
           date_debut: string | null
           date_fin: string | null
           demande_id: number | null
           id: number | null
           referentiel: Database["public"]["Enums"]["referentiel"] | null
           valide: boolean | null
+          valide_labellisation: boolean | null
         }
         Insert: {
+          clos?: boolean | null
           collectivite_id?: number | null
+          date_cnl?: string | null
           date_debut?: string | null
           date_fin?: string | null
           demande_id?: number | null
           id?: number | null
           referentiel?: Database["public"]["Enums"]["referentiel"] | null
           valide?: boolean | null
+          valide_labellisation?: boolean | null
         }
         Update: {
+          clos?: boolean | null
           collectivite_id?: number | null
+          date_cnl?: string | null
           date_debut?: string | null
           date_fin?: string | null
           demande_id?: number | null
           id?: number | null
           referentiel?: Database["public"]["Enums"]["referentiel"] | null
           valide?: boolean | null
+          valide_labellisation?: boolean | null
         }
         Relationships: [
           {
@@ -18957,6 +19140,12 @@ export interface Database {
             columns: ["demande_id"]
             referencedRelation: "demande"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_demande_id_fkey"
+            columns: ["demande_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["demande_id"]
           },
           {
             foreignKeyName: "audit_demande_id_fkey"
@@ -19300,6 +19489,12 @@ export interface Database {
             columns: ["demande_id"]
             referencedRelation: "demande"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_demande_id_fkey"
+            columns: ["demande_id"]
+            referencedRelation: "retool_audit"
+            referencedColumns: ["demande_id"]
           },
           {
             foreignKeyName: "audit_demande_id_fkey"
@@ -20532,6 +20727,15 @@ export interface Database {
           }
         ]
       }
+      crm_indicateurs: {
+        Row: {
+          id: string | null
+          nb_prive: number | null
+          nom: string | null
+          pourcentage_prive: number | null
+        }
+        Relationships: []
+      }
       crm_labellisations: {
         Row: {
           annee: number | null
@@ -20579,6 +20783,14 @@ export interface Database {
           }
         ]
       }
+      crm_plans: {
+        Row: {
+          nb_plan: number | null
+          nb_plan_90pc_fa_privees: number | null
+          type: string | null
+        }
+        Relationships: []
+      }
       crm_usages: {
         Row: {
           _5fiches_1pilotage: boolean | null
@@ -20597,8 +20809,12 @@ export interface Database {
           fiches_non_vides: number | null
           fiches_pilotables: number | null
           fiches_pilotage: number | null
+          indicateur_prive: number | null
           indicateurs_perso: number | null
           key: string | null
+          min1_indicateur_perso_prive: boolean | null
+          min1_indicateur_predef_prive: boolean | null
+          min1_indicateur_prive: boolean | null
           pa_date_creation: string | null
           pa_non_vides: number | null
           pa_pilotables: number | null
@@ -20608,9 +20824,11 @@ export interface Database {
           plans: number | null
           pourcentage_fa_pilotable_privee: number | null
           pourcentage_fa_privee: number | null
+          pourcentage_indicateur_predef_prives: number | null
           premier_rattachement: string | null
           resultats_indicateurs: number | null
           resultats_indicateurs_perso: number | null
+          type_pa: string[] | null
         }
         Relationships: []
       }
@@ -22267,14 +22485,20 @@ export interface Database {
       }
       retool_audit: {
         Row: {
+          audit_id: number | null
+          clos: boolean | null
           collectivite_id: number | null
-          date_attribution: string | null
+          date_attribution_auditeur: string | null
+          date_cnl: string | null
           date_debut: string | null
+          date_demande: string | null
           date_fin: string | null
-          envoyee_le: string | null
+          demande_id: number | null
+          etoiles: Database["labellisation"]["Enums"]["etoile"] | null
           nom: string | null
           referentiel: Database["public"]["Enums"]["referentiel"] | null
           type_audit: string | null
+          valide_labellisation: boolean | null
         }
         Relationships: [
           {
@@ -24124,13 +24348,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
@@ -24957,10 +25181,6 @@ export interface Database {
       }
       diag:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               msg: string
             }
@@ -24970,6 +25190,10 @@ export interface Database {
             Args: {
               msg: unknown
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
@@ -26305,6 +26529,13 @@ export interface Database {
           sujet: Database["labellisation"]["Enums"]["sujet_demande"] | null
         }
       }
+      labellisation_validate_audit: {
+        Args: {
+          audit_id: number
+          valide: boolean
+        }
+        Returns: undefined
+      }
       labellisations: {
         Args: {
           "": unknown
@@ -26611,6 +26842,18 @@ export interface Database {
         }
         Returns: undefined
       }
+      retool_update_audit: {
+        Args: {
+          audit_id: number
+          date_debut: string
+          date_fin: string
+          date_cnl: string
+          valide: boolean
+          valide_labellisation: boolean
+          clos: boolean
+        }
+        Returns: undefined
+      }
       retool_user_list: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -26728,12 +26971,6 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
               why: string
               how_many: number
             }
@@ -26742,6 +26979,12 @@ export interface Database {
         | {
             Args: {
               "": string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              "": number
             }
             Returns: string
           }
@@ -27437,6 +27680,7 @@ export interface Database {
         | "panneau_lateral"
         | "export_xlsx"
         | "export_docx"
+        | "filtre_type_de_plan"
       visite_onglet:
         | "progression"
         | "priorisation"
