@@ -1,3 +1,4 @@
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import SearchPicto from '@components/Picto/SearchPicto';
 import SuccessPicto from '@components/Picto/SuccessPicto';
 
@@ -7,7 +8,14 @@ type ListeVideProps = {
 
 const ListeVide = ({success}: ListeVideProps) => {
   return (
-    <div className="bg-white rounded-lg px-4 pt-2 pb-8 flex flex-col justify-center items-center">
+    <div className="bg-white rounded-lg px-4 pt-2 pb-8 flex flex-col justify-center items-center w-full relative">
+      {success && (
+        <Fireworks
+          autorun={{speed: 3, duration: 600}}
+          className="absolute top-0 left-0 w-full h-full"
+        />
+      )}
+
       {success ? (
         <SuccessPicto className="mb-6" />
       ) : (
