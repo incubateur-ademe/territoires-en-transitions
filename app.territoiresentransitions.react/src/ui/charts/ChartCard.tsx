@@ -35,7 +35,6 @@ type ChartCardModalContentProps = {
   chartInfo?: {
     title?: string;
     subtitle?: string;
-    extendedTitle?: string;
     legend?: {name: string; color: string}[];
     expandable?: boolean;
     downloadedFileName?: string;
@@ -91,11 +90,7 @@ const ChartCardModalContent = ({
       <div ref={chartWrapperRef} className="p-3">
         <div className="pb-4">
           {/* Titre du graphe */}
-          {chartInfo?.extendedTitle ? (
-            <h4 className="m-0">{chartInfo?.extendedTitle}</h4>
-          ) : (
-            chartInfo?.title && <h4 className="m-0">{chartInfo.title}</h4>
-          )}
+          {chartInfo?.title && <h4 className="m-0">{chartInfo.title}</h4>}
 
           {/* Sous-titre du graphe */}
           {!!chartInfo?.subtitle && (
@@ -184,7 +179,6 @@ type ChartCardProps = {
   chartInfo?: {
     title?: string;
     subtitle?: string;
-    extendedTitle?: string;
     legend?: {name: string; color: string}[];
     legendOnOverview?: boolean;
     expandable?: boolean;
