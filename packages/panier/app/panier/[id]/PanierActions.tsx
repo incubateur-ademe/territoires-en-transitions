@@ -16,22 +16,23 @@ const PanierActions = ({
   return (
     <div className="lg:h-screen lg:w-2/5 xl:w-1/3 bg-white border-[0.5px] border-primary-3 sticky top-0">
       {actionsListe.length === 0 ? (
-        <>
+        <div className="h-full relative">
           <Alert
             title="Comment ajouter des actions ?"
             description={`Pour ajouter des actions à votre panier, veuillez cliquer sur le bouton "Ajouter" qui s'affiche au survol de chacune des vignettes d'action.`}
+            classname="lg:absolute"
           />
-          <div className="flex flex-col items-center justify-center max-lg:py-4 lg:pt-32">
+          <div className="h-full flex flex-col items-center justify-center max-lg:py-4">
             <EmptyBasketPicto />
             <span className="text-primary-8 text-lg font-bold text-center">
               Votre panier d'actions est vide !
             </span>
           </div>
-        </>
+        </div>
       ) : (
         <div className="h-full p-4 pt-0 flex flex-col gap-5">
           <div className="flex flex-col overflow-y-auto">
-            <div className="h-40">
+            <div className="h-48 mt-6">
               <BasketPicto className="mx-auto h-full" />
             </div>
             <div className="sticky top-0 z-10">
