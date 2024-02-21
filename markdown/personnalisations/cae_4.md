@@ -101,7 +101,7 @@ Pour les collectivités pour lesquelles il n'y a manifestement pas de potentiel 
 Ces réductions sont cumulables, dans la limite de 2 points potentiel restant.
 
 
-# Réduction potentiel cae 4.2.3 liee AMO et voirie et population
+# Réduction de potentiel liée AMO et voirie et population et désactivation liée AMO, voirie et petites collectivites
 ```yaml
 action_id: cae_4.2.3
 ```
@@ -124,14 +124,10 @@ Pour une collectivité sans compétence voirie, le score de la 4.2.3 est réduit
 Pour une collectivité de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit de 50 %.
 Les réductions sont cumulables.
 
-# Désactivation cae 4.2.3 liee AMO, voirie et petites collectivites
-```yaml
-action_id: cae_4.2.3
-```
-## Règles 
 ### Désactivation
 ```formule
 si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et reponse(centre_polarite, NON) alors VRAI
+sinon si reponse(AOM_1, NON) et reponse (voirie_1, voirie_1_c) et identite(population, moins_de_10000) alors VRAI
 ```
 Pour une collectivité non AOM, sans compétence voirie, de moins de 10 000 habitants ou ne comportant pas de commune ou centre-bourg de plus de 2000 habitants, le score de la 4.2.3 est réduit à 0 et l'action entière est "Non concernée".
 
