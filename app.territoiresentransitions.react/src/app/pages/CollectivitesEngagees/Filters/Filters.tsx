@@ -69,6 +69,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                     ...filters,
                     typesPlan: (values as string[]) ?? [],
                   });
+                  tracker({fonction: 'filtre_type_de_plan', action: 'selection'});
                 }}
                 values={
                   filters.typesPlan?.length ? filters.typesPlan : undefined
