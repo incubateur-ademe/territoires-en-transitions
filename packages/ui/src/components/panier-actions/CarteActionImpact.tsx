@@ -21,7 +21,7 @@ const splitTitle = (title: string) => {
 
 export const CarteActionImpact = ({
   titre,
-  categorie,
+  thematiques,
   complexite,
   budget,
   panier,
@@ -39,7 +39,7 @@ export const CarteActionImpact = ({
       header={
         <div className="flex justify-between">
           {/* Catégorie */}
-          <div>{categorie}</div>
+          <div>{thematiques[0]?.nom ?? ''}</div>
 
           {/* Budget */}
           <NiveauBudget budget={budget} />

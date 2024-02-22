@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import BasketPicto from '@components/Picto/BasketPicto';
 import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
-import {ActionImpact} from '@tet/api';
+import {ActionImpactSnippet} from '@tet/api';
 import {Alert, Button, CarteActionImpact} from '@tet/ui';
 
 type PanierActionsProps = {
-  actionsListe: ActionImpact[];
+  actionsListe: ActionImpactSnippet[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
 
@@ -48,7 +48,7 @@ const PanierActions = ({
                 <CarteActionImpact
                   key={action.id}
                   titre={action.titre}
-                  categorie={'Thématique Test'}
+                  thematiques={action.thematiques}
                   complexite={action.niveau_complexite as 1 | 2 | 3}
                   budget={action.fourchette_budgetaire as 1 | 2 | 3}
                   panier={true}

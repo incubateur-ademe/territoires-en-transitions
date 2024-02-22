@@ -14,7 +14,7 @@ import classNames from 'classnames';
 export const ModaleActionImpact = ({
   children,
   titre,
-  categorie,
+  thematiques,
   complexite,
   budget,
   description,
@@ -32,7 +32,13 @@ export const ModaleActionImpact = ({
         <div>
           <div className="flex justify-between mb-6 mt-4">
             {/* Catégorie */}
-            <div className="text-primary-8 text-lg font-bold">{categorie}</div>
+            <div className="text-primary-8 text-lg font-bold flex divide-x-2 divide-x-primary-3 gap-x-3">
+              {thematiques.map(them => (
+                <div key={them.id} className="pl-3 first-of-type:pl-0">
+                  {them.nom}
+                </div>
+              ))}
+            </div>
 
             {/* Budget */}
             <NiveauBudget budget={budget} />
