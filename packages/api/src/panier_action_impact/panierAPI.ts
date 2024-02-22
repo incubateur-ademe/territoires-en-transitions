@@ -89,7 +89,10 @@ export class PanierAPI {
 
   async fetchPanier(
     panier_id: string,
-    thematique_ids: string[]
+    thematique_ids: number[],
+    // todo
+    niveau_budget_ids: number[],
+    match_competences: boolean
   ): Promise<Panier | null> {
     const builder = this.supabase
       .from('panier')
