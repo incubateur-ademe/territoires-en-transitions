@@ -1695,6 +1695,15 @@ values
     ('fonction', 'restreindre_plan', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'restreindre_plan', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'restreindre_plan', 'auditeur', 'non', 'non', 'non', 'non'),
+    -- Fonction retool_patch_demande
+    ('fonction', 'retool_patch_demande', 'public', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'verifie', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'support', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'lecture', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'edition', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'admin', 'non', 'non', 'non', 'non'),
+    ('fonction', 'retool_patch_demande', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Fonction retool_update_audit
     ('fonction', 'retool_update_audit', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'retool_update_audit', 'connecte', 'non', 'non', 'non', 'non'),

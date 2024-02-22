@@ -635,3 +635,4 @@ plan_action/fiches [plan_action/fiches@v2.96.0] 2024-02-05T09:57:28Z Amandine Ja
 utilisateur/usage [utilisateur/usage@v2.101.0] 2024-02-21T14:22:11Z Florian <florian@derfurth.com> # Ajoute le tracking du filtre par type de plan sur la page collectivités
 taxonomie/thematique [taxonomie/thematique@v2.80.0] 2023-11-15T16:47:33Z Amandine Jacquelin <conta@LanceLibre> # Lie les sous_thématiques aux thématiques
 labellisation/audit [labellisation/audit@v2.101.0] 2024-02-22T15:12:37Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la contrainte des quatre ans pour vérifier qu'une labellisation existe déjà
+retool/audit [retool/audit@v2.101.0] 2024-02-22T15:22:49Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour modifier le sujet d'une demande d'audit
