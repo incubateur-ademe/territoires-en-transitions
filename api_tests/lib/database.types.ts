@@ -18754,6 +18754,7 @@ export interface Database {
             | Database["public"]["Enums"]["avancement"][]
             | null
           avancement_detaille: number[] | null
+          avancement_parent: Database["public"]["Enums"]["avancement"] | null
           collectivite_id: number | null
           concerne: boolean | null
           depth: number | null
@@ -27393,6 +27394,18 @@ export interface Database {
         | {
             Args: {
               why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              how_many: number
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              why: string
               how_many: number
             }
             Returns: boolean[]
@@ -27401,18 +27414,6 @@ export interface Database {
             Args: {
               how_many: number
               why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
             }
             Returns: boolean[]
           }
