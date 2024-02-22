@@ -16,7 +16,7 @@ const meta: Meta<typeof ModaleActionImpact> = {
   args: {
     titre:
       'Désigner une (ou plusieurs personnes) chef de projet transition écologique',
-    categorie: 'Mieux consommer',
+    thematiques: [{id: 1, nom: 'Mieux consommer'}],
     complexite: 1,
     budget: 2,
     description:
