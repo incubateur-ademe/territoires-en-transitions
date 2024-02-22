@@ -7,7 +7,7 @@ import {Panier} from './types';
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
 export const panierSelect =
-  '*, contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),states:action_impact_state(*,thematiques:thematique(*)))';
+  '*,contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),states:action_impact_state(*,thematiques:thematique(*),fourchette_budgetaire:action_impact_fourchette_budgetaire(*)))';
 
 type RealtimePayload<T> = {
   type: string;
@@ -90,8 +90,8 @@ export class PanierAPI {
   async fetchPanier(
     panier_id: string,
     thematique_ids: number[],
-    // todo
     niveau_budget_ids: number[],
+    // todo
     match_competences: boolean
   ): Promise<Panier | null> {
     const builder = this.supabase
@@ -108,6 +108,19 @@ export class PanierAPI {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(
         'action_impact_state.thematiques',
+        'not.is.null'
+      );
+    }
+
+    if (niveau_budget_ids && niveau_budget_ids.length > 0) {
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.fourchette_budgetaire.niveau',
+        `in.(${niveau_budget_ids.join(',')})`
+      );
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.fourchette_budgetaire',
         'not.is.null'
       );
     }
