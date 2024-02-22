@@ -14,6 +14,11 @@ interface Page {
 export type PageName = '/' | 'landing' | 'landing/collectivite' | 'panier';
 
 /**
+ * Liste des onglets de la page panier
+ */
+export type OngletName = 'selection' | 'réalisées' | 'en cours';
+
+/**
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<PageName, Page> {
@@ -53,7 +58,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     };
 
     /* les onglets principaux */
-    onglets: 'selection' | 'réalisées' | 'en cours';
+    onglets: OngletName;
 
     /* les events du panier */
     events: {

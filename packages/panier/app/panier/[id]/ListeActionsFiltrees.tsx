@@ -4,13 +4,13 @@ import {ActionImpact} from '@tet/ui';
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactState[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
-  updateStatus: (actionId: number, statusId: string | null) => void;
+  onUpdateStatus: (actionId: number, statusId: string | null) => void;
 };
 
 const ListeActionsFiltrees = ({
   actionsListe,
   onToggleSelected,
-  updateStatus,
+  onUpdateStatus,
 }: ListeActionsFiltreesProps) => {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
@@ -35,7 +35,7 @@ const ListeActionsFiltrees = ({
             onToggleSelected(action.action.id, !action.isinpanier)
           }
           onUpdateStatus={statut =>
-            updateStatus(
+            onUpdateStatus(
               action.action.id,
               action.statut?.categorie_id === statut ? null : statut,
             )

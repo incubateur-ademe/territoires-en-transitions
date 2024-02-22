@@ -4,7 +4,7 @@
 import PanierActions from './PanierActions';
 import ListeActions from './ListeActions';
 
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {
   ActionImpactCategorie,
@@ -14,6 +14,8 @@ import {
 } from '@tet/api';
 import {panierAPI, supabase} from 'src/clientAPI';
 import {useEventTracker} from 'src/tracking/useEventTracker';
+import {OngletName} from 'src/tracking/trackingPlan';
+import {useOngletTracker} from 'src/tracking/useOngletTracker';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -28,10 +30,12 @@ const PanierRealtime = ({
   budgets,
   thematiques,
 }: PanierRealtimeProps) => {
+  const [currentTab, setCurrentTab] = useState<OngletName>('selection');
+
   const router = useRouter();
 
-  // todo Passer le nom de l'onglet.
-  const tracker = useEventTracker('panier', undefined);
+  const tracker = useEventTracker('panier', currentTab);
+  const ongletTracker = useOngletTracker('panier');
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
@@ -64,10 +68,24 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null
+    statusId: string | null,
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
+    await tracker('statut', {
+      collectivite_preset: panier.collectivite_preset,
+      panier_id: panier.id,
+      action_id: actionId,
+      category_id: statusId,
+    });
     router.refresh();
+  };
+
+  const handleChangeTab = async (tab: OngletName) => {
+    setCurrentTab(tab);
+    await ongletTracker(tab, {
+      collectivite_preset: panier.collectivite_preset,
+      panier_id: panier.id,
+    });
   };
 
   return (
@@ -85,7 +103,8 @@ const PanierRealtime = ({
         <ListeActions
           actionsListe={panier.states}
           onToggleSelected={handleToggleSelected}
-          updateStatus={handleUpdateStatus}
+          onUpdateStatus={handleUpdateStatus}
+          onChangeTab={handleChangeTab}
         />
       </div>
 

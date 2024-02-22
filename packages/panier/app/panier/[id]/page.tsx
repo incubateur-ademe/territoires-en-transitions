@@ -47,7 +47,7 @@ async function Page({
     panierId,
     thematique_ids,
     budget_ids,
-    match_competences
+    match_competences,
   );
 
   if (!panier) return notFound();
@@ -88,7 +88,7 @@ const getInit = {
 async function fetchCategories(): Promise<ActionImpactCategorie[]> {
   const response = await fetch(
     `${apiUrl}/rest/v1/action_impact_categorie`,
-    getInit
+    getInit,
   );
   return await response.json();
 }
@@ -96,7 +96,7 @@ async function fetchCategories(): Promise<ActionImpactCategorie[]> {
 async function fetchThematiques(): Promise<ActionImpactThematique[]> {
   const response = await fetch(
     `${apiUrl}/rest/v1/thematique?select=id,nom`,
-    getInit
+    getInit,
   );
   return await response.json();
 }
@@ -105,7 +105,7 @@ async function fetchNiveaux(
   table:
     | 'action_impact_complexite'
     | 'action_impact_fourchette_budgetaire'
-    | 'action_impact_tier'
+    | 'action_impact_tier',
 ): Promise<Niveau[]> {
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();

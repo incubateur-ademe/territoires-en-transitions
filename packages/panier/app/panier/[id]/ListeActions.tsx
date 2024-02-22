@@ -3,6 +3,7 @@ import {ActionImpactState} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
+import {OngletName} from 'src/tracking/trackingPlan';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
@@ -23,24 +24,34 @@ const getTabLabel = (
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
-  updateStatus: (actionId: number, statusId: string | null) => void;
+  onUpdateStatus: (actionId: number, statusId: string | null) => void;
+  onChangeTab: (tab: OngletName) => void;
 };
 
 const ListeActions = ({
   actionsListe,
   onToggleSelected,
-  updateStatus,
+  onUpdateStatus,
+  onChangeTab,
 }: ListeActionsProps) => {
   const [openAlert, setOpenAlert] = useState(true);
 
-  const tabsList = [
-    {label: 'Sélection', status: null},
-    {label: 'Réalisées', status: 'realise'},
-    {label: 'En cours de réalisation', status: 'en_cours'},
+  const tabsList: {
+    label: string;
+    shortName: OngletName;
+    status: string | null;
+  }[] = [
+    {label: 'Sélection', shortName: 'selection', status: null},
+    {label: 'Réalisées', shortName: 'réalisées', status: 'realise'},
+    {
+      label: 'En cours de réalisation',
+      shortName: 'en cours',
+      status: 'en_cours',
+    },
   ];
 
   return (
-    <Tabs>
+    <Tabs onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}>
       {...tabsList.map(tab => {
         const actionsFiltrees = actionsListe.filter(
           a =>
@@ -63,7 +74,7 @@ const ListeActions = ({
             ) : (
               <ListeActionsFiltrees
                 actionsListe={actionsFiltrees}
-                updateStatus={updateStatus}
+                onUpdateStatus={onUpdateStatus}
                 onToggleSelected={onToggleSelected}
               />
             )}
