@@ -6,16 +6,28 @@ import ListeActions from './ListeActions';
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {ActionImpactCategorie, Panier} from '@tet/api';
+import {
+  ActionImpactCategorie,
+  ActionImpactFourchetteBudgetaire,
+  ActionImpactThematique,
+  Panier,
+} from '@tet/api';
 import {panierAPI, supabase} from 'src/clientAPI';
 import {useEventTracker} from 'src/tracking/useEventTracker';
 
 type PanierRealtimeProps = {
   panier: Panier;
   categories: ActionImpactCategorie[];
+  budgets: ActionImpactFourchetteBudgetaire[];
+  thematiques: ActionImpactThematique[];
 };
 
-const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
+const PanierRealtime = ({
+  panier,
+  categories,
+  budgets,
+  thematiques,
+}: PanierRealtimeProps) => {
   const router = useRouter();
 
   // todo Passer le nom de l'onglet.
@@ -52,7 +64,7 @@ const PanierRealtime = ({panier, categories}: PanierRealtimeProps) => {
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null,
+    statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     router.refresh();
