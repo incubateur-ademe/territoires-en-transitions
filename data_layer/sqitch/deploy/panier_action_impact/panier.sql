@@ -244,4 +244,24 @@ end;
 comment on function action_impact_state is
     'La liste des actions et de leurs états pour un panier.';
 
+create function
+    thematique(action_impact_state)
+    returns setof thematique
+    language sql
+    stable
+begin atomic
+select t.*
+from thematique t
+    join action_impact_thematique ait on ait.thematique_id = t.id
+where ait.action_impact_id = $1.action.id;
+end;
+comment on function thematique is
+    'La relation entre le state d''une action et ses thématiques.';
+
+drop policy allow_read on thematique;
+create policy allow_read on thematique
+    as permissive
+    for select
+    using (true);
+
 COMMIT;
