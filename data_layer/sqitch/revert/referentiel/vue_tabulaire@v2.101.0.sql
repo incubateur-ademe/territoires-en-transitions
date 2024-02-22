@@ -11,7 +11,7 @@ as
 select -- Le client filtre sur:
        c.id                                               as collectivite_id,
        d.action_id,
-       client_scores.referentiel,
+       d.referentiel,
        d.type,
        d.descendants,
        d.ascendants,
@@ -61,9 +61,9 @@ from collectivite c
          -- on prend les scores au format json pour chaque référentiel
          join client_scores on client_scores.collectivite_id = c.id
     -- que l'on explose en lignes, une par action
-         join lateral private.convert_client_scores(client_scores.scores) ccc on true
+         join private.convert_client_scores(client_scores.scores) ccc on true
     -- puis on converti chacune de ces lignes au format approprié pour les vues tabulaires du client
-         join lateral private.to_tabular_score(ccc) sc on true
+         join private.to_tabular_score(ccc) sc on true
     -- on y join la définition de l'action
          join action_referentiel d on sc.action_id = d.action_id
     -- et les statuts saisis si ils existent (left join)
@@ -92,8 +92,6 @@ from collectivite c
     where c.id = statut.collectivite_id
       and statut.action_id = any (d.leaves)
     ) cs on true
-where est_verifie()
-or have_lecture_acces(c.id)
 order by c.id,
          naturalsort(d.identifiant);
 
