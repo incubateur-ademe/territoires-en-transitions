@@ -34,6 +34,7 @@ export type ActionImpactState = {
   action: ActionImpact;
   isinpanier: boolean;
   statut: ActionImpactStatut | null;
+  thematiques: ActionImpactThematique[];
 };
 
 export type PanierBase = Database['public']['Tables']['panier']['Row'];
