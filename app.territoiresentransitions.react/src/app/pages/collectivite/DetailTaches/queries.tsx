@@ -42,9 +42,36 @@ export const fetchActionStatutsList = async (
       or.push(
         ...[
           // gère le cas où null veut dire "non renseigné"
-          'and(type.eq.tache,or(avancement.eq.non_renseigne,avancement.is.null))',
-          'and(type.eq.sous-action,and(or(avancement.eq.non_renseigne,avancement.is.null),avancement_descendants.ov.{non_renseigne}))',
-          'and(type.in.(axe,sous-axe,action),avancement_descendants.ov.{non_renseigne})',
+          'and(' +
+            'type.eq.tache,' +
+            'or(' +
+                'avancement_parent.eq.non_renseigne,' +
+                'and(' +
+                    'avancement_parent.is.null,' +
+                    'or(' +
+                        'avancement.eq.non_renseigne,' +
+                        'avancement.is.null' +
+                    ')' +
+                ')' +
+            ')' +
+          ')',
+          'and(' +
+            'type.eq.sous-action,' +
+            'or(' +
+                'avancement.eq.non_renseigne,' +
+                'and(' +
+                    'avancement.is.null,' +
+                    'or(' +
+                        'avancement_descendants.ov.{non_renseigne},' +
+                        'avancement_descendants.is.null' +
+                    ')' +
+                ')' +
+            ')' +
+          ')',
+          'and(' +
+            'type.in.(axe,sous-axe,action),' +
+            'avancement_descendants.ov.{non_renseigne}' +
+          ')',
         ]
       );
     }
