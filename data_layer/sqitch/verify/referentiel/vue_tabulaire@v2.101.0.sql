@@ -35,8 +35,7 @@ select collectivite_id,
        avancement,
        avancement_detaille,
        avancement_descendants,
-       non_concerne,
-       avancement_parent
+       non_concerne
 from action_statuts
 where false;
 
