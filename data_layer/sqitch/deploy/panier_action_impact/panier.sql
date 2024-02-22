@@ -249,11 +249,12 @@ create function
     returns setof thematique
     language sql
     stable
-begin atomic
-select t.*
-from thematique t
-    join action_impact_thematique ait on ait.thematique_id = t.id
-where ait.action_impact_id = $1.action.id;
+begin
+    atomic
+    select t.*
+    from thematique t
+             join action_impact_thematique ait on ait.thematique_id = t.id
+    where ait.action_impact_id = $1.action.id;
 end;
 comment on function thematique is
     'La relation entre le state d''une action et ses thématiques.';
@@ -263,5 +264,20 @@ create policy allow_read on thematique
     as permissive
     for select
     using (true);
+
+create function
+    action_impact_fourchette_budgetaire(action_impact_state)
+    returns setof action_impact_fourchette_budgetaire
+    rows 1
+    language sql
+    stable
+begin
+    atomic
+    select b.*
+    from action_impact_fourchette_budgetaire b
+    where b.niveau = $1.action.fourchette_budgetaire;
+end;
+comment on function action_impact_fourchette_budgetaire is
+    'La relation entre le state d''une action et ses thématiques.';
 
 COMMIT;
