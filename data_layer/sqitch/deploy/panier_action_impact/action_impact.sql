@@ -87,9 +87,9 @@ create table action_impact_sous_thematique
 
 create table action_impact_banatic_competence
 (
-    action_impact_id      integer references action_impact,
-    banatic_competence_id integer references banatic_competence,
-    primary key (action_impact_id, banatic_competence_id)
+    action_impact_id integer references action_impact,
+    competence_code  integer references banatic_competence,
+    primary key (action_impact_id, competence_code)
 );
 
 create table action_impact_categorie_fnv
