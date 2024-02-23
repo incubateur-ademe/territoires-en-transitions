@@ -1,6 +1,6 @@
 import {SupabaseClient} from '@supabase/supabase-js';
 import {Database} from '../database.types';
-import {Panier} from './types';
+import {Panier, PanierBase} from './types';
 
 /**
  * On sélectionne toutes les colonnes du panier : *
@@ -24,6 +24,16 @@ export class PanierAPI {
 
   constructor(supabase: SupabaseClient<Database>) {
     this.supabase = supabase;
+  }
+
+  async panierFromLanding(collectivite_id?: number): Promise<PanierBase> {
+    const {data, error} =
+      collectivite_id === undefined
+        ? await this.supabase.rpc('panier_from_landing')
+        : await this.supabase.rpc('panier_from_landing', {collectivite_id});
+
+    if (error) throw error;
+    return data as PanierBase;
   }
 
   listenToPanierUpdates(
