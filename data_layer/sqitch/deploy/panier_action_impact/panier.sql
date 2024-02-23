@@ -280,4 +280,37 @@ end;
 comment on function action_impact_fourchette_budgetaire is
     'La relation entre le state d''une action et ses thématiques.';
 
+create function
+    action_impact_matches_competences(collectivite_id integer, action_impact_id integer)
+    returns bool
+    language sql
+    stable
+begin
+    atomic
+    select exists(select 1
+                  from action_impact_banatic_competence a
+                           join collectivite_banatic_competence c using (competence_code)
+                  where a.action_impact_id = $2
+                    and c.collectivite_id = $1);
+end;
+comment on function action_impact_matches_competences is
+    'Vrai si la collectivité a au moins une compétence en commun avec l''action.';
+
+create function
+    matches_competences(action_impact_state)
+    returns bool
+    language sql
+    stable
+begin
+    atomic
+    select -- vrai si l'action n'est pas liée à des compétences
+           (select not exists(select 1 from action_impact_banatic_competence c where c.action_impact_id = $1.action.id))
+               or
+               -- ou si la collectivité au moins une compétence en commun avec l'action
+           (select action_impact_matches_competences(
+                           (select panier.collectivite_id from panier where id = $1.statut.panier_id),
+                           $1.action.id
+                   ));
+end;
+
 COMMIT;
