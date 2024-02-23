@@ -36,9 +36,11 @@ export type ActionImpactState = {
   statut: ActionImpactStatut | null;
 };
 
+export type PanierBase = Database['public']['Tables']['panier']['Row'];
+
 export type Panier =
   /* Le panier en tant que tel */
-  Database['public']['Tables']['panier']['Row'] & {
+  PanierBase & {
     /* Liste des actions ajoutée au panier */
     contenu: ActionImpactSnippet[];
     /* Liste de toutes les actions avec leurs states. */
