@@ -105,6 +105,7 @@ const PanierRealtime = ({
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
+          {...{budgets, thematiques}}
         />
       </div>
 

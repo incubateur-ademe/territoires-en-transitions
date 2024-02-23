@@ -1,9 +1,11 @@
 import {useState} from 'react';
-import {ActionImpactState} from '@tet/api';
+import {useSearchParams} from 'next/navigation';
+import {ActionImpactState, ActionImpactThematique} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import {OngletName} from 'src/tracking/trackingPlan';
+import FiltresActions from './FiltresActions';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
@@ -23,6 +25,8 @@ const getTabLabel = (
 
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
+  budgets: {niveau: number; nom: string}[];
+  thematiques: ActionImpactThematique[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
   onChangeTab: (tab: OngletName) => void;
@@ -30,11 +34,14 @@ type ListeActionsProps = {
 
 const ListeActions = ({
   actionsListe,
+  budgets,
+  thematiques,
   onToggleSelected,
   onUpdateStatus,
   onChangeTab,
 }: ListeActionsProps) => {
   const [openAlert, setOpenAlert] = useState(true);
+  const searchParams = useSearchParams();
 
   const tabsList: {
     label: string;
@@ -61,15 +68,19 @@ const ListeActions = ({
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
+            <FiltresActions {...{budgets, thematiques}} />
             <Alert
               isOpen={openAlert}
               onClose={() => setOpenAlert(false)}
               title="Nous avons personnalisé la liste selon votre territoire et votre domaine d'action. Vous pouvez élargir la sélection grâce aux filtres."
               classname="mb-8"
             />
-            {!tab.status && !actionsFiltrees.length ? (
+            {!tab.status &&
+            !actionsFiltrees.length &&
+            searchParams.size === 0 ? (
               <ListeVide success />
-            ) : !!tab.status && !actionsFiltrees.length ? (
+            ) : (!!tab.status || searchParams.size !== 0) &&
+              !actionsFiltrees.length ? (
               <ListeVide />
             ) : (
               <ListeActionsFiltrees
