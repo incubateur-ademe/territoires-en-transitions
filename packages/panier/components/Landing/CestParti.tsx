@@ -14,8 +14,10 @@ export default function CestParti() {
   );
   const onClick = async () => {
     const base = await panierAPI.panierFromLanding(collectivite_id);
-    // @ts-ignore
-    tracker('cta_panier', {});
+    collectivite_id
+      ? tracker('cta_panier_click', {collectivite_id: collectivite_id})
+      : // @ts-expect-error
+        tracker('cta_panier_click');
     router.push(`/panier/${base.id}`);
   };
 
