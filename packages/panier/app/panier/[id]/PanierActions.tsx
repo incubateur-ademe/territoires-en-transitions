@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
-import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import BasketPicto from '@components/Picto/BasketPicto';
 import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
 import {ActionImpactSnippet} from '@tet/api';
-import {Alert, Button, CarteActionImpact, Modal} from '@tet/ui';
+import {Alert, CarteActionImpact} from '@tet/ui';
+import React from 'react';
 
 type PanierActionsProps = {
+  children: React.ReactNode | React.ReactNode[];
   actionsListe: ActionImpactSnippet[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
@@ -13,6 +14,7 @@ type PanierActionsProps = {
 const PanierActions = ({
   actionsListe,
   onToggleSelected,
+  children,
 }: PanierActionsProps) => {
   return (
     <div className="lg:h-screen lg:w-2/5 xl:w-1/3 bg-white border-[0.5px] border-primary-3 sticky top-0">
@@ -59,39 +61,7 @@ const PanierActions = ({
               ))}
             </div>
           </div>
-
-          <Modal
-            size="lg"
-            render={() => (
-              <div className="flex flex-col gap-10 items-center relative">
-                <Fireworks
-                  autorun={{speed: 3, duration: 600}}
-                  className="absolute top-0 left-0 w-full h-full"
-                />
-                <h3 className="mb-0 text-primary-10">
-                  Pilotez les actions à impact sélectionnées
-                </h3>
-                <div className="w-full bg-primary-0 border border-primary-3 rounded-lg py-8 px-10 flex flex-col items-center">
-                  <span className="text-7xl text-primary-7 font-extrabold mb-6">
-                    {actionsListe.length}
-                  </span>
-                  <span className="text-lg text-primary-9 font-bold text-center mb-2">
-                    action{actionsListe.length > 1 ? 's' : ''} à ajouter dans
-                    mon plan à impact.
-                  </span>
-                  <span className="text-lg text-primary-9 text-center">
-                    Vous pouvez maintenant créer un plan pour retrouver et
-                    modifier ces actions selon vos besoins.
-                  </span>
-                </div>
-                <Button disabled>Créer le plan d'action</Button>
-              </div>
-            )}
-          >
-            <Button className="w-full justify-center mt-auto">
-              Valider la création
-            </Button>
-          </Modal>
+          {children}
         </div>
       )}
     </div>
