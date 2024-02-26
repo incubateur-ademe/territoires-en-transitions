@@ -45,6 +45,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     };
     onglets: never;
     events: {
+      /* Le bouton "c'est parti" */
       cta_panier_click: {};
     };
   };
@@ -75,6 +76,10 @@ export interface TrackingPlan extends Record<PageName, Page> {
         action_id: number;
         category_id: string | null;
       };
+      /* Le bouton "valider la création" affiché dans le panier */
+      cta_valider_creation_panier_click: {};
+      /* Le bouton "créer le plan d'action" affiché dans la modale */
+      cta_creer_le_plan_click: {};
     };
   };
 }
