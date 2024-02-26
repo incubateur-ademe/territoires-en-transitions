@@ -16,6 +16,7 @@ import {panierAPI, supabase} from 'src/clientAPI';
 import {useEventTracker} from 'src/tracking/useEventTracker';
 import {OngletName} from 'src/tracking/trackingPlan';
 import {useOngletTracker} from 'src/tracking/useOngletTracker';
+import {ValiderPanierButton} from 'app/panier/[id]/ValiderPanierButton';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -68,7 +69,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null,
+    statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     await tracker('statut', {
@@ -112,7 +113,9 @@ const PanierRealtime = ({
       <PanierActions
         actionsListe={panier.contenu}
         onToggleSelected={handleToggleSelected}
-      />
+      >
+        <ValiderPanierButton panier={panier} />
+      </PanierActions>
     </div>
   );
 };
