@@ -228,18 +228,19 @@ async function confidentialiteTestProfil(
     profil: Database["public"]["Enums"]["confidentialite_profil"]
 ): Promise<boolean> {
     let toReturn = true;
-    let triggerCVue= false;
-    let triggerUVue = false;
-    let triggerDVue =false;
+    let cVue= false;
+    let uVue = false;
+    let dVue =false;
     if(typeElement == 'vue'){
-        // Vérifie s'il existe des triggers permettant d'insert, update ou delete sur la vue
+        // Vérifie s'il existe des triggers permettant d'insert, update ou delete sur la vue,
+        // Ou si ce sont des vues simples dont postgre permet l'insertion
         const vue = await supabase
             .from("confidentialite_vues_a_tester").select()
             .eq("element", nomElement);
         if (vue!=null && vue.data!=null) {
-            triggerCVue = vue.data[0].c == "YES";
-            triggerUVue = vue.data[0].u == "YES";
-            triggerDVue = vue.data[0].d == "YES";
+            cVue = vue.data[0].c as unknown as boolean;
+            uVue = vue.data[0].u as unknown as boolean;
+            dVue = vue.data[0].d as unknown as boolean;
         }
     }
     const collectivites = profilAvecCollectivite.includes(profil) ? collectiviteIDTest : [0];
@@ -252,7 +253,7 @@ async function confidentialiteTestProfil(
         // Boucle sur chaque collectivité à tester
         for (let collectivite of collectiviteIDTest) {
             // Test C
-            if (typeElement == 'table' || triggerCVue){
+            if (typeElement == 'table' || cVue){
                 toReturn = await confidentialiteTestCRUD(
                     typeElement, nomElement, idElement, profil, profilCol, 'c', collectivite
                 ) && toReturn;
@@ -263,13 +264,13 @@ async function confidentialiteTestProfil(
                 typeElement, nomElement, idElement, profil, profilCol, 'r', collectivite
             ) && toReturn;
             // Test U
-            if (typeElement == 'table' || triggerUVue){
+            if (typeElement == 'table' || uVue){
                 toReturn = await confidentialiteTestCRUD(
                     typeElement, nomElement, idElement, profil, profilCol, 'u', collectivite
                 ) && toReturn;
             }
             // Test D
-            if (typeElement == 'table' || triggerDVue){
+            if (typeElement == 'table' || dVue){
                 toReturn = await confidentialiteTestCRUD(
                     typeElement, nomElement, idElement, profil, profilCol, 'd', collectivite
                 ) && toReturn;
