@@ -38,6 +38,8 @@ export type InputBaseProps = Omit<
   icon?: IconContent;
   /** Variante en fonction d'un état */
   state?: FieldState;
+  /** Pour styler le container */
+  containerClassname?: string;
 };
 
 type IconContent =
@@ -55,6 +57,7 @@ export const InputBase = forwardRef(
   (props: InputBaseProps, ref?: Ref<HTMLInputElement>) => {
     const {
       className,
+      containerClassname,
       type = 'text',
       displaySize = 'md',
       icon,
@@ -68,7 +71,8 @@ export const InputBase = forwardRef(
       <div
         className={classNames(
           'inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5',
-          borderColor
+          borderColor,
+          containerClassname
         )}
       >
         <input
