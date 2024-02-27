@@ -31,16 +31,20 @@ export type FieldMessageProps = {
   message?: string;
   /** Pour surcharger les styles du container du message */
   messageClassName?: string;
+  /** Id pour les tests */
+  'data-test'?: string;
 };
 
 export const FieldMessage = ({
   message,
   state = 'default',
   messageClassName,
+  'data-test': dataTest,
 }: FieldMessageProps) => {
   return (
     message !== undefined && (
       <div
+          data-test={dataTest}
         className={classNames(
           'flex items-center',
           stateToTextColor[state],
