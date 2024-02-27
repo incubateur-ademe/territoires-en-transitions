@@ -1,10 +1,17 @@
 <h2>Territoires en Transitions</h2>
 
-<p>Suivez le lien ci-dessous pour vous connecter au compte {{.Email}}</p>
+<p>Une connexion a été demandée pour l'adresse {{.Email}}</p>
+
+<p>Si vous n'êtes pas à l'origine de cette demande veuillez ignorer ce message.</p>
+
+<p>Sinon, suivez le lien ci-dessous</p>
 <p>
-  <a href="http://localhost:3001/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next={{ .RedirectTo }}"
+  <a href="http://localhost:3001/auth/login?view=verify&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
     >Me connecter</a
   >
+</p>
+<p>
+  et entrez le code suivant : <b id="otp">{{ .Token }}</b> pour vous connecter.
 </p>
 
 <p>À bientôt sur la plateforme !</p>
@@ -14,3 +21,4 @@
     >contact@territoiresentransitions.fr</a
   >
 </p>
+ 

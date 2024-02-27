@@ -4,11 +4,14 @@
 
 <p>Si vous n'êtes pas à l'origine de cette demande veuillez ignorer ce message.</p>
 
-<p>Sinon, suivez le lien ci-dessous pour valider votre inscription</p>
+<p>Sinon, suivez le lien ci-dessous</p>
 <p>
-  <a href="http://localhost:3001/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next={{ .RedirectTo }}"
+  <a href="http://localhost:3001/auth/signup?view=etape2&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
     >Valider mon inscription</a
   >
+</p>
+<p>
+  et entrez le code suivant : <b id="otp">{{ .Token }}</b> pour valider votre inscription.
 </p>
 
 <p>À bientôt sur la plateforme !</p>
