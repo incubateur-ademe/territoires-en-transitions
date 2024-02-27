@@ -4,9 +4,9 @@ import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
 import {ActionImpactSnippet} from '@tet/api';
 import {Alert, CarteActionImpact} from '@tet/ui';
 import React from 'react';
+import {ValiderPanierButton} from 'app/panier/[id]/ValiderPanierButton';
 
 type PanierActionsProps = {
-  children: React.ReactNode | React.ReactNode[];
   actionsListe: ActionImpactSnippet[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
@@ -14,7 +14,6 @@ type PanierActionsProps = {
 const PanierActions = ({
   actionsListe,
   onToggleSelected,
-  children,
 }: PanierActionsProps) => {
   return (
     <div className="lg:h-screen lg:w-2/5 xl:w-1/3 bg-white border-[0.5px] border-primary-3 sticky top-0">
@@ -44,7 +43,7 @@ const PanierActions = ({
                 dans mon panier
               </div>
               <div className="h-12 bg-gradient-to-b from-white via-white" />
-              {children}
+              <ValiderPanierButton />
               <div className="h-6 bg-gradient-to-b from-white via-white" />
             </div>
 
