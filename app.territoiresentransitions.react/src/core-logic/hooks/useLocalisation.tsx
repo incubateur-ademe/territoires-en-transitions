@@ -1,4 +1,3 @@
-import {authBasePath} from 'app/paths';
 import {useMemo} from 'react';
 import {Enums} from '@tet/api';
 import {useLocation} from 'react-router-dom';
@@ -42,11 +41,6 @@ const locationFromPath = (path: string): Localisation => {
     } else {
       onglet = 'plans';
     }
-  } else if (path.startsWith(authBasePath)) {
-    if (path.endsWith('signin')) page = 'signin';
-    else if (path.endsWith('signup')) page = 'signup';
-    else if (path.endsWith('recover')) page = 'recover';
-    else if (path.includes('/recover_landing/ ')) page = 'recover_landing';
   } else if (path.includes('/profil/')) {
     if (path.endsWith('mon-compte')) page = 'mon_compte';
     else if (path.endsWith('rejoindre-une-collectivite')) page = 'rejoindre';

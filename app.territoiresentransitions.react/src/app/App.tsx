@@ -7,7 +7,6 @@ import {
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
 import {E2E} from './E2E';
-import {AuthRoutes} from 'app/pages/Auth/AuthRoutes';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
 import {Redirector} from 'app/Redirector';
@@ -15,13 +14,7 @@ import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
-import {
-  authBasePath,
-  profilPath,
-  ancienRecherchesPath,
-  recherchesLandingPath,
-  recherchesCollectivitesUrl,
-} from 'app/paths';
+import {ancienRecherchesPath, profilPath, recherchesCollectivitesUrl, recherchesLandingPath} from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
@@ -58,9 +51,6 @@ export const App = () => {
                 <Switch>
                   <Route exact path="/">
                     <Home />
-                  </Route>
-                  <Route path={authBasePath}>
-                    <AuthRoutes />
                   </Route>
                   <Route path={profilPath}>
                     <ProfilPage />
