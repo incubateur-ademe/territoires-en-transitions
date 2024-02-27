@@ -636,3 +636,4 @@ utilisateur/usage [utilisateur/usage@v2.101.0] 2024-02-21T14:22:11Z Florian <flo
 taxonomie/thematique [taxonomie/thematique@v2.80.0] 2023-11-15T16:47:33Z Amandine Jacquelin <conta@LanceLibre> # Lie les sous_thématiques aux thématiques
 labellisation/audit [labellisation/audit@v2.101.0] 2024-02-22T15:12:37Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la contrainte des quatre ans pour vérifier qu'une labellisation existe déjà
 retool/audit [retool/audit@v2.101.0] 2024-02-22T15:22:49Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour modifier le sujet d'une demande d'audit
+utilisateur/droits_v2 [utilisateur/droits_v2@v2.101.0] 2024-02-27T13:13:59Z Amandine Jacquelin <conta@LanceLibre> # Enlève les droits en écriture sur les vues simples
