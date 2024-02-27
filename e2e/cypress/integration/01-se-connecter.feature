@@ -2,7 +2,7 @@
 
 Fonctionnalité: Accéder au site et se connecter
 
-  Scénario: Se connecter en tant que Yolo (utilisateur déjà rattaché)
+  Scénario: Se connecter en tant qu'utilisateur déjà rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |
@@ -32,7 +32,37 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible |
 
-  Scénario: Se connecter en tant que Yulu (utilisateur non encore rattaché)
+  Scénario: Se connecter par lien unique en tant qu'utilisateur déjà rattaché
+    Etant donné que j'ouvre le site
+    Alors la page vérifie les conditions suivantes :
+      | Elément                 | Condition |
+      | header                  | visible   |
+      | home                    | visible   |
+      | formulaire de connexion | absent    |
+      | footer                  | présent   |
+
+    Quand je clique sur le bouton "Se connecter" du "header"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | YoLO@dodo.com |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                     | Condition |
+      | home                        | absent    |
+      | message de connexion envoyé | visible   |
+
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "yolo"
+    Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "yolo"
+
+    Quand je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | le tableau de bord de la collectivité | visible   |
+
+  Scénario: Se connecter en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
       | Elément                 | Condition |
@@ -55,6 +85,37 @@ Fonctionnalité: Accéder au site et se connecter
       | email | YuLu@DUDU.COM |
       | mdp   | yulududu      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                  | Condition |
+      | header                   | visible   |
+      | home                     | absent    |
+      | formulaire de connexion  | absent    |
+      | toutes les collectivités | visible   |
+      | footer                   | présent   |
+
+  Scénario: Se connecter par lien unique en tant qu'utilisateur non encore rattaché
+    Etant donné que j'ouvre le site
+    Alors la page vérifie les conditions suivantes :
+      | Elément                 | Condition |
+      | header                  | visible   |
+      | home                    | visible   |
+      | formulaire de connexion | absent    |
+      | footer                  | présent   |
+
+    Quand je clique sur le bouton "Se connecter" du "header"
+    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | YuLu@DUDU.COM |
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                     | Condition |
+      | home                        | absent    |
+      | message de connexion envoyé | visible   |
+
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "yulu"
+    Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "yulu"
+
+    Quand je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
       | Elément                  | Condition |
       | header                   | visible   |
@@ -94,8 +155,11 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion | contient  | L'email et le mot de passe ne correspondent pas |
       | footer                  | présent   |                                                 |
 
-  Scénario: Demander un lien de réinitialisation du mot de passe
-    Etant donné que j'ouvre le site
+  Scénario: Demander un lien de réinitialisation et réinitialiser le mot de passe
+    Etant donné que la mailbox de "yolo" est vidée
+    Alors la mailbox de "yolo" contient 0 message
+
+    Quand j'ouvre le site
     Et que je clique sur le bouton "Se connecter" du "header"
     Et que je clique sur le bouton "Connexion avec mot de passe"
     Alors la page vérifie les conditions suivantes :
@@ -109,16 +173,34 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion                    | visible   |
       | demande de lien de réinitialisation du mdp | visible   |
 
+# étape 1 : demande la réinit.
     Quand je remplis le "demande de lien de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YoLO@dodo.cOm |
-    Et que l'appel à "auth.resetPasswordForEmail" va répondre "ok"
     Et que je clique sur le bouton "Valider" du "demande de lien de réinitialisation du mdp"
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition | Valeur |
       | formulaire de connexion                    | visible   |        |
-      | message lien envoyé                        | visible   |        |
+      | message de réinitialisation envoyé | visible |  |
       | demande de lien de réinitialisation du mdp | absent    |        |
+
+    # étape 2 : saisie code OTP
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "yolo"
+    Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "yolo"
+
+    Quand je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors le "formulaire de réinitialisation du mdp" est visible
+
+    Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
+      | Champ | Valeur                |
+      | mdp   | monmotdepassesécurisé |
+    Et que je clique sur le bouton "Valider" du "formulaire de réinitialisation du mdp"
+
+    Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | formulaire de connexion               | absent    |
+      | formulaire de réinitialisation du mdp | absent    |
+      | le tableau de bord de la collectivité | visible   |
 
   Scénario: Demander un lien de réinitialisation du mot de passe et visualiser une erreur
     Etant donné que j'ouvre le site
@@ -143,59 +225,45 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition | Valeur                                       |
       | formulaire de connexion                    | visible   |                                              |
-      | message lien envoyé                        | absent    |                                              |
+      | message de réinitialisation envoyé | absent |  |
       | demande de lien de réinitialisation du mdp | visible   |                                              |
       | demande de lien de réinitialisation du mdp | contient  | L'envoi du lien de réinitialisation a échoué |
 
-  Scénario: Réinitialiser son mot de passe depuis un lien reçu par mail
-    Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
-    Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | formulaire de connexion OTP           | visible   |
-      | formulaire de réinitialisation du mdp | absent    |
+  Scénario: Se connecter sans mot de passe
+    Etant donné que la mailbox de "yolo" est vidée
+    Alors la mailbox de "yolo" contient 0 message
 
-    Quand je remplis le "formulaire de connexion OTP" avec les valeurs suivantes :
-      | Champ | Valeur        |
-      | email | Yolo@DoDO.com |
-    Et que je clique sur le bouton "Valider" du "formulaire de connexion OTP"
-    Alors le "formulaire de réinitialisation du mdp" est visible
+    Quand j'ouvre le site
+    Et que je clique sur le bouton "Se connecter" du "header"
+    Alors le "formulaire de connexion" est visible
 
-    Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
-      | Champ | Valeur                |
-      | mdp   | monmotdepassesécurisé |
-    Et que l'appel à "auth.updateUserPassword" va répondre "ok"
-    Et que je clique sur le bouton "Valider" du "formulaire de réinitialisation du mdp"
-
-    Alors la page vérifie les conditions suivantes :
-      | Elément                                  | Condition |
-      | formulaire de connexion                  | absent    |
-      | formulaire de réinitialisation du mdp    | absent    |
-      | réinitialisation du mot de passe réussie | visible   |
-
-  Scénario: Réinitialiser son mot de passe depuis un lien reçu par mail et visualiser une erreur
-    Etant donné que j'ouvre le site depuis un lien de réinitialisation du mot de passe
-    Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | formulaire de connexion OTP           | visible   |
-      | formulaire de réinitialisation du mdp | absent    |
-
-    Quand je remplis le "formulaire de connexion OTP" avec les valeurs suivantes :
+    # étape 1 : saisie email/mdp
+    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | yolo@dodo.com |
-    Et que je clique sur le bouton "Valider" du "formulaire de connexion OTP"
-    Alors le "formulaire de réinitialisation du mdp" est visible
-
-    Quand je remplis le "formulaire de réinitialisation du mdp" avec les valeurs suivantes :
-      | Champ | Valeur                |
-      | mdp   | monmotdepassesécurisé |
-    Et que l'appel à "auth.updateUserPassword" va répondre "error"
-    Et que je clique sur le bouton "Valider" du "formulaire de réinitialisation du mdp"
-
+    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                                    | Condition |
-      | formulaire de connexion                    | absent    |
-      | formulaire de réinitialisation du mdp      | absent    |
-      | réinitialisation du mot de passe en erreur | visible   |
+      | Elément                     | Condition |
+      | header                      | visible   |
+      | home                        | absent    |
+      | message de connexion envoyé | visible   |
+    Et la mailbox de "yolo" contient 1 message
+    Et le dernier message dans la mailbox de "yolo" contient le texte "Me connecter"
+
+    # étape 2 : saisie code OTP
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "yolo"
+    Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "yolo"
+
+    Quand je clique sur le bouton "Valider" du "formulaire de connexion"
+    Alors la page vérifie les conditions suivantes :
+      | Elément                               | Condition |
+      | header                                | visible   |
+      | home                                  | absent    |
+      | formulaire de connexion               | absent    |
+      | formulaire de création de compte      | absent    |
+      | toutes les collectivités              | absent    |
+      | le tableau de bord de la collectivité | visible   |
+      | footer                                | présent   |
 
   Scénario: Se connecter et accepter les CGU
     Etant donné que je suis connecté en tant qu'utilisateur de la collectivité 1 n'ayant pas encore accepté les CGU
