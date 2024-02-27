@@ -4,12 +4,7 @@
 import {useSearchParams} from 'next/navigation';
 import {LoginModal} from '@tet/ui';
 import {useLoginState} from './useLoginState';
-
-// redirection par défaut vers la home de l'app.
-const DEFAULT_REDIRECT =
-  process.env.NODE_ENV === 'production'
-    ? 'https://app.territoiresentransitions.fr'
-    : 'http://localhost:3000';
+import {DEFAULT_REDIRECT} from '../constants';
 
 /**
  * Affiche la page d'authentification
@@ -22,20 +17,19 @@ const LoginPage = () => {
   // détermine l'url vers laquelle rediriger après un login réussi
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect_to') || DEFAULT_REDIRECT;
+  const defaultView = searchParams.get('view');
+  const defaultValues = {
+    email: searchParams.get('email'),
+    otp: searchParams.get('otp'),
+  };
 
-  const {onCancel, onSubmit, isLoading, error, view, setView} =
-    useLoginState(redirectTo);
+  const state = useLoginState({
+    redirectTo,
+    defaultView,
+    defaultValues,
+  });
 
-  return (
-    <LoginModal
-      isLoading={isLoading}
-      error={error}
-      view={view}
-      setView={setView}
-      onCancel={onCancel}
-      onSubmit={onSubmit}
-    />
-  );
+  return <LoginModal defaultValues={defaultValues} {...state} />;
 };
 
 export default LoginPage;
