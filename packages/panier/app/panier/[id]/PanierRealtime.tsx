@@ -4,7 +4,7 @@
 import PanierActions from './PanierActions';
 import ListeActions from './ListeActions';
 
-import {useEffect, useState} from 'react';
+import {createContext, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {
   ActionImpactCategorie,
@@ -24,6 +24,19 @@ type PanierRealtimeProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   thematiques: ActionImpactThematique[];
 };
+
+export const PanierContext = createContext<Panier>({
+  id: '',
+  collectivite_id: 0,
+  collectivite_preset: null,
+  private: false,
+  action_impact_state: null,
+  contenu: [],
+  states: [],
+  created_at: '',
+  created_by: null,
+  latest_update: '',
+});
 
 const PanierRealtime = ({
   panier,
@@ -90,33 +103,35 @@ const PanierRealtime = ({
   };
 
   return (
-    <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-      <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
-        <h1>
-          Initiez{' '}
-          <span className="text-secondary-1">des actions impactantes</span> et
-          valorisez le chemin déjà parcouru
-        </h1>
-        <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
-          Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
-          fonction de leur état d'avancement.
-        </p>
-        <ListeActions
-          actionsListe={panier.states}
-          onToggleSelected={handleToggleSelected}
-          onUpdateStatus={handleUpdateStatus}
-          onChangeTab={handleChangeTab}
-          {...{budgets, thematiques}}
-        />
-      </div>
+    <PanierContext.Provider value={panier}>
+      <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
+        <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
+          <h1>
+            Initiez{' '}
+            <span className="text-secondary-1">des actions impactantes</span> et
+            valorisez le chemin déjà parcouru
+          </h1>
+          <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
+            Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
+            fonction de leur état d'avancement.
+          </p>
+          <ListeActions
+            actionsListe={panier.states}
+            onToggleSelected={handleToggleSelected}
+            onUpdateStatus={handleUpdateStatus}
+            onChangeTab={handleChangeTab}
+            {...{budgets, thematiques}}
+          />
+        </div>
 
-      <PanierActions
-        actionsListe={panier.contenu}
-        onToggleSelected={handleToggleSelected}
-      >
-        <ValiderPanierButton panier={panier} />
-      </PanierActions>
-    </div>
+        <PanierActions
+          actionsListe={panier.contenu}
+          onToggleSelected={handleToggleSelected}
+        >
+          <ValiderPanierButton panier={panier} />
+        </PanierActions>
+      </div>
+    </PanierContext.Provider>
   );
 };
 
