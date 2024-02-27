@@ -17,6 +17,7 @@ import {useEventTracker} from 'src/tracking/useEventTracker';
 import {OngletName} from 'src/tracking/trackingPlan';
 import {useOngletTracker} from 'src/tracking/useOngletTracker';
 import {ValiderPanierButton} from 'app/panier/[id]/ValiderPanierButton';
+import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -52,6 +53,7 @@ const PanierRealtime = ({
   const ongletTracker = useOngletTracker('panier');
 
   useEffect(() => {
+    restoreAuthTokens(supabase);
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
 
     return () => {
