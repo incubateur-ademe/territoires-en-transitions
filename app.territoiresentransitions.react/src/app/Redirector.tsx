@@ -5,8 +5,9 @@ import {
   invitationPath,
   makeCollectiviteAccueilUrl,
   signInPath,
+  signUpPath,
 } from 'app/paths';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {useAuth, useDCP} from 'core-logic/api/auth/AuthProvider';
 import {useInvitationState} from 'core-logic/hooks/useInvitationState';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
 
@@ -14,10 +15,10 @@ export const Redirector = () => {
   const history = useHistory();
   const {pathname} = useLocation();
   const {isConnected} = useAuth();
+  const {data: DCP} = useDCP();
   const {invitationState} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
-  const isLandingConnected = // L'utilisateur est connecté et arrive sur '/'.
-    isConnected && pathname === '/' && userCollectivites !== null;
+  const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
   const isInvitationJustAccepted =
     isConnected &&
     invitationState === 'accepted' &&
@@ -31,7 +32,7 @@ export const Redirector = () => {
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (isLandingConnected || isInvitationJustAccepted) {
+    if (userCollectivites && (isLandingConnected || isInvitationJustAccepted)) {
       if (
         userCollectivites &&
         userCollectivites.length >= 1 &&
@@ -46,7 +47,7 @@ export const Redirector = () => {
         history.push(homePath);
       }
     }
-  }, [isLandingConnected, isInvitationJustAccepted]);
+  }, [isLandingConnected, isInvitationJustAccepted, userCollectivites]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
@@ -64,6 +65,17 @@ export const Redirector = () => {
       document.location.replace(signInPath);
     }
   }, [isConnected, invitationState]);
+
+  // redirige vers l'étape 3 de la création de compte si il manque des infos aux DCP
+  const userInfoRequired =
+    isConnected &&
+    DCP &&
+    (!DCP?.cgu_acceptees_le || !DCP?.nom || !DCP?.prenom || !DCP?.telephone);
+  useEffect(() => {
+    if (userInfoRequired) {
+      document.location.replace(`${signUpPath}?view=etape3`);
+    }
+  }, [userInfoRequired]);
 
   return null;
 };
