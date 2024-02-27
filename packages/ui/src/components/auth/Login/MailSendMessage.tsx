@@ -1,4 +1,4 @@
-import MailSend from '../../assets/MailSend';
+import MailSend from '../../../assets/MailSend';
 
 /** Affiche un message suite à l'envoi du mail de connexion ou de
  * réinitialisation du mot de passe */

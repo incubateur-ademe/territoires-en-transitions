@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Modal} from '@design-system/Modal';
-import {LoginProps} from './type';
+import {LoginProps, LoginView} from './type';
 import {Login} from './Login';
 
 /**
@@ -9,20 +9,36 @@ import {Login} from './Login';
 export const LoginModal = (props: LoginProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const {view, onCancel} = props;
-  const size =
-    view === 'msg_init_mdp' || view === 'msg_lien_envoye' ? 'md' : 'lg';
+
   const onClose = () => {
     setIsOpen(false);
     onCancel();
   };
+
   return (
     <Modal
       dataTest="SignInPage"
       backdropBlur
-      size={size}
+      size={mdDialog.includes(view) ? 'md' : 'lg'}
+      title={getTitle(view)}
       openState={{isOpen, setIsOpen}}
       onClose={onClose}
       render={() => <Login {...props} onCancel={() => onClose()} />}
     />
   );
+};
+
+// la modale est en format "md" pour ces contenus
+const mdDialog: LoginView[] = [
+  'msg_init_mdp',
+  'msg_lien_envoye',
+  'verify',
+  'reset_mdp',
+];
+
+// retourne le titre approprié de la modale en fonction de son contenu
+const getTitle = (view: LoginView) => {
+  if (view === 'etape1') return 'Se connecter';
+  if (view === 'mdp_oublie') return 'Mot de passe oublié ?';
+  if (view === 'reset_mdp') return 'Choisissez votre nouveau mot de passe';
 };
