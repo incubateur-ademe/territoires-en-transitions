@@ -1,5 +1,5 @@
 import {Ref, forwardRef} from 'react';
-import {InputBase} from './InputBase';
+import {InputBase, InputBaseProps} from './InputBase';
 import {
   InputPattern,
   InputPatternProps,
@@ -8,17 +8,15 @@ import {
 export type InputOTPProps = Omit<
   InputPatternProps,
   'format' | 'mask' | 'allowEmptyFormatting'
-> & {
-  /** Appelée avec la valeur non formatée lorsque la saisie est correcte */
-  onValidChange: (value: string) => void;
-};
+> &
+  Pick<InputBaseProps, 'containerClassname'>;
 
 const RE_CLEAN = /[^\d]/g; // pour supprimer les caractères non numériques
 const LENGTH = 6; // longueur du code attendu
 const FORMAT = new Array(LENGTH).fill('#').join(' '); // formatage du code lors de la saisie
 
 // renvoi le code saisi si il est valide
-const validate = (value: string) => {
+export const validateOTP = (value: string) => {
   // nettoie le code saisi
   const v = value.replace(RE_CLEAN, '');
   // et le renvoi si la longueur est celle attendue
@@ -33,10 +31,7 @@ const validate = (value: string) => {
  * `onValidChange` est appelée si la saisie est correcte et fourni le code sans le formatage.
  */
 export const InputOTP = forwardRef(
-  (
-    {value, onChange, onValidChange, ...remainingProps}: InputOTPProps,
-    ref?: Ref<HTMLInputElement>
-  ) => {
+  ({value, ...remainingProps}: InputOTPProps, ref?: Ref<HTMLInputElement>) => {
     return (
       <InputPattern
         className="w-32 text-lg text-center"
@@ -46,14 +41,6 @@ export const InputOTP = forwardRef(
         format={FORMAT}
         mask="_"
         allowEmptyFormatting
-        onChange={e => {
-          const value = e.target.value;
-          const v = validate(value);
-          onChange?.(e);
-          if (v) {
-            onValidChange(v);
-          }
-        }}
         {...remainingProps}
       />
     );

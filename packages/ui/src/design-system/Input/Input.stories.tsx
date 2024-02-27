@@ -224,7 +224,6 @@ export const TypePatternAvecValeur: Story = {
 export const TypeOTP: Story = {
   args: {
     type: 'otp',
-    onValidChange: action('onValidChange')
   },
 };
 
@@ -232,7 +231,6 @@ export const TypeOTPAvecValeur: Story = {
   args: {
     type: 'otp',
     value: '123456',
-    onValidChange: action('onValidChange')
   },
 };
 
