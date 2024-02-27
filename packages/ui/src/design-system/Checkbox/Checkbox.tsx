@@ -11,6 +11,8 @@ export type CheckboxProps = Omit<
   label?: string;
   /** Variante visuelle */
   variant?: 'checkbox' | 'switch';
+  /** Pour style le container */
+  containerClassname?: string;
 } & FieldMessageProps;
 
 /**
@@ -25,6 +27,7 @@ export const Checkbox = forwardRef(
       state,
       message,
       className,
+      containerClassname,
       variant = 'checkbox',
       id,
       ...remainingProps
@@ -34,7 +37,7 @@ export const Checkbox = forwardRef(
     const inputId = id ?? useId();
 
     return (
-      <div className="flex gap-2 min-w-min">
+      <div className={classNames('flex gap-2 min-w-min', containerClassname)}>
         <input
           id={inputId}
           type="checkbox"

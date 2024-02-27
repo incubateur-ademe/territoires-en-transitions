@@ -60,6 +60,23 @@ exports[`design-system/Checkbox AvecMessageUniquement smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Checkbox AvecPersonnalisationDuContainer smoke-test 1`] = `
+<div class="flex gap-2 min-w-min border border-grey p-4">
+  <input id="cb13"
+         type="checkbox"
+         class="!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5 flex content-center justify-center mt-0.5 border border-solid !border-grey-6 rounded flex-wrap w-5 h-5 !text-white  checked:!border-transparent checked:hover:bg-primary-8 checked:!disabled:border-grey-4"
+         checked
+  >
+  <div class="flex flex-col gap-1">
+    <label for="cb13"
+           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+    >
+      Description de l'action
+    </label>
+  </div>
+</div>
+`;
+
 exports[`design-system/Checkbox Checked smoke-test 1`] = `
 <div class="flex gap-2 min-w-min">
   <input id="cb3"
