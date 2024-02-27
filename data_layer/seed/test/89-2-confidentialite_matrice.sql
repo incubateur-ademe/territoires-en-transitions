@@ -1623,6 +1623,15 @@ values
     ('fonction', 'plan_action_type', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_type', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'plan_action_type', 'auditeur', 'non', 'oui', 'non', 'non'),
+    -- Fonction valider_audit
+    ('fonction', 'valider_audit', 'public', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'connecte', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'verifie', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'support', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'lecture', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'edition', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'admin', 'non', 'non', 'non', 'non'),
+    ('fonction', 'valider_audit', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction vide
     ('fonction', 'vide', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'vide', 'connecte', 'non', 'non', 'non', 'non'),
