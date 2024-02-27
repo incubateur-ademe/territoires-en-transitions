@@ -6,9 +6,7 @@ export {preset} from './tailwind-preset';
 // dossier composants
 export * from './components/layout';
 export * from './components/panier-actions';
-export * from './components/Login';
-export * from './components/Signup';
-export * from './components/PasswordStrengthMeter';
+export * from './components/auth';
 
 // dossier design-system
 export * from './design-system/Alert';
