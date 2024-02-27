@@ -44,6 +44,8 @@ const PanierActions = ({
                 dans mon panier
               </div>
               <div className="h-12 bg-gradient-to-b from-white via-white" />
+              {children}
+              <div className="h-6 bg-gradient-to-b from-white via-white" />
             </div>
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
@@ -61,7 +63,6 @@ const PanierActions = ({
               ))}
             </div>
           </div>
-          {children}
         </div>
       )}
     </div>
