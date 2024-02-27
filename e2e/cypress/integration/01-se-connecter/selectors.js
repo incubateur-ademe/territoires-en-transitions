@@ -10,8 +10,11 @@ export const LocalSelectors = {
       Valider: 'button[type=submit]',
     },
   },
-  'message lien envoyé': {
-    selector: '[data-test=PasswordRecoverySucceed]',
+  'message de connexion envoyé': {
+    selector: '[data-test=msg_lien_envoye]',
+  },
+  'message de réinitialisation envoyé': {
+    selector: '[data-test=msg_init_mdp]',
     children: {
       'Retour à la connexion': 'button',
     },
@@ -23,7 +26,7 @@ export const LocalSelectors = {
     selector: '[data-test=ResetPassword]',
     children: {
       mdp: 'input[name=password]',
-      Valider: 'button[data-test=ok]',
+      Valider: 'button[type=submit]',
     },
   },
   'réinitialisation du mot de passe réussie': {
