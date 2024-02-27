@@ -129,9 +129,7 @@ const PanierRealtime = ({
         <PanierActions
           actionsListe={panier.contenu}
           onToggleSelected={handleToggleSelected}
-        >
-          <ValiderPanierButton panier={panier} />
-        </PanierActions>
+        />
       </div>
     </PanierContext.Provider>
   );
