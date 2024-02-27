@@ -9,7 +9,6 @@ const meta: Meta<typeof Signup> = {
   args: {
     defaultValues: {
       email: 'yolo@dodo.com',
-      password: '',
     },
     collectivites: [
       {value: 1270, label: 'Grenoble'},
