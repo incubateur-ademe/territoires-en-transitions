@@ -1,4 +1,10 @@
-interface EventProperties extends Record<string, string | number | null> {}
+import {OptionValue} from '@tet/ui';
+
+interface EventProperties
+  extends Record<
+    string,
+    string | number | null | boolean | OptionValue[] | undefined
+  > {}
 
 interface Events extends Record<string, EventProperties> {}
 
@@ -80,6 +86,12 @@ export interface TrackingPlan extends Record<PageName, Page> {
       cta_valider_creation_panier_click: {};
       /* Le bouton "créer le plan d'action" affiché dans la modale */
       cta_creer_le_plan_click: {};
+      /* Les valeurs des filtres  */
+      filtre: {
+        thematique_ids?: OptionValue[];
+        niveau_budget_ids?: OptionValue[];
+        match_competences?: boolean;
+      };
     };
   };
 }
