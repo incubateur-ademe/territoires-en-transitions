@@ -16,8 +16,8 @@ import {panierAPI, supabase} from 'src/clientAPI';
 import {useEventTracker} from 'src/tracking/useEventTracker';
 import {OngletName} from 'src/tracking/trackingPlan';
 import {useOngletTracker} from 'src/tracking/useOngletTracker';
-import {ValiderPanierButton} from 'app/panier/[id]/ValiderPanierButton';
 import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
+import {User} from '@supabase/supabase-js';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -39,6 +39,8 @@ export const PanierContext = createContext<Panier>({
   latest_update: '',
 });
 
+export const UserContext = createContext<User | null>(null);
+
 const PanierRealtime = ({
   panier,
   categories,
@@ -46,15 +48,18 @@ const PanierRealtime = ({
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<OngletName>('selection');
-
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   const tracker = useEventTracker('panier', currentTab);
   const ongletTracker = useOngletTracker('panier');
 
   useEffect(() => {
-    restoreAuthTokens(supabase);
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) setUser(session.user);
+    });
+    restoreAuthTokens(supabase);
 
     return () => {
       // @ts-ignore
@@ -106,31 +111,33 @@ const PanierRealtime = ({
 
   return (
     <PanierContext.Provider value={panier}>
-      <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-        <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
-          <h1>
-            Initiez{' '}
-            <span className="text-secondary-1">des actions impactantes</span> et
-            valorisez le chemin déjà parcouru
-          </h1>
-          <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
-            Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
-            fonction de leur état d'avancement.
-          </p>
-          <ListeActions
-            actionsListe={panier.states}
+      <UserContext.Provider value={user}>
+        <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
+          <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
+            <h1>
+              Initiez{' '}
+              <span className="text-secondary-1">des actions impactantes</span>{' '}
+              et valorisez le chemin déjà parcouru
+            </h1>
+            <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
+              Ajoutez les actions à votre panier. Vous pouvez aussi les classer
+              en fonction de leur état d'avancement.
+            </p>
+            <ListeActions
+              actionsListe={panier.states}
+              onToggleSelected={handleToggleSelected}
+              onUpdateStatus={handleUpdateStatus}
+              onChangeTab={handleChangeTab}
+              {...{budgets, thematiques}}
+            />
+          </div>
+
+          <PanierActions
+            actionsListe={panier.contenu}
             onToggleSelected={handleToggleSelected}
-            onUpdateStatus={handleUpdateStatus}
-            onChangeTab={handleChangeTab}
-            {...{budgets, thematiques}}
           />
         </div>
-
-        <PanierActions
-          actionsListe={panier.contenu}
-          onToggleSelected={handleToggleSelected}
-        />
-      </div>
+      </UserContext.Provider>
     </PanierContext.Provider>
   );
 };
