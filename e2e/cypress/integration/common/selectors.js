@@ -50,8 +50,11 @@ export const Selectors = {
       mdp: 'input[name=password]',
       nom: 'input[name=nom]',
       prenom: 'input[name=prenom]',
-      cgu: 'input[name=vie_privee_conditions]',
-      Valider: 'button[data-test=ok]',
+      telephone: 'input[name=telephone]',
+      cgu: 'input[name=cgu_acceptees]',
+      rôle: '[data-test=role]',
+      "message d'erreur": '[data-test=error]',
+      Valider: 'button[type=submit]',
     },
   },
   'tableau des membres': {
