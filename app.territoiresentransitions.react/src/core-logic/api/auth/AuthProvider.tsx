@@ -162,7 +162,7 @@ const clearCrispUserData = () => {
 const fetchDCP = async (user_id: string) => {
   const {data} = await supabaseClient
     .from('dcp')
-    .select('user_id,nom,prenom,cgu_acceptees_le')
+    .select('user_id,nom,prenom,telephone,cgu_acceptees_le')
     .match({user_id});
 
   return data?.length ? data[0] : null;
