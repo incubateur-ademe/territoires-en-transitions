@@ -272,3 +272,8 @@ export const AvecIconeTexteEtDesactive: Story = {
     icon: {text: 'TTC'},
   },
 };
+
+/** Personnalisation du container (par exemple changement du padding) */
+export const PersonnalisationDuContainer: Story = {
+  args: {containerClassname: 'p-2', value: 'une valeur'},
+};
