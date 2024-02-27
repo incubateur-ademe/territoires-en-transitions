@@ -20370,11 +20370,11 @@ export interface Database {
       }
       confidentialite_vues_a_tester: {
         Row: {
-          c: string | null
-          d: string | null
+          c: boolean | null
+          d: boolean | null
           element: unknown | null
           id_element: string | null
-          u: string | null
+          u: boolean | null
         }
         Relationships: []
       }
@@ -25357,7 +25357,7 @@ export interface Database {
       fiche_resume:
         | {
             Args: {
-              fiche_action_indicateur: unknown
+              fiche_action_action: unknown
             }
             Returns: {
               amelioration_continue: boolean | null
@@ -25377,7 +25377,7 @@ export interface Database {
           }
         | {
             Args: {
-              fiche_action_action: unknown
+              fiche_action_indicateur: unknown
             }
             Returns: {
               amelioration_continue: boolean | null
@@ -27190,44 +27190,6 @@ export interface Database {
       time_bucket:
         | {
             Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -27309,6 +27271,44 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
             }
             Returns: number
           }
@@ -27502,6 +27502,23 @@ export interface Database {
           "": unknown[]
         }
         Returns: string
+      }
+      valider_audit: {
+        Args: {
+          audit_id: number
+        }
+        Returns: {
+          clos: boolean | null
+          collectivite_id: number | null
+          date_cnl: string | null
+          date_debut: string | null
+          date_fin: string | null
+          demande_id: number | null
+          id: number | null
+          referentiel: Database["public"]["Enums"]["referentiel"] | null
+          valide: boolean | null
+          valide_labellisation: boolean | null
+        }
       }
       vide: {
         Args: {
