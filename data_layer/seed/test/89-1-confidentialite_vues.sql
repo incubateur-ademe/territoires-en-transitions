@@ -21,7 +21,11 @@ order by routine_name;
 comment on materialized view confidentialite_fonctions_a_tester is 'Liste des fonctions à tester';
 
 create materialized view confidentialite_vues_a_tester as
-select table_name as element,  null as id_element, is_trigger_insertable_into as c, is_trigger_updatable as u, is_trigger_deletable as d
+select table_name as element,
+       null as id_element,
+       is_trigger_insertable_into = 'YES' or is_insertable_into = 'YES' as c,
+       is_trigger_updatable = 'YES' or is_updatable = 'YES' as u,
+       is_trigger_deletable = 'YES' or is_updatable = 'YES' as d
 from information_schema.views
 where table_schema = 'public'
   and table_name not like 'test_%'
