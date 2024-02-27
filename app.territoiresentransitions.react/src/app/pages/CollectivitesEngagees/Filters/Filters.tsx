@@ -1,3 +1,4 @@
+import {ChangeEvent, useEffect, useState} from 'react';
 import {Field, SelectFilter, Input} from '@tet/ui';
 
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
@@ -13,7 +14,6 @@ import {
 import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useEffect, useState} from 'react';
 import {CollectiviteEngagee} from '@tet/api';
 import {SetFilters} from 'app/pages/CollectivitesEngagees/data/filters';
 import {RecherchesViewParam} from 'app/paths';
@@ -50,8 +50,10 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
           <Input
             data-test="CollectiviteSearchInput"
             type="search"
-            onChange={e => setSearch(e.target.value)}
-            onSearch={v => {
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
+            onSearch={(v: string) => {
               setFilters({...filters, nom: v});
               tracker({fonction: 'recherche', action: 'saisie'});
             }}
