@@ -1,9 +1,11 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {ActionImpactThematique} from '@tet/api';
 import {Field, OptionValue, SelectMultiple} from '@tet/ui';
+import {useEventTracker} from 'src/tracking/useEventTracker';
+import {PanierContext} from 'app/panier/[id]/PanierRealtime';
 
 type FiltresActionsProps = {
   budgets: {niveau: number; nom: string}[];
@@ -14,6 +16,8 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const tracker = useEventTracker('panier');
+  const panier = useContext(PanierContext);
 
   const [complexiteValues, setComplexiteValues] = useState<
     OptionValue[] | undefined
@@ -52,11 +56,20 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
       paramsArray.push(`b=${budgetsValues.join(',')}`);
     }
 
-    if (paramsArray.length > 0) {
-      router.push(`${pathname}?${paramsArray.join('&')}`);
-    } else {
-      router.push(pathname);
-    }
+    const href =
+      paramsArray.length > 0
+        ? `${pathname}?${paramsArray.join('&')}`
+        : pathname;
+    const trackThenNavigate = async () => {
+      await tracker('filtre', {
+        collectivite_preset: panier.collectivite_preset,
+        panier_id: panier.id,
+        thematique_ids: thematiquesValues,
+        niveau_budget_ids: budgetsValues,
+      });
+      router.push(href);
+    };
+    trackThenNavigate();
   }, [
     thematiquesValues,
     thematiquesValues?.length,
@@ -64,6 +77,8 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
     budgetsValues?.length,
     router,
     pathname,
+    panier,
+    tracker,
   ]);
 
   return (
