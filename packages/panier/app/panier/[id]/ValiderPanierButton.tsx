@@ -1,13 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import {Panier} from '@tet/api';
 import {Button, Modal} from '@tet/ui';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {useEventTracker} from 'src/tracking/useEventTracker';
+import {useSearchParams} from 'next/navigation';
+import {PanierContext} from 'app/panier/[id]/PanierRealtime';
 
-export function ValiderPanierButton({panier}: {panier: Panier}) {
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+export function ValiderPanierButton() {
+  const searchParams = useSearchParams();
+  const initiallyOpen = searchParams.get('modale') === 'creation';
+  const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
   const tracker = useEventTracker('panier');
+  const panier = useContext(PanierContext);
   const contenu = panier.contenu;
   return (
     <>
@@ -51,19 +55,27 @@ export function ValiderPanierButton({panier}: {panier: Panier}) {
                 ces actions selon vos besoins.
               </span>
             </div>
-            <Button
-              onClick={() =>
-                tracker('cta_valider_creation_panier_click', {
-                  collectivite_preset: panier.collectivite_preset,
-                  panier_id: panier.id,
-                })
-              }
-            >
-              Créer le plan d'action
-            </Button>
+            <ModeDeconnecte />
           </div>
         )}
       />
     </>
+  );
+}
+
+function ModeDeconnecte() {
+  const tracker = useEventTracker('panier');
+  const panier = useContext(PanierContext);
+  return (
+    <Button
+      onClick={() =>
+        tracker('cta_valider_creation_panier_click', {
+          collectivite_preset: panier.collectivite_preset,
+          panier_id: panier.id,
+        })
+      }
+    >
+      Créer le plan d'action
+    </Button>
   );
 }
