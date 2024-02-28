@@ -4,12 +4,12 @@ import {ActionImpactState, ActionImpactThematique} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
-import {OngletName} from 'src/tracking/trackingPlan';
+import {OngletName} from '@tet/ui';
 import FiltresActions from './FiltresActions';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
-  actionsNb: number,
+  actionsNb: number
 ) => {
   if (tab.status !== null) {
     if (actionsNb > 1 || tab.status === 'en_cours') {
@@ -63,7 +63,7 @@ const ListeActions = ({
         const actionsFiltrees = actionsListe.filter(
           a =>
             (!a.statut && a.statut === tab.status) ||
-            (a.statut && a.statut.categorie_id === tab.status),
+            (a.statut && a.statut.categorie_id === tab.status)
         );
 
         return (

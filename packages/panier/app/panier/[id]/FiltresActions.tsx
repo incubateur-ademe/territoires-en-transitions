@@ -4,7 +4,7 @@ import {useContext, useEffect, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {ActionImpactThematique} from '@tet/api';
 import {Field, OptionValue, SelectMultiple} from '@tet/ui';
-import {useEventTracker} from 'src/tracking/useEventTracker';
+import {useEventTracker} from '@tet/ui';
 import {PanierContext} from 'app/panier/[id]/PanierRealtime';
 
 type FiltresActionsProps = {
