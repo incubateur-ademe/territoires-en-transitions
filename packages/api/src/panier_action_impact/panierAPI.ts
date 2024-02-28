@@ -1,6 +1,6 @@
 import {SupabaseClient} from '@supabase/supabase-js';
 import {Database} from '../database.types';
-import {Panier, PanierBase} from './types';
+import {MesCollectivite, Panier, PanierBase} from './types';
 
 /**
  * On sélectionne toutes les colonnes du panier : *
@@ -164,5 +164,19 @@ export class PanierAPI {
   ): Promise<number> {
     // todo appeler la RPC plan_from_panier(collectivite_id, panier_id)
     throw 'pas encore implémenté';
+  }
+
+  /**
+   * La liste des collectivités dans lesquelles on peut
+   * créer un plan à partir d'un panier.
+   */
+  async mesCollectivites(): Promise<MesCollectivite> {
+    const {data, error} = await this.supabase
+      .from('mes_collectivites')
+      .select('collectivite_id, nom, niveau_acces, est_auditeur')
+      .in('niveau_acces', ['admin', 'edition'])
+      .returns<MesCollectivite>();
+    if (error) throw error;
+    return data;
   }
 }
