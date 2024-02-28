@@ -29,7 +29,14 @@ const LoginPage = () => {
     defaultValues,
   });
 
-  return <LoginModal defaultValues={defaultValues} {...state} />;
+  return (
+    <LoginModal
+      defaultValues={defaultValues}
+      // TODO: intégrer crisp dans le site pour pouvoir le raccorder ici
+      onOpenChatbox={() => {}}
+      {...state}
+    />
+  );
 };
 
 export default LoginPage;
