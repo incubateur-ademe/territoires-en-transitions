@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import {Button, Modal} from '@tet/ui';
 import {useContext, useState} from 'react';
-import {useEventTracker} from 'src/tracking/useEventTracker';
+import {useEventTracker} from '@tet/ui';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {PanierContext, UserContext} from 'app/panier/[id]/PanierRealtime';
 import Link from 'next/link';

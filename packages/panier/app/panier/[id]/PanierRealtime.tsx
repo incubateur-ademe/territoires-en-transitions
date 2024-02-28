@@ -13,9 +13,7 @@ import {
   Panier,
 } from '@tet/api';
 import {panierAPI, supabase} from 'src/clientAPI';
-import {useEventTracker} from 'src/tracking/useEventTracker';
-import {OngletName} from 'src/tracking/trackingPlan';
-import {useOngletTracker} from 'src/tracking/useOngletTracker';
+import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
 import {User} from '@supabase/supabase-js';
 
