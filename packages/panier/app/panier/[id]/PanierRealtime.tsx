@@ -26,6 +26,12 @@ type PanierRealtimeProps = {
   thematiques: ActionImpactThematique[];
 };
 
+/**
+ * Le contexte qui permet de récupérer le `Panier` courant.
+ *
+ * nb: La valeur par défaut n'est utilisée que pour le typage, car le panier est
+ * toujours passé au composant `PanierRealtime` qui se charge de construire le contexte.
+ */
 export const PanierContext = createContext<Panier>({
   id: '',
   collectivite_id: 0,
@@ -39,8 +45,22 @@ export const PanierContext = createContext<Panier>({
   latest_update: '',
 });
 
+/**
+ * Le contexte qui permet de récupérer l'utilisateur
+ *
+ * Si l'utilisateur est `null` on considère qu'il n'est pas connecté.
+ */
 export const UserContext = createContext<User | null>(null);
 
+/**
+ * La partie client du Panier d'Action à Impact
+ *
+ * @param panier Le panier passé par la partie server side.
+ * @param categories
+ * @param budgets La liste des budgets pour le filtrage
+ * @param thematiques La liste des thematiques pour le filtrage
+ * @constructor
+ */
 const PanierRealtime = ({
   panier,
   categories,
