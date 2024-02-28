@@ -47,3 +47,12 @@ export type Panier =
     /* Liste de toutes les actions avec leurs states. */
     states: ActionImpactState[];
   };
+
+export type MaCollectivite = {
+  collectivite_id: number;
+  nom: string;
+  niveau_acces: Database['public']['Enums']['niveau_acces'];
+  est_auditeur: boolean;
+};
+
+export type MesCollectivite = MaCollectivite[];
