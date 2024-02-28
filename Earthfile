@@ -628,7 +628,7 @@ dev:
     END
 
     IF [ "$site" = "yes" ]
-        RUN earthly +site-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY --STRAPI_KEY=${{ $STRAPI_KEY }} --STRAPI_URL=${{ $STRAPI_URL }}
+        RUN earthly +site-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY --STRAPI_KEY=$STRAPI_KEY --STRAPI_URL=$STRAPI_URL
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
