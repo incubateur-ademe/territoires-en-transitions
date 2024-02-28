@@ -221,7 +221,7 @@ exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/FormSection SansHeader smoke-test 1`] = `
+exports[`design-system/FormSection SansHeader smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="flex-grow flex flex-col gap-3 md:col-span-2">

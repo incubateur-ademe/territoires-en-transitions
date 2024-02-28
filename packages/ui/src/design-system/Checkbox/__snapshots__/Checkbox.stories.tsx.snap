@@ -60,7 +60,7 @@ exports[`design-system/Checkbox AvecMessageUniquement smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Checkbox AvecPersonnalisationDuContainer smoke-test 1`] = `
+exports[`design-system/Checkbox AvecPersonnalisationDuContainer smoke-test 1`] = `
 <div class="flex gap-2 min-w-min border border-grey p-4">
   <input id="cb13"
          type="checkbox"
@@ -77,7 +77,7 @@ exports[`Design System/Checkbox AvecPersonnalisationDuContainer smoke-test 1`] =
 </div>
 `;
 
-exports[`Design System/Checkbox Checked smoke-test 1`] = `
+exports[`design-system/Checkbox Checked smoke-test 1`] = `
 <div class="flex gap-2 min-w-min">
   <input id="cb3"
          type="checkbox"

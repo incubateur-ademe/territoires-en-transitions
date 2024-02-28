@@ -420,7 +420,7 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
       </label>
       <div class="flex items-center text-grey-7 my-auto">
         <a href="https://territoiresentransitions.fr/cgu"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
         >
           Les conditions générales
         </a>
@@ -428,7 +428,7 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
           |
         </span>
         <a href="https://www.ademe.fr/donnees-personnelles/"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
         >
           la politique de protection des données de l'ADEME
         </a>
@@ -521,7 +521,7 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
       </label>
       <div class="flex items-center text-grey-7 my-auto">
         <a href="https://territoiresentransitions.fr/cgu"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
         >
           Les conditions générales
         </a>
@@ -529,7 +529,7 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
           |
         </span>
         <a href="https://www.ademe.fr/donnees-personnelles/"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+           class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
         >
           la politique de protection des données de l'ADEME
         </a>

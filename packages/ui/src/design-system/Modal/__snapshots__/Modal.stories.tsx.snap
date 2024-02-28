@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Design System/Modal AvecBackdropBlur smoke-test 1`] = `
+exports[`design-system/Modal AvecBackdropBlur smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
@@ -12,7 +12,7 @@ exports[`Design System/Modal AvecBackdropBlur smoke-test 1`] = `
 </div>
 `;
 
-exports[`Design System/Modal AvecFooter smoke-test 1`] = `
+exports[`design-system/Modal AvecFooter smoke-test 1`] = `
 <div class="p-8">
   <button text="Ouvrir la modale"
           aria-expanded="false"
