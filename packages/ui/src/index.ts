@@ -6,6 +6,7 @@ export {preset} from './tailwind-preset';
 // dossier composants
 export * from './components/layout';
 export * from './components/panier-actions';
+export * from './components/tracking';
 
 // dossier design-system
 export * from './design-system/Accordion';
