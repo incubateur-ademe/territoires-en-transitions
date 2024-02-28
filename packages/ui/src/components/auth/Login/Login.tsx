@@ -4,7 +4,7 @@ import {ResetPassword} from './ResetPassword';
 import {VerifyOTP} from '../VerifyOTP';
 import {LoginTabs} from './LoginTabs';
 import {useFormState} from './useFormState';
-import {ForgottenPassword} from '@components/auth/Login/ForgottenPassword';
+import {ForgottenPassword} from './ForgottenPassword';
 
 /**
  * Affiche le panneau d'authentification et le formulaire "mot de passe oublié"
