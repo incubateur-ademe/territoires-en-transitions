@@ -2,7 +2,7 @@
 
 import {panierAPI} from 'src/clientAPI';
 import {useParams, useRouter} from 'next/navigation';
-import {useEventTracker} from 'src/tracking/useEventTracker';
+import {useEventTracker} from '@tet/ui';
 
 export default function CestParti() {
   const params = useParams();

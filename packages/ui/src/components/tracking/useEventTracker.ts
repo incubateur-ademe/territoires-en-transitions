@@ -1,4 +1,4 @@
-import {PageName, TrackingPlan} from 'src/tracking/trackingPlan';
+import {PageName, TrackingPlan} from './trackingPlan';
 import {usePostHog} from 'posthog-js/react';
 
 /**

@@ -2,7 +2,7 @@
 
 import {useEffect} from 'react';
 import {usePostHog} from 'posthog-js/react';
-import {PageName} from 'src/tracking/trackingPlan';
+import {PageName} from '@tet/ui';
 
 /**
  * Envoi une page view à PostHog lors du rendering.
@@ -14,19 +14,14 @@ import {PageName} from 'src/tracking/trackingPlan';
  * @param pageName
  * @constructor
  */
-export default function TrackPageView({pageName}: {
-  pageName: PageName
-}): null {
+export default function TrackPageView({pageName}: {pageName: PageName}): null {
   const posthog = usePostHog();
 
   useEffect(() => {
     if (posthog) {
-      posthog.capture(
-        '$pageview',
-        {
-          '$current_url': pageName,
-        },
-      );
+      posthog.capture('$pageview', {
+        $current_url: pageName,
+      });
     }
   }, [posthog, pageName]);
 

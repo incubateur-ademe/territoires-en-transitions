@@ -24,6 +24,8 @@ export type PageName = '/' | 'landing' | 'landing/collectivite' | 'panier';
  */
 export type OngletName = 'selection' | 'réalisées' | 'en cours';
 
+type empty = Record<string, never>;
+
 /**
  * Permet de respecter le plan de tracking.
  */
@@ -40,7 +42,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     properties: never;
     onglets: never;
     events: {
-      cta_panier_click: {};
+      cta_panier_click: empty;
     };
   };
 
@@ -52,7 +54,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     onglets: never;
     events: {
       /* Le bouton "c'est parti" */
-      cta_panier_click: {};
+      cta_panier_click: empty;
     };
   };
 
@@ -83,9 +85,9 @@ export interface TrackingPlan extends Record<PageName, Page> {
         category_id: string | null;
       };
       /* Le bouton "valider la création" affiché dans le panier */
-      cta_valider_creation_panier_click: {};
+      cta_valider_creation_panier_click: empty;
       /* Le bouton "créer le plan d'action" affiché dans la modale */
-      cta_creer_le_plan_click: {};
+      cta_creer_le_plan_click: empty;
       /* Les valeurs des filtres  */
       filtre: {
         thematique_ids?: OptionValue[];
