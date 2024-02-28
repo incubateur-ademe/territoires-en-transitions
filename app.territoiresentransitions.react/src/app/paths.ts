@@ -1,17 +1,10 @@
 import {Referentiel} from 'types/litterals';
+import {getAuthPaths} from '@tet/api';
 
-export const domain =
-  document.location.hostname.split('.').toSpliced(0, 1).join('.') ||
-  'localhost';
-const protocol = document.location.protocol;
-
-const authPort = domain === 'localhost' ? ':3001' : '';
-export const authBasePath = `${protocol}//${domain}${authPort}/auth`;
-export const signInPath = `${authBasePath}/login`;
-export const signUpPath = `${authBasePath}/signup`;
-export const resetPwdPath = `${authBasePath}/recover`;
-export const recoverToken = 'token';
-export const recoverLandingPath = `${authBasePath}/recover_landing/:${recoverToken}`;
+const authPaths = getAuthPaths();
+export const signInPath = authPaths.login;
+export const signUpPath = authPaths.signUp;
+export const resetPwdPath = authPaths.resetPwd;
 
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';

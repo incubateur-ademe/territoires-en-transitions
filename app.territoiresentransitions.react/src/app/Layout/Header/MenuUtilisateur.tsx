@@ -1,8 +1,8 @@
 import {forwardRef, Ref} from 'react';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import classNames from 'classnames';
-import {clearAuthTokens} from '@tet/api';
-import {domain, monComptePath, rejoindreUneCollectivitePath} from 'app/paths';
+import {clearAuthTokens, getRootDomain} from '@tet/api';
+import {monComptePath, rejoindreUneCollectivitePath} from 'app/paths';
 import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
@@ -101,7 +101,7 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
       onClick={() => {
         auth.disconnect().then(() => {
           history.push('/');
-          clearAuthTokens(domain);
+          clearAuthTokens(getRootDomain());
         });
       }}
     >
