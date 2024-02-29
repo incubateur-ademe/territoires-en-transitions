@@ -84,7 +84,7 @@ export const CarteActionImpact = ({
                 </Button>
 
                 <Button size="xs" onClick={() => handleToggleSelect(true)}>
-                  Ajouter
+                  Ajouter au panier
                 </Button>
               </>
             )}

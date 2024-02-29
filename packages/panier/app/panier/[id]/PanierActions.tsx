@@ -38,13 +38,12 @@ const PanierActions = ({
               <BasketPicto className="mx-auto h-full" />
             </div>
             <div className="sticky top-0 z-10">
-              <div className="bg-white text-primary-8 pt-6 text-xl font-extrabold text-center">
+              <div className="bg-white text-primary-8 py-6 text-xl font-extrabold text-center">
                 {actionsListe.length} action{actionsListe.length > 1 ? 's' : ''}{' '}
                 dans mon panier
               </div>
-              <div className="h-12 bg-gradient-to-b from-white via-white" />
               <ValiderPanierButton />
-              <div className="h-6 bg-gradient-to-b from-white via-white" />
+              <div className="h-12 bg-gradient-to-b from-white via-white" />
             </div>
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
