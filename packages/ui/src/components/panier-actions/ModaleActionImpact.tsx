@@ -135,7 +135,7 @@ export const ModaleActionImpact = ({
               close();
             }}
           >
-            {panier ? 'Retirer du panier' : 'Ajouter'}
+            {panier ? 'Retirer du panier' : 'Ajouter au panier'}
           </Button>
         </ModalFooter>
       )}
