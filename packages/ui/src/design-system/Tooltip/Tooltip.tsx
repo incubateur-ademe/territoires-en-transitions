@@ -114,6 +114,7 @@ export const Tooltip = ({
             position: strategy,
             top: y,
             left: x,
+            zIndex: preset.theme.extend.zIndex.modal,
           }}
           className={classNames(
             'p-2 text-primary-10 border-primary rounded bg-white shadow-lg text-xs [&_*]:text-xs [&_*]:mb-0',

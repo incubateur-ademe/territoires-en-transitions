@@ -20,7 +20,7 @@ const ListeActionsFiltrees = ({
           titre={action.action.titre}
           thematiques={action.thematiques}
           complexite={action.action.niveau_complexite as 1 | 2 | 3}
-          budget={action.action.fourchette_budgetaire as 1 | 2 | 3}
+          budget={action.action.fourchette_budgetaire as 0 | 1 | 2 | 3}
           description={action.action.description}
           statut={
             action.statut?.categorie_id as
