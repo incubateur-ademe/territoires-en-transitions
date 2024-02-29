@@ -1,30 +1,22 @@
 import {useEffect} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
-import {
-  homePath,
-  invitationPath,
-  makeCollectiviteAccueilUrl,
-  signInPath,
-  signUpPath,
-} from 'app/paths';
+import {homePath, makeCollectiviteAccueilUrl, signUpPath} from 'app/paths';
 import {useAuth, useDCP} from 'core-logic/api/auth/AuthProvider';
-import {useInvitationState} from 'core-logic/hooks/useInvitationState';
+import {
+  acceptAgentInvitation,
+  useInvitationState,
+} from 'core-logic/hooks/useInvitationState';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
+import {getAuthPaths} from '@tet/api';
 
 export const Redirector = () => {
   const history = useHistory();
   const {pathname} = useLocation();
   const {isConnected} = useAuth();
   const {data: DCP} = useDCP();
-  const {invitationState} = useInvitationState();
+  const {invitationId, consume} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
-  const isInvitationJustAccepted =
-    isConnected &&
-    invitationState === 'accepted' &&
-    pathname.startsWith(invitationPath) &&
-    userCollectivites &&
-    userCollectivites.length >= 1;
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -32,7 +24,7 @@ export const Redirector = () => {
   // - est associé à une ou plus collectivité(s) :
   //    on redirige vers le tableau de bord de la première collectivité
   useEffect(() => {
-    if (userCollectivites && (isLandingConnected || isInvitationJustAccepted)) {
+    if (userCollectivites && isLandingConnected) {
       if (
         userCollectivites &&
         userCollectivites.length >= 1 &&
@@ -47,24 +39,29 @@ export const Redirector = () => {
         history.push(homePath);
       }
     }
-  }, [isLandingConnected, isInvitationJustAccepted, userCollectivites]);
+  }, [isLandingConnected, userCollectivites]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
-    // si l'invitation requiert la connexion, on redirige sur "se connecter"
-    if (invitationState === 'waitingForLogin') {
-      document.location.replace(signInPath);
-    }
-  }, [invitationState]);
+    // si déconnecté on redirige sur la page d'accueil (ou la page "créer un
+    // compte" dans le cas d'une invitation en attente)
+    if (invitationId) {
+      if (isConnected && consume) {
+        // si connecté on consomme l'invitation
+        acceptAgentInvitation(invitationId).then(() => {
+          history.replace('/');
+        });
+      } else if (!isConnected && !consume) {
+        // si déconnecté on redirige sur la page "créer un compte"
+        const signUpPathFromInvitation = getAuthPaths(
+          document.location.hostname,
+          `${document.location.href}?consume=1`
+        ).signUp;
 
-  // réagit aux changements de l'état utilisateur connecté/déconnecté
-  useEffect(() => {
-    // si déconnecté on redirige sur la page d'accueil (ou la page "se
-    // connecter" dans le cas d'une invitation en attente de connexion)
-    if (!isConnected && invitationState === 'waitingForLogin') {
-      document.location.replace(signInPath);
+        document.location.replace(signUpPathFromInvitation);
+      }
     }
-  }, [isConnected, invitationState]);
+  }, [isConnected, invitationId]);
 
   // redirige vers l'étape 3 de la création de compte si il manque des infos aux DCP
   const userInfoRequired =
@@ -73,7 +70,7 @@ export const Redirector = () => {
     (!DCP?.cgu_acceptees_le || !DCP?.nom || !DCP?.prenom || !DCP?.telephone);
   useEffect(() => {
     if (userInfoRequired) {
-      document.location.replace(`${signUpPath}?view=etape3`);
+      document.location.replace(`${signUpPath}&view=etape3`);
     }
   }, [userInfoRequired]);
 
