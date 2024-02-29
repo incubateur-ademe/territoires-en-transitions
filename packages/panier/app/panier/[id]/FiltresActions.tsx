@@ -82,7 +82,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   ]);
 
   return (
-    <div className="mb-12 grid grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg">
+    <div className="mb-8 grid grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg">
       <Field title="Niveau de complexité">
         <SelectMultiple
           options={[]}
