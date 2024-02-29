@@ -116,6 +116,10 @@ const setReponses = dataString => {
       }
     });
   });
+
+  // attends un peu avant de passer à l'étape suivante pour que les
+  // modifications soient bien prises en compte
+  cy.wait(250);
 };
 
 // pour le type binaire ou choix
