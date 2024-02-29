@@ -12,8 +12,8 @@ const Landing = () => {
       >
         <div className="lg:w-2/3">
           <h1>
-            Identifiez des actions à impact pour votre collectivité en moins de{' '}
-            <span className="text-secondary-1">quelques clics.</span>
+            Identifiez des actions à impact pour votre collectivité <br />
+            en <span className="text-secondary-1">quelques clics.</span>
           </h1>
           <ul className="list-disc list-outside text-base text-primary-9 font-bold pl-4 mb-8">
             <li className="mb-4">
