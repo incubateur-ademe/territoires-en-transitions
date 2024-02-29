@@ -8,7 +8,7 @@ export type ActionImpactProps = {
   /** Niveau de complexité de l'action : simple, intermédiaire ou élevée */
   complexite: 1 | 2 | 3;
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
-  budget: 1 | 2 | 3;
+  budget: 0 | 1 | 2 | 3;
   /** Description de l'action à impact */
   description: string;
   /** Lien vers les ressources externes */
