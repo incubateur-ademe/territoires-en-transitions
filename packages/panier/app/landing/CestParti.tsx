@@ -2,16 +2,18 @@
 
 import {panierAPI} from 'src/clientAPI';
 import {useParams, useRouter} from 'next/navigation';
-import {useEventTracker} from '@tet/ui';
+import {useEventTracker, Button} from '@tet/ui';
 
-export default function CestParti() {
+const CestParti = () => {
   const params = useParams();
   const router = useRouter();
   const id = params['id'];
   const collectivite_id = id ? parseInt(id as string) : undefined;
+
   const tracker = useEventTracker(
-    collectivite_id ? 'landing/collectivite' : 'landing'
+    collectivite_id ? 'landing/collectivite' : 'landing',
   );
+
   const onClick = async () => {
     const base = await panierAPI.panierFromLanding(collectivite_id);
     collectivite_id
@@ -21,5 +23,7 @@ export default function CestParti() {
     router.push(`/panier/${base.id}`);
   };
 
-  return <button onClick={onClick}>C&apos;est parti !</button>;
-}
+  return <Button onClick={onClick}>C&apos;est parti !</Button>;
+};
+
+export default CestParti;

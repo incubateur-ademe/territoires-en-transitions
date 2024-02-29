@@ -35,9 +35,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <div className="flex flex-col grow">
             <Header />
             <div className="bg-grey-2 grow flex flex-col">
-              <div className="grow flex flex-col w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2">
-                {children}
-              </div>
+              <div className="grow">{children}</div>
             </div>
           </div>
           <Footer />
