@@ -64,9 +64,9 @@ const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
   ];
 
   const isDisplayingIndicateurs =
-    indicateurs.cae.withValue ||
-    indicateurs.eci.withValue ||
-    // indicateurs.crte.withValue ||
+    indicateurs.cae?.withValue ||
+    indicateurs.eci?.withValue ||
+    // indicateurs.crte?.withValue ||
     indicateurs.perso?.total;
 
   return isDisplayingIndicateurs ? (
