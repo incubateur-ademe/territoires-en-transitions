@@ -4,6 +4,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
 
   Scénario: J'invite Nono qui n'est pas un utilisateur
     Etant donné que je suis connecté en tant que "yolo"
+    Et que la mailbox de "nono" est vidée
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors un formulaire d'invitation est affiché
@@ -22,42 +23,31 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Alors la page "home" est visible
 
     Quand je visite le lien copié
-    Alors le "formulaire de connexion" est visible
+    Alors le "formulaire de création de compte" est visible
 
-    Quand je clique sur le bouton "Créer un compte" du "header"
+    Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
+      | Champ | Valeur        |
+      | email | nono@dodo.com |
+    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Alors le "message lien envoyé" est visible
+
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"
+    Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "nono"
+
+    Quand je clique sur le bouton "Valider" du "formulaire de création de compte"
     Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
-      | Champ  | Valeur        |
-      | email  | nOnO@DODO.com |
-      | mdp    | Noo0000oo00!! |
-      | prenom | Nono          |
-      | nom    | Dodo          |
-
+      | Champ     | Valeur     |
+      | nom       | Dodo       |
+      | prenom    | Nono       |
+      | telephone | 0123456789 |
     Et que je clique sur le bouton "cgu" du "formulaire de création de compte"
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
-    Et que je clique sur le bouton "se connecter" de la page "confirmation de creation de compte"
-    Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition | Valeur |
-      | header                                | visible   |        |
-      | header                                | contient  | Nono   |
-      | home                                  | absent    |        |
-      | formulaire de connexion               | absent    |        |
-      | le tableau de bord de la collectivité | visible   |        |
-      | footer                                | visible   |        |
-
-    Quand je suis sur la page "Gestion des membres" de la collectivité "1"
-    Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
-
-    Quand je me déconnecte
-    Et que je clique sur le bouton "Se connecter" du "header"
-    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
-      | Champ | Valeur        |
-      | email | NONO@DODO.COM |
-      | mdp   | Noo0000oo00!! |
-    Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | header                                | visible   |
       | home                                  | absent    |
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
-      | footer                                | présent   |
+
+    Quand je suis sur la page "Gestion des membres" de la collectivité "1"
+    Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
