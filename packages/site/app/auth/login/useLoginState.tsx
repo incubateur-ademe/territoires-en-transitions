@@ -1,10 +1,9 @@
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {setAuthTokens} from '@tet/api';
+import {getRootDomain, setAuthTokens} from '@tet/api';
 import {
   Credentials,
   LoginView,
-  DOMAIN,
   isValidLoginView,
   LoginData,
   VerifyOTPData,
@@ -84,7 +83,7 @@ export const useLoginState = ({
       const session = data.session;
       if (session) {
         // enregistre les coookies de session
-        setAuthTokens(session, DOMAIN);
+        setAuthTokens(session, getRootDomain(document.location.hostname));
         // et redirige sur la page voulue une fois authentifié
         router.push(redirectTo);
       }
