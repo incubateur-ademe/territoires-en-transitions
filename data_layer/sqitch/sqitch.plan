@@ -637,5 +637,6 @@ taxonomie/thematique [taxonomie/thematique@v2.80.0] 2023-11-15T16:47:33Z Amandin
 labellisation/audit [labellisation/audit@v2.101.0] 2024-02-22T15:12:37Z Amandine Jacquelin <conta@LanceLibre> # Ajoute la contrainte des quatre ans pour vérifier qu'une labellisation existe déjà
 retool/audit [retool/audit@v2.101.0] 2024-02-22T15:22:49Z Amandine Jacquelin <conta@LanceLibre> # Ajoute une fonction pour modifier le sujet d'une demande d'audit
 utilisateur/droits_v2 [utilisateur/droits_v2@v2.101.0] 2024-02-27T13:13:59Z Amandine Jacquelin <conta@LanceLibre> # Enlève les droits en écriture sur les vues simples
-
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.101.0] 2024-02-21T15:44:11Z Amandine Jacquelin <conta@LanceLibre> # Ajoute l'avancement du parent afin de corriger le filtre non_renseigne ne fonctionnant pas sur les sous_action
+@v2.102.0 2024-02-29T10:44:16Z Florian <florian@derfurth.com> # Amélioration audit, sécurité et thématiques
+
