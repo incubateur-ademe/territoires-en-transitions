@@ -51,13 +51,14 @@ function loginWithProfile(niveau) {
 function loginAs(userAlias) {
   cy.get(userAlias).then(function (user) {
     login.call(this, user);
+
     cy.get('[data-test=connectedMenu]').should('contain.text', user.prenom);
   });
 }
 function login({email, password}) {
-  cy.get('@auth').then(auth => {
-    auth.disconnect();
-    auth.connect({email, password});
+  cy.get('@auth').then(async auth => {
+    await auth.disconnect();
+    await auth.connect({email, password});
   });
 }
 
