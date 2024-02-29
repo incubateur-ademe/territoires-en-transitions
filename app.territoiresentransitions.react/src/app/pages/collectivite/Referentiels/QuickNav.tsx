@@ -62,7 +62,7 @@ export const OrientationQuickNav = (props: {
 }) => {
   const {action} = props;
   const collectiviteId = useCollectiviteId()!;
-  const titles = useActionTitleList('all');
+  const titles = useActionTitleList(action.referentiel);
 
   if (titles.length === 0) return null;
 
@@ -106,10 +106,11 @@ const OrientationSwitcher = (props: {
 }) => {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const menuId = `${props.action.id}-menu`;
-  const siblings = findActionSiblingsOfId(props.action, props.titles);
   const history = useHistory();
   const collectiviteId = useCollectiviteId()!;
+
+  const menuId = `${props.action.id}-menu`;
+  const siblings = findActionSiblingsOfId(props.action, props.titles);
 
   const handleClose = () => {
     setOpened(false);
