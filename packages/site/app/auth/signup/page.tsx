@@ -2,11 +2,18 @@
 
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
+import {getBaseUrlApp} from '@tet/api';
 import {SignupModal} from '@tet/ui';
 import {useCollectivites} from './useCollectivites';
 import {useSignupState} from './useSignupState';
-import {DEFAULT_REDIRECT} from '../constants';
 
+/**
+ * Affiche la page de création de compte
+ *
+ * Après authentification, si les searchParams de l'url contiennent
+ * `redirect_to`, l'utilisateur est redirigé sur la page voulue, et à défaut sur
+ * l'app.
+ */
 const SignupPage = () => {
   const [filter, setFilter] = useState('');
   const {data: collectivites} = useCollectivites(filter);
@@ -17,7 +24,7 @@ const SignupPage = () => {
     email: searchParams.get('email'),
     otp: searchParams.get('otp'),
   };
-  const redirectTo = searchParams.get('redirect_to') || DEFAULT_REDIRECT;
+  const redirectTo = searchParams.get('redirect_to') || '/';
   const state = useSignupState({redirectTo, defaultView, defaultValues});
 
   return (
