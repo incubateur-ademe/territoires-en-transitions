@@ -101,7 +101,7 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
       onClick={() => {
         auth.disconnect().then(() => {
           history.push('/');
-          clearAuthTokens(getRootDomain());
+          clearAuthTokens(getRootDomain(document.location.hostname));
         });
       }}
     >
