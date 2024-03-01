@@ -21,8 +21,6 @@ const meta: Meta<typeof ActionImpact> = {
     description:
       "Un comité de pilotage se réunit régulièrement (au moins 2 fois par an) pour s'assurer du bon avancement et de la priorisation de la programmation des actions de transition écologique. Ce comité de pilotage s'assure que les actions de transition écologique sont identifiées et priorisées dans l'exercice de programmation budgétaire et la programmation pluriannuelle d'investissement",
     ressources: 'https://www.territoiresentransitions.fr/',
-    nbCollectivitesEnCours: 12,
-    nbCollectivitesRealise: 8,
     onToggleSelected: () => {},
     onUpdateStatus: () => {},
   },

@@ -1,11 +1,13 @@
+import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
+import {Icon} from '@design-system/Icon';
 import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
-// import {Icon} from '@design-system/Icon';
+import {Tooltip} from '@design-system/Tooltip';
 import {NiveauBudget} from './NiveauBudget';
 import {valeurToBadge} from './utils';
 import {ModaleActionImpactProps} from './types';
-import classNames from 'classnames';
+import LienExterneModale from './LienExterneModale';
 
 /**
  * Modale action à impact du panier d'actions
@@ -18,8 +20,6 @@ export const ModaleActionImpact = ({
   complexite,
   budget,
   description,
-  nbCollectivitesEnCours,
-  nbCollectivitesRealise,
   statut,
   panier,
   onToggleSelected,
@@ -76,28 +76,38 @@ export const ModaleActionImpact = ({
             </div>
           )} */}
 
-          {/* Collectivités sur la même action */}
-          {(!!nbCollectivitesEnCours || !!nbCollectivitesRealise) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mt-6">
-              {!!nbCollectivitesEnCours && (
-                <div className="text-primary-9 text-sm font-medium border border-grey-3 rounded-md px-6 py-5 shadow">
-                  <span className="font-bold">
-                    {nbCollectivitesEnCours} collectivités
-                  </span>{' '}
-                  sont en cours sur cette action
-                </div>
-              )}
+          <hr className="mt-4 bg-gradient-to-r from-primary-3 to-primary-3" />
 
-              {!!nbCollectivitesRealise && (
-                <div className="text-primary-9 text-sm font-medium border border-grey-3 rounded-md px-6 py-5 shadow">
-                  <span className="font-bold">
-                    {nbCollectivitesRealise} collectivités
-                  </span>{' '}
-                  ont réalisé cette action
-                </div>
-              )}
+          {/* Subventions mobilisables */}
+          <div className="mt-2">
+            <h6 className="text-primary-10 text-base font-bold">
+              Subventions mobilisables :{' '}
+              <Tooltip
+                label={
+                  <div className="w-52 !font-normal">
+                    De nombreux programmes d’aides nationaux et locaux peuvent
+                    vous permettre de financer ou d’accompagner vos projets. Les
+                    liens directs vers les programmes concernés seront
+                    prochainement disponibles sur la plateforme.
+                  </div>
+                }
+              >
+                <span>
+                  <Icon
+                    icon="file-info-line"
+                    size="sm"
+                    className="text-grey-5 ml-1"
+                  />
+                </span>
+              </Tooltip>
+            </h6>
+            <div className="flex gap-8">
+              <LienExterneModale
+                label="Aides territoires"
+                href="https://aides-territoires.beta.gouv.fr"
+              />
             </div>
-          )}
+          </div>
         </div>
       )}
       renderFooter={({close}) => (

@@ -13,10 +13,6 @@ export type ActionImpactProps = {
   description: string;
   /** Lien vers les ressources externes */
   ressources?: string;
-  /** Nombre de collectivités en train de faire l'action */
-  nbCollectivitesEnCours?: number;
-  /** Nombre de collectivités ayant fait l'action */
-  nbCollectivitesRealise?: number;
   /** Statut de l'action */
   statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
   /** Indique si l'action est mise dans le panier */

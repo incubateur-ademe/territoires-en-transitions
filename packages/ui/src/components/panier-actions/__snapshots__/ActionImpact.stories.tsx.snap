@@ -4,7 +4,7 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
 <div aria-expanded="false"
      aria-haspopup="dialog"
 >
-  <div class="p-7 m-px bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border border-primary-3 box-content !px-5 !py-4 h-[160px]">
+  <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3 box-content !px-5 !py-4 h-[160px]">
     <div class="text-primary-8 text-sm font-bold">
       <div class="flex justify-between">
         <div>
@@ -38,7 +38,7 @@ exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
             Réalisée
           </button>
           <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
-            Ajouter
+            Ajouter au panier
           </button>
         </div>
       </div>
