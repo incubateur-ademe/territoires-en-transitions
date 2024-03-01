@@ -19,9 +19,6 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   const tracker = useEventTracker('panier');
   const panier = useContext(PanierContext);
 
-  const [complexiteValues, setComplexiteValues] = useState<
-    OptionValue[] | undefined
-  >();
   const [thematiquesValues, setThematiquesValues] = useState<
     OptionValue[] | undefined
   >();
@@ -60,6 +57,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
       paramsArray.length > 0
         ? `${pathname}?${paramsArray.join('&')}`
         : pathname;
+
     const trackThenNavigate = async () => {
       await tracker('filtre', {
         collectivite_preset: panier.collectivite_preset,
@@ -69,6 +67,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
       });
       router.push(href);
     };
+
     trackThenNavigate();
   }, [
     thematiquesValues,
@@ -82,18 +81,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   ]);
 
   return (
-    <div className="mb-8 grid grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg">
-      <Field title="Niveau de complexité">
-        <SelectMultiple
-          options={[]}
-          values={complexiteValues}
-          onChange={({values}) => {
-            setComplexiteValues(values);
-          }}
-          isBadgeItem={true}
-          disabled
-        />
-      </Field>
+    <div className="mb-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg">
       <Field title="Thématiques">
         <SelectMultiple
           options={thematiques.map(t => ({value: t.id, label: t.nom}))}
