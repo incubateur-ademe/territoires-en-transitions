@@ -4,7 +4,7 @@ import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
 import {ActionImpactSnippet} from '@tet/api';
 import {Alert, CarteActionImpact} from '@tet/ui';
 import React from 'react';
-import {ValiderPanierButton} from 'app/panier/[id]/ValiderPanierButton';
+import ValiderPanierButton from './ValiderPanierButton';
 
 type PanierActionsProps = {
   actionsListe: ActionImpactSnippet[];
