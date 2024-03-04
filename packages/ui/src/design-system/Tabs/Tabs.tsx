@@ -6,8 +6,10 @@ import {Icon} from '../Icon';
 export type TabSize = 'xs' | 'sm' | 'md';
 
 type TabsProps = {
-  /** Permet d'ajuster les styles de la liste d'onglets */
+  /** Permet d'ajuster les styles du container */
   className?: string;
+  /** Permet d'ajuster les styles de la liste d'onglets */
+  tabsListClassName?: string;
   /** Permet d'ajuster les styles de tous les conteneurs d'onglets */
   tabPanelClassName?: string;
   /** Taille des boutons */
@@ -25,6 +27,7 @@ type TabsProps = {
  */
 export const Tabs = ({
   className,
+  tabsListClassName,
   tabPanelClassName,
   children,
   defaultActiveTab = 0,
@@ -56,11 +59,11 @@ export const Tabs = ({
   );
 
   return (
-    <div className="overflow-hidden">
+    <div className={classNames('overflow-hidden', className)}>
       <ul
         className={classNames(
           'inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto',
-          className
+          tabsListClassName
         )}
         role="tablist"
       >
