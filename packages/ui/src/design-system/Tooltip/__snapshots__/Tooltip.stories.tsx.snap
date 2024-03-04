@@ -1,31 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Tooltip ActivatedByClick smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-10">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
   Cliquer pour voir l'info bulle
 </div>
 `;
 
 exports[`design-system/Tooltip CustomContent smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-32">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-32">
   Survoler pour voir l'info bulle
 </div>
 `;
 
 exports[`design-system/Tooltip Default smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-10">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
   Survoler pour voir l'info bulle
 </div>
 `;
 
 exports[`design-system/Tooltip LongText smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-20">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-20">
   Survoler pour voir l'info bulle
 </div>
 `;
 
 exports[`design-system/Tooltip LongTextWithFixedWidth smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-32">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-32">
   Survoler pour voir l'info bulle
 </div>
 `;
@@ -86,7 +86,7 @@ exports[`design-system/Tooltip Placement smoke-test 1`] = `
 `;
 
 exports[`design-system/Tooltip WithoutArrow smoke-test 1`] = `
-<div class="bg-primary-1 py-2 px-3 w-fit mb-10">
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
   Survoler pour voir l'info bulle
 </div>
 `;
