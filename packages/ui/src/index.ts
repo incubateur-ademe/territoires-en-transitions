@@ -13,6 +13,7 @@ export * from './design-system/Badge';
 export * from './design-system/Button';
 export * from './design-system/Card';
 export * from './design-system/Checkbox';
+export * from './design-system/Divider';
 export * from './design-system/Field';
 export * from './design-system/Footer';
 export * from './design-system/FormSection';

@@ -1,3 +1,4 @@
+import {Divider} from '@design-system/Divider';
 import classNames from 'classnames';
 
 type ModalFooterVariant = 'center' | 'right' | 'space';
@@ -23,7 +24,7 @@ export const ModalFooter = ({
 }) => {
   return (
     <>
-      <hr className="mt-4 bg-gradient-to-r from-primary-3 to-primary-3" />
+      <Divider className="mt-4" />
       <div
         className={classNames(
           'flex gap-4 flex-wrap',
