@@ -34,7 +34,9 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className="box-content !px-5 !py-4 h-[160px]"
+      className={classNames('box-content !px-5 !py-4 h-[160px]', {
+        '!cursor-default': panier && !isSelected,
+      })}
       isSelected={isSelected}
       header={
         <div className="flex justify-between">

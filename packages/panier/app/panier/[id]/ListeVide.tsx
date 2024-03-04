@@ -8,7 +8,7 @@ type ListeVideProps = {
 
 const ListeVide = ({success}: ListeVideProps) => {
   return (
-    <div className="bg-white rounded-lg px-4 pt-2 pb-8 flex flex-col justify-center items-center w-full relative">
+    <div className="bg-white rounded-lg border-[0.5px] border-primary-3 px-8 pt-2 pb-8 flex flex-col justify-center items-center w-full grow relative">
       {success && (
         <Fireworks
           autorun={{speed: 3, duration: 600}}
