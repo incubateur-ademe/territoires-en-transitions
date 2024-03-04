@@ -71,7 +71,7 @@ export const TailleXS: Story = {
 export const AvecStyles: Story = {
   args: {
     defaultActiveTab: 2,
-    className: 'bg-secondary-1 mb-0 rounded-none',
+    tabsListClassName: 'bg-secondary-1 mb-0 rounded-none',
     tabPanelClassName: 'border-2 border-secondary-1 p-4',
     children: AvecIcones.args.children,
   },
