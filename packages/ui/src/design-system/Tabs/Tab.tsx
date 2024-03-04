@@ -21,7 +21,7 @@ interface TabProps {
  * Affiche le contenu d'un onglet
  */
 export const Tab = ({
-  className,
+  className = '',
   index,
   activeTab = 0,
   children,
@@ -40,8 +40,3 @@ export const Tab = ({
       {children}
     </div>
   );
-
-Tab.defaultProps = {
-  activeTab: 0,
-  className: '',
-};
