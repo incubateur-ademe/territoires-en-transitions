@@ -81,7 +81,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   ]);
 
   return (
-    <div className="mb-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg">
+    <div className="mb-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg border-[0.5px] border-primary-3">
       <Field title="Thématiques">
         <SelectMultiple
           options={thematiques.map(t => ({value: t.id, label: t.nom}))}
@@ -89,7 +89,6 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
           onChange={({values}) => {
             setThematiquesValues(values);
           }}
-          isBadgeItem={true}
         />
       </Field>
       <Field title="Ordre de grandeur budgétaire">
@@ -99,7 +98,6 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
           onChange={({values}) => {
             setBudgetsValues(values);
           }}
-          isBadgeItem={true}
         />
       </Field>
     </div>
