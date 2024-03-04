@@ -2,7 +2,6 @@
 'use client';
 
 import {useSearchParams} from 'next/navigation';
-import {getBaseUrlApp} from '@tet/api';
 import {LoginModal} from '@tet/ui';
 import {useLoginState} from './useLoginState';
 

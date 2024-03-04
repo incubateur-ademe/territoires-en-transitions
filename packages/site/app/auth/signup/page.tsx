@@ -2,7 +2,6 @@
 
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {getBaseUrlApp} from '@tet/api';
 import {SignupModal} from '@tet/ui';
 import {useCollectivites} from './useCollectivites';
 import {useSignupState} from './useSignupState';
