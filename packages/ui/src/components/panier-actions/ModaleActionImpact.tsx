@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
+import {Divider} from '@design-system/Divider';
 import {Icon} from '@design-system/Icon';
 import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
 import {Tooltip} from '@design-system/Tooltip';
@@ -76,7 +77,7 @@ export const ModaleActionImpact = ({
             </div>
           )} */}
 
-          <hr className="mt-4 bg-gradient-to-r from-primary-3 to-primary-3" />
+          <Divider className="mt-4" />
 
           {/* Subventions mobilisables */}
           <div className="mt-2">
