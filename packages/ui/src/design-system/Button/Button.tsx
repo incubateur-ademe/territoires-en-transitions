@@ -20,7 +20,7 @@ export const Button = forwardRef(
       size = 'md',
       className,
       icon,
-      iconPosition = 'left',
+      iconPosition,
       external,
       ...props
     }: ButtonProps,
@@ -106,7 +106,11 @@ export const Button = forwardRef(
           className={classNames(
             'bg-none after:hidden',
             buttonClassname,
-            {'flex-row-reverse': iconPosition === 'right' || openInNewTab},
+            {
+              'flex-row-reverse':
+                iconPosition === 'right' ||
+                (openInNewTab && iconPosition !== 'left'),
+            },
             className
           )}
           target={openInNewTab ? '_blank' : anchorProps.target}

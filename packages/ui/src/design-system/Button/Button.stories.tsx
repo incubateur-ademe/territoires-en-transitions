@@ -272,6 +272,9 @@ export const AnchorButtons: Story = {
       <Button href={BASE_URL} variant="underlined" external>
         External link
       </Button>
+      <Button href={BASE_URL} variant="outlined" iconPosition="left" external>
+        External link
+      </Button>
     </div>
   ),
 };

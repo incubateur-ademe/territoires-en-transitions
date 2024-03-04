@@ -58,6 +58,15 @@ exports[`design-system/Button AnchorButtons smoke-test 1`] = `
     </span>
     External link
   </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+    External link
+  </a>
 </div>
 `;
 
