@@ -24,7 +24,12 @@ export const ModalFooter = ({
   return (
     <>
       <hr className="mt-4 bg-gradient-to-r from-primary-3 to-primary-3" />
-      <div className={classNames('flex gap-4', variantToClassnames[variant])}>
+      <div
+        className={classNames(
+          'flex gap-4 flex-wrap',
+          variantToClassnames[variant]
+        )}
+      >
         {children}
       </div>
     </>
@@ -40,5 +45,5 @@ export const ModalFooterSection = ({
 }: {
   children: React.ReactNode[];
 }) => {
-  return <div className="flex gap-4">{children}</div>;
+  return <div className="flex gap-4 flex-wrap">{children}</div>;
 };
