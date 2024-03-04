@@ -21,7 +21,7 @@ import {preset} from '@tailwind-preset';
 
 const colorTheme = preset.theme.extend.colors;
 
-type TooltipProps = {
+export type TooltipProps = {
   /** Élément sur lequel s'applique l'info-bulle */
   children: JSX.Element;
   /** Libellé de l'info-bulle (chaîne de caractère ou composant) */
@@ -46,7 +46,7 @@ export const Tooltip = ({
   offsetValue = 10,
   activatedBy = 'hover',
   openingDelay = 500,
-  placement = 'bottom-start',
+  placement = 'top',
   withArrow = true,
 }: TooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
