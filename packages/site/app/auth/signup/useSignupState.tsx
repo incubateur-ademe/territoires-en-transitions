@@ -10,7 +10,7 @@ import {
   isValidSignupView,
 } from '@tet/ui';
 import {createClient} from 'src/supabase/client';
-import {setAuthTokens} from '@tet/api';
+import {getRootDomain, setAuthTokens} from '@tet/api';
 
 /**
  * Gère l'appel à la fonction de signup et la redirection
@@ -96,9 +96,7 @@ export const useSignupState = ({
       }
 
       // le partage des tokens entre sous-domaines nécessite le nom du domaine racine.
-      const domain =
-        document.location.hostname.split('.').toSpliced(0, 1).join('.') ||
-        'localhost';
+      const domain = getRootDomain(document.location.hostname);
 
       // enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
       setAuthTokens(data.session, domain);

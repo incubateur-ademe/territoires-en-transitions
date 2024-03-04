@@ -11,11 +11,17 @@ export const getRootDomain = (hostname: string) => {
 
 /** Donne l'URL du site */
 const DEV_SITE_PORT = 3001;
-export const getBaseUrlSite = (hostname: string) => {
+export const getBaseUrlSite = (hostname: string, redirect_to: string) => {
   const domain = getRootDomain(hostname);
-  const protocol = document.location.protocol;
+  const protocol = domain === 'localhost' ? 'http' : 'https';
+  const subdomain =
+    domain === 'koyeb.app'
+      ? 'preprod-site-tet.'
+      : redirect_to.includes('preprod-app.')
+      ? 'preprod-site.'
+      : '';
   const port = domain === 'localhost' ? `:${DEV_SITE_PORT}` : '';
-  return `${protocol}//${domain}${port}`;
+  return `${protocol}://${subdomain}${domain}${port}`;
 };
 
 /**
@@ -25,7 +31,7 @@ export const getBaseUrlSite = (hostname: string) => {
  * @returns
  */
 export const getAuthPaths = (hostname: string, redirect_to: string) => {
-  const base = `${getBaseUrlSite(hostname)}/auth`;
+  const base = `${getBaseUrlSite(hostname, redirect_to)}/auth`;
   const params = new URLSearchParams({redirect_to});
   return {
     base,
@@ -36,5 +42,7 @@ export const getAuthPaths = (hostname: string, redirect_to: string) => {
 };
 
 /** Donne l'url de la page "rejoindre une collectivité" */
-export const getRejoindreCollectivitePath = (hostname: string) =>
-  `${getBaseUrlSite(hostname)}/rejoindre-une-collectivite`;
+export const getRejoindreCollectivitePath = (
+  hostname: string,
+  redirect_to: string
+) => `${getBaseUrlSite(hostname, redirect_to)}/rejoindre-une-collectivite`;
