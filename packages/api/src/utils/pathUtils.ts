@@ -9,17 +9,6 @@ export const getRootDomain = (hostname: string) => {
   return parts.length > 2 ? parts.toSpliced(0, 1).join('.') : hostname;
 };
 
-/** Donne l'URL de l'app */
-const DEV_APP_PORT = 3000;
-const APP_SUBDOMAIN = 'app';
-export const getBaseUrlApp = (hostname: string) => {
-  const domain = getRootDomain(hostname);
-  const protocol = document.location.protocol;
-  const subdomain = domain === 'localhost' ? '' : `${APP_SUBDOMAIN}.`;
-  const port = domain === 'localhost' ? `:${DEV_APP_PORT}` : '';
-  return `${protocol}//${subdomain}${domain}${port}`;
-};
-
 /** Donne l'URL du site */
 const DEV_SITE_PORT = 3001;
 export const getBaseUrlSite = (hostname: string) => {
