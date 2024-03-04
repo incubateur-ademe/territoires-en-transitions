@@ -9,7 +9,7 @@ import FiltresActions from './FiltresActions';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
-  actionsNb: number
+  actionsNb: number,
 ) => {
   if (tab.status !== null) {
     if (actionsNb > 1 || tab.status === 'en_cours') {
@@ -58,12 +58,16 @@ const ListeActions = ({
   ];
 
   return (
-    <Tabs onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}>
+    <Tabs
+      onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
+      className="grow flex flex-col"
+      tabPanelClassName="grow flex flex-col"
+    >
       {...tabsList.map(tab => {
         const actionsFiltrees = actionsListe.filter(
           a =>
             (!a.statut && a.statut === tab.status) ||
-            (a.statut && a.statut.categorie_id === tab.status)
+            (a.statut && a.statut.categorie_id === tab.status),
         );
 
         return (

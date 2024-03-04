@@ -107,7 +107,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null
+    statusId: string | null,
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     await tracker('statut', {
@@ -131,7 +131,7 @@ const PanierRealtime = ({
     <PanierContext.Provider value={panier}>
       <UserContext.Provider value={user}>
         <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-          <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2">
+          <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
             <h1>
               Initiez{' '}
               <span className="text-secondary-1">des actions impactantes</span>{' '}
