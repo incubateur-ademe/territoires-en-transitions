@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useRef, useState} from 'react';
-import DownloadButton from 'ui/buttons/DownloadButton';
+import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
@@ -59,7 +59,7 @@ const useDownloadChartButton = (
     DownloadChartButton: () =>
       downloadable ? (
         <div className={className}>
-          <DownloadButton
+          <DownloadCanvasButton
             containerRef={chartWrapperRef}
             fileName={fileName}
             fileType="png"
@@ -90,7 +90,7 @@ const ChartCardModalContent = ({
       <div ref={chartWrapperRef} className="p-3">
         <div className="pb-4">
           {/* Titre du graphe */}
-          {chartInfo?.title && <h4 className="m-0">{chartInfo.title}</h4>}
+          {!!chartInfo?.title && <h4 className="m-0">{chartInfo.title}</h4>}
 
           {/* Sous-titre du graphe */}
           {!!chartInfo?.subtitle && (
