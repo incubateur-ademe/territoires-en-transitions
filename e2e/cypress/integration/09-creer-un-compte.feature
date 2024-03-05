@@ -72,12 +72,12 @@ Fonctionnalité: Créer un compte
 
     Quand je clique sur le bouton "Compte avec mot de passe"
     Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
-      | Champ | Valeur   |
-      | email | <email>  |
-      | mdp   | yolododo |
+      | Champ | Valeur            |
+      | email | <email>           |
+      | mdp   | MotDePasseRobuste |
 
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
-    Alors le "message d'erreur" du "formulaire de création de compte" contient "Le compte n'a pas pu être créé"
+    Alors le "message d'erreur" du "formulaire de création de compte" contient "Utilisateur déjà enregistré"
 
     Exemples:
       | email         |
