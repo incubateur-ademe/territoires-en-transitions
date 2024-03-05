@@ -4,8 +4,9 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {usePlanActionTableauDeBord} from '../data/usePlanActionTableauDeBord';
 import {PlanActionFilter} from '../FiltersPlanAction';
 import DonutChart, {DonutChartProps} from 'ui/charts/DonutChart';
-import DownloadButton from 'ui/buttons/DownloadButton';
+import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import {useRef} from 'react';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type Props = {
   vue: TSyntheseVue;
@@ -14,6 +15,8 @@ type Props = {
 
 const SyntheseVueGraph = ({vue, plan}: Props) => {
   const collectivite_id = useCollectiviteId();
+
+  const tracker = useFonctionTracker();
 
   const {data} = usePlanActionTableauDeBord(
     collectivite_id!,
@@ -36,7 +39,7 @@ const SyntheseVueGraph = ({vue, plan}: Props) => {
     <div className="relative">
       {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
       <div className="absolute right-4 top-4 z-10">
-        <DownloadButton
+        <DownloadCanvasButton
           containerRef={chartWrapperRef}
           fileName={`repartition-${graph.id}${
             plan.id === 'nc'
@@ -46,9 +49,8 @@ const SyntheseVueGraph = ({vue, plan}: Props) => {
               : ''
           }`}
           fileType="png"
-          onClick={
-            () => null
-            //   tracker({fonction: 'graphique', action: 'telechargement'})
+          onClick={() =>
+            tracker({fonction: 'graphique', action: 'telechargement'})
           }
         />
       </div>
