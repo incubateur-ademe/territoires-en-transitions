@@ -9,6 +9,7 @@ import {
   VerifyOTPData,
 } from '@tet/ui';
 import {createClient} from 'src/supabase/client';
+import {useGetPasswordStrength} from 'app/auth/useGetPasswordStrength';
 
 /**
  * Gère l'appel à la fonction de login et la redirection après un login réussi
@@ -26,6 +27,8 @@ export const useLoginState = ({
   };
 }) => {
   const router = useRouter();
+
+  const getPasswordStrength = useGetPasswordStrength();
 
   const [view, setView] = useState<LoginView>(
     isValidLoginView(defaultView) ? (defaultView as LoginView) : 'etape1',
@@ -198,6 +201,7 @@ export const useLoginState = ({
     setError,
     isLoading,
     setIsLoading,
+    getPasswordStrength,
   };
 };
 

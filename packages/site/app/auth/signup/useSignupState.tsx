@@ -11,6 +11,7 @@ import {
 } from '@tet/ui';
 import {createClient} from 'src/supabase/client';
 import {getRootDomain, setAuthTokens} from '@tet/api';
+import {useGetPasswordStrength} from 'app/auth/useGetPasswordStrength';
 
 /**
  * Gère l'appel à la fonction de signup et la redirection
@@ -28,6 +29,8 @@ export const useSignupState = ({
   };
 }) => {
   const router = useRouter();
+
+  const getPasswordStrength = useGetPasswordStrength();
 
   const [view, setView] = useState<SignupView>(
     isValidSignupView(defaultView) ? (defaultView as SignupView) : 'etape1',
@@ -64,7 +67,12 @@ export const useSignupState = ({
 
       // sort si il y a une erreur
       if (error) {
-        setError("Le compte n'a pas pu être créé");
+        console.error(error.status, error.name, error.message);
+        setError(
+          error.message === 'User already registered'
+            ? 'Utilisateur déjà enregistré'
+            : `Le compte n'a pas pu être créé (${error.status})`,
+        );
         return;
       }
 
@@ -151,5 +159,6 @@ export const useSignupState = ({
     setError,
     isLoading,
     setIsLoading,
+    getPasswordStrength,
   };
 };
