@@ -1,3 +1,5 @@
+import {defaultColors, nivoColorsSet} from '../../chartsTheme';
+import {ChartLegendItem} from '../ChartLegend';
 import {DonutData} from './DonutChart';
 
 /**
@@ -33,4 +35,27 @@ export const skipArcLinkLabel = (data: DonutData[]) => {
     }
     return isLabelSkipped;
   }, false);
+};
+
+/** Génère la liste des légendes pour le composant DonutChart */
+export const generateDonutLegendItems = (
+  data: DonutData[]
+): ChartLegendItem[] => {
+  // Légende réduite à afficher
+  return data.map((d, index) => ({
+    name: d.id,
+    color: getLegendColor(d, data.length, index),
+    symbole: d.symbole,
+  }));
+};
+
+/** Renvoi la couleur de la data si définie, sinon utilise les couleurs de nivo */
+const getLegendColor = (data: DonutData, dataLength: number, index: number) => {
+  if (data.color) {
+    return data.color;
+  }
+  if (dataLength <= defaultColors.length) {
+    return defaultColors[index % defaultColors.length];
+  }
+  return nivoColorsSet[index % nivoColorsSet.length];
 };

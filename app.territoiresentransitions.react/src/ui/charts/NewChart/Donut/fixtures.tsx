@@ -1,3 +1,4 @@
+import {Icon} from '@tet/ui';
 import {DonutData} from './DonutChart';
 
 export const fakeNoDonutData: DonutData[] = [];
@@ -10,6 +11,7 @@ export const fakeSimpleDonutData: DonutData[] = [
   {
     id: 'dodo',
     value: 200,
+    symbole: color => <Icon icon="leaf-fill" style={{color}} />,
   },
 ];
 
@@ -59,6 +61,14 @@ export const fakeComplexeDonutData: DonutData[] = [
   },
   {
     id: 'dudu',
+    value: 200,
+  },
+  {
+    id: 'zili',
+    value: 200,
+  },
+  {
+    id: 'zala',
     value: 200,
   },
 ];

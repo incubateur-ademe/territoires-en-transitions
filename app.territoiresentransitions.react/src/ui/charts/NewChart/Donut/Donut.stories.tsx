@@ -14,11 +14,7 @@ const meta: Meta<typeof DonutChart> = {
   args: {
     onClick: undefined,
   },
-  render: args => (
-    <div className="h-64">
-      <DonutChart {...args} />
-    </div>
-  ),
+  render: args => <DonutChart {...args} />,
 };
 
 export default meta;
@@ -41,6 +37,10 @@ export const BeaucoupDeData: Story = {
   args: {
     data: fakeComplexeDonutData,
     displayOutsideLabel: true,
+    legend: {
+      isOpen: true,
+      maxItems: 5,
+    },
   },
 };
 

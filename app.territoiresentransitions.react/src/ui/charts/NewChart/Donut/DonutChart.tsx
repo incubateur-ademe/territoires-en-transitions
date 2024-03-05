@@ -1,15 +1,21 @@
 import {ResponsivePie} from '@nivo/pie';
 
 import {defaultColors, nivoColorsSet, theme} from '../../chartsTheme';
-import {getPercentage, skipArcLinkLabel} from './utils';
+import {
+  generateDonutLegendItems,
+  getPercentage,
+  skipArcLinkLabel,
+} from './utils';
 import {getDonutTooltip} from './DonutTooltip';
 import classNames from 'classnames';
+import ChartLegend, {ChartLegendProps} from '../ChartLegend';
 
 /** Format de données du composant Pie de nivo*/
 export type DonutData = {
   id: string;
   value: number;
   color?: string;
+  symbole?: (color: string) => React.ReactNode;
 };
 
 /** Types du graphique Donut */
@@ -26,6 +32,8 @@ export type DonutChartProps = {
   centeredElement?: React.ReactNode;
   /** Clique sur un arc */
   onClick?: () => void;
+  /** Permet d'afficher et configurer la légende */
+  legend?: ChartLegendProps;
   /** Classname du container, permet notamment de donner la hauteur du graphe.*/
   className?: string;
 };
@@ -43,6 +51,7 @@ const DonutChart = ({
   centeredElement,
   onClick,
   className,
+  legend,
 }: DonutChartProps) => {
   /** Vérifie si le tableau de données est vide */
   const hasNoData =
@@ -117,6 +126,10 @@ const DonutChart = ({
           arcLabelsTextColor={{from: 'color', modifiers: [['darker', 2]]}}
         />
       </div>
+      {/** Légende */}
+      {legend?.isOpen && (
+        <ChartLegend {...legend} items={generateDonutLegendItems(data)} />
+      )}
     </div>
   );
 };
