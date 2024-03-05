@@ -17,6 +17,10 @@ const meta: Meta<typeof Signup> = {
     onSubmit: action('onSubmit'),
     onCancel: action('onCancel'),
     onFilterCollectivites: action('onFilterCollectivites'),
+    getPasswordStrength: (...args) => {
+      action('getPasswordStrength')(...args);
+      return null;
+    },
   },
   render: props => {
     const [view, setView] = useState<SignupView>(props.view || 'etape1');

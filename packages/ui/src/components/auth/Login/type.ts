@@ -1,5 +1,6 @@
 import {VerifyOTPData} from '@components/auth/VerifyOTP/VerifyOTP';
 import {FormState} from './useFormState';
+import {ZxcvbnResult} from '@zxcvbn-ts/core';
 
 const ValidLoginView = [
   'etape1',
@@ -37,6 +38,11 @@ export type LoginProps = {
   onCancel: () => void;
   /** Fonction appelée lors du clic sur le bouton "contactez le support" */
   onOpenChatbox: () => void;
+  /** Pour contrôler la robustesse des mots de passe */
+  getPasswordStrength: (
+    password: string,
+    otherValues: string[]
+  ) => ZxcvbnResult | null;
 };
 
 export type LoginPropsWithState = LoginProps & {formState: FormState};

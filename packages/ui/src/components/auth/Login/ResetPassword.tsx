@@ -5,6 +5,7 @@ import {ModalFooterOKCancel} from '@design-system/Modal';
 import {Field, FieldMessage} from '@design-system/Field';
 import {Input} from '@design-system/Input';
 import {LoginPropsWithState} from './type';
+import {PasswordStrengthMeter} from '@components/auth/PasswordStrengthMeter';
 
 /** Gestionnaire d'état pour le formulaire */
 const useResetPassword = () => {
@@ -22,12 +23,23 @@ const useResetPassword = () => {
 
 /** Réinitialisation du mot de passe après validation du jeton OTP */
 export const ResetPassword = (props: LoginPropsWithState) => {
-  const {error, isLoading, onCancel, onSubmit} = props;
+  const {
+    error,
+    isLoading,
+    onCancel,
+    onSubmit,
+    getPasswordStrength,
+    defaultValues,
+  } = props;
   const {
     handleSubmit,
     register,
+    watch,
     formState: {isValid},
   } = useResetPassword();
+
+  const password = watch('password');
+  const res = getPasswordStrength(password, [defaultValues?.email]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} data-test="ResetPassword">
@@ -37,6 +49,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
         htmlFor="password"
       >
         <Input type="password" {...register('password')} id="password" />
+        <PasswordStrengthMeter strength={res} />
       </Field>
       {error && (
         <FieldMessage messageClassName="mt-4" state="error" message={error} />
@@ -44,7 +57,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
       <ModalFooterOKCancel
         btnOKProps={{
           type: 'submit',
-          disabled: !isValid || isLoading,
+          disabled: !isValid || isLoading || (res && res.score < 4),
         }}
         btnCancelProps={{onClick: onCancel}}
       />

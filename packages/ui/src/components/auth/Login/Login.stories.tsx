@@ -10,6 +10,10 @@ const meta: Meta<typeof Login> = {
     onCancel: action('onCancel'),
     onSubmit: action('onSubmit'),
     onOpenChatbox: action('onOpenChatbox'),
+    getPasswordStrength: (...args) => {
+      action('getPasswordStrength')(...args);
+      return null;
+    },
   },
   render: props => {
     const [view, setView] = useState<LoginView>(props.view || 'etape1');

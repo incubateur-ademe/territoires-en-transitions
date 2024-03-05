@@ -7,6 +7,7 @@ import {ModalFooterOKCancel} from '@design-system/Modal';
 import {Field, FieldMessage} from '@design-system/Field';
 import {Input} from '@design-system/Input';
 import {SignupDataStep1, SignupPropsWithState} from './type';
+import {PasswordStrengthMeter} from '@components/auth/PasswordStrengthMeter';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (isPasswordless: boolean, email: string) => {
@@ -18,7 +19,6 @@ const useSignupStep1 = (isPasswordless: boolean, email: string) => {
         message: 'Le mot de passe doit comporter au moins 8 caractères',
       }),
   });
-
   return useForm({
     reValidateMode: 'onChange',
     resolver: zodResolver(validationSchema),
@@ -78,12 +78,14 @@ const SignupStep1Form = (
     isPasswordless,
     onSubmit,
     onCancel,
+    getPasswordStrength,
     form,
     formState: {setEmail},
   } = props;
   const {
     handleSubmit,
     register,
+    watch,
     formState: {isValid, errors},
   } = form;
 
@@ -95,6 +97,10 @@ const SignupStep1Form = (
     // envoi les données
     onSubmit(data);
   };
+
+  const email = watch('email');
+  const password = watch('password');
+  const res = isPasswordless ? null : getPasswordStrength(password, [email]);
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmitForm)}>
@@ -114,6 +120,7 @@ const SignupStep1Form = (
           message={errors.password?.message.toString()}
         >
           <Input id="password" type="password" {...register('password')} />
+          <PasswordStrengthMeter strength={res} />
         </Field>
       )}
       {error && (
@@ -128,7 +135,7 @@ const SignupStep1Form = (
         btnCancelProps={{onClick: onCancel}}
         btnOKProps={{
           type: 'submit',
-          disabled: !isValid || isLoading,
+          disabled: !isValid || isLoading || (res && res.score < 4),
         }}
       />
     </form>

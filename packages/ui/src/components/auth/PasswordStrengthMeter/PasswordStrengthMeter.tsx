@@ -40,6 +40,8 @@ export const PasswordStrengthMeter = ({
   /** Styles appliqués au container */
   className?: string;
 }) => {
+  if (!strength) return;
+  
   const {score, feedback} = strength;
   const {warning, suggestions} = feedback || {};
   const label = labelsByScore[score] || DEFAULT_LABEL;

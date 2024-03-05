@@ -1,3 +1,4 @@
+import {ZxcvbnResult} from '@zxcvbn-ts/core';
 import {Enums} from '@tet/api';
 import {VerifyOTPData} from '@components/auth/VerifyOTP/VerifyOTP';
 import {FormState} from '@components/auth/Login/useFormState';
@@ -58,6 +59,11 @@ export type SignupProps = {
   onSubmit: (data: SignupData) => void;
   /** Appelé à l'annulation du formulaire */
   onCancel: () => void;
+  /** Pour contrôler la robustesse des mots de passe */
+  getPasswordStrength: (
+    password: string,
+    otherValues: string[]
+  ) => ZxcvbnResult | null;
 };
 
 export type SignupPropsWithState = SignupProps & {formState: FormState};
