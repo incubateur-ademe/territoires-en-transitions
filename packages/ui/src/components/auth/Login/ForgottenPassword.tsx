@@ -77,9 +77,11 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
         />
       </Field>
 
-      <Button type="button" variant="underlined" onClick={onOpenChatbox}>
-        Contactez le support !
-      </Button>
+      {onOpenChatbox && (
+        <Button type="button" variant="underlined" onClick={onOpenChatbox}>
+          Contactez le support !
+        </Button>
+      )}
       {error && (
         <FieldMessage messageClassName="mt-4" state="error" message={error} />
       )}

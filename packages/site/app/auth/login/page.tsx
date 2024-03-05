@@ -32,7 +32,7 @@ const LoginPage = () => {
     <LoginModal
       defaultValues={defaultValues}
       // TODO: intégrer crisp dans le site pour pouvoir le raccorder ici
-      onOpenChatbox={() => {}}
+      //onOpenChatbox={() => {}}
       {...state}
     />
   );

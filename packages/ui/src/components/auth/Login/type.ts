@@ -37,7 +37,7 @@ export type LoginProps = {
   /** Fonction appelée à l'annulation du formulaire */
   onCancel: () => void;
   /** Fonction appelée lors du clic sur le bouton "contactez le support" */
-  onOpenChatbox: () => void;
+  onOpenChatbox?: () => void;
   /** Pour contrôler la robustesse des mots de passe */
   getPasswordStrength: (
     password: string,
