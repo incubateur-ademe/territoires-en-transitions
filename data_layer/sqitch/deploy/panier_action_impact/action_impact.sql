@@ -37,7 +37,8 @@ create table action_impact_fourchette_budgetaire
 insert into action_impact_fourchette_budgetaire(niveau, nom)
 values (1, 'De 0 à 40 000€'),
        (2, 'De 40 000€ à 100 000€'),
-       (3, 'Plus de 100 000€');
+       (3, 'Plus de 100 000€'),
+       (4, 'Non estimé');
 
 create table action_impact_tier
 (
