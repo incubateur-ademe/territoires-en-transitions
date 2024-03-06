@@ -127,6 +127,7 @@ const SubActionHeader = ({
             <ActionJustification
               action={action}
               className="mt-10"
+              backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
               title="Justification de l’ajustement manuel du score"
             />
           ) : null}
