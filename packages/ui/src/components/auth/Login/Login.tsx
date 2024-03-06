@@ -2,6 +2,7 @@ import {LoginProps} from './type';
 import {MailSendMessage} from './MailSendMessage';
 import {ResetPassword} from './ResetPassword';
 import {VerifyOTP} from '../VerifyOTP';
+import {ResendMessage} from '../VerifyOTP/ResendMessage';
 import {LoginTabs} from './LoginTabs';
 import {useFormState} from './useFormState';
 import {ForgottenPassword} from './ForgottenPassword';
@@ -10,7 +11,7 @@ import {ForgottenPassword} from './ForgottenPassword';
  * Affiche le panneau d'authentification et le formulaire "mot de passe oublié"
  */
 export const Login = (props: LoginProps) => {
-  const {view} = props;
+  const {view, onResend, isLoading} = props;
   const formState = useFormState(props);
 
   // affiche les onglets connexion sans/avec mot de passe
@@ -36,21 +37,37 @@ export const Login = (props: LoginProps) => {
 
   if (view === 'msg_lien_envoye') {
     return (
-      <MailSendMessage
-        data-test="msg_lien_envoye"
-        message1="Pour vous connecter, veuillez consulter votre boite mail et"
-        message2="cliquer sur le lien sécurisé reçu !"
-      />
+      <>
+        <MailSendMessage
+          data-test="msg_lien_envoye"
+          message1="Pour vous connecter, veuillez consulter votre boite mail et"
+          message2="cliquer sur le lien sécurisé reçu !"
+        />
+        <ResendMessage
+          email={formState.email}
+          isLoading={isLoading}
+          onResend={onResend}
+          type="login"
+        />
+      </>
     );
   }
 
   if (view === 'msg_init_mdp') {
     return (
-      <MailSendMessage
-        data-test="msg_init_mdp"
-        message1="Veuillez consulter votre boite mail pour"
-        message2="réinitialiser votre mot de passe."
-      />
+      <>
+        <MailSendMessage
+          data-test="msg_init_mdp"
+          message1="Veuillez consulter votre boite mail pour"
+          message2="réinitialiser votre mot de passe."
+        />
+        <ResendMessage
+          email={formState.email}
+          isLoading={isLoading}
+          onResend={onResend}
+          type="reset_password"
+        />
+      </>
     );
   }
 };

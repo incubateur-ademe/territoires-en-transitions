@@ -1,4 +1,4 @@
-import {VerifyOTPData} from '@components/auth/VerifyOTP/VerifyOTP';
+import {ResendFunction, VerifyOTPData} from '@components/auth/VerifyOTP';
 import {FormState} from './useFormState';
 import {ZxcvbnResult} from '@zxcvbn-ts/core';
 
@@ -36,6 +36,8 @@ export type LoginProps = {
   onSubmit?: (formData: LoginData) => void;
   /** Fonction appelée à l'annulation du formulaire */
   onCancel: () => void;
+  /** Fonction appelée pour renvoyer l'email contenant le code */
+  onResend: ResendFunction;
   /** Fonction appelée lors du clic sur le bouton "contactez le support" */
   onOpenChatbox?: () => void;
   /** Pour contrôler la robustesse des mots de passe */

@@ -14,6 +14,7 @@ const meta: Meta<typeof Login> = {
       action('getPasswordStrength')(...args);
       return null;
     },
+    defaultValues: {email: 'yolo@dodo.com', otp: ''},
   },
   render: props => {
     const [view, setView] = useState<LoginView>(props.view || 'etape1');
