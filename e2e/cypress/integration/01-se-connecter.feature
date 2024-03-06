@@ -152,7 +152,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |                                                 |
       | home                    | absent    |                                                 |
       | formulaire de connexion | visible   |                                                 |
-      | formulaire de connexion | contient  | L'email et le mot de passe ne correspondent pas |
+      | formulaire de connexion | contient | L'email ou le mot de passe ne correspondent pas |
       | footer                  | présent   |                                                 |
 
   Scénario: Demander un lien de réinitialisation et réinitialiser le mot de passe

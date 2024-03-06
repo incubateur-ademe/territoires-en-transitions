@@ -105,7 +105,7 @@ const SignupStep1Form = (
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmitForm)}>
       <Field
-        title="Email de connexion *"
+        title="Email professionnel *"
         htmlFor="email"
         state={errors.email ? 'error' : undefined}
         message={errors.email?.message.toString()}

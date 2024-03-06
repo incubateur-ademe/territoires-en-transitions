@@ -40,7 +40,7 @@ exports[`components/auth/Signup Default smoke-test 1`] = `
       <div class="flex-grow flex flex-col gap-3">
         <label for="email">
           <div class="font-medium text-grey-8">
-            Email de connexion *
+            Email professionnel *
           </div>
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
@@ -109,7 +109,7 @@ exports[`components/auth/Signup Etape1AvecMdp smoke-test 1`] = `
       <div class="flex-grow flex flex-col gap-3">
         <label for="email">
           <div class="font-medium text-grey-8">
-            Email de connexion *
+            Email professionnel *
           </div>
         </label>
         <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
@@ -385,7 +385,7 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
     <div class="flex-grow flex flex-col gap-3 md:col-span-2">
       <label for="telephone">
         <div class="font-medium text-grey-8">
-          Numéro de téléphone *
+          Numéro de téléphone professionnel *
         </div>
       </label>
       <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
@@ -418,7 +418,7 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
       <label for=":r0:"
              class="inline-flex items-center cursor-pointer font-medium text-grey-8"
       >
-        J’accepte le cadre d’utilisation de la plateforme (obligatoire)
+        J’accepte le cadre d’utilisation de la plateforme *
       </label>
       <div class="flex items-center text-grey-7 my-auto">
         <a href="https://territoiresentransitions.fr/cgu"
@@ -488,7 +488,7 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
     <div class="flex-grow flex flex-col gap-3 md:col-span-2">
       <label for="telephone">
         <div class="font-medium text-grey-8">
-          Numéro de téléphone *
+          Numéro de téléphone professionnel *
         </div>
       </label>
       <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
@@ -521,7 +521,7 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
       <label for=":r1:"
              class="inline-flex items-center cursor-pointer font-medium text-grey-8"
       >
-        J’accepte le cadre d’utilisation de la plateforme (obligatoire)
+        J’accepte le cadre d’utilisation de la plateforme *
       </label>
       <div class="flex items-center text-grey-7 my-auto">
         <a href="https://territoiresentransitions.fr/cgu"

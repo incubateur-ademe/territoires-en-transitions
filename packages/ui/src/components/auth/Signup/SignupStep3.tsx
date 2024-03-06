@@ -71,7 +71,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
         </Field>
         <Field
           className="md:col-span-2"
-          title="Numéro de téléphone *"
+          title="Numéro de téléphone professionnel *"
           htmlFor="telephone"
           state={errors.telephone ? 'error' : 'info'}
           message={
@@ -86,7 +86,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
       <Checkbox
         data-test="accept-cgu"
         className="font-medium"
-        label="J’accepte le cadre d’utilisation de la plateforme (obligatoire)"
+        label="J’accepte le cadre d’utilisation de la plateforme *"
         message={
           <>
             <Button variant="underlined" size="sm" href={URL_CGU}>

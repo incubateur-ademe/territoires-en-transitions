@@ -80,7 +80,7 @@ export const useLoginState = ({
       setIsLoading(false);
 
       if (error) {
-        setError("L'email et le mot de passe ne correspondent pas");
+        setError("L'email ou le mot de passe ne correspondent pas");
         return;
       }
       const session = data.session;
