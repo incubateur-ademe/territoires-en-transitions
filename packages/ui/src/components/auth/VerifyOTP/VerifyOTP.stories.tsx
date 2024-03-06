@@ -7,6 +7,8 @@ const meta: Meta<typeof VerifyOTP> = {
   args: {
     onCancel: action('onCancel'),
     onSubmit: action('onSubmit'),
+    onResend: action('onResend'),
+    defaultValues: {email: 'yolo@dodo.com', otp: ''},
   },
 };
 

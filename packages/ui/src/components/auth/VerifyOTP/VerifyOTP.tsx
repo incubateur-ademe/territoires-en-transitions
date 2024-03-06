@@ -5,13 +5,16 @@ import {ModalFooterOKCancel} from '@design-system/Modal';
 import {FieldMessage} from '@design-system/Field';
 import {Input, validateOTP} from '@design-system/Input';
 import {MailSendMessage} from '@components/auth/Login/MailSendMessage';
+import {ResendMessage} from './ResendMessage';
 
 export type VerifyOTPData = {
   email: string;
   otp: string;
 };
 
-type VerifyType = 'signup' | 'login' | 'reset_password';
+export type VerifyType = 'signup' | 'login' | 'reset_password';
+
+export type ResendFunction = (args: {type: VerifyType; email: string}) => void;
 
 type VerifyOTPProps = {
   /** Type d'usage (fait varier le message affiché) */
@@ -26,6 +29,8 @@ type VerifyOTPProps = {
   onSubmit?: (formData: VerifyOTPData) => void;
   /** Fonction appelée à l'annulation du formulaire */
   onCancel: () => void;
+  /** Fonction appelée pour renvoyer l'email contenant le code */
+  onResend: ResendFunction;
 };
 
 const messageByType: Record<VerifyType, string> = {
@@ -49,7 +54,8 @@ const useVerifyOTP = () => {
  * Affiche le panneau de vérification du jeton OTP
  */
 export const VerifyOTP = (props: VerifyOTPProps) => {
-  const {type, defaultValues, isLoading, error, onCancel, onSubmit} = props;
+  const {type, defaultValues, isLoading, error, onCancel, onSubmit, onResend} =
+    props;
   const {
     handleSubmit,
     register,
@@ -85,6 +91,16 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
           type: 'submit',
           disabled: !isValid || isLoading,
         }}
+        content={
+          defaultValues?.otp ? undefined : (
+            <ResendMessage
+              email={defaultValues?.email}
+              isLoading={isLoading}
+              onResend={onResend}
+              type={type}
+            />
+          )
+        }
       />
     </form>
   );
