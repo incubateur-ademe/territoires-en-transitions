@@ -9,22 +9,28 @@ const variantToClassnames: Record<ModalFooterVariant, string> = {
   space: 'justify-between',
 };
 
+export type ModalFooterProps = {
+  /** Contenu principal du pied de page */
+  children: React.ReactNode | React.ReactNode[];
+  /** Contenu optionnel entre la ligne de séparation et le contenu principal */
+  content?: React.ReactNode | React.ReactNode[];
+  /** Variante visuelle */
+  variant?: ModalFooterVariant;
+};
+
 /**
  * Composant de base pour le pied-de-page des modales.
  * Contient généralement un ou plusieurs boutons.
  */
 export const ModalFooter = ({
   children,
+  content,
   variant = 'right',
-}: {
-  /** Contenu du pied de page */
-  children: React.ReactNode | React.ReactNode[];
-  /** Variante visuelle */
-  variant?: ModalFooterVariant;
-}) => {
+}: ModalFooterProps) => {
   return (
     <>
       <Divider className="mt-4" />
+      {content}
       <div
         className={classNames(
           'flex gap-4 flex-wrap',
