@@ -37,3 +37,11 @@ export const Space: Story = {
     ],
   },
 };
+
+export const AvecContenuOptionnel: Story = {
+  args: {
+    variant: 'right',
+    content: [<p>Contenu optionnel</p>],
+    children: [<Button variant="outlined">Cancel</Button>, <Button>OK</Button>],
+  },
+};

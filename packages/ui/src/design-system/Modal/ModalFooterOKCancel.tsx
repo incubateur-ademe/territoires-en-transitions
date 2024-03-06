@@ -1,22 +1,27 @@
 import {Button} from '@design-system/Button';
 import {ButtonProps} from '../Button/types';
-import {ModalFooter} from './ModalFooter';
+import {ModalFooter, ModalFooterProps} from './ModalFooter';
 
-/**
- * Variante de `ModalFooter` pour le cas courant "Annuler/Valider"
- */
-export const ModalFooterOKCancel = (props: {
+type ModalFooterOKCancelProps = Omit<
+  ModalFooterProps,
+  'children' | 'variant'
+> & {
   /** Les props du bouton "Valider" */
   btnOKProps: ButtonProps;
   /** Les props du bouton "Annuler" (si non spécifié, le bouton est masqué) */
   btnCancelProps?: ButtonProps;
-}) => {
-  const {btnOKProps, btnCancelProps} = props;
+};
+
+/**
+ * Variante de `ModalFooter` pour le cas courant "Annuler/Valider"
+ */
+export const ModalFooterOKCancel = (props: ModalFooterOKCancelProps) => {
+  const {btnOKProps, btnCancelProps, ...remainingProps} = props;
   const {children: ok, ...btnOKRemainingProps} = btnOKProps;
   const {children: cancel, ...btnCancelRemainingProps} = btnCancelProps || {};
 
   return (
-    <ModalFooter variant="right">
+    <ModalFooter variant="right" {...remainingProps}>
       {btnCancelProps && (
         <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
           {cancel || 'Annuler'}
