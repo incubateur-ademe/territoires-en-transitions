@@ -1,6 +1,6 @@
 import {ZxcvbnResult} from '@zxcvbn-ts/core';
 import {Enums} from '@tet/api';
-import {VerifyOTPData} from '@components/auth/VerifyOTP/VerifyOTP';
+import {ResendFunction, VerifyOTPData} from '@components/auth/VerifyOTP';
 import {FormState} from '@components/auth/Login/useFormState';
 
 const ValidSignupView = [
@@ -59,6 +59,8 @@ export type SignupProps = {
   onSubmit: (data: SignupData) => void;
   /** Appelé à l'annulation du formulaire */
   onCancel: () => void;
+  /** Fonction appelée pour renvoyer l'email contenant le code */
+  onResend: ResendFunction;
   /** Pour contrôler la robustesse des mots de passe */
   getPasswordStrength: (
     password: string,

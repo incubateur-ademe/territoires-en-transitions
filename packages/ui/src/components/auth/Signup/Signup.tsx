@@ -5,13 +5,14 @@ import {SignupStep1} from './SignupStep1';
 import {SignupStep2} from './SignupStep2';
 import {SignupStep3} from './SignupStep3';
 import {SignupStep4} from './SignupStep4';
+import {ResendMessage} from '../VerifyOTP/ResendMessage';
 
 /**
  * Affiche le panneau création de compte
  */
 export const Signup = (props: SignupProps) => {
+  const {view, onResend, isLoading} = props;
   const formState = useFormState(props);
-  const {view} = props;
 
   if (view === 'etape1') {
     return <SignupStep1 {...props} formState={formState} />;
@@ -31,11 +32,19 @@ export const Signup = (props: SignupProps) => {
 
   if (view === 'msg_lien_envoye') {
     return (
-      <MailSendMessage
-        data-test="lien-envoye"
-        message1="Pour activer votre compte, veuillez consulter votre boite mail et"
-        message2="suivre le lien reçu !"
-      />
+      <>
+        <MailSendMessage
+          data-test="lien-envoye"
+          message1="Pour activer votre compte, veuillez consulter votre boite mail et"
+          message2="suivre le lien reçu !"
+        />
+        <ResendMessage
+          email={formState.email}
+          isLoading={isLoading}
+          onResend={onResend}
+          type="login"
+        />
+      </>
     );
   }
 };

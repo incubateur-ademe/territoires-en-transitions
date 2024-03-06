@@ -11,6 +11,7 @@ export const SignupStep2 = (props: SignupPropsWithState) => {
     error,
     onCancel,
     onSubmit,
+    onResend,
     formState: {email},
   } = props;
 
@@ -25,6 +26,7 @@ export const SignupStep2 = (props: SignupPropsWithState) => {
       error={error}
       onCancel={onCancel}
       onSubmit={onSubmit}
+      onResend={onResend}
     />
   );
 };
