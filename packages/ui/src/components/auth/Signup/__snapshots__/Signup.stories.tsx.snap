@@ -389,10 +389,12 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
         </div>
       </label>
       <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
-        <input type="text"
+        <input type="tel"
                class="grow text-grey-8 px-4 outline-none text-md py-3"
+               inputmode="numeric"
                id="telephone"
                name="telephone"
+               value
         >
       </div>
       <div class="flex items-center text-info-1">
@@ -490,10 +492,12 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
         </div>
       </label>
       <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
-        <input type="text"
+        <input type="tel"
                class="grow text-grey-8 px-4 outline-none text-md py-3"
+               inputmode="numeric"
                id="telephone"
                name="telephone"
+               value
         >
       </div>
       <div class="flex items-center text-info-1">

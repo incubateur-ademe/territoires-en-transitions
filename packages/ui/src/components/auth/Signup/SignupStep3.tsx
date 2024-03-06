@@ -3,7 +3,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {ModalFooterOKCancel} from '@design-system/Modal';
 import {Field, FieldMessage} from '@design-system/Field';
-import {Input} from '@design-system/Input';
+import {Input, validateTel} from '@design-system/Input';
 import {SignupDataStep3, SignupPropsWithState} from './type';
 import {FormSectionGrid} from '@design-system/FormSection';
 import {Checkbox} from '@design-system/Checkbox';
@@ -17,7 +17,7 @@ const useSignupStep3 = () => {
   const validationSchema = z.object({
     nom: z.string().min(1, 'Champ requis'),
     prenom: z.string().min(1, 'Champ requis'),
-    telephone: z.string().min(1, 'Champ requis'),
+    telephone: z.string().refine(validateTel),
     cgu_acceptees: z.boolean().refine(value => !!value, {
       message: "Vous devez accepter le cadre d'utilisation de la plateforme",
     }),
@@ -79,7 +79,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
             "L'accès à votre numéro est réservé à l'équipe ADEME de l'outil et le contact par mail restera privilégié"
           }
         >
-          <Input id="telephone" type="text" {...register('telephone')} />
+          <Input id="telephone" type="tel" {...register('telephone')} />
         </Field>
       </FormSectionGrid>
       <hr className="mt-5" />
