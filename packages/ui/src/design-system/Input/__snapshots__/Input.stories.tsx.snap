@@ -324,6 +324,26 @@ exports[`design-system/Input TypeSearchLoading smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Input TypeTel smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="tel"
+         class="grow text-grey-8 px-4 outline-none text-md py-3"
+         inputmode="numeric"
+         value
+  >
+</div>
+`;
+
+exports[`design-system/Input TypeTelAvecValeur smoke-test 1`] = `
+<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+  <input type="tel"
+         class="grow text-grey-8 px-4 outline-none text-md py-3"
+         inputmode="numeric"
+         value="01 23 45 67 89"
+  >
+</div>
+`;
+
 exports[`design-system/Input VarianteSmall smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"

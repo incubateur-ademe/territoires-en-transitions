@@ -234,6 +234,20 @@ export const TypeOTPAvecValeur: Story = {
   },
 };
 
+/** Saisie numéro de téléphone */
+export const TypeTel: Story = {
+  args: {
+    type: 'tel',
+  },
+};
+
+export const TypeTelAvecValeur: Story = {
+  args: {
+    type: 'tel',
+    value: '0123456789',
+  },
+};
+
 /** Recherche en cours. */
 export const TypeSearchLoading: Story = {
   args: {
