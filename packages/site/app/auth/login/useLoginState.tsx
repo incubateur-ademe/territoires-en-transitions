@@ -7,6 +7,7 @@ import {
   isValidLoginView,
   LoginData,
   VerifyOTPData,
+  ResendFunction,
 } from '@tet/ui';
 import {createClient} from 'src/supabase/client';
 import {useGetPasswordStrength} from 'app/auth/useGetPasswordStrength';
@@ -192,9 +193,37 @@ export const useLoginState = ({
     }
   };
 
+  // rappelle la fonction nécessaire si l'utilisateur demande le renvoi d'un email
+  const onResend: ResendFunction = async ({type, email}) => {
+    if (type && email) {
+      // réinitialise les erreurs
+      setError(null);
+
+      setIsLoading(true);
+      let ret;
+      if (type === 'login') {
+        ret = await supabase.auth.signInWithOtp({
+          email,
+          options: {shouldCreateUser: false, emailRedirectTo: redirectTo},
+        });
+      } else if (type === 'reset_password') {
+        ret = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo,
+        });
+      }
+      setIsLoading(false);
+      if (ret?.error) {
+        console.error(ret?.error);
+        setError("L'envoi du message a échoué");
+      }
+      return;
+    }
+  };
+
   return {
     onCancel,
     onSubmit,
+    onResend,
     view,
     setView,
     error,
