@@ -6,6 +6,7 @@ import {InputPassword, InputPasswordProps} from './InputPassword';
 import {InputNumber, InputNumberProps} from './InputNumber';
 import {InputPattern, InputPatternProps} from './InputPattern';
 import {InputOTP, InputOTPProps} from './InputOTP';
+import {InputTel, InputTelProps} from './InputTel';
 
 type InputProps =
   | (Omit<InputBaseProps, 'type'> & {type: 'text'})
@@ -14,6 +15,7 @@ type InputProps =
   | (InputSearchProps & {type: 'search'})
   | (InputPasswordProps & {type: 'password'})
   | (InputPatternProps & {type: 'pattern'})
+  | (InputTelProps & {type: 'tel'})
   | (InputOTPProps & {type: 'otp'});
 
 /**
@@ -46,6 +48,10 @@ export const Input = forwardRef(
 
     if (type === 'otp') {
       return <InputOTP {...(props as InputOTPProps)} ref={ref} />;
+    }
+
+    if (type === 'tel') {
+      return <InputTel {...(props as InputTelProps)} ref={ref} />;
     }
 
     return <InputBase {...(props as InputBaseProps)} ref={ref} />;
