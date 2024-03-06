@@ -4,6 +4,7 @@ import {
   InputPattern,
   InputPatternProps,
 } from '@design-system/Input/InputPattern';
+import {validateInputNumLength} from './validateInputNumLength';
 
 export type InputOTPProps = Omit<
   InputPatternProps,
@@ -11,17 +12,12 @@ export type InputOTPProps = Omit<
 > &
   Pick<InputBaseProps, 'containerClassname'>;
 
-const RE_CLEAN = /[^\d]/g; // pour supprimer les caractères non numériques
 const LENGTH = 6; // longueur du code attendu
 const FORMAT = new Array(LENGTH).fill('#').join(' '); // formatage du code lors de la saisie
 
 // renvoi le code saisi si il est valide
-export const validateOTP = (value: string) => {
-  // nettoie le code saisi
-  const v = value.replace(RE_CLEAN, '');
-  // et le renvoi si la longueur est celle attendue
-  return v.length === LENGTH ? v : false;
-};
+export const validateOTP = (value: string) =>
+  validateInputNumLength(value, LENGTH);
 
 /**
  * Affiche un champ de saisie d'un code OTP (6 chiffres)
