@@ -68,6 +68,7 @@ export type ActionCommentaireFieldProps = {
     modified_at?: string | undefined;
     modified_by?: string | undefined;
   }) => void;
+  onChange?: (value: string) => void;
 };
 
 export const ActionCommentaireField = ({
@@ -80,6 +81,7 @@ export const ActionCommentaireField = ({
   autoFocus = false,
   disabled = false,
   onSave,
+  onChange,
 }: ActionCommentaireFieldProps) => {
   const collectivite = useCurrentCollectivite();
   const [commentaire, setCommentaire] = useState(initialValue);
@@ -98,9 +100,10 @@ export const ActionCommentaireField = ({
         minHeight={action.type === 'tache' ? undefined : '5rem'}
         value={commentaire}
         onInputChange={() => null}
-        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-          setCommentaire(event.currentTarget.value)
-        }
+        onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+          setCommentaire(event.currentTarget.value);
+          onChange?.(event.currentTarget.value);
+        }}
         onBlur={() => {
           commentaire.trim() !== (initialValue || '') &&
             onSave({
