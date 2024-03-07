@@ -77,8 +77,13 @@ create table action_impact
 
     temps_de_mise_en_oeuvre        integer not null references action_impact_temps_mise_en_oeuvre            default 1,
     fourchette_budgetaire    integer not null references action_impact_fourchette_budgetaire default 1,
-    impact_tier              integer not null references action_impact_tier                  default 1
+    impact_tier              integer not null references action_impact_tier                  default 1,
+
+    subventions_mobilisables text,
+    rex text
 );
+comment on column action_impact.rex is 'retour sur experience';
+
 
 
 --- Table de passage
