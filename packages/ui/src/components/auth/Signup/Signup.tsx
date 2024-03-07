@@ -5,7 +5,7 @@ import {SignupStep1} from './SignupStep1';
 import {SignupStep2} from './SignupStep2';
 import {SignupStep3} from './SignupStep3';
 import {SignupStep4} from './SignupStep4';
-import {ResendMessage} from '../VerifyOTP/ResendMessage';
+import {ResendMessage} from '../ResendMessage';
 
 /**
  * Affiche le panneau création de compte

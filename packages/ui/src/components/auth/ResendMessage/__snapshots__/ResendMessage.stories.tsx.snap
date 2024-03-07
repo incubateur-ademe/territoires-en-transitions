@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/auth/ResendMessage Default smoke-test 1`] = `
+<div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+    Vous n'avez pas reçu de message ?
+  </button>
+</div>
+`;
+
+exports[`components/auth/ResendMessage Loading smoke-test 1`] = `
+<div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+    Vous n'avez pas reçu de message ?
+  </button>
+  <div class="my-4 flex flex-col">
+    <p>
+      Vérifiez le dossier
+      <i>
+        spam
+      </i>
+      de votre messagerie ou essayez à nouveau d'envoyer le message à l'adresse :
+    </p>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 self-center w-max">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 font-bold"
+             name="email"
+      >
+      <button title="Envoyer"
+              disabled
+              class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
+      >
+        <span class="ri-send-plane-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`components/auth/ResendMessage Opened smoke-test 1`] = `
+<div>
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
+    Vous n'avez pas reçu de message ?
+  </button>
+  <div class="my-4 flex flex-col">
+    <p>
+      Vérifiez le dossier
+      <i>
+        spam
+      </i>
+      de votre messagerie ou essayez à nouveau d'envoyer le message à l'adresse :
+    </p>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4 self-center w-max">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none text-md py-3 border-r border-solid border-grey-4 font-bold"
+             name="email"
+      >
+      <button title="Envoyer"
+              class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+      >
+        <span class="ri-send-plane-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

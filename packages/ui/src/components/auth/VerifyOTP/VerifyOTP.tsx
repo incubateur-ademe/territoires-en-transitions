@@ -5,7 +5,7 @@ import {ModalFooterOKCancel} from '@design-system/Modal';
 import {FieldMessage} from '@design-system/Field';
 import {Input, validateOTP} from '@design-system/Input';
 import {MailSendMessage} from '@components/auth/Login/MailSendMessage';
-import {ResendMessage} from './ResendMessage';
+import {ResendMessage} from '../ResendMessage';
 
 export type VerifyOTPData = {
   email: string;

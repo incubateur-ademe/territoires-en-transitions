@@ -2,7 +2,7 @@ import {LoginProps} from './type';
 import {MailSendMessage} from './MailSendMessage';
 import {ResetPassword} from './ResetPassword';
 import {VerifyOTP} from '../VerifyOTP';
-import {ResendMessage} from '../VerifyOTP/ResendMessage';
+import {ResendMessage} from '../ResendMessage';
 import {LoginTabs} from './LoginTabs';
 import {useFormState} from './useFormState';
 import {ForgottenPassword} from './ForgottenPassword';
