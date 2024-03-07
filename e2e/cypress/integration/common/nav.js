@@ -76,3 +76,16 @@ When(/la vue(?: des)? "(.*)" est masquée/, view => {
   const {selector} = Views[view];
   cy.get(selector).should('be.hidden');
 });
+
+// teste les redirections
+const redirectedTo = {
+  app: 'http://localhost:3000',
+  site: 'http://localhost:3001',
+  panier: 'http://localhost:3002',
+};
+const checkRedirect = appName => {
+  assert(redirectedTo[appName], `l'url correspondant à "${appName} est défini`);
+  cy.url().should('contain', redirectedTo[appName]);
+};
+When(/je suis redirigé sur l'(.*)/, checkRedirect);
+When(/je suis redirigé sur le (.*)/, checkRedirect);
