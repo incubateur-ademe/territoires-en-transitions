@@ -82,8 +82,8 @@ exports[`components/auth/VerifyOTP AvecErreur smoke-test 1`] = `
       Message d'erreur
     </span>
   </div>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-end">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -173,8 +173,8 @@ exports[`components/auth/VerifyOTP IsLoading smoke-test 1`] = `
            value="1 2 3 4 5 6"
     >
   </div>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-end">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -265,8 +265,8 @@ exports[`components/auth/VerifyOTP PreRempli smoke-test 1`] = `
            value="1 2 3 4 5 6"
     >
   </div>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-end">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -356,13 +356,13 @@ exports[`components/auth/VerifyOTP TypeLogin smoke-test 1`] = `
            value="_ _ _ _ _ _"
     >
   </div>
-  <hr class="mt-4">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
       Vous n'avez pas reçu de message ?
     </button>
   </div>
-  <div class="flex gap-4 justify-end">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -453,13 +453,13 @@ exports[`components/auth/VerifyOTP TypeResetPassword smoke-test 1`] = `
            value="_ _ _ _ _ _"
     >
   </div>
-  <hr class="mt-4">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
       Vous n'avez pas reçu de message ?
     </button>
   </div>
-  <div class="flex gap-4 justify-end">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -550,13 +550,13 @@ exports[`components/auth/VerifyOTP TypeSignup smoke-test 1`] = `
            value="_ _ _ _ _ _"
     >
   </div>
-  <hr class="mt-4">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
       Vous n'avez pas reçu de message ?
     </button>
   </div>
-  <div class="flex gap-4 justify-end">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >

@@ -49,6 +49,7 @@ exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"
@@ -61,8 +62,8 @@ exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs AvecStyles smoke-test 1`] = `
-<div class="overflow-hidden bg-secondary-1 mb-0 rounded-none">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none"
+<div class="overflow-hidden">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none bg-secondary-1 mb-0 rounded-none"
       role="tablist"
   >
     <li role="presentation"
@@ -164,6 +165,7 @@ exports[`design-system/Tabs Onglet2 smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"
@@ -217,6 +219,7 @@ exports[`design-system/Tabs OngletParDefaut smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-0"
+       class
        role="tabpanel"
        aria-labelledby="tab-0"
        tabindex="0"
@@ -276,6 +279,7 @@ exports[`design-system/Tabs TailleSM smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"
@@ -336,6 +340,7 @@ exports[`design-system/Tabs TailleXS smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"

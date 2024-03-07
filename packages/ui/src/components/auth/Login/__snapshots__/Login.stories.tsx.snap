@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/auth/Login AvecErreur smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+<div class="overflow-hidden justify-center">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -31,6 +31,7 @@ exports[`components/auth/Login AvecErreur smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-0"
+       class
        role="tabpanel"
        aria-labelledby="tab-0"
        tabindex="0"
@@ -67,8 +68,8 @@ exports[`components/auth/Login AvecErreur smoke-test 1`] = `
           Une erreur est survenue...
         </span>
       </div>
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
+      <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+      <div class="flex gap-4 flex-wrap justify-end">
         <button type="button"
                 class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
@@ -86,8 +87,8 @@ exports[`components/auth/Login AvecErreur smoke-test 1`] = `
 `;
 
 exports[`components/auth/Login AvecMotDePasse smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+<div class="overflow-hidden justify-center">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -116,6 +117,7 @@ exports[`components/auth/Login AvecMotDePasse smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"
@@ -167,8 +169,8 @@ exports[`components/auth/Login AvecMotDePasse smoke-test 1`] = `
       >
         Mot de passe oublié ?
       </button>
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
+      <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+      <div class="flex gap-4 flex-wrap justify-end">
         <button type="button"
                 class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
@@ -187,8 +189,8 @@ exports[`components/auth/Login AvecMotDePasse smoke-test 1`] = `
 `;
 
 exports[`components/auth/Login AvecMotDePasseEtErreur smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+<div class="overflow-hidden justify-center">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -217,6 +219,7 @@ exports[`components/auth/Login AvecMotDePasseEtErreur smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-1"
+       class
        role="tabpanel"
        aria-labelledby="tab-1"
        tabindex="1"
@@ -277,8 +280,8 @@ exports[`components/auth/Login AvecMotDePasseEtErreur smoke-test 1`] = `
           Une erreur est survenue...
         </span>
       </div>
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
+      <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+      <div class="flex gap-4 flex-wrap justify-end">
         <button type="button"
                 class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
@@ -327,16 +330,16 @@ exports[`components/auth/Login MotDePasseOublie smoke-test 1`] = `
   >
     Contactez le support !
   </button>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-between">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+  <div class="flex gap-4 flex-wrap justify-between">
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
       <span class="ri-arrow-left-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
       </span>
       Se connecter
     </button>
-    <div class="flex gap-4">
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
+    <div class="flex gap-4 flex-wrap">
+      <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+      <div class="flex gap-4 flex-wrap justify-end">
         <button type="button"
                 class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
@@ -574,13 +577,13 @@ exports[`components/auth/Login Recover smoke-test 1`] = `
            value="_ _ _ _ _ _"
     >
   </div>
-  <hr class="mt-4">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6">
       Vous n'avez pas reçu de message ?
     </button>
   </div>
-  <div class="flex gap-4 justify-end">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -619,8 +622,8 @@ exports[`components/auth/Login ReinitMotDePasse smoke-test 1`] = `
       </button>
     </div>
   </div>
-  <hr class="mt-4">
-  <div class="flex gap-4 justify-end">
+  <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+  <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
             class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
@@ -637,8 +640,8 @@ exports[`components/auth/Login ReinitMotDePasse smoke-test 1`] = `
 `;
 
 exports[`components/auth/Login SansMotDePasse smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none justify-center"
+<div class="overflow-hidden justify-center">
+  <ul class="inline-flex rounded-lg bg-grey-2 p-2 gap-3 w-full overflow-x-auto !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -667,6 +670,7 @@ exports[`components/auth/Login SansMotDePasse smoke-test 1`] = `
     </li>
   </ul>
   <div id="tabpanel-0"
+       class
        role="tabpanel"
        aria-labelledby="tab-0"
        tabindex="0"
@@ -694,8 +698,8 @@ exports[`components/auth/Login SansMotDePasse smoke-test 1`] = `
           </span>
         </div>
       </div>
-      <hr class="mt-4">
-      <div class="flex gap-4 justify-end">
+      <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+      <div class="flex gap-4 flex-wrap justify-end">
         <button type="button"
                 class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
         >
