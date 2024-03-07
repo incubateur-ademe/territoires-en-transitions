@@ -32,6 +32,7 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible |
 
+
   Scénario: Se connecter par lien unique en tant qu'utilisateur déjà rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
@@ -42,7 +43,9 @@ Fonctionnalité: Accéder au site et se connecter
       | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
-    Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
+    Alors je suis redirigé sur le site
+
+    Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YoLO@dodo.com |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
@@ -55,13 +58,15 @@ Fonctionnalité: Accéder au site et se connecter
     Alors le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de "yolo"
 
     Quand je clique sur le bouton "Valider" du "formulaire de connexion"
-    Alors la page vérifie les conditions suivantes :
+    Alors je suis redirigé sur l'app
+    Et la page vérifie les conditions suivantes :
       | Elément                               | Condition |
       | header                                | visible   |
       | home                                  | absent    |
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
 
+@focus
   Scénario: Se connecter en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
@@ -72,7 +77,8 @@ Fonctionnalité: Accéder au site et se connecter
       | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
-    Alors la page vérifie les conditions suivantes :
+    Alors je suis redirigé sur le site
+    Et la page vérifie les conditions suivantes :
       | Elément                 | Condition |
       | header                  | visible   |
       | home                    | absent    |
@@ -85,7 +91,8 @@ Fonctionnalité: Accéder au site et se connecter
       | email | YuLu@DUDU.COM |
       | mdp   | yulududu      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
-    Alors la page vérifie les conditions suivantes :
+    Alors je suis redirigé sur l'app
+    Et la page vérifie les conditions suivantes :
       | Elément                  | Condition |
       | header                   | visible   |
       | home                     | absent    |
