@@ -1,6 +1,6 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {Footer} from './Footer';
-import {APP_BASE_URL, BASE_URL} from 'utils/constants';
+import {APP_BASE_URL, SITE_BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Footer> = {
   component: Footer,
@@ -11,7 +11,7 @@ const meta: Meta<typeof Footer> = {
     contentLinks: [
       {
         label: 'territoiresentransitions.fr',
-        href: BASE_URL,
+        href: SITE_BASE_URL,
         external: true,
       },
     ],
@@ -19,7 +19,7 @@ const meta: Meta<typeof Footer> = {
     bottomLinks: [
       {
         label: 'Site',
-        href: BASE_URL,
+        href: SITE_BASE_URL,
         external: true,
       },
       {

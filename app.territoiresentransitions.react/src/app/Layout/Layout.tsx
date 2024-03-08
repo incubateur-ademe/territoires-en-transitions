@@ -9,12 +9,12 @@ type Props = {
 
 const Layout = ({children}: Props) => {
   return (
-    <div className="flex flex-col h-[100vh] overflow-hidden">
-      <div id="main" className="w-full overflow-x-hidden overflow-y-auto">
+    <div className="min-h-screen flex flex-col justify-between">
+      <div id="main" className="mb-8">
         <Header />
         {children}
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
