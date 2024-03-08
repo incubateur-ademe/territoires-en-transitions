@@ -31,6 +31,15 @@ export const theme: Theme = {
   },
 };
 
+export const zoomedChartTheme = {
+  fontSize: 14,
+  labels: {
+    text: {
+      fontWeight: 600,
+    },
+  },
+};
+
 export const defaultColors = [
   '#21AB8E',
   '#FFCA00',

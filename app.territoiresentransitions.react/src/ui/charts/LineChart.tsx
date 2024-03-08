@@ -1,21 +1,24 @@
 import {ResponsiveLine, LineSvgProps, Serie} from '@nivo/line';
 import {defaultColors, theme} from './chartsTheme';
+import {Theme} from '@nivo/core';
 
 export type LineChartProps = LineSvgProps & {
   /** légende de l'axe gauche */
   axisLeftLegend?: string;
+  /** thème custom */
+  customTheme?: Theme;
 };
 
 /**
  * Affiche un graphique de type "ligne"
  */
 const LineChart = (props: LineChartProps) => {
-  const {axisLeftLegend} = props;
+  const {axisLeftLegend, customTheme} = props;
 
   return (
     <ResponsiveLine
       colors={defaultColors}
-      theme={theme}
+      theme={{...theme, ...customTheme}}
       // les marges servent aux légendes
       margin={{top: 5, right: 25, bottom: 70, left: 90}}
       xScale={{

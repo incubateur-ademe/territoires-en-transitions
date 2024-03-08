@@ -6,6 +6,7 @@ import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
 import DonutChart, {DonutChartProps} from './DonutChart';
 import LineChart, {LineChartProps} from './LineChart';
+import {zoomedChartTheme} from './chartsTheme';
 
 export const Legend = ({
   legend,
@@ -220,20 +221,21 @@ const ChartCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Initialisation du graphe en fonction des props
-  let chart: JSX.Element = <></>;
-  switch (chartType) {
-    case 'bar':
-      chart = <BarChart {...(chartProps as BarChartProps)} />;
-      break;
-    case 'donut':
-      chart = <DonutChart {...(chartProps as DonutChartProps)} />;
-      break;
-    case 'line':
-      chart = <LineChart {...(chartProps as LineChartProps)} />;
-      break;
-    default:
-      break;
-  }
+  const chart = (
+    customProps?: BarChartProps | DonutChartProps | LineChartProps
+  ) => {
+    const props = {...chartProps, ...(customProps ?? {})};
+    switch (chartType) {
+      case 'bar':
+        return <BarChart {...(props as BarChartProps)} />;
+      case 'donut':
+        return <DonutChart {...(props as DonutChartProps)} />;
+      case 'line':
+        return <LineChart {...(props as LineChartProps)} />;
+      default:
+        return <></>;
+    }
+  };
 
   return (
     <div
@@ -267,7 +269,10 @@ const ChartCard = ({
             setExternalOpen={setIsModalOpen}
             render={() => (
               <ChartCardModalContent
-                chart={chart}
+                chart={chart({customTheme: zoomedChartTheme} as
+                  | BarChartProps
+                  | DonutChartProps
+                  | LineChartProps)}
                 chartInfo={chartInfo}
                 topElement={topElement}
               />
@@ -290,7 +295,7 @@ const ChartCard = ({
       </div>
 
       {/* Graphe miniature */}
-      {chart}
+      {chart()}
 
       {/* Légende */}
       {chartInfo?.legend && chartInfo?.legendOnOverview && (

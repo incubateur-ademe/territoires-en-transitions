@@ -4,7 +4,8 @@ import {
   ComputedDatum,
   ResponsiveBar,
 } from '@nivo/bar';
-import {defaultColors} from './chartsTheme';
+import {defaultColors, theme} from './chartsTheme';
+import {Theme} from '@nivo/core';
 
 const getCustomColor = ({
   id,
@@ -81,6 +82,7 @@ export type BarChartProps = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
+  customTheme?: Theme;
   indexTitles?: string[];
   layout?: 'horizontal' | 'vertical';
   groupMode?: 'grouped' | 'stacked';
@@ -96,6 +98,7 @@ export type BarChartProps = {
  * @param data - tableau de données à afficher
  * @param indexBy string - élément de data utilisé pour indexer les autres données
  * @param keys string[] - éléments utilisés pour déterminer chaque série de données
+ * @param customTheme thème custom
  * @param indexTitles string[] (optionnel) - permet d'afficher des valeurs différentes de indexBy dans la tooltip
  * @param layout 'horizontal' | 'vertical' (optionnel) - orientation du graphe, par défaut vertical
  * @param groupMode 'grouped' | 'stacked' (optionnel)
@@ -109,6 +112,7 @@ const BarChart = ({
   data,
   indexBy,
   keys,
+  customTheme,
   indexTitles = [],
   layout,
   groupMode,
@@ -133,6 +137,7 @@ const BarChart = ({
   return (
     <ResponsiveBar
       data={localData}
+      theme={{...theme, ...customTheme}}
       keys={keys}
       indexBy={indexBy}
       margin={{

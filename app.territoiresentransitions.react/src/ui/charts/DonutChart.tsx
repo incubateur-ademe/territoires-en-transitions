@@ -5,6 +5,7 @@ import {
   ResponsivePie,
 } from '@nivo/pie';
 import {defaultColors, nivoColorsSet, theme} from './chartsTheme';
+import {Theme} from '@nivo/core';
 
 /**
  * Conversion d'une valeur en %
@@ -137,12 +138,14 @@ export type DonutChartProps = {
     value: number;
     color?: string;
   }[];
+  customTheme?: Theme;
   label?: boolean;
   centeredMetric?: {title: string; value?: string};
   unit?: string;
   customMargin?: {top: number; right: number; bottom: number; left: number};
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
+
   onClick?: () => void;
 };
 
@@ -150,6 +153,7 @@ export type DonutChartProps = {
  * Graphe donut générique à partir du composant nivo/pie
  *
  * @param data - tableau de données à afficher
+ * @param customTheme thème custom
  * @param label - (optionnel) affichage des labels sur le
  * @param centeredMetric
  * @param unit
@@ -161,6 +165,7 @@ export type DonutChartProps = {
 
 const DonutChart = ({
   data,
+  customTheme,
   label = false,
   centeredMetric,
   unit = '',
@@ -193,7 +198,7 @@ const DonutChart = ({
         }
       }}
       data={isDefaultData() ? defaultData : localData}
-      theme={theme}
+      theme={{...theme, ...customTheme}}
       colors={{datum: 'data.color'}}
       margin={customMargin ?? {top: 40, right: 50, bottom: 60, left: 50}}
       innerRadius={0.5}
