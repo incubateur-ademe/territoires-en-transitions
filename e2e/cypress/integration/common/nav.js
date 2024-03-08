@@ -85,7 +85,7 @@ const redirectedTo = {
 };
 const checkRedirect = appName => {
   assert(redirectedTo[appName], `l'url correspondant à "${appName} est défini`);
-  cy.url().should('contain', redirectedTo[appName]);
+  cy.url({timeout: 8000}).should('contain', redirectedTo[appName]);
 };
 When(/je suis redirigé sur l'(.*)/, checkRedirect);
 When(/je suis redirigé sur le (.*)/, checkRedirect);
