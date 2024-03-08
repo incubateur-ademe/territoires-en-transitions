@@ -1,7 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {HeaderTeT} from './HeaderTeT';
 import {Button} from '@design-system/Button';
-import {APP_BASE_URL, BASE_URL} from 'utils/constants';
+import {APP_BASE_URL, SITE_BASE_URL} from 'utils/constants';
 import TeTeLogo from '@assets/TeTeLogo';
 
 const meta: Meta<typeof HeaderTeT> = {
@@ -48,7 +48,7 @@ export const HeaderPanier: Story = {
             {...props}
             key="outil"
             icon="seedling-line"
-            href={`${BASE_URL}/outil-numerique`}
+            href={`${SITE_BASE_URL}/outil-numerique`}
             iconPosition="left"
             external
           >
