@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import {Button, Field, OptionValue, Select} from '@tet/ui';
+import {Button, Divider, Field, OptionValue, Select} from '@tet/ui';
 import {useContext, useState} from 'react';
 import {useEventTracker} from '@tet/ui';
 import {useRouter} from 'next/navigation';
@@ -8,11 +8,22 @@ import {PanierContext, UserContext} from './PanierRealtime';
 import {panierAPI} from 'src/clientAPI';
 import useSWR from 'swr';
 import {MesCollectivite} from '@tet/api';
+import StepperValidation from './StepperValidation';
 
 const ValiderPanierModale = () => {
   const panier = useContext(PanierContext);
   const user = useContext(UserContext);
   const contenu = panier.contenu;
+
+  let steps = [
+    "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
+    'Je modifie les fiches à ma guise et invite mes collaborateurs à contribuer en ligne.',
+  ];
+
+  !user &&
+    steps.unshift(
+      'Je créé mon compte en quelques clics et me rattache à ma collectivité',
+    );
 
   return (
     <div className="flex flex-col gap-10 items-center relative">
@@ -32,9 +43,11 @@ const ValiderPanierModale = () => {
           impact.
         </span>
         <span className="text-lg text-primary-9 text-center">
-          Vous pouvez maintenant créer un plan pour retrouver et modifier ces
-          actions selon vos besoins.
+          Vous pouvez maintenant créer un plan, pour retrouver et modifier ces
+          actions sur notre outil Territoires en Transitions.
         </span>
+        <Divider color="medium" className="mt-8 w-1/2" />
+        <StepperValidation className="w-5/6 mt-2" steps={steps} />
       </div>
       {user ? <ModeConnecte /> : <ModeDeconnecte />}
     </div>
