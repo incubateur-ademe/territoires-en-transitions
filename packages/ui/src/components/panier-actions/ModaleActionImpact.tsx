@@ -5,7 +5,6 @@ import {Divider} from '@design-system/Divider';
 import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
 import {InfoTooltip} from '@design-system/Tooltip';
 import {NiveauBudget} from './NiveauBudget';
-import {valeurToBadge} from './utils';
 import {ModaleActionImpactProps} from './types';
 import LienExterneModale from './LienExterneModale';
 
@@ -17,7 +16,6 @@ export const ModaleActionImpact = ({
   children,
   titre,
   thematiques,
-  complexite,
   budget,
   description,
   statut,
@@ -30,16 +28,7 @@ export const ModaleActionImpact = ({
       size="lg"
       render={() => (
         <div>
-          <div className="flex justify-between mb-6 mt-4">
-            {/* Catégorie */}
-            <div className="text-primary-8 text-lg font-bold flex divide-x-2 divide-x-primary-3 gap-x-3">
-              {thematiques.map(them => (
-                <div key={them.id} className="pl-3 first-of-type:pl-0">
-                  {them.nom}
-                </div>
-              ))}
-            </div>
-
+          <div className="flex justify-end mb-6 mt-4">
             {/* Budget */}
             <NiveauBudget budget={budget} />
           </div>
@@ -47,15 +36,22 @@ export const ModaleActionImpact = ({
           {/* Titre de l'action */}
           <h3>{titre}</h3>
 
-          {/* Badge de complexité */}
-          <Badge
-            title={`Complexité ${valeurToBadge[complexite].nom}`}
-            size="sm"
-            state={valeurToBadge[complexite].style}
-          />
+          {/* Badges thématiques */}
+          {!!thematiques.length && (
+            <div className="flex gap-4 flex-wrap mb-6">
+              {thematiques.map(theme => (
+                <Badge
+                  key={theme.id}
+                  title={theme.nom}
+                  size="sm"
+                  state="standard"
+                />
+              ))}
+            </div>
+          )}
 
           {/* Description */}
-          <p className="paragraphe-18 mt-6">{description}</p>
+          <p className="paragraphe-18">{description}</p>
 
           {/* Ressources externes */}
           {/* {!!ressources && (

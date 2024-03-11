@@ -19,7 +19,6 @@ const ListeActionsFiltrees = ({
           key={action.action.id}
           titre={action.action.titre}
           thematiques={action.thematiques}
-          complexite={action.action.niveau_complexite as 1 | 2 | 3}
           budget={action.action.fourchette_budgetaire as 0 | 1 | 2 | 3}
           description={action.action.description}
           statut={

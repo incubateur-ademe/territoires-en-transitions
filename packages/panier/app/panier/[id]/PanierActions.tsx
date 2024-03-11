@@ -52,7 +52,6 @@ const PanierActions = ({
                   key={action.id}
                   titre={action.titre}
                   thematiques={action.thematiques}
-                  complexite={action.niveau_complexite as 1 | 2 | 3}
                   budget={action.fourchette_budgetaire as 1 | 2 | 3}
                   panier={true}
                   isSelected={false}
