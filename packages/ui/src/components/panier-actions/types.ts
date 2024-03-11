@@ -5,8 +5,6 @@ export type ActionImpactProps = {
   titre: string;
   /** Thématiques de l'action à impact */
   thematiques: ActionImpactThematique[];
-  /** Niveau de complexité de l'action : simple, intermédiaire ou élevée */
-  complexite: 1 | 2 | 3;
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
   budget: 0 | 1 | 2 | 3;
   /** Description de l'action à impact */
@@ -34,7 +32,6 @@ export type CarteActionImpactProps = Pick<
   ActionImpactProps,
   | 'titre'
   | 'thematiques'
-  | 'complexite'
   | 'budget'
   | 'statut'
   | 'panier'

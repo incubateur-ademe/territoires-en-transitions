@@ -3,10 +3,7 @@
 exports[`Components/Panier d'actions/Carte action à impact CarteSelectionnee smoke-test 1`] = `
 <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-info-1 box-content !px-5 !py-4 h-[160px]">
   <div class="text-primary-8 text-sm font-bold">
-    <div class="flex justify-between">
-      <div>
-        Mieux consommer
-      </div>
+    <div class="flex justify-end">
       <div>
         <span class="ri-money-euro-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-secondary-1">
         </span>
@@ -21,10 +18,10 @@ exports[`Components/Panier d'actions/Carte action à impact CarteSelectionnee sm
   <div class="text-primary-8 text-sm font-bold mt-auto">
     <div class="relative z-0">
       <div data-test="Badge-undefined"
-           class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+           class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
       >
-        <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
-          Complexité simple
+        <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+          Mieux consommer
         </span>
       </div>
       <div class="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
@@ -46,10 +43,7 @@ exports[`Components/Panier d'actions/Carte action à impact CarteSelectionnee sm
 exports[`Components/Panier d'actions/Carte action à impact Default smoke-test 1`] = `
 <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3 box-content !px-5 !py-4 h-[160px]">
   <div class="text-primary-8 text-sm font-bold">
-    <div class="flex justify-between">
-      <div>
-        Mieux consommer
-      </div>
+    <div class="flex justify-end">
       <div>
         <span class="ri-money-euro-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-secondary-1">
         </span>
@@ -64,10 +58,10 @@ exports[`Components/Panier d'actions/Carte action à impact Default smoke-test 1
   <div class="text-primary-8 text-sm font-bold mt-auto">
     <div class="relative z-0">
       <div data-test="Badge-undefined"
-           class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+           class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
       >
-        <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
-          Complexité simple
+        <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+          Mieux consommer
         </span>
       </div>
       <div class="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
