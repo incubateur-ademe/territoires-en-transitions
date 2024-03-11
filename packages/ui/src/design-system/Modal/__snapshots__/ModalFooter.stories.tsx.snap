@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Modal/ModalFooter Center smoke-test 1`] = `
-<hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+<hr class="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
 <div class="flex gap-4 flex-wrap justify-center">
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     OK
@@ -10,7 +10,7 @@ exports[`design-system/Modal/ModalFooter Center smoke-test 1`] = `
 `;
 
 exports[`design-system/Modal/ModalFooter Default smoke-test 1`] = `
-<hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+<hr class="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
 <div class="flex gap-4 flex-wrap justify-end">
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     Cancel
@@ -22,7 +22,7 @@ exports[`design-system/Modal/ModalFooter Default smoke-test 1`] = `
 `;
 
 exports[`design-system/Modal/ModalFooter Space smoke-test 1`] = `
-<hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+<hr class="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
 <div class="flex gap-4 flex-wrap justify-between">
   <div class="flex gap-4 flex-wrap">
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
