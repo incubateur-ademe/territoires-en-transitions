@@ -2,9 +2,8 @@ import classNames from 'classnames';
 import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
 import {Divider} from '@design-system/Divider';
-import {Icon} from '@design-system/Icon';
 import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
-import {Tooltip} from '@design-system/Tooltip';
+import {InfoTooltip} from '@design-system/Tooltip';
 import {NiveauBudget} from './NiveauBudget';
 import {valeurToBadge} from './utils';
 import {ModaleActionImpactProps} from './types';
@@ -83,7 +82,8 @@ export const ModaleActionImpact = ({
           <div className="mt-2">
             <h6 className="text-primary-10 text-base font-bold">
               Subventions mobilisables :{' '}
-              <Tooltip
+              <InfoTooltip
+                className="ml-1"
                 label={
                   <div className="w-52 !font-normal">
                     De nombreux programmes d’aides nationaux et locaux peuvent
@@ -92,15 +92,7 @@ export const ModaleActionImpact = ({
                     prochainement disponibles sur la plateforme.
                   </div>
                 }
-              >
-                <span>
-                  <Icon
-                    icon="file-info-line"
-                    size="sm"
-                    className="text-grey-5 ml-1"
-                  />
-                </span>
-              </Tooltip>
+              />
             </h6>
             <div className="flex gap-8">
               <LienExterneModale
