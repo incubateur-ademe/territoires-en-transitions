@@ -2,11 +2,10 @@ import {Badge} from '@design-system/Badge';
 import {Button} from '@design-system/Button';
 import {Card} from '@design-system/Card';
 import classNames from 'classnames';
-import {valeurToBadge} from './utils';
 import {NiveauBudget} from './NiveauBudget';
 import {CarteActionImpactProps} from './types';
 
-const maxLength = 130;
+const maxLength = 120;
 
 const splitTitle = (title: string) => {
   let newContent = title.slice(0, maxLength);
@@ -22,7 +21,6 @@ const splitTitle = (title: string) => {
 export const CarteActionImpact = ({
   titre,
   thematiques,
-  complexite,
   budget,
   panier,
   isSelected,
@@ -39,22 +37,17 @@ export const CarteActionImpact = ({
       })}
       isSelected={isSelected}
       header={
-        <div className="flex justify-between">
-          {/* Catégorie */}
-          <div>{thematiques[0]?.nom ?? ''}</div>
-
+        <div className="flex justify-end">
           {/* Budget */}
           <NiveauBudget budget={budget} />
         </div>
       }
       footer={
         <div className="relative z-0">
-          {/* Badge de complexité */}
-          <Badge
-            title={`Complexité ${valeurToBadge[complexite].nom}`}
-            size="sm"
-            state={valeurToBadge[complexite].style}
-          />
+          {/* Badge thématique */}
+          {!!thematiques.length && (
+            <Badge title={thematiques[0].nom} size="sm" state="standard" />
+          )}
 
           {/* Boutons d'action, visibles au hover de la carte */}
           <div className="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
