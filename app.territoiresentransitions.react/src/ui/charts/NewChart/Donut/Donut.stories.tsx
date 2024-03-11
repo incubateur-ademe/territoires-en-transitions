@@ -33,7 +33,7 @@ export const NoData: Story = {
   },
 };
 
-export const BeaucoupDeData: Story = {
+export const AvecLegende: Story = {
   args: {
     data: fakeComplexeDonutData,
     displayOutsideLabel: true,
