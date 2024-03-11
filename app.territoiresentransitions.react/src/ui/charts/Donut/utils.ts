@@ -1,4 +1,4 @@
-import {defaultColors, nivoColorsSet} from '../../chartsTheme';
+import {defaultColors, nivoColorsSet} from '../chartsTheme';
 import {ChartLegendItem} from '../ChartLegend';
 import {DonutData} from './DonutChart';
 

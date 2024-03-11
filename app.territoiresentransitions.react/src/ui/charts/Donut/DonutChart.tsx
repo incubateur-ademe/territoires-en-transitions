@@ -1,6 +1,6 @@
 import {ResponsivePie} from '@nivo/pie';
 
-import {defaultColors, nivoColorsSet, theme} from '../../chartsTheme';
+import {defaultColors, nivoColorsSet, theme} from '../chartsTheme';
 import {
   generateDonutLegendItems,
   getPercentage,
