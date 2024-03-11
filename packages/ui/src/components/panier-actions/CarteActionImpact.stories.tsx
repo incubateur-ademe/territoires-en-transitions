@@ -5,9 +5,6 @@ const meta: Meta<typeof CarteActionImpact> = {
   title: "Components/Panier d'actions/Carte action à impact",
   component: CarteActionImpact,
   argTypes: {
-    complexite: {
-      control: {type: 'select'},
-    },
     budget: {
       control: {type: 'select'},
     },
@@ -16,7 +13,6 @@ const meta: Meta<typeof CarteActionImpact> = {
     titre:
       'Désigner une (ou plusieurs personnes) chef de projet transition écologique',
     thematiques: [{id: 1, nom: 'Mieux consommer'}],
-    complexite: 1,
     budget: 2,
     onToggleSelected: () => {},
     onUpdateStatus: () => {},
