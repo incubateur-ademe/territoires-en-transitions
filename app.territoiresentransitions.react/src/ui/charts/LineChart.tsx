@@ -1,4 +1,4 @@
-import {ResponsiveLine, LineSvgProps, Serie} from '@nivo/line';
+import {ResponsiveLine, LineSvgProps} from '@nivo/line';
 import {defaultColors, theme} from './chartsTheme';
 
 export type LineChartProps = LineSvgProps & {
@@ -65,7 +65,3 @@ const LineChart = (props: LineChartProps) => {
 };
 
 export default LineChart;
-
-/** Indexe les libellés des séries par id */
-export const getLabelsBySerieId = (data: Serie[]): Record<string, string> =>
-  data.reduce((byId, {id, label}) => ({...byId, [id]: label}), {});
