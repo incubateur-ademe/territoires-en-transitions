@@ -1,7 +1,8 @@
-import Footer from './Footer';
-import Header from './Header';
 import './global.css';
 import {PHProvider} from './providers';
+import CollectiviteProvider from 'context/collectivite';
+import Footer from '@components/Layout/Footer';
+import Header from '@components/Layout/Header';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -31,15 +32,17 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="fr">
       <PHProvider>
-        <body className="min-h-screen overflow-x-visible flex flex-col">
-          <div className="flex flex-col grow">
-            <Header />
-            <div className="bg-grey-2 grow flex flex-col">
-              <div className="grow">{children}</div>
+        <CollectiviteProvider>
+          <body className="min-h-screen overflow-x-visible flex flex-col">
+            <div className="flex flex-col grow">
+              <Header />
+              <div className="bg-grey-2 grow flex flex-col">
+                <div className="grow">{children}</div>
+              </div>
             </div>
-          </div>
-          <Footer />
-        </body>
+            <Footer />
+          </body>
+        </CollectiviteProvider>
       </PHProvider>
     </html>
   );
