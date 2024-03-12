@@ -9,6 +9,7 @@ import {panierAPI} from 'src/clientAPI';
 import useSWR from 'swr';
 import {MesCollectivite} from '@tet/api';
 import StepperValidation from './StepperValidation';
+import {useCollectiviteContext} from 'context/collectivite';
 
 const ValiderPanierModale = () => {
   const panier = useContext(PanierContext);
@@ -46,7 +47,7 @@ const ValiderPanierModale = () => {
           Vous pouvez maintenant créer un plan, pour retrouver et modifier ces
           actions sur notre outil Territoires en Transitions.
         </span>
-        <Divider color="medium" className="mt-8 w-1/2" />
+        <Divider color="medium" className="mt-8 !w-1/2" />
         <StepperValidation className="w-5/6 mt-2" steps={steps} />
       </div>
       {user ? <ModeConnecte /> : <ModeDeconnecte />}
@@ -136,9 +137,10 @@ const ModeConnecteRattache = ({
   const tracker = useEventTracker('panier');
   const panier = useContext(PanierContext);
   const router = useRouter();
+  const collectivite = useCollectiviteContext();
 
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    collectivites[0].collectivite_id,
+    collectivite ?? collectivites[0].collectivite_id,
   );
 
   const handleOnClick = async () => {
