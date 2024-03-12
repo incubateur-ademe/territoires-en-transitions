@@ -9,6 +9,8 @@ export type ActionImpactProps = {
   budget: 0 | 1 | 2 | 3;
   /** Description de l'action à impact */
   description: string;
+  /** Temps de mise en oeuvre */
+  miseEnOeuvre?: string;
   /** Lien vers les ressources externes */
   ressources?: string;
   /** Statut de l'action */
