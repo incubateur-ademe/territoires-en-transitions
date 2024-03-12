@@ -18,6 +18,8 @@ export const ModaleActionImpact = ({
   thematiques,
   budget,
   description,
+  miseEnOeuvre,
+  ressources,
   statut,
   panier,
   onToggleSelected,
@@ -51,26 +53,50 @@ export const ModaleActionImpact = ({
           )}
 
           {/* Description */}
-          <p className="paragraphe-18">{description}</p>
+          <p className="paragraphe-18 mb-8">{description}</p>
+
+          {/* Temps de mise en oeuvre */}
+          <p className="text-base text-primary-10 font-bold mb-8">
+            Temps de mise en oeuvre :{' '}
+            <span className="text-primary-8">
+              {miseEnOeuvre ?? 'non estimé'}
+            </span>
+            <InfoTooltip
+              className="ml-2"
+              label={
+                <div className="w-52 !font-normal">
+                  Temps estimatif correspondant au déploiement de l’action une
+                  fois validée, de son démarrage à ses premières réalisations.
+                  Cette temporalité peut varier en fonction des priorisations,
+                  des moyens et des ressources disponibles.
+                </div>
+              }
+            />
+          </p>
 
           {/* Ressources externes */}
-          {/* {!!ressources && (
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="external-link-line"
-                size="lg"
-                className="text-primary-4"
+          {!!ressources && (
+            <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
+              <LienExterneModale
+                label="Consulter les ressources externes"
+                href=""
               />
-              <a
-                href={ressources}
-                className="text-primary-10 font-bold bg-none active:!bg-transparent after:hidden border-b border-primary-10 hover:border-b-2 p-px hover:pb-0"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                Consulter les ressources externes
-              </a>
             </div>
-          )} */}
+          )}
+
+          <Divider className="mt-4" />
+
+          {/* REX */}
+          <div className="mt-2">
+            <h6 className="text-primary-10 text-base font-bold">
+              D’autres collectivités l’ont fait :
+            </h6>
+            <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
+              <span className="text-sm text-grey-7">
+                Exemples d'autres collectivités à venir
+              </span>
+            </div>
+          </div>
 
           <Divider className="mt-4" />
 
@@ -90,7 +116,7 @@ export const ModaleActionImpact = ({
                 }
               />
             </h6>
-            <div className="flex gap-8">
+            <div className="flex gap-x-8 gap-y-3 flex-wrap">
               <LienExterneModale
                 label="Aides territoires"
                 href="https://aides-territoires.beta.gouv.fr"
