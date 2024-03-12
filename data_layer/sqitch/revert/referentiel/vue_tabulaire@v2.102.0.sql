@@ -54,10 +54,8 @@ select -- Le client filtre sur:
 
        -- les statuts des enfants
        cs.avancements                                     as avancement_descendants,
-       coalesce((not s.concerne), cs.non_concerne, false) as non_concerne,
+       coalesce((not s.concerne), cs.non_concerne, false) as non_concerne
 
-       -- les statuts du parent pour les tâches
-       p.avancement as avancement_parent
 -- pour chaque collectivité
 from collectivite c
          -- on prend les scores au format json pour chaque référentiel
@@ -94,10 +92,8 @@ from collectivite c
     where c.id = statut.collectivite_id
       and statut.action_id = any (d.leaves)
     ) cs on true
-         left join action_relation rel on rel.id = d.action_id
-         left join action_statut p on c.id = p.collectivite_id and p.action_id = rel.parent
 where est_verifie()
-   or have_lecture_acces(c.id)
+or have_lecture_acces(c.id)
 order by c.id,
          naturalsort(d.identifiant);
 
