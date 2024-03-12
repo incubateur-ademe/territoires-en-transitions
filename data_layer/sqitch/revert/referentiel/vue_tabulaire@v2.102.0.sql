@@ -54,10 +54,8 @@ select -- Le client filtre sur:
 
        -- les statuts des enfants
        cs.avancements                                     as avancement_descendants,
-       coalesce((not s.concerne), cs.non_concerne, false) as non_concerne,
+       coalesce((not s.concerne), cs.non_concerne, false) as non_concerne
 
-       -- les statuts du parent pour les tâches
-       p.avancement as avancement_parent
 -- pour chaque collectivité
 from collectivite c
          -- on prend les scores au format json pour chaque référentiel
@@ -94,38 +92,9 @@ from collectivite c
     where c.id = statut.collectivite_id
       and statut.action_id = any (d.leaves)
     ) cs on true
-         left join action_relation rel on rel.id = d.action_id
-         left join action_statut p on c.id = p.collectivite_id and p.action_id = rel.parent
 where est_verifie()
-   or have_lecture_acces(c.id)
+or have_lecture_acces(c.id)
 order by c.id,
          naturalsort(d.identifiant);
-
-alter table private.action_score drop column renseigne;
-
-create or replace function private.convert_client_scores(scores jsonb) returns SETOF private.action_score
-    stable
-    language sql
-as
-$$
-select (select referentiel from action_relation ar where ar.id = (score ->> 'action_id')),
-       (score ->> 'action_id')::action_id,
-       (score ->> 'concerne')::boolean,
-       (score ->> 'desactive')::boolean,
-       (score ->> 'point_fait')::float,
-       (score ->> 'point_pas_fait')::float,
-       (score ->> 'point_potentiel')::float,
-       (score ->> 'point_programme')::float,
-       (score ->> 'point_referentiel')::float,
-       (score ->> 'total_taches_count')::integer,
-       (score ->> 'point_non_renseigne')::float,
-       (score ->> 'point_potentiel_perso')::float,
-       (score ->> 'completed_taches_count')::integer,
-       (score ->> 'fait_taches_avancement')::float,
-       (score ->> 'pas_fait_taches_avancement')::float,
-       (score ->> 'programme_taches_avancement')::float,
-       (score ->> 'pas_concerne_taches_avancement')::float
-from jsonb_array_elements(scores) as score
-$$;
 
 COMMIT;

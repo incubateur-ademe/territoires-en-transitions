@@ -101,31 +101,4 @@ where est_verifie()
 order by c.id,
          naturalsort(d.identifiant);
 
-alter table private.action_score drop column renseigne;
-
-create or replace function private.convert_client_scores(scores jsonb) returns SETOF private.action_score
-    stable
-    language sql
-as
-$$
-select (select referentiel from action_relation ar where ar.id = (score ->> 'action_id')),
-       (score ->> 'action_id')::action_id,
-       (score ->> 'concerne')::boolean,
-       (score ->> 'desactive')::boolean,
-       (score ->> 'point_fait')::float,
-       (score ->> 'point_pas_fait')::float,
-       (score ->> 'point_potentiel')::float,
-       (score ->> 'point_programme')::float,
-       (score ->> 'point_referentiel')::float,
-       (score ->> 'total_taches_count')::integer,
-       (score ->> 'point_non_renseigne')::float,
-       (score ->> 'point_potentiel_perso')::float,
-       (score ->> 'completed_taches_count')::integer,
-       (score ->> 'fait_taches_avancement')::float,
-       (score ->> 'pas_fait_taches_avancement')::float,
-       (score ->> 'programme_taches_avancement')::float,
-       (score ->> 'pas_concerne_taches_avancement')::float
-from jsonb_array_elements(scores) as score
-$$;
-
 COMMIT;
