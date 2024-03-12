@@ -39,41 +39,7 @@ export const fetchActionStatutsList = async (
     const or = [];
 
     if (statut.includes('non_renseigne')) {
-      or.push(
-        ...[
-          // gère le cas où null veut dire "non renseigné"
-          'and(' +
-            'type.eq.tache,' +
-            'or(' +
-                'avancement_parent.eq.non_renseigne,' +
-                'and(' +
-                    'avancement_parent.is.null,' +
-                    'or(' +
-                        'avancement.eq.non_renseigne,' +
-                        'avancement.is.null' +
-                    ')' +
-                ')' +
-            ')' +
-          ')',
-          'and(' +
-            'type.eq.sous-action,' +
-            'or(' +
-                'avancement.eq.non_renseigne,' +
-                'and(' +
-                    'avancement.is.null,' +
-                    'or(' +
-                        'avancement_descendants.ov.{non_renseigne},' +
-                        'avancement_descendants.is.null' +
-                    ')' +
-                ')' +
-            ')' +
-          ')',
-          'and(' +
-            'type.in.(axe,sous-axe,action),' +
-            'avancement_descendants.ov.{non_renseigne}' +
-          ')',
-        ]
-      );
+      query.eq('renseigne', false);
     }
 
     if (statut.includes('detaille')) {
@@ -97,8 +63,10 @@ export const fetchActionStatutsList = async (
       );
     }
 
-    // ajoute les filtres complétaires à la requêtes
-    query = query.or(or.join(','));
+    // ajoute les filtres complémentaires à la requêtes
+      if(or.length > 0){
+          query = query.or(or.join(','));
+      }
   }
 
   // attends les données
