@@ -46,26 +46,23 @@ export const fetchActionStatutsList = async (
             'type.eq.tache,' +
             'or(' +
                 'avancement_parent.eq.non_renseigne,' +
-                'and(' +
-                    'avancement_parent.is.null,' +
-                    'or(' +
-                        'avancement.eq.non_renseigne,' +
-                        'avancement.is.null' +
-                    ')' +
-                ')' +
+                'avancement_parent.is.null' +
+            '),' +
+            'or(' +
+                'avancement.eq.non_renseigne,' +
+                'avancement.is.null' +
             ')' +
           ')',
           'and(' +
             'type.eq.sous-action,' +
             'or(' +
                 'avancement.eq.non_renseigne,' +
-                'and(' +
-                    'avancement.is.null,' +
-                    'or(' +
-                        'avancement_descendants.ov.{non_renseigne},' +
-                        'avancement_descendants.is.null' +
-                    ')' +
-                ')' +
+                'avancement.is.null' +
+            '),' +
+            'or(' +
+                'avancement_descendants.ov.{non_renseigne},' +
+                'avancement_descendants.is.null,' +
+                'avancement_descendants.eq.{}' +
             ')' +
           ')',
           'and(' +
