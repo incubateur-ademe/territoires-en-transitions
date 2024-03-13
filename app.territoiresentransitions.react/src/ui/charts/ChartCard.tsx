@@ -4,7 +4,6 @@ import {useRef, useState} from 'react';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
-import DonutChart, {DonutChartProps} from './DonutChart';
 import LineChart, {LineChartProps} from './LineChart';
 
 export const Legend = ({
@@ -175,7 +174,7 @@ export const ChartCardContent = ({
 
 type ChartCardProps = {
   chartType: 'bar' | 'donut' | 'line';
-  chartProps: BarChartProps | DonutChartProps | LineChartProps;
+  chartProps: BarChartProps | LineChartProps;
   chartInfo?: {
     title?: string;
     subtitle?: string;
@@ -218,9 +217,6 @@ const ChartCard = ({
   switch (chartType) {
     case 'bar':
       chart = <BarChart {...(chartProps as BarChartProps)} />;
-      break;
-    case 'donut':
-      chart = <DonutChart {...(chartProps as DonutChartProps)} />;
       break;
     case 'line':
       chart = <LineChart {...(chartProps as LineChartProps)} />;
