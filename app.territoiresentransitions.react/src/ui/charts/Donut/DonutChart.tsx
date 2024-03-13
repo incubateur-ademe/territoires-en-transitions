@@ -75,9 +75,11 @@ const DonutChart = ({
       {/** Chart */}
       <div className={classNames('relative h-64', className)}>
         {/** Élement central */}
-        <div className="absolute inset-0 flex">
-          <div className="m-auto text-center">{centeredElement}</div>
-        </div>
+        {!!centeredElement && (
+          <div className="absolute inset-0 flex">
+            <div className="m-auto text-center">{centeredElement}</div>
+          </div>
+        )}
         <ResponsivePie
           data={hasNoData ? defaultData : localData}
           valueFormat={value =>

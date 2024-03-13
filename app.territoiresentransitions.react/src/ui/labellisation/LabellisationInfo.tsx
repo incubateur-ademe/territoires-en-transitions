@@ -16,7 +16,7 @@ const LabellisationInfo = ({
   score,
 }: LabellisationInfoProps): JSX.Element => {
   return (
-    <div className="flex flex-col gap-3 md:items-start items-center md:mt-5 md:mb-12 mb-8">
+    <div className="flex flex-col gap-3 md:items-start items-center mb-4">
       <LabellisationStars parcours={parcours} />
       <ScoreDisplay
         score={score.realises / score.max_personnalise}

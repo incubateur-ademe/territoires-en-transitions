@@ -3,7 +3,7 @@ import {ReferentielParamOption} from 'app/paths';
 import {actionAvancementColors} from 'app/theme';
 import {TableOptions} from 'react-table';
 import BarChartCardWithSubrows from 'ui/charts/BarChartCardWithSubrows';
-import {ProgressionRow} from './data/useProgressionReferentiel';
+import {ProgressionRow} from '../data/useProgressionReferentiel';
 import {getFormattedScore} from './utils';
 import {TBarChartScoreTable} from 'ui/charts/BarChartCardWithSubrows';
 

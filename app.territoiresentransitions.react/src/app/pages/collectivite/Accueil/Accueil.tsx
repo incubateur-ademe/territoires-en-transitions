@@ -1,8 +1,8 @@
 import {ReactNode} from 'react';
 import {referentielToName} from 'app/labels';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useProgressionReferentiel} from '../EtatDesLieux/Synthese/data/useProgressionReferentiel';
-import EtatDesLieuxCard from './EtatDesLieuxCard';
+import {useProgressionReferentiel} from './data/useProgressionReferentiel';
+import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
 import IndicateursCard from './IndicateursCard';
 import PlansActionCard from './PlansActionCard';
 
@@ -24,39 +24,39 @@ const Accueil = (): JSX.Element => {
     <main data-test="TableauBord" className="bg-bf975 -mb-8">
       {!!collectiviteId && (
         <div className="fr-container flex flex-col py-16 gap-16">
-          {/* Première ligne - Plans d'action et Indicateurs */}
+          {/* Plans d'action et Indicateurs */}
           <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
             <div className="flex flex-col">
-              <TitreCarte>Plans d'action</TitreCarte>
+              <TitreSection>Plans d'action</TitreSection>
               <PlansActionCard collectiviteId={collectiviteId} />
             </div>
             <div className="flex flex-col">
-              <TitreCarte>Indicateurs</TitreCarte>
+              <TitreSection>Indicateurs</TitreSection>
               <IndicateursCard collectiviteId={collectiviteId} />
             </div>
           </div>
 
-          {/* Deuxième ligne - États des lieux */}
+          {/* États des lieux */}
           <div>
-            <TitreCarte>État des lieux</TitreCarte>
+            <TitreSection>État des lieux</TitreSection>
             <div className="grid lg:grid-cols-2 gap-6">
-              <EtatDesLieuxCard
+              {/** Climat Air Énergie */}
+              <EtatDesLieux
                 collectiviteId={collectiviteId}
                 progressionScore={caeProgressionScore}
                 repartitionPhases={caeRepartitionPhases}
                 potentiel={caePotentiel}
                 referentiel="cae"
                 title={referentielToName.cae}
-                className="order-1"
               />
-              <EtatDesLieuxCard
+              {/** Écomomie circulaire */}
+              <EtatDesLieux
                 collectiviteId={collectiviteId}
                 progressionScore={eciProgressionScore}
                 repartitionPhases={eciRepartitionPhases}
                 potentiel={eciPotentiel}
                 referentiel="eci"
                 title={referentielToName.eci}
-                className="lg:order-2 order-3"
               />
             </div>
           </div>
@@ -67,7 +67,7 @@ const Accueil = (): JSX.Element => {
 };
 
 // affiche un titre au-dessus d'une carte
-const TitreCarte = ({children}: {children: ReactNode}) => (
+const TitreSection = ({children}: {children: ReactNode}) => (
   <h5 className="text-xl leading-5 font-extrabold">{children}</h5>
 );
 

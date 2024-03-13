@@ -1,14 +1,14 @@
+import {useHistory} from 'react-router-dom';
+import classNames from 'classnames';
+
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
-import classNames from 'classnames';
 import {TAxeRow} from 'types/alias';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
-import {statusColor} from 'ui/charts/chartsTheme';
-import DonutChart from 'ui/charts/DonutChart';
 import {PictoPlansAction} from 'ui/pictogrammes/PictoPlansAction';
 import {usePlansActionsListe} from '../PlansActions/PlanAction/data/usePlansActionsListe';
 import {usePlanActionTableauDeBord} from '../PlansActions/Synthese/data/usePlanActionTableauDeBord';
@@ -17,7 +17,8 @@ import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import KeyNumbers from 'ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useHistory} from 'react-router-dom';
+import {statutToColor} from 'app/pages/collectivite/PlansActions/Synthese/utils';
+import Chart from 'ui/charts/Chart';
 
 type PlanActionCardProps = {
   collectiviteId: number;
@@ -78,8 +79,8 @@ const FilledPlansActionCard = ({
 
   return (
     <AccueilCard
-      className={classNames({
-        'grid md:grid-cols-2 gap-8': nbFiches > 0,
+      className={classNames('grow', {
+        'grid md:grid-cols-2 gap-4 md:gap-8': nbFiches > 0,
       })}
     >
       <div className="flex flex-col h-full">
@@ -117,28 +118,29 @@ const FilledPlansActionCard = ({
 
       {/* Graphique de répartition par statut */}
       {nbFiches > 0 && (
-        <div className="h-[200px] w-[246px] md:w-[197px] xl:w-[246px] mx-auto md:order-last order-first">
-          <DonutChart
-            data={
-              planActionsStats && planActionsStats.statuts
-                ? planActionsStats.statuts.map(st => ({
-                    ...st,
-                    id: st.id !== 'NC' ? st.id : 'Sans statut',
-                    color: statusColor[st.id],
-                  }))
-                : []
-            }
-            customMargin={{top: 2, right: 0, bottom: 2, left: 0}}
-            zoomEffect={false}
-            unit="fiche"
-            displayPercentageValue
-            onClick={() => {
-              history.push(
-                makeCollectivitePlansActionsSyntheseVueUrl({
-                  collectiviteId,
-                  vue: 'statuts',
-                })
-              );
+        <div className="w-full max-w-xs mx-auto order-first md:order-last md:-my-6">
+          <Chart
+            donut={{
+              chart: {
+                data:
+                  planActionsStats && planActionsStats.statuts
+                    ? planActionsStats.statuts.map(st => ({
+                        ...st,
+                        id: st.id !== 'NC' ? st.id : 'Sans statut',
+                        color: statutToColor[st.id],
+                      }))
+                    : [],
+                unit: 'fiche',
+                displayPercentageValue: true,
+                onClick: () => {
+                  history.push(
+                    makeCollectivitePlansActionsSyntheseVueUrl({
+                      collectiviteId,
+                      vue: 'statuts',
+                    })
+                  );
+                },
+              },
             }}
           />
         </div>

@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {TableOptions} from 'react-table';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useReferentiel} from '../../../ReferentielTable/useReferentiel';
+import {useReferentiel} from '../../ReferentielTable/useReferentiel';
 import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import {TActionStatutsRow} from 'types/alias';
 import {phaseToLabel} from 'ui/referentiels/utils';
