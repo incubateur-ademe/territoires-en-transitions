@@ -92,7 +92,7 @@ const FilledIndicateursCard = ({
   const tracker = useFonctionTracker();
 
   return (
-    <AccueilCard className="flex flex-col">
+    <AccueilCard className="grow flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
       <ButtonWithLink
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
