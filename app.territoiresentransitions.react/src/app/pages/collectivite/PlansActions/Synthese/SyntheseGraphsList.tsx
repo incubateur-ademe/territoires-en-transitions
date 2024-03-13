@@ -1,6 +1,5 @@
 import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
-import ChartCard from 'ui/charts/ChartCard';
 import {Link} from 'react-router-dom';
 import {
   makeCollectivitePlansActionsNouveauUrl,
@@ -8,7 +7,8 @@ import {
 } from 'app/paths';
 import {PlanActionFilter} from './FiltersPlanAction';
 import {generateSyntheseGraphData} from './utils';
-import classNames from 'classnames';
+import Chart from 'ui/charts/Chart';
+import {Card} from '@tet/ui';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -50,14 +50,11 @@ const SyntheseGraphsList = ({
         graph =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-              <Link
-                data-test={`lien-graph-${graph.id}`}
-                className={classNames('group fr-col-sm-12 fr-col-xl-6', {
-                  'cursor-default': graph.id === 'echeance',
-                })}
-                to={
+              <Card
+                dataTest={`lien-graph-${graph.id}`}
+                href={
                   graph.id === 'echeance'
-                    ? '#'
+                    ? undefined
                     : `${makeCollectivitePlansActionsSyntheseVueUrl({
                         collectiviteId,
                         vue: graph.id,
@@ -68,21 +65,19 @@ const SyntheseGraphsList = ({
                       }`
                 }
               >
-                <ChartCard
-                  chartType="donut"
-                  chartProps={{
-                    data: graph.data,
-                    label: graph.id === 'statuts' || graph.id === 'priorites',
-                  }}
-                  chartInfo={{
-                    title: graph.title,
-                  }}
-                  customStyle={{height: '350px', borderBottomWidth: '4px'}}
-                  className={classNames({
-                    'group-hover:bg-gray-50': graph.id !== 'echeance',
-                  })}
-                />
-              </Link>
+                <div className="mb-2 text-center">{graph.title}</div>
+                <div className="font-normal">
+                  <Chart
+                    donut={{
+                      chart: {
+                        data: graph.data,
+                        displayOutsideLabel:
+                          graph.id === 'statuts' || graph.id === 'priorites',
+                      },
+                    }}
+                  />
+                </div>
+              </Card>
             </div>
           )
       )}

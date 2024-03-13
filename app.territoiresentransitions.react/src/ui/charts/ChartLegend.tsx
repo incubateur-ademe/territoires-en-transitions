@@ -39,6 +39,7 @@ const ChartLegend = ({
         'flex items-center justify-center flex-wrap gap-x-8 gap-y-4 mx-auto',
         {
           'gap-x-4 gap-y-2 text-sm': size === 'sm',
+          'mt-4': size === 'md',
         },
         className
       )}

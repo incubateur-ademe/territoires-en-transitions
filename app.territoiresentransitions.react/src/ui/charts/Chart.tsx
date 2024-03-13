@@ -5,7 +5,7 @@ import LineChart, {LineChartProps} from './Line/LineChart';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
-type ChartProps = {
+export type ChartProps = {
   /** Graphique donut */
   donut?: {
     /** Propriétés du graphique donut */
