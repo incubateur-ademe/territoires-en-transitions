@@ -47,3 +47,24 @@ export const statuts = async(supabaseClient : TSupabaseClient, collectivite_id :
     }
     return toReturn;
 }
+
+/**
+ * Récupère les actions du référentiel
+ * @param supabaseClient
+ */
+export const actions = async(supabaseClient : TSupabaseClient)=> {
+    const query = supabaseClient
+        .from('action_relation')
+        .select();
+
+    const { error, data } = await query;
+    if (error) {
+        throw new Error(error.message);
+    }
+    const toReturn = new Set<string>();
+    for(let i=0; i<data.length; i++){
+        const action : TablesInsert<"action_relation"> = data[i];
+        toReturn.add(action.id);
+    }
+    return toReturn;
+}

@@ -63,6 +63,7 @@ serve(async (req) => {
     const commentaires = await fetch.commentaires(supabaseClient, collectivite_id);
     const tetId = test?yoloUserId:tetUserId;
     const fuse = new Fuse(avancementStatut);
+    const actions = await fetch.actions(supabaseClient);
 
     // Pour chaque ligne du fichier
     for (let ligne=entete+1; ligne<derniereCellule+1; ligne++){
@@ -72,16 +73,19 @@ serve(async (req) => {
       commentaire = commentaire?commentaire.replace('_x000D_', ''):commentaire;
       let statut = await getCelluleValue(sheet, ligne, 3); // Colonne D
 
-      // Sauvegarde le commentaire s'il est présent
-      if(commentaire){
-        await save.commentaire(supabaseClient, collectivite_id, action_id, commentaire, commentaires, tetId);
-      }
+      // Ne sauvegarde pas si l'action dans le fichier excel n'existe pas en base
+      if (actions.has(action_id)) {
+        // Sauvegarde le commentaire s'il est présent
+        if (commentaire) {
+          await save.commentaire(supabaseClient, collectivite_id, action_id, commentaire, commentaires, tetId);
+        }
 
-      // Sauvegarde le statut s'il est présent
-      if(statut){
-        const statutClean = fuse.search(statut)?.[0]?.item;
-        if(statutClean){
-          await save.statut(supabaseClient, collectivite_id, action_id, statutClean, statuts, tetId);
+        // Sauvegarde le statut s'il est présent
+        if (statut) {
+          const statutClean = fuse.search(statut)?.[0]?.item;
+          if (statutClean) {
+            await save.statut(supabaseClient, collectivite_id, action_id, statutClean, statuts, tetId);
+          }
         }
       }
     }
