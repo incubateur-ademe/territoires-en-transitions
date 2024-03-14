@@ -53,7 +53,6 @@ async function Page({
 
   const budgets = await fetchNiveaux('action_impact_fourchette_budgetaire');
   const durees = await fetchNiveaux('action_impact_temps_mise_en_oeuvre');
-  const categories = await fetchCategories();
   const thematiques = await fetchThematiques();
 
   return (
@@ -64,7 +63,6 @@ async function Page({
           panier={panier}
           budgets={budgets}
           durees={durees}
-          categories={categories}
           thematiques={thematiques}
         />
       </Section>
