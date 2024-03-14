@@ -32,17 +32,17 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="fr">
       <PHProvider>
-        <CollectiviteProvider>
-          <body className="min-h-screen overflow-x-visible flex flex-col">
+        <body className="min-h-screen overflow-x-visible flex flex-col">
+          <CollectiviteProvider>
             <div className="flex flex-col grow">
               <Header />
               <div className="bg-grey-2 grow flex flex-col">
                 <div className="grow">{children}</div>
               </div>
             </div>
-            <Footer />
-          </body>
-        </CollectiviteProvider>
+          </CollectiviteProvider>
+          <Footer />
+        </body>
       </PHProvider>
     </html>
   );

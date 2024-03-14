@@ -60,6 +60,7 @@ const FiltresActions = ({
   }, []);
 
   useEffect(() => {
+    // Mise à jour de l'url (et du panier) lorsqu'un filtre est modifié
     let paramsArray = [];
 
     if (!!thematiquesValues && thematiquesValues?.length > 0) {
@@ -89,18 +90,8 @@ const FiltresActions = ({
     };
 
     trackThenNavigate();
-  }, [
-    thematiquesValues,
-    thematiquesValues?.length,
-    budgetsValues,
-    budgetsValues?.length,
-    dureesValues,
-    dureesValues?.length,
-    router,
-    pathname,
-    panier,
-    tracker,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thematiquesValues?.length, budgetsValues?.length, dureesValues?.length]);
 
   return (
     <div className="mb-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg border-[0.5px] border-primary-3">
