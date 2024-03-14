@@ -16,6 +16,7 @@ import {panierAPI, supabase} from 'src/clientAPI';
 import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
 import {User} from '@supabase/supabase-js';
+import {useCollectiviteContext} from 'context/collectivite';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -67,10 +68,17 @@ const PanierRealtime = ({
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<OngletName>('selection');
   const [user, setUser] = useState<User | null>(null);
+
   const router = useRouter();
+  const {setCollectiviteId} = useCollectiviteContext();
 
   const tracker = useEventTracker('panier', currentTab);
   const ongletTracker = useOngletTracker('panier');
+
+  useEffect(
+    () => setCollectiviteId(panier.collectivite_preset),
+    [panier.collectivite_preset, setCollectiviteId],
+  );
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
