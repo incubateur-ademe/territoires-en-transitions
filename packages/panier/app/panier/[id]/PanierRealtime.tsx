@@ -21,7 +21,6 @@ import {useCollectiviteContext} from 'context/collectivite';
 
 type PanierRealtimeProps = {
   panier: Panier;
-  categories: ActionImpactCategorie[];
   budgets: ActionImpactFourchetteBudgetaire[];
   durees: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
@@ -57,14 +56,12 @@ export const UserContext = createContext<User | null>(null);
  * La partie client du Panier d'Action à Impact
  *
  * @param panier Le panier passé par la partie server side.
- * @param categories
  * @param budgets La liste des budgets pour le filtrage
  * @param thematiques La liste des thematiques pour le filtrage
  * @constructor
  */
 const PanierRealtime = ({
   panier,
-  categories,
   budgets,
   durees,
   thematiques,
