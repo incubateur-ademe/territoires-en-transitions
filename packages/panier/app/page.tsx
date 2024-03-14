@@ -1,30 +1,32 @@
-'use server';
+'use client';
 
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import TrackPageView from '@components/TrackPageView/index';
 
-const LandingPage = async () => {
-  return (
-    <>
-      <TrackPageView pageName="/" />
-      <main>
-        <h1>Panier action impact</h1>
-        <p>
-          Pour créer un nouveau panier sans lien avec aucune collectivité :
-        </p>
-        <pre>/landing</pre>
-        <p>
-          Pour créer un nouveau panier pour une collectivité, ou revenir sur le
-          panier récent créé pour cette collectivité :
-        </p>
-        <pre>/landing/collectivite/[collectivite_id]</pre>
-        <p>
-          Pour revenir sur un panier existant :
-        </p>
-        <pre>/panier/[panier_id]</pre>
-      </main>
-    </>
-  );
+/**
+ * Panier d'actions à impact
+ *
+ * Pour créer un nouveau panier sans lien avec aucune collectivité :
+ * /landing
+ *
+ * Pour créer un nouveau panier pour une collectivité, ou revenir sur
+ * le panier récent créé pour cette collectivité :
+ * /landing/collectivite/[collectivite_id]
+ *
+ * Pour revenir sur un panier existant :
+ * /panier/[panier_id]
+ */
+
+const Page = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/landing');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return <TrackPageView pageName="/" />;
 };
 
-export default LandingPage;
+export default Page;
