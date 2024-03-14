@@ -9,6 +9,7 @@ import {useRouter} from 'next/navigation';
 import {
   ActionImpactCategorie,
   ActionImpactFourchetteBudgetaire,
+  ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
@@ -22,6 +23,7 @@ type PanierRealtimeProps = {
   panier: Panier;
   categories: ActionImpactCategorie[];
   budgets: ActionImpactFourchetteBudgetaire[];
+  durees: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
 };
 
@@ -64,6 +66,7 @@ const PanierRealtime = ({
   panier,
   categories,
   budgets,
+  durees,
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<OngletName>('selection');
@@ -154,7 +157,7 @@ const PanierRealtime = ({
               onToggleSelected={handleToggleSelected}
               onUpdateStatus={handleUpdateStatus}
               onChangeTab={handleChangeTab}
-              {...{budgets, thematiques}}
+              {...{budgets, durees, thematiques}}
             />
           </div>
 
