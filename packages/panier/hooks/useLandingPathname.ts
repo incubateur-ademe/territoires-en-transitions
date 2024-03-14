@@ -3,13 +3,13 @@ import {useCollectiviteContext} from 'context/collectivite';
 
 const useLandingPathname = () => {
   const [landingPathname, setLandingPathname] = useState('/landing');
-  const collectivite = useCollectiviteContext();
+  const {collectiviteId} = useCollectiviteContext();
 
   useEffect(() => {
-    if (collectivite) {
-      setLandingPathname(`/landing/collectivite/${collectivite}`);
+    if (collectiviteId) {
+      setLandingPathname(`/landing/collectivite/${collectiviteId}`);
     }
-  }, [collectivite]);
+  }, [collectiviteId]);
 
   return landingPathname;
 };

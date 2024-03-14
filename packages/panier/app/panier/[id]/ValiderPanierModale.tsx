@@ -137,10 +137,12 @@ const ModeConnecteRattache = ({
   const tracker = useEventTracker('panier');
   const panier = useContext(PanierContext);
   const router = useRouter();
-  const collectivite = useCollectiviteContext();
+  const {collectiviteId: savedCollectiviteId} = useCollectiviteContext();
 
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    collectivite ?? collectivites[0].collectivite_id,
+    savedCollectiviteId
+      ? savedCollectiviteId
+      : collectivites[0].collectivite_id,
   );
 
   const handleOnClick = async () => {
