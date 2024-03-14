@@ -25,6 +25,7 @@ const TrackPageView = dynamic(() => import('components/TrackPageView'), {
  * @param searchParams contient les paramètres des filtres :
  *  - t pour les ids des thématiques ex : 1 ou 1,2
  *  - b pour les ids des fourchettes budgétaires ex : 1 ou 1,2
+ *  - d pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
  *  - c pour utiliser les competences ex : true ou false (true par défaut)
  *
  *  Ainsi que le contrôle de la modale de "Création de plan d’action”
@@ -56,6 +57,7 @@ async function Page({
   if (!panier) return notFound();
 
   const budgets = await fetchNiveaux('action_impact_fourchette_budgetaire');
+  const durees = await fetchNiveaux('action_impact_temps_mise_en_oeuvre');
   const categories = await fetchCategories();
   const thematiques = await fetchThematiques();
 
@@ -66,6 +68,7 @@ async function Page({
         <PanierRealtime
           panier={panier}
           budgets={budgets}
+          durees={durees}
           categories={categories}
           thematiques={thematiques}
         />
@@ -110,7 +113,8 @@ async function fetchNiveaux(
   table:
     | 'action_impact_complexite'
     | 'action_impact_fourchette_budgetaire'
-    | 'action_impact_tier',
+    | 'action_impact_tier'
+    | 'action_impact_temps_mise_en_oeuvre',
 ): Promise<Niveau[]> {
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();

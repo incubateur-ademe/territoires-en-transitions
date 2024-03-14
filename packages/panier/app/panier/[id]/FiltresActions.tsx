@@ -2,17 +2,26 @@
 
 import {useContext, useEffect, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {ActionImpactThematique} from '@tet/api';
+import {
+  ActionImpactFourchetteBudgetaire,
+  ActionImpactTempsMiseEnOeuvre,
+  ActionImpactThematique,
+} from '@tet/api';
 import {Field, OptionValue, SelectMultiple} from '@tet/ui';
 import {useEventTracker} from '@tet/ui';
 import {PanierContext} from 'app/panier/[id]/PanierRealtime';
 
 type FiltresActionsProps = {
-  budgets: {niveau: number; nom: string}[];
+  budgets: ActionImpactFourchetteBudgetaire[];
+  durees: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
 };
 
-const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
+const FiltresActions = ({
+  budgets,
+  durees,
+  thematiques,
+}: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -25,6 +34,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
   const [budgetsValues, setBudgetsValues] = useState<
     OptionValue[] | undefined
   >();
+  const [dureesValues, setDureesValues] = useState<OptionValue[] | undefined>();
 
   useEffect(() => {
     // Permet de conserver les filtres lors d'un changement d'onglet
@@ -37,9 +47,15 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
       .get('b')
       ?.split(',')
       .map(val => parseInt(val));
+    const dureesParams = searchParams
+      .get('d')
+      ?.split(',')
+      .map(val => parseInt(val));
 
     if (!!thematiquesParams) setThematiquesValues(thematiquesParams);
     if (!!budgetsParams) setBudgetsValues(budgetsParams);
+    if (!!dureesParams) setDureesValues(dureesParams);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -51,6 +67,9 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
     }
     if (!!budgetsValues && budgetsValues?.length > 0) {
       paramsArray.push(`b=${budgetsValues.join(',')}`);
+    }
+    if (!!dureesValues && dureesValues?.length > 0) {
+      paramsArray.push(`d=${dureesValues.join(',')}`);
     }
 
     const href =
@@ -64,6 +83,7 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
         panier_id: panier.id,
         thematique_ids: thematiquesValues,
         niveau_budget_ids: budgetsValues,
+        niveau_duree_ids: dureesValues,
       });
       router.push(href);
     };
@@ -74,6 +94,8 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
     thematiquesValues?.length,
     budgetsValues,
     budgetsValues?.length,
+    dureesValues,
+    dureesValues?.length,
     router,
     pathname,
     panier,
@@ -97,6 +119,15 @@ const FiltresActions = ({budgets, thematiques}: FiltresActionsProps) => {
           values={budgetsValues}
           onChange={({values}) => {
             setBudgetsValues(values);
+          }}
+        />
+      </Field>
+      <Field title="Temps de mise en oeuvre">
+        <SelectMultiple
+          options={durees.map(b => ({value: b.niveau, label: b.nom}))}
+          values={dureesValues}
+          onChange={({values}) => {
+            setDureesValues(values);
           }}
         />
       </Field>

@@ -1,6 +1,11 @@
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {ActionImpactState, ActionImpactThematique} from '@tet/api';
+import {
+  ActionImpactFourchetteBudgetaire,
+  ActionImpactState,
+  ActionImpactTempsMiseEnOeuvre,
+  ActionImpactThematique,
+} from '@tet/api';
 import {Alert, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
@@ -25,7 +30,8 @@ const getTabLabel = (
 
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
-  budgets: {niveau: number; nom: string}[];
+  budgets: ActionImpactFourchetteBudgetaire[];
+  durees: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
@@ -35,6 +41,7 @@ type ListeActionsProps = {
 const ListeActions = ({
   actionsListe,
   budgets,
+  durees,
   thematiques,
   onToggleSelected,
   onUpdateStatus,
@@ -72,7 +79,7 @@ const ListeActions = ({
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
-            <FiltresActions {...{budgets, thematiques}} />
+            <FiltresActions {...{budgets, durees, thematiques}} />
             <Alert
               isOpen={openAlert}
               onClose={() => setOpenAlert(false)}

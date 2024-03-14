@@ -13,6 +13,9 @@ export type Niveau = {niveau: number; nom: string};
 export type ActionImpactFourchetteBudgetaire =
   Database['public']['Tables']['action_impact_fourchette_budgetaire']['Row'];
 
+export type ActionImpactTempsMiseEnOeuvre =
+  Database['public']['Tables']['action_impact_temps_mise_en_oeuvre']['Row'];
+
 export type FNV = Database['public']['Tables']['categorie_fnv']['Row'];
 
 export type ActionImpact = Database['public']['Tables']['action_impact']['Row'];
