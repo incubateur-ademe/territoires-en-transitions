@@ -3,17 +3,19 @@ import {CarteActionImpact} from '@components/ActionImpact/CarteActionImpact';
 import BasketPicto from '@components/Picto/BasketPicto';
 import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@components/ValidationPanier/ValiderPanierButton';
-import {ActionImpactSnippet} from '@tet/api';
+import {ActionImpactFourchetteBudgetaire, ActionImpactSnippet} from '@tet/api';
 import {Alert} from '@tet/ui';
 import React from 'react';
 
 type PanierActionsProps = {
   actionsListe: ActionImpactSnippet[];
+  budgets: ActionImpactFourchetteBudgetaire[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
 
 const PanierActions = ({
   actionsListe,
+  budgets,
   onToggleSelected,
 }: PanierActionsProps) => {
   return (
@@ -53,7 +55,9 @@ const PanierActions = ({
                   key={action.id}
                   titre={action.titre}
                   thematiques={action.thematiques}
-                  budget={action.fourchette_budgetaire as 1 | 2 | 3}
+                  budget={budgets.find(
+                    b => b.niveau === action.fourchette_budgetaire,
+                  )}
                   panier={true}
                   isSelected={false}
                   onToggleSelected={() => onToggleSelected(action.id, false)}

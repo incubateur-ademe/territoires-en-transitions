@@ -1,4 +1,8 @@
-import {ActionImpactThematique} from '@tet/api';
+import {
+  ActionImpactFourchetteBudgetaire,
+  ActionImpactTempsMiseEnOeuvre,
+  ActionImpactThematique,
+} from '@tet/api';
 
 export type ActionImpactProps = {
   /** Titre de l'action à impact */
@@ -6,13 +10,17 @@ export type ActionImpactProps = {
   /** Thématiques de l'action à impact */
   thematiques: ActionImpactThematique[];
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
-  budget: 1 | 2 | 3 | 4;
+  budget?: ActionImpactFourchetteBudgetaire;
   /** Description de l'action à impact */
   description: string;
   /** Temps de mise en oeuvre */
-  miseEnOeuvre?: string;
+  miseEnOeuvre?: ActionImpactTempsMiseEnOeuvre;
   /** Lien vers les ressources externes */
-  ressources?: string;
+  ressources?: string | null;
+  /** Lien vers les retours d'expérience */
+  rex?: string;
+  /** Lien vers les subventions mobilisables */
+  subventions?: string;
   /** Statut de l'action */
   statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
   /** Indique si l'action est mise dans le panier */

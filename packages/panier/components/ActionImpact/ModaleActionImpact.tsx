@@ -12,6 +12,7 @@ import {
 } from '@tet/ui';
 import NiveauBudget from './NiveauBudget';
 import LienExterneModale from './LienExterneModale';
+import Markdown from '@components/Markdown';
 
 /**
  * Modale action à impact du panier d'actions
@@ -25,6 +26,8 @@ export const ModaleActionImpact = ({
   description,
   miseEnOeuvre,
   ressources,
+  rex,
+  subventions,
   statut,
   panier,
   onToggleSelected,
@@ -37,7 +40,7 @@ export const ModaleActionImpact = ({
         <div>
           <div className="flex justify-end mb-6 mt-4">
             {/* Budget */}
-            <NiveauBudget budget={budget} />
+            <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
           </div>
 
           {/* Titre de l'action */}
@@ -58,13 +61,13 @@ export const ModaleActionImpact = ({
           )}
 
           {/* Description */}
-          <p className="paragraphe-18 mb-8">{description}</p>
+          <Markdown content={description} className="paragraphe-18 mb-8" />
 
           {/* Temps de mise en oeuvre */}
           <p className="text-base text-primary-10 font-bold mb-8">
             Temps de mise en oeuvre :{' '}
             <span className="text-primary-8">
-              {miseEnOeuvre ?? 'non estimé'}
+              {miseEnOeuvre?.nom ?? 'non estimé'}
             </span>
             <InfoTooltip
               className="ml-2"
@@ -80,14 +83,11 @@ export const ModaleActionImpact = ({
           </p>
 
           {/* Ressources externes */}
-          {!!ressources && (
+          {/* {!!ressources && (
             <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
-              <LienExterneModale
-                label="Consulter les ressources externes"
-                href=""
-              />
+              <LienExterneModale markdownLink={ressources} />
             </div>
-          )}
+          )} */}
 
           <Divider className="mt-4" />
 
@@ -97,9 +97,13 @@ export const ModaleActionImpact = ({
               D’autres collectivités l’ont fait :
             </h6>
             <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
-              <span className="text-sm text-grey-7">
-                Exemples d'autres collectivités à venir
-              </span>
+              {!rex ? (
+                <span className="text-sm text-grey-7">
+                  Exemples d'autres collectivités à venir
+                </span>
+              ) : (
+                <LienExterneModale markdownLink={rex} />
+              )}
             </div>
           </div>
 
@@ -126,6 +130,9 @@ export const ModaleActionImpact = ({
                 label="Aides territoires"
                 href="https://aides-territoires.beta.gouv.fr"
               />
+              {!!subventions && (
+                <LienExterneModale markdownLink={subventions} />
+              )}
             </div>
           </div>
         </div>

@@ -97,6 +97,7 @@ const ListeActions = ({
                 actionsListe={actionsFiltrees}
                 onUpdateStatus={onUpdateStatus}
                 onToggleSelected={onToggleSelected}
+                {...{budgets, durees}}
               />
             )}
           </Tab>
