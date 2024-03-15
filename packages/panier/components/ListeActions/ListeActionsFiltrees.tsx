@@ -1,14 +1,22 @@
 import {ActionImpact} from '@components/ActionImpact';
-import {ActionImpactState} from '@tet/api';
+import {
+  ActionImpactFourchetteBudgetaire,
+  ActionImpactState,
+  ActionImpactTempsMiseEnOeuvre,
+} from '@tet/api';
 
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactState[];
+  budgets: ActionImpactFourchetteBudgetaire[];
+  durees: ActionImpactTempsMiseEnOeuvre[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
 };
 
 const ListeActionsFiltrees = ({
   actionsListe,
+  budgets,
+  durees,
   onToggleSelected,
   onUpdateStatus,
 }: ListeActionsFiltreesProps) => {
@@ -19,8 +27,14 @@ const ListeActionsFiltrees = ({
           key={action.action.id}
           titre={action.action.titre}
           thematiques={action.thematiques}
-          budget={action.action.fourchette_budgetaire as 1 | 2 | 3 | 4}
+          budget={budgets.find(
+            b => b.niveau === action.action.fourchette_budgetaire,
+          )}
           description={action.action.description}
+          miseEnOeuvre={durees.find(
+            d => d.niveau === action.action.temps_mise_en_oeuvre,
+          )}
+          ressources={action.action.ressources_externes}
           statut={
             action.statut?.categorie_id as
               | 'non_pertinent'
