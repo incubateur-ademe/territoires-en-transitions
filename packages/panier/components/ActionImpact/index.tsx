@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import {CarteActionImpact} from './CarteActionImpact';
-import {ModaleActionImpact} from './ModaleActionImpact';
 import {ActionImpactProps} from './types';
+import {ModaleActionImpact} from './ModaleActionImpact';
+import {CarteActionImpact} from './CarteActionImpact';
 
 /**
  * Action à impact du panier d'actions (carte + modale)
@@ -16,7 +16,7 @@ export const ActionImpact = ({
 
   useEffect(() => setIsActionSelected(panier), [panier]);
 
-  const handleToggleSelect = value => {
+  const handleToggleSelect = (value: boolean) => {
     setIsActionSelected(value);
     onToggleSelected(value);
   };

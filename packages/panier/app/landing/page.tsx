@@ -1,6 +1,6 @@
+import Landing from '@components/Landing';
 import TrackPageView from '@components/TrackPageView/index';
 import React from 'react';
-import Landing from './Landing';
 
 export default async function Page() {
   return (

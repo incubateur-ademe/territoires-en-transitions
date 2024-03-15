@@ -1,11 +1,16 @@
+/* eslint-disable react/no-unescaped-entities */
 import classNames from 'classnames';
-import {Badge} from '@design-system/Badge';
-import {Button} from '@design-system/Button';
-import {Divider} from '@design-system/Divider';
-import {Modal, ModalFooter, ModalFooterSection} from '@design-system/Modal';
-import {InfoTooltip} from '@design-system/Tooltip';
-import {NiveauBudget} from './NiveauBudget';
 import {ModaleActionImpactProps} from './types';
+import {
+  Badge,
+  Button,
+  Divider,
+  InfoTooltip,
+  Modal,
+  ModalFooter,
+  ModalFooterSection,
+} from '@tet/ui';
+import NiveauBudget from './NiveauBudget';
 import LienExterneModale from './LienExterneModale';
 
 /**

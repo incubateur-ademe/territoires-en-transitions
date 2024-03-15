@@ -6,10 +6,9 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {Alert, Tab, Tabs} from '@tet/ui';
+import {Alert, OngletName, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
-import {OngletName} from '@tet/ui';
 import FiltresActions from './FiltresActions';
 
 const getTabLabel = (

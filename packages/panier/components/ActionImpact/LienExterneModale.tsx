@@ -1,4 +1,4 @@
-import {Icon} from '@design-system/Icon';
+import {Icon} from '@tet/ui';
 
 type LienExterneModaleProps = {
   href: string;

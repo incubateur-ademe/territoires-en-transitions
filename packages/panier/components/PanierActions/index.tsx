@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
+import {CarteActionImpact} from '@components/ActionImpact/CarteActionImpact';
 import BasketPicto from '@components/Picto/BasketPicto';
 import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
+import ValiderPanierButton from '@components/ValidationPanier/ValiderPanierButton';
 import {ActionImpactSnippet} from '@tet/api';
-import {Alert, CarteActionImpact} from '@tet/ui';
+import {Alert} from '@tet/ui';
 import React from 'react';
-import ValiderPanierButton from './ValiderPanierButton';
 
 type PanierActionsProps = {
   actionsListe: ActionImpactSnippet[];

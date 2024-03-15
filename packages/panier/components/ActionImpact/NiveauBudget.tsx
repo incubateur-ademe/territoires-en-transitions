@@ -1,16 +1,16 @@
-import {Icon} from '@design-system/Icon';
-import {Tooltip} from '@design-system/Tooltip';
+import {Icon, Tooltip} from '@tet/ui';
 import classNames from 'classnames';
 
 type NiveauBudgetProps = {
-  budget: 0 | 1 | 2 | 3;
+  budget: 1 | 2 | 3 | 4;
 };
 
-export const NiveauBudget = ({budget}: NiveauBudgetProps) => {
+const NiveauBudget = ({budget}: NiveauBudgetProps) => {
   const nomBudget = {
     1: 'De 0 à 40 000 €',
     2: 'De 40 000 € à 100 000 €',
     3: 'Plus de 100 000 €',
+    4: 'Ordre de grandeur budgétaire non estimé.',
   };
 
   const tooltipText = (
@@ -31,9 +31,7 @@ export const NiveauBudget = ({budget}: NiveauBudgetProps) => {
     <Tooltip
       label={
         <div className="w-52 !font-normal">
-          {budget === 0
-            ? 'Ordre de grandeur budgétaire non estimé.'
-            : tooltipText}
+          {budget === 4 ? nomBudget[budget] : tooltipText}
         </div>
       }
     >
@@ -41,25 +39,27 @@ export const NiveauBudget = ({budget}: NiveauBudgetProps) => {
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
-            'text-secondary-1': budget >= 1,
-            'text-grey-4': budget < 1,
+            'text-secondary-1': budget >= 1 && budget < 4,
+            'text-grey-4': budget === 4,
           })}
         />
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
-            'text-secondary-1': budget >= 2,
-            'text-grey-4': budget < 2,
+            'text-secondary-1': budget >= 2 && budget < 4,
+            'text-grey-4': budget === 4 || budget < 2,
           })}
         />
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
             'text-secondary-1': budget === 3,
-            'text-grey-4': budget < 3,
+            'text-grey-4': budget !== 3,
           })}
         />
       </div>
     </Tooltip>
   );
 };
+
+export default NiveauBudget;

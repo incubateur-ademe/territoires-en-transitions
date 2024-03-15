@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useCollectiviteContext} from 'context/collectivite';
+import {useCollectiviteContext} from 'providers/collectivite';
 
 const useLandingPathname = () => {
   const [landingPathname, setLandingPathname] = useState('/landing');

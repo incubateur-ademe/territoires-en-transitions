@@ -15,6 +15,8 @@ type StepperValidationProps = {
   className?: string;
 };
 
+// TODO : Déplacer dans le package ui
+
 const StepperValidation = ({steps, className}: StepperValidationProps) => {
   return (
     <ul className={classNames('list-none', className)}>

@@ -1,17 +1,12 @@
 'use server';
 
 import React from 'react';
-import PanierRealtime from './PanierRealtime';
 import {notFound} from 'next/navigation';
 import dynamic from 'next/dynamic';
-import Section from '@components/Section/Section';
+import Section from '@components/Section';
 import {extractIdsFromParam} from 'src/utils/extractIdsFromParam';
-import {
-  fetchCategories,
-  fetchNiveaux,
-  fetchPanier,
-  fetchThematiques,
-} from './utils';
+import {fetchNiveaux, fetchPanier, fetchThematiques} from './utils';
+import PanierRealtime from '@components/PanierRealtime';
 
 const TrackPageView = dynamic(() => import('components/TrackPageView'), {
   ssr: false,
