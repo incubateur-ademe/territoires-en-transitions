@@ -31,7 +31,7 @@ const ValiderPanierModale = () => {
       <h3 className="mb-0 mx-16 text-center text-primary-10">
         Pilotez les actions à impact sélectionnées
       </h3>
-      <div className="w-full bg-primary-0 border border-primary-3 rounded-lg py-8 px-10 flex flex-col items-center relative">
+      <div className="w-full bg-primary-0 border border-primary-3 rounded-lg py-6 px-8 flex flex-col items-center relative">
         <Fireworks
           autorun={{speed: 3, duration: 600}}
           className="absolute top-0 left-0 w-full h-full"
@@ -66,7 +66,7 @@ export default ValiderPanierModale;
 const ModeDeconnecte = () => {
   // todo changer les liens, ajouter [l'url courante]+[modale=creation] en redirect
   return (
-    <div className="flex gap-4 justify-center mt-8">
+    <div className="flex gap-4 justify-center">
       <Button href="app/login" variant="outlined">
         Se connecter
       </Button>
@@ -113,11 +113,7 @@ const ModeConnecte = () => {
  */
 const ModeConnectePasRattache = () => {
   // todo url du site vers page "Rejoindre une collectivité”
-  return (
-    <Button href="" className="mt-8">
-      Rejoindre une collectivité
-    </Button>
-  );
+  return <Button href="">Rejoindre une collectivité</Button>;
 };
 
 /**
@@ -176,9 +172,7 @@ const ModeConnecteRattache = ({
           }}
         />
       </Field>
-      <Button onClick={handleOnClick} className="mt-8">
-        Créer le plan d'action
-      </Button>
+      <Button onClick={handleOnClick}>Créer le plan d'action</Button>
     </>
   );
 };
