@@ -158,6 +158,7 @@ const PanierRealtime = ({
 
           <PanierActions
             actionsListe={panier.contenu}
+            budgets={budgets}
             onToggleSelected={handleToggleSelected}
           />
         </div>
