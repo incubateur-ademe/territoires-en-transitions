@@ -7,9 +7,8 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {Field, OptionValue, SelectMultiple} from '@tet/ui';
-import {useEventTracker} from '@tet/ui';
-import {PanierContext} from 'app/panier/[id]/PanierRealtime';
+import {Field, OptionValue, SelectMultiple, useEventTracker} from '@tet/ui';
+import {PanierContext} from '@components/PanierRealtime';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];

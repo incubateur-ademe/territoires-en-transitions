@@ -1,5 +1,5 @@
+import {ActionImpact} from '@components/ActionImpact';
 import {ActionImpactState} from '@tet/api';
-import {ActionImpact} from '@tet/ui';
 
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactState[];
@@ -19,7 +19,7 @@ const ListeActionsFiltrees = ({
           key={action.action.id}
           titre={action.action.titre}
           thematiques={action.thematiques}
-          budget={action.action.fourchette_budgetaire as 0 | 1 | 2 | 3}
+          budget={action.action.fourchette_budgetaire as 1 | 2 | 3 | 4}
           description={action.action.description}
           statut={
             action.statut?.categorie_id as
