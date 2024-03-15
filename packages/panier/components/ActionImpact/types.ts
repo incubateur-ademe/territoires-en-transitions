@@ -6,7 +6,7 @@ export type ActionImpactProps = {
   /** Thématiques de l'action à impact */
   thematiques: ActionImpactThematique[];
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
-  budget: 0 | 1 | 2 | 3;
+  budget: 1 | 2 | 3 | 4;
   /** Description de l'action à impact */
   description: string;
   /** Temps de mise en oeuvre */

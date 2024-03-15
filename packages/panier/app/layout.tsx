@@ -1,6 +1,6 @@
 import './global.css';
-import {PHProvider} from './providers';
-import CollectiviteProvider from 'context/collectivite';
+import CollectiviteProvider from 'providers/collectivite';
+import PHProvider from 'providers/posthog';
 import Footer from '@components/Layout/Footer';
 import Header from '@components/Layout/Header';
 
