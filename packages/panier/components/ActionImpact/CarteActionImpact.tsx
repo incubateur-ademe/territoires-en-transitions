@@ -37,7 +37,7 @@ export const CarteActionImpact = ({
       header={
         <div className="flex justify-end">
           {/* Budget */}
-          <NiveauBudget budget={budget} />
+          <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
         </div>
       }
       footer={
