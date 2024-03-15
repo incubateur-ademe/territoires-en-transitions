@@ -1,9 +1,7 @@
-import {Badge} from '@design-system/Badge';
-import {Button} from '@design-system/Button';
-import {Card} from '@design-system/Card';
 import classNames from 'classnames';
-import {NiveauBudget} from './NiveauBudget';
 import {CarteActionImpactProps} from './types';
+import {Badge, Button, Card} from '@tet/ui';
+import NiveauBudget from './NiveauBudget';
 
 const maxLength = 120;
 
@@ -28,7 +26,7 @@ export const CarteActionImpact = ({
   onToggleSelected,
   onUpdateStatus,
 }: CarteActionImpactProps) => {
-  const handleToggleSelect = value => onToggleSelected(value);
+  const handleToggleSelect = (value: boolean) => onToggleSelected(value);
 
   return (
     <Card

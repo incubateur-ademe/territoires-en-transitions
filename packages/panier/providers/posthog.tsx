@@ -9,7 +9,9 @@ if (typeof window !== 'undefined') {
   const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
   if (is_dev && (!key || !host)) {
-    console.warn(`Le tracking PostHog n'est pas configuré, les variables d'env sont absentes.`);
+    console.warn(
+      `Le tracking PostHog n'est pas configuré, les variables d'env sont absentes.`,
+    );
   } else {
     if (!key) throw `La variable NEXT_PUBLIC_POSTHOG_KEY n'est pas définie`;
     if (!host) throw `La variable NEXT_PUBLIC_POSTHOG_HOST n'est pas définie`;
@@ -22,13 +24,15 @@ if (typeof window !== 'undefined') {
       ui_host: host,
       capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
 
-      loaded: (posthog) => {
+      loaded: posthog => {
         if (process.env.NODE_ENV === 'development') posthog.debug();
       },
     });
   }
 }
 
-export function PHProvider({children}: { children: React.ReactNode }) {
+const PHProvider = ({children}: {children: React.ReactNode}) => {
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
-}
+};
+
+export default PHProvider;

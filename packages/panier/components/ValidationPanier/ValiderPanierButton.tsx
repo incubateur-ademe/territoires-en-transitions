@@ -1,11 +1,10 @@
 'use client';
 
-import {Button, Modal} from '@tet/ui';
+import {Button, Modal, useEventTracker} from '@tet/ui';
 import {useContext, useState} from 'react';
-import {useEventTracker} from '@tet/ui';
 import {useSearchParams} from 'next/navigation';
-import {PanierContext} from './PanierRealtime';
 import ValiderPanierModale from './ValiderPanierModale';
+import {PanierContext} from '@components/PanierRealtime';
 
 /**
  * Le bouton “Valider la création” du panier d'action

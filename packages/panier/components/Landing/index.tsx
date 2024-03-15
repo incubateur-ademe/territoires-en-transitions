@@ -1,7 +1,7 @@
 import BigBasketPicto from '@components/Picto/BigBasketPicto';
 import CestParti from './CestParti';
 import DashboardPicto from '@components/Picto/DashboardPicto';
-import Section from '@components/Section/Section';
+import Section from '@components/Section';
 
 const Landing = () => {
   return (
