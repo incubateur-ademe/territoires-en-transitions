@@ -1,13 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import PanierActions from './PanierActions';
-import ListeActions from './ListeActions';
-
 import {createContext, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {
-  ActionImpactCategorie,
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
@@ -17,7 +13,9 @@ import {panierAPI, supabase} from 'src/clientAPI';
 import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
 import {User} from '@supabase/supabase-js';
-import {useCollectiviteContext} from 'context/collectivite';
+import {useCollectiviteContext} from 'providers/collectivite';
+import ListeActions from '@components/ListeActions';
+import PanierActions from '@components/PanierActions';
 
 type PanierRealtimeProps = {
   panier: Panier;
