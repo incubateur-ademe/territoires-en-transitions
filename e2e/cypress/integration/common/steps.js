@@ -39,6 +39,18 @@ beforeEach(function () {
   });
 });
 
+afterEach(function () {
+  cy.getCookies().then(cookies => {
+    const tetCookies = cookies?.filter(c => c.name?.startsWith('tet-'));
+    if (tetCookies?.length) {
+      Cypress.log({
+        name: 'cookies',
+        message: JSON.stringify(tetCookies),
+      });
+    }
+  });
+});
+
 When("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
