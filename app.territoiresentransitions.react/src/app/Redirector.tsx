@@ -12,8 +12,8 @@ import {getAuthPaths} from '@tet/api';
 export const Redirector = () => {
   const history = useHistory();
   const {pathname} = useLocation();
-  const {isConnected} = useAuth();
-  const {data: DCP} = useDCP();
+  const {isConnected, user} = useAuth();
+  const {data: DCP, isLoading: isLoadingDCP} = useDCP(user?.id);
   const {invitationId, consume} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
@@ -66,8 +66,13 @@ export const Redirector = () => {
   // redirige vers l'étape 3 de la création de compte si il manque des infos aux DCP
   const userInfoRequired =
     isConnected &&
-    DCP &&
-    (!DCP?.cgu_acceptees_le || !DCP?.nom || !DCP?.prenom || !DCP?.telephone);
+    user?.id &&
+    !isLoadingDCP &&
+    (DCP === null || !DCP?.nom || !DCP?.prenom);
+    /* TODO: ajouter la condition suivante pour rendre obligatoire la saisie
+      du numéro de tél si il est absent de la base (mais il faudra alors ajouter
+      le pré-remplissage du formulaire avec les DCP déjà complétées)
+      || !DCP?.telephone*/
   useEffect(() => {
     if (userInfoRequired) {
       document.location.replace(`${signUpPath}&view=etape3`);
