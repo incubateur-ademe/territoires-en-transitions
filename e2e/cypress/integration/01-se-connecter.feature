@@ -32,7 +32,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible |
 
-@focus
   Scénario: Se connecter par lien unique en tant qu'utilisateur déjà rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
@@ -66,7 +65,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
 
-@focus
   Scénario: Se connecter en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
