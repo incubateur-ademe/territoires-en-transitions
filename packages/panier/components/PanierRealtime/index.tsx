@@ -16,6 +16,7 @@ import {User} from '@supabase/supabase-js';
 import {useCollectiviteContext} from 'providers/collectivite';
 import ListeActions from '@components/ListeActions';
 import PanierActions from '@components/PanierActions';
+import {usePanierContext} from 'providers/panier';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -23,25 +24,6 @@ type PanierRealtimeProps = {
   durees: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
 };
-
-/**
- * Le contexte qui permet de récupérer le `Panier` courant.
- *
- * nb: La valeur par défaut n'est utilisée que pour le typage, car le panier est
- * toujours passé au composant `PanierRealtime` qui se charge de construire le contexte.
- */
-export const PanierContext = createContext<Panier>({
-  id: '',
-  collectivite_id: 0,
-  collectivite_preset: null,
-  private: false,
-  action_impact_state: null,
-  contenu: [],
-  states: [],
-  created_at: '',
-  created_by: null,
-  latest_update: '',
-});
 
 /**
  * Le contexte qui permet de récupérer l'utilisateur
@@ -69,14 +51,19 @@ const PanierRealtime = ({
 
   const router = useRouter();
   const {setCollectiviteId} = useCollectiviteContext();
+  const {setPanier} = usePanierContext();
 
   const tracker = useEventTracker('panier', currentTab);
   const ongletTracker = useOngletTracker('panier');
 
-  useEffect(
-    () => setCollectiviteId(panier.collectivite_preset),
-    [panier.collectivite_preset, setCollectiviteId],
-  );
+  useEffect(() => {
+    setPanier(panier);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [panier.latest_update, setPanier]);
+
+  useEffect(() => {
+    setCollectiviteId(panier.collectivite_preset);
+  }, [panier.collectivite_preset, setCollectiviteId]);
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
@@ -134,36 +121,34 @@ const PanierRealtime = ({
   };
 
   return (
-    <PanierContext.Provider value={panier}>
-      <UserContext.Provider value={user}>
-        <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-          <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
-            <h1>
-              Initiez{' '}
-              <span className="text-secondary-1">des actions impactantes</span>{' '}
-              et valorisez le chemin déjà parcouru
-            </h1>
-            <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
-              Ajoutez les actions à votre panier. Vous pouvez aussi les classer
-              en fonction de leur état d'avancement.
-            </p>
-            <ListeActions
-              actionsListe={panier.states}
-              onToggleSelected={handleToggleSelected}
-              onUpdateStatus={handleUpdateStatus}
-              onChangeTab={handleChangeTab}
-              {...{budgets, durees, thematiques}}
-            />
-          </div>
-
-          <PanierActions
-            actionsListe={panier.contenu}
-            budgets={budgets}
+    <UserContext.Provider value={user}>
+      <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
+        <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
+          <h1>
+            Initiez{' '}
+            <span className="text-secondary-1">des actions impactantes</span> et
+            valorisez le chemin déjà parcouru
+          </h1>
+          <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
+            Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
+            fonction de leur état d'avancement.
+          </p>
+          <ListeActions
+            actionsListe={panier.states}
             onToggleSelected={handleToggleSelected}
+            onUpdateStatus={handleUpdateStatus}
+            onChangeTab={handleChangeTab}
+            {...{budgets, durees, thematiques}}
           />
         </div>
-      </UserContext.Provider>
-    </PanierContext.Provider>
+
+        <PanierActions
+          actionsListe={panier.contenu}
+          budgets={budgets}
+          onToggleSelected={handleToggleSelected}
+        />
+      </div>
+    </UserContext.Provider>
   );
 };
 
