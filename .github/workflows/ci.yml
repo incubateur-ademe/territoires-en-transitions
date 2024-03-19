@@ -532,6 +532,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.API_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SERVICE_ROLE_KEY }}
+          ELECTRON_ENABLE_LOGGING: 1
 
       - name: Upload report to GitHub
         if: failure()
