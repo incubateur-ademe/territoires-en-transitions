@@ -451,11 +451,6 @@ exports[`components/auth/Signup Etape3 smoke-test 1`] = `
   </div>
   <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div class="flex gap-4 flex-wrap justify-end">
-    <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
-    >
-      Annuler
-    </button>
     <button type="submit"
             disabled
             class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
@@ -561,11 +556,6 @@ exports[`components/auth/Signup Etape3Erreur smoke-test 1`] = `
   </div>
   <hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
   <div class="flex gap-4 flex-wrap justify-end">
-    <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
-    >
-      Annuler
-    </button>
     <button type="submit"
             disabled
             class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"

@@ -41,7 +41,6 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
   const {
     isLoading,
     error,
-    onCancel,
     onSubmit,
     formState: {email},
   } = props;
@@ -104,7 +103,6 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
         <FieldMessage messageClassName="mt-4" state="error" message={error} />
       )}
       <ModalFooterOKCancel
-        btnCancelProps={{onClick: onCancel}}
         btnOKProps={{
           type: 'submit',
           disabled: !isValid || isLoading,

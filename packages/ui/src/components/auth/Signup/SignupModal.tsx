@@ -23,6 +23,7 @@ export const SignupModal = (props: SignupProps) => {
       title={getTitle(view)}
       openState={{isOpen, setIsOpen}}
       onClose={onClose}
+      noCloseButton={view === 'etape3'}
       render={() => <Signup {...props} onCancel={() => onClose()} />}
     />
   );
