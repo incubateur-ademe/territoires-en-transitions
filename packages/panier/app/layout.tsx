@@ -4,6 +4,7 @@ import PHProvider from 'providers/posthog';
 import Footer from '@components/Layout/Footer';
 import Header from '@components/Layout/Header';
 import PanierProvider from 'providers/panier';
+import Axeptio from '@components/Axeptio';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -47,6 +48,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <Footer />
         </body>
       </PHProvider>
+      <Axeptio />
     </html>
   );
 }

@@ -26,17 +26,24 @@ export function middleware(request: NextRequest) {
   const cspHeader = `
     default-src 'self';
     script-src ${scriptSrc}
+      https://static.axept.io/sdk.js
       https://eu.posthog.com/static/surveys.js
-      https://eu.posthog.com/static/recorder-v2.js;
+      https://eu-assets.i.posthog.com/static/surveys.js
+      https://eu.posthog.com/static/recorder-v2.js
+      https://eu-assets.i.posthog.com/static/recorder-v2.js;  
     style-src ${styleSrc};
-    img-src 'self' blob: data: ytimg.com;
+    img-src 'self' blob: data: 
+      ytimg.com
+      axeptio.imgix.net;
     font-src 'self';
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
       ws://${request.nextUrl.host}
-      eu.posthog.com;
+      eu.i.posthog.com
+      api.axept.io
+      client.axept.io;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
@@ -55,14 +62,14 @@ export function middleware(request: NextRequest) {
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   // ajoute les en-têtes à la réponse
   const response = NextResponse.next({request: {headers: requestHeaders}});
   response.headers.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   return response;
