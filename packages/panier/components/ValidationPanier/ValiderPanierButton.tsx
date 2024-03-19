@@ -1,10 +1,10 @@
 'use client';
 
 import {Button, Modal, useEventTracker} from '@tet/ui';
-import {useContext, useState} from 'react';
+import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import ValiderPanierModale from './ValiderPanierModale';
-import {PanierContext} from '@components/PanierRealtime';
+import {usePanierContext} from 'providers/panier';
 
 /**
  * Le bouton “Valider la création” du panier d'action
@@ -17,7 +17,7 @@ const ValiderPanierButton = () => {
   const initiallyOpen = searchParams.get('modale') === 'creation';
   const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
   const tracker = useEventTracker('panier');
-  const panier = useContext(PanierContext);
+  const {panier} = usePanierContext();
 
   return (
     <>
@@ -26,8 +26,8 @@ const ValiderPanierButton = () => {
         onClick={() => {
           setCreateModalOpen(true);
           tracker('cta_valider_creation_panier_click', {
-            collectivite_preset: panier.collectivite_preset,
-            panier_id: panier.id,
+            collectivite_preset: panier?.collectivite_preset ?? null,
+            panier_id: panier?.id ?? '',
           });
         }}
       >

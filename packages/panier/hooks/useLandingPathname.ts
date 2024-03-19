@@ -1,15 +1,19 @@
 import {useEffect, useState} from 'react';
 import {useCollectiviteContext} from 'providers/collectivite';
+import {usePanierContext} from 'providers/panier';
 
 const useLandingPathname = () => {
   const [landingPathname, setLandingPathname] = useState('/landing');
   const {collectiviteId} = useCollectiviteContext();
+  const {panier} = usePanierContext();
 
   useEffect(() => {
     if (collectiviteId) {
       setLandingPathname(`/landing/collectivite/${collectiviteId}`);
+    } else if (panier?.id && panier.contenu.length > 0) {
+      setLandingPathname(`/landing/panier/${panier.id}`);
     }
-  }, [collectiviteId]);
+  }, [collectiviteId, panier?.id, panier?.contenu.length]);
 
   return landingPathname;
 };
