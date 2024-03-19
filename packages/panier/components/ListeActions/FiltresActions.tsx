@@ -8,7 +8,7 @@ import {
   ActionImpactThematique,
 } from '@tet/api';
 import {Field, OptionValue, SelectMultiple, useEventTracker} from '@tet/ui';
-import {PanierContext} from '@components/PanierRealtime';
+import {usePanierContext} from 'providers/panier';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
@@ -25,7 +25,7 @@ const FiltresActions = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const tracker = useEventTracker('panier');
-  const panier = useContext(PanierContext);
+  const {panier} = usePanierContext();
 
   const [thematiquesValues, setThematiquesValues] = useState<
     OptionValue[] | undefined
@@ -79,8 +79,8 @@ const FiltresActions = ({
 
     const trackThenNavigate = async () => {
       await tracker('filtre', {
-        collectivite_preset: panier.collectivite_preset,
-        panier_id: panier.id,
+        collectivite_preset: panier?.collectivite_preset ?? null,
+        panier_id: panier?.id ?? '',
         thematique_ids: thematiquesValues,
         niveau_budget_ids: budgetsValues,
         niveau_duree_ids: dureesValues,

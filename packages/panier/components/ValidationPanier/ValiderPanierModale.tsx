@@ -15,12 +15,13 @@ import useSWR from 'swr';
 import {MesCollectivite} from '@tet/api';
 import {useCollectiviteContext} from 'providers/collectivite';
 import StepperValidation from '@components/Stepper/StepperValidation';
-import {PanierContext, UserContext} from '@components/PanierRealtime';
+import {UserContext} from '@components/PanierRealtime';
+import {usePanierContext} from 'providers/panier';
 
 const ValiderPanierModale = () => {
-  const panier = useContext(PanierContext);
+  const {panier} = usePanierContext();
   const user = useContext(UserContext);
-  const contenu = panier.contenu;
+  const contenu = panier?.contenu ?? [];
 
   let steps = [
     "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
@@ -137,7 +138,7 @@ const ModeConnecteRattache = ({
   collectivites: MesCollectivite;
 }) => {
   const tracker = useEventTracker('panier');
-  const panier = useContext(PanierContext);
+  const {panier} = usePanierContext();
   const router = useRouter();
   const {collectiviteId: savedCollectiviteId} = useCollectiviteContext();
 
@@ -153,11 +154,11 @@ const ModeConnecteRattache = ({
     )!;
     await tracker('cta_valider_creation_panier_click', {
       collectivite_preset: collectivite.collectivite_id,
-      panier_id: panier.id,
+      panier_id: panier?.id ?? '',
     });
     const plan_id = await panierAPI.createPlanFromPanier(
       collectivite.collectivite_id,
-      panier.id,
+      panier?.id ?? '',
     );
     // todo utiliser la fonction utilitaire du package API pour composer l'URL
     const href = `https://app.territoiresentransitions.fr/collectivite/${collectivite.collectivite_id}/plans/plan/${plan_id}`;

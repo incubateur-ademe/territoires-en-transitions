@@ -3,6 +3,7 @@ import CollectiviteProvider from 'providers/collectivite';
 import PHProvider from 'providers/posthog';
 import Footer from '@components/Layout/Footer';
 import Header from '@components/Layout/Header';
+import PanierProvider from 'providers/panier';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -34,12 +35,14 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
       <PHProvider>
         <body className="min-h-screen overflow-x-visible flex flex-col">
           <CollectiviteProvider>
-            <div className="flex flex-col grow">
-              <Header />
-              <div className="bg-grey-2 grow flex flex-col">
-                <div className="grow">{children}</div>
+            <PanierProvider>
+              <div className="flex flex-col grow">
+                <Header />
+                <div className="bg-grey-2 grow flex flex-col">
+                  <div className="grow">{children}</div>
+                </div>
               </div>
-            </div>
+            </PanierProvider>
           </CollectiviteProvider>
           <Footer />
         </body>
