@@ -1,7 +1,8 @@
 import BigBasketPicto from '@components/Picto/BigBasketPicto';
-import CestParti from './CestParti';
 import DashboardPicto from '@components/Picto/DashboardPicto';
 import Section from '@components/Section';
+import CestParti from './CestParti';
+import ReprendrePanier from './ReprendrePanier';
 
 const Landing = () => {
   return (
@@ -29,7 +30,10 @@ const Landing = () => {
               élus ?
             </li>
           </ul>
-          <CestParti />
+          <div className="flex gap-x-8 gap-y-4 flex-wrap">
+            <CestParti />
+            <ReprendrePanier />
+          </div>
         </div>
         <div className="flex justify-center items-center">
           <BigBasketPicto />
