@@ -1,12 +1,37 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {createClient} from './src/supabase/actions';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP
+ * et vérifier/rafraîchir le Auth token supabase
  *
  * Ref: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
+ *     https://supabase.com/docs/guides/auth/server-side/nextjs
  *
  */
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  // pour compléter les en-têtes de la requête
+  const requestHeaders = new Headers(request.headers);
+
+  // crée la réponse
+  const response = NextResponse.next({request: {headers: requestHeaders}});
+
+  // ajoute la CSP aux en-têtes
+  addCspHeaders(request.nextUrl.host, requestHeaders, response.headers);
+
+  // contrôle et rafraichit le Auth token du client supabase
+  const supabase = createClient(request.cookies, response.cookies);
+  await supabase.auth.getUser();
+
+  return response;
+}
+
+/** Ajoute la CSP aux en-têtes */
+const addCspHeaders = (
+  host: string,
+  requestHeaders: Headers,
+  responseHeaders: Headers,
+) => {
   // génère un id à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
@@ -36,7 +61,7 @@ export function middleware(request: NextRequest) {
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!} 
       ${process.env.NEXT_PUBLIC_STRAPI_URL!}
-      ws://${request.nextUrl.host};
+      ws://${host};
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
@@ -50,23 +75,19 @@ export function middleware(request: NextRequest) {
     .replace(/\s{2,}/g, ' ')
     .trim();
 
-  // crée et complète l'objet `Headers`
-  const requestHeaders = new Headers(request.headers);
+  // ajoute la CSP aux en-têtes de la requête
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue,
   );
 
-  // ajoute les en-têtes à la réponse
-  const response = NextResponse.next({request: {headers: requestHeaders}});
-  response.headers.set(
+  // ajoute la CSP aux en-têtes de la réponse
+  responseHeaders.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue,
   );
-
-  return response;
-}
+};
 
 /**
  * Evite que le middleware soit appliqué à certaines routes
@@ -75,13 +96,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
     {
-      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      source: '/((?!_next/static|_next/image|favicon.ico).*)',
       missing: [
         {type: 'header', key: 'next-router-prefetch'},
         {type: 'header', key: 'purpose', value: 'prefetch'},

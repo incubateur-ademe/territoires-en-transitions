@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {ChangeEvent, useState} from 'react';
 
 import {
   Checkbox,
@@ -63,7 +63,9 @@ const ModifierFicheModale = ({
                 data-test="FicheNomInput"
                 type="text"
                 value={fiche.titre ?? undefined}
-                onChange={e => setFiche({...fiche, titre: e.target.value})}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setFiche({...fiche, titre: e.target.value})
+                }
                 placeholder="Sans titre"
                 autoFocus
               />
@@ -134,7 +136,7 @@ const ModifierFicheModale = ({
                         )
                       : ''
                   }
-                  onChange={e =>
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setFiche({
                       ...fiche,
                       date_fin_provisoire:

@@ -314,8 +314,9 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
+    COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
-    RUN npm run build -w @tet/ui
+    RUN npm run build -w @tet/api -w @tet/ui
     # la commande utilisée pour lancer les tests
     CMD npm run test -w @tet/app
     SAVE IMAGE app-test:latest
@@ -558,6 +559,8 @@ dev:
     ARG --required API_URL
     ARG --required ANON_KEY
     ARG --required SERVICE_ROLE_KEY
+    ARG STRAPI_KEY
+    ARG STRAPI_URL
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
@@ -566,6 +569,7 @@ dev:
     ARG eco=no
     ARG fast=no
     ARG faster=no
+    ARG site=no
     ARG version=HEAD # version du plan
 
     IF [ "$fast" = "yes" -a "$faster" = "yes" ]
@@ -621,6 +625,10 @@ dev:
 
     IF [ "$app" = "yes" ]
         RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+    END
+
+    IF [ "$site" = "yes" ]
+        RUN earthly +site-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY --STRAPI_KEY=$STRAPI_KEY --STRAPI_URL=$STRAPI_URL
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL

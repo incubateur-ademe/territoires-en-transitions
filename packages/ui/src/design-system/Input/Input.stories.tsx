@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 
@@ -8,12 +8,15 @@ const meta: Meta<typeof Input> = {
   component: Input,
   render: args => {
     const [value, setValue] = useState(args.value);
+    const inputRef = useRef(null);
     return (
       <Input
         {...args}
+        ref={inputRef}
         value={value}
         onChange={e => {
           action('onChange')(e.target.value);
+          action('inputRef.current.value')(inputRef.current.value);
           setValue(e.target.value);
         }}
       />
@@ -198,6 +201,53 @@ export const TypeNumberFloatAvecValeur: Story = {
   },
 };
 
+/** Saisie avec pattern */
+export const TypePattern: Story = {
+  args: {
+    type: 'pattern',
+    format: '# # # #',
+    mask: '_',
+    allowEmptyFormatting: true
+  },
+};
+
+export const TypePatternAvecValeur: Story = {
+  args: {
+    type: 'pattern',
+    format: '# # # #',
+    mask: '_',
+    value: '1234'
+  },
+};
+
+/** Saisie OTP */
+export const TypeOTP: Story = {
+  args: {
+    type: 'otp',
+  },
+};
+
+export const TypeOTPAvecValeur: Story = {
+  args: {
+    type: 'otp',
+    value: '123456',
+  },
+};
+
+/** Saisie numéro de téléphone */
+export const TypeTel: Story = {
+  args: {
+    type: 'tel',
+  },
+};
+
+export const TypeTelAvecValeur: Story = {
+  args: {
+    type: 'tel',
+    value: '0123456789',
+  },
+};
+
 /** Recherche en cours. */
 export const TypeSearchLoading: Story = {
   args: {
@@ -235,4 +285,9 @@ export const AvecIconeTexteEtDesactive: Story = {
     placeholder: 'placeholder',
     icon: {text: 'TTC'},
   },
+};
+
+/** Personnalisation du container (par exemple changement du padding) */
+export const PersonnalisationDuContainer: Story = {
+  args: {containerClassname: 'p-2', value: 'une valeur'},
 };

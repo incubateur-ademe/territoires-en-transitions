@@ -2,8 +2,20 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
+function getPeerDependencies() {
+  try {
+    const pkg = require(path.resolve(process.cwd(), 'package.json'));
+    return Object.keys(pkg.peerDependencies);
+  } catch (err) {
+    return [];
+  }
+}
+
 /** Configuration Webpack */
 module.exports = function (env, argv) {
+  // génère la liste des modules à exclure du build depuis les peerDeps du package
+  const externals = Object.fromEntries(getPeerDependencies().map(d => [d, d]));
+
   return {
     // configuration en fonction de l'environnement cible
     mode: env.production ? 'production' : 'development',
@@ -41,12 +53,7 @@ module.exports = function (env, argv) {
     },
 
     // exclut du bundle les bibliothèques externes
-    externals: {
-      react: 'react',
-      'react-dom': 'react-dom',
-      classnames: 'classnames',
-      '@floating-ui/react': '@floating-ui/react',
-    },
+    externals,
 
     // configuration de la génération
     output: {

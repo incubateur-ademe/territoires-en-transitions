@@ -133,3 +133,11 @@ export const VarianteSwitchDisabled: Story = {
     variant: 'switch',
   },
 };
+
+export const AvecPersonnalisationDuContainer: Story = {
+  args: {
+    id: 'cb13',
+    checked: true,
+    containerClassname: 'border border-grey p-4',
+  },
+};

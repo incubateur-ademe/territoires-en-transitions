@@ -28,19 +28,23 @@ export type FieldMessageProps = {
   /** État */
   state?: FieldState;
   /** Message d'état affiché en dessous du champ */
-  message?: string;
+  message?: string | JSX.Element;
   /** Pour surcharger les styles du container du message */
   messageClassName?: string;
+  /** Id pour les tests */
+  'data-test'?: string;
 };
 
 export const FieldMessage = ({
   message,
   state = 'default',
   messageClassName,
+  'data-test': dataTest,
 }: FieldMessageProps) => {
   return (
     message !== undefined && (
       <div
+          data-test={dataTest}
         className={classNames(
           'flex items-center',
           stateToTextColor[state],
@@ -50,7 +54,11 @@ export const FieldMessage = ({
         {state !== 'disabled' && state !== 'default' && (
           <Icon icon={stateToIcon[state]} size="sm" className="mr-1" />
         )}
-        <span className="text-xs">{message}</span>
+        {typeof message === 'string' ? (
+          <span className="text-xs">{message}</span>
+        ) : (
+          message
+        )}
       </div>
     )
   );

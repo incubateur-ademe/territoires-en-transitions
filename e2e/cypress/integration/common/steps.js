@@ -39,6 +39,15 @@ beforeEach(function () {
   });
 });
 
+afterEach(function () {
+  cy.getCookies().then(cookies => {
+    const tetCookies = cookies?.filter(c => c.name?.startsWith('tet-'));
+    if (tetCookies?.length) {
+      console.log('TeT cookies:', JSON.stringify(tetCookies));
+    }
+  });
+});
+
 When("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
@@ -129,7 +138,7 @@ export const checkExpectation = (selector, expectation, value) => {
 // un nom d'élément dans la page
 export const resolveSelector = (context, elem) => {
   const s = context.LocalSelectors?.[elem] || Selectors[elem];
-  assert(s, 'le sélecteur est défini localement ou globalement');
+  assert(s, `le sélecteur "${elem}" est défini`);
   return s;
 };
 
@@ -206,6 +215,22 @@ When(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
     .click();
 });
 
+When('je coche la case {string}', function (checkbox) {
+  cy.get(resolveSelector(this, checkbox).selector).within(() => {
+    cy.root().should('not.be.checked');
+    cy.root().click();
+    cy.root().should('be.checked');
+  });
+});
+
+When('je décoche la case {string}', function (checkbox) {
+  cy.get(resolveSelector(this, checkbox).selector).within(() => {
+    cy.root().should('be.checked');
+    cy.root().click();
+    cy.root().should('not.be.checked');
+  });
+});
+
 function fillFormWithValues(elem, dataTable) {
   const parent = resolveSelector(this, elem);
   cy.get(parent.selector).within(() => {
@@ -227,9 +252,18 @@ When(
   "je sélectionne l'option {string} dans la liste déroulante {string}",
   selectDropdownValue
 );
-function selectDropdownValue(value, dropdown) {
+When(
+  "je sélectionne l'option {string} dans la liste déroulante {string} du {string}",
+  selectDropdownValue
+);
+function selectDropdownValue(value, dropdown, parentElem) {
   // ouvre le sélecteur
-  cy.get(resolveSelector(this, dropdown).selector).click();
+  if (parentElem) {
+    const parent = resolveSelector(this, parentElem);
+    cy.get(parent.selector).find(parent.children[dropdown]).click();
+  } else {
+    cy.get(resolveSelector(this, dropdown).selector).click();
+  }
   // et sélectionne la valeur voulue
   cy.get(`[data-test="${value}"]`).should('be.visible').click();
 }
