@@ -63,6 +63,12 @@ const ListeActions = ({
     },
   ];
 
+  const filteredThematiques = thematiques.filter(t => {
+    return actionsListe.find(a => {
+      return a.thematiques.find(at => at.id === t.id);
+    });
+  });
+
   return (
     <Tabs
       onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
@@ -78,7 +84,10 @@ const ListeActions = ({
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
-            <FiltresActions {...{budgets, durees, thematiques}} />
+            <FiltresActions
+              {...{budgets, durees}}
+              thematiques={filteredThematiques}
+            />
             <Alert
               isOpen={openAlert}
               onClose={() => setOpenAlert(false)}

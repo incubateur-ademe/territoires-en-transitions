@@ -1,13 +1,19 @@
 'use client';
 
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {Field, OptionValue, SelectMultiple, useEventTracker} from '@tet/ui';
+import {
+  Checkbox,
+  Field,
+  OptionValue,
+  SelectMultiple,
+  useEventTracker,
+} from '@tet/ui';
 import {usePanierContext} from 'providers/panier';
 
 type FiltresActionsProps = {
@@ -34,6 +40,7 @@ const FiltresActions = ({
     OptionValue[] | undefined
   >();
   const [dureesValues, setDureesValues] = useState<OptionValue[] | undefined>();
+  const [competencesValue, setCompetencesValue] = useState(false);
 
   useEffect(() => {
     // Permet de conserver les filtres lors d'un changement d'onglet
@@ -50,10 +57,13 @@ const FiltresActions = ({
       .get('d')
       ?.split(',')
       .map(val => parseInt(val));
+    const competencesParams = searchParams.get('c');
 
     if (!!thematiquesParams) setThematiquesValues(thematiquesParams);
     if (!!budgetsParams) setBudgetsValues(budgetsParams);
     if (!!dureesParams) setDureesValues(dureesParams);
+    if (!!competencesParams)
+      setCompetencesValue(competencesParams === 'true' ? true : false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -71,6 +81,7 @@ const FiltresActions = ({
     if (!!dureesValues && dureesValues?.length > 0) {
       paramsArray.push(`d=${dureesValues.join(',')}`);
     }
+    if (competencesValue) paramsArray.push('c=true');
 
     const href =
       paramsArray.length > 0
@@ -90,37 +101,52 @@ const FiltresActions = ({
 
     trackThenNavigate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thematiquesValues?.length, budgetsValues?.length, dureesValues?.length]);
+  }, [
+    thematiquesValues?.length,
+    budgetsValues?.length,
+    dureesValues?.length,
+    competencesValue,
+  ]);
 
   return (
-    <div className="mb-8 grid sm:grid-cols-2 xl:grid-cols-3 gap-4 relative z-10 bg-white p-6 rounded-lg border-[0.5px] border-primary-3">
-      <Field title="Thématiques">
-        <SelectMultiple
-          options={thematiques.map(t => ({value: t.id, label: t.nom}))}
-          values={thematiquesValues}
-          onChange={({values}) => {
-            setThematiquesValues(values);
-          }}
+    <div className="mb-8 relative z-10 bg-white p-6 rounded-lg border-[0.5px] border-primary-3">
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <Field title="Thématiques">
+          <SelectMultiple
+            options={thematiques.map(t => ({value: t.id, label: t.nom}))}
+            values={thematiquesValues}
+            onChange={({values}) => {
+              setThematiquesValues(values);
+            }}
+          />
+        </Field>
+        <Field title="Ordre de grandeur budgétaire">
+          <SelectMultiple
+            options={budgets.map(b => ({value: b.niveau, label: b.nom}))}
+            values={budgetsValues}
+            onChange={({values}) => {
+              setBudgetsValues(values);
+            }}
+          />
+        </Field>
+        <Field title="Temps de mise en oeuvre">
+          <SelectMultiple
+            options={durees.map(b => ({value: b.niveau, label: b.nom}))}
+            values={dureesValues}
+            onChange={({values}) => {
+              setDureesValues(values);
+            }}
+          />
+        </Field>
+      </div>
+      <div className="mt-8">
+        <Checkbox
+          label="Élargir au delà de mes compétences"
+          message="Certaines actions ne sont pas directement rattachées à un domaine de compétence territoriale. Néanmoins, votre collectivité peut s’en emparer afin d’enrichir sa politique locale de transition."
+          checked={competencesValue}
+          onChange={() => setCompetencesValue(prevState => !prevState)}
         />
-      </Field>
-      <Field title="Ordre de grandeur budgétaire">
-        <SelectMultiple
-          options={budgets.map(b => ({value: b.niveau, label: b.nom}))}
-          values={budgetsValues}
-          onChange={({values}) => {
-            setBudgetsValues(values);
-          }}
-        />
-      </Field>
-      <Field title="Temps de mise en oeuvre">
-        <SelectMultiple
-          options={durees.map(b => ({value: b.niveau, label: b.nom}))}
-          values={dureesValues}
-          onChange={({values}) => {
-            setDureesValues(values);
-          }}
-        />
-      </Field>
+      </div>
     </div>
   );
 };
