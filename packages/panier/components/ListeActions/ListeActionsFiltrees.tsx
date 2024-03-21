@@ -28,11 +28,11 @@ const ListeActionsFiltrees = ({
           titre={action.action.titre}
           thematiques={action.thematiques}
           budget={budgets.find(
-            b => b.niveau === action.action.fourchette_budgetaire,
+            b => b.niveau === action.action.fourchette_budgetaire
           )}
           description={action.action.description}
           miseEnOeuvre={durees.find(
-            d => d.niveau === action.action.temps_mise_en_oeuvre,
+            d => d.niveau === action.action.temps_de_mise_en_oeuvre
           )}
           ressources={action.action.ressources_externes}
           statut={
@@ -50,7 +50,7 @@ const ListeActionsFiltrees = ({
           onUpdateStatus={statut =>
             onUpdateStatus(
               action.action.id,
-              action.statut?.categorie_id === statut ? null : statut,
+              action.statut?.categorie_id === statut ? null : statut
             )
           }
         />
