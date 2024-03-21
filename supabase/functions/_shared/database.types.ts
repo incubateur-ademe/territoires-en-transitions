@@ -25632,6 +25632,15 @@ export interface Database {
           statut: unknown | null
         }[]
       }
+      action_impact_temps_de_mise_en_oeuvre: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          niveau: number
+          nom: string
+        }[]
+      }
       action_perimetre_evaluation: {
         Args: {
           id: unknown
@@ -28075,14 +28084,14 @@ export interface Database {
       skip:
         | {
             Args: {
-              why: string
-              how_many: number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              why: string
+              how_many: number
             }
             Returns: string
           }
@@ -28287,6 +28296,89 @@ export interface Database {
       time_bucket:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
             }
@@ -28368,44 +28460,6 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
             }
             Returns: number
           }

@@ -2839,7 +2839,9 @@ export interface Database {
           nb_collectivite_en_cours: number
           nb_collectivite_realise: number
           ressources_externes: string | null
-          temps_mise_en_oeuvre: number
+          rex: string | null
+          subventions_mobilisables: string | null
+          temps_de_mise_en_oeuvre: number
           titre: string
         }
         Insert: {
@@ -2851,7 +2853,9 @@ export interface Database {
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
           ressources_externes?: string | null
-          temps_mise_en_oeuvre?: number
+          rex?: string | null
+          subventions_mobilisables?: string | null
+          temps_de_mise_en_oeuvre?: number
           titre: string
         }
         Update: {
@@ -2863,7 +2867,9 @@ export interface Database {
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
           ressources_externes?: string | null
-          temps_mise_en_oeuvre?: number
+          rex?: string | null
+          subventions_mobilisables?: string | null
+          temps_de_mise_en_oeuvre?: number
           titre?: string
         }
         Relationships: [
@@ -2880,9 +2886,9 @@ export interface Database {
             referencedColumns: ["niveau"]
           },
           {
-            foreignKeyName: "action_impact_temps_mise_en_oeuvre_fkey"
-            columns: ["temps_mise_en_oeuvre"]
-            referencedRelation: "action_impact_temps_mise_en_oeuvre"
+            foreignKeyName: "action_impact_temps_de_mise_en_oeuvre_fkey"
+            columns: ["temps_de_mise_en_oeuvre"]
+            referencedRelation: "action_impact_temps_de_mise_en_oeuvre"
             referencedColumns: ["niveau"]
           }
         ]
@@ -3118,6 +3124,7 @@ export interface Database {
           isinpanier: boolean | null
           statut: unknown | null
           action_impact_fourchette_budgetaire: unknown | null
+          action_impact_temps_de_mise_en_oeuvre: unknown | null
           matches_competences: unknown | null
           thematique: unknown | null
         }
@@ -3170,7 +3177,7 @@ export interface Database {
           }
         ]
       }
-      action_impact_temps_mise_en_oeuvre: {
+      action_impact_temps_de_mise_en_oeuvre: {
         Row: {
           niveau: number
           nom: string
@@ -26000,6 +26007,15 @@ export interface Database {
           statut: unknown | null
         }[]
       }
+      action_impact_temps_de_mise_en_oeuvre: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          niveau: number
+          nom: string
+        }[]
+      }
       action_perimetre_evaluation: {
         Args: {
           id: unknown
@@ -26761,13 +26777,13 @@ export interface Database {
       }
       fail:
         | {
-            Args: Record<PropertyKey, never>
-            Returns: string
-          }
-        | {
             Args: {
               "": string
             }
+            Returns: string
+          }
+        | {
+            Args: Record<PropertyKey, never>
             Returns: string
           }
       fiche_resume:
@@ -27229,13 +27245,13 @@ export interface Database {
       geojson:
         | {
             Args: {
-              site_region: unknown
+              site_labellisation: unknown
             }
             Returns: Json[]
           }
         | {
             Args: {
-              site_labellisation: unknown
+              site_region: unknown
             }
             Returns: Json[]
           }
@@ -28449,14 +28465,14 @@ export interface Database {
       skip:
         | {
             Args: {
-              why: string
-              how_many: number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              why: string
+              how_many: number
             }
             Returns: string
           }
@@ -28671,6 +28687,89 @@ export interface Database {
       time_bucket:
         | {
             Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              bucket_width: unknown
+              ts: string
+              origin: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
               bucket_width: unknown
               ts: string
               offset: unknown
@@ -28682,51 +28781,6 @@ export interface Database {
               bucket_width: unknown
               ts: string
               offset: unknown
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              bucket_width: unknown
-              ts: string
-              origin: string
             }
             Returns: string
           }
@@ -28752,44 +28806,6 @@ export interface Database {
             Args: {
               bucket_width: number
               ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
             }
             Returns: number
           }
