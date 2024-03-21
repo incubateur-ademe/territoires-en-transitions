@@ -11,7 +11,6 @@ import {
 } from '@tet/api';
 import {panierAPI, supabase} from 'src/clientAPI';
 import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
-import {restoreAuthTokens} from '@tet/site/app/auth/authTokens';
 import {User} from '@supabase/supabase-js';
 import {useCollectiviteContext} from 'providers/collectivite';
 import ListeActions from '@components/ListeActions';
@@ -70,7 +69,7 @@ const PanierRealtime = ({
     supabase.auth.onAuthStateChange((event, session) => {
       if (session) setUser(session.user);
     });
-    restoreAuthTokens(supabase);
+    // todo: restoreAuthTokens(supabase);
 
     return () => {
       // @ts-ignore
@@ -100,7 +99,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null,
+    statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     await tracker('statut', {
