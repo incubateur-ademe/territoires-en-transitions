@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import {OptionValue} from '@tet/ui';
+type OptionValue = number | string;
 
 interface EventProperties
   extends Record<
