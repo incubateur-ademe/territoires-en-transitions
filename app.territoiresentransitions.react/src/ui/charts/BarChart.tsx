@@ -135,6 +135,10 @@ const BarChart = ({
       data={localData}
       keys={keys}
       indexBy={indexBy}
+      theme={{
+        labels: {text: {fontSize: 14}},
+        axis: {ticks: {text: {fontSize: 13}}},
+      }}
       margin={{
         top: layout === 'horizontal' ? 20 : 85,
         right: 60,
