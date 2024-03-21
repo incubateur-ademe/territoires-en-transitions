@@ -50,12 +50,12 @@ values (1, '1'),
        (2, '2'),
        (3, '3');
 
-create table action_impact_temps_mise_en_oeuvre
+create table action_impact_temps_de_mise_en_oeuvre
 (
     niveau integer primary key,
     nom    text not null
 );
-insert into action_impact_temps_mise_en_oeuvre(niveau, nom)
+insert into action_impact_temps_de_mise_en_oeuvre(niveau, nom)
 values (1, 'Moins d’1 an'),
        (2, '1 a 2 ans'),
        (3, 'Plus de 2 ans'),
@@ -75,7 +75,7 @@ create table action_impact
     nb_collectivite_realise  integer not null                                                default 1,
     action_continue          boolean not null                                                default false,
 
-    temps_de_mise_en_oeuvre        integer not null references action_impact_temps_mise_en_oeuvre            default 1,
+    temps_de_mise_en_oeuvre  integer not null references action_impact_temps_de_mise_en_oeuvre  default 1,
     fourchette_budgetaire    integer not null references action_impact_fourchette_budgetaire default 1,
     impact_tier              integer not null references action_impact_tier                  default 1,
 
