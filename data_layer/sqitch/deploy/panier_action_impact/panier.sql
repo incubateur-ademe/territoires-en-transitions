@@ -278,7 +278,22 @@ begin
     where b.niveau = $1.action.fourchette_budgetaire;
 end;
 comment on function action_impact_fourchette_budgetaire is
-    'La relation entre le state d''une action et ses thématiques.';
+    'La relation entre le state d''une action et sa fourchette budgétaire.';
+
+create function
+    action_impact_temps_de_mise_en_oeuvre(action_impact_state)
+    returns setof action_impact_temps_de_mise_en_oeuvre
+    rows 1
+    language sql
+    stable
+begin
+    atomic
+    select meo.*
+    from action_impact_temps_de_mise_en_oeuvre meo
+    where meo.niveau = $1.action.temps_de_mise_en_oeuvre;
+end;
+comment on function action_impact_temps_de_mise_en_oeuvre is
+    'La relation entre le state d''une action et son temps de mise en oeuvre.';
 
 create function
     action_impact_matches_competences(collectivite_id integer, action_impact_id integer)
