@@ -7,7 +7,16 @@ import {MesCollectivite, Panier, PanierBase} from './types';
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
 export const panierSelect =
-  '*,contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),states:action_impact_state(*,matches_competences,thematiques:thematique(*),fourchette_budgetaire:action_impact_fourchette_budgetaire(*)))';
+  '*,' +
+  'contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),' +
+  'states:action_impact_state(' +
+  '*,' +
+  'matches_competences,' +
+  'thematiques:thematique(*),' +
+  'fourchette_budgetaire:action_impact_fourchette_budgetaire(*),' +
+  'temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*)' +
+  ')' +
+  ')';
 
 type RealtimePayload<T> = {
   type: string;
@@ -101,6 +110,7 @@ export class PanierAPI {
     panier_id: string,
     thematique_ids: number[],
     niveau_budget_ids: number[],
+    niveau_temps_ids: number[],
     match_competences: boolean
   ): Promise<Panier | null> {
     const builder = this.supabase
@@ -130,6 +140,19 @@ export class PanierAPI {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(
         'action_impact_state.fourchette_budgetaire',
+        'not.is.null'
+      );
+    }
+
+    if (niveau_temps_ids && niveau_temps_ids.length > 0) {
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.temps_de_mise_en_oeuvre.niveau',
+        `in.(${niveau_budget_ids.join(',')})`
+      );
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.temps_de_mise_en_oeuvre',
         'not.is.null'
       );
     }
