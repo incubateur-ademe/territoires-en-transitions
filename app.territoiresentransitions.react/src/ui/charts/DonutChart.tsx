@@ -193,7 +193,7 @@ const DonutChart = ({
         }
       }}
       data={isDefaultData() ? defaultData : localData}
-      theme={theme}
+      theme={{...theme, labels: {text: {fontSize: 14, fontWeight: 500}}}}
       colors={{datum: 'data.color'}}
       margin={customMargin ?? {top: 40, right: 50, bottom: 60, left: 50}}
       innerRadius={0.5}
