@@ -22,7 +22,7 @@ export const fetchPanier = async (
   panierId: string,
   thematique_ids: number[],
   budget_ids: number[],
-  match_competences: boolean,
+  match_competences: boolean
 ): Promise<Panier | null> => {
   const supabase = createClient(cookies());
   // @ts-ignore
@@ -32,7 +32,8 @@ export const fetchPanier = async (
     panierId,
     thematique_ids,
     budget_ids,
-    match_competences,
+    [],
+    match_competences
   );
 
   return panier;
@@ -41,7 +42,7 @@ export const fetchPanier = async (
 export const fetchCategories = async (): Promise<ActionImpactCategorie[]> => {
   const response = await fetch(
     `${apiUrl}/rest/v1/action_impact_categorie`,
-    getInit,
+    getInit
   );
   return await response.json();
 };
@@ -49,7 +50,7 @@ export const fetchCategories = async (): Promise<ActionImpactCategorie[]> => {
 export const fetchThematiques = async (): Promise<ActionImpactThematique[]> => {
   const response = await fetch(
     `${apiUrl}/rest/v1/thematique?select=id,nom`,
-    getInit,
+    getInit
   );
   return await response.json();
 };
@@ -59,7 +60,7 @@ export const fetchNiveaux = async (
     | 'action_impact_complexite'
     | 'action_impact_fourchette_budgetaire'
     | 'action_impact_tier'
-    | 'action_impact_temps_mise_en_oeuvre',
+    | 'action_impact_temps_mise_en_oeuvre'
 ): Promise<Niveau[]> => {
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();
