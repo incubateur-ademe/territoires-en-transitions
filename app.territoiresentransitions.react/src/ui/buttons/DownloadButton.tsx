@@ -26,7 +26,7 @@ const DownloadButton = ({
 }: DownloadButtonProps): JSX.Element => {
   const handleDownload = () => {
     if (containerRef && containerRef.current) {
-      html2canvas(containerRef.current).then(canvas => {
+      html2canvas(containerRef.current, {scale: 2}).then(canvas => {
         downloadFromCanvas(canvas, fileName, fileType);
       });
       if (onClick) onClick();
