@@ -44,6 +44,7 @@ jobs:
           +panier-build
           --ENV_NAME=${{ github.event.inputs.target }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }} 
+          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }} 
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
       - name: Deploy panier on Koyeb
