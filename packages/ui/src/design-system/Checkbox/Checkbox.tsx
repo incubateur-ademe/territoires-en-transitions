@@ -65,7 +65,7 @@ export const Checkbox = forwardRef(
             <label
               htmlFor={inputId}
               className={classNames(
-                'inline-flex items-center cursor-pointer font-medium',
+                'inline-flex items-center cursor-pointer ml-0 font-medium',
                 {
                   'text-grey-8': !remainingProps.disabled,
                   'text-grey-6': remainingProps.disabled,

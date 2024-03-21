@@ -8,7 +8,7 @@ exports[`design-system/Checkbox AvecMessage smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb7"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -29,7 +29,7 @@ exports[`design-system/Checkbox AvecMessageEtEtat smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb8"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -69,7 +69,7 @@ exports[`design-system/Checkbox AvecPersonnalisationDuContainer smoke-test 1`] =
   >
   <div class="flex flex-col gap-1">
     <label for="cb13"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -86,7 +86,7 @@ exports[`design-system/Checkbox Checked smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb3"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -104,7 +104,7 @@ exports[`design-system/Checkbox CheckedAndDisabled smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb5"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-6"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-6"
     >
       Description de l'action
     </label>
@@ -121,7 +121,7 @@ exports[`design-system/Checkbox LongLabelAvecMessage smoke-test 1`] = `
     >
     <div class="flex flex-col gap-1">
       <label for="cb6"
-             class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+             class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
       >
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       </label>
@@ -154,7 +154,7 @@ exports[`design-system/Checkbox Unchecked smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb2"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -171,7 +171,7 @@ exports[`design-system/Checkbox UncheckedAndDisabled smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb4"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-6"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-6"
     >
       Description de l'action
     </label>
@@ -187,7 +187,7 @@ exports[`design-system/Checkbox VarianteSwitch smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb10"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -211,7 +211,7 @@ exports[`design-system/Checkbox VarianteSwitchChecked smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb11"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-8"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-8"
     >
       Description de l'action
     </label>
@@ -236,7 +236,7 @@ exports[`design-system/Checkbox VarianteSwitchDisabled smoke-test 1`] = `
   >
   <div class="flex flex-col gap-1">
     <label for="cb12"
-           class="inline-flex items-center cursor-pointer font-medium text-grey-6"
+           class="inline-flex items-center cursor-pointer ml-0 font-medium text-grey-6"
     >
       Description de l'action
     </label>
