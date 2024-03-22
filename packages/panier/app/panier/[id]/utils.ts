@@ -60,7 +60,7 @@ export const fetchNiveaux = async (
     | 'action_impact_complexite'
     | 'action_impact_fourchette_budgetaire'
     | 'action_impact_tier'
-    | 'action_impact_temps_mise_en_oeuvre'
+    | 'action_impact_temps_de_mise_en_oeuvre'
 ): Promise<Niveau[]> => {
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();
