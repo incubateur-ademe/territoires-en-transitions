@@ -1,10 +1,8 @@
 import './global.css';
-import CollectiviteProvider from 'providers/collectivite';
-import PHProvider from 'providers/posthog';
 import Footer from '@components/Layout/Footer';
 import Header from '@components/Layout/Header';
-import PanierProvider from 'providers/panier';
 import Axeptio from '@components/Axeptio';
+import {StoreProvider} from 'providers';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -33,21 +31,17 @@ export const metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="fr">
-      <PHProvider>
+      <StoreProvider>
         <body className="min-h-screen overflow-x-visible flex flex-col">
-          <CollectiviteProvider>
-            <PanierProvider>
-              <div className="flex flex-col grow">
-                <Header />
-                <div className="bg-grey-2 grow flex flex-col">
-                  <div className="grow">{children}</div>
-                </div>
-              </div>
-            </PanierProvider>
-          </CollectiviteProvider>
+          <div className="flex flex-col grow">
+            <Header />
+            <div className="bg-grey-2 grow flex flex-col">
+              <div className="grow">{children}</div>
+            </div>
+          </div>
           <Footer />
         </body>
-      </PHProvider>
+      </StoreProvider>
       <Axeptio />
     </html>
   );

@@ -2,7 +2,7 @@
 
 import {useParams, usePathname, useRouter} from 'next/navigation';
 import {useEventTracker, Button} from '@tet/ui';
-import {useCollectiviteContext} from 'providers/collectivite';
+import {useCollectiviteContext} from 'providers';
 
 const ReprendrePanier = () => {
   const {collectiviteId} = useCollectiviteContext();
