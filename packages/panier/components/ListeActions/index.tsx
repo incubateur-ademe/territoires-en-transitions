@@ -30,7 +30,7 @@ const getTabLabel = (
 type ListeActionsProps = {
   actionsListe: ActionImpactState[];
   budgets: ActionImpactFourchetteBudgetaire[];
-  durees: ActionImpactTempsMiseEnOeuvre[];
+  temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
@@ -40,7 +40,7 @@ type ListeActionsProps = {
 const ListeActions = ({
   actionsListe,
   budgets,
-  durees,
+  temps,
   thematiques,
   onToggleSelected,
   onUpdateStatus,
@@ -63,12 +63,6 @@ const ListeActions = ({
     },
   ];
 
-  const filteredThematiques = thematiques.filter(t => {
-    return actionsListe.find(a => {
-      return a.thematiques.find(at => at.id === t.id);
-    });
-  });
-
   return (
     <Tabs
       onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
@@ -84,10 +78,7 @@ const ListeActions = ({
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
-            <FiltresActions
-              {...{budgets, durees}}
-              thematiques={filteredThematiques}
-            />
+            <FiltresActions {...{budgets, temps, thematiques}} />
             <Alert
               isOpen={openAlert}
               onClose={() => setOpenAlert(false)}
@@ -106,7 +97,7 @@ const ListeActions = ({
                 actionsListe={actionsFiltrees}
                 onUpdateStatus={onUpdateStatus}
                 onToggleSelected={onToggleSelected}
-                {...{budgets, durees}}
+                {...{budgets, temps}}
               />
             )}
           </Tab>
