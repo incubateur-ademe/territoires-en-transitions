@@ -19,7 +19,7 @@ const TrackPageView = dynamic(() => import('components/TrackPageView'), {
  * @param searchParams contient les paramètres des filtres :
  *  - t pour les ids des thématiques ex : 1 ou 1,2
  *  - b pour les ids des fourchettes budgétaires ex : 1 ou 1,2
- *  - d pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
+ *  - m pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
  *  - c pour utiliser les competences ex : true ou false (true par défaut)
  *
  *  Ainsi que le contrôle de la modale de "Création de plan d’action”
@@ -35,19 +35,20 @@ async function Page({
   const panierId = params.id;
   const thematique_ids = extractIdsFromParam(searchParams['t'] as string);
   const budget_ids = extractIdsFromParam(searchParams['b'] as string);
-  const match_competences = searchParams['c'] !== 'false';
+  const temps_ids = extractIdsFromParam(searchParams['m'] as string);
+  // const match_competences = searchParams['c'] !== 'false';
 
   const panier = await fetchPanier(
     panierId,
     thematique_ids,
     budget_ids,
-    match_competences
+    temps_ids,
   );
 
   if (!panier) return notFound();
 
   const budgets = await fetchNiveaux('action_impact_fourchette_budgetaire');
-  const durees = await fetchNiveaux('action_impact_temps_de_mise_en_oeuvre');
+  const temps = await fetchNiveaux('action_impact_temps_de_mise_en_oeuvre');
   const thematiques = await fetchThematiques();
 
   return (
@@ -57,7 +58,7 @@ async function Page({
         <PanierRealtime
           panier={panier}
           budgets={budgets}
-          durees={durees}
+          temps={temps}
           thematiques={thematiques}
         />
       </Section>
