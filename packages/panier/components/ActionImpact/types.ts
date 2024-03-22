@@ -18,9 +18,9 @@ export type ActionImpactProps = {
   /** Lien vers les ressources externes */
   ressources?: string | null;
   /** Lien vers les retours d'expérience */
-  rex?: string;
+  rex?: string | null;
   /** Lien vers les subventions mobilisables */
-  subventions?: string;
+  subventions?: string | null;
   /** Statut de l'action */
   statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
   /** Indique si l'action est mise dans le panier */

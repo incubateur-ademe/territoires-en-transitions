@@ -35,6 +35,8 @@ const ListeActionsFiltrees = ({
             t => t.niveau === action.action.temps_de_mise_en_oeuvre,
           )}
           ressources={action.action.ressources_externes}
+          rex={action.action.rex}
+          subventions={action.action.subventions_mobilisables}
           statut={
             action.statut?.categorie_id as
               | 'non_pertinent'
