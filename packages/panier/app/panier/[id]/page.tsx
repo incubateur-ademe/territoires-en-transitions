@@ -47,7 +47,7 @@ async function Page({
   if (!panier) return notFound();
 
   const budgets = await fetchNiveaux('action_impact_fourchette_budgetaire');
-  const durees = await fetchNiveaux('action_impact_temps_mise_en_oeuvre');
+  const durees = await fetchNiveaux('action_impact_temps_de_mise_en_oeuvre');
   const thematiques = await fetchThematiques();
 
   return (
