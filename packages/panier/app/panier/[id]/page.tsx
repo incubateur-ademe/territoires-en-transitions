@@ -41,7 +41,7 @@ async function Page({
     panierId,
     thematique_ids,
     budget_ids,
-    match_competences,
+    match_competences
   );
 
   if (!panier) return notFound();

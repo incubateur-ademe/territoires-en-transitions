@@ -11,7 +11,6 @@ export const panierSelect =
   'contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),' +
   'states:action_impact_state(' +
   '*,' +
-  'matches_competences,' +
   'thematiques:thematique(*),' +
   'fourchette_budgetaire:action_impact_fourchette_budgetaire(*),' +
   'temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*)' +
@@ -110,8 +109,7 @@ export class PanierAPI {
     panier_id: string,
     thematique_ids: number[],
     niveau_budget_ids: number[],
-    niveau_temps_ids: number[],
-    match_competences: boolean
+    niveau_temps_ids: number[]
   ): Promise<Panier | null> {
     const builder = this.supabase
       .from('panier')
@@ -154,14 +152,6 @@ export class PanierAPI {
       builder.url.searchParams.append(
         'action_impact_state.temps_de_mise_en_oeuvre',
         'not.is.null'
-      );
-    }
-
-    if (match_competences) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.matches_competences',
-        'is.true'
       );
     }
 

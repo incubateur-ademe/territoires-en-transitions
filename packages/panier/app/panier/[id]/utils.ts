@@ -32,8 +32,7 @@ export const fetchPanier = async (
     panierId,
     thematique_ids,
     budget_ids,
-    [],
-    match_competences
+    []
   );
 
   return panier;
