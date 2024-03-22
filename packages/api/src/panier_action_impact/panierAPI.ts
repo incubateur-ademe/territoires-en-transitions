@@ -146,7 +146,7 @@ export class PanierAPI {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(
         'action_impact_state.temps_de_mise_en_oeuvre.niveau',
-        `in.(${niveau_budget_ids.join(',')})`
+        `in.(${niveau_temps_ids.join(',')})`
       );
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(

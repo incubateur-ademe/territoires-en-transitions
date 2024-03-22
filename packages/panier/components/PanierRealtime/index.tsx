@@ -20,7 +20,7 @@ import {usePanierContext} from 'providers/panier';
 type PanierRealtimeProps = {
   panier: Panier;
   budgets: ActionImpactFourchetteBudgetaire[];
-  durees: ActionImpactTempsMiseEnOeuvre[];
+  temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
 };
 
@@ -36,13 +36,14 @@ export const UserContext = createContext<User | null>(null);
  *
  * @param panier Le panier passé par la partie server side.
  * @param budgets La liste des budgets pour le filtrage
+ * @param temps La liste des temps de mise en oeuvre pour le filtrage
  * @param thematiques La liste des thematiques pour le filtrage
  * @constructor
  */
 const PanierRealtime = ({
   panier,
   budgets,
-  durees,
+  temps,
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<OngletName>('selection');
@@ -99,7 +100,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null
+    statusId: string | null,
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     await tracker('statut', {
@@ -137,7 +138,7 @@ const PanierRealtime = ({
             onToggleSelected={handleToggleSelected}
             onUpdateStatus={handleUpdateStatus}
             onChangeTab={handleChangeTab}
-            {...{budgets, durees, thematiques}}
+            {...{budgets, temps, thematiques}}
           />
         </div>
 
