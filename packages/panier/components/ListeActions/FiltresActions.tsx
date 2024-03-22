@@ -92,7 +92,7 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
         niveau_budget_ids: budgetsValues,
         niveau_temps_ids: tempsValues,
       });
-      router.push(href);
+      router.push(href, {scroll: false});
     };
 
     trackThenNavigate();
