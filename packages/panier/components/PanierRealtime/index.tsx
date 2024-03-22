@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import {createContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
@@ -9,13 +9,15 @@ import {
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
-import {panierAPI, supabase} from 'src/clientAPI';
 import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
-import {User} from '@supabase/supabase-js';
-import {useCollectiviteContext} from 'providers/collectivite';
+import {panierAPI, supabase} from 'src/clientAPI';
 import ListeActions from '@components/ListeActions';
 import PanierActions from '@components/PanierActions';
-import {usePanierContext} from 'providers/panier';
+import {
+  useCollectiviteContext,
+  usePanierContext,
+  useUserContext,
+} from 'providers';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -23,13 +25,6 @@ type PanierRealtimeProps = {
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
 };
-
-/**
- * Le contexte qui permet de récupérer l'utilisateur
- *
- * Si l'utilisateur est `null` on considère qu'il n'est pas connecté.
- */
-export const UserContext = createContext<User | null>(null);
 
 /**
  * La partie client du Panier d'Action à Impact
@@ -47,11 +42,11 @@ const PanierRealtime = ({
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<OngletName>('selection');
-  const [user, setUser] = useState<User | null>(null);
 
   const router = useRouter();
   const {setCollectiviteId} = useCollectiviteContext();
   const {setPanier} = usePanierContext();
+  const {setUser} = useUserContext();
 
   const tracker = useEventTracker('panier', currentTab);
   const ongletTracker = useOngletTracker('panier');
@@ -76,7 +71,7 @@ const PanierRealtime = ({
       // @ts-ignore
       supabase.removeChannel(channel);
     };
-  }, [router, panier.id]);
+  }, [router, panier.id, setUser]);
 
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {
@@ -121,34 +116,32 @@ const PanierRealtime = ({
   };
 
   return (
-    <UserContext.Provider value={user}>
-      <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-        <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
-          <h1>
-            Initiez{' '}
-            <span className="text-secondary-1">des actions impactantes</span> et
-            valorisez le chemin déjà parcouru
-          </h1>
-          <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
-            Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
-            fonction de leur état d'avancement.
-          </p>
-          <ListeActions
-            actionsListe={panier.states}
-            onToggleSelected={handleToggleSelected}
-            onUpdateStatus={handleUpdateStatus}
-            onChangeTab={handleChangeTab}
-            {...{budgets, temps, thematiques}}
-          />
-        </div>
-
-        <PanierActions
-          actionsListe={panier.contenu}
-          budgets={budgets}
+    <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
+      <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
+        <h1>
+          Initiez{' '}
+          <span className="text-secondary-1">des actions impactantes</span> et
+          valorisez le chemin déjà parcouru
+        </h1>
+        <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
+          Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
+          fonction de leur état d'avancement.
+        </p>
+        <ListeActions
+          actionsListe={panier.states}
           onToggleSelected={handleToggleSelected}
+          onUpdateStatus={handleUpdateStatus}
+          onChangeTab={handleChangeTab}
+          {...{budgets, temps, thematiques}}
         />
       </div>
-    </UserContext.Provider>
+
+      <PanierActions
+        actionsListe={panier.contenu}
+        budgets={budgets}
+        onToggleSelected={handleToggleSelected}
+      />
+    </div>
   );
 };
 

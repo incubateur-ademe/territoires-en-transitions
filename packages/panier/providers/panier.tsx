@@ -31,7 +31,7 @@ export const usePanierContext = () => {
 /**
  * Provider pour le contexte du panier
  */
-const PanierProvider = ({children}: {children: React.ReactNode}) => {
+export const PanierProvider = ({children}: {children: React.ReactNode}) => {
   const [panier, setPanier] = useState(contextDefaultValue.panier);
 
   return (
@@ -40,5 +40,3 @@ const PanierProvider = ({children}: {children: React.ReactNode}) => {
     </PanierContext.Provider>
   );
 };
-
-export default PanierProvider;
