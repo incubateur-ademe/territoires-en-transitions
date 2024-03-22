@@ -8,19 +8,21 @@ import {
   Select,
   useEventTracker,
 } from '@tet/ui';
-import {useContext, useState} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {panierAPI} from 'src/clientAPI';
 import useSWR from 'swr';
 import {MesCollectivite} from '@tet/api';
-import {useCollectiviteContext} from 'providers/collectivite';
 import StepperValidation from '@components/Stepper/StepperValidation';
-import {UserContext} from '@components/PanierRealtime';
-import {usePanierContext} from 'providers/panier';
+import {
+  useCollectiviteContext,
+  usePanierContext,
+  useUserContext,
+} from 'providers';
 
 const ValiderPanierModale = () => {
   const {panier} = usePanierContext();
-  const user = useContext(UserContext);
+  const {user} = useUserContext();
   const contenu = panier?.contenu ?? [];
 
   let steps = [

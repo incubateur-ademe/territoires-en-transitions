@@ -1,13 +1,12 @@
 import {useEffect, useState} from 'react';
-import {useCollectiviteContext} from 'providers/collectivite';
-import {usePanierContext} from 'providers/panier';
 import {usePathname} from 'next/navigation';
+import {useCollectiviteContext, usePanierContext} from 'providers';
 
 const useLandingPathname = () => {
   const [landingPathname, setLandingPathname] = useState('/landing');
   const {collectiviteId} = useCollectiviteContext();
-  const pathname = usePathname();
   const {panier} = usePanierContext();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (pathname.includes('landing')) {

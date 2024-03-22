@@ -32,7 +32,11 @@ export const useCollectiviteContext = () => {
 /**
  * Provider pour le contexte de la collectivité
  */
-const CollectiviteProvider = ({children}: {children: React.ReactNode}) => {
+export const CollectiviteProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const pathname = usePathname();
   const pathnameArray = pathname.split('/');
   const params = useParams();
@@ -57,5 +61,3 @@ const CollectiviteProvider = ({children}: {children: React.ReactNode}) => {
     </CollectiviteContext.Provider>
   );
 };
-
-export default CollectiviteProvider;

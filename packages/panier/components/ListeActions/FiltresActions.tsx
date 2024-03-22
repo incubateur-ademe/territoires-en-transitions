@@ -14,7 +14,7 @@ import {
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import {usePanierContext} from 'providers/panier';
+import {usePanierContext} from 'providers';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
