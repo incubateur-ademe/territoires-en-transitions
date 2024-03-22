@@ -91,7 +91,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
       filtre: {
         thematique_ids?: OptionValue[];
         niveau_budget_ids?: OptionValue[];
-        niveau_duree_ids?: OptionValue[];
+        niveau_temps_ids?: OptionValue[];
         match_competences?: boolean;
       };
     };
