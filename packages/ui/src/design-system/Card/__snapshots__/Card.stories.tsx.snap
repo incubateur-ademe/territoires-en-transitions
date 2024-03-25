@@ -18,7 +18,7 @@ exports[`design-system/Card CompleteCard smoke-test 1`] = `
       <div data-test="Badge-undefined"
            class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
       >
-        <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+        <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
           Un badge
         </span>
       </div>
@@ -65,7 +65,7 @@ exports[`design-system/Card WithFooter smoke-test 1`] = `
       <div data-test="Badge-undefined"
            class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
       >
-        <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+        <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
           Un badge
         </span>
       </div>
