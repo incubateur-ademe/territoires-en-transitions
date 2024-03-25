@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
     process.env.NODE_ENV === 'production'
-      ? `'self' 'nonce-${nonce}' 'strict-dynamic';`
+      ? `'self' 'nonce-${nonce}'`
       : `'self' 'unsafe-eval' 'unsafe-inline'`;
 
   // on autorise les styles `unsafe-inline` à cause notamment d'un problème avec le commposant next/image
@@ -25,29 +25,21 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc}
-      https://static.axept.io/sdk.js
-      https://eu.posthog.com/static/surveys.js
-      https://eu-assets.i.posthog.com/static/surveys.js
-      https://eu.posthog.com/static/recorder-v2.js
-      https://eu-assets.i.posthog.com/static/recorder-v2.js;  
+    script-src ${scriptSrc} *.axept.io *.posthog.com;  
     style-src ${styleSrc};
-    img-src 'self' blob: data: 
-      ytimg.com
-      axeptio.imgix.net;
+    img-src 'self' blob: data: axeptio.imgix.net;
     font-src 'self';
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
       ws://${request.nextUrl.host}
-      eu.i.posthog.com
-      api.axept.io
-      client.axept.io;
+      *.posthog.com
+      *.axept.io;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com;
+    frame-src 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;
