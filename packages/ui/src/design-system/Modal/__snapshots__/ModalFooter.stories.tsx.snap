@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Modal/ModalFooter AvecContenuOptionnel smoke-test 1`] = `
-<hr class="bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
+<hr class="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4">
 <p>
   Contenu optionnel
 </p>

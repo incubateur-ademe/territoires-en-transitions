@@ -37,6 +37,8 @@ type Props = {
   className?: string;
   /** Restreint le titre à une seule ligne, true par défaut */
   trim?: boolean;
+  /** Met le texte du badge en majuscules */
+  uppercase?: boolean;
 };
 
 /** Affiche un badge */
@@ -51,6 +53,7 @@ export const Badge = ({
   disabled,
   className,
   trim = true,
+  uppercase = true,
   dataTest,
 }: Props) => {
   const styles = badgeClassnames[state];
@@ -71,15 +74,12 @@ export const Badge = ({
       )}
     >
       <span
-        className={classNames(
-          styles.text,
-          'font-bold uppercase leading-4 text-left',
-          {
-            'line-clamp-1': trim,
-            'text-xs': size === 'sm',
-            'mt-0.5 text-sm': size === 'md',
-          }
-        )}
+        className={classNames(styles.text, 'font-bold leading-4 text-left', {
+          'line-clamp-1': trim,
+          'text-xs': size === 'sm',
+          'mt-0.5 text-sm': size === 'md',
+          uppercase: uppercase,
+        })}
       >
         {title}
       </span>
