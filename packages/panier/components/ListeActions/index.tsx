@@ -9,7 +9,7 @@ import {
 import {Alert, OngletName, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
-import FiltresActions from './FiltresActions';
+import FiltresActions from '@components/FiltresActions';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},

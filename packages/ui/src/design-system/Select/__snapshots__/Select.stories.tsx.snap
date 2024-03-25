@@ -97,14 +97,14 @@ exports[`design-system/Select DisabledSearchableMultiSelectWithValue smoke-test 
           <div data-test="Badge-undefined"
                class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
           >
-            <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+            <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
               Option 1
             </span>
           </div>
           <div data-test="Badge-undefined"
                class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
           >
-            <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+            <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
               +1
             </span>
           </div>
