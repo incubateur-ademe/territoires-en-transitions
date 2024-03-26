@@ -18,6 +18,7 @@
     "dev:app": "concurrently --names \"api,ui,app\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\"",
     "dev:site": "concurrently --names \"api,ui,site\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/site -- -p 3001\"",
     "build": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm run build:site; else npm run build:app; fi",
+    "build:auth": "npm run build -w @tet/api -w @tet/ui -w @tet/auth",
     "build:app": "npm run build -w @tet/api -w @tet/ui -w @tet/app",
     "build:site": "npm run build -w @tet/api -w @tet/ui -w @tet/site",
     "start": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm start -w @tet/site; else npm start -w @tet/app; fi"
