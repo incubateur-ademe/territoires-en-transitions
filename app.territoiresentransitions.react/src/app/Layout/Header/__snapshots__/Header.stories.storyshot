@@ -1525,7 +1525,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 <a
                   className="fr-btn fr-icon-add-circle-line"
                   data-test="signup"
-                  href="/auth/signup"
+                  href="http://localhost:3003/signup?redirect_to=http%3A%2F%2Flocalhost%2F"
                   onClick={[Function]}
                 >
                   Créer un compte
@@ -1535,7 +1535,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
                 <a
                   className="fr-btn fr-icon-account-line"
                   data-test="signin"
-                  href="/auth/signin"
+                  href="http://localhost:3003/login?redirect_to=http%3A%2F%2Flocalhost%2F"
                   onClick={[Function]}
                 >
                   Se connecter
@@ -1582,7 +1582,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
             <a
               className="fr-btn fr-icon-add-circle-line"
               data-test="signup"
-              href="/auth/signup"
+              href="http://localhost:3003/signup?redirect_to=http%3A%2F%2Flocalhost%2F"
               onClick={[Function]}
             >
               Créer un compte
@@ -1592,7 +1592,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
             <a
               className="fr-btn fr-icon-account-line"
               data-test="signin"
-              href="/auth/signin"
+              href="http://localhost:3003/login?redirect_to=http%3A%2F%2Flocalhost%2F"
               onClick={[Function]}
             >
               Se connecter
