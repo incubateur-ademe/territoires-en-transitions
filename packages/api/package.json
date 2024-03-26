@@ -37,6 +37,6 @@
   "license": "ISC",
   "description": "",
   "peerDependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.3"
   }
 }
