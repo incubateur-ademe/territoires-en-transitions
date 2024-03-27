@@ -15,7 +15,7 @@ const NiveauBudget = ({budget}: NiveauBudgetProps) => {
         subvention).
       </div>
       <div>
-        Une évaluation précise du budget sera réalisée lors du dimensionnement
+        Une évaluation précise du budget sera à réaliser lors du dimensionnement
         exacte de l’action.
       </div>
     </div>
