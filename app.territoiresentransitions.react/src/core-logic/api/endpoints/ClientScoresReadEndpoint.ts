@@ -17,9 +17,11 @@ class ClientScoresReadEndpoint extends DataLayerReadEndpoint<
     getParams: ClientScoresGetParams
   ): Promise<PostgrestResponse<ClientScores>> {
     if (getParams.referentiel)
+      // @ts-ignore
       return this._table
         .eq('collectivite_id', getParams.collectiviteId)
         .eq('referentiel', getParams.referentiel);
+    // @ts-ignore
     return this._table.eq('collectivite_id', getParams.collectiviteId);
   }
 }
