@@ -4,6 +4,11 @@ import {
   ActionImpactThematique,
 } from '@tet/api';
 
+type LinkType = {
+  url: string;
+  label: string;
+};
+
 export type ActionImpactProps = {
   /** Titre de l'action à impact */
   titre: string;
@@ -16,11 +21,11 @@ export type ActionImpactProps = {
   /** Temps de mise en oeuvre */
   miseEnOeuvre?: ActionImpactTempsMiseEnOeuvre;
   /** Lien vers les ressources externes */
-  ressources?: string | null;
+  ressources?: LinkType[] | null;
   /** Lien vers les retours d'expérience */
-  rex?: string | null;
+  rex?: LinkType[] | null;
   /** Lien vers les subventions mobilisables */
-  subventions?: string | null;
+  subventions?: LinkType[] | null;
   /** Statut de l'action */
   statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
   /** Indique si l'action est mise dans le panier */
