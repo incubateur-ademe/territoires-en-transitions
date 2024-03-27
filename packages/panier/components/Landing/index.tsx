@@ -8,7 +8,7 @@ const Landing = () => {
   return (
     <>
       <Section
-        className="lg:flex-row gap-y-8 gap-x-16 items-center py-24"
+        className="lg:flex-row gap-y-8 gap-x-16 items-center max-md:pt-12 md:py-24"
         containerClassName="bg-white"
       >
         <div className="lg:w-2/3">
@@ -35,13 +35,13 @@ const Landing = () => {
             <ReprendrePanier />
           </div>
         </div>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center max-w-full">
           <BigBasketPicto />
         </div>
       </Section>
 
-      <Section className="lg:flex-row gap-y-8 gap-x-12 items-center py-24">
-        <div className="lg:w-1/2 flex justify-center items-center max-lg:order-last">
+      <Section className="lg:flex-row gap-y-8 gap-x-12 items-center max-md:pt-12 md:py-24">
+        <div className="lg:w-1/2 flex justify-center items-center max-lg:order-last max-w-full">
           <DashboardPicto />
         </div>
         <div className="lg:w-1/2">
