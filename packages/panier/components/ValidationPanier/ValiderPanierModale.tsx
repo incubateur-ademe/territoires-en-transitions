@@ -12,7 +12,7 @@ import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {panierAPI} from 'src/clientAPI';
 import useSWR from 'swr';
-import {MesCollectivite} from '@tet/api';
+import {MesCollectivite, getAuthPaths} from '@tet/api';
 import StepperValidation from '@components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,
@@ -73,13 +73,22 @@ export default ValiderPanierModale;
  * Les boutons renvoient sur le site avec l'URL courante
  */
 const ModeDeconnecte = () => {
-  // todo changer les liens, ajouter [l'url courante]+[modale=creation] en redirect
+  // construit l'url de redirection (vers cette modale ouverte)
+  const redirectTo = new URL(document.location.href);
+  redirectTo.searchParams.set('modale', 'creation');
+
+  // récupère les urls du module auth.
+  const authPaths = getAuthPaths(
+    document.location.hostname,
+    redirectTo.toString(),
+  );
+
   return (
     <div className="flex gap-4 justify-center">
-      <Button href="app/login" variant="outlined">
+      <Button href={authPaths.login} variant="outlined">
         Se connecter
       </Button>
-      <Button href="app/signup">Créer un compte</Button>
+      <Button href={authPaths.signUp}>Créer un compte</Button>
     </div>
   );
 };
