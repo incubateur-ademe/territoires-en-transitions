@@ -261,6 +261,7 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     COPY ./package-lock.json ./
     # dépendances des modules
     COPY $APP_DIR/package.json ./$APP_DIR/
+    COPY $AUTH_DIR/package.json ./$AUTH_DIR/
     COPY $SITE_DIR/package.json ./$SITE_DIR/
     COPY $UI_DIR/package.json ./$UI_DIR/
     COPY $API_DIR/package.json ./$API_DIR/
