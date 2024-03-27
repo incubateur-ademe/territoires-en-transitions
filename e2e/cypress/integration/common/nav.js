@@ -80,7 +80,7 @@ When(/la vue(?: des)? "(.*)" est masquée/, view => {
 // teste les redirections
 const redirectedTo = {
   app: 'http://localhost:3000',
-  site: 'http://localhost:3001',
+  authentification: 'http://localhost:3003',
   panier: 'http://localhost:3002',
 };
 const checkRedirect = appName => {

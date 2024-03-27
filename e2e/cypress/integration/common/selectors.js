@@ -4,7 +4,7 @@
 
 export const Selectors = {
   header: {
-    selector: 'header[role=banner]',
+    selector: 'header',
     children: {
       'Se connecter': '.fr-header__tools-links [data-test=signin]',
       'Créer un compte': '.fr-header__tools-links [data-test=signup]',
