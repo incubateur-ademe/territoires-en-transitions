@@ -24356,13 +24356,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -25195,13 +25195,13 @@ export interface Database {
             Returns: string
           }
         | {
-            Args: {
-              msg: unknown
-            }
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              msg: unknown
+            }
             Returns: string
           }
         | {
@@ -26850,6 +26850,14 @@ export interface Database {
         }
         Returns: undefined
       }
+      retool_patch_demande: {
+        Args: {
+          demande_id: number
+          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+          etoiles?: Database["labellisation"]["Enums"]["etoile"]
+        }
+        Returns: undefined
+      }
       retool_update_audit: {
         Args: {
           audit_id: number
@@ -27394,18 +27402,6 @@ export interface Database {
         | {
             Args: {
               why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
               how_many: number
             }
             Returns: boolean[]
@@ -27414,6 +27410,18 @@ export interface Database {
             Args: {
               how_many: number
               why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              how_many: number
             }
             Returns: boolean[]
           }
