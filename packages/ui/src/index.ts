@@ -7,6 +7,7 @@ export {preset} from './tailwind-preset';
 export * from './hooks/useCopyToClipboard';
 
 // dossier composants
+export * from './components/filters';
 export * from './components/layout';
 export * from './components/tracking';
 

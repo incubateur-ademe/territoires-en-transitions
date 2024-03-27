@@ -1,27 +1,9 @@
-import {Ref, RefObject, forwardRef, useEffect, useRef, useState} from 'react';
+import {Ref, forwardRef, useEffect, useRef, useState} from 'react';
 import {ButtonProps} from './types';
 import {Button} from './Button';
 import {NotificationVariant} from '../Notification';
 import {NotificationButton} from './NotificationButton';
 import classNames from 'classnames';
-
-const useOutsideAlerter = (
-  ref: RefObject<HTMLDivElement>,
-  onClickOutside: () => void
-) => {
-  useEffect(() => {
-    const handleClickOutside = event => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        return onClickOutside();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref, onClickOutside]);
-};
 
 /** Ouverture d'un menu flottant au click sur le bouton */
 
@@ -52,9 +34,24 @@ export const ButtonMenu = forwardRef(
     const [openMenu, setOpenMenu] = useState(false);
 
     const containerRef: Ref<HTMLDivElement> = useRef(null);
-    useOutsideAlerter(containerRef, () => setOpenMenu(false));
 
     const handleClick = () => setOpenMenu(prevState => !prevState);
+
+    const handleClickOutside = event => {
+      if (
+        containerRef?.current &&
+        !containerRef?.current.contains(event.target)
+      ) {
+        setOpenMenu(false);
+      }
+    };
+
+    useEffect(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
 
     return (
       <div ref={containerRef} className="mx-2 relative w-fit">
