@@ -34,9 +34,18 @@ const ListeActionsFiltrees = ({
           miseEnOeuvre={temps.find(
             t => t.niveau === action.action.temps_de_mise_en_oeuvre,
           )}
-          ressources={action.action.ressources_externes}
-          rex={action.action.rex}
-          subventions={action.action.subventions_mobilisables}
+          ressources={[
+            {
+              url: 'https://www.territoiresentransitions.fr/',
+              label: 'Ceci est un test',
+            },
+            {
+              url: 'https://www.territoiresentransitions.fr/',
+              label: 'Un second test',
+            },
+          ]}
+          rex={[]}
+          subventions={[]}
           statut={
             action.statut?.categorie_id as
               | 'non_pertinent'

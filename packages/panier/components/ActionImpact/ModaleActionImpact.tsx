@@ -36,16 +36,10 @@ export const ModaleActionImpact = ({
   return (
     <Modal
       size="lg"
+      title={titre}
+      textAlign="left"
       render={() => (
         <div>
-          <div className="flex justify-end mb-6 mt-4">
-            {/* Budget */}
-            <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
-          </div>
-
-          {/* Titre de l'action */}
-          <h3>{titre}</h3>
-
           {/* Badges thématiques */}
           {!!thematiques.length && (
             <div className="flex gap-4 flex-wrap mb-6">
@@ -67,27 +61,77 @@ export const ModaleActionImpact = ({
           <p className="text-base text-primary-10 font-bold mb-8">
             Temps de mise en oeuvre :{' '}
             <span className="text-primary-8">
-              {miseEnOeuvre?.nom ?? 'non estimé'}
+              {miseEnOeuvre?.nom.toLowerCase() ?? 'non estimé'}
             </span>
             <InfoTooltip
+              activatedBy="click"
               className="ml-2"
               label={
-                <div className="w-52 !font-normal">
-                  Temps estimatif correspondant au déploiement de l’action une
-                  fois validée, de son démarrage à ses premières réalisations.
-                  Cette temporalité peut varier en fonction des priorisations,
-                  des moyens et des ressources disponibles.
+                <div className="w-52 !font-normal flex flex-col gap-3 p-1">
+                  <div>
+                    Temps estimatif correspondant au déploiement de l’action une
+                    fois celle-ci validée, de son démarrage à ses premières
+                    réalisations.
+                  </div>
+                  <div>
+                    Cette temporalité peut varier en fonction des priorisations,
+                    des moyens et des ressources disponibles.
+                  </div>
+                  <Button
+                    variant="underlined"
+                    size="xs"
+                    className="!text-info-1 !border-info-1"
+                    href="https://www.territoiresentransitions.fr/"
+                    external
+                  >
+                    En savoir plus
+                  </Button>
+                </div>
+              }
+            />
+          </p>
+
+          {/* Estimation budgétaire */}
+          <p className="text-base text-primary-10 font-bold mb-8">
+            Estimation budgétaire :{' '}
+            <span className="text-primary-8">
+              {budget?.nom.toLowerCase() ?? 'non estimé'}
+            </span>
+            <InfoTooltip
+              activatedBy="click"
+              className="ml-2"
+              label={
+                <div className="w-52 !font-normal flex flex-col gap-3 p-1">
+                  <div>
+                    Estimation budgétaire HT (investissement et fonctionnement,
+                    hors subvention).
+                  </div>
+                  <div>
+                    Une évaluation précise du budget sera à réaliser lors du
+                    dimensionnement exacte de l’action.
+                  </div>
+                  <Button
+                    variant="underlined"
+                    size="xs"
+                    className="!text-info-1 !border-info-1"
+                    href="https://www.territoiresentransitions.fr/"
+                    external
+                  >
+                    En savoir plus
+                  </Button>
                 </div>
               }
             />
           </p>
 
           {/* Ressources externes */}
-          {/* {!!ressources && (
+          {!!ressources && ressources.length > 0 && (
             <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
-              <LienExterneModale markdownLink={ressources} />
+              {ressources.map(r => (
+                <LienExterneModale key={r.label} {...r} />
+              ))}
             </div>
-          )} */}
+          )}
 
           <Divider className="mt-4" />
 
@@ -97,30 +141,33 @@ export const ModaleActionImpact = ({
               D’autres collectivités l’ont fait :
             </h6>
             <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
-              {!rex ? (
+              {!rex || rex.length === 0 ? (
                 <span className="text-sm text-grey-7">
                   Exemples d'autres collectivités à venir
                 </span>
               ) : (
-                <LienExterneModale markdownLink={rex} />
+                rex.map(r => <LienExterneModale key={r.label} {...r} />)
               )}
             </div>
           </div>
-
-          <Divider className="mt-4" />
 
           {/* Subventions mobilisables */}
           <div className="mt-2">
             <h6 className="text-primary-10 text-base font-bold">
               Subventions mobilisables :{' '}
               <InfoTooltip
+                activatedBy="click"
                 className="ml-1"
                 label={
-                  <div className="w-52 !font-normal">
-                    De nombreux programmes d’aides nationaux et locaux peuvent
-                    vous permettre de financer ou d’accompagner vos projets. Les
-                    liens directs vers les programmes concernés seront
-                    prochainement disponibles sur la plateforme.
+                  <div className="w-52 !font-normal flex flex-col gap-3 p-1">
+                    <div>
+                      De nombreux programmes d’aides nationaux et locaux peuvent
+                      vous permettre de financer ou d’accompagner vos projets.
+                    </div>
+                    <div>
+                      Les liens directs vers les programmes concernés seront
+                      prochainement disponibles sur la plateforme.
+                    </div>
                   </div>
                 }
               />
@@ -128,11 +175,13 @@ export const ModaleActionImpact = ({
             <div className="flex gap-x-8 gap-y-3 flex-wrap">
               <LienExterneModale
                 label="Aides territoires"
-                href="https://aides-territoires.beta.gouv.fr"
+                url="https://aides-territoires.beta.gouv.fr"
               />
-              {!!subventions && (
-                <LienExterneModale markdownLink={subventions} />
-              )}
+              {!!subventions &&
+                subventions.length > 0 &&
+                subventions.map(s => (
+                  <LienExterneModale key={s.label} {...s} />
+                ))}
             </div>
           </div>
         </div>
