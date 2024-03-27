@@ -55,7 +55,7 @@ export const Card = ({
       'hover:border-grey-4': hasHoverEffect && !isSelected,
       // default
       'border-grey-3': !isSelected,
-      '!m-0 border-2 border-info-1': isSelected,
+      '!m-0 border-2 border-primary-7': isSelected,
     },
     className
   );
