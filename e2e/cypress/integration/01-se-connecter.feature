@@ -16,8 +16,7 @@ Fonctionnalité: Accéder au site et se connecter
       | Elément                 | Condition |
       | header                  | visible   |
       | home                    | absent    |
-      | formulaire de connexion | visible   |
-      | footer                  | présent   |
+      | formulaire de connexion | visible |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
@@ -32,7 +31,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible |
 
-
   Scénario: Se connecter par lien unique en tant qu'utilisateur déjà rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
@@ -43,7 +41,7 @@ Fonctionnalité: Accéder au site et se connecter
       | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
-    Alors je suis redirigé sur le site
+    Alors je suis redirigé sur l'authentification
 
     Quand je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
@@ -66,7 +64,6 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion               | absent    |
       | le tableau de bord de la collectivité | visible   |
 
-@focus
   Scénario: Se connecter en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
     Alors la page vérifie les conditions suivantes :
@@ -77,13 +74,13 @@ Fonctionnalité: Accéder au site et se connecter
       | footer                  | présent   |
 
     Quand je clique sur le bouton "Se connecter" du "header"
-    Alors je suis redirigé sur le site
+    Alors je suis redirigé sur l'authentification
     Et la page vérifie les conditions suivantes :
       | Elément                 | Condition |
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer                  | présent   |
+      | footer | absent |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
@@ -146,7 +143,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer                  | présent   |
+      | footer | absent |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
@@ -159,8 +156,8 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |                                                 |
       | home                    | absent    |                                                 |
       | formulaire de connexion | visible   |                                                 |
-      | formulaire de connexion | contient  | L'email et le mot de passe ne correspondent pas |
-      | footer                  | présent   |                                                 |
+      | formulaire de connexion | contient | L'email ou le mot de passe ne correspondent pas |
+      | footer                  | absent   |                                                 |
 
   Scénario: Demander un lien de réinitialisation et réinitialiser le mot de passe
     Etant donné que la mailbox de "yolo" est vidée
