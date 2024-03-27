@@ -17,7 +17,7 @@
     "dev": "concurrently --names \"api,ui,app,site,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold,bgYellow.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\" \"npm run dev -w @tet/site -- -p 3001\" \"npm run dev -w @tet/auth -- -p 3003\"",
     "dev:app": "concurrently --names \"api,ui,app,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\" \"npm run dev -w @tet/auth -- -p 3003\"",
     "dev:site": "concurrently --names \"api,ui,site\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/site -- -p 3001\"",
-    "dev:panier": "concurrently --names \"api,ui,panier\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/panier -- -p 3001\"",
+    "dev:panier": "concurrently --names \"api,ui,panier,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgYellow.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/panier -- -p 3001\" \"npm run dev -w @tet/auth -- -p 3003\"",
     "build": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm run build:site; else npm run build:app; fi",
     "build:auth": "npm run build -w @tet/api -w @tet/ui -w @tet/auth",
     "build:app": "npm run build -w @tet/api -w @tet/ui -w @tet/app",
