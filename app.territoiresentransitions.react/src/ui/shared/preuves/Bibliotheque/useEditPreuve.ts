@@ -42,7 +42,9 @@ export const useEditPreuve: TEditPreuve = preuve => {
 // le nom de la table dans laquelle sont stockées les infos sur une preuve
 // dépend du type de la preuve
 const tableOfType = ({preuve_type}: TPreuve) =>
-  (preuve_type as string) === 'annexe' ? preuve_type : `preuve_${preuve_type}`;
+  (preuve_type as string) === 'annexe'
+    ? 'annexe'
+    : (`preuve_${preuve_type}` as const);
 
 // renvoie une fonction de suppression d'une preuve
 const useRemovePreuve = () =>
@@ -64,7 +66,7 @@ const useUpdatePreuveCommentaire = () =>
       const {id, commentaire} = preuve;
       return supabaseClient
         .from(tableOfType(preuve))
-        .update({commentaire})
+        .update({commentaire: commentaire || ''})
         .match({id});
     },
     {
