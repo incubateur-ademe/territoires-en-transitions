@@ -785,6 +785,11 @@ site-deploy:
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
 
+auth-deploy:
+    ARG --required KOYEB_API_KEY
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
+
 app-deploy: ## Déploie le front dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
     FROM +koyeb
