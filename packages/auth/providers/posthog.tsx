@@ -8,7 +8,7 @@ if (typeof window !== 'undefined') {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
-  if (is_dev && (!key || !host)) {
+  if (/*is_dev &&*/ !key || !host) {
     console.warn(
       `Le tracking PostHog n'est pas configuré, les variables d'env sont absentes.`,
     );
