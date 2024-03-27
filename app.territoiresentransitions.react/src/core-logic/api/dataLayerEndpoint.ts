@@ -29,6 +29,7 @@ export abstract class DataLayerReadEndpoint<
   }
 
   get _table() {
+    // @ts-ignore
     return supabaseClient.from(this.name).select();
   }
 
@@ -143,6 +144,7 @@ export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
   }
 
   get _table() {
+    // @ts-ignore
     return supabaseClient.from(this.name);
   }
 
