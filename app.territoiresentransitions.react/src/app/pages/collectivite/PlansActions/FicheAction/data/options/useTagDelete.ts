@@ -1,15 +1,12 @@
 import {QueryKey, useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {CollectiviteTag, TableTag} from '@tet/api';
 
-type Tag = {
-  collectivite_id: number;
-  id?: number | undefined;
-  nom: string;
-};
+type Tag = CollectiviteTag;
 
 type Args = {
   key: QueryKey;
-  tagTableName: string;
+  tagTableName: TableTag;
   keysToInvalidate?: QueryKey[];
 };
 
