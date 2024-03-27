@@ -328,7 +328,9 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
+    COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
+    RUN npm run build -w @tet/api
     RUN npm run build -w @tet/ui
     # la commande utilisée pour lancer les tests
     CMD npm run test -w @tet/app
