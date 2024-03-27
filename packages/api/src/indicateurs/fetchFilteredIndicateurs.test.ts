@@ -3,6 +3,9 @@ import {signIn, signOut} from '../tests/auth';
 import {testReset} from '../tests/testReset';
 import {supabase} from '../tests/supabase';
 import {fetchFilteredIndicateurs, Filters, Subset,} from './fetchFilteredIndicateurs';
+import {Database} from '../database.types';
+
+type TableName = keyof Database['public']['Tables'];
 
 const FIXTURE = {
   indicateur_pilote: [
@@ -54,7 +57,10 @@ const FIXTURE = {
       indicateur_perso_id: 0,
     },
   ],
-};
+} as Partial<
+  Record<TableName, Database['public']['Tables'][TableName]['Insert']>
+>;
+
 
 // wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
 const fetchIndicateurs = (subset: Subset, filters: Filters) =>
@@ -83,7 +89,8 @@ describe('Confidentialité', async () => {
       [{indicateur_id: 'cae_8', collectivite_id: 1}]
     );
 
-    const {data, error} = await supabase.from('indicateur_resultat')
+    const {data} = await supabase
+      .from('indicateur_resultat')
       .select('*')
       .eq('collectivite_id', 1)
       .eq('indicateur_id', 'cae_8');
@@ -95,7 +102,8 @@ describe('Confidentialité', async () => {
 
   it('Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n\'ai pas de droits', async () => {
     await signIn('yulududu');
-    const {data, error} = await supabase.from('indicateur_resultat')
+    const {data} = await supabase
+      .from('indicateur_resultat')
       .select('*')
       .eq('collectivite_id', 1)
       .eq('indicateur_id', 'cae_8');
@@ -114,7 +122,9 @@ describe('Filtrer les indicateurs', async () => {
     await Promise.all(
       Object.entries(FIXTURE).map(async ([tableName, entries]) => {
         console.log(`insert fixture into ${tableName}`);
-        const upsert = await supabase.from(tableName).upsert(entries);
+        const upsert = await supabase
+          .from(tableName as TableName)
+          .upsert(entries);
         assert.equal(
           upsert.status,
           201,
