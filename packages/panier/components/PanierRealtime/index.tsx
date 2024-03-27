@@ -62,11 +62,6 @@ const PanierRealtime = ({
 
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) setUser(session.user);
-    });
-    // todo: restoreAuthTokens(supabase);
-
     return () => {
       // @ts-ignore
       supabase.removeChannel(channel);
