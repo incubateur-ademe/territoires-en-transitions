@@ -34,11 +34,13 @@ export type TEditIndicateurValeurHandlers = ReturnType<
 
 // où écrire en fonction du type de valeur et si c'est un indicateur personnalisé ou non
 const tableValeur = (type: TypeValeur, isPerso?: boolean) =>
-  isPerso ? `indicateur_personnalise_${type}` : `indicateur_${type}`;
+  isPerso
+    ? (`indicateur_personnalise_${type}` as const)
+    : (`indicateur_${type}` as const);
 const tableCommentaire = (type: TypeValeur, isPerso?: boolean) =>
   isPerso
-    ? `indicateur_perso_${type}_commentaire`
-    : `indicateur_${type}_commentaire`;
+    ? (`indicateur_perso_${type}_commentaire` as const)
+    : (`indicateur_${type}_commentaire` as const);
 
 /** Met à jour la valeur d'un indicateur */
 const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
