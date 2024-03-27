@@ -53,6 +53,10 @@ module.exports = async (on, config) => {
   // pour vérifier le contenu d'un zip
   validateZip(on, config);
 
+  // redirige les logs cypress dans la console quand un test échoue (utile pour
+  // comprendre les échecs en CI)
+  require('cypress-terminal-report/src/installLogsPrinter')(on);
+
   // renvoie la configuration mise à jour par les plugins
   return config;
 };
