@@ -5,6 +5,26 @@ import LineChart, {LineChartProps} from './Line/LineChart';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
+/** Informations détaillées du graphique visible sur la modale de téléchargement */
+export type ChartInfosProps = {
+  /** État d'ouverture de la modale et configuration */
+  modal?: {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+    /** Taille de la modale */
+    size?: ModalSize;
+  };
+  /** Titre du graphique */
+  title?: string;
+  /** Sous-titre du graphique */
+  subtitle?: string;
+  /** Informations additionnelles affichées sous le graphique et sa légende.
+   * Peut être utilisé pour des légendes complexes ou un simple texte complémentaire */
+  additionalInfos?: React.ReactElement | string;
+  /** Doit être donné pour afficher le bouton de téléchargement */
+  fileName?: string;
+};
+
 export type ChartProps = {
   /** Graphique donut */
   donut?: {
@@ -23,24 +43,7 @@ export type ChartProps = {
     modalChart?: Omit<LineChartProps, 'data'>;
   };
   /** Les informations détaillées à afficher dans la modale de téléchargement */
-  infos?: {
-    /** État d'ouverture de la modale et configuration */
-    modal?: {
-      isOpen: boolean;
-      setIsOpen: (isOpen: boolean) => void;
-      /** Taille de la modale */
-      size?: ModalSize;
-    };
-    /** Titre du graphique */
-    title?: string;
-    /** Sous-titre du graphique */
-    subtitle?: string;
-    /** Informations additionnelles affichées sous le graphique et sa légende.
-     * Peut être utilisé pour des légendes complexes ou un simple texte complémentaire */
-    additionalInfos?: React.ReactElement | string;
-    /** Doit être donné pour afficher le bouton de téléchargement */
-    fileName?: string;
-  };
+  infos?: ChartInfosProps;
 };
 
 /**
