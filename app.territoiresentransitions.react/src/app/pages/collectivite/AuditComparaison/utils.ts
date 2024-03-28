@@ -16,8 +16,8 @@ export const getFormattedScore = (
     formattedScore.push(
       ...scoreData.map(d => ({
         [indexBy]: `${d.action_id.split('_')[1]}`,
-        'Avant audit': d.pre_audit.score_realise * 100,
-        'Après audit': d.courant.score_realise * 100,
+        'Avant audit': (d.pre_audit.score_realise || 0) * 100,
+        'Après audit': (d.courant.score_realise || 0) * 100,
       }))
     );
 
@@ -26,21 +26,23 @@ export const getFormattedScore = (
       [indexBy]: 'Total',
       'Avant audit':
         (scoreData.reduce(
-          (res, currVal) => res + currVal.pre_audit.points_realises,
+          (res, currVal) => res + (currVal.pre_audit.points_realises || 0),
           0
         ) /
           (scoreData.reduce(
-            (res, currVal) => res + currVal.pre_audit.points_max_personnalises,
+            (res, currVal) =>
+              res + (currVal.pre_audit.points_max_personnalises || 0),
             0
           ) || 1)) *
         100,
       'Après audit':
         (scoreData.reduce(
-          (res, currVal) => res + currVal.courant.points_realises,
+          (res, currVal) => res + (currVal.courant.points_realises || 0),
           0
         ) /
           (scoreData.reduce(
-            (res, currVal) => res + currVal.courant.points_max_personnalises,
+            (res, currVal) =>
+              res + (currVal.courant.points_max_personnalises || 0),
             0
           ) || 1)) *
         100,

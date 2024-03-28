@@ -1,15 +1,12 @@
 import {QueryKey, useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {CollectiviteTag, TableTag} from '@tet/api';
 
-type Tag = {
-  collectivite_id: number;
-  id?: number | undefined;
-  nom: string;
-};
+type Tag = CollectiviteTag;
 
 type Args = {
   key: QueryKey;
-  tagTableName: string;
+  tagTableName: TableTag;
   keysToInvalidate?: QueryKey[];
 };
 
@@ -18,7 +15,8 @@ export const useTagUpdate = ({key, tagTableName, keysToInvalidate}: Args) => {
 
   return useMutation(
     async (tag: Tag) => {
-      await supabaseClient.from(tagTableName).update(tag).eq('id', tag.id);
+      if (tag.id)
+        await supabaseClient.from(tagTableName).update(tag).eq('id', tag.id);
     },
     {
       mutationKey: 'update_tag',

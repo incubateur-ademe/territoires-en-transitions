@@ -26,7 +26,9 @@ class ActionTitleReadEndpoint extends DataLayerReadCachedEndpoint<
     getParams: ActionTitleGetParams
   ): Promise<PostgrestResponse<ActionTitleRead>> {
     if (getParams.referentiel !== undefined)
+      // @ts-ignore
       return this._table.eq('referentiel', getParams.referentiel);
+    // @ts-ignore
     return this._table;
   }
 }

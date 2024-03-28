@@ -8,7 +8,7 @@ import {
   NonNullableFields,
 } from '@tet/api';
 
-export type TFlatAxe = CompositeTypes<'flat_axe_node'>;
+export type TFlatAxe = NonNullableFields<CompositeTypes<'flat_axe_node'>>;
 
 export type TPlanType = Tables<'plan_action_type'>;
 

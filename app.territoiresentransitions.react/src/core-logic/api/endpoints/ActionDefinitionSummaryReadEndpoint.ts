@@ -40,9 +40,10 @@ class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<
   async _read(
     getParams: ActionDefinitionSummaryParams
   ): Promise<PostgrestResponse<ActionDefinitionSummary>> {
+    // @ts-ignore
     return this._table
-      .eq('referentiel', getParams.referentiel)
-      .eq('identifiant', getParams.identifiant);
+  .eq('referentiel', getParams.referentiel)
+  .eq('identifiant', getParams.identifiant);
   }
 }
 

@@ -4,20 +4,34 @@ import {Database} from './database.types';
 // client supabase avec le typage de la base
 export type DBClient = ReturnType<typeof createClient<Database>>;
 
+// liste des noms de table du schéma public
+export type TableName = keyof Database['public']['Tables'];
+
 // Alias génériques sur le typage de la base
-export type Tables<T extends keyof Database['public']['Tables']> =
+export type Tables<T extends TableName> =
   Database['public']['Tables'][T]['Row'];
 export type Views<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row'];
 export type Enums<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T];
-export type TablesInsert<T extends keyof Database['public']['Tables']> =
+export type TablesInsert<T extends TableName> =
   Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends keyof Database['public']['Tables']> =
+export type TablesUpdate<T extends TableName> =
   Database['public']['Tables'][T]['Update'];
 export type CompositeTypes<
   T extends keyof Database['public']['CompositeTypes']
 > = Database['public']['CompositeTypes'][T];
+
+// un exemple de type d'objet tag associé à une collectivité
+export type CollectiviteTag = Database['public']['Tables']['partenaire_tag']['Insert'];
+
+// la liste des tables correspondant au schéma CollectiviteTag
+// utilise le "key remapping" et les types conditionnels
+// Ref: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#key-remapping-via-as
+//      https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+export type TableTag = keyof {
+  [K in TableName as TablesInsert<K> extends CollectiviteTag ? K : never]: unknown;
+};
 
 /**
   Génère, à partir d'un type, un nouveau type dont tous les champs sont non

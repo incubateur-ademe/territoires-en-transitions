@@ -41,7 +41,7 @@ const PersonnesPilotes = ({
   const options =
     personneListe?.map(personne => ({
       value: personne.tag_id ? personne.tag_id : personne.user_id!,
-      label: personne.nom,
+      label: personne.nom || '',
     })) ?? [];
 
   const userCreatedOptions = getFlatOptions(options)
