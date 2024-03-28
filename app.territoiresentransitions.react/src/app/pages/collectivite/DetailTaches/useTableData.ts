@@ -79,7 +79,7 @@ export const useTableData: UseTableData = () => {
               av => !!av && av !== 'non_renseigne'
             )
           ) {
-            return {...action, avancement: !action.avancement?'detaille':action.avancement, isExpanded: true};
+            return {...action, avancement: 'detaille', isExpanded: true};
           } else return {...action, isExpanded: false};
         } else if (action.type === 'sous-action') {
           // Les autres sous-actions ne sont pas dépliées
