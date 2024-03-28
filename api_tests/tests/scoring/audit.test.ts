@@ -66,11 +66,12 @@ Deno.test("Scénario de demande d'audit COT", async () => {
   });
 
   const demande = await verifier_avant_commencement(collectivite);
+  assertExists(demande);
   const auditEnCours = await commencer_audit(
     auditAuditeur,
     collectivite,
-    demande,
-    auditeur,
+    demande!,
+    auditeur
   );
 
   const mesCollectivitesPendantAuditResponse = await supabase
@@ -84,7 +85,7 @@ Deno.test("Scénario de demande d'audit COT", async () => {
     est_auditeur: true,
   });
 
-  const auditValide = await valider_audit(auditEnCours, collectivite, demande);
+  const auditValide = await valider_audit(auditEnCours, collectivite, demande!);
 
   // Une fois l'audit COT valide, il est clôturé automatiquement.
   assertExists(auditValide.data[0]!.date_fin);
