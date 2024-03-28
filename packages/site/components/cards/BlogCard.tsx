@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {Badge} from '@tet/ui';
 import classNames from 'classnames';
 import {getLocalDateString} from 'src/utils/getLocalDateString';
@@ -82,13 +83,13 @@ const BlogCard = ({
           {image ? (
             image
           ) : (
-            <picture>
-              <img
-                className="fr-responsive-image w-full"
-                src="placeholder.png"
-                alt="pas d'image disponible"
-              />
-            </picture>
+            <Image
+              className="fr-responsive-image w-full"
+              src="/placeholder.png"
+              alt="pas d'image disponible"
+              width={354}
+              height={201}
+            />
           )}
         </div>
         {!!badge && (
