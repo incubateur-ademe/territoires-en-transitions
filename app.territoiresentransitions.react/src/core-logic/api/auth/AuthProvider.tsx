@@ -10,6 +10,7 @@ import {User, SignInWithPasswordCredentials} from '@supabase/supabase-js';
 import {useQuery} from 'react-query';
 import {supabaseClient} from '../supabase';
 import {useCurrentSession} from './useCurrentSession';
+import {Crisp} from 'crisp-sdk-web';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -125,6 +126,22 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// affecte les données de l'utilisateur connecté à la chatbox
+const setCrispUserData = (userData: UserData | null) => {
+  if (userData && Crisp.isCrispInjected()) {
+    const {nom, prenom, email} = userData;
+
+    if (nom && prenom) {
+      Crisp.user.setNickname(`${prenom} ${nom}`);
+    }
+
+    if (email) {
+      Crisp.user.setEmail(email);
+    }
+  }
+};
+
+// TODO: à supprimer (voir ci-dessous)
 declare global {
   interface Window {
     $crisp: {
@@ -133,25 +150,11 @@ declare global {
   }
 }
 
-// affecte les données de l'utilisateur connecté à la chatbox
-const setCrispUserData = (userData: UserData | null) => {
-  if ('$crisp' in window && userData) {
-    const {$crisp} = window;
-    const {nom, prenom, email} = userData;
-
-    if (nom && prenom) {
-      $crisp.push(['set', 'user:nickname', [`${prenom} ${nom}`]]);
-    }
-
-    // enregistre l'email
-    if (email) {
-      $crisp.push(['set', 'user:email', [email]]);
-    }
-  }
-};
-
 // ré-initialise les données de la chatbox (appelée à la déconnexion)
 const clearCrispUserData = () => {
+  // TODO: remplacer cet appel par `Crisp.session.reset()` quand [ce
+  // problème](https://github.com/crisp-im/crisp-sdk-web/issues/28) aura été
+  // résolu
   if ('$crisp' in window) {
     const {$crisp} = window;
     $crisp.push(['do', 'session:reset']);
