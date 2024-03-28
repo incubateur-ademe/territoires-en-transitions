@@ -7,13 +7,13 @@ import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {TIndicateurPersonnalise} from './types';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
 import {useExportIndicateurs} from './useExportIndicateurs';
-import IndicateurChart from './charts/IndicateurChart';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
 import {useIndicateurPersonnalise} from './useIndicateurDefinition';
+import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -69,7 +69,14 @@ const IndicateurPersonnaliseBase = ({
             onClick={() => exportIndicateurs()}
           />
         </div>
-        <IndicateurChart variant="zoomed" definition={definition} />
+
+        <IndicateurDetailChart
+          definition={definition}
+          rempli={definition.rempli}
+          titre={definition.titre}
+          fileName={definition.nom}
+        />
+
         <BadgeACompleter a_completer={!rempli} className="fr-mt-5w fr-mb-3w" />
         <IndicateurValuesTabs definition={definition} />
         <FormField

@@ -3,13 +3,14 @@ import {Badge} from 'ui/shared/Badge';
 import FormField from 'ui/shared/form/FormField';
 import {referentielToName} from 'app/labels';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
-import IndicateurChart from '../charts/IndicateurChart';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurPredefini} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
 import {ImportSourcesDropdown} from './ImportSourcesDropdown';
+
+import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -30,11 +31,15 @@ export const IndicateurDetail = ({
         currentSource={currentSource}
         setCurrentSource={setCurrentSource}
       />
-      <IndicateurChart
-        variant="zoomed"
+
+      <IndicateurDetailChart
         definition={definition}
-        importSource={currentSource}
+        rempli={definition.rempli}
+        source={currentSource}
+        titre={definition.titre_long}
+        fileName={definition.nom}
       />
+
       <div className="flex items-center fr-mt-5w fr-mb-3w gap-4">
         <BadgeACompleter a_completer={!definition.rempli} />
         {definition.participation_score && (

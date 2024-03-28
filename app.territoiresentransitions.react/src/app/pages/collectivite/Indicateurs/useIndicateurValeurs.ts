@@ -23,14 +23,14 @@ export type TIndicateurValeurEtCommentaires = TIndicateurValeur & {
 export const useIndicateurValeurs = ({
   id,
   importSource,
-  isDetail,
+  autoRefresh = false,
 }: {
   /** Identifiant indicateur perso ou prédéfini */
   id: number | string | undefined;
   /** Source des données à utiliser */
   importSource?: string;
-  /** Indique si le graphique est en mode "détail" (ou en vignette) */
-  isDetail: boolean;
+  /** Indique si le rafraichissement des datas du graphique */
+  autoRefresh?: boolean;
 }) => {
   const collectivite_id = useCollectiviteId();
   const isPerso = typeof id === 'number';
@@ -62,10 +62,7 @@ export const useIndicateurValeurs = ({
         .returns<TIndicateurValeur[]>();
       return data;
     },
-    /** il faut recharger plus souvent quand le graphe est sur la page détail car
-     * les valeurs peuvent être éditées dans un autre onglet et un autre
-     * indicateur (cas indicateur lié à un autre) */
-    isDetail ? undefined : DISABLE_AUTO_REFETCH
+    autoRefresh ? undefined : DISABLE_AUTO_REFETCH
   );
 };
 
