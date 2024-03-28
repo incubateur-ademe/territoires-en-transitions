@@ -70,7 +70,6 @@ create table action_impact
     titre                    text    not null,
     description              text    not null,
 
-    ressources_externes      text,
     nb_collectivite_en_cours integer not null                                                default 1,
     nb_collectivite_realise  integer not null                                                default 1,
     action_continue          boolean not null                                                default false,
@@ -79,12 +78,59 @@ create table action_impact
     fourchette_budgetaire    integer not null references action_impact_fourchette_budgetaire default 1,
     impact_tier              integer not null references action_impact_tier                  default 1,
 
-    subventions_mobilisables text,
-    rex text
+    subventions_mobilisables jsonb,
+    ressources_externes      jsonb,
+    rex                      jsonb,
+
+    check (jsonb_matches_schema(
+            schema :='{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "url": {"type": "string"}
+                },
+                "required": ["label", "url"],
+                "additionalProperties": false
+              }
+            }',
+            instance := subventions_mobilisables
+           )),
+    check (jsonb_matches_schema(
+            schema :='{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "url": {"type": "string"}
+                },
+                "required": ["label", "url"],
+                "additionalProperties": false
+              }
+            }',
+            instance := ressources_externes
+           )),
+        check (jsonb_matches_schema(
+        schema :='{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "url": {"type": "string"}
+                },
+                "required": ["label", "url"],
+                "additionalProperties": false
+              }
+            }',
+        instance := rex
+        ))
 );
-comment on column action_impact.rex is 'retour sur experience';
-
-
+comment on column action_impact.subventions_mobilisables is 'Subventions mobilisables, liste de liens `[{label: string, url: string}]`';
+comment on column action_impact.ressources_externes is 'Ressources externes, liste de liens `[{label: string, url: string}]`';
+comment on column action_impact.rex is 'Retours sur experience, liste de liens `[{label: string, url: string}]`';
 
 --- Table de passage
 
