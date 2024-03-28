@@ -48,7 +48,7 @@ def compute_scores(
 
     scores: Dict[ActionId, ActionScore] = {}
 
-    # 3. Dernière passe Propagation des scores des taches vers les parents
+    # 3. Quatrième passe Propagation des scores des taches vers les parents
     # - on calcule le score des taches
     # - puis on propage aux parents
     #   - le score de chaque parent est calculé :
@@ -68,7 +68,7 @@ def compute_scores(
         )
     )
 
-    # Dernière pour la fonction de personnalisation scores.
+    # Cinquième pour la fonction de personnalisation scores.
     for (
             action_id,
             personnalisation_consequence,
@@ -96,6 +96,16 @@ def compute_scores(
                     ),
                     action_id,
                 )
+
+    # Dernière pour passer un tag renseigné
+    referentiel_tree.map_from_taches_to_root(
+        lambda action_id: add_tag_renseigne(
+            referentiel_tree,
+            scores,
+            action_id
+        )
+    )
+
     return {
         action_id: _round_action_score(score) for action_id, score in scores.items()
     }

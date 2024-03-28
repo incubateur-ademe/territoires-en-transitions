@@ -13,6 +13,23 @@ from business.utils.models.personnalisation import ActionPersonnalisationConsequ
 logger = logging.getLogger()
 
 
+def add_tag_renseigne(
+    referentiel_tree: ActionPointTree,
+    scores: Dict[ActionId, ActionScore],
+    action_id: ActionId
+):
+    if (
+            not scores[action_id].desactive and
+            scores[action_id].concerne and
+            (
+                    referentiel_tree._get_parent(action_id) is None or
+                    scores[referentiel_tree._get_parent(action_id)].concerne
+            ) and
+            scores[action_id].point_non_renseigne > 0.0
+    ):
+        scores[action_id].renseigne = False
+
+
 def update_action_scores(
         referentiel_tree: ActionPointTree,
         personnalise_tree: ActionPointTree,
@@ -96,6 +113,7 @@ def update_action_scores_from_status(
             if is_personnalise and not is_desactive
             else None,
             desactive=is_desactive,
+            renseigne=True
         )
         return
 
@@ -152,6 +170,7 @@ def update_action_scores_from_status(
         if is_personnalise
         else None,
         desactive=is_desactive,
+        renseigne=True
     )
 
 
@@ -244,6 +263,7 @@ def update_action_score_from_children_scores(
         if is_personnalise and not is_desactive
         else None,
         desactive=is_desactive,
+        renseigne=True
     )
 
 
@@ -282,6 +302,7 @@ def compute_action_non_concerne_ids(
 
     action_non_concerne_ids += action_desactive_ids
 
+    """Quand tous les enfants sont non concernés, propage le statut vers le parent"""
     point_tree.map_from_taches_to_root(
         lambda action_id: _propagate_non_concerne(
             point_tree,
@@ -290,6 +311,7 @@ def compute_action_non_concerne_ids(
             action_non_concerne_ids,
         )
     )
+
     return action_non_concerne_ids
 
 
@@ -452,7 +474,7 @@ def build_point_personnalisation_tree(
                 lambda action_id: personnalise_tree.set_action_point(
                     action_id,
                     personnalise_tree.get_action_point(action_id) * factor,
-                )
+                    )
             )
             personnalise_tree.map_from_action_to_taches(
                 personnalisation,
