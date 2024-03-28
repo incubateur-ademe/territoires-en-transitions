@@ -1,30 +1,37 @@
-import {LineSvgProps, ResponsiveLine} from '@nivo/line';
+import {CSSProperties} from 'react';
+import classNames from 'classnames';
+import {Datum, LineSvgProps, ResponsiveLine} from '@nivo/line';
 
 import {defaultColors, theme} from '../chartsTheme';
 import ChartLegend, {ChartLegendProps} from '../ChartLegend';
-import classNames from 'classnames';
 import {generateLineLegendItems} from 'ui/charts/Line/utils';
 
+/** Format de données pour une droite du graphique Line */
 export type LineData = {
+  /** Id nécessaire à Nivo */
   id: string;
-  data: {
-    x: number | string | Date;
-    y: number | string | Date;
-  }[];
+  /** Position de chaque points du graphique */
+  data: Datum[];
+  /** Nom de la droite, l'id est utilisé dans la légende s'il n'est pas donné */
+  label?: string;
+  /** Couleur de la droite */
   color?: string;
+  /** Symbole associé à la droite, notamment utilisé pour la légende */
   symbole?: (color: string) => React.ReactNode;
+  /** Styles appliqué à la droite (épaisseur, pointillés, ...) */
+  style?: CSSProperties;
 };
 
-export type LineChartProps = {
+export type LineChartProps = Omit<LineSvgProps, 'data'> & {
   /** tableau de données à afficher */
   data: LineData[];
   /** Permet d'afficher et configurer la légende */
   legend?: ChartLegendProps;
-  /** Classname du container, permet notamment de donner la hauteur du graphe.*/
+  /** Classname du graphique, permet notamment de donner la hauteur du graphe.*/
   className?: string;
   /** Legende de l'ordonnée */
   axisLeftLegend?: string | React.ReactNode;
-} & LineSvgProps;
+};
 
 /**
  * Affiche un graphique de type "ligne"
@@ -37,7 +44,7 @@ const LineChart = ({
   ...nivoLineProps
 }: LineChartProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       {axisLeftLegend && (
         <div className="ml-3 text-sm text-grey-9">{axisLeftLegend}</div>
       )}
