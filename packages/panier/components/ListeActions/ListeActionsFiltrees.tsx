@@ -28,24 +28,15 @@ const ListeActionsFiltrees = ({
           titre={action.action.titre}
           thematiques={action.thematiques}
           budget={budgets.find(
-            b => b.niveau === action.action.fourchette_budgetaire,
+            b => b.niveau === action.action.fourchette_budgetaire
           )}
           description={action.action.description}
           miseEnOeuvre={temps.find(
-            t => t.niveau === action.action.temps_de_mise_en_oeuvre,
+            t => t.niveau === action.action.temps_de_mise_en_oeuvre
           )}
-          ressources={[
-            {
-              url: 'https://www.territoiresentransitions.fr/',
-              label: 'Ceci est un test',
-            },
-            {
-              url: 'https://www.territoiresentransitions.fr/',
-              label: 'Un second test',
-            },
-          ]}
-          rex={[]}
-          subventions={[]}
+          ressources={action.action.ressources_externes ?? []}
+          rex={action.action.rex ?? []}
+          subventions={action.action.subventions_mobilisables ?? []}
           statut={
             action.statut?.categorie_id as
               | 'non_pertinent'
@@ -61,7 +52,7 @@ const ListeActionsFiltrees = ({
           onUpdateStatus={statut =>
             onUpdateStatus(
               action.action.id,
-              action.statut?.categorie_id === statut ? null : statut,
+              action.statut?.categorie_id === statut ? null : statut
             )
           }
         />
