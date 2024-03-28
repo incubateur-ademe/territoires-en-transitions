@@ -1,20 +1,24 @@
-import {Link} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import IndicateurChart from '../charts/IndicateurChart';
-import {TIndicateurChartProps} from '../charts/types';
 import {TIndicateurListItem} from '../types';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
+import IndicateurCard, {
+  IndicateurCardProps,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type TIndicateurChartsGridProps = {
   definitions: TIndicateurListItem[];
   view: IndicateurViewParamOption;
 };
 
-/** Affiche une grille de graphiques d'indicateur */
+/**
+ * Affiche une grille de graphiques d'indicateur.
+ * Les données des graphiques sont chargées dynamiquement lorsqu'ils deviennent visibles à l'écran.
+ */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const {definitions, view} = props;
 
@@ -33,10 +37,11 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
 
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
-  props: TIndicateurChartProps & {view: IndicateurViewParamOption}
+  props: IndicateurCardProps & {view: IndicateurViewParamOption}
 ) => {
   const {ref, entry} = useIntersectionObserver();
   const collectiviteId = useCollectiviteId()!;
+  const isReadonly = useCurrentCollectivite()?.readonly ?? true;
 
   const {definition, view} = props;
   const url = makeCollectiviteIndicateursUrl({
@@ -46,11 +51,14 @@ const IndicateurChartContainer = (
   });
 
   return (
-    <div className="h-80" ref={ref}>
+    <div className="min-h-[20rem]" ref={ref}>
       {entry?.isIntersecting ? (
-        <Link to={url} className="focus-visible:ring">
-          <IndicateurChart {...props} />
-        </Link>
+        <IndicateurCard
+          href={url}
+          className="h-full"
+          definition={definition}
+          readonly={isReadonly}
+        />
       ) : (
         definition.nom
       )}
