@@ -79,7 +79,7 @@ export async function envoyer_demande(
     etoiles: etoiles ?? null,
     sujet: sujet,
   });
-  return demandeLabellisationEnvoyee;
+  return { ...demandeLabellisationEnvoyee, sujet };
 }
 
 export async function verifier_avant_commencement(
