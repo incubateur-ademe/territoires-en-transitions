@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.1",
-    "supabase": "1.88.0"
+    "supabase": "1.151.1"
   },
   "scripts": {
     "dev": "concurrently --names \"api,ui,app,site,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgGreen.bold,bgYellow.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/app\" \"npm run dev -w @tet/site -- -p 3001\" \"npm run dev -w @tet/site -- -p 3003\"",
