@@ -62,3 +62,7 @@ class ActionScore:
     "Le potentiel personnalisé est calculé à partir du potentiel, " \
         "auquel on ajoute le reliquat des points des actions désactivées"
 
+    renseigne: bool
+    "Vrai si l'action est renseignée, càd non manquante à la complétion du référentiel. " \
+        "Tag défini en fonction du statut de l'action et de celui de ses parents"
+
