@@ -18,7 +18,19 @@ export type ActionImpactTempsMiseEnOeuvre =
 
 export type FNV = Database['public']['Tables']['categorie_fnv']['Row'];
 
-export type ActionImpact = Database['public']['Tables']['action_impact']['Row'];
+export type Link = {
+  url: string;
+  label: string;
+};
+
+export type ActionImpact = Omit<
+  Database['public']['Tables']['action_impact']['Row'],
+  'rex' | 'ressources_externes' | 'subventions_mobilisables'
+> & {
+  rex: Link[];
+  ressources_externes: Link[];
+  subventions_mobilisables: Link[];
+};
 
 /* Le resumé d'une action à impact, utilisé pour les cartes  */
 export type ActionImpactSnippet =
