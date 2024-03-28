@@ -27,22 +27,34 @@ export const getRootDomain = (hostname: string) => {
  *  (app, panier, auth) ou pas de sous-domaine (ou wwww) pour le
  *  site
  */
-/** Donne l'URL du module d'authentification */
-const DEV_SITE_PORT = 3003; // port pour le mode dev
-export const getAuthBaseUrl = (hostname: string) => {
+export const getBaseUrl = (
+  hostname: string,
+  appName: string,
+  devPort: number
+) => {
   const domain = getRootDomain(hostname);
   if (domain === 'localhost') {
-    return `http://localhost:${DEV_SITE_PORT}`;
+    return `http://localhost:${devPort}`;
   }
 
-    const subdomain =
-      hostname.includes('preprod') || domain === 'koyeb.app'
-        ? domain === 'koyeb.app'
-          ? 'preprod-auth-tet'
-          : 'preprod-auth'
-        : 'auth';
+  const subdomain =
+    hostname.includes('preprod') || domain === 'koyeb.app'
+      ? domain === 'koyeb.app'
+        ? `preprod-${appName}-tet`
+        : `preprod-${appName}`
+      : appName;
   return `https://${subdomain}.${domain}`;
 };
+
+/** Donne l'URL du module d'authentification */
+const DEV_AUTH_PORT = 3003; // port pour le mode dev
+export const getAuthBaseUrl = (hostname: string) =>
+  getBaseUrl(hostname, 'auth', DEV_AUTH_PORT);
+
+/** Donne l'URL de l'app pour rediriger après la connexion depuis le site */
+const DEV_APP_PORT = 3000;
+export const getAppBaseUrl = (hostname: string) =>
+  getBaseUrl(hostname, 'app', DEV_APP_PORT);
 
 /**
  * Donne les URLs des pages d'authentification
