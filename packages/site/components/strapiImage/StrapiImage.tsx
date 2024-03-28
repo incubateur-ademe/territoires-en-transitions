@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+'use client';
+
 import classNames from 'classnames';
-import {CSSProperties} from 'react';
+import {CSSProperties, useState} from 'react';
 import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
@@ -25,6 +27,8 @@ export function StrapiImage({
   containerStyle,
   displayCaption = false,
 }: StrapiImageProps) {
+  const [error, setError] = useState(false);
+
   const attributes = data.attributes;
 
   const url =
@@ -36,10 +40,19 @@ export function StrapiImage({
     <div className={containerClassName} style={containerStyle}>
       <Image
         className={classNames('block', className)}
-        src={url.startsWith('http') ? url : `${baseURL}${url}`}
+        src={
+          error
+            ? '/placeholder.png'
+            : url.startsWith('http')
+            ? url
+            : `${baseURL}${url}`
+        }
         alt={`${attributes.alternativeText ?? ''}`}
         width={attributes.width as unknown as number}
         height={attributes.height as unknown as number}
+        placeholder="blur"
+        blurDataURL="/placeholder.png"
+        onErrorCapture={() => setError(true)}
       />
       {displayCaption && !!attributes.caption && (
         <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
