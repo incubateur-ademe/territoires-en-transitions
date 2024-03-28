@@ -52,12 +52,17 @@ const ScoreDetailleModal = ({
     | undefined
   >();
 
+  const [justification, setJustification] = useState<string>('');
+
   const scores = useTasksScoreRepartition(action.id);
   const {actionJustification} = useActionJustification(action.id);
   const {saveActionJustification} = useSaveActionJustification();
 
   useEffect(() => {
-    if (actionJustification) setJustificationPayload(actionJustification);
+    if (actionJustification) {
+      setJustificationPayload(actionJustification);
+      setJustification(actionJustification.texte);
+    }
   }, [actionJustification]);
 
   return (
@@ -132,6 +137,7 @@ const ScoreDetailleModal = ({
                   title="Justification de l’ajustement manuel (obligatoire)"
                   subtitle="Précisez les raisons de cette répartition, dont les initiatives complémentaires à valoriser, pour faciliter la relecture et l’audit"
                   onSave={setJustificationPayload}
+                  onChange={setJustification}
                 />
               )}
 
@@ -160,7 +166,7 @@ const ScoreDetailleModal = ({
                       justificationPayload &&
                       saveActionJustification(justificationPayload);
                   }}
-                  disabled={isScorePerso && !justificationPayload?.texte}
+                  disabled={isScorePerso && !justification?.length}
                 >
                   {saveAtValidation
                     ? isScorePerso
