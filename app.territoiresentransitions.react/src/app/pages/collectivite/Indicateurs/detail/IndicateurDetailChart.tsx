@@ -16,6 +16,10 @@ type Props = {
   source?: string;
 };
 
+/**
+ * Utiliser dans les pages indicateurs.
+ * Permet notamment de télécharger le graphique.
+ */
 const IndicateurDetailChart = ({
   definition,
   rempli,
