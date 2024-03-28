@@ -2838,9 +2838,9 @@ export interface Database {
           impact_tier: number
           nb_collectivite_en_cours: number
           nb_collectivite_realise: number
-          ressources_externes: string | null
-          rex: string | null
-          subventions_mobilisables: string | null
+          ressources_externes: Json | null
+          rex: Json | null
+          subventions_mobilisables: Json | null
           temps_de_mise_en_oeuvre: number
           titre: string
         }
@@ -2852,9 +2852,9 @@ export interface Database {
           impact_tier?: number
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
-          ressources_externes?: string | null
-          rex?: string | null
-          subventions_mobilisables?: string | null
+          ressources_externes?: Json | null
+          rex?: Json | null
+          subventions_mobilisables?: Json | null
           temps_de_mise_en_oeuvre?: number
           titre: string
         }
@@ -2866,9 +2866,9 @@ export interface Database {
           impact_tier?: number
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
-          ressources_externes?: string | null
-          rex?: string | null
-          subventions_mobilisables?: string | null
+          ressources_externes?: Json | null
+          rex?: Json | null
+          subventions_mobilisables?: Json | null
           temps_de_mise_en_oeuvre?: number
           titre?: string
         }
@@ -28465,14 +28465,14 @@ export interface Database {
       skip:
         | {
             Args: {
-              "": string
+              why: string
+              how_many: number
             }
             Returns: string
           }
         | {
             Args: {
-              why: string
-              how_many: number
+              "": string
             }
             Returns: string
           }
