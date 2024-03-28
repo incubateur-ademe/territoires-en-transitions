@@ -4,7 +4,7 @@ exports[`design-system/Badge CustomIcon smoke-test 1`] = `
 <div data-test="Badge-undefined"
      class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
 >
-  <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+  <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
     Badge
   </span>
   <div class="flex rounded-full cursor-pointer">
@@ -18,7 +18,7 @@ exports[`design-system/Badge Default smoke-test 1`] = `
 <div data-test="Badge-undefined"
      class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
 >
-  <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+  <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
     Badge
   </span>
 </div>
@@ -33,14 +33,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -51,7 +51,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -62,14 +62,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-grey-1 border-grey-5 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-grey-8 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-8 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -81,14 +81,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-primary-7 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-primary-7 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -99,7 +99,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-primary-7 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -110,14 +110,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-primary-7 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-primary-7 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-primary-7 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -129,14 +129,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -147,7 +147,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -158,14 +158,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -177,14 +177,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-warning-2 border-warning-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-warning-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-warning-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-warning-2 border-warning-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-warning-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-warning-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -195,7 +195,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-warning-2 border-warning-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-warning-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-warning-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -206,14 +206,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-warning-2 border-warning-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-warning-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-warning-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-warning-2 border-warning-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-warning-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-warning-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -225,14 +225,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-new-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-new-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-new-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-new-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -243,7 +243,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-new-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-new-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -254,14 +254,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-new-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-new-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-new-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-new-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -273,14 +273,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-error-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-error-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-error-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-error-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -291,7 +291,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-error-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-error-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -302,14 +302,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-error-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-error-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-error-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-error-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -321,14 +321,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -339,7 +339,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -350,14 +350,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-info-1 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
@@ -369,14 +369,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-grey-6 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-grey-6 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -387,7 +387,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded flex-row-reverse !px-1.5 !py-0.5"
     >
-      <span class="text-grey-6 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+      <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
@@ -398,14 +398,14 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
     <div data-test="Badge-undefined"
          class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
     >
-      <span class="text-grey-6 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
     <div data-test="Badge-undefined"
          class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
     >
-      <span class="text-grey-6 font-bold uppercase leading-4 text-left line-clamp-1 mt-0.5 text-sm">
+      <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
         Badge
       </span>
     </div>
