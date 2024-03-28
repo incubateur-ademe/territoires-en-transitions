@@ -16,7 +16,7 @@ const FiltrePersonnes = ({values, onSelect}: Props) => {
         {value: ITEM_ALL, label: 'Tous'},
         ...personneListe.map(personne => ({
           value: `${personne.user_id || personne.tag_id}`,
-          label: personne.nom,
+          label: personne.nom || '',
         })),
       ]
     : [];
