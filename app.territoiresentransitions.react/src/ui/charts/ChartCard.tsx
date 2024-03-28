@@ -4,7 +4,6 @@ import {useRef, useState} from 'react';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
-import LineChart, {LineChartProps} from './LineChart';
 
 export const Legend = ({
   legend,
@@ -132,49 +131,9 @@ const ChartCardModalContent = ({
   );
 };
 
-// variante pour les graphes indicateurs
-export const ChartCardContent = ({
-  chart,
-  chartInfo,
-  topElement,
-}: ChartCardModalContentProps) => {
-  // Référence utilisée pour le téléchargement du graphe
-  const {chartWrapperRef, downloadable, DownloadChartButton} =
-    useDownloadChartButton(
-      chartInfo?.downloadedFileName,
-      'absolute right-0 top-0 z-10'
-    );
-
-  return (
-    <div className="relative">
-      {/* Bouton de téléchargement, affiché si un nom de fichier est fourni */}
-      <DownloadChartButton />
-
-      <div ref={chartWrapperRef} className="p-3">
-        {/* Titre du graphe */}
-        {!!chartInfo?.title && (
-          <p className={classNames('font-bold', {'mr-12': downloadable})}>
-            {chartInfo.title}
-          </p>
-        )}
-
-        {/* Element additionnel optionnel, ajouté entre le titre et le graphe */}
-        <div data-html2canvas-ignore>
-          {!!topElement && topElement('detailled')}
-        </div>
-
-        {/* Graphe agrandi */}
-        <div className={classNames('w-full h-50', chartInfo?.chartClassname)}>
-          {chart}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 type ChartCardProps = {
-  chartType: 'bar' | 'donut' | 'line';
-  chartProps: BarChartProps | LineChartProps;
+  chartType: 'bar';
+  chartProps: BarChartProps;
   chartInfo?: {
     title?: string;
     subtitle?: string;
@@ -192,7 +151,7 @@ type ChartCardProps = {
 /**
  * Carte affichant un graphe custom
  *
- * @param chartType 'bar' | 'donut' | 'line'
+ * @param chartType 'bar'
  * @param chartProps BarChartProps | DonutChartProps |
  * @param chartInfo title, legend, expandable, downloadFileName, additionalInfo
  * @param topElement JSX.Element (affiché entre le titre et le graphe)
@@ -217,9 +176,6 @@ const ChartCard = ({
   switch (chartType) {
     case 'bar':
       chart = <BarChart {...(chartProps as BarChartProps)} />;
-      break;
-    case 'line':
-      chart = <LineChart {...(chartProps as LineChartProps)} />;
       break;
     default:
       break;
