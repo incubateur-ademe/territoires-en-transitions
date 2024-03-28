@@ -3,6 +3,8 @@ LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
 ARG --global SITE_DIR='./packages/site'
+ARG --global AUTH_DIR='./packages/auth'
+ARG --global PANIER_DIR='./packages/panier'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
 ARG --global BUSINESS_DIR='./business'
@@ -14,9 +16,11 @@ ARG --global REG_TARGET=$REGISTRY/$REG_USER
 ARG --global ENV_NAME="dev"
 ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
-ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR)
+ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
-ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR)
+ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
+ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
+ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
 ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
 ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
 ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
@@ -259,7 +263,9 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     COPY ./package-lock.json ./
     # dépendances des modules
     COPY $APP_DIR/package.json ./$APP_DIR/
+    COPY $AUTH_DIR/package.json ./$AUTH_DIR/
     COPY $SITE_DIR/package.json ./$SITE_DIR/
+    COPY $PANIER_DIR/package.json ./$PANIER_DIR/
     COPY $UI_DIR/package.json ./$UI_DIR/
     COPY $API_DIR/package.json ./$API_DIR/
     # installe les dépendances
@@ -314,7 +320,9 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
+    COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
+    RUN npm run build -w @tet/api
     RUN npm run build -w @tet/ui
     # la commande utilisée pour lancer les tests
     CMD npm run test -w @tet/app
@@ -356,40 +364,69 @@ package-api-test: ## lance les tests d'intégration de l'api
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
 
-site-build: ## construit l'image du site
+panier-build: ## construit l'image du panier
     ARG PLATFORM
     ARG --required ANON_KEY
     ARG --required API_URL
-    ARG --required STRAPI_KEY
-    ARG --required STRAPI_URL
-    ARG AMPLITUDE_KEY
+    ARG POSTHOG_HOST
+    ARG POSTHOG_KEY
+    ARG AXEPTIO_ID
     ARG vars
     FROM +front-deps
-    ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
-    ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
     ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
     ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_AMPLITUDE_KEY=$AMPLITUDE_KEY
+    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
+    ENV NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID
     ENV NEXT_TELEMETRY_DISABLED=1
-    ENV PUBLIC_PATH="/app/packages/site/public"
+    ENV PUBLIC_PATH="/app/packages/panier/public"
     ENV PORT=80
     EXPOSE $PORT
     # copie les sources des modules à construire
-    COPY $SITE_DIR $SITE_DIR
+    COPY $PANIER_DIR $PANIER_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:site
-    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
-    SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
+    RUN npm run build:panier
+    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/panier/"]
+    SAVE IMAGE --cache-from=$PANIER_IMG_NAME --push $PANIER_IMG_NAME
 
-site-run: ## construit et lance l'image du site en local
+panier-run: ## construit et lance l'image du panier en local
     ARG network=supabase_network_tet
     LOCALLY
     RUN docker run -d --rm \
-        --name site_tet \
+        --name panier_tet \
         --network $network \
         --publish 3001:80 \
-        $SITE_IMG_NAME
+        $PANIER_IMG_NAME
+
+auth-build: ## construit l'image du module d'authentification
+    ARG PLATFORM
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG vars
+    FROM +front-deps
+    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
+    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NEXT_TELEMETRY_DISABLED=1
+    ENV PUBLIC_PATH="/app/packages/auth/public"
+    ENV PORT=80
+    EXPOSE $PORT
+    # copie les sources des modules à construire
+    COPY $AUTH_DIR $AUTH_DIR
+    COPY $UI_DIR $UI_DIR
+    COPY $API_DIR $API_DIR
+    RUN npm run build:auth
+    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/auth/"]
+    SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
+
+auth-run: ## construit et lance l'image du module d'authentification en local
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN docker run -d --rm \
+        --name auth_tet \
+        --network $network \
+        --publish 3003:80 \
+        $AUTH_IMG_NAME
 
 storybook-build: ## construit l'image du storybook du module `ui`
     ARG PLATFORM
@@ -563,6 +600,7 @@ dev:
     ARG datalayer=yes
     ARG business=yes
     ARG app=no
+    ARG auth=no
     ARG eco=no
     ARG fast=no
     ARG faster=no
@@ -621,6 +659,10 @@ dev:
 
     IF [ "$app" = "yes" ]
         RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+    END
+
+    IF [ "$auth" = "yes" ]
+        RUN earthly +auth-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
@@ -784,6 +826,16 @@ site-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
+
+auth-deploy:
+    ARG --required KOYEB_API_KEY
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
+
+panier-deploy:
+    ARG --required KOYEB_API_KEY
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-panier/front --docker $PANIER_IMG_NAME
 
 app-deploy: ## Déploie le front dans une app Koyeb existante
     ARG --required KOYEB_API_KEY

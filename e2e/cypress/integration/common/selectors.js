@@ -4,7 +4,7 @@
 
 export const Selectors = {
   header: {
-    selector: 'header[role=banner]',
+    selector: 'header',
     children: {
       'Se connecter': '.fr-header__tools-links [data-test=signin]',
       'Créer un compte': '.fr-header__tools-links [data-test=signup]',
@@ -31,7 +31,7 @@ export const Selectors = {
     children: {
       email: 'input[name=email]',
       mdp: 'input[name=password]',
-      Valider: 'button[data-test=ok]',
+      Valider: 'button[type=submit]',
       'Mot de passe oublié': '[data-test=forgotten-pwd]',
     },
   },
@@ -50,8 +50,11 @@ export const Selectors = {
       mdp: 'input[name=password]',
       nom: 'input[name=nom]',
       prenom: 'input[name=prenom]',
-      cgu: 'input[name=vie_privee_conditions]',
-      Valider: 'button[data-test=ok]',
+      telephone: 'input[name=telephone]',
+      cgu: 'input[name=cgu_acceptees]',
+      rôle: '[data-test=role]',
+      "message d'erreur": '[data-test=error]',
+      Valider: 'button[type=submit]',
     },
   },
   'tableau des membres': {

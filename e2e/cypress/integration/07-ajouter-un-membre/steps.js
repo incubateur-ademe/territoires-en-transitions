@@ -1,10 +1,17 @@
 import {When} from '@badeball/cypress-cucumber-preprocessor';
 
 import {LocalSelectors} from './selectors';
+import {LocalSelectors as LoginSelector} from '../01-se-connecter/selectors';
+import {LocalSelectors as SignupSelectors} from '../09-creer-un-compte/selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
+  cy.wrap({...LoginSelector, ...SignupSelectors, ...LocalSelectors}).as(
+    'LocalSelectors',
+    {
+      type: 'static',
+    }
+  );
 });
 
 When("un formulaire d'invitation est affiché", () => {

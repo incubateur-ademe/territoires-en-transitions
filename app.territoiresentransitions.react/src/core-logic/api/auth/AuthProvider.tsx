@@ -162,7 +162,7 @@ const clearCrispUserData = () => {
 const fetchDCP = async (user_id: string) => {
   const {data} = await supabaseClient
     .from('dcp')
-    .select('user_id,nom,prenom,cgu_acceptees_le')
+    .select('user_id,nom,prenom,telephone,cgu_acceptees_le')
     .match({user_id});
 
   return data?.length ? data[0] : null;
@@ -171,11 +171,7 @@ const fetchDCP = async (user_id: string) => {
 // hook qui utilise les queries DCP
 export const useDCP = (user_id?: string) => {
   // fetch
-  const {data} = useQuery(['dcp', user_id], () =>
-    user_id ? fetchDCP(user_id) : null
-  );
-
-  return {data};
+  return useQuery(['dcp', user_id], () => (user_id ? fetchDCP(user_id) : null));
 };
 
 // vérifie si l'utilisateur courant à le droit "support"

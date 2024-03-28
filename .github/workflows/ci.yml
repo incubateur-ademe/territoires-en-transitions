@@ -100,6 +100,27 @@ jobs:
       - name: Build and push app image
         run: earthly --use-inline-cache --save-inline-cache --push +app-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
+  build-auth-dev:
+    needs: prepare-front-deps
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Build and push auth. image
+        run: earthly --use-inline-cache --save-inline-cache --push +auth-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+
   build-storybook-dev:
     needs: prepare-front-deps
     environment: dev
@@ -136,7 +157,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -169,7 +190,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -222,7 +243,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -271,7 +292,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -303,7 +324,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -352,7 +373,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -380,7 +401,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -426,7 +447,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -450,6 +471,7 @@ jobs:
       - build-business-dev
       - build-tools
       - build-app-dev
+      - build-auth-dev
       - build-db
     environment: dev
     name: End-to-end tests
@@ -475,7 +497,7 @@ jobs:
           version: v0.7.0
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.88.0
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -490,7 +512,7 @@ jobs:
       - name: Start services
         run: >
           earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=yes --app=yes --eco=yes --faster=yes --version=HEAD 
+          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD 
           --DB_URL=${{ secrets.DB_URL }} 
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
           --API_URL=${{ secrets.API_URL }}
@@ -554,7 +576,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.52.3
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -616,7 +638,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.52.3
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -678,7 +700,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.52.3
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -740,7 +762,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.52.3
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -803,7 +825,7 @@ jobs:
           version: v0.7.20
       - uses: supabase/setup-cli@v1
         with:
-          version: 1.52.3
+          version: latest
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}

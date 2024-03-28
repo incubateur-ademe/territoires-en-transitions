@@ -2829,6 +2829,412 @@ export interface Database {
           }
         ]
       }
+      action_impact: {
+        Row: {
+          action_continue: boolean
+          description: string
+          fourchette_budgetaire: number
+          id: number
+          impact_tier: number
+          nb_collectivite_en_cours: number
+          nb_collectivite_realise: number
+          ressources_externes: string | null
+          rex: string | null
+          subventions_mobilisables: string | null
+          temps_de_mise_en_oeuvre: number
+          titre: string
+        }
+        Insert: {
+          action_continue?: boolean
+          description: string
+          fourchette_budgetaire?: number
+          id?: number
+          impact_tier?: number
+          nb_collectivite_en_cours?: number
+          nb_collectivite_realise?: number
+          ressources_externes?: string | null
+          rex?: string | null
+          subventions_mobilisables?: string | null
+          temps_de_mise_en_oeuvre?: number
+          titre: string
+        }
+        Update: {
+          action_continue?: boolean
+          description?: string
+          fourchette_budgetaire?: number
+          id?: number
+          impact_tier?: number
+          nb_collectivite_en_cours?: number
+          nb_collectivite_realise?: number
+          ressources_externes?: string | null
+          rex?: string | null
+          subventions_mobilisables?: string | null
+          temps_de_mise_en_oeuvre?: number
+          titre?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_fourchette_budgetaire_fkey"
+            columns: ["fourchette_budgetaire"]
+            referencedRelation: "action_impact_fourchette_budgetaire"
+            referencedColumns: ["niveau"]
+          },
+          {
+            foreignKeyName: "action_impact_impact_tier_fkey"
+            columns: ["impact_tier"]
+            referencedRelation: "action_impact_tier"
+            referencedColumns: ["niveau"]
+          },
+          {
+            foreignKeyName: "action_impact_temps_de_mise_en_oeuvre_fkey"
+            columns: ["temps_de_mise_en_oeuvre"]
+            referencedRelation: "action_impact_temps_de_mise_en_oeuvre"
+            referencedColumns: ["niveau"]
+          }
+        ]
+      }
+      action_impact_action: {
+        Row: {
+          action_id: string
+          action_impact_id: number
+        }
+        Insert: {
+          action_id: string
+          action_impact_id: number
+        }
+        Update: {
+          action_id?: string
+          action_impact_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_action_action_id_fkey"
+            columns: ["action_id"]
+            referencedRelation: "action_definition"
+            referencedColumns: ["action_id"]
+          },
+          {
+            foreignKeyName: "action_impact_action_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_banatic_competence: {
+        Row: {
+          action_impact_id: number
+          competence_code: number
+        }
+        Insert: {
+          action_impact_id: number
+          competence_code: number
+        }
+        Update: {
+          action_impact_id?: number
+          competence_code?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_banatic_competence_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_banatic_competence_competence_code_fkey"
+            columns: ["competence_code"]
+            referencedRelation: "banatic_competence"
+            referencedColumns: ["code"]
+          }
+        ]
+      }
+      action_impact_categorie: {
+        Row: {
+          id: string
+          nom: string
+        }
+        Insert: {
+          id: string
+          nom: string
+        }
+        Update: {
+          id?: string
+          nom?: string
+        }
+        Relationships: []
+      }
+      action_impact_categorie_fnv: {
+        Row: {
+          action_impact_id: number
+          categorie_fnv_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          categorie_fnv_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          categorie_fnv_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_categorie_fnv_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_categorie_fnv_categorie_fnv_id_fkey"
+            columns: ["categorie_fnv_id"]
+            referencedRelation: "categorie_fnv"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_complexite: {
+        Row: {
+          niveau: number
+          nom: string
+        }
+        Insert: {
+          niveau: number
+          nom: string
+        }
+        Update: {
+          niveau?: number
+          nom?: string
+        }
+        Relationships: []
+      }
+      action_impact_fourchette_budgetaire: {
+        Row: {
+          niveau: number
+          nom: string
+        }
+        Insert: {
+          niveau: number
+          nom: string
+        }
+        Update: {
+          niveau?: number
+          nom?: string
+        }
+        Relationships: []
+      }
+      action_impact_indicateur: {
+        Row: {
+          action_impact_id: number
+          indicateur_id: string
+        }
+        Insert: {
+          action_impact_id: number
+          indicateur_id: string
+        }
+        Update: {
+          action_impact_id?: number
+          indicateur_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_indicateur_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_indicateur_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_indicateur_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_indicateur_indicateur_id_fkey"
+            columns: ["indicateur_id"]
+            referencedRelation: "crm_indicateurs"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_panier: {
+        Row: {
+          action_id: number
+          panier_id: string
+        }
+        Insert: {
+          action_id: number
+          panier_id: string
+        }
+        Update: {
+          action_id?: number
+          panier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_panier_action_id_fkey"
+            columns: ["action_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_panier_panier_id_fkey"
+            columns: ["panier_id"]
+            referencedRelation: "panier"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_sous_thematique: {
+        Row: {
+          action_impact_id: number
+          sous_thematique_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          sous_thematique_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          sous_thematique_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_sous_thematique_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_sous_thematique_sous_thematique_id_fkey"
+            columns: ["sous_thematique_id"]
+            referencedRelation: "sous_thematique"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_state: {
+        Row: {
+          action: unknown | null
+          isinpanier: boolean | null
+          statut: unknown | null
+          action_impact_fourchette_budgetaire: unknown | null
+          action_impact_temps_de_mise_en_oeuvre: unknown | null
+          matches_competences: unknown | null
+          thematique: unknown | null
+        }
+        Insert: {
+          action?: unknown | null
+          isinpanier?: boolean | null
+          statut?: unknown | null
+        }
+        Update: {
+          action?: unknown | null
+          isinpanier?: boolean | null
+          statut?: unknown | null
+        }
+        Relationships: []
+      }
+      action_impact_statut: {
+        Row: {
+          action_id: number
+          categorie_id: string
+          panier_id: string
+        }
+        Insert: {
+          action_id: number
+          categorie_id: string
+          panier_id: string
+        }
+        Update: {
+          action_id?: number
+          categorie_id?: string
+          panier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_statut_action_id_fkey"
+            columns: ["action_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_statut_categorie_id_fkey"
+            columns: ["categorie_id"]
+            referencedRelation: "action_impact_categorie"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_statut_panier_id_fkey"
+            columns: ["panier_id"]
+            referencedRelation: "panier"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_temps_de_mise_en_oeuvre: {
+        Row: {
+          niveau: number
+          nom: string
+        }
+        Insert: {
+          niveau: number
+          nom: string
+        }
+        Update: {
+          niveau?: number
+          nom?: string
+        }
+        Relationships: []
+      }
+      action_impact_thematique: {
+        Row: {
+          action_impact_id: number
+          thematique_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          thematique_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          thematique_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_thematique_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_thematique_thematique_id_fkey"
+            columns: ["thematique_id"]
+            referencedRelation: "thematique"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      action_impact_tier: {
+        Row: {
+          niveau: number
+          nom: string
+        }
+        Insert: {
+          niveau: number
+          nom: string
+        }
+        Update: {
+          niveau?: number
+          nom?: string
+        }
+        Relationships: []
+      }
       action_relation: {
         Row: {
           id: string
@@ -3710,6 +4116,36 @@ export interface Database {
           }
         ]
       }
+      banatic_competence: {
+        Row: {
+          code: number
+          nom: string
+        }
+        Insert: {
+          code: number
+          nom: string
+        }
+        Update: {
+          code?: number
+          nom?: string
+        }
+        Relationships: []
+      }
+      categorie_fnv: {
+        Row: {
+          id: number
+          nom: string
+        }
+        Insert: {
+          id?: number
+          nom: string
+        }
+        Update: {
+          id?: number
+          nom?: string
+        }
+        Relationships: []
+      }
       client_scores: {
         Row: {
           collectivite_id: number
@@ -4375,6 +4811,328 @@ export interface Database {
           modified_at?: string
         }
         Relationships: []
+      }
+      collectivite_banatic_competence: {
+        Row: {
+          collectivite_id: number
+          competence_code: number
+        }
+        Insert: {
+          collectivite_id: number
+          competence_code: number
+        }
+        Update: {
+          collectivite_id?: number
+          competence_code?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "collectivite_banatic_competence_competence_code_fkey"
+            columns: ["competence_code"]
+            referencedRelation: "banatic_competence"
+            referencedColumns: ["code"]
+          }
+        ]
       }
       collectivite_bucket: {
         Row: {
@@ -13467,6 +14225,644 @@ export interface Database {
           id?: number
         }
         Relationships: []
+      }
+      panier: {
+        Row: {
+          collectivite_id: number | null
+          collectivite_preset: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          latest_update: string
+          private: boolean | null
+          action_impact_state: unknown | null
+        }
+        Insert: {
+          collectivite_id?: number | null
+          collectivite_preset?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          latest_update?: string
+          private?: boolean | null
+        }
+        Update: {
+          collectivite_id?: number | null
+          collectivite_preset?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          latest_update?: string
+          private?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_collectivite_preset_fkey"
+            columns: ["collectivite_preset"]
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "panier_created_by_fkey"
+            columns: ["created_by"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       partenaire_tag: {
         Row: {
@@ -24356,13 +25752,13 @@ export interface Database {
       _get_note:
         | {
             Args: {
-              "": number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              "": number
             }
             Returns: string
           }
@@ -24584,6 +25980,41 @@ export interface Database {
           id: unknown
         }
         Returns: Record<string, unknown>
+      }
+      action_impact_fourchette_budgetaire: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          niveau: number
+          nom: string
+        }[]
+      }
+      action_impact_matches_competences: {
+        Args: {
+          collectivite_id: number
+          action_impact_id: number
+        }
+        Returns: boolean
+      }
+      action_impact_state: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          action: unknown | null
+          isinpanier: boolean | null
+          statut: unknown | null
+        }[]
+      }
+      action_impact_temps_de_mise_en_oeuvre: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          niveau: number
+          nom: string
+        }[]
       }
       action_perimetre_evaluation: {
         Args: {
@@ -25195,13 +26626,13 @@ export interface Database {
             Returns: string
           }
         | {
-            Args: {
-              msg: unknown
-            }
+            Args: Record<PropertyKey, never>
             Returns: string
           }
         | {
-            Args: Record<PropertyKey, never>
+            Args: {
+              msg: unknown
+            }
             Returns: string
           }
         | {
@@ -26576,6 +28007,12 @@ export interface Database {
         }
         Returns: unknown
       }
+      matches_competences: {
+        Args: {
+          "": unknown
+        }
+        Returns: boolean
+      }
       materialized_views_are: {
         Args: {
           "": unknown[]
@@ -26633,6 +28070,47 @@ export interface Database {
       os_name: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      panier_from_landing:
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: {
+              collectivite_id: number | null
+              collectivite_preset: number | null
+              created_at: string
+              created_by: string | null
+              id: string
+              latest_update: string
+              private: boolean | null
+            }
+          }
+        | {
+            Args: {
+              collectivite_id: number
+            }
+            Returns: {
+              collectivite_id: number | null
+              collectivite_preset: number | null
+              created_at: string
+              created_by: string | null
+              id: string
+              latest_update: string
+              private: boolean | null
+            }
+          }
+      panier_of_collectivite: {
+        Args: {
+          collectivite_id: number
+        }
+        Returns: {
+          collectivite_id: number | null
+          collectivite_preset: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          latest_update: string
+          private: boolean | null
+        }
       }
       pass:
         | {
@@ -26850,6 +28328,14 @@ export interface Database {
         }
         Returns: undefined
       }
+      retool_patch_demande: {
+        Args: {
+          demande_id: number
+          sujet: Database["labellisation"]["Enums"]["sujet_demande"]
+          etoiles?: Database["labellisation"]["Enums"]["etoile"]
+        }
+        Returns: undefined
+      }
       retool_update_audit: {
         Args: {
           audit_id: number
@@ -26979,14 +28465,14 @@ export interface Database {
       skip:
         | {
             Args: {
-              why: string
-              how_many: number
+              "": string
             }
             Returns: string
           }
         | {
             Args: {
-              "": string
+              why: string
+              how_many: number
             }
             Returns: string
           }
@@ -27172,6 +28658,16 @@ export interface Database {
         }
         Returns: undefined
       }
+      thematique: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          id: number
+          md_id: Database["public"]["Enums"]["indicateur_thematique"] | null
+          nom: string
+        }[]
+      }
       thematiques: {
         Args: {
           "": unknown
@@ -27189,6 +28685,44 @@ export interface Database {
         Returns: string
       }
       time_bucket:
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              bucket_width: number
+              ts: number
+              offset: number
+            }
+            Returns: number
+          }
         | {
             Args: {
               bucket_width: unknown
@@ -27275,44 +28809,6 @@ export interface Database {
             }
             Returns: number
           }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              bucket_width: number
-              ts: number
-              offset: number
-            }
-            Returns: number
-          }
       time_bucket_gapfill:
         | {
             Args: {
@@ -27394,18 +28890,6 @@ export interface Database {
         | {
             Args: {
               why: string
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              how_many: number
-            }
-            Returns: boolean[]
-          }
-        | {
-            Args: {
-              why: string
               how_many: number
             }
             Returns: boolean[]
@@ -27414,6 +28898,18 @@ export interface Database {
             Args: {
               how_many: number
               why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              why: string
+            }
+            Returns: boolean[]
+          }
+        | {
+            Args: {
+              how_many: number
             }
             Returns: boolean[]
           }
