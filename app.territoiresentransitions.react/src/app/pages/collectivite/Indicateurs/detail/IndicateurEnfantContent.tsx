@@ -2,12 +2,12 @@ import {TIndicateurPredefini} from '../types';
 import FormField from 'ui/shared/form/FormField';
 import {Spacer} from 'ui/dividers/Spacer';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
-import IndicateurChart from '../charts/IndicateurChart';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
 import {ImportSourcesDropdown} from './ImportSourcesDropdown';
+import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
 export const IndicateurEnfantContent = ({
@@ -32,11 +32,12 @@ export const IndicateurEnfantContent = ({
         currentSource={currentSource}
         setCurrentSource={setCurrentSource}
       />
-      <IndicateurChart
-        className="fr-mb-3w"
-        variant="zoomed"
+      <IndicateurDetailChart
         definition={definition}
-        importSource={currentSource}
+        rempli={definition.rempli}
+        source={currentSource}
+        titre={definition.titre_long}
+        fileName={definition.nom}
       />
       <IndicateurValuesTabs
         definition={definition}
