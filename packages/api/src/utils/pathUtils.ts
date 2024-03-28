@@ -13,7 +13,7 @@ export const getRootDomain = (hostname: string) => {
  * URL DES MODULES SUIVANT L'ENVIRONNEMENT
  *
  * DEV
- *  domain=localhost + port distinct (app=3000, site=3002, panier=3002,
+ *  domain=localhost + port distinct (app=3000, site=3001, panier=3002,
  *  auth=3003)
  *
  * PREPROD dans le domaine TeT domain=territoiresentransitions.fr + sous-domaine
@@ -24,7 +24,7 @@ export const getRootDomain = (hostname: string) => {
  *  test-app-<branche>-tet, preprod-site-tet, preprod-panier-tet, preprod-auth-tet)
  *
  * PROD (domaine TeT) domain=territoiresentransitions.fr + sous-domaine distinct
- *  (prod-app, prod-panier, prod-auth) ou pas de sous-domaine (ou wwww) pour le
+ *  (app, panier, auth) ou pas de sous-domaine (ou wwww) pour le
  *  site
  */
 /** Donne l'URL du module d'authentification */
@@ -34,9 +34,14 @@ export const getAuthBaseUrl = (hostname: string) => {
   if (domain === 'localhost') {
     return `http://localhost:${DEV_SITE_PORT}`;
   }
-  const subdomain =
-    domain === 'koyeb.app' ? 'preprod-auth-tet.' : 'preprod-auth';
-  return `https://${subdomain}${domain}`;
+
+    const subdomain =
+      hostname.includes('preprod') || domain === 'koyeb.app'
+        ? domain === 'koyeb.app'
+          ? 'preprod-auth-tet'
+          : 'preprod-auth'
+        : 'auth';
+  return `https://${subdomain}.${domain}`;
 };
 
 /**
