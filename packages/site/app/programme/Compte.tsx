@@ -11,7 +11,7 @@ const Compte = ({description}: CompteProps) => {
       buttons={[
         {
           title: 'Créer un compte',
-          href: 'https://app.territoiresentransitions.fr/auth/signup',
+          href: 'https://auth.territoiresentransitions.fr/signup',
           external: true,
           variant: 'outlined',
         },

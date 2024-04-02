@@ -84,7 +84,7 @@ export const getData = async (): Promise<AccueilData | null> => {
                 .data as unknown as StrapiItem,
               button: {
                 titre: 'Accéder à la plateforme',
-                href: 'https://app.territoiresentransitions.fr/auth/signup',
+                href: 'https://auth.territoiresentransitions.fr/signup',
               },
             },
           ],

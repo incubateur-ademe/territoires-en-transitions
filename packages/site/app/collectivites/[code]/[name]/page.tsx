@@ -126,7 +126,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
               'Vous êtes membre de cette collectivité ?'
             }
             cta={strapiDefaultData?.connexion?.cta ?? 'Se connecter'}
-            href="https://app.territoiresentransitions.fr/auth/signin"
+            href="https://auth.territoiresentransitions.fr/signin"
           />
         ) : (
           <AccesCompte
@@ -135,7 +135,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
               'Faites un pas supplémentaire vers la transition écologique en créant un compte gratuit'
             }
             cta={strapiDefaultData?.inscription?.cta ?? 'Créer un compte'}
-            href="https://app.territoiresentransitions.fr/auth/signup"
+            href="https://auth.territoiresentransitions.fr/signup"
           />
         )}
       </div>
