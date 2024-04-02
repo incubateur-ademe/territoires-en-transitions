@@ -3,6 +3,9 @@ export {preset} from './tailwind-preset';
 
 /* composants exportés */
 
+// dossier hooks
+export * from './hooks/useCopyToClipboard';
+
 // dossier composants
 export * from './components/layout';
 export * from './components/tracking';
