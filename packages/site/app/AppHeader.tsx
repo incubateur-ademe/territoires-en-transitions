@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import {MenuPrincipal} from './MenuPrincipal';
-import {Dispatch, SetStateAction, useState} from 'react';
+import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import classNames from 'classnames';
+import {getAuthPaths, getAppBaseUrl} from '@tet/api';
 
 export type MenuProps = {
   menuOpened: boolean;
@@ -49,21 +50,24 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
 }
 
 function Links() {
+  const [authPaths, setAuthPaths] = useState<null | ReturnType<
+    typeof getAuthPaths
+  >>(null);
+  useEffect(() => {
+    setAuthPaths(
+      getAuthPaths(document.location.hostname, getAppBaseUrl(document.location.hostname)),
+    );
+  }, []);
+
   return (
     <ul className="fr-btns-group">
       <li>
-        <a
-          href="https://app.territoiresentransitions.fr/auth/signup"
-          className="fr-btn fr-icon-add-circle-line"
-        >
+        <a href={authPaths?.signUp} className="fr-btn fr-icon-add-circle-line">
           Créer un compte
         </a>
       </li>
       <li>
-        <a
-          href="https://app.territoiresentransitions.fr/auth/signin"
-          className="fr-btn fr-icon-account-line"
-        >
+        <a href={authPaths?.login} className="fr-btn fr-icon-account-line">
           Se connecter
         </a>
       </li>
