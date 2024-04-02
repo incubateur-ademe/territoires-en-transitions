@@ -989,60 +989,6 @@ Deno.test("Test accès annexe", async () => {
   await signOut();
 });
 
-// fiche_action_annexe
-Deno.test("Test accès fiche_action_annexe", { ignore: true }, async () => {
-  await testReset();
-  // Passe la collectivite 1 sans acces restreint
-  await testChangeAccessRestreint(1, false);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result1 = await supabase
-    .from("fiche_action_annexe")
-    .select()
-    .eq("fiche_id", 1);
-  assertExists(result1.data);
-  // TODO pas d'annexe dans les données de test assertEquals(true, result1.data.length>0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result2 = await supabase
-    .from("fiche_action_annexe")
-    .select()
-    .eq("fiche_id", 1);
-  assertExists(result2.data);
-  // TODO pas d'annexe dans les données de test assertEquals(true, result2.data.length>0);
-  await signOut();
-
-  // Passe la collectivite 1 en acces restreint
-  await testChangeAccessRestreint(1, true);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a toujours accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result3 = await supabase
-    .from("fiche_action_annexe")
-    .select()
-    .eq("fiche_id", 1);
-  assertExists(result3.data);
-  // TODO pas d'annexe dans les données de test assertEquals(true, result3.data.length>0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // n'a plus accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result4 = await supabase
-    .from("fiche_action_annexe")
-    .select()
-    .eq("fiche_id", 1);
-  assertExists(result4.data);
-  // TODO pas d'annexe dans les données de test assertEquals(true, result4.data.length==0);
-  await signOut();
-});
-
 // fiche_action_indicateur
 Deno.test("Test accès fiche_action_indicateur", async () => {
   await testReset();
