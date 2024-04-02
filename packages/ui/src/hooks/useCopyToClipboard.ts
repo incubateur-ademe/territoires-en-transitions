@@ -2,13 +2,12 @@ import {useState} from 'react';
 
 type CopiedValue = string | null;
 type CopyFn = (text: string) => Promise<boolean>; // Return success
-type ResetFn = () => void;
 
 /**
  * Fourni une fonction permettant de copier une valeur dans le presse-papier
  * Ref: https://usehooks-ts.com/react-hook/use-copy-to-clipboard
  */
-const useCopyToClipboard = (): [CopiedValue, CopyFn, ResetFn] => {
+export const useCopyToClipboard = () => {
   const [copiedText, setCopiedText] = useState<CopiedValue>(null);
 
   const reset = () => setCopiedText(null);
@@ -31,7 +30,5 @@ const useCopyToClipboard = (): [CopiedValue, CopyFn, ResetFn] => {
     }
   };
 
-  return [copiedText, copy, reset];
+  return {copiedText, copy, reset};
 };
-
-export default useCopyToClipboard;

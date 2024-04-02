@@ -1,6 +1,6 @@
 import {useEffect, useMemo} from 'react';
 import DOMPurify from 'dompurify';
-import useCopyToClipboard from 'ui/shared/useCopyToClipboard';
+import {useCopyToClipboard} from '@tet/ui';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {TNiveauAcces} from 'types/alias';
@@ -30,7 +30,7 @@ const InvitationMessage = ({
   acces,
   invitationUrl,
 }: TInvitationMessageProps) => {
-  const [copiedText, copy, reset] = useCopyToClipboard();
+  const {copiedText, copy, reset} = useCopyToClipboard();
 
   useEffect(() => {
     if (copiedText) {
