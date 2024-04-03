@@ -8,6 +8,7 @@ export * from './components/layout';
 export * from './components/panier-actions';
 
 // dossier design-system
+export * from './design-system/Accordion';
 export * from './design-system/Alert';
 export * from './design-system/Badge';
 export * from './design-system/Button';
