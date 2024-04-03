@@ -66,12 +66,12 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         </Field> */}
         <Checkbox
           label="Indicateur complété"
-          checked={filters.rempli}
+          checked={filters.rempli ?? false}
           onChange={() => setFilters({...filters, rempli: !filters.rempli})}
         />
         <Checkbox
           label="Indicateur privé"
-          checked={filters.confidentiel}
+          checked={filters.confidentiel ?? false}
           onChange={() =>
             setFilters({...filters, confidentiel: !filters.confidentiel})
           }
