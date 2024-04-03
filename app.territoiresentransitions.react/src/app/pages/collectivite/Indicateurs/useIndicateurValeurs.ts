@@ -29,7 +29,10 @@ export const useIndicateurValeurs = ({
   id: number | string | undefined;
   /** Source des données à utiliser */
   importSource?: string;
-  /** Indique si le rafraichissement des datas du graphique */
+  /**
+   * Indique si le rafraichissement des datas du graphique doit se faire automatiquement.
+   * `false` par défaut.
+   */
   autoRefresh?: boolean;
 }) => {
   const collectivite_id = useCollectiviteId();
