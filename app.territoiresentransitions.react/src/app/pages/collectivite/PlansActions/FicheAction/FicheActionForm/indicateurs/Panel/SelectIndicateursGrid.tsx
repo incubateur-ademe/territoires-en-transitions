@@ -26,16 +26,24 @@ const SelectIndicateursGrid = (props: Props) => {
         <SpinnerLoader className="mx-auto my-28" />
       ) : /** Indicateurs */
       definitions && definitions.length > 0 ? (
-        <div className="flex flex-col gap-6">
-          {definitions.map(definition => (
-            <IndicateurChartContainer
-              key={definition.id}
-              definition={definition}
-              selectedIndicateurs={selectedIndicateurs}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
+        <>
+          {/** Nb results */}
+          <div className="mb-4 text-sm text-grey-7">
+            {definitions.length} résultat
+            {definitions.length > 1 && 's'}
+          </div>
+          {/** Grid */}
+          <div className="flex flex-col gap-6">
+            {definitions.map(definition => (
+              <IndicateurChartContainer
+                key={definition.id}
+                definition={definition}
+                selectedIndicateurs={selectedIndicateurs}
+                onSelect={onSelect}
+              />
+            ))}
+          </div>
+        </>
       ) : (
         /** No data */
         <div className="my-24 text-center text-sm text-grey-6">
