@@ -22,7 +22,9 @@ export const CreerIndicateurPersoModal = ({
         <IndicateurPersoNouveau onClose={close} fiche={fiche} />
       )}
     >
-      <Button variant="outlined">Créer un indicateur personnalisé</Button>
+      <Button variant="outlined" size="sm">
+        Créer un indicateur de suivi
+      </Button>
     </Modal>
   ) : null;
 };
