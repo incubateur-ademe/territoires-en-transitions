@@ -4,9 +4,15 @@ import {
   usePanelDispatch,
   usePanelState,
 } from 'app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
+import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 import Content from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/Panel/Content';
 
-const Panel = () => {
+type Props = {
+  selectedIndicateurs: Indicateur[] | null;
+  onSelect: (indicateurs: Indicateur[]) => void;
+};
+
+const Panel = ({selectedIndicateurs, onSelect}: Props) => {
   const panelState = usePanelState();
   const panelDispatch = usePanelDispatch();
 
@@ -22,13 +28,18 @@ const Panel = () => {
             Associer des indicateurs
           </div>
         ),
-        content: <Content />,
+        content: (
+          <Content
+            selectedIndicateurs={selectedIndicateurs}
+            onSelect={onSelect}
+          />
+        ),
       });
     }
   };
 
   return (
-    <Button icon="file-add-fill" onClick={handleTogglePlanel}>
+    <Button icon="file-add-fill" onClick={handleTogglePlanel} size="sm">
       Associer un indicateur
     </Button>
   );
