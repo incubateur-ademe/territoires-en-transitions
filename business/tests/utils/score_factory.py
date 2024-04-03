@@ -20,6 +20,7 @@ def make_action_score(
     pas_concerne_taches_avancement: float = 0.0,
     point_potentiel_perso: Optional[float] = None,
     desactive: bool = False,
+    renseigne: bool = True
 ):
     return ActionScore(
         action_id=ActionId(action_id),
@@ -38,4 +39,5 @@ def make_action_score(
         pas_concerne_taches_avancement=pas_concerne_taches_avancement,
         point_potentiel_perso=point_potentiel_perso,
         desactive=desactive,
+        renseigne=True
     )

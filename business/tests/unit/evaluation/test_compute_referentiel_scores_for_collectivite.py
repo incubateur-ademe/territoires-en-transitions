@@ -117,6 +117,7 @@ def test_notation_when_one_tache_is_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -135,6 +136,7 @@ def test_notation_when_one_tache_is_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci_2")] == ActionScore(
@@ -154,6 +156,7 @@ def test_notation_when_one_tache_is_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -173,6 +176,7 @@ def test_notation_when_one_tache_is_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -209,6 +213,7 @@ def test_notation_when_one_tache_is_programme(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -227,6 +232,7 @@ def test_notation_when_one_tache_is_programme(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -246,6 +252,7 @@ def test_notation_when_one_tache_is_programme(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -283,6 +290,7 @@ def test_notation_when_one_tache_is_pas_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -301,6 +309,7 @@ def test_notation_when_one_tache_is_pas_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -320,6 +329,7 @@ def test_notation_when_one_tache_is_pas_fait(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -356,6 +366,7 @@ def test_notation_when_one_tache_has_detailed_avancement(simple_point_tree_refer
         pas_concerne_taches_avancement=0,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -374,6 +385,7 @@ def test_notation_when_one_tache_has_detailed_avancement(simple_point_tree_refer
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -393,6 +405,7 @@ def test_notation_when_one_tache_has_detailed_avancement(simple_point_tree_refer
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -429,6 +442,7 @@ def test_notation_when_one_tache_is_non_concerne(simple_point_tree_referentiel):
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
 
     assert actual_scores[ActionId("eci_1.2")] == ActionScore(
@@ -448,6 +462,7 @@ def test_notation_when_one_tache_is_non_concerne(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
     assert actual_scores[ActionId("eci_1")] == ActionScore(
         action_id=ActionId("eci_1"),
@@ -466,6 +481,7 @@ def test_notation_when_one_tache_is_non_concerne(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -485,6 +501,7 @@ def test_notation_when_one_tache_is_non_concerne(simple_point_tree_referentiel):
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -529,6 +546,7 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee(
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -547,6 +565,7 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee(
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
 
     assert actual_scores[ActionId("eci_1")] == ActionScore(
@@ -566,6 +585,7 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee(
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
 
     assert actual_scores[ActionId("eci_2")] == ActionScore(
@@ -585,6 +605,7 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -604,6 +625,7 @@ def test_notation_when_an_action_of_action_level_becomes_non_concernee(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -644,6 +666,7 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_2.1")] == ActionScore(
         action_id=ActionId("eci_2.1"),
@@ -662,6 +685,7 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires(
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
 
     assert actual_scores[ActionId("eci_2.2")] == ActionScore(
@@ -681,6 +705,7 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_2")] == ActionScore(
         action_id=ActionId("eci_2"),
@@ -699,6 +724,7 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
 
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -718,6 +744,7 @@ def test_notation_should_not_redistribute_points_on_taches_regementaires(
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -769,6 +796,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=False,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     # point_fait of 2.2 is redistributed on 2.1
     assert actual_scores[ActionId("eci_2.1")] == ActionScore(
@@ -788,6 +816,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     assert actual_scores[ActionId("eci_2.1.0")] == ActionScore(
@@ -807,6 +836,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_2.1.1")] == ActionScore(
         action_id=ActionId("eci_2.1.1"),
@@ -825,6 +855,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
     assert actual_scores[ActionId("eci_2.1.2")] == ActionScore(
         action_id=ActionId("eci_2.1.2"),
@@ -843,6 +874,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
     # axe 2 point_fait should remain unchanged
     assert actual_scores[ActionId("eci_2")] == ActionScore(
@@ -862,6 +894,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
     # root point_fait should remain unchanged
@@ -882,6 +915,7 @@ def test_notation_should_redistribute_non_concernee_points_if_depth_is_greater_t
         concerne=True,
         point_potentiel_perso=None,
         desactive=False,
+        renseigne=False
     )
 
 
@@ -978,6 +1012,7 @@ def test_notation_when_one_action_is_reduced(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,  # None because the consequence is derived from the parent
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -996,6 +1031,7 @@ def test_notation_when_one_action_is_reduced(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,  # None because the consequence is derived from the parent
+        renseigne=False
     )
 
     # Action eci_1 should be reduced to 6 points
@@ -1016,6 +1052,7 @@ def test_notation_when_one_action_is_reduced(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=6.0,
+        renseigne=False
     )
     # Root action eci should be reduced to 76 points (6 points from eci_1 and 70 points from eci_2)
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -1035,6 +1072,7 @@ def test_notation_when_one_action_is_reduced(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,
+        renseigne=False
     )
 
 
@@ -1073,6 +1111,7 @@ def test_notation_when_one_action_is_increased(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,  # None because the consequence is derived from the parent
+        renseigne=True
     )
     assert actual_scores[ActionId("eci_1.2")] == ActionScore(
         action_id=ActionId("eci_1.2"),
@@ -1091,6 +1130,7 @@ def test_notation_when_one_action_is_increased(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,  # None because the consequence is derived from the parent
+        renseigne=False
     )
 
     # Action eci_1 should be reduced to 6 points
@@ -1111,6 +1151,7 @@ def test_notation_when_one_action_is_increased(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=36.0,  # Consequence applied here ! (30 * 1.2)
+        renseigne=False
     )
     # Root action eci should be reduced to 76 points (6 points from eci_1 and 70 points from eci_2)
     assert actual_scores[ActionId("eci")] == ActionScore(
@@ -1130,6 +1171,7 @@ def test_notation_when_one_action_is_increased(simple_point_tree_referentiel):
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,
+        renseigne=False
     )
 
 
@@ -1178,6 +1220,7 @@ def test_notation_when_potentiel_perso_formule_is_given(simple_point_tree_refere
         pas_concerne_taches_avancement=0,
         desactive=False,
         point_potentiel_perso=None,
+        renseigne=False
     )
 
     # Action eci_1 should have the score reduced to the same than eci_2

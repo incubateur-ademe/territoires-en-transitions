@@ -25,7 +25,7 @@ def test_scores_should_match_yaml_expectations(test_post_personnalize, test_post
     print(path_in_str)
 
     # On ouvre le fichier et on charge les données
-    with open(path) as f:
+    with open(path, encoding='utf8') as f:
         data = yaml.safe_load(f)
         print(data['Test'])
         print('')

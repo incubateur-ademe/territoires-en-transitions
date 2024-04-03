@@ -9,7 +9,7 @@ from .fixtures import *
 def test_dl_evaluation(execution_api):
     path = 'tests/data/payloads/dl_evaluation.json'
 
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf8') as file:
         json_data = json.load(file)
 
     payload = DatalayerEvaluationPayload(**json_data)
@@ -26,7 +26,7 @@ def test_dl_evaluation(execution_api):
 def test_dl_personnalisation(execution_api):
     path = 'tests/data/payloads/dl_personnalisation.json'
 
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf8') as file:
         json_data = json.load(file)
 
     payload = DatalayerPersonnalisationPayload(**json_data)
@@ -72,6 +72,7 @@ def test_evaluate_eci(execution_api, eci_evaluation_ref):
         "pas_concerne_taches_avancement": 0,
         "desactive": False,
         "point_potentiel_perso": None,
+        "renseigne": False
     }
 
 
@@ -107,4 +108,5 @@ def test_evaluate_cae(execution_api, cae_evaluation_ref):
         "pas_concerne_taches_avancement": 0,
         "desactive": False,
         "point_potentiel_perso": None,
+        "renseigne": False
     }
