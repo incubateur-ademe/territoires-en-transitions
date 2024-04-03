@@ -41,6 +41,7 @@ def test_eci_desactivation_of_sous_action_242_should_redistribute_points_amongst
         pas_concerne_taches_avancement=4,
         desactive=True,
         point_potentiel_perso=None,
+        renseigne=True
     )
 
     # Points redistributed amongst the 4 non reglementaires siblings
@@ -69,6 +70,7 @@ def test_eci_desactivation_of_sous_action_242_should_redistribute_points_amongst
         pas_concerne_taches_avancement=4,
         desactive=False,
         point_potentiel_perso=None,
+        renseigne=False
     )
 
 
