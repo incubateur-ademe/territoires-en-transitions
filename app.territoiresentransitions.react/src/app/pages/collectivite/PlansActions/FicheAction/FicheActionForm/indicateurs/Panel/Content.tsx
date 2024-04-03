@@ -27,7 +27,6 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
     setSelectedIndicateursState(indicateurs);
     onSelect(indicateurs);
   };
-
   return (
     <div className="grow p-4 overflow-y-auto">
       <div className="flex flex-col gap-4">
@@ -90,12 +89,17 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
           <>0 indicateur sélectionné</>
         )}
       </div>
-      {definitions && (
+      {definitions && definitions.length > 0 ? (
         <SelectIndicateursGrid
           definitions={definitions}
           selectedIndicateurs={selectedIndicateursState}
           onSelect={handleSelect}
         />
+      ) : (
+        <div className="my-24 text-center text-sm text-grey-6">
+          Aucun indicateur
+          <br /> ne correspond à votre recherche
+        </div>
       )}
     </div>
   );
