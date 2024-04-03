@@ -15,7 +15,7 @@ type AccordionType = {
   /** Permet de styler le contenu (ignoré si le contenu n'est pas une chaîne) */
   contentClassname?: string;
   /** Pour afficher un texte optionnel à côté du titre */
-  subtitle?: boolean;
+  subtitle?: string;
 };
 
 /**
