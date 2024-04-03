@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {Badge, Button, Card, Checkbox, Tooltip} from '@tet/ui';
+import {Badge, Button, Card, CardProps, Checkbox, Tooltip} from '@tet/ui';
 import {Notification} from '@tet/ui';
 
 import IndicateurChart, {
@@ -9,6 +9,7 @@ import IndicateurChart, {
 } from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import {useIndicateurChartInfo} from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import {
+  Indicateur,
   TIndicateurChartInfo,
   TIndicateurListItem,
 } from 'app/pages/collectivite/Indicateurs/types';
@@ -19,6 +20,7 @@ import {
 } from 'ui/charts/Line/utils';
 import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
+import {getIndicateurRestant} from './utils';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -27,7 +29,7 @@ export type IndicateurCardProps = {
   /** Rend la carte sélectionnable. Ne peux pas être utilisé avec la prop `href` */
   selectState?: {
     selected: boolean;
-    setSelected: () => void;
+    setSelected: (indicateur: Indicateur) => void;
   };
   /** Rend la carte comme un lien. Ne peux pas être utilisé avec la prop `selectState` */
   href?: string;
@@ -36,9 +38,14 @@ export type IndicateurCardProps = {
   /** Props du composant `IndicateurChart` sans ce qui est relatif aux données */
   chart?: Omit<IndicateurChartProps, 'data' | 'isLoading'>;
   /** Affiche ou masque le graphique */
-  showIndicateur?: boolean;
+  showChart?: boolean;
+  /** Props du composant générique Card */
+  card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
   readonly?: boolean;
+  /** Indique si le rafraichissement des datas du graphique doit se faire automatiquement.
+      `false` par défaut. */
+  autoRefresh?: boolean;
 };
 
 /** Carte qui permet d'afficher un graphique dans une liste */
@@ -49,6 +56,10 @@ const IndicateurCard = (props: IndicateurCardProps) => {
       'IndicateurCard: selectState et href ne peuvent pas être utilisés ensemble'
     );
   }
+
+  /** Par défaut le rafraîchissement automatique est désactivée car trop gourmand sur de longues listes */
+  const autoRefresh = props.autoRefresh ?? false;
+
   // lit les données nécessaires à l'affichage du graphe
   const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
     props.definition.id
@@ -57,6 +68,7 @@ const IndicateurCard = (props: IndicateurCardProps) => {
   // charge les valeurs à afficher dans le graphe
   const {data: valeurs, isLoading: isLoadingValeurs} = useIndicateurValeurs({
     id: chartInfo?.id,
+    autoRefresh,
   });
 
   // Assemblage des données pour le graphique
@@ -99,7 +111,8 @@ export const IndicateurCardBase = ({
   definition,
   chart,
   chartInfo,
-  showIndicateur = true,
+  showChart = true,
+  card,
   readonly,
 }: IndicateurCardBaseProps) => {
   const isIndicateurParent = chartInfo?.enfants && chartInfo.enfants.length > 0;
@@ -111,18 +124,14 @@ export const IndicateurCardBase = ({
     ? totalEnfants
     : (totalEnfants ?? 0) + 1;
 
-  // uniquement utilisé pour `indicateursACompleterRestant`
-  const indicateursEnfantsAcompleterRestant = chartInfo?.enfants?.filter(
-    enfant => !enfant.rempli
-  ).length;
   /** Nombre total d'indicateurs restant à compléter, qu'il y ait des enfants ou non */
-  const indicateursACompleterRestant = chartInfo?.sans_valeur
-    ? indicateursEnfantsAcompleterRestant
-    : indicateursEnfantsAcompleterRestant === 0 && chartInfo?.rempli
-    ? 0
-    : (indicateursEnfantsAcompleterRestant ?? 0) + 1;
+  const indicateursACompleterRestant =
+    chartInfo && getIndicateurRestant(chartInfo);
 
-  const isNotLoadingNotFilled = !isLoading && !chartInfo?.rempli;
+  /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
+  const hasValeurOrObjectif = data.valeurs.map(v => v.valeur).length > 0;
+
+  const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
 
   return (
     <Card
@@ -133,34 +142,43 @@ export const IndicateurCardBase = ({
         className
       )}
       href={href}
+      {...card}
     >
-      {chartInfo && (
+      {chartInfo?.confidentiel && (
+        <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
+          <div className="absolute -top-5 left-5">
+            <Notification icon="lock-fill" size="sm" />
+          </div>
+        </Tooltip>
+      )}
+      {!!selectState ? (
+        <Checkbox
+          checked={selectState.selected}
+          onChange={() =>
+            selectState.setSelected({
+              indicateur_id:
+                typeof definition.id === 'string' ? definition.id : null,
+              indicateur_personnalise_id:
+                typeof definition.id === 'number' ? definition.id : null,
+              nom: definition.nom,
+              description: chartInfo?.titre_long ?? '',
+              unite: chartInfo?.unite ?? '',
+            })
+          }
+          label={chartInfo?.nom}
+        />
+      ) : (
         <>
-          {chartInfo.confidentiel && (
-            <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
-              <div className="absolute -top-5 left-5">
-                <Notification icon="lock-fill" size="sm" />
-              </div>
-            </Tooltip>
-          )}
           {indicateursACompleterRestant === 0 ? (
             <Badge title="Complété" state="success" size="sm" />
           ) : (
             <Badge title="À compléter" state="info" size="sm" />
           )}
-          {!!selectState ? (
-            <Checkbox
-              checked={selectState.selected}
-              onChange={selectState.setSelected}
-              label={chartInfo.nom}
-            />
-          ) : (
-            <div className="font-bold line-clamp-2">{chartInfo.nom}</div>
-          )}
+          <div className="font-bold line-clamp-2">{chartInfo?.nom}</div>
         </>
       )}
       {/** Graphique */}
-      {showIndicateur && (
+      {showChart && (
         <>
           {isIndicateurParent &&
           chartInfo?.sans_valeur &&
@@ -243,25 +261,29 @@ export const IndicateurCardBase = ({
       )}
       {/** Partie sous le séparateur horizontal */}
       {chartInfo &&
-        (showIndicateur ? (
+        (showChart ? (
           <>
-            {chartInfo.rempli &&
+            {/** Barre horizontale */}
+            {hasValeurOrObjectif &&
               (isIndicateurParent || chartInfo.participation_score) && (
                 <div className="h-px bg-primary-3" />
               )}
             {(isIndicateurParent || chartInfo.participation_score) && (
               <div className="flex flex-wrap gap-2 items-center text-sm text-grey-8">
+                {/* Nombre d'indicateurs */}
                 {isIndicateurParent && totalNbIndicateurs && (
                   <div>
                     {totalNbIndicateurs} indicateur
                     {totalNbIndicateurs > 1 && 's'}
                   </div>
                 )}
+                {/** Barre verticale */}
                 {isIndicateurParent &&
                   totalNbIndicateurs &&
                   chartInfo.participation_score && (
                     <div className="w-px h-3 bg-grey-5" />
                   )}
+                {/** Participation au score */}
                 {chartInfo.participation_score && (
                   <div>Participe au score Climat Air Énergie</div>
                 )}
@@ -273,7 +295,9 @@ export const IndicateurCardBase = ({
           !readonly &&
           href && (
             <>
+              {/** Barre horizontale */}
               <div className="h-px bg-primary-3" />
+              {/** Compléter indicateur bouton */}
               <Button size="xs">
                 {indicateursACompleterRestant
                   ? `Compléter ${indicateursACompleterRestant} indicateur${
