@@ -1,4 +1,5 @@
 import {ValuesToUnion, Tables} from '@tet/api';
+import {TIndicateur} from 'types/alias';
 
 type Rempli = boolean | null;
 
@@ -25,6 +26,15 @@ export type TIndicateurChartInfo = {
   enfants?: {id: string; rempli: Rempli}[] | null;
   count?: number;
   total?: number;
+};
+
+/** Base indicateur générique */
+export type Indicateur = Omit<
+  TIndicateur,
+  'indicateur_id' | 'indicateur_personnalise_id'
+> & {
+  indicateur_id?: string | null;
+  indicateur_personnalise_id?: number | null;
 };
 
 /**

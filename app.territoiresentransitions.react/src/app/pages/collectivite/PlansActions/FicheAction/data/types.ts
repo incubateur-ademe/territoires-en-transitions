@@ -1,8 +1,8 @@
+import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 import {
   TActionInsert,
   TAxeInsert,
   TFicheAction,
-  TIndicateur,
   TFicheActionServicePiloteInsert,
   TFicheActionStructureInsert,
   TPartenaireInsert,
@@ -46,14 +46,6 @@ export type FicheAction = Omit<
 export type Personne = Omit<TPersonne, 'tag_id' | 'user_id'> & {
   tag_id?: number | null;
   user_id?: string | null;
-};
-
-export type Indicateur = Omit<
-  TIndicateur,
-  'indicateur_id' | 'indicateur_personnalise_id'
-> & {
-  indicateur_id?: string | null;
-  indicateur_personnalise_id?: number | null;
 };
 
 export type Financeur = Omit<

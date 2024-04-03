@@ -2,7 +2,7 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateur} from '../types';
+import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 
 type TFetchedData = Indicateur[];
 
