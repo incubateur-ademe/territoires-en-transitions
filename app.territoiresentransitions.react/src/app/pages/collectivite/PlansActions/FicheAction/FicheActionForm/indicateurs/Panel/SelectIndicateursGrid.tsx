@@ -1,5 +1,3 @@
-import {useState} from 'react';
-
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
 import {
   Indicateur,
@@ -19,22 +17,14 @@ type Props = {
 const SelectIndicateursGrid = (props: Props) => {
   const {definitions, selectedIndicateurs, onSelect} = props;
 
-  const [selectedIndicateursState, setSelectedIndicateursState] =
-    useState(selectedIndicateurs);
-
-  const handleSelect = (indicateurs: Indicateur[]) => {
-    setSelectedIndicateursState(indicateurs);
-    onSelect(indicateurs);
-  };
-
   return (
     <div className="flex flex-col gap-6">
       {definitions?.map(definition => (
         <IndicateurChartContainer
           key={definition.id}
           definition={definition}
-          selectedIndicateurs={selectedIndicateursState}
-          onSelect={handleSelect}
+          selectedIndicateurs={selectedIndicateurs}
+          onSelect={onSelect}
         />
       ))}
     </div>
