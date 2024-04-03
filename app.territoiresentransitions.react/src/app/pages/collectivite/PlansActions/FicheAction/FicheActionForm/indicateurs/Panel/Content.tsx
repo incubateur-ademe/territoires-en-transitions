@@ -68,7 +68,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         />
       </div>
       <hr className="p-0 my-6 w-full h-px" />
-      <div className="mb-6 font-bold">
+      <div className="mb-4 font-bold">
         {selectedIndicateursState ? (
           <>
             {selectedIndicateursState.length} indicateur
