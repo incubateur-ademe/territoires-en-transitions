@@ -6,28 +6,44 @@ import {
 import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 type Props = {
-  definitions: TIndicateurListItem[];
+  definitions?: TIndicateurListItem[];
+  isLoading?: boolean;
   selectedIndicateurs: Indicateur[] | null;
   onSelect: (indicateurs: Indicateur[]) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
 const SelectIndicateursGrid = (props: Props) => {
-  const {definitions, selectedIndicateurs, onSelect} = props;
+  const {definitions, isLoading, selectedIndicateurs, onSelect} = props;
 
   return (
-    <div className="flex flex-col gap-6">
-      {definitions.map(definition => (
-        <IndicateurChartContainer
-          key={definition.id}
-          definition={definition}
-          selectedIndicateurs={selectedIndicateurs}
-          onSelect={onSelect}
-        />
-      ))}
-    </div>
+    <>
+      {/** Loading */}
+      {isLoading ? (
+        <SpinnerLoader className="mx-auto my-28" />
+      ) : /** Indicateurs */
+      definitions && definitions.length > 0 ? (
+        <div className="flex flex-col gap-6">
+          {definitions.map(definition => (
+            <IndicateurChartContainer
+              key={definition.id}
+              definition={definition}
+              selectedIndicateurs={selectedIndicateurs}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
+      ) : (
+        /** No data */
+        <div className="my-24 text-center text-sm text-grey-6">
+          Aucun indicateur
+          <br /> ne correspond à votre recherche
+        </div>
+      )}
+    </>
   );
 };
 
