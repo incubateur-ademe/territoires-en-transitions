@@ -5,9 +5,15 @@ import {Checkbox, Field, Input, SelectFilter} from '@tet/ui';
 
 import {useThematiqueListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useThematiqueListe';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import IndicateurChartsGrid from './IndicateurChartsGrid';
+import SelectIndicateursGrid from './SelectIndicateursGrid';
+import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 
-const Content = () => {
+type Props = {
+  selectedIndicateurs: Indicateur[] | null;
+  onSelect: (indicateurs: Indicateur[]) => void;
+};
+
+const Content = ({selectedIndicateurs, onSelect}: Props) => {
   const {data: thematiqueListe} = useThematiqueListe();
 
   const [filters, setFilters] = useState<Indicateurs.Filters>({});
@@ -64,9 +70,25 @@ const Content = () => {
           }
         />
       </div>
-      <hr className="p-0 my-8 w-full h-px" />
-      <div className="mb-6 font-bold text-lg">X indicateur sélectionné</div>
-      {definitions && <IndicateurChartsGrid definitions={definitions} />}
+      <hr className="p-0 my-6 w-full h-px" />
+      <div className="mb-6 font-bold">
+        {selectedIndicateurs ? (
+          <>
+            {selectedIndicateurs.length} indicateur
+            {selectedIndicateurs.length > 1 && 's'} sélectionné
+            {selectedIndicateurs.length > 1 && 's'}
+          </>
+        ) : (
+          <>0 indicateur sélectionné</>
+        )}
+      </div>
+      {definitions && (
+        <SelectIndicateursGrid
+          definitions={definitions}
+          selectedIndicateurs={selectedIndicateurs}
+          onSelect={onSelect}
+        />
+      )}
     </div>
   );
 };
