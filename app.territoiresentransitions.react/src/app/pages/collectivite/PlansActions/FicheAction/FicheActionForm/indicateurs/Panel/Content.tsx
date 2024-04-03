@@ -29,7 +29,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
   };
   return (
     <div className="grow p-4 overflow-y-auto">
-      <div className="flex flex-col gap-4">
+      <div className=" relative flex flex-col gap-4 z-[1]">
         <Field title="Rechercher par nom ou description" small>
           <Input
             type="search"
@@ -53,17 +53,6 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
             small
           />
         </Field>
-        {/* <Field title="Indicateur complété" small>
-          <SelectFilter
-            options={[
-              {value: 'oui', label: 'Complété'},
-              {value: 'non', label: 'À compléter'},
-            ]}
-            values={filters.rempli ? 'oui' : 'non'}
-            onChange={() => null}
-            small
-          />
-        </Field> */}
         <Checkbox
           label="Indicateur complété"
           checked={filters.rempli ?? false}
