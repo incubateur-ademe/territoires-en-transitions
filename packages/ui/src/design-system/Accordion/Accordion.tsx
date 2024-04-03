@@ -14,9 +14,8 @@ type AccordionType = {
   content: string | React.ReactNode;
   /** Permet de styler le contenu (ignoré si le contenu n'est pas une chaîne) */
   contentClassname?: string;
-  /** Indique un contenu privé (affiche un message d'info à l'utilisateur mais
-   * ne permet pas de faire apparaître le contenu) */
-  onlyForMembers?: boolean;
+  /** Pour afficher un texte optionnel à côté du titre */
+  subtitle?: boolean;
 };
 
 /**
@@ -31,7 +30,7 @@ export const AccordionControlled = ({
   contentClassname,
   expanded,
   setExpanded,
-  onlyForMembers,
+  subtitle,
 }: AccordionType & {
   /** le contenu est visible */
   expanded: boolean;
@@ -45,7 +44,7 @@ export const AccordionControlled = ({
         role="button"
         aria-controls={id}
         aria-expanded={expanded}
-        onClick={() => setExpanded(onlyForMembers ? false : !expanded)}
+        onClick={() => setExpanded(!expanded)}
         className={classNames(
           'border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1',
           {'border-transparent rounded-b-none bg-primary-2': expanded}
@@ -64,11 +63,10 @@ export const AccordionControlled = ({
         )}
         {/** titre */}
         {title}
-        {/** message mode "privé" */}
-        {!!onlyForMembers && (
+        {/** sous-titre */}
+        {!!subtitle && (
           <span className="font-normal text-xs ml-3 line-clamp-1">
-            Cette section est visible uniquement par les membres de votre
-            collectivité
+            {subtitle}
           </span>
         )}
         {/** icône optionnelle alignée à droite */}
@@ -79,9 +77,14 @@ export const AccordionControlled = ({
 
       {/** CONTENU */}
       {!!expanded &&
-        !onlyForMembers &&
         (typeof content === 'string' ? (
-          <div className={classNames('p-4', contentClassname)} id={id}>
+          <div
+            className={classNames(
+              'p-4 border border-t-0 border-grey-4 rounded-b-lg',
+              contentClassname
+            )}
+            id={id}
+          >
             {content}
           </div>
         ) : (

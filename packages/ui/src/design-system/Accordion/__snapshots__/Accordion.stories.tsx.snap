@@ -26,6 +26,22 @@ exports[`design-system/Accordion AvecIconeADroite smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Accordion AvecSousTitre smoke-test 1`] = `
+<div role="button"
+     aria-expanded="false"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+>
+  <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
+  </span>
+  <span class="ri-lock-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary">
+  </span>
+  Titre
+  <span class="font-normal text-xs ml-3 line-clamp-1">
+    Cette section est visible uniquement par les membres de votre collectivité
+  </span>
+</div>
+`;
+
 exports[`design-system/Accordion ContenuPersonnalise smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
@@ -57,7 +73,7 @@ exports[`design-system/Accordion ControlleOuvert smoke-test 1`] = `
   </span>
   Titre
 </div>
-<div class="p-4">
+<div class="p-4 border border-t-0 border-grey-4 rounded-b-lg">
   Contenu
 </div>
 `;
@@ -70,19 +86,5 @@ exports[`design-system/Accordion Default smoke-test 1`] = `
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
   Titre
-</div>
-`;
-
-exports[`design-system/Accordion ReserveAuMembre smoke-test 1`] = `
-<div role="button"
-     aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
->
-  <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
-  </span>
-  Titre
-  <span class="font-normal text-xs ml-3 line-clamp-1">
-    Cette section est visible uniquement par les membres de votre collectivité
-  </span>
 </div>
 `;

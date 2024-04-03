@@ -51,8 +51,10 @@ export const AvecIconeADroite: Story = {
   },
 };
 
-export const ReserveAuMembre: Story = {
+export const AvecSousTitre: Story = {
   args: {
-    onlyForMembers: true,
+    icon: 'lock-line',
+    subtitle:
+      'Cette section est visible uniquement par les membres de votre collectivité',
   },
 };
