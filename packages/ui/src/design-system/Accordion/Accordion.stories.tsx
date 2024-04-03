@@ -1,6 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {Accordion, AccordionControlled} from './Accordion';
+import DoubleCheckIcon from '@assets/DoubleCheckIcon';
 
 const meta: Meta<typeof Accordion> = {
   component: Accordion,
@@ -48,6 +49,12 @@ export const AvecIconeADroite: Story = {
   args: {
     icon: 'information-line',
     iconPosition: 'right',
+  },
+};
+
+export const AvecIconeSVG: Story = {
+  args: {
+    icon: <DoubleCheckIcon className="fill-primary-7 mr-3" />,
   },
 };
 

@@ -26,6 +26,27 @@ exports[`design-system/Accordion AvecIconeADroite smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Accordion AvecIconeSVG smoke-test 1`] = `
+<div role="button"
+     aria-expanded="false"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
+>
+  <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
+  </span>
+  <svg class="fill-primary-7 mr-3"
+       width="18"
+       height="18"
+       viewbox="0 0 24 24"
+       fill="none"
+       xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z">
+    </path>
+  </svg>
+  Titre
+</div>
+`;
+
 exports[`design-system/Accordion AvecSousTitre smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
