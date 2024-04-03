@@ -1,7 +1,7 @@
 import {Meta, StoryObj} from '@storybook/react';
 
 import {IndicateurCardBase, IndicateurCardBaseProps} from './IndicateurCard';
-import {fakeIndicateurValeurs} from '../chart/fixtures';
+import {fakeIndicateurValeurs} from '../../chart/fixtures';
 import React, {useState} from 'react';
 
 const meta: Meta<typeof IndicateurCardBase> = {
@@ -74,7 +74,7 @@ export const CompletSansValeur: Story = {
 export const SansGraphVide: Story = {
   args: {
     href: '#',
-    showIndicateur: false,
+    showChart: false,
     chartInfo: {
       nom: 'Achats publics avec considération environnementale',
       participation_score: true,
@@ -86,7 +86,7 @@ export const SansGraphVide: Story = {
 
 export const SansGraphRempli: Story = {
   args: {
-    showIndicateur: false,
+    showChart: false,
     data: {
       valeurs: fakeIndicateurValeurs,
     },
@@ -130,7 +130,7 @@ export const SelectionnableSansGraphVide: Story = {
       count: 5,
       total: 5,
     },
-    showIndicateur: false,
+    showChart: false,
   },
   render: args => <SelectStory {...args} />,
 };

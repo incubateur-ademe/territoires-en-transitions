@@ -7,7 +7,7 @@ import {
 } from 'app/paths';
 import IndicateurCard, {
   IndicateurCardProps,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard';
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type TIndicateurChartsGridProps = {
