@@ -20,6 +20,14 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
 
   const {data: definitions} = useFilteredIndicateurDefinitions(null, filters);
 
+  const [selectedIndicateursState, setSelectedIndicateursState] =
+    useState(selectedIndicateurs);
+
+  const handleSelect = (indicateurs: Indicateur[]) => {
+    setSelectedIndicateursState(indicateurs);
+    onSelect(indicateurs);
+  };
+
   return (
     <div className="grow p-4 overflow-y-auto">
       <div className="flex flex-col gap-4">
@@ -72,11 +80,11 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
       </div>
       <hr className="p-0 my-6 w-full h-px" />
       <div className="mb-6 font-bold">
-        {selectedIndicateurs ? (
+        {selectedIndicateursState ? (
           <>
-            {selectedIndicateurs.length} indicateur
-            {selectedIndicateurs.length > 1 && 's'} sélectionné
-            {selectedIndicateurs.length > 1 && 's'}
+            {selectedIndicateursState.length} indicateur
+            {selectedIndicateursState.length > 1 && 's'} sélectionné
+            {selectedIndicateursState.length > 1 && 's'}
           </>
         ) : (
           <>0 indicateur sélectionné</>
@@ -85,8 +93,8 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
       {definitions && (
         <SelectIndicateursGrid
           definitions={definitions}
-          selectedIndicateurs={selectedIndicateurs}
-          onSelect={onSelect}
+          selectedIndicateurs={selectedIndicateursState}
+          onSelect={handleSelect}
         />
       )}
     </div>
