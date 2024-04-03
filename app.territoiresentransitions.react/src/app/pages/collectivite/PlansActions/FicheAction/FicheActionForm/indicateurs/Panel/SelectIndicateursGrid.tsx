@@ -19,7 +19,7 @@ const SelectIndicateursGrid = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-6">
-      {definitions?.map(definition => (
+      {definitions.map(definition => (
         <IndicateurChartContainer
           key={definition.id}
           definition={definition}
