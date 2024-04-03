@@ -48,10 +48,17 @@ const IndicateurDetailChart = ({
     valeurs: valeurs || [],
   };
 
+  // Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître
+  const hasValeurOrObjectif = data.valeurs.map(v => v.valeur).length > 0;
+
   return (
     <div className="flex flex-col p-6 border border-grey-4 rounded-lg">
       <div className="flex justify-between gap-16 mb-6">
-        <div className={classNames('font-bold', {'grow text-center': !rempli})}>
+        <div
+          className={classNames('font-bold', {
+            'grow text-center': !hasValeurOrObjectif,
+          })}
+        >
           {titre}
         </div>
         {rempli && (
@@ -95,7 +102,7 @@ const IndicateurDetailChart = ({
         }}
       />
 
-      {!rempli && (
+      {!hasValeurOrObjectif && (
         <div className="mx-auto text-sm text-grey-7">
           Aucune valeur renseignée pour l’instant
         </div>
