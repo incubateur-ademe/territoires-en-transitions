@@ -52,7 +52,10 @@ const IndicateurDetailChart = ({
   const hasValeurOrObjectif = data.valeurs.map(v => v.valeur).length > 0;
 
   return (
-    <div className="flex flex-col p-6 border border-grey-4 rounded-lg">
+    <div
+      data-test={`chart-${definition.id}`}
+      className="flex flex-col p-6 border border-grey-4 rounded-lg"
+    >
       <div className="flex justify-between gap-16 mb-6">
         <div
           className={classNames('font-bold', {
