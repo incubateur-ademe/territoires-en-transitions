@@ -3,7 +3,7 @@
 exports[`design-system/Accordion AvecIcone smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
@@ -16,7 +16,7 @@ exports[`design-system/Accordion AvecIcone smoke-test 1`] = `
 exports[`design-system/Accordion AvecIconeADroite smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
@@ -29,7 +29,7 @@ exports[`design-system/Accordion AvecIconeADroite smoke-test 1`] = `
 exports[`design-system/Accordion AvecSousTitre smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
@@ -45,7 +45,7 @@ exports[`design-system/Accordion AvecSousTitre smoke-test 1`] = `
 exports[`design-system/Accordion ContenuPersonnalise smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
@@ -56,7 +56,7 @@ exports[`design-system/Accordion ContenuPersonnalise smoke-test 1`] = `
 exports[`design-system/Accordion ContenuStyle smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>
@@ -67,13 +67,13 @@ exports[`design-system/Accordion ContenuStyle smoke-test 1`] = `
 exports[`design-system/Accordion ControlleOuvert smoke-test 1`] = `
 <div role="button"
      aria-expanded="true"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1 border-transparent rounded-b-none bg-primary-2"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1 border-transparent rounded-b-none bg-primary-2"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform transform: rotate-90">
   </span>
   Titre
 </div>
-<div class="p-4 border border-t-0 border-grey-4 rounded-b-lg">
+<div class="px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg">
   Contenu
 </div>
 `;
@@ -81,7 +81,7 @@ exports[`design-system/Accordion ControlleOuvert smoke-test 1`] = `
 exports[`design-system/Accordion Default smoke-test 1`] = `
 <div role="button"
      aria-expanded="false"
-     class="border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1"
+     class="border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1"
 >
   <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-3 text-primary transition-transform">
   </span>

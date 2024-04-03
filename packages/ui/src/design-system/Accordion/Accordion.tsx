@@ -46,7 +46,7 @@ export const AccordionControlled = ({
         aria-expanded={expanded}
         onClick={() => setExpanded(!expanded)}
         className={classNames(
-          'border border-grey-4 rounded-lg h-16 flex items-center px-8 font-bold text-primary-10  hover:bg-primary-1',
+          'border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1',
           {'border-transparent rounded-b-none bg-primary-2': expanded}
         )}
       >
@@ -80,7 +80,7 @@ export const AccordionControlled = ({
         (typeof content === 'string' ? (
           <div
             className={classNames(
-              'p-4 border border-t-0 border-grey-4 rounded-b-lg',
+              'px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg',
               contentClassname
             )}
             id={id}
