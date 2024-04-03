@@ -18,7 +18,8 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
 
   const [filters, setFilters] = useState<Indicateurs.Filters>({});
 
-  const {data: definitions} = useFilteredIndicateurDefinitions(null, filters);
+  const {data: definitions, isLoading: isDefinitionsLoading} =
+    useFilteredIndicateurDefinitions(null, filters);
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
@@ -78,18 +79,12 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
           <>0 indicateur sélectionné</>
         )}
       </div>
-      {definitions && definitions.length > 0 ? (
-        <SelectIndicateursGrid
-          definitions={definitions}
-          selectedIndicateurs={selectedIndicateursState}
-          onSelect={handleSelect}
-        />
-      ) : (
-        <div className="my-24 text-center text-sm text-grey-6">
-          Aucun indicateur
-          <br /> ne correspond à votre recherche
-        </div>
-      )}
+      <SelectIndicateursGrid
+        definitions={definitions}
+        isLoading={isDefinitionsLoading}
+        selectedIndicateurs={selectedIndicateursState}
+        onSelect={handleSelect}
+      />
     </div>
   );
 };
