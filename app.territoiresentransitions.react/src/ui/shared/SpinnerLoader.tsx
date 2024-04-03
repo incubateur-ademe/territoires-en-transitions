@@ -10,7 +10,7 @@ const SpinnerLoader = ({className}: Props) => {
       <svg
         aria-hidden="true"
         className={classNames(
-          `w-6 h-6 text-gray-200 animate-spin fill-bf500 ${className}`
+          `w-6 h-6 text-gray-200 animate-spin fill-primary-5 ${className}`
         )}
         viewBox="0 0 100 101"
         fill="none"
