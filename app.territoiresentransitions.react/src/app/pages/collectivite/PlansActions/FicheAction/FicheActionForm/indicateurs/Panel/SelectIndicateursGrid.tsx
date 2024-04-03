@@ -64,7 +64,7 @@ const IndicateurChartContainer = (
   };
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className="min-h-[20rem]">
       {entry?.isIntersecting ? (
         <IndicateurCard
           definition={definition}
