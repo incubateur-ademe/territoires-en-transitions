@@ -20,7 +20,7 @@ const EquipeListe = ({liste}: EquipeListeProps) => {
         >
           <StrapiImage
             data={l.image}
-            className="rounded-full w-[83px] h-[83px] border border-primary-4"
+            className="rounded-full w-[83px] h-[83px] min-w-[83px] min-h-[83px] object-cover border border-primary-4"
           />
           <div className="flex flex-col gap-1">
             <p className="text-primary-9 text-[14px] text-center leading-[19px] font-[500] mb-0">
