@@ -2,7 +2,7 @@ import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
 import AdemeLogo from '@assets/AdemeLogo';
 import {Footer, LinkObject} from '../../design-system/Footer/Footer';
 import {Button} from '@design-system/Button';
-import {BASE_URL} from 'utils/constants';
+import {SITE_BASE_URL} from 'utils/constants';
 
 type FooterTeTProps = {
   /** Liens supplémentaires à afficher en fonction de la page visitée */
@@ -45,11 +45,11 @@ export const FooterTeT = ({customLinks, customLogos}: FooterTeTProps) => {
       bottomLinks={[
         {
           label: 'Accessibilité : non conforme',
-          href: `${BASE_URL}/accessibilite`,
+          href: `${SITE_BASE_URL}/accessibilite`,
         },
         {
           label: 'Mentions légales',
-          href: `${BASE_URL}/mentions`,
+          href: `${SITE_BASE_URL}/mentions`,
         },
         {
           label: 'Données personnelles',
@@ -58,7 +58,7 @@ export const FooterTeT = ({customLinks, customLogos}: FooterTeTProps) => {
         },
         {
           label: 'Gestion des cookies',
-          href: `${BASE_URL}/cookies`,
+          href: `${SITE_BASE_URL}/cookies`,
         },
         {
           label: 'Code source',
@@ -67,7 +67,7 @@ export const FooterTeT = ({customLinks, customLogos}: FooterTeTProps) => {
         },
         {
           label: 'Conditions générales d’utilisation',
-          href: `${BASE_URL}/cgu`,
+          href: `${SITE_BASE_URL}/cgu`,
         },
         ...(customLinks ?? []),
       ]}

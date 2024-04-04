@@ -1,9 +1,9 @@
 import './global.css';
 import AppHeader from './AppHeader';
-import {Footer} from '@components/footer/Footer';
 import {Metadata, Viewport} from 'next';
 import {getMetaData} from './utils';
 import {Amplitude} from './Amplitude';
+import Footer from '@components/layout/Footer';
 
 export const viewport: Viewport = {
   width: 'device-width',
