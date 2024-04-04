@@ -18,6 +18,10 @@ type AccordionType = {
   subtitle?: string;
 };
 
+/** Styles du container autour du contenu quand l'accordéon est déplié */
+export const ACCORDION_CONTENT_STYLE =
+  'px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg text-grey-8';
+
 /**
  * Affiche un contenu complémentaire
  */
@@ -37,17 +41,25 @@ export const AccordionControlled = ({
   /** appelée pour déplier/replier le contenu */
   setExpanded: (value: boolean) => void;
 }) => {
+
   return (
-    <>
+    <div>
       {/** EN-TËTE */}
       <div
         role="button"
+        tabIndex={0}
         aria-controls={id}
         aria-expanded={expanded}
+        onKeyDown={e => {
+          if (e.code === 'Space') {
+            e.preventDefault();
+            setExpanded(!expanded);
+          }
+        }}
         onClick={() => setExpanded(!expanded)}
         className={classNames(
-          'border border-grey-4 rounded-lg h-16 flex items-center px-6 font-bold text-primary-10  hover:bg-primary-1',
-          {'border-transparent rounded-b-none bg-primary-2': expanded}
+          'border border-grey-4 rounded-lg h-14 flex items-center px-6 font-bold text-primary-10 hover:bg-primary-1',
+          {'border-primary-2 rounded-b-none bg-primary-2': expanded}
         )}
       >
         {/** picto indiquant l'état ouvert/fermé */}
@@ -79,10 +91,7 @@ export const AccordionControlled = ({
       {!!expanded &&
         (typeof content === 'string' ? (
           <div
-            className={classNames(
-              'px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg',
-              contentClassname
-            )}
+            className={classNames(ACCORDION_CONTENT_STYLE, contentClassname)}
             id={id}
           >
             {content}
@@ -90,7 +99,7 @@ export const AccordionControlled = ({
         ) : (
           content
         ))}
-    </>
+    </div>
   );
 };
 
