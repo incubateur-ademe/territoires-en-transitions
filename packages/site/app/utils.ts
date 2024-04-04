@@ -83,7 +83,7 @@ export const getData = async (): Promise<AccueilData | null> => {
               image: data.attributes.Accompagnement.Compte.Image
                 .data as unknown as StrapiItem,
               button: {
-                titre: 'Créer un compte',
+                titre: 'Accéder à la plateforme',
                 href: 'https://app.territoiresentransitions.fr/auth/signup',
               },
             },
