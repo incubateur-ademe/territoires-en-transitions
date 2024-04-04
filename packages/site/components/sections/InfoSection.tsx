@@ -1,7 +1,8 @@
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
-import {ButtonVariant} from '@components/dstet/buttons/utils';
+'use client';
+
 import classNames from 'classnames';
 import Section from './Section';
+import {Button, ButtonVariant} from '@tet/ui';
 
 type InfoSectionProps = {
   id?: string;
@@ -26,19 +27,18 @@ const InfoSection = ({id, content, buttons}: InfoSectionProps) => {
       <div className="w-full flex flex-wrap items-stretch justify-center gap-6">
         {buttons.length > 0 &&
           buttons.map(button => (
-            <ButtonWithLink
+            <Button
               key={button.title}
+              href={button.href}
+              variant={button.variant}
+              external={button.external}
               className={classNames(
-                '!m-0 !w-full md:!w-auto',
+                'max-md:w-full max-md:justify-center md:w-auto',
                 button.className,
               )}
-              href={button.href}
-              external={button.external}
-              variant={button.variant}
-              size="big"
             >
               {button.title}
-            </ButtonWithLink>
+            </Button>
           ))}
       </div>
     </Section>

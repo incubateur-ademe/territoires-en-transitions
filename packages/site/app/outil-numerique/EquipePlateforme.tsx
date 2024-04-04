@@ -1,11 +1,11 @@
 'use client';
 
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import EquipeListe from './EquipeListe';
 import EquipeCarousel from './EquipeCarousel';
 import {useEffect, useRef, useState} from 'react';
+import {Button} from '@tet/ui';
 
 type EquipePlateformeProps = {
   titre: string;
@@ -72,9 +72,7 @@ const EquipePlateforme = ({
       </div>
 
       <div className="flex gap-8 justify-center">
-        <ButtonWithLink href="/contact" size="big">
-          {cta_contact}
-        </ButtonWithLink>
+        <Button href="/contact">{cta_contact}</Button>
       </div>
     </Section>
   );

@@ -3,9 +3,9 @@
 import {useState} from 'react';
 import classNames from 'classnames';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import AnchorAsButton from '@components/buttons/AnchorAsButton';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import Markdown from '@components/markdown/Markdown';
+import {Button} from '@tet/ui';
 
 const splitContent = (content: string, limit: number) => {
   let newContent = content.slice(0, limit);
@@ -61,12 +61,12 @@ const ActionCollectivite = ({
         />
 
         {contenu.length > limitContent && (
-          <AnchorAsButton
+          <Button
             onClick={() => setContenuOpen(prevState => !prevState)}
-            className="text-primary-7 font-bold"
+            variant="underlined"
           >
             {contenuOpen ? 'Lire moins' : 'Lire plus'}
-          </AnchorAsButton>
+          </Button>
         )}
       </div>
     </div>

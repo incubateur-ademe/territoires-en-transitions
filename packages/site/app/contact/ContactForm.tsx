@@ -1,11 +1,11 @@
 'use client';
 
-import Button from '@components/dstet/buttons/Button';
 import {ToastFloater} from '@components/floating-ui/ToastFloater';
 import classNames from 'classnames';
 import {useState} from 'react';
 import {supabase} from '../initSupabase';
 import {options} from './data';
+import {Button} from '@tet/ui';
 
 type FormData = {
   categorie: string;
@@ -165,7 +165,7 @@ const ContactForm = () => {
         </div>
 
         <div className="flex justify-end">
-          <Button size="big">Envoyer</Button>
+          <Button>Envoyer</Button>
         </div>
       </form>
 

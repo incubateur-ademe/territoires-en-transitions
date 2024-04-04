@@ -1,7 +1,6 @@
 'use client';
 
-import Button from '@components/dstet/buttons/Button';
-import {ButtonVariant} from '@components/dstet/buttons/utils';
+import {Button, ButtonVariant} from '@tet/ui';
 import classNames from 'classnames';
 import {useCallback, useEffect, useState} from 'react';
 import {useSwipeable} from 'react-swipeable';
@@ -93,8 +92,8 @@ const Slideshow = ({
           {displayButtons && (
             <Button
               variant={buttonsVariant}
-              size="big"
-              className="fr-icon-arrow-left-s-line"
+              icon="arrow-left-s-line"
+              size="sm"
               title="previous"
               onClick={() => handleChangeIndex('previous')}
             />
@@ -120,8 +119,8 @@ const Slideshow = ({
           {displayButtons && (
             <Button
               variant={buttonsVariant}
-              size="big"
-              className="fr-icon-arrow-right-s-line"
+              icon="arrow-right-s-line"
+              size="sm"
               title="next"
               onClick={() => handleChangeIndex('next')}
             />
