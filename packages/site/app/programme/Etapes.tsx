@@ -1,8 +1,10 @@
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
+'use client';
+
 import Card from '@components/cards/Card';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import {Content} from './types';
+import {Button} from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
@@ -29,9 +31,9 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <ButtonWithLink href="/contact" className="mt-6" size="big">
+      <Button href="/contact" className="mt-6">
         Contactez-nous
-      </ButtonWithLink>
+      </Button>
     </CardsSection>
   ) : null;
 };

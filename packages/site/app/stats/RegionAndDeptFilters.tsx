@@ -5,7 +5,7 @@ import {supabase} from '../initSupabase';
 import {useEffect, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import Select from '../../components/inputs/Select';
-import Button from '@components/dstet/buttons/Button';
+import {Button} from '@tet/ui';
 
 /**
  * Toutes les régions.
@@ -183,7 +183,6 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
         />
 
         <Button
-          size="big"
           variant="outlined"
           onClick={() => {
             setSelectedRegion(emptyString);

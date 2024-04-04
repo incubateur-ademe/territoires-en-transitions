@@ -1,7 +1,8 @@
+'use client';
+
 import classNames from 'classnames';
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
-import {ButtonVariant} from '@components/dstet/buttons/utils';
 import Markdown from '@components/markdown/Markdown';
+import {Button, ButtonVariant} from '@tet/ui';
 
 type CardProps = {
   title?: string;
@@ -78,15 +79,14 @@ const Card = ({
         </div>
 
         {button && (
-          <ButtonWithLink
+          <Button
             href={button.href}
             variant={button.variant}
             external={button.external}
-            fullWidth
-            size="big"
+            className="w-full justify-center"
           >
             {button.title}
-          </ButtonWithLink>
+          </Button>
         )}
       </div>
     </div>

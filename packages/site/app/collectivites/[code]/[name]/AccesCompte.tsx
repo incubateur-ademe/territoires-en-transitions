@@ -1,4 +1,6 @@
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
+'use client';
+
+import {Button} from '@tet/ui';
 
 type AccesCompteProps = {
   description: string;
@@ -12,9 +14,7 @@ const AccesCompte = ({description, cta, href}: AccesCompteProps) => {
       <p className="text-center text-primary-8 font-bold text-[18px] leading-[28px]">
         {description}
       </p>
-      <ButtonWithLink href={href} size="big">
-        {cta}
-      </ButtonWithLink>
+      <Button href={href}>{cta}</Button>
     </div>
   );
 };

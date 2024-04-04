@@ -1,6 +1,8 @@
+'use client';
+
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
+import {Button} from '@tet/ui';
 import classNames from 'classnames';
 
 type NewsletterProps = {
@@ -14,13 +16,9 @@ const Newsletter = ({titre, description, className}: NewsletterProps) => {
     <Section className={classNames('gap-0', className)}>
       <h2 className="mb-3">{titre}</h2>
       <p>{description}</p>
-      <ButtonWithLink
-        href="https://cloud.contact.ademe.fr/inscription-tete"
-        external
-        size="big"
-      >
+      <Button href="https://cloud.contact.ademe.fr/inscription-tete" external>
         S'inscrire
-      </ButtonWithLink>
+      </Button>
     </Section>
   );
 };

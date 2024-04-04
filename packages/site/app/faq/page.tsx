@@ -1,14 +1,11 @@
 'use server';
-/* eslint-disable react/no-unescaped-entities */
 
 import Accordion from '@components/accordion/Accordion';
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import Section from '@components/sections/Section';
 import {Metadata} from 'next';
-import CommunityPicto from 'public/pictogrammes/CommunityPicto';
-import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
 import {fetchCollection} from 'src/strapi/strapi';
 import {sortByRank} from 'src/utils/sortByRank';
+import ContactEquipe from './ContactEquipe';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -56,21 +53,7 @@ const Faq = async () => {
           </div>
         )}
       </Section>
-      <Section
-        className="!flex-row justify-between items-center gap-8 flex-wrap"
-        containerClassName="bg-primary-1"
-      >
-        <p className="mb-0 flex-auto text-center">
-          Cette page n’a pas répondu à votre question ? Notre équipe est à votre
-          écoute !
-        </p>
-        <div className="flex-auto flex justify-center items-center gap-8 flex-wrap">
-          <PictoWithBackground pictogram={<CommunityPicto />} />
-          <ButtonWithLink href="/contact" variant="outlined" size="big">
-            Contacter l'équipe
-          </ButtonWithLink>
-        </div>
-      </Section>
+      <ContactEquipe />
     </>
   );
 };

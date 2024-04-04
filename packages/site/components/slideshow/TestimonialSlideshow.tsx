@@ -1,8 +1,8 @@
-import {ButtonVariant} from '@components/dstet/buttons/utils';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import Slideshow from './Slideshow';
+import {ButtonVariant} from '@tet/ui';
 
 type TestimonialSlideshowProps = {
   contenu: {

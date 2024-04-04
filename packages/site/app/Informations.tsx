@@ -1,7 +1,9 @@
+'use client';
+
 /* eslint-disable react/no-unescaped-entities */
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
+import {Button} from '@tet/ui';
 import CalendarPicto from 'public/pictogrammes/CalendarPicto';
 import CommunityPicto from 'public/pictogrammes/CommunityPicto';
 import InformationPicto from 'public/pictogrammes/InformationPicto';
@@ -23,31 +25,33 @@ const Informations = ({titre, description, className}: InformationsProps) => {
         <CardsWrapper cols={3} className="!gap-14">
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<InformationPicto />} />
-            <ButtonWithLink href="/faq" fullWidth variant="outlined" size="big">
+            <Button
+              href="/faq"
+              variant="outlined"
+              className="w-full justify-center"
+            >
               Lire les questions fréquentes
-            </ButtonWithLink>
+            </Button>
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CommunityPicto />} />
-            <ButtonWithLink
+            <Button
               href="/contact"
-              fullWidth
               variant="outlined"
-              size="big"
+              className="w-full justify-center"
             >
               Contacter l'équipe
-            </ButtonWithLink>
+            </Button>
           </div>
           <div className="flex flex-col items-center gap-8">
             <PictoWithBackground pictogram={<CalendarPicto />} />
-            <ButtonWithLink
+            <Button
               href="https://calendly.com/territoiresentransitions"
-              fullWidth
+              className="w-full justify-center"
               external
-              size="big"
             >
               Participer à une démo
-            </ButtonWithLink>
+            </Button>
           </div>
         </CardsWrapper>
       }

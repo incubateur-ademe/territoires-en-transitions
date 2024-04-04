@@ -1,12 +1,11 @@
 'use client';
 
-import ButtonWithLink from '@components/dstet/buttons/ButtonWithLink';
-import PlayCircleIcon from '@components/icones/PlayCircleIcon';
 import Section from '@components/sections/Section';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {useEvolutionTotalActivation} from 'app/stats/EvolutionTotalActivationParType';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import Arrow from './Arrow';
+import {Button} from '@tet/ui';
 
 type HeaderPlateformeProps = {
   titre: string;
@@ -40,9 +39,7 @@ const HeaderPlateforme = ({
       </p>
       <div className="flex max-md:flex-col gap-y-4 gap-x-8 justify-center items-center">
         <div className="max-md:flex max-md:flex-col max-md:items-center">
-          <ButtonWithLink href={url_inscription} size="big">
-            {cta_inscription}
-          </ButtonWithLink>
+          <Button href={url_inscription}>{cta_inscription}</Button>
           {!!collectivitesActivees && (
             <p className="md:hidden text-primary-9 text-[13px] font-bold mb-0 pt-2">
               Déjà {collectivitesActivees} collectivités utilisatrices
@@ -50,11 +47,9 @@ const HeaderPlateforme = ({
           )}
         </div>
 
-        <ButtonWithLink href={url_demo} size="big" variant="outlined">
-          <div className="flex gap-3 justify-center items-center">
-            <PlayCircleIcon fill="#6A6AF4" /> {cta_demo}
-          </div>
-        </ButtonWithLink>
+        <Button href={url_demo} variant="outlined" icon="play-circle-line">
+          {cta_demo}
+        </Button>
       </div>
       <div className="max-md:hidden flex justify-center gap-4 h-[32px] mt-2">
         {!!collectivitesActivees && (
