@@ -3,6 +3,8 @@ import {AnchorHTMLProps, DivHTMLProps, isAnchor} from 'utils/types';
 
 /** Types custom de Card */
 type BaseCardProps = {
+  /** Id pour les tests */
+  dataTest?: string;
   /** En-tête, sous forme d'une chaîne de caractères ou d'un noeud React */
   header?: string | React.ReactNode;
   /** Contenu principal de la carte */
@@ -23,7 +25,7 @@ type DivCardProps = BaseCardProps & DivHTMLProps;
 type AnchorCardProps = BaseCardProps & AnchorHTMLProps;
 
 /** Props du composant générique <Card> */
-type CardProps = DivCardProps | AnchorCardProps;
+export type CardProps = DivCardProps | AnchorCardProps;
 
 /** Affiche une carte avec header et/ou footer
  * Pour appliquer des classnames au header ou au footer en fonction
@@ -32,6 +34,7 @@ type CardProps = DivCardProps | AnchorCardProps;
  * Donner une prop `href` pour transformer la carte en lien
  */
 export const Card = ({
+  dataTest,
   children,
   header,
   footer,
@@ -64,6 +67,7 @@ export const Card = ({
     return (
       <a
         {...otherProps}
+        data-test={dataTest}
         className={classNames('bg-none after:hidden', appliedClassname)}
         target={external ? '_blank' : otherProps.target}
         rel={external ? 'noreferrer noopener' : otherProps.rel}
@@ -76,6 +80,7 @@ export const Card = ({
     return (
       <div
         {...divCardProps}
+        data-test={dataTest}
         className={appliedClassname}
         onClick={!disabled ? divCardProps.onClick : undefined}
       >
