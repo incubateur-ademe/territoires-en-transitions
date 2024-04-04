@@ -15,9 +15,9 @@ import classNames from 'classnames';
 import {preset} from '@tailwind-preset';
 import {Button} from '../Button';
 
-type Size = 'sm' | 'md' | 'lg' | 'xl';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
-const sizeToClass: Record<Size, string> = {
+const sizeToClass: Record<ModalSize, string> = {
   sm: 'max-w-sm',
   md: 'max-w-xl',
   lg: 'max-w-4xl',
@@ -35,6 +35,8 @@ export type RenderProps = {
   labelId: string;
   /** l'id à la description pour l'accessibilité */
   descriptionId: string;
+  /** Référence du container de la modale */
+  ref: React.MutableRefObject<HTMLElement>;
 };
 
 /** Types des props du composant générique Modal */
@@ -63,7 +65,7 @@ export type ModalProps = {
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
   /** max-width prédéfinies dans le DSFR, valeur par défaut "md" */
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: ModalSize;
   /** désactive la fermeture lors du clic sur le fond */
   disableDismiss?: boolean;
   /** n'affiche pas le bouton Fermer */
@@ -166,6 +168,7 @@ export const Modal = ({
               >
                 {!noCloseButton && (
                   <Button
+                    data-html2canvas-ignore
                     data-test={`close-${dataTest}`}
                     title="Fermer"
                     onClick={handleOpenChange}
@@ -202,6 +205,7 @@ export const Modal = ({
                   close: handleOpenChange,
                   labelId,
                   descriptionId,
+                  ref: refs.floating,
                 })}
                 {renderFooter?.({
                   close: handleOpenChange,
