@@ -105,21 +105,19 @@ const CollectiviteHeader = ({
             {!annuaireUrl ? (
               nom
             ) : (
-              <>
-                <a
-                  href={annuaireUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="bg-none active:!bg-transparent after:hidden"
-                >
-                  {nom}
-                </a>
+              <a
+                href={annuaireUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="bg-none active:!bg-transparent after:hidden flex items-end gap-1.5"
+              >
+                <span className="inline-block">{nom}</span>
                 <Icon
                   icon="external-link-line"
                   size="2xl"
                   className="inline-block mb-1.5"
                 />
-              </>
+              </a>
             )}
           </h1>
 
