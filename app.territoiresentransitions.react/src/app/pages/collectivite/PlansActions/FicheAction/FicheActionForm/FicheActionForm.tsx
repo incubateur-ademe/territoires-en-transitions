@@ -129,7 +129,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
           isReadonly={isReadonly}
         />
-        <FormField label="Résultats attendus">
+        <FormField label="Effets attendus">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
             values={fiche.resultats_attendus ?? []}
