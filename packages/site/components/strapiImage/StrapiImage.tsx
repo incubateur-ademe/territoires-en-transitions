@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import classNames from 'classnames';
 import {CSSProperties} from 'react';
+import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
@@ -32,17 +33,19 @@ export function StrapiImage({
       : `${attributes.url}`;
 
   return (
-    <picture className={containerClassName} style={containerStyle}>
-      <img
+    <div className={containerClassName} style={containerStyle}>
+      <Image
         className={classNames('block', className)}
         src={url.startsWith('http') ? url : `${baseURL}${url}`}
         alt={`${attributes.alternativeText ?? ''}`}
+        width={attributes.width as unknown as number}
+        height={attributes.height as unknown as number}
       />
       {displayCaption && !!attributes.caption && (
         <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
           {`${attributes.caption}`}
         </p>
       )}
-    </picture>
+    </div>
   );
 }

@@ -64,7 +64,7 @@ const ParagrapheService = ({
         {!!imageTitre && (
           <StrapiImage
             data={imageTitre}
-            className={classNames('mb-6', {
+            className={classNames('mb-6 w-auto', {
               'mx-auto': titreCentre,
               'mb-0': !texte,
               'h-6': tailleImageTitre === 'sm' || !tailleImageTitre,
