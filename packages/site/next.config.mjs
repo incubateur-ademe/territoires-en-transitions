@@ -13,6 +13,9 @@ const nextConfig = {
     // permet le chargement de nivo
     esmExternals: 'loose',
   },
+  images: {
+    remotePatterns: [{protocol: 'https', hostname: '**.strapiapp.com'}],
+  },
   // surcharge la config webpack
   webpack: config => {
     // pour le chargement des fontes au format woff2
