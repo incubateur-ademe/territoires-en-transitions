@@ -4,6 +4,7 @@ import classNames from 'classnames';
 export type LinkObject = {label: string; href: string; external?: boolean};
 
 type FooterProps = {
+  id?: string;
   /** Liste de logos à afficher à gauche du footer.
    * Utiliser de préférence des composants renvoyant un svg. */
   logos?: React.ReactNode[];
@@ -24,6 +25,7 @@ type FooterProps = {
  */
 
 export const Footer = ({
+  id,
   logos,
   content,
   contentLinks,
@@ -33,6 +35,7 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <footer
+      id={id}
       className={classNames('w-full border-t-2 border-t-primary-8', className)}
     >
       {/* Partie suppérieure du footer */}

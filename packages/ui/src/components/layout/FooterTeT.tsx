@@ -5,19 +5,29 @@ import {Button} from '@design-system/Button';
 import {SITE_BASE_URL} from 'utils/constants';
 
 type FooterTeTProps = {
+  id?: string;
   /** Liens supplémentaires à afficher en fonction de la page visitée */
   customLinks?: LinkObject[];
   /** Logos supplémentaires à afficher en fonction de la page visitée */
   customLogos?: React.ReactNode[];
+  /** Surcharge des classNames. */
+  className?: string;
 };
 
 /**
  * Footer par défaut des applications Territoires en Transitions
  */
 
-export const FooterTeT = ({customLinks, customLogos}: FooterTeTProps) => {
+export const FooterTeT = ({
+  id,
+  customLinks,
+  customLogos,
+  className,
+}: FooterTeTProps) => {
   return (
     <Footer
+      id={id}
+      className={className}
       logos={[
         <RepubliqueFrancaiseLogo className="h-full" />,
         <AdemeLogo className="h-full" />,
