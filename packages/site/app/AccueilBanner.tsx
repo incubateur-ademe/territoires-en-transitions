@@ -35,7 +35,7 @@ const AccueilBanner = ({titre, couverture}: AccueilBannerProps) => {
       {!!couverture && (
         <StrapiImage
           data={couverture}
-          className="w-auto mx-auto"
+          className="w-full mx-auto"
           containerClassName="w-full lg:w-3/5 xl:w-2/5 min-w-[350px]"
           displayCaption={false}
         />
