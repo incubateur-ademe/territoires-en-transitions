@@ -1,6 +1,8 @@
+'use client';
+
 /* eslint-disable @next/next/no-img-element */
 import classNames from 'classnames';
-import {CSSProperties} from 'react';
+import {CSSProperties, useState} from 'react';
 import Image from 'next/image';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
@@ -15,6 +17,7 @@ type StrapiImageProps = {
   containerClassName?: string;
   containerStyle?: CSSProperties;
   displayCaption?: boolean;
+  placeholder?: string;
 };
 
 export function StrapiImage({
@@ -24,7 +27,10 @@ export function StrapiImage({
   containerClassName,
   containerStyle,
   displayCaption = false,
+  placeholder,
 }: StrapiImageProps) {
+  const [error, setError] = useState(false);
+
   const attributes = data.attributes;
 
   const url =
@@ -36,10 +42,19 @@ export function StrapiImage({
     <div className={containerClassName} style={containerStyle}>
       <Image
         className={classNames('block', className)}
-        src={url.startsWith('http') ? url : `${baseURL}${url}`}
+        src={
+          error
+            ? placeholder ?? '/placeholder.png'
+            : url.startsWith('http')
+            ? url
+            : `${baseURL}${url}`
+        }
         alt={`${attributes.alternativeText ?? ''}`}
         width={attributes.width as unknown as number}
         height={attributes.height as unknown as number}
+        placeholder="blur"
+        blurDataURL={placeholder ?? '/placeholder.png'}
+        onErrorCapture={() => setError(true)}
       />
       {displayCaption && !!attributes.caption && (
         <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
