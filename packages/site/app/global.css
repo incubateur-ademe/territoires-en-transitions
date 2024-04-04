@@ -61,7 +61,7 @@ nav.md-toc ~ h2:before {
 }
 
 /** listes ul / ol */
-ul:not(.fr-footer__content-list, .fr-btns-group),
+ul:not(.fr-btns-group),
 ol {
   list-style: inside;
 }

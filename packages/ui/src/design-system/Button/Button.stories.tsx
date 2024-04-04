@@ -4,7 +4,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import DoubleCheckIcon from '@assets/DoubleCheckIcon';
 
 import {Button} from './Button';
-import {BASE_URL} from 'utils/constants';
+import {SITE_BASE_URL} from 'utils/constants';
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -254,25 +254,35 @@ export const Variants: Story = {
 export const AnchorButtons: Story = {
   render: () => (
     <div className="flex flex-wrap items-end gap-5">
-      <Button href={BASE_URL}>Internal link</Button>
-      <Button href={BASE_URL} variant="underlined">
+      <Button href={SITE_BASE_URL}>Internal link</Button>
+      <Button href={SITE_BASE_URL} variant="underlined">
         Internal link
       </Button>
-      <Button href={BASE_URL} icon="leaf-line" variant="outlined" />
-      <Button href={BASE_URL} variant="outlined" icon="leaf-line" disabled>
+      <Button href={SITE_BASE_URL} icon="leaf-line" variant="outlined" />
+      <Button href={SITE_BASE_URL} variant="outlined" icon="leaf-line" disabled>
         Disabled link
       </Button>
-      <Button href={BASE_URL} variant="underlined" icon="leaf-line" disabled>
+      <Button
+        href={SITE_BASE_URL}
+        variant="underlined"
+        icon="leaf-line"
+        disabled
+      >
         Disabled link
       </Button>
-      <Button href={BASE_URL} external>
+      <Button href={SITE_BASE_URL} external>
         External link
       </Button>
-      <Button href={BASE_URL} external />
-      <Button href={BASE_URL} variant="underlined" external>
+      <Button href={SITE_BASE_URL} external />
+      <Button href={SITE_BASE_URL} variant="underlined" external>
         External link
       </Button>
-      <Button href={BASE_URL} variant="outlined" iconPosition="left" external>
+      <Button
+        href={SITE_BASE_URL}
+        variant="outlined"
+        iconPosition="left"
+        external
+      >
         External link
       </Button>
     </div>
@@ -293,7 +303,7 @@ export const WithRef: Story = {
         <Button
           ref={anchorRef}
           onClick={onAnchorClick}
-          href={BASE_URL}
+          href={SITE_BASE_URL}
           external
         >
           Anchor with ref

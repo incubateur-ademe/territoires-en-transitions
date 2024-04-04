@@ -55,7 +55,7 @@ export const Footer = ({
 
           {/* Liste de liens */}
           {!!contentLinks && (
-            <ul className="list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
+            <ul className="!list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
               {contentLinks.map(link => (
                 <li key={link.label} className="pl-4 first-of-type:pl-0 pb-0">
                   <Button
@@ -80,7 +80,7 @@ export const Footer = ({
           <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-6">
             {/* Liste de liens */}
             {!!bottomLinks && (
-              <ul className="list-none flex flex-wrap gap-2 divide-x divide-grey-4">
+              <ul className="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
                 {bottomLinks.map(link => (
                   <li key={link.label} className="pl-2 first-of-type:pl-0 pb-0">
                     <Button
