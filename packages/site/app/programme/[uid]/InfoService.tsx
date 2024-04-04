@@ -1,4 +1,4 @@
-'use client'; // todo: voir côté composant <Button/> pourquoi le use client est nécessaire
+'use client';
 
 import {Button} from '@tet/ui';
 import Section from '@components/sections/Section';
