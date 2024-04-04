@@ -3,7 +3,7 @@ import Section from '@components/sections/Section';
 
 const NotFound = () => {
   return (
-    <Section className="mt-32 md:mt-60">
+    <Section className="my-16">
       <div className="flex items-center justify-center divide-x divide-black">
         <h1 className="text-3xl font-normal pr-4">404</h1>
         <h2 className="text-lg font-normal pl-4">Cette page n'existe pas</h2>
