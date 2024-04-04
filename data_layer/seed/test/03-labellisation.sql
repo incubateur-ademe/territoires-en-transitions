@@ -38,7 +38,8 @@ select fr.referentiel,
        coalesce(s.fait_taches_avancement, fr.children_count),
        coalesce(s.pas_fait_taches_avancement, 0.0),
        coalesce(s.programme_taches_avancement, 0.0),
-       coalesce(s.pas_concerne_taches_avancement, 0.0)
+       coalesce(s.pas_concerne_taches_avancement, 0.0),
+       coalesce(s.renseigne, true)
 from fake_ref fr
          left join s on s.action_id = fr.id
 $$ language sql;
