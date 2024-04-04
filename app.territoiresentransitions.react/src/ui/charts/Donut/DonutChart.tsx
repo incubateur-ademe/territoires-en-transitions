@@ -100,7 +100,7 @@ const DonutChart = ({
           }
           enableArcLabels={hasNoData ? false : true}
           /** Styles */
-          theme={theme}
+          theme={{...theme, labels: {text: {fontSize: 14, fontWeight: 500}}}}
           colors={{datum: 'data.color'}}
           onMouseEnter={(_datum, event) => {
             if (!!onClick) {
