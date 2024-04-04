@@ -1,5 +1,3 @@
-'use client';
-
 import DonutChartWithLegend from '@components/charts/DonutChartWithLegend';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import {IndicateurDefaultData} from './IndicateursCollectivite';
