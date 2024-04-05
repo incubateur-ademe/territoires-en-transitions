@@ -3,6 +3,7 @@ import {HeaderTeT} from './HeaderTeT';
 import {Button} from '@design-system/Button';
 import {APP_BASE_URL, SITE_BASE_URL} from 'utils/constants';
 import TeTeLogo from '@assets/TeTeLogo';
+import HeaderButton from '@design-system/Header/HeaderButton';
 
 const meta: Meta<typeof HeaderTeT> = {
   title: 'Components/Layout/Header TeT',
@@ -35,6 +36,12 @@ export const HeaderSite: Story = {
       <Button {...props} icon="user-line" href={`${APP_BASE_URL}/auth/signin`}>
         Se connecter
       </Button>,
+    ],
+    menuButtons: props => [
+      <HeaderButton {...props} isActive>
+        Accueil
+      </HeaderButton>,
+      <HeaderButton {...props}>État des lieux</HeaderButton>,
     ],
   },
 };

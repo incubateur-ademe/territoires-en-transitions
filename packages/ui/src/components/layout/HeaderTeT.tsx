@@ -3,6 +3,9 @@ import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
 import {Button} from '@design-system/Button';
 import {ButtonProps} from '@design-system/Button/types';
 import {Header} from '@design-system/Header/Header';
+import HeaderButton, {
+  HeaderButtonProps,
+} from '@design-system/Header/HeaderButton';
 
 import {ReactElement} from 'react';
 
@@ -13,6 +16,9 @@ type HeaderTeTProps = {
   customRootUrl?: string;
   /** Menu accès rapide */
   quickAccessButtons?: (props: ButtonProps) => ReactElement<typeof Button>[];
+  menuButtons?: (
+    props: HeaderButtonProps
+  ) => ReactElement<typeof HeaderButton>[];
 };
 
 /**
@@ -23,6 +29,7 @@ export const HeaderTeT = ({
   customLogos,
   customRootUrl,
   quickAccessButtons,
+  menuButtons,
 }: HeaderTeTProps) => {
   return (
     <Header
@@ -35,6 +42,7 @@ export const HeaderTeT = ({
       ]}
       customRootUrl={customRootUrl}
       quickAccessButtons={quickAccessButtons}
+      menuButtons={menuButtons}
     />
   );
 };

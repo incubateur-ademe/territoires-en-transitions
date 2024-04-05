@@ -2,10 +2,15 @@ import {Button} from '@design-system/Button';
 import {ButtonProps} from '@design-system/Button/types';
 import classNames from 'classnames';
 import {Dispatch, ReactElement, SetStateAction} from 'react';
+import HeaderButton, {HeaderButtonProps} from './HeaderButton';
 
 type HeaderMenuProps = {
   /** Menu accès rapide */
   quickAccessButtons?: (props: ButtonProps) => ReactElement<typeof Button>[];
+  /** Menu de navigation */
+  menuButtons?: (
+    props: HeaderButtonProps
+  ) => ReactElement<typeof HeaderButton>[];
   /** Etat ouvert du menu en version mobile */
   openedMenu: boolean;
   /** Ouverture du menu en version mobile */
@@ -16,12 +21,14 @@ type HeaderMenuProps = {
 
 const HeaderMenu = ({
   quickAccessButtons,
+  menuButtons,
   openedMenu,
   setOpenedMenu,
 }: HeaderMenuProps) => {
   return (
     <div
       className={classNames('w-full bg-white', {
+        'lg:border-t-[0.5px] lg:border-t-primary-4': !!menuButtons,
         'absolute top-0 left-0 z-modal h-screen': openedMenu,
       })}
     >
@@ -61,6 +68,30 @@ const HeaderMenu = ({
             <li key={idx}>{button}</li>
           ))}
         </ul>
+
+        {/* Menu de navigation */}
+        <nav
+          className={classNames(
+            'flex max-lg:flex-col justify-between max-lg:mt-6',
+            {
+              'max-lg:hidden': !openedMenu,
+            }
+          )}
+        >
+          <ul className={classNames('list-none flex max-lg:flex-col mb-0')}>
+            {menuButtons?.({
+              variant: 'white',
+              className:
+                'rounded-none font-normal text-primary-9 hover:!text-primary-9 text-sm max-lg:w-full',
+            }).map((button, idx) => {
+              return (
+                <li key={idx} className="pb-0">
+                  {button}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {ReactElement, useState} from 'react';
 import {ButtonProps} from '@design-system/Button/types';
 import HeaderBody from './HeaderBody';
 import HeaderMenu from './HeaderMenu';
+import HeaderButton, {HeaderButtonProps} from './HeaderButton';
 
 type HeaderProps = {
   /** Titre du header */
@@ -16,6 +17,10 @@ type HeaderProps = {
   customRootUrl?: string;
   /** Menu accès rapide */
   quickAccessButtons?: (props: ButtonProps) => ReactElement<typeof Button>[];
+  /** Menu de navigation */
+  menuButtons?: (
+    props: HeaderButtonProps
+  ) => ReactElement<typeof HeaderButton>[];
   /** Surcharge des classNames. */
   className?: string;
 };
@@ -30,12 +35,18 @@ export const Header = ({
   logos,
   customRootUrl,
   quickAccessButtons,
+  menuButtons,
   className,
 }: HeaderProps) => {
   const [openedMenu, setOpenedMenu] = useState(false);
 
   return (
-    <header className={classNames('w-full bg-white relative', className)}>
+    <header
+      className={classNames(
+        'w-full bg-white border-b-[0.5px] border-b-primary-4 relative',
+        className
+      )}
+    >
       {/* Partie suppérieure du header */}
       <HeaderBody
         {...{
@@ -49,7 +60,9 @@ export const Header = ({
       />
 
       {/* Partie inférieure du header - Barre de navigation */}
-      <HeaderMenu {...{quickAccessButtons, openedMenu, setOpenedMenu}} />
+      <HeaderMenu
+        {...{quickAccessButtons, menuButtons, openedMenu, setOpenedMenu}}
+      />
     </header>
   );
 };
