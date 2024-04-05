@@ -47,10 +47,10 @@
       "component": "bloc.description",
       "required": true
     },
-    "services_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-titre"
+    "services_liste_rel": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::service.service"
     },
     "Compte": {
       "displayName": "Compte",
@@ -87,11 +87,6 @@
       "repeatable": false,
       "component": "bloc.ressources",
       "required": true
-    },
-    "services_liste_rel": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::service.service"
     }
   }
 }

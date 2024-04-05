@@ -87,15 +87,6 @@ export interface BlocRessources extends Schema.Component {
         maxLength: 200;
       }> &
       Attribute.DefaultTo<"Besoin de pr\u00E9cisions avant de m'engager !">;
-    ReglementCaeURL: Attribute.String &
-      Attribute.Required &
-      Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/06/Reglement-du-label-Territoire-engage-pour-la-transition-ecologique-CAE_2022.pdf'>;
-    ReglementEciURL: Attribute.String &
-      Attribute.Required &
-      Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/03/Reglement_label_ECi_20220316.pdf.pdf'>;
-    AnnuaireURL: Attribute.String &
-      Attribute.Required &
-      Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2023/05/ADEME_Liste-conseillers_TE-CAE-2023_mai.pdf'>;
   };
 }
 

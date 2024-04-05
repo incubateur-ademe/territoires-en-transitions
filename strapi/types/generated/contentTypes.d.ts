@@ -1179,18 +1179,17 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
     objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
     Services: Attribute.Component<'bloc.description'> & Attribute.Required;
-    services_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
+    services_liste_rel: Attribute.Relation<
+      'api::page-programme.page-programme',
+      'oneToMany',
+      'api::service.service'
+    >;
     Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
     Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
     etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
-    services_liste_rel: Attribute.Relation<
-      'api::page-programme.page-programme',
-      'oneToMany',
-      'api::service.service'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
