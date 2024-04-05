@@ -8,16 +8,18 @@ import {Button} from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
-  description?: string;
   contenu: Content[] | null;
+  cta: {
+    label: string;
+    url: string;
+  };
 };
 
-const Etapes = ({titre, description, contenu}: EtapesProps) => {
+const Etapes = ({titre, contenu, cta}: EtapesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
       containerClassName="bg-primary-1"
       title={titre}
-      description={description}
       cardsList={
         <CardsWrapper cols={4}>
           {contenu.map((c, index) => (
@@ -31,8 +33,12 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <Button href="/contact" className="mt-6">
-        Contactez-nous
+      <Button
+        href={cta.url}
+        external={!cta.url.startsWith('/')}
+        className="mt-6"
+      >
+        {cta.label}
       </Button>
     </CardsSection>
   ) : null;

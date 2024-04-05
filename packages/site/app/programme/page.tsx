@@ -39,29 +39,17 @@ const Programme = async () => {
         objectifs={data.objectifs}
       />
 
-      <Services
-        titre={data.services.titre}
-        description={data.services.description}
-        contenu={data.services.contenu}
-      />
+      <Services {...data.services} />
 
-      <Compte description={data.compte.description} />
+      <Compte {...data.compte} />
 
-      <Benefices
-        titre={data.benefices.titre}
-        description={data.benefices.description}
-        contenu={data.benefices.contenu}
-      />
+      <Benefices {...data.benefices} />
 
-      <Etapes
-        titre={data.etapes.titre}
-        description={data.etapes.description}
-        contenu={data.etapes.contenu}
-      />
+      <Etapes {...data.etapes} />
 
       <Carte />
 
-      <Ressources description={data.ressources.description} />
+      <Ressources {...data.ressources} />
     </>
   ) : (
     <NoResult />

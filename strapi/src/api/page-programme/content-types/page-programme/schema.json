@@ -59,6 +59,17 @@
       "component": "bloc.compte",
       "required": true
     },
+    "compte_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "compte_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
+    },
     "Benefices": {
       "type": "component",
       "repeatable": false,
@@ -76,10 +87,22 @@
       "component": "bloc.description",
       "required": true
     },
+    "etapes_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+
     "etapes_liste": {
       "type": "component",
       "repeatable": true,
       "component": "shared.vignette-avec-titre"
+    },
+    "etapes_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
     },
     "Ressources": {
       "displayName": "Ressources",
@@ -87,6 +110,19 @@
       "repeatable": false,
       "component": "bloc.ressources",
       "required": true
+    },
+    "ressources_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "ressources_cta": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.bouton-avec-lien",
+      "required": true,
+      "max": 3,
+      "min": 1
     }
   }
 }

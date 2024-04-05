@@ -10,7 +10,6 @@ type InfoSectionProps = {
   buttons: {
     title: string;
     href: string;
-    external?: boolean;
     variant?: ButtonVariant;
     className?: string;
   }[];
@@ -31,7 +30,7 @@ const InfoSection = ({id, content, buttons}: InfoSectionProps) => {
               key={button.title}
               href={button.href}
               variant={button.variant}
-              external={button.external}
+              external={!button.href.startsWith('/')}
               className={classNames(
                 'max-md:w-full max-md:justify-center md:w-auto',
                 button.className,

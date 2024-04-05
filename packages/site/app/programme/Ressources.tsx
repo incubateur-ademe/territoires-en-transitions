@@ -2,25 +2,23 @@ import InfoSection from '@components/sections/InfoSection';
 
 type RessourcesProps = {
   description: string;
+  cta: {
+    label: string;
+    url: string;
+  }[];
 };
 
-const Ressources = ({description}: RessourcesProps) => {
+const Ressources = ({description, cta}: RessourcesProps) => {
   return (
     <InfoSection
       content={description}
-      buttons={[
-        {
-          title: 'Ressources',
-          href: '/ressources',
-          variant: 'outlined',
-        },
-        {
-          title: 'Lire les questions fréquentes',
-          href: '/faq',
-          variant: 'outlined',
-          className: '!bg-[#FFE8BD] hover:bg-[#FFE4A8]',
-        },
-      ]}
+      buttons={cta.map((button, index) => ({
+        title: button.label,
+        href: button.url,
+        variant: 'outlined',
+        className:
+          index === cta.length - 1 ? '!bg-[#FFE8BD] hover:bg-[#FFE4A8]' : '',
+      }))}
     />
   );
 };

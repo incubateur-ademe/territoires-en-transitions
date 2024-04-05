@@ -7,17 +7,16 @@ export const getStrapiData = async () => {
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'Objectifs'],
-    ['populate[3]', 'objectifs_liste'],
-    ['populate[4]', 'objectifs_liste.image'],
-    ['populate[5]', 'Services'],
-    ['populate[6]', 'services_liste_rel'],
-    ['populate[7]', 'services_liste_rel.image'],
-    ['populate[8]', 'Compte'],
-    ['populate[9]', 'Benefices'],
-    ['populate[10]', 'benefices_liste'],
-    ['populate[11]', 'Etapes'],
-    ['populate[12]', 'etapes_liste'],
-    ['populate[13]', 'Ressources'],
+    ['populate[3]', 'objectifs_liste.image'],
+    ['populate[4]', 'Services'],
+    ['populate[5]', 'services_liste_rel'],
+    ['populate[6]', 'services_liste_rel.image'],
+    ['populate[7]', 'compte_cta.lien'],
+    ['populate[8]', 'Benefices'],
+    ['populate[9]', 'benefices_liste'],
+    ['populate[10]', 'etapes_liste'],
+    ['populate[11]', 'etapes_cta.lien'],
+    ['populate[12]', 'ressources_cta.lien'],
   ]);
 
   // Formattage de la data
@@ -29,6 +28,7 @@ export const getStrapiData = async () => {
         ?.attributes ?? undefined;
 
     return {
+      // SEO
       seo: {
         metaTitle:
           (programmeData.seo?.metaTitle as unknown as string) ?? undefined,
@@ -45,10 +45,14 @@ export const getStrapiData = async () => {
             }
           : undefined,
       },
+
+      // EN-TÊTE
       titre: programmeData.Titre as unknown as string,
       description:
         (programmeData.Description as unknown as string) ?? undefined,
       couvertureURL: (programmeData.VideoURL as unknown as string) ?? undefined,
+
+      // OBJECTIFS
       objectifs: {
         titre: programmeData.Objectifs.Titre as unknown as string,
         description: programmeData.Objectifs.Description as unknown as string,
@@ -68,6 +72,8 @@ export const getStrapiData = async () => {
               }))
             : null,
       },
+
+      // SERVICES
       services: {
         titre: programmeData.Services.Titre as unknown as string,
         description: programmeData.Services.Description as unknown as string,
@@ -95,9 +101,20 @@ export const getStrapiData = async () => {
               }))
             : null,
       },
+
+      // CREER UN COMPTE
       compte: {
-        description: programmeData.Compte.Description as unknown as string,
+        description: programmeData.compte_titre as unknown as string,
+        cta: {
+          label: (programmeData.compte_cta.label_custom ??
+            programmeData.compte_cta.lien.data.attributes
+              .label_defaut) as unknown as string,
+          url: programmeData.compte_cta.lien.data.attributes
+            .url as unknown as string,
+        },
       },
+
+      // BENEFICES
       benefices: {
         titre: programmeData.Benefices.Titre as unknown as string,
         description: programmeData.Benefices.Description as unknown as string,
@@ -117,9 +134,10 @@ export const getStrapiData = async () => {
               }))
             : null,
       },
+
+      // ETAPES
       etapes: {
-        titre: programmeData.Etapes.Titre as unknown as string,
-        description: programmeData.Etapes.Description as unknown as string,
+        titre: programmeData.etapes_titre as unknown as string,
         contenu:
           !!programmeData.etapes_liste && programmeData.etapes_liste.length
             ? (
@@ -134,9 +152,33 @@ export const getStrapiData = async () => {
                 description: et.legende,
               }))
             : null,
+        cta: {
+          label: (programmeData.etapes_cta.label_custom ??
+            programmeData.etapes_cta.lien.data.attributes
+              .label_defaut) as unknown as string,
+          url: programmeData.etapes_cta.lien.data.attributes
+            .url as unknown as string,
+        },
       },
+
+      // RESSOURCES
       ressources: {
-        description: programmeData.Ressources.Description as unknown as string,
+        description: programmeData.ressources_titre as unknown as string,
+        cta: (
+          programmeData.ressources_cta as unknown as {
+            id: number;
+            lien: {
+              data: {
+                attributes: {uid: string; url: string; label_defaut: string};
+              };
+            };
+            label_custom: string;
+          }[]
+        ).map(r => ({
+          label: (r.label_custom ??
+            r.lien.data.attributes.label_defaut) as unknown as string,
+          url: r.lien.data.attributes.url as unknown as string,
+        })),
       },
     };
   } else return null;

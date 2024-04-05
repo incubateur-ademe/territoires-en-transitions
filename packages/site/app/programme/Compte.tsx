@@ -2,17 +2,20 @@ import InfoSection from '@components/sections/InfoSection';
 
 type CompteProps = {
   description: string;
+  cta: {
+    label: string;
+    url: string;
+  };
 };
 
-const Compte = ({description}: CompteProps) => {
+const Compte = ({description, cta}: CompteProps) => {
   return (
     <InfoSection
       content={description}
       buttons={[
         {
-          title: 'Créer un compte',
-          href: 'https://auth.territoiresentransitions.fr/signup',
-          external: true,
+          title: cta.label,
+          href: cta.url,
           variant: 'outlined',
         },
       ]}

@@ -1229,11 +1229,36 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       'api::service.service'
     >;
     Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
+    compte_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    compte_cta: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
+    etapes_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
     etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
+    etapes_cta: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
+    ressources_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    ressources_cta: Attribute.Component<'shared.bouton-avec-lien', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 1;
+        max: 3;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
