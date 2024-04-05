@@ -321,6 +321,24 @@ export interface ServicesParagraphe extends Schema.Component {
   };
 }
 
+export interface SharedBoutonAvecLien extends Schema.Component {
+  collectionName: 'components_shared_bouton_avec_liens';
+  info: {
+    displayName: 'bouton_avec_lien';
+  };
+  attributes: {
+    lien: Attribute.Relation<
+      'shared.bouton-avec-lien',
+      'oneToOne',
+      'api::lien.lien'
+    >;
+    label_custom: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+  };
+}
+
 export interface SharedBouton extends Schema.Component {
   collectionName: 'components_shared_boutons';
   info: {
@@ -474,6 +492,7 @@ declare module '@strapi/types' {
       'services.info': ServicesInfo;
       'services.liste': ServicesListe;
       'services.paragraphe': ServicesParagraphe;
+      'shared.bouton-avec-lien': SharedBoutonAvecLien;
       'shared.bouton': SharedBouton;
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;

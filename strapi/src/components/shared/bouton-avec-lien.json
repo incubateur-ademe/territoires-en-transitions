@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_bouton_avec_liens",
+  "info": {
+    "displayName": "bouton_avec_lien"
+  },
+  "options": {},
+  "attributes": {
+    "lien": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::lien.lien"
+    },
+    "label_custom": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255
+    }
+  }
+}
