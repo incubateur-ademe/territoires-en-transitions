@@ -1,9 +1,15 @@
 import PictoBackground from './PictoBackground';
 
-const PictoWithBackground = ({pictogram}: {pictogram: React.ReactNode}) => {
+const PictoWithBackground = ({
+  pictogram,
+  fill,
+}: {
+  pictogram: React.ReactNode;
+  fill?: string;
+}) => {
   return (
     <div className="relative" style={{position: 'relative'}}>
-      <PictoBackground />
+      <PictoBackground fill={fill} />
       <div
         className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
         style={{

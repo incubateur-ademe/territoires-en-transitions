@@ -82,7 +82,7 @@ const Card = ({
           <Button
             href={button.href}
             variant={button.variant}
-            external={button.external}
+            external={!button.href.startsWith('/')}
             className="w-full justify-center"
           >
             {button.title}

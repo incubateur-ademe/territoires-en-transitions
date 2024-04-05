@@ -22,10 +22,22 @@
       "component": "bloc.description-avec-image",
       "required": true
     },
+    "programme_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
+    },
     "Compte": {
       "type": "component",
       "repeatable": false,
       "component": "bloc.description-avec-image",
+      "required": true
+    },
+    "compte_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
       "required": true
     }
   }

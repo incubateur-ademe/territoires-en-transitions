@@ -16,30 +16,31 @@ const Accueil = async () => {
     <>
       <AccueilBanner titre={data.titre} couverture={data.couverture} />
 
-      <Accompagnement
-        titre={data.accompagnement.titre}
-        description={data.accompagnement.description}
-        contenu={data.accompagnement.contenu}
-      />
+      <Accompagnement {...data.accompagnement} />
 
-      {data.temoignages && (
-        <Temoignages
-          titre={data.temoignages.titre}
-          description={data.temoignages.description}
-          contenu={data.temoignages.contenu}
-        />
-      )}
+      {data.temoignages && <Temoignages {...data.temoignages} />}
 
       <Informations
-        titre={data.informations.titre}
-        description={data.informations.description}
-        className={data.temoignages ? 'bg-primary-1' : '#fff'}
+        {...data.informations}
+        className={
+          data.temoignages && data.temoignages.contenu.length > 1
+            ? 'bg-primary-1'
+            : '#fff'
+        }
+        pictobackgroundFill={
+          data.temoignages && data.temoignages.contenu.length > 1
+            ? '#fff'
+            : '#FBFCFE'
+        }
       />
 
       <Newsletter
-        titre={data.newsletter.titre}
-        description={data.newsletter.description}
-        className={data.temoignages ? '#fff' : 'bg-primary-1'}
+        {...data.newsletter}
+        className={
+          data.temoignages && data.temoignages.contenu.length > 1
+            ? '#fff'
+            : 'bg-primary-1'
+        }
       />
     </>
   ) : (

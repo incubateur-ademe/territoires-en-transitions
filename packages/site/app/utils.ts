@@ -42,16 +42,20 @@ export const getData = async (): Promise<AccueilData | null> => {
     ['populate[2]', 'Accompagnement'],
     ['populate[3]', 'Accompagnement.Programme'],
     ['populate[4]', 'Accompagnement.Programme.Image'],
-    ['populate[5]', 'Accompagnement.Compte'],
-    ['populate[6]', 'Accompagnement.Compte.Image'],
-    ['populate[7]', 'Temoignages'],
-    ['populate[8]', 'Informations'],
-    ['populate[9]', 'Newsletter'],
+    ['populate[5]', 'Accompagnement.programme_cta.lien'],
+    ['populate[6]', 'Accompagnement.Compte'],
+    ['populate[7]', 'Accompagnement.Compte.Image'],
+    ['populate[8]', 'Accompagnement.compte_cta.lien'],
+    ['populate[9]', 'Temoignages'],
     ['populate[10]', 'temoignages_liste.temoignage'],
     ['populate[11]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[12]', 'informations_cta.bouton.lien'],
+    ['populate[13]', 'informations_cta.image'],
+    ['populate[14]', 'Newsletter'],
+    ['populate[15]', 'newsletter_cta.lien'],
   ]);
 
-  const temoignages = data.attributes.temoignages_liste
+  const temoignages = data.attributes?.temoignages_liste
     .data as unknown as StrapiItem[];
 
   // Formattage de la data
@@ -61,6 +65,8 @@ export const getData = async (): Promise<AccueilData | null> => {
         couverture:
           (data.attributes.Couverture.data as unknown as StrapiItem) ??
           undefined,
+
+        // ACCOMPAGNEMENT
         accompagnement: {
           titre: data.attributes.Accompagnement.Titre as unknown as string,
           description: data.attributes.Accompagnement
@@ -73,7 +79,14 @@ export const getData = async (): Promise<AccueilData | null> => {
                 .Description as unknown as string,
               image: data.attributes.Accompagnement.Programme.Image
                 .data as unknown as StrapiItem,
-              button: {titre: 'Découvrir le programme', href: '/programme'},
+              button: {
+                titre: (data.attributes.Accompagnement.programme_cta
+                  .label_custom ??
+                  data.attributes.Accompagnement.programme_cta.lien.data
+                    .attributes.label_defaut) as unknown as string,
+                href: data.attributes.Accompagnement.programme_cta.lien.data
+                  .attributes.url as unknown as string,
+              },
             },
             {
               titre: data.attributes.Accompagnement.Compte
@@ -83,12 +96,18 @@ export const getData = async (): Promise<AccueilData | null> => {
               image: data.attributes.Accompagnement.Compte.Image
                 .data as unknown as StrapiItem,
               button: {
-                titre: 'Accéder à la plateforme',
-                href: 'https://auth.territoiresentransitions.fr/signup',
+                titre: (data.attributes.Accompagnement.compte_cta
+                  .label_custom ??
+                  data.attributes.Accompagnement.compte_cta.lien.data.attributes
+                    .label_defaut) as unknown as string,
+                href: data.attributes.Accompagnement.compte_cta.lien.data
+                  .attributes.url as unknown as string,
               },
             },
           ],
         },
+
+        // TEMOIGNAGES
         temoignages:
           temoignages && temoignages.length > 0
             ? {
@@ -109,15 +128,47 @@ export const getData = async (): Promise<AccueilData | null> => {
                 })),
               }
             : null,
+
+        // INFORMATIONS
         informations: {
-          titre: data.attributes.Informations.Titre as unknown as string,
-          description: data.attributes.Informations
-            .Description as unknown as string,
+          titre: data.attributes.informations_titre as unknown as string,
+          cta: (
+            data.attributes.informations_cta as unknown as {
+              id: number;
+              bouton: {
+                lien: {
+                  data: {
+                    attributes: {
+                      uid: string;
+                      url: string;
+                      label_defaut: string;
+                    };
+                  };
+                };
+                label_custom: string;
+              };
+              image: {data: StrapiItem};
+            }[]
+          ).map(i => ({
+            label: (i.bouton.label_custom ??
+              i.bouton.lien.data.attributes.label_defaut) as unknown as string,
+            url: i.bouton.lien.data.attributes.url as unknown as string,
+            image: i.image.data,
+          })),
         },
+
+        // NEWSLETTER
         newsletter: {
           titre: data.attributes.Newsletter.Titre as unknown as string,
           description: data.attributes.Newsletter
             .Description as unknown as string,
+          cta: {
+            label: (data.attributes.newsletter_cta.label_custom ??
+              data.attributes.newsletter_cta.lien.data.attributes
+                .label_defaut) as unknown as string,
+            url: data.attributes.newsletter_cta.lien.data.attributes
+              .url as unknown as string,
+          },
         },
       }
     : null;

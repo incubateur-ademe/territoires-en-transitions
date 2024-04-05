@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_vignette_avec_boutons",
+  "info": {
+    "displayName": "vignette_avec_bouton"
+  },
+  "options": {},
+  "attributes": {
+    "bouton": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    }
+  }
+}

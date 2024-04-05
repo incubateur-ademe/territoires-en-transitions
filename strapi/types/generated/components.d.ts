@@ -17,7 +17,11 @@ export interface BlocAccompagnement extends Schema.Component {
       Attribute.DefaultTo<'Votre territoire est unique. Avancez \u00E9tape par \u00E9tape dans la transition \u00E9cologique selon vos comp\u00E9tences et vos moyens avec le programme Territoire Engag\u00E9 Transition \u00C9cologique.'>;
     Programme: Attribute.Component<'bloc.description-avec-image'> &
       Attribute.Required;
+    programme_cta: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     Compte: Attribute.Component<'bloc.description-avec-image'> &
+      Attribute.Required;
+    compte_cta: Attribute.Component<'shared.bouton-avec-lien'> &
       Attribute.Required;
   };
 }
@@ -417,6 +421,17 @@ export interface SharedTemoignage extends Schema.Component {
   };
 }
 
+export interface SharedVignetteAvecBouton extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_boutons';
+  info: {
+    displayName: 'vignette_avec_bouton';
+  };
+  attributes: {
+    bouton: Attribute.Component<'shared.bouton-avec-lien'> & Attribute.Required;
+    image: Attribute.Media & Attribute.Required;
+  };
+}
+
 export interface SharedVignetteAvecMarkdown extends Schema.Component {
   collectionName: 'components_shared_vignette_avec_markdowns';
   info: {
@@ -497,6 +512,7 @@ declare module '@strapi/types' {
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
       'shared.temoignage': SharedTemoignage;
+      'shared.vignette-avec-bouton': SharedVignetteAvecBouton;
       'shared.vignette-avec-markdown': SharedVignetteAvecMarkdown;
       'shared.vignette-avec-titre': SharedVignetteAvecTitre;
       'shared.vignette': SharedVignette;

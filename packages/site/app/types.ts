@@ -30,11 +30,15 @@ export type AccueilData = {
   } | null;
   informations: {
     titre: string;
-    description: string;
+    cta: {label: string; url: string; image: StrapiItem}[];
   };
   newsletter: {
     titre: string;
     description: string;
+    cta: {
+      label: string;
+      url: string;
+    };
   };
 };
 

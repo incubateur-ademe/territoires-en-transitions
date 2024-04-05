@@ -27,9 +27,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "Accompagnement": {
       "type": "component",
@@ -54,10 +52,29 @@
       "component": "bloc.description",
       "required": true
     },
+    "informations_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "informations_cta": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-bouton",
+      "required": true,
+      "max": 3,
+      "min": 1
+    },
     "Newsletter": {
       "type": "component",
       "repeatable": false,
       "component": "bloc.description",
+      "required": true
+    },
+    "newsletter_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
       "required": true
     }
   }

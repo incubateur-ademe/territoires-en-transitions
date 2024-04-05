@@ -909,7 +909,20 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
       'api::temoignage.temoignage'
     >;
     Informations: Attribute.Component<'bloc.description'> & Attribute.Required;
+    informations_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    informations_cta: Attribute.Component<'shared.vignette-avec-bouton', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 1;
+        max: 3;
+      }>;
     Newsletter: Attribute.Component<'bloc.description'> & Attribute.Required;
+    newsletter_cta: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
