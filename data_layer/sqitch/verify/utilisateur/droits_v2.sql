@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('valider_audit(integer)', 'execute');
+select has_function_privilege('claim_collectivite(integer, membre_fonction, text, referentiel[])', 'execute');
 
 ROLLBACK;

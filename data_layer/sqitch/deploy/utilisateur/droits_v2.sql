@@ -1,51 +1,55 @@
--- Deploy tet:utilisateur/droits_v2 to pg
--- requires: utilisateur/niveaux_acces
+-- Deploy tet:droits to pg
+-- requires: collectivites
 
 BEGIN;
 
-REVOKE INSERT, UPDATE, DELETE ON audit FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON audit FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON audit FROM service_role;
+comment on function claim_collectivite(integer) is
+    'Fonction dépréciée pour rejoindre une collectivité.';
 
-REVOKE INSERT, UPDATE, DELETE ON audit_en_cours FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON audit_en_cours FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON audit_en_cours FROM service_role;
-
-REVOKE INSERT, UPDATE, DELETE ON client_action_statut FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON client_action_statut FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON client_action_statut FROM service_role;
-
-REVOKE INSERT, UPDATE, DELETE ON site_region FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON site_region FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON site_region FROM service_role;
-
-REVOKE INSERT, UPDATE, DELETE ON plan_action FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON plan_action FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON plan_action FROM service_role;
-
-REVOKE INSERT, UPDATE, DELETE ON plan_action_profondeur FROM authenticated;
-REVOKE INSERT, UPDATE, DELETE ON plan_action_profondeur FROM anon;
-REVOKE INSERT, UPDATE, DELETE ON plan_action_profondeur FROM service_role;
-
--- Pour remplacer la possibilité d'update sur la vue audit
-create function valider_audit (audit_id integer) returns audit as
+create function claim_collectivite(
+    collectivite_id integer,
+    role membre_fonction,
+    poste text,
+    champ_intervention referentiel[]
+) returns json
+    security definer
+    language plpgsql
+    stable
+as
 $$
-declare
-    to_return audit;
 begin
-    if not est_auditeur_audit(valider_audit.audit_id) then
-        perform set_config('response.status', '403', true);
-        raise 'L''utilisateur n''est pas l''auditeur de cet audit';
+    if not is_authenticated() then
+        perform set_config('response.status', '401', true);
+        return json_build_object('message', 'Vous n''êtes pas connecté.');
     end if;
 
-    update labellisation.audit
-    set valide = true
-    where id = valider_audit.audit_id;
+    -- si la collectivité n'a pas d'utilisateur actif existant
+    if not exists (select 1
+                   from private_utilisateur_droit pud
+                   where pud.active
+                     and pud.collectivite_id = $1)
+    then
+        -- alors on créé un droit
+        insert
+        into private_utilisateur_droit(user_id, collectivite_id, niveau_acces, active)
+        values (auth.uid(), $1, 'admin', true);
 
-    select * from audit where id = valider_audit.audit_id limit 1 into to_return;
+        -- puis on ajoute les informations complémentaires
+        insert
+        into private_collectivite_membre(user_id, collectivite_id, fonction, details_fonction, champ_intervention)
+        values (auth.uid(), $1, $2, $3, $4);
 
-    return to_return;
+        -- enfin on renvoie un message
+        perform set_config('response.status', '200', true);
+        return json_build_object('message', 'Vous êtes administrateur de la collectivité.');
+    else
+        -- sinon on renvoie une erreur 409: Conflict
+        perform set_config('response.status', '409', true);
+        return json_build_object('message', 'La collectivité dispose déjà d''un administrateur.');
+    end if;
 end
-$$ language plpgsql security definer;
+$$;
+comment on function claim_collectivite(integer, membre_fonction, text, referentiel[]) is
+    'Permet à l''utilisateur de rejoindre une collectivité sans utilisateur.';
 
 COMMIT;
