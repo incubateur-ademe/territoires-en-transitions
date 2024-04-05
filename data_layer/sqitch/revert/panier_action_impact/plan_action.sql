@@ -3,5 +3,6 @@
 BEGIN;
 
 drop function plan_from_panier(int, uuid);
+drop table fiche_action_effet_attendu;
 
 COMMIT;
