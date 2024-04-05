@@ -21,7 +21,7 @@ values (1, 'Transversal'),
 
 create table action_impact_complexite
 (
-    niveau integer primary key,
+    niveau serial primary key,
     nom    text not null
 );
 insert into action_impact_complexite(niveau, nom)
@@ -31,7 +31,7 @@ values (1, 'simple'),
 
 create table action_impact_fourchette_budgetaire
 (
-    niveau integer primary key,
+    niveau serial primary key,
     nom    text not null
 );
 insert into action_impact_fourchette_budgetaire(niveau, nom)
@@ -42,7 +42,7 @@ values (1, 'De 0 à 40 000€'),
 
 create table action_impact_tier
 (
-    niveau integer primary key,
+    niveau serial primary key,
     nom    text not null
 );
 insert into action_impact_tier(niveau, nom)
@@ -52,7 +52,7 @@ values (1, '1'),
 
 create table action_impact_temps_de_mise_en_oeuvre
 (
-    niveau integer primary key,
+    niveau serial primary key,
     nom    text not null
 );
 insert into action_impact_temps_de_mise_en_oeuvre(niveau, nom)
@@ -60,6 +60,38 @@ values (1, 'Moins d’1 an'),
        (2, '1 a 2 ans'),
        (3, 'Plus de 2 ans'),
        (4, 'Non estimé');
+
+create table effet_attendu
+(
+    id     serial primary key ,
+    nom    text not null,
+    notice text
+);
+insert into effet_attendu (id, nom, notice)
+values (1, 'Adaptation au changement climatique', null),
+       (2, 'Allongement de la durée d''usage', null),
+       (3, 'Amélioration de la qualité de l''air', null),
+       (4, 'Développement des énergies renouvelables', null),
+       (5, 'Préservation de la biodiversité', null),
+       (6, 'Réduction des consommations énergétiques', null),
+       (7, 'Réduction des déchets', null),
+       (8, 'Réduction des polluants atmosphériques', null),
+       (9, 'Réduction des émissions de gaz à effet de serre', null),
+       (10, 'Sobriété ', null),
+       (11, 'Préservation des ressources agricoles, forestières et aquatiques', null),
+       (12, 'Régénération des sols', null),
+       (13, 'Sécurité alimentaire', null),
+       (14, 'Stockage carbone', null),
+       (15, 'Limitation de la sécheresse', null),
+       (16, 'Prévention des inondations', null),
+       (17, 'Accompagnement au changement de pratiques', null),
+       (18, 'Création de lien social', null),
+       (19, 'Réduction des surfaces imperméabilisées', null),
+       (20, 'Réduction du taux de motorisation', null),
+       (21, 'Bénéfique pour la santé', null),
+       (22, 'Amélioration du cadre de vie', null),
+       (23, 'Gains économiques', null),
+       (24, 'Limitation des déplacements', null);
 
 
 -- Action à impact
@@ -178,6 +210,13 @@ create table action_impact_indicateur
     action_impact_id integer references action_impact,
     indicateur_id    indicateur_id references indicateur_definition,
     primary key (action_impact_id, indicateur_id)
+);
+
+create table action_impact_effet_attendu
+(
+    action_impact_id integer references action_impact,
+    effet_attendu_id integer references effet_attendu,
+    primary key (action_impact_id, effet_attendu_id)
 );
 
 COMMIT;
