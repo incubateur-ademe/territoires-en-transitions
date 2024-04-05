@@ -67,8 +67,10 @@ values (1, 'Moins d’1 an'),
 create table action_impact
 (
     id                       serial primary key,
-    titre                    text    not null,
-    description              text    not null,
+
+    titre                      text not null,
+    description                text not null,
+    description_complementaire text not null default '',
 
     nb_collectivite_en_cours integer not null                                                default 1,
     nb_collectivite_realise  integer not null                                                default 1,
@@ -131,6 +133,8 @@ create table action_impact
 comment on column action_impact.subventions_mobilisables is 'Subventions mobilisables, liste de liens `[{label: string, url: string}]`';
 comment on column action_impact.ressources_externes is 'Ressources externes, liste de liens `[{label: string, url: string}]`';
 comment on column action_impact.rex is 'Retours sur experience, liste de liens `[{label: string, url: string}]`';
+comment on column action_impact.description is 'La description courte affichée dans le panier.';
+comment on column action_impact.description_complementaire is 'La description complémentaire ajoutée à la fiche action.';
 
 --- Table de passage
 

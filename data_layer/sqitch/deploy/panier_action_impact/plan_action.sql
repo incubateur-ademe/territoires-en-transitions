@@ -33,9 +33,7 @@ begin
         loop
             -- on insert une fiche
             insert into fiche_action (collectivite_id, description)
-            -- todo
-            -- - description longue
-            select $1, selected_action_impact.description
+            select $1, selected_action_impact.description || '\n' || selected_action_impact.description_complementaire
             returning id into fiche_id;
 
             -- on ajoute la fiche nouvellement cau plan
