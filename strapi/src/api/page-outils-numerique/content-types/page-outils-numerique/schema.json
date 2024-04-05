@@ -47,13 +47,22 @@
       "type": "string",
       "required": true
     },
+    "cta_inscription_new": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
+    },
+    "cta_demo_new": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien"
+    },
     "couverture": {
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "avantages": {
       "type": "component",
@@ -75,9 +84,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "temoignages_liste": {
       "type": "relation",
@@ -106,6 +113,12 @@
       "required": true,
       "maxLength": 50,
       "default": "Je contacte l'équipe"
+    },
+    "cta_contact_new": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
     },
     "questions_titre": {
       "type": "string",

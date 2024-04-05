@@ -5,15 +5,18 @@ export const getStrapiData = async () => {
   const data = await fetchSingle('page-outils-numerique', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'couverture'],
-    ['populate[3]', 'avantages'],
-    ['populate[4]', 'avantages.image'],
-    ['populate[5]', 'fonctionnalites_image'],
-    ['populate[6]', 'temoignages_liste.temoignage'],
-    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
-    ['populate[8]', 'equipe_liste'],
-    ['populate[9]', 'equipe_liste.image'],
-    ['populate[10]', 'questions_liste'],
+    ['populate[2]', 'cta_inscription_new.lien'],
+    ['populate[3]', 'cta_demo_new.lien'],
+    ['populate[4]', 'couverture'],
+    ['populate[5]', 'avantages'],
+    ['populate[6]', 'avantages.image'],
+    ['populate[7]', 'fonctionnalites_image'],
+    ['populate[8]', 'temoignages_liste.temoignage'],
+    ['populate[9]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[10]', 'equipe_liste'],
+    ['populate[11]', 'equipe_liste.image'],
+    ['populate[12]', 'cta_contact_new.lien'],
+    ['populate[13]', 'questions_liste'],
   ]);
 
   if (data) {
@@ -42,10 +45,16 @@ export const getStrapiData = async () => {
       header: {
         titre: outilData.titre as unknown as string,
         accroche: outilData.accroche as unknown as string,
-        cta_inscription: outilData.cta_inscription as unknown as string,
-        url_inscription: outilData.url_inscription as unknown as string,
-        cta_demo: outilData.cta_demo as unknown as string,
-        url_demo: outilData.url_demo as unknown as string,
+        cta_inscription: (outilData.cta_inscription_new.label_custom ??
+          outilData.cta_inscription_new.lien.data.attributes
+            .label_defaut) as unknown as string,
+        url_inscription: outilData.cta_inscription_new.lien.data.attributes
+          .url as unknown as string,
+        cta_demo: (outilData.cta_demo_new.label_custom ??
+          outilData.cta_demo_new.lien.data.attributes
+            .label_defaut) as unknown as string,
+        url_demo: outilData.cta_demo_new.lien.data.attributes
+          .url as unknown as string,
         couverture: outilData.couverture.data as unknown as StrapiItem,
       },
       avantages: (
@@ -89,7 +98,11 @@ export const getStrapiData = async () => {
           ...eq,
           image: eq.image.data,
         })),
-        cta_contact: outilData.cta_contact as unknown as string,
+        cta_contact: (outilData.cta_contact_new.label_custom ??
+          outilData.cta_contact_new.lien.data.attributes
+            .label_defaut) as unknown as string,
+        cta_url: outilData.cta_contact_new.lien.data.attributes
+          .url as unknown as string,
       },
       questions: {
         titre: outilData.questions_titre as unknown as string,

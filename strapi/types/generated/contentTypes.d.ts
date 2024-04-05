@@ -1140,6 +1140,9 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       }> &
       Attribute.DefaultTo<'Je participe \u00E0 une d\u00E9mo'>;
     url_demo: Attribute.String & Attribute.Required;
+    cta_inscription_new: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
+    cta_demo_new: Attribute.Component<'shared.bouton-avec-lien'>;
     couverture: Attribute.Media & Attribute.Required;
     avantages: Attribute.Component<'shared.vignette', true> &
       Attribute.SetMinMax<{
@@ -1175,6 +1178,8 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         maxLength: 50;
       }> &
       Attribute.DefaultTo<"Je contacte l'\u00E9quipe">;
+    cta_contact_new: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     questions_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{

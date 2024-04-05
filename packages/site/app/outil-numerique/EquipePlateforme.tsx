@@ -18,6 +18,7 @@ type EquipePlateformeProps = {
     image: StrapiItem;
   }[];
   cta_contact: string;
+  cta_url: string;
 };
 
 const EquipePlateforme = ({
@@ -26,6 +27,7 @@ const EquipePlateforme = ({
   description,
   liste,
   cta_contact,
+  cta_url,
 }: EquipePlateformeProps) => {
   const [carouselWidth, setCarouselWidth] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -72,7 +74,7 @@ const EquipePlateforme = ({
       </div>
 
       <div className="flex gap-8 justify-center">
-        <Button href="/contact">{cta_contact}</Button>
+        <Button href={cta_url}>{cta_contact}</Button>
       </div>
     </Section>
   );
