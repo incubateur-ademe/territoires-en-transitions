@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "liens",
+  "info": {
+    "singularName": "lien",
+    "pluralName": "liens",
+    "displayName": "Liens",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label_defaut": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    }
+  }
+}

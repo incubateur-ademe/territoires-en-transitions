@@ -849,6 +849,37 @@ export interface ApiFaqFaq extends Schema.CollectionType {
   };
 }
 
+export interface ApiLienLien extends Schema.CollectionType {
+  collectionName: 'liens';
+  info: {
+    singularName: 'lien';
+    pluralName: 'liens';
+    displayName: 'Liens';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    label_defaut: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    url: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::lien.lien', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::lien.lien', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
   collectionName: 'page_accueils';
   info: {
@@ -1302,6 +1333,7 @@ declare module '@strapi/types' {
       'api::actualite.actualite': ApiActualiteActualite;
       'api::collectivite.collectivite': ApiCollectiviteCollectivite;
       'api::faq.faq': ApiFaqFaq;
+      'api::lien.lien': ApiLienLien;
       'api::page-accueil.page-accueil': ApiPageAccueilPageAccueil;
       'api::page-budget.page-budget': ApiPageBudgetPageBudget;
       'api::page-collectivite.page-collectivite': ApiPageCollectivitePageCollectivite;
