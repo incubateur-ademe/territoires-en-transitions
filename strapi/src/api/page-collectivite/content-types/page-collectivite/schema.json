@@ -21,9 +21,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "inscription_description": {
       "type": "string",
@@ -35,6 +33,12 @@
       "required": true,
       "default": "Créer un compte"
     },
+    "inscription_cta_new": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
+    },
     "connexion_description": {
       "type": "string",
       "required": true,
@@ -44,6 +48,12 @@
       "type": "string",
       "required": true,
       "default": "Se connecter"
+    },
+    "connexion_cta_new": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton-avec-lien",
+      "required": true
     },
     "gaz_effet_serre": {
       "displayName": "Indicateur",

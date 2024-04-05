@@ -1022,12 +1022,16 @@ export interface ApiPageCollectivitePageCollectivite extends Schema.SingleType {
     inscription_cta: Attribute.String &
       Attribute.Required &
       Attribute.DefaultTo<'Cr\u00E9er un compte'>;
+    inscription_cta_new: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     connexion_description: Attribute.String &
       Attribute.Required &
       Attribute.DefaultTo<'Vous \u00EAtes membre de cette collectivit\u00E9 ?'>;
     connexion_cta: Attribute.String &
       Attribute.Required &
       Attribute.DefaultTo<'Se connecter'>;
+    connexion_cta_new: Attribute.Component<'shared.bouton-avec-lien'> &
+      Attribute.Required;
     gaz_effet_serre: Attribute.Component<'contenu.indicateur'>;
     artificialisation_sols: Attribute.Component<'contenu.indicateur'>;
     createdAt: Attribute.DateTime;

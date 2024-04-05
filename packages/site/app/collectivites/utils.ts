@@ -158,10 +158,12 @@ export const getStrapiDefaultData = async () => {
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'couverture'],
-    ['populate[3]', 'artificialisation_sols'],
-    ['populate[4]', 'artificialisation_sols.illustration_encadre'],
-    ['populate[5]', 'gaz_effet_serre'],
-    ['populate[6]', 'gaz_effet_serre.illustration_encadre'],
+    ['populate[3]', 'inscription_cta_new.lien'],
+    ['populate[4]', 'connexion_cta_new.lien'],
+    ['populate[5]', 'artificialisation_sols'],
+    ['populate[6]', 'artificialisation_sols.illustration_encadre'],
+    ['populate[7]', 'gaz_effet_serre'],
+    ['populate[8]', 'gaz_effet_serre.illustration_encadre'],
   ]);
 
   if (data) {
@@ -193,14 +195,25 @@ export const getStrapiDefaultData = async () => {
         description:
           (data.attributes.inscription_description as unknown as string) ??
           undefined,
-        cta:
-          (data.attributes.inscription_cta as unknown as string) ?? undefined,
+        cta: {
+          label: (data.attributes.inscription_cta_new.label_custom ??
+            data.attributes.inscription_cta_new.lien.data.attributes
+              .label_defaut) as unknown as string,
+          url: data.attributes.inscription_cta_new.lien.data.attributes
+            .url as unknown as string,
+        },
       },
       connexion: {
         description:
           (data.attributes.connexion_description as unknown as string) ??
           undefined,
-        cta: (data.attributes.connexionn_cta as unknown as string) ?? undefined,
+        cta: {
+          label: (data.attributes.connexion_cta_new.label_custom ??
+            data.attributes.connexion_cta_new.lien.data.attributes
+              .label_defaut) as unknown as string,
+          url: data.attributes.connexion_cta_new.lien.data.attributes
+            .url as unknown as string,
+        },
       },
       indicateurs: {
         artificialisation_sols: artificialisation_sols

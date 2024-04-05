@@ -119,25 +119,25 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
             />
           </>
         )}
-        {collectiviteData.collectivite.active ? (
-          <AccesCompte
-            description={
-              strapiDefaultData?.connexion?.description ??
-              'Vous êtes membre de cette collectivité ?'
-            }
-            cta={strapiDefaultData?.connexion?.cta ?? 'Se connecter'}
-            href="https://auth.territoiresentransitions.fr/signin"
-          />
-        ) : (
-          <AccesCompte
-            description={
-              strapiDefaultData?.inscription?.description ??
-              'Faites un pas supplémentaire vers la transition écologique en créant un compte gratuit'
-            }
-            cta={strapiDefaultData?.inscription?.cta ?? 'Créer un compte'}
-            href="https://auth.territoiresentransitions.fr/signup"
-          />
-        )}
+        {collectiviteData.collectivite.active
+          ? !!strapiDefaultData?.connexion?.cta && (
+              <AccesCompte
+                description={
+                  strapiDefaultData?.connexion?.description ??
+                  'Vous êtes membre de cette collectivité ?'
+                }
+                cta={strapiDefaultData.connexion.cta}
+              />
+            )
+          : !!strapiDefaultData?.inscription?.cta && (
+              <AccesCompte
+                description={
+                  strapiDefaultData?.inscription?.description ??
+                  'Faites un pas supplémentaire vers la transition écologique en créant un compte gratuit'
+                }
+                cta={strapiDefaultData.inscription.cta}
+              />
+            )}
       </div>
 
       {/* Contenu */}
