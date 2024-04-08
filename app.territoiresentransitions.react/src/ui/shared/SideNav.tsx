@@ -24,6 +24,8 @@ type Props = {
   links: SideNavLinks;
 };
 
+
+
 const SideNav = ({links}: Props) => {
   return (
     <nav data-test="SideNav" className="fr-sidemenu flex !pr-4">
@@ -35,14 +37,20 @@ const SideNav = ({links}: Props) => {
             } else {
               return (
                 <li key={element.link} className="fr-sidemenu__item">
-                  <NavLink
-                    className="fr-sidemenu__link"
-                    to={element.link}
-                    target="_self"
-                    aria-current="page"
-                  >
-                    {element.displayName}
-                  </NavLink>
+                  {element.link.startsWith('http') ? (
+                    <a className="fr-sidemenu__link" href={element.link}>
+                      {element.displayName}
+                    </a>
+                  ) : (
+                    <NavLink
+                      className="fr-sidemenu__link"
+                      to={element.link}
+                      target="_self"
+                      aria-current="page"
+                    >
+                      {element.displayName}
+                    </NavLink>
+                  )}
                 </li>
               );
             }
