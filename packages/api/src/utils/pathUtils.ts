@@ -76,3 +76,7 @@ export const getAuthPaths = (hostname: string, redirect_to: string) => {
 /** Donne l'url de la page "rejoindre une collectivité" */
 export const getRejoindreCollectivitePath = (hostname: string) =>
   `${getAuthBaseUrl(hostname)}/rejoindre-une-collectivite`;
+
+/** Donne l'url d'une page collectivité */
+export const getCollectivitePath = (hostname: string, collectivite_id: number) =>
+  `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
