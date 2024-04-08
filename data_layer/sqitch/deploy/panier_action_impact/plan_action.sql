@@ -13,9 +13,9 @@ comment on table fiche_action_effet_attendu is
 
 create function
     plan_from_panier(collectivite_id int, panier_id uuid)
-    returns plan_action
-    stable
-    security invoker
+    returns integer
+    volatile
+    security definer
 as
 $$
 declare
@@ -41,8 +41,8 @@ begin
         where p.id = $2
         loop
             -- on insère une fiche
-            insert into fiche_action (collectivite_id, description)
-            select $1, selected_action_impact.description || '\n' || selected_action_impact.description_complementaire
+            insert into fiche_action (collectivite_id, titre, description)
+            select $1, selected_action_impact.titre, selected_action_impact.description || '\n' || selected_action_impact.description_complementaire
             returning id into fiche_id;
 
             -- puis on ajoute la fiche nouvellement créée au plan
@@ -73,6 +73,9 @@ begin
             from action_impact_effet_attendu as aiea
             where aiea.action_impact_id = selected_action_impact.id;
         end loop;
+
+    perform set_config('response.status', '201', true);
+    return axe_id;
 end;
 $$ language plpgsql;
 comment on function plan_from_panier(int, uuid) is
