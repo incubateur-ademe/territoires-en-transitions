@@ -14,7 +14,10 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   images: {
-    remotePatterns: [{protocol: 'https', hostname: '**.strapiapp.com'}],
+    remotePatterns: [
+      {protocol: 'https', hostname: '**.strapiapp.com'},
+      {protocol: 'http', hostname: '127.0.0.1'},
+    ],
   },
   // surcharge la config webpack
   webpack: config => {
