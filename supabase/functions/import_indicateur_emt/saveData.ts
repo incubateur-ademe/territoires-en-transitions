@@ -73,18 +73,24 @@ export const commentaire = async(
         }
     }
     commentaireToSave.modified_by = tetId;
-    commentaireToSave.commentaire = 'Import EMT: ' + commentaireToSave.commentaire
 
     // Il n'y a pas de clé primaire sur la table indicateur_resultat_commentaire
     // et donc il n'est pas possible d'utiliser upsert
     const { error, data } = insert ?
         await supabaseClient.from('indicateur_resultat_commentaire').insert(commentaireToSave) :
+        (commentaireToSave.annee == null ?
+            await supabaseClient.from('indicateur_resultat_commentaire')
+                .update(commentaireToSave)
+                .match({
+                    collectivite_id : commentaireToSave.collectivite_id,
+                    indicateur_id : commentaireToSave.indicateur_id})
+                .is('annee', null):
         await supabaseClient.from('indicateur_resultat_commentaire')
             .update(commentaireToSave)
             .match({
                 collectivite_id : commentaireToSave.collectivite_id,
                 indicateur_id : commentaireToSave.indicateur_id,
-                annee : commentaireToSave.annee});
+                annee : commentaireToSave.annee}));
     if (error) {
         throw new Error(error.message);
     }
