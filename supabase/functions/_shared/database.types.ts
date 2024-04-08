@@ -3207,6 +3207,7 @@ export type Database = {
         Row: {
           action_continue: boolean
           description: string
+          description_complementaire: string
           fourchette_budgetaire: number
           id: number
           impact_tier: number
@@ -3221,6 +3222,7 @@ export type Database = {
         Insert: {
           action_continue?: boolean
           description: string
+          description_complementaire?: string
           fourchette_budgetaire?: number
           id?: number
           impact_tier?: number
@@ -3235,6 +3237,7 @@ export type Database = {
         Update: {
           action_continue?: boolean
           description?: string
+          description_complementaire?: string
           fourchette_budgetaire?: number
           id?: number
           impact_tier?: number
@@ -3381,7 +3384,7 @@ export type Database = {
           nom: string
         }
         Insert: {
-          niveau: number
+          niveau?: number
           nom: string
         }
         Update: {
@@ -3390,13 +3393,43 @@ export type Database = {
         }
         Relationships: []
       }
+      action_impact_effet_attendu: {
+        Row: {
+          action_impact_id: number
+          effet_attendu_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          effet_attendu_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          effet_attendu_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_effet_attendu_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            isOneToOne: false
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_effet_attendu_effet_attendu_id_fkey"
+            columns: ["effet_attendu_id"]
+            isOneToOne: false
+            referencedRelation: "effet_attendu"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       action_impact_fourchette_budgetaire: {
         Row: {
           niveau: number
           nom: string
         }
         Insert: {
-          niveau: number
+          niveau?: number
           nom: string
         }
         Update: {
@@ -3583,7 +3616,7 @@ export type Database = {
           nom: string
         }
         Insert: {
-          niveau: number
+          niveau?: number
           nom: string
         }
         Update: {
@@ -3628,7 +3661,7 @@ export type Database = {
           nom: string
         }
         Insert: {
-          niveau: number
+          niveau?: number
           nom: string
         }
         Update: {
@@ -7719,6 +7752,24 @@ export type Database = {
           },
         ]
       }
+      effet_attendu: {
+        Row: {
+          id: number
+          nom: string
+          notice: string | null
+        }
+        Insert: {
+          id?: number
+          nom: string
+          notice?: string | null
+        }
+        Update: {
+          id?: number
+          nom?: string
+          notice?: string | null
+        }
+        Relationships: []
+      }
       epci: {
         Row: {
           collectivite_id: number | null
@@ -8671,6 +8722,64 @@ export type Database = {
           },
           {
             foreignKeyName: "fiche_action_axe_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiche_action_effet_attendu: {
+        Row: {
+          effet_attendu_id: number
+          fiche_id: number
+        }
+        Insert: {
+          effet_attendu_id: number
+          fiche_id: number
+        }
+        Update: {
+          effet_attendu_id?: number
+          fiche_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_action_effet_attendu_effet_attendu_id_fkey"
+            columns: ["effet_attendu_id"]
+            isOneToOne: false
+            referencedRelation: "effet_attendu"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiches_action"
@@ -29789,12 +29898,22 @@ export type Database = {
           node_name: unknown
         }[]
       }
-      claim_collectivite: {
-        Args: {
-          id: number
-        }
-        Returns: Json
-      }
+      claim_collectivite:
+        | {
+            Args: {
+              collectivite_id: number
+              role: Database["public"]["Enums"]["membre_fonction"]
+              poste: string
+              champ_intervention: Database["public"]["Enums"]["referentiel"][]
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              id: number
+            }
+            Returns: Json
+          }
       col_is_null:
         | {
             Args: {
@@ -31691,6 +31810,13 @@ export type Database = {
           id: number
           type: string
         }[]
+      }
+      plan_from_panier: {
+        Args: {
+          collectivite_id: number
+          panier_id: string
+        }
+        Returns: number
       }
       plans_action_collectivite: {
         Args: {
