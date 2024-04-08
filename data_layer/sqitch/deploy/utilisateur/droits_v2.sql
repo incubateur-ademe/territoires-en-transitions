@@ -14,7 +14,7 @@ create function claim_collectivite(
 ) returns json
     security definer
     language plpgsql
-    stable
+    volatile
 as
 $$
 begin
