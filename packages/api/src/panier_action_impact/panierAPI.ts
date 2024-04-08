@@ -161,12 +161,11 @@ export class PanierAPI {
   }
 
   /**
-   * TODO Crée un plan d'action pour la collectivité à partir d'un panier
+   * Crée un plan d'action pour la collectivité à partir d'un panier
    *
    * Renvoi l'id du plan d'action créé.
    *
-   * On pourra alors rediriger l'utilisateur vers :
-   * https://app.territoiresentransitions.fr/collectivite/[collectivite_id]/plans/plan/[plan_id]
+   * On pourra alors rediriger l'utilisateur vers le plan nouvellement créé.
    *
    * @param collectivite_id
    * @param panier_id
@@ -175,8 +174,12 @@ export class PanierAPI {
     collectivite_id: number,
     panier_id: string
   ): Promise<number> {
-    // todo appeler la RPC plan_from_panier(collectivite_id, panier_id)
-    throw 'pas encore implémenté';
+    const {data, error} = await this.supabase.rpc('plan_from_panier', {
+      collectivite_id,
+      panier_id,
+    });
+    if (error) throw error;
+    return data.id;
   }
 
   /**
