@@ -1,6 +1,7 @@
-import {monComptePath, rejoindreUneCollectivitePath} from 'app/paths';
+import {monComptePath} from 'app/paths';
 import {ProfilRoutes} from './ProfileRoutes';
 import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
+import {getRejoindreCollectivitePath} from '@tet/api';
 
 const Profil = () => {
   const links: SideNavLinks = [
@@ -9,7 +10,10 @@ const Profil = () => {
       displayName: 'Mon compte',
     },
     {
-      link: rejoindreUneCollectivitePath,
+      link: getRejoindreCollectivitePath(
+        document.location.hostname,
+        document.location.origin
+      ),
       displayName: 'Rejoindre une collectivité',
     },
   ];
