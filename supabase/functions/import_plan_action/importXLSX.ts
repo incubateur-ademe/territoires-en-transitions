@@ -140,7 +140,7 @@ const celluleXLSXToElementFiche = async (
     f : TFicheActionImport
 ) : Promise<any | null> => {
     const celluleCoordonnes = xlsx.utils.encode_cell({r: ligne, c: colonne});
-    const cellule = !sheet[celluleCoordonnes]?null:sheet[celluleCoordonnes].w;
+    const cellule = !sheet[celluleCoordonnes]?null:sheet[celluleCoordonnes].v;
     try {
         switch (colonne) {
             case 0 : // Axe (x) -> A | 1
