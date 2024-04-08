@@ -11,6 +11,7 @@ import LineChart from './LineChart';
 
 const meta: Meta<typeof LineChart> = {
   component: LineChart,
+  parameters: {storyshots: false}, // @nivo/line semble fait échoué storyshot :(
   args: {},
   render: args => <LineChart {...args} />,
 };

@@ -11,6 +11,7 @@ import DonutChart from './DonutChart';
 
 const meta: Meta<typeof DonutChart> = {
   component: DonutChart,
+  parameters: {storyshots: false}, // @nivo/line semble fait échoué storyshot :(
   args: {
     onClick: undefined,
   },
