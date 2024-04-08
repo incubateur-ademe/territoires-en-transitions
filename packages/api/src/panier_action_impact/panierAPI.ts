@@ -179,7 +179,7 @@ export class PanierAPI {
       panier_id,
     });
     if (error) throw error;
-    return data.id;
+    return data;
   }
 
   /**
