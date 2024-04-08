@@ -211,7 +211,9 @@ const ModeConnecteRattache = ({
           }}
         />
       </Field>
-      <Button onClick={handleOnClick}>Créer le plan d'action</Button>
+      <Button onClick={handleOnClick} disabled={!collectiviteId}>
+        Créer le plan d'action
+      </Button>
     </>
   );
 };
