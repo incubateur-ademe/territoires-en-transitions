@@ -124,6 +124,7 @@ const Option = ({
   return (
     <div className="group flex w-full">
       <button
+        type="button"
         data-test={option.value}
         className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
         onClick={e => {
