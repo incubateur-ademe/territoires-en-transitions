@@ -12,7 +12,12 @@ import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {panierAPI} from 'src/clientAPI';
 import useSWR from 'swr';
-import {MesCollectivite, getAuthPaths} from '@tet/api';
+import {
+  MesCollectivite,
+  getAuthPaths,
+  getCollectivitePlanPath,
+  getRejoindreCollectivitePath,
+} from '@tet/api';
 import StepperValidation from '@components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,
@@ -130,8 +135,20 @@ const ModeConnecte = () => {
  * Affiche le bouton "Rejoindre une collectivité”
  */
 const ModeConnectePasRattache = () => {
-  // todo url du site vers page "Rejoindre une collectivité”
-  return <Button href="">Rejoindre une collectivité</Button>;
+  // construit l'url de redirection (vers cette modale ouverte)
+  const redirectTo = new URL(document.location.href);
+  redirectTo.searchParams.set('modale', 'creation');
+
+  return (
+    <Button
+      href={getRejoindreCollectivitePath(
+        document.location.hostname,
+        redirectTo.toString(),
+      )}
+    >
+      Rejoindre une collectivité
+    </Button>
+  );
 };
 
 /**
@@ -171,8 +188,12 @@ const ModeConnecteRattache = ({
       collectivite.collectivite_id,
       panier?.id ?? '',
     );
-    // todo utiliser la fonction utilitaire du package API pour composer l'URL
-    const href = `https://app.territoiresentransitions.fr/collectivite/${collectivite.collectivite_id}/plans/plan/${plan_id}`;
+
+    const href = getCollectivitePlanPath(
+      document.location.hostname,
+      collectivite.collectivite_id,
+      plan_id,
+    );
     router.push(href);
   };
 
