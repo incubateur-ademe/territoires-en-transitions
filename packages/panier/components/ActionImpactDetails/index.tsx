@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import {ActionImpactDetails} from '@tet/api';
+import type {ActionImpactDetails} from '@tet/api';
 import {actionImpactAPI} from 'src/clientAPI';
 
 
