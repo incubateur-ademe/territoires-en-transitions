@@ -72,6 +72,7 @@ export const RejoindreUneCollectivite = (
       <FormSectionGrid>
         <Field className="md:col-span-2" title="Nom de la collectivité *">
           <Select
+            dataTest="select-collectivite"
             debounce={500}
             options={
               collectivites?.map(c => ({

@@ -11,6 +11,7 @@ const AssocierCollectiviteBandeau = () => {
       collectivité."
       footer={
         <Button
+          data-test="btn-AssocierCollectivite"
           href={getRejoindreCollectivitePath(
             document.location.hostname,
             document.location.origin

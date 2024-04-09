@@ -18,7 +18,7 @@ export const RejoindreUneCollectiviteModal = (
 
   return (
     <Modal
-      dataTest="RejoindreUneCollectivitePage"
+      dataTest="dialog-AssocierCollectivite"
       backdropBlur
       size="lg"
       title="Rejoindre une collectivité"
