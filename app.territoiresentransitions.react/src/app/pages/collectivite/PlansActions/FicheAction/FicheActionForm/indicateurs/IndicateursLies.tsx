@@ -8,6 +8,9 @@ import IndicateursPanel from 'app/pages/collectivite/PlansActions/FicheAction/Fi
 import {CreerIndicateurPersoModal} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/CreerIndicateurPersoModal';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import {usePanelDispatch} from 'app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
+import Content from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/Panel/Content';
 
 type Props = {
   fiche: FicheAction;
@@ -18,6 +21,8 @@ type Props = {
 
 const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
   const collectiviteId = useCollectiviteId();
+
+  const panelDispatch = usePanelDispatch();
 
   /**
    * Retourne le groupe auquel appartient l'indicateur.
@@ -67,6 +72,26 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
                   undefined,
               })}
               card={{external: true}}
+              selectState={{
+                selected: true,
+                setSelected: indicateur => {
+                  const newIndicateurs = selectIndicateur({
+                    indicateur,
+                    selected: true,
+                    selectedIndicateurs: indicateurs,
+                  });
+                  onSelect(newIndicateurs);
+                  panelDispatch({
+                    type: 'updateContent',
+                    content: (
+                      <Content
+                        selectedIndicateurs={newIndicateurs}
+                        onSelect={onSelect}
+                      />
+                    ),
+                  });
+                },
+              }}
               autoRefresh
               readonly={isReadonly}
             />
