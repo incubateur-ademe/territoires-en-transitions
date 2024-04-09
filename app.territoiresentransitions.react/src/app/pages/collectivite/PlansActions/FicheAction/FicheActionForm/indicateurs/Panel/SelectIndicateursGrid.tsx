@@ -93,6 +93,7 @@ const IndicateurChartContainer = (
         <IndicateurCard
           definition={definition}
           selectState={{
+            checkbox: true,
             selected,
             setSelected,
           }}

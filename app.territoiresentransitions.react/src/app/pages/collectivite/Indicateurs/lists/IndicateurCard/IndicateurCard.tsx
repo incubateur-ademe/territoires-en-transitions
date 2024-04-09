@@ -26,8 +26,14 @@ import {getIndicateurRestant} from './utils';
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
   definition: TIndicateurListItem;
-  /** Rend la carte sélectionnable. Ne peux pas être utilisé avec la prop `href` */
+  /** Permet de sélectionner ou dissocier l'indicateur */
   selectState?: {
+    /**
+     * Remplace le nom par un input checkbox.
+     * Ne peux pas être utilisé avec la prop `href`.
+     * Si `false`, le bouton de dissociation est affiché
+     */
+    checkbox?: boolean;
     selected: boolean;
     setSelected: (indicateur: Indicateur) => void;
   };
@@ -51,9 +57,9 @@ export type IndicateurCardProps = {
 /** Carte qui permet d'afficher un graphique dans une liste */
 const IndicateurCard = (props: IndicateurCardProps) => {
   /** La carte ne peut pas être à la fois un  */
-  if (!!props.selectState && !!props.href) {
+  if (props.selectState?.checkbox && !!props.href) {
     throw new Error(
-      'IndicateurCard: selectState et href ne peuvent pas être utilisés ensemble'
+      'IndicateurCard: checkbox et href ne peuvent pas être utilisés ensemble'
     );
   }
 
@@ -138,7 +144,7 @@ export const IndicateurCardBase = ({
       dataTest={`chart-${definition.id}`}
       className={classNames(
         'relative font-normal !gap-3',
-        {'border-primary-7': selectState?.selected},
+        {'border-primary-7': selectState?.checkbox && selectState?.selected},
         className
       )}
       href={href}
@@ -151,7 +157,7 @@ export const IndicateurCardBase = ({
           </div>
         </Tooltip>
       )}
-      {!!selectState ? (
+      {selectState?.checkbox ? (
         <Checkbox
           checked={selectState.selected}
           onChange={() =>
@@ -169,11 +175,37 @@ export const IndicateurCardBase = ({
         />
       ) : (
         <>
-          {indicateursACompleterRestant === 0 ? (
-            <Badge title="Complété" state="success" size="sm" />
-          ) : (
-            <Badge title="À compléter" state="info" size="sm" />
-          )}
+          <div className="flex items-center gap-6">
+            {indicateursACompleterRestant === 0 ? (
+              <Badge title="Complété" state="success" size="sm" />
+            ) : (
+              <Badge title="À compléter" state="info" size="sm" />
+            )}
+            {selectState?.setSelected && (
+              <Button
+                onClick={(
+                  evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                ) => {
+                  evt.preventDefault();
+                  evt.stopPropagation();
+                  selectState.setSelected({
+                    indicateur_id:
+                      typeof definition.id === 'string' ? definition.id : null,
+                    indicateur_personnalise_id:
+                      typeof definition.id === 'number' ? definition.id : null,
+                    nom: definition.nom,
+                    description: chartInfo?.titre_long ?? '',
+                    unite: chartInfo?.unite ?? '',
+                  });
+                }}
+                icon="link-unlink"
+                title="Dissocier l'indicateur"
+                size="xs"
+                variant="grey"
+                className="ml-auto hidden group-hover:flex -my-2"
+              />
+            )}
+          </div>
           <div className="font-bold line-clamp-2">{chartInfo?.nom}</div>
         </>
       )}
