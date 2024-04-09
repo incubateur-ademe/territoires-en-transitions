@@ -7,6 +7,7 @@ import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 
 type Props = {
   definitions?: TIndicateurListItem[];
@@ -72,21 +73,6 @@ const IndicateurChartContainer = (
         i.indicateur_personnalise_id === definition.id
     ) ?? false;
 
-  const setSelected = (indicateur: Indicateur) => {
-    if (selected) {
-      onSelect(
-        selectedIndicateurs?.filter(
-          i =>
-            i.indicateur_id !== indicateur.indicateur_id ||
-            i.indicateur_personnalise_id !==
-              indicateur.indicateur_personnalise_id
-        ) ?? []
-      );
-    } else {
-      onSelect([...(selectedIndicateurs ?? []), indicateur]);
-    }
-  };
-
   return (
     <div ref={ref} className="min-h-[20rem]">
       {entry?.isIntersecting ? (
@@ -95,7 +81,10 @@ const IndicateurChartContainer = (
           selectState={{
             checkbox: true,
             selected,
-            setSelected,
+            setSelected: indicateur =>
+              onSelect(
+                selectIndicateur({indicateur, selected, selectedIndicateurs})
+              ),
           }}
         />
       ) : (
