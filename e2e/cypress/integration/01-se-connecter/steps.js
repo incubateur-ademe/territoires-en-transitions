@@ -8,25 +8,6 @@ beforeEach(() => {
   cy.wrap(LocalMocks).as('LocalMocks', {type: 'static'});
 });
 
-When(
-  "j'ouvre le site depuis un lien de réinitialisation du mot de passe",
-  () => {
-    // génère le lien tel qui sera généré par le back et envoyé par mail (il est
-    // difficile de tester la réception de mail directement)
-    cy.task('supabase_generateLink', {
-      type: 'recovery',
-      email: 'yolo@dodo.com',
-    }).then(res => {
-      // extrait le OTP
-      const email_otp = res?.data?.email_otp;
-      assert(email_otp, 'OTP non trouvé');
-
-      // crée un lien tel qui doit être reçu par email et visite cette page
-      cy.visit(`/auth/recover_landing/${email_otp}`);
-    });
-  }
-);
-
 When('je vais vérifier les données envoyées à la chatbox', () => {
   // attend que le client crisp soit chargé
   cy.window({log: false})
