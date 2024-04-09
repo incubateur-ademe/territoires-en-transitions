@@ -6,8 +6,7 @@ import {
   CollectiviteNom,
   RejoindreUneCollectiviteData,
 } from '@components/RejoindreUneCollectivite';
-import {Database, getCollectivitePath} from '@tet/api';
-import useSWR from 'swr';
+import {getCollectivitePath, restoreSessionFromAuthTokens} from '@tet/api';
 
 export const NB_COLLECTIVITES_FETCH = 10;
 
@@ -20,6 +19,7 @@ export const useRejoindreUneCollectivite = ({
   redirectTo: string;
 }) => {
   const router = useRouter();
+  restoreSessionFromAuthTokens(supabase);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
