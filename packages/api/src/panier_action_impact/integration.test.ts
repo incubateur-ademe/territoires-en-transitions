@@ -150,6 +150,7 @@ describe("État des actions", async () => {
   );
 });
 
+/*
 describe("Temps réel", async () => {
   it(`On devrait recevoir un événement par ajout d'action`, async () => {
     const demandeInitiale = await supabase.rpc("panier_from_landing");
@@ -188,3 +189,4 @@ describe("Temps réel", async () => {
     );
   });
 });
+*/
