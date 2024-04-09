@@ -89,3 +89,7 @@ const checkRedirect = appName => {
 };
 When(/je suis redirigé sur l'(.*)/, checkRedirect);
 When(/je suis redirigé sur le (.*)/, checkRedirect);
+
+When('je clique sur le lien {string}', text => {
+  cy.get('a').contains(text).click();
+});

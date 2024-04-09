@@ -1,65 +1,58 @@
 # language: fr
-
 Fonctionnalité: Associer une collectivité à mon compte
 
   Scénario: Sélectionner la première collectivité à associer à mon compte (cas d'une collectivité déjà activée)
     Etant donné que je suis connecté en tant que "yulu"
-
     Quand je visite la vue "Toutes les collectivités"
     Et que je clique sur le bouton "Associer une collectivité à mon compte"
-    Alors le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
+    Alors je suis redirigé sur l'authentification
+    Et le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
       | Element                                               | Condition |
       | Nom de la collectivité                                | vide      |
-      | vous ne trouvez pas la collectivité que vous cherchez | visible   |
+      | Valider                                               | désactivé |
+      | vous ne trouvez pas la collectivité que vous cherchez | absent    |
 
-    Quand je remplis le "dialogue Associer une collectivité à mon compte" avec les valeurs suivantes :
-      | Champ                  | Valeur                |
-      | Nom de la collectivité | Afa{downarrow}{enter} |
-
+    Quand je sélectionne l'option "772" dans la liste déroulante "Nom de la collectivité"
     Alors le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
       | Element                                               | Condition |
       | Nom de la collectivité                                | Afa       |
       | vous ne trouvez pas la collectivité que vous cherchez | absent    |
-      | dialogue Rejoindre cette collectivité                 | visible   |
+      | Valider                                               | désactivé |
 
-    Quand je clique en dehors de la boîte de dialogue
-    Alors le "dialogue Associer une collectivité à mon compte" vérifie la condition "absent"
-
-    Quand je clique sur le bouton "Associer une collectivité à mon compte"
+    Quand je sélectionne l'option "partenaire" dans la liste déroulante "Rôle"
     Alors le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
-      | Element                               | Condition | Valeur |
-      | dialogue Rejoindre cette collectivité | visible   |        |
+      | Element                | Condition  |
+      | Nom de la collectivité | Afa        |
+      | Rôle                   | Partenaire |
+      | Valider                | activé     |
+
+    Quand je clique sur le bouton "Valider" du "dialogue Associer une collectivité à mon compte"
+    Alors je suis redirigé sur l'app
+    Et le "dialogue Associer une collectivité à mon compte" est absent
+    Et le "le tableau de bord de la collectivité" est visible
 
   Scénario: Rejoindre une collectivité qui n'est pas activée
-    Etant donné que les informations des membres sont réinitialisées
-    Et que je suis connecté en tant que "yolo"
+    Etant donné que je suis connecté en tant que "yolo"
 
-    Quand je visite la vue "Rejoindre une collectivité"
-    Alors le "formulaire rejoindre une collectivité" est visible
+    Quand je visite la vue "Mon compte"
+    Et que je clique sur le lien "Rejoindre une collectivité"
+    Alors le "dialogue Associer une collectivité à mon compte" est visible
 
-    Quand je sélectionne "Partenaire" dans le champ "SelectFonction"
-    Alors le champ "SelectFonction" doit contenir "partenaire"
+    Quand je sélectionne l'option "partenaire" dans la liste déroulante "Rôle"
+    Alors "Rôle" contient "Partenaire"
 
-    Quand je recherche la collectivité "Ablis" dans le champ "collectivite"
-    Alors une alerte contient le titre "Accès admin"
-
-    Quand je clique sur le bouton "Rejoindre en tant qu'admin"
-    Alors une alerte contient le message "Vous êtes désormais membre de la collectivité Ablis avec un accès admin."
-
-    Quand je clique sur le lien du formulaire
-    Alors la collectivité "Ablis" apparait dans le dropdown de sélection avec les droits d'accès relatifs à ma Fonction
+    Quand je recherche la collectivité "Ablis" dans le champ "select-collectivite"
+    Et que je clique sur le bouton "Valider" du "dialogue Associer une collectivité à mon compte"
+    Alors je suis redirigé sur l'app
+    Et la collectivité "Ablis" apparait dans le dropdown de sélection avec les droits d'accès relatifs à ma Fonction
 
   Scénario: Rejoindre une collectivité déjà activée
-    Etant donné que les informations des membres sont réinitialisées
-    Et que je suis connecté en tant que "yolo"
+    Etant donné que je suis connecté en tant que "yolo"
 
-    Quand je visite la vue "Rejoindre une collectivité"
-    Alors le "formulaire rejoindre une collectivité" est visible
-
-    Quand je recherche la collectivité "Ambérieu-en-Bugey" dans le champ "collectivité"
-    Alors une alerte de statut "information" est affichée avec le message "Contactez l’admin Yolo Dodo à l’adresse yolo@dodo.com pour recevoir un lien d’invitation."
-
-    Quand je clique sur le lien du formulaire
-    Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | le tableau de bord de la collectivité | visible   |
+    Quand je visite la vue "Mon compte"
+    Et que je clique sur le lien "Rejoindre une collectivité"
+    Alors le "dialogue Associer une collectivité à mon compte" est visible
+    
+    Quand je recherche la collectivité "Ambérieu-en-Bugey" dans le champ "select-collectivite"
+    Alors le "dialogue Associer une collectivité à mon compte" contient "Contactez l'une des personnes admin par mail pour recevoir un lien d’invitation"
+    Et le bouton "Valider" du "dialogue Associer une collectivité à mon compte" est désactivé

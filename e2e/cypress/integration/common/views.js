@@ -11,10 +11,6 @@ export const Views = {
     route: '/profil/mon-compte',
     selector: '[data-test=MonCompte]',
   },
-  'Rejoindre une collectivité': {
-    route: '/profil/rejoindre-une-collectivite',
-    selector: '[data-test=RejoindreUneCollectivite]',
-  },
 };
 
 export const CollectivitePages = {
