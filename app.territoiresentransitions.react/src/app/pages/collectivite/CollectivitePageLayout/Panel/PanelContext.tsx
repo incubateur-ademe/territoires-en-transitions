@@ -9,7 +9,7 @@ import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 // type PanelAction = 'open' | 'close' | 'toggle';
 type PanelAction = {
-  type: 'open' | 'close';
+  type: 'open' | 'close' | 'updateContent';
   toolbar?: React.ReactNode;
   content?: React.ReactNode;
 };
@@ -44,6 +44,12 @@ const panelReducer = (state: PanelState, action: PanelAction) => {
     case 'close': {
       return {
         isOpen: false,
+      };
+    }
+    case 'updateContent': {
+      return {
+        ...state,
+        content: action.content,
       };
     }
     default: {

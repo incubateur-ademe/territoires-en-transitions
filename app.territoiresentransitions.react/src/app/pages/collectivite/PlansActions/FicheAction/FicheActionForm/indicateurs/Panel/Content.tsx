@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import {Indicateurs} from '@tet/api';
 import {Checkbox, Field, Input, SelectFilter} from '@tet/ui';
@@ -24,10 +24,15 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
 
+  useEffect(() => {
+    setSelectedIndicateursState(selectedIndicateurs);
+  }, [selectedIndicateurs]);
+
   const handleSelect = (indicateurs: Indicateur[]) => {
     setSelectedIndicateursState(indicateurs);
     onSelect(indicateurs);
   };
+
   return (
     <div className="grow p-4 overflow-y-auto">
       <div className=" relative flex flex-col gap-4 z-[1]">
