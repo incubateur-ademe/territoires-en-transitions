@@ -52,7 +52,7 @@ export const Card = ({
     !disabled;
 
   const appliedClassname = classNames(
-    'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group',
+    'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group',
     {
       'hover:cursor-pointer hover:shadow-card': hasHoverEffect,
       'hover:border-grey-4': hasHoverEffect && !isSelected,
