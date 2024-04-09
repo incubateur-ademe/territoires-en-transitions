@@ -10,6 +10,7 @@ import {User, SignInWithPasswordCredentials} from '@supabase/supabase-js';
 import {useQuery} from 'react-query';
 import {supabaseClient} from '../supabase';
 import {useCurrentSession} from './useCurrentSession';
+import {getRootDomain, setAuthTokens} from '@tet/api';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -93,8 +94,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     }
   }, [userData]);
 
-  // pour authentifier l'utilisateur
-  const connect = (data: SignInWithPasswordCredentials) =>
+  // pour authentifier l'utilisateur (utilisé uniquement depuis les tests e2e)
+  const connect = async (data: SignInWithPasswordCredentials) =>
     supabaseClient.auth
       .signInWithPassword(data)
       .then(({data}) => {
@@ -102,6 +103,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
           setAuthError("L'email et le mot de passe ne correspondent pas.");
           return false;
         }
+        setAuthTokens(data.session, getRootDomain(document.location.hostname));
         return true;
       })
       .catch(() => {
