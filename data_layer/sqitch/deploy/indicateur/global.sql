@@ -19,6 +19,7 @@ JOIN indicateur_definition d ON r.indicateur_id::text = d.id::text
 LEFT JOIN indicateur_resultat_commentaire c
           ON r.indicateur_id::text = c.indicateur_id::text AND r.collectivite_id = c.collectivite_id AND
              r.annee = c.annee
+where can_read_acces_restreint(r.collectivite_id)
 UNION ALL
 SELECT 'resultat'::indicateur_valeur_type AS type,
        r.collectivite_id,
@@ -36,6 +37,7 @@ LEFT JOIN indicateur_confidentiel confidentiel ON r.indicateur_id::text = confid
 LEFT JOIN indicateur_resultat_commentaire c
           ON alt.id::text = c.indicateur_id::text AND r.collectivite_id = c.collectivite_id AND
              r.annee = c.annee
+where can_read_acces_restreint(r.collectivite_id)
 UNION ALL
 SELECT 'objectif'::indicateur_valeur_type AS type,
        o.collectivite_id,
@@ -51,6 +53,7 @@ JOIN indicateur_definition d ON o.indicateur_id::text = d.id::text
 LEFT JOIN indicateur_objectif_commentaire c
           ON o.indicateur_id::text = c.indicateur_id::text AND o.collectivite_id = c.collectivite_id AND
              o.annee = c.annee
+where can_read_acces_restreint(o.collectivite_id)
 UNION ALL
 SELECT 'objectif'::indicateur_valeur_type AS type,
        o.collectivite_id,
@@ -66,6 +69,7 @@ JOIN indicateur_definition alt ON o.indicateur_id::text = alt.valeur_indicateur:
 LEFT JOIN indicateur_objectif_commentaire c
           ON alt.id::text = c.indicateur_id::text AND o.collectivite_id = c.collectivite_id AND
              o.annee = c.annee
+where can_read_acces_restreint(o.collectivite_id)
 UNION ALL
 SELECT 'import'::indicateur_valeur_type AS type,
        indicateur_resultat_import.collectivite_id,
@@ -77,6 +81,7 @@ SELECT 'import'::indicateur_valeur_type AS type,
        indicateur_resultat_import.source,
        indicateur_resultat_import.source_id
 FROM indicateur_resultat_import
+where can_read_acces_restreint(indicateur_resultat_import.collectivite_id)
 UNION ALL
 SELECT 'import'::indicateur_valeur_type AS type,
        i.collectivite_id,
@@ -89,6 +94,7 @@ SELECT 'import'::indicateur_valeur_type AS type,
        i.source_id
 FROM indicateur_resultat_import i
 JOIN indicateur_definition alt ON i.indicateur_id::text = alt.valeur_indicateur::text
+where can_read_acces_restreint(i.collectivite_id)
 UNION ALL
 SELECT 'resultat'::indicateur_valeur_type AS type,
        r.collectivite_id,
@@ -101,6 +107,7 @@ SELECT 'resultat'::indicateur_valeur_type AS type,
        NULL::text                         AS source_id
 FROM indicateur_personnalise_resultat r
 LEFT JOIN indicateur_perso_resultat_commentaire c USING (collectivite_id, indicateur_id, annee)
+where can_read_acces_restreint(r.collectivite_id)
 UNION ALL
 SELECT 'objectif'::indicateur_valeur_type AS type,
        r.collectivite_id,
@@ -112,6 +119,7 @@ SELECT 'objectif'::indicateur_valeur_type AS type,
        NULL::text                         AS source,
        NULL::text                         AS source_id
 FROM indicateur_personnalise_objectif r
-LEFT JOIN indicateur_perso_objectif_commentaire c USING (collectivite_id, indicateur_id, annee);
+LEFT JOIN indicateur_perso_objectif_commentaire c USING (collectivite_id, indicateur_id, annee)
+where can_read_acces_restreint(r.collectivite_id);
 
 COMMIT;
