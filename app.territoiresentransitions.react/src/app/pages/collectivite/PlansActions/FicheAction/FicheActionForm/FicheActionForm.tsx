@@ -226,6 +226,29 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         title="Modalités de mise en œuvre"
       >
         <FormField
+          label="Financements"
+          htmlFor="financements"
+          hint="Estimation indicative des coûts relatifs à certains postes de dépense pour mener l’action. Ces informations permettent de décider du dimensionnement de l’action."
+        >
+          <TextareaControlled
+            id="financements"
+            initialValue={fiche.financements ?? ''}
+            onBlur={e => {
+              if (fiche.financements) {
+                e.target.value !== fiche.financements &&
+                  updateFiche({...fiche, financements: e.target.value.trim()});
+              } else {
+                e.target.value.trim().length > 0 &&
+                  updateFiche({...fiche, financements: e.target.value.trim()});
+              }
+            }}
+            placeholder="Écrire ici..."
+            className="outline-transparent resize-none"
+            disabled={isReadonly}
+          />
+        </FormField>
+        <div className="mb-6 border-t border-gray-300" />
+        <FormField
           label="Budget prévisionnel total "
           htmlFor="budget-previsionnel"
         >
@@ -256,29 +279,6 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             isReadonly={isReadonly}
           />
         </div>
-        <FormField
-          label="Financements"
-          htmlFor="financements"
-          hint="Programmes de financements, etc."
-        >
-          <TextareaControlled
-            id="financements"
-            initialValue={fiche.financements ?? ''}
-            onBlur={e => {
-              if (fiche.financements) {
-                e.target.value !== fiche.financements &&
-                  updateFiche({...fiche, financements: e.target.value.trim()});
-              } else {
-                e.target.value.trim().length > 0 &&
-                  updateFiche({...fiche, financements: e.target.value.trim()});
-              }
-            }}
-            placeholder="Écrire ici..."
-            className="outline-transparent resize-none"
-            disabled={isReadonly}
-          />
-        </FormField>
-        <div className="mb-6 border-t border-gray-300" />
         <div className="grid grid-cols-2 gap-4">
           <FormField label="Statut">
             <SelectDropdown
