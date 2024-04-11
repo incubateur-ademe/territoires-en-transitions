@@ -656,3 +656,5 @@ panier_action_impact/panier [panier_action_impact/action_impact] 2024-01-24T16:5
 panier_action_impact/plan_action 2024-04-04T12:41:35Z Florian <florian@derfurth.com> # Permet de créer un plan d'action à partir d'un panier
 utilisateur/droits_v2 [utilisateur/droits_v2@v2.102.0] 2024-04-05T13:31:55Z Florian <florian@derfurth.com> # Permet de rejoindre une collectivité avec un role et un poste
 @v3.0.0 2024-04-24T15:32:58Z Marc Rutkowski <marc@attractive-media.fr> # Ajout du panier d'action à impact
+
+plan_action/fiches [plan_action/fiches@v2.102.0] 2024-04-11T15:19:15Z Florian <florian@derfurth.com> # Répare l'unicité des pilotes des fiches actions
