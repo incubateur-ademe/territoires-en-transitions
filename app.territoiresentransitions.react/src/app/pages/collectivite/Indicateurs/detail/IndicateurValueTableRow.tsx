@@ -149,7 +149,7 @@ const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
 const ValueImported = ({valeur}: {valeur: string}) => {
   // la valeur importée est une chaîne qui peut contenir beaucoup de chiffres
   // après la virgule alors on essaye de la parser
-  const n = parseFloat(valeur?.replace(/\s/, '').replace(',', '.'));
+  const n = parseFloat(valeur?.replace(/\s/g, '').replace(',', '.'));
   // et si le résultat est valide on le formate avec maximum 3 digits (ou on
   // utilise la chaîne d'origine)
   const v = isNaN(n) ? valeur : NumFormat.format(n);
