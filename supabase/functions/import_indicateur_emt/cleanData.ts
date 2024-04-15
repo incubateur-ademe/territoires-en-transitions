@@ -61,7 +61,7 @@ export const valeur = async (
     indicateur_id : string,
     definitons : Map<string, Tables<"indicateur_definition">>
 ): Promise<number | null> => {
-    if(!valeur){
+    if(valeur==null){
         return null;
     }
     let toReturn = parseFloat(String(valeur).replace('%', ''));
