@@ -273,7 +273,7 @@ export const IndicateurCardBase = ({
                 </Button>
               )}
               {/** Légende */}
-              {chartInfo?.rempli && (
+              {hasValeurOrObjectif && (
                 <div className="flex flex-wrap gap-4 ml-2 mt-2">
                   {generateLineLegendItems(prepareData(data.valeurs)).map(
                     ({name, color, symbole}) => (
