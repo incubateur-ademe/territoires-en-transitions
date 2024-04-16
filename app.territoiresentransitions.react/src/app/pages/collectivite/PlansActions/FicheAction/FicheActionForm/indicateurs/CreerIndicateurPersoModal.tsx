@@ -23,7 +23,7 @@ export const CreerIndicateurPersoModal = ({
       )}
     >
       <Button variant="outlined" size="sm">
-        Créer un indicateur de suivi
+        Créer un indicateur
       </Button>
     </Modal>
   ) : null;

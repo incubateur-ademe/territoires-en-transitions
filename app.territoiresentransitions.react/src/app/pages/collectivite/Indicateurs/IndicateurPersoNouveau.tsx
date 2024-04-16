@@ -61,7 +61,7 @@ const IndicateurPersoNouveau = ({
     <div className={classNames('fr-p-2w', className)}>
       <h4>
         <i className="fr-icon-line-chart-line fr-pr-2w" />
-        Créer un indicateur personnalisé
+        Créer un indicateur
       </h4>
       <IndicateurPersoNouveauForm
         indicateur={newDefinition}
