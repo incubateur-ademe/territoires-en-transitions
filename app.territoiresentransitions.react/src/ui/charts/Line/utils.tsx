@@ -32,5 +32,5 @@ export const getLeftLineChartMargin = (valeurs: TIndicateurValeur[]) => {
   const maxValue = Math.round(Math.max(...leftAxisValues));
   const valueLength = maxValue.toString().length;
   // 10px étant +- la largeur d'un caractère, on multiplie par 10 pour obtenir la largeur en px
-  return valueLength * 10;
+  return valueLength <= 1 ? 16 : valueLength * 10;
 };
