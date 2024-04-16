@@ -4,6 +4,7 @@ import {useRef, useState} from 'react';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
 import BarChart, {BarChartProps} from './BarChart';
+import {Button} from '@tet/ui';
 
 export const Legend = ({
   legend,
@@ -64,7 +65,9 @@ const useDownloadChartButton = (
             onClick={() =>
               tracker({fonction: 'graphique', action: 'telechargement'})
             }
-          />
+          >
+            Télécharger le graphique
+          </DownloadCanvasButton>
         </div>
       ) : null,
   };
@@ -219,13 +222,18 @@ const ChartCard = ({
               />
             )}
           >
-            <button
-              className="fr-btn fr-btn--sm fr-btn--secondary fr-icon-zoom-in-line ml-auto"
+            <Button
+              icon="zoom-in-line"
+              size="xs"
+              variant="outlined"
               onClick={() => {
                 setIsModalOpen(true);
                 tracker({fonction: 'graphique', action: 'agrandissement'});
               }}
-            />
+              className="ml-auto h-fit"
+            >
+              Détails
+            </Button>
           </Modal>
         )}
       </div>

@@ -117,7 +117,9 @@ const GraphCard = ({title, subTitle, renderGraph}: Props) => {
           variant="outlined"
           onClick={() => toggleOpen()}
           className="ml-auto h-fit"
-        />
+        >
+          Détails
+        </Button>
       </div>
       {renderGraph({isOpen, setIsOpen: toggleOpen})}
     </AccueilCard>
