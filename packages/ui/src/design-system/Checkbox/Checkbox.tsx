@@ -11,8 +11,10 @@ export type CheckboxProps = Omit<
   label?: string;
   /** Variante visuelle */
   variant?: 'checkbox' | 'switch';
-  /** Pour style le container */
+  /** Pour styliser le container */
   containerClassname?: string;
+  /** Pour styliser le label */
+  labelClassname?: string;
 } & FieldMessageProps;
 
 /**
@@ -28,6 +30,7 @@ export const Checkbox = forwardRef(
       message,
       className,
       containerClassname,
+      labelClassname,
       variant = 'checkbox',
       id,
       ...remainingProps
@@ -69,7 +72,8 @@ export const Checkbox = forwardRef(
                 {
                   'text-grey-8': !remainingProps.disabled,
                   'text-grey-6': remainingProps.disabled,
-                }
+                },
+                labelClassname
               )}
             >
               {label}
