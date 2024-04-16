@@ -260,11 +260,6 @@ const SelectButton = forwardRef(
     }: SelectButtonProps,
     ref?: Ref<HTMLButtonElement>
   ) => {
-    useEffect(() => {
-      if (!isOpen) {
-        onSearch('');
-      }
-    }, [isOpen]);
 
     return (
       <button
