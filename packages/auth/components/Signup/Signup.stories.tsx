@@ -65,11 +65,3 @@ export const Etape3: Story = {
 export const Etape3Erreur: Story = {
   args: {view: 'etape3', error: "Message d'erreur"},
 };
-
-export const Etape4: Story = {
-  args: {view: 'etape4'},
-};
-
-export const Etape4Erreur: Story = {
-  args: {view: 'etape4', error: "Message d'erreur"},
-};
