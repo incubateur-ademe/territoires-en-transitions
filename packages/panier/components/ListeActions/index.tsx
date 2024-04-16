@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
@@ -6,7 +5,7 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {Alert, PanierOngletName, Tab, Tabs} from '@tet/ui';
+import {PanierOngletName, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import FiltresActions from '@components/FiltresActions';
@@ -46,7 +45,6 @@ const ListeActions = ({
   onUpdateStatus,
   onChangeTab,
 }: ListeActionsProps) => {
-  const [openAlert, setOpenAlert] = useState(true);
   const searchParams = useSearchParams();
 
   const tabsList: {
@@ -80,12 +78,7 @@ const ListeActions = ({
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
             <FiltresActions {...{budgets, temps, thematiques}} />
-            <Alert
-              isOpen={openAlert}
-              onClose={() => setOpenAlert(false)}
-              title="Nous avons personnalisé la liste selon votre territoire et votre domaine d'action. Vous pouvez élargir la sélection grâce aux filtres."
-              classname="mb-8"
-            />
+
             {!tab.status &&
             !actionsFiltrees.length &&
             searchParams.size === 0 ? (
