@@ -18,8 +18,10 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
 
   const [filters, setFilters] = useState<Indicateurs.Filters>({});
 
+  const [subset, setSubset] = useState<Indicateurs.Subset | null>(null);
+
   const {data: definitions, isLoading: isDefinitionsLoading} =
-    useFilteredIndicateurDefinitions(null, filters);
+    useFilteredIndicateurDefinitions(subset, filters);
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
@@ -70,6 +72,11 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
           onChange={() =>
             setFilters({...filters, confidentiel: !filters.confidentiel})
           }
+        />
+        <Checkbox
+          label="Indicateur personnalisé"
+          checked={subset === 'perso' ?? false}
+          onChange={() => setSubset(subset === 'perso' ? null : 'perso')}
         />
       </div>
       <hr className="p-0 my-6 w-full h-px" />
