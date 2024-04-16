@@ -63,17 +63,19 @@ export const useRejoindreUneCollectivite = ({
     setIsLoading(true);
     const query = supabase
       .from('named_collectivite')
-      .select()
+      .select('*,collectivite_test(id)')
       .limit(NB_COLLECTIVITES_FETCH);
 
     if (search) {
       query.ilike('nom', `%${search}%`);
     }
 
-    const {error, data} = await query.returns<CollectiviteNom[]>();
+    const {error, data} = await query;
     setIsLoading(false);
     if (!error && data) {
-      setCollectivites(data);
+      setCollectivites(
+        data.filter(c => !c.collectivite_test?.length) as CollectiviteNom[],
+      );
     }
   };
 
