@@ -9,7 +9,7 @@ import {
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
-import {PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
+import {Alert, PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {panierAPI, supabase} from 'src/clientAPI';
 import ListeActions from '@components/ListeActions';
 import PanierActions from '@components/PanierActions';
@@ -42,6 +42,7 @@ const PanierRealtime = ({
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
+  const [openAlert, setOpenAlert] = useState(true);
 
   const router = useRouter();
   const {setCollectiviteId} = useCollectiviteContext();
@@ -113,6 +114,12 @@ const PanierRealtime = ({
   return (
     <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
       <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
+        <Alert
+          isOpen={openAlert}
+          onClose={() => setOpenAlert(false)}
+          title="Contenu en cours de validation par l’ADEME et en amélioration continue"
+          classname="mb-8 -mt-4"
+        />
         <h1>
           Initiez{' '}
           <span className="text-secondary-1">des actions impactantes</span> et
