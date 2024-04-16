@@ -64,13 +64,18 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         <Checkbox
           label="Indicateur complété"
           checked={filters.rempli ?? false}
-          onChange={() => setFilters({...filters, rempli: !filters.rempli})}
+          onChange={() =>
+            setFilters({...filters, rempli: !filters.rempli ? true : undefined})
+          }
         />
         <Checkbox
           label="Indicateur privé"
           checked={filters.confidentiel ?? false}
           onChange={() =>
-            setFilters({...filters, confidentiel: !filters.confidentiel})
+            setFilters({
+              ...filters,
+              confidentiel: !filters.confidentiel ? true : undefined,
+            })
           }
         />
         <Checkbox
