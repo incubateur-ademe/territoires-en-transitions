@@ -18,6 +18,7 @@ export const LoginModal = (props: LoginProps) => {
   return (
     <Modal
       dataTest="SignInPage"
+      disableDismiss
       backdropBlur
       size={mdDialog.includes(view) ? 'md' : 'lg'}
       title={getTitle(view)}
