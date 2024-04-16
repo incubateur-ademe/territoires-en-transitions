@@ -56,7 +56,6 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
           {indicateurs.map(indicateur => (
             <IndicateurCard
               key={indicateur.nom}
-              className="h-full"
               definition={{
                 id:
                   indicateur.indicateur_id ??
