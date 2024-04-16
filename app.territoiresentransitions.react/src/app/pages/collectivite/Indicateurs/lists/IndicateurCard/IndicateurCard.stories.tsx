@@ -74,26 +74,10 @@ export const CompletSansValeur: Story = {
 export const SansGraphVide: Story = {
   args: {
     href: '#',
-    showChart: false,
+    hideChartWithoutValue: true,
     chartInfo: {
       nom: 'Achats publics avec considération environnementale',
       participation_score: true,
-      count: 3,
-      total: 5,
-    },
-  },
-};
-
-export const SansGraphRempli: Story = {
-  args: {
-    showChart: false,
-    data: {
-      valeurs: fakeIndicateurValeurs,
-    },
-    chartInfo: {
-      nom: 'Achats publics avec considération environnementale',
-      participation_score: true,
-      rempli: true,
       count: 3,
       total: 5,
     },
@@ -130,7 +114,7 @@ export const SelectionnableSansGraphVide: Story = {
       count: 5,
       total: 5,
     },
-    showChart: false,
+    hideChartWithoutValue: true,
   },
   render: args => <SelectStory {...args} />,
 };
@@ -140,7 +124,11 @@ const SelectStory = (props: IndicateurCardBaseProps) => {
   return (
     <IndicateurCardBase
       {...props}
-      selectState={{selected, setSelected: () => setSelected(!selected)}}
+      selectState={{
+        selected,
+        setSelected: () => setSelected(!selected),
+        checkbox: true,
+      }}
     />
   );
 };

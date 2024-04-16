@@ -74,7 +74,7 @@ const IndicateurChartContainer = (
     ) ?? false;
 
   return (
-    <div ref={ref} className="min-h-[20rem]">
+    <div ref={ref} className="min-h-[5rem]">
       {entry?.isIntersecting ? (
         <IndicateurCard
           definition={definition}
@@ -86,6 +86,7 @@ const IndicateurChartContainer = (
                 selectIndicateur({indicateur, selected, selectedIndicateurs})
               ),
           }}
+          hideChartWithoutValue
         />
       ) : (
         definition.nom

@@ -44,7 +44,7 @@ export type IndicateurCardProps = {
   /** Props du composant `IndicateurChart` sans ce qui est relatif aux données */
   chart?: Omit<IndicateurChartProps, 'data' | 'isLoading'>;
   /** Affiche ou masque le graphique */
-  showChart?: boolean;
+  hideChartWithoutValue?: boolean;
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
@@ -117,10 +117,14 @@ export const IndicateurCardBase = ({
   definition,
   chart,
   chartInfo,
-  showChart = true,
+  hideChartWithoutValue = false,
   card,
   readonly,
 }: IndicateurCardBaseProps) => {
+  const showChart =
+    !hideChartWithoutValue ||
+    (hideChartWithoutValue && data.valeurs.length > 0);
+
   const isIndicateurParent = chartInfo?.enfants && chartInfo.enfants.length > 0;
 
   // uniquement utilisé pour `totalNbIndicateurs`
@@ -172,6 +176,7 @@ export const IndicateurCardBase = ({
             })
           }
           label={chartInfo?.nom}
+          labelClassname="!font-bold"
         />
       ) : (
         <>
