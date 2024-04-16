@@ -42,6 +42,10 @@ export const setAuthTokens = (session: Session, domain: string) => {
 export const restoreSessionFromAuthTokens = async (
   supabase: SupabaseClient
 ) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   // recherche les cookies
   const cookies = document.cookie
     .split(/\s*;\s*/)
