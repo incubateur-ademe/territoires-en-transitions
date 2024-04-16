@@ -7,7 +7,6 @@ const ValidSignupView = [
   'etape1',
   'etape2',
   'etape3',
-  'etape4',
   'msg_lien_envoye',
 ] as const;
 export const isValidSignupView = (view: string | null) =>
@@ -29,19 +28,7 @@ export type SignupDataStep3 = {
   cgu_acceptees: boolean;
 };
 
-export type SignupDataStep4 = {
-  email: string;
-  collectivite_id?: number;
-  collectivite_engagee?: boolean;
-  role?: Enums<'membre_fonction'>;
-  poste?: string;
-};
-
-export type SignupData =
-  | SignupDataStep1
-  | SignupDataStep2
-  | SignupDataStep3
-  | SignupDataStep4;
+export type SignupData = SignupDataStep1 | SignupDataStep2 | SignupDataStep3;
 
 export type SignupProps = {
   /** Vue courante */

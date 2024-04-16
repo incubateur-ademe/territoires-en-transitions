@@ -4,7 +4,6 @@ import {SignupProps} from './type';
 import {SignupStep1} from './SignupStep1';
 import {SignupStep2} from './SignupStep2';
 import {SignupStep3} from './SignupStep3';
-import {SignupStep4} from './SignupStep4';
 import {ResendMessage} from '../ResendMessage';
 
 /**
@@ -24,10 +23,6 @@ export const Signup = (props: SignupProps) => {
 
   if (view === 'etape3') {
     return <SignupStep3 {...props} formState={formState} />;
-  }
-
-  if (view === 'etape4') {
-    return <SignupStep4 {...props} formState={formState} />;
   }
 
   if (view === 'msg_lien_envoye') {
