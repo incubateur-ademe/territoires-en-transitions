@@ -80,7 +80,7 @@ export const RejoindreUneCollectivite = (
                 label: c.nom,
               })) || []
             }
-            values={collectiviteId ? [collectiviteId] : undefined}
+            values={collectiviteId ? collectiviteId : undefined}
             isSearcheable
             onSearch={onFilterCollectivites}
             disabled={isLoading}
