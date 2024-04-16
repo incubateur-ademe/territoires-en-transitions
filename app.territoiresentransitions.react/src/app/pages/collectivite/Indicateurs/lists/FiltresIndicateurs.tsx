@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {AccordionControlled} from 'ui/Accordion';
 import FormField from 'ui/shared/form/FormField';
-import Checkbox from 'ui/shared/form/Checkbox';
+import {Checkbox} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
 import FiltreThematiques from './FiltreThematiques';
 import FiltrePersonnes from './FiltrePersonnes';
@@ -96,10 +96,10 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                 </FormField>
               )*/}
                 <Checkbox
-                  className="mt-2 font-medium"
+                  className="font-medium"
                   label="Indicateurs privés"
                   checked={confidentiel?.includes('oui') || false}
-                  onCheck={() =>
+                  onChange={() =>
                     updateFilterParam(
                       'confidentiel',
                       confidentiel?.includes('oui') ? [] : ['oui']
@@ -110,10 +110,10 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                 {view === 'cae' && (
                   <div className="flex flex-row">
                     <Checkbox
-                      className="mt-2 font-medium"
+                      className="font-medium"
                       label="Participe au score"
                       checked={participation_score?.includes('oui') || false}
-                      onCheck={() =>
+                      onChange={() =>
                         updateFilterParam(
                           'participation_score',
                           participation_score?.includes('oui') ? [] : ['oui']
@@ -121,7 +121,6 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                       }
                     />
                     <InfoTooltip
-                      className="pt-2"
                       label={() => (
                         <p>
                           Indicateur dont les résultats conditionnent certains
