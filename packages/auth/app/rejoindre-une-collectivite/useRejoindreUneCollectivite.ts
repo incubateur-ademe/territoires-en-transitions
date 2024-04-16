@@ -59,6 +59,7 @@ export const useRejoindreUneCollectivite = ({
 
   const onFilterCollectivites = async (search: string) => {
     // charge les collectivites
+    if (isLoading) return;
     setIsLoading(true);
     const query = supabase
       .from('named_collectivite')
@@ -96,21 +97,25 @@ export const useRejoindreUneCollectivite = ({
     }
   };
 
+  const selectionIsNotIntoFetchedData =
+    collectiviteSelectionnee?.id &&
+    collectivites &&
+    !collectivites?.find(
+      c => c.collectivite_id === collectiviteSelectionnee?.id,
+    );
+
   return {
-    collectivites:
-      collectiviteSelectionnee?.id &&
-      collectivites &&
-      !collectivites?.find(
-        c => c.collectivite_id === collectiviteSelectionnee?.id,
-      )
-        ? [
-            ...(collectivites || []),
-            {
-              collectivite_id: collectiviteSelectionnee.id,
-              nom: collectiviteSelectionnee.nom,
-            },
-          ]
-        : collectivites,
+    // on s'assure que la collectivité sélectionnée est bien présente dans les
+    // items pour éviter une erreur dans le composant Select
+    collectivites: selectionIsNotIntoFetchedData
+      ? [
+          ...(collectivites || []),
+          {
+            collectivite_id: collectiviteSelectionnee.id,
+            nom: collectiviteSelectionnee.nom,
+          },
+        ]
+      : collectivites,
     collectiviteSelectionnee,
     error,
     setError,
