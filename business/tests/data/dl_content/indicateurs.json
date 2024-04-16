@@ -644,7 +644,7 @@
       "titre_long": "Part de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e dans les Ordures M\u00e9nagers et Assimil\u00e9s (OMR) et la benne tout venant d\u00e9chetterie (%)",
       "type": null,
       "unite": "%",
-      "valeur_indicateur": "cae_6.c"
+      "valeur_indicateur": null
     },
     {
       "action_ids": [],
@@ -1653,8 +1653,8 @@
       "participation_score": false,
       "programmes": [
         "pcaet",
-        "cae",
-        "clef"
+        "clef",
+        "cae"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1979,8 +1979,8 @@
       "participation_score": false,
       "programmes": [
         "pcaet",
-        "cae",
-        "clef"
+        "clef",
+        "cae"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3141,9 +3141,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3167,9 +3167,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3193,9 +3193,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3219,9 +3219,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3245,9 +3245,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3271,9 +3271,9 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3370,9 +3370,9 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -4013,9 +4013,9 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
+        "pcaet",
         "cae",
-        "pcaet"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4573,8 +4573,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
-        "crte"
+        "crte",
+        "clef"
       ],
       "sans_valeur": true,
       "selection": false,
