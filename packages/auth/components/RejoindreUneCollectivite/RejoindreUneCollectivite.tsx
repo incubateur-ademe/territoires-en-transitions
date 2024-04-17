@@ -83,7 +83,7 @@ export const RejoindreUneCollectivite = (
             values={collectiviteId ? collectiviteId : undefined}
             isSearcheable
             onSearch={onFilterCollectivites}
-            disabled={isLoading}
+            isLoading={isLoading}
             onChange={value => {
               const id = collectiviteId === value ? null : (value as number);
               onSelectCollectivite(id);
