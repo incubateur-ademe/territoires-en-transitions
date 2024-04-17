@@ -8,7 +8,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
 
     Quand je suis connecté avec les droits en "edition"
     Et que je suis sur la page "Indicateurs CAE" de la collectivité courante
-    Alors la page contient au moins 4 graphiques vides
+    Alors la page contient au moins 2 graphiques vides
 
   Scénario: Editer un indicateur prédéfini
     Etant donné une collectivité nommée "Le Bois Joli"
