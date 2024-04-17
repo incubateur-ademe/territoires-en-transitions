@@ -130,8 +130,11 @@ export const SelectBase = (props: SelectProps) => {
     }
   };
 
-  /** Liste d'option filtrée par la saisie de l'utilisateur */
-  const filteredOptions = filterOptions(options, inputValue);
+  /** Liste d'option filtrée par la saisie de l'utilisateur (sauf si une
+   * fonction de filtrage externe est fournie) */
+  const filteredOptions = onSearch
+    ? options
+    : filterOptions(options, inputValue);
 
   /** Détermine si le Select permet la création d'option */
   const isCreateOptionSelect = !!createProps;
