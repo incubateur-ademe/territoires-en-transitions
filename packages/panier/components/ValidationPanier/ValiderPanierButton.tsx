@@ -16,7 +16,7 @@ const ValiderPanierButton = () => {
   const searchParams = useSearchParams();
   const initiallyOpen = searchParams.get('modale') === 'creation';
   const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
-  const tracker = useEventTracker('panier');
+  const tracker = useEventTracker('panier/panier');
   const {panier} = usePanierContext();
 
   return (

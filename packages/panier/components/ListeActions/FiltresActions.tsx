@@ -26,7 +26,7 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const tracker = useEventTracker('panier');
+  const tracker = useEventTracker('panier/panier');
   const {panier} = usePanierContext();
 
   const [thematiquesValues, setThematiquesValues] = useState<

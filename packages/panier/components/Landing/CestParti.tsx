@@ -16,7 +16,7 @@ const CestParti = () => {
       : undefined;
 
   const tracker = useEventTracker(
-    collectivite_id ? 'landing/collectivite' : 'landing',
+    collectivite_id ? 'panier/landing/collectivite' : 'panier/landing',
   );
 
   const onClick = async () => {

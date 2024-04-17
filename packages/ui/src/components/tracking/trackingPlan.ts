@@ -18,7 +18,13 @@ interface Page {
 /**
  * La liste des pages
  */
-export type PageName = '/' | 'landing' | 'landing/collectivite' | 'panier';
+export type PageName = PageNamePanier;
+
+type PageNamePanier =
+  | 'panier/'
+  | 'panier/landing'
+  | 'panier/landing/collectivite'
+  | 'panier/panier';
 
 /**
  * Liste des onglets de la page panier
@@ -30,14 +36,14 @@ export type OngletName = 'selection' | 'réalisées' | 'en cours';
  */
 export interface TrackingPlan extends Record<PageName, Page> {
   /* La page à la racine de https://panier.territoiresentransitions.fr */
-  '/': {
+  'panier/': {
     properties: never;
     onglets: never;
     events: never;
   };
 
   /* La landing générique, qui crée et renvoie sur un nouveau panier */
-  landing: {
+  'panier/landing': {
     properties: never;
     onglets: never;
     events: {
@@ -46,7 +52,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
   };
 
   /* La landing pour une collectivité, qui crée et renvoie sur un panier récent ou un nouveau panier. */
-  'landing/collectivite': {
+  'panier/landing/collectivite': {
     properties: {
       collectivite_id: number;
     };
@@ -58,7 +64,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
   };
 
   /* La page d'un panier d'action */
-  panier: {
+  'panier/panier': {
     /* les propriétés de tous événements de la page panier */
     properties: {
       collectivite_preset: number | null;
