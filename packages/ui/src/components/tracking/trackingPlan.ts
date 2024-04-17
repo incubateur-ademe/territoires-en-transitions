@@ -29,7 +29,7 @@ type PageNamePanier =
 /**
  * Liste des onglets de la page panier
  */
-export type OngletName = 'selection' | 'réalisées' | 'en cours';
+export type PanierOngletName = 'selection' | 'réalisées' | 'en cours';
 
 /**
  * Permet de respecter le plan de tracking.
@@ -72,7 +72,7 @@ export interface TrackingPlan extends Record<PageName, Page> {
     };
 
     /* les onglets principaux */
-    onglets: OngletName;
+    onglets: PanierOngletName;
 
     /* les events du panier */
     events: {

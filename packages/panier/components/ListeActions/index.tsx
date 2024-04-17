@@ -6,7 +6,7 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {Alert, OngletName, Tab, Tabs} from '@tet/ui';
+import {Alert, PanierOngletName, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import FiltresActions from '@components/FiltresActions';
@@ -34,7 +34,7 @@ type ListeActionsProps = {
   thematiques: ActionImpactThematique[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
-  onChangeTab: (tab: OngletName) => void;
+  onChangeTab: (tab: PanierOngletName) => void;
 };
 
 const ListeActions = ({
@@ -51,7 +51,7 @@ const ListeActions = ({
 
   const tabsList: {
     label: string;
-    shortName: OngletName;
+    shortName: PanierOngletName;
     status: string | null;
   }[] = [
     {label: 'Sélection', shortName: 'selection', status: null},

@@ -9,7 +9,7 @@ import {
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
-import {OngletName, useEventTracker, useOngletTracker} from '@tet/ui';
+import {PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {panierAPI, supabase} from 'src/clientAPI';
 import ListeActions from '@components/ListeActions';
 import PanierActions from '@components/PanierActions';
@@ -41,7 +41,7 @@ const PanierRealtime = ({
   temps,
   thematiques,
 }: PanierRealtimeProps) => {
-  const [currentTab, setCurrentTab] = useState<OngletName>('selection');
+  const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
 
   const router = useRouter();
   const {setCollectiviteId} = useCollectiviteContext();
@@ -102,7 +102,7 @@ const PanierRealtime = ({
     router.refresh();
   };
 
-  const handleChangeTab = async (tab: OngletName) => {
+  const handleChangeTab = async (tab: PanierOngletName) => {
     setCurrentTab(tab);
     await ongletTracker(tab, {
       collectivite_preset: panier.collectivite_preset,
