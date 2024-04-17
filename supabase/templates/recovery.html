@@ -10,12 +10,11 @@
 </p>
 
 <p>Sinon, suivez le lien ci-dessous</p>
-<p>
-  <a
-    href="http://localhost:3003/login?view=recover&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
-    >Réinitialiser mon mot de passe</a
-  >
-</p>
+<a
+  href="http://localhost:3003/login?view=recover&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
+  style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem; display: block;"
+  >Réinitialiser mon mot de passe</a
+>
 <p>
   et entrez le code suivant : <b id="otp">{{ .Token }}</b> avant de pouvoir choisir un nouveau mot de passe.
 </p>

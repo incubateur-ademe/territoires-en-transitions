@@ -5,11 +5,11 @@
 <p>Si vous n'êtes pas à l'origine de cette demande veuillez ignorer ce message.</p>
 
 <p>Sinon, suivez le lien ci-dessous</p>
-<p>
-  <a href="http://localhost:3003/signup?view=etape2&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
-    >Valider mon inscription</a
-  >
-</p>
+<a href="http://localhost:3003/signup?view=etape2&email={{.Email}}&otp={{ .Token }}&redirect_to={{ .RedirectTo }}"
+  style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem; display: block;"
+  >Valider mon inscription</a
+>
+
 <p>
   et entrez le code suivant : <b id="otp">{{ .Token }}</b> pour valider votre inscription.
 </p>
