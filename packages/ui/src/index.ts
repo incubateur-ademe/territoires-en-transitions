@@ -26,6 +26,7 @@ export * from './design-system/FormSection';
 export * from './design-system/Header';
 export * from './design-system/Icon';
 export * from './design-system/Input';
+export * from './design-system/Menu';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
 export * from './design-system/Select';

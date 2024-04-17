@@ -1,5 +1,4 @@
 import {Meta, StoryObj} from '@storybook/react';
-
 import {ButtonMenu} from './ButtonMenu';
 
 const meta: Meta<typeof ButtonMenu> = {
@@ -22,7 +21,7 @@ const meta: Meta<typeof ButtonMenu> = {
     },
   },
   args: {
-    icon: 'equalizer-fill',
+    icon: 'leaf-line',
     notificationValue: 2,
     menuAlignment: 'left',
     children: (

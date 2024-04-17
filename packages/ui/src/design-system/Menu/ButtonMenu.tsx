@@ -1,8 +1,7 @@
 import {Ref, forwardRef, useEffect, useRef, useState} from 'react';
-import {ButtonProps} from './types';
-import {Button} from './Button';
+import {ButtonProps} from '../Button/types';
 import {NotificationVariant} from '../Notification';
-import {NotificationButton} from './NotificationButton';
+import {NotificationButton} from '../Button/NotificationButton';
 import classNames from 'classnames';
 
 /** Ouverture d'un menu flottant au click sur le bouton */
@@ -16,6 +15,7 @@ export const ButtonMenu = forwardRef(
       size = 'xs',
       menuAlignment = 'right',
       menuClassName,
+      onClick,
       ...props
     }: {
       /** Contenu du menu flottant */
@@ -35,7 +35,13 @@ export const ButtonMenu = forwardRef(
 
     const containerRef: Ref<HTMLDivElement> = useRef(null);
 
-    const handleClick = () => setOpenMenu(prevState => !prevState);
+    const handleClick = (
+      evt: React.MouseEvent<HTMLButtonElement> &
+        React.MouseEvent<HTMLAnchorElement>
+    ) => {
+      setOpenMenu(prevState => !prevState);
+      onClick?.(evt);
+    };
 
     const handleClickOutside = event => {
       if (
@@ -55,18 +61,15 @@ export const ButtonMenu = forwardRef(
 
     return (
       <div ref={containerRef} className="mx-2 relative w-fit">
-        {notificationValue !== undefined ? (
-          <NotificationButton
-            ref={ref}
-            size={size}
-            notificationValue={notificationValue}
-            notificationVariant={notificationVariant}
-            onClick={handleClick}
-            {...props}
-          />
-        ) : (
-          <Button ref={ref} size={size} onClick={handleClick} {...props} />
-        )}
+        <NotificationButton
+          ref={ref}
+          size={size}
+          notificationValue={notificationValue || undefined}
+          notificationVariant={notificationVariant}
+          onClick={handleClick}
+          {...props}
+        />
+
         {openMenu && (
           <div
             className={classNames(

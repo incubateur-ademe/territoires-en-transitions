@@ -10,7 +10,7 @@ export const NotificationButton = forwardRef(
       notificationVariant,
       ...props
     }: {
-      notificationValue: number;
+      notificationValue?: number;
       notificationVariant?: NotificationVariant;
     } & ButtonProps,
     ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
@@ -18,12 +18,14 @@ export const NotificationButton = forwardRef(
     return (
       <div className="relative w-fit h-fit">
         <Button ref={ref} {...props} />
-        <Notification
-          size="xs"
-          variant={notificationVariant}
-          number={notificationValue}
-          classname="h-6 w-6 !p-0 justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
-        />
+        {notificationValue !== undefined && (
+          <Notification
+            size="xs"
+            variant={notificationVariant}
+            number={notificationValue}
+            classname="h-6 w-6 !p-0 justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3"
+          />
+        )}
       </div>
     );
   }
