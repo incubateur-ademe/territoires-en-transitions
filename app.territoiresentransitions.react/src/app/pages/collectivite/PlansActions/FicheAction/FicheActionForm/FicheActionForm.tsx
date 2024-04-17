@@ -228,7 +228,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         <FormField
           label="Financements"
           htmlFor="financements"
-          hint="Estimation indicative des coûts relatifs à certains postes de dépense pour mener l’action. Ces informations permettent de décider du dimensionnement de l’action."
+          hint="Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions …"
         >
           <TextareaControlled
             id="financements"
