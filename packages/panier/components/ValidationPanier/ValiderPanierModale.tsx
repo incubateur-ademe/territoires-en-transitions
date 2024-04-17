@@ -165,7 +165,7 @@ const ModeConnecteRattache = ({
 }: {
   collectivites: MesCollectivite;
 }) => {
-  const tracker = useEventTracker('panier');
+  const tracker = useEventTracker('panier/panier');
   const {panier} = usePanierContext();
   const router = useRouter();
   const {collectiviteId: savedCollectiviteId} = useCollectiviteContext();

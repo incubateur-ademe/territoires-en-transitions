@@ -53,7 +53,7 @@ async function Page({
 
   return (
     <>
-      <TrackPageView pageName="panier" />
+      <TrackPageView pageName="panier/panier" />
       <Section>
         <PanierRealtime
           panier={panier}

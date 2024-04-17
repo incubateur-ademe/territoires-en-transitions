@@ -26,7 +26,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <TrackPageView pageName="/" />;
+  return <TrackPageView pageName="panier/" />;
 };
 
 export default Page;

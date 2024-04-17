@@ -14,7 +14,7 @@ const ReprendrePanier = () => {
   const panier_id =
     pathnameArray[2] === 'panier' && id ? (id as string) : undefined;
 
-  const tracker = useEventTracker('landing');
+  const tracker = useEventTracker('panier/landing');
 
   const handleClick = async () => {
     if (!!panier_id) {

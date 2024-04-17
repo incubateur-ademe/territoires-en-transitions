@@ -48,8 +48,8 @@ const PanierRealtime = ({
   const {setPanier} = usePanierContext();
   const {setUser} = useUserContext();
 
-  const tracker = useEventTracker('panier', currentTab);
-  const ongletTracker = useOngletTracker('panier');
+  const tracker = useEventTracker('panier/panier', currentTab);
+  const ongletTracker = useOngletTracker('panier/panier');
 
   useEffect(() => {
     setPanier(panier);

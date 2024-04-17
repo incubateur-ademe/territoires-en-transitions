@@ -5,7 +5,7 @@ import React from 'react';
 const Page = () => {
   return (
     <>
-      <TrackPageView pageName="landing" />
+      <TrackPageView pageName="panier/landing" />
       <Landing />
     </>
   );
