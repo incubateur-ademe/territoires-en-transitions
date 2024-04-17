@@ -96,13 +96,12 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
           Se connecter
         </Button>
         <ModalFooterSection>
-          <ModalFooterOKCancel
-            btnOKProps={{
-              type: 'submit',
-              disabled: !isValid || isLoading,
-            }}
-            btnCancelProps={{onClick: onCancel}}
-          />
+          <Button type="button" variant="outlined" onClick={onCancel}>
+            Annuler
+          </Button>
+          <Button type="submit" disabled={!isValid || isLoading}>
+            Valider
+          </Button>
         </ModalFooterSection>
       </ModalFooter>
     </form>
