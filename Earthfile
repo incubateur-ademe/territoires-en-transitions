@@ -52,6 +52,17 @@ db-deploy-build:
     COPY ./data_layer/sqitch ./data_layer/sqitch
     SAVE IMAGE --push $REG_TARGET/db-deploy:$DL_TAG
 
+sqitch-local-build:
+    # Build sqitch avec postgres 15 et les migrations
+    #
+    # Utilisation: se mettre sur la bonne branche puis lancer :
+    # earthly +sqitch-local-build
+    # docker run sqitch $sandbox status
+    FROM +sqitch-build
+    COPY sqitch.conf ./sqitch.conf
+    COPY ./data_layer/sqitch ./data_layer/sqitch
+    SAVE IMAGE sqitch
+
 pg-tap-build:
     FROM +postgres
     RUN apt-get update
