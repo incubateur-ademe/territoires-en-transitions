@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {supabase} from 'src/clientAPI';
 import {
@@ -6,7 +6,11 @@ import {
   CollectiviteNom,
   RejoindreUneCollectiviteData,
 } from '@components/RejoindreUneCollectivite';
-import {getCollectivitePath, restoreSessionFromAuthTokens} from '@tet/api';
+import {
+  getCollectivitePath,
+  makeSearchString,
+  restoreSessionFromAuthTokens,
+} from '@tet/api';
 
 export const NB_COLLECTIVITES_FETCH = 10;
 
@@ -66,8 +70,9 @@ export const useRejoindreUneCollectivite = ({
       .select('*,collectivite_test(id)')
       .limit(NB_COLLECTIVITES_FETCH);
 
-    if (search) {
-      query.ilike('nom', `%${search}%`);
+    const processedSearch = makeSearchString(search, 'nom');
+    if (processedSearch) {
+      query.or(processedSearch);
     }
 
     const {error, data} = await query;
