@@ -70,12 +70,12 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Alors le texte "Aucun indicateur personnalisé" est visible
 
     Quand je clique sur le bouton "Créer un indicateur"
-    Alors le texte "Créer un indicateur personnalisé" est visible
+    Alors le texte "Les indicateurs personnalisés" est visible
 
     Quand je crée l'indicateur avec les données suivantes :
       | Nom            | Unité | Description    | Thématique        |
       | Mon indicateur | %     | Ma description | Énergie et climat |
-    Alors le texte "Créer un indicateur personnalisé" est absent
+    Alors le texte "Les indicateurs personnalisés" est absent
     Et le texte "Mon indicateur" est visible
     Et le tableau des résultats de l'indicateur est vide
     Et le graphique de l'indicateur est vide
