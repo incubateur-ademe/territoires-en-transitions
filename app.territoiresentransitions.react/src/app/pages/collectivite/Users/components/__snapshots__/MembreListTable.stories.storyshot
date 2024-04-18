@@ -43,7 +43,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As A
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Détails fonction
+            Intitulé de poste
              
             <span
               className="block text-xs font-normal"
@@ -522,7 +522,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As E
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Détails fonction
+            Intitulé de poste
              
             <span
               className="block text-xs font-normal"
@@ -849,7 +849,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable As L
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Détails fonction
+            Intitulé de poste
              
             <span
               className="block text-xs font-normal"
@@ -1178,7 +1178,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Empt
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Détails fonction
+            Intitulé de poste
              
             <span
               className="block text-xs font-normal"
@@ -1257,7 +1257,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTable Is L
           <th
             className="py-3 px-5 whitespace-nowrap"
           >
-            Détails fonction
+            Intitulé de poste
              
             <span
               className="block text-xs font-normal"

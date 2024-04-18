@@ -46,7 +46,7 @@ const MembreListTable = ({
                 </span>
               </th>
               <th className={thClassNames}>
-                Détails fonction{' '}
+                Intitulé de poste{' '}
                 <span className="block text-xs font-normal">
                   dans cette collectivité
                 </span>
