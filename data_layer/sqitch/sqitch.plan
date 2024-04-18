@@ -644,3 +644,4 @@ indicateur/global 2024-04-10T10:00:31Z Amandine Jacquelin <conta@LanceLibre> # M
 @v2.105.0 2024-04-17T12:30:00Z Amandine Jacquelin <conta@LanceLibre> # Corrige l'enregistrement des commentaires sur les indicateurs
 
 referentiel/vue_tabulaire [referentiel/vue_tabulaire@v2.102.0] 2024-03-12T18:05:45Z Amandine Jacquelin <conta@LanceLibre> # Corrige la vue action_statuts pour ne pas inclure les avancements descendants quand un parent est non concerne ou desactive
+@v2.106.0 2024-04-18T07:48:50Z Amandine Jacquelin <conta@LanceLibre> # Correction du filtre non renseigné sur la vue action_statuts
