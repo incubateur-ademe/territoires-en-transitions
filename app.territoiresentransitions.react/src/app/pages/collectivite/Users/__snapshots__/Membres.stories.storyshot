@@ -57,7 +57,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Détails fonction
+              Intitulé de poste
                
               <span
                 className="block text-xs font-normal"
@@ -668,7 +668,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Détails fonction
+              Intitulé de poste
                
               <span
                 className="block text-xs font-normal"
@@ -1279,7 +1279,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Détails fonction
+              Intitulé de poste
                
               <span
                 className="block text-xs font-normal"
@@ -1890,7 +1890,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
             <th
               className="py-3 px-5 whitespace-nowrap"
             >
-              Détails fonction
+              Intitulé de poste
                
               <span
                 className="block text-xs font-normal"
