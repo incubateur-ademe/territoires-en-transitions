@@ -53,9 +53,10 @@ export const RejoindreUneCollectivite = (
   const {collectivite_engagee, poste, role, champ_intervention} = formState;
   const {id: collectiviteId, contacts} = collectiviteSelectionnee || {};
 
+  const hasContacts = !!contacts?.length;
   const isValid =
     collectiviteId &&
-    !contacts?.length &&
+    !hasContacts &&
     role &&
     (!collectivite_engagee || champ_intervention?.length);
 
@@ -110,63 +111,69 @@ export const RejoindreUneCollectivite = (
             }
           />
 
-          {!!contacts?.length && (
+          {hasContacts && (
             <CollectiviteSelectionnee collectivite={collectiviteSelectionnee} />
           )}
         </Field>
-        <Field title="Rôle *">
-          <Select
-            dataTest="role"
-            options={ROLES}
-            values={role ? [role] : undefined}
-            onChange={value => {
-              setFormState(previous => ({
-                ...previous,
-                role:
-                  role === value
-                    ? null
-                    : (value as RejoindreUneCollectiviteData['role']),
-              }));
-            }}
-          />
-        </Field>
-
-        <Field title="Intitulé de poste" htmlFor="poste">
-          <Input
-            id="poste"
-            type="text"
-            value={poste}
-            onChange={e =>
-              setFormState(previous => ({...previous, poste: e.target.value}))
-            }
-          />
-        </Field>
-        <Checkbox
-          containerClassname="md:col-span-2"
-          label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
-          onChange={e =>
-            setFormState(previous => ({
-              ...previous,
-              collectivite_engagee: e.target.checked,
-            }))
-          }
-        />
-        {collectivite_engagee && (
-          <Field title="Référentiel du programme *">
-            <SelectMultiple
-              multiple
-              dataTest="role"
-              options={REFERENTIELS}
-              values={champ_intervention}
-              onChange={({values}) => {
+        {!hasContacts && (
+          <>
+            <Field title="Rôle *">
+              <Select
+                dataTest="role"
+                options={ROLES}
+                values={role ? [role] : undefined}
+                onChange={value => {
+                  setFormState(previous => ({
+                    ...previous,
+                    role:
+                      role === value
+                        ? null
+                        : (value as RejoindreUneCollectiviteData['role']),
+                  }));
+                }}
+              />
+            </Field>
+            <Field title="Intitulé de poste" htmlFor="poste">
+              <Input
+                id="poste"
+                type="text"
+                value={poste}
+                onChange={e =>
+                  setFormState(previous => ({
+                    ...previous,
+                    poste: e.target.value,
+                  }))
+                }
+              />
+            </Field>
+            <Checkbox
+              containerClassname="md:col-span-2"
+              label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
+              onChange={e =>
                 setFormState(previous => ({
                   ...previous,
-                  champ_intervention:
-                    values as RejoindreUneCollectiviteData['champ_intervention'],
-                }));
-              }}
+                  collectivite_engagee: e.target.checked,
+                }))
+              }
             />
-          </Field>
+            {collectivite_engagee && (
+              <Field title="Référentiel du programme *">
+                <SelectMultiple
+                  multiple
+                  dataTest="role"
+                  options={REFERENTIELS}
+                  values={champ_intervention}
+                  onChange={({values}) => {
+                    setFormState(previous => ({
+                      ...previous,
+                      champ_intervention:
+                        values as RejoindreUneCollectiviteData['champ_intervention'],
+                    }));
+                  }}
+                />
+              </Field>
+            )}
+          </>
         )}
       </FormSectionGrid>
       {!!error && (
