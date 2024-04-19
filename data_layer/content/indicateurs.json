@@ -1507,8 +1507,8 @@
       "parent": null,
       "participation_score": true,
       "programmes": [
-        "clef",
-        "cae"
+        "cae",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1652,9 +1652,9 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
+        "cae",
         "pcaet",
-        "clef",
-        "cae"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1744,8 +1744,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1767,8 +1767,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1790,8 +1790,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1813,8 +1813,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1836,8 +1836,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1859,8 +1859,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1882,8 +1882,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -1978,9 +1978,9 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
+        "cae",
         "pcaet",
-        "clef",
-        "cae"
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -2004,8 +2004,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2027,8 +2027,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2050,8 +2050,8 @@
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2634,8 +2634,8 @@
       "parent": "cae_3.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3092,8 +3092,8 @@
       "parent": "cae_3.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3141,8 +3141,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3167,8 +3167,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3193,8 +3193,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3219,8 +3219,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3245,8 +3245,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3271,8 +3271,8 @@
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3370,8 +3370,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -3698,15 +3698,15 @@
       "action_ids": [
         "cae_1.2.3"
       ],
-      "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9chets et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>\n<ul>\n<li>\n<p>Valeur limite : 573 kg/hab.an</p>\n</li>\n<li>\n<p>Valeur cible : 480 kg/hab.an</p>\n</li>\n</ul>\n",
+      "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9blais et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>\n<ul>\n<li>\n<p>Valeur limite : 573 kg/hab.an</p>\n</li>\n<li>\n<p>Valeur cible : 480 kg/hab.an</p>\n</li>\n</ul>\n",
       "id": "cae_6.a",
       "identifiant": "6.a",
       "nom": "Production de d\u00e9chets",
       "parent": null,
       "participation_score": true,
       "programmes": [
-        "clef",
-        "cae"
+        "cae",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3715,6 +3715,30 @@
         "eci_dechets"
       ],
       "titre_long": "Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats)",
+      "type": null,
+      "unite": "kg/hab",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
+      "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (hors d\u00e9blais et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n",
+      "id": "cae_6.aa",
+      "identifiant": "6.aa",
+      "nom": "Production de d\u00e9chets (hors d\u00e9blais et gravats)",
+      "parent": "cae_6.a",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "eci_dechets"
+      ],
+      "titre_long": "Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (sans d\u00e9blais et gravats)",
       "type": null,
       "unite": "kg/hab",
       "valeur_indicateur": null
@@ -3745,10 +3769,54 @@
       "action_ids": [
         "cae_1.2.3"
       ],
-      "description": "<p>emballages, d\u00e9chets fermentescibles, verre\u2026</p>\n",
+      "description": "<p>emballages, d\u00e9chets fermentescibles, verre</p>\n",
       "id": "cae_6.c",
       "identifiant": "6.c",
       "nom": "Production de d\u00e9chets collect\u00e9s s\u00e9lectivement",
+      "parent": "cae_6.a",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire",
+      "type": null,
+      "unite": "kg/hab",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
+      "description": "<p>d\u00e9chets verre</p>\n",
+      "id": "cae_6.ca",
+      "identifiant": "6.ca",
+      "nom": "Production de d\u00e9chets verre collect\u00e9s s\u00e9lectivement",
+      "parent": "cae_6.a",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Production de d\u00e9chets collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire",
+      "type": null,
+      "unite": "kg/hab",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
+      "description": "<p>emballages</p>\n",
+      "id": "cae_6.cb",
+      "identifiant": "6.cb",
+      "nom": "Production de d\u00e9chets emballages collect\u00e9s s\u00e9lectivement",
       "parent": "cae_6.a",
       "participation_score": false,
       "programmes": [
@@ -3796,8 +3864,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "clef",
-        "cae"
+        "cae",
+        "clef"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -4013,8 +4081,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "pcaet",
         "cae",
+        "pcaet",
         "clef"
       ],
       "sans_valeur": false,
@@ -4061,8 +4129,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4084,8 +4152,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4107,8 +4175,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4130,8 +4198,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4153,8 +4221,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4176,8 +4244,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4199,8 +4267,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4222,8 +4290,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "pcaet",
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
