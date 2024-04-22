@@ -2,10 +2,10 @@ import {Database, Enums, NonNullableFields} from '@tet/api';
 
 export type RejoindreUneCollectiviteData = {
   collectiviteId?: number | null;
-  collectivite_engagee?: boolean;
   role?: Enums<'membre_fonction'> | null;
   champ_intervention?: Array<Enums<'referentiel'>>;
   poste?: string;
+  est_referent?: boolean;
 };
 
 export type RejoindreUneCollectiviteProps = {

@@ -48,6 +48,7 @@ export const useRejoindreUneCollectivite = ({
       champ_intervention: formData.champ_intervention || [],
       role: formData.role,
       poste: formData.poste || '',
+      est_referent: formData.est_referent || false,
     });
     setIsLoading(false);
 
