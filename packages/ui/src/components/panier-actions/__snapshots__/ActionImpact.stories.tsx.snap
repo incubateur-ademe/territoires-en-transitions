@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Components/Panier d'actions/Action à impact Default smoke-test 1`] = `
+<div aria-expanded="false"
+     aria-haspopup="dialog"
+>
+  <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3 box-content"
+       style="max-width: 400px;"
+  >
+    <div class="text-primary-8 text-sm font-bold">
+      <div class="flex justify-between">
+        <div>
+          Mieux consommer
+        </div>
+        <div>
+          <span class="ri-money-euro-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-secondary-1">
+          </span>
+          <span class="ri-money-euro-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-secondary-1">
+          </span>
+          <span class="ri-money-euro-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-grey-4">
+          </span>
+        </div>
+      </div>
+    </div>
+    Désigner une (ou plusieurs personnes) chef de projet transition écologique
+    <div class="text-primary-8 text-sm font-bold mt-auto">
+      <div class="flex justify-between items-center relative">
+        <div data-test="Badge-undefined"
+             class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 absolute group-hover:hidden"
+        >
+          <span class="text-success-1 font-bold uppercase leading-4 text-left line-clamp-1 text-xs">
+            Complexité simple
+          </span>
+        </div>
+        <div class="flex gap-2 invisible group-hover:visible ml-auto">
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+            Non pertinent
+          </button>
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+            En cours
+          </button>
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+            Réalisé
+          </button>
+          <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !px-4">
+            Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

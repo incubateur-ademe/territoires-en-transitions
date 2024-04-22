@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Card CompleteCard smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
   <div class="text-primary-8 text-sm font-bold">
     <div class="flex justify-between">
       <div>
@@ -36,20 +36,20 @@ exports[`design-system/Card CompleteCard smoke-test 1`] = `
 `;
 
 exports[`design-system/Card Default smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group border-grey-3">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </div>
 `;
 
 exports[`design-system/Card Disabled smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group border-grey-3">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </div>
 `;
 
 exports[`design-system/Card WithExternalLink smoke-test 1`] = `
 <a href="#"
-   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
+   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
    target="_blank"
    rel="noreferrer noopener"
 >
@@ -58,7 +58,7 @@ exports[`design-system/Card WithExternalLink smoke-test 1`] = `
 `;
 
 exports[`design-system/Card WithFooter smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group border-grey-3">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
   <div class="text-primary-8 text-sm font-bold mt-auto">
     <div class="flex justify-between items-center gap-4">
@@ -83,7 +83,7 @@ exports[`design-system/Card WithFooter smoke-test 1`] = `
 `;
 
 exports[`design-system/Card WithHeader smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group border-grey-3">
   <div class="text-primary-8 text-sm font-bold">
     <div class="flex justify-between">
       <div>
@@ -100,20 +100,24 @@ exports[`design-system/Card WithHeader smoke-test 1`] = `
 
 exports[`design-system/Card WithLink smoke-test 1`] = `
 <a href="#"
-   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
+   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
 >
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </a>
 `;
 
 exports[`design-system/Card WithOnClick smoke-test 1`] = `
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </div>
 `;
 
 exports[`design-system/Card WithSelect smoke-test 1`] = `
+<<<<<<< HEAD
 <div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-primary-7">
+=======
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-info-1">
+>>>>>>> 7a4e41993 (Update storyshots)
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </div>
 `;
