@@ -2,154 +2,111 @@
 
 BEGIN;
 
--- locales_evolution_collectivite_avec_minimum_fiches
-drop view stats_locales_evolution_collectivite_avec_minimum_fiches;
-drop materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
-
-create materialized view stats.locales_evolution_collectivite_avec_minimum_fiches as
-WITH fiche_collectivite AS (SELECT mb.first_day                                                               AS mois,
-                                   c.collectivite_id,
-                                   c.region_code,
-                                   c.departement_code,
-                                   COALESCE(count(*) FILTER (WHERE fa.modified_at <= mb.last_day), 0::bigint) AS fiches
-                            FROM stats.monthly_bucket mb
-                                     JOIN stats.collectivite c ON true
-                                     LEFT JOIN fiche_action fa USING (collectivite_id)
-                            GROUP BY mb.first_day, c.collectivite_id, c.departement_code, c.region_code)
-SELECT fiche_collectivite.mois,
-       NULL::character varying(2)                            AS code_region,
-       NULL::character varying(2)                            AS code_departement,
-       count(*) FILTER (WHERE fiche_collectivite.fiches > 5) AS collectivites
-FROM fiche_collectivite
-GROUP BY fiche_collectivite.mois
-UNION ALL
-SELECT fiche_collectivite.mois,
-       fiche_collectivite.region_code                        AS code_region,
-       NULL::character varying                               AS code_departement,
-       count(*) FILTER (WHERE fiche_collectivite.fiches > 5) AS collectivites
-FROM fiche_collectivite
-GROUP BY fiche_collectivite.mois, fiche_collectivite.region_code
-UNION ALL
-SELECT fiche_collectivite.mois,
-       NULL::character varying                               AS code_region,
-       fiche_collectivite.departement_code                   AS code_departement,
-       count(*) FILTER (WHERE fiche_collectivite.fiches > 5) AS collectivites
-FROM fiche_collectivite
-GROUP BY fiche_collectivite.mois, fiche_collectivite.departement_code
-ORDER BY 1;
-
-create view stats_locales_evolution_collectivite_avec_minimum_fiches
+create or replace function
+    stats.refresh_stats_locales()
+    returns void
 as
-select *
-from stats.locales_evolution_collectivite_avec_minimum_fiches;
+$$
+begin
+    refresh materialized view stats.locales_evolution_total_activation;
+    refresh materialized view stats.locales_collectivite_actives_et_total_par_type;
+    refresh materialized view stats.locales_evolution_utilisateur;
+    refresh materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
+    refresh materialized view stats.locales_pourcentage_completude;
+    refresh materialized view stats.locales_tranche_completude;
+    refresh materialized view stats.evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
+    refresh materialized view stats.locales_engagement_collectivite;
+    refresh materialized view stats.locales_evolution_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_personnalise;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel;
+end
+$$ language plpgsql;
 
+drop view stats_locales_labellisation_par_niveau;
+drop materialized view stats.locales_labellisation_par_niveau;
 
--- locales_evolution_nombre_fiches
-drop view stats_locales_evolution_nombre_fiches;
-drop materialized view stats.locales_evolution_nombre_fiches;
-
-create materialized view stats.locales_evolution_nombre_fiches as
-SELECT mb.first_day                                          AS mois,
-       NULL::character varying(2)                            AS code_region,
-       NULL::character varying(2)                            AS code_departement,
-       count(*) FILTER (WHERE fa.modified_at <= mb.last_day) AS fiches
-FROM stats.monthly_bucket mb
-         JOIN stats.collectivite ca ON true
-         JOIN fiche_action fa USING (collectivite_id)
-GROUP BY mb.first_day
+create materialized view stats.locales_labellisation_par_niveau as
+WITH latest_labellisation AS (
+                             SELECT l.collectivite_id,
+                                    l.referentiel,
+                                    (
+                                    SELECT ll.etoiles
+                                    FROM labellisation ll
+                                    WHERE ll.collectivite_id = l.collectivite_id
+                                      AND ll.referentiel = l.referentiel
+                                    ORDER BY ll.obtenue_le DESC
+                                    LIMIT 1
+                                    ) AS etoiles
+                             FROM labellisation l
+                             GROUP BY l.collectivite_id, l.referentiel
+                             ),
+     labellisation_locales AS (
+                             SELECT l.etoiles,
+                                    l.referentiel,
+                                    c.region_code,
+                                    c.departement_code
+                             FROM latest_labellisation l
+                             JOIN stats.collectivite c USING (collectivite_id)
+                             )
+SELECT NULL::character varying(2) AS code_region,
+       NULL::character varying(2) AS code_departement,
+       labellisation_locales.referentiel,
+       labellisation_locales.etoiles,
+       count(*)                   AS labellisations
+FROM labellisation_locales
+GROUP BY labellisation_locales.referentiel, labellisation_locales.etoiles
 UNION ALL
-SELECT mb.first_day                                          AS mois,
-       ca.region_code                                        AS code_region,
-       NULL::character varying                               AS code_departement,
-       count(*) FILTER (WHERE fa.modified_at <= mb.last_day) AS fiches
-FROM stats.monthly_bucket mb
-         JOIN stats.collectivite ca ON true
-         LEFT JOIN fiche_action fa USING (collectivite_id)
-GROUP BY mb.first_day, ca.region_code
+SELECT r.code                          AS code_region,
+       NULL::character varying         AS code_departement,
+       l.referentiel,
+       l.etoiles,
+       COALESCE(count(l.*), 0::bigint) AS labellisations
+FROM imports.region r
+JOIN labellisation_locales l ON l.region_code::text = r.code::text
+GROUP BY l.referentiel, l.etoiles, r.code
 UNION ALL
-SELECT mb.first_day                                          AS mois,
-       NULL::character varying                               AS code_region,
-       ca.departement_code                                   AS code_departement,
-       count(*) FILTER (WHERE fa.modified_at <= mb.last_day) AS fiches
-FROM stats.monthly_bucket mb
-         JOIN stats.collectivite ca ON true
-         LEFT JOIN fiche_action fa USING (collectivite_id)
-GROUP BY mb.first_day, ca.departement_code
-ORDER BY 1;
+SELECT NULL::character varying         AS code_region,
+       d.code                          AS code_departement,
+       l.referentiel,
+       l.etoiles,
+       COALESCE(count(l.*), 0::bigint) AS labellisations
+FROM imports.departement d
+JOIN labellisation_locales l ON l.departement_code::text = d.code::text
+GROUP BY l.referentiel, l.etoiles, d.code;
 
-create view stats_locales_evolution_nombre_fiches
+create view stats_locales_labellisation_par_niveau as
+SELECT code_region,
+       code_departement,
+       referentiel,
+       etoiles,
+       labellisations
+FROM stats.locales_labellisation_par_niveau;
+
+create or replace function
+    stats.refresh_stats_locales()
+    returns void
 as
-select *
-from stats.locales_evolution_nombre_fiches;
-
-drop view stats_locales_evolution_total_activation;
-drop materialized view stats.locales_evolution_total_activation;
-create materialized view stats.locales_evolution_total_activation
-as
-select -- permet de filtrer
-       m.first_day                              as mois,
-       null:: varchar(2)                        as code_region,
-       null::varchar(2)                         as code_departement,
-
-       -- stats nationales
-       (select count(*) as count
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day) as total,
-       (select count(*) filter (where cu.type_collectivite = 'EPCI'::type_collectivite) as count
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day) as total_epci,
-       (select count(*) filter (where cu.type_collectivite = 'syndicat'::type_collectivite) as count
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day) as total_syndicat,
-       (select count(*) filter (where cu.type_collectivite = 'commune'::type_collectivite) as count
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day) as total_commune
-from stats.monthly_bucket m
-
-union all
-
-select m.first_day as mois,
-       r.code,
-       null,
-       (select count(*) filter ( where cu.region_code = r.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'EPCI' and cu.region_code = r.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'syndicat' and cu.region_code = r.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'commune' and cu.region_code = r.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day)
-
-from imports.region r
-         join stats.monthly_bucket m on true
-
-union all
-
-select m.first_day as mois,
-       null,
-       d.code,
-       (select count(*) filter ( where departement_code = d.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'EPCI' and departement_code = d.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'syndicat' and departement_code = d.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day),
-       (select count(*) filter ( where cu.type_collectivite = 'commune' and departement_code = d.code)
-        from stats.collectivite_utilisateur cu
-        where cu.date_activation <= m.last_day)
-
-from imports.departement d
-         join stats.monthly_bucket m on true;
-
-create view stats_locales_evolution_total_activation as
-select *
-from stats.locales_evolution_total_activation;
+$$
+begin
+    refresh materialized view stats.locales_evolution_total_activation;
+    refresh materialized view stats.locales_collectivite_actives_et_total_par_type;
+    refresh materialized view stats.locales_evolution_utilisateur;
+    refresh materialized view stats.locales_evolution_nombre_utilisateur_par_collectivite;
+    refresh materialized view stats.locales_pourcentage_completude;
+    refresh materialized view stats.locales_tranche_completude;
+    refresh materialized view stats.evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_minimum_fiches;
+    refresh materialized view stats.locales_engagement_collectivite;
+    refresh materialized view stats.locales_labellisation_par_niveau;
+    refresh materialized view stats.locales_evolution_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_personnalise;
+    refresh materialized view stats.locales_evolution_resultat_indicateur_referentiel;
+    refresh materialized view stats.locales_evolution_nombre_fiches;
+    refresh materialized view stats.locales_evolution_collectivite_avec_indicateur_referentiel;
+end
+$$ language plpgsql;
 
 COMMIT;
