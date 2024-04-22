@@ -3,6 +3,9 @@
 
 BEGIN;
 
+alter table private_collectivite_membre
+    add column est_referent boolean;
+
 comment on function claim_collectivite(integer) is
     'Fonction dépréciée pour rejoindre une collectivité.';
 
@@ -10,7 +13,8 @@ create function claim_collectivite(
     collectivite_id integer,
     role membre_fonction,
     poste text,
-    champ_intervention referentiel[]
+    champ_intervention referentiel[],
+    est_referent boolean
 ) returns json
     security definer
     language plpgsql
@@ -36,8 +40,8 @@ begin
 
         -- puis on ajoute les informations complémentaires
         insert
-        into private_collectivite_membre(user_id, collectivite_id, fonction, details_fonction, champ_intervention)
-        values (auth.uid(), $1, $2, $3, $4);
+        into private_collectivite_membre(user_id, collectivite_id, fonction, details_fonction, champ_intervention, est_referent)
+        values (auth.uid(), $1, $2, $3, $4, $5);
 
         -- enfin on renvoie un message
         perform set_config('response.status', '200', true);
@@ -49,7 +53,7 @@ begin
     end if;
 end
 $$;
-comment on function claim_collectivite(integer, membre_fonction, text, referentiel[]) is
+comment on function claim_collectivite(integer, membre_fonction, text, referentiel[], est_referent boolean) is
     'Permet à l''utilisateur de rejoindre une collectivité sans utilisateur.';
 
 COMMIT;
