@@ -4,7 +4,7 @@ import {
   ComputedDatum,
   ResponsiveBar,
 } from '@nivo/bar';
-import {defaultColors} from './chartsTheme';
+import {defaultColors} from '../chartsTheme';
 
 const getCustomColor = ({
   id,

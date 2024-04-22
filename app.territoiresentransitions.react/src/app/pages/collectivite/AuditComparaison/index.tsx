@@ -5,7 +5,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useExportAuditScores} from './useExportAuditScore';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
-} from 'ui/charts/BarChartCardWithSubrows';
+} from 'ui/charts/old/BarChartCardWithSubrows';
 import {defaultColors} from 'ui/charts/chartsTheme';
 import {getFormattedScore} from './utils';
 import {TScoreAuditRowData} from './types';

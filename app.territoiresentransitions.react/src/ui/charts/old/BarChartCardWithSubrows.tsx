@@ -6,7 +6,7 @@ import {TableOptions} from 'react-table';
 import FilArianeButtons from 'ui/shared/FilArianeButtons';
 import TagFilters from 'ui/shared/filters/TagFilters';
 import ChartCard from './ChartCard';
-import {getIndexTitles} from './utils';
+import {getIndexTitles} from '../utils';
 
 export type TBarChartScoreTable =
   | Pick<
