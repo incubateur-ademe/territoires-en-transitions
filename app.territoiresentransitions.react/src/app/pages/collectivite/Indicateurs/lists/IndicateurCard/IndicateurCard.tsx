@@ -265,11 +265,7 @@ export const IndicateurCardBase = ({
               />
               {isNotLoadingNotFilled && !readonly && !!href && (
                 <Button size="xs" className="mx-auto">
-                  {isIndicateurParent && indicateursACompleterRestant
-                    ? `${indicateursACompleterRestant} indicateur${
-                        indicateursACompleterRestant > 1 ? 's' : ''
-                      } restants à compléter`
-                    : 'Compléter l’indicateur'}
+                  Compléter
                 </Button>
               )}
               {/** Légende */}
@@ -310,6 +306,7 @@ export const IndicateurCardBase = ({
                 {/* Nombre d'indicateurs */}
                 {isIndicateurParent && totalNbIndicateurs && (
                   <div>
+                    {totalNbIndicateurs - (indicateursACompleterRestant || 0)}/
                     {totalNbIndicateurs} indicateur
                     {totalNbIndicateurs > 1 && 's'}
                   </div>
