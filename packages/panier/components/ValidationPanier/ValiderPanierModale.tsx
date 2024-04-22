@@ -180,7 +180,7 @@ const ModeConnecteRattache = ({
     const collectivite = collectivites.find(
       c => c.collectivite_id === collectiviteId,
     )!;
-    await tracker('cta_valider_creation_panier_click', {
+    await tracker('cta_creer_le_plan_click', {
       collectivite_preset: collectivite.collectivite_id,
       panier_id: panier?.id ?? '',
     });
