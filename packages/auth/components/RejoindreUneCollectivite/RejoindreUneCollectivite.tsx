@@ -50,7 +50,7 @@ export const RejoindreUneCollectivite = (
   const [formState, setFormState] = useState<
     Omit<RejoindreUneCollectiviteData, 'collectiviteId'>
   >({});
-  const {collectivite_engagee, poste, role, champ_intervention} = formState;
+  const {est_referent, poste, role, champ_intervention} = formState;
   const {id: collectiviteId, contacts} = collectiviteSelectionnee || {};
 
   const hasContacts = !!contacts?.length;
@@ -58,7 +58,7 @@ export const RejoindreUneCollectivite = (
     collectiviteId &&
     !hasContacts &&
     role &&
-    (!collectivite_engagee || champ_intervention?.length);
+    (!est_referent || champ_intervention?.length);
 
   return (
     <form
@@ -152,11 +152,11 @@ export const RejoindreUneCollectivite = (
               onChange={e =>
                 setFormState(previous => ({
                   ...previous,
-                  collectivite_engagee: e.target.checked,
+                  est_referent: e.target.checked,
                 }))
               }
             />
-            {collectivite_engagee && (
+            {est_referent && (
               <Field title="Référentiel du programme *">
                 <SelectMultiple
                   multiple
