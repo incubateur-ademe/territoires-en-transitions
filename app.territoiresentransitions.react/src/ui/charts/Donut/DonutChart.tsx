@@ -93,7 +93,6 @@ const DonutChart = ({
           tooltip={datum =>
             !hasNoData && getDonutTooltip(datum, localData, unit)
           }
-          layers={['arcs', 'arcLabels', 'arcLinkLabels', 'legends']}
           onClick={onClick}
           enableArcLinkLabels={
             (displayOutsideLabel || hasNoData) && !skipArcLinkLabel(data)
