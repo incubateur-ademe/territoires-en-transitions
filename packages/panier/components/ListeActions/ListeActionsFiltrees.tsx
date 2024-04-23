@@ -30,7 +30,7 @@ const ListeActionsFiltrees = ({
           budget={budgets.find(
             b => b.niveau === action.action.fourchette_budgetaire
           )}
-          description={action.action.description}
+          description={`${action.action.description}\n\n${action.action.description_complementaire}`}
           miseEnOeuvre={temps.find(
             t => t.niveau === action.action.temps_de_mise_en_oeuvre
           )}
