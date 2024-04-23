@@ -19782,6 +19782,7 @@ export type Database = {
           collectivite_id: number
           created_at: string
           details_fonction: string | null
+          est_referent: boolean | null
           fonction: Database["public"]["Enums"]["membre_fonction"] | null
           modified_at: string
           user_id: string
@@ -19793,6 +19794,7 @@ export type Database = {
           collectivite_id: number
           created_at?: string
           details_fonction?: string | null
+          est_referent?: boolean | null
           fonction?: Database["public"]["Enums"]["membre_fonction"] | null
           modified_at?: string
           user_id: string
@@ -19804,6 +19806,7 @@ export type Database = {
           collectivite_id?: number
           created_at?: string
           details_fonction?: string | null
+          est_referent?: boolean | null
           fonction?: Database["public"]["Enums"]["membre_fonction"] | null
           modified_at?: string
           user_id?: string
@@ -29905,6 +29908,7 @@ export type Database = {
               role: Database["public"]["Enums"]["membre_fonction"]
               poste: string
               champ_intervention: Database["public"]["Enums"]["referentiel"][]
+              est_referent: boolean
             }
             Returns: Json
           }
@@ -29981,6 +29985,7 @@ export type Database = {
           fonction: Database["public"]["Enums"]["membre_fonction"]
           details_fonction: string
           champ_intervention: Database["public"]["Enums"]["referentiel"][]
+          est_referent: boolean
         }[]
       }
       compress_chunk: {
@@ -32570,6 +32575,14 @@ export type Database = {
           collectivite_id: number
           membre_id: string
           details_fonction: string
+        }
+        Returns: Json
+      }
+      update_collectivite_membre_est_referent: {
+        Args: {
+          collectivite_id: number
+          membre_id: string
+          est_referent: boolean
         }
         Returns: Json
       }
