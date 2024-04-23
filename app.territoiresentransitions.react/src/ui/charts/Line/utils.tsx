@@ -1,5 +1,5 @@
 import {ChartLegendItem} from '../ChartLegend';
-import {getLegendColor} from '../utils';
+import {getDataColor} from '../utils';
 import {LineData} from './LineChart';
 import {TIndicateurValeur} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 
@@ -10,7 +10,7 @@ export const generateLineLegendItems = (
   // Légende réduite à afficher
   return data.map((d, index) => ({
     name: d.label ?? d.id,
-    color: getLegendColor(d, data.length, index),
+    color: getDataColor(d, data.length, index),
     symbole: d.symbole,
   }));
 };
