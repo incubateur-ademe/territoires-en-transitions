@@ -1,6 +1,6 @@
 import {ChartLegendItem} from '../ChartLegend';
 import {DonutData} from './DonutChart';
-import {getLegendColor} from '../utils';
+import {getDataColor} from '../utils';
 
 /**
  * Conversion d'une valeur en %
@@ -44,7 +44,7 @@ export const generateDonutLegendItems = (
   // Légende réduite à afficher
   return data.map((d, index) => ({
     name: d.id,
-    color: getLegendColor(d, data.length, index),
+    color: getDataColor(d, data.length, index),
     symbole: d.symbole,
   }));
 };

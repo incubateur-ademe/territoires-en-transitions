@@ -22,7 +22,7 @@ export const getIndexTitles = (
 };
 
 /** Renvoi la couleur de la data si définie, sinon utilise les couleurs de nivo */
-export const getLegendColor = (
+export const getDataColor = (
   data: LineData | DonutData,
   dataLength: number,
   index: number

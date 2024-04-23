@@ -1,6 +1,6 @@
 import {ResponsivePie} from '@nivo/pie';
 
-import {defaultColors, nivoColorsSet, theme} from '../chartsTheme';
+import {theme} from '../chartsTheme';
 import {
   generateDonutLegendItems,
   getPercentage,
@@ -9,6 +9,7 @@ import {
 import {getDonutTooltip} from './DonutTooltip';
 import classNames from 'classnames';
 import ChartLegend, {ChartLegendProps} from '../ChartLegend';
+import {getDataColor} from 'ui/charts/utils';
 
 /** Format de données du composant Pie de nivo*/
 export type DonutData = {
@@ -63,11 +64,7 @@ const DonutChart = ({
   /** Ajoute des couleurs si aucune n'est définie */
   const localData = data.map((d, index) => ({
     ...d,
-    color: d.color
-      ? d.color
-      : data.length <= defaultColors.length
-      ? defaultColors[index % defaultColors.length]
-      : nivoColorsSet[index % nivoColorsSet.length],
+    color: getDataColor(d, data.length, index),
   }));
 
   return (
