@@ -1,7 +1,14 @@
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {Input, validateOTP, FieldMessage, ModalFooterOKCancel} from '@tet/ui';
+import {
+  Input,
+  validateOTP,
+  FieldMessage,
+  ModalFooterOKCancel,
+  TrackPageView,
+  useEventTracker,
+} from '@tet/ui';
 import {MailSendMessage} from '@components/Login/MailSendMessage';
 import {ResendMessage} from '@components/ResendMessage';
 
@@ -64,46 +71,54 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
     formState: {isValid},
   } = useVerifyOTP(defaultValues?.email || '', defaultValues?.otp || '');
 
+  const pageName = `auth/verify_otp/${type}` as const;
+  const eventTracker = useEventTracker(pageName);
+
   const onSubmitForm = handleSubmit((data: VerifyOTPData) => {
     const otp = validateOTP(data.otp);
     if (otp && defaultValues.email) {
       onSubmit?.({email: defaultValues.email, otp});
+      // @ts-expect-error
+      eventTracker('cta_submit', {});
     }
   });
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
-      <MailSendMessage
-        data-test="lien-envoye"
-        message1={`${messageByType[type]}, veuillez consulter votre boite mail et`}
-        message2="entrer le code reçu !"
-      />
-      <Input
-        type="otp"
-        defaultValue={defaultValues?.otp}
-        {...register('otp')}
-        containerClassname="self-center w-fit"
-      />
-      {!!error && (
-        <FieldMessage messageClassName="mt-4" state="error" message={error} />
-      )}
-      <ModalFooterOKCancel
-        btnCancelProps={{onClick: onCancel}}
-        btnOKProps={{
-          type: 'submit',
-          disabled: !isValid || isLoading,
-        }}
-        content={
-          defaultValues?.otp ? undefined : (
-            <ResendMessage
-              email={defaultValues?.email || ''}
-              isLoading={isLoading}
-              onResend={onResend}
-              type={type}
-            />
-          )
-        }
-      />
-    </form>
+    <>
+      <TrackPageView pageName={pageName} />
+      <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
+        <MailSendMessage
+          data-test="lien-envoye"
+          message1={`${messageByType[type]}, veuillez consulter votre boite mail et`}
+          message2="entrer le code reçu !"
+        />
+        <Input
+          type="otp"
+          defaultValue={defaultValues?.otp}
+          {...register('otp')}
+          containerClassname="self-center w-fit"
+        />
+        {!!error && (
+          <FieldMessage messageClassName="mt-4" state="error" message={error} />
+        )}
+        <ModalFooterOKCancel
+          btnCancelProps={{onClick: onCancel}}
+          btnOKProps={{
+            type: 'submit',
+            disabled: !isValid || isLoading,
+          }}
+          content={
+            defaultValues?.otp ? undefined : (
+              <ResendMessage
+                email={defaultValues?.email || ''}
+                isLoading={isLoading}
+                onResend={onResend}
+                type={type}
+              />
+            )
+          }
+        />
+      </form>
+    </>
   );
 };

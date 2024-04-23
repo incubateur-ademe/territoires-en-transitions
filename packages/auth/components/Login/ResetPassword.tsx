@@ -1,8 +1,15 @@
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {Input, Field, FieldMessage, ModalFooterOKCancel} from '@tet/ui';
-import {LoginPropsWithState} from './type';
+import {
+  Input,
+  Field,
+  FieldMessage,
+  ModalFooterOKCancel,
+  useEventTracker,
+  TrackPageView,
+} from '@tet/ui';
+import {LoginData, LoginPropsWithState} from './type';
 import {PasswordStrengthMeter} from '@components/PasswordStrengthMeter';
 
 /** Gestionnaire d'état pour le formulaire */
@@ -43,26 +50,36 @@ export const ResetPassword = (props: LoginPropsWithState) => {
   const password = watch('password');
   const res = getPasswordStrength(password, [defaultValues?.email || '']);
 
+  const eventTracker = useEventTracker('auth/login/reset_mdp');
+  const onSubmitForm = handleSubmit((data: LoginData) => {
+    onSubmit?.(data);
+    // @ts-expect-error
+    eventTracker('cta_submit', {});
+  });
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} data-test="ResetPassword">
-      <Field
-        className="mb-6 md:col-span-2"
-        title="Nouveau mot de passe"
-        htmlFor="password"
-      >
-        <Input type="password" {...register('password')} id="password" />
-        {!!res && <PasswordStrengthMeter strength={res} />}
-      </Field>
-      {!!error && (
-        <FieldMessage messageClassName="mt-4" state="error" message={error} />
-      )}
-      <ModalFooterOKCancel
-        btnOKProps={{
-          type: 'submit',
-          disabled: !isValid || isLoading || (res && res.score < 4),
-        }}
-        btnCancelProps={{onClick: onCancel}}
-      />
-    </form>
+    <>
+      <TrackPageView pageName="auth/login/reset_mdp" />
+      <form onSubmit={onSubmitForm} data-test="ResetPassword">
+        <Field
+          className="mb-6 md:col-span-2"
+          title="Nouveau mot de passe"
+          htmlFor="password"
+        >
+          <Input type="password" {...register('password')} id="password" />
+          {!!res && <PasswordStrengthMeter strength={res} />}
+        </Field>
+        {!!error && (
+          <FieldMessage messageClassName="mt-4" state="error" message={error} />
+        )}
+        <ModalFooterOKCancel
+          btnOKProps={{
+            type: 'submit',
+            disabled: !isValid || isLoading || (res && res.score < 4),
+          }}
+          btnCancelProps={{onClick: onCancel}}
+        />
+      </form>
+    </>
   );
 };
