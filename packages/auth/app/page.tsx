@@ -2,7 +2,7 @@
 
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import TrackPageView from '@components/TrackPageView/index';
+import TrackPageView from '@components/TrackPageView';
 
 const Page = () => {
   const router = useRouter();
@@ -12,7 +12,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <TrackPageView pageName="panier/" />;
+  return <TrackPageView pageName="auth/" />;
 };
 
 export default Page;

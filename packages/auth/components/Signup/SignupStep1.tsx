@@ -9,6 +9,9 @@ import {
   ModalFooterOKCancel,
   Tab,
   Tabs,
+  TrackPageView,
+  useOngletTracker,
+  useEventTracker,
 } from '@tet/ui';
 import {SignupDataStep1, SignupPropsWithState} from './type';
 import {PasswordStrengthMeter} from '@components/PasswordStrengthMeter';
@@ -42,28 +45,34 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
   const {email} = formState;
   const [isPasswordless, setIsPasswordless] = useState(!withPassword);
   const form = useSignupStep1(isPasswordless, email);
+  const ongletTracker = useOngletTracker('auth/signup');
 
   return (
-    <Tabs
-      className="justify-center"
-      defaultActiveTab={isPasswordless ? 0 : 1}
-      onChange={activeTab => {
-        if (activeTab === 0) {
-          // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
-          form.setValue('password', '');
-          setIsPasswordless(true);
-        } else {
-          setIsPasswordless(false);
-        }
-      }}
-    >
-      <Tab label="Compte sans mot de passe">
-        <SignupStep1Form {...props} form={form} isPasswordless />
-      </Tab>
-      <Tab label="Compte avec mot de passe">
-        <SignupStep1Form {...props} form={form} />
-      </Tab>
-    </Tabs>
+    <>
+      <TrackPageView pageName="auth/signup" />
+      <Tabs
+        className="justify-center"
+        defaultActiveTab={isPasswordless ? 0 : 1}
+        onChange={activeTab => {
+          if (activeTab === 0) {
+            // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+            form.setValue('password', '');
+            setIsPasswordless(true);
+            ongletTracker('sans_mdp', {});
+          } else {
+            setIsPasswordless(false);
+            ongletTracker('avec_mdp', {});
+          }
+        }}
+      >
+        <Tab label="Compte sans mot de passe">
+          <SignupStep1Form {...props} form={form} isPasswordless />
+        </Tab>
+        <Tab label="Compte avec mot de passe">
+          <SignupStep1Form {...props} form={form} />
+        </Tab>
+      </Tabs>
+    </>
   );
 };
 
@@ -92,6 +101,7 @@ const SignupStep1Form = (
     watch,
     formState: {isValid, errors},
   } = form;
+  const eventTracker = useEventTracker('auth/signup');
 
   const onSubmitForm = (data: SignupDataStep1) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
@@ -100,6 +110,8 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
+    // @ts-expect-error
+    eventTracker('cta_submit');
   };
 
   const email = watch('email');

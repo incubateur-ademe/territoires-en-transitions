@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {Button, Input} from '@tet/ui';
+import {Button, Input, TrackPageView, useEventTracker} from '@tet/ui';
 import {ResendFunction, VerifyType} from '../VerifyOTP';
 
 type ResendMessageProps = {
@@ -36,8 +36,12 @@ export const ResendMessage = (props: ResendMessageProps) => {
 
   const [opened, setOpened] = useState(isOpened);
 
+  const pageName = `auth/resend_otp/${type}` as const;
+  const eventTracker = useEventTracker(pageName);
+
   return (
     <div>
+      <TrackPageView pageName={pageName} />
       <Button variant="underlined" onClick={() => setOpened(!opened)}>
         Vous n'avez pas reçu de message ?
       </Button>
@@ -61,6 +65,8 @@ export const ResendMessage = (props: ResendMessageProps) => {
                 onClick: () => {
                   onResend({type, email: emailValue});
                   setOpened(false);
+                  // @ts-expect-error
+                  eventTracker('cta_submit', {});
                 },
               },
             }}

@@ -10,6 +10,8 @@ import {
   FieldMessage,
   FormSectionGrid,
   ModalFooterOKCancel,
+  TrackPageView,
+  useEventTracker,
 } from '@tet/ui';
 import {SignupDataStep3, SignupPropsWithState} from './type';
 
@@ -41,6 +43,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
     register,
     formState: {isValid, errors},
   } = useSignupStep3();
+  const eventTracker = useEventTracker('auth/signup/dcp');
 
   const {
     isLoading,
@@ -51,67 +54,72 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
 
   const onSubmitForm = handleSubmit(data => {
     onSubmit({...(data as SignupDataStep3), email});
+    // @ts-expect-error
+    eventTracker('cta_submit', {});
   });
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
-      <FormSectionGrid>
-        <Field
-          title="Nom *"
-          htmlFor="nom"
-          state={errors.nom ? 'error' : undefined}
-          message={errors.nom?.message?.toString()}
-        >
-          <Input id="nom" type="text" {...register('nom')} />
-        </Field>
-        <Field
-          title="Prénom *"
-          htmlFor="prenom"
-          state={errors.prenom ? 'error' : undefined}
-          message={errors.prenom?.message?.toString()}
-        >
-          <Input id="prenom" type="text" {...register('prenom')} />
-        </Field>
-        <Field
-          className="md:col-span-2"
-          title="Numéro de téléphone professionnel *"
-          htmlFor="telephone"
-          state={errors.telephone ? 'error' : 'info'}
+    <>
+      <TrackPageView pageName="auth/signup/dcp" />
+      <form className="flex flex-col gap-4" onSubmit={onSubmitForm}>
+        <FormSectionGrid>
+          <Field
+            title="Nom *"
+            htmlFor="nom"
+            state={errors.nom ? 'error' : undefined}
+            message={errors.nom?.message?.toString()}
+          >
+            <Input id="nom" type="text" {...register('nom')} />
+          </Field>
+          <Field
+            title="Prénom *"
+            htmlFor="prenom"
+            state={errors.prenom ? 'error' : undefined}
+            message={errors.prenom?.message?.toString()}
+          >
+            <Input id="prenom" type="text" {...register('prenom')} />
+          </Field>
+          <Field
+            className="md:col-span-2"
+            title="Numéro de téléphone professionnel *"
+            htmlFor="telephone"
+            state={errors.telephone ? 'error' : 'info'}
+            message={
+              errors.telephone?.message?.toString() ||
+              "L'accès à votre numéro est réservé à l'équipe ADEME de l'outil et le contact par mail restera privilégié"
+            }
+          >
+            <Input id="telephone" type="tel" {...register('telephone')} />
+          </Field>
+        </FormSectionGrid>
+        <hr className="mt-5" />
+        <Checkbox
+          data-test="accept-cgu"
+          className="font-medium"
+          label="J’accepte le cadre d’utilisation de la plateforme *"
           message={
-            errors.telephone?.message?.toString() ||
-            "L'accès à votre numéro est réservé à l'équipe ADEME de l'outil et le contact par mail restera privilégié"
+            <>
+              <Button variant="underlined" size="sm" href={URL_CGU}>
+                Les conditions générales
+              </Button>
+              <span className="text-sm mx-2">|</span>
+              <Button variant="underlined" size="sm" href={URL_DCP}>
+                la politique de protection des données de l'ADEME
+              </Button>
+            </>
           }
-        >
-          <Input id="telephone" type="tel" {...register('telephone')} />
-        </Field>
-      </FormSectionGrid>
-      <hr className="mt-5" />
-      <Checkbox
-        data-test="accept-cgu"
-        className="font-medium"
-        label="J’accepte le cadre d’utilisation de la plateforme *"
-        message={
-          <>
-            <Button variant="underlined" size="sm" href={URL_CGU}>
-              Les conditions générales
-            </Button>
-            <span className="text-sm mx-2">|</span>
-            <Button variant="underlined" size="sm" href={URL_DCP}>
-              la politique de protection des données de l'ADEME
-            </Button>
-          </>
-        }
-        {...register('cgu_acceptees')}
-      />
-      {!!error && (
-        <FieldMessage messageClassName="mt-4" state="error" message={error} />
-      )}
-      <ModalFooterOKCancel
-        btnOKProps={{
-          type: 'submit',
-          disabled: !isValid || isLoading,
-        }}
-      />
-    </form>
+          {...register('cgu_acceptees')}
+        />
+        {!!error && (
+          <FieldMessage messageClassName="mt-4" state="error" message={error} />
+        )}
+        <ModalFooterOKCancel
+          btnOKProps={{
+            type: 'submit',
+            disabled: !isValid || isLoading,
+          }}
+        />
+      </form>
+    </>
   );
 };

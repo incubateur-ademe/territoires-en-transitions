@@ -7,9 +7,10 @@ import {
   Field,
   FieldMessage,
   ModalFooter,
-  ModalFooterOKCancel,
   ModalFooterSection,
+  useEventTracker,
 } from '@tet/ui';
+import TrackPageView from '../TrackPageView';
 import {LoginPropsWithState} from './type';
 
 /** Gestionnaire d'état pour le formulaire */
@@ -46,6 +47,8 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     formState: {isValid, errors},
   } = form;
 
+  const eventTracker = useEventTracker('auth/login/mdp_oublie');
+
   const onSubmitForm = (data: {email: string}) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
     // l'étape suivante, dans le cas où l'utilisateur saisi directement le code
@@ -53,57 +56,62 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
+    // @ts-expect-error
+    eventTracker('cta_submit');
   };
 
   return (
-    <form
-      className="flex flex-col gap-4"
-      onSubmit={handleSubmit(onSubmitForm)}
-      data-test="PasswordRecovery"
-    >
-      <Field
-        title="Email de connexion *"
-        htmlFor="email"
-        state={errors.email ? 'error' : 'info'}
-        message={
-          errors.email?.message?.toString() ||
-          "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contacter le support."
-        }
+    <>
+      <TrackPageView pageName="auth/login/mdp_oublie" />
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={handleSubmit(onSubmitForm)}
+        data-test="PasswordRecovery"
       >
-        <Input
-          id="email"
-          type="text"
-          autoComplete="on"
-          {...register('email')}
-        />
-      </Field>
-
-      {onOpenChatbox && (
-        <Button type="button" variant="underlined" onClick={onOpenChatbox}>
-          Contactez le support !
-        </Button>
-      )}
-      {!!error && (
-        <FieldMessage messageClassName="mt-4" state="error" message={error} />
-      )}
-      <ModalFooter variant="space">
-        <Button
-          variant="outlined"
-          icon="arrow-left-line"
-          iconPosition="left"
-          onClick={() => setView('etape1')}
+        <Field
+          title="Email de connexion *"
+          htmlFor="email"
+          state={errors.email ? 'error' : 'info'}
+          message={
+            errors.email?.message?.toString() ||
+            "Vous devez être en mesure d'accéder à cette boîte mail pour ouvrir l'e-mail sinon contacter le support."
+          }
         >
-          Se connecter
-        </Button>
-        <ModalFooterSection>
-          <Button type="button" variant="outlined" onClick={onCancel}>
-            Annuler
+          <Input
+            id="email"
+            type="text"
+            autoComplete="on"
+            {...register('email')}
+          />
+        </Field>
+
+        {onOpenChatbox && (
+          <Button type="button" variant="underlined" onClick={onOpenChatbox}>
+            Contactez le support !
           </Button>
-          <Button type="submit" disabled={!isValid || isLoading}>
-            Valider
+        )}
+        {!!error && (
+          <FieldMessage messageClassName="mt-4" state="error" message={error} />
+        )}
+        <ModalFooter variant="space">
+          <Button
+            variant="outlined"
+            icon="arrow-left-line"
+            iconPosition="left"
+            onClick={() => setView('etape1')}
+          >
+            Se connecter
           </Button>
-        </ModalFooterSection>
-      </ModalFooter>
-    </form>
+          <ModalFooterSection>
+            <Button type="button" variant="outlined" onClick={onCancel}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={!isValid || isLoading}>
+              Valider
+            </Button>
+          </ModalFooterSection>
+        </ModalFooter>
+      </form>
+    </>
   );
 };

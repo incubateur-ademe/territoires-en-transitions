@@ -10,6 +10,8 @@ import {
   SelectMultiple,
   Accordion,
   ACCORDION_CONTENT_STYLE,
+  TrackPageView,
+  useEventTracker,
 } from '@tet/ui';
 import {Enums} from '@tet/api';
 import {
@@ -60,132 +62,139 @@ export const RejoindreUneCollectivite = (
     role &&
     (!est_referent || champ_intervention?.length);
 
+  const eventTracker = useEventTracker('auth/rejoindre-une-collectivite');
   return (
-    <form
-      className="flex flex-col gap-4"
-      onSubmit={e => {
-        e.preventDefault();
-        if (isValid) {
-          onSubmit({...formState, collectiviteId});
-        }
-      }}
-    >
-      <FormSectionGrid>
-        <Field className="md:col-span-2" title="Nom de la collectivité *">
-          <Select
-            dataTest="select-collectivite"
-            debounce={500}
-            options={
-              collectivites?.map(c => ({
-                value: c.collectivite_id,
-                label: c.nom,
-              })) || []
-            }
-            values={collectiviteId ? collectiviteId : undefined}
-            isSearcheable
-            onSearch={onFilterCollectivites}
-            isLoading={isLoading}
-            onChange={value => {
-              const id = collectiviteId === value ? null : (value as number);
-              onSelectCollectivite(id);
-            }}
-          />
-          <Accordion
-            title="Aide"
-            icon="question-line"
-            iconPosition="right"
-            content={
-              <div className={ACCORDION_CONTENT_STYLE}>
-                <div className="italic mb-2">
-                  Vous ne trouvez pas la collectivité que vous recherchez ?
+    <>
+      <TrackPageView pageName="auth/rejoindre-une-collectivite" />
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={e => {
+          e.preventDefault();
+          if (isValid) {
+            onSubmit({...formState, collectiviteId});
+            eventTracker('cta_submit', {});
+          }
+        }}
+      >
+        <FormSectionGrid>
+          <Field className="md:col-span-2" title="Nom de la collectivité *">
+            <Select
+              dataTest="select-collectivite"
+              debounce={500}
+              options={
+                collectivites?.map(c => ({
+                  value: c.collectivite_id,
+                  label: c.nom,
+                })) || []
+              }
+              values={collectiviteId ? collectiviteId : undefined}
+              isSearcheable
+              onSearch={onFilterCollectivites}
+              isLoading={isLoading}
+              onChange={value => {
+                const id = collectiviteId === value ? null : (value as number);
+                onSelectCollectivite(id);
+              }}
+            />
+            <Accordion
+              title="Aide"
+              icon="question-line"
+              iconPosition="right"
+              content={
+                <div className={ACCORDION_CONTENT_STYLE}>
+                  <div className="italic mb-2">
+                    Vous ne trouvez pas la collectivité que vous recherchez ?
+                  </div>
+                  <div>
+                    Envoyez un email à{' '}
+                    <a href="mailto:contact@territoiresentransitions.fr">
+                      contact@territoiresentransitions.fr
+                    </a>{' '}
+                    avec le nom de la collectivité et son numéro SIREN pour que
+                    nous puissions vous aider.
+                  </div>
                 </div>
-                <div>
-                  Envoyez un email à{' '}
-                  <a href="mailto:contact@territoiresentransitions.fr">
-                    contact@territoiresentransitions.fr
-                  </a>{' '}
-                  avec le nom de la collectivité et son numéro SIREN pour que
-                  nous puissions vous aider.
-                </div>
-              </div>
-            }
-          />
-
-          {hasContacts && (
-            <CollectiviteSelectionnee collectivite={collectiviteSelectionnee} />
-          )}
-        </Field>
-        {!hasContacts && (
-          <>
-            <Field title="Rôle *">
-              <Select
-                dataTest="role"
-                options={ROLES}
-                values={role ? [role] : undefined}
-                onChange={value => {
-                  setFormState(previous => ({
-                    ...previous,
-                    role:
-                      role === value
-                        ? null
-                        : (value as RejoindreUneCollectiviteData['role']),
-                  }));
-                }}
-              />
-            </Field>
-            <Field title="Intitulé de poste" htmlFor="poste">
-              <Input
-                id="poste"
-                type="text"
-                value={poste}
-                onChange={e =>
-                  setFormState(previous => ({
-                    ...previous,
-                    poste: e.target.value,
-                  }))
-                }
-              />
-            </Field>
-            <Checkbox
-              containerClassname="md:col-span-2"
-              label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
-              onChange={e =>
-                setFormState(previous => ({
-                  ...previous,
-                  est_referent: e.target.checked,
-                }))
               }
             />
-            {est_referent && (
-              <Field title="Référentiel du programme *">
-                <SelectMultiple
-                  multiple
+
+            {hasContacts && (
+              <CollectiviteSelectionnee
+                collectivite={collectiviteSelectionnee}
+              />
+            )}
+          </Field>
+          {!hasContacts && (
+            <>
+              <Field title="Rôle *">
+                <Select
                   dataTest="role"
-                  options={REFERENTIELS}
-                  values={champ_intervention}
-                  onChange={({values}) => {
+                  options={ROLES}
+                  values={role ? [role] : undefined}
+                  onChange={value => {
                     setFormState(previous => ({
                       ...previous,
-                      champ_intervention:
-                        values as RejoindreUneCollectiviteData['champ_intervention'],
+                      role:
+                        role === value
+                          ? null
+                          : (value as RejoindreUneCollectiviteData['role']),
                     }));
                   }}
                 />
               </Field>
-            )}
-          </>
+              <Field title="Intitulé de poste" htmlFor="poste">
+                <Input
+                  id="poste"
+                  type="text"
+                  value={poste}
+                  onChange={e =>
+                    setFormState(previous => ({
+                      ...previous,
+                      poste: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+              <Checkbox
+                containerClassname="md:col-span-2"
+                label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
+                onChange={e =>
+                  setFormState(previous => ({
+                    ...previous,
+                    est_referent: e.target.checked,
+                  }))
+                }
+              />
+              {est_referent && (
+                <Field title="Référentiel du programme *">
+                  <SelectMultiple
+                    multiple
+                    dataTest="role"
+                    options={REFERENTIELS}
+                    values={champ_intervention}
+                    onChange={({values}) => {
+                      setFormState(previous => ({
+                        ...previous,
+                        champ_intervention:
+                          values as RejoindreUneCollectiviteData['champ_intervention'],
+                      }));
+                    }}
+                  />
+                </Field>
+              )}
+            </>
+          )}
+        </FormSectionGrid>
+        {!!error && (
+          <FieldMessage messageClassName="mt-4" state="error" message={error} />
         )}
-      </FormSectionGrid>
-      {!!error && (
-        <FieldMessage messageClassName="mt-4" state="error" message={error} />
-      )}
-      <ModalFooterOKCancel
-        btnCancelProps={{onClick: onCancel}}
-        btnOKProps={{
-          type: 'submit',
-          disabled: !isValid || isLoading,
-        }}
-      />
-    </form>
+        <ModalFooterOKCancel
+          btnCancelProps={{onClick: onCancel}}
+          btnOKProps={{
+            type: 'submit',
+            disabled: !isValid || isLoading,
+          }}
+        />
+      </form>
+    </>
   );
 };
