@@ -72,6 +72,7 @@ export const RejoindreUneCollectivite = (
           e.preventDefault();
           if (isValid) {
             onSubmit({...formState, collectiviteId});
+            // @ts-expect-error
             eventTracker('cta_submit', {});
           }
         }}
