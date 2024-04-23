@@ -1,6 +1,6 @@
-import {defaultColors, nivoColorsSet} from '../chartsTheme';
 import {ChartLegendItem} from '../ChartLegend';
 import {DonutData} from './DonutChart';
+import {getLegendColor} from '../utils';
 
 /**
  * Conversion d'une valeur en %
@@ -47,15 +47,4 @@ export const generateDonutLegendItems = (
     color: getLegendColor(d, data.length, index),
     symbole: d.symbole,
   }));
-};
-
-/** Renvoi la couleur de la data si définie, sinon utilise les couleurs de nivo */
-const getLegendColor = (data: DonutData, dataLength: number, index: number) => {
-  if (data.color) {
-    return data.color;
-  }
-  if (dataLength <= defaultColors.length) {
-    return defaultColors[index % defaultColors.length];
-  }
-  return nivoColorsSet[index % nivoColorsSet.length];
 };
