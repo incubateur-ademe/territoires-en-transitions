@@ -4,12 +4,32 @@ BEGIN;
 
 create table fiche_action_effet_attendu
 (
-    fiche_id         integer references fiche_action,
+    fiche_id integer references fiche_action on delete cascade,
     effet_attendu_id integer references effet_attendu,
     primary key (fiche_id, effet_attendu_id)
 );
 comment on table fiche_action_effet_attendu is
-    'Lie une fiche action à un effet attendu';
+    'Lie une fiche action à un effet attendu. '
+        'Pas encore affiché en front';
+
+alter table fiche_action_effet_attendu
+    enable row level security;
+
+create table action_impact_fiche_action
+(
+    fiche_id         integer references fiche_action on delete cascade,
+    action_impact_id integer references action_impact,
+    primary key (fiche_id, action_impact_id)
+);
+comment on table action_impact_fiche_action is
+    'Lie une fiche action à l''action à impact dont elle découle. '
+        'Pas encore affiché en front';
+
+comment on column action_impact_fiche_action.fiche_id is 'La fiche crée.';
+comment on column action_impact_fiche_action.action_impact_id is 'L''action à l''origine de la fiche.';
+
+alter table action_impact_fiche_action
+    enable row level security;
 
 create function
     plan_from_panier(collectivite_id int, panier_id uuid)
@@ -19,9 +39,9 @@ create function
 as
 $$
 declare
-    axe_id                 integer;
     selected_action_impact action_impact;
-    fiche_id               integer;
+    new_plan_id  integer;
+    new_fiche_id integer;
 begin
     if not can_read_acces_restreint($1) and not is_service_role()
     then
@@ -30,7 +50,7 @@ begin
     end if;
 
     -- on commence par créer un plan
-    axe_id = upsert_axe('Plan d''action à impact', $1, null);
+    new_plan_id = upsert_axe('Plan d''action à impact', $1, null);
 
     -- puis pour chaque action à impact du panier
     for selected_action_impact in
@@ -43,43 +63,47 @@ begin
             -- on insère une fiche
             insert into fiche_action (collectivite_id, titre, description)
             select $1, selected_action_impact.titre, selected_action_impact.description || '\n' || selected_action_impact.description_complementaire
-            returning id into fiche_id;
+            returning id into new_fiche_id;
+
+            -- - on enregistre le lien entre la fiche et l'action à impact
+            insert into action_impact_fiche_action (fiche_id, action_impact_id)
+            values (new_fiche_id, selected_action_impact.id);
 
             -- puis on ajoute la fiche nouvellement créée au plan
-            perform ajouter_fiche_action_dans_un_axe(fiche_id, axe_id);
+            perform ajouter_fiche_action_dans_un_axe(new_fiche_id, new_plan_id);
 
             -- ensuite on applique de l'action à la fiche:
             -- - les thematiques
             insert into fiche_action_thematique (fiche_id, thematique_id)
-            select fiche_id, ait.thematique_id
+            select new_fiche_id, ait.thematique_id
             from action_impact_thematique ait
             where ait.action_impact_id = selected_action_impact.id;
 
             -- - les sous-thematiques
             insert into fiche_action_sous_thematique (fiche_id, thematique_id)
-            select fiche_id, aist.sous_thematique_id
+            select new_fiche_id, aist.sous_thematique_id
             from action_impact_sous_thematique as aist
             where aist.action_impact_id = selected_action_impact.id;
 
             -- - les indicateurs
             insert into fiche_action_indicateur (fiche_id, indicateur_id)
-            select fiche_id, aii.indicateur_id
+            select new_fiche_id, aii.indicateur_id
             from action_impact_indicateur as aii
             where aii.action_impact_id = selected_action_impact.id;
 
             -- - les effets attendus
             insert into fiche_action_effet_attendu (fiche_id, effet_attendu_id)
-            select fiche_id, aiea.effet_attendu_id
+            select new_fiche_id, aiea.effet_attendu_id
             from action_impact_effet_attendu as aiea
             where aiea.action_impact_id = selected_action_impact.id;
         end loop;
 
     perform set_config('response.status', '201', true);
-    return axe_id;
+    return new_plan_id;
 end;
 $$ language plpgsql;
 comment on function plan_from_panier(int, uuid) is
     'Crée un plan d''action à partir d''un panier pour une collectivité. '
-        'Renvoie le plan nouvellement créé.';
+        'Renvoie l''id du plan nouvellement créé.';
 
 COMMIT;
