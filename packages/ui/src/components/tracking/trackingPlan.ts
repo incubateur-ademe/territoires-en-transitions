@@ -18,29 +18,71 @@ interface Page {
 /**
  * La liste des pages
  */
-export type PageName = PageNamePanier;
-
-type PageNamePanier =
-  | 'panier/'
-  | 'panier/landing'
-  | 'panier/landing/collectivite'
-  | 'panier/panier';
+export type PageName = keyof TrackingPlan;
 
 /**
  * Liste des onglets de la page panier
  */
 export type PanierOngletName = 'selection' | 'réalisées' | 'en cours';
 
+/** Pour le tracking de page sans données additionnelles */
+type NoProps = {
+  properties: never;
+  onglets: never;
+  events: never;
+};
+
+/** Pour le tracking des écrans d'authent. */
+type PageWithSubmitButton = {
+  properties: never;
+  onglets: never;
+  events: {cta_submit: {}};
+};
+/** et le tracking des écrans avec les onglets avec/sans mdp */
+type AuthPageAvecOnglets = {
+  properties: never;
+  onglets: 'sans_mdp' | 'avec_mdp';
+  events: {cta_submit: {}};
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
-export interface TrackingPlan extends Record<PageName, Page> {
+export interface TrackingPlan extends Record<string, Page> {
+  /* La page à la racine de https://auth.territoiresentransitions.fr */
+  'auth/': NoProps;
+
+  /* La 1ère étape du login (avec ou sans mdp) */
+  'auth/login': AuthPageAvecOnglets;
+  /** Formulaire de demande d'un code OTP pour réinitialiser le mdp */
+  'auth/login/mdp_oublie': PageWithSubmitButton;
+  /** Formulaire de saisie du nouveau mdp */
+  'auth/login/reset_mdp': PageWithSubmitButton;
+
+  /* La 1ère étape de la création de compte (avec ou sans mdp) */
+  'auth/signup': AuthPageAvecOnglets;
+  /** Saisie des informations complémentaires pour la création de compte */
+  'auth/signup/dcp': PageWithSubmitButton;
+
+  /** Vérification du code OTP pour pouvoir réinitialiser le mdp */
+  'auth/verify_otp/reset_password': PageWithSubmitButton;
+  /** Vérification du code OTP pour la connexion sans mdp  */
+  'auth/verify_otp/login': PageWithSubmitButton;
+  /** Vérification du code OTP pour la création de compte  */
+  'auth/verify_otp/signup': PageWithSubmitButton;
+
+  /** Demande le renvoi d'un code OTP pour pouvoir réinitialiser le mdp */
+  'auth/resend_otp/reset_password': PageWithSubmitButton;
+  /** Demande le renvoi d'un code OTP pour la connexion sans mdp  */
+  'auth/resend_otp/login': PageWithSubmitButton;
+  /** Demande le renvoi d'un code OTP pour la création de compte  */
+  'auth/resend_otp/signup': PageWithSubmitButton;
+
+  /** Page "rejoindre une collectivité" */
+  'auth/rejoindre-une-collectivite': PageWithSubmitButton;
+
   /* La page à la racine de https://panier.territoiresentransitions.fr */
-  'panier/': {
-    properties: never;
-    onglets: never;
-    events: never;
-  };
+  'panier/': NoProps;
 
   /* La landing générique, qui crée et renvoie sur un nouveau panier */
   'panier/landing': {
@@ -103,3 +145,4 @@ export interface TrackingPlan extends Record<PageName, Page> {
     };
   };
 }
+
