@@ -3,6 +3,11 @@
 BEGIN;
 
 drop function action_impact_state(panier);
+drop function thematique(action_impact_state);
+drop function action_impact_fourchette_budgetaire(action_impact_state);
+drop function action_impact_temps_de_mise_en_oeuvre(action_impact_state);
+drop function matches_competences(action_impact_state);
+drop function action_impact_matches_competences(integer, integer);
 drop table action_impact_state;
 
 drop table action_impact_statut;
