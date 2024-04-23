@@ -644,7 +644,7 @@ dev:
         END
 
         IF [ "$eco" = "yes" ]
-            RUN docker stop storage_imgproxy_tet
+            RUN docker stop supabase_imgproxy_tet
             RUN docker stop supabase_studio_tet
             RUN docker stop supabase_pg_meta_tet
         END
