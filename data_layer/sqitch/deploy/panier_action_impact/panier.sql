@@ -32,16 +32,12 @@ alter publication supabase_realtime add table panier;
 -- RLS
 alter table panier
     enable row level security;
-create policy allow_read
+create policy allow_all
     on panier
-    for select
+    for all
     to anon, authenticated
     using (true);
-create policy allow_update
-    on panier
-    for update
-    to anon, authenticated
-    using (true);
+comment on policy allow_all on panier is 'Tout le monde peut créer un panier.';
 
 create table action_impact_panier
 (
@@ -53,6 +49,15 @@ comment on table action_impact_panier is
     'Une action dans son panier. '
         'On ajoute et on retire les actions du panier à partir de cette table.';
 
+alter table action_impact_panier
+    enable row level security;
+create policy allow_all
+    on action_impact_panier
+    for all
+    to anon, authenticated
+    using (true);
+comment on policy allow_all on action_impact_panier is
+    'Tout le monde peut ajouter ou enlever des action du panier.';
 
 create table action_impact_categorie
 (
@@ -81,7 +86,17 @@ create table action_impact_statut
 comment on table action_impact_statut is
     'Le statut d''une action dans un panier, ex "En cours". '
         'On sert de cette table pour assigner et retirer la catégorie d''une action dans un panier.';
-
+alter table action_impact_statut
+    enable row level security;
+alter table action_impact_statut
+    enable row level security;
+create policy allow_all
+    on action_impact_statut
+    for all
+    to anon, authenticated
+    using (true);
+comment on policy allow_all on action_impact_statut is
+    'Tout le monde peut ajouter ou enlever des action du panier.';
 
 create function
     panier_from_landing()
