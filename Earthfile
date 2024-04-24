@@ -410,6 +410,41 @@ panier-run: ## construit et lance l'image du panier en local
         --publish 3001:80 \
         $PANIER_IMG_NAME
 
+site-build: ## construit l'image du site
+    ARG PLATFORM
+    ARG --required ANON_KEY
+    ARG --required API_URL
+    ARG --required STRAPI_KEY
+    ARG --required STRAPI_URL
+    ARG AMPLITUDE_KEY
+    ARG vars
+    FROM +front-deps
+    ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
+    ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
+    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
+    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NEXT_PUBLIC_AMPLITUDE_KEY=$AMPLITUDE_KEY
+    ENV NEXT_TELEMETRY_DISABLED=1
+    ENV PUBLIC_PATH="/app/packages/site/public"
+    ENV PORT=80
+    EXPOSE $PORT
+    # copie les sources des modules à construire
+    COPY $SITE_DIR $SITE_DIR
+    COPY $UI_DIR $UI_DIR
+    COPY $API_DIR $API_DIR
+    RUN npm run build:site
+    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
+    SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
+
+site-run: ## construit et lance l'image du site en local
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN docker run -d --rm \
+        --name site_tet \
+        --network $network \
+        --publish 3001:80 \
+        $SITE_IMG_NAME
+
 auth-build: ## construit l'image du module d'authentification
     ARG PLATFORM
     ARG --required ANON_KEY
@@ -842,7 +877,7 @@ auth-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
-    
+
 panier-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
