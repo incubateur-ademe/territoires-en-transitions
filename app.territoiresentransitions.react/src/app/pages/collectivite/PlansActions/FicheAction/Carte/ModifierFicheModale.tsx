@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {QueryKey} from 'react-query';
 
 import {
   Checkbox,
@@ -27,6 +28,7 @@ type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   axeId?: number;
+  keysToInvalidate?: QueryKey[];
 };
 
 /**
@@ -37,11 +39,9 @@ const ModifierFicheModale = ({
   axeId,
   isOpen,
   setIsOpen,
+  keysToInvalidate,
 }: Props) => {
-  const {mutate: updateFiche} = useUpdateFicheResume(
-    initialFiche.id!.toString(),
-    axeId
-  );
+  const {mutate: updateFiche} = useUpdateFicheResume(keysToInvalidate);
 
   const [fiche, setFiche] = useState(initialFiche);
 
