@@ -20,7 +20,7 @@ import {
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];
-  onCreate: (inputValue: string) => void;
+  onCreate?: (inputValue: string) => void;
   onDelete?: (id: OptionValue) => void;
   onUpdate?: (id: OptionValue, inputValue: string) => void;
 };
@@ -136,9 +136,6 @@ export const SelectBase = (props: SelectProps) => {
     ? options
     : filterOptions(options, inputValue);
 
-  /** Détermine si le Select permet la création d'option */
-  const isCreateOptionSelect = !!createProps;
-
   /** Compare la valeur de l'input de recherche avec la première optin de la liste
    * pour afficher le bouton de création d'une option */
   const isNotSimilar =
@@ -162,7 +159,7 @@ export const SelectBase = (props: SelectProps) => {
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
           {/** Bouton de création d'une option */}
-          {isCreateOptionSelect &&
+          {createProps?.onCreate &&
             inputValue.trim().length > 0 &&
             isNotSimilar && (
               <button
@@ -195,7 +192,7 @@ export const SelectBase = (props: SelectProps) => {
             dataTest={dataTest}
             values={arrayValues}
             options={
-              isCreateOptionSelect
+              createProps
                 ? sortOptionByAlphabet(filteredOptions)
                 : filteredOptions
             }
