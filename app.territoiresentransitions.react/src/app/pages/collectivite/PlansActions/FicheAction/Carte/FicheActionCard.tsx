@@ -13,6 +13,7 @@ import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import ModifierFicheModale from './ModifierFicheModale';
 import {useState} from 'react';
+import {QueryKey} from 'react-query';
 
 type Props = {
   link?: string;
@@ -24,6 +25,7 @@ type Props = {
   planId?: number;
   /** Permet d'afficher le menu d'option de la carte */
   isEditable?: boolean;
+  editKeysToInvalidate?: QueryKey[];
 };
 
 const FicheActionCard = ({
@@ -32,6 +34,7 @@ const FicheActionCard = ({
   axeId,
   link,
   isEditable = false,
+  editKeysToInvalidate,
 }: Props) => {
   const collectivite = useCurrentCollectivite();
 
@@ -76,6 +79,7 @@ const FicheActionCard = ({
                 axeId={axeId}
                 isOpen={isEditOpen}
                 setIsOpen={() => setIsEditOpen(!isEditOpen)}
+                keysToInvalidate={editKeysToInvalidate}
               />
             )}
             <button

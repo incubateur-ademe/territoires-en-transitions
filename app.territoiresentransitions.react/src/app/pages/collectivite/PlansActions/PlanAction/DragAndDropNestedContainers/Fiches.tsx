@@ -36,6 +36,7 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
                   axeId={axeId}
                   planId={planId}
                   fiche={fiche}
+                  editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
                   url={
                     fiche.id
                       ? isAxePage

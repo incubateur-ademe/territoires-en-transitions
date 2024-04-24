@@ -5,6 +5,7 @@ import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import {FicheResume} from '../../FicheAction/data/types';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
+import {QueryKey} from 'react-query';
 
 export type FicheDndData = {
   type: 'fiche';
@@ -17,9 +18,10 @@ type Props = {
   axeId: number;
   url?: string;
   fiche: FicheResume;
+  editKeysToInvalidate?: QueryKey[];
 };
 
-const Fiche = ({planId, axeId, url, fiche}: Props) => {
+const Fiche = ({planId, axeId, url, fiche, editKeysToInvalidate}: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -71,6 +73,7 @@ const Fiche = ({planId, axeId, url, fiche}: Props) => {
             axeId={axeId}
             link={url}
             isEditable
+            editKeysToInvalidate={editKeysToInvalidate}
           />
         </div>
       )}

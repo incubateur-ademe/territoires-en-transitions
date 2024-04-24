@@ -23,6 +23,7 @@ const FichesNonClassees = () => {
                 ficheUid: f.id!.toString(),
               })}
               isEditable
+              editKeysToInvalidate={[['axe_fiches', null]]}
             />
           ))}
         </div>
