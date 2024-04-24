@@ -113,11 +113,7 @@ exports[`design-system/Card WithOnClick smoke-test 1`] = `
 `;
 
 exports[`design-system/Card WithSelect smoke-test 1`] = `
-<<<<<<< HEAD
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-primary-7">
-=======
-<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-info-1">
->>>>>>> 7a4e41993 (Update storyshots)
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group hover:cursor-pointer hover:shadow-card !m-0 border-2 border-primary-7">
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
 </div>
 `;
