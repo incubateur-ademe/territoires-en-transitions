@@ -1,16 +1,7 @@
 import classNames from 'classnames';
 import {CarteActionImpactProps} from './types';
-import {Badge, Button, Card} from '@tet/ui';
+import {Badge, Button, Card, Tooltip} from '@tet/ui';
 import NiveauBudget from './NiveauBudget';
-
-const maxLength = 120;
-
-const splitTitle = (title: string) => {
-  let newContent = title.slice(0, maxLength);
-  const contentEnd = title.slice(maxLength).split(' ')[0];
-  newContent += contentEnd;
-  return newContent;
-};
 
 /**
  * Carte action à impact du panier d'actions
@@ -83,9 +74,9 @@ export const CarteActionImpact = ({
         </div>
       }
     >
-      <span className="line-clamp-1">
-        {titre.length > maxLength ? `${splitTitle(titre)}...` : titre}
-      </span>
+      <Tooltip label={titre}>
+        <span className="line-clamp-1">{titre}</span>
+      </Tooltip>
     </Card>
   );
 };
