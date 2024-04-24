@@ -2,7 +2,9 @@
 
 exports[`design-system/Filters FiltersWithBadges smoke-test 1`] = `
 <div class="mb-[500px]">
-  <div class="flex justify-between items-start">
+  <div class="flex justify-between items-start"
+       title="Filtrer"
+  >
     <div class="flex gap-2 flex-wrap">
     </div>
     <div class="mx-2 relative w-fit">

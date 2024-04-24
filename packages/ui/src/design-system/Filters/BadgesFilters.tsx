@@ -23,6 +23,7 @@ type FilterType = {
   values: OptionValue | OptionValue[] | undefined;
   /** Active la multi sélection dans les filtres */
   multiple?: boolean;
+
   /** Détecte le changement de valeur du select */
   onChange: (args: SelectMultipleOnChangeArgs | OptionValue) => void;
 };
@@ -36,9 +37,17 @@ type BadgeType = {
 type FiltersMenuProps = {
   filters: FilterType[];
   className?: string;
+  /** Pour styler le bouton et le container du menu déroulant */
+  btnMenuClassName?: string;
+  menuClassName?: string;
 };
 
-export const BadgesFilters = ({filters, className}: FiltersMenuProps) => {
+export const BadgesFilters = ({
+  filters,
+  className,
+  btnMenuClassName,
+  menuClassName,
+}: FiltersMenuProps) => {
   const [badgesList, setBadgesList] = useState<BadgeType[] | null>(null);
 
   /** Gère la fermeture d'un badge et la mise à jour du filtre associé */
@@ -104,7 +113,10 @@ export const BadgesFilters = ({filters, className}: FiltersMenuProps) => {
   }, [JSON.stringify(filters.map(f => f.values))]);
 
   return (
-    <div className={classNames('flex justify-between items-start', className)}>
+    <div
+      className={classNames('flex justify-between items-start', className)}
+      title="Filtrer"
+    >
       <div className="flex gap-2 flex-wrap">
         {/* Liste des badges correspondant aux filtres sélectionnés */}
         {!!badgesList &&
@@ -140,7 +152,12 @@ export const BadgesFilters = ({filters, className}: FiltersMenuProps) => {
       </div>
 
       {/* Menu + Filtres Select */}
-      <ButtonMenu icon="equalizer-fill" notificationValue={badgesList?.length}>
+      <ButtonMenu
+        icon="equalizer-fill"
+        notificationValue={badgesList?.length}
+        className={btnMenuClassName}
+        menuClassName={menuClassName}
+      >
         <div className="flex flex-col gap-4 w-72">
           {filters.map(filter => (
             <Field key={filter.title} title={filter.title}>
