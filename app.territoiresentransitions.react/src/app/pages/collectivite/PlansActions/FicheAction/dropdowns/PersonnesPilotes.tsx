@@ -1,10 +1,10 @@
 import {QueryKey} from 'react-query';
 
-import {OptionValue, SelectMultiple, getFlatOptions} from '@tet/ui';
+import {Option, OptionValue, SelectMultiple, getFlatOptions} from '@tet/ui';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Personne} from '../data/types';
-import {formatNewTag, getPersonneId} from '../data/utils';
+import {getPersonneId} from '../data/utils';
 import {usePersonneListe} from '../data/options/usePersonneListe';
 import {useDeleteTag} from '../data/options/useTagDelete';
 import {useTagUpdate} from '../data/options/useTagUpdate';
@@ -38,7 +38,7 @@ const PersonnesPilotes = ({
     keysToInvalidate,
   });
 
-  const options =
+  const options: Option[] =
     personneListe?.map(personne => ({
       value: personne.tag_id ? personne.tag_id : personne.user_id!,
       label: personne.nom || '',
@@ -65,13 +65,6 @@ const PersonnesPilotes = ({
       onChange={({values}) => onChange(formatPilotes(values))}
       createProps={{
         userCreatedOptions,
-        onCreate: inputValue => {
-          onChange(
-            personnes
-              ? [...personnes, formatNewTag(inputValue, collectivite_id!)]
-              : [formatNewTag(inputValue, collectivite_id!)]
-          );
-        },
         onUpdate: (tag_id, tag_name) => {
           updateTag({
             collectivite_id: collectivite_id!,
@@ -79,7 +72,13 @@ const PersonnesPilotes = ({
             nom: tag_name,
           });
         },
-        onDelete: tag_id => deleteTag(parseInt(tag_id as string)),
+        onDelete: tag_id => {
+          deleteTag(parseInt(tag_id as string));
+          const newPersonnes = personnes?.filter(
+            p => p.tag_id !== parseInt(tag_id as string)
+          );
+          onChange(newPersonnes?.length ? newPersonnes : null);
+        },
       }}
       disabled={isReadonly}
     />

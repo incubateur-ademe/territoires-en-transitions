@@ -4,6 +4,7 @@ import {QueryKey} from 'react-query';
 import {
   Checkbox,
   Field,
+  FormSectionGrid,
   Input,
   Modal,
   ModalFooterOKCancel,
@@ -20,8 +21,12 @@ import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgePriorite from '../../components/BadgePriorite';
 import {useUpdateFicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
 import {format} from 'date-fns';
-// import PersonnesPilotes from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PersonnesPilotes';
-// import PlansDropdown from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PlansDropdown';
+import PersonnesPilotes from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PersonnesPilotes';
+import {
+  useFicheActionAddPilote,
+  useFicheActionRemoveTagPilote,
+  useFicheActionRemoveUserPilote,
+} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
 
 type Props = {
   initialFiche: FicheResume;
@@ -43,12 +48,18 @@ const ModifierFicheModale = ({
 }: Props) => {
   const {mutate: updateFiche} = useUpdateFicheResume(keysToInvalidate);
 
+  const {mutate: addPilotes} = useFicheActionAddPilote(keysToInvalidate);
+  const {mutate: removeUserPilotes} =
+    useFicheActionRemoveUserPilote(keysToInvalidate);
+  const {mutate: removeTagPilotes} =
+    useFicheActionRemoveTagPilote(keysToInvalidate);
+
   const [fiche, setFiche] = useState(initialFiche);
 
   return (
     <Modal
       dataTest="ModifierFicheModale"
-      size="md"
+      size="lg"
       openState={{
         isOpen,
         setIsOpen,
@@ -68,17 +79,7 @@ const ModifierFicheModale = ({
                 autoFocus
               />
             </Field>
-            {/* <Field
-              title="Plan associé"
-              state="info"
-              message="Cette fiche peut être associée à plusieurs plans."
-            >
-              <PlansDropdown
-                plans={fiche.plans as any}
-                onChange={plans => setFiche({...fiche, plans})}
-              />
-            </Field> */}
-            <div className="grid grid-cols-1 gap-6">
+            <FormSectionGrid>
               <Field title="Statut">
                 <Select
                   data-test="Statut"
@@ -113,16 +114,19 @@ const ModifierFicheModale = ({
                   )}
                 />
               </Field>
-            </div>
-            <div className="grid grid-cols-1 gap-6">
-              {/* <Field title="Personne pilote">
+            </FormSectionGrid>
+            <FormSectionGrid>
+              <Field title="Personne pilote">
                 <PersonnesPilotes
                   personnes={fiche.pilotes}
                   onChange={pilotes => {
                     setFiche({...fiche, pilotes});
                   }}
+                  keysToInvalidate={[
+                    ['axe_fiches', axeId, fiche.collectivite_id],
+                  ]}
                 />
-              </Field> */}
+              </Field>
               <Field title="Date de fin prévisionnelle">
                 <Input
                   type="date"
@@ -158,10 +162,53 @@ const ModifierFicheModale = ({
                   />
                 </div>
               </Field>
-            </div>
+            </FormSectionGrid>
             <ModalFooterOKCancel
               btnOKProps={{
                 onClick: () => {
+                  const pilotesToAdd =
+                    fiche.pilotes
+                      ?.filter(
+                        finalPilote =>
+                          !initialFiche.pilotes?.some(
+                            oldPilote => finalPilote.nom === oldPilote.nom
+                          )
+                      )
+                      .map(pilote => ({
+                        fiche_id: fiche.id!,
+                        user_id: pilote.user_id,
+                        tag_id: pilote.tag_id,
+                      })) ?? [];
+
+                  if (pilotesToAdd.length > 0) {
+                    addPilotes(pilotesToAdd);
+                  }
+
+                  const pilotesToRemove =
+                    initialFiche.pilotes
+                      ?.filter(
+                        oldPilote =>
+                          !fiche.pilotes?.some(
+                            finalPilote => finalPilote.nom === oldPilote.nom
+                          )
+                      )
+                      .map(pilote => ({
+                        fiche_id: fiche.id!,
+                        user_id: pilote.user_id,
+                        tag_id: pilote.tag_id,
+                      })) ?? [];
+                  if (pilotesToRemove.length > 0) {
+                    const pilotesTag = pilotesToRemove.filter(
+                      pilote => pilote.tag_id
+                    );
+                    if (pilotesTag.length > 0) {
+                      removeTagPilotes(pilotesTag);
+                    }
+                    const pilotesUser = pilotesToRemove.filter(
+                      pilote => pilote.user_id
+                    );
+                    removeUserPilotes(pilotesUser);
+                  }
                   updateFiche(fiche);
                   close();
                 },
