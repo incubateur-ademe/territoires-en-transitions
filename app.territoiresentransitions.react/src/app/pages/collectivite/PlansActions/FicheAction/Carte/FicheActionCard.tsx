@@ -107,7 +107,7 @@ const FicheActionCard = ({
         target={openInNewTab ? '_blank' : undefined}
         rel={openInNewTab ? 'noopener noreferrer' : undefined}
         className={classNames(
-          'block bg-none',
+          'block bg-none h-full',
           {'after:!hidden': openInNewTab},
           {'cursor-default': !ficheAction.id},
           {
