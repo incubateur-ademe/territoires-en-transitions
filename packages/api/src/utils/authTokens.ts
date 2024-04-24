@@ -16,7 +16,20 @@ const formatExpiredToken = (name: string, domain: string) =>
 export const clearAuthTokens = (domain: string) => {
   document.cookie = formatExpiredToken(ACCESS_TOKEN, domain);
   document.cookie = formatExpiredToken(REFRESH_TOKEN, domain);
+  deleteSbCookies(domain);
 };
+
+/**
+ * Supprime les tokens écrits par le client supabase (appelé lors de la déconnexion)
+ * Ref: https://github.com/supabase/auth-js/issues/46
+ */
+const SUPABASE_TOKEN = /^sb-.*-auth-token/;
+const deleteSbCookies = (domain: string) =>
+  document.cookie
+    .split(/\s*;\s*/)
+    .map(cookie => cookie.split('='))
+    .filter(x => x[0].match(SUPABASE_TOKEN))
+    .forEach(x => (document.cookie = formatExpiredToken(x[0], domain)));
 
 /** Crée les tokens à partir de la session */
 const MAX_AGE = 60 * 60 * 24 * 365;
