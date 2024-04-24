@@ -66,7 +66,7 @@ const ListeActions = ({
       onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
       className="grow flex flex-col"
       tabPanelClassName="grow flex flex-col"
-      tabsListClassName="!justify-start"
+      tabsListClassName="!justify-start mb-0"
     >
       {...tabsList.map(tab => {
         const actionsFiltrees = actionsListe.filter(
