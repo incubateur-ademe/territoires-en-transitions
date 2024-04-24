@@ -1,13 +1,12 @@
-from typing import Dict, Optional
 import re
+from typing import Dict, Optional
 
-from business.utils.models.action_score import ActionScore
 from business.evaluation.personnalisation.formule_interpreter import (
     FormuleInterpreter,
 )
-from business.utils.models.actions import ActionId
 from business.evaluation.personnalisation.parser import parser
-
+from business.utils.models.action_score import ActionScore
+from business.utils.models.actions import ActionId
 
 formule_interpreter = FormuleInterpreter()
 
@@ -23,7 +22,7 @@ def execute_score_personnalisation_override_regle(
         if score is None:
             return None
         formule_with_score_replaced = formule_with_score_replaced.replace(
-            f"score({action_id})", str(score.point_fait / score.point_potentiel)
+            f"score({action_id})", str(score.point_fait / score.point_potentiel) if score.point_potentiel else "0"
         )
     tree = parser.parse(formule_with_score_replaced)
     return formule_interpreter.visit(tree)
