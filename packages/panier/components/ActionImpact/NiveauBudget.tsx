@@ -31,7 +31,7 @@ const NiveauBudget = ({budget}: NiveauBudgetProps) => {
         </div>
       }
     >
-      <div>
+      <div className="flex items-center justify-center px-1.5 py-1 border rounded border-grey-3 bg-grey-1">
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({

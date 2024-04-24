@@ -30,25 +30,23 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className={classNames('box-content !px-5 !py-4 h-[160px]', {
+      className={classNames('box-content px-4 py-4 h-20', {
         '!cursor-default': panier && !isSelected,
       })}
       isSelected={isSelected}
-      header={
-        <div className="flex justify-end">
-          {/* Budget */}
-          <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
-        </div>
-      }
       footer={
         <div className="relative z-0">
-          {/* Badge thématique */}
-          {!!thematiques.length && (
-            <Badge title={thematiques[0].nom} size="sm" state="standard" />
-          )}
+          <div className="flex justify-end opacity-100 group-hover:opacity-0 transition-opacity duration-500">
+            {/* Badge thématique */}
+            {!!thematiques.length && (
+              <Badge title={thematiques[0].nom} size="sm" state="standard" />
+            )}
+            {/* Budget */}
+            <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
+          </div>
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          <div className="invisible group-hover:visible w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
             {panier ? (
               <Button size="xs" onClick={() => handleToggleSelect(false)}>
                 Retirer du panier
@@ -85,7 +83,9 @@ export const CarteActionImpact = ({
         </div>
       }
     >
-      {titre.length > maxLength ? `${splitTitle(titre)}...` : titre}
+      <span className="line-clamp-1">
+        {titre.length > maxLength ? `${splitTitle(titre)}...` : titre}
+      </span>
     </Card>
   );
 };

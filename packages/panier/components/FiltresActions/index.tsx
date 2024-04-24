@@ -116,7 +116,7 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
           multiple: true,
         },
       ]}
-      className="mb-8"
+      className="mt-2 mb-4"
     />
   );
 };

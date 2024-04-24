@@ -120,12 +120,11 @@ const PanierRealtime = ({
           title="Contenu en cours de validation par l’ADEME et en amélioration continue"
           classname="mb-8 -mt-4"
         />
-        <h1>
-          Initiez{' '}
-          <span className="text-secondary-1">des actions impactantes</span> et
-          valorisez le chemin déjà parcouru
+        <h1 className="mb-4">
+          Initiez <span className="text-primary">des actions impactantes</span>{' '}
+          et valorisez le chemin déjà parcouru
         </h1>
-        <p className="text-grey-9 text-lg font-medium mt-8 mb-12">
+        <p className="text-grey-9 text-lg font-medium mt-0 mb-2">
           Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
           fonction de leur état d'avancement.
         </p>
