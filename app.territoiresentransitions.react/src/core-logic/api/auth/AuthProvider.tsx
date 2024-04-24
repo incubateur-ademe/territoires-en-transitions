@@ -8,9 +8,9 @@ import {
 } from 'react';
 import {User, SignInWithPasswordCredentials} from '@supabase/supabase-js';
 import {useQuery} from 'react-query';
+import {clearAuthTokens, getRootDomain, setAuthTokens} from '@tet/api';
 import {supabaseClient} from '../supabase';
 import {useCurrentSession} from './useCurrentSession';
-import {getRootDomain, setAuthTokens} from '@tet/api';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -117,6 +117,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         setAuthError(response.error.message);
         return false;
       }
+      clearAuthTokens(getRootDomain(document.location.hostname));
       return true;
     });
 
