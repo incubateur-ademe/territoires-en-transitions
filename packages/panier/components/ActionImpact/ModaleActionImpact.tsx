@@ -55,7 +55,10 @@ export const ModaleActionImpact = ({
           )}
 
           {/* Description */}
-          <Markdown content={description} className="paragraphe-18 mb-8" />
+          <Markdown
+            content={description}
+            className="paragraphe-18 mb-8 [&_ul]:list-disc [&_ul]:pl-8"
+          />
 
           {/* Temps de mise en oeuvre */}
           <p className="text-base text-primary-10 font-bold mb-8">
