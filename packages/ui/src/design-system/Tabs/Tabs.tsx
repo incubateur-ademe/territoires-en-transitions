@@ -62,7 +62,7 @@ export const Tabs = ({
     <div className={classNames('overflow-hidden', className)}>
       <ul
         className={classNames(
-          'inline-flex justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none',
+          'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none',
           tabsListClassName
         )}
         role="tablist"
