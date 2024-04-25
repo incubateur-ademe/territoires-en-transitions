@@ -5,7 +5,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
   className="flex flex-col h-[100vh] overflow-hidden"
 >
   <div
-    className="w-full overflow-x-hidden overflow-y-auto"
+    className="flex-grow flex flex-col w-full overflow-x-hidden overflow-y-auto"
     id="main"
   >
     <header

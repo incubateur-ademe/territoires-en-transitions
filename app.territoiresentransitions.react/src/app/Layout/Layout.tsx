@@ -9,7 +9,10 @@ type Props = {
 const Layout = ({children}: Props) => {
   return (
     <div className="flex flex-col h-[100vh] overflow-hidden">
-      <div id="main" className="w-full overflow-x-hidden overflow-y-auto">
+      <div
+        id="main"
+        className="flex-grow flex flex-col w-full overflow-x-hidden overflow-y-auto"
+      >
         <Header />
         {children}
         <Footer />
