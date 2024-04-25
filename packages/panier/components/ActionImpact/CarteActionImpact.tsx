@@ -27,7 +27,7 @@ export const CarteActionImpact = ({
       isSelected={isSelected}
       footer={
         <div className="relative z-0">
-          <div className="flex justify-end opacity-100 group-hover:opacity-0 transition-opacity duration-500">
+          <div className="flex justify-end items-center gap-2 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
             {/* Badge thématique */}
             {!!thematiques.length && (
               <Badge title={thematiques[0].nom} size="sm" state="standard" />
