@@ -24,6 +24,10 @@ export const createTrackingClient = ({
   key?: string;
   env?: string;
 }) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   const is_dev = env === 'development';
 
   if (!key || !host) {
