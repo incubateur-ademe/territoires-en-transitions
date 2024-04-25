@@ -95,6 +95,9 @@ export const preset = {
         button: '0 2px 4px 0 rgba(0,0,0,0.05)',
         card: '2px 2px 10px 0 rgba(233, 233, 233, 0.9)',
       },
+      screens: {
+        '2xl': '1440px',
+      },
       maxWidth: {
         '8xl': '90rem',
       },
