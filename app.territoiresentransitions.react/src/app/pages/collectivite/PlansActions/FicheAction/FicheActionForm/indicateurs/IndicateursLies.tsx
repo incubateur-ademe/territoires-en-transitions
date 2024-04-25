@@ -60,7 +60,7 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
                 id:
                   indicateur.indicateur_id ??
                   indicateur.indicateur_personnalise_id!,
-                nom: indicateur.nom,
+                nom: indicateur.nom ?? '',
               }}
               href={makeCollectiviteIndicateursUrl({
                 collectiviteId: collectiviteId!,
