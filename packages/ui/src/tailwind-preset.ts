@@ -95,6 +95,9 @@ export const preset = {
         button: '0 2px 4px 0 rgba(0,0,0,0.05)',
         card: '2px 2px 10px 0 rgba(233, 233, 233, 0.9)',
       },
+      maxWidth: {
+        '8xl': '90rem',
+      },
       zIndex: {modal: '4000'},
       backgroundImage: {
         // malheureusement on n'arrive pas à styler le bouton de ràz des input.search directement avec remixicon

@@ -26,7 +26,7 @@ const HeaderBody = ({
   setOpenedMenu,
 }: HeaderBodyProps) => {
   return (
-    <div className="w-full xl:max-w-7xl mx-auto lg:py-3 lg:px-6 xl:px-2 flex items-center justify-between">
+    <div className="w-full xl:max-w-7xl 2xl:max-w-8xl mx-auto lg:py-3 lg:px-6 xl:px-2 flex items-center justify-between">
       {/* Contenu principal */}
       <a
         href={customRootUrl ?? '/'}

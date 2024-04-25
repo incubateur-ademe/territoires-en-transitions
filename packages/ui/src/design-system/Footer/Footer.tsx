@@ -39,7 +39,7 @@ export const Footer = ({
       className={classNames('w-full border-t-2 border-t-primary-8', className)}
     >
       {/* Partie suppérieure du footer */}
-      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-8 flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row">
+      <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 py-8 flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row">
         {/* Logos */}
         {!!logos && (
           <div className="flex h-28 gap-x-1">
@@ -80,7 +80,7 @@ export const Footer = ({
       {/* Partie inférieure du footer */}
       {(!!bottomLinks || !!bottomContent) && (
         <div className="w-full border-t border-t-primary-4">
-          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 py-6">
+          <div className="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 py-6">
             {/* Liste de liens */}
             {!!bottomLinks && (
               <ul className="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
