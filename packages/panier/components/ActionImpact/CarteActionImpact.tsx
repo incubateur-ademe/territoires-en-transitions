@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {CarteActionImpactProps} from './types';
-import {Badge, Button, Card, Tooltip} from '@tet/ui';
+import {Badge, Button, Card} from '@tet/ui';
 import NiveauBudget from './NiveauBudget';
 
 /**
@@ -21,7 +21,7 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className={classNames('box-content px-4 py-4 h-20', {
+      className={classNames('box-content px-4 py-4 h-28', {
         '!cursor-default': panier && !isSelected,
       })}
       isSelected={isSelected}
@@ -74,9 +74,7 @@ export const CarteActionImpact = ({
         </div>
       }
     >
-      <Tooltip label={titre}>
-        <span className="line-clamp-1">{titre}</span>
-      </Tooltip>
+      <span className="line-clamp-3">{titre}</span>
     </Card>
   );
 };
