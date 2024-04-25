@@ -13,7 +13,7 @@ const Section = ({children, className, containerClassName}: SectionProps) => {
     >
       <div
         className={classNames(
-          'grow flex flex-col w-full mx-auto xl:max-w-7xl',
+          'grow flex flex-col w-full mx-auto xl:max-w-7xl 2xl:max-w-8xl',
           className,
         )}
       >

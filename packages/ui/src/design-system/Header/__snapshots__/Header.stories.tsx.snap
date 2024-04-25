@@ -2,7 +2,7 @@
 
 exports[`design-system/Header Default smoke-test 1`] = `
 <header class="w-full bg-white relative">
-  <div class="w-full xl:max-w-7xl mx-auto lg:py-3 lg:px-6 xl:px-2 flex items-center justify-between">
+  <div class="w-full xl:max-w-7xl 2xl:max-w-8xl mx-auto lg:py-3 lg:px-6 xl:px-2 flex items-center justify-between">
     <a href="/"
        class="block max-lg:w-full hover:!bg-primary-1 lg:rounded-lg bg-none"
     >
@@ -42,7 +42,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
     </ul>
   </div>
   <div class="w-full bg-white">
-    <div class="mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 text-sm">
+    <div class="mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 text-sm">
       <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6 flex-row-reverse lg:hidden ml-auto max-lg:hidden">
         <span class="ri-close-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
         </span>

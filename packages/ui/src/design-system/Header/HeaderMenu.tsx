@@ -27,7 +27,7 @@ const HeaderMenu = ({
     >
       <div
         className={classNames(
-          'mx-auto px-4 lg:px-6 xl:max-w-7xl xl:px-2 text-sm',
+          'mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 text-sm',
           {'py-3 h-full': openedMenu}
         )}
       >
