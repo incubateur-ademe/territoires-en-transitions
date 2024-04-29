@@ -187,7 +187,8 @@ export const ModaleActionImpact = ({
                   subventions.length > 0 &&
                   subventions.map(
                     s =>
-                      s.url !== URL_AIDES_TERRITOIRES && (
+                      s.url &&
+                      !s.url.startsWith(URL_AIDES_TERRITOIRES) && (
                         <LienExterneModale key={s.label} {...s} />
                       ),
                   )}
