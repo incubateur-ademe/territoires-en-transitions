@@ -25,7 +25,7 @@ const NiveauBudget = ({budget}: NiveauBudgetProps) => {
     <Tooltip
       label={
         <div className="w-52 !font-normal">
-          {budget.niveau === 4
+          {budget.niveau === 1
             ? 'Ordre de grandeur budgétaire non estimé.'
             : tooltipText}
         </div>
@@ -35,22 +35,22 @@ const NiveauBudget = ({budget}: NiveauBudgetProps) => {
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
-            'text-secondary-1': budget.niveau >= 1 && budget.niveau < 4,
-            'text-grey-4': budget.niveau === 4,
+            'text-secondary-1': budget.niveau > 1,
+            'text-grey-4': budget.niveau === 1,
           })}
         />
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
-            'text-secondary-1': budget.niveau >= 2 && budget.niveau < 4,
-            'text-grey-4': budget.niveau === 4 || budget.niveau < 2,
+            'text-secondary-1': budget.niveau > 2,
+            'text-grey-4': budget.niveau <= 2,
           })}
         />
         <Icon
           icon="money-euro-circle-fill"
           className={classNames({
-            'text-secondary-1': budget.niveau === 3,
-            'text-grey-4': budget.niveau !== 3,
+            'text-secondary-1': budget.niveau > 3,
+            'text-grey-4': budget.niveau <= 3,
           })}
         />
       </div>

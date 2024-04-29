@@ -33,7 +33,7 @@ export const CarteActionImpact = ({
               <Badge title={thematiques[0].nom} size="sm" state="standard" />
             )}
             {/* Budget */}
-            <NiveauBudget budget={budget ?? {niveau: 4, nom: 'Non estimé'}} />
+            <NiveauBudget budget={budget ?? {niveau: 1, nom: 'Non estimé'}} />
           </div>
 
           {/* Boutons d'action, visibles au hover de la carte */}
