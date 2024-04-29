@@ -3,6 +3,7 @@
 
 import {useSearchParams} from 'next/navigation';
 import {LoginModal} from '@components/Login/LoginModal';
+import {useRedirectTo} from '@components/Login/useRedirectTo';
 import {useLoginState} from './useLoginState';
 
 /**
@@ -21,6 +22,9 @@ const LoginPage = () => {
     email: searchParams.get('email'),
     otp: searchParams.get('otp'),
   };
+
+  // redirige immédiatement si l'utilisateur est déjà connecté
+  useRedirectTo(redirectTo);
 
   const state = useLoginState({
     redirectTo,

@@ -5,6 +5,7 @@ import {useSearchParams} from 'next/navigation';
 import {SignupModal} from '@components/Signup';
 import {useCollectivites} from './useCollectivites';
 import {useSignupState} from './useSignupState';
+import {useRedirectTo} from '@components/Login/useRedirectTo';
 
 /**
  * Affiche la page de création de compte
@@ -25,6 +26,9 @@ const SignupPage = () => {
   };
   const redirectTo = searchParams.get('redirect_to') || '/';
   const state = useSignupState({redirectTo, defaultView, defaultValues});
+
+  // redirige immédiatement si l'utilisateur est déjà connecté
+  useRedirectTo(redirectTo);
 
   return (
     <SignupModal
