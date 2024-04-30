@@ -41,7 +41,6 @@ export const AccordionControlled = ({
   /** appelée pour déplier/replier le contenu */
   setExpanded: (value: boolean) => void;
 }) => {
-
   return (
     <div>
       {/** EN-TËTE */}
@@ -58,29 +57,31 @@ export const AccordionControlled = ({
         }}
         onClick={() => setExpanded(!expanded)}
         className={classNames(
-          'border border-grey-4 rounded-lg h-14 flex items-center px-6 font-bold text-primary-10 hover:bg-primary-1',
+          'border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1',
           {'border-primary-2 rounded-b-none bg-primary-2': expanded}
         )}
       >
         {/** picto indiquant l'état ouvert/fermé */}
         <Icon
           icon="arrow-right-s-line"
-          className={classNames('mr-3 text-primary transition-transform', {
+          className={classNames('text-primary transition-transform', {
             'transform: rotate-90': expanded,
           })}
         />
         {/** icône optionnelle avant le titre */}
         {!!icon && iconPosition === 'left' && (
-          <Icon icon={icon} className="mr-3 text-primary" />
+          <Icon icon={icon} className="text-primary" />
         )}
-        {/** titre */}
-        {title}
-        {/** sous-titre */}
-        {!!subtitle && (
-          <span className="font-normal text-xs ml-3 line-clamp-1">
-            {subtitle}
-          </span>
-        )}
+        <div className="-mt-0.5">
+          {/** titre */}
+          {title}
+          {/** sous-titre */}
+          {!!subtitle && (
+            <span className="font-normal text-xs mt-2 line-clamp-1">
+              {subtitle}
+            </span>
+          )}
+        </div>
         {/** icône optionnelle alignée à droite */}
         {!!icon && iconPosition === 'right' && (
           <Icon icon={icon} className="ml-auto text-primary" />
