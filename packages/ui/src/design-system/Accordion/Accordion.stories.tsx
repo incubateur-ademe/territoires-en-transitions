@@ -54,13 +54,24 @@ export const AvecIconeADroite: Story = {
 
 export const AvecIconeSVG: Story = {
   args: {
-    icon: <DoubleCheckIcon className="fill-primary-7 mr-3" />,
+    icon: <DoubleCheckIcon className="fill-primary-7" />,
   },
 };
 
 export const AvecSousTitre: Story = {
   args: {
     icon: 'lock-line',
+    subtitle:
+      'Cette section est visible uniquement par les membres de votre collectivité',
+  },
+};
+
+export const CompletTitreLong: Story = {
+  args: {
+    icon: 'lock-line',
+    iconPosition: 'right',
+    title:
+      'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
     subtitle:
       'Cette section est visible uniquement par les membres de votre collectivité',
   },
