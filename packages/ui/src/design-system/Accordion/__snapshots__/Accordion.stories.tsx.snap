@@ -149,7 +149,7 @@ exports[`design-system/Accordion ControlleOuvert smoke-test 1`] = `
       Titre
     </div>
   </div>
-  <div class="px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg text-grey-8">
+  <div class="px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg text-grey-8 [&amp;_a]:break-all">
     Contenu
   </div>
 </div>
