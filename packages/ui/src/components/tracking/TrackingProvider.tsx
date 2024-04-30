@@ -1,5 +1,7 @@
 import posthog, {PostHog} from 'posthog-js';
 import {PostHogProvider} from 'posthog-js/react';
+import React from 'react';
+import {getConsent} from './Consent';
 
 /**
  * Renvoi les vars d'env. pour le tracking depuis un module next js
@@ -43,6 +45,7 @@ export const createTrackingClient = ({
   posthog.init(key, {
     api_host: apiHost,
     ui_host: host,
+    persistence: getConsent() ? 'cookie' : 'memory',
     capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
 
     loaded: posthog => {
