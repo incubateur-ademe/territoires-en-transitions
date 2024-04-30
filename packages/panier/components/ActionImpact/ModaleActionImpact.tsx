@@ -86,7 +86,7 @@ export const ModaleActionImpact = ({
                       variant="underlined"
                       size="xs"
                       className="!text-info-1 !border-info-1"
-                      href="https://www.territoiresentransitions.fr/"
+                      href="https://aide.territoiresentransitions.fr/fr/article/en-savoir-plus-sur-les-criteres-du-panier-dactions-a-impact-b37tky/#1-temps-de-mise-en-oeuvre"
                       external
                     >
                       En savoir plus
@@ -119,7 +119,7 @@ export const ModaleActionImpact = ({
                       variant="underlined"
                       size="xs"
                       className="!text-info-1 !border-info-1"
-                      href="https://www.territoiresentransitions.fr/"
+                      href="https://aide.territoiresentransitions.fr/fr/article/en-savoir-plus-sur-les-criteres-du-panier-dactions-a-impact-b37tky/#1-estimation-des-ordres-de-grandeur-budgetaires"
                       external
                     >
                       En savoir plus
