@@ -1,7 +1,6 @@
 import './global.css';
 import Footer from '@components/Layout/Footer';
 import Header from '@components/Layout/Header';
-import Axeptio from '@components/Axeptio';
 import {StoreProvider} from 'providers';
 
 export const metadata = {
@@ -42,7 +41,6 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <Footer />
         </body>
       </StoreProvider>
-      <Axeptio />
     </html>
   );
 }
