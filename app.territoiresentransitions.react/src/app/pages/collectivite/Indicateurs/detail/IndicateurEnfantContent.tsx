@@ -6,7 +6,7 @@ import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
-import {ImportSourcesDropdown} from './ImportSourcesDropdown';
+import {ImportSourcesSelector} from './ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
@@ -27,7 +27,7 @@ export const IndicateurEnfantContent = ({
 
   return (
     <div className="p-6">
-      <ImportSourcesDropdown
+      <ImportSourcesSelector
         sources={sources}
         currentSource={currentSource}
         setCurrentSource={setCurrentSource}

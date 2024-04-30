@@ -8,7 +8,7 @@ import {TIndicateurPredefini} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
-import {ImportSourcesDropdown} from './ImportSourcesDropdown';
+import {ImportSourcesSelector} from './ImportSourcesSelector';
 
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 
@@ -26,7 +26,7 @@ export const IndicateurDetail = ({
 
   return (
     <>
-      <ImportSourcesDropdown
+      <ImportSourcesSelector
         sources={sources}
         currentSource={currentSource}
         setCurrentSource={setCurrentSource}
