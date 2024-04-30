@@ -40,10 +40,13 @@ const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
     : null;
 
   // converti un id de source en index
-  const idToIndex = (id: string) =>
-    id === SOURCE_COLLECTIVITE
-      ? 0
-      : indexedSources?.findIndex(s => s.id === id) ?? 0;
+  const idToIndex = (id: string) => {
+    if (id === SOURCE_COLLECTIVITE) {
+      return 0;
+    }
+    const index = indexedSources?.findIndex(s => s.id === id);
+    return index === -1 || index === undefined ? 0 : index;
+  };
 
   // converti un index en id de source
   const indexToId = (index: number) =>
