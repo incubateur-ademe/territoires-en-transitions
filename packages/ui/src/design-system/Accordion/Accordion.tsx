@@ -20,7 +20,7 @@ type AccordionType = {
 
 /** Styles du container autour du contenu quand l'accordéon est déplié */
 export const ACCORDION_CONTENT_STYLE =
-  'px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg text-grey-8';
+  'px-10 py-6 border border-t-0 border-grey-4 rounded-b-lg text-grey-8 [&_a]:break-all';
 
 /**
  * Affiche un contenu complémentaire
