@@ -5,7 +5,7 @@ import {Tab, Tabs} from '@tet/ui';
  * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il
  * y en a plusieurs. Sinon rien n'est affiché.
  */
-export const ImportSourcesDropdown = ({
+export const ImportSourcesSelector = ({
   sources,
   currentSource,
   setCurrentSource,
