@@ -1,3 +1,5 @@
+import {useState} from 'react';
+import {Modal, ModalFooterOKCancel} from '@tet/ui';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
@@ -14,6 +16,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
 import {useIndicateurPersonnalise} from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
+import {useRemoveIndicateurPerso} from './useRemoveIndicateurPerso';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -52,6 +55,12 @@ const IndicateurPersonnaliseBase = ({
     }
   };
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const {mutate: removeIndicateurPerso} = useRemoveIndicateurPerso(
+    collectivite?.collectivite_id,
+    definition.id
+  );
+
   return (
     <>
       <HeaderIndicateur
@@ -68,6 +77,15 @@ const IndicateurPersonnaliseBase = ({
             title="Exporter"
             onClick={() => exportIndicateurs()}
           />
+          {!isReadonly && (
+            <ToolbarIconButton
+              className="fr-mr-1w text-error-1"
+              disabled={isLoading}
+              icon="delete"
+              title="Supprimer"
+              onClick={() => setShowConfirm(true)}
+            />
+          )}
         </div>
 
         <IndicateurDetailChart
@@ -103,6 +121,26 @@ const IndicateurPersonnaliseBase = ({
         </FormField>
         <ScrollTopButton className="fr-mt-4w" />
       </div>
+      {showConfirm && (
+        <Modal
+          openState={{isOpen: showConfirm, setIsOpen: setShowConfirm}}
+          title={`Suppression indicateur "${definition.nom}"`}
+          description="Vous perdrez définitivement les données associées à cet indicateur."
+          renderFooter={({close}) => (
+            <ModalFooterOKCancel
+              btnCancelProps={{
+                onClick: () => close(),
+              }}
+              btnOKProps={{
+                onClick: () => {
+                  close();
+                  removeIndicateurPerso();
+                },
+              }}
+            />
+          )}
+        />
+      )}
     </>
   );
 };
