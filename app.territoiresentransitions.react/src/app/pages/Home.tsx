@@ -7,11 +7,10 @@ const Home = () => {
       <h1 className="fr-h1">À vous de jouer !</h1>
 
       <p>
-        Territoires en Transitions est un outil public gratuit et open-source
-        pour les collectivités, financé par l'ADEME. Actuellement à ses débuts,
-        la plateforme a besoin de vous pour évoluer dans le sens de vos besoins.
-        Rejoignez-nous dans sa co-construction en créant votre compte en moins
-        d'une minute.
+        Territoires en Transitions est un service numérique gratuit et
+        open-source qui s’adresse à toutes les collectivités. Créez votre compte
+        en moins d'une minute et rejoignez le profil de votre collectivité. Une
+        question ? Utilisez le chat en bas à droite de votre écran !
       </p>
       <Spacer />
       <div className="flex flex-row-reverse gap-3">
