@@ -1,10 +1,8 @@
-import FormField from 'ui/shared/form/FormField';
 import {IndicateurImportSource, SOURCE_COLLECTIVITE} from './useImportSources';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {DSFRbuttonClassname} from 'ui/shared/select/commons';
+import {Tab, Tabs} from '@tet/ui';
 
 /**
- * Affiche la liste déroulante des sources de données d'un indicateur, lorsqu'il
+ * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il
  * y en a plusieurs. Sinon rien n'est affiché.
  */
 export const ImportSourcesDropdown = ({
@@ -16,17 +14,42 @@ export const ImportSourcesDropdown = ({
   currentSource: string;
   setCurrentSource?: (value: string) => void;
 }) => {
-  return sources?.length && setCurrentSource ? (
-    <FormField label="Source de données">
-      <SelectDropdown
-        buttonClassName={DSFRbuttonClassname}
-        options={[
-          {label: 'Données de la collectivité', value: SOURCE_COLLECTIVITE},
-          ...sources.map(({id, libelle}) => ({label: libelle, value: id})),
-        ]}
-        value={currentSource}
-        onSelect={setCurrentSource}
-      />
-    </FormField>
+  const {indexedSources, idToIndex, indexToId} = useIndexedSources(sources);
+
+  return indexedSources && setCurrentSource ? (
+    <Tabs
+      tabsListClassName="!justify-start"
+      defaultActiveTab={idToIndex(currentSource)}
+      onChange={activeTab => setCurrentSource(indexToId(activeTab))}
+    >
+      {indexedSources?.map(({id, libelle}) => (
+        <Tab key={id} label={libelle} />
+      ))}
+    </Tabs>
   ) : null;
+};
+
+/**
+ * Ajoute la source "mes données" à l'index 0 et renvoi des fonctions
+ * utilitaires pour transformer les id en index et réciproquement.
+ */
+const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
+  // ajoute la source "mes données"
+  const indexedSources = sources?.length
+    ? [{id: SOURCE_COLLECTIVITE, libelle: 'Mes données'}, ...sources]
+    : null;
+
+  // converti un id de source en index
+  const idToIndex = (id: string) =>
+    id === SOURCE_COLLECTIVITE
+      ? 0
+      : indexedSources?.findIndex(s => s.id === id) ?? 0;
+
+  // converti un index en id de source
+  const indexToId = (index: number) =>
+    index === 0
+      ? SOURCE_COLLECTIVITE
+      : indexedSources?.[index]?.id ?? SOURCE_COLLECTIVITE;
+
+  return {indexedSources, idToIndex, indexToId};
 };
