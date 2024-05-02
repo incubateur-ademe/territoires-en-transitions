@@ -16,7 +16,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
 import {useIndicateurPersonnalise} from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
-import {useRemoveIndicateurPerso} from './useRemoveIndicateurPerso';
+import {useDeleteIndicateurPerso} from './useRemoveIndicateurPerso';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -56,8 +56,8 @@ const IndicateurPersonnaliseBase = ({
   };
 
   const [showConfirm, setShowConfirm] = useState(false);
-  const {mutate: removeIndicateurPerso} = useRemoveIndicateurPerso(
-    collectivite?.collectivite_id,
+  const {mutate: deleteIndicateurPerso} = useDeleteIndicateurPerso(
+    collectivite?.collectivite_id as number,
     definition.id
   );
 
@@ -125,16 +125,17 @@ const IndicateurPersonnaliseBase = ({
         <Modal
           openState={{isOpen: showConfirm, setIsOpen: setShowConfirm}}
           title={`Suppression indicateur "${definition.nom}"`}
-          description="Vous perdrez définitivement les données associées à cet indicateur."
+          description="Êtes-vous sûr de vouloir supprimer cet indicateur personnalisé ? Vous perdrez définitivement les données associées à cet indicateur."
           renderFooter={({close}) => (
             <ModalFooterOKCancel
               btnCancelProps={{
                 onClick: () => close(),
               }}
               btnOKProps={{
+                children: 'Supprimer',
                 onClick: () => {
+                  deleteIndicateurPerso();
                   close();
-                  removeIndicateurPerso();
                 },
               }}
             />

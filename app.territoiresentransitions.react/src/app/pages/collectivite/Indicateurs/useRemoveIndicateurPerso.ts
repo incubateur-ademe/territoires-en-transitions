@@ -3,39 +3,60 @@ import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 // import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
-export const useRemoveIndicateurPerso = (
-  collectivite_id: number | undefined,
+export const useDeleteIndicateurPerso = (
+  collectivite_id: number,
   indicateur_id: number
 ) => {
-  //  const tracker = useFonctionTracker();
+  const tracker = useFonctionTracker();
   const history = useHistory();
   const queryClient = useQueryClient();
 
-  return useMutation(['remove_indicateur_perso', indicateur_id], async () => {
-    if (!collectivite_id || !indicateur_id) return;
+  return useMutation(
+    ['delete_indicateur_perso', indicateur_id],
+    async () => {
+      if (collectivite_id === undefined || indicateur_id === undefined) {
+        return;
+      }
 
-    // TODO: remplacer cet appel qui ne fonctionne pas par une RPC
-    const {error} = await supabaseClient
-      .from('indicateur_personnalise_definition')
-      .delete()
-      .match({collectivite_id, id: indicateur_id});
+      const {error} = await supabaseClient
+        .from('indicateur_personnalise_definition')
+        .delete()
+        .match({collectivite_id, id: indicateur_id});
 
-    if (!error) {
+      if (error) {
+        console.error(error);
+        throw error;
+      }
+
       queryClient.invalidateQueries([
         'indicateur_definitions',
         collectivite_id,
         'perso',
       ]);
+    },
 
-      history.push(
-        makeCollectiviteIndicateursUrl({
-          collectiviteId: collectivite_id,
-          indicateurView: 'perso',
-        })
-      );
-    } else {
-      console.error(error);
+    {
+      meta: {
+        success: "L'indicateur personnalisé est supprimé",
+        error: "L'indicateur personnalisé n'a pas pu être supprimé",
+      },
+      onSuccess: () => {
+        history.push(
+          makeCollectiviteIndicateursUrl({
+            collectiviteId: collectivite_id,
+            indicateurView: 'perso',
+          })
+        );
+
+        tracker({
+          page: 'indicateur',
+          action: 'suppression_indicateur',
+          fonction: '',
+        });
+        // tracker('delete_indicateur_perso', {indicateur_id});
+      },
     }
-  });
+  );
 };
