@@ -96,7 +96,7 @@ export interface TrackingPlan extends Record<string, Page> {
   /* La landing pour une collectivité, qui crée et renvoie sur un panier récent ou un nouveau panier. */
   'panier/landing/collectivite': {
     properties: {
-      collectivite_id: number;
+      collectivite_preset: number;
     };
     onglets: never;
     events: {
