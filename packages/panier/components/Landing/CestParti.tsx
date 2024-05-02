@@ -22,7 +22,7 @@ const CestParti = () => {
   const onClick = async () => {
     const base = await panierAPI.panierFromLanding(collectivite_id);
     collectivite_id
-      ? tracker('cta_panier_click', {collectivite_id: collectivite_id})
+      ? tracker('cta_panier_click', {collectivite_preset: collectivite_id})
       : // @ts-expect-error
         tracker('cta_panier_click');
     router.push(`/panier/${base.id}`);
