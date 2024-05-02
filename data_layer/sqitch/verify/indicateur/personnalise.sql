@@ -2,12 +2,7 @@
 
 BEGIN;
 
-select modified_by
-from indicateur_personnalise_resultat
-where false;
-
-select modified_by
-from indicateur_personnalise_objectif
-where false;
+-- Pas de changements autre que les droits
+-- Pas de changements autre que les delete cascade
 
 ROLLBACK;
