@@ -7,10 +7,12 @@ import {PageName, TrackingPlan} from './trackingPlan';
  *
  * le typage permet de respecter le plan de tracking.
  */
-interface TrackPageViewProps<N extends PageName> {
+
+type TrackPageViewProps<N extends PageName> = {
   pageName: N;
-  properties: TrackingPlan[N]['properties'];
-}
+} & (TrackingPlan[N]['properties'] extends object
+  ? {properties: TrackingPlan[N]['properties']}
+  : {properties?: undefined});
 
 /**
  * Envoi une page view à PostHog lors du rendering.

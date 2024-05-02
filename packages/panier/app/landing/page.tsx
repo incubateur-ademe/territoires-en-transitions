@@ -5,7 +5,7 @@ import React from 'react';
 export default async function Page() {
   return (
     <>
-      <TrackPageView pageName="panier/landing" properties={undefined} />
+      <TrackPageView pageName="panier/landing" />
       <Landing />
     </>
   );
