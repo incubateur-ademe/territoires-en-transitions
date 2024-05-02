@@ -1,5 +1,6 @@
+import {useEffect, useState} from 'react';
 import classNames from 'classnames';
-import {TIndicateurDefinition} from '../types';
+import {TIndicateurDefinition, SOURCE_COLLECTIVITE, SourceType} from '../types';
 import {
   TIndicateurValeurEtCommentaires,
   useIndicateurValeursEtCommentaires,
@@ -14,12 +15,10 @@ import {
   ValueTableRowReadOnly,
   IndicateurValueTableRow,
 } from './IndicateurValueTableRow';
-import {useEffect, useState} from 'react';
-import {SOURCE_COLLECTIVITE} from './useImportSources';
 
 type IndicateurValuesTableProps = {
   definition: TIndicateurDefinition;
-  type: 'resultat' | 'objectif';
+  type: SourceType;
   importSource?: string;
   isReadonly: boolean;
   confidentiel?: boolean;

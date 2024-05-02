@@ -1,5 +1,4 @@
-import {IndicateurImportSource, SOURCE_COLLECTIVITE} from './useImportSources';
-import {Tab, Tabs} from '@tet/ui';
+import {SOURCE_COLLECTIVITE} from '../types';
 
 /**
  * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il

@@ -1,14 +1,16 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition, TIndicateurPredefini} from '../types';
-
-type TypeValeur = 'resultat' | 'objectif';
+import {
+  SourceType,
+  TIndicateurDefinition,
+  TIndicateurPredefini,
+} from '../types';
 
 type TEditIndicateurValeurArgs = {
   collectivite_id: number | null;
   definition: TIndicateurDefinition;
-  type: TypeValeur;
+  type: SourceType;
 };
 
 /** Fourni des fonctions pour éditer ou "supprimer" une valeur/commentaire d'un indicateur */
@@ -33,11 +35,11 @@ export type TEditIndicateurValeurHandlers = ReturnType<
 >;
 
 // où écrire en fonction du type de valeur et si c'est un indicateur personnalisé ou non
-const tableValeur = (type: TypeValeur, isPerso?: boolean) =>
+const tableValeur = (type: SourceType, isPerso?: boolean) =>
   isPerso
     ? (`indicateur_personnalise_${type}` as const)
     : (`indicateur_${type}` as const);
-const tableCommentaire = (type: TypeValeur, isPerso?: boolean) =>
+const tableCommentaire = (type: SourceType, isPerso?: boolean) =>
   isPerso
     ? (`indicateur_perso_${type}_commentaire` as const)
     : (`indicateur_${type}_commentaire` as const);
