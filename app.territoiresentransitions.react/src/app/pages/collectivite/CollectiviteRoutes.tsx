@@ -14,6 +14,7 @@ import {
   collectivitePlansActionsBasePath,
   makeCollectiviteAccueilUrl,
   collectiviteAccueilPath,
+  collectiviteTDBLandingPath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -27,6 +28,7 @@ import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import AccueilPage from './Accueil/AccueilPage';
+import {TableauDeBordPage} from 'app/pages/collectivite/TableauDeBord/TableauDeBordPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -51,6 +53,9 @@ export const CollectiviteRoutes = () => {
       </RouteEnAccesRestreint>
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
+      </RouteEnAccesRestreint>
+      <RouteEnAccesRestreint path={collectiviteTDBLandingPath}>
+        <TableauDeBordPage />
       </RouteEnAccesRestreint>
 
       <Route path={collectiviteUsersPath}>
