@@ -86,7 +86,7 @@ export interface TrackingPlan extends Record<string, Page> {
 
   /* La landing générique, qui crée et renvoie sur un nouveau panier */
   'panier/landing': {
-    properties: never;
+    properties: undefined;
     onglets: never;
     events: {
       cta_panier_click: {};
@@ -145,4 +145,3 @@ export interface TrackingPlan extends Record<string, Page> {
     };
   };
 }
-

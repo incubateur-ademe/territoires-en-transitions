@@ -1,24 +1,39 @@
 import {useEffect} from 'react';
 import {usePostHog} from 'posthog-js/react';
-import {PageName} from './trackingPlan';
+import {PageName, TrackingPlan} from './trackingPlan';
+
+/**
+ * Les props du tracker de pageviews
+ *
+ * le typage permet de respecter le plan de tracking.
+ */
+interface TrackPageViewProps<N extends PageName> {
+  pageName: N;
+  properties: TrackingPlan[N]['properties'];
+}
 
 /**
  * Envoi une page view à PostHog lors du rendering.
  *
  * Note : en dev quand le mode strict est activé,
- * on envoie deux événementsà la suite.
+ * on envoie deux événements à la suite.
  * https://react.dev/reference/react/StrictMode
  *
- * @param pageName
+ * @param pageName Le nom de la page
+ * @param properties Les propriétés obligatoires de la page
  * @constructor
  */
-export function TrackPageView({pageName}: {pageName: PageName}): null {
+export function TrackPageView<N extends PageName>({
+  pageName,
+  properties,
+}: TrackPageViewProps<N>): null {
   const posthog = usePostHog();
 
   useEffect(() => {
     if (posthog) {
       posthog.capture('$pageview', {
         $current_url: pageName,
+        ...(properties ?? {}),
       });
     }
   }, [posthog, pageName]);
