@@ -2,11 +2,8 @@ import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Enums} from '@tet/api';
-import {TIndicateurDefinition} from './types';
-import {
-  SOURCE_COLLECTIVITE,
-  useIndicateurImportSources,
-} from './detail/useImportSources';
+import {SOURCE_COLLECTIVITE, SourceType, TIndicateurDefinition} from './types';
+import {useIndicateurImportSources} from './detail/useImportSources';
 
 export type TIndicateurValeur = {
   annee: number;
@@ -76,7 +73,7 @@ export const useIndicateurValeursEtCommentaires = ({
   importSource,
 }: {
   definition: TIndicateurDefinition;
-  type: 'resultat' | 'objectif';
+  type: SourceType;
   importSource?: string;
 }) => {
   const {id, isPerso} = definition;
