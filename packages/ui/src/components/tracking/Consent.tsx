@@ -9,6 +9,14 @@ export type ScriptLikeProps = {
 };
 
 /**
+ * Renvoi les vars d'env. pour le tracking depuis un module next js
+ */
+export const getNextConsentEnvId = () => {
+  const id = process.env.NEXT_PUBLIC_AXEPTIO_ID;
+  return id;
+};
+
+/**
  * Permet de demander le consentement du dépôt de cookies pour le tracking.
  *
  * @param onConsentSave Le callback, appelé quant le consentement est enregistré
@@ -18,11 +26,13 @@ export type ScriptLikeProps = {
 export function Consent({
   onConsentSave,
   script,
+  consentId,
 }: {
   onConsentSave: () => void;
   script: (props: ScriptLikeProps) => JSX.Element;
+  consentId: string;
 }) {
-  const client_id = process.env.NEXT_PUBLIC_AXEPTIO_ID;
+  const client_id = consentId;
   const is_dev = process.env.NODE_ENV === 'development';
   if (!client_id) {
     if (is_dev) {

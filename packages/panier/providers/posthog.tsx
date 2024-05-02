@@ -4,6 +4,7 @@ import {
   Consent,
   createTrackingClient,
   getConsent,
+  getNextConsentEnvId,
   getNextTrackingEnv,
   ScriptLikeProps,
   TrackingProvider,
@@ -21,6 +22,7 @@ export const PHProvider = ({children}: {children: React.ReactNode}) => {
       <TrackingProvider client={client}>{children}</TrackingProvider>
       <Consent
         onConsentSave={onConsentSave}
+        consentId={getNextConsentEnvId()}
         script={(props: ScriptLikeProps) => <Script {...props} />}
       />
     </>
