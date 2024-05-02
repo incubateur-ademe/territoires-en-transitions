@@ -27,20 +27,20 @@ export type PanierOngletName = 'selection' | 'réalisées' | 'en cours';
 
 /** Pour le tracking de page sans données additionnelles */
 type NoProps = {
-  properties: never;
+  properties: undefined;
   onglets: never;
   events: never;
 };
 
 /** Pour le tracking des écrans d'authent. */
 type PageWithSubmitButton = {
-  properties: never;
+  properties: undefined;
   onglets: never;
   events: {cta_submit: {}};
 };
 /** et le tracking des écrans avec les onglets avec/sans mdp */
 type AuthPageAvecOnglets = {
-  properties: never;
+  properties: undefined;
   onglets: 'sans_mdp' | 'avec_mdp';
   events: {cta_submit: {}};
 };

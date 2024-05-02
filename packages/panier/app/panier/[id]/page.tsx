@@ -42,7 +42,7 @@ async function Page({
     panierId,
     thematique_ids,
     budget_ids,
-    temps_ids,
+    temps_ids
   );
 
   if (!panier) return notFound();
@@ -53,7 +53,13 @@ async function Page({
 
   return (
     <>
-      <TrackPageView pageName="panier/panier" />
+      <TrackPageView
+        pageName="panier/panier"
+        properties={{
+          collectivite_preset: panier.collectivite_preset,
+          panier_id: panier.id,
+        }}
+      />
       <Section>
         <PanierRealtime
           panier={panier}
