@@ -39,7 +39,7 @@ export const useDeleteIndicateurPerso = (
 
     {
       meta: {
-        success: "L'indicateur personnalisé est supprimé",
+        success: "L'indicateur personnalisé a été supprimé",
         error: "L'indicateur personnalisé n'a pas pu être supprimé",
       },
       onSuccess: () => {
@@ -50,11 +50,11 @@ export const useDeleteIndicateurPerso = (
           })
         );
 
-        tracker({
-          page: 'indicateur',
-          action: 'suppression_indicateur',
-          fonction: '',
-        });
+        // tracker({
+        //   page: 'indicateur',
+        //   action: 'suppression_indicateur',
+        //   fonction: '',
+        // });
         // tracker('delete_indicateur_perso', {indicateur_id});
       },
     }
