@@ -12,6 +12,7 @@ import {
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
+  makeTableauBordUrl,
 } from 'app/paths';
 import {TNavDropdown, TNavItem, TNavItemsList} from './types';
 
@@ -28,7 +29,8 @@ const makeNavItemsBase = (
   user: UserData | null
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
-  const acces_restreint = collectivite.acces_restreint && collectivite.niveau_acces===null;
+  const acces_restreint =
+    collectivite.acces_restreint && collectivite.niveau_acces === null;
 
   // items communs qque soient les droits de l'utilisateur courant
   const common = [
@@ -164,6 +166,14 @@ const makeNavItemsBase = (
   // sinon renvoi les items communs et les items paramètres
   return [
     ...common,
+    {
+      label: 'Tableau de bord',
+      to: makeTableauBordUrl({
+        collectiviteId,
+        view: 'personnel',
+      }),
+      urlPrefix: ['/tableau-de-bord/'],
+    },
     {
       title: 'Paramètres',
       items: [
