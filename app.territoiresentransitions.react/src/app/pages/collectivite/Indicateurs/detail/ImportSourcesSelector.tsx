@@ -1,4 +1,14 @@
-import {SOURCE_COLLECTIVITE} from '../types';
+import {Alert, Button, Tab, Tabs} from '@tet/ui';
+import {SOURCE_COLLECTIVITE, SourceType} from '../types';
+import {IndicateurImportSource} from './useImportSources';
+
+const SOURCE_TYPE_LABEL: Record<SourceType, string> = {
+  objectif: 'objectifs',
+  resultat: 'résultats',
+};
+
+const getSourceTypeLabel = (sourceType: SourceType | null) =>
+  (sourceType && SOURCE_TYPE_LABEL[sourceType]) || null;
 
 /**
  * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il
@@ -13,18 +23,37 @@ export const ImportSourcesSelector = ({
   currentSource: string;
   setCurrentSource?: (value: string) => void;
 }) => {
-  const {indexedSources, idToIndex, indexToId} = useIndexedSources(sources);
+  const {indexedSources, idToIndex, indexToId, getSourceType} =
+    useIndexedSources(sources);
+  const sourceTypeLabel = getSourceTypeLabel(getSourceType(currentSource));
 
   return indexedSources && setCurrentSource ? (
-    <Tabs
-      tabsListClassName="!justify-start"
-      defaultActiveTab={idToIndex(currentSource)}
-      onChange={activeTab => setCurrentSource(indexToId(activeTab))}
-    >
-      {indexedSources?.map(({id, libelle}) => (
-        <Tab key={id} label={libelle} />
-      ))}
-    </Tabs>
+    <>
+      <Tabs
+        tabsListClassName="!justify-start"
+        defaultActiveTab={idToIndex(currentSource)}
+        onChange={activeTab => setCurrentSource(indexToId(activeTab))}
+      >
+        {indexedSources?.map(({id, libelle}) => (
+          <Tab
+            key={id}
+            label={
+              getSourceType(currentSource) === 'objectif'
+                ? `Objectifs ${libelle}`
+                : libelle
+            }
+          />
+        ))}
+      </Tabs>
+      {currentSource !== SOURCE_COLLECTIVITE && sourceTypeLabel && (
+        <Alert
+          classname="mb-8"
+          state="info"
+          title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
+          footer={<Button size="sm">Appliquer à mes {sourceTypeLabel}</Button>}
+        />
+      )}
+    </>
   ) : null;
 };
 
@@ -53,5 +82,14 @@ const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
       ? SOURCE_COLLECTIVITE
       : indexedSources?.[index]?.id ?? SOURCE_COLLECTIVITE;
 
-  return {indexedSources, idToIndex, indexToId};
+  // donne le type d'une source
+  const getSourceType = (id: string) => {
+    if (id === SOURCE_COLLECTIVITE) {
+      return null;
+    }
+    const index = idToIndex(id);
+    return indexedSources?.[index]?.type || 'resultat';
+  };
+
+  return {indexedSources, idToIndex, indexToId, getSourceType};
 };
