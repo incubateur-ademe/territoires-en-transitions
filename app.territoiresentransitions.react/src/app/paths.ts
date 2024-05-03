@@ -92,7 +92,7 @@ export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesP
 // TDB = tableau de bord
 export const collectiviteTDBBasePath = `${collectivitePath}/tableau-de-bord`;
 export const TDBViewId = 'tdbView';
-export const collectiviteTDBLandingPath = `${collectiviteTDBBasePath}/:${TDBViewId}`;
+export const collectiviteTDBPath = `${collectiviteTDBBasePath}/:${TDBViewId}`;
 export type TDBViewParam = 'collectivite' | 'personnel';
 export const collectiviteTDBCollectivitePath = `${collectiviteTDBBasePath}/collectivite`;
 export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personnel`;
@@ -104,7 +104,7 @@ export const makeTableauBordUrl = ({
   collectiviteId: number;
   view: TDBViewParam;
 }) => {
-  return collectiviteTDBLandingPath
+  return collectiviteTDBPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${TDBViewId}`, view);
 };
