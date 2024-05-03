@@ -25,38 +25,36 @@ const View = ({view, title, description, settingButton, children}: Props) => {
           <h2 className="mb-4">{title}</h2>
           <div className="text-lg text-grey-8">{description}</div>
         </div>
-        <div className="flex-shrink-0 flex items-center gap-6">
-          <div className="flex itens-center">
-            <ButtonGroup
-              activeButtonId={view}
-              size="sm"
-              buttons={[
-                {
-                  id: 'collectivite',
-                  onClick: () =>
-                    history.push(
-                      makeTableauBordUrl({
-                        collectiviteId: collectiviteId!,
-                        view: 'collectivite',
-                      })
-                    ),
-                  children: 'La collectivité',
-                },
-                {
-                  id: 'personnel',
-                  onClick: () =>
-                    history.push(
-                      makeTableauBordUrl({
-                        collectiviteId: collectiviteId!,
-                        view: 'personnel',
-                      })
-                    ),
-                  children: 'Mon tableau de bord',
-                },
-              ]}
-            />
-          </div>
-          <Button variant="outlined" icon="settings-2-line" size="sm" />
+        <div className="flex-shrink-0 flex items-center gap-4 mt-1">
+          <ButtonGroup
+            activeButtonId={view}
+            size="xs"
+            buttons={[
+              {
+                id: 'collectivite',
+                onClick: () =>
+                  history.push(
+                    makeTableauBordUrl({
+                      collectiviteId: collectiviteId!,
+                      view: 'collectivite',
+                    })
+                  ),
+                children: 'La collectivité',
+              },
+              {
+                id: 'personnel',
+                onClick: () =>
+                  history.push(
+                    makeTableauBordUrl({
+                      collectiviteId: collectiviteId!,
+                      view: 'personnel',
+                    })
+                  ),
+                children: 'Mon tableau de bord',
+              },
+            ]}
+          />
+          <Button variant="outlined" icon="settings-2-line" size="xs" />
           {settingButton}
         </div>
       </div>
