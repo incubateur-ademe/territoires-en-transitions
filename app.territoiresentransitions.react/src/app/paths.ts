@@ -97,6 +97,8 @@ export const collectiviteTDBPath = `${collectiviteTDBBasePath}/:${TDBViewId}`;
 export type TDBViewParam = 'collectivite' | 'personnel';
 export const collectiviteTDBCollectivitePath = `${collectiviteTDBBasePath}/collectivite`;
 export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personnel`;
+export const TDBModuleId = 'tdbModule';
+export const collectiviteTDBModulePath = `${collectiviteTDBPath}/:${TDBModuleId}`;
 
 export const makeTableauBordUrl = ({
   collectiviteId,
@@ -108,6 +110,21 @@ export const makeTableauBordUrl = ({
   return collectiviteTDBPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${TDBViewId}`, view);
+};
+
+export const makeTableauBordModuleUrl = ({
+  collectiviteId,
+  view,
+  module,
+}: {
+  collectiviteId: number;
+  view: TDBViewParam;
+  module: string;
+}) => {
+  return collectiviteTDBModulePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${TDBViewId}`, view)
+    .replace(`:${TDBModuleId}`, module);
 };
 
 export const makeCollectiviteIndicateursUrl = ({
