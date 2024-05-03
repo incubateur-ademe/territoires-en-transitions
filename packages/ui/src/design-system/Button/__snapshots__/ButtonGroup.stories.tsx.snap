@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Button/ButtonGroup Default smoke-test 1`] = `
+<div class="flex items-center">
+  <button id="1"
+          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="border-top-right-radius: 0px; border-bottom-right-radius: 0px;"
+  >
+    Bouton 1
+  </button>
+  <button id="2"
+          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="border-radius: 0px; border-right: 0px; border-left: 0px;"
+  >
+    Bouton 2
+  </button>
+  <button id="3"
+          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;"
+  >
+    Bouton 3
+  </button>
+</div>
+`;
+
+exports[`design-system/Button/ButtonGroup Deux smoke-test 1`] = `
+<div class="flex items-center">
+  <button id="1"
+          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-right: 0px;"
+  >
+    Bouton 1
+  </button>
+  <button id="2"
+          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="border-top-left-radius: 0px; border-bottom-left-radius: 0px; border-left: 0px;"
+  >
+    Bouton 2
+  </button>
+</div>
+`;
+
+exports[`design-system/Button/ButtonGroup Size smoke-test 1`] = `
+<div class="flex items-center">
+  <button id="1"
+          class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5"
+          style="border-top-right-radius: 0px; border-bottom-right-radius: 0px;"
+  >
+    Bouton 1
+  </button>
+  <button id="2"
+          class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5"
+          style="border-radius: 0px; border-right: 0px; border-left: 0px;"
+  >
+    Bouton 2
+  </button>
+  <button id="3"
+          class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5"
+          style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;"
+  >
+    Bouton 3
+  </button>
+</div>
+`;
