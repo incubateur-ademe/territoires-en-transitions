@@ -9,7 +9,16 @@ type Props = {
 
 /** Page d'un module du tableau de bord plans d'action */
 const ActionsDontJeSuisPilotePage = ({view}: Props) => {
-  return <ModulePage view={view} module={actionsDontJeSuisPilote} />;
+  /**
+   * TODO:
+   * - [ ] Récupérer et afficher la liste des actions
+   */
+
+  return (
+    <ModulePage view={view} title={actionsDontJeSuisPilote.title}>
+      Les actions filtrées
+    </ModulePage>
+  );
 };
 
 export default ActionsDontJeSuisPilotePage;
