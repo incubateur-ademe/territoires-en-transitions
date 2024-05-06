@@ -83,6 +83,7 @@ const IndicateurPersonnaliseBase = ({
               disabled={isLoading}
               icon="delete"
               title="Supprimer"
+              aria-label="Supprimer"
               onClick={() => setShowConfirm(true)}
             />
           )}
@@ -132,6 +133,7 @@ const IndicateurPersonnaliseBase = ({
                 onClick: () => close(),
               }}
               btnOKProps={{
+                'aria-label': 'Supprimer',
                 children: 'Supprimer',
                 onClick: () => {
                   deleteIndicateurPerso();

@@ -61,7 +61,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
       | 2001  | 456      |             |
       | 2000  | 123      | plop        |
 
-  Scénario: Ajouter et éditer un indicateur personnalisé
+  Scénario: Ajouter, éditer, et supprimer un indicateur personnalisé
     Etant donné une collectivité nommée "Le Bois Joli"
     Et un utilisateur avec les droits en "edition"
 
@@ -119,3 +119,10 @@ Fonctionnalité: Visualiser et éditer les indicateurs
 
     Quand je suis sur la page "Indicateurs personnalisés" de la collectivité courante
     Alors la page ne contient pas de graphiques vides
+
+    Quand je clique sur le 1er graphique
+    Et que je clique sur le bouton "Supprimer"
+    Et que je clique sur le bouton "Supprimer" de la "modale de confirmation"
+    Et que je suis sur la page "Indicateurs personnalisés" de la collectivité courante
+    Alors le texte "Aucun indicateur personnalisé" est visible
+
