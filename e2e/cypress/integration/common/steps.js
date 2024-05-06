@@ -185,7 +185,10 @@ function handleClickOnElement(subElement, elem) {
   const parent = resolveSelector(this, elem);
   cy.get(parent.selector).find(parent.children[subElement]).click();
 }
-When(/je clique sur le bouton "([^"]*)" du "([^"]*)"/, handleClickOnElement);
+When(
+  /je clique sur le bouton "([^"]*)" (?:du|de la) "([^"]*)"/,
+  handleClickOnElement
+);
 When(/je clique sur l'onglet "([^"]*)" du "([^"]*)"/, handleClickOnElement);
 When(
   /je clique sur le bouton "([^"]*)" de la page "([^"]*)"/,
