@@ -1,15 +1,15 @@
-import {useHistory} from 'react-router-dom';
-import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {useMutation, useQueryClient} from 'react-query';
+import {useHistory} from 'react-router-dom';
 // import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {useEventTracker} from '@tet/ui';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export const useDeleteIndicateurPerso = (
   collectivite_id: number,
   indicateur_id: number
 ) => {
-  const tracker = useFonctionTracker();
+  const tracker = useEventTracker('app/indicateurs/perso');
   const history = useHistory();
   const queryClient = useQueryClient();
 
@@ -50,12 +50,7 @@ export const useDeleteIndicateurPerso = (
           })
         );
 
-        // tracker({
-        //   page: 'indicateur',
-        //   action: 'suppression_indicateur',
-        //   fonction: '',
-        // });
-        // tracker('delete_indicateur_perso', {indicateur_id});
+        tracker('indicateur_suppression', {collectivite_id, indicateur_id});
       },
     }
   );
