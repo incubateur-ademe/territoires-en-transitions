@@ -3,10 +3,9 @@
 import React from 'react';
 import {notFound} from 'next/navigation';
 import dynamic from 'next/dynamic';
-import Section from '@components/Section';
 import {extractIdsFromParam} from 'src/utils/extractIdsFromParam';
 import {fetchNiveaux, fetchPanier, fetchThematiques} from './utils';
-import PanierRealtime from '@components/PanierRealtime';
+import PagePanier from './PagePanier';
 
 const TrackPageView = dynamic(() => import('components/TrackPageView'), {
   ssr: false,
@@ -42,7 +41,7 @@ async function Page({
     panierId,
     thematique_ids,
     budget_ids,
-    temps_ids
+    temps_ids,
   );
 
   if (!panier) return notFound();
@@ -60,14 +59,7 @@ async function Page({
           panier_id: panier.id,
         }}
       />
-      <Section>
-        <PanierRealtime
-          panier={panier}
-          budgets={budgets}
-          temps={temps}
-          thematiques={thematiques}
-        />
-      </Section>
+      <PagePanier {...{panier, budgets, temps, thematiques}} />
     </>
   );
 }
