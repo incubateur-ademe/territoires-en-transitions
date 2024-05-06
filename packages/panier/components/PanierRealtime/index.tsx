@@ -9,7 +9,7 @@ import {
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
-import {Alert, PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
+import {PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
 import {panierAPI, supabase} from 'src/clientAPI';
 import ListeActions from '@components/ListeActions';
 import PanierActions from '@components/PanierActions';
@@ -42,7 +42,6 @@ const PanierRealtime = ({
   thematiques,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
-  const [openAlert, setOpenAlert] = useState(true);
 
   const router = useRouter();
   const {setCollectiviteId} = useCollectiviteContext();
@@ -113,18 +112,12 @@ const PanierRealtime = ({
 
   return (
     <div className="grow flex max-lg:flex-col gap-8 max-lg:mb-6 min-h-[101vh]">
-      <div className="lg:w-3/5 xl:w-2/3 py-12 max-lg:pb-2 flex flex-col">
-        <Alert
-          isOpen={openAlert}
-          onClose={() => setOpenAlert(false)}
-          title="Contenu en cours de validation par l’ADEME et en amélioration continue"
-          classname="mb-8 -mt-4"
-        />
-        <h1 className="mb-4">
+      <div className="lg:w-3/5 xl:w-2/3 py-8 max-lg:pb-2 flex flex-col">
+        <h1 className="mb-6">
           Initiez <span className="text-primary">des actions impactantes</span>{' '}
           et valorisez le chemin déjà parcouru
         </h1>
-        <p className="text-grey-9 text-lg font-medium mt-0 mb-2">
+        <p className="text-grey-9 text-lg font-medium mb-6">
           Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
           fonction de leur état d'avancement.
         </p>

@@ -1,5 +1,5 @@
 import {ActionImpactFourchetteBudgetaire} from '@tet/api';
-import {Icon, Tooltip} from '@tet/ui';
+import {Icon} from '@tet/ui';
 import classNames from 'classnames';
 
 type NiveauBudgetProps = {
@@ -7,54 +7,45 @@ type NiveauBudgetProps = {
 };
 
 const NiveauBudget = ({budget}: NiveauBudgetProps) => {
-  const tooltipText = (
-    <div className="flex flex-col gap-2 text-primary-10">
-      <div className="font-bold">{budget.nom}</div>
-      <div>
-        Estimation budgétaire HT (investissement et fonctionnement, hors
-        subvention).
-      </div>
-      <div>
-        Une évaluation précise du budget sera à réaliser lors du dimensionnement
-        exacte de l’action.
-      </div>
-    </div>
-  );
+  // Mise en forme du label à partir du nom stocké en base
+  // ex : "De 40 000€ à 100 000€" => "40k à 100k"
+  // attention en cas de mise à jour des budgets
+  const label = budget.nom
+    .split('000')
+    .join('')
+    .replaceAll(' €', 'k')
+    .replace('De ', '');
 
   return (
-    <Tooltip
-      label={
-        <div className="w-52 !font-normal">
-          {budget.niveau === 1
-            ? 'Ordre de grandeur budgétaire non estimé.'
-            : tooltipText}
-        </div>
-      }
-    >
-      <div className="flex items-center justify-center px-1.5 py-1 border rounded border-grey-3 bg-grey-1">
-        <Icon
-          icon="money-euro-circle-fill"
-          className={classNames({
-            'text-secondary-1': budget.niveau > 1,
-            'text-grey-4': budget.niveau === 1,
-          })}
-        />
-        <Icon
-          icon="money-euro-circle-fill"
-          className={classNames({
-            'text-secondary-1': budget.niveau > 2,
-            'text-grey-4': budget.niveau <= 2,
-          })}
-        />
-        <Icon
-          icon="money-euro-circle-fill"
-          className={classNames({
-            'text-secondary-1': budget.niveau > 3,
-            'text-grey-4': budget.niveau <= 3,
-          })}
-        />
-      </div>
-    </Tooltip>
+    <div className="flex shrink-0 items-center justify-center px-1 py-0.5 border-[0.5px] rounded border-grey-3 bg-grey-1 gap-x-1">
+      <Icon
+        icon="money-euro-circle-fill"
+        size="sm"
+        className={classNames({
+          'text-secondary-1': budget.niveau > 1,
+          'text-grey-4': budget.niveau === 1,
+        })}
+      />
+      <Icon
+        icon="money-euro-circle-fill"
+        size="sm"
+        className={classNames({
+          'text-secondary-1': budget.niveau > 2,
+          'text-grey-4': budget.niveau <= 2,
+        })}
+      />
+      <Icon
+        icon="money-euro-circle-fill"
+        size="sm"
+        className={classNames({
+          'text-secondary-1': budget.niveau > 3,
+          'text-grey-4': budget.niveau <= 3,
+        })}
+      />
+      <span className="leading-3 pt-0.5 text-grey-6 text-sm font-bold">
+        {label}
+      </span>
+    </div>
   );
 };
 

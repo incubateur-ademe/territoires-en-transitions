@@ -7,11 +7,11 @@ type LienExterneModaleProps = {
 
 const LienExterneModale = ({url, label}: LienExterneModaleProps) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-start gap-2">
       <Icon icon="external-link-line" size="lg" className="text-primary-4" />
       <a
         href={url}
-        className="text-primary-10 text-sm font-bold bg-none active:!bg-transparent after:hidden border-b border-primary-10 hover:border-b-2 p-px hover:pb-0"
+        className="text-primary-10 text-sm leading-6 font-bold hover:text-primary-8 bg-none active:!bg-transparent after:hidden underline underline-offset-4"
         target="_blank"
         rel="noreferrer noopener"
       >
