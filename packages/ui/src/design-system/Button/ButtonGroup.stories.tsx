@@ -42,6 +42,16 @@ export const Size: Story = {
   },
 };
 
+export const Disabled: Story = {
+  args: {
+    buttons: [
+      {id: '1', children: 'Bouton 1', disabled: true},
+      {id: '2', children: 'Bouton 2'},
+      {id: '3', children: 'Bouton 3'},
+    ],
+  },
+};
+
 export const Deux: Story = {
   args: {
     buttons: [
