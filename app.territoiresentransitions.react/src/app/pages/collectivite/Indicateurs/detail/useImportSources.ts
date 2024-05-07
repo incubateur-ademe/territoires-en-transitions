@@ -3,7 +3,8 @@ import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {naturalSort} from 'utils/naturalSort';
-import {SOURCE_COLLECTIVITE, SourceType} from '../types';
+import {SourceType} from '../types';
+import {SOURCE_COLLECTIVITE} from '../constants';
 
 export type IndicateurImportSource = {
   id: string;
