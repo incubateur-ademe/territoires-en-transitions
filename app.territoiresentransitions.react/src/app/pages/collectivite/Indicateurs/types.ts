@@ -8,8 +8,6 @@ type Thematique = {
   nom: string;
 };
 
-export const SOURCE_COLLECTIVITE = '$sc';
-
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';
 
