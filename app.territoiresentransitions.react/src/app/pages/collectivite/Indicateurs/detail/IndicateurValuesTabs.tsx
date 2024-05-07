@@ -2,9 +2,9 @@ import {Tab, Tabs, useActiveTab} from 'ui/shared/Tabs';
 import ToggleButton from 'ui/shared/designSystem/ToggleButton';
 import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
 import {TIndicateurDefinition} from '../types';
+import {SOURCE_COLLECTIVITE} from '../constants';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurValuesTable} from './IndicateurValuesTable';
-import {SOURCE_COLLECTIVITE} from './useImportSources';
 import {useToggleIndicateurConfidentiel} from './useToggleIndicateurConfidentiel';
 import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
 

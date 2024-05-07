@@ -2,7 +2,8 @@ import {useQuery} from 'react-query';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Enums} from '@tet/api';
-import {SOURCE_COLLECTIVITE, SourceType, TIndicateurDefinition} from './types';
+import {SourceType, TIndicateurDefinition} from './types';
+import {SOURCE_COLLECTIVITE} from './constants';
 import {useIndicateurImportSources} from './detail/useImportSources';
 
 export type TIndicateurValeur = {

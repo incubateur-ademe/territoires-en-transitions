@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import classNames from 'classnames';
-import {TIndicateurDefinition, SOURCE_COLLECTIVITE, SourceType} from '../types';
+import {TIndicateurDefinition, SourceType} from '../types';
+import {SOURCE_COLLECTIVITE} from '../constants';
 import {
   TIndicateurValeurEtCommentaires,
   useIndicateurValeursEtCommentaires,
