@@ -27,6 +27,7 @@ export const IndicateurDetail = ({
   return (
     <>
       <ImportSourcesSelector
+        definition={definition}
         sources={sources}
         currentSource={currentSource}
         setCurrentSource={setCurrentSource}

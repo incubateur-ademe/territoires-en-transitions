@@ -138,7 +138,7 @@ const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 };
 
 // recharge les valeurs et l'état "rempli"
-const useOnSuccess = (args: TEditIndicateurValeurArgs) => {
+export const useOnSuccess = (args: TEditIndicateurValeurArgs) => {
   const {collectivite_id, definition, type} = args;
   const {id: indicateur_id} = definition;
   const parent = (definition as TIndicateurPredefini).parent;

@@ -1,31 +1,59 @@
-import {Alert, Button, Tab, Tabs} from '@tet/ui';
-import {SOURCE_COLLECTIVITE, SourceType} from '../types';
+import {useState} from 'react';
+import {Alert, Button, Modal, ModalFooterOKCancel, Tab, Tabs} from '@tet/ui';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {TIndicateurDefinition} from '../types';
+import {SOURCE_COLLECTIVITE} from '../constants';
 import {IndicateurImportSource} from './useImportSources';
-
-const SOURCE_TYPE_LABEL: Record<SourceType, string> = {
-  objectif: 'objectifs',
-  resultat: 'résultats',
-};
-
-const getSourceTypeLabel = (sourceType: SourceType | null) =>
-  (sourceType && SOURCE_TYPE_LABEL[sourceType]) || null;
+import {useApplyOpenData, useOpenDataComparaison} from './useApplyOpenData';
+import {ApplyOpenDataModal} from './ApplyOpenDataModal';
+import {getSourceTypeLabel} from '../constants';
 
 /**
  * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il
  * y en a plusieurs. Sinon rien n'est affiché.
  */
 export const ImportSourcesSelector = ({
+  definition,
   sources,
   currentSource,
   setCurrentSource,
 }: {
+  definition: TIndicateurDefinition;
   sources?: IndicateurImportSource[] | null;
   currentSource: string;
   setCurrentSource?: (value: string) => void;
 }) => {
   const {indexedSources, idToIndex, indexToId, getSourceType} =
     useIndexedSources(sources);
-  const sourceTypeLabel = getSourceTypeLabel(getSourceType(currentSource));
+  const s = sources?.find(s => s.id === currentSource);
+  const sourceType = getSourceType(currentSource);
+  const source =
+    (s &&
+      sourceType && {
+        id: s.id,
+        type: sourceType,
+        nom: s.libelle,
+      }) ||
+    undefined;
+  const sourceTypeLabel = getSourceTypeLabel(sourceType);
+  const comparaison = useOpenDataComparaison({
+    definition,
+    importSource: currentSource,
+  });
+  const canApplyOpenData =
+    currentSource !== SOURCE_COLLECTIVITE &&
+    sourceTypeLabel &&
+    !!(comparaison?.conflits || comparaison?.ajouts);
+  const collectivite = useCurrentCollectivite();
+  const collectivite_id = collectivite?.collectivite_id || null;
+
+  const {mutate: applyOpenData} = useApplyOpenData({
+    collectivite_id,
+    definition,
+    source,
+  });
+  const [isOpen, setIsOpen] = useState(false);
+  const [overwrite, setOverwrite] = useState(false);
 
   return indexedSources && setCurrentSource ? (
     <>
@@ -45,13 +73,59 @@ export const ImportSourcesSelector = ({
           />
         ))}
       </Tabs>
-      {currentSource !== SOURCE_COLLECTIVITE && sourceTypeLabel && (
-        <Alert
-          classname="mb-8"
-          state="info"
-          title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
-          footer={<Button size="sm">Appliquer à mes {sourceTypeLabel}</Button>}
-        />
+      {canApplyOpenData && (
+        <>
+          <Alert
+            classname="mb-8"
+            state="info"
+            title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
+            footer={
+              <Button
+                size="sm"
+                onClick={() => {
+                  // ouvrir le dialogue de résolution des conflits si nécessaire
+                  if (comparaison?.conflits) {
+                    if (!source || !sourceType) return;
+                    setIsOpen(true);
+                  } else {
+                    // applique les changements si nécessaire
+                    applyOpenData({comparaison, overwrite: false});
+                  }
+                }}
+              >
+                Appliquer à mes {sourceTypeLabel}
+              </Button>
+            }
+          />
+          {isOpen && source && sourceType && (
+            <Modal
+              size="xl"
+              openState={{isOpen, setIsOpen}}
+              title={`Appliquer les ${sourceTypeLabel} ${source.nom}`}
+              render={() => (
+                <ApplyOpenDataModal
+                  comparaison={comparaison}
+                  definition={definition}
+                  source={source}
+                  overwrite={overwrite}
+                  setOverwrite={setOverwrite}
+                />
+              )}
+              renderFooter={({close}) => (
+                <ModalFooterOKCancel
+                  btnCancelProps={{onClick: close}}
+                  btnOKProps={{
+                    onClick: () => {
+                      // applique les changements si nécessaire
+                      applyOpenData({comparaison, overwrite});
+                      close();
+                    },
+                  }}
+                />
+              )}
+            />
+          )}
+        </>
       )}
     </>
   ) : null;
