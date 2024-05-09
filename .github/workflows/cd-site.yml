@@ -45,7 +45,8 @@ jobs:
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
           --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }} 
-          --AMPLITUDE_KEY=${{ vars.AMPLITUDE_KEY }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }} 
+          --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
 
       - name: Deploy site on Koyeb
         run: >

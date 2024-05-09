@@ -13,7 +13,6 @@
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx}\""
   },
   "dependencies": {
-    "@amplitude/analytics-browser": "^2.3.5",
     "@floating-ui/react": "^0.25.2",
     "@gouvfr/dsfr": "^1.10.0",
     "@mdx-js/loader": "^2.3.0",
@@ -34,6 +33,7 @@
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "next": "^14.0.4",
+    "posthog-js": "^1.131.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",

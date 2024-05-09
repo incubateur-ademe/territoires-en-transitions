@@ -30,18 +30,14 @@ const useEvolutionCollectivitesLabellisees = (
 
       return data
         .filter(d => d.mois !== null)
-        .map(d => {
-          if (d.mois) console.log(new Date(d.mois).getFullYear());
-
-          return {
-            mois: d.mois,
-            '1 étoile': d.etoile_1 ?? 0,
-            '2 étoiles': d.etoile_2 ?? 0,
-            '3 étoiles': d.etoile_3 ?? 0,
-            '4 étoiles': d.etoile_4 ?? 0,
-            '5 étoiles': d.etoile_5 ?? 0,
-          };
-        });
+        .map(d => ({
+          mois: d.mois,
+          '1 étoile': d.etoile_1 ?? 0,
+          '2 étoiles': d.etoile_2 ?? 0,
+          '3 étoiles': d.etoile_3 ?? 0,
+          '4 étoiles': d.etoile_4 ?? 0,
+          '5 étoiles': d.etoile_5 ?? 0,
+        }));
     },
   );
 };
