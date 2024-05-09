@@ -42,6 +42,15 @@ const nextConfig = {
       ],
     },
   ],
+  // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
+  async rewrites() {
+    return [
+      {
+        source: '/ingest/:path*',
+        destination: 'https://eu.posthog.com/:path*',
+      },
+    ];
+  },
 };
 
 // ajoute le traitement des fichiers mdx

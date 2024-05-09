@@ -2,8 +2,9 @@ import './global.css';
 import AppHeader from './AppHeader';
 import {Metadata, Viewport} from 'next';
 import {getMetaData} from './utils';
-import {Amplitude} from './Amplitude';
 import Footer from '@components/layout/Footer';
+import {PHProvider} from 'providers/posthog';
+import TrackPage from './TrackPage';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -70,15 +71,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({children}: {children: JSX.Element}) {
   return (
-    <html>
-      <body className="min-h-screen flex flex-col justify-between">
-        <div className="grow flex flex-col">
-          <AppHeader />
-          <div className="grow flex flex-col">{children}</div>
-        </div>
-        <Footer />
-        <Amplitude />
-      </body>
-    </html>
+    <PHProvider>
+      <html>
+        <body className="min-h-screen flex flex-col justify-between">
+          <div className="grow flex flex-col">
+            <AppHeader />
+            <div className="grow flex flex-col">{children}</div>
+          </div>
+          <Footer />
+          <TrackPage />
+        </body>
+      </html>
+    </PHProvider>
   );
 }
