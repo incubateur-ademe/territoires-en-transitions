@@ -49,7 +49,6 @@ const CollectiviteHeader = ({
             className="object-cover object-center h-full w-full"
             containerClassName="h-full w-full object-cover object-center"
             displayCaption={false}
-            placeholder="/collectivites/placeholder.jpg"
           />
         ) : (
           <div className="bg-primary-3 h-full w-full relative">
