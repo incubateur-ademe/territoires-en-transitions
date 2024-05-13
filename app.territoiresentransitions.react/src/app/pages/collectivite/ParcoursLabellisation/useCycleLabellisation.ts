@@ -1,5 +1,5 @@
 import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useIsAuditeur} from '../Audit/useAudit';
 import {useCarteIdentite} from '../PersoReferentielThematique/useCarteIdentite';
 import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
@@ -30,7 +30,8 @@ export type TCycleLabellisationStatus =
 export const useCycleLabellisation = (
   referentiel: string | null
 ): TCycleLabellisation => {
-  const collectivite_id = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectivite_id = collectivite?.collectivite_id || null;
   const isAuditeur = useIsAuditeur();
   const identite = useCarteIdentite(collectivite_id);
 
@@ -52,7 +53,10 @@ export const useCycleLabellisation = (
       // et le référentiel est rempli
       completude_ok &&
       // et tous les critères sont atteints
-      rempli
+      rempli &&
+      // et l'utilisateur a le droit requis
+      collectivite &&
+      !collectivite?.readonly
   );
 
   // on peut soumettre une demande de labellisation si...
