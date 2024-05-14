@@ -39,6 +39,7 @@ export const ImportSourcesSelector = ({
   const comparaison = useOpenDataComparaison({
     definition,
     importSource: currentSource,
+    type: sourceType,
   });
   const canApplyOpenData =
     currentSource !== SOURCE_COLLECTIVITE &&

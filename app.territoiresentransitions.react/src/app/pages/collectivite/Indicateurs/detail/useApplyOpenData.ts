@@ -4,7 +4,10 @@
 
 import {useMutation} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TIndicateurValeur, useIndicateurValeurs} from '../useIndicateurValeurs';
+import {
+  TIndicateurValeurEtCommentaires,
+  useIndicateurValeursEtCommentaires,
+} from '../useIndicateurValeurs';
 import {SourceType, TIndicateurDefinition} from '../types';
 import {SOURCE_TYPE_LABEL} from '../constants';
 import {useOnSuccess} from './useEditIndicateurValeur';
@@ -14,9 +17,9 @@ import {useOnSuccess} from './useEditIndicateurValeur';
  */
 export const compareOpenData = (
   /** données actuelles */
-  currentData: TIndicateurValeur[],
+  currentData: TIndicateurValeurEtCommentaires[],
   /** données à appliquer */
-  openData: TIndicateurValeur[]
+  openData: TIndicateurValeurEtCommentaires[]
 ) => {
   if (!openData?.length) {
     // rien à appliquer
@@ -29,7 +32,7 @@ export const compareOpenData = (
   let ajouts = 0;
 
   // parcours chaque ligne à appliquer
-  const lignes = openData.map(({annee, valeur}) => {
+  const lignes = openData.map(({annee, valeur, source}) => {
     // cherche si une valeur a déjà été saisie pour la même année
     const existingData = currentData?.find(d => d.annee === annee);
 
@@ -44,6 +47,7 @@ export const compareOpenData = (
         annee,
         valeur: existingData?.valeur ?? null,
         nouvelleValeur: valeur,
+        source,
       };
     }
 
@@ -54,6 +58,7 @@ export const compareOpenData = (
       annee,
       valeur: existingData.valeur,
       nouvelleValeur: valeur,
+      source,
     };
   });
 
@@ -108,7 +113,24 @@ export const useApplyOpenData = ({
       // enregistre les changements
       // TODO: à changer quand le modèle aura changé
       const table = `indicateur_${source.type}` as const;
-      return supabaseClient.from(table).upsert(toUpsert);
+      const {error} = await supabaseClient.from(table).upsert(toUpsert);
+      if (error) {
+        return false;
+      }
+
+      // enregistre aussi le champ `source` en commentaire
+      const commentsToUpsert = filteredData!
+        .filter(({source}) => !!source)
+        .map(({annee, source}) => ({
+          annee,
+          commentaire: source!,
+          collectivite_id,
+          indicateur_id: definition.id as string,
+        }));
+      const commentsTable = `indicateur_${source.type}_commentaire` as const;
+      return supabaseClient.from(commentsTable).upsert(commentsToUpsert, {
+        onConflict: 'collectivite_id,indicateur_id,annee',
+      });
     },
     {
       mutationKey: 'apply_open_data',
@@ -134,13 +156,19 @@ export const useApplyOpenData = ({
 export const useOpenDataComparaison = ({
   definition,
   importSource,
+  type,
 }: {
   definition: TIndicateurDefinition;
   importSource: string;
+  type: SourceType | null;
 }) => {
-  const {data: currentData} = useIndicateurValeurs({id: definition.id});
-  const {data: openData} = useIndicateurValeurs({
-    id: definition.id,
+  const {data: currentData} = useIndicateurValeursEtCommentaires({
+    definition,
+    type,
+  });
+  const {data: openData} = useIndicateurValeursEtCommentaires({
+    definition,
+    type,
     importSource,
     enabled: !!importSource,
   });
