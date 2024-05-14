@@ -60,7 +60,9 @@ export const ButtonGroup = ({
           key={index}
           {...props}
           size={size}
-          variant={activeButtonId === props.id ? 'primary' : 'outlined'}
+          variant={
+            props.id && activeButtonId === props.id ? 'primary' : 'outlined'
+          }
           className="!border-primary-7"
           style={getButtonStyles(index)}
         />
