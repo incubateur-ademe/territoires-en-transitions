@@ -72,10 +72,13 @@ export const useIndicateurValeursEtCommentaires = ({
   definition,
   type,
   importSource,
+  enabled = true,
 }: {
   definition: TIndicateurDefinition;
-  type: SourceType;
+  type: SourceType | null;
   importSource?: string;
+  /** Pour désactiver le chargement auto. */
+  enabled?: boolean;
 }) => {
   const {id, isPerso} = definition;
   const collectivite_id = useCollectiviteId();
@@ -105,12 +108,13 @@ export const useIndicateurValeursEtCommentaires = ({
           query.eq('type', 'import');
         } else {
           query.is('source_id', null);
-          query.eq('type', 'resultat');
+          query.neq('type', 'import');
         }
       }
 
       const {data} = await query.returns<TIndicateurValeurEtCommentaires[]>();
       return data;
-    }
+    },
+    {enabled}
   );
 };
