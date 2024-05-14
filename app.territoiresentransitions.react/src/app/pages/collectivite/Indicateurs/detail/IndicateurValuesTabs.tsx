@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {Tab, Tabs, useActiveTab} from 'ui/shared/Tabs';
 import ToggleButton from 'ui/shared/designSystem/ToggleButton';
 import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
@@ -23,6 +24,15 @@ export const IndicateurValuesTabs = ({
     useToggleIndicateurConfidentiel(definition);
   const {data} = useIndicateurInfoLiees(definition);
   const {confidentiel} = data || {};
+
+  // force l'affichage de l'onglet Résultats sil il n'y a pas d'onglet Objectifs
+  // quand on passe d'une source de données à une autre
+  const avecObjectifs = !importSource || importSource === SOURCE_COLLECTIVITE;
+  useEffect(() => {
+    if (activeTab === 1 && !avecObjectifs) {
+      onChangeTab(0);
+    }
+  }, [avecObjectifs, activeTab]);
 
   return (
     <>
@@ -59,7 +69,7 @@ export const IndicateurValuesTabs = ({
             />
           )}
         </Tab>
-        {!importSource || importSource === SOURCE_COLLECTIVITE ? (
+        {avecObjectifs ? (
           <Tab label="Objectifs" icon="calendar-2">
             {activeTab === 1 && (
               <IndicateurValuesTable
