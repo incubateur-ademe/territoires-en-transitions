@@ -24,7 +24,7 @@ const Personnel = () => {
             />
           );
         }
-        return <div>Ce module n'existe pas</div>;
+        return null;
       })}
     </View>
   );
