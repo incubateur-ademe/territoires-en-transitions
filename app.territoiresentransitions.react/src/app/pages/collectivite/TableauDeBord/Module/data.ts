@@ -1,12 +1,13 @@
 import {Filters} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {TFilters} from 'app/pages/collectivite/PlansActions/FicheAction/data/filters';
+import {TDBViewParam} from 'app/paths';
 
 /** Référencer les différents slugs des modules ici,
  * sachant que l'affichage du bon module dépend de son slug */
 export type TDBModuleSlug = 'actions-dont-je-suis-pilote';
 
 /** Types générique d'un module tableau de bord plans d'action */
-export type TDBModuleTypes = {
+type TDBModule = {
   /** Le titre du module */
   title: string;
   /** Le nom donné à l'url du module,
@@ -15,7 +16,7 @@ export type TDBModuleTypes = {
 };
 
 /** Types d'un module spécifique aux fiches actions */
-export type TDBFichesActionsModuleTypes = TDBModuleTypes & {
+export type TDBFichesActionsModuleTypes = TDBModule & {
   /** Les différents filtres sélectionnés */
   filters: TFilters[];
   /** le type de tri sélectionné */
@@ -25,7 +26,7 @@ export type TDBFichesActionsModuleTypes = TDBModuleTypes & {
 };
 
 /** Types d'un module spécifique aux indicateurs */
-export type TDBIndicateursModuleTypes = TDBModuleTypes & {
+export type TDBIndicateursModuleTypes = TDBModule & {
   /** Les différents filtres sélectionnés */
   filters: Filters[];
   /** le type de tri sélectionné */
@@ -36,13 +37,21 @@ export type TDBIndicateursModuleTypes = TDBModuleTypes & {
 export const actionsDontJeSuisPilote: TDBFichesActionsModuleTypes = {
   title: 'Actions dont je suis le pilote',
   slug: 'actions-dont-je-suis-pilote',
-  filters: [],
   display: 'cards',
+  filters: [],
 };
 
-/** Liste des modules d'un utilisateur avec les filtres sauvegardés */
-export const tdbPersonnelModules: (
-  | TDBModuleTypes
+export type TDBUtilisateurModulesTypes = (
+  | TDBModule
   | TDBFichesActionsModuleTypes
   | TDBIndicateursModuleTypes
-)[] = [actionsDontJeSuisPilote];
+)[];
+
+/** Réglagle tableau de bord personnel de l'utilisateur */
+export const tdbUtilisateur: {
+  defaultView: TDBViewParam;
+  tdbPersonnelModules: TDBUtilisateurModulesTypes;
+} = {
+  defaultView: 'personnel',
+  tdbPersonnelModules: [actionsDontJeSuisPilote],
+};
