@@ -16,7 +16,6 @@ const Personnel = ({modules}: Props) => {
       view={'personnel'}
       title="Mon tableau de bord personnalisé"
       description="Ce tableau de bord est personnel afin de suivre mes plans d’action."
-      settingButton={undefined}
     >
       {modules.map(module => {
         if (module.slug === 'actions-dont-je-suis-pilote') {
