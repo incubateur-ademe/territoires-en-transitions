@@ -29,7 +29,7 @@ const ModulePage = ({view, title, children}: Props) => {
   return (
     <div data-test={`tdb-${slug}`}>
       {/** Header */}
-      <div className="border-b pb-8 mb-12">
+      <div className="border-b border-primary-3 pb-8 mb-12">
         <h2 className="mb-4">{title}</h2>
         <Button
           variant="underlined"

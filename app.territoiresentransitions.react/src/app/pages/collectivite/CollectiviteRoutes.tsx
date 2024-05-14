@@ -14,7 +14,7 @@ import {
   collectivitePlansActionsBasePath,
   makeCollectiviteAccueilUrl,
   collectiviteAccueilPath,
-  collectiviteTDBPath,
+  collectiviteTDBBasePath,
 } from 'app/paths';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
@@ -54,7 +54,7 @@ export const CollectiviteRoutes = () => {
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
       </RouteEnAccesRestreint>
-      <RouteEnAccesRestreint path={collectiviteTDBPath}>
+      <RouteEnAccesRestreint path={collectiviteTDBBasePath}>
         <TableauDeBordPage />
       </RouteEnAccesRestreint>
 
