@@ -12,7 +12,7 @@ import {
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
-  makeTableauBordUrl,
+  makeTableauBordLandingUrl,
 } from 'app/paths';
 import {TNavDropdown, TNavItem, TNavItemsList} from './types';
 
@@ -168,9 +168,8 @@ const makeNavItemsBase = (
     ...common,
     {
       label: 'Tableau de bord',
-      to: makeTableauBordUrl({
+      to: makeTableauBordLandingUrl({
         collectiviteId,
-        view: 'personnel',
       }),
       urlPrefix: ['/tableau-de-bord/'],
     },

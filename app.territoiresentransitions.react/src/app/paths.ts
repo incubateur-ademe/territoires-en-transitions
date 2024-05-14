@@ -99,6 +99,17 @@ export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personne
 export const TDBModuleId = 'tdbModule';
 export const collectiviteTDBModulePath = `${collectiviteTDBPath}/:${TDBModuleId}`;
 
+export const makeTableauBordLandingUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) => {
+  return collectiviteTDBBasePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+};
+
 export const makeTableauBordUrl = ({
   collectiviteId,
   view,
