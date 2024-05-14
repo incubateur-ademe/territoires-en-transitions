@@ -40,7 +40,6 @@ const TableauDeBord = () => {
             view={'collectivite'}
             title="Le tableau de bord collaboratif de ma collectivité."
             description="Ce tableau de bord est destiné à l'ensemble des personnes de ma collectivité et peut être modifié par les administrateurs."
-            settingButton={undefined}
             children={undefined}
           />
         </Route>

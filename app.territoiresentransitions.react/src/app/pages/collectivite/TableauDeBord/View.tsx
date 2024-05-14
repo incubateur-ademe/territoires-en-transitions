@@ -8,12 +8,11 @@ type Props = {
   view: TDBViewParam;
   title: string;
   description: string;
-  settingButton: React.ReactNode;
   children: React.ReactNode;
 };
 
 /** Vue générique parent pour les pages tableau de bord de la collectivité et personnel */
-const View = ({view, title, description, settingButton, children}: Props) => {
+const View = ({view, title, description, children}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
@@ -55,7 +54,6 @@ const View = ({view, title, description, settingButton, children}: Props) => {
             ]}
           />
           <Button variant="outlined" icon="settings-2-line" size="xs" />
-          {settingButton}
         </div>
       </div>
       {/** Contenu principal */}
