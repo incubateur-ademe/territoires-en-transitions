@@ -88,7 +88,7 @@ const ValuesTableBase = (
             {type === 'resultat' ? 'Résultat' : 'Objectif'}
             {unite && <span className="font-normal"> ({unite})</span>}
           </th>
-          <th scope="col">Commentaires</th>
+          <th scope="col">Commentaires (Source, etc…)</th>
         </tr>
       </thead>
       <tbody>
