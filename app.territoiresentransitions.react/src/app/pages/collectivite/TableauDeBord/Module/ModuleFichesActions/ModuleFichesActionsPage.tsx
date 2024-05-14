@@ -8,7 +8,7 @@ type Props = {
 };
 
 /** Page d'un module du tableau de bord plans d'action */
-const ActionsDontJeSuisPilotePage = ({view}: Props) => {
+const ModuleFichesActionsPage = ({view}: Props) => {
   /**
    * TODO:
    * - [ ] Récupérer et afficher la liste des actions
@@ -21,4 +21,4 @@ const ActionsDontJeSuisPilotePage = ({view}: Props) => {
   );
 };
 
-export default ActionsDontJeSuisPilotePage;
+export default ModuleFichesActionsPage;

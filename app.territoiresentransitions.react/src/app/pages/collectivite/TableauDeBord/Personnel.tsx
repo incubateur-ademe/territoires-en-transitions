@@ -1,6 +1,9 @@
-import {tdbPersonnelModules} from 'app/pages/collectivite/TableauDeBord/Module/data';
+import {
+  TDBFichesActionsModuleTypes,
+  tdbPersonnelModules,
+} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import View from './View';
-import ActionsDontJeSuisPilote from 'app/pages/collectivite/TableauDeBord/Module/ActionsDontJeSuisPilote/ActionsDontJeSuisPilote';
+import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 
 /** Vue personnelle du tableau de bord plans d'action */
 const Personnel = () => {
@@ -14,10 +17,10 @@ const Personnel = () => {
       {tdbPersonnelModules.map(module => {
         if (module.slug === 'actions-dont-je-suis-pilote') {
           return (
-            <ActionsDontJeSuisPilote
+            <ModuleFichesActions
               key={module.slug}
               view={'personnel'}
-              module={module}
+              module={module as TDBFichesActionsModuleTypes}
             />
           );
         }
