@@ -2,7 +2,7 @@ import {useParams} from 'react-router-dom';
 
 import {TDBViewParam} from 'app/paths';
 import {TDBModuleSlug} from './data';
-import ActionsDontJeSuisPilotePage from 'app/pages/collectivite/TableauDeBord/Module/ActionsDontJeSuisPilote/ActionsDontJeSuisPilotePage';
+import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
 
 type Props = {
   view: TDBViewParam;
@@ -17,7 +17,7 @@ const Modules = ({view}: Props) => {
   const {tdbModule: slug}: {tdbModule: TDBModuleSlug} = useParams();
 
   if (slug === 'actions-dont-je-suis-pilote') {
-    return <ActionsDontJeSuisPilotePage view={view} />;
+    return <ModuleFichesActionsPage view={view} />;
   }
   return <div>Ce module n'existe pas</div>;
 };

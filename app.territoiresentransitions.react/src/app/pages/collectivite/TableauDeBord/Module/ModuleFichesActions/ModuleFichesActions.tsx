@@ -5,15 +5,15 @@ import {Button} from '@tet/ui';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import Module from '../Module';
-import {TDBModuleTypes} from '../data';
+import {TDBFichesActionsModuleTypes} from '../data';
 
 type Props = {
   view: TDBViewParam;
-  module: TDBModuleTypes;
+  module: TDBFichesActionsModuleTypes;
 };
 
 /** Module pour la page tableau de bord plans d'action */
-const ActionsDontJeSuisPilote = ({view, module}: Props) => {
+const ModuleFichesActions = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
@@ -44,4 +44,4 @@ const ActionsDontJeSuisPilote = ({view, module}: Props) => {
   );
 };
 
-export default ActionsDontJeSuisPilote;
+export default ModuleFichesActions;
