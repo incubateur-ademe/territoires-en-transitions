@@ -2,18 +2,20 @@ import {useEffect} from 'react';
 import {usePostHog} from 'posthog-js/react';
 import {PageName, TrackingPlan} from './trackingPlan';
 
-/**
- * Type guard pour les propriétés
- */
-function isRelativeToCollectivite(object: unknown): object is {
-  collectivite_id?: number;
-  collectivite_preset?: number;
-} {
-  return (
-    typeof object === 'object' &&
-    ('collectivite_id' in object || 'collectivite_preset' in object)
-  );
-}
+// extrait l'id de la collectivité depuis l'objet donné si une des propriétés
+// attendues est présente
+const getCollectiviteId = (properties: unknown) => {
+  if (typeof properties === 'object') {
+    if ('collectivite_id' in properties) {
+      return `${properties.collectivite_id}`;
+    }
+    if ('collectivite_preset' in properties) {
+      return `${properties.collectivite_preset}`;
+    }
+  }
+
+  return null;
+};
 
 /**
  * Les props du tracker de pageviews
@@ -24,7 +26,7 @@ type TrackPageViewProps<N extends PageName> = {
   pageName: N;
 } & (TrackingPlan[N]['properties'] extends object
   ? {properties: TrackingPlan[N]['properties']}
-  : {properties?: undefined});
+  : {properties?: undefined | {collectivite_id: number}});
 
 /**
  * Envoi une page view à PostHog lors du rendering.
@@ -47,12 +49,7 @@ export function TrackPageView<N extends PageName>({
     if (posthog) {
       // Spécifie le groupe des évenements qui suivent cet appel
       // https://posthog.com/docs/getting-started/group-analytics
-      posthog.group(
-        'collectivite',
-        isRelativeToCollectivite(properties)
-          ? `${properties.collectivite_id ?? properties.collectivite_preset}`
-          : null
-      );
+      posthog.group('collectivite', getCollectiviteId(properties));
 
       // Envoie la pageview manuellement à PostHog conformément au tracking plan
       posthog.capture('$pageview', {
