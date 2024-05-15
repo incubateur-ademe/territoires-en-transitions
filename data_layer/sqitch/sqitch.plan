@@ -683,3 +683,4 @@ plan_action/fiches [plan_action/fiches@v3.6.0] 2024-07-02T09:46:13Z Frederic Arn
 plan_action/fiches [plan_action/fiches@v3.7.0] 2024-07-02T13:21:08Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Amélioration des performances des requêtes de filtre
 @v3.8.0 2024-07-05T19:06:22Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Amélioration des performances des requêtes de filtre
 
+indicateur/fusion 2024-05-10T12:26:07Z Amandine Jacquelin <conta@LanceLibre> # Fusionne les indicateurs predefini et personnalisés. Fusionne les résultats et objectifs.
