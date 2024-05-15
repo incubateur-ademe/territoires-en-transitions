@@ -6,6 +6,8 @@ import {
 } from 'react-router-dom';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
+import {TrackingProvider, createTrackingClient} from '@tet/ui';
+import {ENV} from 'environmentVariables';
 import {E2E} from './E2E';
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
@@ -32,9 +34,11 @@ const theme = createTheme({
 });
 
 const queryClient = new QueryClient();
+const trackingClient = createTrackingClient(ENV.posthog);
 
 export const App = () => {
   return (
+    <TrackingProvider client={trackingClient}>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ThemeProvider theme={theme}>
@@ -73,5 +77,6 @@ export const App = () => {
         </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
+    </TrackingProvider>
   );
 };
