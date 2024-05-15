@@ -293,11 +293,15 @@ app-build: ## construit l'image de l'app
     ARG --required API_URL
     ARG CRISP_WEBSITE_ID
     ARG SENTRY_DSN
+    ARG POSTHOG_HOST
+    ARG POSTHOG_KEY
     FROM +front-deps
     ENV REACT_APP_SUPABASE_URL=$API_URL
     ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
     ENV REACT_APP_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
     ENV REACT_APP_SENTRY_DSN=$SENTRY_DSN
+    ENV REACT_APP_POSTHOG_HOST=$POSTHOG_HOST
+    ENV REACT_APP_POSTHOG_KEY=$POSTHOG_KEY
     LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
