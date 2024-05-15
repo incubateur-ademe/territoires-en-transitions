@@ -1,6 +1,6 @@
 import {useHistory} from 'react-router-dom';
 
-import {Button} from '@tet/ui';
+import {Button, Modal} from '@tet/ui';
 
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -22,8 +22,20 @@ const ModuleFichesActions = ({view, module}: Props) => {
    * - [ ] Récupérer et afficher la liste des actions
    */
 
+  const loading = false;
+  const isEmpty = false;
+
   return (
-    <Module title={module.title}>
+    <Module
+      title={module.title}
+      symbole={module.symbole}
+      editModal={openState => (
+        <Modal openState={openState} render={() => <div>Filtres</div>} />
+      )}
+      isLoading={loading}
+      isEmpty={isEmpty}
+      selectedFilters={['test']}
+    >
       <Button
         variant="outlined"
         className="mt-4"
