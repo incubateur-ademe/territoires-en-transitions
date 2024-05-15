@@ -1,6 +1,7 @@
 import {Filters} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {TFilters} from 'app/pages/collectivite/PlansActions/FicheAction/data/filters';
 import {TDBViewParam} from 'app/paths';
+import PictoExpert from 'ui/pictogrammes/PictoExpert';
 
 /** Référencer les différents slugs des modules ici,
  * sachant que l'affichage du bon module dépend de son slug */
@@ -13,12 +14,14 @@ type TDBModule = {
   /** Le nom donné à l'url du module,
    * est utilisé comme id pour afficher la bonne page du module */
   slug: TDBModuleSlug;
+  /** Le symbole du module (picto svg) */
+  symbole?: React.ReactNode;
 };
 
 /** Types d'un module spécifique aux fiches actions */
 export type TDBFichesActionsModuleTypes = TDBModule & {
   /** Les différents filtres sélectionnés */
-  filters: TFilters[];
+  filters: TFilters;
   /** le type de tri sélectionné */
   sortBy?: any;
   /** Défini l'affichage des actions */
@@ -38,7 +41,8 @@ export const actionsDontJeSuisPilote: TDBFichesActionsModuleTypes = {
   title: 'Actions dont je suis le pilote',
   slug: 'actions-dont-je-suis-pilote',
   display: 'cards',
-  filters: [],
+  symbole: <PictoExpert />,
+  filters: {collectivite_id: 1},
 };
 
 export type TDBUtilisateurModulesTypes = (
