@@ -10,7 +10,7 @@ type Props = {
   view: TDBViewParam;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
-   * (voir le module ActionsDontJeSuisPilote pour un exemple) */
+   * (voir ModuleFichesActionsPage pour un exemple) */
   children: React.ReactNode;
 };
 
