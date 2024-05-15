@@ -48,7 +48,7 @@ type AuthPageAvecOnglets = {
 /**
  * Permet de respecter le plan de tracking.
  */
-export interface TrackingPlan extends Record<string, Page> {
+export interface TrackingPlan extends Record<never, Page> {
   /* La page à la racine de https://auth.territoiresentransitions.fr */
   'auth/': NoProps;
 
