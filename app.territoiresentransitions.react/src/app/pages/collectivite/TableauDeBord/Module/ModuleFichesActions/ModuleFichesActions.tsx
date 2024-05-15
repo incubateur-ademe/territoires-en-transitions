@@ -40,7 +40,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
       footerButtons={
         data.length > 4 && (
           <Button
-            variant="outlined"
+            variant="grey"
             size="sm"
             onClick={() =>
               history.push(
