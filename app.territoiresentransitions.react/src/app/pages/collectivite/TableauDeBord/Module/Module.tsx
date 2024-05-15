@@ -91,8 +91,8 @@ const Module = ({
         <>
           {/** Bouton d'édition des filtres du module + modale */}
           <Button
-            variant="outlined"
-            icon="settings-2-line"
+            variant="grey"
+            icon="edit-line"
             size="xs"
             className="ml-auto"
             onClick={() => setIsModalOpen(true)}
