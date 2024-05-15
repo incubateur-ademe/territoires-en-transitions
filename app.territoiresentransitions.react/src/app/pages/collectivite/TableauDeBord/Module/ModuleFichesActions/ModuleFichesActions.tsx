@@ -12,7 +12,8 @@ type Props = {
   module: TDBFichesActionsModuleTypes;
 };
 
-/** Module pour la page tableau de bord plans d'action */
+/** Module pour les différents modules liés aux fiches action
+ * dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
@@ -24,6 +25,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
 
   const loading = false;
   const isEmpty = false;
+  const data = [1, 2, 3, 4, 5, 6];
 
   return (
     <Module
@@ -35,23 +37,30 @@ const ModuleFichesActions = ({view, module}: Props) => {
       isLoading={loading}
       isEmpty={isEmpty}
       selectedFilters={['test']}
+      footerButtons={
+        data.length > 4 && (
+          <Button
+            variant="outlined"
+            size="sm"
+            onClick={() =>
+              history.push(
+                makeTableauBordModuleUrl({
+                  collectiviteId: collectiviteId!,
+                  view,
+                  module: module.slug,
+                })
+              )
+            }
+          >
+            Afficher{' '}
+            {data.length === 5
+              ? '1 autre action'
+              : `les ${data.length - 4} autres actions`}
+          </Button>
+        )
+      }
     >
-      <Button
-        variant="outlined"
-        className="mt-4"
-        size="sm"
-        onClick={() =>
-          history.push(
-            makeTableauBordModuleUrl({
-              collectiviteId: collectiviteId!,
-              view,
-              module: module.slug,
-            })
-          )
-        }
-      >
-        Ouvrir la page du module
-      </Button>
+      Contenu du module
     </Module>
   );
 };
