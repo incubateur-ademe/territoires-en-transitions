@@ -12,10 +12,14 @@ import Personnel from './Personnel';
 import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {tdbUtilisateur} from 'app/pages/collectivite/TableauDeBord/Module/data';
+import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
   const collectivite_id = useCollectiviteId();
+
+  const plansActions = usePlansActionsListe(collectivite_id!);
+  const isEmpty = plansActions?.plans.length === 0;
 
   return (
     <div className="bg-grey-2 -mb-8 py-12">
@@ -32,7 +36,10 @@ const TableauDeBord = () => {
         </Route>
         {/** Tableau de bord personnel */}
         <Route exact path={collectiviteTDBPersonnelPath}>
-          <Personnel modules={tdbUtilisateur.tdbPersonnelModules} />
+          <Personnel
+            isEmpty={isEmpty}
+            modules={tdbUtilisateur.tdbPersonnelModules}
+          />
         </Route>
         {/** Tableau de bord de la collectivité */}
         <Route exact path={collectiviteTDBCollectivitePath}>
