@@ -43,14 +43,14 @@ export const useDeleteIndicateurPerso = (
         error: "L'indicateur personnalisé n'a pas pu être supprimé",
       },
       onSuccess: () => {
+        tracker('indicateur_suppression', {collectivite_id, indicateur_id});
+
         history.push(
           makeCollectiviteIndicateursUrl({
             collectiviteId: collectivite_id,
             indicateurView: 'perso',
           })
         );
-
-        tracker('indicateur_suppression', {collectivite_id, indicateur_id});
       },
     }
   );
