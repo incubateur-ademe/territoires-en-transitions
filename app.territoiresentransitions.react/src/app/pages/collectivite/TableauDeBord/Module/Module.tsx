@@ -26,6 +26,8 @@ type Props = {
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
   children: React.ReactNode;
+  /** Des boutons optionnels dans un fragment qui s'affichent au pied du module */
+  footerButtons?: React.ReactNode;
 };
 
 /** Composant générique d'un module du tableau de bord plans d'action */
@@ -37,6 +39,7 @@ const Module = ({
   selectedFilters,
   isEmpty,
   children,
+  footerButtons,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -76,8 +79,17 @@ const Module = ({
   return (
     <ModuleContainer>
       <div className="flex items-start gap-20">
-        <h6>{title}</h6>
+        <div>
+          <h6 className="mb-0">{title}</h6>
+          <div className="flex gap-4 mt-4">
+            {/** Selected filters */}
+            {selectedFilters.map(filter => (
+              <Badge key={filter} title={filter} state="standard" />
+            ))}
+          </div>
+        </div>
         <>
+          {/** Bouton d'édition des filtres du module + modale */}
           <Button
             variant="outlined"
             icon="settings-2-line"
@@ -88,8 +100,14 @@ const Module = ({
           {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
         </>
       </div>
-      {/** Filters */}
-      {children}
+      {/** Contenu du module */}
+      <div className="flex-grow">{children}</div>
+      {/** Footer buttons */}
+      {footerButtons && (
+        <div className="mt-auto ml-auto flex items-center gap-4">
+          {footerButtons}
+        </div>
+      )}
     </ModuleContainer>
   );
 };
@@ -97,7 +115,7 @@ const Module = ({
 export default Module;
 
 const ModuleContainer = ({children}: {children: React.ReactNode}) => (
-  <div className="min-h-[21rem] flex flex-col p-8 bg-primary-0 border border-primary-4 rounded-xl">
+  <div className="min-h-[21rem] flex flex-col gap-6 p-8 bg-primary-0 border border-primary-4 rounded-xl">
     {children}
   </div>
 );
