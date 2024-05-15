@@ -1525,6 +1525,54 @@
       "action_ids": [
         "cae_1.2.3"
       ],
+      "description": "<p>Il s\u2019agit de la part (en poids) des d\u00e9chets m\u00e9nagers et assimil\u00e9s (DMA) orient\u00e9s vers le recyclage mati\u00e8re. Le recyclage consiste en toute op\u00e9ration de valorisation par laquelle les d\u00e9chets, sont retrait\u00e9s en substances, mati\u00e8res ou produits pour resservir \u00e0 leur fonction initiale ou \u00e0 d\u2019autres fins (d\u00e9finition du code de l\u2019environnement). La valorisation \u00e9nerg\u00e9tique n'est pas prise en compte ici.</p>\n<p>NB : On mesure les d\u00e9chets \u00ab orient\u00e9s vers le recyclage \u00bb, les refus de tri ne sont donc pas d\u00e9duits. Ne sont pas consid\u00e9r\u00e9s ici comme \u00ab orient\u00e9s vers le recyclage \u00bb les d\u00e9chets entrant dans des installations de tri m\u00e9canobiologique. Pour ces derniers, seuls les flux sortant orient\u00e9s vers le recyclage mati\u00e8re (m\u00e9taux r\u00e9cup\u00e9r\u00e9s) sont \u00e0 int\u00e9grer dans les flux \u00ab orient\u00e9s vers le recyclage \u00bb. Les m\u00e2chefers valoris\u00e9s ainsi que les m\u00e9taux r\u00e9cup\u00e9r\u00e9s sur m\u00e2chefers ne sont pas int\u00e9gr\u00e9s.</p>\n",
+      "id": "cae_7.aa",
+      "identifiant": "7.aa",
+      "nom": "Recyclage des d\u00e9chets mati\u00e8res",
+      "parent": "cae_7",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "eci_dechets"
+      ],
+      "titre_long": "Part des d\u00e9chets m\u00e9nagers et assimil\u00e9s orient\u00e9s vers le recyclage mati\u00e8re \u00e0 par an (%)",
+      "type": "impact",
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
+      "description": "<p>Il s\u2019agit de la part (en poids) des d\u00e9chets m\u00e9nagers et assimil\u00e9s (DMA) orient\u00e9s vers le recyclage organique. Le recyclage consiste en toute op\u00e9ration de valorisation par laquelle les d\u00e9chets, y compris organiques, sont retrait\u00e9s en substances, mati\u00e8res ou produits pour resservir \u00e0 leur fonction initiale ou \u00e0 d\u2019autres fins (d\u00e9finition du code de l\u2019environnement). La valorisation \u00e9nerg\u00e9tique n'est pas prise en compte ici.</p>\n<p>NB : On mesure les d\u00e9chets \u00ab orient\u00e9s vers le recyclage \u00bb, les refus de tri ne sont donc pas d\u00e9duits. Ne sont pas consid\u00e9r\u00e9s ici comme \u00ab orient\u00e9s vers le recyclage \u00bb les d\u00e9chets entrant dans des installations de tri m\u00e9canobiologique. Pour ces derniers, seuls les flux sortant orient\u00e9s vers la valorisation organique (compostage ou m\u00e9thanisation) sont \u00e0 int\u00e9grer dans les flux \u00ab orient\u00e9s vers le recyclage \u00bb. Les m\u00e2chefers valoris\u00e9s ainsi que les m\u00e9taux r\u00e9cup\u00e9r\u00e9s sur m\u00e2chefers ne sont pas int\u00e9gr\u00e9s.</p>\n",
+      "id": "cae_7.ab",
+      "identifiant": "7.ab",
+      "nom": "Recyclage des d\u00e9chets organiques",
+      "parent": "cae_7",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "eci_dechets"
+      ],
+      "titre_long": "Part des d\u00e9chets m\u00e9nagers et assimil\u00e9s orient\u00e9s vers le recyclage organique \u00e0 par an (%)",
+      "type": "impact",
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
       "description": "<p>Recyclage des d\u00e9chets du BTP : a minima ceux produits par les chantiers de la collectivit\u00e9, mais dans l'id\u00e9al, ceux produits par toute la fili\u00e8re BTP locale.</p>\n<p>L'objectif est de d\u00e9passer 70% de valorisation des d\u00e9chets du BTP (objectif que l\u2019Europe a fix\u00e9 dans la directive-cadre d\u00e9chets).</p>\n",
       "id": "cae_7.b",
       "identifiant": "7.b",
@@ -1653,8 +1701,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1979,8 +2027,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3142,8 +3190,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3168,8 +3216,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3194,8 +3242,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3220,8 +3268,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3246,8 +3294,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3272,8 +3320,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3371,8 +3419,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3701,7 +3749,7 @@
       "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9blais et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>\n<ul>\n<li>\n<p>Valeur limite : 573 kg/hab.an</p>\n</li>\n<li>\n<p>Valeur cible : 480 kg/hab.an</p>\n</li>\n</ul>\n",
       "id": "cae_6.a",
       "identifiant": "6.a",
-      "nom": "Production de d\u00e9chets",
+      "nom": "Production de d\u00e9chets (avec d\u00e9blais et gravats)",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -4082,8 +4130,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "pcaet",
-        "clef"
+        "clef",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4641,8 +4689,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "crte",
-        "clef"
+        "clef",
+        "crte"
       ],
       "sans_valeur": true,
       "selection": false,
