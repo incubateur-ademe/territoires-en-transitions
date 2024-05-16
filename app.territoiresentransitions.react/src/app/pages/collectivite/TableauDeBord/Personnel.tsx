@@ -1,5 +1,5 @@
 import {
-  TDBFichesActionsModuleTypes,
+  TDBModuleFichesActions,
   TDBUtilisateurModulesTypes,
 } from 'app/pages/collectivite/TableauDeBord/Module/data';
 import View from './View';
@@ -28,7 +28,7 @@ const Personnel = ({isEmpty, modules}: Props) => {
               <ModuleFichesActions
                 key={module.slug}
                 view={'personnel'}
-                module={module as TDBFichesActionsModuleTypes}
+                module={module as TDBModuleFichesActions}
               />
             );
           }
