@@ -54,6 +54,11 @@ async function Page({
     <>
       <TrackPageView
         pageName="panier/panier"
+        // @ts-ignore : l'import dynamique du composant semble générer une
+        // erreur de typage erronée sur la ligne suivante (en important
+        // directement le composant depuis @tet/ui l'erreur disparait, mais on
+        // ne peut pas le faire car le wrapping avec la directive `'use client'`
+        // est nécessaire)
         properties={{
           collectivite_preset: panier.collectivite_preset,
           panier_id: panier.id,
