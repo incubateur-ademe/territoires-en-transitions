@@ -1,17 +1,14 @@
 import {usePostHog} from 'posthog-js/react';
-import {PageName, TrackingPlan} from './trackingPlan';
+import {PageName, PageProperties, TrackingPlan} from './trackingPlan';
 
 /**
  * Le tracker les changements d'onglet d'une page.
  *
  * le typage permet de respecter le plan de tracking.
  */
-type PageOngletTracker = <
-  O extends string & TrackingPlan[PageName]['onglets'],
-  P extends TrackingPlan[PageName]['properties']
->(
-  onglet: O,
-  properties: P
+type PageOngletTracker<N extends PageName> = (
+  onglet: TrackingPlan[N]['onglets'],
+  properties?: PageProperties<N>
 ) => Promise<void>;
 
 /**
@@ -19,15 +16,17 @@ type PageOngletTracker = <
  *
  * @param pageName le pathname de la page
  */
-export function useOngletTracker(pageName: PageName): PageOngletTracker {
+export function useOngletTracker<N extends PageName>(
+  pageName: N
+): PageOngletTracker<N> {
   const posthog = usePostHog();
 
-  return async (onglet, properties) => {
+  return async (onglet, properties = undefined) => {
     if (posthog) {
       posthog.capture('onglet', {
         $current_url: pageName,
         onglet: onglet,
-        ...properties,
+        ...(properties ?? {}),
       });
     } else {
       console.error(`PostHog is not ready.`);
