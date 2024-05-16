@@ -50,16 +50,41 @@ type AuthPageAvecOnglets = {
   events: {cta_submit: {}};
 };
 
+type OpenDataSource = {
+  source_id: string;
+  type: 'resultat' | 'objectif';
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<never, Page> {
+  /** Page indicateur perso */
   'app/indicateurs/perso': {
     properties: {collectivite_id: number};
     onglets: never;
     events: {
       indicateur_suppression: {indicateur_id: number};
     };
+  };
+
+  /** Page indicateur prédéfini */
+  'app/indicateurs/predefini': {
+    properties: {collectivite_id: number; indicateur_id: string};
+    onglets: never;
+    events: {
+      /** Consultation des données open data par fournisseur */
+      view_open_data: OpenDataSource;
+      /** Applique une source open data aux résultats ou objectifs */
+      apply_open_data: OpenDataSource & {overwrite: boolean};
+    };
+  };
+
+  /** Modale qui affiche les données open-data en conflits avec les données déjà saisies */
+  'app/indicateurs/predefini/conflits': {
+    properties: {collectivite_id: number; indicateur_id: string};
+    onglets: never;
+    events: never;
   };
 
   /* La page à la racine de https://auth.territoiresentransitions.fr */
