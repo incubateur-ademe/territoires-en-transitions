@@ -5,11 +5,11 @@ import {Button, Modal} from '@tet/ui';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import Module from '../Module';
-import {TDBFichesActionsModuleTypes} from '../data';
+import {TDBModuleFichesActions} from '../data';
 
 type Props = {
   view: TDBViewParam;
-  module: TDBFichesActionsModuleTypes;
+  module: TDBModuleFichesActions;
 };
 
 /** Module pour les différents modules liés aux fiches action
