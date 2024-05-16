@@ -1,5 +1,14 @@
 import {useState} from 'react';
-import {Alert, Button, Modal, ModalFooterOKCancel, Tab, Tabs} from '@tet/ui';
+import {
+  Alert,
+  Button,
+  Modal,
+  ModalFooterOKCancel,
+  Tab,
+  Tabs,
+  TrackPageView,
+  useEventTracker,
+} from '@tet/ui';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TIndicateurDefinition} from '../types';
 import {SOURCE_COLLECTIVITE} from '../constants';
@@ -70,13 +79,25 @@ export const ImportSourcesSelector = ({
   const [isOpen, setIsOpen] = useState(false);
   const [overwrite, setOverwrite] = useState(false);
 
+  const trackEvent = useEventTracker('app/indicateurs/predefini');
+
   return indexedSources && setCurrentSource ? (
     /** onglets de sélection de la source si il y a des sources open-data dispo */
     <>
       <Tabs
         tabsListClassName="!justify-start"
         defaultActiveTab={idToIndex(currentSource)}
-        onChange={activeTab => setCurrentSource(indexToId(activeTab))}
+        onChange={activeTab => {
+          const sourceId = indexToId(activeTab);
+          setCurrentSource(sourceId);
+          if (sourceId !== SOURCE_COLLECTIVITE)
+            trackEvent('view_open_data', {
+              collectivite_id: collectivite_id!,
+              indicateur_id: definition.id as string,
+              source_id: sourceId,
+              type: sourceType || 'resultat',
+            });
+        }}
       >
         {indexedSources?.map(({id, libelle}) => (
           <Tab
@@ -121,13 +142,22 @@ export const ImportSourcesSelector = ({
               openState={{isOpen, setIsOpen}}
               title={`Appliquer les ${sourceTypeLabel} ${source.nom}`}
               render={() => (
-                <ApplyOpenDataModal
-                  comparaison={comparaison}
-                  definition={definition}
-                  source={source}
-                  overwrite={overwrite}
-                  setOverwrite={setOverwrite}
-                />
+                <>
+                  <TrackPageView
+                    pageName="app/indicateurs/predefini/conflits"
+                    properties={{
+                      collectivite_id: collectivite_id!,
+                      indicateur_id: definition.id as string,
+                    }}
+                  />
+                  <ApplyOpenDataModal
+                    comparaison={comparaison}
+                    definition={definition}
+                    source={source}
+                    overwrite={overwrite}
+                    setOverwrite={setOverwrite}
+                  />
+                </>
               )}
               renderFooter={({close}) => (
                 <ModalFooterOKCancel
