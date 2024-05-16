@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 import {usePostHog} from 'posthog-js/react';
-import {PageName, TrackingPlan} from './trackingPlan';
+import {PageName, PageProperties} from './trackingPlan';
 
 // extrait l'id de la collectivité depuis l'objet donné si une des propriétés
 // attendues est présente
@@ -24,9 +24,9 @@ const getCollectiviteId = (properties: unknown) => {
  */
 type TrackPageViewProps<N extends PageName> = {
   pageName: N;
-} & (TrackingPlan[N]['properties'] extends object
-  ? {properties: TrackingPlan[N]['properties']}
-  : {properties?: undefined | {collectivite_id: number}});
+} & (PageProperties<N> extends object
+  ? {properties: PageProperties<N>}
+  : {properties?: undefined});
 
 /**
  * Envoi une page view à PostHog lors du rendering.
