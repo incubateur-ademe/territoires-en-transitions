@@ -23,8 +23,11 @@ export const ImportSourcesSelector = ({
   currentSource: string;
   setCurrentSource?: (value: string) => void;
 }) => {
+  // utilitaire pour faire correspondre les index d'onglet aux id de source
   const {indexedSources, idToIndex, indexToId, getSourceType} =
     useIndexedSources(sources);
+
+  // source sélectionnée
   const s = sources?.find(s => s.id === currentSource);
   const sourceType = getSourceType(currentSource);
   const source =
@@ -35,28 +38,40 @@ export const ImportSourcesSelector = ({
         nom: s.libelle,
       }) ||
     undefined;
+
+  // libellé en fonction du type de source
   const sourceTypeLabel = getSourceTypeLabel(sourceType);
+
+  // compare les données open-data avec les données courantes (si la source est externe)
   const comparaison = useOpenDataComparaison({
     definition,
     importSource: currentSource,
     type: sourceType,
   });
+
+  // détermine si le bouton "appliquer à mes objectifs/résultats" doit être affiché
   const canApplyOpenData =
     currentSource !== SOURCE_COLLECTIVITE &&
     sourceTypeLabel &&
     !!(comparaison?.conflits || comparaison?.ajouts);
+
+  // collectivité courante
   const collectivite = useCurrentCollectivite();
   const collectivite_id = collectivite?.collectivite_id || null;
 
+  // mutation pour appliquer les données
   const {mutate: applyOpenData} = useApplyOpenData({
     collectivite_id,
     definition,
     source,
   });
+
+  // état local de la modale de résolution des conflits
   const [isOpen, setIsOpen] = useState(false);
   const [overwrite, setOverwrite] = useState(false);
 
   return indexedSources && setCurrentSource ? (
+    /** onglets de sélection de la source si il y a des sources open-data dispo */
     <>
       <Tabs
         tabsListClassName="!justify-start"
@@ -75,6 +90,7 @@ export const ImportSourcesSelector = ({
         ))}
       </Tabs>
       {canApplyOpenData && (
+        /** bandeau & bouton "appliquer à mes objectifs/résultats" */
         <>
           <Alert
             classname="mb-8"
@@ -99,6 +115,7 @@ export const ImportSourcesSelector = ({
             }
           />
           {isOpen && source && sourceType && (
+            /** modale de résolution des conflits */
             <Modal
               size="xl"
               openState={{isOpen, setIsOpen}}
