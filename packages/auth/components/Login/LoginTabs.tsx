@@ -59,10 +59,10 @@ export const LoginTabs = (props: LoginPropsWithState) => {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
             form.setValue('password', '');
             setIsPasswordless(true);
-            ongletTracker('sans_mdp', {});
+            ongletTracker('sans_mdp');
           } else {
             setIsPasswordless(false);
-            ongletTracker('avec_mdp', {});
+            ongletTracker('avec_mdp');
           }
         }}
       >
