@@ -139,7 +139,7 @@ const expectations: {
     filter: {
       collectivite_id: 1,
     },
-    count: 200, // 199 indicateurs prédéfinis + 1 perso
+    count: 202, // 201 indicateurs prédéfinis + 1 perso
     examples: [
       {
         collectivite_id: 1,
