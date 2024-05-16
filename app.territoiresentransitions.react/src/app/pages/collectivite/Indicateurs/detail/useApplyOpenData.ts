@@ -3,6 +3,7 @@
  */
 
 import {useMutation} from 'react-query';
+import {useEventTracker} from '@tet/ui';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {
   TIndicateurValeurEtCommentaires,
@@ -86,6 +87,15 @@ export const useApplyOpenData = ({
   definition,
   source,
 }: UseApplyOpenDataArgs) => {
+  const trackEvent = useEventTracker('app/indicateurs/predefini');
+
+  const type = source?.type || 'resultat';
+  const onSuccess = useOnSuccess({
+    collectivite_id,
+    definition,
+    type,
+  });
+
   return useMutation(
     async ({
       comparaison,
@@ -141,11 +151,16 @@ export const useApplyOpenData = ({
             source.nom
           } ont bien été appliqués`,
       },
-      onSuccess: useOnSuccess({
-        collectivite_id,
-        definition,
-        type: source?.type || 'resultat',
-      }),
+      onSuccess: (data, {overwrite}) => {
+        onSuccess();
+        trackEvent('apply_open_data', {
+          collectivite_id: collectivite_id!,
+          indicateur_id: definition.id as string,
+          source_id: source!.id,
+          type,
+          overwrite,
+        });
+      },
     }
   );
 };

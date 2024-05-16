@@ -7,6 +7,8 @@ import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
 import {TIndicateurPredefini} from './types';
 import {useExportIndicateurs} from './useExportIndicateurs';
 import {useIndicateurPredefini} from './useIndicateurDefinition';
+import {TrackPageView} from '@tet/ui';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -18,8 +20,14 @@ export const IndicateurPredefiniBase = ({
     definition,
   ]);
 
+  const collectivite_id = useCollectiviteId()!;
+
   return (
     <>
+      <TrackPageView
+        pageName="app/indicateurs/predefini"
+        properties={{collectivite_id, indicateur_id: definition.id}}
+      />
       <HeaderIndicateur title={definition.nom} />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
