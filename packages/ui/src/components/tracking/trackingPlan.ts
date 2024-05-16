@@ -20,6 +20,11 @@ interface Page {
  */
 export type PageName = keyof TrackingPlan;
 
+/** Propriétés d'une page */
+export type PageProperties<N extends PageName> = (TrackingPlan[N]['properties'] extends object
+? TrackingPlan[N]['properties']
+: undefined);
+
 /**
  * Liste des onglets de la page panier
  */
