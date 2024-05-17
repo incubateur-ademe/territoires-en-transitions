@@ -27,6 +27,7 @@ export * from './design-system/Icon';
 export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
+export * from './design-system/Pagination';
 export * from './design-system/Select';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
