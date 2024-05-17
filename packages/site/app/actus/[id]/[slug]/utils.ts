@@ -59,7 +59,7 @@ export const getData = async (id: number) => {
   ]);
 
   if (data) {
-    const idList = await fetchCollection('actualites', [
+    const {data: idList} = await fetchCollection('actualites', [
       ['fields[0]', 'DateCreation'],
       ['fields[1]', 'createdAt'],
       ['fields[2]', 'Epingle'],

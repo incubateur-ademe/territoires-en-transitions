@@ -26,7 +26,7 @@ type ActuCard = {
 };
 
 const getData = async () => {
-  const data = await fetchCollection('actualites', [
+  const {data} = await fetchCollection('actualites', [
     ['populate[0]', 'Couverture'],
     ['sort[0]', 'createdAt:desc'],
   ]);

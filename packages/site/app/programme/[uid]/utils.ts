@@ -11,7 +11,7 @@ import {
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export const getServiceStrapiData = async (uid: string) => {
-  const data = await fetchCollection('services', [
+  const {data} = await fetchCollection('services', [
     ['filters[uid]', `${uid}`],
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],

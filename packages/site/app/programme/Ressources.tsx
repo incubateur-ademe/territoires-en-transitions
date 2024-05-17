@@ -15,6 +15,11 @@ const Ressources = ({description}: RessourcesProps) => {
           variant: 'outlined',
         },
         {
+          title: 'Annuaire des conseillers',
+          href: '/programme/annuaire',
+          variant: 'outlined',
+        },
+        {
           title: 'Lire les questions fréquentes',
           href: '/faq',
           variant: 'outlined',

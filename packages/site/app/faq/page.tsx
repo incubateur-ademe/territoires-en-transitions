@@ -20,7 +20,7 @@ export type FaqData = {
 };
 
 const getData = async () => {
-  const data = await fetchCollection('faqs');
+  const {data} = await fetchCollection('faqs');
 
   const formattedData = data
     ? sortByRank(data).map(d => ({

@@ -70,7 +70,7 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
 };
 
 export const getStrapiData = async (codeSirenInsee: string) => {
-  const data = await fetchCollection('collectivites', [
+  const {data} = await fetchCollection('collectivites', [
     ['filters[code_siren_insee]', `${codeSirenInsee}`],
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
