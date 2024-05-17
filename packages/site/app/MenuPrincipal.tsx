@@ -9,10 +9,11 @@ import {MenuProps} from './AppHeader';
 type MenuItemProps = {
   children: ReactNode;
   href: string;
+  external?: boolean;
 } & MenuProps;
 
 function MenuItem(props: MenuItemProps) {
-  const {href, children, setMenuOpened} = props;
+  const {href, children, external, setMenuOpened} = props;
   const pathName = usePathname();
   const pathNameBase = pathName?.split('/').splice(0, 2).join('/');
 
@@ -20,7 +21,8 @@ function MenuItem(props: MenuItemProps) {
     <li className="fr-nav__item">
       <Link
         href={href}
-        target="_self"
+        target={external ? '_blank' : '_self'}
+        rel={external ? 'noreferrer noopener' : ''}
         aria-controls="modal-header__menu"
         className="fr-nav__link"
         aria-current={href === pathNameBase ? 'page' : undefined}
@@ -58,6 +60,13 @@ export function MenuPrincipal(props: MenuProps) {
       </MenuItem>
       <MenuItem href="/contact" {...props}>
         Contact
+      </MenuItem>
+      <MenuItem
+        href="https://rencontres.territoiresentransitions.fr/"
+        external
+        {...props}
+      >
+        Rencontres
       </MenuItem>
     </ul>
   );
