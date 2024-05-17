@@ -11,6 +11,7 @@ const headers = {
 type Collection =
   | 'actualites'
   | 'collectivites'
+  | 'conseillers'
   | 'faqs'
   | 'services'
   | 'temoignages';
@@ -26,7 +27,10 @@ type Single =
 export async function fetchCollection(
   path: Collection,
   params: [string, string][] = [['populate', '*']],
-): Promise<Array<StrapiItem>> {
+): Promise<{
+  data: Array<StrapiItem>;
+  meta: {pagination: {start: number; limit: number; total: number}};
+}> {
   const url = new URL(`${baseURL}/api/${path}`);
   params.forEach(p => url.searchParams.append(...p));
 
@@ -36,7 +40,7 @@ export async function fetchCollection(
     headers,
   });
   const body = await response.json();
-  return body['data'];
+  return body;
 }
 
 export const fetchSingle = async (

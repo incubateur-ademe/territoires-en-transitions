@@ -824,6 +824,75 @@ export interface ApiCollectiviteCollectivite extends Schema.CollectionType {
   };
 }
 
+export interface ApiConseillerConseiller extends Schema.CollectionType {
+  collectionName: 'conseillers';
+  info: {
+    singularName: 'conseiller';
+    pluralName: 'conseillers';
+    displayName: 'Conseillers';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    prenom: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    nom: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    structure: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    region: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    ville: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    email: Attribute.Email &
+      Attribute.Required &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    linkedin: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    site: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    photo: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::conseiller.conseiller',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::conseiller.conseiller',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiFaqFaq extends Schema.CollectionType {
   collectionName: 'faqs';
   info: {
@@ -1302,6 +1371,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::actualite.actualite': ApiActualiteActualite;
       'api::collectivite.collectivite': ApiCollectiviteCollectivite;
+      'api::conseiller.conseiller': ApiConseillerConseiller;
       'api::faq.faq': ApiFaqFaq;
       'api::page-accueil.page-accueil': ApiPageAccueilPageAccueil;
       'api::page-budget.page-budget': ApiPageBudgetPageBudget;

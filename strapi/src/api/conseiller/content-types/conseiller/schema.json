@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "conseillers",
+  "info": {
+    "singularName": "conseiller",
+    "pluralName": "conseillers",
+    "displayName": "Conseillers"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "prenom": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "nom": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "structure": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "region": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "ville": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "maxLength": 255,
+      "unique": true
+    },
+    "linkedin": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "site": {
+      "type": "string",
+      "required": false,
+      "maxLength": 255
+    },
+    "photo": {
+      "allowedTypes": ["images"],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}
