@@ -26,13 +26,14 @@ export const IndicateurDetail = ({
 
   return (
     <>
-      <ImportSourcesSelector
-        definition={definition}
-        sources={sources}
-        currentSource={currentSource}
-        setCurrentSource={setCurrentSource}
-      />
-
+      {!!sources?.length && (
+        <ImportSourcesSelector
+          definition={definition}
+          sources={sources}
+          currentSource={currentSource}
+          setCurrentSource={setCurrentSource}
+        />
+      )}
       <IndicateurDetailChart
         definition={definition}
         rempli={definition.rempli}

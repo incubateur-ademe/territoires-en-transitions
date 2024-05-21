@@ -28,16 +28,16 @@ export const ImportSourcesSelector = ({
   setCurrentSource,
 }: {
   definition: TIndicateurDefinition;
-  sources?: IndicateurImportSource[] | null;
+  sources: IndicateurImportSource[];
   currentSource: string;
-  setCurrentSource?: (value: string) => void;
+  setCurrentSource: (value: string) => void;
 }) => {
   // utilitaire pour faire correspondre les index d'onglet aux id de source
   const {indexedSources, idToIndex, indexToId, getSourceType} =
     useIndexedSources(sources);
 
   // source sélectionnée
-  const s = sources?.find(s => s.id === currentSource);
+  const s = sources.find(s => s.id === currentSource);
   const sourceType = getSourceType(currentSource);
   const source =
     (s &&
@@ -179,7 +179,7 @@ export const ImportSourcesSelector = ({
   ) : null;
 };
 
-/**
+/*
  * Ajoute la source "mes données" à l'index 0 et renvoi des fonctions
  * utilitaires pour transformer les id en index et réciproquement.
  */
