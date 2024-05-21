@@ -1,14 +1,14 @@
 import {FicheAction} from '../../data/types';
-import {
-  IndicateurViewParamOption,
-  makeCollectiviteIndicateursUrl,
-} from 'app/paths';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import IndicateursPanel from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/Panel/Panel';
 import {CreerIndicateurPersoModal} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/CreerIndicateurPersoModal';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
-import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import {
+  getIndicateurGroup,
+  selectIndicateur,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {usePanelDispatch} from 'app/pages/collectivite/CollectivitePageLayout/Panel/PanelContext';
 import Content from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/Panel/Content';
 
@@ -23,20 +23,6 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
   const collectiviteId = useCollectiviteId();
 
   const panelDispatch = usePanelDispatch();
-
-  /**
-   * Retourne le groupe auquel appartient l'indicateur.
-   * Si l'id est undefined, on assume que c'est un indicateur personnalisé.
-   */
-  const getIndicateurGroup = (
-    indicateur_id?: string | null
-  ): IndicateurViewParamOption => {
-    if (indicateur_id) {
-      return indicateur_id.split('_')[0] as IndicateurViewParamOption;
-    } else {
-      return 'perso';
-    }
-  };
 
   return (
     <>
