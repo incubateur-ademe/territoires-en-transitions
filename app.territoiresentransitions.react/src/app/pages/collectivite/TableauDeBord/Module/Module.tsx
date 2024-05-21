@@ -1,4 +1,5 @@
 import {Badge, Button} from '@tet/ui';
+import classNames from 'classnames';
 import React, {useState} from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
@@ -55,23 +56,21 @@ const Module = ({
 
   if (isEmpty) {
     return (
-      <ModuleContainer>
-        <div className="m-auto flex flex-col items-center text-center">
-          <div className="mb-4">{symbole}</div>
-          <h4 className="mb-2 text-primary-8">{title}</h4>
-          <p className="m-0 font-bold text-primary-9">
-            Aucun résultat pour ce filtre !
-          </p>
-          <div className="flex gap-4 my-6">
-            {selectedFilters.map(filter => (
-              <Badge key={filter} title={filter} state="standard" />
-            ))}
-          </div>
-          <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            Modifier le filtre
-          </Button>
-          {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
+      <ModuleContainer className="gap-0 items-center text-center !bg-primary-0">
+        <div className="mb-4">{symbole}</div>
+        <h4 className="mb-2 text-primary-8">{title}</h4>
+        <p className="m-0 font-bold text-primary-9">
+          Aucun résultat pour ce filtre !
+        </p>
+        <div className="flex gap-4 my-6">
+          {selectedFilters.map(filter => (
+            <Badge key={filter} title={filter} state="standard" />
+          ))}
         </div>
+        <Button size="sm" onClick={() => setIsModalOpen(true)}>
+          Modifier le filtre
+        </Button>
+        {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
       </ModuleContainer>
     );
   }
@@ -114,8 +113,19 @@ const Module = ({
 
 export default Module;
 
-const ModuleContainer = ({children}: {children: React.ReactNode}) => (
-  <div className="min-h-[21rem] flex flex-col gap-6 p-8 bg-primary-0 border border-primary-4 rounded-xl">
+const ModuleContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div
+    className={classNames(
+      'min-h-[21rem] flex flex-col gap-6 p-8 bg-white border border-primary-4 rounded-xl',
+      className
+    )}
+  >
     {children}
   </div>
 );
