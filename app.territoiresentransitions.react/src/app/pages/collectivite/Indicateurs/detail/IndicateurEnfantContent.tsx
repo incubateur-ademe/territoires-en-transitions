@@ -27,12 +27,14 @@ export const IndicateurEnfantContent = ({
 
   return (
     <div className="p-6">
-      <ImportSourcesSelector
-        definition={definition}
-        sources={sources}
-        currentSource={currentSource}
-        setCurrentSource={setCurrentSource}
-      />
+      {!!sources?.length && (
+        <ImportSourcesSelector
+          definition={definition}
+          sources={sources}
+          currentSource={currentSource}
+          setCurrentSource={setCurrentSource}
+        />
+      )}
       <IndicateurDetailChart
         definition={definition}
         rempli={definition.rempli}
