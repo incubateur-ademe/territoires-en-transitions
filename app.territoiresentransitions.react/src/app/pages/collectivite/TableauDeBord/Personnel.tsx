@@ -1,18 +1,22 @@
 import {
   TDBModuleFichesActions,
+  TDBModuleIndicateurs,
+  TDBModuleSlug,
   TDBUtilisateurModulesTypes,
 } from 'app/pages/collectivite/TableauDeBord/Module/data';
 import View from './View';
 import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 import TdbVide from './TdbVide';
+import ModuleIndicateurs from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateurs';
 
 type Props = {
   isEmpty: boolean;
   modules: TDBUtilisateurModulesTypes;
+  plan_ids?: number[];
 };
 
 /** Vue personnelle du tableau de bord plans d'action */
-const Personnel = ({isEmpty, modules}: Props) => {
+const Personnel = ({isEmpty, modules, plan_ids}: Props) => {
   return (
     <View
       view={'personnel'}
@@ -22,18 +26,32 @@ const Personnel = ({isEmpty, modules}: Props) => {
       {isEmpty ? (
         <TdbVide />
       ) : (
-        modules.map(module => {
-          if (module.slug === 'actions-dont-je-suis-pilote') {
-            return (
-              <ModuleFichesActions
-                key={module.slug}
-                view={'personnel'}
-                module={module as TDBModuleFichesActions}
-              />
-            );
-          }
-          return null;
-        })
+        <div className="flex flex-col gap-10">
+          {modules.map(module => {
+            if (module.slug === TDBModuleSlug.ACTIONS_DONT_JE_SUIS_LE_PILOTE) {
+              return (
+                <ModuleFichesActions
+                  key={module.slug}
+                  view={'personnel'}
+                  module={module as TDBModuleFichesActions}
+                />
+              );
+            }
+            if (
+              module.slug === TDBModuleSlug.INDICATEURS_DE_SUIVI_DE_MES_PLANS
+            ) {
+              return (
+                <ModuleIndicateurs
+                  key={module.slug}
+                  view={'personnel'}
+                  module={module as TDBModuleIndicateurs}
+                  plan_ids={plan_ids}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
       )}
     </View>
   );

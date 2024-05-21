@@ -39,6 +39,7 @@ const TableauDeBord = () => {
           <Personnel
             isEmpty={isEmpty}
             modules={tdbUtilisateur.tdbPersonnelModules}
+            plan_ids={plansActions?.plans.map(p => p.id)}
           />
         </Route>
         {/** Tableau de bord de la collectivité */}
