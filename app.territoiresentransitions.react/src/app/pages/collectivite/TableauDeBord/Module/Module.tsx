@@ -56,7 +56,7 @@ const Module = ({
 
   if (isEmpty) {
     return (
-      <ModuleContainer className="gap-0 items-center text-center !bg-primary-0">
+      <ModuleContainer className="!gap-0 items-center text-center !bg-primary-0">
         <div className="mb-4">{symbole}</div>
         <h4 className="mb-2 text-primary-8">{title}</h4>
         <p className="m-0 font-bold text-primary-9">
