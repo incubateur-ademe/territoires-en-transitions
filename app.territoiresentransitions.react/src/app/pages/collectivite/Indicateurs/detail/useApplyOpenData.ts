@@ -22,7 +22,7 @@ export const compareOpenData = (
   /** données à appliquer */
   openData: TIndicateurValeurEtCommentaires[]
 ) => {
-  if (!openData?.length) {
+  if (!openData.length) {
     // rien à appliquer
     return null;
   }
