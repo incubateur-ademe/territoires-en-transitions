@@ -99,17 +99,12 @@ export const useIndicateurValeursEtCommentaires = ({
         .not('valeur', 'is', null)
         .order('annee', {ascending: false});
 
-      if (type === 'objectif') {
-        query.is('source_id', null);
-        query.eq('type', type);
+      if (importSource && importSource !== SOURCE_COLLECTIVITE) {
+        query.eq('source_id', importSource);
+        query.eq('type', 'import');
       } else {
-        if (importSource && importSource !== SOURCE_COLLECTIVITE) {
-          query.eq('source_id', importSource);
-          query.eq('type', 'import');
-        } else {
-          query.is('source_id', null);
-          query.neq('type', 'import');
-        }
+        query.is('source_id', null);
+        query.eq('type', type === 'objectif' ? type : 'resultat');
       }
 
       const {data} = await query.returns<TIndicateurValeurEtCommentaires[]>();
