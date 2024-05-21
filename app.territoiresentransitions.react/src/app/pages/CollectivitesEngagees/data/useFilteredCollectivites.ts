@@ -92,9 +92,12 @@ const buildQueryFromFilters = (filters: CollectiviteEngagee.Filters) => {
         filter('completude_eci_intervalle', 'in', filters.tauxDeRemplissage);
     }
   }
-  // en l'absence de taux sélectionné, la selection d'un référentiel équivaut
-  // à un taux de remplissage qui n'est pas 0
-  else if (filters.referentiel.length > 0) {
+  // en l'absence de taux ou de niveau de labellisation sélectionné, la
+  // selection d'un référentiel équivaut à un taux de remplissage qui n'est pas 0
+  else if (
+    filters.referentiel.length > 0 &&
+    filters.niveauDeLabellisation.length === 0
+  ) {
     const intervalles = ['0-49', '50-79', '80-99', '100'];
     if (filters.referentiel.length === 1) {
       if (filters.referentiel.includes('cae'))
