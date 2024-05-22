@@ -58,15 +58,17 @@ export const ImportSourcesSelector = ({
     type: sourceType,
   });
 
-  // détermine si le bouton "appliquer à mes objectifs/résultats" doit être affiché
-  const canApplyOpenData =
-    currentSource !== SOURCE_COLLECTIVITE &&
-    sourceTypeLabel &&
-    !!(comparaison?.conflits || comparaison?.ajouts);
-
   // collectivité courante
   const collectivite = useCurrentCollectivite();
   const collectivite_id = collectivite?.collectivite_id || null;
+
+  // détermine si le bouton "appliquer à mes objectifs/résultats" doit être affiché
+  const canApplyOpenData =
+    collectivite &&
+    !collectivite.readonly &&
+    currentSource !== SOURCE_COLLECTIVITE &&
+    sourceTypeLabel &&
+    !!(comparaison?.conflits || comparaison?.ajouts);
 
   // mutation pour appliquer les données
   const {mutate: applyOpenData} = useApplyOpenData({
@@ -135,7 +137,7 @@ export const ImportSourcesSelector = ({
               </Button>
             }
           />
-          {isOpen && source && sourceType && (
+          {canApplyOpenData && isOpen && source && sourceType && (
             /** modale de résolution des conflits */
             <Modal
               size="xl"
