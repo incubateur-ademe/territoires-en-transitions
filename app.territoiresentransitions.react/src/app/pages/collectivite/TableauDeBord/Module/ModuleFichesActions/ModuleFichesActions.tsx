@@ -6,6 +6,10 @@ import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import Module from '../Module';
 import {TDBModuleFichesActions} from '../data';
+import {useQuery} from 'react-query';
+import {FicheActions} from '@tet/api';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
+import {Filter} from '@tet/api/dist/src/ficheActions';
 
 type Props = {
   view: TDBViewParam;
@@ -25,7 +29,34 @@ const ModuleFichesActions = ({view, module}: Props) => {
 
   const loading = false;
   const isEmpty = false;
-  const data = [1, 2, 3, 4, 5, 6];
+  // const data = [1, 2, 3, 4, 5, 6];
+
+  const filter: Filter = {
+    planActionIds: [],
+    servicePiloteIds: [],
+  };
+
+  const {data: result} = useQuery(
+    ['TDB_module_fiche_action_1', collectiviteId, view, filter],
+    async () => {
+      if (!collectiviteId) return [];
+
+      const {data, error} = await FicheActions.fetchFilteredFicheActions({
+        dbClient: supabaseClient,
+        collectiviteId,
+        filter,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    DISABLE_AUTO_REFETCH
+  );
+
+  const data = result || [];
 
   return (
     <Module
@@ -60,7 +91,11 @@ const ModuleFichesActions = ({view, module}: Props) => {
         )
       }
     >
-      Contenu du module
+      {data.map((item, index) => (
+        <div className="pb-10">
+          <code key={index}>{JSON.stringify(item)}</code>
+        </div>
+      ))}
     </Module>
   );
 };
