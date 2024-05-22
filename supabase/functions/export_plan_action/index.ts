@@ -41,8 +41,7 @@ serve(async (req) => {
     return new Response(blob, {
       headers: {
         ...corsHeaders,
-        'Content-disposition': `attachment; filename=${filename}`,
-        filename,
+        "Content-disposition": `attachment; filename=${encodeURI(filename)}`,
       },
     });
   } catch (error) {
