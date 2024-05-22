@@ -19,6 +19,9 @@ const TableauDeBord = () => {
   const collectivite_id = useCollectiviteId();
 
   const plansActions = usePlansActionsListe(collectivite_id!);
+
+  const plan_ids = plansActions?.plans.map(p => p.id);
+
   const isEmpty = plansActions?.plans.length === 0;
 
   return (
@@ -39,7 +42,7 @@ const TableauDeBord = () => {
           <Personnel
             isEmpty={isEmpty}
             modules={tdbUtilisateur.tdbPersonnelModules}
-            plan_ids={plansActions?.plans.map(p => p.id)}
+            plan_ids={plan_ids}
           />
         </Route>
         {/** Tableau de bord de la collectivité */}
@@ -53,7 +56,7 @@ const TableauDeBord = () => {
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>
-          <Modules />
+          <Modules plan_ids={plan_ids} />
         </Route>
       </div>
     </div>
