@@ -1,6 +1,6 @@
 import {useHistory, useParams} from 'react-router-dom';
 
-import {Button} from '@tet/ui';
+import {Button, Icon} from '@tet/ui';
 
 import {TDBViewParam, makeTableauBordUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -29,23 +29,25 @@ const ModulePage = ({view, title, children}: Props) => {
   return (
     <div data-test={`tdb-${slug}`}>
       {/** Header */}
-      <div className="border-b border-primary-3 pb-8 mb-12">
+      <div className="border-b border-primary-3 pb-8">
         <h2 className="mb-4">{title}</h2>
-        <Button
-          variant="underlined"
-          className="mt-4"
-          size="sm"
-          onClick={() =>
-            history.push(
-              makeTableauBordUrl({
-                collectiviteId: collectiviteId!,
-                view,
-              })
-            )
-          }
-        >
-          Revenir au tableau de bord
-        </Button>
+        <div className="flex items-center gap-2 mt-4">
+          <Button
+            variant="underlined"
+            onClick={() =>
+              history.push(
+                makeTableauBordUrl({
+                  collectiviteId: collectiviteId!,
+                  view,
+                })
+              )
+            }
+          >
+            Tableau de bord
+          </Button>
+          <Icon icon="arrow-right-s-line" className="mt-0.5 text-grey-7" />
+          <span className="mt-0.5 text-grey-7">{title}</span>
+        </div>
       </div>
       {/** Contenu principal */}
       {children}
