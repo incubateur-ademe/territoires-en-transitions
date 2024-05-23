@@ -206,5 +206,5 @@ insert into public.fiche_action_financeur_tag
 select * from test.fiche_action_financeur_tag;
 
 $$ language sql security definer;
-comment on function test_reset_audit is
+comment on function test_reset_plan_action is
     'Reinitialise les audits.';
