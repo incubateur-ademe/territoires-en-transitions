@@ -25,7 +25,7 @@ const TableauDeBord = () => {
   const isEmpty = plansActions?.plans.length === 0;
 
   return (
-    <div className="bg-grey-2 -mb-8 py-12">
+    <div className="grow bg-grey-2 -mb-8 py-12">
       <div className="fr-container">
         {/** Si l'on vient de la navigation principale de l'app,
          * alors on redirige vers la vue par défaut enregistrée par l'utilisateur */}

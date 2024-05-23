@@ -9,6 +9,8 @@ import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/Indic
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Pagination} from 'ui/shared/Pagination';
 import {Checkbox} from '@tet/ui';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 
 type Props = {
   view: TDBViewParam;
@@ -19,6 +21,7 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
   const collectiviteId = useCollectiviteId();
 
   const {data} = useFilteredIndicateurDefinitions(null, {
+  const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
     plan_ids,
   });
 
@@ -53,19 +56,32 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
           checked={displayGraphs}
           onChange={() => setDisplayGraphs(!displayGraphs)}
         />
-        {total && (
-          <span className="text-grey-7">
-            {total}
-            {` `}
-            {`indicateur${total > 1 && 's'}`}
-          </span>
-        )}
+        {/** Nombre total de résultats */}
+        <span className="shrink-0 text-grey-7">
+          {isLoading ? '--' : total ? total : '0'}
+          {` `}
+          {`indicateur`}
+          {total && total > 1 ? 's' : ''}
+        </span>
       </div>
-      {/** Liste d'indicateurs */}
-      {currentDefs && (
+      {/** Chargement */}
+      {isLoading ? (
+        <div className="m-auto">
+          <SpinnerLoader className="w-8 h-8" />
+        </div>
+      ) : /** État vide  */
+      currentDefs?.length === 0 ? (
+        <div className="flex flex-col items-center m-auto">
+          <PictoIndicateurVide />
+          <p className="text-primary-8">
+            Aucun indicateur ne correspond à votre recherche
+          </p>
+        </div>
+      ) : (
+        /** Liste d'indicateurs */
         <>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
-            {currentDefs.map(definition => (
+            {currentDefs?.map(definition => (
               <IndicateurCard
                 key={definition.id}
                 definition={definition}
