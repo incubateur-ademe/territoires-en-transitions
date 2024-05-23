@@ -5,6 +5,8 @@ create or replace function
     returns void
 as
 $$
+    truncate groupement_collectivite cascade;
+    truncate groupement cascade;
 -- 02-droits.sql
     select test_reset_droits();
 -- 04-membre.sql
