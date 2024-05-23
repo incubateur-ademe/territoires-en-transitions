@@ -31,7 +31,7 @@ const TestimonialCard = ({
       ) : (
         <Image
           className="w-[185px] h-[185px] object-cover rounded-full block"
-          src="/placeholder.png"
+          src="/placeholder.svg"
           alt="pas d'image disponible"
           width={354}
           height={201}

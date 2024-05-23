@@ -62,7 +62,7 @@ const CollectiviteHeader = ({
               <StrapiImage
                 data={couvertureDefaut}
                 className="object-cover object-center h-full w-full"
-                containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10"
+                containerClassName="h-full w-full object-cover object-center hover:opacity-10 transition-opacity duration-500 relative z-10 bg-primary-2"
                 containerStyle={{
                   WebkitTransition:
                     'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -82,7 +82,7 @@ const CollectiviteHeader = ({
                   WebkitTransition:
                     'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
-                className="hover:opacity-10 transition-opacity duration-500"
+                className="hover:opacity-10 transition-opacity duration-500 bg-primary-2"
               />
             )}
           </div>

@@ -85,7 +85,7 @@ const BlogCard = ({
           ) : (
             <Image
               className="fr-responsive-image w-full"
-              src="/placeholder.png"
+              src="/placeholder.svg"
               alt="pas d'image disponible"
               width={354}
               height={201}

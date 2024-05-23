@@ -27,9 +27,12 @@ const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
               textClassName="text-center small-text"
               image={
                 c.image ? (
-                  <div className="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center">
-                    <StrapiImage data={c.image} displayCaption={false} />
-                  </div>
+                  <StrapiImage
+                    data={c.image}
+                    displayCaption={false}
+                    containerClassName="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center"
+                    className="max-w-[70%] max-h-[70%]"
+                  />
                 ) : undefined
               }
             />

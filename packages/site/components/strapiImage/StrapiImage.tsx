@@ -2,13 +2,33 @@
 
 /* eslint-disable @next/next/no-img-element */
 import classNames from 'classnames';
-import {CSSProperties, useState} from 'react';
-import Image from 'next/image';
+import {CSSProperties, useEffect, useState} from 'react';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
-const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
+const imagePlaceholder = '/placeholder.svg';
 
 type Size = 'large' | 'medium' | 'small' | 'thumbnail';
+
+type Format = {[size: string]: {url: string}};
+
+const addBaseURL = (url: string) => {
+  const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
+
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/')) return `${baseURL}${url}`;
+  return `${baseURL}/${url}`;
+};
+
+const getImageSrc = (
+  size: Size | undefined,
+  formats: Format,
+  url: string | undefined,
+) => {
+  if (url) {
+    const tempURL = size && formats?.size ? `${formats[size].url}` : url;
+    return addBaseURL(tempURL);
+  } else return imagePlaceholder;
+};
 
 type StrapiImageProps = {
   data: StrapiItem;
@@ -19,40 +39,52 @@ type StrapiImageProps = {
   displayCaption?: boolean;
 };
 
-export function StrapiImage({
+export const StrapiImage = ({
   data,
   size,
   className,
   containerClassName,
   containerStyle,
   displayCaption = false,
-}: StrapiImageProps) {
-  const [error, setError] = useState(false);
-
+}: StrapiImageProps) => {
   const attributes = data.attributes;
 
-  const url =
-    size && attributes.formats?.size
-      ? `${attributes.formats[size].url}`
-      : `${attributes.url}`;
+  const [src, setSrc] = useState(imagePlaceholder);
 
-  return !error ? (
+  const formats = Object.keys(attributes.formats ?? {})
+    .map(srcKey => ({
+      url: addBaseURL(`${attributes.formats[srcKey].url}`),
+      width: attributes.formats[srcKey].width as unknown as number,
+    }))
+    .sort((a, b) => a.width - b.width);
+
+  useEffect(() => {
+    setSrc(
+      getImageSrc(
+        size,
+        attributes.formats as unknown as Format,
+        attributes.url as unknown as string,
+      ),
+    );
+  }, [size, attributes]);
+
+  return (
     <div className={containerClassName} style={containerStyle}>
-      <Image
+      <img
         className={classNames('block', className)}
-        src={url.startsWith('http') ? url : `${baseURL}/${url}`}
+        src={src}
+        srcSet={`${
+          formats.length ? `${formats.map(f => `${f.url} ${f.width}w`)},` : ''
+        } ${src} ${attributes.width}w`}
         alt={`${attributes.alternativeText ?? ''}`}
-        width={attributes.width as unknown as number}
-        height={attributes.height as unknown as number}
-        placeholder="blur"
-        blurDataURL="/blurImage.png"
-        onErrorCapture={() => setError(true)}
+        onError={() => setSrc(imagePlaceholder)}
       />
+
       {displayCaption && !!attributes.caption && (
         <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
           {`${attributes.caption}`}
         </p>
       )}
     </div>
-  ) : null;
-}
+  );
+};
