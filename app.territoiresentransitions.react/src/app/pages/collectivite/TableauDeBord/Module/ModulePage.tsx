@@ -27,7 +27,7 @@ const ModulePage = ({view, title, children}: Props) => {
    */
 
   return (
-    <div data-test={`tdb-${slug}`}>
+    <div data-test={`tdb-${slug}`} className="min-h-[44rem] flex flex-col">
       {/** Header */}
       <div className="border-b border-primary-3 pb-8">
         <h2 className="mb-4">{title}</h2>
