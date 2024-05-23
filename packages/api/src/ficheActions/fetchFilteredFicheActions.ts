@@ -1,19 +1,18 @@
 import {z} from 'zod';
 import {DBClient} from '../typeUtils';
+import {niveauPriorites, statuts} from './domain/schemas';
 
 export const filterSchema = z.object({
   planActionIds: z.number().array().optional(),
 
-  // Responsables = personne pilote ou service pilote ou structure pilote
   userPiloteIds: z.string().array().optional(),
   personnePiloteIds: z.number().array().optional(),
   structurePiloteIds: z.number().array().optional(),
   servicePiloteIds: z.number().array().optional(),
   // referents: array(string()).optional(),
-  // Type TFicheActionStatuts
-  statuts: z.number().array().optional(),
-  // Type TFicheActionNiveauxPriorite
-  priorites: z.number().array().optional(),
+
+  statuts: statuts.array().optional(),
+  priorites: niveauPriorites.array().optional(),
 
   modifiedSince: z.enum([
     'last-90-days',
@@ -21,6 +20,8 @@ export const filterSchema = z.object({
     'last-30-days',
     'last-15-days',
   ]),
+
+  limit: z.number().default(4),
 });
 
 export type Filter = z.infer<typeof filterSchema>;
@@ -42,6 +43,9 @@ type Props = {
   filter: Filter;
 };
 
+/**
+ * Charge une liste de fiches actions en fonction des filtres en paramètre.
+ */
 export async function fetchFilteredFicheActions({
   dbClient,
   collectiviteId,
@@ -53,7 +57,7 @@ export async function fetchFilteredFicheActions({
   const relatedTables = new Set<string>();
 
   if (filter.planActionIds?.length) {
-    relatedTables.add('fiche_action_axe!inner(axe!inner())');
+    relatedTables.add('fiche_action_axe!inner()');
   }
 
   if (filter.userPiloteIds?.length) {
@@ -86,7 +90,7 @@ export async function fetchFilteredFicheActions({
   // 👇
 
   if (filter.planActionIds?.length) {
-    query.in('fiche_action_axe.axe.plan', filter.planActionIds);
+    query.in('fiche_action_axe.plan', filter.planActionIds);
   }
 
   if (filter.userPiloteIds?.length) {

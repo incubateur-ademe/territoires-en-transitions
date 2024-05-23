@@ -2,70 +2,71 @@
 
 BEGIN;
 
-create or replace function
-    create_fiche(
-    collectivite_id int,
-    axe_id int default null,
-    action_id action_id default null,
-    indicateur_referentiel_id indicateur_id default null,
-    indicateur_personnalise_id int default null
-)
-    returns fiche_resume
-    language plpgsql
-    security definer
-    volatile
-as
-$$
-declare
-    new_fiche_id int;
-    resume       fiche_resume;
-begin
-    if not have_edition_acces(create_fiche.collectivite_id) and not is_service_role()
-    then
-        perform set_config('response.status', '403', true);
-        raise 'L''utilisateur n''a pas de droit en édition sur la collectivité.';
-    end if;
+CREATE OR REPLACE FUNCTION public.fiche_action_service_tag(public.fiches_action)
+    RETURNS SETOF public.fiche_action_service_tag
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.fiche_action_service_tag
+    WHERE fiche_id = $1.id
+    ;
+END;
 
-    insert into fiche_action (collectivite_id, titre)
-    values (create_fiche.collectivite_id, '')
-    returning id into new_fiche_id;
+CREATE OR REPLACE FUNCTION public.fiche_action_structure_tag(public.fiches_action)
+    RETURNS SETOF public.fiche_action_structure_tag
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.fiche_action_structure_tag
+    WHERE fiche_id = $1.id
+    ;
+END;
 
-    if create_fiche.axe_id is not null
-    then
-        insert into fiche_action_axe (fiche_id, axe_id)
-        values (new_fiche_id, create_fiche.axe_id);
-    end if;
+CREATE OR REPLACE FUNCTION public.fiche_action_personne_tag(public.fiches_action)
+    RETURNS SETOF public.fiche_action_pilote
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.fiche_action_pilote
+    WHERE fiche_id = $1.id
+    ;
+END;
 
-    if create_fiche.action_id is not null
-    then
-        insert into fiche_action_action (fiche_id, action_id)
-        values (new_fiche_id, create_fiche.action_id);
-    end if;
 
-    if create_fiche.indicateur_referentiel_id is not null
-    then
-        insert into fiche_action_indicateur (fiche_id, indicateur_id)
-        values (new_fiche_id, create_fiche.indicateur_referentiel_id);
-    end if;
+CREATE OR REPLACE FUNCTION public.fiche_action_pilote(public.fiches_action)
+    RETURNS SETOF public.fiche_action_pilote
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.fiche_action_pilote
+    WHERE fiche_id = $1.id
+    ;
+END;
 
-    if create_fiche.indicateur_personnalise_id is not null
-    then
-        insert into fiche_action_indicateur (fiche_id, indicateur_personnalise_id)
-        values (new_fiche_id, create_fiche.indicateur_personnalise_id);
-    end if;
-
-    select * from fiche_resume where id = new_fiche_id limit 1 into resume;
-    return resume;
-end;
-$$;
-
-alter table fiche_action_pilote
-    drop constraint fiche_action_pilote_fiche_id_user_id_tag_id_key;
-
-alter table fiche_action_pilote
-    add constraint one_user_per_fiche unique (fiche_id, user_id);
-
-alter table fiche_action_pilote
-    add constraint one_tag_per_fiche unique (fiche_id, tag_id);
+CREATE OR REPLACE FUNCTION public.fiche_action_axe(public.fiches_action)
+    RETURNS SETOF public.axe
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT axe.*
+    FROM public.fiche_action_axe
+    JOIN public.axe ON fiche_action_axe.axe_id = axe.id
+    WHERE fiche_action_axe.fiche_id = $1.id
+    ;
+END;
 
 COMMIT;

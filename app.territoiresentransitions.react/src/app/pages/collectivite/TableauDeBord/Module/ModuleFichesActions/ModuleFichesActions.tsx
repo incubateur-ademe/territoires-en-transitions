@@ -32,8 +32,11 @@ const ModuleFichesActions = ({view, module}: Props) => {
   // const data = [1, 2, 3, 4, 5, 6];
 
   const filter: Filter = {
-    planActionIds: [],
+    planActionIds: [1],
     servicePiloteIds: [],
+    structurePiloteIds: [1],
+    personnePiloteIds: [],
+    userPiloteIds: [],
   };
 
   const {data: result} = useQuery(
