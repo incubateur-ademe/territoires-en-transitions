@@ -1,8 +1,9 @@
 import {z} from 'zod';
 import {DBClient} from '../typeUtils';
 import {niveauPriorites, statuts} from './domain/schemas';
+import {array} from 'yup';
 
-export const filterSchema = z.object({
+const filterSchema = z.object({
   planActionIds: z.number().array().optional(),
 
   userPiloteIds: z.string().array().optional(),
@@ -14,17 +15,24 @@ export const filterSchema = z.object({
   statuts: statuts.array().optional(),
   priorites: niveauPriorites.array().optional(),
 
-  modifiedSince: z.enum([
-    'last-90-days',
-    'last-60-days',
-    'last-30-days',
-    'last-15-days',
-  ]),
-
-  limit: z.number().default(4),
+  modifiedSince: z
+    .enum(['last-90-days', 'last-60-days', 'last-30-days', 'last-15-days'])
+    .optional(),
 });
 
-export type Filter = z.infer<typeof filterSchema>;
+const sortSchema = z.object({
+  field: z.enum(['titre', 'modified_at']),
+  direction: z.enum(['asc', 'desc']).default('desc'),
+});
+
+export const queryOptionsSchema = z.object({
+  filter: filterSchema,
+  sort: sortSchema.array().optional(),
+  page: z.number().optional().default(1),
+  limit: z.number().min(1).max(100).default(10),
+});
+
+export type QueryOptions = z.infer<typeof queryOptionsSchema>;
 
 const resultRowsSchema = z
   .object({
@@ -35,12 +43,17 @@ type ResultRows = z.infer<typeof resultRowsSchema>;
 
 const ficheActionColumns = [
   '*',
+  // 'id',
+  // 'services',
+  // 'structures',
+  // 'pilotes',
+  // 'statuts',
 ];
 
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  filter: Filter;
+  options: QueryOptions;
 };
 
 /**
@@ -49,8 +62,10 @@ type Props = {
 export async function fetchFilteredFicheActions({
   dbClient,
   collectiviteId,
-  filter,
+  options,
 }: Props) {
+  const {filter, sort, page, limit} = queryOptionsSchema.parse(options);
+
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
 
@@ -80,11 +95,18 @@ export async function fetchFilteredFicheActions({
   // 👇
 
   const query = dbClient
-    .from('fiches_action')
+    .from('fiche_resume')
     .select([...ficheActionColumns, ...relatedTables].join(','), {
       count: 'exact',
     })
+    .range((page - 1) * limit + 1, page * limit)
     .eq('collectivite_id', collectiviteId);
+
+  if (sort?.length) {
+    sort.forEach(sort => {
+      query.order(sort.field, {ascending: sort.direction === 'asc'});
+    });
+  }
 
   // 3. Ajoute les clauses correspondant aux filtres
   // 👇
@@ -123,11 +145,18 @@ export async function fetchFilteredFicheActions({
     query.in('niveau_priorite', filter.priorites);
   }
 
+  if (filter.modifiedSince) {
+    query.gte(
+      'modified_at',
+      new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString()
+    );
+  }
+
   const {data, error, count} = await query.returns<ResultRows>();
 
   if (error) {
     return {error};
   }
 
-  return {data, count};
+  return {data, count, nextPage: count > page * limit ? page + 1 : null};
 }
