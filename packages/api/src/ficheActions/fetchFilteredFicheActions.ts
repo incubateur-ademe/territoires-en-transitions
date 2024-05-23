@@ -32,9 +32,9 @@ const resultRowsSchema = z
   .array();
 type ResultRows = z.infer<typeof resultRowsSchema>;
 
-// type ResultRow = FicheResume;
-
-const ficheActionColumns = ['id', 'services'];
+const ficheActionColumns = [
+  '*',
+];
 
 type Props = {
   dbClient: DBClient;
@@ -77,7 +77,9 @@ export async function fetchFilteredFicheActions({
 
   const query = dbClient
     .from('fiches_action')
-    .select([...ficheActionColumns, ...relatedTables].join(','))
+    .select([...ficheActionColumns, ...relatedTables].join(','), {
+      count: 'exact',
+    })
     .eq('collectivite_id', collectiviteId);
 
   // 3. Ajoute les clauses correspondant aux filtres
@@ -117,11 +119,11 @@ export async function fetchFilteredFicheActions({
     query.in('niveau_priorite', filter.priorites);
   }
 
-  const {data, error} = await query.returns<ResultRows>();
+  const {data, error, count} = await query.returns<ResultRows>();
 
   if (error) {
     return {error};
   }
 
-  return {data};
+  return {data, count};
 }
