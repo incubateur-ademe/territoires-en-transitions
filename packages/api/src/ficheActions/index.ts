@@ -1,2 +1,2 @@
 export {fetchFilteredFicheActions} from './fetchFilteredFicheActions';
-export type {Filter} from './fetchFilteredFicheActions';
+export type {QueryOptions} from './fetchFilteredFicheActions';

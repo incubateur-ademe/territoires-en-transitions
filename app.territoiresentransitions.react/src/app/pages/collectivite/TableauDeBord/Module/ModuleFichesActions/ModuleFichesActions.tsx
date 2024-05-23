@@ -2,14 +2,14 @@ import {useHistory} from 'react-router-dom';
 
 import {Button, Modal} from '@tet/ui';
 
+import {FicheActions} from '@tet/api';
+import {QueryOptions} from '@tet/api/dist/src/ficheActions';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
+import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useQuery} from 'react-query';
 import Module from '../Module';
 import {TDBModuleFichesActions} from '../data';
-import {useQuery} from 'react-query';
-import {FicheActions} from '@tet/api';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {Filter} from '@tet/api/dist/src/ficheActions';
 
 type Props = {
   view: TDBViewParam;
@@ -31,23 +31,37 @@ const ModuleFichesActions = ({view, module}: Props) => {
   const isEmpty = false;
   // const data = [1, 2, 3, 4, 5, 6];
 
-  const filter: Filter = {
-    planActionIds: [1],
-    servicePiloteIds: [],
-    structurePiloteIds: [1],
-    personnePiloteIds: [],
-    userPiloteIds: [],
+  const options: QueryOptions = {
+    filter: {
+      planActionIds: [],
+      servicePiloteIds: [],
+      structurePiloteIds: [],
+      personnePiloteIds: [],
+      userPiloteIds: [],
+    },
+    sort: [
+      {
+        field: 'modified_at',
+        direction: 'desc',
+      },
+      {
+        field: 'titre',
+        direction: 'desc',
+      },
+    ],
+    page: 1,
+    limit: 3,
   };
 
   const {data: result} = useQuery(
-    ['TDB_module_fiche_action_1', collectiviteId, view, filter],
+    ['TDB_module_fiche_action_1', collectiviteId, view, options],
     async () => {
       if (!collectiviteId) return [];
 
       const {data, error} = await FicheActions.fetchFilteredFicheActions({
         dbClient: supabaseClient,
         collectiviteId,
-        filter,
+        options,
       });
 
       if (error) {
