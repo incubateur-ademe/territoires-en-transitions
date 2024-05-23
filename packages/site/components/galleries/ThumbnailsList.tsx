@@ -20,7 +20,8 @@ const ThumbnailsList = ({thumbnails}: ThumbnailsListProps) => {
           {!!thumbnail.image && (
             <StrapiImage
               data={thumbnail.image}
-              containerClassName="bg-white p-10 rounded-full w-[196px]"
+              containerClassName="bg-white rounded-full w-[196px]"
+              className="w-[196px] h-[196px] min-w-[196px] min-h-[196px] p-10 object-cover rounded-full"
             />
           )}
           <h6 className="text-primary-9 text-center text-base md:text-lg leading-5 mb-0 max-md:max-w-[300px] md:w-[250px]">

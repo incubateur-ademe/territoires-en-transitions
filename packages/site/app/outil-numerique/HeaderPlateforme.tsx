@@ -61,17 +61,14 @@ const HeaderPlateforme = ({
           </>
         )}
       </div>
-      <div
-        style={{boxShadow: '0px 4px 50px 0px #0000000D'}}
-        className="md:w-4/5 h-fit mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4 mx-auto"
-      >
-        <StrapiImage
-          data={couverture}
-          className="w-auto mx-auto"
-          containerClassName="w-full min-w-[350px]"
-          displayCaption={false}
-        />
-      </div>
+
+      <StrapiImage
+        data={couverture}
+        className="max-h-[560px] w-full object-cover object-top"
+        containerClassName="max-h-[560px] min-w-[350px] md:w-4/5 w-fit mx-auto mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4"
+        containerStyle={{boxShadow: '0px 4px 50px 0px #0000000D'}}
+        displayCaption={false}
+      />
     </Section>
   );
 };
