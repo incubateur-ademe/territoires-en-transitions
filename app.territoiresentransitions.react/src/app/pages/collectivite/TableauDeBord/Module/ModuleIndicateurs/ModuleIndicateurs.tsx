@@ -1,6 +1,6 @@
 import {useHistory} from 'react-router-dom';
 
-import {Button, Modal} from '@tet/ui';
+import {Button} from '@tet/ui';
 
 import {
   TDBViewParam,
@@ -13,6 +13,7 @@ import {TDBModuleIndicateurs} from '../data';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 
 type Props = {
   view: TDBViewParam;
@@ -31,10 +32,7 @@ const ModuleIndicateurs = ({view, module, plan_ids}: Props) => {
       title={module.title}
       symbole={module.symbole}
       editModal={openState => (
-        <Modal
-          openState={openState}
-          render={() => <div>Filtres indicateurs</div>}
-        />
+        <ModalIndicateursSuiviPlan openState={openState} />
       )}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
