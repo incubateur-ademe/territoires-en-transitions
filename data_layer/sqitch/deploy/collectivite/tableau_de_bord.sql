@@ -27,9 +27,30 @@ CREATE TABLE "public"."tableau_de_bord_module" (
 
 -- RLS
 alter table public.tableau_de_bord_module enable row level security;
+
 create policy allow_read
     on public.tableau_de_bord_module
-    using (true);
+    for select to "authenticated" 
+    using (
+        have_lecture_acces(collectivite_id)
+    );
+
+create policy allow_insert
+    on public.tableau_de_bord_module
+    for insert to "authenticated"
+    with check (
+        have_edition_acces(collectivite_id)
+    );
+
+create policy allow_update
+    on public.tableau_de_bord_module
+    for update to "authenticated" 
+    using (
+        have_edition_acces(collectivite_id) 
+        and (
+            user_id = auth.uid() or user_id is null 
+        )
+    );
 
 -- Add the moddatetime extension to the database
 create extension if not exists "moddatetime" with schema "extensions";
