@@ -68,8 +68,6 @@ test('filtre sur un utilisateur pilote', async () => {
     },
   });
 
-  console.log(data);
-
   expect(data).toMatchObject({
     utilisateurPilotes: [
       {

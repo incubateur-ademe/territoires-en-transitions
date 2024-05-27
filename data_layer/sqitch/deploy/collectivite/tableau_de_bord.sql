@@ -9,7 +9,7 @@ CREATE TABLE "public"."tableau_de_bord_module" (
     "user_id" uuid,
     "titre" varchar NOT NULL,
     "type" varchar NOT NULL,
-    "query_options" jsonb NOT NULL,
+    "options" jsonb NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT now(),
     "modified_at" timestamptz DEFAULT now(),
     CONSTRAINT "public_tableau_de_bord_module_collectivite_id_fkey" 

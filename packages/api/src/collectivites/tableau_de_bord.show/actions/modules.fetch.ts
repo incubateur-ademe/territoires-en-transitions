@@ -1,8 +1,9 @@
 import {z} from 'zod';
 import {DBClient} from '../../../typeUtils';
-import {Module, moduleSchema} from '../domain/module.schema';
+import {Module, moduleSchemaSelect} from '../domain/module.schema';
+import {objectToCamel} from 'ts-case-convert';
 
-const outputSchema = moduleSchema.array();
+const outputSchema = moduleSchemaSelect.array();
 type Output = z.infer<typeof outputSchema>;
 
 type Props = {
@@ -30,7 +31,7 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
       };
     }
 
-    return {data};
+    return {data: objectToCamel(data)};
   } catch (error) {
     console.error(error);
     return {error};
