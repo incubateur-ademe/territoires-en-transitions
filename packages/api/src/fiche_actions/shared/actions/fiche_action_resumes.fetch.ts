@@ -1,70 +1,33 @@
 import {z} from 'zod';
-import {DBClient} from '../typeUtils';
-import {niveauPriorites, statuts} from './domain/schemas';
-import {array} from 'yup';
+import {DBClient} from '../../../typeUtils';
+import {Options, fetchOptionsSchema} from '../domain/fetch_options.schema';
 
-const filterSchema = z.object({
-  planActionIds: z.number().array().optional(),
-
-  userPiloteIds: z.string().array().optional(),
-  personnePiloteIds: z.number().array().optional(),
-  structurePiloteIds: z.number().array().optional(),
-  servicePiloteIds: z.number().array().optional(),
-  // referents: array(string()).optional(),
-
-  statuts: statuts.array().optional(),
-  priorites: niveauPriorites.array().optional(),
-
-  modifiedSince: z
-    .enum(['last-90-days', 'last-60-days', 'last-30-days', 'last-15-days'])
-    .optional(),
-});
-
-const sortSchema = z.object({
-  field: z.enum(['titre', 'modified_at']),
-  direction: z.enum(['asc', 'desc']).default('desc'),
-});
-
-export const queryOptionsSchema = z.object({
-  filter: filterSchema,
-  sort: sortSchema.array().optional(),
-  page: z.number().optional().default(1),
-  limit: z.number().min(1).max(100).default(10),
-});
-
-export type QueryOptions = z.infer<typeof queryOptionsSchema>;
-
-const resultRowsSchema = z
+const outputSchema = z
   .object({
     id: z.string(),
   })
   .array();
-type ResultRows = z.infer<typeof resultRowsSchema>;
 
-const ficheActionColumns = [
-  '*',
-  // 'id',
-  // 'services',
-  // 'structures',
-  // 'pilotes',
-  // 'statuts',
-];
+type Output = z.infer<typeof outputSchema>;
+
+const ficheActionColumns = ['*'];
 
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  options: QueryOptions;
+  options: Options;
 };
 
 /**
- * Charge une liste de fiches actions en fonction des filtres en paramètre.
+ * Charge une liste de résumés de fiches actions en fonction des filtres en paramètres.
  */
-export async function fetchFilteredFicheActions({
+export async function ficheActionResumesFetch({
   dbClient,
-  collectiviteId,
+  collectiviteId: unsafeCollectiviteId,
   options,
 }: Props) {
-  const {filter, sort, page, limit} = queryOptionsSchema.parse(options);
+  const collectiviteId = z.number().parse(unsafeCollectiviteId);
+  const {filtre: filter, sort, page, limit} = fetchOptionsSchema.parse(options);
 
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
@@ -75,7 +38,7 @@ export async function fetchFilteredFicheActions({
     relatedTables.add('fiche_action_axe!inner()');
   }
 
-  if (filter.userPiloteIds?.length) {
+  if (filter.utilisateurPiloteIds?.length) {
     relatedTables.add('fiche_action_pilote!inner()');
   }
 
@@ -115,8 +78,8 @@ export async function fetchFilteredFicheActions({
     query.in('fiche_action_axe.plan', filter.planActionIds);
   }
 
-  if (filter.userPiloteIds?.length) {
-    query.in('fiche_action_pilote.user_id', filter.userPiloteIds);
+  if (filter.utilisateurPiloteIds?.length) {
+    query.in('fiche_action_pilote.user_id', filter.utilisateurPiloteIds);
   }
 
   if (filter.personnePiloteIds?.length) {
@@ -152,7 +115,7 @@ export async function fetchFilteredFicheActions({
     );
   }
 
-  const {data, error, count} = await query.returns<ResultRows>();
+  const {data, error, count} = await query.returns<Output>();
 
   if (error) {
     return {error};

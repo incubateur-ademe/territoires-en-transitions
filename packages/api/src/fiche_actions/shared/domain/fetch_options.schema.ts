@@ -1,5 +1,6 @@
 import {z} from 'zod';
-import {niveauPrioritesSchema, statutsSchema} from './schemas';
+import {niveauPrioritesSchema, statutsSchema} from './enum.schemas';
+import {queryOptionsSchema} from '../../../shared/domain/query_options.schema';
 
 /**
  * Schema de filtre pour les fiches actions.
@@ -21,6 +22,12 @@ export const filtreSchema = z.object({
 });
 
 export type Filtre = z.infer<typeof filtreSchema>;
+
+export const fetchOptionsSchema = queryOptionsSchema.extend({
+  filtre: filtreSchema,
+});
+
+export type Options = z.infer<typeof fetchOptionsSchema>;
 
 /**
  * Schema de retour des valeurs associées aux ids des filtres.

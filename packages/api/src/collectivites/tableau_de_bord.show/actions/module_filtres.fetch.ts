@@ -1,11 +1,11 @@
-import {DBClient} from '../../../typeUtils';
+import {objectToCamel} from 'ts-case-convert';
+import {z} from 'zod';
 import {
   Filtre,
   filtreSchema,
   filtreValueSchema,
-} from '../../../fiche_actions/shared/domain/filtre.schema';
-import {z} from 'zod';
-import {objectToCamel} from 'ts-case-convert';
+} from '../../../fiche_actions/shared/domain/fetch_options.schema';
+import {DBClient} from '../../../typeUtils';
 
 const outputSchema = filtreValueSchema;
 type Output = z.infer<typeof outputSchema>;
