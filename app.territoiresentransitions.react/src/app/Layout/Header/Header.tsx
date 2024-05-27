@@ -30,7 +30,7 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <>
-      <header role="banner" className="fr-header">
+      <header role="banner" id="app-header" className="fr-header">
         <Body {...propsWithState} />
         <Menu {...propsWithState} />
       </header>
