@@ -53,6 +53,7 @@ export const Pagination = ({
   // Détecte le changement de page sélectionnée en props
   useEffect(() => {
     setCurrentPage(selectedPage);
+    document.getElementById('app-header')?.scrollIntoView();
   }, [selectedPage]);
 
   // Détecte les changement nécessitant le recalcul des boutons
