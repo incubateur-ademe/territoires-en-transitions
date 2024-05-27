@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {Button, Modal} from '@tet/ui';
 
 import {FicheActions} from '@tet/api';
-import {QueryOptions} from '@tet/api/dist/src/ficheActions';
+import {QueryOptions} from '@tet/api/dist/src/fiche_actions';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
