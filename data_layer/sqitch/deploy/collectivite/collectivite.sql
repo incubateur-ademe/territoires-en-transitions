@@ -1,26 +1,72 @@
--- Deploy tet:collectivites to pg
--- requires: base
--- requires: imports
+-- Deploy tet:plan_action/fiches to pg
 
 BEGIN;
 
-alter table collectivite
-    add column access_restreint boolean default false not null;
+-- Ajoute des computed fields associées à la collectivité
+-- 👇
 
-create function can_read_acces_restreint(collectivite_id integer) returns boolean as $$
-begin
-    return (
-        select case when (select access_restreint
-                          from collectivite
-                          where id = can_read_acces_restreint.collectivite_id
-                          limit 1)
-                        then have_lecture_acces(can_read_acces_restreint.collectivite_id)
-                    else is_authenticated() end
-    );
+CREATE OR REPLACE FUNCTION public.collectivite_service_tag(public.collectivite)
+    RETURNS SETOF public.service_tag
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.service_tag
+    WHERE collectivite_id = $1.id
+    ;
+END;
 
-end;
-$$language plpgsql security definer;
-comment on function can_read_acces_restreint
-    is 'Vrai si l''utilisateur a accès en lecture à la collectivité en prenant en compte la restriction access_restreint';
+CREATE OR REPLACE FUNCTION public.collectivite_structure_tag(public.collectivite)
+    RETURNS SETOF public.structure_tag
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.structure_tag
+    WHERE collectivite_id = $1.id
+    ;
+END;
+
+CREATE OR REPLACE FUNCTION public.collectivite_personne_tag(public.collectivite)
+    RETURNS SETOF public.personne_tag
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.personne_tag
+    WHERE collectivite_id = $1.id
+    ;
+END;
+
+CREATE OR REPLACE FUNCTION public.collectivite_utilisateur(public.collectivite)
+    RETURNS SETOF public.dcp
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT *
+    FROM public.dcp
+    ;
+END;
+
+CREATE OR REPLACE FUNCTION public.collectivite_axe(public.collectivite)
+    RETURNS SETOF public.axe
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT axe.*
+    FROM public.axe
+    WHERE collectivite_id = $1.id
+    ;
+END;
 
 COMMIT;
