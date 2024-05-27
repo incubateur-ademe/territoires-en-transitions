@@ -4,7 +4,6 @@ import 'dotenv/config';
 
 export default defineConfig({
   test: {
-    maxConcurrency: 1,
-    pool: 'forks',
+    fileParallelism: false,
   },
 });
