@@ -5,6 +5,6 @@ export * from './utils/authTokens';
 export * from './utils/pathUtils';
 export * from './utils/makeSearchString';
 export * as Indicateurs from './indicateurs';
-export * as FicheActions from './ficheActions';
+export * as FicheActions from './fiche_actions';
 export * as CollectiviteEngagee from './collectiviteEngagees';
 export * from './panier_action_impact';
