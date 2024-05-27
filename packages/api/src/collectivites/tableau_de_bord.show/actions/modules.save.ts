@@ -1,28 +1,23 @@
+import {objectToSnake} from 'ts-case-convert';
 import {z} from 'zod';
 import {DBClient} from '../../../typeUtils';
 import {
+  Module,
   moduleCommonSchemaInsert,
   moduleFicheActionsSchema,
   moduleIndicateursSchema,
 } from '../domain/module.schema';
-import {objectToCamel, objectToSnake} from 'ts-case-convert';
 
 const insertSchema = moduleCommonSchemaInsert;
 type ModuleInsert = z.infer<typeof insertSchema>;
 
 type Props = {
   dbClient: DBClient;
-  module: ModuleInsert;
+  module: Module;
 };
 
 export async function modulesSave({dbClient, module: unsafeModule}: Props) {
-  const commonPart = moduleCommonSchemaInsert.parse(unsafeModule);
-  const specificPart = parseSpecificPart(unsafeModule);
-
-  const module = {
-    ...commonPart,
-    ...specificPart,
-  };
+  const module = parseModule(unsafeModule);
 
   try {
     const {data, error} = await dbClient
@@ -43,13 +38,21 @@ export async function modulesSave({dbClient, module: unsafeModule}: Props) {
   }
 }
 
-function parseSpecificPart(module) {
+function parseModule(module) {
+  const commonPart = moduleCommonSchemaInsert.parse(module);
+
   if (module.type === 'fiche_action.list') {
-    return moduleFicheActionsSchema.parse(module);
+    return {
+      ...moduleFicheActionsSchema.parse(module),
+      ...commonPart,
+    };
   }
 
   if (module.type === 'indicateur.list') {
-    return moduleIndicateursSchema.parse(module);
+    return {
+      ...moduleIndicateursSchema.parse(module),
+      ...commonPart,
+    };
   }
 
   throw new Error('Invalid module type');

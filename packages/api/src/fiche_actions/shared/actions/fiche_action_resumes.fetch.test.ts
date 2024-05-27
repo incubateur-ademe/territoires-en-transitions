@@ -16,7 +16,7 @@ beforeAll(async () => {
   };
 });
 
-test('filtre vide', async () => {
+test('Fetch sans filtre', async () => {
   const {data} = await ficheActionResumesFetch({
     ...params,
     options: {filtre: {}},
@@ -25,7 +25,7 @@ test('filtre vide', async () => {
   expect(data).toMatchObject({});
 });
 
-test('filtre sur un statut', async () => {
+test('Fetch avec filtre sur un statut', async () => {
   const {data} = await ficheActionResumesFetch({
     ...params,
     options: {filtre: {statuts: ['En cours']}},

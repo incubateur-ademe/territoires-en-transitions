@@ -1,9 +1,9 @@
-import {beforeAll, expect, test} from 'vitest';
+import {beforeEach, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
-import {supabase} from '../../../tests/supabase';
+import {dbAdmin, supabase} from '../../../tests/supabase';
+import {Module} from '../domain/module.schema';
 import {modulesFetch} from './modules.fetch';
 import {modulesSave} from './modules.save';
-import {Module} from '../domain/module.schema';
 
 const params = {
   dbClient: supabase,
@@ -11,44 +11,49 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-beforeAll(async () => {
+beforeEach(async () => {
   await signIn('yolododo');
 
   return async () => {
-    await supabase
+    // Supprime les modules existants
+    await dbAdmin
       .from('tableau_de_bord_module')
       .delete()
       .eq('collectivite_id', params.collectiviteId)
       .eq('user_id', params.userId);
 
-    const {data} = await supabase.from('tableau_de_bord_module').select('*');
+    const {data} = await dbAdmin.from('tableau_de_bord_module').select('*');
     expect(data).toHaveLength(0);
 
     await signOut();
   };
 });
 
-test('filtre vide', async () => {
-  const module: Module = {
-    id: crypto.randomUUID(),
-    collectiviteId: 1,
-    userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-    titre: 'Mon module personnalisé',
-    type: 'fiche_action.list',
-    options: {
-      filtre: {
-        utilisateurPiloteIds: ['17440546-f389-4d4f-bfdb-b0c94a1bd0f9'],
-      },
+export const moduleNew: Module = {
+  id: crypto.randomUUID(),
+  collectiviteId: 1,
+  userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+  titre: 'Mon module personnalisé',
+  type: 'fiche_action.list',
+  options: {
+    filtre: {
+      utilisateurPiloteIds: ['17440546-f389-4d4f-bfdb-b0c94a1bd0f9'],
     },
-  };
+  },
+};
+
+test('Enregistre un nouveau module', async () => {
+  const module = moduleNew;
 
   const {data: noData} = await modulesSave({
     ...params,
     module,
   });
 
+  // Vérifie le bon enregistrement du module
   expect(noData).toBeNull();
 
+  // Vérifie la récupération du module
   const {data} = await modulesFetch({...params});
 
   expect(data).toHaveLength(1);
@@ -59,10 +64,122 @@ test('filtre vide', async () => {
   });
 });
 
-// test('filtre sur un statut', async () => {
-//   const {data} = await modulesSave({
-//     ...params,
-//   });
+test("Vérifie la mise à jour d'un module existant", async () => {
+  const module = moduleNew;
 
-//   expect(data).toMatchObject({});
-// });
+  // Enregistre un nouveau module pour yolododo
+  await modulesSave({
+    ...params,
+    module,
+  });
+
+  const newTitre = 'Nouveau titre';
+
+  // Enregistre le module mis à jour
+  await modulesSave({
+    ...params,
+    module: {
+      ...module,
+      titre: newTitre,
+    },
+  });
+
+  // Vérifie la mise à jour
+  const {data} = await modulesFetch({...params});
+
+  expect(data).toHaveLength(1);
+  expect(data[0]).toMatchObject({
+    titre: newTitre,
+  });
+});
+
+test("RLS: Vérifie qu'un utilisateur sans accès à la collectivité ne peut pas insert", async () => {
+  const module = moduleNew;
+
+  // Enregistre un module pour le user par défaut
+  await modulesSave({
+    ...params,
+    module,
+  });
+
+  // Se connecte avec un autre utilisateur sans droits sur la collectivité
+  await signOut();
+  await signIn('yulududu');
+
+  // Tente d'enregistrer un nouveau module pour la collectivité par défaut
+  const {error} = await modulesSave({
+    ...params,
+    module: {
+      ...module,
+      id: crypto.randomUUID(),
+    },
+  });
+
+  // Vérifie qu'une erreur est retournée
+  expect(error).toBeDefined();
+
+  // Vérifie que l'utilisateur n'a pas pu enregistrer le module pour cette collectivité
+  const {data} = await modulesFetch({...params, dbClient: dbAdmin});
+  expect(data).toHaveLength(1);
+});
+
+test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pas update", async () => {
+  const module = moduleNew;
+
+  // Enregistre un module pour le user par défaut
+  await modulesSave({
+    ...params,
+    module,
+  });
+
+  // Se connecte avec un autre utilisateur n'ayant que les droits en lecture
+  await signOut();
+  await signIn('yaladada');
+
+  // Tente de mettre à jour le module
+  await modulesSave({
+    ...params,
+    module: {
+      ...module,
+      titre: 'Nouveau titre',
+    },
+  });
+
+  // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
+  const {data} = await modulesFetch({...params, dbClient: dbAdmin});
+  expect(data).toHaveLength(1);
+  expect(data[0]).toMatchObject({
+    titre: module.titre,
+  });
+});
+
+test("RLS: Vérifie qu'un utilisateur en écriture ne peut pas update le module d'un autre utilisateur de la collectivité", async () => {
+  const module = moduleNew;
+
+  // Enregistre un module pour le user par défaut
+  await modulesSave({
+    ...params,
+    module,
+  });
+
+  // Se connecte avec un autre utilisateur ayant aussi les droits
+  // en écriture sur la collectivité
+  await signOut();
+  await signIn('yilididi');
+
+  // Tente de mettre à jour le module
+  await modulesSave({
+    ...params,
+    module: {
+      ...module,
+      titre: 'Nouveau titre',
+    },
+  });
+
+  // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
+  const {data} = await modulesFetch({...params, dbClient: dbAdmin});
+  expect(data).toHaveLength(1);
+  expect(data[0]).toMatchObject({
+    titre: module.titre,
+  });
+});

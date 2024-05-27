@@ -19,7 +19,7 @@ beforeAll(async () => {
   };
 });
 
-test('filtre vide', async () => {
+test('Filtre vide', async () => {
   const {data} = await getModules({
     filtre: {},
   });
@@ -27,7 +27,7 @@ test('filtre vide', async () => {
   expect(data).toMatchObject({});
 });
 
-test('filtre sur les plans', async () => {
+test('Filtre sur les plans', async () => {
   const {data} = await getModules({
     filtre: {
       planActionIds: [1],
@@ -44,7 +44,7 @@ test('filtre sur les plans', async () => {
   });
 });
 
-test('filtre sur une personne pilote', async () => {
+test('Filtre sur une personne pilote', async () => {
   const {data} = await getModules({
     filtre: {
       personnePiloteIds: [1],
@@ -61,7 +61,7 @@ test('filtre sur une personne pilote', async () => {
   });
 });
 
-test('filtre sur un utilisateur pilote', async () => {
+test('Filtre sur un utilisateur pilote', async () => {
   const {data} = await getModules({
     filtre: {
       utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
@@ -79,7 +79,7 @@ test('filtre sur un utilisateur pilote', async () => {
   });
 });
 
-test('filtre sur une structure pilote', async () => {
+test('Filtre sur une structure pilote', async () => {
   const {data} = await getModules({
     filtre: {
       structurePiloteIds: [2],
@@ -96,7 +96,7 @@ test('filtre sur une structure pilote', async () => {
   });
 });
 
-test('filtre sur un service pilote', async () => {
+test('Filtre sur un service pilote', async () => {
   const {data} = await getModules({
     filtre: {
       servicePiloteIds: [1],
@@ -113,7 +113,7 @@ test('filtre sur un service pilote', async () => {
   });
 });
 
-test('filtre sur plusieurs services pilotes', async () => {
+test('Filtre sur plusieurs services pilotes', async () => {
   const {data} = await getModules({
     filtre: {
       servicePiloteIds: [1, 2],
