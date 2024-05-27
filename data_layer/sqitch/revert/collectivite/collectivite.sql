@@ -1,11 +1,11 @@
 -- Deploy tet:collectivites to pg
--- requires: base
--- requires: imports
 
 BEGIN;
 
-drop function can_read_acces_restreint;
-alter table collectivite
-    drop column access_restreint;
+DROP FUNCTION public.collectivite_service_tag(public.collectivite);
+DROP FUNCTION public.collectivite_structure_tag(public.collectivite);
+DROP FUNCTION public.collectivite_personne_tag(public.collectivite);
+DROP FUNCTION public.collectivite_utilisateur(public.collectivite);
+DROP FUNCTION public.collectivite_axe(public.collectivite);
 
 COMMIT;

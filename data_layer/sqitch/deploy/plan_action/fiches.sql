@@ -2,6 +2,9 @@
 
 BEGIN;
 
+-- Ajoute les computed fields pour filtrer les fiche actions
+-- 👇
+
 CREATE OR REPLACE FUNCTION public.fiche_action_service_tag(public.fiches_action)
     RETURNS SETOF public.fiche_action_service_tag
     LANGUAGE SQL
