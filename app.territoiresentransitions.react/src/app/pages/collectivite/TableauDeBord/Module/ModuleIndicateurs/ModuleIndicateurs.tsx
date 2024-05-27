@@ -75,7 +75,7 @@ const ModuleIndicateurs = ({view, module, plan_ids}: Props) => {
         </>
       }
     >
-      <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
         {data &&
           data.map(
             (definition, index) =>

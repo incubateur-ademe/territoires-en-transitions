@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-import {Checkbox, Input, Select} from '@tet/ui';
+import {Checkbox, Input, Pagination, Select} from '@tet/ui';
 
 import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
 import ModulePage from '../ModulePage';
@@ -9,7 +9,6 @@ import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateu
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Pagination} from 'ui/shared/Pagination';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 
