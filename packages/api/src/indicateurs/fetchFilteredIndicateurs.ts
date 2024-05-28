@@ -30,6 +30,10 @@ export type Filters = {
   confidentiel?: boolean;
   fiches_non_classees?: boolean;
   text?: string;
+  sort?: {
+    field: keyof Filters;
+    direction: 'asc' | 'desc';
+  };
 };
 
 // Associe les parties requises aux champs sur lesquels on filtre.
@@ -230,14 +234,28 @@ export const fetchFilteredIndicateurs = async (
     query.or(filterParams.join(','), {foreignTable: 'pilotes'});
   }
 
+  /** Par défaut tri par ordre alphabétique */
+  const orderByOptions = [
+    {
+      field: 'nom',
+      direction: 'asc',
+    },
+  ];
+
+  if (filters.sort) {
+    orderByOptions.unshift(filters.sort);
+  }
+
+  orderByOptions.forEach(sort => {
+    query.order(sort.field, {ascending: sort.direction === 'asc'});
+  });
+
   const {data, ...remaining} = await query.returns<IndicateurItemFetched[]>();
   const rows = data || [];
 
   return {
     ...remaining,
     data: rows
-      // tri par nom (pour que les diacritiques soient pris en compte)
-      .sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
       // et conserve un id unique
       .map(({indicateur_id, indicateur_perso_id, ...otherProps}) => ({
         id: indicateur_id || indicateur_perso_id,
