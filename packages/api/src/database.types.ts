@@ -3423,6 +3423,64 @@ export type Database = {
           },
         ]
       }
+      action_impact_fiche_action: {
+        Row: {
+          action_impact_id: number
+          fiche_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          fiche_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          fiche_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_fiche_action_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            isOneToOne: false
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       action_impact_fourchette_budgetaire: {
         Row: {
           niveau: number
@@ -5454,6 +5512,12 @@ export type Database = {
           id: number
           modified_at: string
           active: boolean | null
+          collectivite_axe: unknown | null
+          collectivite_personne_tag: unknown | null
+          collectivite_service_tag: unknown | null
+          collectivite_structure_tag: unknown | null
+          collectivite_thematique: unknown | null
+          collectivite_utilisateur: unknown | null
         }
         Insert: {
           access_restreint?: boolean
@@ -13692,7 +13756,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "indicateur_pilote_indicateur_personnalise_definition_id_fk"
+            foreignKeyName: "indicateur_pilote_indicateur_perso_id_fkey"
             columns: ["indicateur_perso_id"]
             isOneToOne: false
             referencedRelation: "indicateur_personnalise_definition"
@@ -15320,7 +15384,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "indicateur_service_tag_indicateur_personnalise_definition_id_fk"
+            foreignKeyName: "indicateur_service_tag_indicateur_perso_id_fkey"
             columns: ["indicateur_perso_id"]
             isOneToOne: false
             referencedRelation: "indicateur_personnalise_definition"
@@ -22020,6 +22084,421 @@ export type Database = {
         }
         Relationships: []
       }
+      tableau_de_bord_module: {
+        Row: {
+          collectivite_id: number
+          created_at: string
+          id: string
+          modified_at: string
+          options: Json
+          slug: string
+          titre: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          collectivite_id: number
+          created_at?: string
+          id?: string
+          modified_at?: string
+          options: Json
+          slug: string
+          titre: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          collectivite_id?: number
+          created_at?: string
+          id?: string
+          modified_at?: string
+          options?: Json
+          slug?: string
+          titre?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_snippet"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_action_statut"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_plan_action"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_referentiel"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_utilisateur"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivites_crm"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "late_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "locales_pourcentage_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "rattachement"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "report_indicateur_resultat"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "report_reponse_binaire"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "report_reponse_choix"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "report_reponse_proportion"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "report_scores"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "crm_personnes"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp_display"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       thematique: {
         Row: {
           id: number
@@ -23039,7 +23518,6 @@ export type Database = {
             | Database["public"]["Enums"]["avancement"][]
             | null
           avancement_detaille: number[] | null
-          avancement_parent: Database["public"]["Enums"]["avancement"] | null
           collectivite_id: number | null
           concerne: boolean | null
           depth: number | null
@@ -23063,6 +23541,7 @@ export type Database = {
           points_realises: number | null
           points_restants: number | null
           referentiel: Database["public"]["Enums"]["referentiel"] | null
+          renseigne: boolean | null
           score_non_renseigne: number | null
           score_pas_fait: number | null
           score_programme: number | null
@@ -29965,6 +30444,22 @@ export type Database = {
             }
             Returns: string
           }
+      collectivite_axe: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number
+          created_at: string
+          id: number
+          modified_at: string
+          modified_by: string | null
+          nom: string | null
+          parent: number | null
+          plan: number | null
+          type: number | null
+        }[]
+      }
       collectivite_card: {
         Args: {
           "": unknown
@@ -29985,7 +30480,63 @@ export type Database = {
           fonction: Database["public"]["Enums"]["membre_fonction"]
           details_fonction: string
           champ_intervention: Database["public"]["Enums"]["referentiel"][]
-          est_referent: boolean
+        }[]
+      }
+      collectivite_personne_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number
+          id: number
+          nom: string
+        }[]
+      }
+      collectivite_service_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number
+          id: number
+          nom: string
+        }[]
+      }
+      collectivite_structure_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number
+          id: number
+          nom: string
+        }[]
+      }
+      collectivite_thematique: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          id: number
+          md_id: Database["public"]["Enums"]["indicateur_thematique"] | null
+          nom: string
+        }[]
+      }
+      collectivite_utilisateur: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          cgu_acceptees_le: string | null
+          created_at: string
+          deleted: boolean
+          email: string
+          limited: boolean
+          modified_at: string
+          nom: string
+          prenom: string
+          telephone: string | null
+          user_id: string
         }[]
       }
       compress_chunk: {
@@ -30374,6 +30925,60 @@ export type Database = {
             }
             Returns: string
           }
+      fiche_action_axe: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          collectivite_id: number
+          created_at: string
+          id: number
+          modified_at: string
+          modified_by: string | null
+          nom: string | null
+          parent: number | null
+          plan: number | null
+          type: number | null
+        }[]
+      }
+      fiche_action_personne_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          fiche_id: number
+          tag_id: number | null
+          user_id: string | null
+        }[]
+      }
+      fiche_action_pilote: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          fiche_id: number
+          tag_id: number | null
+          user_id: string | null
+        }[]
+      }
+      fiche_action_service_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          fiche_id: number
+          service_tag_id: number
+        }[]
+      }
+      fiche_action_structure_tag: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          fiche_id: number
+          structure_tag_id: number
+        }[]
+      }
       fiche_resume:
         | {
             Args: {
@@ -32575,14 +33180,6 @@ export type Database = {
           collectivite_id: number
           membre_id: string
           details_fonction: string
-        }
-        Returns: Json
-      }
-      update_collectivite_membre_est_referent: {
-        Args: {
-          collectivite_id: number
-          membre_id: string
-          est_referent: boolean
         }
         Returns: Json
       }
