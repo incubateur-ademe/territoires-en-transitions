@@ -2,8 +2,6 @@
 
 import Section from '@components/sections/Section';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import EquipeListe from './EquipeListe';
-import EquipeCarousel from './EquipeCarousel';
 import {useEffect, useRef, useState} from 'react';
 import {Button} from '@tet/ui';
 
@@ -60,16 +58,6 @@ const EquipePlateforme = ({
           {description}
         </p>
       )}
-
-      {/* Affichage de la liste en version desktop */}
-      <div className="max-md:hidden flex gap-4 flex-wrap justify-center my-12">
-        <EquipeListe liste={liste} />
-      </div>
-
-      {/* Affichage de la liste en version mobile */}
-      <div ref={ref} className="md:hidden">
-        <EquipeCarousel liste={liste} width={carouselWidth} />
-      </div>
 
       <div className="flex gap-8 justify-center">
         <Button href="/contact">{cta_contact}</Button>
