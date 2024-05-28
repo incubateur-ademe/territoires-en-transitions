@@ -68,12 +68,13 @@ const View = ({
           <div className="mr-auto">
             <Select
               options={getTrierParOptions()}
-              onChange={value =>
-                setFilters({
-                  ...filters,
-                  trierPar: value ? [value as string] : undefined,
-                })
-              }
+              onChange={value => {
+                value &&
+                  setFilters({
+                    ...filters,
+                    trierPar: [value as string],
+                  });
+              }}
               values={filters.trierPar?.[0]}
               customItem={v => <span className="text-grey-9">{v.label}</span>}
               disabled={view === 'plans'}
