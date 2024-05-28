@@ -16,6 +16,9 @@ type Input = {
   filtre: Filtre;
 };
 
+/**
+ * Fetch les valeurs des filtres d'un module de tableau de bord.
+ */
 export async function moduleFiltresFetch({
   dbClient,
   collectiviteId,
