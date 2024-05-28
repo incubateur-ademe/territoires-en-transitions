@@ -1,7 +1,7 @@
+import {objectToCamel} from 'ts-case-convert';
 import {z} from 'zod';
 import {DBClient} from '../../../typeUtils';
-import {Module, moduleSchemaSelect} from '../domain/module.schema';
-import {objectToCamel} from 'ts-case-convert';
+import {getDefaultModules, moduleSchemaSelect} from '../domain/module.schema';
 
 const outputSchema = moduleSchemaSelect.array();
 type Output = z.infer<typeof outputSchema>;
@@ -9,9 +9,12 @@ type Output = z.infer<typeof outputSchema>;
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  userId: string;
+  userId: string | null;
 };
 
+/**
+ * Fetch les modules du tableau de bord d'une collectivité et d'un user.
+ */
 export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
   try {
     const {data, error} = await dbClient
@@ -25,62 +28,39 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
       throw error;
     }
 
+    const defaultModules = getDefaultModules({userId, collectiviteId});
+
     if (data.length === 0) {
       return {
-        data: getDefaultModules({userId, collectiviteId}),
+        data: defaultModules,
       };
     }
 
-    return {data: objectToCamel(data)};
+    const modules = mergeWithDefaultModules(data, defaultModules);
+
+    return {data: objectToCamel(modules)};
   } catch (error) {
     console.error(error);
     return {error};
   }
 }
 
-function getDefaultModules({userId, collectiviteId}) {
-  const now = new Date().toISOString();
+function mergeWithDefaultModules(
+  fetchedModules: Output,
+  defaultModules: Output
+) {
+  // On crée une map des modules récupérés avec le slug comme clé
+  const fetchedModulesMap = new Map(
+    fetchedModules.map(module => [module.slug, module])
+  );
 
-  const indicateurs: Module = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Indicateurs de suivi de mes plans',
-    type: 'indicateur.list',
-    options: {},
-    createdAt: now,
-    modifiedAt: now,
-  };
+  // On ajoute les modules par défaut non présents dans les modules récupérés
+  defaultModules.forEach(defaultModule => {
+    fetchedModulesMap.set(
+      defaultModule.slug,
+      fetchedModulesMap.get(defaultModule.slug) || defaultModule
+    );
+  });
 
-  const actionsDontJeSuisPilote: Module = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Actions dont je suis pilote',
-    type: 'fiche_action.list',
-    options: {
-      filtre: {
-        utilisateurPiloteIds: [userId],
-      },
-    },
-    createdAt: now,
-    modifiedAt: now,
-  };
-
-  const actionsRecentlyModified: Module = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Actions récemment modifiées',
-    type: 'fiche_action.list',
-    options: {
-      filtre: {
-        modifiedSince: 'last-30-days',
-      },
-    },
-    createdAt: now,
-    modifiedAt: now,
-  };
-
-  return [indicateurs, actionsDontJeSuisPilote, actionsRecentlyModified];
+  return Array.from(fetchedModulesMap.values());
 }

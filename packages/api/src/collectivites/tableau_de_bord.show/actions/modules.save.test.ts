@@ -1,9 +1,10 @@
 import {beforeEach, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
 import {dbAdmin, supabase} from '../../../tests/supabase';
-import {Module} from '../domain/module.schema';
 import {modulesFetch} from './modules.fetch';
 import {modulesSave} from './modules.save';
+import {moduleNew, resetTableauDeBordModules} from './modules.test-fixture';
+import {getDefaultModules} from '../domain/module.schema';
 
 const params = {
   dbClient: supabase,
@@ -11,37 +12,16 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
+const numberOfModulesByDefault = getDefaultModules(params).length;
+
 beforeEach(async () => {
   await signIn('yolododo');
 
   return async () => {
-    // Supprime les modules existants
-    await dbAdmin
-      .from('tableau_de_bord_module')
-      .delete()
-      .eq('collectivite_id', params.collectiviteId)
-      .eq('user_id', params.userId);
-
-    const {data} = await dbAdmin.from('tableau_de_bord_module').select('*');
-    expect(data).toHaveLength(0);
-
+    await resetTableauDeBordModules(params);
     await signOut();
   };
 });
-
-export const moduleNew: Module = {
-  id: crypto.randomUUID(),
-  collectiviteId: 1,
-  userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-  titre: 'Mon module personnalisé',
-  slug: 'mon-module-personnalise',
-  type: 'fiche_action.list',
-  options: {
-    filtre: {
-      utilisateurPiloteIds: ['17440546-f389-4d4f-bfdb-b0c94a1bd0f9'],
-    },
-  },
-};
 
 test('Enregistre un nouveau module', async () => {
   const module = moduleNew;
@@ -57,7 +37,7 @@ test('Enregistre un nouveau module', async () => {
   // Vérifie la récupération du module
   const {data} = await modulesFetch({...params});
 
-  expect(data).toHaveLength(1);
+  expect(data).toHaveLength(numberOfModulesByDefault + 1);
   expect(data[0]).toMatchObject({
     titre: module.titre,
     type: module.type,
@@ -88,7 +68,7 @@ test("Vérifie la mise à jour d'un module existant", async () => {
   // Vérifie la mise à jour
   const {data} = await modulesFetch({...params});
 
-  expect(data).toHaveLength(1);
+  expect(data).toHaveLength(numberOfModulesByDefault + 1);
   expect(data[0]).toMatchObject({
     titre: newTitre,
   });
@@ -121,7 +101,7 @@ test("RLS: Vérifie qu'un utilisateur sans accès à la collectivité ne peut pa
 
   // Vérifie que l'utilisateur n'a pas pu enregistrer le module pour cette collectivité
   const {data} = await modulesFetch({...params, dbClient: dbAdmin});
-  expect(data).toHaveLength(1);
+  expect(data).toHaveLength(numberOfModulesByDefault + 1);
 });
 
 test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pas update", async () => {
@@ -148,7 +128,7 @@ test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pa
 
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const {data} = await modulesFetch({...params, dbClient: dbAdmin});
-  expect(data).toHaveLength(1);
+  expect(data).toHaveLength(numberOfModulesByDefault + 1);
   expect(data[0]).toMatchObject({
     titre: module.titre,
   });
@@ -179,7 +159,7 @@ test("RLS: Vérifie qu'un utilisateur en écriture ne peut pas update le module 
 
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const {data} = await modulesFetch({...params, dbClient: dbAdmin});
-  expect(data).toHaveLength(1);
+  expect(data).toHaveLength(numberOfModulesByDefault + 1);
   expect(data[0]).toMatchObject({
     titre: module.titre,
   });
