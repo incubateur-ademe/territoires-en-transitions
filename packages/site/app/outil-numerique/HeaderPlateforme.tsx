@@ -31,10 +31,10 @@ const HeaderPlateforme = ({
 
   return (
     <Section containerClassName="bg-gradient-to-b from-[#F4F5FD] to-[#FFFFFF] !pb-0">
-      <h1 className="text-primary-9 text-center md:text-[52px] md:leading-[72px]">
+      <h1 className="text-primary-9 text-center md:text-[45px] md:leading-[55px] lg:px-20 mb-2">
         {titre}
       </h1>
-      <p className="text-primary-7 text-center text-[22px] leading-[28px] md:text-[24px] md:leading-[32px] font-bold">
+      <p className="text-primary-7 text-center text-[22px] leading-[28px] md:text-[24px] md:leading-[32px] font-bold lg:px-20 mb-4">
         {accroche}
       </p>
       <div className="flex max-md:flex-col gap-y-4 gap-x-8 justify-center items-center">

@@ -3,7 +3,6 @@
 import NoResult from '@components/info/NoResult';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';
-import FonctionnalitesPlateforme from './FonctionnalitesPlateforme';
 import HeaderPlateforme from './HeaderPlateforme';
 import QuestionsPlateforme from './QuestionsPlateforme';
 import TemoignagesPlateforme from './TemoignagesPlateforme';
@@ -35,17 +34,13 @@ const OutilNumerique = async () => {
 
       <AvantagesPlateforme avantages={strapiData.avantages} />
 
-      <FonctionnalitesPlateforme {...strapiData.fonctionnalites} />
-
       {strapiData.temoignages.length > 0 && (
         <TemoignagesPlateforme temoignages={strapiData.temoignages} />
       )}
 
       <EquipePlateforme {...strapiData.equipe} />
 
-      {strapiData.questions.liste.length > 0 && (
-        <QuestionsPlateforme {...strapiData.questions} />
-      )}
+      <QuestionsPlateforme {...strapiData.questions} />
     </div>
   ) : (
     <NoResult />
