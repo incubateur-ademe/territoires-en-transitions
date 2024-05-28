@@ -1,11 +1,11 @@
 import {objectToCamel} from 'ts-case-convert';
 import {z} from 'zod';
+import {DBClient} from '../../../typeUtils';
 import {
   Filtre,
   filtreSchema,
   filtreValueSchema,
-} from '../../../fiche_actions/shared/domain/fetch_options.schema';
-import {DBClient} from '../../../typeUtils';
+} from '../domain/fetch_options.schema';
 
 const outputSchema = filtreValueSchema;
 type Output = z.infer<typeof outputSchema>;
@@ -17,9 +17,9 @@ type Input = {
 };
 
 /**
- * Fetch les valeurs des filtres d'un module de tableau de bord.
+ * Fetch les valeurs du filtre de fetch de fiches actions
  */
-export async function moduleFiltresFetch({
+export async function filtreValuesFetch({
   dbClient,
   collectiviteId,
   filtre: unsafeFiltre,
