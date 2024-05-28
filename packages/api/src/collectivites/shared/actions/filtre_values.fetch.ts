@@ -1,11 +1,11 @@
 import {objectToCamel} from 'ts-case-convert';
 import {z} from 'zod';
-import {DBClient} from '../../../typeUtils';
 import {
-  Filtre,
-  filtreSchema,
+  FiltreRessourceLiees,
+  filtreRessourceLieesSchema,
   filtreValueSchema,
-} from '../domain/fetch_options.schema';
+} from '../domain/filtre_ressource_liees.schema';
+import {DBClient} from '../../../typeUtils';
 
 const outputSchema = filtreValueSchema;
 type Output = z.infer<typeof outputSchema>;
@@ -13,7 +13,7 @@ type Output = z.infer<typeof outputSchema>;
 type Input = {
   dbClient: DBClient;
   collectiviteId: number;
-  filtre: Filtre;
+  filtre: FiltreRessourceLiees;
 };
 
 /**
@@ -24,7 +24,7 @@ export async function filtreValuesFetch({
   collectiviteId,
   filtre: unsafeFiltre,
 }: Input) {
-  const filtre = filtreSchema.parse(unsafeFiltre);
+  const filtre = filtreRessourceLieesSchema.parse(unsafeFiltre);
 
   try {
     // 1. Ajoute les tables liées correspondant aux filtres
@@ -33,7 +33,7 @@ export async function filtreValuesFetch({
     const relatedTables = new Set<string>();
 
     if (filtre.planActionIds?.length) {
-      relatedTables.add('plans:collectivite_axe!inner(*)');
+      relatedTables.add('planActions:collectivite_axe!inner(*)');
     }
 
     if (filtre.utilisateurPiloteIds?.length) {
@@ -50,6 +50,10 @@ export async function filtreValuesFetch({
 
     if (filtre.servicePiloteIds?.length) {
       relatedTables.add('servicePilotes:collectivite_service_tag!inner(*)');
+    }
+
+    if (filtre.thematiqueIds?.length) {
+      relatedTables.add('thematiques:collectivite_thematique!inner(*)');
     }
 
     if (relatedTables.size === 0) {
@@ -86,6 +90,10 @@ export async function filtreValuesFetch({
 
     if (filtre.servicePiloteIds?.length) {
       query.in('collectivite_service_tag.id', filtre.servicePiloteIds);
+    }
+
+    if (filtre.thematiqueIds?.length) {
+      query.in('collectivite_thematique.id', filtre.thematiqueIds);
     }
 
     const {data, error} = await query.returns<Output>().single();

@@ -1,1 +1,1 @@
-export {ficheActionResumesFetch} from './resumes.list/actions/fiche_action_resumes.fetch';
+export * as ResumesList from './resumes.list';
