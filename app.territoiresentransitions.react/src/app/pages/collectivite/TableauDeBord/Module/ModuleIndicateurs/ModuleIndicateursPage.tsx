@@ -11,6 +11,26 @@ import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/Indic
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
+import {Filters} from '@tet/api/dist/src/indicateurs';
+
+type orderByOptionsType = {
+  label: string;
+  value: keyof Filters;
+  direction: 'asc' | 'desc';
+};
+
+const orderByOptions: orderByOptionsType[] = [
+  {
+    label: 'Complétude',
+    value: 'rempli',
+    direction: 'desc',
+  },
+  {
+    label: 'Ordre alphabétique',
+    value: 'text',
+    direction: 'asc',
+  },
+];
 
 type Props = {
   view: TDBViewParam;
@@ -20,18 +40,7 @@ type Props = {
 const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const orderByOptions = [
-    {
-      label: 'Complétude',
-      value: 'rempli',
-    },
-    {
-      label: 'Ordre alphabétique',
-      value: 'nom',
-    },
-  ];
-
-  const [order, setOrder] = useState(orderByOptions[0].value);
+  const [order, setOrder] = useState(orderByOptions[0]);
 
   /** Texte de recherche pour l'input */
   const [search, setSearch] = useState<string>();
@@ -41,6 +50,13 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
     plan_ids,
     text: debouncedSearch,
+    sort:
+      order.value === 'rempli'
+        ? {
+            field: order.value,
+            direction: order.direction,
+          }
+        : undefined,
   });
 
   /** Nombre total d'indicateurs filtrés */
@@ -71,8 +87,10 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
         <div className="w-56">
           <Select
             options={orderByOptions}
-            onChange={value => setOrder(value as string)}
-            values={order}
+            onChange={value =>
+              value && setOrder(orderByOptions.find(o => o.value === value)!)
+            }
+            values={order.value}
             customItem={v => <span className="text-grey-8">{v.label}</span>}
           />
         </div>
