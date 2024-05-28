@@ -69,4 +69,16 @@ BEGIN ATOMIC
     ;
 END;
 
+CREATE OR REPLACE FUNCTION public.collectivite_thematique(public.collectivite)
+    RETURNS SETOF public.thematique
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT thematique.*
+    FROM public.thematique
+    ;
+END;
+
 COMMIT;

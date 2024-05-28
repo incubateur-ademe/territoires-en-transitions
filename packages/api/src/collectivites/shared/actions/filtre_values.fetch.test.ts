@@ -2,8 +2,9 @@ import {beforeAll, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
 import {supabase} from '../../../tests/supabase';
 import {filtreValuesFetch} from './filtre_values.fetch';
+import {FiltreRessourceLiees} from '../domain/filtre_ressource_liees.schema';
 
-const getFiltreValues = async ({filtre}) => {
+const getFiltreValues = async ({filtre}: {filtre: FiltreRessourceLiees}) => {
   return filtreValuesFetch({
     dbClient: supabase,
     collectiviteId: 1,
@@ -35,7 +36,7 @@ test('Filtre sur les plans', async () => {
   });
 
   expect(data).toMatchObject({
-    plans: [
+    planActions: [
       {
         id: 1,
         nom: 'Plan Vélo 2020-2024',
@@ -129,6 +130,27 @@ test('Filtre sur plusieurs services pilotes', async () => {
       {
         id: 2,
         nom: 'Ultra service',
+      },
+    ],
+  });
+});
+
+test('Filtre sur plusieurs thématiques', async () => {
+  const {data} = await getFiltreValues({
+    filtre: {
+      thematiqueIds: [4, 6],
+    },
+  });
+
+  expect(data).toMatchObject({
+    thematiques: [
+      {
+        id: 4,
+        nom: expect.any(String),
+      },
+      {
+        id: 6,
+        nom: expect.any(String),
       },
     ],
   });
