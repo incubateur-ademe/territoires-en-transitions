@@ -2,10 +2,11 @@ import {useHistory} from 'react-router-dom';
 
 import {Button, Modal} from '@tet/ui';
 
-import {FicheActions} from '@tet/api';
-import {QueryOptions} from '@tet/api/dist/src/fiche_actions';
+import {filtreValuesFetch} from '@tet/api/dist/src/collectivites/shared/actions/filtre_values.fetch';
+import {ficheActionResumesFetch} from '@tet/api/src/fiche_actions/resumes.list/actions/fiche_action_resumes.fetch';
+import {FetchOptions} from '@tet/api/src/fiche_actions/resumes.list/domain/fetch_options.schema';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useQuery} from 'react-query';
 import Module from '../Module';
@@ -31,13 +32,13 @@ const ModuleFichesActions = ({view, module}: Props) => {
   const isEmpty = false;
   // const data = [1, 2, 3, 4, 5, 6];
 
-  const options: QueryOptions = {
-    filter: {
+  const options: FetchOptions = {
+    filtre: {
       planActionIds: [],
       servicePiloteIds: [],
       structurePiloteIds: [],
       personnePiloteIds: [],
-      userPiloteIds: [],
+      utilisateurPiloteIds: [],
     },
     sort: [
       {
@@ -53,27 +54,34 @@ const ModuleFichesActions = ({view, module}: Props) => {
     limit: 3,
   };
 
-  const {data: result} = useQuery(
+  const {data} = useQuery(
     ['TDB_module_fiche_action_1', collectiviteId, view, options],
     async () => {
-      if (!collectiviteId) return [];
+      if (!collectiviteId) return {};
 
-      const {data, error} = await FicheActions.fetchFilteredFicheActions({
-        dbClient: supabaseClient,
-        collectiviteId,
-        options,
-      });
+      const [{data: filtres}, {data}] = await Promise.all([
+        filtreValuesFetch({
+          dbClient: supabaseClient,
+          collectiviteId,
+          filtre: options.filtre,
+        }),
 
-      if (error) {
-        throw error;
-      }
+        ficheActionResumesFetch({
+          dbClient: supabaseClient,
+          collectiviteId,
+          options,
+        }),
+      ]);
 
-      return data;
-    },
-    DISABLE_AUTO_REFETCH
+      return {filtres, data};
+    }
   );
 
-  const data = result || [];
+  if (!data?.data || !data?.filtres) {
+    return null;
+  }
+
+  const {data: ficheActions, filtres} = data;
 
   return (
     <Module
@@ -86,7 +94,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
       isEmpty={isEmpty}
       selectedFilters={['test']}
       footerButtons={
-        data.length > 4 && (
+        ficheActions.length > 4 && (
           <Button
             variant="grey"
             size="sm"
@@ -101,14 +109,14 @@ const ModuleFichesActions = ({view, module}: Props) => {
             }
           >
             Afficher{' '}
-            {data.length === 5
+            {ficheActions.length === 5
               ? '1 autre action'
-              : `les ${data.length - 4} autres actions`}
+              : `les ${ficheActions.length - 4} autres actions`}
           </Button>
         )
       }
     >
-      {data.map((item, index) => (
+      {ficheActions.map((item, index) => (
         <div className="pb-10">
           <code key={index}>{JSON.stringify(item)}</code>
         </div>

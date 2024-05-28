@@ -1,21 +1,16 @@
-import {z} from 'zod';
-import {DBClient} from '../../../typeUtils';
-import {Options, fetchOptionsSchema} from '../domain/fetch_options.schema';
+import { objectToCamel } from 'ts-case-convert';
+import { z } from 'zod';
+import { DBClient, Views } from '../../../typeUtils';
+import { FetchOptions, fetchOptionsSchema } from '../domain/fetch_options.schema';
 
-const outputSchema = z
-  .object({
-    id: z.string(),
-  })
-  .array();
-
-type Output = z.infer<typeof outputSchema>;
+type Output = Array<Views<'fiche_resume'>>;
 
 const ficheActionColumns = ['*'];
 
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  options: Options;
+  options: FetchOptions;
 };
 
 /**
@@ -118,8 +113,11 @@ export async function ficheActionResumesFetch({
   const {data, error, count} = await query.returns<Output>();
 
   if (error) {
-    return {error};
+    console.error(error);
+    throw error;
   }
 
-  return {data, count, nextPage: count > page * limit ? page + 1 : null};
+  const nextPage =  count > page * limit ? page + 1 : null;
+
+  return {data: objectToCamel(data), count, nextPage};
 }

@@ -105,6 +105,6 @@ export async function filtreValuesFetch({
     return {data: objectToCamel(data)};
   } catch (error) {
     console.error(error);
-    return {error};
+    throw error;
   }
 }
