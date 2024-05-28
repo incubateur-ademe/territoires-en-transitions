@@ -1,12 +1,12 @@
-.fonctionnalites ul {
+.panier ul {
   list-style-position: outside;
-  margin-bottom: 0;
+  @apply pl-5;
 }
 
-.fonctionnalites li:not(:last-of-type) {
-  padding-bottom: 24px;
+.panier li:not(:last-of-type) {
+  @apply pb-6;
 }
 
-.fonctionnalites li::marker {
+.panier li::marker {
   @apply text-primary-6;
 }

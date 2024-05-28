@@ -51,9 +51,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "avantages": {
       "type": "component",
@@ -61,6 +59,26 @@
       "component": "shared.vignette",
       "min": 2,
       "max": 4
+    },
+    "panier_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "panier_description": {
+      "type": "richtext",
+      "required": true
+    },
+    "panier_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "panier_cta": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
     },
     "fonctionnalites_titre": {
       "type": "string",
@@ -75,9 +93,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "temoignages_liste": {
       "type": "relation",

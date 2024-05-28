@@ -8,12 +8,13 @@ export const getStrapiData = async () => {
     ['populate[2]', 'couverture'],
     ['populate[3]', 'avantages'],
     ['populate[4]', 'avantages.image'],
-    ['populate[5]', 'fonctionnalites_image'],
-    ['populate[6]', 'temoignages_liste.temoignage'],
-    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
-    ['populate[8]', 'equipe_liste'],
-    ['populate[9]', 'equipe_liste.image'],
-    ['populate[10]', 'questions_liste'],
+    ['populate[5]', 'panier_image'],
+    ['populate[6]', 'fonctionnalites_image'],
+    ['populate[7]', 'temoignages_liste.temoignage'],
+    ['populate[8]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[9]', 'equipe_liste'],
+    ['populate[10]', 'equipe_liste.image'],
+    ['populate[11]', 'questions_liste'],
   ]);
 
   if (data) {
@@ -58,6 +59,13 @@ export const getStrapiData = async () => {
         ...av,
         image: av.image.data,
       })),
+      panier: {
+        titre: outilData.panier_titre as unknown as string,
+        description: outilData.panier_description as unknown as string,
+        image:
+          (outilData.panier_image?.data as unknown as StrapiItem) ?? undefined,
+        cta: outilData.panier_cta as unknown as string,
+      },
       fonctionnalites: {
         titre: outilData.fonctionnalites_titre as unknown as string,
         contenu: outilData.fonctionnalites_contenu as unknown as string,

@@ -1167,6 +1167,18 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         min: 2;
         max: 4;
       }>;
+    panier_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    panier_description: Attribute.RichText & Attribute.Required;
+    panier_image: Attribute.Media;
+    panier_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
     fonctionnalites_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{

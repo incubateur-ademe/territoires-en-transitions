@@ -9,6 +9,7 @@ import TemoignagesPlateforme from './TemoignagesPlateforme';
 import {getStrapiData} from './utils';
 import {Metadata, ResolvingMetadata} from 'next';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import PanierActionsImpact from './PanierActionsImpact';
 
 export async function generateMetadata(
   {params}: {params: {}},
@@ -33,6 +34,8 @@ const OutilNumerique = async () => {
       <HeaderPlateforme {...strapiData.header} />
 
       <AvantagesPlateforme avantages={strapiData.avantages} />
+
+      <PanierActionsImpact {...strapiData.panier} />
 
       {strapiData.temoignages.length > 0 && (
         <TemoignagesPlateforme temoignages={strapiData.temoignages} />

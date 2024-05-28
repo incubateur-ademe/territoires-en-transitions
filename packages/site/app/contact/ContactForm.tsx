@@ -2,10 +2,11 @@
 
 import {ToastFloater} from '@components/floating-ui/ToastFloater';
 import classNames from 'classnames';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {supabase} from '../initSupabase';
 import {options} from './data';
 import {Button} from '@tet/ui';
+import {useRouter, useSearchParams} from 'next/navigation';
 
 type FormData = {
   categorie: string;
@@ -28,6 +29,10 @@ const initFormData: FormData = {
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(initFormData);
   const [status, setStatus] = useState<'success' | 'error' | null>(null);
+  const [isContactPanier, setIsContactPanier] = useState(false);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -66,6 +71,9 @@ const ContactForm = () => {
     if (data) {
       setStatus('success');
       setFormData(initFormData);
+      if (isContactPanier) {
+        router.push('/contact');
+      }
     } else if (error) {
       console.error(error);
       setStatus('error');
@@ -74,6 +82,31 @@ const ContactForm = () => {
       setStatus('error');
     }
   };
+
+  useEffect(() => {
+    const paiContact = searchParams.get('panier') === 'true' ? true : false;
+    setIsContactPanier(paiContact);
+
+    if (paiContact) {
+      const stringToFind = "Informations sur le panier d'actions à impact";
+      const optionGroup = options.find(opt =>
+        opt.options.some(o => o.label === stringToFind),
+      );
+      const option = optionGroup?.options.find(
+        opt => opt.label === stringToFind,
+      );
+
+      if (optionGroup && option) {
+        setFormData(prevState => ({
+          ...prevState,
+          categorie: optionGroup.group,
+          objet: option,
+          message:
+            'Bonjour, le panier d’actions à impact m’intéresse. Pourriez vous me recontacter ?',
+        }));
+      }
+    }
+  }, [searchParams]);
 
   return (
     <>
@@ -89,6 +122,7 @@ const ContactForm = () => {
             required
             onChange={handleChangeSelect}
             value={formData.objet.value}
+            disabled={isContactPanier}
           >
             <option value="" disabled hidden>
               Selectionnez une option
@@ -161,6 +195,7 @@ const ContactForm = () => {
             required
             onChange={handleChange}
             value={formData.message}
+            disabled={isContactPanier}
           />
         </div>
 
