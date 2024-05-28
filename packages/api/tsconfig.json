@@ -19,6 +19,6 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "dist"
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "vitest.config.mts"],
   "exclude": ["node_modules", "dist"]
 }
