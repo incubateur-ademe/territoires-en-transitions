@@ -1,5 +1,5 @@
 import {objectToSnake} from 'ts-case-convert';
-import {z} from 'zod';
+import {TablesInsert} from '../../../database.types';
 import {DBClient} from '../../../typeUtils';
 import {
   Module,
@@ -7,9 +7,6 @@ import {
   moduleFicheActionsSchema,
   moduleIndicateursSchema,
 } from '../domain/module.schema';
-
-const insertSchema = moduleCommonSchemaInsert;
-type ModuleInsert = z.infer<typeof insertSchema>;
 
 type Props = {
   dbClient: DBClient;
@@ -22,10 +19,10 @@ export async function modulesSave({dbClient, module: unsafeModule}: Props) {
   try {
     const {data, error} = await dbClient
       .from('tableau_de_bord_module')
-      .upsert(objectToSnake(module), {onConflict: 'id'})
+      .upsert(objectToSnake(module) as TablesInsert<'tableau_de_bord_module'>, {
+        onConflict: 'id',
+      })
       .eq('id', module.id);
-    // .eq('collectivite_id', module.collectiviteId)
-    // .eq('user_id', module.userId);
 
     if (error) {
       throw error;

@@ -3,7 +3,7 @@ import {signIn, signOut} from '../../../tests/auth';
 import {supabase} from '../../../tests/supabase';
 import {moduleFiltresFetch} from './module_filtres.fetch';
 
-const getModules = async ({filtre}) => {
+const getFiltreValues = async ({filtre}) => {
   return moduleFiltresFetch({
     dbClient: supabase,
     collectiviteId: 1,
@@ -20,7 +20,7 @@ beforeAll(async () => {
 });
 
 test('Filtre vide', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {},
   });
 
@@ -28,7 +28,7 @@ test('Filtre vide', async () => {
 });
 
 test('Filtre sur les plans', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       planActionIds: [1],
     },
@@ -45,7 +45,7 @@ test('Filtre sur les plans', async () => {
 });
 
 test('Filtre sur une personne pilote', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       personnePiloteIds: [1],
     },
@@ -62,7 +62,7 @@ test('Filtre sur une personne pilote', async () => {
 });
 
 test('Filtre sur un utilisateur pilote', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
     },
@@ -80,7 +80,7 @@ test('Filtre sur un utilisateur pilote', async () => {
 });
 
 test('Filtre sur une structure pilote', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       structurePiloteIds: [2],
     },
@@ -97,7 +97,7 @@ test('Filtre sur une structure pilote', async () => {
 });
 
 test('Filtre sur un service pilote', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       servicePiloteIds: [1],
     },
@@ -114,7 +114,7 @@ test('Filtre sur un service pilote', async () => {
 });
 
 test('Filtre sur plusieurs services pilotes', async () => {
-  const {data} = await getModules({
+  const {data} = await getFiltreValues({
     filtre: {
       servicePiloteIds: [1, 2],
     },
