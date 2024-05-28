@@ -1,10 +1,10 @@
 import {beforeAll, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
 import {supabase} from '../../../tests/supabase';
-import {moduleFiltresFetch} from './module_filtres.fetch';
+import {filtreValuesFetch} from './filtre_values.fetch';
 
 const getFiltreValues = async ({filtre}) => {
-  return moduleFiltresFetch({
+  return filtreValuesFetch({
     dbClient: supabase,
     collectiviteId: 1,
     filtre,

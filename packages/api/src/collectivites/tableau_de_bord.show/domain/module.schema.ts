@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {fetchOptionsSchema} from '../../../fiche_actions/shared/domain/fetch_options.schema';
+import {fetchOptionsSchema} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
 
 export const moduleCommonSchemaInsert = z.object({
   id: z.string().uuid(),
