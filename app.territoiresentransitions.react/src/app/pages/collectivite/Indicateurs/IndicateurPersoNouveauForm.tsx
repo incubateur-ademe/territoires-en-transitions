@@ -5,8 +5,8 @@ import {Form, Formik} from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
 import FormField from 'ui/shared/form/FormField';
-import ThematiquesDropdown from './detail/ThematiquesDropdown';
 import {TThematiqueRow} from 'types/alias';
+import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -29,7 +29,7 @@ export const IndicateurPersoNouveauForm = (props: {
 }) => {
   const {indicateur, isSaving, thematiquesFiche, onSave, onCancel} = props;
   const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
-    thematiquesFiche || []
+    thematiquesFiche ?? []
   );
 
   const handleSave = (data: TIndicateurPersoDefinitionWrite) => {
@@ -56,9 +56,10 @@ export const IndicateurPersoNouveauForm = (props: {
             <FormikInput type="area" name="description" label="Description" />
             <FormField className="fr-mt-4w" label="Thématique">
               <ThematiquesDropdown
-                values={thematiques?.map(t => t.id.toString())}
-                onSelect={setThematiques}
-                isReadonly={false}
+                values={
+                  thematiques.length ? thematiques?.map(t => t.id) : undefined
+                }
+                onChange={thematiques => setThematiques(thematiques)}
               />
             </FormField>
           </div>

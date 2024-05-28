@@ -7,7 +7,7 @@ import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilo
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
 import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/PersonnePiloteDropdown';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
-import ThematiquesDropdown from './ThematiquesDropdown';
+import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -61,11 +61,15 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       </FormField>
       {/** Thématiques */}
       {definition.isPerso && (
-        <FormField className="fr-mt-4w" label="Thématique">
+        <FormField className="fr-mt-4w z-10" label="Thématique">
           <ThematiquesDropdown
-            values={resume?.thematiques?.map(t => t.id.toString()) || []}
-            onSelect={upsertIndicateurPersoThematique}
-            isReadonly={isReadonly}
+            values={
+              resume?.thematiques.length
+                ? resume.thematiques?.map(t => t.id)
+                : undefined
+            }
+            onChange={upsertIndicateurPersoThematique}
+            disabled={isReadonly}
           />
         </FormField>
       )}
