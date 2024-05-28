@@ -8,22 +8,26 @@ CREATE TABLE "public"."tableau_de_bord_module" (
     "collectivite_id" int4 NOT NULL,
     "user_id" uuid,
     "titre" varchar NOT NULL,
+    "slug" varchar NOT NULL,
     "type" varchar NOT NULL,
     "options" jsonb NOT NULL,
     "created_at" timestamptz NOT NULL DEFAULT now(),
-    "modified_at" timestamptz DEFAULT now(),
-    CONSTRAINT "public_tableau_de_bord_module_collectivite_id_fkey" 
-        FOREIGN KEY ("collectivite_id") 
-        REFERENCES "public"."commune"("id") 
+    "modified_at" timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY ("collectivite_id") 
+        REFERENCES "public"."collectivite"("id") 
         ON DELETE RESTRICT 
         ON UPDATE CASCADE,
-    CONSTRAINT "public_tableau_de_bord_module_user_id_fkey" 
-        FOREIGN KEY ("user_id") 
+    FOREIGN KEY ("user_id") 
         REFERENCES "public"."dcp"("user_id")
         ON DELETE RESTRICT 
         ON UPDATE CASCADE,
     PRIMARY KEY ("id")
 );
+
+-- Crée un index unique sur slug, user_id, collectivite
+CREATE UNIQUE INDEX 
+    ON "public"."tableau_de_bord_module" 
+    (slug, user_id, collectivite_id);
 
 -- RLS
 alter table public.tableau_de_bord_module enable row level security;

@@ -34,6 +34,7 @@ export const moduleNew: Module = {
   collectiviteId: 1,
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   titre: 'Mon module personnalisé',
+  slug: 'mon-module-personnalise',
   type: 'fiche_action.list',
   options: {
     filtre: {
