@@ -24,7 +24,6 @@ import StructurePiloteDropdown from './StructurePiloteDropdown';
 import PartenairesDropdown from './PartenairesDropdown';
 import PersonnePiloteDropdown from './PersonnePiloteDropdown';
 import PersonneReferenteDropdown from './PersonneReferenteDropdown';
-import ThematiquesDropdown from './ThematiquesDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
 import {
   TFicheActionNiveauxPriorite,
@@ -45,6 +44,7 @@ import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
 import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
+import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -81,11 +81,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             disabled={isReadonly}
           />
         </FormField>
-        <FormField label="Thématique">
+        <FormField label="Thématique" className="z-10">
           <ThematiquesDropdown
-            thematiques={fiche.thematiques}
-            onSelect={thematiques => updateFiche({...fiche, thematiques})}
-            isReadonly={isReadonly}
+            values={fiche.thematiques?.map(t => t.id)}
+            onChange={thematiques => updateFiche({...fiche, thematiques})}
+            disabled={isReadonly}
           />
         </FormField>
         <FormField label="Sous-thématique">

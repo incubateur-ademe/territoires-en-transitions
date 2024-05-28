@@ -3,7 +3,6 @@ import {AccordionControlled} from 'ui/Accordion';
 import FormField from 'ui/shared/form/FormField';
 import {Checkbox} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
-import FiltreThematiques from './FiltreThematiques';
 import FiltrePersonnes from './FiltrePersonnes';
 import {UseFilterState} from './useIndicateursFilterState';
 import FiltreServices from './FiltreServices';
@@ -11,6 +10,7 @@ import FiltrePlans from './FiltrePlans';
 import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
+import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 //import FiltreType from './FiltreType';
 
 export type FiltresIndicateursProps = {
@@ -56,10 +56,19 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
         html={
           isOpen && (
             <>
-              <FormField label="Thématique">
-                <FiltreThematiques
-                  values={thematiques}
-                  onSelect={values => updateFilterParam('thematiques', values)}
+              <FormField label="Thématique" className="z-10">
+                <ThematiquesDropdown
+                  values={
+                    thematiques?.length
+                      ? thematiques.map(t => parseInt(t))
+                      : undefined
+                  }
+                  onChange={values =>
+                    updateFilterParam(
+                      'thematiques',
+                      values.map(t => t.id.toString())
+                    )
+                  }
                 />
               </FormField>
               <div className="grid lg:grid-cols-2 gap-x-8 gap-y-0">
