@@ -1,3 +1,4 @@
+import {FiltreValues} from '@tet/api/src/collectivites/shared/domain/filtre_ressource_liees.schema';
 import {Badge, Button} from '@tet/ui';
 import classNames from 'classnames';
 import React, {useState} from 'react';
@@ -22,7 +23,7 @@ type Props = {
   /** État vide générique */
   isEmpty: boolean;
   /** Affiche les filtres sélectionnés dans une liste de badges */
-  selectedFilters: string[];
+  selectedFilters: FiltreValues;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
@@ -63,9 +64,7 @@ const Module = ({
           Aucun résultat pour ce filtre !
         </p>
         <div className="flex gap-4 my-6">
-          {selectedFilters.map(filter => (
-            <Badge key={filter} title={filter} state="standard" />
-          ))}
+          {getBadgesOfFiltreValues(selectedFilters)}
         </div>
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
@@ -82,9 +81,7 @@ const Module = ({
           <h6 className="mb-0">{title}</h6>
           <div className="flex gap-4 mt-4">
             {/** Selected filters */}
-            {selectedFilters.map(filter => (
-              <Badge key={filter} title={filter} state="standard" />
-            ))}
+            {getBadgesOfFiltreValues(selectedFilters)}
           </div>
         </div>
         <>
@@ -129,3 +126,17 @@ const ModuleContainer = ({
     {children}
   </div>
 );
+
+function getBadgesOfFiltreValues(filtreValues: FiltreValues) {
+  return Object.entries(filtreValues).map(([key, values]) => {
+    return values.map((value, index) => {
+      return (
+        <Badge
+          key={index}
+          title={'prenom' in value ? `${value.prenom} ${value.nom}` : value.nom}
+          state="standard"
+        />
+      );
+    });
+  });
+}

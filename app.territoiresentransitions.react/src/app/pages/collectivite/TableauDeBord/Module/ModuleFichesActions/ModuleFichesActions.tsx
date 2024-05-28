@@ -59,7 +59,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
     async () => {
       if (!collectiviteId) return {};
 
-      const [{data: filtres}, {data}] = await Promise.all([
+      const [{data: filtreValues}, {data}] = await Promise.all([
         filtreValuesFetch({
           dbClient: supabaseClient,
           collectiviteId,
@@ -73,15 +73,15 @@ const ModuleFichesActions = ({view, module}: Props) => {
         }),
       ]);
 
-      return {filtres, data};
+      return {filtreValues, data};
     }
   );
 
-  if (!data?.data || !data?.filtres) {
+  if (!data?.data || !data?.filtreValues) {
     return null;
   }
 
-  const {data: ficheActions, filtres} = data;
+  const {data: ficheActions, filtreValues} = data;
 
   return (
     <Module
@@ -92,7 +92,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
       )}
       isLoading={loading}
       isEmpty={isEmpty}
-      selectedFilters={['test']}
+      selectedFilters={filtreValues}
       footerButtons={
         ficheActions.length > 4 && (
           <Button
@@ -116,6 +116,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
         )
       }
     >
+      {/* À modifier pour afficher les actions */}
       {ficheActions.map((item, index) => (
         <div className="pb-10">
           <code key={index}>{JSON.stringify(item)}</code>

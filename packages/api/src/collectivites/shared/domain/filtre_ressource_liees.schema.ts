@@ -16,7 +16,7 @@ export type FiltreRessourceLiees = z.infer<typeof filtreRessourceLieesSchema>;
 /**
  * Schema de retour des valeurs associées aux ids des filtres.
  */
-export const filtreValueSchema = z.object({
+export const filtreValuesSchema = z.object({
   planActions: z
     .object({
       id: z.number(),
@@ -66,3 +66,5 @@ export const filtreValueSchema = z.object({
     .array()
     .optional(),
 });
+
+export type FiltreValues = z.infer<typeof filtreValuesSchema>;
