@@ -164,6 +164,11 @@
     @apply text-primary-9;
   }
 
+  .paragraphe-primary-10,
+  .paragraphe-primary-10 > p {
+    @apply text-primary-10;
+  }
+
   .paragraphe-primary-11,
   .paragraphe-primary-11 > p {
     @apply text-primary-11;

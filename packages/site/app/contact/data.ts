@@ -37,13 +37,17 @@ export const options = [
         value: 7,
         label: 'Questions sur l’utilisation de la plateforme',
       },
+      {
+        value: 8,
+        label: "Informations sur le panier d'actions à impact",
+      },
     ],
   },
   {
     group: 'Aucun de ces sujets ?',
     options: [
       {
-        value: 8,
+        value: 9,
         label: 'Autre',
       },
     ],
