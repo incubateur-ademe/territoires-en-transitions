@@ -1,14 +1,10 @@
 import {objectToCamel} from 'ts-case-convert';
-import {z} from 'zod';
+import {DBClient} from '../../../typeUtils';
 import {
   FiltreRessourceLiees,
+  FiltreValues,
   filtreRessourceLieesSchema,
-  filtreValueSchema,
 } from '../domain/filtre_ressource_liees.schema';
-import {DBClient} from '../../../typeUtils';
-
-const outputSchema = filtreValueSchema;
-type Output = z.infer<typeof outputSchema>;
 
 type Input = {
   dbClient: DBClient;
@@ -23,7 +19,7 @@ export async function filtreValuesFetch({
   dbClient,
   collectiviteId,
   filtre: unsafeFiltre,
-}: Input) {
+}: Input): Promise<{data: FiltreValues}> {
   const filtre = filtreRessourceLieesSchema.parse(unsafeFiltre);
 
   try {
@@ -96,13 +92,13 @@ export async function filtreValuesFetch({
       query.in('collectivite_thematique.id', filtre.thematiqueIds);
     }
 
-    const {data, error} = await query.returns<Output>().single();
+    const {data, error} = await query.single();
 
     if (error) {
       throw error;
     }
 
-    return {data: objectToCamel(data)};
+    return {data: objectToCamel(data) as FiltreValues};
   } catch (error) {
     console.error(error);
     throw error;
