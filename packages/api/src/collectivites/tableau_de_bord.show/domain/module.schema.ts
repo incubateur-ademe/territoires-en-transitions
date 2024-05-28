@@ -6,6 +6,7 @@ export const moduleCommonSchemaInsert = z.object({
   collectiviteId: z.number(),
   userId: z.string().uuid().nullish(),
   titre: z.string(),
+  slug: z.string(),
 });
 
 export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
