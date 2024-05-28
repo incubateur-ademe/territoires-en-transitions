@@ -2,7 +2,6 @@
   "name": "@tet/api",
   "version": "1.0.0",
   "main": "dist/src/index.js",
-  "type": "module",
   "types": "dist/src/index.d.ts",
   "private": true,
   "engines": {
