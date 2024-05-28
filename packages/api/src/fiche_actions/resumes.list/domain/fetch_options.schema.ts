@@ -32,4 +32,4 @@ export const fetchOptionsSchema = getQueryOptionsSchema([
   filtre: filtreSchema,
 });
 
-export type Options = z.infer<typeof fetchOptionsSchema>;
+export type FetchOptions = z.infer<typeof fetchOptionsSchema>;
