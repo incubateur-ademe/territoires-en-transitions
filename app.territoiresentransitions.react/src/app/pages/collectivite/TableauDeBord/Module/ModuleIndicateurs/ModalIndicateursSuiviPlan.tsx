@@ -6,18 +6,22 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
+  OptionValue,
   SelectFilter,
+  SelectMultiple,
 } from '@tet/ui';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {indicateursSuiviPlans} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import FiltreThematiques from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/FiltreThematiques';
+import FiltrePersonnes from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/FiltrePersonnes';
 
 type Filters = {
   planIds?: number[];
   pilotesIds?: (string | number)[];
-  thematiquesIds?: number[];
-  rempli?: string;
+  thematiquesIds?: string[];
+  rempli?: string[];
 };
 
 const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
@@ -38,7 +42,7 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
           </h3>
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
             <Field title="Nom du plan :">
-              <SelectFilter
+              <SelectMultiple
                 values={formState.planIds}
                 options={
                   plansActions?.plans.map(p => ({
@@ -46,38 +50,32 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
                     value: p.id,
                   })) ?? []
                 }
-                onChange={({values}) =>
+                onChange={({values, selectedValue}) =>
+                  ((formState.planIds?.length === 1 &&
+                    selectedValue !== formState.planIds[0]) ||
+                    (formState.planIds && formState.planIds.length > 1)) &&
                   setFormState({...formState, planIds: values as number[]})
                 }
               />
             </Field>
             <Field title="Pilote de l'indicateur :">
-              <SelectFilter
+              <FiltrePersonnes
                 values={formState.pilotesIds}
-                options={[
-                  {
-                    label: 'test',
-                    value: 'test',
-                  },
-                ]}
-                onChange={({values}) =>
-                  setFormState({...formState, pilotesIds: values})
+                onSelect={pilotesIds =>
+                  setFormState({
+                    ...formState,
+                    pilotesIds,
+                  })
                 }
               />
             </Field>
             <Field title="Thématique de l'indicateur :">
-              <SelectFilter
+              <FiltreThematiques
                 values={formState.thematiquesIds}
-                options={[
-                  {
-                    label: 'test',
-                    value: 'test',
-                  },
-                ]}
-                onChange={({values}) =>
+                onSelect={thematiquesIds =>
                   setFormState({
                     ...formState,
-                    thematiquesIds: values as number[],
+                    thematiquesIds,
                   })
                 }
               />
@@ -90,11 +88,15 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
                     label: 'Complet',
                     value: 'rempli',
                   },
+                  {
+                    label: 'Incomplet',
+                    value: 'incomplet',
+                  },
                 ]}
-                onChange={({values, selectedValue}) =>
+                onChange={({values}) =>
                   setFormState({
                     ...formState,
-                    rempli: selectedValue as string,
+                    rempli: values as string[],
                   })
                 }
               />
