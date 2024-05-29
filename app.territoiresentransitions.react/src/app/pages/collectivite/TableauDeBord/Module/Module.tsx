@@ -1,4 +1,4 @@
-import {FiltreValues} from '@tet/api/src/collectivites/shared/domain/filtre_ressource_liees.schema';
+import {FiltreValues} from '@tet/api/dist/src/collectivites/shared/domain/filtre_ressource_liees.schema';
 import {Badge, Button} from '@tet/ui';
 import classNames from 'classnames';
 import React, {useState} from 'react';
