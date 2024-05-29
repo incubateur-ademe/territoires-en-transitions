@@ -1,7 +1,7 @@
-import { objectToCamel } from 'ts-case-convert';
-import { z } from 'zod';
-import { DBClient, Views } from '../../../typeUtils';
-import { FetchOptions, fetchOptionsSchema } from '../domain/fetch_options.schema';
+import {objectToCamel} from 'ts-case-convert';
+import {z} from 'zod';
+import {DBClient, Views} from '../../../typeUtils';
+import {FetchOptions, fetchOptionsSchema} from '../domain/fetch_options.schema';
 
 type Output = Array<Views<'fiche_resume'>>;
 
@@ -117,7 +117,7 @@ export async function ficheActionResumesFetch({
     throw error;
   }
 
-  const nextPage =  count > page * limit ? page + 1 : null;
+  const nextPage = count > page * limit ? page + 1 : null;
 
   return {data: objectToCamel(data), count, nextPage};
 }
