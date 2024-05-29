@@ -42,4 +42,5 @@ export async function signOut() {
   return response;
 }
 
-const delay = time => new Promise(resolve => setTimeout(resolve, time));
+const delay = (time: number) =>
+  new Promise(resolve => setTimeout(resolve, time));
