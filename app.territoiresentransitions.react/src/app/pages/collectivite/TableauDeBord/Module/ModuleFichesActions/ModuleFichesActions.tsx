@@ -3,8 +3,8 @@ import {useHistory} from 'react-router-dom';
 import {Button, Modal} from '@tet/ui';
 
 import {filtreValuesFetch} from '@tet/api/dist/src/collectivites/shared/actions/filtre_values.fetch';
-import {ficheActionResumesFetch} from '@tet/api/src/fiche_actions/resumes.list/actions/fiche_action_resumes.fetch';
-import {FetchOptions} from '@tet/api/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import {ficheActionResumesFetch} from '@tet/api/dist/src/fiche_actions/resumes.list/actions/fiche_action_resumes.fetch';
+import {FetchOptions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
