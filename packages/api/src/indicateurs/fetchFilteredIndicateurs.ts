@@ -217,13 +217,15 @@ export const fetchFilteredIndicateurs = async (
     query.or(filterParams.join(','), {foreignTable: 'pilotes'});
   }
 
+  // const {data, ...remaining} = await query;
   const {data, ...remaining} = await query.returns<IndicateurItemFetched[]>();
+  const rows = data || [];
 
   return {
     ...remaining,
-    data: data
+    data: rows
       // tri par nom (pour que les diacritiques soient pris en compte)
-      ?.sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
+      .sort((a, b) => (a.nom && b.nom ? a.nom.localeCompare(b.nom) : 0))
       // et conserve un id unique
       .map(({indicateur_id, indicateur_perso_id, ...otherProps}) => ({
         id: indicateur_id || indicateur_perso_id,

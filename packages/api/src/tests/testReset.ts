@@ -1,4 +1,4 @@
-import retry from 'async-retry';
+import retry, {Options} from 'async-retry';
 import {supabase} from './supabase';
 
 async function _testReset(): Promise<void> {
@@ -13,4 +13,4 @@ async function _testReset(): Promise<void> {
 export const testReset = () =>
   retry(_testReset, {
     retries: 5,
-  });
+  } as Options);
