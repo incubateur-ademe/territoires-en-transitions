@@ -119,6 +119,9 @@ export interface TrackingPlan extends Record<never, Page> {
   /** Page "rejoindre une collectivité" */
   'auth/rejoindre-une-collectivite': PageWithSubmitButton;
 
+  /** Modale d'envoi d'une invitation à rejoindre une collectivité */
+  'auth/invite': PageWithSubmitButton;
+
   /* La page à la racine de https://panier.territoiresentransitions.fr */
   'panier/': NoProps;
 
