@@ -1,15 +1,13 @@
 import {objectToCamel} from 'ts-case-convert';
-import {z} from 'zod';
 import {DBClient} from '../../../typeUtils';
-import {getDefaultModules, moduleSchemaSelect} from '../domain/module.schema';
+import {ModuleSelect, getDefaultModules} from '../domain/module.schema';
 
-const outputSchema = moduleSchemaSelect.array();
-type Output = z.infer<typeof outputSchema>;
+type Output = Array<ModuleSelect>;
 
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  userId: string | null;
+  userId: string;
 };
 
 /**
@@ -17,12 +15,13 @@ type Props = {
  */
 export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
   try {
-    const {data, error} = await dbClient
+    const query = dbClient
       .from('tableau_de_bord_module')
       .select('*')
       .eq('collectivite_id', collectiviteId)
-      .eq('user_id', userId)
-      .returns<Output>();
+      .eq('user_id', userId);
+
+    const {data, error} = await query.returns<Output>();
 
     if (error) {
       throw error;

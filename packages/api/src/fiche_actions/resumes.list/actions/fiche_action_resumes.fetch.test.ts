@@ -33,3 +33,12 @@ test('Fetch avec filtre sur un statut', async () => {
 
   expect(data).toMatchObject({});
 });
+
+test('Fetch avec filtre sur un statut', async () => {
+  const {data} = await ficheActionResumesFetch({
+    ...params,
+    options: {filtre: {modifiedSince: 'last-15-days'}},
+  });
+
+  expect(data).toMatchObject({});
+});

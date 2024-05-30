@@ -2,7 +2,7 @@ import {objectToSnake} from 'ts-case-convert';
 import {TablesInsert} from '../../../database.types';
 import {DBClient} from '../../../typeUtils';
 import {
-  Module,
+  ModuleInsert,
   moduleCommonSchemaInsert,
   moduleFicheActionsSchema,
   moduleIndicateursSchema,
@@ -10,7 +10,7 @@ import {
 
 type Props = {
   dbClient: DBClient;
-  module: Module;
+  module: ModuleInsert;
 };
 
 export async function modulesSave({dbClient, module: unsafeModule}: Props) {
@@ -35,7 +35,7 @@ export async function modulesSave({dbClient, module: unsafeModule}: Props) {
   }
 }
 
-function parseModule(module) {
+function parseModule(module: ModuleInsert) {
   const commonPart = moduleCommonSchemaInsert.parse(module);
 
   if (module.type === 'fiche_action.list') {

@@ -28,13 +28,13 @@ test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregi
 
   expect(data).toHaveLength(3);
 
-  expect(data[0]).toMatchObject({
+  expect(data?.[0]).toMatchObject({
     titre: /indicateurs/i,
     type: 'indicateur.list',
     options: expect.any(Object),
   });
 
-  expect(data[1]).toMatchObject({
+  expect(data?.[1]).toMatchObject({
     titre: /actions/i,
     type: 'fiche_action.list',
     options: expect.objectContaining({

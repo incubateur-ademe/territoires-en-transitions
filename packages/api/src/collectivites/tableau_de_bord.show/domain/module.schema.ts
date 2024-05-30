@@ -31,7 +31,13 @@ export const moduleSchemaSelect = z.discriminatedUnion('type', [
   moduleFicheActionsSchema.merge(moduleCommonSchemaSelect),
 ]);
 
-export type Module = z.infer<typeof moduleSchemaSelect>;
+export const moduleSchemaInsert = z.discriminatedUnion('type', [
+  moduleIndicateursSchema.merge(moduleCommonSchemaInsert),
+  moduleFicheActionsSchema.merge(moduleCommonSchemaInsert),
+]);
+
+export type ModuleSelect = z.input<typeof moduleSchemaSelect>;
+export type ModuleInsert = z.input<typeof moduleSchemaInsert>;
 
 export const defaultSlugsSchema = z.enum([
   'indicateurs-de-suivi-de-mes-plans',
@@ -39,25 +45,34 @@ export const defaultSlugsSchema = z.enum([
   'actions-recemment-modifiees',
 ]);
 
+type Props = {
+  collectiviteId: number;
+  userId: string;
+};
+
 /**
  * Retourne les 3 modules de base par défaut.
  */
-export function getDefaultModules({userId, collectiviteId}) {
+export function getDefaultModules({userId, collectiviteId}: Props) {
   const now = new Date().toISOString();
 
-  const indicateurs: Module = {
+  const indicateurs: ModuleSelect = {
     id: crypto.randomUUID(),
     userId,
     collectiviteId,
     titre: 'Indicateurs de suivi de mes plans',
     type: 'indicateur.list',
     slug: defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans'],
-    options: {},
+    options: {
+      filtre: {
+        pilote_user_ids: [userId],
+      },
+    },
     createdAt: now,
     modifiedAt: now,
   };
 
-  const actionsDontJeSuisPilote: Module = {
+  const actionsDontJeSuisPilote: ModuleSelect = {
     id: crypto.randomUUID(),
     userId,
     collectiviteId,
@@ -73,7 +88,7 @@ export function getDefaultModules({userId, collectiviteId}) {
     modifiedAt: now,
   };
 
-  const actionsRecentlyModified: Module = {
+  const actionsRecentlyModified: ModuleSelect = {
     id: crypto.randomUUID(),
     userId,
     collectiviteId,
