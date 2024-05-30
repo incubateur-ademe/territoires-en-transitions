@@ -1,0 +1,199 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Admin 1`] = `
+<form
+  className="flex flex-col gap-4"
+  data-test="SendInvite"
+  onSubmit={[Function]}
+>
+  <div
+    className="flex-grow flex flex-col gap-3"
+  >
+    <label
+      htmlFor="email"
+    >
+      <div
+        className="font-medium text-grey-8"
+      >
+        Adresse email de la personne à inviter *
+      </div>
+    </label>
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none text-md py-3"
+        id="email"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+      />
+    </div>
+  </div>
+  <div
+    className="flex-grow flex flex-col gap-3"
+  >
+    <label>
+      <div
+        className="font-medium text-grey-8"
+      >
+        Niveau d’accès pour cette collectivité  * 
+      </div>
+    </label>
+    <button
+      aria-expanded={false}
+      aria-label="ouvrir le menu"
+      className="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+      data-test="niveau"
+      disabled={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+      type="button"
+    >
+      <div
+        className="flex px-4 min-h-[3rem] py-2"
+      >
+        <div
+          className="flex grow flex-wrap gap-2 mr-4"
+        >
+          <span
+            className="my-auto text-left text-xs text-grey-6 line-clamp-1"
+          >
+            Sélectionner une option
+          </span>
+        </div>
+        <span
+          className="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9"
+        />
+      </div>
+    </button>
+  </div>
+  <hr
+    className="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4"
+  />
+  <div
+    className="flex gap-4 flex-wrap justify-end"
+  >
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Annuler
+    </button>
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
+      data-test="ok"
+      disabled={true}
+      onClick={[Function]}
+      type="submit"
+    >
+      Valider
+    </button>
+  </div>
+</form>
+`;
+
+exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Edition 1`] = `
+<form
+  className="flex flex-col gap-4"
+  data-test="SendInvite"
+  onSubmit={[Function]}
+>
+  <div
+    className="flex-grow flex flex-col gap-3"
+  >
+    <label
+      htmlFor="email"
+    >
+      <div
+        className="font-medium text-grey-8"
+      >
+        Adresse email de la personne à inviter *
+      </div>
+    </label>
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none text-md py-3"
+        id="email"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+      />
+    </div>
+  </div>
+  <div
+    className="flex-grow flex flex-col gap-3"
+  >
+    <label>
+      <div
+        className="font-medium text-grey-8"
+      >
+        Niveau d’accès pour cette collectivité  * 
+      </div>
+    </label>
+    <button
+      aria-expanded={false}
+      aria-label="ouvrir le menu"
+      className="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+      data-test="niveau"
+      disabled={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+      type="button"
+    >
+      <div
+        className="flex px-4 min-h-[3rem] py-2"
+      >
+        <div
+          className="flex grow flex-wrap gap-2 mr-4"
+        >
+          <span
+            className="my-auto text-left text-xs text-grey-6 line-clamp-1"
+          >
+            Sélectionner une option
+          </span>
+        </div>
+        <span
+          className="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9"
+        />
+      </div>
+    </button>
+  </div>
+  <hr
+    className="w-full bg-gradient-to-r from-primary-3 to-primary-3 mt-4"
+  />
+  <div
+    className="flex gap-4 flex-wrap justify-end"
+  >
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      Annuler
+    </button>
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
+      data-test="ok"
+      disabled={true}
+      onClick={[Function]}
+      type="submit"
+    >
+      Valider
+    </button>
+  </div>
+</form>
+`;
