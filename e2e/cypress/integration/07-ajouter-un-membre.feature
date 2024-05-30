@@ -6,44 +6,42 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
-    Alors un formulaire d'invitation est affiché
+    Alors le tableau des membres n'inclus pas l'utilisateur "yulu@dudu.com"
 
-    Quand je renseigne l'email "yulu@DUDU.com" de la personne à inviter en "edition"
+    Quand je clique sur le bouton "Inviter un membre"
+    Et que je renseigne l'email "yulu@DUDU.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
-    Alors une alerte de "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
+    #Alors une alerte de "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
     Alors le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
 
   Scénario: Inviter un email qui est déjà associé à un membre de la collectivité
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
-    Alors un formulaire d'invitation est affiché
+    Alors le tableau des membres doit contenir l'utilisateur "yili@didi.com"
 
-    Quand je renseigne l'email "YiLI@didi.com" de la personne à inviter en "edition"
+    Quand je clique sur le bouton "Inviter un membre"
+    Et que je renseigne l'email "YiLI@didi.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
-    Alors une alerte de "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
+    Alors le tableau des membres doit contenir l'utilisateur "yili@didi.com"
+    #Alors une alerte de "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
 
   Scénario: Inviter un email qui n'est pas encore associé à un compte utilisateur
     Etant donné que je suis connecté en tant que "yolo"
     Et que la mailbox de "nono" est vidée
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
-    Alors un formulaire d'invitation est affiché
+    Alors le tableau des membres n'inclus pas l'utilisateur "nodo@dodo.com"
 
-    Quand je renseigne l'email "NoNo@dodo.com" de la personne à inviter en "admin"
+    Quand je clique sur le bouton "Inviter un membre"
+    Et que je renseigne l'email "NoNo@dodo.com" de la personne à inviter en "admin"
     Et que je valide le formulaire
-    Alors un message d'invitation est affiché
-
-    Quand je clique sur le bouton "Copier le message"
-    Alors le presse-papier contient "Yolo Dodo de Ambérieu-en-Bugey vous invite à collaborer."
-
-    Quand je clique sur le bouton "Copier le lien"
-    Alors le presse-papier contient "http"
+    Alors le tableau des membres indique que le compte "nono@dodo.com" est en attente de création
 
     Quand je me déconnecte
     Alors la page "home" est visible
 
-    Quand je visite le lien copié
+    Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"
     Alors le "formulaire de création de compte" est visible
 
     Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
@@ -72,4 +70,3 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
-

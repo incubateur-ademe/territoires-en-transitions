@@ -14,6 +14,9 @@ export const LocalSelectors = {
   'Copier le lien': {
     selector: '[data-test=copier-url]', //[data-test=CopyLink]
   },
+  'Inviter un membre': {
+    selector: '[data-test=invite]',
+  },
   // 'Générer un nouveau lien': {
   //   selector: '[data-test=InvitationLink] [data-test=GenLink]',
   // },
