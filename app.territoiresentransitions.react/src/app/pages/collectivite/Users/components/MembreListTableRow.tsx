@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {Button, Icon, Tooltip} from '@tet/ui';
 
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
@@ -12,6 +13,7 @@ import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
 import {TNiveauAcces} from 'types/alias';
 import {TMembreFonction} from 'types/alias';
+import {ResendInvitationArgs} from 'app/pages/collectivite/Users/useResendInvitation';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -19,6 +21,7 @@ export type TMembreListTableRowProps = {
   membre: Membre;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
+  resendInvitation: (args: ResendInvitationArgs) => void;
 };
 
 const membreFonctions: {value: TMembreFonction; label: string}[] = [
@@ -42,7 +45,7 @@ const niveauAccessDetail: Record<TNiveauAcces, string> = {
 };
 
 const rowClassNames = 'h-20 border-b border-gray-300 bg-white';
-const cellClassNames = 'relative px-4';
+const cellClassNames = 'px-4';
 
 const MembreListTableRow = ({
   currentUserId,
@@ -50,6 +53,7 @@ const MembreListTableRow = ({
   membre,
   updateMembre,
   removeFromCollectivite,
+  resendInvitation,
 }: TMembreListTableRowProps) => {
   const {
     user_id: membre_id,
@@ -61,6 +65,7 @@ const MembreListTableRow = ({
     details_fonction,
     champ_intervention,
     niveau_acces,
+    invitation_id,
   } = membre;
 
   const isCurrentUser = currentUserId === membre_id;
@@ -87,47 +92,51 @@ const MembreListTableRow = ({
     }
   };
 
-  const onRemoveInvite = (membreEmail: string) => {
-    removeFromCollectivite(membreEmail);
-  };
-
   // Si le membre est en attente d'acceptation d'une invitation
   if (membre_id === null) {
     return (
       <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
-        {/* Mettre le valeur colSpan à 5 quand l'ion remet la colonne téléphone */}
         <td colSpan={4} className={cellClassNames}>
           <span className="block mb-0.5 text-xs text-gray-500">{email}</span>
           <span className="font-medium text-xs text-gray-600">
             Création de compte en attente
           </span>
         </td>
-        <td className={`${cellClassNames}`}>
-          {/* currentUserAccess="edition" permet de n'afficher que l'option "remove" même en étant admin */}
-          {canUpdate ? (
-            <>
-              <AccesDropdown
-                isCurrentUser={isCurrentUser}
-                currentUserAccess="edition"
-                value={niveau_acces}
-                onSelect={onAccesSelect}
-              />
-              <UpdateMemberAccesModal
-                isOpen={isAccesModalOpen}
-                setIsOpen={setIsAccesModalOpen}
-                selectedOption={accesOptionSelected}
-                membreId={membre_id}
-                membreEmail={membre.email}
-                isCurrentUser={isCurrentUser}
-                updateMembre={updateMembre}
-                removeFromCollectivite={removeFromCollectivite}
-                removeInvite={onRemoveInvite}
-              />
-            </>
-          ) : (
-            <span>
-              {niveauAcces.find(v => v.value === niveau_acces)?.label}
-            </span>
+        <td className={cellClassNames}>
+          <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
+        </td>
+        <td className={cellClassNames}>
+          <Tooltip label="En attente de validation">
+            <Icon
+              className="bg-warning-2 text-warning-1 p-2 rounded"
+              icon="hourglass-line"
+            />
+          </Tooltip>
+        </td>
+        <td className={cellClassNames}>
+          {canUpdate && (
+            <div className="flex flex-row gap-4">
+              <Tooltip label="Supprimer l'invitation">
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  icon="delete-bin-6-line"
+                  onClick={() => removeFromCollectivite(email)}
+                />
+              </Tooltip>
+              {invitation_id && (
+                <Tooltip label="Renvoyer l'invitation">
+                  <Button
+                    size="sm"
+                    variant="outlined"
+                    icon="mail-send-line"
+                    onClick={() =>
+                      resendInvitation({invitationId: invitation_id, email})
+                    }
+                  />
+                </Tooltip>
+              )}
+            </div>
           )}
         </td>
       </tr>
@@ -196,29 +205,42 @@ const MembreListTableRow = ({
           </span>
         )}
       </td>
-      <td className={`${cellClassNames}`}>
+      <td className={cellClassNames}>
         {canUpdate ? (
-          <>
-            <AccesDropdown
-              isCurrentUser={isCurrentUser}
-              currentUserAccess={currentUserAccess}
-              value={niveau_acces}
-              onSelect={onAccesSelect}
-            />
-            <UpdateMemberAccesModal
-              isOpen={isAccesModalOpen}
-              setIsOpen={setIsAccesModalOpen}
-              selectedOption={accesOptionSelected}
-              membreId={membre_id}
-              membreEmail={membre.email}
-              isCurrentUser={isCurrentUser}
-              updateMembre={updateMembre}
-              removeFromCollectivite={removeFromCollectivite}
-              removeInvite={onRemoveInvite}
-            />
-          </>
+          <AccesDropdown
+            isCurrentUser={isCurrentUser}
+            currentUserAccess={currentUserAccess}
+            value={niveau_acces}
+            onSelect={onAccesSelect}
+          />
         ) : (
           <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
+        )}
+      </td>
+      <td className={cellClassNames}>
+        <Tooltip label="Rattachement effectué">
+          <Icon
+            className="bg-success-2 text-success-1 p-2 rounded"
+            icon="checkbox-circle-fill"
+          />
+        </Tooltip>
+      </td>
+      <td className={cellClassNames}>
+        {canUpdate && (
+          <Tooltip
+            label={
+              isCurrentUser
+                ? 'Retirer mon accès à la collectivité'
+                : 'Retirer ce membre de la collectivité'
+            }
+          >
+            <Button
+              size="sm"
+              variant="outlined"
+              icon="delete-bin-6-line"
+              onClick={() => removeFromCollectivite(email)}
+            />
+          </Tooltip>
         )}
       </td>
     </tr>
@@ -344,17 +366,16 @@ const AccesDropdown = ({
   value,
   onSelect,
 }: TAccesDropdownProps) => {
+  if (currentUserAccess !== 'admin')
+    return niveauAcces.find(v => v.value === currentUserAccess)?.label;
+
   return (
     <div data-test="acces-dropdown">
       <SelectDropdown
         placement="bottom-end"
         value={value}
         onSelect={onSelect}
-        options={
-          currentUserAccess === 'admin'
-            ? [...niveauAcces, {value: 'remove', label: 'Supprimé'}]
-            : [{value: 'remove', label: 'Supprimé'}]
-        }
+        options={niveauAcces}
         renderSelection={value => (
           <span className="mr-auto">
             {niveauAcces.find(v => v.value === value)?.label}
