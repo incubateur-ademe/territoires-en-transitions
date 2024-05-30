@@ -13,12 +13,9 @@ import {
   TUpdateMembre,
 } from 'app/pages/collectivite/Users/types';
 import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
-import InvitationForm from 'app/pages/collectivite/Users/components/InvitationForm';
-import {
-  AddUserToCollectiviteRequest,
-  AddUserToCollectiviteResponse,
-  useAddUserToCollectivite,
-} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
+import {useAddUserToCollectivite} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
+import {Button, Modal} from '@tet/ui';
+import {Invite} from 'app/pages/collectivite/Users/components/Invite';
 
 export type MembresProps = {
   membres: Membre[];
@@ -27,9 +24,6 @@ export type MembresProps = {
   currentUser: UserData;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
-  addUser: (request: AddUserToCollectiviteRequest) => void;
-  addUserResponse: AddUserToCollectiviteResponse | null;
-  resetAddUser: () => void;
 };
 
 /**
@@ -43,19 +37,34 @@ export const Membres = ({
   currentUser,
   updateMembre,
   removeFromCollectivite,
-  addUser,
-  addUserResponse,
-  resetAddUser,
 }: MembresProps) => {
-  const canViewInvitation =
-    collectivite.niveau_acces === 'admin' ||
-    collectivite.niveau_acces === 'edition';
+  const {niveau_acces} = collectivite;
+  const canInvite = niveau_acces === 'admin' || niveau_acces === 'edition';
+  const {mutate: addUser} = useAddUserToCollectivite(collectivite, currentUser);
 
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
-      <h1 className="mb-10 lg:mb-14 lg:text-center">Gestion des membres</h1>
+      <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
+        Gestion des membres
+        {canInvite && (
+          <Modal
+            title="Inviter un membre"
+            render={({close}) => (
+              <Invite
+                niveauAcces={niveau_acces}
+                onCancel={close}
+                onSubmit={data => {
+                  addUser(data);
+                  close();
+                }}
+              />
+            )}
+          >
+            <Button data-test="invite">Inviter un membre</Button>
+          </Modal>
+        )}
+      </h1>
 
-      <h2 className="">Liste des membres</h2>
       <MembreListTable
         currentUserId={currentUser.id}
         currentUserAccess={
@@ -66,22 +75,6 @@ export const Membres = ({
         updateMembre={updateMembre}
         removeFromCollectivite={removeFromCollectivite}
       />
-
-      {canViewInvitation && (
-        <>
-          <h2 className="mt-12">Invitation</h2>
-          <p className="italic text-gray-500">
-            Tous les champs sont obligatoires
-          </p>
-          <InvitationForm
-            addUser={addUser}
-            addUserResponse={addUserResponse}
-            resetAddUser={resetAddUser}
-            currentUser={currentUser}
-            currentCollectivite={collectivite}
-          />
-        </>
-      )}
     </main>
   );
 };
@@ -95,15 +88,11 @@ const MembresConnected = () => {
   const {membres, isLoading: isMemberLoading} = useCollectiviteMembres();
   const {updateMembre} = useUpdateCollectiviteMembre();
   const {removeFromCollectivite} = useRemoveFromCollectivite();
-  const {addUser, addUserResponse, resetAddUser} = useAddUserToCollectivite();
 
   if (!user?.id || !collectivite_id || !collectivite) return null;
 
   return (
     <Membres
-      addUser={addUser}
-      addUserResponse={addUserResponse}
-      resetAddUser={resetAddUser}
       currentUser={user}
       membres={membres}
       collectivite={collectivite}
