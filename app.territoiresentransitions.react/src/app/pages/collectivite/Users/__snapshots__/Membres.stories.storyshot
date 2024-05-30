@@ -6,15 +6,24 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
   data-test="Users"
 >
   <h1
-    className="mb-10 lg:mb-14 lg:text-center"
+    className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between"
   >
     Gestion des membres
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      data-test="invite"
+      disabled={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      Inviter un membre
+    </button>
   </h1>
-  <h2
-    className=""
-  >
-    Liste des membres
-  </h2>
   <div
     className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
   >
@@ -490,123 +499,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         </tbody>
       </table>
     </div>
-  </div>
-  <h2
-    className="mt-12"
-  >
-    Invitation
-  </h2>
-  <p
-    className="italic text-gray-500"
-  >
-    Tous les champs sont obligatoires
-  </p>
-  <div
-    className="max-w-4xl"
-    data-test="invitation-form"
-  >
-    <form
-      action="#"
-      className="md:flex gap-6"
-      onChange={[Function]}
-      onReset={[Function]}
-      onSubmit={[Function]}
-    >
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="email"
-        >
-          <div
-            className="font-medium"
-          >
-            Adresse email de la personne à inviter
-          </div>
-        </label>
-        <input
-          className="fr-input"
-          id="email"
-          label="Adresse email de la personne à inviter"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value=""
-        />
-      </div>
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="Niveau d’accès pour cette collectivité"
-        >
-          <div
-            className="font-medium"
-          >
-            Niveau d’accès pour cette collectivité
-          </div>
-        </label>
-        <select
-          className="fr-select"
-          id="Niveau d’accès pour cette collectivité"
-          label="Niveau d’accès pour cette collectivité"
-          name="acces"
-          onBlur={[Function]}
-          onChange={[Function]}
-          options={
-            Array [
-              Object {
-                "label": "Admin",
-                "value": "admin",
-              },
-              Object {
-                "label": "Édition",
-                "value": "edition",
-              },
-              Object {
-                "label": "Lecture",
-                "value": "lecture",
-              },
-            ]
-          }
-          value=""
-        >
-          <option
-            disabled={true}
-            hidden={true}
-            value=""
-          >
-            Sélectionnez une option
-          </option>
-          <option
-            value="admin"
-          >
-            Admin
-          </option>
-          <option
-            value="edition"
-          >
-            Édition
-          </option>
-          <option
-            value="lecture"
-          >
-            Lecture
-          </option>
-        </select>
-      </div>
-      <button
-        className="fr-btn md:mt-7 md:mb-auto"
-        data-test="ok"
-        disabled={false}
-      >
-        Ajouter
-      </button>
-    </form>
   </div>
 </main>
 `;
@@ -617,15 +509,24 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
   data-test="Users"
 >
   <h1
-    className="mb-10 lg:mb-14 lg:text-center"
+    className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between"
   >
     Gestion des membres
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      data-test="invite"
+      disabled={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      Inviter un membre
+    </button>
   </h1>
-  <h2
-    className=""
-  >
-    Liste des membres
-  </h2>
   <div
     className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
   >
@@ -1101,123 +1002,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
         </tbody>
       </table>
     </div>
-  </div>
-  <h2
-    className="mt-12"
-  >
-    Invitation
-  </h2>
-  <p
-    className="italic text-gray-500"
-  >
-    Tous les champs sont obligatoires
-  </p>
-  <div
-    className="max-w-4xl"
-    data-test="invitation-form"
-  >
-    <form
-      action="#"
-      className="md:flex gap-6"
-      onChange={[Function]}
-      onReset={[Function]}
-      onSubmit={[Function]}
-    >
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="email"
-        >
-          <div
-            className="font-medium"
-          >
-            Adresse email de la personne à inviter
-          </div>
-        </label>
-        <input
-          className="fr-input"
-          id="email"
-          label="Adresse email de la personne à inviter"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value=""
-        />
-      </div>
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="Niveau d’accès pour cette collectivité"
-        >
-          <div
-            className="font-medium"
-          >
-            Niveau d’accès pour cette collectivité
-          </div>
-        </label>
-        <select
-          className="fr-select"
-          id="Niveau d’accès pour cette collectivité"
-          label="Niveau d’accès pour cette collectivité"
-          name="acces"
-          onBlur={[Function]}
-          onChange={[Function]}
-          options={
-            Array [
-              Object {
-                "label": "Admin",
-                "value": "admin",
-              },
-              Object {
-                "label": "Édition",
-                "value": "edition",
-              },
-              Object {
-                "label": "Lecture",
-                "value": "lecture",
-              },
-            ]
-          }
-          value=""
-        >
-          <option
-            disabled={true}
-            hidden={true}
-            value=""
-          >
-            Sélectionnez une option
-          </option>
-          <option
-            value="admin"
-          >
-            Admin
-          </option>
-          <option
-            value="edition"
-          >
-            Édition
-          </option>
-          <option
-            value="lecture"
-          >
-            Lecture
-          </option>
-        </select>
-      </div>
-      <button
-        className="fr-btn md:mt-7 md:mb-auto"
-        data-test="ok"
-        disabled={false}
-      >
-        Ajouter
-      </button>
-    </form>
   </div>
 </main>
 `;
@@ -1228,15 +1012,24 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
   data-test="Users"
 >
   <h1
-    className="mb-10 lg:mb-14 lg:text-center"
+    className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between"
   >
     Gestion des membres
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      data-test="invite"
+      disabled={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onPointerDown={[Function]}
+    >
+      Inviter un membre
+    </button>
   </h1>
-  <h2
-    className=""
-  >
-    Liste des membres
-  </h2>
   <div
     className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
   >
@@ -1713,123 +1506,6 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
       </table>
     </div>
   </div>
-  <h2
-    className="mt-12"
-  >
-    Invitation
-  </h2>
-  <p
-    className="italic text-gray-500"
-  >
-    Tous les champs sont obligatoires
-  </p>
-  <div
-    className="max-w-4xl"
-    data-test="invitation-form"
-  >
-    <form
-      action="#"
-      className="md:flex gap-6"
-      onChange={[Function]}
-      onReset={[Function]}
-      onSubmit={[Function]}
-    >
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="email"
-        >
-          <div
-            className="font-medium"
-          >
-            Adresse email de la personne à inviter
-          </div>
-        </label>
-        <input
-          className="fr-input"
-          id="email"
-          label="Adresse email de la personne à inviter"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value=""
-        />
-      </div>
-      <div
-        className="fr-input-group flex-grow"
-      >
-        <label
-          className="fr-label mb-2"
-          htmlFor="Niveau d’accès pour cette collectivité"
-        >
-          <div
-            className="font-medium"
-          >
-            Niveau d’accès pour cette collectivité
-          </div>
-        </label>
-        <select
-          className="fr-select"
-          id="Niveau d’accès pour cette collectivité"
-          label="Niveau d’accès pour cette collectivité"
-          name="acces"
-          onBlur={[Function]}
-          onChange={[Function]}
-          options={
-            Array [
-              Object {
-                "label": "Admin",
-                "value": "admin",
-              },
-              Object {
-                "label": "Édition",
-                "value": "edition",
-              },
-              Object {
-                "label": "Lecture",
-                "value": "lecture",
-              },
-            ]
-          }
-          value=""
-        >
-          <option
-            disabled={true}
-            hidden={true}
-            value=""
-          >
-            Sélectionnez une option
-          </option>
-          <option
-            value="admin"
-          >
-            Admin
-          </option>
-          <option
-            value="edition"
-          >
-            Édition
-          </option>
-          <option
-            value="lecture"
-          >
-            Lecture
-          </option>
-        </select>
-      </div>
-      <button
-        className="fr-btn md:mt-7 md:mb-auto"
-        data-test="ok"
-        disabled={false}
-      >
-        Ajouter
-      </button>
-    </form>
-  </div>
 </main>
 `;
 
@@ -1839,15 +1515,10 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
   data-test="Users"
 >
   <h1
-    className="mb-10 lg:mb-14 lg:text-center"
+    className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between"
   >
     Gestion des membres
   </h1>
-  <h2
-    className=""
-  >
-    Liste des membres
-  </h2>
   <div
     className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden"
   >
