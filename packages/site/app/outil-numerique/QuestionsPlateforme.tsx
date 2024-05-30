@@ -29,7 +29,7 @@ const QuestionsPlateforme = ({
       )}
 
       <div className="mx-auto flex max-lg:flex-col gap-8 justify-center items-center">
-        <Button href="/faq" variant="outlined">
+        <Button href="/faq?onglet=outil-numerique" variant="outlined">
           {cta_faq}
         </Button>
         <Button

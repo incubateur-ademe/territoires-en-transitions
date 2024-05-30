@@ -908,6 +908,11 @@ export interface ApiFaqFaq extends Schema.CollectionType {
     Rang: Attribute.Integer & Attribute.Unique;
     Titre: Attribute.String & Attribute.Required;
     Contenu: Attribute.RichText & Attribute.Required;
+    onglet: Attribute.Enumeration<
+      ['Le programme Territoire Engag\u00E9', "L'outil num\u00E9rique"]
+    > &
+      Attribute.Required &
+      Attribute.DefaultTo<'programme'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

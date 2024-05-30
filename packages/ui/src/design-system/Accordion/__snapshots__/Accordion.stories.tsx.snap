@@ -5,7 +5,7 @@ exports[`design-system/Accordion AvecIcone smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -23,7 +23,7 @@ exports[`design-system/Accordion AvecIconeADroite smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -41,7 +41,7 @@ exports[`design-system/Accordion AvecIconeSVG smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -67,7 +67,7 @@ exports[`design-system/Accordion AvecSousTitre smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -88,7 +88,7 @@ exports[`design-system/Accordion CompletTitreLong smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -109,7 +109,7 @@ exports[`design-system/Accordion ContenuPersonnalise smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -125,7 +125,7 @@ exports[`design-system/Accordion ContenuStyle smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>
@@ -160,7 +160,7 @@ exports[`design-system/Accordion Default smoke-test 1`] = `
   <div role="button"
        tabindex="0"
        aria-expanded="false"
-       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1"
+       class="border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1 bg-white"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] text-primary transition-transform">
     </span>

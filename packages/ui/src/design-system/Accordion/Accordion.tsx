@@ -58,7 +58,10 @@ export const AccordionControlled = ({
         onClick={() => setExpanded(!expanded)}
         className={classNames(
           'border border-grey-4 rounded-lg flex gap-3 px-6 py-4 font-bold text-primary-10 hover:bg-primary-1',
-          {'border-primary-2 rounded-b-none bg-primary-2': expanded}
+          {
+            'border-primary-2 rounded-b-none bg-primary-2': expanded,
+            'bg-white': !expanded,
+          }
         )}
       >
         {/** picto indiquant l'état ouvert/fermé */}
