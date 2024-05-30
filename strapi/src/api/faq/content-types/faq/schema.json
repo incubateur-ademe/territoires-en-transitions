@@ -23,6 +23,12 @@
     "Contenu": {
       "type": "richtext",
       "required": true
+    },
+    "onglet": {
+      "type": "enumeration",
+      "enum": ["Le programme Territoire Engagé", "L'outil numérique"],
+      "default": "programme",
+      "required": true
     }
   }
 }

@@ -17,6 +17,7 @@ export type FaqData = {
   id: number;
   titre: string;
   contenu: string;
+  onglet: string;
 };
 
 const getData = async () => {
@@ -27,6 +28,7 @@ const getData = async () => {
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         contenu: d.attributes.Contenu as unknown as string,
+        onglet: d.attributes.onglet as unknown as string,
       }))
     : null;
 
@@ -38,8 +40,8 @@ const Faq = async () => {
 
   return (
     <>
-      <Section>
-        <h1>Questions fréquentes</h1>
+      <Section containerClassName="bg-primary-0">
+        <h1 className="text-center">Questions fréquentes</h1>
         {questions && <ListeQuestions questions={questions} />}
       </Section>
       <ContactEquipe />
