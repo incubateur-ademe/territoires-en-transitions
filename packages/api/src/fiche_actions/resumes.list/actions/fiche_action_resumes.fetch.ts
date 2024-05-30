@@ -57,7 +57,7 @@ export async function ficheActionResumesFetch({
     .select([...ficheActionColumns, ...relatedTables].join(','), {
       count: 'exact',
     })
-    .range((page - 1) * limit + 1, page * limit)
+    .range((page - 1) * limit, page * limit - 1)
     .eq('collectivite_id', collectiviteId);
 
   if (sort?.length) {
@@ -117,7 +117,7 @@ export async function ficheActionResumesFetch({
     throw error;
   }
 
-  const nextPage = count > page * limit ? page + 1 : null;
+  const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
 
   return {data: objectToCamel(data), count, nextPage};
 }
