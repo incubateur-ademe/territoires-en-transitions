@@ -1217,6 +1217,15 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.SetMinMax<{
         min: 1;
       }>;
+    questions_description: Attribute.RichText &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    cta_faq: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

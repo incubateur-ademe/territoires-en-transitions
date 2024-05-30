@@ -51,7 +51,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "avantages": {
       "type": "component",
@@ -73,7 +75,9 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "panier_cta": {
       "type": "string",
@@ -93,7 +97,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "temoignages_liste": {
       "type": "relation",
@@ -133,6 +139,15 @@
       "repeatable": true,
       "component": "shared.paragraphe",
       "min": 1
+    },
+    "questions_description": {
+      "type": "richtext",
+      "maxLength": 255
+    },
+    "cta_faq": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
     }
   }
 }
