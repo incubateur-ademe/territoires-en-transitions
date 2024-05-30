@@ -3,57 +3,66 @@
 
 BEGIN;
 
-alter table private_collectivite_membre
-    add column est_referent boolean;
+drop function collectivite_membres(id integer);
 
-comment on function claim_collectivite(integer) is
-    'Fonction dépréciée pour rejoindre une collectivité.';
-
-create function claim_collectivite(
-    collectivite_id integer,
-    role membre_fonction,
-    poste text,
-    champ_intervention referentiel[],
-    est_referent boolean
-) returns json
+create function collectivite_membres(id integer)
+    returns TABLE(user_id text, prenom text, nom text, email text, telephone text, niveau_acces niveau_acces, fonction membre_fonction, details_fonction text, champ_intervention referentiel[], invitation_id text)
     security definer
-    language plpgsql
-    volatile
+    language sql
 as
 $$
-begin
-    if not is_authenticated() then
-        perform set_config('response.status', '401', true);
-        return json_build_object('message', 'Vous n''êtes pas connecté.');
-    end if;
-
-    -- si la collectivité n'a pas d'utilisateur actif existant
-    if not exists (select 1
-                   from private_utilisateur_droit pud
-                   where pud.active
-                     and pud.collectivite_id = $1)
-    then
-        -- alors on créé un droit
-        insert
-        into private_utilisateur_droit(user_id, collectivite_id, niveau_acces, active)
-        values (auth.uid(), $1, 'admin', true);
-
-        -- puis on ajoute les informations complémentaires
-        insert
-        into private_collectivite_membre(user_id, collectivite_id, fonction, details_fonction, champ_intervention, est_referent)
-        values (auth.uid(), $1, $2, $3, $4, $5);
-
-        -- enfin on renvoie un message
-        perform set_config('response.status', '200', true);
-        return json_build_object('message', 'Vous êtes administrateur de la collectivité.');
-    else
-        -- sinon on renvoie une erreur 409: Conflict
-        perform set_config('response.status', '409', true);
-        return json_build_object('message', 'La collectivité dispose déjà d''un administrateur.');
-    end if;
-end
+with droits_dcp_membre as
+         (select d.user_id,
+                 p.prenom,
+                 p.nom,
+                 p.email,
+                 p.telephone,
+                 d.niveau_acces,
+                 m.fonction,
+                 m.details_fonction,
+                 m.champ_intervention,
+                 null::uuid as invitation_id
+          from private_utilisateur_droit d
+                   left join utilisateur.dcp_display p on p.user_id = d.user_id
+                   left join private_collectivite_membre m
+                             on m.user_id = d.user_id and m.collectivite_id = d.collectivite_id
+          where d.collectivite_id = collectivite_membres.id
+            and d.active),
+     invitations as (select null::uuid             as user_id,
+                            null                   as prenom,
+                            null                   as nom,
+                            i.email,
+                            null                   as telephone,
+                            i.niveau::niveau_acces as niveau_acces,
+                            null::membre_fonction  as fonction,
+                            null                   as details_fonction,
+                            null::referentiel[]    as champ_intervention,
+                            i.id                   as invitation_id
+                     from utilisateur.invitation i
+                     where i.collectivite_id = collectivite_membres.id
+                       and i.pending),
+     merged as (select *
+                from droits_dcp_membre
+                where is_authenticated() -- limit dcp listing to user with an account.
+                union
+                select *
+                from invitations
+                where have_edition_acces(collectivite_membres.id) -- do not show invitations to those who cannot invite.
+     )
+select *
+from merged
+where est_verifie() or have_lecture_acces(collectivite_membres.id)
+order by invitation_id,
+        case fonction
+             when 'referent' then 1
+             when 'technique' then 2
+             when 'politique' then 3
+             when 'conseiller' then 4
+             else 5
+             end,
+         nom,
+         prenom;
 $$;
-comment on function claim_collectivite(integer, membre_fonction, text, referentiel[], est_referent boolean) is
-    'Permet à l''utilisateur de rejoindre une collectivité sans utilisateur.';
+
 
 COMMIT;
