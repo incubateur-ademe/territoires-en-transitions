@@ -1,8 +1,9 @@
 import {TNiveauAcces} from 'types/alias';
 import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
 import MembreListTableRow from './MembreListTableRow';
+import {ResendInvitationArgs} from 'app/pages/collectivite/Users/useResendInvitation';
 
-const thClassNames = 'py-3 px-5 whitespace-nowrap';
+const thClassNames = 'py-3 px-5 whitespace-nowrap text-primary-9';
 
 export type MembreListTableProps = {
   currentUserId: string;
@@ -11,6 +12,7 @@ export type MembreListTableProps = {
   isLoading: boolean;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
+  resendInvitation: (args: ResendInvitationArgs) => void;
 };
 
 const MembreListTable = ({
@@ -20,9 +22,10 @@ const MembreListTable = ({
   currentUserAccess,
   updateMembre,
   removeFromCollectivite,
+  resendInvitation,
 }: MembreListTableProps) => {
   return (
-    <div className="mx-auto border-8 border-t-0 border-bf925 bg-bf925 rounded-lg overflow-x-hidden">
+    <div className="mx-auto border-8 border-t-0 border-primary-2 bg-primary-2 rounded-lg overflow-x-hidden">
       <div className="overflow-x-auto w-full">
         <table
           data-test="MembreListTable"
@@ -51,9 +54,11 @@ const MembreListTable = ({
                   dans cette collectivité
                 </span>
               </th>
-              <th className={`${thClassNames}`}>
+              <th className={thClassNames}>
                 <div className="flex items-center">Accès</div>
               </th>
+              <th className={thClassNames}>Statut</th>
+              <th className={thClassNames}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +78,7 @@ const MembreListTable = ({
                     currentUserId={currentUserId}
                     updateMembre={updateMembre}
                     removeFromCollectivite={removeFromCollectivite}
+                    resendInvitation={resendInvitation}
                   />
                 ))
               : null}

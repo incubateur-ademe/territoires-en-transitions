@@ -20,6 +20,7 @@ import {useAddUserToCollectivite} from 'app/pages/collectivite/Users/useAddUserT
 import {Button, Modal, Pagination} from '@tet/ui';
 import {Invite} from 'app/pages/collectivite/Users/components/Invite';
 import {useState} from 'react';
+import {useResendInvitation} from 'app/pages/collectivite/Users/useResendInvitation';
 
 export type MembresProps = {
   membres: Membre[];
@@ -45,6 +46,10 @@ export const Membres = ({
   const {niveau_acces} = collectivite;
   const canInvite = niveau_acces === 'admin' || niveau_acces === 'edition';
   const {mutate: addUser} = useAddUserToCollectivite(collectivite, currentUser);
+  const {mutate: resendInvitation} = useResendInvitation(
+    collectivite,
+    currentUser
+  );
 
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
@@ -78,6 +83,7 @@ export const Membres = ({
         isLoading={isLoading}
         updateMembre={updateMembre}
         removeFromCollectivite={removeFromCollectivite}
+        resendInvitation={resendInvitation}
       />
     </main>
   );
