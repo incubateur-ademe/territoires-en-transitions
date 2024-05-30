@@ -1,7 +1,8 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {isAllowedOrigin} from '@tet/api';
 
 /**
- * Middleware pour ajouter à chaque requête les en-têtes CSP
+ * Middleware pour ajouter à chaque requête les en-têtes CSP et CORS
  *
  * Ref: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  *
@@ -58,11 +59,35 @@ export function middleware(request: NextRequest) {
     contentSecurityPolicyHeaderValue,
   );
 
-  // ajoute les en-têtes à la réponse
+  // ajoute les en-têtes CSP à la réponse
   const response = NextResponse.next({request: {headers: requestHeaders}});
   response.headers.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue,
+  );
+
+  // ajoute l'en-tête 'Access-Control-Allow-Origin' si l'origine de la requête est valide
+  const origin = request.headers.get('origin');
+  if (
+    origin &&
+    isAllowedOrigin(
+      origin,
+      process.env.NODE_ENV,
+      process.env.ALLOWED_ORIGIN_PATTERN,
+    )
+  ) {
+    response.headers.append('Access-Control-Allow-Origin', origin);
+  }
+
+  // ajoute les autres en-têtes CORS
+  response.headers.append('Access-Control-Allow-Credentials', 'true');
+  response.headers.append(
+    'Access-Control-Allow-Methods',
+    'GET,DELETE,PATCH,POST,PUT,OPTIONS',
+  );
+  response.headers.append(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, apikey, authorization',
   );
 
   return response;
