@@ -21,11 +21,13 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
       .eq('collectivite_id', collectiviteId)
       .eq('user_id', userId);
 
-    const {data, error} = await query.returns<Output>();
+    const {data: rawData, error} = await query;
 
     if (error) {
       throw error;
     }
+
+    const data = objectToCamel(rawData) as Output;
 
     const defaultModules = getDefaultModules({userId, collectiviteId});
 
@@ -37,7 +39,7 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
 
     const modules = mergeWithDefaultModules(data, defaultModules);
 
-    return {data: objectToCamel(modules)};
+    return {data: modules};
   } catch (error) {
     console.error(error);
     return {error};

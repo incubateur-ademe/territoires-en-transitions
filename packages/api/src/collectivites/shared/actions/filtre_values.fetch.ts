@@ -92,13 +92,15 @@ export async function filtreValuesFetch({
       query.in('collectivite_thematique.id', filtre.thematiqueIds);
     }
 
-    const {data, error} = await query.single();
+    const {data: rawData, error} = await query.single();
 
     if (error) {
       throw error;
     }
 
-    return {data: objectToCamel(data) as FiltreValues};
+    const data = objectToCamel(rawData) as FiltreValues;
+
+    return {data};
   } catch (error) {
     console.error(error);
     throw error;

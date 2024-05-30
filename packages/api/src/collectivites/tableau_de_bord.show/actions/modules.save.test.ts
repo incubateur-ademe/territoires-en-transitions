@@ -26,13 +26,13 @@ beforeEach(async () => {
 test('Enregistre un nouveau module', async () => {
   const module = moduleNew;
 
-  const {data: noData} = await modulesSave({
+  const {error} = await modulesSave({
     ...params,
     module,
   });
 
   // Vérifie le bon enregistrement du module
-  expect(noData).toBeNull();
+  expect(error).toBeUndefined();
 
   // Vérifie la récupération du module
   const {data} = await modulesFetch({...params});
