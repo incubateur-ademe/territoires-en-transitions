@@ -3,6 +3,7 @@
 exports[`Storyshots app/Layout/Header Connected 1`] = `
 <header
   className="fr-header"
+  id="app-header"
   role="banner"
 >
   <div
@@ -496,6 +497,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
 exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
 <header
   className="fr-header"
+  id="app-header"
   role="banner"
 >
   <div
@@ -930,6 +932,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
 exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
 <header
   className="fr-header"
+  id="app-header"
   role="banner"
 >
   <div
@@ -1423,6 +1426,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
 exports[`Storyshots app/Layout/Header Not Connected 1`] = `
 <header
   className="fr-header"
+  id="app-header"
   role="banner"
 >
   <div

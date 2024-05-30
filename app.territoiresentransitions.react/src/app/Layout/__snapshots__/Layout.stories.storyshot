@@ -10,6 +10,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
   >
     <header
       className="fr-header"
+      id="app-header"
       role="banner"
     >
       <div
