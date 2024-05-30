@@ -5,7 +5,10 @@ import {
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
 import {useUpdateCollectiviteMembre} from 'app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import {useCollectiviteMembres} from 'app/pages/collectivite/Users/useCollectiviteMembres';
+import {
+  PAGE_SIZE,
+  useCollectiviteMembres,
+} from 'app/pages/collectivite/Users/useCollectiviteMembres';
 import {useRemoveFromCollectivite} from 'app/pages/collectivite/Users/useRemoveFromCollectivite';
 import {
   Membre,
@@ -14,8 +17,9 @@ import {
 } from 'app/pages/collectivite/Users/types';
 import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
 import {useAddUserToCollectivite} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
-import {Button, Modal} from '@tet/ui';
+import {Button, Modal, Pagination} from '@tet/ui';
 import {Invite} from 'app/pages/collectivite/Users/components/Invite';
+import {useState} from 'react';
 
 export type MembresProps = {
   membres: Membre[];
@@ -85,21 +89,37 @@ const MembresConnected = () => {
   const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
 
-  const {membres, isLoading: isMemberLoading} = useCollectiviteMembres();
+  const [page, setPage] = useState(1);
+  const {data, isLoading} = useCollectiviteMembres(page);
   const {updateMembre} = useUpdateCollectiviteMembre();
   const {removeFromCollectivite} = useRemoveFromCollectivite();
 
   if (!user?.id || !collectivite_id || !collectivite) return null;
 
+  const {membres, count} = data;
+
   return (
-    <Membres
-      currentUser={user}
-      membres={membres}
-      collectivite={collectivite}
-      updateMembre={updateMembre}
-      removeFromCollectivite={removeFromCollectivite}
-      isLoading={isMemberLoading}
-    />
+    <>
+      <Membres
+        currentUser={user}
+        membres={membres}
+        collectivite={collectivite}
+        updateMembre={updateMembre}
+        removeFromCollectivite={removeFromCollectivite}
+        isLoading={isLoading}
+      />
+      {count > PAGE_SIZE && (
+        <Pagination
+          className="self-center"
+          selectedPage={page}
+          nbOfPages={Math.ceil(count / PAGE_SIZE)}
+          onChange={selectedPage => {
+            setPage(selectedPage);
+            document.getElementById('app-header')?.scrollIntoView();
+          }}
+        />
+      )}
+    </>
   );
 };
 
