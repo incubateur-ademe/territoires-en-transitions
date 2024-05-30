@@ -217,7 +217,6 @@ export const fetchFilteredIndicateurs = async (
     query.or(filterParams.join(','), {foreignTable: 'pilotes'});
   }
 
-  // const {data, ...remaining} = await query;
   const {data, ...remaining} = await query.returns<IndicateurItemFetched[]>();
   const rows = data || [];
 
