@@ -10,6 +10,7 @@ export const fakeAdmin: Membre = {
   champ_intervention: ['cae'],
   details_fonction: 'Cheffe de projet PCAET',
   niveau_acces: 'admin',
+  invitation_id: null,
 };
 
 export const fakeEditeur: Membre = {
@@ -23,6 +24,7 @@ export const fakeEditeur: Membre = {
   details_fonction:
     "Vice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier, adjoint au maire en charge du dVice-Président à l'aménagement durable du territoire de la CC du Pays de Château-Gontier",
   niveau_acces: 'edition',
+  invitation_id: null,
 };
 
 export const fakeLecteur: Membre = {
@@ -36,12 +38,14 @@ export const fakeLecteur: Membre = {
   details_fonction:
     'Consultant assistance à maîtrise d’ouvrage - Bureau d’études Green Planet',
   niveau_acces: 'lecture',
+  invitation_id: null,
 };
 
 const fakeInvite: Membre = {
   user_id: null,
   email: 'invite@dodo.com',
   niveau_acces: 'lecture',
+  invitation_id: 'some-uuid',
 };
 
 export const fakeMembres: Membre[] = [

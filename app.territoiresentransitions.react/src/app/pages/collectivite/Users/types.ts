@@ -11,6 +11,7 @@ export interface Membre {
   champ_intervention?: Referentiel[];
   details_fonction?: string;
   niveau_acces: TNiveauAcces;
+  invitation_id: string | null;
 }
 
 export type TUpdateMembreArgs = {
