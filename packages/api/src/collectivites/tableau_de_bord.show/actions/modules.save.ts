@@ -17,7 +17,7 @@ export async function modulesSave({dbClient, module: unsafeModule}: Props) {
   const module = parseModule(unsafeModule);
 
   try {
-    const {data, error} = await dbClient
+    const {error} = await dbClient
       .from('tableau_de_bord_module')
       .upsert(objectToSnake(module) as TablesInsert<'tableau_de_bord_module'>, {
         onConflict: 'id',
@@ -28,7 +28,7 @@ export async function modulesSave({dbClient, module: unsafeModule}: Props) {
       throw error;
     }
 
-    return {data};
+    return {};
   } catch (error) {
     console.error(error);
     return {error};
