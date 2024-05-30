@@ -23,7 +23,6 @@ const EquipePlateforme = ({
   citation,
   description,
   liste,
-  cta_contact,
 }: EquipePlateformeProps) => {
   const [carouselWidth, setCarouselWidth] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -47,7 +46,7 @@ const EquipePlateforme = ({
 
   return (
     <Section>
-      <h2 className="text-primary-8 md:text-center mb-1 p-">{titre}</h2>
+      <h2 className="text-primary-8 md:text-center mb-1">{titre}</h2>
       {!!citation && (
         <h4 className="text-primary-7 md:text-center text-[24px] leading-[32px] mb-1">
           {citation}
@@ -58,10 +57,6 @@ const EquipePlateforme = ({
           {description}
         </p>
       )}
-
-      <div className="flex gap-8 justify-center">
-        <Button href="/contact">{cta_contact}</Button>
-      </div>
     </Section>
   );
 };

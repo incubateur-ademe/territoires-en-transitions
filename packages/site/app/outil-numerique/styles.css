@@ -10,3 +10,8 @@
 .panier li::marker {
   @apply text-primary-6;
 }
+
+.questions * {
+  @apply text-2xl;
+  @apply font-bold;
+}

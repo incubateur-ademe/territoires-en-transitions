@@ -97,7 +97,6 @@ export const getStrapiData = async () => {
           ...eq,
           image: eq.image.data,
         })),
-        cta_contact: outilData.cta_contact as unknown as string,
       },
       questions: {
         titre: outilData.questions_titre as unknown as string,
@@ -106,6 +105,10 @@ export const getStrapiData = async () => {
           titre: string;
           contenu: string;
         }[],
+        description:
+          (outilData.questions_description as unknown as string) ?? undefined,
+        cta_faq: outilData.cta_faq as unknown as string,
+        cta_contact: outilData.cta_contact as unknown as string,
       },
     };
   } else return null;
