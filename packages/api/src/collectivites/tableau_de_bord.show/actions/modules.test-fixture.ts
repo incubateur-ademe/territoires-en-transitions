@@ -1,8 +1,8 @@
 import {expect} from 'vitest';
 import {dbAdmin} from '../../../tests/supabase';
-import {Module} from '../domain/module.schema';
+import {ModuleInsert} from '../domain/module.schema';
 
-export const moduleNew: Module = {
+export const moduleNew: ModuleInsert = {
   id: crypto.randomUUID(),
   collectiviteId: 1,
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',

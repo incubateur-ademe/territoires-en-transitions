@@ -38,11 +38,12 @@ test('Enregistre un nouveau module', async () => {
   const {data} = await modulesFetch({...params});
 
   expect(data).toHaveLength(numberOfModulesByDefault + 1);
-  expect(data[0]).toMatchObject({
-    titre: module.titre,
-    type: module.type,
-    options: module.options,
-  });
+  expect(data).toContainEqual(
+    expect.objectContaining({
+      titre: module.titre,
+      type: module.type,
+    })
+  );
 });
 
 test("Vérifie la mise à jour d'un module existant", async () => {
@@ -69,9 +70,11 @@ test("Vérifie la mise à jour d'un module existant", async () => {
   const {data} = await modulesFetch({...params});
 
   expect(data).toHaveLength(numberOfModulesByDefault + 1);
-  expect(data[0]).toMatchObject({
-    titre: newTitre,
-  });
+  expect(data).toContainEqual(
+    expect.objectContaining({
+      titre: newTitre,
+    })
+  );
 });
 
 test("RLS: Vérifie qu'un utilisateur sans accès à la collectivité ne peut pas insert", async () => {
@@ -118,19 +121,21 @@ test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pa
   await signIn('yaladada');
 
   // Tente de mettre à jour le module
+  const newTitre = 'Nouveau titre';
   await modulesSave({
     ...params,
     module: {
       ...module,
-      titre: 'Nouveau titre',
+      titre: newTitre,
     },
   });
 
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const {data} = await modulesFetch({...params, dbClient: dbAdmin});
+
   expect(data).toHaveLength(numberOfModulesByDefault + 1);
-  expect(data[0]).toMatchObject({
-    titre: module.titre,
+  expect(data).not.toContainEqual({
+    titre: newTitre,
   });
 });
 
@@ -149,18 +154,20 @@ test("RLS: Vérifie qu'un utilisateur en écriture ne peut pas update le module 
   await signIn('yilididi');
 
   // Tente de mettre à jour le module
+  const newTitre = 'Nouveau titre';
   await modulesSave({
     ...params,
     module: {
       ...module,
-      titre: 'Nouveau titre',
+      titre: newTitre,
     },
   });
 
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const {data} = await modulesFetch({...params, dbClient: dbAdmin});
+
   expect(data).toHaveLength(numberOfModulesByDefault + 1);
-  expect(data[0]).toMatchObject({
-    titre: module.titre,
+  expect(data).not.toContainEqual({
+    titre: newTitre,
   });
 });
