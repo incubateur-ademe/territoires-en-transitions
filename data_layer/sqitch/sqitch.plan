@@ -663,6 +663,9 @@ plan_action/fiches [plan_action/fiches@v2.102.0] 2024-04-11T15:19:15Z Florian <f
 indicateur/personnalise [indicateur/personnalise@v3.1.0] 2024-05-02T09:03:31Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprimer un indicateur
 indicateur/source [indicateur/source@v3.1.0] 2024-05-27T08:07:32Z Amandine Jacquelin <conta@LanceLibre> # Inclus source_id dans la primary key de indicateur_resultat_import
 @3.3.0 2024-05-28T07:49:37Z Amandine Jacquelin <conta@LanceLibre> # Tag 3.3.0 - Permet d'ajouter des imports d'indicateur de plusieurs sources
+
 plan_action/fiches [plan_action/fiches@v3.1.0] 2024-05-23T08:03:45Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Filtrer les fiches actions
 collectivite/tableau_de_bord 2024-05-23T16:37:17Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Filtrer les modules du tableau de bord
 collectivite/collectivite [collectivite/collectivite@v3.1.0] 2024-05-27T09:20:41Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Recupérer les ressources asssociées à la collectivité
+@v3.4.0 2024-05-30T14:50:53Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag 3.4.0 - Permet de filtrer les fiche actions, et de stocker les modules du tableau de bord
+
