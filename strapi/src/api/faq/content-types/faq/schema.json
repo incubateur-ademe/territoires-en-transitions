@@ -26,8 +26,11 @@
     },
     "onglet": {
       "type": "enumeration",
-      "enum": ["Le programme Territoire Engagé", "L'outil numérique"],
-      "default": "programme",
+      "enum": [
+        "Le programme Territoire Engagé",
+        "L'outil numérique"
+      ],
+      "default": "Le programme Territoire Engagé",
       "required": true
     }
   }

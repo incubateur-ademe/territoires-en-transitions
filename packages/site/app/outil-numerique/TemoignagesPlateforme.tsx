@@ -15,12 +15,12 @@ type TemoignagesPlateformeProps = {
 const TemoignagesPlateforme = ({temoignages}: TemoignagesPlateformeProps) => {
   return (
     <Section
-      containerClassName="md:bg-primary-7 max-md:!p-0"
+      containerClassName="bg-primary-7 max-md:!p-2"
       className="max-md:p-0"
     >
       <TestimonialSlideshow
         contenu={temoignages}
-        className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 md:w-3/4 mx-auto"
+        className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 w-3/4 mx-auto"
         dotsColor="orange"
         displayButtons={false}
         autoSlideDelay={12000}
