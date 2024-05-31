@@ -1183,7 +1183,8 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
-      }>;
+      }> &
+      Attribute.DefaultTo<"\u00C7a m'int\u00E9resse">;
     fonctionnalites_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1207,12 +1208,12 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.SetMinMax<{
         min: 1;
       }>;
-    cta_contact: Attribute.String &
+    equipe_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
       }> &
-      Attribute.DefaultTo<"Je contacte l'\u00E9quipe">;
+      Attribute.DefaultTo<"D\u00E9couvrir les membres de l'\u00E9quipe">;
     questions_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1230,7 +1231,14 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
-      }>;
+      }> &
+      Attribute.DefaultTo<'Je consulte la FAQ'>;
+    cta_contact: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<"Je contacte l'\u00E9quipe">;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

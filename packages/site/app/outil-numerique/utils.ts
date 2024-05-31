@@ -97,6 +97,7 @@ export const getStrapiData = async () => {
           ...eq,
           image: eq.image.data,
         })),
+        cta: outilData.equipe_cta as unknown as string,
       },
       questions: {
         titre: outilData.questions_titre as unknown as string,
