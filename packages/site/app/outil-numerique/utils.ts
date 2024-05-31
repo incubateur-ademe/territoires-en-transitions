@@ -6,15 +6,10 @@ export const getStrapiData = async () => {
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'couverture'],
-    ['populate[3]', 'avantages'],
-    ['populate[4]', 'avantages.image'],
-    ['populate[5]', 'panier_image'],
-    ['populate[6]', 'fonctionnalites_image'],
-    ['populate[7]', 'temoignages_liste.temoignage'],
-    ['populate[8]', 'temoignages_liste.temoignage.portrait'],
-    ['populate[9]', 'equipe_liste'],
-    ['populate[10]', 'equipe_liste.image'],
-    ['populate[11]', 'questions_liste'],
+    ['populate[3]', 'avantages.image'],
+    ['populate[4]', 'panier_image'],
+    ['populate[5]', 'temoignages_liste.temoignage'],
+    ['populate[6]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   if (data) {
@@ -66,11 +61,6 @@ export const getStrapiData = async () => {
           (outilData.panier_image?.data as unknown as StrapiItem) ?? undefined,
         cta: outilData.panier_cta as unknown as string,
       },
-      fonctionnalites: {
-        titre: outilData.fonctionnalites_titre as unknown as string,
-        contenu: outilData.fonctionnalites_contenu as unknown as string,
-        image: outilData.fonctionnalites_image.data as unknown as StrapiItem,
-      },
       temoignages: (
         (outilData.temoignages_liste.data as unknown as StrapiItem[]) ?? []
       ).map(t => ({
@@ -86,26 +76,10 @@ export const getStrapiData = async () => {
         titre: outilData.equipe_titre as unknown as string,
         citation: outilData.equipe_citation as unknown as string,
         description: outilData.equipe_description as unknown as string,
-        liste: (
-          outilData.equipe_liste as unknown as {
-            id: number;
-            titre: string;
-            legende: string;
-            image: {data: StrapiItem};
-          }[]
-        ).map(eq => ({
-          ...eq,
-          image: eq.image.data,
-        })),
         cta: outilData.equipe_cta as unknown as string,
       },
       questions: {
         titre: outilData.questions_titre as unknown as string,
-        liste: outilData.questions_liste as unknown as {
-          id: number;
-          titre: string;
-          contenu: string;
-        }[],
         description:
           (outilData.questions_description as unknown as string) ?? undefined,
         cta_faq: outilData.cta_faq as unknown as string,

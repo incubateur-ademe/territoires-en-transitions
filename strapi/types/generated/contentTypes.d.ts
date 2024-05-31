@@ -912,7 +912,7 @@ export interface ApiFaqFaq extends Schema.CollectionType {
       ['Le programme Territoire Engag\u00E9', "L'outil num\u00E9rique"]
     > &
       Attribute.Required &
-      Attribute.DefaultTo<'programme'>;
+      Attribute.DefaultTo<'Le programme Territoire Engag\u00E9'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

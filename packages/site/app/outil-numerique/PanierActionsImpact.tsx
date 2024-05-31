@@ -1,5 +1,7 @@
+'use client';
+
+import {Button} from '@tet/ui';
 import Section from '@components/sections/Section';
-import PAIButton from './PAIButton';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import Markdown from '@components/markdown/Markdown';
@@ -24,6 +26,7 @@ const PanierActionsImpact = ({
         <StrapiImage
           data={image}
           containerClassName="max-w-xl lg:max-2xl:max-w-md shrink"
+          className="h-96 object-scale-down"
         />
       )}
       <div>
@@ -32,7 +35,9 @@ const PanierActionsImpact = ({
           texte={description}
           className="paragraphe-primary-10 paragraphe-18 panier"
         />
-        <PAIButton label={cta} />
+        <Button href="/contact?panier=true" className="mt-6 max-lg:mx-auto">
+          {cta}
+        </Button>
       </div>
     </Section>
   );
