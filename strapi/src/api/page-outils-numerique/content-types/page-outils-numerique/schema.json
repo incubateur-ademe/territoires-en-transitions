@@ -51,9 +51,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "avantages": {
       "type": "component",
@@ -75,14 +73,13 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "panier_cta": {
       "type": "string",
       "required": true,
-      "maxLength": 50
+      "maxLength": 50,
+      "default": "Ça m'intéresse"
     },
     "fonctionnalites_titre": {
       "type": "string",
@@ -97,9 +94,7 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "temoignages_liste": {
       "type": "relation",
@@ -123,11 +118,11 @@
       "component": "shared.vignette-avec-titre",
       "min": 1
     },
-    "cta_contact": {
+    "equipe_cta": {
       "type": "string",
       "required": true,
       "maxLength": 50,
-      "default": "Je contacte l'équipe"
+      "default": "Découvrir les membres de l'équipe"
     },
     "questions_titre": {
       "type": "string",
@@ -147,7 +142,14 @@
     "cta_faq": {
       "type": "string",
       "required": true,
-      "maxLength": 50
+      "maxLength": 50,
+      "default": "Je consulte la FAQ"
+    },
+    "cta_contact": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "Je contacte l'équipe"
     }
   }
 }
