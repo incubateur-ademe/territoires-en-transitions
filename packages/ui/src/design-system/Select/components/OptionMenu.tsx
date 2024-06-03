@@ -16,21 +16,19 @@ import {Modal} from '@design-system/Modal';
 import {Icon} from '@design-system/Icon';
 import {Button} from '@design-system/Button';
 
-import {CreateOption} from './SelectBase';
-import {Option} from '../utils';
+import {Option, OptionValue} from '../utils';
 
 type Props = {
   /** L'option à modifier */
   option: Option;
-  /**
-   * Fonctions permettant de l'ajoût, la modification et la suppression d'une option.
-   * Nécessite aussi le tableau des options créées par l'utilisateur.
-   */
-  createProps: CreateOption;
+  /** Fonction pour supprimer l'option */
+  onDelete?: (id: OptionValue) => void;
+  /** Fonction pour éditer l'option */
+  onUpdate?: (id: OptionValue, inputValue: string) => void;
 };
 
 /** Menu affiché dans l'option d'un sélecteur */
-export const OptionMenu = ({option, createProps}: Props) => {
+export const OptionMenu = ({option, onDelete, onUpdate}: Props) => {
   /** Gère l'état d'ouverture du menu */
   const [isOpen, setIsOpen] = useState(false);
 
@@ -76,74 +74,77 @@ export const OptionMenu = ({option, createProps}: Props) => {
               evt.stopPropagation();
             }}
           >
-            {/** Modale pour éditer l'option */}
-            <Modal
-              title="Éditer l'option"
-              onClose={() => setIsOpen(false)}
-              render={({close}) => {
-                const handleClose = () => {
-                  close();
-                  setIsOpen(false);
-                };
-                return (
-                  <div className="flex flex-col">
-                    <input
-                      autoFocus
-                      value={inputValue}
-                      onChange={e => setInputValue(e.target.value)}
-                      className="w-full py-3 px-4 rounded-xl border border-solid border-grey-4 bg-grey-1 outline-none"
-                    />
-                    <div className="flex gap-4 mt-8 ml-auto">
-                      <Button variant="grey" onClick={handleClose}>
+            {onUpdate && (
+              <Modal
+                title="Éditer l'option"
+                onClose={() => setIsOpen(false)}
+                render={({close}) => {
+                  const handleClose = () => {
+                    close();
+                    setIsOpen(false);
+                  };
+                  return (
+                    <div className="flex flex-col">
+                      <input
+                        autoFocus
+                        value={inputValue}
+                        onChange={e => setInputValue(e.target.value)}
+                        className="w-full py-3 px-4 rounded-xl border border-solid border-grey-4 bg-grey-1 outline-none"
+                      />
+                      <div className="flex gap-4 mt-8 ml-auto">
+                        <Button variant="grey" onClick={handleClose}>
+                          Annuler
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            onUpdate(option.value, inputValue);
+                            handleClose();
+                          }}
+                        >
+                          Valider
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                }}
+              >
+                <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
+                  <Icon icon="edit-line" size="sm" className="mr-2" />
+                  Éditer
+                </button>
+              </Modal>
+            )}
+            {onDelete && (
+              /** Modale pour supprimer l'option */
+              <Modal
+                title="Supprimer"
+                description="Souhaitez-vous vraiment supprimer cette option de votre collectivité ?"
+                textAlign="left"
+                onClose={() => setIsOpen(false)}
+                render={({close}) => {
+                  return (
+                    <div className="flex gap-4 ml-auto">
+                      <Button variant="grey" onClick={close}>
                         Annuler
                       </Button>
                       <Button
                         onClick={() => {
-                          createProps.onUpdate(option.value, inputValue);
-                          handleClose();
+                          onDelete(option.value);
+                          close();
                         }}
                       >
                         Valider
                       </Button>
                     </div>
-                  </div>
-                );
-              }}
-            >
-              <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
-                <Icon icon="edit-line" size="sm" className="mr-2" />
-                Éditer
-              </button>
-            </Modal>
-            {/** Modale pour supprimer l'option */}
-            <Modal
-              title="Supprimer"
-              description="Souhaitez-vous vraiment supprimer cette option de votre collectivité ?"
-              textAlign="left"
-              onClose={() => setIsOpen(false)}
-              render={({close}) => {
-                return (
-                  <div className="flex gap-4 ml-auto">
-                    <Button variant="grey" onClick={close}>
-                      Annuler
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        createProps.onDelete(option.value);
-                        close();
-                      }}
-                    >
-                      Valider
-                    </Button>
-                  </div>
-                );
-              }}
-            >
-              <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
-                <Icon icon="delete-bin-6-line" size="sm" className="mr-2" />
-                Supprimer
-              </button>
-            </Modal>
+                  );
+                }}
+              >
+                <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
+                  <Icon icon="delete-bin-6-line" size="sm" className="mr-2" />
+                  Supprimer
+                </button>
+              </Modal>
+            )}
           </div>
         </FloatingFocusManager>
       )}

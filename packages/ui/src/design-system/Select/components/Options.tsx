@@ -27,8 +27,6 @@ type BaseProps = {
 };
 
 type OptionsListProps = BaseProps & {
-  /** Id pour les tests e2e */
-  dataTest?: string;
   /** Liste des options */
   options: SelectOption[];
   /** Fait apparaître un état de chargement à la place des options */
@@ -47,10 +45,9 @@ const Options = ({
   isBadgeItem,
   createProps,
   noOptionPlaceholder,
-  dataTest,
 }: OptionsListProps) => {
   return (
-    <div data-test={`${dataTest}-options`}>
+    <div>
       {isLoading ? (
         <div className="p-4 text-sm text-gray-500">Chargement...</div>
       ) : options.length > 0 ? (
@@ -162,10 +159,13 @@ const Option = ({
           )}
         </div>
       </button>
-      {createProps &&
-        createProps.userCreatedOptions.some(o => o === option.value) && (
-          <OptionMenu option={option} createProps={createProps} />
-        )}
+      {isUserCreated && (createProps?.onDelete || createProps?.onUpdate) && (
+        <OptionMenu
+          option={option}
+          onDelete={createProps?.onDelete}
+          onUpdate={createProps?.onUpdate}
+        />
+      )}
     </div>
   );
 };
