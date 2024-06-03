@@ -23,7 +23,7 @@ const FiltersColonne = ({vue, filters, setFilters}: Props) => {
     <>
       <div
         className={classNames(
-          'flex flex-col shrink-0 h-min bg-white z-[1000] md:py-10 md:px-8 md:rounded-xl md:!block md:w-5/12 lg:w-4/12 xl:w-3/12',
+          'flex flex-col shrink-0 h-min bg-white md:py-10 md:px-8 md:rounded-xl md:!block md:w-5/12 lg:w-4/12 xl:w-3/12',
           {
             hidden: !isMobileFilterOpen,
             'fixed inset-0 h-screen p-4 pb-6 overflow-y-auto':

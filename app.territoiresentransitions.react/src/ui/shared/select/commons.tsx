@@ -1,4 +1,5 @@
 import {Placement} from '@floating-ui/react';
+import {Icon} from '@tet/ui';
 import classNames from 'classnames';
 
 /**
@@ -155,8 +156,6 @@ export const buttonDisplayedClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const buttonDisplayedPlaceholderClassname =
   'mr-auto text-grey425 line-clamp-1';
-export const buttonDisplayedIconClassname =
-  'fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto';
 export const optionButtonClassname =
   'flex items-center w-full p-2 text-left text-sm';
 export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
@@ -171,8 +170,10 @@ export const Checkmark = ({isSelected}: {isSelected: boolean}) => (
 
 /** Affiche l'icône plier/déplier */
 export const ExpandCollapseIcon = ({isOpen}: {isOpen: boolean | undefined}) => (
-  <span
-    className={classNames(buttonDisplayedIconClassname, {
+  <Icon
+    icon="arrow-down-s-line"
+    size="lg"
+    className={classNames('flex mt-1 ml-auto', {
       'rotate-180': isOpen,
     })}
   />

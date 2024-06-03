@@ -9,6 +9,7 @@ import {TCollectiviteCarte} from 'app/pages/CollectivitesEngagees/data/useFilter
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {makeCollectiviteAccueilUrl} from 'app/paths';
 import classNames from 'classnames';
+import {Icon} from '@tet/ui';
 
 type Props = {
   collectivite: TCollectiviteCarte;
@@ -89,14 +90,14 @@ export const ReferentielCol = (props: TReferentielColProps) => {
         <>
           <CinqEtoiles etoiles={props.etoiles} />
           <div className="flex items-center text-xs text-grey-6">
-            <i className="inline-flex mr-1.5 fr-icon-line-chart-line before:h-4 before:w-4" />
+            <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
             <span className="mr-1 font-semibold">
               {toPercentString(props.scoreRealise)}
             </span>
             réalisé courant
           </div>
           <div className="flex items-center text-xs text-grey-6">
-            <i className="inline-flex mr-1.5 fr-icon-calendar-line before:h-4 before:w-4" />
+            <Icon icon="calendar-line" size="sm" className="mr-1.5" />
             <span className="mr-1 font-semibold">
               {toPercentString(props.scoreProgramme)}
             </span>

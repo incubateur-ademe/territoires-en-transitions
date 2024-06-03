@@ -1,3 +1,4 @@
+import {Icon} from '@design-system/Icon';
 import classNames from 'classnames';
 
 type TagProps = {
@@ -46,13 +47,13 @@ export const Tag = ({
       </span>
       {canClose && (
         <div
-          className="ml-1 rounded-full cursor-pointer"
+          className="flex ml-1 rounded-full cursor-pointer"
           onClick={evt => {
             evt.stopPropagation();
             onClose();
           }}
         >
-          <div className="fr-fi-close-line flex m-auto scale-75" />
+          <Icon icon="close-line" size="md" className="m-auto" />
         </div>
       )}
     </div>
