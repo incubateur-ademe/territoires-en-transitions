@@ -9,6 +9,12 @@ import {
 /** constante pour gérer la sélection de tous les filtres */
 export const ITEM_ALL = 'tous';
 
+/** option complète ITEM_ALL */
+export const itemAllOption = {
+  label: 'Désélectionner les options',
+  value: ITEM_ALL,
+};
+
 /**
  * Sélecteur multiple pour filtrer une liste avec option "Tous"
  */

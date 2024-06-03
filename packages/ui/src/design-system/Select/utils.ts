@@ -1,3 +1,4 @@
+import {ITEM_ALL, itemAllOption} from '@design-system/Select/SelectFilter';
 import {naturalSort} from '../../utils/naturalSort';
 
 /**
@@ -51,7 +52,7 @@ export const sortOptionByAlphabet = (
 
   options.forEach(option => {
     if (isSingleOption(option)) {
-      optionArray.push(option);
+      option.value !== ITEM_ALL && optionArray.push(option);
     } else {
       sectionArray.push(option);
     }
@@ -69,7 +70,14 @@ export const sortOptionByAlphabet = (
     );
   });
 
-  return [...optionArray, ...sectionArray];
+  const sortedOptions = [...optionArray, ...sectionArray];
+
+  /** Remet l'option de désélection au début de la liste si présente */
+  if (getFlatOptions(options).some(o => o.value === ITEM_ALL)) {
+    return [itemAllOption, ...sortedOptions];
+  }
+
+  return sortedOptions;
 };
 
 /**
