@@ -9,6 +9,11 @@
   }
 }
 
+.fr-header,
+.fr-header__brand {
+  z-index: inherit;
+}
+
 .htmlContent ul {
   list-style: disc;
   margin-left: 1.5rem;
