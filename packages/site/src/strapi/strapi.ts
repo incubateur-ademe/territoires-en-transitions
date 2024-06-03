@@ -35,7 +35,7 @@ export async function fetchCollection(
   params.forEach(p => url.searchParams.append(...p));
 
   const response = await fetch(`${url}`, {
-    cache: 'no-store',
+    next: {revalidate: 3600},
     method: 'GET',
     headers,
   });
@@ -66,8 +66,9 @@ export async function fetchItem(
 ): Promise<StrapiItem> {
   const url = new URL(`${baseURL}/api/${path}/${id}`);
   params.forEach(p => url.searchParams.append(...p));
+
   const response = await fetch(`${url}`, {
-    cache: 'no-store',
+    next: {revalidate: 3600},
     method: 'GET',
     headers,
   });
