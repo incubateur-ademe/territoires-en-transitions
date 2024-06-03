@@ -291,9 +291,10 @@ export const ZIndex: Story = {
     return (
       <div className="h-screen">
         <div className="relative h-full m-16">
-          <div className="absolute inset-0 z-20 bg-pink-100">
+          <div id="yolo" className="absolute inset-0 z-20 bg-pink-100">
             <Field title="Exemple">
               <Select
+                parentId="yolo"
                 options={optionsWithSections}
                 values={value}
                 onChange={v => {
@@ -301,6 +302,12 @@ export const ZIndex: Story = {
                   action('onChange');
                 }}
               />
+            </Field>
+            <Field
+              title="Devrait être sous les options du select"
+              className="relative mt-6"
+            >
+              <div className="p-4 bg-blue-300 rounded-lg">test</div>
             </Field>
           </div>
         </div>

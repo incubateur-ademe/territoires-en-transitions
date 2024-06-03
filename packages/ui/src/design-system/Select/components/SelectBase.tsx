@@ -55,6 +55,8 @@ export type SelectProps = {
   isBadgeItem?: boolean;
   /** Texte affiché quand aucune option ne correspond à la recherche */
   emptySearchPlaceholder?: string;
+  /** Id du parent dans lequel doit être rendu le portal */
+  parentId?: string;
   /** Change le positionnement du dropdown menu */
   placement?: Placement;
   /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
@@ -94,6 +96,7 @@ export const SelectBase = (props: SelectProps) => {
     isLoading = false,
     customItem,
     isBadgeItem = false,
+    parentId,
     containerWidthMatchButton = true,
     disabled = false,
     small = false,
@@ -151,6 +154,7 @@ export const SelectBase = (props: SelectProps) => {
 
   return (
     <DropdownFloater
+      parentId={parentId}
       placement={placement}
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
@@ -189,7 +193,6 @@ export const SelectBase = (props: SelectProps) => {
             )}
           {/** Liste des options */}
           <Options
-            dataTest={dataTest}
             values={arrayValues}
             options={
               createProps
@@ -260,7 +263,6 @@ const SelectButton = forwardRef(
     }: SelectButtonProps,
     ref?: Ref<HTMLButtonElement>
   ) => {
-
     return (
       <button
         ref={ref}
