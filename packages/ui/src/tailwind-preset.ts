@@ -101,7 +101,6 @@ export const preset = {
       maxWidth: {
         '8xl': '90rem',
       },
-      zIndex: {modal: '4000'},
       backgroundImage: {
         // malheureusement on n'arrive pas à styler le bouton de ràz des input.search directement avec remixicon
         // ni à exporter correctement des svg définis localement dans le package ui

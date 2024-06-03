@@ -96,7 +96,6 @@ export const Modal = ({
   noCloseButton,
   renderFooter,
   backdropBlur,
-  zIndex = preset.theme.extend.zIndex.modal,
   dataTest = 'Modal',
 }: ModalProps) => {
   const isControlled = !!openState;
@@ -136,15 +135,14 @@ export const Modal = ({
           children,
           getReferenceProps({ref: refs.setReference, ...children.props})
         )}
-      <FloatingPortal>
-        {isOpen && (
+      {isOpen && (
+        <FloatingPortal>
           <FloatingOverlay
             lockScroll
             style={{
               display: 'grid',
               placeItems: 'center',
               background: preset.theme.extend.colors.overlay,
-              zIndex,
               backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
             }}
           >
@@ -157,11 +155,11 @@ export const Modal = ({
                   'aria-describedby': descriptionId,
                   className: classNames(
                     `
-                      relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
-                      rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
-                      sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
-                      md:p-[4.5rem]
-                    `,
+                        relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
+                        rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
+                        sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
+                        md:p-[4.5rem]
+                      `,
                     sizeToClass[size]
                   ),
                 })}
@@ -213,8 +211,8 @@ export const Modal = ({
               </div>
             </FloatingFocusManager>
           </FloatingOverlay>
-        )}
-      </FloatingPortal>
+        </FloatingPortal>
+      )}
     </>
   );
 };
