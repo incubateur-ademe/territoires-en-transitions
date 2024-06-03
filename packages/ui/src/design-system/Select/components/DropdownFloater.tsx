@@ -11,13 +11,18 @@ import {
   autoUpdate,
   size,
   OffsetOptions,
+  FloatingPortal,
+  FloatingFocusManager,
 } from '@floating-ui/react';
+import classNames from 'classnames';
 
 type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */
   children: JSX.Element;
   /** Permet de définir et d'afficher le contenu du dropdown */
   render: (data: {close: () => void}) => React.ReactNode;
+  /** Id du parent dans lequel doit être rendu le portal */
+  parentId?: string;
   /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
   placement?: Placement;
   /** Toggle l'état d'ouverture en appuyant sur la touche 'space'. Défaut `true` */
@@ -28,6 +33,8 @@ type DropdownFloaterProps = {
   containerWidthMatchButton?: boolean;
   /** Placement offset */
   offsetValue?: OffsetOptions;
+  /** ClassName pour le container avec fond blanc  */
+  containerClassName?: string;
   'data-test'?: string;
   disabled?: boolean;
 };
@@ -36,12 +43,14 @@ type DropdownFloaterProps = {
 export const DropdownFloater = ({
   render,
   children,
+  parentId,
   placement,
   spaceToToggle = true,
   enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
   disabled,
+  containerClassName,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -108,26 +117,33 @@ export const DropdownFloater = ({
         })
       )}
       {isOpen && (
-        <div
-          data-test={dataTest}
-          {...getFloatingProps({
-            ref: refs.setFloating,
-            style: {
-              position: strategy,
-              top: y,
-              left: x,
-            },
-          })}
-        >
-          <div
-            className="overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0"
-            style={{maxHeight: maxHeight - 16}}
-          >
-            {render({
-              close: () => setIsOpen(false),
-            })}
-          </div>
-        </div>
+        <FloatingPortal id={parentId}>
+          <FloatingFocusManager context={context}>
+            <div
+              data-test={dataTest}
+              {...getFloatingProps({
+                ref: refs.setFloating,
+                style: {
+                  position: strategy,
+                  top: y,
+                  left: x,
+                },
+              })}
+            >
+              <div
+                className={classNames(
+                  'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
+                  containerClassName
+                )}
+                style={{maxHeight: maxHeight - 16}}
+              >
+                {render({
+                  close: () => setIsOpen(false),
+                })}
+              </div>
+            </div>
+          </FloatingFocusManager>
+        </FloatingPortal>
       )}
     </>
   );
