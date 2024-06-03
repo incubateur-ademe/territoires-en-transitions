@@ -117,8 +117,6 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
         },
       ]}
       className="my-4"
-      btnMenuClassName="-mt-14"
-      menuClassName="-mt-14"
     />
   );
 };
