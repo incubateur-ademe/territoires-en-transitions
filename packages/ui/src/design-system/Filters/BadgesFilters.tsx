@@ -37,17 +37,9 @@ type BadgeType = {
 type FiltersMenuProps = {
   filters: FilterType[];
   className?: string;
-  /** Pour styler le bouton et le container du menu déroulant */
-  btnMenuClassName?: string;
-  menuClassName?: string;
 };
 
-export const BadgesFilters = ({
-  filters,
-  className,
-  btnMenuClassName,
-  menuClassName,
-}: FiltersMenuProps) => {
+export const BadgesFilters = ({filters, className}: FiltersMenuProps) => {
   const [badgesList, setBadgesList] = useState<BadgeType[] | null>(null);
 
   /** Gère la fermeture d'un badge et la mise à jour du filtre associé */
@@ -152,12 +144,7 @@ export const BadgesFilters = ({
       </div>
 
       {/* Menu + Filtres Select */}
-      <ButtonMenu
-        icon="equalizer-fill"
-        notificationValue={badgesList?.length}
-        className={btnMenuClassName}
-        menuClassName={menuClassName}
-      >
+      <ButtonMenu icon="equalizer-fill" notificationValue={badgesList?.length}>
         <div className="flex flex-col gap-4 w-72">
           {filters.map(filter => (
             <Field key={filter.title} title={filter.title}>
@@ -173,7 +160,6 @@ export const BadgesFilters = ({
                   options={filter.options}
                   values={filter.values}
                   onChange={args => {
-                    console.log(args);
                     filter.onChange(args);
                   }}
                   small

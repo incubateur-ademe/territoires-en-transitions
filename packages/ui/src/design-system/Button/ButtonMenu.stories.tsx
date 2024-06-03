@@ -24,7 +24,6 @@ const meta: Meta<typeof ButtonMenu> = {
   args: {
     icon: 'equalizer-fill',
     notificationValue: 2,
-    menuAlignment: 'left',
     children: (
       <div className="!w-44 text-sm">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium,
