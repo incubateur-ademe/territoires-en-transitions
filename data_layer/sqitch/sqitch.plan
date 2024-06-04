@@ -669,4 +669,5 @@ collectivite/tableau_de_bord 2024-05-23T16:37:17Z Frederic Arnoux <frederic.arno
 collectivite/collectivite [collectivite/collectivite@v3.1.0] 2024-05-27T09:20:41Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Recupérer les ressources asssociées à la collectivité
 @v3.4.0 2024-05-30T14:50:53Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag 3.4.0 - Permet de filtrer les fiche actions, et de stocker les modules du tableau de bord
 
-utilisateur/droits_v2 [utilisateur/droits_v2@v3.0.0] 2024-05-30T10:08:04Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'id d'invitation dans la rpc collectivite_membres 
+utilisateur/droits_v2 [utilisateur/droits_v2@v3.0.0] 2024-05-30T10:08:04Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'id d'invitation dans la rpc collectivite_membres
+utilisateur/membre [utilisateur/membre@v3.4.0] 2024-06-04T12:58:19Z Marc Rutkowski <marc@attractive-media.fr> # Répare la suppression d'un utilisateur pré-existant à son rattachement à une collectivité
