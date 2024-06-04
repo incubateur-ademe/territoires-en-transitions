@@ -22,8 +22,6 @@ import FicheActionFormDateInput from './FicheActionFormDateInput';
 import Section from './Section';
 import StructurePiloteDropdown from './StructurePiloteDropdown';
 import PartenairesDropdown from './PartenairesDropdown';
-import PersonnePiloteDropdown from './PersonnePiloteDropdown';
-import PersonneReferenteDropdown from './PersonneReferenteDropdown';
 import SousThematiquesDropdown from './SousThematiquesDropdown';
 import {
   TFicheActionNiveauxPriorite,
@@ -45,6 +43,8 @@ import FichesLiees from './FichesLiees';
 import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
 import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -155,11 +155,10 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </FormField>
         <FormField label="Personne pilote">
-          <PersonnePiloteDropdown
-            keysToInvalidate={[['fiche_action', fiche.id]]}
-            personnes={fiche.pilotes}
-            onSelect={pilotes => updateFiche({...fiche, pilotes})}
-            isReadonly={isReadonly}
+          <PersonnesDropdown
+            values={fiche.pilotes?.map(p => getPersonneStringId(p))}
+            onChange={pilotes => updateFiche({...fiche, pilotes})}
+            disabled={isReadonly}
           />
         </FormField>
         <FormField
@@ -186,11 +185,10 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </FormField>
         <div className="mb-6 border-t border-gray-300" />
         <FormField label="Élu·e référent·e">
-          <PersonneReferenteDropdown
-            ficheId={fiche.id}
-            personnes={fiche.referents}
-            onSelect={referents => updateFiche({...fiche, referents})}
-            isReadonly={isReadonly}
+          <PersonnesDropdown
+            values={fiche.referents?.map(p => getPersonneStringId(p))}
+            onChange={referents => updateFiche({...fiche, referents})}
+            disabled={isReadonly}
           />
         </FormField>
         <FormField label="Direction ou service pilote">

@@ -21,12 +21,13 @@ import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgePriorite from '../../components/BadgePriorite';
 import {useUpdateFicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
 import {format} from 'date-fns';
-import PersonnesPilotes from 'app/pages/collectivite/PlansActions/FicheAction/dropdowns/PersonnesPilotes';
 import {
   useFicheActionAddPilote,
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 
 type Props = {
   initialFiche: FicheResume;
@@ -117,14 +118,15 @@ const ModifierFicheModale = ({
             </FormSectionGrid>
             <FormSectionGrid>
               <Field title="Personne pilote">
-                <PersonnesPilotes
-                  personnes={fiche.pilotes}
+                <PersonnesDropdown
+                  values={
+                    fiche.pilotes?.length
+                      ? fiche.pilotes.map(p => getPersonneStringId(p))
+                      : undefined
+                  }
                   onChange={pilotes => {
                     setFiche({...fiche, pilotes});
                   }}
-                  keysToInvalidate={[
-                    ['axe_fiches', axeId, fiche.collectivite_id],
-                  ]}
                 />
               </Field>
               <Field title="Date de fin prévisionnelle">

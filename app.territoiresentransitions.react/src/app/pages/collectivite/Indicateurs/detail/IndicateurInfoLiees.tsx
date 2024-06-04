@@ -5,9 +5,10 @@ import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
 import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
 import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
-import PersonnePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/PersonnePiloteDropdown';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
 import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -38,17 +39,14 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
     <>
       {/** personne pilote */}
       <FormField className="fr-mt-4w" label="Personne pilote">
-        <PersonnePiloteDropdown
-          keysToInvalidate={[
-            [
-              'indicateur_info_liees',
-              collectivite.collectivite_id,
-              definition.id,
-            ],
-          ]}
-          personnes={resume?.pilotes || []}
-          onSelect={upsertIndicateurPilote}
-          isReadonly={isReadonly}
+        <PersonnesDropdown
+          values={
+            resume?.pilotes.length
+              ? resume.pilotes?.map(p => getPersonneStringId(p))
+              : undefined
+          }
+          onChange={upsertIndicateurPilote}
+          disabled={isReadonly}
         />
       </FormField>
       {/** services pilotes */}
