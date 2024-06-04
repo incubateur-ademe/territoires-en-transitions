@@ -4,7 +4,6 @@ import PictoDataViz from 'ui/pictogrammes/PictoDataViz';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import PictoInformation from 'ui/pictogrammes/PictoInformation';
 import Checkbox from 'ui/shared/form/Checkbox';
-import FormField from 'ui/shared/form/FormField';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import MultiSelectTagsDropdown from 'ui/shared/select/MultiSelectTagsDropdown';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
@@ -45,6 +44,7 @@ import BadgePriorite from '../../components/BadgePriorite';
 import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
+import {Field} from '@tet/ui';
 
 type TFicheActionForm = {
   fiche: FicheAction;
@@ -61,8 +61,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         dataTest="section-presentation"
         icon={<PictoInformation />}
         title="Présentation"
+        childrenContainerClassName="gap-6"
       >
-        <FormField label="Description de l'action" htmlFor="description">
+        <Field title="Description de l'action" htmlFor="description">
           <TextareaControlled
             id="description"
             initialValue={fiche.description ?? ''}
@@ -80,15 +81,15 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
-        <FormField label="Thématique" className="z-10">
+        </Field>
+        <Field title="Thématique">
           <ThematiquesDropdown
             values={fiche.thematiques?.map(t => t.id)}
             onChange={thematiques => updateFiche({...fiche, thematiques})}
             disabled={isReadonly}
           />
-        </FormField>
-        <FormField label="Sous-thématique">
+        </Field>
+        <Field title="Sous-thématique">
           <SousThematiquesDropdown
             thematiques={
               fiche.thematiques
@@ -101,11 +102,11 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             }
             isReadonly={isReadonly}
           />
-        </FormField>
+        </Field>
       </Section>
 
       <Section icon={<PictoDataViz />} title="Objectifs et indicateurs">
-        <FormField label="Objectifs">
+        <Field title="Objectifs" className="mb-6">
           <TextareaControlled
             initialValue={fiche.objectifs ?? ''}
             onBlur={e => {
@@ -122,14 +123,14 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
         <IndicateursLies
           fiche={fiche}
           indicateurs={fiche.indicateurs}
           onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
           isReadonly={isReadonly}
         />
-        <FormField label="Effets attendus">
+        <Field title="Effets attendus">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
             values={fiche.resultats_attendus ?? []}
@@ -139,30 +140,31 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             }
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
       </Section>
 
       <Section
         icon={<PictoCommunity />}
         title="Acteurs"
         dataTest="section-acteurs"
+        childrenContainerClassName="gap-6"
       >
-        <FormField label="Structure pilote">
+        <Field title="Structure pilote">
           <StructurePiloteDropdown
             structures={fiche.structures}
             onSelect={structures => updateFiche({...fiche, structures})}
             isReadonly={isReadonly}
           />
-        </FormField>
-        <FormField label="Personne pilote">
+        </Field>
+        <Field title="Personne pilote">
           <PersonnesDropdown
             values={fiche.pilotes?.map(p => getPersonneStringId(p))}
             onChange={pilotes => updateFiche({...fiche, pilotes})}
             disabled={isReadonly}
           />
-        </FormField>
-        <FormField
-          label="Moyens humains et techniques"
+        </Field>
+        <Field
+          title="Moyens humains et techniques"
           htmlFor="moyens-humains-tech"
         >
           <TextareaControlled
@@ -182,32 +184,32 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
-        <div className="mb-6 border-t border-gray-300" />
-        <FormField label="Élu·e référent·e">
+        </Field>
+        <div className="border-t border-gray-300" />
+        <Field title="Élu·e référent·e">
           <PersonnesDropdown
             values={fiche.referents?.map(p => getPersonneStringId(p))}
             onChange={referents => updateFiche({...fiche, referents})}
             disabled={isReadonly}
           />
-        </FormField>
-        <FormField label="Direction ou service pilote">
+        </Field>
+        <Field title="Direction ou service pilote">
           <ServicePiloteDropdown
             services={fiche.services}
             onSelect={services => updateFiche({...fiche, services})}
             isReadonly={isReadonly}
           />
-        </FormField>
-        <div className="mb-6 border-t border-gray-300" />
-        <FormField label="Partenaires">
+        </Field>
+        <div className="border-t border-gray-300" />
+        <Field title="Partenaires">
           <PartenairesDropdown
             partenaires={fiche.partenaires}
             onSelect={partenaires => updateFiche({...fiche, partenaires})}
             isReadonly={isReadonly}
           />
-        </FormField>
-        <div className="mb-6 border-t border-gray-300" />
-        <FormField label="Cibles">
+        </Field>
+        <div className="border-t border-gray-300" />
+        <Field title="Cibles">
           <MultiSelectTagsDropdown
             buttonClassName={DSFRbuttonClassname}
             values={fiche.cibles ?? []}
@@ -215,16 +217,17 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             onSelect={values => updateFiche({...fiche, cibles: values})}
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
       </Section>
 
       <Section
         dataTest="section-modalites"
         icon={<PictoCalendar />}
         title="Modalités de mise en œuvre"
+        childrenContainerClassName="gap-6"
       >
-        <FormField
-          label="Financements"
+        <Field
+          title="Financements"
           htmlFor="financements"
           hint="Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions …"
         >
@@ -244,12 +247,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
-        <div className="mb-6 border-t border-gray-300" />
-        <FormField
-          label="Budget prévisionnel total "
-          htmlFor="budget-previsionnel"
-        >
+        </Field>
+        <div className="border-t border-gray-300" />
+        <Field title="Budget prévisionnel total " htmlFor="budget-previsionnel">
           <FicheActionFormBudgetInput
             budget={fiche.budget_previsionnel}
             onBlur={e => {
@@ -269,8 +269,8 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             }}
             disabled={isReadonly}
           />
-        </FormField>
-        <div className="mb-6 pt-6 border-y border-gray-300">
+        </Field>
+        <div className="pt-6 border-y border-gray-300">
           <Financeurs
             fiche={fiche}
             onUpdate={newFiche => updateFiche(newFiche)}
@@ -278,7 +278,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <FormField label="Statut">
+          <Field title="Statut">
             <SelectDropdown
               data-test="Statut"
               buttonClassName={DSFRbuttonClassname}
@@ -292,8 +292,8 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               )}
               disabled={isReadonly}
             />
-          </FormField>
-          <FormField label="Niveau de priorité">
+          </Field>
+          <Field title="Niveau de priorité">
             <SelectDropdown
               buttonClassName={DSFRbuttonClassname}
               value={fiche.niveau_priorite ?? undefined}
@@ -310,10 +310,10 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               placeholderText="Sélectionnez une option"
               disabled={isReadonly}
             />
-          </FormField>
+          </Field>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <FormField label="Date de début">
+          <Field title="Date de début">
             <FicheActionFormDateInput
               initialValue={fiche.date_debut}
               onBlur={e =>
@@ -325,8 +325,8 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
               }
               disabled={isReadonly}
             />
-          </FormField>
-          <FormField label="Date de fin prévisionnelle">
+          </Field>
+          <Field title="Date de fin prévisionnelle">
             <FicheActionFormDateInput
               initialValue={fiche.date_fin_provisoire}
               disabled={(fiche.amelioration_continue || isReadonly) ?? false}
@@ -353,13 +353,12 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
                 disabled={isReadonly}
               />
             </div>
-          </FormField>
+          </Field>
         </div>
-        <FormField
-          label="Calendrier"
+        <Field
+          title="Calendrier"
           htmlFor="calendrier"
           hint="Si l’action est en pause ou abandonnée, expliquez pourquoi"
-          className="mt-6"
         >
           <TextareaControlled
             id="calendrier"
@@ -377,9 +376,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
       </Section>
-      <Section icon={<PictoLeaf />} title="Actions et fiches liées">
+      <Section
+        icon={<PictoLeaf />}
+        title="Actions et fiches liées"
+        childrenContainerClassName="gap-6"
+      >
         <ActionsLiees
           actions={fiche.actions}
           onSelect={actions => updateFiche({...fiche, actions})}
@@ -393,8 +396,8 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         />
       </Section>
       <Section icon={<PictoBook />} title="Notes">
-        <FormField
-          label="Notes complémentaires"
+        <Field
+          title="Notes complémentaires"
           hint="Évaluation ou autres informations sur l’action "
           htmlFor="notes-complementaires"
         >
@@ -421,26 +424,16 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             className="outline-transparent resize-none"
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
       </Section>
       <Section icon={<PictoDocument />} title="Documents et liens">
-        {annexes?.map(doc => (
-          <PreuveDoc preuve={doc as unknown as TPreuve} />
+        {annexes?.map((doc, index) => (
+          <PreuveDoc key={index} preuve={doc as unknown as TPreuve} />
         ))}
         <div className={annexes?.length ? 'fr-mt-2w' : undefined}>
           <AddAnnexeButton fiche_id={fiche.id!} />
         </div>
       </Section>
-      {/* <Checkbox
-        label="Mise à jour de la fiche terminée"
-        onCheck={() =>
-          updateFiche({
-            ...fiche,
-            maj_termine: !fiche.maj_termine,
-          })
-        }
-        checked={fiche.maj_termine ?? false}
-      /> */}
     </div>
   );
 };

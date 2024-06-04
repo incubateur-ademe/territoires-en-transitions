@@ -1,10 +1,9 @@
 import {useState} from 'react';
-import {Modal, ModalFooterOKCancel} from '@tet/ui';
+import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import FormField from 'ui/shared/form/FormField';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {TIndicateurPersonnalise} from './types';
 import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
@@ -98,28 +97,27 @@ const IndicateurPersonnaliseBase = ({
 
         <BadgeACompleter a_completer={!rempli} className="fr-mt-5w fr-mb-3w" />
         <IndicateurValuesTabs definition={definition} />
-        <FormField
-          className="fr-mt-5w"
-          label="Description et méthodologie de calcul"
-        >
-          <TextareaControlled
-            data-test="desc"
-            className="fr-input fr-mt-1w !outline-none"
-            initialValue={description}
-            readOnly={isReadonly}
-            onBlur={e => handleUpdate('description', e.target.value)}
-          />
-        </FormField>
-        <IndicateurInfoLiees definition={definition} />
-        <FichesActionLiees definition={definition} />
-        <FormField label="Unité" className="fr-mt-3w fr-label">
-          <InputControlled
-            className="fr-input fr-mt-1w !outline-none"
-            initialValue={unite}
-            readOnly={isReadonly}
-            onBlur={e => handleUpdate('unite', e.target.value)}
-          />
-        </FormField>
+        <div className="flex flex-col gap-8 mt-10">
+          <Field title="Description et méthodologie de calcul">
+            <TextareaControlled
+              data-test="desc"
+              className="fr-input fr-mt-1w !outline-none"
+              initialValue={description}
+              readOnly={isReadonly}
+              onBlur={e => handleUpdate('description', e.target.value)}
+            />
+          </Field>
+          <IndicateurInfoLiees definition={definition} />
+          <FichesActionLiees definition={definition} />
+          <Field title="Unité">
+            <InputControlled
+              className="fr-input fr-mt-1w !outline-none"
+              initialValue={unite}
+              readOnly={isReadonly}
+              onBlur={e => handleUpdate('unite', e.target.value)}
+            />
+          </Field>
+        </div>
         <ScrollTopButton className="fr-mt-4w" />
       </div>
       {showConfirm && (

@@ -1,5 +1,4 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import FormField from 'ui/shared/form/FormField';
 import {TIndicateurDefinition} from '../types';
 import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
 import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
@@ -9,6 +8,7 @@ import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionFor
 import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
 import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
+import {Field} from '@tet/ui';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -38,7 +38,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   return (
     <>
       {/** personne pilote */}
-      <FormField className="fr-mt-4w" label="Personne pilote">
+      <Field title="Personne pilote">
         <PersonnesDropdown
           values={
             resume?.pilotes.length
@@ -48,18 +48,18 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
           onChange={upsertIndicateurPilote}
           disabled={isReadonly}
         />
-      </FormField>
+      </Field>
       {/** services pilotes */}
-      <FormField className="fr-mt-4w" label="Direction ou service pilote">
+      <Field title="Direction ou service pilote">
         <ServicePiloteDropdown
           services={resume?.services || []}
           onSelect={upsertIndicateurServicePilote}
           isReadonly={isReadonly}
         />
-      </FormField>
+      </Field>
       {/** Thématiques */}
       {definition.isPerso && (
-        <FormField className="fr-mt-4w z-10" label="Thématique">
+        <Field title="Thématique">
           <ThematiquesDropdown
             values={
               resume?.thematiques.length
@@ -69,7 +69,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
             onChange={upsertIndicateurPersoThematique}
             disabled={isReadonly}
           />
-        </FormField>
+        </Field>
       )}
     </>
   );

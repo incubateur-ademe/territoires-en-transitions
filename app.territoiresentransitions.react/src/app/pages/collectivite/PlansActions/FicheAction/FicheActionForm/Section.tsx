@@ -7,9 +7,17 @@ type Props = {
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
+  childrenContainerClassName?: string;
 };
 
-const Section = ({dataTest, isDefaultOpen, icon, title, children}: Props) => {
+const Section = ({
+  dataTest,
+  isDefaultOpen,
+  icon,
+  title,
+  children,
+  childrenContainerClassName,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
 
   return (
@@ -32,7 +40,16 @@ const Section = ({dataTest, isDefaultOpen, icon, title, children}: Props) => {
         <div className="w-12 h-12">{icon}</div>
         <span className="font-bold">{title}</span>
       </button>
-      {isOpen && <div className="flex flex-col p-6">{children}</div>}
+      {isOpen && (
+        <div
+          className={classNames(
+            'flex flex-col p-6',
+            childrenContainerClassName
+          )}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };

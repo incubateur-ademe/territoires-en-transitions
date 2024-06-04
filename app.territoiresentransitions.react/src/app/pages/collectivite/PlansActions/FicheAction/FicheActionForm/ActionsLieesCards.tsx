@@ -20,7 +20,7 @@ export const ActionsLieesCards = ({
     ) ?? [];
 
   return actionsLiees.length > 0 ? (
-    <div className="grid grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-2 gap-6">
       {actionsLiees.map(action => {
         const {action_id, referentiel, identifiant, nom} = action;
 
