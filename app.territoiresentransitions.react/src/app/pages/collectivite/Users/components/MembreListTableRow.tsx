@@ -3,7 +3,7 @@ import {Button, Icon, Tooltip} from '@tet/ui';
 
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
-import UpdateMemberAccesModal from 'app/pages/collectivite/Users/components/UpdateMembreAccesModal';
+import {ConfirmerSuppressionMembre} from './ConfirmerSuppressionMembre';
 import {
   Membre,
   TRemoveFromCollectivite,
@@ -11,9 +11,9 @@ import {
 } from 'app/pages/collectivite/Users/types';
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
-import {TNiveauAcces} from 'types/alias';
-import {TMembreFonction} from 'types/alias';
-import {ResendInvitationArgs} from 'app/pages/collectivite/Users/useResendInvitation';
+import {TNiveauAcces, TMembreFonction} from 'types/alias';
+import {ResendInvitationArgs} from '../useResendInvitation';
+import {ConfirmerChangementNiveau} from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -47,100 +47,128 @@ const niveauAccessDetail: Record<TNiveauAcces, string> = {
 const rowClassNames = 'h-20 border-b border-gray-300 bg-white';
 const cellClassNames = 'px-4';
 
-const MembreListTableRow = ({
+const MembreListTableRow = (props: TMembreListTableRowProps) => {
+  const {membre} = props;
+
+  // l'affichage est différent si le membre est en attente ou non d'acceptation d'une invitation
+  return membre.user_id ? (
+    <MembreListTableRowAttache {...props} />
+  ) : (
+    <MembreListTableRowInvite {...props} />
+  );
+};
+
+/**
+ * Affiche une ligne représentant un membre invité à rejoindre la collectivité
+ */
+const MembreListTableRowInvite = ({
   currentUserId,
   currentUserAccess,
   membre,
-  updateMembre,
   removeFromCollectivite,
   resendInvitation,
 }: TMembreListTableRowProps) => {
+  const {user_id, email, niveau_acces, invitation_id} = membre;
+
+  const isCurrentUser = currentUserId === user_id;
+  const isAdmin = currentUserAccess === 'admin';
+  const canUpdate = isAdmin || isCurrentUser;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
+      <td colSpan={4} className={cellClassNames}>
+        <span className="block mb-0.5 text-xs text-gray-500">{email}</span>
+        <span className="font-medium text-xs text-gray-600">
+          Création de compte en attente
+        </span>
+      </td>
+      <td className={cellClassNames}>
+        <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
+      </td>
+      <td className={cellClassNames}>
+        <Tooltip label="En attente de validation">
+          <Icon
+            className="bg-warning-2 text-warning-1 p-2 rounded"
+            icon="hourglass-line"
+          />
+        </Tooltip>
+      </td>
+      <td className={cellClassNames}>
+        {canUpdate && (
+          <div className="flex flex-row gap-4">
+            <Tooltip label="Supprimer l'invitation">
+              <Button
+                size="sm"
+                variant="outlined"
+                icon="delete-bin-6-line"
+                onClick={() => setIsOpen(true)}
+              />
+            </Tooltip>
+            <ConfirmerSuppressionMembre
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              membre={membre}
+              isCurrentUser={isCurrentUser}
+              removeFromCollectivite={removeFromCollectivite}
+            />
+            {invitation_id && (
+              <Tooltip label="Renvoyer l'invitation">
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  icon="mail-send-line"
+                  onClick={() =>
+                    resendInvitation({invitationId: invitation_id, email})
+                  }
+                />
+              </Tooltip>
+            )}
+          </div>
+        )}
+      </td>
+    </tr>
+  );
+};
+
+/**
+ * Affiche une ligne représentant un membre de la collectivité
+ */
+const MembreListTableRowAttache = (props: TMembreListTableRowProps) => {
+  const {
+    currentUserId,
+    currentUserAccess,
+    membre,
+    updateMembre,
+    removeFromCollectivite,
+  } = props;
   const {
     user_id: membre_id,
     nom,
     prenom,
-    // telephone,
     email,
     fonction,
     details_fonction,
     champ_intervention,
     niveau_acces,
-    invitation_id,
   } = membre;
 
   const isCurrentUser = currentUserId === membre_id;
   const isAdmin = currentUserAccess === 'admin';
   const canUpdate = isAdmin || isCurrentUser;
 
-  // Ce state est utilisé pour gérer l'affichage de la modal au click sans boutton
-  // car les boutons sont situés à l'intérieur du select
-  const [isAccesModalOpen, setIsAccesModalOpen] = useState(false);
+  // indique si les modales de confirmaiton sont ouvertes ou non
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenChangeNiveau, setIsOpenChangeNiveau] = useState(false);
 
-  // Récupère la valeur du selecteur d'accès pour la donner à la modal
-  const [accesOptionSelected, setAccesOptionSelected] = useState<
+  // valeur du selecteur d'accès pour la donner à la modale de confirmation
+  const [selectedOption, setSelectedOption] = useState<
     TAccesDropdownOption | undefined
   >(undefined);
 
-  const onAccesSelect = (value: TAccesDropdownOption) => {
-    // Comme nous n'affichons pas de modal lors du changement d'accès d'un autre utilisateur que soit même,
-    // on crée une condition afin d'ouvrir la modal ou directement changer l'accès d'un tierce
-    if (isCurrentUser || value === 'remove') {
-      setAccesOptionSelected(value);
-      setIsAccesModalOpen(true);
-    } else if (membre_id) {
-      updateMembre({membre_id, name: 'niveau_acces', value});
-    }
-  };
-
-  // Si le membre est en attente d'acceptation d'une invitation
-  if (membre_id === null) {
-    return (
-      <tr data-test={`MembreRow-${email}`} className={rowClassNames}>
-        <td colSpan={4} className={cellClassNames}>
-          <span className="block mb-0.5 text-xs text-gray-500">{email}</span>
-          <span className="font-medium text-xs text-gray-600">
-            Création de compte en attente
-          </span>
-        </td>
-        <td className={cellClassNames}>
-          <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
-        </td>
-        <td className={cellClassNames}>
-          <Tooltip label="En attente de validation">
-            <Icon
-              className="bg-warning-2 text-warning-1 p-2 rounded"
-              icon="hourglass-line"
-            />
-          </Tooltip>
-        </td>
-        <td className={cellClassNames}>
-          {canUpdate && (
-            <div className="flex flex-row gap-4">
-              <Tooltip label="Supprimer l'invitation">
-                <Button
-                  size="sm"
-                  variant="outlined"
-                  icon="delete-bin-6-line"
-                  onClick={() => removeFromCollectivite(email)}
-                />
-              </Tooltip>
-              {invitation_id && (
-                <Tooltip label="Renvoyer l'invitation">
-                  <Button
-                    size="sm"
-                    variant="outlined"
-                    icon="mail-send-line"
-                    onClick={() =>
-                      resendInvitation({invitationId: invitation_id, email})
-                    }
-                  />
-                </Tooltip>
-              )}
-            </div>
-          )}
-        </td>
-      </tr>
-    );
+  if (!membre_id) {
+    return;
   }
 
   return (
@@ -151,10 +179,6 @@ const MembreListTableRow = ({
         </span>
         <span className="block mt-1 text-xs text-gray-500">{email}</span>
       </td>
-      {/* En attente de la page gestion de compte */}
-      {/* <td className={cellClassNames}>
-        <span>{telephone}</span>
-      </td> */}
       <td className={cellClassNames}>
         {canUpdate ? (
           <FonctionDropdown
@@ -211,7 +235,15 @@ const MembreListTableRow = ({
             isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
             value={niveau_acces}
-            onSelect={onAccesSelect}
+            onSelect={value => {
+              // demande confirmation avant de changer le niveau d'accès de l'admin lui-même
+              if (isCurrentUser && niveau_acces === 'admin') {
+                setSelectedOption(value);
+                setIsOpenChangeNiveau(true);
+              } else {
+                updateMembre({membre_id, name: 'niveau_acces', value});
+              }
+            }}
           />
         ) : (
           <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
@@ -227,20 +259,43 @@ const MembreListTableRow = ({
       </td>
       <td className={cellClassNames}>
         {canUpdate && (
-          <Tooltip
-            label={
-              isCurrentUser
-                ? 'Retirer mon accès à la collectivité'
-                : 'Retirer ce membre de la collectivité'
-            }
-          >
-            <Button
-              size="sm"
-              variant="outlined"
-              icon="delete-bin-6-line"
-              onClick={() => removeFromCollectivite(email)}
+          <>
+            <Tooltip
+              label={
+                isCurrentUser
+                  ? 'Retirer mon accès à la collectivité'
+                  : 'Retirer ce membre de la collectivité'
+              }
+            >
+              <Button
+                data-test="delete"
+                size="sm"
+                variant="outlined"
+                icon="delete-bin-6-line"
+                onClick={() => setIsOpen(true)}
+              />
+            </Tooltip>
+            <ConfirmerSuppressionMembre
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              membre={membre}
+              isCurrentUser={isCurrentUser}
+              removeFromCollectivite={removeFromCollectivite}
             />
-          </Tooltip>
+            <ConfirmerChangementNiveau
+              isOpen={isOpenChangeNiveau}
+              setIsOpen={setIsOpenChangeNiveau}
+              selectedOption={selectedOption}
+              membre={membre}
+              updateMembre={() =>
+                updateMembre({
+                  membre_id,
+                  name: 'niveau_acces',
+                  value: selectedOption ?? 'lecture',
+                })
+              }
+            />
+          </>
         )}
       </td>
     </tr>
@@ -316,28 +371,15 @@ const ChampsInterventionDropdown = ({
   </div>
 );
 
-export type TAccesDropdownOption = TNiveauAcces | 'remove';
+export type TAccesDropdownOption = TNiveauAcces;
 
 const AccessDropdownLabel = ({
   option,
-  isCurrentUser,
   currentUserAccess,
 }: {
   option: TAccesDropdownOption;
-  isCurrentUser: boolean;
   currentUserAccess: TNiveauAcces;
 }) => {
-  if (option === 'remove')
-    return (
-      <span
-        aria-label="retirer l'acces"
-        className="flex w-full py-2 text-left text-red-600"
-      >
-        {isCurrentUser
-          ? 'Retirer mon accès à la collectivité'
-          : 'Retirer ce membre de la collectivité'}
-      </span>
-    );
   if (currentUserAccess === 'admin')
     return (
       <div>
@@ -384,7 +426,6 @@ const AccesDropdown = ({
         renderOption={option => (
           <AccessDropdownLabel
             option={option.value as TNiveauAcces}
-            isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
           />
         )}

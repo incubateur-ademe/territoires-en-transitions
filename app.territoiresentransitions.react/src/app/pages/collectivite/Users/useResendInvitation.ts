@@ -37,7 +37,7 @@ export const useResendInvitation = (
             ...authHeaders,
           },
           body: JSON.stringify({
-            to: email?.toLowerCase(),
+            to: email.toLowerCase(),
             from: {prenom, nom, email: emailFrom},
             collectivite: nomCollectivite,
             invitationUrl,
@@ -52,7 +52,8 @@ export const useResendInvitation = (
     },
     {
       meta: {
-        success: `L'invitation a rejoindre la collectivité ${collectivite.nom} a bien été envoyée`,
+        success: `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée`,
+        error: `L'invitation n'a pas pu être envoyée`,
       },
     }
   );

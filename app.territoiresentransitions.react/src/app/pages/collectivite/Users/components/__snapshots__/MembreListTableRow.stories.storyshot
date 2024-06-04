@@ -6,7 +6,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
   data-test="MembreRow-yolo@dodo.com"
 >
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <span
       className="font-bold"
@@ -22,7 +22,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </span>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <div
       data-test="fonction-dropdown"
@@ -49,7 +49,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </div>
   </td>
   <td
-    className="relative px-4 pr-0"
+    className="px-4 pr-0"
   >
     <div
       data-test="champ_intervention-dropdown"
@@ -79,7 +79,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </div>
   </td>
   <td
-    className="w-96 relative px-4"
+    className="w-96 px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
@@ -94,7 +94,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <div
       data-test="acces-dropdown"
@@ -120,6 +120,41 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
       </button>
     </div>
   </td>
+  <td
+    className="px-4"
+  >
+    <span
+      className="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] bg-success-2 text-success-1 p-2 rounded"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
+    />
+  </td>
+  <td
+    className="px-4"
+  >
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      data-test="delete"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
+    >
+      <span
+        className="ri-delete-bin-6-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8"
+      />
+    </button>
+  </td>
 </tr>
 `;
 
@@ -129,7 +164,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
   data-test="MembreRow-yala@dada.com"
 >
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <span
       className="font-bold"
@@ -145,7 +180,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </span>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <div
       data-test="fonction-dropdown"
@@ -172,7 +207,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </div>
   </td>
   <td
-    className="relative px-4 pr-0"
+    className="px-4 pr-0"
   >
     <div
       data-test="champ_intervention-dropdown"
@@ -205,7 +240,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </div>
   </td>
   <td
-    className="w-96 relative px-4"
+    className="w-96 px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
@@ -220,31 +255,44 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
-    <div
-      data-test="acces-dropdown"
+    Édition
+  </td>
+  <td
+    className="px-4"
+  >
+    <span
+      className="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] bg-success-2 text-success-1 p-2 rounded"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
+    />
+  </td>
+  <td
+    className="px-4"
+  >
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      data-test="delete"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
     >
-      <button
-        aria-expanded={false}
-        aria-label="ouvrir le menu"
-        className="flex items-center w-full p-2 text-left text-sm"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onPointerDown={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Édition
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
-        />
-      </button>
-    </div>
+      <span
+        className="ri-delete-bin-6-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8"
+      />
+    </button>
   </td>
 </tr>
 `;
@@ -255,41 +303,44 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow I
   data-test="MembreRow-invite@dodo.com"
 >
   <td
-    className="relative px-4"
+    className="px-4"
+    colSpan={4}
   >
     <span
-      className="font-bold"
-    >
-       
-    </span>
-    <span
-      className="block mt-1 text-xs text-gray-500"
+      className="block mb-0.5 text-xs text-gray-500"
     >
       invite@dodo.com
     </span>
-  </td>
-  <td
-    className="relative px-4"
-  >
-    <span />
-  </td>
-  <td
-    className="relative px-4 pr-0"
-  />
-  <td
-    className="w-96 relative px-4"
-  >
     <span
-      className="line-clamp-3"
-    />
+      className="font-medium text-xs text-gray-600"
+    >
+      Création de compte en attente
+    </span>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <span>
       Lecture
     </span>
   </td>
+  <td
+    className="px-4"
+  >
+    <span
+      className="ri-hourglass-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] bg-warning-2 text-warning-1 p-2 rounded"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
+    />
+  </td>
+  <td
+    className="px-4"
+  />
 </tr>
 `;
 
@@ -299,7 +350,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
   data-test="MembreRow-john@doe.com"
 >
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <span
       className="font-bold"
@@ -315,7 +366,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </span>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
     <div
       data-test="fonction-dropdown"
@@ -342,7 +393,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </div>
   </td>
   <td
-    className="relative px-4 pr-0"
+    className="px-4 pr-0"
   >
     <div
       data-test="champ_intervention-dropdown"
@@ -372,7 +423,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </div>
   </td>
   <td
-    className="w-96 relative px-4"
+    className="w-96 px-4"
   >
     <div
       className="py-1 px-2 border border-gray-300"
@@ -387,31 +438,44 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     </div>
   </td>
   <td
-    className="relative px-4"
+    className="px-4"
   >
-    <div
-      data-test="acces-dropdown"
+    Lecture
+  </td>
+  <td
+    className="px-4"
+  >
+    <span
+      className="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] bg-success-2 text-success-1 p-2 rounded"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
+    />
+  </td>
+  <td
+    className="px-4"
+  >
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      data-test="delete"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseMove={[Function]}
+      onPointerDown={[Function]}
+      onPointerEnter={[Function]}
     >
-      <button
-        aria-expanded={false}
-        aria-label="ouvrir le menu"
-        className="flex items-center w-full p-2 text-left text-sm"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onPointerDown={[Function]}
-      >
-        <span
-          className="mr-auto"
-        >
-          Lecture
-        </span>
-        <span
-          className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
-        />
-      </button>
-    </div>
+      <span
+        className="ri-delete-bin-6-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8"
+      />
+    </button>
   </td>
 </tr>
 `;
