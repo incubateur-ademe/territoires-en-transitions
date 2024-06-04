@@ -3,8 +3,8 @@ import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {usePersonneListe} from '../../../FicheAction/data/options/usePersonneListe';
 import {TOption} from 'ui/shared/select/commons';
-import {getPersonneId} from '../../../FicheAction/data/utils';
 import {SANS_PILOTE, SANS_REFERENT} from '../../../FicheAction/data/filters';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 
 type Props = {
   filterKey: 'pilotes' | 'referents';
@@ -47,7 +47,7 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
   personnes &&
     personnes.forEach(personne =>
       options.push({
-        value: getPersonneId(personne),
+        value: getPersonneStringId(personne),
         label: personne.nom!,
       })
     );

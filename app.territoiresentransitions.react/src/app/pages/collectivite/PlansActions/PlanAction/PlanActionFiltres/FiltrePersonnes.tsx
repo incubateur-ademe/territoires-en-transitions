@@ -7,9 +7,9 @@ import {
   TFiltreProps,
 } from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {getPersonneId} from '../../FicheAction/data/utils';
 import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 
 type Props = TFiltreProps & {
   label: string;
@@ -52,7 +52,7 @@ const FiltrePersonnes = ({
   personnes &&
     personnes.forEach(personne =>
       options.push({
-        value: getPersonneId(personne),
+        value: getPersonneStringId(personne),
         label: personne.nom!,
       })
     );
@@ -81,8 +81,8 @@ const FiltrePersonnes = ({
   const onSelect = (newValues: string[]) => {
     const newFilters = filters;
     const newPersonnes = personnes
-      ?.filter(p => newValues.includes(getPersonneId(p)))
-      .map(p => getPersonneId(p));
+      ?.filter(p => newValues.includes(getPersonneStringId(p)))
+      .map(p => getPersonneStringId(p));
 
     // onClick "tous" ou toggle option
     if (getIsAllSelected(newValues)) {
