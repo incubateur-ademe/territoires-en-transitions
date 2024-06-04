@@ -3,7 +3,6 @@ import {AccordionControlled} from 'ui/Accordion';
 import FormField from 'ui/shared/form/FormField';
 import {Checkbox} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
-import FiltrePersonnes from './FiltrePersonnes';
 import {UseFilterState} from './useIndicateursFilterState';
 import FiltreServices from './FiltreServices';
 import FiltrePlans from './FiltrePlans';
@@ -11,6 +10,8 @@ import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 //import FiltreType from './FiltreType';
 
 export type FiltresIndicateursProps = {
@@ -73,9 +74,14 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
               </FormField>
               <div className="grid lg:grid-cols-2 gap-x-8 gap-y-0">
                 <FormField label="Personne pilote">
-                  <FiltrePersonnes
-                    values={pilotes}
-                    onSelect={values => updateFilterParam('pilotes', values)}
+                  <PersonnesDropdown
+                    values={pilotes?.length ? pilotes : undefined}
+                    onChange={pilotes =>
+                      updateFilterParam(
+                        'pilotes',
+                        pilotes.map(p => getPersonneStringId(p))
+                      )
+                    }
                   />
                 </FormField>
                 <FormField label="Direction ou service pilote">
