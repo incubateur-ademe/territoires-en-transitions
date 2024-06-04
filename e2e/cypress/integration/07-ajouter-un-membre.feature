@@ -70,3 +70,18 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
+
+  Scénario: Inviter un email qui est déjà associé à un utilisateur puis supprimer le rattachement
+    Etant donné que je suis connecté en tant que "yolo"
+
+    Quand je suis sur la page "Gestion des membres" de la collectivité "1"
+    Alors le tableau des membres n'inclus pas l'utilisateur "yulu@dudu.com"
+
+    Quand je clique sur le bouton "Inviter un membre"
+    Et que je renseigne l'email "yulu@DUDU.com" de la personne à inviter en "edition"
+    Et que je valide le formulaire
+    Alors le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
+
+    Quand je clique sur le bouton "supprimer" de "yulu@dudu.com"
+    Et que je clique sur le bouton "Valider" de la modale
+    Alors le tableau des membres ne doit pas contenir l'utilisateur "yulu@dudu.com"
