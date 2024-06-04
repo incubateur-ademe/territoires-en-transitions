@@ -5,15 +5,15 @@ import {getAuthBaseUrl} from '@tet/api';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
 
-export type ResendInvitationArgs = {
+export type SendInvitationArgs = {
   email: string;
   invitationId: string;
 };
 
 /**
- * Ajoute un utilisateur à une collectivité donnée
+ * Envoi le mail d'invitation à rejoindre une collectivité donnée
  */
-export const useResendInvitation = (
+export const useSendInvitation = (
   collectivite: CurrentCollectivite,
   user: UserData
 ) => {
@@ -21,7 +21,7 @@ export const useResendInvitation = (
   const authHeaders = useAuthHeaders();
 
   return useMutation(
-    async ({invitationId, email}: ResendInvitationArgs) => {
+    async ({invitationId, email}: SendInvitationArgs) => {
       const invitationUrl = makeInvitationLandingPath(invitationId);
 
       // envoi le mail d'invitation

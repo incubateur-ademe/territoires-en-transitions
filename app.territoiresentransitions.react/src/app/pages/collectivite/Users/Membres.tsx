@@ -19,8 +19,7 @@ import MembreListTable from 'app/pages/collectivite/Users/components/MembreListT
 import {useAddUserToCollectivite} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
 import {Button, Modal, Pagination} from '@tet/ui';
 import {Invite} from 'app/pages/collectivite/Users/components/Invite';
-import {useState} from 'react';
-import {useResendInvitation} from 'app/pages/collectivite/Users/useResendInvitation';
+import {useSendInvitation} from 'app/pages/collectivite/Users/useSendInvitation';
 
 export type MembresProps = {
   membres: Membre[];
@@ -50,6 +49,7 @@ export const Membres = ({
     collectivite,
     currentUser
   );
+  const {mutate: sendInvitation} = useSendInvitation(collectivite, currentUser);
 
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
@@ -83,7 +83,7 @@ export const Membres = ({
         isLoading={isLoading}
         updateMembre={updateMembre}
         removeFromCollectivite={removeFromCollectivite}
-        resendInvitation={resendInvitation}
+        resendInvitation={sendInvitation}
       />
     </main>
   );

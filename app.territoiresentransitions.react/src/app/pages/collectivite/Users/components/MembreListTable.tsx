@@ -1,7 +1,7 @@
 import {TNiveauAcces} from 'types/alias';
 import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
 import MembreListTableRow from './MembreListTableRow';
-import {ResendInvitationArgs} from 'app/pages/collectivite/Users/useResendInvitation';
+import {SendInvitationArgs} from 'app/pages/collectivite/Users/useSendInvitation';
 
 const thClassNames = 'py-3 px-5 whitespace-nowrap text-primary-9';
 
@@ -12,7 +12,7 @@ export type MembreListTableProps = {
   isLoading: boolean;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
-  resendInvitation: (args: ResendInvitationArgs) => void;
+  sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 const MembreListTable = ({
@@ -22,7 +22,7 @@ const MembreListTable = ({
   currentUserAccess,
   updateMembre,
   removeFromCollectivite,
-  resendInvitation,
+  sendInvitation,
 }: MembreListTableProps) => {
   return (
     <div className="mx-auto border-8 border-t-0 border-primary-2 bg-primary-2 rounded-lg overflow-x-hidden">
@@ -78,7 +78,7 @@ const MembreListTable = ({
                     currentUserId={currentUserId}
                     updateMembre={updateMembre}
                     removeFromCollectivite={removeFromCollectivite}
-                    resendInvitation={resendInvitation}
+                    sendInvitation={sendInvitation}
                   />
                 ))
               : null}

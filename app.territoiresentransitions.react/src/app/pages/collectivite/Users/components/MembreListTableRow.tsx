@@ -12,7 +12,7 @@ import {
 import {Referentiel} from 'types/litterals';
 import {referentielToName} from 'app/labels';
 import {TNiveauAcces, TMembreFonction} from 'types/alias';
-import {ResendInvitationArgs} from '../useResendInvitation';
+import {SendInvitationArgs} from '../useSendInvitation';
 import {ConfirmerChangementNiveau} from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
 
 export type TMembreListTableRowProps = {
@@ -21,7 +21,7 @@ export type TMembreListTableRowProps = {
   membre: Membre;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
-  resendInvitation: (args: ResendInvitationArgs) => void;
+  sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 const membreFonctions: {value: TMembreFonction; label: string}[] = [
@@ -66,7 +66,7 @@ const MembreListTableRowInvite = ({
   currentUserAccess,
   membre,
   removeFromCollectivite,
-  resendInvitation,
+  sendInvitation,
 }: TMembreListTableRowProps) => {
   const {user_id, email, niveau_acces, invitation_id} = membre;
 
@@ -120,7 +120,7 @@ const MembreListTableRowInvite = ({
                   variant="outlined"
                   icon="mail-send-line"
                   onClick={() =>
-                    resendInvitation({invitationId: invitation_id, email})
+                    sendInvitation({invitationId: invitation_id, email})
                   }
                 />
               </Tooltip>
