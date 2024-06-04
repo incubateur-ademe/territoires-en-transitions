@@ -12,12 +12,11 @@ Fonctionnalité: Gérer les informations des membres
 
     Quand je modifie le champ "acces" de "yolo@dodo.com" en "Édition"
     Alors je vois une modale intitulée "Modifier mes droits d’accès la collectivité"
-    Et que je clique sur le bouton "Confirmer" de la modale
+    Et que je clique sur le bouton "Valider" de la modale
 
     Alors le tableau des membres doit contenir les informations suivantes
       | nom       | mail          | fonction   | champ_intervention                    | details_fonction                    | acces   |
       | Yolo Dodo | yolo@dodo.com | Référent·e | Climat Air ÉnergieÉconomie Circulaire | Référent YOLO de cette collectivité | Édition |
-
 
   Scénario: Retirer un accès en tant qu'Admin
     Etant donné que je suis connecté en tant que "yolo"
@@ -29,12 +28,11 @@ Fonctionnalité: Gérer les informations des membres
       | Yili Didi | yili@didi.com | Équipe politique | Climat Air ÉnergieÉconomie Circulaire | Politique YILI de cette collectivité | Édition |
       | Yala Dada | yala@dada.com |                  |                                       |                                      | Lecture |
 
-    Quand je modifie le champ "acces" de "yili@didi.com" en "retirer l'acces"
-    Alors je vois une modale intitulée "Retirer ce membre de la collectivité"
-    Et que je clique sur le bouton "Confirmer" de la modale
+    Quand je clique sur le bouton "supprimer" de "yili@didi.com"
+    Alors je vois une modale intitulée "Détacher yili@didi.com"
+    Et que je clique sur le bouton "Valider" de la modale
 
     Alors le tableau des membres ne doit pas contenir l'utilisateur "yili@didi.com"
-
 
   Scénario: Modifier mes informations en tant que membre de la collectivité
     Etant donné que les informations des membres sont réinitialisées
@@ -61,7 +59,6 @@ Fonctionnalité: Gérer les informations des membres
     Alors le tableau des membres doit contenir les informations suivantes
       | nom       | mail          | fonction         | champ_intervention | details_fonction                     | acces |
       | Yolo Dodo | yolo@dodo.com | Équipe technique | Climat Air Énergie | Yolo est dans l'équipe technique ECI | Admin |
-
 
   Scénario: Modifier les informations d'autres membres en tant qu'administrateur
     Etant donné que je suis connecté en tant que "yolo"
