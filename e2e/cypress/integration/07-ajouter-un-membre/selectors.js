@@ -17,7 +17,10 @@ export const LocalSelectors = {
   'Inviter un membre': {
     selector: '[data-test=invite]',
   },
-  // 'Générer un nouveau lien': {
-  //   selector: '[data-test=InvitationLink] [data-test=GenLink]',
-  // },
+  modale: {
+    selector: '[data-test=Modal]',
+  },
+  supprimer: {
+    selector: '[data-test=delete]',
+  },
 };
