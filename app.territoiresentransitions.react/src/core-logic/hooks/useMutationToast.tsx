@@ -1,16 +1,12 @@
-import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {useQueryClient} from 'react-query';
-import {ToastFloater} from 'ui/shared/floating-ui/ToastFloater';
+import {useBaseToast} from './useBaseToast';
 
 // messages génériques
 const DEFAULT_MESSAGE = {
   success: 'Modification enregistrée',
   error: "Erreur lors de l'enregistrement",
 };
-
-type Hidden = null;
-type ToastStatus = Hidden | 'success' | 'error' | 'info';
 
 /**
  * Écoute toutes les mutations de l'application et fait apparaître un toast
@@ -19,17 +15,7 @@ type ToastStatus = Hidden | 'success' | 'error' | 'info';
  */
 export const useMutationToast = () => {
   const queryClient = useQueryClient();
-
-  const [status, setStatus] = useState<ToastStatus>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [autoHideDuration, setAutoHideDuration] = useState<number | undefined>(
-    undefined
-  );
-
-  const close = () => {
-    setStatus(null);
-    setMessage(null);
-  };
+  const {renderToast, setToast} = useBaseToast();
 
   useEffect(() => {
     return queryClient.getMutationCache().subscribe(mutation => {
@@ -42,36 +28,10 @@ export const useMutationToast = () => {
           (mutation?.meta?.[status] as string) || DEFAULT_MESSAGE[status];
         const hideDuration =
           (mutation?.meta?.autoHideDuration as number) || undefined;
-        setMessage(message);
-        setStatus(status);
-        setAutoHideDuration(hideDuration);
+        setToast(status, message, hideDuration);
       }
     });
   }, []);
-
-  const renderToast = () => (
-    <ToastFloater
-      open={status !== null}
-      onClose={() => close()}
-      className={classNames('!text-white', {
-        '!bg-success': status === 'success',
-        '!bg-error425': status === 'error',
-        '!bg-tDefaultInfo': status === 'info',
-      })}
-      autoHideDuration={autoHideDuration}
-    >
-      <div className="flex items-center">
-        <div
-          className={`flex mr-3 ${classNames({
-            'fr-icon-check-line': status === 'success',
-            'fr-icon-close-line': status === 'error',
-            'fr-icon-information-line': status === 'info',
-          })}`}
-        ></div>
-        {message}
-      </div>
-    </ToastFloater>
-  );
 
   return {renderToast};
 };
