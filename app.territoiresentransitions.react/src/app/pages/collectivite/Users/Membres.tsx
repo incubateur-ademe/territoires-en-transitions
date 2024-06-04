@@ -19,6 +19,8 @@ import MembreListTable from 'app/pages/collectivite/Users/components/MembreListT
 import {useAddUserToCollectivite} from 'app/pages/collectivite/Users/useAddUserToCollectivite';
 import {Button, Modal, Pagination} from '@tet/ui';
 import {Invite} from 'app/pages/collectivite/Users/components/Invite';
+import {useBaseToast} from 'core-logic/hooks/useBaseToast';
+import {useEffect, useState} from 'react';
 import {useSendInvitation} from 'app/pages/collectivite/Users/useSendInvitation';
 
 export type MembresProps = {
@@ -44,12 +46,24 @@ export const Membres = ({
 }: MembresProps) => {
   const {niveau_acces} = collectivite;
   const canInvite = niveau_acces === 'admin' || niveau_acces === 'edition';
-  const {mutate: addUser} = useAddUserToCollectivite(collectivite, currentUser);
-  const {mutate: resendInvitation} = useResendInvitation(
+  const {data, mutate: addUser} = useAddUserToCollectivite(
     collectivite,
     currentUser
   );
   const {mutate: sendInvitation} = useSendInvitation(collectivite, currentUser);
+  const {setToast, renderToast} = useBaseToast();
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.added && !data.invitationId) {
+      setToast(
+        'success',
+        'Nouveau membre ajouté avec succès à la collectivité !'
+      );
+    } else if (data.error) {
+      setToast('info', data.error);
+    }
+  }, [data?.added, data?.error]);
 
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
@@ -83,8 +97,9 @@ export const Membres = ({
         isLoading={isLoading}
         updateMembre={updateMembre}
         removeFromCollectivite={removeFromCollectivite}
-        resendInvitation={sendInvitation}
+        sendInvitation={sendInvitation}
       />
+      {renderToast()}
     </main>
   );
 };
