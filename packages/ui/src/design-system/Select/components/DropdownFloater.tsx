@@ -13,6 +13,7 @@ import {
   OffsetOptions,
   FloatingPortal,
   FloatingFocusManager,
+  useFloatingParentNodeId,
 } from '@floating-ui/react';
 import classNames from 'classnames';
 
@@ -117,7 +118,7 @@ export const DropdownFloater = ({
         })
       )}
       {isOpen && (
-        <FloatingPortal id={parentId}>
+        <FloaterContent parentId={parentId}>
           <FloatingFocusManager context={context}>
             <div
               data-test={dataTest}
@@ -143,8 +144,27 @@ export const DropdownFloater = ({
               </div>
             </div>
           </FloatingFocusManager>
-        </FloatingPortal>
+        </FloaterContent>
       )}
     </>
   );
+};
+
+type Props = {
+  children: React.ReactNode;
+  /** Id custom de l'élément dans lequel rendre le portal si donné */
+  parentId?: string;
+};
+
+/** Permet de rendre le dropdown dans un portal ou non si un parent existe déjà */
+const FloaterContent = ({children, parentId}: Props) => {
+  /** si l'id n'est pas null alors le DropdownFloater est contenu dans un élément
+   * où le floating node est déjà présent (par exemple dans une modale) */
+  const parentNodeId = useFloatingParentNodeId();
+
+  if (parentNodeId) {
+    return children;
+  } else {
+    return <FloatingPortal id={parentId}>{children}</FloatingPortal>;
+  }
 };

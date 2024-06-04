@@ -1,11 +1,13 @@
 import {cloneElement, useState} from 'react';
 import {
   FloatingFocusManager,
+  FloatingNode,
   FloatingOverlay,
   FloatingPortal,
   useClick,
   useDismiss,
   useFloating,
+  useFloatingNodeId,
   useId,
   useInteractions,
   useRole,
@@ -113,7 +115,10 @@ export const Modal = ({
     }
   };
 
+  const nodeId = useFloatingNodeId();
+
   const {refs, context} = useFloating({
+    nodeId,
     open: isOpen,
     onOpenChange: handleOpenChange,
   });
@@ -135,84 +140,89 @@ export const Modal = ({
           children,
           getReferenceProps({ref: refs.setReference, ...children.props})
         )}
-      {isOpen && (
-        <FloatingPortal>
-          <FloatingOverlay
-            lockScroll
-            style={{
-              display: 'grid',
-              placeItems: 'center',
-              background: preset.theme.extend.colors.overlay,
-              backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
-            }}
-          >
-            <FloatingFocusManager context={context}>
-              <div
-                data-test={dataTest}
-                {...getFloatingProps({
-                  ref: refs.setFloating,
-                  'aria-labelledby': labelId,
-                  'aria-describedby': descriptionId,
-                  className: classNames(
-                    `
-                        relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
-                        rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
-                        sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
-                        md:p-[4.5rem]
-                      `,
-                    sizeToClass[size]
-                  ),
-                })}
-              >
-                {!noCloseButton && (
-                  <Button
-                    data-html2canvas-ignore
-                    data-test={`close-${dataTest}`}
-                    title="Fermer"
-                    onClick={handleOpenChange}
-                    icon="close-line"
-                    variant="grey"
-                    size="xs"
-                    className="absolute max-md:top-4 top-8 max-md:right-4 right-8"
-                  />
-                )}
-                {(title || subTitle || description) && (
-                  <div
-                    className={classNames('flex flex-col gap-4', {
-                      'text-left': textAlign === 'left',
-                      'text-center': textAlign === 'center',
-                      'text-right': textAlign === 'right',
-                    })}
-                  >
-                    {title && (
-                      <h3 id={labelId} className="mb-0 text-primary-10">
-                        {title}
-                      </h3>
-                    )}
-                    {subTitle && (
-                      <p className="mb-0 font-medium text-grey-6">{subTitle}</p>
-                    )}
-                    {description && (
-                      <p id={descriptionId} className="mb-0">
-                        {description}
-                      </p>
-                    )}
-                  </div>
-                )}
-                {render?.({
-                  close: handleOpenChange,
-                  labelId,
-                  descriptionId,
-                  ref: refs.floating,
-                })}
-                {renderFooter?.({
-                  close: handleOpenChange,
-                })}
-              </div>
-            </FloatingFocusManager>
-          </FloatingOverlay>
-        </FloatingPortal>
-      )}
+      <FloatingNode id={nodeId}>
+        {isOpen && (
+          <FloatingPortal>
+            <FloatingOverlay
+              lockScroll
+              style={{
+                display: 'grid',
+                placeItems: 'center',
+                background: preset.theme.extend.colors.overlay,
+                zIndex: preset.theme.extend.zIndex.modal,
+                backdropFilter: backdropBlur ? 'blur(10px)' : undefined,
+              }}
+            >
+              <FloatingFocusManager context={context}>
+                <div
+                  data-test={dataTest}
+                  {...getFloatingProps({
+                    ref: refs.setFloating,
+                    'aria-labelledby': labelId,
+                    'aria-describedby': descriptionId,
+                    className: classNames(
+                      `
+                                  relative flex flex-col self-end gap-8 w-full mt-8 mx-auto px-10 py-12
+                                  rounded-xl bg-white border border-grey-4 shadow-[0_4px_20px_0px_rgba(0,0,0,0.05)]
+                                  sm:self-center sm:w-[calc(100%-3rem)] sm:my-6
+                                  md:p-[4.5rem]
+                                `,
+                      sizeToClass[size]
+                    ),
+                  })}
+                >
+                  {!noCloseButton && (
+                    <Button
+                      data-html2canvas-ignore
+                      data-test={`close-${dataTest}`}
+                      title="Fermer"
+                      onClick={handleOpenChange}
+                      icon="close-line"
+                      variant="grey"
+                      size="xs"
+                      className="absolute max-md:top-4 top-8 max-md:right-4 right-8"
+                    />
+                  )}
+                  {(title || subTitle || description) && (
+                    <div
+                      className={classNames('flex flex-col gap-4', {
+                        'text-left': textAlign === 'left',
+                        'text-center': textAlign === 'center',
+                        'text-right': textAlign === 'right',
+                      })}
+                    >
+                      {title && (
+                        <h3 id={labelId} className="mb-0 text-primary-10">
+                          {title}
+                        </h3>
+                      )}
+                      {subTitle && (
+                        <p className="mb-0 font-medium text-grey-6">
+                          {subTitle}
+                        </p>
+                      )}
+                      {description && (
+                        <p id={descriptionId} className="mb-0">
+                          {description}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {render?.({
+                    close: handleOpenChange,
+                    labelId,
+                    descriptionId,
+                    ref: refs.floating,
+                  })}
+                  {renderFooter?.({
+                    close: handleOpenChange,
+                  })}
+                </div>
+              </FloatingFocusManager>
+            </FloatingOverlay>
+          </FloatingPortal>
+        )}
+      </FloatingNode>
     </>
   );
 };
