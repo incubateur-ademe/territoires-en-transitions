@@ -1,5 +1,4 @@
 import {TIndicateurPredefini} from '../types';
-import FormField from 'ui/shared/form/FormField';
 import {Spacer} from 'ui/dividers/Spacer';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import {FichesActionLiees} from '../FichesActionLiees';
@@ -8,6 +7,7 @@ import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
 import {ImportSourcesSelector} from './ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
+import {Field} from '@tet/ui';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
 export const IndicateurEnfantContent = ({
@@ -46,25 +46,26 @@ export const IndicateurEnfantContent = ({
         definition={definition}
         importSource={currentSource}
       />
-      {
-        /** actions liées */
-        actionsLiees?.length ? (
-          <FormField
-            className="fr-mt-4w"
-            label={
-              actionsLiees.length > 1
-                ? 'Actions référentiel liées'
-                : 'Action référentiel liée'
-            }
-          >
-            <ActionsLieesCards actions={actionsLiees} />
-          </FormField>
-        ) : (
-          <Spacer size={3} />
-        )
-      }
-      <IndicateurInfoLiees definition={definition} />
-      <FichesActionLiees definition={definition} />
+      <div className="flex flex-col gap-8 mt-10">
+        {
+          /** actions liées */
+          actionsLiees?.length ? (
+            <Field
+              title={
+                actionsLiees.length > 1
+                  ? 'Actions référentiel liées'
+                  : 'Action référentiel liée'
+              }
+            >
+              <ActionsLieesCards actions={actionsLiees} />
+            </Field>
+          ) : (
+            <Spacer size={3} />
+          )
+        }
+        <IndicateurInfoLiees definition={definition} />
+        <FichesActionLiees definition={definition} />
+      </div>
     </div>
   );
 };
