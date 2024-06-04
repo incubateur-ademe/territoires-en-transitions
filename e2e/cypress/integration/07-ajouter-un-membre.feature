@@ -11,8 +11,8 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Quand je clique sur le bouton "Inviter un membre"
     Et que je renseigne l'email "yulu@DUDU.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
-    #Alors une alerte de "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
-    Alors le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
+    Alors une notification de type "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
+    Et le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
 
   Scénario: Inviter un email qui est déjà associé à un membre de la collectivité
     Etant donné que je suis connecté en tant que "yolo"
@@ -24,7 +24,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je renseigne l'email "YiLI@didi.com" de la personne à inviter en "edition"
     Et que je valide le formulaire
     Alors le tableau des membres doit contenir l'utilisateur "yili@didi.com"
-    #Alors une alerte de "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
+    Et une notification de type "information" est affichée et contient "L'utilisateur est déjà associé à cette collectivité."
 
   Scénario: Inviter un email qui n'est pas encore associé à un compte utilisateur
     Etant donné que je suis connecté en tant que "yolo"

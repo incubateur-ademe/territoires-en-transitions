@@ -286,6 +286,15 @@ When(
   }
 );
 
+When(
+  'une notification de type {string} est affichée et contient {string}',
+  (type, message) => {
+    cy.get(`[data-test=toast-${transateTypes[type]}]`)
+      .should('be.visible')
+      .should('contain.text', message);
+  }
+);
+
 When('je recharge la page', () => {
   cy.reload();
 });
