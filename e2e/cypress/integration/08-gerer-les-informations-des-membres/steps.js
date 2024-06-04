@@ -77,6 +77,10 @@ When(/je vois une modale intitulée "([^"]+)"/, titre => {
   cy.get(LocalSelectors['modale'].selector).should('contain', titre);
 });
 
-When(/je clique sur le bouton "([^"]+)" de la modale/, ariaLabel => {
-  cy.get(`[aria-label="${ariaLabel}"]`).click();
+When(/je clique sur le bouton "([^"]+)" de la modale/, label => {
+  cy.get('button').contains(label).click();
+});
+
+When('je clique sur le bouton {string} de {string}', (btn, email) => {
+  getUtilisateurRow(email).find('button[data-test=delete]').click();
 });
