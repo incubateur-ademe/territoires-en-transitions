@@ -1,10 +1,10 @@
 import {TActionStatutsRow} from 'types/alias';
-import FormField from 'ui/shared/form/FormField';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOption} from 'ui/shared/select/commons';
 import {useActionListe} from '../data/options/useActionListe';
 import {TActionRelationInsert} from 'types/alias';
 import {ActionsLieesCards} from './ActionsLieesCards';
+import {Field} from '@tet/ui';
 
 type Props = {
   actions: TActionRelationInsert[] | null;
@@ -42,7 +42,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
 
   return (
     <>
-      <FormField label="Actions des référentiels liées">
+      <Field title="Actions des référentiels liées">
         <AutocompleteInputSelect
           dsfrButton
           containerWidthMatchButton
@@ -52,7 +52,7 @@ const ActionsLiees = ({actions, onSelect, isReadonly}: Props) => {
           placeholderText="Recherchez par mots-clés"
           disabled={isReadonly}
         />
-      </FormField>
+      </Field>
       <ActionsLieesCards actions={actions?.map(action => action.id)} />
     </>
   );

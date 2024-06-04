@@ -1,4 +1,3 @@
-import FormField from 'ui/shared/form/FormField';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOption, TOptionSection} from 'ui/shared/select/commons';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -12,6 +11,7 @@ import {TAxeInsert} from 'types/alias';
 import {generateTitle} from '../data/utils';
 import FicheActionCard from '../Carte/FicheActionCard';
 import {naturalSort} from 'utils/naturalSort';
+import {Field} from '@tet/ui';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -112,7 +112,7 @@ const FichesLiees = ({
 
   return (
     <>
-      <FormField label="Fiches des plans liées">
+      <Field title="Fiches des plans liées">
         <AutocompleteInputSelect
           dsfrButton
           containerWidthMatchButton
@@ -122,7 +122,7 @@ const FichesLiees = ({
           placeholderText="Recherchez par mots-clés"
           disabled={isReadonly}
         />
-      </FormField>
+      </Field>
       {fiches && fiches.length > 0 && (
         <div className="grid grid-cols-2 gap-6">
           {fiches.map(fiche => (

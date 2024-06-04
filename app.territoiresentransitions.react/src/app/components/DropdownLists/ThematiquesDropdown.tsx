@@ -4,7 +4,7 @@ import {TThematiqueRow} from 'types/alias';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];
-  onChange: (thematique: TThematiqueRow[]) => void;
+  onChange: (thematiques: TThematiqueRow[]) => void;
 };
 
 const ThematiquesDropdown = (props: Props) => {

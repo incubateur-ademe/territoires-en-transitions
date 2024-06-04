@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {AccordionControlled} from 'ui/Accordion';
 import FormField from 'ui/shared/form/FormField';
-import {Checkbox} from '@tet/ui';
+import {Checkbox, Field} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
 import {UseFilterState} from './useIndicateursFilterState';
 import FiltreServices from './FiltreServices';
@@ -41,14 +41,14 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
 
   return (
     <>
-      <FormField label="Filtrer par nom ou description">
+      <Field title="Filtrer par nom ou description" className="mb-6">
         <UiSearchBar
           debouncePeriod={500}
           placeholder=""
           value={text?.[0] || ''}
           search={value => updateFilterParam('text', [value])}
         />
-      </FormField>
+      </Field>
       <AccordionControlled
         id="filtres-indicateurs"
         className="mb-8"
@@ -57,7 +57,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
         html={
           isOpen && (
             <>
-              <FormField label="Thématique" className="z-10">
+              <Field title="Thématique" className="mb-6">
                 <ThematiquesDropdown
                   values={
                     thematiques?.length
@@ -71,9 +71,9 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                     )
                   }
                 />
-              </FormField>
-              <div className="grid lg:grid-cols-2 gap-x-8 gap-y-0">
-                <FormField label="Personne pilote">
+              </Field>
+              <div className="grid lg:grid-cols-2 gap-x-8 gap-y-6">
+                <Field title="Personne pilote">
                   <PersonnesDropdown
                     values={pilotes?.length ? pilotes : undefined}
                     onChange={pilotes =>
@@ -83,25 +83,25 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                       )
                     }
                   />
-                </FormField>
-                <FormField label="Direction ou service pilote">
+                </Field>
+                <Field title="Direction ou service pilote">
                   <FiltreServices
                     values={services}
                     onSelect={values => updateFilterParam('services', values)}
                   />
-                </FormField>
-                <FormField label="Plan d'action">
+                </Field>
+                <Field title="Plan d'action">
                   <FiltrePlans
                     values={plans}
                     onSelect={values => updateFilterParam('plans', values)}
                   />
-                </FormField>
-                <FormField label="Indicateur complété">
+                </Field>
+                <Field title="Indicateur complété">
                   <FiltreComplet
                     values={rempli}
                     onSelect={values => updateFilterParam('rempli', values)}
                   />
-                </FormField>
+                </Field>
                 {/*view !== 'perso' && (
                 <FormField label="Type">
                   <FiltreType
