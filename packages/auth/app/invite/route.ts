@@ -69,7 +69,7 @@ const mailTemplate = ({from, collectivite, invitationUrl}: Invitation) => {
 <p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p> 
 
 <a href="${invitationUrl}"
-  style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem; display: block;"
+  style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content;"
   >Je rejoins la collectivité</a
 >
 
