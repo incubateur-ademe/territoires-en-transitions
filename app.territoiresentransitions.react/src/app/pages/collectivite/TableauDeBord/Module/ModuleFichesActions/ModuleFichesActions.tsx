@@ -2,14 +2,17 @@ import {useHistory} from 'react-router-dom';
 
 import {Button, Modal} from '@tet/ui';
 
+import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
 import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
-import {TDBModuleFichesActions} from '../data';
+import {FetchOptions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
 
 type Props = {
   view: TDBViewParam;
-  module: TDBModuleFichesActions;
+  module: ModuleSelect;
 };
 
 /** Module pour les différents modules liés aux fiches action
@@ -18,27 +21,25 @@ const ModuleFichesActions = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  /**
-   * TODO:
-   * - [ ] Récupérer et afficher la liste des actions
-   */
+  const {data: actions, isLoading} = useFicheActionResumeFetch({
+    options: module.options as FetchOptions,
+  });
 
-  const loading = false;
-  const isEmpty = false;
-  const data = [1, 2, 3, 4, 5, 6];
+  const isEmpty = !actions || actions?.length === 0;
 
   return (
     <Module
-      title={module.title}
-      symbole={module.symbole}
+      title={module.titre}
+      symbole={<PictoExpert />}
       editModal={openState => (
         <Modal openState={openState} render={() => <div>Filtres</div>} />
       )}
-      isLoading={loading}
+      isLoading={isLoading}
       isEmpty={isEmpty}
       selectedFilters={['test']}
       footerButtons={
-        data.length > 4 && (
+        actions &&
+        actions.length > 4 && (
           <Button
             variant="grey"
             size="sm"
@@ -53,14 +54,15 @@ const ModuleFichesActions = ({view, module}: Props) => {
             }
           >
             Afficher{' '}
-            {data.length === 5
+            {actions.length === 5
               ? '1 autre action'
-              : `les ${data.length - 4} autres actions`}
+              : `les ${actions.length - 4} autres actions`}
           </Button>
         )
       }
     >
-      Contenu du module
+      {actions &&
+        actions.map(action => <div key={action.id}>{action.titre}</div>)}
     </Module>
   );
 };
