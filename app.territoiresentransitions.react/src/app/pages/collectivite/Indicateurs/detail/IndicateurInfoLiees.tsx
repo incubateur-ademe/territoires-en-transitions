@@ -35,16 +35,18 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   if (!collectivite) return;
   const isReadonly = !collectivite || collectivite.readonly;
 
+  // Il y a un bug dans la fonction useIndicateurInfoLiees
+  // qui duplique les pilotes lorsque l'on sélectionne
+  // à la fois des user et des tags
+  const pilotes = resume?.pilotes?.map(p => getPersonneStringId(p));
+  const pilotesValues = [...new Set(pilotes)];
+
   return (
     <>
       {/** personne pilote */}
       <Field title="Personne pilote">
         <PersonnesDropdown
-          values={
-            resume?.pilotes.length
-              ? resume.pilotes?.map(p => getPersonneStringId(p))
-              : undefined
-          }
+          values={resume?.pilotes.length ? pilotesValues : undefined}
           onChange={upsertIndicateurPilote}
           disabled={isReadonly}
         />
