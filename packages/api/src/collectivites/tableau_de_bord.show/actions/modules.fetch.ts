@@ -2,7 +2,7 @@ import {objectToCamel} from 'ts-case-convert';
 import {DBClient} from '../../../typeUtils';
 import {ModuleSelect, getDefaultModules} from '../domain/module.schema';
 
-type Output = Array<ModuleSelect>;
+export type ModuleFetchReturnValue = Array<ModuleSelect>;
 
 type Props = {
   dbClient: DBClient;
@@ -27,9 +27,12 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
       throw error;
     }
 
-    const data = objectToCamel(rawData) as Output;
+    const data = objectToCamel(rawData) as ModuleFetchReturnValue;
 
-    const defaultModules = getDefaultModules({userId, collectiviteId});
+    const defaultModules = getDefaultModules({
+      userId: userId,
+      collectiviteId,
+    });
 
     if (data.length === 0) {
       return {
@@ -47,8 +50,8 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
 }
 
 function mergeWithDefaultModules(
-  fetchedModules: Output,
-  defaultModules: Output
+  fetchedModules: ModuleFetchReturnValue,
+  defaultModules: ModuleFetchReturnValue
 ) {
   // On crée une map des modules récupérés avec le slug comme clé
   const fetchedModulesMap = new Map(
