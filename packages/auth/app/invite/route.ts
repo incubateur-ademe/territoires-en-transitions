@@ -43,10 +43,11 @@ export async function POST(request: NextRequest) {
   }
 
   // génère et envoi le mail
-  const {to, collectivite} = invitation;
+  const {to, from, collectivite} = invitation;
+  const {nom, prenom} = from;
   const res = await sendEmail({
     to,
-    subject: `Rejoignez ${collectivite} sur Territoires en Transitions`,
+    subject: `Invitation de ${prenom} ${nom} à rejoindre ${collectivite} sur Territoires en Transitions`,
     html: mailTemplate(invitation),
   });
 
