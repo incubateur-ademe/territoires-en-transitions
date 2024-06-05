@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Module d'authentification
 
-## Getting Started
+Ce module implémente les écrans nécessaires à la création des comptes utilisateur et à l'authentification.
 
-First, run the development server:
+## Variables d'environnement
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Les variables suivantes sont utilisées au runtime.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Nom         | Description                                                                              |
+| ----------- | ---------------------------------------------------------------------------------------- |
+| `SMTP_KEY`  | Clé du serveur SMTP                                                                      |
+| `SMTP_USER` | Utilisateur du serveur SMTP                                                              |
+| `PORT`      | Port sur lequel l'application en mode prod est exposée lors du lancement via `npm start` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> Dans les modes `development` ou `test`, les variables `SMTP_*` sont ignorées car le code utilise le serveur SMTP du service [Inbucket](https://inbucket.org/) inclus dans Supabase.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Les variables suivantes sont utilisées au build et embarquées dans le front.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+| Nom                             | Description                 |
+| ------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Adresse du serveur Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé Supabase anonyme        |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Commandes NPM
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Commande    | Description                      |
+| ----------- | -------------------------------- |
+| `dev`       | Lance le serveur de dev          |
+| `build`     | Fait le build                    |
+| `start`     | Démarre le module après le build |
+| `lint`      | Vérifie la syntaxe               |
+| `storybook` | Démarre le storybook             |
+| `format`    | Formate le code                  |
