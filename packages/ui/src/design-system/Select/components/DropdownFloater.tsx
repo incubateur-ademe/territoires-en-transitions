@@ -166,7 +166,7 @@ export const DropdownFloater = ({
 };
 
 type Props = {
-  children: React.ReactNode;
+  children: JSX.Element;
   /** Id custom de l'élément dans lequel rendre le portal si donné */
   parentId?: string;
   parentNodeId: string | null;
