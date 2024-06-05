@@ -6,7 +6,7 @@ import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
 import FormField from 'ui/shared/form/FormField';
 import {TThematiqueRow} from 'types/alias';
-import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
+import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
 
 const validation = Yup.object({
   titre: Yup.string()

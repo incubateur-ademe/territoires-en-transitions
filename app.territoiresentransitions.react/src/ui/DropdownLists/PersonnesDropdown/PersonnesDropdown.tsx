@@ -1,12 +1,14 @@
+import {useEffect} from 'react';
+
 import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 import {usePersonneListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/usePersonneListe';
 import {useTagCreate} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagCreate';
 import {useDeleteTag} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagDelete';
 import {useTagUpdate} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagUpdate';
 import {Personne} from 'app/pages/collectivite/PlansActions/FicheAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useEffect} from 'react';
+
+import {getPersonneStringId} from './utils';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
