@@ -262,7 +262,9 @@ exports[`design-system/Select ZIndex smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <div class="h-screen">
     <div class="relative h-full m-16">
-      <div class="absolute inset-0 z-20 bg-pink-100">
+      <div id="yolo"
+           class="absolute inset-0 z-20 bg-pink-100"
+      >
         <div class="flex-grow flex flex-col gap-3">
           <label>
             <div class="font-medium text-grey-8">
@@ -284,6 +286,16 @@ exports[`design-system/Select ZIndex smoke-test 1`] = `
               </span>
             </div>
           </button>
+        </div>
+        <div class="flex-grow flex flex-col gap-3 relative mt-6">
+          <label>
+            <div class="font-medium text-grey-8">
+              Devrait être sous les options du select
+            </div>
+          </label>
+          <div class="p-4 bg-blue-300 rounded-lg">
+            test
+          </div>
         </div>
       </div>
     </div>
