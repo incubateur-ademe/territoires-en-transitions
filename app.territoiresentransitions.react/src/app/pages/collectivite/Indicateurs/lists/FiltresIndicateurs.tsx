@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import {AccordionControlled} from 'ui/Accordion';
-import FormField from 'ui/shared/form/FormField';
 import {Checkbox, Field} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
 import {UseFilterState} from './useIndicateursFilterState';
@@ -9,9 +8,9 @@ import FiltrePlans from './FiltrePlans';
 import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
-import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
-import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
+import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'ui/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
 //import FiltreType from './FiltreType';
 
 export type FiltresIndicateursProps = {

@@ -5,10 +5,10 @@ import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
 import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
-import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
-import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 import {Field} from '@tet/ui';
+import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
+import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
+import PersonnesDropdown from 'ui/DropdownLists/PersonnesDropdown/PersonnesDropdown';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;

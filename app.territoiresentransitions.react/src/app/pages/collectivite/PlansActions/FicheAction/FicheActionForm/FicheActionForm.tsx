@@ -41,10 +41,10 @@ import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import FichesLiees from './FichesLiees';
 import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
-import ThematiquesDropdown from 'app/components/DropdownLists/ThematiquesDropdown';
-import PersonnesDropdown from 'app/components/DropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'app/components/DropdownLists/PersonnesDropdown/utils';
 import {Field} from '@tet/ui';
+import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'ui/DropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
 
 type TFicheActionForm = {
   fiche: FicheAction;
