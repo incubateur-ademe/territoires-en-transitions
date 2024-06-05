@@ -32,7 +32,7 @@ export const useIndicateurInfoLiees = ({
       )
       .match(
         isPerso
-          ? {collectivite_id, indicateur_perso_id: id}
+          ? {indicateur_perso_id: id}
           : {collectivite_id, indicateur_id: id}
       )
       .returns<TFetchedData[]>();
