@@ -114,7 +114,7 @@ export async function ficheActionResumesFetch({
 
   if (error) {
     console.error(error);
-    throw error;
+    return {error};
   }
 
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
