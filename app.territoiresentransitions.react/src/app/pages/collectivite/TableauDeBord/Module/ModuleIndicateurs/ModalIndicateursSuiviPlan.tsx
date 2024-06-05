@@ -6,20 +6,19 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  OptionValue,
   SelectFilter,
   SelectMultiple,
 } from '@tet/ui';
+import FiltrePersonnes from 'app/pages/collectivite/Indicateurs/lists/FiltrePersonnes';
+import FiltreThematiques from 'app/pages/collectivite/Indicateurs/lists/FiltreThematiques';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {indicateursSuiviPlans} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import FiltreThematiques from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/FiltreThematiques';
-import FiltrePersonnes from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/FiltrePersonnes';
 
 type Filters = {
   planIds?: number[];
-  pilotesIds?: (string | number)[];
+  pilotesIds?: string[];
   thematiquesIds?: string[];
   rempli?: string[];
 };

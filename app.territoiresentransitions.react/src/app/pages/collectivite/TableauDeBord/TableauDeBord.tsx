@@ -1,5 +1,8 @@
 import {Redirect, Route} from 'react-router-dom';
 
+import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
+import {tdbUtilisateur} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {
   collectiviteTDBBasePath,
   collectiviteTDBCollectivitePath,
@@ -7,12 +10,9 @@ import {
   collectiviteTDBPersonnelPath,
   makeTableauBordUrl,
 } from 'app/paths';
-import View from './View';
-import Personnel from './Personnel';
-import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {tdbUtilisateur} from 'app/pages/collectivite/TableauDeBord/Module/data';
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import Personnel from './Personnel';
+import View from './View';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
@@ -39,11 +39,7 @@ const TableauDeBord = () => {
         </Route>
         {/** Tableau de bord personnel */}
         <Route exact path={collectiviteTDBPersonnelPath}>
-          <Personnel
-            isEmpty={isEmpty}
-            modules={tdbUtilisateur.tdbPersonnelModules}
-            plan_ids={plan_ids}
-          />
+          <Personnel />
         </Route>
         {/** Tableau de bord de la collectivité */}
         <Route exact path={collectiviteTDBCollectivitePath}>
