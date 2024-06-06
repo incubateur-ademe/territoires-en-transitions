@@ -22,15 +22,15 @@ export const useSendInvitation = (
 
   return useMutation(
     async ({invitationId, email: rawEmail}: SendInvitationArgs) => {
+      const email = rawEmail.toLowerCase();
       const url =
         window.location.origin +
         (invitationId
-          ? makeInvitationLandingPath(invitationId)
+          ? makeInvitationLandingPath(invitationId, email)
           : makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,
             }));
       const urlType = invitationId ? 'invitation' : 'rattachement';
-      const email = rawEmail.toLowerCase();
 
       // envoi le mail d'invitation
       const invitePath = `${getAuthBaseUrl(document.location.hostname)}/invite`;

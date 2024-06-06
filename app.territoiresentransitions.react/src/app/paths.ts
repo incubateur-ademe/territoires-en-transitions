@@ -11,7 +11,8 @@ export const resetPwdPath = authPaths.resetPwd;
 
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}`;
+export const invitationMailParam = 'email';
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
 
 export const profilPath = '/profil';
 export const monComptePath = `${profilPath}/mon-compte`;
@@ -388,5 +389,10 @@ export const makeCollectiviteJournalUrl = ({
     collectiviteId.toString()
   );
 
-export const makeInvitationLandingPath = (invitationId: string) =>
-  invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
+export const makeInvitationLandingPath = (
+  invitationId: string,
+  email: string
+) =>
+  invitationLandingPath
+    .replace(`:${invitationIdParam}`, invitationId)
+    .replace(`:${invitationMailParam}`, email);

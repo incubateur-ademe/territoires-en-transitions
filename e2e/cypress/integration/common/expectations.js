@@ -5,6 +5,7 @@ export const Expectations = {
   visible: 'be.visible',
   masqué: 'not.be.visible',
   contient: 'contain.text',
+  'contient la valeur': 'contain.value',
   activé: 'be.enabled',
   activée: 'be.enabled',
   désactivé: 'be.disabled',
