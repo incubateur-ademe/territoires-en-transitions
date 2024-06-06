@@ -5,7 +5,18 @@ import {FetchOptions, fetchOptionsSchema} from '../domain/fetch_options.schema';
 
 type Output = Array<Views<'fiche_resume'>>;
 
-const ficheActionColumns = ['*'];
+const ficheActionColumns = [
+  'id',
+  'titre',
+  'statut',
+  'collectivite_id',
+  'modified_at',
+  'pilotes',
+  'date_fin_provisoire',
+  'niveau_priorite',
+  'restreint',
+  'amelioration_continue',
+];
 
 type Props = {
   dbClient: DBClient;
@@ -53,7 +64,7 @@ export async function ficheActionResumesFetch({
   // 👇
 
   const query = dbClient
-    .from('fiche_resume')
+    .from('fiches_action')
     .select([...ficheActionColumns, ...relatedTables].join(','), {
       count: 'exact',
     })
