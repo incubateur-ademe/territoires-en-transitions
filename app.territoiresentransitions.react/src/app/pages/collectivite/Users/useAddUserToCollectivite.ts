@@ -37,16 +37,18 @@ export const useAddUserToCollectivite = (
   const {mutate: sendInvitation} = useSendInvitation(collectivite, user);
 
   return useMutation(
-    async ({email, niveau}: AddUserToCollectiviteArgs) => {
+    async ({email: rawEmail, niveau}: AddUserToCollectiviteArgs) => {
+      const email = rawEmail.toLowerCase();
       const {data, error} = await supabaseClient.rpc('add_user', {
         collectivite_id,
-        email: email.toLowerCase(),
+        email,
         niveau,
       });
 
       if (error) {
         return {
           error: (error as AddUserToCollectiviteError).error,
+          email,
           added: false,
         };
       }
@@ -56,11 +58,12 @@ export const useAddUserToCollectivite = (
 
       // envoi le mail d'invitation
       if (invitationId) {
-        await sendInvitation({email: email.toLowerCase(), invitationId});
+        await sendInvitation({email, invitationId});
       }
 
       return {
         added: response?.added ?? false,
+        email,
         invitationId,
       };
     },

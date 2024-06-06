@@ -37,6 +37,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je renseigne l'email "NoNo@dodo.com" de la personne à inviter en "admin"
     Et que je valide le formulaire
     Alors le tableau des membres indique que le compte "nono@dodo.com" est en attente de création
+    Et une notification de type "succès" est affichée et contient "L'invitation à rejoindre la collectivité Ambérieu-en-Bugey a bien été envoyée à nono@dodo.com"
 
     Quand je me déconnecte
     Alors la page "home" est visible
