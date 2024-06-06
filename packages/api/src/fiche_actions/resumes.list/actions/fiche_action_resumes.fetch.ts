@@ -1,7 +1,11 @@
 import {objectToCamel} from 'ts-case-convert';
 import {z} from 'zod';
 import {DBClient, Views} from '../../../typeUtils';
-import {FetchOptions, fetchOptionsSchema} from '../domain/fetch_options.schema';
+import {
+  FetchOptions,
+  Filtre,
+  fetchOptionsSchema,
+} from '../domain/fetch_options.schema';
 
 type Output = Array<Views<'fiche_resume'>>;
 
@@ -33,30 +37,30 @@ export async function ficheActionResumesFetch({
   options,
 }: Props) {
   const collectiviteId = z.number().parse(unsafeCollectiviteId);
-  const {filtre: filter, sort, page, limit} = fetchOptionsSchema.parse(options);
+  const {filtre, sort, page, limit} = fetchOptionsSchema.parse(options);
 
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
 
   const relatedTables = new Set<string>();
 
-  if (filter.planActionIds?.length) {
+  if (filtre.planActionIds?.length) {
     relatedTables.add('fiche_action_axe!inner()');
   }
 
-  if (filter.utilisateurPiloteIds?.length) {
+  if (filtre.utilisateurPiloteIds?.length) {
     relatedTables.add('fiche_action_pilote!inner()');
   }
 
-  if (filter.personnePiloteIds?.length) {
+  if (filtre.personnePiloteIds?.length) {
     relatedTables.add('fiche_action_pilote!inner()');
   }
 
-  if (filter.structurePiloteIds?.length) {
+  if (filtre.structurePiloteIds?.length) {
     relatedTables.add('fiche_action_structure_tag!inner()');
   }
 
-  if (filter.servicePiloteIds?.length) {
+  if (filtre.servicePiloteIds?.length) {
     relatedTables.add('fiche_action_service_tag!inner(*)');
   }
 
@@ -80,46 +84,45 @@ export async function ficheActionResumesFetch({
   // 3. Ajoute les clauses correspondant aux filtres
   // 👇
 
-  if (filter.planActionIds?.length) {
-    query.in('fiche_action_axe.plan', filter.planActionIds);
+  if (filtre.planActionIds?.length) {
+    query.in('fiche_action_axe.plan', filtre.planActionIds);
   }
 
-  if (filter.utilisateurPiloteIds?.length) {
-    query.in('fiche_action_pilote.user_id', filter.utilisateurPiloteIds);
+  if (filtre.utilisateurPiloteIds?.length) {
+    query.in('fiche_action_pilote.user_id', filtre.utilisateurPiloteIds);
   }
 
-  if (filter.personnePiloteIds?.length) {
-    query.in('fiche_action_pilote.tag_id', filter.personnePiloteIds);
+  if (filtre.personnePiloteIds?.length) {
+    query.in('fiche_action_pilote.tag_id', filtre.personnePiloteIds);
   }
 
-  if (filter.structurePiloteIds?.length) {
+  if (filtre.structurePiloteIds?.length) {
     query.in(
       'fiche_action_structure_tag.structure_tag_id',
-      filter.structurePiloteIds
+      filtre.structurePiloteIds
     );
   }
 
-  if (filter.servicePiloteIds?.length) {
+  if (filtre.servicePiloteIds?.length) {
     query.in(
       'fiche_action_service_tag.service_tag_id',
-      filter.servicePiloteIds
+      filtre.servicePiloteIds
     );
   }
 
-  if (filter.statuts?.length) {
-    query.in('statut', filter.statuts);
+  if (filtre.statuts?.length) {
+    query.in('statut', filtre.statuts);
   }
 
-  if (filter.priorites?.length) {
-    query.in('niveau_priorite', filter.priorites);
+  if (filtre.priorites?.length) {
+    query.in('niveau_priorite', filtre.priorites);
   }
 
-  if (filter.modifiedSince) {
-    query.gte(
-      'modified_at',
-      new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString()
-    );
+  if (filtre.modifiedSince) {
+    query.gte('modified_at', getDateSince(filtre.modifiedSince));
   }
+
+  query.order('modified_at', {ascending: false});
 
   const {data, error, count} = await query.returns<Output>();
 
@@ -131,4 +134,15 @@ export async function ficheActionResumesFetch({
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
 
   return {data: objectToCamel(data), count, nextPage};
+}
+
+function getDateSince(value: NonNullable<Filtre['modifiedSince']>) {
+  const match = value.match(/\d+/) as RegExpMatchArray;
+  const nombreDeJours = parseInt(match[0]);
+
+  const date = new Date();
+  date.setDate(date.getDate() - nombreDeJours);
+  const modifiedSince = date.toISOString();
+
+  return modifiedSince;
 }
