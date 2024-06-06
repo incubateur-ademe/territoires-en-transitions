@@ -29,10 +29,6 @@ type DropdownFloaterProps = {
   parentId?: string;
   /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
   placement?: Placement;
-  /** Toggle l'état d'ouverture en appuyant sur la touche 'space'. Défaut `true` */
-  spaceToToggle?: boolean;
-  /** Toggle l'état d'ouverture en appuyant sur la touche 'enter'. Défaut `true` */
-  enterToToggle?: boolean;
   /** Pour que la largeur des options soit égale au bouton d'ouverture. Défaut `false` */
   containerWidthMatchButton?: boolean;
   /** Placement offset */
@@ -49,8 +45,6 @@ export const DropdownFloater = ({
   children,
   parentId,
   placement,
-  spaceToToggle = true,
-  enterToToggle = true,
   containerWidthMatchButton = false,
   offsetValue = 4,
   disabled,
@@ -90,6 +84,7 @@ export const DropdownFloater = ({
   const click = useClick(context, {
     keyboardHandlers: false,
   });
+
   const dismiss = useDismiss(context);
 
   const {getReferenceProps, getFloatingProps} = useInteractions([
@@ -108,29 +103,13 @@ export const DropdownFloater = ({
         getReferenceProps({
           ref: refs.setReference,
           isOpen,
-          onKeyDown(evt) {
-            if (
-              enterToToggle &&
-              evt.key === 'Enter' &&
-              evt.target instanceof HTMLInputElement
-            ) {
-              setIsOpen(!isOpen);
-            }
-            if (
-              spaceToToggle &&
-              evt.key === ' ' &&
-              evt.target instanceof HTMLInputElement
-            ) {
-              setIsOpen(!isOpen);
-            }
-          },
           ...children.props,
         })
       )}
       <FloatingNode id={nodeId}>
         {isOpen && (
           <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
-            <FloatingFocusManager context={context}>
+            <FloatingFocusManager context={context} initialFocus={-1}>
               <div
                 data-test={dataTest}
                 {...getFloatingProps({
