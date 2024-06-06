@@ -21,8 +21,9 @@ export const useSendInvitation = (
   const authHeaders = useAuthHeaders();
 
   return useMutation(
-    async ({invitationId, email}: SendInvitationArgs) => {
+    async ({invitationId, email: rawEmail}: SendInvitationArgs) => {
       const invitationUrl = makeInvitationLandingPath(invitationId);
+      const email = rawEmail.toLowerCase();
 
       // envoi le mail d'invitation
       if (invitationUrl) {
@@ -37,23 +38,29 @@ export const useSendInvitation = (
             ...authHeaders,
           },
           body: JSON.stringify({
-            to: email.toLowerCase(),
+            to: email,
             from: {prenom, nom, email: emailFrom},
             collectivite: nomCollectivite,
             invitationUrl,
           }),
         });
         if (status > 200) {
-          throw Error("Echec de l'envoi d'email");
+          return {error: "Echec de l'envoi d'email"};
         }
+        return {
+          email,
+          sent: true,
+        };
       }
 
-      return true;
+      return {
+        email,
+        sent: false,
+      };
     },
     {
       meta: {
-        success: `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée`,
-        error: `L'invitation n'a pas pu être envoyée`,
+        disableToast: true,
       },
     }
   );

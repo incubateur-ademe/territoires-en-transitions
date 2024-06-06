@@ -50,20 +50,35 @@ export const Membres = ({
     collectivite,
     currentUser
   );
-  const {mutate: sendInvitation} = useSendInvitation(collectivite, currentUser);
+  const {data: sendData, mutate: sendInvitation} = useSendInvitation(
+    collectivite,
+    currentUser
+  );
   const {setToast, renderToast} = useBaseToast();
 
+  // affichage des notifications après l'ajout ou l'envoi de l'invitation
   useEffect(() => {
     if (!data) return;
-    if (data.added && !data.invitationId) {
+    if (data.added) {
       setToast(
         'success',
         'Nouveau membre ajouté avec succès à la collectivité !'
       );
+    } else if (data.invitationId) {
+      setToast('success', mailSentMessage(collectivite, data));
     } else if (data.error) {
       setToast('info', data.error);
     }
   }, [data?.added, data?.error]);
+
+  // affichage de la notification après le renvoi d'une invitation
+  useEffect(() => {
+    if (sendData?.sent) {
+      setToast('success', mailSentMessage(collectivite, sendData));
+    } else if (sendData?.error) {
+      setToast('error', sendData.error);
+    }
+  }, [sendData?.sent, sendData?.email, sendData?.error]);
 
   return (
     <main data-test="Users" className="fr-container mt-9 mb-16">
@@ -103,6 +118,13 @@ export const Membres = ({
     </main>
   );
 };
+
+// formate le message affiché après l'envoi d'un email
+const mailSentMessage = (
+  collectivite: CurrentCollectivite,
+  data: {email: string}
+): string =>
+  `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée à ${data.email}`;
 
 const MembresConnected = () => {
   const auth = useAuth();
@@ -145,3 +167,4 @@ const MembresConnected = () => {
 };
 
 export default MembresConnected;
+
