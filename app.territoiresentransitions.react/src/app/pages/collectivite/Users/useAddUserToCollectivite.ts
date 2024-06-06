@@ -56,8 +56,8 @@ export const useAddUserToCollectivite = (
       const response = data as unknown as AddUserToCollectiviteData;
       const invitationId = response?.invitation_id;
 
-      // envoi le mail d'invitation
-      if (invitationId) {
+      // envoi le mail d'invitation ou un mail de notification du rattachement à la collectivité
+      if (invitationId || response.added) {
         await sendInvitation({email, invitationId});
       }
 

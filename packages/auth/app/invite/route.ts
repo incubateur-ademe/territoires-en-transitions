@@ -18,8 +18,11 @@ const invitationSchema = z.object({
   }),
   /** Collectivité à laquelle est attachée l'invitation */
   collectivite: z.string(),
-  /** Lien pour activer l'invitation */
-  invitationUrl: z.string(),
+  /** Lien pour activer l'invitation ou accéder à la collectivité (dans le cas
+   * du rattachement d'un utilisateur existant) */
+  url: z.string(),
+  /** Indique si il s'agit d'une invitation ou d'un rattachement */
+  urlType: z.enum(['invitation', 'rattachement']),
 });
 
 type Invitation = z.infer<typeof invitationSchema>;
@@ -60,7 +63,7 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // formatage du mail
-const mailTemplate = ({from, collectivite, invitationUrl}: Invitation) => {
+const mailTemplate = ({from, collectivite, url, urlType}: Invitation) => {
   const {email, nom, prenom} = from;
 
   return `<h2>Territoires en Transitions</h2>
@@ -68,12 +71,20 @@ const mailTemplate = ({from, collectivite, invitationUrl}: Invitation) => {
 
 <p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p> 
 
-<a href="${invitationUrl}"
+<a href="${url}"
   style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content;"
-  >Je rejoins la collectivité</a
+  >${
+    urlType === 'invitation'
+      ? 'Je rejoins la collectivité'
+      : 'Je lance Territoires en transitions !'
+  }</a
 >
 
-<p><i>Envie d’en savoir plus sur la plateforme ? RDV sur : <a href="https://www.territoiresentransitions.fr/outil-numerique">https://www.territoiresentransitions.fr/outil-numerique</a></p>
+${
+  urlType === 'invitation'
+    ? '<p><i>Envie d’en savoir plus sur la plateforme ? RDV sur : <a href="https://www.territoiresentransitions.fr/outil-numerique">https://www.territoiresentransitions.fr/outil-numerique</a></p>'
+    : ''
+}
 
 <p>À bientôt sur la plateforme !</p>
 

@@ -389,5 +389,4 @@ export const makeCollectiviteJournalUrl = ({
   );
 
 export const makeInvitationLandingPath = (invitationId: string) =>
-  window.location.origin +
   invitationLandingPath.replace(`:${invitationIdParam}`, invitationId);
