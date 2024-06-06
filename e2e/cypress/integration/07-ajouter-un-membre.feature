@@ -2,8 +2,10 @@
 
 Fonctionnalité: Ajouter un membre au profil de la collectivité
 
+
   Scénario: Inviter un email qui est déjà associé à un utilisateur
     Etant donné que je suis connecté en tant que "yolo"
+    Et que la mailbox de "yulu" est vidée
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres n'inclus pas l'utilisateur "yulu@dudu.com"
@@ -13,6 +15,7 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je valide le formulaire
     Alors une notification de type "succès" est affichée et contient "Nouveau membre ajouté avec succès à la collectivité !"
     Et le tableau des membres doit contenir l'utilisateur "yulu@dudu.com"
+    Et la mailbox de "yulu" contient 1 message
 
   Scénario: Inviter un email qui est déjà associé à un membre de la collectivité
     Etant donné que je suis connecté en tant que "yolo"
