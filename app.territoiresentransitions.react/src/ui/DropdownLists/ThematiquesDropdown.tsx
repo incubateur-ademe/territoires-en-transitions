@@ -23,6 +23,7 @@ const ThematiquesDropdown = (props: Props) => {
   return (
     <SelectFilter
       {...props}
+      dataTest={props.dataTest ?? 'thematiques'}
       options={options}
       onChange={({values}) => props.onChange(getSelectedThematiques(values))}
     />

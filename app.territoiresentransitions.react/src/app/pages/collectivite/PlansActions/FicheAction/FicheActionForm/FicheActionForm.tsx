@@ -158,6 +158,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         </Field>
         <Field title="Personne pilote">
           <PersonnesDropdown
+            dataTest="personnes-pilotes"
             values={fiche.pilotes?.map(p => getPersonneStringId(p))}
             onChange={pilotes => updateFiche({...fiche, pilotes})}
             disabled={isReadonly}

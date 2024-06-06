@@ -27,7 +27,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
       | Description     | absent    |        |
       | Thématique      | absent    |        |
 
-    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes"
     Et que je crée un tag "Un service" avec le sélecteur de tag "ServicePilote"
     Alors la page vérifie les conditions suivantes :
       | Elément         | Condition | Valeur         |
@@ -94,7 +94,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
       | Service pilote  | contient  |                   |
       | Thématique      | contient  | Énergie et climat |
 
-    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes"
     Et que je crée un tag "Un service" avec le sélecteur de tag "ServicePilote"
     Alors la page vérifie les conditions suivantes :
       | Elément         | Condition | Valeur            |
