@@ -12,21 +12,24 @@ type Props = {
 export const useFicheActionResumeFetch = ({options}: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  return useQuery(['fiches_resume_collectivite', collectiviteId], async () => {
-    if (!collectiviteId) {
-      throw new Error('Aucune collectivité associée');
+  return useQuery(
+    ['fiches_resume_collectivite', collectiviteId, options],
+    async () => {
+      if (!collectiviteId) {
+        throw new Error('Aucune collectivité associée');
+      }
+
+      const {data, error} = await ficheActionResumesFetch({
+        dbClient: supabaseClient,
+        collectiviteId,
+        options,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
     }
-
-    const {data, error} = await ficheActionResumesFetch({
-      dbClient: supabaseClient,
-      collectiviteId,
-      options,
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  });
+  );
 };
