@@ -66,33 +66,36 @@ export async function OPTIONS(request: NextRequest) {
 const mailTemplate = ({from, collectivite, url, urlType}: Invitation) => {
   const {email, nom, prenom} = from;
 
-  return `<h2>Territoires en Transitions</h2>
-  <p>Bonjour,</p>
+  return `<html>
+<body>
+    <h2>Territoires en Transitions</h2>
+    <p>Bonjour,</p>
 
-<p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p> 
-
-<a href="${url}"
-  style="font-size: 1rem; font-weight: 600; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content;"
-  >${
-    urlType === 'invitation'
-      ? 'Je rejoins la collectivité'
-      : 'Je lance Territoires en transitions !'
-  }</a
->
-
-${
-  urlType === 'invitation'
-    ? '<p><i>Envie d’en savoir plus sur la plateforme ? RDV sur : <a href="https://www.territoiresentransitions.fr/outil-numerique">https://www.territoiresentransitions.fr/outil-numerique</a></p>'
-    : ''
-}
-
-<p>À bientôt sur la plateforme !</p>
-
-<p>
-Un problème ? Contactez-nous à <br /><a
-    href="mailto:contact@territoiresentransitions.fr"
-    >contact@territoiresentransitions.fr</a
+  <p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p> 
+  <a href="${url}"
+    style="font-size: 1rem; font-weight: 700; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content; background-color: #6A6AF4; color: white; text-decoration: none;"
+    >${
+      urlType === 'invitation'
+        ? 'Je rejoins la collectivité'
+        : 'Je lance Territoires en transitions !'
+    }</a
   >
-</p>
+
+  ${
+    urlType === 'invitation'
+      ? '<p><i>Envie d’en savoir plus sur la plateforme ? RDV sur : <a href="https://www.territoiresentransitions.fr/outil-numerique">https://www.territoiresentransitions.fr/outil-numerique</a></p>'
+      : ''
+  }
+
+  <p>À bientôt sur la plateforme !</p>
+
+  <p>
+  Un problème ? Contactez-nous à <br /><a
+      href="mailto:contact@territoiresentransitions.fr"
+      >contact@territoiresentransitions.fr</a
+    >
+  </p>
+</body>
+</html>
 `;
 };
