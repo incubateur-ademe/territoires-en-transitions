@@ -67,7 +67,7 @@ const PersonnesDropdown = (props: Props) => {
   return (
     <SelectFilter
       {...props}
-      dataTest="personnes"
+      dataTest={props.dataTest ?? 'personnes'}
       options={options}
       onChange={({values}) => props.onChange(getSelectedPersonnes(values))}
       createProps={{

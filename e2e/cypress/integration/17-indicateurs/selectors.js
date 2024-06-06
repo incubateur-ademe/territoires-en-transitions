@@ -4,7 +4,7 @@ export const LocalSelectors = {
   },
   Thématique: {selector: '[data-test=thematiques]'},
   Description: {selector: '[data-test=desc]'},
-  'Personne pilote': {selector: '[data-test=PersonnePilote]'},
+  'Personne pilote': {selector: '[data-test=personnes]'},
   'Service pilote': {selector: '[data-test=ServicePilote]'},
   Supprimer: {selector: 'button[aria-label=Supprimer]'},
   'modale de confirmation': {

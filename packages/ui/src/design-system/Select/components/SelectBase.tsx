@@ -167,7 +167,7 @@ export const SelectBase = (props: SelectProps) => {
             isNotSimilar && (
               <button
                 type="button"
-                data-test={`${dataTest}-create-option`}
+                data-test={`${dataTest}-creer-tag`}
                 className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate(inputValue);
@@ -345,6 +345,7 @@ const SelectButton = forwardRef(
               // afin d'afficher le placeholder de l'input
               isSearcheable && !(disabled && values) && (
                 <input
+                  data-test={`${dataTest}-input`}
                   type="text"
                   className={classNames(
                     'w-full text-sm outline-0 placeholder:text-grey-6',

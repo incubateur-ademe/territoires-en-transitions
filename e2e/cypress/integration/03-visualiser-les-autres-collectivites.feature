@@ -3,8 +3,6 @@
 Fonctionnalité: Collectivités engagées
 
   Scénario: Visualiser les collectivités sans être connecté
-    Etant donné que je suis connecté en tant que "yolo"
-    Quand je me déconnecte
     Quand je visite la vue "Toutes les collectivités"
     Alors le toggle "ToggleVuePlan" est désactivé
     Alors la page contient au moins 3 collectivités

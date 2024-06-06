@@ -14,7 +14,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors le "header input" contient "Fiche test"
     # créer un tag personne pilote "Michel Sapasse"
     Quand j'ouvre la section "acteurs"
-    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
     # ajouter un statut "En cours"
     Et que j'ouvre la section "modalites"
     Et que je sélectionne "En cours" dans la liste déroulante "Statut"
@@ -173,7 +173,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
     # créer un tag personne pilote "Michel Sapasse"
     Quand j'ouvre la section "acteurs"
-    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "PersonnePilote"
+    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
 
     # ajouter un statut "En cours"
     Et que j'ouvre la section "modalites"
