@@ -158,7 +158,6 @@ export const SelectBase = (props: SelectProps) => {
       placement={placement}
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
-      enterToToggle={!hasSearch}
       disabled={disabled}
       render={({close}) => (
         <div data-test={`${dataTest}-options`}>
@@ -263,6 +262,8 @@ const SelectButton = forwardRef(
     }: SelectButtonProps,
     ref?: Ref<HTMLButtonElement>
   ) => {
+    const [isInputFocused, setIsInputFocused] = useState(false);
+
     return (
       <button
         ref={ref}
@@ -276,6 +277,17 @@ const SelectButton = forwardRef(
         disabled={disabled}
         type="button"
         {...props}
+        onKeyDown={evt => {
+          /** Seul moyen trouvé pour ne pas prendre en compte la key "Space"
+           * qui trigger le click du bouton et toggle le dropdown quand
+           * l'utilisateur saisi un espace dans l'input.
+           * Sinon il faudrait donner {...props} à l'input et non au bouton.
+           * Mais quid des select sans input ainsi que toute la partie du bouton autour de l'input */
+          if (isInputFocused && evt.code === 'Space') {
+            evt.preventDefault();
+            onSearch(inputValue + ' ');
+          }
+        }}
       >
         <div
           className={classNames('flex px-4', {
@@ -351,6 +363,8 @@ const SelectButton = forwardRef(
                       evt.stopPropagation();
                     }
                   }}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
                   placeholder={placeholder ?? 'Rechercher par mots-clés'}
                   disabled={disabled}
                 />
