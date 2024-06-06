@@ -47,11 +47,11 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
 
     Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"
     Alors le "formulaire de création de compte" est visible
+    Et le "formulaire de création de compte" vérifie les conditions suivantes :    
+      | Champ | Condition           | Valeur        |
+      | email | contient la valeur  | nono@dodo.com |
 
-    Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
-      | Champ | Valeur        |
-      | email | nono@dodo.com |
-    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Quand je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors le "message lien envoyé" est visible
 
     Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"

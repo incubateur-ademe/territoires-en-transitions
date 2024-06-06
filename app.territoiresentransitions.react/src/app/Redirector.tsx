@@ -14,7 +14,7 @@ export const Redirector = () => {
   const {pathname} = useLocation();
   const {isConnected, user} = useAuth();
   const {data: DCP, isLoading: isLoadingDCP} = useDCP(user?.id);
-  const {invitationId, consume} = useInvitationState();
+  const {invitationId, invitationEmail, consume} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
@@ -53,10 +53,19 @@ export const Redirector = () => {
         });
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"
-        const signUpPathFromInvitation = getAuthPaths(
-          document.location.hostname,
-          `${document.location.href}?consume=1`
-        ).signUp;
+        const signUpPathFromInvitation = new URL(
+          getAuthPaths(
+            document.location.hostname,
+            `${document.location.href}?consume=1`
+          ).signUp
+        );
+        // ajoute l'email associé à l'invitation afin que le formulaire soit pré-rempli
+        if (invitationEmail) {
+          signUpPathFromInvitation.searchParams.append(
+            'email',
+            invitationEmail
+          );
+        }
 
         document.location.replace(signUpPathFromInvitation);
       }
