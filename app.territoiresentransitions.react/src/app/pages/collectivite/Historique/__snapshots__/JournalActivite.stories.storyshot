@@ -13,6 +13,7 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
   <hr />
   <div
     className="mb-8 pb-8 border-b border-b-gray-200"
+    id="filtres-historique"
   >
     <p
       className="mb-6 font-bold"
@@ -352,71 +353,6 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
         </div>
       </div>
     </div>
-  </div>
-  <div
-    className="flex justify-center mt-6 md:mt-12"
-  >
-    <nav
-      aria-label="Pagination"
-      className="fr-pagination"
-      role="navigation"
-    >
-      <ul
-        className="fr-pagination__list"
-      >
-        <li>
-          <button
-            aria-disabled="true"
-            className="fr-pagination__link fr-pagination__link--first"
-            disabled={true}
-            onClick={[Function]}
-            role="link"
-          >
-            Première page
-          </button>
-        </li>
-        <button
-          aria-disabled="true"
-          className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
-          disabled={true}
-          onClick={[Function]}
-          role="link"
-        >
-          Page précédente
-        </button>
-        <button
-          aria-current="page"
-          className="fr-pagination__link"
-          title="Page 1"
-        >
-          1
-        </button>
-        <div
-          className="hidden"
-        >
-          <button
-            className="fr-pagination__link fr-displayed-lg"
-            disabled={true}
-          >
-            …
-          </button>
-        </div>
-        <button
-          className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-          disabled={true}
-          onClick={[Function]}
-        >
-          Page suivante
-        </button>
-        <button
-          className="fr-pagination__link fr-pagination__link--last"
-          disabled={true}
-          onClick={[Function]}
-        >
-          Dernière page
-        </button>
-      </ul>
-    </nav>
   </div>
 </main>
 `;

@@ -3,6 +3,7 @@
 exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Filtres 1`] = `
 <div
   className="mb-8 pb-8 border-b border-b-gray-200"
+  id="filtres-historique"
 >
   <p
     className="mb-6 font-bold"
@@ -160,6 +161,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
 exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1`] = `
 <div
   className="mb-8 pb-8 border-b border-b-gray-200"
+  id="filtres-historique"
 >
   <p
     className="mb-6 font-bold"

@@ -54,18 +54,14 @@ const Annuaire = () => {
         ))}
       </div>
 
-      {total > PAGINATION_LIMIT && (
-        <div className="flex justify-center mt-8">
-          <Pagination
-            selectedPage={selectedPage}
-            nbOfPages={Math.ceil(total / PAGINATION_LIMIT)}
-            onChange={selectedPage => {
-              setSelectPage(selectedPage);
-              document.getElementById('annuaire-header')?.scrollIntoView();
-            }}
-          />
-        </div>
-      )}
+      <Pagination
+        className="mt-8 mx-auto"
+        selectedPage={selectedPage}
+        nbOfElements={total}
+        maxElementsPerPage={PAGINATION_LIMIT}
+        idToScrollTo="annuaire-header"
+        onChange={selectedPage => setSelectPage(selectedPage)}
+      />
     </Section>
   );
 };

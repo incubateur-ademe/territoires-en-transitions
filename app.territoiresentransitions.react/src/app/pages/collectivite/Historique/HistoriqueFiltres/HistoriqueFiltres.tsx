@@ -19,7 +19,10 @@ const HistoriqueFiltres = ({
   setFilters,
 }: HistoriqueFiltresProps) => {
   return (
-    <div className="mb-8 pb-8 border-b border-b-gray-200">
+    <div
+      id="filtres-historique"
+      className="mb-8 pb-8 border-b border-b-gray-200"
+    >
       <p className="mb-6 font-bold">
         Filtrer l’historique des modifications par
       </p>

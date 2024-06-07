@@ -7,8 +7,12 @@ import {calculatePaginationArray} from './utils';
 type PaginationProps = {
   /** Page sélectionnée */
   selectedPage: number;
-  /** Nombre total de page */
-  nbOfPages: number;
+  /** Nombre total d'élements */
+  nbOfElements: number;
+  /** Nombre d'éléments par page */
+  maxElementsPerPage: number;
+  /** Indique l'élément vers lequel scroller après le changement de page */
+  idToScrollTo?: string;
   /** Détecte le changement de page sélectionnée */
   onChange?: (selectedPage: number) => void;
   /** Classnames custom */
@@ -20,10 +24,15 @@ type PaginationProps = {
  */
 export const Pagination = ({
   selectedPage,
-  nbOfPages,
+  nbOfElements,
+  maxElementsPerPage,
+  idToScrollTo,
   onChange,
   className,
 }: PaginationProps) => {
+  const [nbOfPages, setNbOfPages] = useState(
+    Math.ceil(nbOfElements / maxElementsPerPage)
+  );
   const [pageButtons, setPageButtons] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(selectedPage);
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
@@ -32,6 +41,7 @@ export const Pagination = ({
   const handleChangePage = (page: number) => {
     setCurrentPage(page);
     onChange?.(page);
+    !!idToScrollTo && document.getElementById(idToScrollTo)?.scrollIntoView();
   };
 
   // Détecte la largeur de page
@@ -53,7 +63,6 @@ export const Pagination = ({
   // Détecte le changement de page sélectionnée en props
   useEffect(() => {
     setCurrentPage(selectedPage);
-    document.getElementById('app-header')?.scrollIntoView();
   }, [selectedPage]);
 
   // Détecte les changement nécessitant le recalcul des boutons
@@ -67,7 +76,12 @@ export const Pagination = ({
     setPageButtons(paginationArray);
   }, [currentPage, nbOfPages, isMobile]);
 
-  return (
+  // Détecte un changement du nombre de pages
+  useEffect(() => {
+    setNbOfPages(Math.ceil(nbOfElements / maxElementsPerPage));
+  }, [nbOfElements, maxElementsPerPage]);
+
+  return nbOfElements > maxElementsPerPage ? (
     <nav className={classNames('flex w-fit gap-6', className)}>
       <Button
         icon="arrow-left-s-line"
@@ -103,5 +117,5 @@ export const Pagination = ({
         {!isMobile && 'Suivant'}
       </Button>
     </nav>
-  );
+  ) : null;
 };
