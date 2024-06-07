@@ -151,20 +151,16 @@ const MembresConnected = () => {
         removeFromCollectivite={removeFromCollectivite}
         isLoading={isLoading}
       />
-      {count > PAGE_SIZE && (
-        <Pagination
-          className="self-center"
-          selectedPage={page}
-          nbOfPages={Math.ceil(count / PAGE_SIZE)}
-          onChange={selectedPage => {
-            setPage(selectedPage);
-            document.getElementById('app-header')?.scrollIntoView();
-          }}
-        />
-      )}
+      <Pagination
+        className="self-center"
+        selectedPage={page}
+        nbOfElements={count}
+        maxElementsPerPage={PAGE_SIZE}
+        idToScrollTo="app-header"
+        onChange={setPage}
+      />
     </>
   );
 };
 
 export default MembresConnected;
-

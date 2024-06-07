@@ -7,7 +7,8 @@ import {
   TFilters,
 } from '../Bibliotheque/useFichiers';
 import {TAddFileFromLib} from './AddFile';
-import {Pagination} from 'ui/shared/Pagination';
+import {Pagination} from '@tet/ui';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export type TAddFromLibProps = {
   items: TBibliothequeFichier[];
@@ -35,6 +36,9 @@ export const AddFromLib = (props: TAddFromLibProps) => {
   const [currentSelection, setCurrentSelection] = useState<{
     [key: number]: boolean;
   }>({});
+
+  const tracker = useFonctionTracker();
+
   const canAdd = Object.values(currentSelection).find(v => !!v);
 
   // met à jour notre sélection interne lorsqu'une case est dé/cochée
@@ -83,13 +87,17 @@ export const AddFromLib = (props: TAddFromLibProps) => {
                 ))}
               </div>
             </fieldset>
-            <div className="flex justify-center">
-              <Pagination
-                nbOfPages={Math.ceil(total / NB_ITEMS_PER_PAGE)}
-                selectedPage={filters.page ?? 1}
-                onChange={page => setFilters({...filters, page})}
-              />
-            </div>
+
+            <Pagination
+              className="mx-auto"
+              nbOfElements={total}
+              maxElementsPerPage={NB_ITEMS_PER_PAGE}
+              selectedPage={filters.page ?? 1}
+              onChange={page => {
+                setFilters({...filters, page});
+                tracker({fonction: 'pagination', action: 'clic'});
+              }}
+            />
           </>
         ) : null}
       </div>

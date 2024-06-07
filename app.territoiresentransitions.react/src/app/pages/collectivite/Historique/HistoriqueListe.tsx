@@ -8,7 +8,8 @@ import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 import {NB_ITEMS_PER_PAGE} from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
-import {Pagination} from 'ui/shared/Pagination';
+import {Pagination} from '@tet/ui';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 /**
  * Affiche l'historique des modifications
@@ -20,6 +21,8 @@ export const HistoriqueListe = ({
   filters,
   setFilters,
 }: THistoriqueProps) => {
+  const tracker = useFonctionTracker();
+
   return (
     <>
       <HistoriqueFiltres
@@ -40,15 +43,18 @@ export const HistoriqueListe = ({
           return Item ? <Item key={makeKey(item)} item={item} /> : null;
         })}
       </div>
-      {total !== 0 && (
-        <div className="flex justify-center mt-6 md:mt-12">
-          <Pagination
-            nbOfPages={Math.ceil(total / NB_ITEMS_PER_PAGE)}
-            selectedPage={filters.page ?? 1}
-            onChange={selected => setFilters({...filters, page: selected})}
-          />
-        </div>
-      )}
+
+      <Pagination
+        className="mt-6 md:mt-12 mx-auto"
+        nbOfElements={total}
+        maxElementsPerPage={NB_ITEMS_PER_PAGE}
+        selectedPage={filters.page ?? 1}
+        onChange={selected => {
+          setFilters({...filters, page: selected});
+          tracker({fonction: 'pagination', action: 'clic'});
+        }}
+        idToScrollTo="filtres-historique"
+      />
     </>
   );
 };

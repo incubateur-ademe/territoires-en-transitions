@@ -1,10 +1,9 @@
 import classNames from 'classnames';
 
-import {Button, Select} from '@tet/ui';
+import {Button, Pagination, Select} from '@tet/ui';
 
 import {TCollectiviteCarte} from '../data/useFilteredCollectivites';
 import {getNumberOfActiveFilters, SetFilters} from '../data/filters';
-import {Pagination} from 'ui/shared/Pagination';
 import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
 import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
 import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
@@ -15,6 +14,7 @@ import {
   RecherchesViewParam,
 } from 'app/paths';
 import {useHistory, useLocation} from 'react-router-dom';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -48,6 +48,7 @@ const View = ({
 }: ViewProps) => {
   const history = useHistory();
   const location = useLocation();
+  const tracker = useFonctionTracker();
 
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'collectivité',
@@ -153,15 +154,17 @@ const View = ({
         />
       </div>
       {/** Pagination */}
-      {dataCount !== 0 && (
-        <div className="flex justify-center mt-6 md:mt-12">
-          <Pagination
-            nbOfPages={Math.ceil(dataCount / NB_CARDS_PER_PAGE)}
-            selectedPage={filters.page ?? 1}
-            onChange={selected => setFilters({...filters, page: selected})}
-          />
-        </div>
-      )}
+      <Pagination
+        className="mt-6 md:mt-12 mx-auto"
+        selectedPage={filters.page ?? 1}
+        nbOfElements={dataCount}
+        maxElementsPerPage={NB_CARDS_PER_PAGE}
+        onChange={selected => {
+          setFilters({...filters, page: selected});
+          tracker({fonction: 'pagination', action: 'clic'});
+        }}
+        idToScrollTo="app-header"
+      />
     </div>
   );
 };
