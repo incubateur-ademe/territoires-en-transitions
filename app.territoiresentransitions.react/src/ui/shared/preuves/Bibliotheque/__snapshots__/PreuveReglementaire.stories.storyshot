@@ -27,7 +27,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action De
         </span>
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -81,7 +81,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action No
         </span>
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -130,7 +130,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
         )
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -244,7 +244,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
         )
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -346,7 +346,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
         )
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -509,7 +509,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Non Rense
         )
       </span>
       <span
-        className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+        className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}

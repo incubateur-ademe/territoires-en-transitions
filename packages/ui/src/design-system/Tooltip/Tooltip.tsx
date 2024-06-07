@@ -36,6 +36,8 @@ export type TooltipProps = {
   placement?: Placement;
   /** Affichage d'une flèche sur la tooltip */
   withArrow?: boolean;
+  /** Surchage des classnames de la tooltip */
+  className?: string;
 };
 
 /** Affiche une info bulle */
@@ -48,6 +50,7 @@ export const Tooltip = ({
   openingDelay = 500,
   placement = 'top',
   withArrow = true,
+  className,
 }: TooltipProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -122,7 +125,8 @@ export const Tooltip = ({
               'border-t': context.placement.startsWith('bottom'),
               'border-r': context.placement.startsWith('left'),
               'border-l': context.placement.startsWith('right'),
-            }
+            },
+            className
           )}
         >
           {withArrow && (
@@ -137,7 +141,11 @@ export const Tooltip = ({
               stroke={colorTheme.primary.DEFAULT}
             />
           )}
-          {label}
+          {typeof label === 'string' ? (
+            <p className="w-fit max-w-sm font-normal">{label}</p>
+          ) : (
+            label
+          )}
         </div>
       )}
     </>

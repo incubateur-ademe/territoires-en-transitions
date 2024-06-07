@@ -1,6 +1,6 @@
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {toFixed} from 'utils/toFixed';
 import ProgressBar, {ProgressBarType} from './ProgressBar';
+import {Tooltip} from '@tet/ui';
 
 type ProgressBarTooltipContentProps = {
   score: {label: string; value: number; color: string}[];
@@ -24,15 +24,14 @@ const ProgressBarWithTooltip = ({
 }: ProgressBarType): JSX.Element => {
   return (
     <Tooltip
-      className="[&_*]:!text-base"
-      label={() => (
+      label={
         <ProgressBarTooltipContent
           score={score}
           total={total}
           defaultScore={defaultScore}
           percent={percent}
         />
-      )}
+      }
     >
       <div>
         <ProgressBar
@@ -60,7 +59,7 @@ const ProgressBarTooltipContent = ({
     score.reduce((sum, currVal) => sum + currVal.value, 0);
 
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       {/* Liste des éléments dans score */}
       {score.map(s =>
         s.value > 1e-3 ? (

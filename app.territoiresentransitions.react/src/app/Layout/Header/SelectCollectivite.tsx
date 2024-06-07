@@ -3,7 +3,7 @@ import {makeCollectiviteAccueilUrl} from 'app/paths';
 import {Link} from 'react-router-dom';
 import {BadgeNiveauAcces} from './BadgeNiveauAcces';
 import {HeaderPropsWithModalState} from './types';
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
+import {Tooltip} from '@tet/ui';
 
 const ID = 'SelectCollectivite';
 
@@ -33,7 +33,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
   return (
     <ul className="fr-nav__list" data-test={ID}>
       <li className="fr-nav__item !relative">
-        <Tooltip label={currentCollectivite.nom}>
+        <Tooltip label={currentCollectivite.nom} withArrow={false}>
           <button
             className={classNames(
               {

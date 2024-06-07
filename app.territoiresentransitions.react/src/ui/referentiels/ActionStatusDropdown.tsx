@@ -24,8 +24,8 @@ import {
   statutParAvancement,
 } from './utils';
 import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import classNames from 'classnames';
+import {Tooltip} from '@tet/ui';
 
 export type StatusToSavePayload = {
   actionId: string;
@@ -245,10 +245,14 @@ export const ActionStatusDropdown = ({
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
       quand au moins une des tâches a un statut */}
       <Tooltip
-        label="Le score a été ajusté manuellement à la sous-action : la
-        modification du statut de la tâche ne sera pas pris en compte pour
-        le score."
-        delay={0}
+        label={
+          <p className="w-96">
+            Le score a été ajusté manuellement à la sous-action : la
+            modification du statut de la tâche ne sera pas pris en compte pour
+            le score.
+          </p>
+        }
+        openingDelay={0}
         className={classNames({hidden: !statusWarningMessage})}
       >
         <div>

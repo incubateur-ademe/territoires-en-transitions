@@ -1,8 +1,9 @@
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {TPreuve, TPreuveReglementaire} from './types';
 import PreuveDoc from './PreuveDoc';
 import {AddPreuveReglementaire} from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
 import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
+import {InfoTooltip} from '@tet/ui';
+import DOMPurify from 'dompurify';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
@@ -40,9 +41,18 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
           {nom}{' '}
           {!(hideIdentifier ?? false) && <IdentifiantAction action={action} />}
           {description && (
-            <Tooltip label={description} activatedBy="click">
-              <span className="fr-fi-information-line pl-2 text-bf500 cursor-pointer" />
-            </Tooltip>
+            <InfoTooltip
+              label={
+                <div
+                  className="max-w-sm"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(description),
+                  }}
+                />
+              }
+              activatedBy="click"
+              iconClassName="ml-2"
+            />
           )}
         </span>
 

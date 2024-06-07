@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 
-import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
 import SmallIconContextMenu from 'app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
 import IconUnlockFill from 'ui/shared/designSystem/icons/IconUnlockFill';
 import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
@@ -16,6 +15,7 @@ import {PlanNode} from '../data/types';
 import {useExportPlanAction} from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
 import {TPlanType} from 'types/alias';
+import {Tooltip} from '@tet/ui';
 
 const EXPORT_OPTIONS = [
   {value: 'xlsx', label: 'Format Excel (.xlsx)'},
@@ -100,11 +100,9 @@ const Actions = ({
               className="p-2 bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
-              <DSTetTooltip
+              <Tooltip
                 placement="bottom"
-                label={() => (
-                  <span>Rendre publiques l'ensemble des fiches du plan</span>
-                )}
+                label="Rendre publiques l'ensemble des fiches du plan"
               >
                 <div>
                   <IconUnlockFill
@@ -113,7 +111,7 @@ const Actions = ({
                     })}
                   />
                 </div>
-              </DSTetTooltip>
+              </Tooltip>
             </button>
           </RestreindreFichesModal>
           <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
@@ -122,11 +120,9 @@ const Actions = ({
               className="p-2 bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
-              <DSTetTooltip
+              <Tooltip
                 placement="bottom"
-                label={() => (
-                  <span>Rendre privées l'ensemble des fiches du plan</span>
-                )}
+                label="Rendre privées l'ensemble des fiches du plan"
               >
                 <div>
                   <IconLockFill
@@ -135,7 +131,7 @@ const Actions = ({
                     })}
                   />
                 </div>
-              </DSTetTooltip>
+              </Tooltip>
             </button>
           </RestreindreFichesModal>
         </>

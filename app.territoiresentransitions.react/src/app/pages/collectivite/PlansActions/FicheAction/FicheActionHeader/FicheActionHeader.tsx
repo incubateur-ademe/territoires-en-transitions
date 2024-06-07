@@ -6,8 +6,8 @@ import {usePlanActionProfondeur} from '../../PlanAction/data/usePlanActionProfon
 import FicheActionRangerModal from '../FicheActionRangerModal/FicheActionRangerModal';
 import {useExportFicheAction} from '../data/useExportFicheAction';
 import ToggleButton from 'ui/shared/designSystem/ToggleButton';
-import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
 import {useEditFicheAction} from '../data/useUpsertFicheAction';
+import {Tooltip} from '@tet/ui';
 
 type TFicheActionHeader = {
   fiche: FicheAction;
@@ -37,9 +37,9 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
       {!isReadonly && (
         <div className="mb-6 flex items-center justify-end gap-4">
           <div className="mr-auto">
-            <DSTetTooltip
-              label={() => (
-                <p>
+            <Tooltip
+              label={
+                <p className="w-96">
                   Si le mode privé est activé la fiche action n'est plus
                   consultable par les personnes n’étant pas membres de votre
                   collectivité.
@@ -48,7 +48,7 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
                   La fiche reste consultable par l’ADEME et le service support
                   de la plateforme.
                 </p>
-              )}
+              }
             >
               <ToggleButton
                 data-test="FicheToggleConfidentialite"
@@ -58,7 +58,7 @@ const FicheActionHeader = ({fiche, isReadonly}: TFicheActionHeader) => {
                 }
                 description="Fiche action en mode privé"
               />
-            </DSTetTooltip>
+            </Tooltip>
           </div>
           {plansProfondeur?.plans && plansProfondeur.plans.length > 0 && (
             <FicheActionRangerModal

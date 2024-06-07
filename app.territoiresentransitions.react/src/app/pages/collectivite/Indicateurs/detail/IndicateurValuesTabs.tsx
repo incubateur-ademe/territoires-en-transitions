@@ -1,13 +1,13 @@
 import {useEffect} from 'react';
 import {Tab, Tabs, useActiveTab} from 'ui/shared/Tabs';
 import ToggleButton from 'ui/shared/designSystem/ToggleButton';
-import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
 import {TIndicateurDefinition} from '../types';
 import {SOURCE_COLLECTIVITE} from '../constants';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurValuesTable} from './IndicateurValuesTable';
 import {useToggleIndicateurConfidentiel} from './useToggleIndicateurConfidentiel';
 import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
+import {Tooltip} from '@tet/ui';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
@@ -37,16 +37,12 @@ export const IndicateurValuesTabs = ({
   return (
     <>
       {!isReadonly && (
-        <DSTetTooltip
-          label={() => (
-            <p>
-              Si le mode privé est activé, le résultat le plus récent n'est plus
-              consultable par les personnes n’étant pas membres de votre
-              collectivité. Seuls les autres résultats restent accessibles pour
-              tous les utilisateurs et la valeur privée reste consultable par
-              l’ADEME et le service support de la plateforme.
-            </p>
-          )}
+        <Tooltip
+          label={`Si le mode privé est activé, le résultat le plus récent n'est plus 
+            consultable par les personnes n’étant pas membres de votre 
+            collectivité. Seuls les autres résultats restent accessibles pour 
+            tous les utilisateurs et la valeur privée reste consultable par 
+            l’ADEME et le service support de la plateforme.`}
         >
           <ToggleButton
             className="my-10"
@@ -55,7 +51,7 @@ export const IndicateurValuesTabs = ({
             disabled={isLoading}
             onClick={() => toggleIndicateurConfidentiel(confidentiel || false)}
           />
-        </DSTetTooltip>
+        </Tooltip>
       )}
       <Tabs defaultActiveTab={activeTab} onChange={onChangeTab}>
         <Tab label="Résultats" icon="checkbox">
