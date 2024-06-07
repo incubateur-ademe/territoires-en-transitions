@@ -1,13 +1,12 @@
 import {useState} from 'react';
 import {AccordionControlled} from 'ui/Accordion';
-import {Checkbox, Field} from '@tet/ui';
+import {Checkbox, Field, InfoTooltip} from '@tet/ui';
 import {IndicateurViewParamOption} from 'app/paths';
 import {UseFilterState} from './useIndicateursFilterState';
 import FiltreServices from './FiltreServices';
 import FiltrePlans from './FiltrePlans';
 import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
-import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
@@ -121,7 +120,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                 />
 
                 {view === 'cae' && (
-                  <div className="flex flex-row">
+                  <div className="flex flex-row items-center">
                     <Checkbox
                       label="Participe au score"
                       checked={participation_score?.includes('oui') || false}
@@ -133,12 +132,9 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                       }
                     />
                     <InfoTooltip
-                      label={() => (
-                        <p>
-                          Indicateur dont les résultats conditionnent certains
-                          points dans le référentiel CAE
-                        </p>
-                      )}
+                      label="Indicateur dont les résultats conditionnent certains points dans le référentiel CAE"
+                      activatedBy="click"
+                      iconClassName="ml-2 -mb-0.5"
                     />
                   </div>
                 )}

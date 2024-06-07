@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 type InfoTooltipProps = Omit<TooltipProps, 'children'> & {
   size?: IconSize;
-  className?: string;
+  iconClassName?: string;
 };
 
 /**
@@ -13,7 +13,7 @@ type InfoTooltipProps = Omit<TooltipProps, 'children'> & {
 
 export const InfoTooltip = ({
   size = 'sm',
-  className,
+  iconClassName,
   ...tooltipProps
 }: InfoTooltipProps) => {
   return (
@@ -21,9 +21,10 @@ export const InfoTooltip = ({
       <Icon
         icon="information-line"
         size={size}
-        className={classNames('text-grey-6', className, {
+        className={classNames('text-grey-6', iconClassName, {
           'cursor-pointer': tooltipProps.activatedBy === 'click',
         })}
+        onClick={evt => evt.stopPropagation()}
       />
     </Tooltip>
   );

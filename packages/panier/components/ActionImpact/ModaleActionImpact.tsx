@@ -70,7 +70,7 @@ export const ModaleActionImpact = ({
               </span>
               <InfoTooltip
                 activatedBy="click"
-                className="ml-2"
+                iconClassName="ml-2"
                 label={
                   <div className="w-52 !font-normal flex flex-col gap-3 p-1">
                     <div>
@@ -104,7 +104,7 @@ export const ModaleActionImpact = ({
               </span>
               <InfoTooltip
                 activatedBy="click"
-                className="ml-2"
+                iconClassName="ml-2"
                 label={
                   <div className="w-52 !font-normal flex flex-col gap-3 p-1">
                     <div>
@@ -162,7 +162,7 @@ export const ModaleActionImpact = ({
                 Subventions mobilisables :{' '}
                 <InfoTooltip
                   activatedBy="click"
-                  className="ml-1"
+                  iconClassName="ml-1"
                   label={
                     <div className="w-52 !font-normal flex flex-col gap-3 p-1">
                       <div>

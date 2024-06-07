@@ -1,8 +1,8 @@
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {NIVEAUX} from './getNiveauInfo';
 import {GreyStar, RedStar} from './Star';
 import {TLabellisationParcours} from '../../app/pages/collectivite/ParcoursLabellisation/types';
 import {toLocaleFixed} from 'utils/toFixed';
+import {Tooltip} from '@tet/ui';
 
 type LabellisationStarsProps = {
   parcours: TLabellisationParcours | null;
@@ -15,7 +15,7 @@ const LabellisationStars = ({parcours}: LabellisationStarsProps) => {
 
   return (
     <Tooltip
-      label={() =>
+      label={
         etoiles === 1 ? (
           <p>
             Reconnaissance obtenue

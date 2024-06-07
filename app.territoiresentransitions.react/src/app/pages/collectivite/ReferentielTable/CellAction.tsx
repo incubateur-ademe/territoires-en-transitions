@@ -2,8 +2,8 @@ import {CellProps} from 'react-table';
 import {Link} from 'react-router-dom';
 import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
 import {ActionReferentiel} from './useReferentiel';
-import {Tooltip} from 'ui/shared/floating-ui/Tooltip';
 import {Kbd} from 'ui/shared/Kbd';
+import {Tooltip} from '@tet/ui';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
@@ -106,15 +106,15 @@ export const CellAction = (props: TCellProps) => {
 };
 
 // infobulles
-const infoReplier = () => (
-  <p>
+const infoReplier = (
+  <p className="font-normal">
     Cliquer pour replier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé
     <br />
     pour replier toutes les lignes de même niveau)
   </p>
 );
-const infoDeplier = () => (
-  <p>
+const infoDeplier = (
+  <p className="font-normal">
     Cliquer pour déplier (tenir <Kbd>⇧ SHIFT</Kbd> enfoncé pour déplier
     <br />
     toutes les lignes de même niveau de l'axe, ou tenir

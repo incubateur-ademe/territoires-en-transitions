@@ -142,7 +142,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -188,7 +188,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -299,7 +299,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -686,7 +686,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -732,7 +732,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -843,7 +843,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
             )
           </span>
           <span
-            className="fr-fi-information-line pl-2 text-bf500 cursor-pointer"
+            className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}

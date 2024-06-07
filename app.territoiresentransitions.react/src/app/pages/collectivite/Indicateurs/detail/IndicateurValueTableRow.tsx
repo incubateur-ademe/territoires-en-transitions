@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
-import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 import Modal from 'ui/shared/floating-ui/Modal';
 import Textarea from 'ui/shared/form/Textarea';
 import {
@@ -14,8 +13,7 @@ import {
   TUseTableRowStateArgs,
   useTableRowState,
 } from './useTableRowState';
-import DSTetTooltip from 'ui/shared/floating-ui/DSTetTooltip';
-import {Notification} from '@tet/ui';
+import {InfoTooltip, Notification, Tooltip} from '@tet/ui';
 
 const PLACEHOLDER = 'Écrire ici...';
 const OPTIONS = [
@@ -74,14 +72,13 @@ export const IndicateurValueTableRow = ({
       <tr>
         <td className="relative">
           {confidentiel && (
-            <DSTetTooltip
-              className="min-w-max"
-              label={() => <p>Le résultat est en mode privé</p>}
+            <Tooltip
+              label={<p className="min-w-max">Le résultat est en mode privé</p>}
             >
               <div className="absolute top-3 -left-5">
                 <Notification icon="lock-fill" />
               </div>
-            </DSTetTooltip>
+            </Tooltip>
           )}
         </td>
         <td>
@@ -158,13 +155,13 @@ const ValueImported = ({valeur}: {valeur: string}) => {
     <>
       <span className="text-grey-6 font-bold w-fit">{v}</span>
       <InfoTooltip
-        label={() => (
+        label={
           <span>
             Cette valeur est renseignée <b>automatiquement</b>. Pour toute
             question, l’équipe est à votre écoute sur
             contact@territoiresentransitions.fr !
           </span>
-        )}
+        }
       />
     </>
   );

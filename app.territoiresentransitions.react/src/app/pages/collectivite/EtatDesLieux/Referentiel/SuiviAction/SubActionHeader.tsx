@@ -5,7 +5,6 @@ import {
   ActionStatusDropdown,
   StatusToSavePayload,
 } from 'ui/referentiels/ActionStatusDropdown';
-import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
 import ScoreDisplay from 'ui/referentiels/ScoreDisplay';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {SuiviScoreRow} from '../data/useScoreRealise';
@@ -13,6 +12,8 @@ import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
 import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import {TActionAvancement} from 'types/alias';
+import {InfoTooltip} from '@tet/ui';
+import DOMPurify from 'dompurify';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
@@ -82,7 +83,18 @@ const SubActionHeader = ({
           {action.nom}
           {action.description &&
             ((isSubAction && action.referentiel === 'cae') || isTask) && (
-              <InfoTooltip label={action.description} />
+              <InfoTooltip
+                label={
+                  <div
+                    className="max-w-sm font-normal"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(action.description),
+                    }}
+                  />
+                }
+                activatedBy="click"
+                iconClassName="ml-2"
+              />
             )}
         </div>
 
