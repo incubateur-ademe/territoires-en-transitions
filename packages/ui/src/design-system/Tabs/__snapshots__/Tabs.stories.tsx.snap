@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Tabs AvecBeaucoupOnglets smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -104,8 +104,8 @@ exports[`design-system/Tabs AvecBeaucoupOnglets smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -165,8 +165,8 @@ exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs AvecStyles smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none bg-secondary-1 mb-0 rounded-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none bg-secondary-1 mb-0 rounded-none"
       role="tablist"
   >
     <li role="presentation"
@@ -226,8 +226,8 @@ exports[`design-system/Tabs AvecStyles smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs Onglet2 smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -280,8 +280,8 @@ exports[`design-system/Tabs Onglet2 smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs OngletParDefaut smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -334,8 +334,8 @@ exports[`design-system/Tabs OngletParDefaut smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs TailleSM smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
@@ -395,8 +395,8 @@ exports[`design-system/Tabs TailleSM smoke-test 1`] = `
 `;
 
 exports[`design-system/Tabs TailleXS smoke-test 1`] = `
-<div class="overflow-hidden">
-  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+<div class>
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none"
       role="tablist"
   >
     <li role="presentation"
