@@ -29,7 +29,7 @@ export async function generateMetadata(
 const OutilNumerique = async () => {
   const strapiData = await getStrapiData();
 
-  return strapiData && strapiData.avantages.length > 0 ? (
+  return strapiData ? (
     <div className="grow">
       <HeaderPlateforme {...strapiData.header} />
 

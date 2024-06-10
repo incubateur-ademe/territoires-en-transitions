@@ -1146,26 +1146,32 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
+      }> &
+      Attribute.DefaultTo<'Vous cherchez un outil pour piloter vos plans d\u2019action et suivre vos indicateurs ?'>;
     accroche: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
+      }> &
+      Attribute.DefaultTo<'D\u00E9couvrez ce service gratuit d\u00E9di\u00E9 \u00E0 accompagner votre collectivit\u00E9 ! '>;
     cta_inscription: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
       }> &
       Attribute.DefaultTo<'Je m\u2019inscris'>;
-    url_inscription: Attribute.String & Attribute.Required;
+    url_inscription: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'https://app.territoiresentransitions.fr'>;
     cta_demo: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
       }> &
       Attribute.DefaultTo<'Je participe \u00E0 une d\u00E9mo'>;
-    url_demo: Attribute.String & Attribute.Required;
+    url_demo: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'https://calendly.com/territoiresentransitions/demo-fonctionnalite-plans-d-action'>;
     couverture: Attribute.Media & Attribute.Required;
     avantages: Attribute.Component<'shared.vignette', true> &
       Attribute.SetMinMax<{
@@ -1176,8 +1182,11 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
-    panier_description: Attribute.RichText & Attribute.Required;
+      }> &
+      Attribute.DefaultTo<'Identifiez des actions \u00E0 impact pour votre collectivit\u00E9 en moins de quelques clics'>;
+    panier_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<"Vous avez besoin d'aide pour identifier des actions concr\u00E8tes adapt\u00E9es \u00E0 votre territoire ? Vous souhaitez acc\u00E9l\u00E9rer votre d\u00E9marche de transition \u00E9cologique pour votre commune ou votre intercommunalit\u00E9 ? Vous cherchez \u00E0 prioriser quelques actions cl\u00E9s \u00E0 valider avec vos \u00E9lus ?">;
     panier_image: Attribute.Media;
     panier_cta: Attribute.String &
       Attribute.Required &
@@ -1189,8 +1198,11 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
-    fonctionnalites_contenu: Attribute.RichText & Attribute.Required;
+      }> &
+      Attribute.DefaultTo<'Organisez le travail et atteignez vos objectifs !'>;
+    fonctionnalites_contenu: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<"Acc\u00E9l\u00E9rez votre diagnostic gr\u00E2ce aux actions \u00E0 impact Centralisez vos donn\u00E9es et pilotez vos plans d\u2019actions B\u00E9n\u00E9ficiez d\u2019une aide pr\u00E9cieuse dans la collecte de donn\u00E9es gr\u00E2ce \u00E0 l\u2019Open Data Collaborez avec vos coll\u00E8gues pour le suivi des actions et la mise \u00E0 jour des indicateurs Evaluez la progression et l'impact de vos actions via vos tableaux de bord">;
     fonctionnalites_image: Attribute.Media & Attribute.Required;
     temoignages_liste: Attribute.Relation<
       'api::page-outils-numerique.page-outils-numerique',
@@ -1201,9 +1213,12 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
-    equipe_citation: Attribute.Text;
-    equipe_description: Attribute.Text;
+      }> &
+      Attribute.DefaultTo<'Qui sommes-nous ?'>;
+    equipe_citation: Attribute.Text &
+      Attribute.DefaultTo<"\u201CDans un environnement qui change, il n'y a pas de plus grand risque que de rester immobile.\u201D">;
+    equipe_description: Attribute.Text &
+      Attribute.DefaultTo<'C\u2019est avec cette envie de faire avancer les choses que le projet Territoires en Transitions est n\u00E9. Nicolas Vall\u00E9e, intrapreneur et salari\u00E9 de l\u2019ADEME, a toujours aim\u00E9 faire bouger les lignes. C\u2019est donc dans cette optique qu\u2019il s\u2019est entour\u00E9 des meilleurs (\u00E9videmment) pour atteindre un objectif : changer le monde. Enfin, d\u00E9j\u00E0 changer le quotidien des collectivit\u00E9s pour leur permettre de r\u00E9ussir leur transition \u00E9cologique.'>;
     equipe_liste: Attribute.Component<'shared.vignette-avec-titre', true> &
       Attribute.SetMinMax<{
         min: 1;
@@ -1218,7 +1233,8 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
+      }> &
+      Attribute.DefaultTo<'Vous avez une question ?'>;
     questions_liste: Attribute.Component<'shared.paragraphe', true> &
       Attribute.SetMinMax<{
         min: 1;
@@ -1226,7 +1242,8 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
     questions_description: Attribute.RichText &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
-      }>;
+      }> &
+      Attribute.DefaultTo<"N'h\u00E9sitez pas \u00E0 consulter notre FaQ ou \u00E0 nous contacter. Notre \u00E9quipe r\u00E9pond via le chat en moins de 20 minutes.">;
     cta_faq: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
