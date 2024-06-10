@@ -1,8 +1,8 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Personne} from '../../PlansActions/FicheAction/data/types';
 import {TIndicateurDefinition} from '../types';
+import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 /** Met à jour les personnes pilotes d'un indicateur */
 export const useUpsertIndicateurPilote = (

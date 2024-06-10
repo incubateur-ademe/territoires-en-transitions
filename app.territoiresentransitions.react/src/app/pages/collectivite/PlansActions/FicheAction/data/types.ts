@@ -7,12 +7,12 @@ import {
   TFicheActionStructureInsert,
   TPartenaireInsert,
   TSousThematiqueInsert,
-  TPersonne,
   TFinanceurTagInsert,
   TFinanceurMontant,
   TFicheResume,
   TThematiqueRow,
 } from 'types/alias';
+import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 export type FicheAction = Omit<
   TFicheAction,
@@ -41,11 +41,6 @@ export type FicheAction = Omit<
   services: TFicheActionServicePiloteInsert[] | null;
   financeurs: Financeur[];
   fiches_liees: FicheResume[] | null;
-};
-
-export type Personne = Omit<TPersonne, 'tag_id' | 'user_id'> & {
-  tag_id?: number | null;
-  user_id?: string | null;
 };
 
 export type Financeur = Omit<

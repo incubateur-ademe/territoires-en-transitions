@@ -2,7 +2,12 @@ import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Personne} from '../types';
+import {TPersonne} from 'types/alias';
+
+export type Personne = Omit<TPersonne, 'tag_id' | 'user_id'> & {
+  tag_id?: number | null;
+  user_id?: string | null;
+};
 
 type TFetchedData = Personne[];
 
