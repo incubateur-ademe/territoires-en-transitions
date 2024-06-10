@@ -1,10 +1,10 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
-import {usePersonneListe} from '../../../FicheAction/data/options/usePersonneListe';
 import {TOption} from 'ui/shared/select/commons';
 import {SANS_PILOTE, SANS_REFERENT} from '../../../FicheAction/data/filters';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {usePersonneListe} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 type Props = {
   filterKey: 'pilotes' | 'referents';

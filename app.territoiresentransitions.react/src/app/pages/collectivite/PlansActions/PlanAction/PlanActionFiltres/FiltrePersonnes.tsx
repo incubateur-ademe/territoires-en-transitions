@@ -7,9 +7,9 @@ import {
   TFiltreProps,
 } from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {usePersonneListe} from '../../FicheAction/data/options/usePersonneListe';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {usePersonneListe} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 type Props = TFiltreProps & {
   label: string;
