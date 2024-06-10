@@ -160,14 +160,14 @@ export const SelectBase = (props: SelectProps) => {
       containerWidthMatchButton={containerWidthMatchButton}
       disabled={disabled}
       render={({close}) => (
-        <div data-test={`${dataTest}-options`}>
+        <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
           {createProps?.onCreate &&
             inputValue.trim().length > 0 &&
             isNotSimilar && (
               <button
                 type="button"
-                data-test={`${dataTest}-creer-tag`}
+                data-test={dataTest && `${dataTest}-creer-tag`}
                 className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate(inputValue);
