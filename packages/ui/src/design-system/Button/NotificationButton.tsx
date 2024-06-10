@@ -2,21 +2,24 @@ import {Ref, forwardRef} from 'react';
 import {ButtonProps} from './types';
 import {Button} from './Button';
 import {Notification, NotificationVariant} from '../Notification';
+import classNames from 'classnames';
 
 export const NotificationButton = forwardRef(
   (
     {
       notificationValue,
       notificationVariant,
+      containerclassName,
       ...props
     }: {
       notificationValue: number;
       notificationVariant?: NotificationVariant;
+      containerclassName?: string;
     } & ButtonProps,
     ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
   ) => {
     return (
-      <div className="relative w-fit h-fit">
+      <div className={classNames('relative w-fit h-fit', containerclassName)}>
         <Button ref={ref} {...props} />
         <Notification
           size="xs"
