@@ -10,6 +10,7 @@ export const ButtonMenu = ({
   children,
   notificationValue,
   notificationVariant,
+  notificationBtnClassName,
   size = 'xs',
   ...props
 }: {
@@ -19,6 +20,8 @@ export const ButtonMenu = ({
   notificationValue?: number;
   /** Variant de la pastille de notification */
   notificationVariant?: NotificationVariant;
+  /** ClassName pour le container du NotificationButton */
+  notificationBtnClassName?: string;
 } & ButtonProps) => {
   return (
     <>
@@ -32,11 +35,12 @@ export const ButtonMenu = ({
             size={size}
             notificationValue={notificationValue}
             notificationVariant={notificationVariant}
-            className="mr-2"
+            containerclassName={notificationBtnClassName}
             {...props}
+            className="" // reset le classname sinon les styles sont dupliqués entre le container et le bouton
           />
         ) : (
-          <Button size={size} className="mx-2" {...props} />
+          <Button size={size} {...props} />
         )}
       </DropdownFloater>
     </>
