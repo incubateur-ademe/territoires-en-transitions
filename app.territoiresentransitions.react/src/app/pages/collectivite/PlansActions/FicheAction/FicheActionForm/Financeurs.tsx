@@ -5,9 +5,9 @@ import {useFinanceurListe} from '../data/options/useFinanceurListe';
 import {formatNewTag} from '../data/utils';
 import FicheActionFormBudgetInput from './FicheActionFormBudgetInput';
 import {FicheAction, Financeur} from '../data/types';
-import {useDeleteTag} from '../data/options/useTagDelete';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useTagUpdate} from '../data/options/useTagUpdate';
+import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
+import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
 
 type Props = {
   fiche: FicheAction;

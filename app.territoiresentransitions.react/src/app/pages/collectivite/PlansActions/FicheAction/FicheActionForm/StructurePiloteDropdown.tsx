@@ -4,8 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {useStructurePiloteListe} from '../data/options/useStructurePiloteListe';
 import {TFicheActionStructureInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
-import {useDeleteTag} from '../data/options/useTagDelete';
-import {useTagUpdate} from '../data/options/useTagUpdate';
+import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
+import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
 
 type Props = {
   structures: TFicheActionStructureInsert[] | null;
