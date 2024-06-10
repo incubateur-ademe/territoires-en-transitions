@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
 
 import {Indicateurs} from '@tet/api';
-import {Checkbox, Field, Input, SelectFilter} from '@tet/ui';
+import {Checkbox, Field, Input} from '@tet/ui';
 
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
-import {useThematiqueListe} from 'ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = {
   selectedIndicateurs: Indicateur[] | null;
@@ -14,8 +14,6 @@ type Props = {
 };
 
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
-  const {data: thematiqueListe} = useThematiqueListe();
-
   const [filters, setFilters] = useState<Indicateurs.Filters>({});
 
   const [subset, setSubset] = useState<Indicateurs.Subset | null>(null);
@@ -47,15 +45,15 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
           />
         </Field>
         <Field title="Thématique" small>
-          <SelectFilter
-            options={
-              thematiqueListe?.map(t => ({label: t.nom, value: t.id})) ?? []
-            }
-            values={filters.thematique_ids}
-            onChange={({values}) =>
+          <ThematiquesDropdown
+            values={filters.thematique_ids ?? undefined}
+            onChange={thematiques =>
               setFilters({
                 ...filters,
-                thematique_ids: values as number[],
+                thematique_ids:
+                  thematiques.length > 0
+                    ? thematiques.map(t => t.id)
+                    : undefined,
               })
             }
             small
