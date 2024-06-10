@@ -6,6 +6,7 @@ import {fetchCollection} from 'src/strapi/strapi';
 import {sortByRank} from 'src/utils/sortByRank';
 import ContactEquipe from './ContactEquipe';
 import ListeQuestions from './ListeQuestions';
+import NoResult from '@components/info/NoResult';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -38,7 +39,7 @@ const getData = async () => {
 const Faq = async () => {
   const questions: FaqData[] | null = await getData();
 
-  return (
+  return questions && questions.length > 0 ? (
     <>
       <Section containerClassName="bg-primary-0">
         <h1 className="text-center">Questions fréquentes</h1>
@@ -46,6 +47,8 @@ const Faq = async () => {
       </Section>
       <ContactEquipe />
     </>
+  ) : (
+    <NoResult />
   );
 };
 

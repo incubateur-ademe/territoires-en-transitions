@@ -16,10 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: {
-      default: data.metaTitle ?? 'Territoires en Transitions',
-      template: `%s | ${data.metaTitle ?? 'Territoires en Transitions'}`,
+      default: data?.metaTitle ?? 'Territoires en Transitions',
+      template: `%s | ${data?.metaTitle ?? 'Territoires en Transitions'}`,
     },
-    description: data.metaDescription,
+    description: data?.metaDescription,
     icons: {
       icon: '/favicon.ico',
       other: [
@@ -48,11 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
     },
     openGraph: {
-      title: data.metaTitle ?? 'Territoires en Transitions',
-      description: data.metaDescription,
+      title: data?.metaTitle ?? 'Territoires en Transitions',
+      description: data?.metaDescription,
       url: 'https://www.territoiresentransitions.fr',
-      siteName: data.metaTitle ?? 'Territoires en Transitions',
-      images: data.metaImage
+      siteName: data?.metaTitle ?? 'Territoires en Transitions',
+      images: data?.metaImage
         ? [
             {
               url: data.metaImage.url,
