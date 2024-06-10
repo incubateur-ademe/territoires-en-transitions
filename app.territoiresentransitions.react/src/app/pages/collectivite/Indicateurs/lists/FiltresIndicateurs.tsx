@@ -8,9 +8,9 @@ import FiltrePlans from './FiltrePlans';
 import FiltreComplet from './FiltreComplet';
 import {UiSearchBar} from 'ui/UiSearchBar';
 import {InfoTooltip} from 'ui/shared/floating-ui/InfoTooltip';
-import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
-import PersonnesDropdown from 'ui/DropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 //import FiltreType from './FiltreType';
 
 export type FiltresIndicateursProps = {

@@ -42,9 +42,9 @@ import FichesLiees from './FichesLiees';
 import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
 import {Field} from '@tet/ui';
-import ThematiquesDropdown from 'ui/DropdownLists/ThematiquesDropdown';
-import PersonnesDropdown from 'ui/DropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type TFicheActionForm = {
   fiche: FicheAction;
