@@ -12,26 +12,28 @@ export const getMetaData = async () => {
   const metaImage =
     (data?.attributes?.seo?.metaImage?.data as unknown as StrapiItem)
       ?.attributes ??
-    (data.attributes.Couverture.data as unknown as StrapiItem)?.attributes ??
+    (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes ??
     undefined;
 
-  return {
-    metaTitle:
-      (data?.attributes?.seo?.metaTitle as unknown as string) ?? undefined,
-    metaDescription:
-      (data?.attributes?.seo?.metaDescription as unknown as string) ??
-      (data.attributes.Titre as unknown as string) ??
-      undefined,
-    metaImage: metaImage
-      ? {
-          url: metaImage.url as unknown as string,
-          width: metaImage.width as unknown as number,
-          height: metaImage.height as unknown as number,
-          type: metaImage.mime as unknown as string,
-          alt: metaImage.alternativeText as unknown as string,
-        }
-      : undefined,
-  };
+  return data
+    ? {
+        metaTitle:
+          (data?.attributes?.seo?.metaTitle as unknown as string) ?? undefined,
+        metaDescription:
+          (data?.attributes?.seo?.metaDescription as unknown as string) ??
+          (data?.attributes.Titre as unknown as string) ??
+          undefined,
+        metaImage: metaImage
+          ? {
+              url: metaImage.url as unknown as string,
+              width: metaImage.width as unknown as number,
+              height: metaImage.height as unknown as number,
+              type: metaImage.mime as unknown as string,
+              alt: metaImage.alternativeText as unknown as string,
+            }
+          : undefined,
+      }
+    : null;
 };
 
 export const getData = async (): Promise<AccueilData | null> => {
@@ -51,7 +53,7 @@ export const getData = async (): Promise<AccueilData | null> => {
     ['populate[11]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
-  const temoignages = data.attributes.temoignages_liste
+  const temoignages = data?.attributes.temoignages_liste
     .data as unknown as StrapiItem[];
 
   // Formattage de la data
