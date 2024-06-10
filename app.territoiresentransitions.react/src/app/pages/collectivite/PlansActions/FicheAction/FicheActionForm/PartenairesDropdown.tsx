@@ -4,8 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {usePartenaireListe} from '../data/options/usePartenaireListe';
 import {TPartenaireInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
-import {useDeleteTag} from '../data/options/useTagDelete';
-import {useTagUpdate} from '../data/options/useTagUpdate';
+import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
+import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
 
 type Props = {
   partenaires: TPartenaireInsert[] | null;

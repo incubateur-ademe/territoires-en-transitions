@@ -2,9 +2,9 @@ import {useEffect} from 'react';
 
 import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
 import {usePersonneListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/usePersonneListe';
-import {useTagCreate} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagCreate';
-import {useDeleteTag} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagDelete';
-import {useTagUpdate} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useTagUpdate';
+import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
+import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
+import {useTagCreate} from 'ui/DropdownLists/hooks/useTagCreate';
 import {Personne} from 'app/pages/collectivite/PlansActions/FicheAction/data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
