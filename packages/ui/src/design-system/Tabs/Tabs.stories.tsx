@@ -76,3 +76,21 @@ export const AvecStyles: Story = {
     children: AvecIcones.args.children,
   },
 };
+
+export const AvecBeaucoupOnglets: Story = {
+  args: {
+    defaultActiveTab: 1,
+    children: [
+      ...AvecIcones.args.children,
+      <Tab label="Onglet 4" icon="lock-fill">
+        contenu onglet 4
+      </Tab>,
+      <Tab label="Onglet 5" icon="user-line">
+        contenu onglet 5
+      </Tab>,
+      <Tab label="Onglet 6" icon="chat-1-line">
+        contenu onglet 6
+      </Tab>,
+    ],
+  },
+};

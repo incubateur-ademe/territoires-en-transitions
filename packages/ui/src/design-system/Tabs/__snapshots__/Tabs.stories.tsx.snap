@@ -1,5 +1,108 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`design-system/Tabs AvecBeaucoupOnglets smoke-test 1`] = `
+<div class="overflow-hidden">
+  <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
+      role="tablist"
+  >
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-0"
+              aria-selected="false"
+      >
+        <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 1
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md border border-grey-3 rounded-md shadow-button bg-white text-primary-9"
+              type="button"
+              role="tab"
+              id="tab-1"
+              aria-selected="true"
+      >
+        <span class="ri-user-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 2
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-2"
+              aria-selected="false"
+      >
+        <span class="ri-chat-1-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 3
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-3"
+              aria-selected="false"
+      >
+        <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 4
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-4"
+              aria-selected="false"
+      >
+        <span class="ri-user-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 5
+      </button>
+    </li>
+    <li role="presentation"
+        class="p-0"
+    >
+      <button class="px-3 py-1 font-bold w-max hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9 text-md text-primary-10"
+              type="button"
+              role="tab"
+              id="tab-5"
+              aria-selected="false"
+      >
+        <span class="ri-chat-1-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mr-1">
+        </span>
+        Onglet 6
+      </button>
+    </li>
+  </ul>
+  <div id="tabpanel-1"
+       class
+       role="tabpanel"
+       aria-labelledby="tab-1"
+       tabindex="1"
+       label="Onglet 2"
+       icon="user-line"
+  >
+    contenu onglet 2
+  </div>
+</div>
+`;
+
 exports[`design-system/Tabs AvecIcones smoke-test 1`] = `
 <div class="overflow-hidden">
   <ul class="inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full overflow-x-auto !list-none"
