@@ -4,8 +4,8 @@ import SelectCreateTagsDropdown from 'ui/shared/select/SelectCreateTagsDropdown'
 import {useServicePiloteListe} from '../data/options/useServicePiloteListe';
 import {TFicheActionServicePiloteInsert} from 'types/alias';
 import {formatNewTag} from '../data/utils';
-import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
-import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
+import {useTagUpdate} from 'ui/dropdownLists/hooks/useTagUpdate';
+import {useDeleteTag} from 'ui/dropdownLists/hooks/useTagDelete';
 
 type Props = {
   services: TFicheActionServicePiloteInsert[] | null;

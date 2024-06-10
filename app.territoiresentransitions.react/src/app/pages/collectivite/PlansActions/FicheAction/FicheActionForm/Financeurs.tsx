@@ -6,8 +6,8 @@ import {formatNewTag} from '../data/utils';
 import FicheActionFormBudgetInput from './FicheActionFormBudgetInput';
 import {FicheAction, Financeur} from '../data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useTagUpdate} from 'ui/DropdownLists/hooks/useTagUpdate';
-import {useDeleteTag} from 'ui/DropdownLists/hooks/useTagDelete';
+import {useTagUpdate} from 'ui/dropdownLists/hooks/useTagUpdate';
+import {useDeleteTag} from 'ui/dropdownLists/hooks/useTagDelete';
 
 type Props = {
   fiche: FicheAction;

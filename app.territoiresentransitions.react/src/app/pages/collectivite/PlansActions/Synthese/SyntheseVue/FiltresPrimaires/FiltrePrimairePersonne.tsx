@@ -4,7 +4,7 @@ import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFilt
 import {usePersonneListe} from '../../../FicheAction/data/options/usePersonneListe';
 import {TOption} from 'ui/shared/select/commons';
 import {SANS_PILOTE, SANS_REFERENT} from '../../../FicheAction/data/filters';
-import {getPersonneStringId} from 'ui/DropdownLists/PersonnesDropdown/utils';
+import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = {
   filterKey: 'pilotes' | 'referents';
