@@ -42,7 +42,7 @@ import FichesLiees from './FichesLiees';
 import IndicateursLies from './indicateurs/IndicateursLies';
 import BadgePriorite from '../../components/BadgePriorite';
 import {Field} from '@tet/ui';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 

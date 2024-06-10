@@ -3,10 +3,10 @@ import {useEffect, useState} from 'react';
 import {Indicateurs} from '@tet/api';
 import {Checkbox, Field, Input, SelectFilter} from '@tet/ui';
 
-import {useThematiqueListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useThematiqueListe';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {useThematiqueListe} from 'ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
 
 type Props = {
   selectedIndicateurs: Indicateur[] | null;

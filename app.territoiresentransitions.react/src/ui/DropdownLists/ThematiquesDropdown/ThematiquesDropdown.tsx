@@ -1,6 +1,6 @@
 import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {useThematiqueListe} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/useThematiqueListe';
 import {TThematiqueRow} from 'types/alias';
+import {useThematiqueListe} from './useThematiqueListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];

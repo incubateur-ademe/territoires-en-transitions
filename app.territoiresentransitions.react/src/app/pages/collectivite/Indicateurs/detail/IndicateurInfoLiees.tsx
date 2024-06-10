@@ -6,7 +6,7 @@ import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilo
 import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
 import {Field} from '@tet/ui';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 
