@@ -20,12 +20,14 @@
     "titre": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Vous cherchez un outil pour piloter vos plans d’action et suivre vos indicateurs ?"
     },
     "accroche": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Découvrez ce service gratuit dédié à accompagner votre collectivité ! "
     },
     "cta_inscription": {
       "type": "string",
@@ -35,7 +37,8 @@
     },
     "url_inscription": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "https://app.territoiresentransitions.fr"
     },
     "cta_demo": {
       "type": "string",
@@ -45,7 +48,8 @@
     },
     "url_demo": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "https://calendly.com/territoiresentransitions/demo-fonctionnalite-plans-d-action"
     },
     "couverture": {
       "type": "media",
@@ -63,11 +67,13 @@
     "panier_titre": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Identifiez des actions à impact pour votre collectivité en moins de quelques clics"
     },
     "panier_description": {
       "type": "richtext",
-      "required": true
+      "required": true,
+      "default": "Vous avez besoin d'aide pour identifier des actions concrètes adaptées à votre territoire ? Vous souhaitez accélérer votre démarche de transition écologique pour votre commune ou votre intercommunalité ? Vous cherchez à prioriser quelques actions clés à valider avec vos élus ?"
     },
     "panier_image": {
       "type": "media",
@@ -84,11 +90,13 @@
     "fonctionnalites_titre": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Organisez le travail et atteignez vos objectifs !"
     },
     "fonctionnalites_contenu": {
       "type": "richtext",
-      "required": true
+      "required": true,
+      "default": "Accélérez votre diagnostic grâce aux actions à impact Centralisez vos données et pilotez vos plans d’actions Bénéficiez d’une aide précieuse dans la collecte de données grâce à l’Open Data Collaborez avec vos collègues pour le suivi des actions et la mise à jour des indicateurs Evaluez la progression et l'impact de vos actions via vos tableaux de bord"
     },
     "fonctionnalites_image": {
       "type": "media",
@@ -104,13 +112,16 @@
     "equipe_titre": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Qui sommes-nous ?"
     },
     "equipe_citation": {
-      "type": "text"
+      "type": "text",
+      "default": "“Dans un environnement qui change, il n'y a pas de plus grand risque que de rester immobile.”"
     },
     "equipe_description": {
-      "type": "text"
+      "type": "text",
+      "default": "C’est avec cette envie de faire avancer les choses que le projet Territoires en Transitions est né. Nicolas Vallée, intrapreneur et salarié de l’ADEME, a toujours aimé faire bouger les lignes. C’est donc dans cette optique qu’il s’est entouré des meilleurs (évidemment) pour atteindre un objectif : changer le monde. Enfin, déjà changer le quotidien des collectivités pour leur permettre de réussir leur transition écologique."
     },
     "equipe_liste": {
       "type": "component",
@@ -127,7 +138,8 @@
     "questions_titre": {
       "type": "string",
       "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "Vous avez une question ?"
     },
     "questions_liste": {
       "type": "component",
@@ -137,7 +149,8 @@
     },
     "questions_description": {
       "type": "richtext",
-      "maxLength": 255
+      "maxLength": 255,
+      "default": "N'hésitez pas à consulter notre FaQ ou à nous contacter. Notre équipe répond via le chat en moins de 20 minutes."
     },
     "cta_faq": {
       "type": "string",
