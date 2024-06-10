@@ -33,6 +33,8 @@ type BaseButtonProps = {
   iconPosition?: IconPosition;
   /** Lien externe */
   external?: boolean;
+  /** Donné par le dropdownfloater si utilisé pour afficher un élément floating-ui */
+  isOpen?: boolean;
 } & ButtonContentProps;
 
 // On définit les types des props du composant <Button>

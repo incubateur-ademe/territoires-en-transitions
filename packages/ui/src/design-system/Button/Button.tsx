@@ -22,6 +22,8 @@ export const Button = forwardRef(
       icon,
       iconPosition,
       external,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isOpen, // obligé de le déstructurer pour ne pas le passer au bouton
       ...props
     }: ButtonProps,
     ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
