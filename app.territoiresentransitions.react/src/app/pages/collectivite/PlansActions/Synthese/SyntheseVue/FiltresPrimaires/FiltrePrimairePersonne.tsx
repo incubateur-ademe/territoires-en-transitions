@@ -3,8 +3,8 @@ import {ITEM_ALL} from 'ui/shared/filters/commons';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {TOption} from 'ui/shared/select/commons';
 import {SANS_PILOTE, SANS_REFERENT} from '../../../FicheAction/data/filters';
-import {getPersonneStringId} from 'ui/DropdownListsTemp/PersonnesDropdown/utils';
-import {usePersonneListe} from 'ui/DropdownListsTemp/PersonnesDropdown/usePersonneListe';
+import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {usePersonneListe} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 type Props = {
   filterKey: 'pilotes' | 'referents';
