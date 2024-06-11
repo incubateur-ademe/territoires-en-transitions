@@ -2,19 +2,20 @@ import {useHistory} from 'react-router-dom';
 
 import {Button} from '@tet/ui';
 
+import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {optionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
+import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   TDBViewParam,
   makeCollectiviteIndicateursUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import Module from '../Module';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
-import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
+import Module from '../Module';
 
 type Props = {
   view: TDBViewParam;
@@ -26,9 +27,12 @@ const ModuleIndicateurs = ({view, module, planIds}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
+  const filtre = {
+    ...optionsToFilters(module.options),
     plan_ids: planIds,
-  });
+  };
+
+  const {data, isLoading} = useFilteredIndicateurDefinitions(null, filtre);
 
   return (
     <Module
