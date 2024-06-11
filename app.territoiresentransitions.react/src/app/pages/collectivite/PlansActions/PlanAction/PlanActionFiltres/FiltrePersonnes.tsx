@@ -8,8 +8,8 @@ import {
 } from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import {usePersonneListe} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import {getPersonneStringId} from 'ui/DropdownListsTemp/PersonnesDropdown/utils';
+import {usePersonneListe} from 'ui/DropdownListsTemp/PersonnesDropdown/usePersonneListe';
 
 type Props = TFiltreProps & {
   label: string;

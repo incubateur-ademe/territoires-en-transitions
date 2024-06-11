@@ -17,6 +17,8 @@ const ThematiquesDropdown = (props: Props) => {
       }))
     : [];
 
+  console.log("commit pour changer le nom d'un dossier");
+
   const getSelectedThematiques = (values?: OptionValue[]) =>
     thematiqueListe?.filter(t => values?.some(v => v === t.id)) ?? [];
 
