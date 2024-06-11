@@ -2,8 +2,8 @@ import { supabaseWithServiceRole } from "../../lib/supabase_with_service_role.ts
 import { signOut } from "../../lib/auth.ts";
 import { testReset } from "../../lib/rpcs/testReset.ts";
 import { assertEquals } from "https://deno.land/std@0.198.0/assert/mod.ts";
-import * as xlsx from "https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs";
-import * as cptable from "https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs";
+import * as xlsx from 'https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs';
+import * as cptable from 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/cpexcel.full.mjs';
 xlsx.set_cptable(cptable);
 
 const dirtyOptions = {
