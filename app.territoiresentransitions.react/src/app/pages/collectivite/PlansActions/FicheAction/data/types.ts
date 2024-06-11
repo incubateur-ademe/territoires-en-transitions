@@ -12,7 +12,7 @@ import {
   TFicheResume,
   TThematiqueRow,
 } from 'types/alias';
-import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import {Personne} from 'ui/DropdownListsTemp/PersonnesDropdown/usePersonneListe';
 
 export type FicheAction = Omit<
   TFicheAction,

@@ -1,4 +1,4 @@
-import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import {Personne} from 'ui/DropdownListsTemp/PersonnesDropdown/usePersonneListe';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string

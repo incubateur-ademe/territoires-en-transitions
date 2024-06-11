@@ -26,8 +26,8 @@ import {
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import PersonnesDropdown from 'ui/DropdownListsTemp/PersonnesDropdown/PersonnesDropdown';
+import {getPersonneStringId} from 'ui/DropdownListsTemp/PersonnesDropdown/utils';
 
 type Props = {
   initialFiche: FicheResume;
