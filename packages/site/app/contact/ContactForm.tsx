@@ -29,10 +29,11 @@ const initFormData: FormData = {
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(initFormData);
   const [status, setStatus] = useState<'success' | 'error' | null>(null);
-  const [isContactPanier, setIsContactPanier] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const isContactPanier = searchParams.get('panier') === 'true' ? true : false;
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -84,10 +85,7 @@ const ContactForm = () => {
   };
 
   useEffect(() => {
-    const paiContact = searchParams.get('panier') === 'true' ? true : false;
-    setIsContactPanier(paiContact);
-
-    if (paiContact) {
+    if (isContactPanier) {
       const stringToFind = "Informations sur le panier d'actions à impact";
       const optionGroup = options.find(opt =>
         opt.options.some(o => o.label === stringToFind),
@@ -106,7 +104,8 @@ const ContactForm = () => {
         }));
       }
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
