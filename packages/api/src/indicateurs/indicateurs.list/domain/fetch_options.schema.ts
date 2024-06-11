@@ -19,10 +19,7 @@ export const filtreSchema = filtreRessourceLieesSchema
 
 export type Filtre = z.infer<typeof filtreSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema([
-  'titre',
-  'modified_at',
-]).extend({
+export const fetchOptionsSchema = getQueryOptionsSchema(['text']).extend({
   filtre: filtreSchema,
 });
 

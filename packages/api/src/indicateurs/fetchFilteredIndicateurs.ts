@@ -1,5 +1,6 @@
 import {Enums, DBClient} from '../typeUtils';
 import {unaccent} from '../utils/unaccent';
+import {Options} from './indicateurs.list/domain/fetch_options.schema';
 
 // type renvoyé par la fonction de fetch
 type IndicateurItemFetched = {
@@ -263,3 +264,16 @@ export const fetchFilteredIndicateurs = async (
       })),
   };
 };
+
+export function optionsToFilters(options: Pick<Options, 'filtre'>): Filters {
+  const {filtre} = options;
+
+  return {
+    thematique_ids: filtre.thematiqueIds,
+    plan_ids: filtre.planActionIds,
+    pilote_user_ids: filtre.utilisateurPiloteIds,
+    pilote_tag_ids: filtre.personnePiloteIds,
+    service_ids: filtre.servicePiloteIds,
+    rempli: filtre.estComplet,
+  };
+}

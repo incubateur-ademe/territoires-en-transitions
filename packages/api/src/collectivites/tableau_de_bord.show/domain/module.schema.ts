@@ -1,5 +1,6 @@
 import {z} from 'zod';
-import {fetchOptionsSchema} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
+import {fetchOptionsSchema as fichesFetchOptionsSchema} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
+import {fetchOptionsSchema as indicateursFetchOptionsSchema} from '../../../indicateurs/indicateurs.list/domain/fetch_options.schema';
 
 export const moduleCommonSchemaInsert = z.object({
   id: z.string().uuid(),
@@ -18,12 +19,12 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
 
 export const moduleIndicateursSchema = z.object({
   type: z.literal('indicateur.list'),
-  options: z.object({}),
+  options: indicateursFetchOptionsSchema,
 });
 
 export const moduleFicheActionsSchema = z.object({
   type: z.literal('fiche_action.list'),
-  options: fetchOptionsSchema,
+  options: fichesFetchOptionsSchema,
 });
 
 export const moduleSchemaSelect = z.discriminatedUnion('type', [
@@ -65,7 +66,6 @@ export function getDefaultModules({userId, collectiviteId}: Props) {
     slug: defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans'],
     options: {
       filtre: {
-        pilote_user_ids: [userId],
       },
     },
     createdAt: now,
