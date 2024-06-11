@@ -69,7 +69,7 @@ When(
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
       // les badges sont présents
-      cy.get('[data-test=ActionStatutBadge]').should('have.length.gt', 0);
+      cy.get('[data-test=Badge-ActionStatutBadge]').should('have.length.gt', 0);
       // mais pas les sélecteurs pour modifier la valeur
       cy.get('[data-test=SelectStatut]').should('not.exist');
     });
@@ -81,7 +81,7 @@ When(
   () => {
     cy.get('[data-test=DetailTacheTable]').within(() => {
       // les badges sont présents
-      cy.get('[data-test=ActionStatutBadge]').should('have.length.gt', 0);
+      cy.get('[data-test=Badge-ActionStatutBadge]').should('have.length.gt', 0);
       // ainsi que les sélecteurs pour modifier la valeur
       cy.get('[data-test=SelectStatut]').should('have.length.gt', 0);
     });

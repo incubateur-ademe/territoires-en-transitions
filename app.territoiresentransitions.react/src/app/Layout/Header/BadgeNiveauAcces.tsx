@@ -1,3 +1,4 @@
+import {Badge} from '@tet/ui';
 import classNames from 'classnames';
 import {TNiveauAcces} from 'types/alias';
 
@@ -13,18 +14,12 @@ export const BadgeNiveauAcces = (props: Props) => {
   const displayedAcces = getLabel(props);
 
   return (
-    <span
-      className={classNames(
-        'fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none',
-        {
-          'fr-badge--info': acces !== null,
-          'fr-badge--new': acces === null,
-        },
-        className
-      )}
-    >
-      {displayedAcces}
-    </span>
+    <Badge
+      title={displayedAcces}
+      size="sm"
+      state={acces === null ? 'new' : 'info'}
+      className={classNames(className, 'pointer-events-none')}
+    />
   );
 };
 

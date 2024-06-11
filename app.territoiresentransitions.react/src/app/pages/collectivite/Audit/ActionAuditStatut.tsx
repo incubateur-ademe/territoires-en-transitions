@@ -29,9 +29,9 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const {auditStatut, readonly, onChange} = props;
   const {statut} = auditStatut;
   return (
-    <div className="fr-px-1w fr-mt-2w w-full bg-[#e8edff]">
+    <div className="px-2 mt-4 w-full bg-primary-2">
       {readonly ? (
-        <div className="fr-py-1w" data-test="action-audit-statut-ro">
+        <div className="py-2" data-test="action-audit-statut-ro">
           <BadgeAuditStatut statut={statut} />
         </div>
       ) : (
@@ -44,11 +44,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
             renderOption={option => (
               <BadgeAuditStatut statut={option.value as TAuditStatut} />
             )}
-            renderSelection={statut => (
-              <span className="mr-auto">
-                <BadgeAuditStatut statut={statut} />
-              </span>
-            )}
+            renderSelection={statut => <BadgeAuditStatut statut={statut} />}
             buttonClassName="w-full"
           />
         </div>

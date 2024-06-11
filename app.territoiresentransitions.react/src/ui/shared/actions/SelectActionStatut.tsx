@@ -46,9 +46,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
   const currentValue = value || 'non_renseigne';
 
   if (disabled) {
-    return (
-      <ActionStatutBadge statut={currentValue as TActionAvancementExt} small />
-    );
+    return <ActionStatutBadge statut={currentValue as TActionAvancementExt} />;
   }
 
   return (
@@ -62,13 +60,10 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
         buttonClassName
       )}
       renderOption={option => (
-        <ActionStatutBadge
-          statut={option.value as TActionAvancementExt}
-          small
-        />
+        <ActionStatutBadge statut={option.value as TActionAvancementExt} />
       )}
       renderSelection={value => (
-        <ActionStatutBadge statut={value} small className="mr-auto mt-1" />
+        <ActionStatutBadge statut={value} className="mt-1" />
       )}
       required
     />

@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import {TIndicateurPredefini} from '../types';
-import {Badge} from 'ui/shared/Badge';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {ExpandToggle} from 'ui/icons/ExpandToggle';
+import {Badge} from '@tet/ui';
 
 /** Affiche l'en-tête du détail d'un indicateur enfant */
 export const IndicateurEnfantHeader = ({
@@ -29,11 +29,9 @@ export const IndicateurEnfantHeader = ({
         <ExpandToggle open={open} />
         <span className="font-bold">{definition.nom}</span>
       </div>
-      <div>
+      <div className="flex gap-2">
         {definition.participation_score && (
-          <Badge status="no-icon" className="fr-mr-1w">
-            Participe au score
-          </Badge>
+          <Badge title="Participe au score" state="grey" />
         )}
         <BadgeACompleter
           className="min-w-max"

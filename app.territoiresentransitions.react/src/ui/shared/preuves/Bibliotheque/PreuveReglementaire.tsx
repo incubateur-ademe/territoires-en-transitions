@@ -34,7 +34,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         {/* Titre du document + Identifiant de l'action associée */}
         <span
           data-test="desc"
-          className={`fr-text--sm font-medium fr-mb-3v ${
+          className={`text-sm font-medium mb-3 flex gap-2 ${
             isDisabled ? 'text-grey25' : 'text-black'
           }`}
         >

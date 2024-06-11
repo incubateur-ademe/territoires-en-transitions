@@ -1,73 +1,105 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Barre 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey-5 line-through"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white !px-1.5 !py-0.5 min-w-fit line-through"
+  data-test="Badge-ActionStatutBadge"
 >
-  Non renseigné
-</span>
+  <span
+    className="text-grey-6 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Non renseigné
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Detaille 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-primary bg-primary-2"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Détaillé
-</span>
+  <span
+    className="text-primary-7 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Détaillé
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Fait 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-success-1 bg-success-2"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Fait
-</span>
+  <span
+    className="text-success-1 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Fait
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Concerne 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-grey-3"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Non concerné
-</span>
+  <span
+    className="text-grey-6 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Non concerné
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Non Renseigne 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey-5"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Non renseigné
-</span>
+  <span
+    className="text-grey-6 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Non renseigné
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Pas Fait 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-error-1 bg-error-2"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-error-2 border-error-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Pas fait
-</span>
+  <span
+    className="text-error-1 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Pas fait
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Programme 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-info-1 bg-info-2"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Programmé
-</span>
+  <span
+    className="text-info-1 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Programmé
+  </span>
+</div>
 `;
 
 exports[`Storyshots ui/shared/actions/ActionStatutBadge Small 1`] = `
-<span
-  className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-grey-6 bg-white border border-grey-5 !text-xs !px-1"
-  data-test="ActionStatutBadge"
+<div
+  className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white !px-1.5 !py-0.5 min-w-fit"
+  data-test="Badge-ActionStatutBadge"
 >
-  Non renseigné
-</span>
+  <span
+    className="text-grey-6 font-bold leading-4 text-left text-xs uppercase"
+  >
+    Non renseigné
+  </span>
+</div>
 `;

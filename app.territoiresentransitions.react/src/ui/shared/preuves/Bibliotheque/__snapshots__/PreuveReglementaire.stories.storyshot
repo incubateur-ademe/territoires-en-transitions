@@ -9,22 +9,27 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action De
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-grey25"
+      className="text-sm font-medium mb-3 flex gap-2 text-grey25"
       data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.2
         )
-        <span
-          className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
+        <div
+          className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+          data-test="Badge-undefined"
         >
-          Non concerné
-        </span>
+          <span
+            className="text-grey-6 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+          >
+            Non concerné
+          </span>
+        </div>
       </span>
       <span
         className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
@@ -63,22 +68,27 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Action No
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-grey25"
+      className="text-sm font-medium mb-3 flex gap-2 text-grey25"
       data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.2
         )
-        <span
-          className="fr-badge fr-badge--no-icon fr-ml-4w fr-text-mention--grey fr-text--xs"
+        <div
+          className="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+          data-test="Badge-undefined"
         >
-          Non concerné
-        </span>
+          <span
+            className="text-grey-6 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+          >
+            Non concerné
+          </span>
+        </div>
       </span>
       <span
         className="ri-information-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 ml-2 cursor-pointer"
@@ -117,13 +127,13 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-black"
+      className="text-sm font-medium mb-3 flex gap-2 text-black"
       data-test="desc"
     >
       Etude de vulnérabilité au changement climatique
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.3
@@ -231,13 +241,13 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-black"
+      className="text-sm font-medium mb-3 flex gap-2 text-black"
       data-test="desc"
     >
       Agenda 21 / Agenda 2030
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.3
@@ -333,13 +343,13 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-black"
+      className="text-sm font-medium mb-3 flex gap-2 text-black"
       data-test="desc"
     >
       Etude de vulnérabilité au changement climatique
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.3
@@ -496,13 +506,13 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Non Rense
     className="flex flex-1 flex-col"
   >
     <span
-      className="fr-text--sm font-medium fr-mb-3v text-black"
+      className="text-sm font-medium mb-3 flex gap-2 text-black"
       data-test="desc"
     >
       Délibération d'engagement dans la Convention des Maires
        
       <span
-        className="text-grey-6 leading-6"
+        className="text-grey-6 leading-6 flex gap-2"
       >
         (
         1.1.2

@@ -85,11 +85,16 @@ Array [
         }
       >
         Déchets
-        <span
-          className="fr-badge fr-badge--success fr-badge--no-icon"
+        <div
+          className="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
+          data-test="Badge-a-completer"
         >
-          Complété
-        </span>
+          <span
+            className="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase"
+          >
+            Complété
+          </span>
+        </div>
       </a>
     </li>
     <li
@@ -105,11 +110,16 @@ Array [
         }
       >
         Énergie
-        <span
-          className="fr-badge fr-badge--info fr-badge--no-icon"
+        <div
+          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
+          data-test="Badge-a-completer"
         >
-          À compléter
-        </span>
+          <span
+            className="text-info-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase"
+          >
+            À compléter
+          </span>
+        </div>
       </a>
     </li>
     <li
@@ -125,11 +135,16 @@ Array [
         }
       >
         Mobilité
-        <span
-          className="fr-badge fr-badge--success fr-badge--no-icon"
+        <div
+          className="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded"
+          data-test="Badge-a-completer"
         >
-          Complété
-        </span>
+          <span
+            className="text-success-1 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase"
+          >
+            Complété
+          </span>
+        </div>
       </a>
     </li>
   </ul>,

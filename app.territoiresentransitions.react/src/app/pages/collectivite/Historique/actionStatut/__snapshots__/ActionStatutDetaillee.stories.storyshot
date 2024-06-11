@@ -2,12 +2,16 @@
 
 exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Nouvelle 1`] = `
 Array [
-  <span
-    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-primary bg-primary-2"
-    data-test="ActionStatutBadge"
+  <div
+    className="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded min-w-fit"
+    data-test="Badge-ActionStatutBadge"
   >
-    Détaillé
-  </span>,
+    <span
+      className="text-primary-7 font-bold leading-4 text-left mt-0.5 text-sm uppercase"
+    >
+      Détaillé
+    </span>
+  </div>,
   <div
     className="mt-2"
   >
@@ -38,12 +42,16 @@ Array [
 
 exports[`Storyshots app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee Action Precedente 1`] = `
 Array [
-  <span
-    className="w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md text-primary bg-primary-2 line-through"
-    data-test="ActionStatutBadge"
+  <div
+    className="bg-primary-2 border-primary-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded min-w-fit line-through"
+    data-test="Badge-ActionStatutBadge"
   >
-    Détaillé
-  </span>,
+    <span
+      className="text-primary-7 font-bold leading-4 text-left mt-0.5 text-sm uppercase"
+    >
+      Détaillé
+    </span>
+  </div>,
   <div
     className="mt-2"
   >

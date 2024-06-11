@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {Badge, Button, Card, CardProps, Checkbox, Tooltip} from '@tet/ui';
+import {Button, Card, CardProps, Checkbox, Tooltip} from '@tet/ui';
 import {Notification} from '@tet/ui';
 
 import IndicateurChart, {
@@ -21,6 +21,7 @@ import {
 import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
 import {getIndicateurRestant} from './utils';
+import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -185,11 +186,10 @@ export const IndicateurCardBase = ({
       ) : (
         <>
           <div className="flex items-center gap-6">
-            {indicateursACompleterRestant === 0 ? (
-              <Badge title="Complété" state="success" size="sm" />
-            ) : (
-              <Badge title="À compléter" state="info" size="sm" />
-            )}
+            <BadgeACompleter
+              a_completer={indicateursACompleterRestant !== 0}
+              size="sm"
+            />
             {selectState?.setSelected && (
               <Button
                 onClick={(
