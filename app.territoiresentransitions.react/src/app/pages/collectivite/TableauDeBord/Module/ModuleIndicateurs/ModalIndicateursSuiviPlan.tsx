@@ -6,24 +6,28 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  SelectFilter,
+  Select,
   SelectMultiple,
 } from '@tet/ui';
 import FiltrePersonnes from 'app/pages/collectivite/Indicateurs/lists/FiltrePersonnes';
 import FiltreThematiques from 'app/pages/collectivite/Indicateurs/lists/FiltreThematiques';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import {indicateursSuiviPlans} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 
 type Filters = {
   planIds?: number[];
   pilotesIds?: string[];
   thematiquesIds?: string[];
-  rempli?: string[];
+  rempli?: string;
 };
 
-const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
+type Props = ModalProps & {
+  module: ModuleSelect;
+};
+
+const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
   const collectivite_id = useCollectiviteId();
   const plansActions = usePlansActionsListe(collectivite_id!);
 
@@ -36,9 +40,7 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
       openState={openState}
       render={() => (
         <>
-          <h3 className="mb-4 text-center text-2xl">
-            {indicateursSuiviPlans.title}
-          </h3>
+          <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
             <Field title="Nom du plan :">
               <SelectMultiple
@@ -80,7 +82,7 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
               />
             </Field>
             <Field title="Complétion indicateur :">
-              <SelectFilter
+              <Select
                 values={formState.rempli}
                 options={[
                   {
@@ -92,10 +94,10 @@ const ModalIndicateursSuiviPlan = ({openState}: ModalProps) => {
                     value: 'incomplet',
                   },
                 ]}
-                onChange={({values}) =>
+                onChange={value =>
                   setFormState({
                     ...formState,
-                    rempli: values as string[],
+                    rempli: value as string,
                   })
                 }
               />
