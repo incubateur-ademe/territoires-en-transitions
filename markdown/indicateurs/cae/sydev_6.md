@@ -1,7 +1,7 @@
 # SYDEV - Nombre de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis
 ```yaml
-id: cae_68.a
-identifiant: 68.a
+id: sydev_6.a
+identifiant: sydev_6.a
 unite: Nombre de dossiers
 
 titre_long: Nombre de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis
@@ -22,8 +22,8 @@ Mesure le nombre de projets de rénovation réussis par rapport au nombre de pro
 
 # SYDEV - Pourcentage de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis
 ```yaml
-id: cae_68.b
-identifiant: 68.b
+id: sydev_6.b
+identifiant: sydev_6.b
 unite: % de dossiers
 
 titre_long: Nombre de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis / nombre dossiers en cours (en %)
