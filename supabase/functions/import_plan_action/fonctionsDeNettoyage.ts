@@ -100,16 +100,35 @@ export const booleen = async (booleen : any) : Promise<boolean> => {
  * @param date
  * @return date nettoyée
  */
-export const date = async (date : any) : Promise<string> => {
-    if(!date){
-        return null;
-    }
-    const toReturn = new Date(date);
-    if(toReturn.toString()=="Invalid Date"){
-        throw Error("La date n'est pas valide");
-    }
-    return toReturn;
-}
+const nettoieDate = async (date: any) => {
+  if (!date) {
+    return null;
+  }
+  const d = new Date(date);
+  if (d.toString() == "Invalid Date") {
+    throw Error("La date n'est pas valide");
+  }
+  const toReturn = d.toISOString();
+  if (toReturn.substring(0, 10) === "1970-01-01") {
+    return null;
+  }
+  return toReturn;
+};
+
+// extrait et nettoie la valeur d'une cellule "date"
+export const date = async (sheet: any, celluleCoordonnes: any) => {
+  if (!sheet[celluleCoordonnes]) return null;
+
+  // essaye d'extraire une date de la valeur brute
+  const value = await nettoieDate(sheet[celluleCoordonnes].v);
+  if (value) {
+    return value;
+  }
+
+  // ou à défaut essaye d'interpréter la valeur formattée
+  return await nettoieDate(sheet[celluleCoordonnes].w);
+};
+  
 
 /**
  * Nettoie des thématiques

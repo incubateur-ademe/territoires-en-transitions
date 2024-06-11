@@ -211,10 +211,10 @@ const celluleXLSXToElementFiche = async (
                 f.niveau_priorite = await nettoie.niveauPriorite(cellule);
                 break;
             case 27 : // Date de début -> AB | 28
-                f.date_debut = await nettoie.date(cellule);
+                f.date_debut = await nettoie.date(sheet, celluleCoordonnes);
                 break;
             case 28 : // Date de fin -> AC | 29
-                f.date_fin_provisoire = await nettoie.date(cellule);
+                f.date_fin_provisoire = await nettoie.date(sheet, celluleCoordonnes);
                 break;
             case 29 : // Action en amélioration continue -> AD | 30
                 f.amelioration_continue = await nettoie.booleen(cellule);
