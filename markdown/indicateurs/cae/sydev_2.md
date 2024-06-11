@@ -1,13 +1,12 @@
 # SYDEV - Evolution des consommations par rapport aux objectifs du SRADDET (GWh/an)
 ```yaml
-id: cae_66.a
-identifiant: 66.a
+id: sydev_2.a
+identifiant: 2.a
 unite: GWh/an
 
 titre_long: Evolution des consommations par rapport aux objectifs du SRADDET et les objectifs 2030 et 2050 de l'EPCI vis-à-vis de l'année de référence (en GWh/an)
 selection: no
 participation_score: no
-actions:
 
 programmes:
   - cae
@@ -21,14 +20,14 @@ L'indicateur "Evolution des consommations par rapport aux objectifs du SRADDET e
 
 # SYDEV - Evolution des consommations par rapport aux objectifs du SRADDET (%)
 ```yaml
-id: cae_66.b
-identifiant: 66.a
+id: sydev_2.b
+identifiant: 2.b
 unite: %
+parent : sydev_2.a
 
 titre_long: Evolution des consommations par rapport aux objectifs du SRADDET et les objectifs 2030 et 2050 de l'EPCI vis-à-vis de l'année de référence (en %)
 selection: no
 participation_score: no
-actions:
 
 programmes:
   - cae
