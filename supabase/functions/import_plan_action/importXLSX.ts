@@ -1,5 +1,6 @@
-import * as xlsx from 'https://deno.land/x/sheetjs@v0.18.3/xlsx.mjs';
-import * as cptable from 'https://deno.land/x/sheetjs@v0.18.3/dist/cpexcel.full.mjs';
+// @deno-types="https://cdn.sheetjs.com/xlsx-0.20.2/package/types/index.d.ts"
+import * as xlsx from "https://cdn.sheetjs.com/xlsx-0.20.2/package/xlsx.mjs";
+import * as cptable from "https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/cpexcel.full.mjs";
 import * as nettoie from "./fonctionsDeNettoyage.ts";
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
 import { fetchData, TMemoire} from "./fetchData.ts";
