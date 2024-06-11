@@ -4,7 +4,6 @@ import {Checkbox, Input, Pagination, Select} from '@tet/ui';
 
 import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
 import ModulePage from '../ModulePage';
-import {indicateursSuiviPlans} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
@@ -12,6 +11,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import {Filters} from '@tet/api/dist/src/indicateurs';
+import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 
 type orderByOptionsType = {
   label: string;
@@ -34,10 +34,11 @@ const orderByOptions: orderByOptionsType[] = [
 
 type Props = {
   view: TDBViewParam;
-  plan_ids?: number[];
+  module: ModuleSelect;
+  planIds?: number[];
 };
 
-const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
+const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
   const collectiviteId = useCollectiviteId();
 
   const [order, setOrder] = useState(orderByOptions[0]);
@@ -48,7 +49,7 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
-    plan_ids,
+    plan_ids: planIds,
     text: debouncedSearch,
     sort:
       order.value === 'rempli'
@@ -80,7 +81,7 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
   return (
-    <ModulePage view={view} title={indicateursSuiviPlans.title}>
+    <ModulePage view={view} title={module.titre}>
       {/** Paramètres de la liste */}
       <div className="flex items-center gap-8 mb-8 py-6 border-b border-primary-3 z-10">
         {/** Tri */}
@@ -121,6 +122,8 @@ const ModuleIndicateursPage = ({view, plan_ids}: Props) => {
           displaySize="sm"
         />
       </div>
+      {/** Liste des filtres appliqués */}
+      <div className="flex gap-6 mb-8">TODO filtres</div>
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">

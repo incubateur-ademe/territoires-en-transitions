@@ -9,30 +9,33 @@ import {
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import Module from '../Module';
-import {TDBModuleIndicateurs} from '../data';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
+import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 
 type Props = {
   view: TDBViewParam;
-  module: TDBModuleIndicateurs;
-  plan_ids?: number[];
+  planIds?: number[];
+  module: ModuleSelect;
 };
 
-const ModuleIndicateurs = ({view, module, plan_ids}: Props) => {
+const ModuleIndicateurs = ({view, module, planIds}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(null, {plan_ids});
+  const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
+    plan_ids: planIds,
+  });
 
   return (
     <Module
-      title={module.title}
-      symbole={module.symbole}
+      title={module.titre}
+      symbole={<PictoIndicateurVide />}
       editModal={openState => (
-        <ModalIndicateursSuiviPlan openState={openState} />
+        <ModalIndicateursSuiviPlan openState={openState} module={module} />
       )}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}

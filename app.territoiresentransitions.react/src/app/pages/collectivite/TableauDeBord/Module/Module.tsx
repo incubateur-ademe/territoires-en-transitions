@@ -78,15 +78,7 @@ const Module = ({
   return (
     <ModuleContainer>
       <div className="flex items-start gap-20">
-        <div>
-          <h6 className="mb-0">{title}</h6>
-          <div className="flex gap-4 mt-4">
-            {/** Selected filters */}
-            {selectedFilters.map(filter => (
-              <Badge key={filter} title={filter} state="standard" />
-            ))}
-          </div>
-        </div>
+        <h6 className="mb-0">{title}</h6>
         <>
           {/** Bouton d'édition des filtres du module + modale */}
           <Button
@@ -122,7 +114,7 @@ const ModuleContainer = ({
 }) => (
   <div
     className={classNames(
-      'min-h-[21rem] flex flex-col gap-6 p-8 bg-white border border-primary-4 rounded-xl',
+      'min-h-[21rem] flex flex-col gap-4 p-8 bg-white border border-primary-4 rounded-xl',
       className
     )}
   >

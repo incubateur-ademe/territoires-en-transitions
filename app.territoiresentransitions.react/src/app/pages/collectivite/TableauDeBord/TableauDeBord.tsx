@@ -2,7 +2,6 @@ import {Redirect, Route} from 'react-router-dom';
 
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
-import {tdbUtilisateur} from 'app/pages/collectivite/TableauDeBord/Module/data';
 import {
   collectiviteTDBBasePath,
   collectiviteTDBCollectivitePath,
@@ -13,6 +12,7 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import Personnel from './Personnel';
 import View from './View';
+import TdbVide from './TdbVide';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
@@ -20,7 +20,7 @@ const TableauDeBord = () => {
 
   const plansActions = usePlansActionsListe(collectivite_id!);
 
-  const plan_ids = plansActions?.plans.map(p => p.id);
+  const planIds = plansActions?.plans.map(p => p.id);
 
   const isEmpty = plansActions?.plans.length === 0;
 
@@ -33,13 +33,19 @@ const TableauDeBord = () => {
           <Redirect
             to={makeTableauBordUrl({
               collectiviteId: collectivite_id!,
-              view: tdbUtilisateur.defaultView,
+              view: 'personnel',
             })}
           />
         </Route>
         {/** Tableau de bord personnel */}
         <Route exact path={collectiviteTDBPersonnelPath}>
-          <Personnel />
+          <View
+            view={'personnel'}
+            title="Mon tableau de bord"
+            description="Ce tableau de bord est personnel afin de suivre mes plans d'action."
+          >
+            {isEmpty ? <TdbVide /> : <Personnel planIds={planIds} />}
+          </View>
         </Route>
         {/** Tableau de bord de la collectivité */}
         <Route exact path={collectiviteTDBCollectivitePath}>
@@ -52,7 +58,7 @@ const TableauDeBord = () => {
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>
-          <Modules plan_ids={plan_ids} />
+          <Modules planIds={planIds} />
         </Route>
       </div>
     </div>
