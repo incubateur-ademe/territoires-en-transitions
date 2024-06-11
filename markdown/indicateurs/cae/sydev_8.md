@@ -1,0 +1,21 @@
+# SYDEV - Nombre de projets ayant recours aux matériaux biosourcés
+
+```yaml
+id: sydev_8
+identifiant: sydev_8
+unite: Nombre de projets
+
+titre_long: Nombre de projets ayant recours aux matériaux biosourcés
+selection: no
+obligation_cae: no
+
+programmes:
+  - cae
+
+thematiques:
+  - energie_et_climat
+```
+## Description
+Mesure le pourcentage de projets de construction ou de rénovation de bâtiments et installations appartenant aux communes qui ont utilisé des matériaux biosourcés. Les matériaux biosourcés sont des matériaux produits à partir de ressources végétales ou animales renouvelables, tels que le bois, la paille, la laine de mouton ou la chaux.
+
+Pour obtenir cet indicateur, on pourra contacter les mairies des communes du département et demander des informations sur les projets de construction ou de rénovation qui ont utilisé des matériaux biosourcés. On pourra également consulter les sites web des communes pour voir s'il y a des informations disponibles sur leurs projets de construction ou de rénovation et les matériaux qui ont été utilisés. Il est également possible de consulter les organisations locales ou les associations qui s'occupent de la promotion des matériaux biosourcés pour obtenir des informations sur les tendances dans la région.
