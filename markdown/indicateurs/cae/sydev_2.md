@@ -1,7 +1,7 @@
 # SYDEV - Evolution des consommations par rapport aux objectifs du SRADDET (GWh/an)
 ```yaml
 id: sydev_2.a
-identifiant: 2.a
+identifiant: sydev_2.a
 unite: GWh/an
 
 titre_long: Evolution des consommations par rapport aux objectifs du SRADDET et les objectifs 2030 et 2050 de l'EPCI vis-à-vis de l'année de référence (en GWh/an)
@@ -21,7 +21,7 @@ L'indicateur "Evolution des consommations par rapport aux objectifs du SRADDET e
 # SYDEV - Evolution des consommations par rapport aux objectifs du SRADDET (%)
 ```yaml
 id: sydev_2.b
-identifiant: 2.b
+identifiant: sydev_2.b
 unite: %
 parent : sydev_2.a
 
