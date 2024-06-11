@@ -1,7 +1,7 @@
 # SYDEV - Nombre de ménages en Précarité énergétique
 ```yaml
-id: cae_71
-identifiant: 71
+id: sydev_3.a
+identifiant: sydev_3.a
 unite: Nombre de ménages
 
 titre_long: Nombre de ménages en Précarité énergétique (OPAH…)
@@ -23,10 +23,10 @@ Pour disposer de cet indicateur pour le département, on pourra s' adresser aux 
 
 # SYDEV - Proportion de ménages en Précarité énergétique
 ```yaml
-id: cae_71.a
-identifiant: 71.a
+id: sydev_3.b
+identifiant: sydev_3.b
 unite: Nombre de ménages
-parent: cae_71
+parent: sydev_3.a
 
 titre_long: Proportion de ménages en Précarité énergétique (OPAH…)
 
