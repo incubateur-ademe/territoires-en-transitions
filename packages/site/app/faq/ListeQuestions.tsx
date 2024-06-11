@@ -20,24 +20,20 @@ const ListeQuestions = ({questions}: ListeQuestionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const getOngletId = useCallback(() => {
-    const ongletParam = searchParams.get('onglet');
-    const ongletId = ongletParam
-      ? onglets.findIndex(onglet => onglet.param === ongletParam)
-      : 0;
-    if (ongletId === -1) router.push(`${pathname}?onglet=${onglets[0].param}`);
-    return ongletId;
-  }, [pathname, router, searchParams]);
-
-  const [currentTab, setCurrentTab] = useState<number>(getOngletId());
-
-  useEffect(() => {
-    setCurrentTab(getOngletId());
-  }, [searchParams, getOngletId]);
+  const ongletParam = searchParams.get('onglet');
+  const currentTab = ongletParam
+    ? onglets.findIndex(onglet => onglet.param === ongletParam)
+    : 0;
 
   const handleChangeTab = (activeTab: number) => {
     router.push(`${pathname}?onglet=${onglets[activeTab].param}`);
   };
+
+  useEffect(() => {
+    if (currentTab === -1)
+      router.push(`${pathname}?onglet=${onglets[0].param}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Tabs
