@@ -1,9 +1,9 @@
-import {Badge, TBadgeProps} from 'ui/shared/Badge';
+import {Badge, BadgeState} from '@tet/ui';
 import {TAuditStatut} from './types';
 
 export const statutToOption: Record<
   TAuditStatut,
-  {label: string; badge: TBadgeProps['status']}
+  {label: string; badge: BadgeState}
 > = {
   non_audite: {label: 'Non audité', badge: 'warning'},
   en_cours: {label: 'Audit en cours', badge: 'info'},
@@ -15,9 +15,5 @@ export const statutToOption: Record<
  */
 export const BadgeAuditStatut = ({statut}: {statut: TAuditStatut}) => {
   const {label, badge} = statutToOption[statut];
-  return (
-    <Badge status={badge} className="fr-badge--no-icon fr-text--xs">
-      {label}
-    </Badge>
-  );
+  return <Badge title={label} state={badge} size="sm" />;
 };

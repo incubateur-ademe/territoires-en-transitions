@@ -349,10 +349,10 @@ When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
 );
 
 When('le badge {string} est visible', text => {
-  cy.get('.fr-badge').contains(text).should('be.visible');
+  cy.get('[data-test=Badge-a-completer]').contains(text).should('be.visible');
 });
 When('le badge {string} est absent', text => {
-  cy.get('.fr-badge').contains(text).should('not.exist');
+  cy.get('[data-test=Badge-a-completer]').contains(text).should('not.exist');
 });
 
 When(/le texte "([^"]*)" est visible/, texte => {

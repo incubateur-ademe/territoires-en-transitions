@@ -1,7 +1,6 @@
 import {ActionType} from 'types/action_referentiel';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionScore} from 'core-logic/hooks/scoreHooks';
-import {ActionPhaseBadge} from './ActionPhaseBadge';
 
 export interface PillParams {
   color: string;
@@ -92,9 +91,6 @@ export const ActionReferentielDisplayTitle = ({
       <div>
         <span className="fr-text--lg">{action.nom} </span>
         <ActionPotentiel action={action} />
-        {action.type === 'sous-action' ? (
-          <ActionPhaseBadge action={action} className="fr-ml-4w" />
-        ) : null}
       </div>
     </div>
   );

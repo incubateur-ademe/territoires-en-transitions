@@ -1,4 +1,4 @@
-import {Badge} from 'ui/shared/Badge';
+import {Badge} from '@tet/ui';
 import {TPreuveAction} from './types';
 
 export type TIdentifiantActionProps = {
@@ -13,15 +13,10 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
   const {identifiant} = action;
 
   return (
-    <span className="text-grey-6 leading-6">
+    <span className="text-grey-6 leading-6 flex gap-2">
       ({identifiant})
       {isDisabledAction(action) ? (
-        <Badge
-          status="no-icon"
-          className="fr-ml-4w fr-text-mention--grey fr-text--xs"
-        >
-          Non concerné
-        </Badge>
+        <Badge title="Non concerné" size="sm" state="grey" />
       ) : null}
     </span>
   );

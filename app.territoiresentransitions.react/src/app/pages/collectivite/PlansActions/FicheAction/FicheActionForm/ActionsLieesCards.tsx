@@ -35,7 +35,7 @@ export const ActionsLieesCards = ({
                 actionId: action_id,
                 referentielId: referentiel,
               })}
-              statutBadge={<ActionStatutBadge statut={statut} small />}
+              statutBadge={<ActionStatutBadge statut={statut} />}
               details={`Référentiel ${referentielToName[referentiel]}`}
               title={`${identifiant} ${nom}`}
             />

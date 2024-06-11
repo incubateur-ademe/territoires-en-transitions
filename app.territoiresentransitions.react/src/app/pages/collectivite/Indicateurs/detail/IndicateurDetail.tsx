@@ -1,5 +1,4 @@
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {Badge} from 'ui/shared/Badge';
 import {referentielToName} from 'app/labels';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
@@ -8,9 +7,8 @@ import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
 import {ImportSourcesSelector} from './ImportSourcesSelector';
-
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
-import {Field} from '@tet/ui';
+import {Badge, Field} from '@tet/ui';
 
 /**
  * Affiche le détail d'un indicateur sans enfant
@@ -42,12 +40,14 @@ export const IndicateurDetail = ({
         fileName={definition.nom}
       />
 
-      <div className="flex items-center fr-mt-5w fr-mb-3w gap-4">
+      <div className="flex items-center mt-10 mb-6 gap-4">
         <BadgeACompleter a_completer={!definition.rempli} />
         {definition.participation_score && (
-          <Badge className="!normal-case" status="no-icon">
-            Participe au score {referentielToName.cae}
-          </Badge>
+          <Badge
+            title={`Participe au score ${referentielToName.cae}`}
+            uppercase={false}
+            state="grey"
+          />
         )}
       </div>
       <IndicateurValuesTabs

@@ -95,7 +95,7 @@ const IndicateurPersonnaliseBase = ({
           fileName={definition.nom}
         />
 
-        <BadgeACompleter a_completer={!rempli} className="fr-mt-5w fr-mb-3w" />
+        <BadgeACompleter a_completer={!rempli} className="mt-10 mb-6" />
         <IndicateurValuesTabs definition={definition} />
         <div className="flex flex-col gap-8 mt-10">
           <Field title="Description et méthodologie de calcul">

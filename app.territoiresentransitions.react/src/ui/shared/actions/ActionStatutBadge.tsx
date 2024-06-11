@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {avancementToLabel} from 'app/labels';
 import {TActionAvancementExt} from 'types/alias';
+import {Badge, BadgeState} from '@tet/ui';
 
 type Props = {
   className?: string;
@@ -8,37 +9,29 @@ type Props = {
   // Indique si le statut est barré
   barre?: boolean;
   // Rend une version plus petite du composant
-  small?: boolean;
+  size?: 'sm' | 'md';
 };
 
-const statusToClassNames = {
-  non_renseigne: 'text-grey-6 bg-white border border-grey-5',
-  pas_fait: 'text-error-1 bg-error-2',
-  programme: 'text-info-1 bg-info-2',
-  detaille: 'text-primary bg-primary-2',
-  fait: 'text-success-1 bg-success-2',
-  non_concerne: 'text-grey-6 bg-grey-3',
+const statusToState: Record<TActionAvancementExt, BadgeState> = {
+  non_renseigne: 'grey',
+  pas_fait: 'error',
+  programme: 'info',
+  detaille: 'standard',
+  fait: 'success',
+  non_concerne: 'grey',
 };
 
-const ActionStatutBadge = ({className, statut, barre, small}: Props) => {
+const ActionStatutBadge = ({className, statut, barre, size = 'sm'}: Props) => {
   return (
-    <span
-      data-test="ActionStatutBadge"
-      className={classNames(
-        className,
-        // styles communs
-        'w-max py-0.5 px-2 font-bold text-sm uppercase whitespace-nowrap rounded-md',
-        // couleurs (et bordures) en fonction du statut
-        statusToClassNames[statut],
-        // variantes
-        {
-          'line-through': barre,
-          '!text-xs !px-1': small,
-        }
-      )}
-    >
-      {avancementToLabel[statut]}
-    </span>
+    <Badge
+      dataTest="ActionStatutBadge"
+      title={avancementToLabel[statut]}
+      size={size}
+      state={statusToState[statut]}
+      light={statut === 'non_renseigne'}
+      trim={false}
+      className={classNames('min-w-fit', {'line-through': barre}, className)}
+    />
   );
 };
 

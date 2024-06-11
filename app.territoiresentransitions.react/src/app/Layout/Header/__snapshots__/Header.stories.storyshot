@@ -310,7 +310,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                     onClick={[Function]}
                     target="_self"
                   >
-                    Répartition des fiches actions
+                    Répartition des fiches action
                   </a>
                 </li>
               </ul>
@@ -431,11 +431,16 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   >
                     Collectivité test
                   </b>
-                  <span
-                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info ml-4"
+                  <div
+                    className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 ml-4 pointer-events-none"
+                    data-test="Badge-undefined"
                   >
-                    admin
-                  </span>
+                    <span
+                      className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                    >
+                      admin
+                    </span>
+                  </div>
                 </button>
                 <div
                   className="fr-menu right-0 fr-collapse"
@@ -456,11 +461,16 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                         target="_self"
                       >
                         Collectivité test 2
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          édition
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            édition
+                          </span>
+                        </div>
                       </a>
                     </li>
                     <li
@@ -474,11 +484,16 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                         target="_self"
                       >
                         Collectivité test 3
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          lecture
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            lecture
+                          </span>
+                        </div>
                       </a>
                     </li>
                   </ul>
@@ -838,7 +853,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                     onClick={[Function]}
                     target="_self"
                   >
-                    Répartition des fiches actions
+                    Répartition des fiches action
                   </a>
                 </li>
               </ul>
@@ -900,11 +915,16 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                   >
                     Collectivité test
                   </b>
-                  <span
-                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+                  <div
+                    className="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 ml-4 pointer-events-none"
+                    data-test="Badge-undefined"
                   >
-                    visite
-                  </span>
+                    <span
+                      className="text-new-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                    >
+                      visite
+                    </span>
+                  </div>
                 </button>
                 <div
                   className="fr-menu right-0 fr-collapse"
@@ -925,11 +945,16 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                         target="_self"
                       >
                         Collectivité test 2
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          édition
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            édition
+                          </span>
+                        </div>
                       </a>
                     </li>
                     <li
@@ -943,11 +968,16 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                         target="_self"
                       >
                         Collectivité test 3
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          lecture
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            lecture
+                          </span>
+                        </div>
                       </a>
                     </li>
                   </ul>
@@ -1320,7 +1350,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                     onClick={[Function]}
                     target="_self"
                   >
-                    Répartition des fiches actions
+                    Répartition des fiches action
                   </a>
                 </li>
               </ul>
@@ -1441,11 +1471,16 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                   >
                     Collectivité test
                   </b>
-                  <span
-                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+                  <div
+                    className="bg-new-2 border-new-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 ml-4 pointer-events-none"
+                    data-test="Badge-undefined"
                   >
-                    visite
-                  </span>
+                    <span
+                      className="text-new-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                    >
+                      visite
+                    </span>
+                  </div>
                 </button>
                 <div
                   className="fr-menu right-0 fr-collapse"
@@ -1466,11 +1501,16 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                         target="_self"
                       >
                         Collectivité test 2
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          édition
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            édition
+                          </span>
+                        </div>
                       </a>
                     </li>
                     <li
@@ -1484,11 +1524,16 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                         target="_self"
                       >
                         Collectivité test 3
-                        <span
-                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        <div
+                          className="bg-info-2 border-info-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5 float-right pointer-events-none"
+                          data-test="Badge-undefined"
                         >
-                          lecture
-                        </span>
+                          <span
+                            className="text-info-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase"
+                          >
+                            lecture
+                          </span>
+                        </div>
                       </a>
                     </li>
                   </ul>
