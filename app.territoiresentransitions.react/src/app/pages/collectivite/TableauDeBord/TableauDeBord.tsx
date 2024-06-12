@@ -44,7 +44,7 @@ const TableauDeBord = () => {
             title="Mon tableau de bord"
             description="Ce tableau de bord est personnel afin de suivre mes plans d'action."
           >
-            {isEmpty ? <TdbVide /> : <Personnel planIds={planIds} />}
+            {isEmpty ? <TdbVide /> : <Personnel />}
           </View>
         </Route>
         {/** Tableau de bord de la collectivité */}

@@ -1,15 +1,11 @@
-import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 import {defaultSlugsSchema} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {useModulesFetch} from './Module/useModulesFetch';
-import ModuleIndicateurs from './Module/ModuleIndicateurs/ModuleIndicateurs';
+import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-
-type Props = {
-  planIds?: number[];
-};
+import ModuleIndicateurs from './Module/ModuleIndicateurs/ModuleIndicateurs';
+import {useModulesFetch} from './Module/useModulesFetch';
 
 /** Vue personnelle du tableau de bord plans d'action */
-const Personnel = ({planIds}: Props) => {
+const Personnel = () => {
   const {data: modules, isLoading} = useModulesFetch();
 
   if (isLoading) {
@@ -45,7 +41,6 @@ const Personnel = ({planIds}: Props) => {
               key={module.slug}
               view={'personnel'}
               module={module}
-              planIds={planIds}
             />
           );
         }

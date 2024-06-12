@@ -1,7 +1,7 @@
 import {beforeEach, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
 import {supabase} from '../../../tests/supabase';
-import {defaultSlugsSchema, getDefaultModules} from '../domain/module.schema';
+import {defaultSlugsSchema} from '../domain/module.schema';
 import {modulesFetch} from './modules.fetch';
 import {modulesSave} from './modules.save';
 import {moduleNew, resetTableauDeBordModules} from './modules.test-fixture';
@@ -12,7 +12,7 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = getDefaultModules(params).length;
+const numberOfModulesByDefault = 3;
 
 beforeEach(async () => {
   await signIn('yolododo');

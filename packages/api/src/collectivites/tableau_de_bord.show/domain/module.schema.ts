@@ -67,60 +67,75 @@ export const defaultSlugsSchema = z.enum([
 type Props = {
   collectiviteId: number;
   userId: string;
+  getPlanActionIds: () => Promise<number[]>;
 };
 
 /**
- * Retourne les 3 modules de base par défaut.
+ * Retourne le module de base par défaut correspondant au slug donné.
  */
-export function getDefaultModules({userId, collectiviteId}: Props) {
+export async function getDefaultModule(
+  slug: string,
+  {userId, collectiviteId, getPlanActionIds}: Props
+) {
   const now = new Date().toISOString();
 
-  const indicateurs: ModuleSelect = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Indicateurs de suivi de mes plans',
-    type: 'indicateur.list',
-    slug: defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans'],
-    options: {
-      filtre: {
+  if (slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote']) {
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      collectiviteId,
+      titre: 'Actions dont je suis pilote',
+      type: 'fiche_action.list',
+      slug,
+      options: {
+        filtre: {
+          utilisateurPiloteIds: [userId],
+        },
       },
-    },
-    createdAt: now,
-    modifiedAt: now,
-  };
+      createdAt: now,
+      modifiedAt: now,
+    } as ModuleFicheActionsSelect;
+  }
 
-  const actionsDontJeSuisPilote: ModuleSelect = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Actions dont je suis pilote',
-    type: 'fiche_action.list',
-    slug: defaultSlugsSchema.enum['actions-dont-je-suis-pilote'],
-    options: {
-      filtre: {
-        utilisateurPiloteIds: [userId],
+  if (slug === defaultSlugsSchema.enum['actions-recemment-modifiees']) {
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      collectiviteId,
+      titre: 'Actions récemment modifiées',
+      type: 'fiche_action.list',
+      slug,
+      options: {
+        filtre: {
+          modifiedSince: 'last-30-days',
+        },
       },
-    },
-    createdAt: now,
-    modifiedAt: now,
-  };
+      createdAt: now,
+      modifiedAt: now,
+    } as ModuleFicheActionsSelect;
+  }
 
-  const actionsRecentlyModified: ModuleSelect = {
-    id: crypto.randomUUID(),
-    userId,
-    collectiviteId,
-    titre: 'Actions récemment modifiées',
-    type: 'fiche_action.list',
-    slug: defaultSlugsSchema.enum['actions-recemment-modifiees'],
-    options: {
-      filtre: {
-        modifiedSince: 'last-30-days',
+  if (slug === defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']) {
+    const planActionIds = await getPlanActionIds();
+
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      collectiviteId,
+      titre: 'Indicateurs de suivi de mes plans',
+      type: 'indicateur.list',
+      slug: defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans'],
+      options: {
+        // Le filtre par défaut affiche les indicateurs liés à tous les plans d'actions de la collectivité
+        filtre: {
+          planActionIds,
+          // utilisateurPiloteIds: [userId],
+        },
       },
-    },
-    createdAt: now,
-    modifiedAt: now,
-  };
+      createdAt: now,
+      modifiedAt: now,
+    } as ModuleIndicateursSelect;
+  }
 
-  return [indicateurs, actionsDontJeSuisPilote, actionsRecentlyModified];
+  throw new Error(`Le slug ${slug} n'est pas un slug de module par défaut.`);
 }
