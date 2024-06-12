@@ -12,8 +12,6 @@ actions:
 programmes:
   - cae
 
-climat_pratic_ids:
-
 thematiques:
   - energie_et_climat
 ```
@@ -25,8 +23,9 @@ Mesure le nombre de projets de rénovation réussis par rapport au nombre de pro
 id: sydev_6.b
 identifiant: sydev_6.b
 unite: % de dossiers
+parent : sydev_6.a
 
-titre_long: Nombre de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis / nombre dossiers en cours (en %)
+titre_long: Nombre de projets de rénovation globale performante (BBC - catégories A et B uniquement) aboutis sur le nombre dossiers en cours (en %)
 
 selection: no
 obligation_cae: no
