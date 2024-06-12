@@ -1,0 +1,20 @@
+# SYDEV - Nombre de projets d'ENR en production
+
+```yaml
+id: sydev_21
+identifiant: sydev_21
+unite: Nombre de projets
+
+titre_long: Nombre de projets d'énergie renouvelable (EnR) en production
+
+participation_score: no
+
+programmes:
+  - cae
+
+thematiques:
+  - energie_et_climat
+```
+## Description
+Mesure le nombre de projets d'énergie renouvelable (EnR) en production dans le département qui sont développés, financés ou gérés par des citoyens ou des groupes de citoyens. Il permet de mesurer l'implication des citoyens dans la production d'énergie renouvelable dans le département et de comparer les performances entre les différentes régions.
+Pour obtenir cet indicateur, on pourra contacter les autorités locales ou les promoteurs de projets EnR pour obtenir les données sur les projets EnR en production dans le département et déterminer le nombre de projets qui sont développés, financés ou gérés par des citoyens ou des groupes de citoyens. Il est également possible d'obtenir ces informations auprès des régulateurs nationaux ou des organisations qui fournissent des données sur les énergies renouvelables et les projets citoyens.
