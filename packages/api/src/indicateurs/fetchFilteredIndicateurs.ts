@@ -125,7 +125,7 @@ export const fetchFilteredIndicateurs = async (
           .split(' ')
           .map(s => s.trim())
           .filter(s => !!s)
-          .map(s => `'${s}':*`)
+          .map(s => `"${s}":*`)
           .join(' & ')
       );
     }
