@@ -50,9 +50,11 @@ const Personnel = ({planIds}: Props) => {
           );
         }
         if (
-          module.slug ===
+          module.type === 'fiche_action.list' &&
+          (module.slug ===
             defaultSlugsSchema.enum['actions-dont-je-suis-pilote'] ||
-          module.slug === defaultSlugsSchema.enum['actions-recemment-modifiees']
+            module.slug ===
+              defaultSlugsSchema.enum['actions-recemment-modifiees'])
         ) {
           return (
             <ModuleFichesActions
