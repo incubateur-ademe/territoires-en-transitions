@@ -1,0 +1,21 @@
+# SYDEV - Consommation annuelle d'électricité dans les bornes de recharges
+
+```yaml
+id: sydev_14
+identifiant: sydev_14
+unite: MWh/an
+
+titre_long: Consommation annuelle d'électricité dans les bornes de recharges (en MWh/an)
+
+participation_score: no
+
+programmes:
+  - cae
+
+
+thematiques:
+  - mobilite_et_transport
+```
+## Description
+L'indicateur "Consommation annuelle d'électricité dans les bornes de recharge (en MWh/an)" correspond à la quantité totale d'électricité consommée par an dans les bornes de recharge pour véhicules électriques (VE) et hybrides rechargeables (PHEV) dans le département considéré, exprimée en mégawattheures par an. Cet indicateur permet d'évaluer l'utilisation des infrastructures de recharge pour les véhicules électriques et de mesurer la part des véhicules électriques et hybrides rechargeables dans le mix de transport local.
+
