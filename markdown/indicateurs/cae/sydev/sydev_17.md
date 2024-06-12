@@ -1,0 +1,19 @@
+# SYDEV - Capacités d'accueil pour le raccordement aux réseaux de transport et de distribution des installations de production d'électricité
+
+```yaml
+id: sydev_17
+identifiant: sydev_17
+unite: MW
+
+titre_long: Capacités d'accueil pour le raccordement aux réseaux de transport et de distribution des installations de production d'électricité
+
+participation_score: no
+
+programmes:
+  - cae
+
+thematiques:
+  - energie_et_climat
+```
+## Description
+L'indicateur "Capacité d'accueil pour le raccordement d'EnR" fait référence à la capacité estimée des réseaux électriques à accueillir et intégrer la production d'énergie renouvelable (EnR) dans un département ou un territoire. Cet indicateur permet d'évaluer la compatibilité du réseau électrique local avec les objectifs de développement des énergies renouvelables et d'identifier les besoins en investissement pour renforcer le réseau et faciliter l'intégration des EnR.
