@@ -38,7 +38,7 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
             <Field title="Nom du plan :">
               <SelectMultiple
-                values={filtreState.planIds}
+                values={filtreState.planActionIds}
                 options={
                   plansActions?.plans.map(p => ({
                     label: generateTitle(p.nom),
@@ -46,10 +46,14 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
                   })) ?? []
                 }
                 onChange={({values, selectedValue}) =>
-                  ((filtreState.planIds?.length === 1 &&
-                    selectedValue !== filtreState.planIds[0]) ||
-                    (filtreState.planIds && filtreState.planIds.length > 1)) &&
-                  setFiltreState({...filtreState, planIds: values as number[]})
+                  ((filtreState.planActionIds?.length === 1 &&
+                    selectedValue !== filtreState.planActionIds[0]) ||
+                    (filtreState.planActionIds &&
+                      filtreState.planActionIds.length > 1)) &&
+                  setFiltreState({
+                    ...filtreState,
+                    planActionIds: values as number[],
+                  })
                 }
               />
             </Field>
