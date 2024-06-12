@@ -16,6 +16,8 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import Module from '../Module';
+import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
+import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
 
 type Props = {
   view: TDBViewParam;
@@ -30,6 +32,8 @@ const ModuleIndicateurs = ({view, module}: Props) => {
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, filtre);
 
+  const {data: filtresData} = useFiltreValues({filtre: module.options.filtre});
+
   return (
     <Module
       title={module.titre}
@@ -39,7 +43,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
       )}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
-      selectedFilters={['test']}
+      selectedFilters={filtresData && filtersToBadges(filtresData)}
       footerButtons={
         <>
           <Button
