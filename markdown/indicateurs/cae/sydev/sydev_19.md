@@ -1,0 +1,18 @@
+# SYDEV - Taux de progression de la production d'EnR
+```yaml
+id: sydev_19
+identifiant: sydev_19
+unite: %
+
+titre_long: Taux de progression de la production d'EnR par rapport à l'année de référence (en %) en comparaison avec objectifs 2030 et 2050
+
+participation_score: no
+
+programmes:
+  - cae
+
+thematiques:
+  - energie_et_climat
+```
+## Description
+L'indicateur "Taux de progression de la production d'EnR par rapport à l'année de référence (en %) - comparaison avec objectifs 2030 et 2050" mesure l'évolution de la production d'énergies renouvelables (EnR) sur un territoire ou un département depuis une année de référence. Il permet d'évaluer si le territoire est en bonne voie pour atteindre ses objectifs de production d'énergies renouvelables fixés pour 2030 et 2050.
