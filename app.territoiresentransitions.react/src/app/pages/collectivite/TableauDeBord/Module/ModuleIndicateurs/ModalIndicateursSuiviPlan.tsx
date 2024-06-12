@@ -18,14 +18,23 @@ import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/dat
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useQueryClient} from 'react-query';
+import {getQueryKey} from '../useModulesFetch';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
 };
 
 const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
-  const collectivite_id = useCollectiviteId();
-  const plansActions = usePlansActionsListe(collectivite_id!);
+  const collectiviteId = useCollectiviteId();
+  if (!collectiviteId) {
+    throw new Error('Aucune collectivité associée');
+  }
+
+  const plansActions = usePlansActionsListe(collectiviteId);
+  const queryClient = useQueryClient();
+  const userId = useAuth().user?.id;
 
   const [filtreState, setFiltreState] = useState<Filtre>(module.options.filtre);
 
@@ -127,6 +136,11 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
                   },
                 },
               });
+
+              queryClient.invalidateQueries(
+                getQueryKey(collectiviteId, userId)
+              );
+
               close();
             },
           }}
