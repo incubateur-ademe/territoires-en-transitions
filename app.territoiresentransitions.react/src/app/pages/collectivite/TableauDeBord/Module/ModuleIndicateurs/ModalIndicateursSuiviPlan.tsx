@@ -1,5 +1,8 @@
 import {useState} from 'react';
 
+import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
+import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {Filtre} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
 import {
   Field,
   FormSection,
@@ -13,27 +16,18 @@ import FiltrePersonnes from 'app/pages/collectivite/Indicateurs/lists/FiltrePers
 import FiltreThematiques from 'app/pages/collectivite/Indicateurs/lists/FiltreThematiques';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-
-type Filters = {
-  planIds?: number[];
-  pilotesIds?: string[];
-  thematiquesIds?: string[];
-  rempli?: string;
-};
 
 type Props = ModalProps & {
-  module: ModuleSelect;
+  module: ModuleIndicateursSelect;
 };
 
 const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
   const collectivite_id = useCollectiviteId();
   const plansActions = usePlansActionsListe(collectivite_id!);
 
-  const [formState, setFormState] = useState<Filters>({
-    planIds: plansActions?.plans.map(p => p.id),
-  });
+  const [filtreState, setFiltreState] = useState<Filtre>(module.options.filtre);
 
   return (
     <Modal
@@ -44,7 +38,7 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
             <Field title="Nom du plan :">
               <SelectMultiple
-                values={formState.planIds}
+                values={filtreState.planIds}
                 options={
                   plansActions?.plans.map(p => ({
                     label: generateTitle(p.nom),
@@ -52,38 +46,44 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
                   })) ?? []
                 }
                 onChange={({values, selectedValue}) =>
-                  ((formState.planIds?.length === 1 &&
-                    selectedValue !== formState.planIds[0]) ||
-                    (formState.planIds && formState.planIds.length > 1)) &&
-                  setFormState({...formState, planIds: values as number[]})
+                  ((filtreState.planIds?.length === 1 &&
+                    selectedValue !== filtreState.planIds[0]) ||
+                    (filtreState.planIds && filtreState.planIds.length > 1)) &&
+                  setFiltreState({...filtreState, planIds: values as number[]})
                 }
               />
             </Field>
             <Field title="Pilote de l'indicateur :">
               <FiltrePersonnes
-                values={formState.pilotesIds}
+                values={filtreState.personnePiloteIds?.map(String)}
                 onSelect={pilotesIds =>
-                  setFormState({
-                    ...formState,
-                    pilotesIds,
+                  setFiltreState({
+                    ...filtreState,
+                    personnePiloteIds: pilotesIds.map(Number),
                   })
                 }
               />
             </Field>
             <Field title="Thématique de l'indicateur :">
               <FiltreThematiques
-                values={formState.thematiquesIds}
+                values={filtreState.thematiqueIds?.map(String)}
                 onSelect={thematiquesIds =>
-                  setFormState({
-                    ...formState,
-                    thematiquesIds,
+                  setFiltreState({
+                    ...filtreState,
+                    thematiqueIds: thematiquesIds.map(Number),
                   })
                 }
               />
             </Field>
             <Field title="Complétion indicateur :">
               <Select
-                values={formState.rempli}
+                values={
+                  filtreState.estComplet === undefined
+                    ? undefined
+                    : filtreState.estComplet
+                    ? 'rempli'
+                    : 'incomplet'
+                }
                 options={[
                   {
                     label: 'Complet',
@@ -95,9 +95,10 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
                   },
                 ]}
                 onChange={value =>
-                  setFormState({
-                    ...formState,
-                    rempli: value as string,
+                  setFiltreState({
+                    ...filtreState,
+                    estComplet:
+                      value === undefined ? undefined : value === 'rempli',
                   })
                 }
               />
@@ -111,7 +112,17 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
             onClick: () => close(),
           }}
           btnOKProps={{
-            onClick: () => {
+            onClick: async () => {
+              await modulesSave({
+                dbClient: supabaseClient,
+                module: {
+                  ...module,
+                  options: {
+                    ...module.options,
+                    filtre: filtreState,
+                  },
+                },
+              });
               close();
             },
           }}

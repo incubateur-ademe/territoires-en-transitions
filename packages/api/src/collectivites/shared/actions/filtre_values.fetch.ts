@@ -1,5 +1,7 @@
 import {objectToCamel} from 'ts-case-convert';
 import {DBClient} from '../../../typeUtils';
+import {useQuery} from 'react-query';
+
 import {
   FiltreRessourceLiees,
   FiltreValues,
@@ -106,3 +108,21 @@ export async function filtreValuesFetch({
     throw error;
   }
 }
+
+export const useFiltreValuesFetch = ({
+  dbClient,
+  collectiviteId,
+  filtre,
+}: Input) => {
+  const {data} = useQuery(
+    ['collectivite_filtre_values', collectiviteId, filtre],
+    () =>
+      filtreValuesFetch({
+        dbClient,
+        collectiviteId,
+        filtre,
+      })
+  );
+
+  return data;
+};
