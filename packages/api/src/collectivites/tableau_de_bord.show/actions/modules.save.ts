@@ -4,7 +4,7 @@ import {DBClient} from '../../../typeUtils';
 import {
   ModuleInsert,
   moduleCommonSchemaInsert,
-  moduleFicheActionsSchema,
+  moduleFichesSchema,
   moduleIndicateursSchema,
 } from '../domain/module.schema';
 
@@ -40,7 +40,7 @@ function parseModule(module: ModuleInsert) {
 
   if (module.type === 'fiche_action.list') {
     return {
-      ...moduleFicheActionsSchema.parse(module),
+      ...moduleFichesSchema.parse(module),
       ...commonPart,
     };
   }

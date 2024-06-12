@@ -2,12 +2,15 @@ import {z} from 'zod';
 import {fetchOptionsSchema as fichesFetchOptionsSchema} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
 import {fetchOptionsSchema as indicateursFetchOptionsSchema} from '../../../indicateurs/indicateurs.list/domain/fetch_options.schema';
 
+const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
+
 export const moduleCommonSchemaInsert = z.object({
   id: z.string().uuid(),
   collectiviteId: z.number(),
   userId: z.string().uuid().nullish(),
   titre: z.string(),
   slug: z.string(),
+  type: moduleTypeSchema,
 });
 
 export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
@@ -18,23 +21,38 @@ export const moduleCommonSchemaSelect = moduleCommonSchemaInsert
   });
 
 export const moduleIndicateursSchema = z.object({
-  type: z.literal('indicateur.list'),
+  type: z.literal(moduleTypeSchema.enum['indicateur.list']),
   options: indicateursFetchOptionsSchema,
 });
 
-export const moduleFicheActionsSchema = z.object({
-  type: z.literal('fiche_action.list'),
+export const moduleIndicateursSelectSchema = moduleCommonSchemaSelect.merge(
+  moduleIndicateursSchema
+);
+
+export type ModuleIndicateursSelect = z.input<
+  typeof moduleIndicateursSelectSchema
+>;
+
+export const moduleFichesSchema = z.object({
+  type: z.literal(moduleTypeSchema.enum['fiche_action.list']),
   options: fichesFetchOptionsSchema,
 });
 
+export const moduleFicheActionsSelectSchema =
+  moduleCommonSchemaSelect.merge(moduleFichesSchema);
+
+export type ModuleFicheActionsSelect = z.input<
+  typeof moduleFicheActionsSelectSchema
+>;
+
 export const moduleSchemaSelect = z.discriminatedUnion('type', [
-  moduleIndicateursSchema.merge(moduleCommonSchemaSelect),
-  moduleFicheActionsSchema.merge(moduleCommonSchemaSelect),
+  moduleIndicateursSelectSchema,
+  moduleFicheActionsSelectSchema,
 ]);
 
 export const moduleSchemaInsert = z.discriminatedUnion('type', [
-  moduleIndicateursSchema.merge(moduleCommonSchemaInsert),
-  moduleFicheActionsSchema.merge(moduleCommonSchemaInsert),
+  moduleCommonSchemaInsert.merge(moduleIndicateursSchema),
+  moduleCommonSchemaInsert.merge(moduleFichesSchema),
 ]);
 
 export type ModuleSelect = z.input<typeof moduleSchemaSelect>;

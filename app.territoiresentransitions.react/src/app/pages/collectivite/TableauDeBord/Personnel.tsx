@@ -36,8 +36,9 @@ const Personnel = ({planIds}: Props) => {
     <div className="flex flex-col gap-10">
       {modules.map(module => {
         if (
+          module.type === 'indicateur.list' &&
           module.slug ===
-          defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']
+            defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']
         ) {
           return (
             <ModuleIndicateurs

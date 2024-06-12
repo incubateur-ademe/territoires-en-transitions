@@ -22,7 +22,7 @@ type Props = {
   /** État vide générique */
   isEmpty: boolean;
   /** Affiche les filtres sélectionnés dans une liste de badges */
-  selectedFilters: string[];
+  selectedFilters?: string[];
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
@@ -63,7 +63,7 @@ const Module = ({
           Aucun résultat pour ce filtre !
         </p>
         <div className="flex gap-4 my-6">
-          {selectedFilters.map(filter => (
+          {selectedFilters?.map(filter => (
             <Badge key={filter} title={filter} state="standard" />
           ))}
         </div>
@@ -90,6 +90,12 @@ const Module = ({
           />
           {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
         </>
+      </div>
+      {/** Filtres du module */}
+      <div className="flex gap-4 my-6">
+        {selectedFilters?.map(filter => (
+          <Badge key={filter} title={filter} state="standard" />
+        ))}
       </div>
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
