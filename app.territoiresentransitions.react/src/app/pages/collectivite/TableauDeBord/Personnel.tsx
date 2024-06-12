@@ -1,4 +1,3 @@
-import {defaultSlugsSchema} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModuleIndicateurs from './Module/ModuleIndicateurs/ModuleIndicateurs';
@@ -31,11 +30,7 @@ const Personnel = () => {
   return (
     <div className="flex flex-col gap-10">
       {modules.map(module => {
-        if (
-          module.type === 'indicateur.list' &&
-          module.slug ===
-            defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']
-        ) {
+        if (module.type === 'indicateur.list') {
           return (
             <ModuleIndicateurs
               key={module.slug}
@@ -44,13 +39,7 @@ const Personnel = () => {
             />
           );
         }
-        if (
-          module.type === 'fiche_action.list' &&
-          (module.slug ===
-            defaultSlugsSchema.enum['actions-dont-je-suis-pilote'] ||
-            module.slug ===
-              defaultSlugsSchema.enum['actions-recemment-modifiees'])
-        ) {
+        if (module.type === 'fiche_action.list') {
           return (
             <ModuleFichesActions
               key={module.slug}
