@@ -4,7 +4,6 @@ import {dbAdmin, supabase} from '../../../tests/supabase';
 import {modulesFetch} from './modules.fetch';
 import {modulesSave} from './modules.save';
 import {moduleNew, resetTableauDeBordModules} from './modules.test-fixture';
-import {getDefaultModules} from '../domain/module.schema';
 
 const params = {
   dbClient: supabase,
@@ -12,7 +11,7 @@ const params = {
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = getDefaultModules(params).length;
+const numberOfModulesByDefault = 3;
 
 beforeEach(async () => {
   await signIn('yolododo');

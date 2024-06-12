@@ -1,6 +1,11 @@
 import {objectToCamel} from 'ts-case-convert';
+import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data-access/plan_actions.fetch';
 import {DBClient} from '../../../typeUtils';
-import {ModuleSelect, getDefaultModules} from '../domain/module.schema';
+import {
+  ModuleSelect,
+  defaultSlugsSchema,
+  getDefaultModule,
+} from '../domain/module.schema';
 
 export type ModuleFetchReturnValue = Array<ModuleSelect>;
 
@@ -29,18 +34,11 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
 
     const data = objectToCamel(rawData) as ModuleFetchReturnValue;
 
-    const defaultModules = getDefaultModules({
-      userId: userId,
+    const modules = await mergeWithDefaultModules(data, {
+      dbClient,
+      userId,
       collectiviteId,
     });
-
-    if (data.length === 0) {
-      return {
-        data: defaultModules,
-      };
-    }
-
-    const modules = mergeWithDefaultModules(data, defaultModules);
 
     return {data: modules};
   } catch (error) {
@@ -49,9 +47,9 @@ export async function modulesFetch({dbClient, collectiviteId, userId}: Props) {
   }
 }
 
-function mergeWithDefaultModules(
+async function mergeWithDefaultModules(
   fetchedModules: ModuleFetchReturnValue,
-  defaultModules: ModuleFetchReturnValue
+  props: Props
 ) {
   // On crée une map des modules récupérés avec le slug comme clé
   const fetchedModulesMap = new Map(
@@ -59,12 +57,21 @@ function mergeWithDefaultModules(
   );
 
   // On ajoute les modules par défaut non présents dans les modules récupérés
-  defaultModules.forEach(defaultModule => {
-    fetchedModulesMap.set(
-      defaultModule.slug,
-      fetchedModulesMap.get(defaultModule.slug) || defaultModule
-    );
-  });
+  for (const slug of defaultSlugsSchema.options) {
+    if (fetchedModulesMap.get(slug)) {
+      continue;
+    }
+
+    const defaultModule = await getDefaultModule(slug, {
+      ...props,
+      getPlanActionIds: () =>
+        planActionsFetch({...props}).then(data =>
+          data.plans.map(plan => plan.id)
+        ),
+    });
+
+    fetchedModulesMap.set(slug, defaultModule);
+  }
 
   return Array.from(fetchedModulesMap.values());
 }
