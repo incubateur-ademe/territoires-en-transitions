@@ -1,4 +1,5 @@
-import {Badge, Button} from '@tet/ui';
+import {Button} from '@tet/ui';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import classNames from 'classnames';
 import React, {useState} from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
@@ -62,11 +63,12 @@ const Module = ({
         <p className="m-0 font-bold text-primary-9">
           Aucun résultat pour ce filtre !
         </p>
-        <div className="flex gap-4 my-6">
-          {selectedFilters?.map(filter => (
-            <Badge key={filter} title={filter} state="standard" />
-          ))}
-        </div>
+        {selectedFilters && (
+          <ModuleFiltreBadges
+            className="my-6"
+            selectedFilters={selectedFilters}
+          />
+        )}
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
         </Button>
@@ -88,15 +90,14 @@ const Module = ({
             className="ml-auto"
             onClick={() => setIsModalOpen(true)}
           />
-          {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
+          {isModalOpen &&
+            editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
         </>
       </div>
       {/** Filtres du module */}
-      <div className="flex gap-4 my-6">
-        {selectedFilters?.map(filter => (
-          <Badge key={filter} title={filter} state="standard" />
-        ))}
-      </div>
+      {selectedFilters && (
+        <ModuleFiltreBadges selectedFilters={selectedFilters} />
+      )}
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}
