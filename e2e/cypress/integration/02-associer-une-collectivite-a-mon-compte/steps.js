@@ -27,32 +27,6 @@ When(
   }
 );
 
-When(/une alerte contient le titre "([^"]+)"/, value => {
-  cy.get(`.fr-alert`).find('h3').should('have.text', value);
-});
-
-When(/une alerte contient le message "([^"]+)"/, value => {
-  cy.wait(500); // attente de la requete
-  cy.get(`.fr-alert`).find('p').should('have.text', value);
-});
-
-const translateStatus = {
-  succès: 'success',
-  information: 'info',
-  erreur: 'error',
-};
-
-When(
-  'une alerte de statut {string} est affichée avec le message {string}',
-  (status, message) => {
-    cy.get(`.fr-alert--${translateStatus[status]}`).should('be.visible');
-    cy.get(`.fr-alert--${translateStatus[status]}`).should(
-      'contain.text',
-      message
-    );
-  }
-);
-
 // lien vers tableau de bord
 When('je clique sur le lien du formulaire', () => {
   cy.get('[data-test=dialog-AssocierCollectivite] a').click();

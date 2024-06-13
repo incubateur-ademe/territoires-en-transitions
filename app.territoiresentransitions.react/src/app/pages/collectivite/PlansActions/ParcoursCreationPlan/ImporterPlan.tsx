@@ -1,8 +1,8 @@
+import {Alert} from '@tet/ui';
 import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {Link} from 'react-router-dom';
-import Alerte from 'ui/shared/Alerte';
 import ContextMenu from 'ui/shared/select/ContextMenu';
 import {MenuTriggerButton} from 'ui/shared/select/MenuTriggerButton';
 
@@ -53,9 +53,10 @@ const ImporterPlan = () => {
             Attention à bien respecter le format proposé pour que l’importation
             fonctionne !
           </p>
-          <Alerte
-            state="information"
-            description="Pour toute question, contactez-nous sur le support en ligne ou par email à contact@territoiresentransitions.fr<br />Nous sommes là pour vous aider !"
+          <Alert
+            title={`Pour toute question, contactez-nous sur le support en ligne 
+              ou par email à contact@territoiresentransitions.fr. 
+              Nous sommes là pour vous aider !`}
           />
           <div className="h-[1px] my-8 bg-gray-300" />
 

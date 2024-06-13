@@ -10,6 +10,7 @@ import {
 } from './DemandeLabellisationModal';
 import {MessageCompletudeECi} from './MessageCompletudeECi';
 import {usePreuvesLabellisation} from './useCycleLabellisation';
+import {Alert} from '@tet/ui';
 
 /**
  * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
@@ -64,11 +65,15 @@ export const DemandeAuditModalContent = (
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (
-          <div className="fr-alert fr-alert--success">
-            {etoiles === '1' && !isCOT
-              ? submittedEtoile1
-              : submittedAutresEtoiles}
-          </div>
+          <Alert
+            state="success"
+            className="mb-4"
+            title={
+              etoiles === '1' && !isCOT
+                ? submittedEtoile1
+                : submittedAutresEtoiles
+            }
+          />
         ) : null}
         {status === 'non_demandee' && !isLoading ? (
           <>

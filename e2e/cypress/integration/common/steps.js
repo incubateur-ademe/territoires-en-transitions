@@ -278,13 +278,6 @@ const transateTypes = {
   information: 'info',
   erreur: 'error',
 };
-When(
-  /une alerte de "([^"]*)" est affichée et contient "([^"]*)"/,
-  (type, message) => {
-    cy.get(`.fr-alert--${transateTypes[type]}`).should('be.visible');
-    cy.get(`.fr-alert--${transateTypes[type]}`).should('contain.text', message);
-  }
-);
 
 When(
   'une notification de type {string} est affichée et contient {string}',

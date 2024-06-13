@@ -25,7 +25,7 @@ const PanierActions = ({
           <Alert
             title="Comment ajouter des actions ?"
             description={`Pour ajouter des actions à votre panier, veuillez cliquer sur le bouton "Ajouter" qui s'affiche au survol de chacune des vignettes d'action.`}
-            classname="lg:absolute"
+            className="lg:absolute"
           />
           <div className="h-full flex flex-col items-center justify-center max-lg:py-4">
             <EmptyBasketPicto />

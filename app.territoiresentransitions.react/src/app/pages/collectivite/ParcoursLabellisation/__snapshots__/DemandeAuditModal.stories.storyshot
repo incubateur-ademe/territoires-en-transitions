@@ -12,9 +12,24 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-alert--success"
+      className="bg-success-2 mb-4"
     >
-      Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.
+      <div
+        className="py-3 flex gap-4 px-4 bg-success-2"
+      >
+        <span
+          className="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-success-1"
+        />
+        <div
+          className="flex flex-col gap-3 justify-center"
+        >
+          <div
+            className="text-base font-bold text-success-1"
+          >
+            Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -32,9 +47,24 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-alert--success"
+      className="bg-success-2 mb-4"
     >
-      Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l’ADEME.
+      <div
+        className="py-3 flex gap-4 px-4 bg-success-2"
+      >
+        <span
+          className="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-success-1"
+        />
+        <div
+          className="flex flex-col gap-3 justify-center"
+        >
+          <div
+            className="text-base font-bold text-success-1"
+          >
+            Votre demande de labellisation a bien été envoyée. Vous recevrez dans les 48h ouvrées un mail de l’ADEME.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -585,18 +615,33 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-mb-4w fr-alert--warning"
+      className="bg-warning-2 mb-8"
     >
-      <p>
-        Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
-         
-        <b>
-          Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
-        </b>
-      </p>
-      <p>
-        Pour rappel, cet audit a un coût qui est aujourd’hui financé par l’ADEME. La validation de votre demande d’audit vous engage à respecter les conditions de complétude.
-      </p>
+      <div
+        className="py-3 flex gap-4 px-4 bg-warning-2"
+      >
+        <span
+          className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
+        />
+        <div
+          className="flex flex-col gap-3 justify-center"
+        >
+          <div
+            className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
+          >
+            <p>
+              Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
+               
+              <b>
+                Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
+              </b>
+            </p>
+            <p>
+              Pour rappel, cet audit a un coût qui est aujourd’hui financé par l’ADEME. La validation de votre demande d’audit vous engage à respecter les conditions de complétude.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
     <fieldset
       className="fr-fieldset"
@@ -735,18 +780,33 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
     className="w-full"
   >
     <div
-      className="fr-alert fr-mb-4w fr-alert--warning"
+      className="bg-warning-2 mb-8"
     >
-      <p>
-        Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
-         
-        <b>
-          Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
-        </b>
-      </p>
-      <p>
-        Pour rappel, cet audit a un coût qui est aujourd’hui financé par l’ADEME. La validation de votre demande d’audit vous engage à respecter les conditions de complétude.
-      </p>
+      <div
+        className="py-3 flex gap-4 px-4 bg-warning-2"
+      >
+        <span
+          className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
+        />
+        <div
+          className="flex flex-col gap-3 justify-center"
+        >
+          <div
+            className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
+          >
+            <p>
+              Pour cet audit ECi, l’ensemble des tâches déclarées « faites » ou « détaillées » comprenant du « fait » doivent présenter des preuves téléchargées au niveau de la sous-action correspondante dans le référentiel.
+               
+              <b>
+                Aucun auditeur ne pourra être attribué en cas de dossier incomplet.
+              </b>
+            </p>
+            <p>
+              Pour rappel, cet audit a un coût qui est aujourd’hui financé par l’ADEME. La validation de votre demande d’audit vous engage à respecter les conditions de complétude.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
     <fieldset
       className="fr-fieldset"

@@ -9,6 +9,7 @@ import {useUploader} from 'ui/shared/preuves/AddPreuveModal/useUploader';
 import {ButtonClose} from 'ui/buttons/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
 import {formatFileSize} from 'utils/file';
+import {Alert} from '@tet/ui';
 
 export type TFileItem = {
   /** Fichier concerné */
@@ -123,20 +124,23 @@ const FileItemFailed = (props: TFileItemProps) => {
         />
       </div>
       {status.code === UploadStatusCode.duplicated ? (
-        <div className="fr-alert fr-alert--info fr-mt-2w">
-          <p>
-            Ce fichier sera ajouté directement via votre bibliothèque de
-            fichiers car il a déjà été téléversé
-            {file.name !== status.filename ? (
-              <>
-                {' '}
-                sous le nom <i>{status.filename}.</i>
-              </>
-            ) : (
-              '.'
-            )}
-          </p>
-        </div>
+        <Alert
+          className="mt-4"
+          description={
+            <p>
+              Ce fichier sera ajouté directement via votre bibliothèque de
+              fichiers car il a déjà été téléversé
+              {file.name !== status.filename ? (
+                <>
+                  {' '}
+                  sous le nom <i>{status.filename}.</i>
+                </>
+              ) : (
+                '.'
+              )}
+            </p>
+          }
+        />
       ) : (
         <div
           data-test="error"

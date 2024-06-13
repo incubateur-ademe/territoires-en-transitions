@@ -57,12 +57,27 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItemsList Exemple 1 1`]
           />
         </div>
         <div
-          className="fr-alert fr-alert--info fr-mt-2w"
+          className="bg-info-2 mt-4"
         >
-          <p>
-            Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé
-            .
-          </p>
+          <div
+            className="py-3 flex gap-4 px-4 bg-info-2"
+          >
+            <span
+              className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1"
+            />
+            <div
+              className="flex flex-col gap-3 justify-center"
+            >
+              <div
+                className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
+              >
+                <p>
+                  Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé
+                  .
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
@@ -96,17 +111,32 @@ exports[`Storyshots ui/shared/preuves/AddPreuveModal/FileItemsList Exemple 1 1`]
           />
         </div>
         <div
-          className="fr-alert fr-alert--info fr-mt-2w"
+          className="bg-info-2 mt-4"
         >
-          <p>
-            Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé
-             
-            sous le nom 
-            <i>
-              fichier.xls
-              .
-            </i>
-          </p>
+          <div
+            className="py-3 flex gap-4 px-4 bg-info-2"
+          >
+            <span
+              className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1"
+            />
+            <div
+              className="flex flex-col gap-3 justify-center"
+            >
+              <div
+                className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
+              >
+                <p>
+                  Ce fichier sera ajouté directement via votre bibliothèque de fichiers car il a déjà été téléversé
+                   
+                  sous le nom 
+                  <i>
+                    fichier.xls
+                    .
+                  </i>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -5,11 +5,11 @@ exports[`design-system/Alert ControlledByParent smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-info-2">
     <span class="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-info-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -26,11 +26,11 @@ exports[`design-system/Alert Default smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-info-2">
     <span class="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-info-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -43,11 +43,11 @@ exports[`design-system/Alert Error smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-error-2">
     <span class="ri-spam-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-error-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-error-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -60,11 +60,11 @@ exports[`design-system/Alert Success smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-success-2">
     <span class="ri-checkbox-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-success-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-success-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -77,11 +77,11 @@ exports[`design-system/Alert Warning smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-warning-2">
     <span class="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-warning-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -94,11 +94,11 @@ exports[`design-system/Alert WithClosingButton smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-info-2">
     <span class="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-info-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
     </div>
@@ -115,11 +115,11 @@ exports[`design-system/Alert WithFooter smoke-test 1`] = `
   <div class="py-3 flex gap-4 px-4 bg-info-2">
     <span class="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-info-1">
     </span>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 justify-center">
       <div class="text-base font-bold text-info-1">
         Titre
       </div>
-      <div class="text-sm font-medium text-grey-9">
+      <div class="text-sm [&amp;_*]:text-sm font-medium text-grey-9 [&amp;_*]:text-grey-9 [&amp;>*]:last:mb-0 flex flex-col gap-3">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim blandit placerat. Cras dolor enim, luctus elementum fringilla vitae, sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa posuere faucibus.
       </div>
       <div class="flex gap-4 my-2">

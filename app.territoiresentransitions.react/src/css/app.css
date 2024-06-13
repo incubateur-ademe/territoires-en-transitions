@@ -9,6 +9,10 @@
   }
 }
 
+.htmlContent *:last-of-type {
+  margin-bottom: 0;
+}
+
 .htmlContent ul {
   list-style: disc;
   margin-left: 1.5rem;

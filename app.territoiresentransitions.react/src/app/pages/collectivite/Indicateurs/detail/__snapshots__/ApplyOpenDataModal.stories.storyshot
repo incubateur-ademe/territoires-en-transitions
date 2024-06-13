@@ -14,7 +14,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
         className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
       />
       <div
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 justify-center"
       >
         <div
           className="text-base font-bold text-warning-1"
@@ -22,7 +22,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           Conflit détecté
         </div>
         <div
-          className="text-sm font-medium text-grey-9"
+          className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
         >
           Vous êtes sur le point d’appliquer les « objectifs PCAET » à vos objectifs.
             Attention : certaines données des « objectifs PCAET » entrent en conflit avec vos objectifs et ont des valeurs différentes.
@@ -187,7 +187,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
         className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
       />
       <div
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 justify-center"
       >
         <div
           className="text-base font-bold text-warning-1"
@@ -195,7 +195,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           Conflit détecté
         </div>
         <div
-          className="text-sm font-medium text-grey-9"
+          className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
         >
           Vous êtes sur le point d’appliquer les « objectifs PCAET » à vos objectifs.
             Attention : certaines données des « objectifs PCAET » entrent en conflit avec vos objectifs et ont des valeurs différentes.
@@ -361,7 +361,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
         className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
       />
       <div
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 justify-center"
       >
         <div
           className="text-base font-bold text-warning-1"
@@ -369,7 +369,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           Conflit détecté
         </div>
         <div
-          className="text-sm font-medium text-grey-9"
+          className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
         >
           Vous êtes sur le point d’appliquer les « objectifs PCAET » à vos objectifs.
             Attention : certaines données des « objectifs PCAET » entrent en conflit avec vos objectifs et ont des valeurs différentes.
@@ -534,7 +534,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
         className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
       />
       <div
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 justify-center"
       >
         <div
           className="text-base font-bold text-warning-1"
@@ -542,7 +542,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           Conflit détecté
         </div>
         <div
-          className="text-sm font-medium text-grey-9"
+          className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
         >
           Vous êtes sur le point d’appliquer les « objectifs PCAET » à vos objectifs.
             Attention : certaines données des « objectifs PCAET » entrent en conflit avec vos objectifs et ont des valeurs différentes.
@@ -833,7 +833,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
         className="ri-information-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] mt-0.5 text-warning-1"
       />
       <div
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-3 justify-center"
       >
         <div
           className="text-base font-bold text-warning-1"
@@ -841,7 +841,7 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           Conflit détecté
         </div>
         <div
-          className="text-sm font-medium text-grey-9"
+          className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3"
         >
           Vous êtes sur le point d’appliquer les « résultats PCAET » à vos résultats.
             Attention : certaines données des « résultats PCAET » entrent en conflit avec vos résultats et ont des valeurs différentes.

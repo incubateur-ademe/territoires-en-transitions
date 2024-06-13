@@ -7,6 +7,7 @@ import {Dispatch, SetStateAction, useState} from 'react';
 import {TActionAvancement} from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {StatusToSavePayload} from './ActionStatusDropdown';
+import {Alert} from '@tet/ui';
 
 /**
  * Vérifie pour chaque tâche de la sous-action le statut
@@ -124,12 +125,12 @@ const ScoreAutoModal = ({
 
               {action.referentiel === 'cae' &&
                 !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
-                  <div className="fr-alert fr-alert--warning mt-12 mb-12">
-                    <p>
-                      Pour activer l’ajustement manuel, vous devez renseigner un
-                      statut pour chaque tâche.
-                    </p>
-                  </div>
+                  <Alert
+                    state="warning"
+                    className="my-12"
+                    title="Pour activer l’ajustement manuel, vous devez renseigner un
+                  statut pour chaque tâche."
+                  />
                 )}
 
               <div className="w-full flex justify-end gap-4 mt-12 mb-4">
