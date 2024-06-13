@@ -27,9 +27,12 @@ const ModulePage = ({view, title, children}: Props) => {
    */
 
   return (
-    <div data-test={`tdb-${slug}`} className="min-h-[44rem] flex flex-col">
+    <div
+      data-test={`tdb-${slug}`}
+      className="min-h-[44rem] flex flex-col gap-8"
+    >
       {/** Header */}
-      <div className="border-b border-primary-3 pb-8">
+      <div>
         <h2 className="mb-4">{title}</h2>
         <div className="flex items-center gap-2 mt-4">
           <Button
