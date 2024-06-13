@@ -4,11 +4,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useQuery} from 'react-query';
 
-/**
- * Charge la liste d'indicateurs en fonction du filtre donné
- *
- * @param filter Paramètres de filtrage
- */
+/** Charges les différents modules du tableau de bord personnel */
 export const useModulesFetch = () => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;

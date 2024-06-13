@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-import {Checkbox, Input, Pagination, Select} from '@tet/ui';
+import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
 
 import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
 import ModulePage from '../ModulePage';
@@ -11,7 +11,13 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import {Filters} from '@tet/api/dist/src/indicateurs';
-import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
+import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
+import {optionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
+import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
+import {useModuleFetch} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
 
 type orderByOptionsType = {
   label: string;
@@ -34,12 +40,15 @@ const orderByOptions: orderByOptionsType[] = [
 
 type Props = {
   view: TDBViewParam;
-  module: ModuleSelect;
-  planIds?: number[];
+  slug: string;
 };
 
-const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
+const ModuleIndicateursPage = ({view, slug}: Props) => {
   const collectiviteId = useCollectiviteId();
+
+  const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
+
+  const filtre = module && optionsToFilters(module.options);
 
   const [order, setOrder] = useState(orderByOptions[0]);
 
@@ -49,7 +58,7 @@ const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
-    plan_ids: planIds,
+    ...filtre,
     text: debouncedSearch,
     sort:
       order.value === 'rempli'
@@ -80,10 +89,22 @@ const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
+  const {data: filtresData} = useFiltreValues({
+    filtre: module?.options?.filtre ?? {},
+  });
+
+  const selectedFilters = filtresData && filtersToBadges(filtresData);
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  if (isModuleLoading || !module) {
+    return null;
+  }
+
   return (
     <ModulePage view={view} title={module.titre}>
       {/** Paramètres de la liste */}
-      <div className="flex items-center gap-8 mb-8 py-6 border-b border-primary-3 z-10">
+      <div className="flex items-center gap-8 py-6 border-y border-primary-3">
         {/** Tri */}
         <div className="w-56">
           <Select
@@ -93,6 +114,7 @@ const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
             }
             values={order.value}
             customItem={v => <span className="text-grey-8">{v.label}</span>}
+            small
           />
         </div>
         {/** Toggle affichage des graph */}
@@ -118,12 +140,27 @@ const ModuleIndicateursPage = ({view, planIds, module}: Props) => {
           onSearch={v => setDebouncedSearch(v)}
           value={search}
           containerClassname="ml-auto w-full md:w-96"
-          placeholder="Rechercher un indicateur"
+          placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
+        {/** Bouton d'édition des filtres du module + modale */}
+        <Button
+          variant="outlined"
+          icon="equalizer-line"
+          size="sm"
+          onClick={() => setIsSettingsOpen(true)}
+        />
+        {isSettingsOpen && (
+          <ModalIndicateursSuiviPlan
+            openState={{isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen}}
+            module={module as ModuleIndicateursSelect}
+          />
+        )}
       </div>
       {/** Liste des filtres appliqués */}
-      <div className="flex gap-6 mb-8">TODO filtres</div>
+      {selectedFilters && (
+        <ModuleFiltreBadges selectedFilters={selectedFilters} />
+      )}
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">

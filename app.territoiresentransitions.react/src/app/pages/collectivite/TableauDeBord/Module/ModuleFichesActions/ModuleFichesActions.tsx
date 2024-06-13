@@ -2,17 +2,23 @@ import {useHistory} from 'react-router-dom';
 
 import {Button, Modal} from '@tet/ui';
 
-import {ModuleSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
-import {TDBViewParam, makeTableauBordModuleUrl} from 'app/paths';
+import {
+  TDBViewParam,
+  makeCollectivitePlanActionFicheUrl,
+  makeTableauBordModuleUrl,
+} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
-import {FetchOptions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
+import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
 
 type Props = {
   view: TDBViewParam;
-  module: ModuleSelect;
+  module: ModuleFicheActionsSelect;
 };
 
 /** Module pour les différents modules liés aux fiches action
@@ -21,11 +27,13 @@ const ModuleFichesActions = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const {data: actions, isLoading} = useFicheActionResumeFetch({
-    options: module.options as FetchOptions,
+  const {data, isLoading} = useFicheActionResumeFetch({
+    options: module.options,
   });
 
-  const isEmpty = !actions || actions?.length === 0;
+  const fiches = data?.data;
+
+  const {data: filtresData} = useFiltreValues({filtre: module.options.filtre});
 
   return (
     <Module
@@ -35,11 +43,11 @@ const ModuleFichesActions = ({view, module}: Props) => {
         <Modal openState={openState} render={() => <div>Filtres</div>} />
       )}
       isLoading={isLoading}
-      isEmpty={isEmpty}
-      selectedFilters={['test']}
+      isEmpty={!fiches || fiches?.length === 0}
+      selectedFilters={filtresData && filtersToBadges(filtresData)}
       footerButtons={
-        actions &&
-        actions.length > 4 && (
+        fiches &&
+        fiches.length > 4 && (
           <Button
             variant="grey"
             size="sm"
@@ -54,15 +62,42 @@ const ModuleFichesActions = ({view, module}: Props) => {
             }
           >
             Afficher{' '}
-            {actions.length === 5
+            {fiches.length === 5
               ? '1 autre action'
-              : `les ${actions.length - 4} autres actions`}
+              : `les ${fiches.length - 4} autres actions`}
           </Button>
         )
       }
     >
-      {actions &&
-        actions.map(action => <div key={action.id}>{action.titre}</div>)}
+      <div className="grid md:grid-cols-2 2xl:grid-cols-4 gap-4">
+        {fiches &&
+          fiches.map(
+            (fiche, index) =>
+              index < 4 && (
+                <FicheActionCard
+                  key={fiche.id}
+                  ficheAction={fiche}
+                  isEditable
+                  editKeysToInvalidate={[
+                    [
+                      'fiches_resume_collectivite',
+                      collectiviteId,
+                      module.options,
+                    ],
+                  ]}
+                  link={
+                    fiche.plans && fiche.plans[0] && fiche.plans[0].id
+                      ? makeCollectivitePlanActionFicheUrl({
+                          collectiviteId: collectiviteId!,
+                          ficheUid: fiche.id!.toString(),
+                          planActionUid: fiche.plans[0].id!.toString(),
+                        })
+                      : undefined
+                  }
+                />
+              )
+          )}
+      </div>
     </Module>
   );
 };
