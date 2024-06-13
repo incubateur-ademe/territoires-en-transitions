@@ -43,6 +43,13 @@ const filterParts: {[key in keyof Filters]?: string} = {
   fiches_non_classees: 'fiches_non_classees!inner()',
 };
 
+// Hack temporaire en attendant le nouveau modèle indicateurs
+// pour afficher des indicateurs spécifiques à certaines collectivités
+const sydevCollectiviteIds = [
+  5290, 5288, 5303, 5291, 5297, 5292, 5295, 5298, 5299, 5294, 5286, 5304, 5302,
+  5296, 5287, 5289, 5301, 5293, 5300,
+];
+
 /**
  * Charge une liste d'indicateurs en fonction des paramètres de filtrage
  *
@@ -92,6 +99,12 @@ export const fetchFilteredIndicateurs = async (
     )
     // filtre toujours sur la collectivité
     .eq('collectivite_id', collectivite_id);
+
+  // Hack temporaire en attendant le nouveau modèle indicateurs
+  // pour afficher des indicateurs spécifiques à certaines collectivités
+  if (!sydevCollectiviteIds.includes(collectivite_id)) {
+    query.not('indicateur_id', 'like', 's_%');
+  }
 
   // filtre par sous-ensemble voulu
   if (isPerso) {
