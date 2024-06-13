@@ -24,25 +24,23 @@ export const ButtonMenu = ({
   notificationBtnClassName?: string;
 } & ButtonProps) => {
   return (
-    <>
-      <DropdownFloater
-        placement="bottom-end"
-        containerClassName="rounded-lg !border-t shadow-card"
-        render={() => <div className="p-4">{children}</div>}
-      >
-        {notificationValue !== undefined ? (
-          <NotificationButton
-            size={size}
-            notificationValue={notificationValue}
-            notificationVariant={notificationVariant}
-            containerclassName={notificationBtnClassName}
-            {...props}
-            className="" // reset le classname sinon les styles sont dupliqués entre le container et le bouton
-          />
-        ) : (
-          <Button size={size} {...props} />
-        )}
-      </DropdownFloater>
-    </>
+    <DropdownFloater
+      placement="bottom-end"
+      containerClassName="rounded-lg !border-t shadow-card"
+      render={() => <div className="p-4">{children}</div>}
+    >
+      {notificationValue !== undefined ? (
+        <NotificationButton
+          size={size}
+          notificationValue={notificationValue}
+          notificationVariant={notificationVariant}
+          containerclassName={notificationBtnClassName}
+          {...props}
+          className="" // reset le classname sinon les styles sont dupliqués entre le container et le bouton
+        />
+      ) : (
+        <Button size={size} {...props} />
+      )}
+    </DropdownFloater>
   );
 };
