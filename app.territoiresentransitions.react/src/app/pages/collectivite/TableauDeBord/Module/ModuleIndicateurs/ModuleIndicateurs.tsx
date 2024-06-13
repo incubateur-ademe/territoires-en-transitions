@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {Button} from '@tet/ui';
 
 import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {optionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
+import {moduleOptionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -16,8 +16,6 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import Module from '../Module';
-import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
-import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
 
 type Props = {
   view: TDBViewParam;
@@ -28,22 +26,20 @@ const ModuleIndicateurs = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const filtre = optionsToFilters(module.options);
+  const filtre = moduleOptionsToFilters(module.options);
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, filtre);
-
-  const {data: filtresData} = useFiltreValues({filtre: module.options.filtre});
 
   return (
     <Module
       title={module.titre}
+      filtre={module.options.filtre}
       symbole={<PictoIndicateurVide />}
       editModal={openState => (
         <ModalIndicateursSuiviPlan openState={openState} module={module} />
       )}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
-      selectedFilters={filtresData && filtersToBadges(filtresData)}
       footerButtons={
         <>
           <Button

@@ -2,7 +2,7 @@ import {useState} from 'react';
 
 import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
 import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filtre} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {Filtre as FiltreIndicateurs} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
 import {
   Field,
   FormSection,
@@ -36,7 +36,9 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
   const queryClient = useQueryClient();
   const userId = useAuth().user?.id;
 
-  const [filtreState, setFiltreState] = useState<Filtre>(module.options.filtre);
+  const [filtreState, setFiltreState] = useState<FiltreIndicateurs>(
+    module.options.filtre
+  );
 
   return (
     <Modal

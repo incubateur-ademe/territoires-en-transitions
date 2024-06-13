@@ -14,7 +14,10 @@ const Modules = () => {
   const {tdbModule: slug, tdbView}: {tdbModule: string; tdbView: TDBViewParam} =
     useParams();
 
-  if (slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote']) {
+  if (
+    slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote'] ||
+    slug === defaultSlugsSchema.enum['actions-recemment-modifiees']
+  ) {
     return <ModuleFichesActionsPage view={tdbView} slug={slug} />;
   }
 

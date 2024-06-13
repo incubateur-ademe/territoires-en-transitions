@@ -1,6 +1,12 @@
 import {z} from 'zod';
-import {fetchOptionsSchema as fichesFetchOptionsSchema} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
-import {fetchOptionsSchema as indicateursFetchOptionsSchema} from '../../../indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {
+  fetchOptionsSchema as fichesFetchOptionsSchema,
+  Filtre as FiltreFicheActions,
+} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
+import {
+  fetchOptionsSchema as indicateursFetchOptionsSchema,
+  Filtre as FiltreIndicateurs,
+} from '../../../indicateurs/indicateurs.list/domain/fetch_options.schema';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
 
@@ -63,6 +69,10 @@ export const defaultSlugsSchema = z.enum([
   'actions-dont-je-suis-pilote',
   'actions-recemment-modifiees',
 ]);
+
+export type Slug = z.infer<typeof defaultSlugsSchema>;
+
+export type Filtre = FiltreIndicateurs | FiltreFicheActions;
 
 type Props = {
   collectiviteId: number;

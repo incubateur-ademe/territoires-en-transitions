@@ -6,7 +6,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {FetchOptions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
 
 type Props = {
-  options: FetchOptions;
+  options?: FetchOptions;
 };
 
 export const useFicheActionResumeFetch = ({options}: Props) => {
@@ -17,6 +17,10 @@ export const useFicheActionResumeFetch = ({options}: Props) => {
     async () => {
       if (!collectiviteId) {
         throw new Error('Aucune collectivité associée');
+      }
+
+      if (!options) {
+        return null;
       }
 
       return await ficheActionResumesFetch({

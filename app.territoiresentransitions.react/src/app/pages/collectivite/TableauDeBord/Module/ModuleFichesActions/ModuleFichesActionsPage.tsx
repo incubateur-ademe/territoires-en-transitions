@@ -2,20 +2,24 @@ import {useState} from 'react';
 
 import {TDBViewParam, makeCollectivitePlanActionFicheUrl} from 'app/paths';
 
-import ModulePage from '../ModulePage';
-import {Input, Pagination, Select} from '@tet/ui';
-import {Filtre} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
-import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import PictoExpert from 'ui/pictogrammes/PictoExpert';
+import {
+  ModuleFicheActionsSelect,
+  Slug,
+} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import {Input, Select} from '@tet/ui';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {useHistory} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
 import {useModuleFetch} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useHistory} from 'react-router-dom';
+import PictoExpert from 'ui/pictogrammes/PictoExpert';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import ModulePage from '../ModulePage';
 
 type orderByOptionsType = {
   label: string;
-  value: keyof Filtre;
+  value: keyof FiltreFicheActions;
   direction: 'asc' | 'desc';
 };
 
@@ -29,7 +33,7 @@ const orderByOptions: orderByOptionsType[] = [
 
 type Props = {
   view: TDBViewParam;
-  slug: string;
+  slug: Slug;
 };
 
 /** Page d'un module du tableau de bord plans d'action */
@@ -39,6 +43,10 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
 
   const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
 
+  const {data, isLoading} = useFicheActionResumeFetch({
+    options: (module as ModuleFicheActionsSelect)?.options,
+  });
+
   const [order, setOrder] = useState(orderByOptions[0]);
 
   /** Texte de recherche pour l'input */
@@ -46,15 +54,11 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const {data, isLoading} = useFicheActionResumeFetch({
-    options: module?.options,
-  });
-
-  const total = data?.count;
-
   if (isModuleLoading || !module) {
     return null;
   }
+
+  const total = data?.count;
 
   return (
     <ModulePage view={view} title={'Titre générique actions'}>

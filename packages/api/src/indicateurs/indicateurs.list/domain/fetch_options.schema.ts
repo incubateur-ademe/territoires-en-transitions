@@ -2,6 +2,12 @@ import {z} from 'zod';
 import {filtreRessourceLieesSchema} from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
 import {getQueryOptionsSchema} from '../../../shared/domain/query_options.schema';
 
+export const filtreSpecifiqueSchema = z.object({
+  estComplet: z.boolean().optional(),
+});
+
+export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
+
 /**
  * Schema de filtre pour le fetch des indicateurs.
  */
@@ -13,9 +19,7 @@ export const filtreSchema = filtreRessourceLieesSchema
     servicePiloteIds: true,
     thematiqueIds: true,
   })
-  .extend({
-    estComplet: z.boolean().optional(),
-  });
+  .merge(filtreSpecifiqueSchema);
 
 export type Filtre = z.infer<typeof filtreSchema>;
 

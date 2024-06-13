@@ -1,4 +1,5 @@
 import {moduleFetch} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/module.fetch';
+import {Slug} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -7,7 +8,7 @@ import {useQuery} from 'react-query';
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
  */
-export const useModuleFetch = (slug: string) => {
+export const useModuleFetch = (slug: Slug) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
 
@@ -22,18 +23,12 @@ export const useModuleFetch = (slug: string) => {
         throw new Error('Aucun utilisateur connecté');
       }
 
-      const {data, error} = await moduleFetch({
+      return await moduleFetch({
         dbClient: supabaseClient,
         collectiviteId,
         userId,
         slug,
       });
-
-      if (error) {
-        throw error;
-      }
-
-      return data;
     }
   );
 };

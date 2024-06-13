@@ -1,3 +1,4 @@
+import {Filtre} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Button} from '@tet/ui';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import classNames from 'classnames';
@@ -22,8 +23,8 @@ type Props = {
   isLoading: boolean;
   /** État vide générique */
   isEmpty: boolean;
-  /** Affiche les filtres sélectionnés dans une liste de badges */
-  selectedFilters?: string[];
+  /** Filtre du module */
+  filtre: Filtre;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
@@ -35,10 +36,10 @@ type Props = {
 /** Composant générique d'un module du tableau de bord plans d'action */
 const Module = ({
   title,
+  filtre,
   symbole,
   editModal,
   isLoading,
-  selectedFilters,
   isEmpty,
   children,
   footerButtons,
@@ -63,12 +64,8 @@ const Module = ({
         <p className="m-0 font-bold text-primary-9">
           Aucun résultat pour ce filtre !
         </p>
-        {selectedFilters && (
-          <ModuleFiltreBadges
-            className="my-6"
-            selectedFilters={selectedFilters}
-          />
-        )}
+        <ModuleFiltreBadges className="my-6" filtre={filtre} />
+
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
         </Button>
@@ -95,9 +92,7 @@ const Module = ({
         </>
       </div>
       {/** Filtres du module */}
-      {selectedFilters && (
-        <ModuleFiltreBadges selectedFilters={selectedFilters} />
-      )}
+      <ModuleFiltreBadges filtre={filtre} />
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}

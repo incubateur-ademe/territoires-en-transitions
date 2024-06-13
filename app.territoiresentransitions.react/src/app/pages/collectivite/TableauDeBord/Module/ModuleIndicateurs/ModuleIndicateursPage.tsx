@@ -2,22 +2,23 @@ import {useState} from 'react';
 
 import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
 
-import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
-import ModulePage from '../ModulePage';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import {
+  ModuleIndicateursSelect,
+  Slug,
+} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import {Filters} from '@tet/api/dist/src/indicateurs';
+import {moduleOptionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
-import {Filters} from '@tet/api/dist/src/indicateurs';
-import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
-import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
+import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
-import {optionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {useModuleFetch} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import ModulePage from '../ModulePage';
 
 type orderByOptionsType = {
   label: string;
@@ -40,7 +41,7 @@ const orderByOptions: orderByOptionsType[] = [
 
 type Props = {
   view: TDBViewParam;
-  slug: string;
+  slug: Slug;
 };
 
 const ModuleIndicateursPage = ({view, slug}: Props) => {
@@ -48,14 +49,14 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
 
-  const filtre = module && optionsToFilters(module.options);
-
   const [order, setOrder] = useState(orderByOptions[0]);
 
   /** Texte de recherche pour l'input */
   const [search, setSearch] = useState<string>();
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
+
+  const filtre = module && moduleOptionsToFilters(module.options);
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
     ...filtre,
@@ -88,12 +89,6 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
-
-  const {data: filtresData} = useFiltreValues({
-    filtre: module?.options?.filtre ?? {},
-  });
-
-  const selectedFilters = filtresData && filtersToBadges(filtresData);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -158,9 +153,8 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         )}
       </div>
       {/** Liste des filtres appliqués */}
-      {selectedFilters && (
-        <ModuleFiltreBadges selectedFilters={selectedFilters} />
-      )}
+      <ModuleFiltreBadges filtre={module.options.filtre} />
+
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">
