@@ -42,7 +42,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            className="ri-arrow-down-s-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] flex mt-1 ml-auto"
           />
         </button>
       </div>
@@ -78,7 +78,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
             </span>
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            className="ri-arrow-down-s-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] flex mt-1 ml-auto"
           />
         </button>
       </div>
@@ -199,7 +199,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            className="ri-arrow-down-s-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] flex mt-1 ml-auto"
           />
         </button>
       </div>
@@ -233,7 +233,7 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Defaut 1
             Sélectionner des options
           </span>
           <span
-            className="fr-fi-arrow-down-s-line mt-1 scale-90 ml-auto"
+            className="ri-arrow-down-s-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] flex mt-1 ml-auto"
           />
         </button>
       </div>
