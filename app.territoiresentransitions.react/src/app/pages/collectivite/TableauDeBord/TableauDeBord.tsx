@@ -20,8 +20,6 @@ const TableauDeBord = () => {
 
   const plansActions = usePlansActionsListe(collectivite_id!);
 
-  const planIds = plansActions?.plans.map(p => p.id);
-
   const isEmpty = plansActions?.plans.length === 0;
 
   return (
@@ -58,7 +56,7 @@ const TableauDeBord = () => {
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>
-          <Modules planIds={planIds} />
+          <Modules />
         </Route>
       </div>
     </div>
