@@ -47,7 +47,9 @@ const PersonnesDropdown = (props: Props) => {
     tagTableName: 'personne_tag',
   });
 
-  /** Utilise useEffect pour de récupérer le nouvel id
+  const newTagId = newTag?.data?.[0].id;
+
+  /** Utilise useEffect pour récupérer le nouvel id
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
     if (newTag?.data) {
@@ -55,13 +57,13 @@ const PersonnesDropdown = (props: Props) => {
         {
           collectivite_id: collectivite_id!,
           nom: newTag.data[0].nom,
-          tag_id: newTag.data[0].id,
+          tag_id: newTagId,
           user_id: null,
         },
         ...getSelectedPersonnes(props.values),
       ]);
     }
-  }, [newTag?.data]);
+  }, [newTagId]);
 
   return (
     <SelectFilter
