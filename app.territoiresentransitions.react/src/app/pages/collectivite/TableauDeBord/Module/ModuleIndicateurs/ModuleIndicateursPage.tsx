@@ -13,7 +13,10 @@ import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/Indic
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
-import {useModuleFetch} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+import {
+  getQueryKey,
+  useModuleFetch,
+} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
 import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
@@ -149,6 +152,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
           <ModalIndicateursSuiviPlan
             openState={{isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen}}
             module={module as ModuleIndicateursSelect}
+            keysToInvalidate={[getQueryKey(slug)]}
           />
         )}
       </div>
