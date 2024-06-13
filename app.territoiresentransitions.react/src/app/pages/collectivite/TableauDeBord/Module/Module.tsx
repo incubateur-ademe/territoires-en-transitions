@@ -64,8 +64,7 @@ const Module = ({
         <p className="m-0 font-bold text-primary-9">
           Aucun résultat pour ce filtre !
         </p>
-        <ModuleFiltreBadges className="my-6" filtre={filtre} />
-
+        <ModuleFiltreBadges className="my-6 justify-center" filtre={filtre} />
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
         </Button>

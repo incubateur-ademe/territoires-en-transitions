@@ -14,16 +14,16 @@ export const filtersToBadges = (data: FiltreKeys) => {
 
   const badgeValues: string[] = [];
 
-  let pilotes = 'Pilotes : ';
+  const pilotes: string[] = [];
 
   dataKeys.forEach(key => {
     if (key === 'utilisateurPilotes') {
-      pilotes += data[key]
-        ?.map(pilote => `${pilote.prenom} ${pilote.nom}`)
-        .join(', ');
+      const users = data[key]?.map(user => `${user.prenom} ${user.nom}`);
+      users && pilotes.push(...users);
     }
     if (key === 'personnePilotes') {
-      pilotes += data[key]?.map(pilote => pilote.nom).join(', ');
+      const personnes = data[key]?.map(tag => tag.nom);
+      personnes && pilotes.push(...personnes);
     }
     if (key === 'thematiques') {
       badgeValues.push(
@@ -52,12 +52,8 @@ export const filtersToBadges = (data: FiltreKeys) => {
     }
   });
 
-  if (
-    dataKeys.some(
-      key => key === 'utilisateurPilotes' || key === 'personnePilotes'
-    )
-  ) {
-    badgeValues.push(pilotes);
+  if (pilotes.length > 0) {
+    badgeValues.push(`Pilotes : ${pilotes.join(', ')}`);
   }
 
   return badgeValues;
