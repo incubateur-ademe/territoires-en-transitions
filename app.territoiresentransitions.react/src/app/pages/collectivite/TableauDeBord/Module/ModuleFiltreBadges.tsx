@@ -21,9 +21,15 @@ const ModuleFiltreBadges = ({filtre, className}: Props) => {
   const selectedFilters = filtersToBadges({...filtreValues, ...filtre});
 
   return (
-    <div className={classNames('flex gap-4', className)}>
+    <div className={classNames('flex flex-wrap gap-4', className)}>
       {selectedFilters.map(filter => (
-        <Badge key={filter} title={filter} state="standard" size="sm" />
+        <Badge
+          key={filter}
+          title={filter}
+          state="standard"
+          size="sm"
+          trim={false}
+        />
       ))}
     </div>
   );

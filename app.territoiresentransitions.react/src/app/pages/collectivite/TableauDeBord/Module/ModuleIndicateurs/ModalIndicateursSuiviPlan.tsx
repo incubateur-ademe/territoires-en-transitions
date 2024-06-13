@@ -2,7 +2,10 @@ import {useState} from 'react';
 
 import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
 import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filtre as FiltreIndicateurs} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {
+  Filtre,
+  Filtre as FiltreIndicateurs,
+} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
 import {
   Field,
   FormSection,
@@ -40,6 +43,19 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
     module.options.filtre
   );
 
+  const getPilotesValues = (filtreState: Filtre) => {
+    const pilotes = [];
+    if (filtreState.utilisateurPiloteIds) {
+      pilotes.push(...filtreState.utilisateurPiloteIds);
+    }
+    if (filtreState.personnePiloteIds) {
+      pilotes.push(...filtreState.personnePiloteIds.map(String));
+    }
+    return pilotes;
+  };
+
+  const pilotes = getPilotesValues(filtreState);
+
   return (
     <Modal
       openState={openState}
@@ -70,22 +86,38 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
             </Field>
             <Field title="Pilote de l'indicateur :">
               <PersonnesDropdown
-                values={filtreState.personnePiloteIds?.map(String)}
-                onChange={pilotesIds =>
+                values={pilotes.length ? pilotes : undefined}
+                onChange={personnes => {
+                  const personnePiloteIds: number[] = [];
+                  const utilisateurPiloteIds: string[] = [];
+                  personnes.forEach(p => {
+                    if (p.tag_id) {
+                      personnePiloteIds.push(p.tag_id);
+                    }
+                    if (p.user_id) {
+                      utilisateurPiloteIds.push(p.user_id);
+                    }
+                  });
                   setFiltreState({
                     ...filtreState,
-                    personnePiloteIds: pilotesIds.map(Number),
-                  })
-                }
+                    personnePiloteIds,
+                    utilisateurPiloteIds,
+                  });
+                }}
               />
             </Field>
             <Field title="Thématique de l'indicateur :">
               <ThematiquesDropdown
-                values={filtreState.thematiqueIds}
-                onChange={thematiquesIds =>
+                values={
+                  filtreState.thematiqueIds &&
+                  filtreState.thematiqueIds.length > 0
+                    ? filtreState.thematiqueIds
+                    : undefined
+                }
+                onChange={thematiques =>
                   setFiltreState({
                     ...filtreState,
-                    thematiqueIds: thematiquesIds.map(Number),
+                    thematiqueIds: thematiques.map(t => t.id),
                   })
                 }
               />
