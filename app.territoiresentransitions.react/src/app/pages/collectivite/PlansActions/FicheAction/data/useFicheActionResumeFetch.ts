@@ -19,17 +19,11 @@ export const useFicheActionResumeFetch = ({options}: Props) => {
         throw new Error('Aucune collectivité associée');
       }
 
-      const {data, error} = await ficheActionResumesFetch({
+      return await ficheActionResumesFetch({
         dbClient: supabaseClient,
         collectiviteId,
         options,
       });
-
-      if (error) {
-        throw error;
-      }
-
-      return data;
     }
   );
 };

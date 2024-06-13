@@ -133,7 +133,8 @@ export async function ficheActionResumesFetch({
 
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
 
-  return {data: objectToCamel(data), count, nextPage};
+  // return {data: objectToCamel(data), count, nextPage};
+  return {data: data, count, nextPage};
 }
 
 function getDateSince(value: NonNullable<Filtre['modifiedSince']>) {

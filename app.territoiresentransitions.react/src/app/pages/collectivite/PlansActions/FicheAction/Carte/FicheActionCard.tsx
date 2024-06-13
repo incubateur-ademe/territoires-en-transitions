@@ -46,6 +46,7 @@ const FicheActionCard = ({
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheAction.id!,
     axeId: axeId || null,
+    keysToInvalidate: editKeysToInvalidate,
   });
 
   const carteId = `fiche-${ficheAction.id}`;
