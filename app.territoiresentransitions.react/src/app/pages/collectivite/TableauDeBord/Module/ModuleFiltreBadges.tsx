@@ -1,12 +1,25 @@
+import {Filtre} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Badge} from '@tet/ui';
 import classNames from 'classnames';
+import {useFiltreValues} from './useFiltreValues';
+import {filtersToBadges} from './utils';
 
 type Props = {
-  selectedFilters: string[];
+  filtre: Filtre;
   className?: string;
 };
 
-const ModuleFiltreBadges = ({className, selectedFilters}: Props) => {
+const ModuleFiltreBadges = ({filtre, className}: Props) => {
+  const {data: filtreValues} = useFiltreValues({
+    filtre,
+  });
+
+  if (!filtreValues) {
+    return null;
+  }
+
+  const selectedFilters = filtersToBadges({...filtreValues, ...filtre});
+
   return (
     <div className={classNames('flex gap-4', className)}>
       {selectedFilters.map(filter => (

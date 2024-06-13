@@ -3,6 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {Button, Modal} from '@tet/ui';
 
 import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
 import {
   TDBViewParam,
@@ -12,9 +13,6 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
-import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {useFiltreValues} from 'app/pages/collectivite/TableauDeBord/Module/useFiltreValues';
-import {filtersToBadges} from 'app/pages/collectivite/TableauDeBord/Module/utils';
 
 type Props = {
   view: TDBViewParam;
@@ -33,18 +31,16 @@ const ModuleFichesActions = ({view, module}: Props) => {
 
   const fiches = data?.data;
 
-  const {data: filtresData} = useFiltreValues({filtre: module.options.filtre});
-
   return (
     <Module
       title={module.titre}
+      filtre={module.options.filtre}
       symbole={<PictoExpert />}
       editModal={openState => (
         <Modal openState={openState} render={() => <div>Filtres</div>} />
       )}
       isLoading={isLoading}
       isEmpty={!fiches || fiches?.length === 0}
-      selectedFilters={filtresData && filtersToBadges(filtresData)}
       footerButtons={
         fiches &&
         fiches.length > 4 && (

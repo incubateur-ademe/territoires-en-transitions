@@ -265,7 +265,7 @@ export const fetchFilteredIndicateurs = async (
   };
 };
 
-export function optionsToFilters(
+export function moduleOptionsToFilters(
   options: Pick<FetchOptions, 'filtre'>
 ): Filters {
   const {filtre} = options;

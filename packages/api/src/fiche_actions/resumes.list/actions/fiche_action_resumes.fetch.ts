@@ -1,9 +1,8 @@
-import {objectToCamel} from 'ts-case-convert';
 import {z} from 'zod';
 import {DBClient, Views} from '../../../typeUtils';
 import {
   FetchOptions,
-  Filtre,
+  Filtre as FiltreFicheActions,
   fetchOptionsSchema,
 } from '../domain/fetch_options.schema';
 
@@ -37,7 +36,7 @@ export async function ficheActionResumesFetch({
   options,
 }: Props) {
   const collectiviteId = z.number().parse(unsafeCollectiviteId);
-  const {filtre, sort, page, limit} = fetchOptionsSchema.parse(options);
+  const {filtre: filtre, sort, page, limit} = fetchOptionsSchema.parse(options);
 
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
@@ -137,7 +136,7 @@ export async function ficheActionResumesFetch({
   return {data: data, count, nextPage};
 }
 
-function getDateSince(value: NonNullable<Filtre['modifiedSince']>) {
+function getDateSince(value: NonNullable<FiltreFicheActions['modifiedSince']>) {
   const match = value.match(/\d+/) as RegExpMatchArray;
   const nombreDeJours = parseInt(match[0]);
 
