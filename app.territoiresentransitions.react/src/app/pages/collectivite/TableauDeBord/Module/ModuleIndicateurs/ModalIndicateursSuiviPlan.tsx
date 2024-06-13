@@ -12,8 +12,6 @@ import {
   Select,
   SelectMultiple,
 } from '@tet/ui';
-import FiltrePersonnes from 'app/pages/collectivite/Indicateurs/lists/FiltrePersonnes';
-import FiltreThematiques from 'app/pages/collectivite/Indicateurs/lists/FiltreThematiques';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {supabaseClient} from 'core-logic/api/supabase';
@@ -21,6 +19,8 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useQueryClient} from 'react-query';
 import {getQueryKey} from '../useModulesFetch';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
@@ -67,9 +67,9 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
               />
             </Field>
             <Field title="Pilote de l'indicateur :">
-              <FiltrePersonnes
+              <PersonnesDropdown
                 values={filtreState.personnePiloteIds?.map(String)}
-                onSelect={pilotesIds =>
+                onChange={pilotesIds =>
                   setFiltreState({
                     ...filtreState,
                     personnePiloteIds: pilotesIds.map(Number),
@@ -78,9 +78,9 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
               />
             </Field>
             <Field title="Thématique de l'indicateur :">
-              <FiltreThematiques
-                values={filtreState.thematiqueIds?.map(String)}
-                onSelect={thematiquesIds =>
+              <ThematiquesDropdown
+                values={filtreState.thematiqueIds}
+                onChange={thematiquesIds =>
                   setFiltreState({
                     ...filtreState,
                     thematiqueIds: thematiquesIds.map(Number),
