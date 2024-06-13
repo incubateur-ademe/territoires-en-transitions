@@ -1,5 +1,5 @@
 import {supabaseClient} from 'core-logic/api/supabase';
-import {useMutation, useQueryClient} from 'react-query';
+import {QueryKey, useMutation, useQueryClient} from 'react-query';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
@@ -15,6 +15,7 @@ type Args = {
   ficheId: number;
   /** Invalider la cle axe_fiches et savoir s'il faut rediriger ou non */
   axeId: number | null;
+  keysToInvalidate?: QueryKey[];
 };
 
 /**
@@ -78,6 +79,9 @@ export const useDeleteFicheAction = (args: Args) => {
         );
       },
       onSuccess: () => {
+        args.keysToInvalidate?.forEach(key =>
+          queryClient.invalidateQueries(key)
+        );
         queryClient.invalidateQueries(axe_fiches_key);
         queryClient.invalidateQueries(flat_axes_Key);
         if (!axeId) {
