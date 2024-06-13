@@ -19,17 +19,20 @@ import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/dat
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useQueryClient} from 'react-query';
-import {getQueryKey} from '../useModulesFetch';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {QueryKey, useQueryClient} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
+  keysToInvalidate?: QueryKey[];
 };
 
-const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
+const ModalIndicateursSuiviPlan = ({
+  openState,
+  module,
+  keysToInvalidate,
+}: Props) => {
   const collectiviteId = useCollectiviteId();
   if (!collectiviteId) {
     throw new Error('Aucune collectivité associée');
@@ -37,7 +40,6 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
 
   const plansActions = usePlansActionsListe(collectiviteId);
   const queryClient = useQueryClient();
-  const userId = useAuth().user?.id;
 
   const [filtreState, setFiltreState] = useState<FiltreIndicateurs>(
     module.options.filtre
@@ -171,8 +173,8 @@ const ModalIndicateursSuiviPlan = ({openState, module}: Props) => {
                 },
               });
 
-              queryClient.invalidateQueries(
-                getQueryKey(collectiviteId, userId)
+              keysToInvalidate?.forEach(key =>
+                queryClient.invalidateQueries(key)
               );
 
               close();

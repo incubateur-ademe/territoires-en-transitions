@@ -16,6 +16,8 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import Module from '../Module';
+import {getQueryKey} from '../useModulesFetch';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 type Props = {
   view: TDBViewParam;
@@ -24,6 +26,7 @@ type Props = {
 
 const ModuleIndicateurs = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
+  const userId = useAuth().user?.id;
   const history = useHistory();
 
   const filtre = moduleOptionsToFilters(module.options);
@@ -36,7 +39,11 @@ const ModuleIndicateurs = ({view, module}: Props) => {
       filtre={module.options.filtre}
       symbole={<PictoIndicateurVide />}
       editModal={openState => (
-        <ModalIndicateursSuiviPlan openState={openState} module={module} />
+        <ModalIndicateursSuiviPlan
+          openState={openState}
+          module={module}
+          keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
+        />
       )}
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
