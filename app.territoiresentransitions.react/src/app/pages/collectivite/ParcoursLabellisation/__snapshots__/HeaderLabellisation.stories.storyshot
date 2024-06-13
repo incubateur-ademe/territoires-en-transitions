@@ -21,7 +21,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2021
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -58,7 +58,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2021
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -102,7 +102,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2021
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -139,7 +139,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2021
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -176,7 +176,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2022
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -202,7 +202,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -239,7 +239,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
       15 décembre 2021
     </p>
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       deuxième
@@ -263,7 +263,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -287,7 +287,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -313,7 +313,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -347,7 +347,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -381,7 +381,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première
@@ -407,7 +407,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
     className="fr-container fr-my-2w"
   >
     <h2
-      className="fr-mb-2w"
+      className="mb-4"
     >
       Objectif : 
       première

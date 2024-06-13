@@ -18,7 +18,6 @@ import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import {ActionAuditDetail} from '../Audit/ActionAuditDetail';
 import {useShowDescIntoInfoPanel} from '../Audit/useAudit';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import Alerte from 'ui/shared/Alerte';
 import {usePrevAndNextActionLinks} from './usePrevAndNextActionLinks';
 import {ActionHeader} from './ActionHeader';
 import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
@@ -28,6 +27,7 @@ import {useScoreRealise} from '../EtatDesLieux/Referentiel/data/useScoreRealise'
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import {useFilteredIndicateurDefinitions} from '../Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurChartsGrid from '../Indicateurs/lists/IndicateurChartsGrid';
+import {Alert} from '@tet/ui';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -66,7 +66,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   // le contenu de l'onglet Indicateurs n'est pas affiché si la collectivité est
   // en accès restreint
   const noIndicateursTab =
-    collectivite.acces_restreint && collectivite.niveau_acces===null;
+    collectivite.acces_restreint && collectivite.niveau_acces === null;
 
   // synchronise l'url lors du passage d'un onglet à l'autre
   const handleChange = (activeTab: number) => {
@@ -110,14 +110,17 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <ActionAuditDetail action={action} />
 
         {!showDescIntoInfoPanel && (
-          <Alerte state="information" classname="fr-mt-9v">
-            <div
-              className="htmlContent"
-              dangerouslySetInnerHTML={{
-                __html: addTargetToContentAnchors(action.description || ''),
-              }}
-            />
-          </Alerte>
+          <Alert
+            className="mt-9"
+            description={
+              <div
+                className="htmlContent"
+                dangerouslySetInnerHTML={{
+                  __html: addTargetToContentAnchors(action.description || ''),
+                }}
+              />
+            }
+          />
         )}
 
         <Tabs

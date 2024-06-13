@@ -1,5 +1,4 @@
 import {Tabs, Tab} from 'ui/shared/Tabs';
-import Alerte from 'ui/shared/Alerte';
 import {useAudit} from '../Audit/useAudit';
 import AuditSuivi from '../AuditSuivi';
 import {
@@ -15,6 +14,7 @@ import {
 import {useHistory} from 'react-router-dom';
 import AuditComparaison from '../AuditComparaison';
 import CriteresLabellisation from './CriteresLabellisation';
+import {Alert} from '@tet/ui';
 
 // index des onglets de la page Labellisation
 const TABS_INDEX: Record<LabellisationVueParamOption, number> = {
@@ -87,28 +87,29 @@ export const LabellisationTabs = () => {
 };
 
 const EnSavoirPlus = () => (
-  <Alerte
-    classname="fr-mb-4w"
-    state="information"
-    titre="En savoir plus sur l’avancement de l’audit"
-  >
-    <ul>
-      <li>
-        <strong>Non audité</strong> : une personne en charge de l'audit a été
-        nommée mais le travail d'audit n'a pas encore commencé pour cette
-        action.
-      </li>
-      <li>
-        <strong>Audit en cours</strong> : l'audit est en cours pour cette
-        action. Seule la personne en charge de l'audit peut modifier les statuts
-        des sous-actions et tâches. Les textes, les preuves et les indicateurs
-        ne sont à modifier qu'à la demande de la personne en charge de l'audit.
-      </li>
-      <li>
-        <strong>Audité</strong> : cette action a été validée par la personne en
-        charge de l'audit. Les statuts seront de nouveau modifiables lorsque
-        l'audit ou la labellisation seront validés.
-      </li>
-    </ul>
-  </Alerte>
+  <Alert
+    className="mb-8"
+    title="En savoir plus sur l’avancement de l’audit"
+    description={
+      <ul>
+        <li>
+          <strong>Non audité</strong> : une personne en charge de l'audit a été
+          nommée mais le travail d'audit n'a pas encore commencé pour cette
+          action.
+        </li>
+        <li>
+          <strong>Audit en cours</strong> : l'audit est en cours pour cette
+          action. Seule la personne en charge de l'audit peut modifier les
+          statuts des sous-actions et tâches. Les textes, les preuves et les
+          indicateurs ne sont à modifier qu'à la demande de la personne en
+          charge de l'audit.
+        </li>
+        <li>
+          <strong>Audité</strong> : cette action a été validée par la personne
+          en charge de l'audit. Les statuts seront de nouveau modifiables
+          lorsque l'audit ou la labellisation seront validés.
+        </li>
+      </ul>
+    }
+  />
 );

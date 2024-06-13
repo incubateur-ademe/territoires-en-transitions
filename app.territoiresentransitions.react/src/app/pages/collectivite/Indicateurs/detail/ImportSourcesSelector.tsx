@@ -116,7 +116,7 @@ export const ImportSourcesSelector = ({
         /** bandeau & bouton "appliquer à mes objectifs/résultats" */
         <>
           <Alert
-            classname="mb-8"
+            className="mb-8"
             state="info"
             title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
             footer={

@@ -54,7 +54,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   return (
     <PageHeaderLeft>
       <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
-      <h2 className="fr-mb-2w">Objectif : {numLabels[etoiles]} étoile</h2>
+      <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
       {status === 'non_demandee' && !isAuditeur ? (
         <>
           {etoiles === '1' && isCOT ? (

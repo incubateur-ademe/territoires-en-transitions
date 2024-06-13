@@ -10,6 +10,7 @@ import {
   useCycleLabellisation,
   usePreuvesLabellisation,
 } from './useCycleLabellisation';
+import {Alert} from '@tet/ui';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
@@ -35,11 +36,14 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
         par l’ADEME.
       </p>
       {etoiles !== '1' && atteint ? (
-        <div className="fr-alert fr-alert--info fr-mb-2w">
-          Bravo, vous avez plus de {Math.round(score_a_realiser * 100)} %
-          d’actions réalisées ! Les critères ont été mis à jour pour préparer
-          votre candidature à la {numLabels[etoiles]} étoile.
-        </div>
+        <Alert
+          className="mb-4"
+          title={`Bravo, vous avez plus de ${Math.round(
+            score_a_realiser * 100
+          )} %
+        d’actions réalisées ! Les critères ont été mis à jour pour préparer
+        votre candidature à la ${numLabels[etoiles]} étoile.`}
+        />
       ) : null}
       <h2>Critères de labellisation</h2>
       <ul>

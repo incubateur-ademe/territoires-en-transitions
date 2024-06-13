@@ -5,9 +5,9 @@ import {useState} from 'react';
 
 type AlertProps = {
   /** Titre du bloc alerte */
-  title: string;
+  title?: string;
   /** Texte additionnel optionnel */
-  description?: string;
+  description?: string | React.ReactNode;
   /** Possibilité d'ajouter un composant custom en fin de bloc */
   footer?: React.ReactNode;
   /** Etat du bloc alerte */
@@ -17,7 +17,7 @@ type AlertProps = {
   /** Gestion de l'affichage pour les alertes sur toute la largeur de page */
   fullPageWidth?: boolean;
   /** Classname custom */
-  classname?: string;
+  className?: string;
   /** Détecte la fermeture du bloc */
   onClose?: () => void;
 };
@@ -33,7 +33,7 @@ export const Alert = ({
   state = 'info',
   isOpen = true,
   fullPageWidth = false,
-  classname,
+  className,
   onClose,
 }: AlertProps) => {
   const disableClose = !onClose;
@@ -45,7 +45,8 @@ export const Alert = ({
     <div
       className={classNames(
         {'w-full px-4 lg:px-6': fullPageWidth},
-        styles.background
+        styles.background,
+        className
       )}
     >
       <div
@@ -56,8 +57,7 @@ export const Alert = ({
             'px-4': !fullPageWidth,
             'w-full mx-auto xl:max-w-7xl 2xl:max-w-8xl': fullPageWidth,
           },
-          styles.background,
-          classname
+          styles.background
         )}
       >
         {/* Icône à gauche du bloc */}
@@ -67,12 +67,16 @@ export const Alert = ({
         />
 
         {/* Titre et texte additionnel */}
-        <div className="flex flex-col gap-3">
-          <div className={classNames('text-base font-bold', styles.text)}>
-            {title}
-          </div>
+        <div className="flex flex-col gap-3 justify-center">
+          {!!title && (
+            <div className={classNames('text-base font-bold', styles.text)}>
+              {title}
+            </div>
+          )}
           {!!description && (
-            <div className="text-sm font-medium text-grey-9">{description}</div>
+            <div className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3">
+              {description}
+            </div>
           )}
           {!!footer && footer}
         </div>

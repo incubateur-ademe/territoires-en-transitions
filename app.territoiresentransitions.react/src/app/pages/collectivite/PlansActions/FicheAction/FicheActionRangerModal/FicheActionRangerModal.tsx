@@ -1,10 +1,10 @@
 import {TAxeInsert} from 'types/alias';
-import Alerte from 'ui/shared/Alerte';
 import Modal from 'ui/shared/floating-ui/Modal';
 import {FicheAction} from '../data/types';
 import PlanChemin from './PlanChemin';
 
 import TableauNouvelEmplacement from './TableauNouvelEmplacement';
+import {Alert} from '@tet/ui';
 
 type Props = {
   toggleButtonTitle?: string;
@@ -37,11 +37,9 @@ const FicheActionRangerModal = ({fiche, toggleButtonTitle}: Props) => {
                 </span>
               )}
             </div>
-            <Alerte
-              classname="inline-block mb-8 mr-auto"
-              state="information"
-              description="Le contenu de la fiche sera mis à jour de manière synchronisée quel que soit l’emplacement"
-              small
+            <Alert
+              className="mb-8"
+              title="Le contenu de la fiche sera mis à jour de manière synchronisée quel que soit l’emplacement"
             />
             <h6 className="text-lg">Sélectionner un nouvel emplacement</h6>
 

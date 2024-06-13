@@ -3,6 +3,7 @@ import {numLabels} from './numLabels';
 import {useEnvoiDemande} from './useEnvoiDemande';
 import {TCycleLabellisation} from './useCycleLabellisation';
 import {MessageCompletudeECi} from './MessageCompletudeECi';
+import {Alert} from '@tet/ui';
 
 export type TDemandeLabellisationModalProps = {
   isCOT: boolean;
@@ -112,9 +113,11 @@ export const DemandeLabellisationModalContent = (
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (
-          <div className="fr-alert fr-alert--success">
-            {etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
-          </div>
+          <Alert
+            state="success"
+            className="mb-4"
+            title={etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
+          />
         ) : null}
         {status === 'non_demandee' && !isLoading ? (
           <>
