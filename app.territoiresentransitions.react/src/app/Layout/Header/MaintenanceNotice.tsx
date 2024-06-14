@@ -1,5 +1,5 @@
+import {ControlledAlert as Alert} from '@tet/ui';
 import {Maintenance} from '../useMaintenance';
-import {NoticeAlert, Notice} from 'ui/Notice';
 
 /**
  * Affiche un bandeau d'information quand une maintenance est prévue ou en cours.
@@ -15,15 +15,25 @@ export const MaintenanceNotice = ({
   const ongoing = new Date(now) > new Date(begins_at);
   if (ongoing)
     return (
-      <NoticeAlert message="Une mise en production est en cours. Merci de ne pas utiliser la plateforme pour éviter toute perte d'informations." />
+      <Alert
+        fullPageWidth
+        state="error"
+        title={`Une mise en production est en cours. Merci de ne pas utiliser la plateforme 
+        pour éviter toute perte d'informations.`}
+      />
     );
 
-  const formatedDate = formatDate(begins_at);
   const formatedBeginsAt = formatDate(begins_at);
   const formatedEndsAt = formatDate(ends_at);
   return (
-    <Notice
-      message={`Une mise en production est prévue le ${formatedDate} de ${formatedBeginsAt} à ${formatedEndsAt}. Le fonctionnement de la plateforme pourra en être altéré sur ce laps de temps.`}
+    <Alert
+      fullPageWidth
+      title={`Une mise en production est prévue ${
+        formatedBeginsAt === formatedEndsAt
+          ? `le ${formatedBeginsAt}`
+          : `du ${formatedBeginsAt} au ${formatedEndsAt}`
+      }. 
+      Le fonctionnement de la plateforme pourra en être altéré sur ce laps de temps.`}
     />
   );
 };

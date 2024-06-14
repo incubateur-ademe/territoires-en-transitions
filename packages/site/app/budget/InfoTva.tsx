@@ -1,4 +1,7 @@
+'use client';
+
 import Markdown from '@components/markdown/Markdown';
+import {Alert} from '@tet/ui';
 
 export type InfoTvaProps = {
   titre: string;
@@ -7,15 +10,16 @@ export type InfoTvaProps = {
 
 const InfoTva = ({titre, description}: InfoTvaProps) => {
   return (
-    <div className="fr-notice fr-notice--info bg-info-2 p-6 mt-10 rounded-[10px]">
-      <div className="fr-notice__body text-info-1 pr-0">
-        <p className="fr-notice__title text-info-1 text-[16px]">{titre}</p>
+    <Alert
+      className="p-3 mt-10 rounded-[10px]"
+      title={titre}
+      description={
         <Markdown
           texte={description}
-          className="paragraphe-14 paragraphe-info-1 paragraphe-medium -mb-6"
+          className="paragraphe-14 paragraphe-info-1 paragraphe-medium -mb-6 [&>p]:mb-0"
         />
-      </div>
-    </div>
+      }
+    />
   );
 };
 
