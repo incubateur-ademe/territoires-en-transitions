@@ -43,7 +43,9 @@ Deno.test(
       )
       .contains('definition_referentiel.programmes', ['cae'])
       .eq('thematiques.md_id', 'energie_et_climat')
-      .eq('collectivite_id', 1);
+      .eq('collectivite_id', 1)
+      // filtre les indicateurs sydev
+      .not('indicateur_id', 'like', 's_%');
 
     const { data } = await query.returns<IndicateurDefinition[]>();
     assertExists(data);
