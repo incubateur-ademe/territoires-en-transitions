@@ -102,7 +102,7 @@ export const fetchFilteredIndicateurs = async (
 
   // Hack temporaire en attendant le nouveau modèle indicateurs
   // pour afficher des indicateurs spécifiques à certaines collectivités
-  if (!sydevCollectiviteIds.includes(collectivite_id)) {
+  if (!sydevCollectiviteIds.includes(collectivite_id) && !isPerso) {
     query.not('indicateur_id', 'like', 's_%');
   }
 
