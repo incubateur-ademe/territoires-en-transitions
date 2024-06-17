@@ -54,9 +54,9 @@ const IndicateurPersoNouveau = ({
   };
 
   return (
-    <div className={classNames('fr-p-2w', className)}>
+    <div className={classNames('p-4', className)}>
       <h4>
-        <i className="fr-icon-line-chart-line fr-pr-2w" />
+        <i className="fr-icon-line-chart-line pr-4" />
         Créer un indicateur
       </h4>
       <IndicateurPersoNouveauForm

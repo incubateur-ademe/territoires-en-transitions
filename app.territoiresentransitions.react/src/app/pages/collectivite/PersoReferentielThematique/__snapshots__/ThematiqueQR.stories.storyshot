@@ -35,7 +35,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -46,7 +46,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <section
               className="fr-accordion fr-mb-3w"
@@ -154,7 +154,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -165,7 +165,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4"
@@ -223,7 +223,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -234,7 +234,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4 flex-col"
@@ -340,7 +340,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
       </fieldset>
     </div>
     <div
-      className="flex fr-pt-4w"
+      className="flex pt-8"
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
@@ -396,7 +396,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -407,7 +407,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <section
               className="fr-accordion fr-mb-3w"
@@ -515,7 +515,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -526,7 +526,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4"
@@ -584,7 +584,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -595,7 +595,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4 flex-col"
@@ -701,7 +701,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
       </fieldset>
     </div>
     <div
-      className="flex fr-pt-4w"
+      className="flex pt-8"
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
@@ -833,7 +833,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -844,7 +844,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <section
               className="fr-accordion fr-mb-3w"
@@ -952,7 +952,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -963,7 +963,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4"
@@ -1021,7 +1021,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md fr-p-2w fr-mb-1w"
+          className="border rounded-md p-4 fr-mb-1w"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1032,7 +1032,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             }
           />
           <div
-            className="fr-pl-2w"
+            className="pl-4"
           >
             <div
               className="flex pl-4 flex-col"
@@ -1138,7 +1138,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
       </fieldset>
     </div>
     <div
-      className="flex fr-pt-4w"
+      className="flex pt-8"
     >
       <a
         className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"

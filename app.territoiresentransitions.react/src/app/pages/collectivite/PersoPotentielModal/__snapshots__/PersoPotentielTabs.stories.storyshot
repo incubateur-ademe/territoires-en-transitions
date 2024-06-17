@@ -204,7 +204,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <section
                 className="fr-accordion fr-mb-3w"
@@ -323,7 +323,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4"
@@ -392,7 +392,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4 flex-col"
@@ -622,7 +622,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4"
@@ -802,7 +802,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4"
@@ -982,7 +982,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <section
                 className="fr-accordion fr-mb-3w"
@@ -1212,7 +1212,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <section
                 className="fr-accordion fr-mb-3w"
@@ -1449,7 +1449,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4 flex-col"
@@ -1634,7 +1634,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
               }
             />
             <div
-              className="fr-pl-2w"
+              className="pl-4"
             >
               <div
                 className="flex pl-4 flex-col"

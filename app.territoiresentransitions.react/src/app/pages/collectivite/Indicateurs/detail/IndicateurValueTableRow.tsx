@@ -218,7 +218,7 @@ const ConfirmModif = ({
       noCloseButton
       externalOpen={true}
       render={() => (
-        <div className="fr-py-2w">
+        <div className="py-4">
           <h4>Confirmer la modification</h4>
           <p>Attention, une valeur existe déjà pour l'année {annee}.</p>
           <p>

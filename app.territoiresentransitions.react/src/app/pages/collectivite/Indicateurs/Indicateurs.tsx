@@ -65,7 +65,7 @@ const IndicateurDetail = (
 ) => {
   const {indicateurId, isPerso} = props;
   if (indicateurId === ID_NOUVEAU) {
-    return <IndicateurPersoNouveau className="fr-p-6w" />;
+    return <IndicateurPersoNouveau className="p-12" />;
   }
   if (isPerso) return <IndicateurPersonnalise indicateurId={indicateurId} />;
   return <IndicateurPredefini indicateurId={indicateurId} />;

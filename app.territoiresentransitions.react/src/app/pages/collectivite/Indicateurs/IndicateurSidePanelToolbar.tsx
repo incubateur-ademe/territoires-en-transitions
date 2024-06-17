@@ -47,7 +47,7 @@ export const IndicateurSidePanelToolbar = ({
         content: (
           <>
             {panelId === 'info' && (
-              <div className="overflow-y-auto fr-px-3w fr-py-2w">
+              <div className="overflow-y-auto px-6 py-4">
                 <div
                   className="fr-text--sm"
                   dangerouslySetInnerHTML={{__html: definition.description!}}

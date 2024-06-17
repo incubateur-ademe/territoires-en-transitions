@@ -63,7 +63,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
           </>
         ) : null}
         <QuestionReponseList questionReponses={qrList} onChange={onChange} />
-        <div className="flex fr-pt-4w">
+        <div className="flex pt-8">
           <a
             className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
             data-test="btn-toc"

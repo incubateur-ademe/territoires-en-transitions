@@ -16,7 +16,7 @@ export const ActionInfoSommaire = ({
   current,
   setCurrent,
 }: TActionSommaireProps) => (
-  <nav className="bg-grey975 fr-py-1w fr-px-3w text-xs" role="navigation">
+  <nav className="bg-grey975 py-2 px-6 text-xs" role="navigation">
     <ul className="list-none p-0">
       {items.map(({id, label, num}) => {
         const isCurrent = id === current;

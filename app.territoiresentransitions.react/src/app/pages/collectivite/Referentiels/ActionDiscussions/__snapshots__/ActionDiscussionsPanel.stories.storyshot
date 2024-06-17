@@ -5,7 +5,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
   className="flex flex-col pt-4 grow overflow-hidden"
 >
   <div
-    className="flex fr-px-2w fr-pb-2w"
+    className="flex px-4 pb-4"
   >
     <div
       className="flex items-center py-1 px-3 text-sm text-white bg-bf500 rounded-full"
@@ -36,7 +36,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
     </div>
   </div>
   <div
-    className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
+    className="pt-4 pb-2 px-4 bg-gray-100"
     data-test="ActionDiscussionsNouvelleDiscussion"
   >
     <div
@@ -235,7 +235,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
   className="flex flex-col pt-4 grow overflow-hidden"
 >
   <div
-    className="flex fr-px-2w fr-pb-2w"
+    className="flex px-4 pb-4"
   >
     <div
       className="flex items-center py-1 px-3 text-sm text-white bg-bf500 rounded-full"
@@ -266,7 +266,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
     </div>
   </div>
   <div
-    className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
+    className="pt-4 pb-2 px-4 bg-gray-100"
     data-test="ActionDiscussionsNouvelleDiscussion"
   >
     <div

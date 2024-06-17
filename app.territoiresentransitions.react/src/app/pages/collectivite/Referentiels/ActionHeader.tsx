@@ -33,10 +33,10 @@ export const ActionHeader = ({
         >
           <div
             className={classNames(
-              'flex flex-col justify-between bg-[#6A6AF4] text-white fr-px-5w',
+              'flex flex-col justify-between bg-[#6A6AF4] text-white px-10',
               {
-                'fr-py-3w': !isScrolled,
-                'fr-py-1w': isScrolled,
+                'py-6': !isScrolled,
+                'py-2': isScrolled,
               }
             )}
           >
@@ -58,10 +58,10 @@ export const ActionHeader = ({
             </div>
           </div>
           <div className="fr-container flex justify-between items-center fr-text--sm fr-my-2w">
-            <div className="flex gap-4 items-center fr-pl-1v text-grey425">
+            <div className="flex gap-4 items-center pl-1 text-grey425">
               <ActionProgressBar
                 action={action}
-                className="border-r border-r-[#ddd] fr-pr-5v"
+                className="border-r border-r-[#ddd] pr-5"
               />
               <ScoreDisplay
                 score={actionScore?.points_realises ?? null}
@@ -70,7 +70,7 @@ export const ActionHeader = ({
                 size="sm"
               />
               {action.have_questions && (
-                <div className="border-l border-l-[#ddd] fr-pl-3v">
+                <div className="border-l border-l-[#ddd] pl-3">
                   <PersoPotentiel actionDef={action} />
                 </div>
               )}

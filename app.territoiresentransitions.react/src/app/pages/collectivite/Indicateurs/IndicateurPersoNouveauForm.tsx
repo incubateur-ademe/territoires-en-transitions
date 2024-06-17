@@ -42,7 +42,7 @@ export const IndicateurPersoNouveauForm = (props: {
     >
       {({isValid}) => (
         <Form>
-          <div className="bg-grey975 fr-py-7w fr-px-10w">
+          <div className="bg-grey975 py-14 px-20">
             <p>
               Les indicateurs personnalisés vous permettent de suivre de manière
               spécifique les actions menées par votre collectivité. Associez-les
