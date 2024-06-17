@@ -62,7 +62,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
   return (
     <div
       className={classNames({
-        'border rounded-md fr-p-2w fr-mb-1w': variant !== 'modal',
+        'border rounded-md p-4 fr-mb-1w': variant !== 'modal',
         'fr-my-2w': variant === 'modal',
       })}
     >
@@ -75,7 +75,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         )}
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}
       />
-      <div className="fr-pl-2w">
+      <div className="pl-4">
         {description ? (
           <Accordion
             className="fr-mb-3w"
