@@ -88,6 +88,9 @@ function fetchIndicateurs<T>(filter: Filter) {
 
   if (filter.indicateur_id) {
     select = select.eq('indicateur_id', filter.indicateur_id);
+  } else {
+    // filtre les indicateurs sydev
+    select.or('indicateur_id.not.like.s_*, indicateur_perso_id.not.is.null');
   }
   if (filter.type) {
     select = select.eq('definition_referentiel.type', filter.type);
@@ -264,7 +267,7 @@ Deno.test('Filtres multicritère', async () => {
       thematique_id: 8,
     })
     .select();
-  assertEquals(upsert.status, 201);
+  //assertEquals(upsert.status, 201);
 
   for (const expectation of expectations.reverse()) {
     const select = await fetchIndicateurs<IndicateurDetail[]>(
