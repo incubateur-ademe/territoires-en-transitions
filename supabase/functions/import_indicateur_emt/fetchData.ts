@@ -3,75 +3,55 @@ import {Tables, TablesInsert} from "../_shared/typeUtils.ts";
 
 
 /**
- * Récupère les commentaires des indicateurs de la collectivité
+ * Récupère les valeurs des indicateurs de la collectivité
  * @param supabaseClient
  * @param collectivite_id
  * @return commentaires
  */
-export const commentaires = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
+export const valeurs = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
     const query = supabaseClient
-        .from('indicateur_resultat_commentaire')
+        .from('indicateur_valeur')
         .select()
-        .eq('collectivite_id', collectivite_id);
+        .eq('collectivite_id', collectivite_id)
+        .is('metadonnee_id', null);
 
     const { error, data } = await query;
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, TablesInsert<"indicateur_resultat_commentaire">>();
+    const toReturn = new Map<string, TablesInsert<"indicateur_valeur">>();
     for(let i=0; i<data.length; i++){
-        const commentaire : TablesInsert<"indicateur_resultat_commentaire"> = data[i];
-        toReturn.set(
-            (commentaire.annee?commentaire.indicateur_id +' ' +commentaire.annee:commentaire.indicateur_id),
-            commentaire
-        );
+        const valeur : TablesInsert<"indicateur_valeur"> = data[i];
+        toReturn.set(`${valeur.indicateur_id} - ${new Date(valeur.date_valeur).getFullYear()}`, valeur);
     }
     return toReturn;
 }
 
 /**
- * Récupère les définitions des indicateurs
+ * Récupère les définitions prédéfinis des indicateurs
  * @param supabaseClient
  * @return definitions
  */
 export const definitions = async(supabaseClient : TSupabaseClient)=> {
     const query = supabaseClient
         .from('indicateur_definition')
-        .select();
+        .select()
+        .is('collectivite_id', null)
+        .is('groupement_id', null)
+        .not('identifiant_referentiel', 'is', null);
 
     const { error, data } = await query;
     if (error) {
         throw new Error(error.message);
     }
-    const toReturn = new Map<string, Tables<"indicateur_definition">>();
+    const parIdentifiant = new Map<string, Tables<"indicateur_definition">>();
+    const parID = new Map<number, Tables<"indicateur_definition">>();
     for(let i=0; i<data.length; i++){
         const definition : Tables<"indicateur_definition"> = data[i];
-        toReturn.set(definition.id, definition);
+        parIdentifiant.set(definition.identifiant_referentiel, definition);
+        parID.set(definition.id, definition);
     }
-    return toReturn;
+    return {parIdentifiant, parID};
 }
 
-/**
- * Récupère les résultats des indicateurs
- * @param supabaseClient
- * @param collectivite_id
- * @return definitions
- */
-export const resultats = async(supabaseClient : TSupabaseClient, collectivite_id : number)=> {
-    const query = supabaseClient
-        .from('indicateur_resultat')
-        .select()
-        .eq('collectivite_id', collectivite_id);
-
-    const { error, data } = await query;
-    if (error) {
-        throw new Error(error.message);
-    }
-    const toReturn = new Map<string, Tables<"indicateur_resultat">>();
-    for(let i=0; i<data.length; i++){
-        const resultat : Tables<"indicateur_resultat"> = data[i];
-        toReturn.set(resultat.indicateur_id +' - '+ resultat.annee, resultat);
-    }
-    return toReturn;
-}
 
