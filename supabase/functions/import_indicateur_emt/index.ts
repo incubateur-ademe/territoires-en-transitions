@@ -57,9 +57,8 @@ serve(async (req) => {
         }
       }
     }
-    const commentaires = await fetch.commentaires(supabaseClient, collectivite_id);
+    const valeurs = await fetch.valeurs(supabaseClient, collectivite_id);
     const definitions = await fetch.definitions(supabaseClient);
-    const resultats = await fetch.resultats(supabaseClient, collectivite_id)
     const tetId = test?yoloUserId:tetUserId;
 
     // Pour chaque ligne du fichier
@@ -67,7 +66,7 @@ serve(async (req) => {
       // Récupère l'id de l'indicateur
       const id = await getCelluleValue(sheet, ligne, 0); // Colonne A
       const nom = await getCelluleValue(sheet, ligne, 2); // Colonne C
-      const indicateur_id = await clean.id(id, nom, referentiel, definitions);
+      const indicateur_id = await clean.id(id, nom, referentiel, definitions.parIdentifiant);
 
       if(indicateur_id) {
         for (let colonne = 4; colonne < 14; colonne += 3) {
@@ -75,29 +74,17 @@ serve(async (req) => {
           let valeur = await getCelluleValue(sheet, ligne, colonne);
           let annee = await clean.annee(await getCelluleValue(sheet, ligne, colonne + 1));
           let commentaire = await getCelluleValue(sheet, ligne, colonne + 2);
-          const valeurClean = await clean.valeur(valeur, indicateur_id, definitions);
-
-          // Sauvegarde la valeur si elle est présente, ainsi que l'année associée
-          if (annee && valeurClean) {
-            await save.resultat(
+          const valeurClean = await clean.valeur(valeur, indicateur_id, definitions.parID);
+          // Sauvegarde les valeurs si elles sont présentes, ainsi que l'année associée
+          if (annee && (valeurClean || commentaire)) {
+            await save.valeurs(
                 supabaseClient,
                 collectivite_id,
                 indicateur_id,
                 annee,
                 valeurClean,
-                resultats
-            );
-          }
-          // Sauvegarde le commentaire s'il est présent
-          if (commentaire) {
-            await save.commentaire(
-                supabaseClient,
-                collectivite_id,
-                indicateur_id,
-                annee,
                 commentaire,
-                commentaires,
-                tetId
+                valeurs
             );
           }
         }
@@ -126,7 +113,7 @@ serve(async (req) => {
  * @param ligne
  * @param colonne
  */
-const getCelluleValue = async (sheet : any, ligne : integer, colonne : integer)
+const getCelluleValue = async (sheet : any, ligne : number, colonne : number)
     : Promise<any | null> => {
   const coord = xlsx.utils.encode_cell({r: ligne, c: colonne});
   return !sheet[coord]?null:sheet[coord].v;

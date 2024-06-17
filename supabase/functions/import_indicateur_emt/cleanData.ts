@@ -13,7 +13,7 @@ export const id = async (
     nom : string,
     referentiel : string,
     definitions : Map<string, Tables<"indicateur_definition">>
-): Promise<any | null> => {
+): Promise<number | null> => {
     // Cellules fusionnées et dont la valeur ne se retrouve que sur la première cellule
     if(!id){
         if(String(nom).includes('Montant des aides financières accordées aux particuliers et acteurs privés (euros/hab.an)')){
@@ -46,7 +46,7 @@ export const id = async (
         case null :
     }
     idClean = referentiel +'_' +idClean;
-    return definitions.get(idClean)?idClean:null;
+    return definitions.get(idClean) ? definitions.get(idClean).id : null;
 }
 
 /**
@@ -58,8 +58,8 @@ export const id = async (
  */
 export const valeur = async (
     valeur : any,
-    indicateur_id : string,
-    definitons : Map<string, Tables<"indicateur_definition">>
+    indicateur_id : number,
+    definitons : Map<number, Tables<"indicateur_definition">>
 ): Promise<number | null> => {
     if(valeur==null){
         return null;
@@ -68,7 +68,10 @@ export const valeur = async (
     if(isNaN(toReturn)){
         return null;
     }
-    if(definitons.get(indicateur_id)!.unite=='%' && toReturn<1){
+    const defs = definitons.get(indicateur_id) || null;
+    const unite = defs ? defs.unite : '';
+
+    if(unite ==='%' && toReturn<1){
         toReturn *= 100;
     }
     return toReturn;
