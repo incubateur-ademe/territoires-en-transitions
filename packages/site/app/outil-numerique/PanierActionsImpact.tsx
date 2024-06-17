@@ -25,8 +25,8 @@ const PanierActionsImpact = ({
       {!!image && (
         <StrapiImage
           data={image}
-          containerClassName="max-w-xl lg:max-2xl:max-w-md shrink"
-          className="h-96 object-scale-down"
+          containerClassName="w-fit shrink"
+          className="h-64 sm:h-96 w-auto max-w-full sm:max-w-xl lg:max-2xl:max-w-md object-scale-down"
         />
       )}
       <div>
