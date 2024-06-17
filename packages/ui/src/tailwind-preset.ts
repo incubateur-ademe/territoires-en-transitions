@@ -104,6 +104,7 @@ export const preset = {
       zIndex: {
         modal: '1000',
         dropdown: '999',
+        tooltip: '1001',
       },
       backgroundImage: {
         // malheureusement on n'arrive pas à styler le bouton de ràz des input.search directement avec remixicon
