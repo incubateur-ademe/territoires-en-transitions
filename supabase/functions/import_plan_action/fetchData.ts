@@ -87,21 +87,8 @@ export const fetchSousThematiques = async (
  */
 export const fetchIndicateurs = async (supabaseClient: TSupabaseClient, collectivite_id : number) :
     Promise<Map<string, TIndicateur>> => {
-    const query = supabaseClient
-        .from('indicateurs_collectivite')
-        .select()
-        .eq('collectivite_id', collectivite_id);
-
-    const { error, data } = await query;
-    if (error) {
-        throw new Error(error.message);
-    }
-    const toReturn = new Map<string, TIndicateur>();
-    for(let i=0; i<data.length; i++){
-        const indicateur : TIndicateur = data[i];
-        toReturn.set(indicateur.indicateur_id==null?indicateur.nom:indicateur.indicateur_id, indicateur);
-    }
-    return toReturn;
+    // TODO
+    return new Map<string, TIndicateur>();
 }
 
 /**
