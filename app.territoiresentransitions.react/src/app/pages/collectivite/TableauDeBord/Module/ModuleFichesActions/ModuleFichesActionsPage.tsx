@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useHistory} from 'react-router-dom';
 
 import {TDBViewParam, makeCollectivitePlanActionFicheUrl} from 'app/paths';
 
@@ -7,15 +8,20 @@ import {
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
-import {Input, Select} from '@tet/ui';
+import {Button, Input, Select} from '@tet/ui';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
-import {useModuleFetch} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+import {
+  getQueryKey,
+  useModuleFetch,
+} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistory} from 'react-router-dom';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModulePage from '../ModulePage';
+import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
+import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
 type orderByOptionsType = {
   label: string;
@@ -47,6 +53,8 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
     options: (module as ModuleFicheActionsSelect)?.options,
   });
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   const [order, setOrder] = useState(orderByOptions[0]);
 
   /** Texte de recherche pour l'input */
@@ -61,7 +69,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   const total = data?.count;
 
   return (
-    <ModulePage view={view} title={'Titre générique actions'}>
+    <ModulePage view={view} title={module.titre}>
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
         {/** Tri */}
         <div className="w-64">
@@ -92,9 +100,41 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
           placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
+        {/** Bouton d'édition des filtres du module + modale */}
+        <Button
+          variant="outlined"
+          icon="equalizer-line"
+          size="sm"
+          onClick={() => setIsSettingsOpen(true)}
+        />
+        {isSettingsOpen && (
+          <>
+            {module.slug === 'actions-dont-je-suis-pilote' && (
+              <ModalActionsDontJeSuisLePilote
+                openState={{
+                  isOpen: isSettingsOpen,
+                  setIsOpen: setIsSettingsOpen,
+                }}
+                module={module as ModuleFicheActionsSelect}
+                keysToInvalidate={[getQueryKey(slug)]}
+              />
+            )}
+            {module.slug === 'actions-recemment-modifiees' && (
+              <ModalActionsRecemmentModifiees
+                openState={{
+                  isOpen: isSettingsOpen,
+                  setIsOpen: setIsSettingsOpen,
+                }}
+                module={module as ModuleFicheActionsSelect}
+                keysToInvalidate={[getQueryKey(slug)]}
+              />
+            )}
+          </>
+        )}
       </div>
       {/** Liste des filtres appliqués */}
-      <div className="flex gap-6 mb-8">TODO filtres</div>
+      <ModuleFiltreBadges filtre={module.options.filtre} />
+
       {/** Chargement */}
       {isLoading ? (
         <div className="m-auto">

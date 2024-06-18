@@ -1,6 +1,6 @@
 import {useHistory} from 'react-router-dom';
 
-import {Button, Modal} from '@tet/ui';
+import {Button} from '@tet/ui';
 
 import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
@@ -13,6 +13,10 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
+import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import {getQueryKey} from 'app/pages/collectivite/TableauDeBord/Module/useModulesFetch';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
 type Props = {
   view: TDBViewParam;
@@ -23,6 +27,7 @@ type Props = {
  * dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({view, module}: Props) => {
   const collectiviteId = useCollectiviteId();
+  const userId = useAuth().user?.id;
   const history = useHistory();
 
   const {data, isLoading} = useFicheActionResumeFetch({
@@ -36,9 +41,26 @@ const ModuleFichesActions = ({view, module}: Props) => {
       title={module.titre}
       filtre={module.options.filtre}
       symbole={<PictoExpert />}
-      editModal={openState => (
-        <Modal openState={openState} render={() => <div>Filtres</div>} />
-      )}
+      editModal={openState => {
+        if (module.slug === 'actions-dont-je-suis-pilote') {
+          return (
+            <ModalActionsDontJeSuisLePilote
+              openState={openState}
+              module={module}
+              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
+            />
+          );
+        }
+        if (module.slug === 'actions-recemment-modifiees') {
+          return (
+            <ModalActionsRecemmentModifiees
+              openState={openState}
+              module={module}
+              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
+            />
+          );
+        }
+      }}
       isLoading={isLoading}
       isEmpty={!fiches || fiches?.length === 0}
       footerButtons={

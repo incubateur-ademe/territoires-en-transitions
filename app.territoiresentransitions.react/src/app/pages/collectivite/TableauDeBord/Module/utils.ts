@@ -43,7 +43,10 @@ export const filtersToBadges = (data: FiltreKeys) => {
       badgeValues.push(data[key] ? 'Complet' : 'Incomplet');
     }
     if (key === 'priorites') {
-      badgeValues.push(`Priorité : ${data[key]}`);
+      badgeValues.push(`Priorité : ${data[key]?.join(', ')}`);
+    }
+    if (key === 'statuts') {
+      badgeValues.push(`Statuts : ${data[key]?.join(', ')}`);
     }
     if (key === 'modifiedSince') {
       badgeValues.push(
