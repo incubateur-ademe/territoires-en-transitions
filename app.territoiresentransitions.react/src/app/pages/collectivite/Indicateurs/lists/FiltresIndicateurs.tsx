@@ -57,11 +57,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
             <>
               <Field title="Thématique" className="mb-6">
                 <ThematiquesDropdown
-                  values={
-                    thematiques?.length
-                      ? thematiques.map(t => parseInt(t))
-                      : undefined
-                  }
+                  values={thematiques?.map(t => parseInt(t))}
                   onChange={({thematiques}) =>
                     updateFilterParam(
                       'thematiques',
@@ -73,7 +69,7 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
               <div className="grid lg:grid-cols-2 gap-x-8 gap-y-6">
                 <Field title="Personne pilote">
                   <PersonnesDropdown
-                    values={pilotes?.length ? pilotes : undefined}
+                    values={pilotes}
                     onChange={({personnes}) =>
                       updateFilterParam(
                         'pilotes',

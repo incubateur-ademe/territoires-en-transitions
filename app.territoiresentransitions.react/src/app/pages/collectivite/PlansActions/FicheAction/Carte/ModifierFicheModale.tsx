@@ -119,11 +119,7 @@ const ModifierFicheModale = ({
             <FormSectionGrid>
               <Field title="Personne pilote">
                 <PersonnesDropdown
-                  values={
-                    fiche.pilotes?.length
-                      ? fiche.pilotes.map(p => getPersonneStringId(p))
-                      : undefined
-                  }
+                  values={fiche.pilotes?.map(p => getPersonneStringId(p))}
                   onChange={({personnes}) => {
                     setFiche({...fiche, pilotes: personnes});
                   }}

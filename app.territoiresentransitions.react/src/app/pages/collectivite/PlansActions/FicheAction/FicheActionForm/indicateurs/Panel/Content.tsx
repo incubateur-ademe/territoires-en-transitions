@@ -46,7 +46,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         </Field>
         <Field title="Thématique" small>
           <ThematiquesDropdown
-            values={filters.thematique_ids ?? undefined}
+            values={filters.thematique_ids}
             onChange={({thematiques}) =>
               setFilters({
                 ...filters,

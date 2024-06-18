@@ -46,7 +46,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       {/** personne pilote */}
       <Field title="Personne pilote">
         <PersonnesDropdown
-          values={resume?.pilotes.length ? pilotesValues : undefined}
+          values={pilotesValues}
           onChange={({personnes}) => upsertIndicateurPilote(personnes)}
           disabled={isReadonly}
         />
@@ -63,11 +63,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       {definition.isPerso && (
         <Field title="Thématique">
           <ThematiquesDropdown
-            values={
-              resume?.thematiques.length
-                ? resume.thematiques?.map(t => t.id)
-                : undefined
-            }
+            values={resume?.thematiques?.map(t => t.id)}
             onChange={({thematiques}) =>
               upsertIndicateurPersoThematique(thematiques)
             }
