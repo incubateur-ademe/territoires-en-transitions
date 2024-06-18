@@ -4,7 +4,13 @@ import {useThematiqueListe} from './useThematiqueListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];
-  onChange: (thematiques: TThematiqueRow[]) => void;
+  onChange: ({
+    thematiques,
+    selectedThematique,
+  }: {
+    thematiques: TThematiqueRow[];
+    selectedThematique: TThematiqueRow;
+  }) => void;
 };
 
 const ThematiquesDropdown = (props: Props) => {
@@ -17,8 +23,6 @@ const ThematiquesDropdown = (props: Props) => {
       }))
     : [];
 
-  console.log("commit pour changer le nom d'un dossier");
-
   const getSelectedThematiques = (values?: OptionValue[]) =>
     thematiqueListe?.filter(t => values?.some(v => v === t.id)) ?? [];
 
@@ -27,7 +31,12 @@ const ThematiquesDropdown = (props: Props) => {
       {...props}
       dataTest={props.dataTest ?? 'thematiques'}
       options={options}
-      onChange={({values}) => props.onChange(getSelectedThematiques(values))}
+      onChange={({values, selectedValue}) =>
+        props.onChange({
+          thematiques: getSelectedThematiques(values),
+          selectedThematique: getSelectedThematiques([selectedValue])[0],
+        })
+      }
     />
   );
 };

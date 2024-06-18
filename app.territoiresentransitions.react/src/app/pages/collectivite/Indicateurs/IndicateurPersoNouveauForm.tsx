@@ -59,7 +59,7 @@ export const IndicateurPersoNouveauForm = (props: {
                 values={
                   thematiques.length ? thematiques?.map(t => t.id) : undefined
                 }
-                onChange={thematiques => setThematiques(thematiques)}
+                onChange={({thematiques}) => setThematiques(thematiques)}
               />
             </FormField>
           </div>

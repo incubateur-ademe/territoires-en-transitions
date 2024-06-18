@@ -85,7 +85,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         <Field title="Thématique">
           <ThematiquesDropdown
             values={fiche.thematiques?.map(t => t.id)}
-            onChange={thematiques => updateFiche({...fiche, thematiques})}
+            onChange={({thematiques}) => updateFiche({...fiche, thematiques})}
             disabled={isReadonly}
           />
         </Field>
