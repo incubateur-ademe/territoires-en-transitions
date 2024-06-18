@@ -35,7 +35,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -49,7 +49,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             className="pl-4"
           >
             <section
-              className="fr-accordion fr-mb-3w"
+              className="fr-accordion mb-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -61,7 +61,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   En savoir plus
                 </button>
@@ -154,7 +154,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -223,7 +223,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -263,7 +263,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               />
             </div>
             <section
-              className="fr-accordion fr-mt-2w"
+              className="fr-accordion mt-4"
             >
               <h3
                 className="fr-accordion__title"
@@ -275,7 +275,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo mr-3"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -308,7 +308,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               </div>
             </section>
             <section
-              className="fr-accordion fr-mt-3w"
+              className="fr-accordion mt-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -320,7 +320,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   Comment calculer la part ?
                 </button>
@@ -350,7 +350,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         Revenir au sommaire
       </a>
       <a
-        className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
+        className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start ml-6"
         data-test="btn-next"
         href="/collectivite/1/personnalisation/dechets?r=eci,cae"
       >
@@ -396,7 +396,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -410,7 +410,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             className="pl-4"
           >
             <section
-              className="fr-accordion fr-mb-3w"
+              className="fr-accordion mb-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -422,7 +422,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   En savoir plus
                 </button>
@@ -515,7 +515,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -584,7 +584,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -624,7 +624,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               />
             </div>
             <section
-              className="fr-accordion fr-mt-2w"
+              className="fr-accordion mt-4"
             >
               <h3
                 className="fr-accordion__title"
@@ -636,7 +636,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo mr-3"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -669,7 +669,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               </div>
             </section>
             <section
-              className="fr-accordion fr-mt-3w"
+              className="fr-accordion mt-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -681,7 +681,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   Comment calculer la part ?
                 </button>
@@ -833,7 +833,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -847,7 +847,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
             className="pl-4"
           >
             <section
-              className="fr-accordion fr-mb-3w"
+              className="fr-accordion mb-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -859,7 +859,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   En savoir plus
                 </button>
@@ -952,7 +952,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1021,7 +1021,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         className="fr-fieldset !flex-col !items-stretch"
       >
         <div
-          className="border rounded-md p-4 fr-mb-1w"
+          className="border rounded-md p-4 mb-2"
         >
           <legend
             className="fr-fieldset__legend fr-fieldset__legend--regular"
@@ -1061,7 +1061,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               />
             </div>
             <section
-              className="fr-accordion fr-mt-2w"
+              className="fr-accordion mt-4"
             >
               <h3
                 className="fr-accordion__title"
@@ -1073,7 +1073,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-icon-draft-line text-tDefaultInfo fr-mr-3v"
+                    className="fr-icon-draft-line text-tDefaultInfo mr-3"
                   />
                   Justifier votre réponse (optionnel)
                 </button>
@@ -1106,7 +1106,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
               </div>
             </section>
             <section
-              className="fr-accordion fr-mt-3w"
+              className="fr-accordion mt-6"
             >
               <h3
                 className="fr-accordion__title"
@@ -1118,7 +1118,7 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
                   onClick={[Function]}
                 >
                   <i
-                    className="fr-fi-information-fill text-tDefaultInfo fr-mr-3v"
+                    className="fr-fi-information-fill text-tDefaultInfo mr-3"
                   />
                   Comment calculer la part ?
                 </button>

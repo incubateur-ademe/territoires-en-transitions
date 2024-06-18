@@ -79,7 +79,7 @@ const ValuesTableBase = (
   }, [lastAddedYear]);
 
   return (
-    <table className="w-full fr-table fr-table--bordered fr-mb-0">
+    <table className="w-full fr-table fr-table--bordered mb-0">
       <thead>
         <tr>
           <th className="w-2">&nbsp;</th>

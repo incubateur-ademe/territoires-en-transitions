@@ -11,7 +11,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Fichier 1`] 
       className="flex gap-2"
     >
       <a
-        className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+        className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
         data-test="name"
         href="/"
         onClick={[Function]}
@@ -68,7 +68,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Fichier Comm
       className="flex gap-2"
     >
       <a
-        className="fr-text--sm fr-mb-1v fr-fi-file-line fr-link--icon-left"
+        className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
         data-test="name"
         href="/"
         onClick={[Function]}
@@ -132,7 +132,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Lien 1`] = `
       className="flex gap-2"
     >
       <a
-        className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+        className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
         data-test="name"
         href="/"
         onClick={[Function]}
@@ -184,7 +184,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveDoc Preuve Lien Comment
       className="flex gap-2"
     >
       <a
-        className="fr-text--sm fr-mb-1v fr-fi-links-fill fr-link--icon-left"
+        className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
         data-test="name"
         href="/"
         onClick={[Function]}

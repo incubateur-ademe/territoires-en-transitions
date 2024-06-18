@@ -96,7 +96,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",
@@ -157,7 +157,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",
@@ -208,7 +208,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",
@@ -326,7 +326,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",
@@ -405,7 +405,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",
@@ -456,7 +456,7 @@ exports[`Storyshots app/pages/collectivite/Referentiels/ActionDiscussions/Action
                   </span>
                 </div>
                 <p
-                  className="text-sm whitespace-pre-wrap fr-mb-0"
+                  className="text-sm whitespace-pre-wrap mb-0"
                   style={
                     Object {
                       "overflowWrap": "anywhere",

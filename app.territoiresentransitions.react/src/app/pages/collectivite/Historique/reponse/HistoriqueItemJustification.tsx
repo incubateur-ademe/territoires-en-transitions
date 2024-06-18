@@ -46,7 +46,7 @@ const HistoriqueItemJustificationDetails = (props: THistoriqueItemProps) => {
     <>
       <p>Question : {question_formulation}</p>
       {reponse !== null && reponse !== undefined && (
-        <p className="fr-mt-2w">
+        <p className="mt-4">
           Réponse (lors de la justification) :{' '}
           {formatReponseValue(reponse, question_type)}
         </p>

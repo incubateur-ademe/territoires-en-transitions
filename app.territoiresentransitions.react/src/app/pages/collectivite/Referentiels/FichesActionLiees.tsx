@@ -28,7 +28,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
     <>
       {!isReadonly && (
         <button
-          className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-4w"
+          className="fr-btn fr-btn--icon-left fr-icon-add-line mb-8"
           onClick={() => createFicheResume()}
         >
           Créer une fiche action

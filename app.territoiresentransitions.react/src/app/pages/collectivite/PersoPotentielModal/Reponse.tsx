@@ -170,7 +170,7 @@ const RadioButton = ({
       </div>
       {hasReponse && (
         <button
-          className="fr-link fr-link--icon-left fr-icon-edit-line fr-ml-3w fr-mb-2w !max-w-fit"
+          className="fr-link fr-link--icon-left fr-icon-edit-line ml-6 mb-4 !max-w-fit"
           onClick={e => {
             e.preventDefault();
             onChange(null);

@@ -12,12 +12,12 @@ Array [
   </h2>,
   <ul>
     <li
-      className="fr-mb-1w"
+      className="mb-2"
     >
       Renseigner tous les statuts du référentiel
     </li>
     <a
-      className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+      className="fr-link fr-link--icon-right fr-fi-arrow-right-line mb-4"
       href="/collectivite/1/referentiels/cae/detail"
       rel="noreferrer"
       target="_blank"
@@ -25,7 +25,7 @@ Array [
       Mettre à jour
     </a>
     <li
-      className=" fr-mt-2w fr-mb-1w"
+      className=" mt-4 mb-2"
     >
       Être une collectivité engagée dans une politique
        
@@ -33,7 +33,7 @@ Array [
        et le prouver (via les documents preuves ou un texte justificatif)
     </li>
     <div
-      className="critere-action-table fr-my-4"
+      className="critere-action-table my-8"
     >
       <table>
         <thead>
@@ -583,7 +583,7 @@ Array [
       </table>
     </div>
     <li
-      className="fr-mb-1w"
+      className="mb-2"
     >
       Signer un
        
@@ -634,12 +634,12 @@ Array [
   </h2>,
   <ul>
     <li
-      className="fr-mb-1w"
+      className="mb-2"
     >
       Renseigner tous les statuts du référentiel
     </li>
     <a
-      className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+      className="fr-link fr-link--icon-right fr-fi-arrow-right-line mb-4"
       href="/collectivite/1/referentiels/eci/detail"
       rel="noreferrer"
       target="_blank"
@@ -647,7 +647,7 @@ Array [
       Mettre à jour
     </a>
     <li
-      className=" fr-mt-2w fr-mb-1w"
+      className=" mt-4 mb-2"
     >
       Être une collectivité engagée dans une politique
        
@@ -655,7 +655,7 @@ Array [
        et le prouver (via les documents preuves ou un texte justificatif)
     </li>
     <div
-      className="critere-action-table fr-my-4"
+      className="critere-action-table my-8"
     >
       <table>
         <thead>
@@ -1205,7 +1205,7 @@ Array [
       </table>
     </div>
     <li
-      className="fr-mb-1w"
+      className="mb-2"
     >
       Signer un
        

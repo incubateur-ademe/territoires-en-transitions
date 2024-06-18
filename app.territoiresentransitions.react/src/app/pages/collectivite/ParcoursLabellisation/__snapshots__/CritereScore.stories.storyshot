@@ -3,12 +3,12 @@
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Atteint 1`] = `
 <ul>
   <li
-    className="fr-mt-2w fr-mb-1w"
+    className="mt-4 mb-2"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w "
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm mb-0 ml-6 "
   >
     Terminé
   </i>
@@ -18,12 +18,12 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau 1 Non Atteint 1`] = `
 <ul>
   <li
-    className="fr-mt-2w fr-mb-1w"
+    className="mt-4 mb-2"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
   <a
-    className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+    className="fr-link fr-link--icon-right fr-fi-arrow-right-line mb-4"
     href="/collectivite/1/referentiels/eci/progression"
     rel="noreferrer"
     target="_blank"
@@ -36,12 +36,12 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Atteint 1`] = `
 <ul>
   <li
-    className="fr-mt-2w fr-mb-1w"
+    className="mt-4 mb-2"
   >
     Atteindre un score d’au moins 35 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w "
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm mb-0 ml-6 "
   >
     Terminé
   </i>
@@ -51,12 +51,12 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Ni
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CritereScore Niveau Suivant Non Atteint 1`] = `
 <ul>
   <li
-    className="fr-mt-2w fr-mb-1w"
+    className="mt-4 mb-2"
   >
     Atteindre un score d’au moins 0 % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)
   </li>
   <a
-    className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+    className="fr-link fr-link--icon-right fr-fi-arrow-right-line mb-4"
     href="/collectivite/1/referentiels/eci/progression"
     rel="noreferrer"
     target="_blank"

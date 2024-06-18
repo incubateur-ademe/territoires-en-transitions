@@ -60,7 +60,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
           </div>
         )}
       >
-        <AnchorAsButton className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm">
+        <AnchorAsButton className="fr-link fr-link--icon-left fr-icon-settings-5-line ml-4 fr-text--sm">
           Personnaliser
         </AnchorAsButton>
       </Modal>

@@ -13,7 +13,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
   <button
     aria-expanded="false"
     aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
+    className="fr-btn fr-btn--sm fr-btn--secondary mb-4"
     data-test="AddRapportButton"
     onClick={[Function]}
     onKeyDown={[Function]}
@@ -24,7 +24,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
     Ajouter le rapport d'audit
   </button>
   <p
-    className="fr-mt-2w"
+    className="mt-4"
   >
     Suite à cette validation, plus aucune modification ne sera possible dans le cadre de l’audit et le secrétariat de la Commission nationale du label (CNL) sera notifié pour réceptionner le dossier de candidature complet et le transmettre aux membres de la CNL.
   </p>
@@ -32,7 +32,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Labellisatio
     className="flex"
   >
     <button
-      className="fr-btn fr-btn--sm fr-mr-2w"
+      className="fr-btn fr-btn--sm mr-4"
       data-test="validate"
       disabled={true}
       onClick={[Function]}
@@ -62,7 +62,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
   <button
     aria-expanded="false"
     aria-haspopup="dialog"
-    className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
+    className="fr-btn fr-btn--sm fr-btn--secondary mb-4"
     data-test="AddRapportButton"
     onClick={[Function]}
     onKeyDown={[Function]}
@@ -73,7 +73,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
     Ajouter le rapport d'audit
   </button>
   <p
-    className="fr-mt-2w"
+    className="mt-4"
   >
     Suite à cette validation, et après vérification par l'équipe Territoires en Transitions, un nouveau cycle va démarrer avec le score validé par l'audit.
   </p>
@@ -81,7 +81,7 @@ exports[`Storyshots app/pages/collectivite/Audit/ValiderAudit Audit Sans Labelli
     className="flex"
   >
     <button
-      className="fr-btn fr-btn--sm fr-mr-2w"
+      className="fr-btn fr-btn--sm mr-4"
       data-test="validate"
       disabled={true}
       onClick={[Function]}

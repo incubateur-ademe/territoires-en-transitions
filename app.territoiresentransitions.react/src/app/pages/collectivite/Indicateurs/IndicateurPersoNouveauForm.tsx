@@ -51,7 +51,7 @@ export const IndicateurPersoNouveauForm = (props: {
             <FormikInput name="titre" label="Nom de l’indicateur" />
             <FormikInput name="unite" label="Unité" />
             <FormikInput type="area" name="description" label="Description" />
-            <FormField className="fr-mt-4w" label="Thématique">
+            <FormField className="mt-8" label="Thématique">
               <ThematiquesDropdown
                 values={thematiques?.map(t => t.id)}
                 onChange={({thematiques}) => setThematiques(thematiques)}

@@ -196,7 +196,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler
@@ -332,7 +332,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler
@@ -468,7 +468,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler
@@ -582,7 +582,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <div
-      className="fr-mt-2w"
+      className="mt-4"
     >
       <button
         className="fr-btn"
@@ -593,7 +593,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler
@@ -758,7 +758,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler
@@ -901,7 +901,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <div
-      className="fr-mt-2w"
+      className="mt-4"
     >
       <button
         className="fr-btn"
@@ -912,7 +912,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
         Envoyer ma demande
       </button>
       <button
-        className="fr-btn fr-btn--secondary fr-ml-4w"
+        className="fr-btn fr-btn--secondary ml-8"
         onClick={[Function]}
       >
         Annuler

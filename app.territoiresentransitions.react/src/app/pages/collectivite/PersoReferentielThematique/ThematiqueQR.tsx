@@ -76,7 +76,7 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
           </a>
           {nextThematiqueId ? (
             <a
-              className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
+              className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start ml-6"
               data-test="btn-next"
               href={makeCollectivitePersoRefThematiqueUrl({
                 collectiviteId: collectivite.id,

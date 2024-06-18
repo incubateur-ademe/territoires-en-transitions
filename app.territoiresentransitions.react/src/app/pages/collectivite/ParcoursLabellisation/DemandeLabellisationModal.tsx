@@ -143,7 +143,7 @@ export const DemandeLabellisationModalContent = (
             </button>
             {etoiles !== '1' ? (
               <button
-                className="fr-btn fr-btn--secondary fr-ml-4w"
+                className="fr-btn fr-btn--secondary ml-8"
                 onClick={onClose}
               >
                 Revenir à la préparation de l’audit

@@ -3,7 +3,7 @@
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresAction Exemple 1 1`] = `
 Array [
   <li
-    className=" fr-mt-2w fr-mb-1w"
+    className=" mt-4 mb-2"
   >
     Être une collectivité engagée dans une politique
      
@@ -11,7 +11,7 @@ Array [
      et le prouver (via les documents preuves ou un texte justificatif)
   </li>,
   <div
-    className="critere-action-table fr-my-4"
+    className="critere-action-table my-8"
   >
     <table>
       <thead>
@@ -566,7 +566,7 @@ Array [
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriteresAction Exemple 2 1`] = `
 Array [
   <li
-    className=" fr-mt-2w fr-mb-1w"
+    className=" mt-4 mb-2"
   >
     Être une collectivité engagée dans une politique
      
@@ -574,7 +574,7 @@ Array [
      et le prouver (via les documents preuves ou un texte justificatif)
   </li>,
   <div
-    className="critere-action-table fr-my-4"
+    className="critere-action-table my-8"
   >
     <table>
       <thead>

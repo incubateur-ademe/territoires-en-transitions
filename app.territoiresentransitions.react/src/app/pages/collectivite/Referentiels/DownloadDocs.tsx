@@ -30,7 +30,7 @@ export const DownloadDocs = (props: TDownloadDocsProps) => {
       <p>
         Téléchargement en cours...
         <button
-          className={`${BTN} fr-ml-4w fr-fi-close-line`}
+          className={`${BTN} ml-8 fr-fi-close-line`}
           onClick={() => queryClient.cancelQueries('zip-action')}
         >
           Annuler

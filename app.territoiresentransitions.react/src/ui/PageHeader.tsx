@@ -14,7 +14,7 @@ export const PageHeader = (props: TPageHeaderProps) => {
   const {className, children} = props;
   return (
     <div
-      className={`sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center fr-mt-4w ${
+      className={`sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center ${
         className || ''
       }`}
     >
@@ -30,7 +30,7 @@ export const PageHeaderLeft = (props: TPageHeaderProps) => {
   const {className, children} = props;
   return (
     <PageHeader className={className}>
-      <div className="fr-container fr-my-2w">{children}</div>
+      <div className="fr-container my-4">{children}</div>
     </PageHeader>
   );
 };

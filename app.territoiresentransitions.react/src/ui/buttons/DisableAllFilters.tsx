@@ -18,7 +18,7 @@ export const DisableAllFilters = (props: TDisableAllFiltersProps) => {
 
   return (
     <AnchorAsButton
-      className="underline_href fr-link fr-link--icon-left fr-icon-close-circle-fill fr-ml-2w pl-1"
+      className="underline_href fr-link fr-link--icon-left fr-icon-close-circle-fill ml-4 pl-1"
       data-test="DisableAllFilters"
       onClick={onClick}
     >

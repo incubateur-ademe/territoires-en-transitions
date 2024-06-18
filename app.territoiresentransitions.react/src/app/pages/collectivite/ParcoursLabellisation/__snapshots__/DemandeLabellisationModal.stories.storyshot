@@ -148,7 +148,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeLabellis
       Envoyer ma demande
     </button>
     <button
-      className="fr-btn fr-btn--secondary fr-ml-4w"
+      className="fr-btn fr-btn--secondary ml-8"
       onClick={[Function]}
     >
       Revenir à la préparation de l’audit
@@ -212,7 +212,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeLabellis
       Envoyer ma demande
     </button>
     <button
-      className="fr-btn fr-btn--secondary fr-ml-4w"
+      className="fr-btn fr-btn--secondary ml-8"
       onClick={[Function]}
     >
       Revenir à la préparation de l’audit
@@ -247,7 +247,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeLabellis
       Envoyer ma demande
     </button>
     <button
-      className="fr-btn fr-btn--secondary fr-ml-4w"
+      className="fr-btn fr-btn--secondary ml-8"
       onClick={[Function]}
     >
       Revenir à la préparation de l’audit
@@ -311,7 +311,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeLabellis
       Envoyer ma demande
     </button>
     <button
-      className="fr-btn fr-btn--secondary fr-ml-4w"
+      className="fr-btn fr-btn--secondary ml-8"
       onClick={[Function]}
     >
       Revenir à la préparation de l’audit

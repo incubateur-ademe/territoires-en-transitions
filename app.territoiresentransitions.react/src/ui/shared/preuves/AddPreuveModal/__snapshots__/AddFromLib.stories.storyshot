@@ -31,7 +31,7 @@ Array [
       </div>
     </div>
     <p
-      className="fr-mt-2w"
+      className="mt-4"
     >
       Sélectionner les fichiers à ajouter
     </p>
@@ -225,7 +225,7 @@ Array [
     </div>
   </div>,
   <p
-    className="fr-mt-2w"
+    className="mt-4"
   >
     Aucun fichier
   </p>,

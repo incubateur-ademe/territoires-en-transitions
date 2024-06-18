@@ -2,11 +2,11 @@
 
 exports[`Storyshots app/pages/Auth/AccepterCGUModal Exemple 1 1`] = `
 <div
-  className="fr-mb-4w"
+  className="mb-8"
   data-test="AccepterCGU"
 >
   <div
-    className="flex flex-col fr-mb-2w"
+    className="flex flex-col mb-4"
   >
     <svg
       className="self-center"

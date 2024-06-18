@@ -60,8 +60,8 @@ const ReferentielTabs = () => {
   };
 
   return (
-    <main className="fr-container fr-mt-4w flex flex-col items-center">
-      <h1 className="fr-mb-4w">
+    <main className="fr-container mt-8 flex flex-col items-center">
+      <h1 className="mb-8">
         Référentiel{' '}
         {referentielToName[referentielId as ReferentielOfIndicateur]}
       </h1>

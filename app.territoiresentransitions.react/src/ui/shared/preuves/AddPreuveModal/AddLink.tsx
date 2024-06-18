@@ -52,7 +52,7 @@ export const AddLink = (props: TAddLinkProps) => {
               <FormikInput name="url" label="Lien (obligatoire)" />
             </div>
             <button
-              className="fr-btn fr-mt-2w"
+              className="fr-btn mt-4"
               data-test="ok"
               disabled={!values.titre || !values.url || !isValid}
             >

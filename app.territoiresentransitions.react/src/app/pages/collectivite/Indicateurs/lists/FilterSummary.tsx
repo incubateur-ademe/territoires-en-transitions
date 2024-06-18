@@ -13,7 +13,7 @@ export const FilterSummary = ({
   filterParamsCount: number;
 }) => (
   <div className="flex flex-row">
-    <span className="fr-mr-2w">{getLabel(count, filterParamsCount)}</span>
+    <span className="mr-4">{getLabel(count, filterParamsCount)}</span>
     {filterParamsCount ? (
       <DisableAllFilters
         filtersCount={filterParamsCount}

@@ -103,7 +103,7 @@ export const DemandeAuditModalContent = (
               </RadioButton>
             </fieldset>
             {aide}
-            <div className={classNames({'fr-mt-2w': !aide})}>
+            <div className={classNames({'mt-4': !aide})}>
               <button
                 className="fr-btn"
                 data-test="EnvoyerDemandeBtn"
@@ -121,7 +121,7 @@ export const DemandeAuditModalContent = (
                 Envoyer ma demande
               </button>
               <button
-                className="fr-btn fr-btn--secondary fr-ml-4w"
+                className="fr-btn fr-btn--secondary ml-8"
                 onClick={onClose}
               >
                 Annuler

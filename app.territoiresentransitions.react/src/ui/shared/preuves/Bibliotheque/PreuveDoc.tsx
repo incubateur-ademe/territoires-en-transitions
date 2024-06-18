@@ -149,7 +149,7 @@ const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
   return (
     <AnchorAsButton
       data-test="name"
-      className={classNames('fr-text--sm fr-mb-1v', picto, {
+      className={classNames('fr-text--sm mb-1', picto, {
         'fr-link--icon-left': Boolean(picto),
       })}
       onClick={() => openPreuve(preuve)}
@@ -172,7 +172,7 @@ const TextInputWithEditState = ({
   return editState.isEditing ? (
     <input
       autoFocus
-      className="fr-input fr-my-2v"
+      className="fr-input my-2"
       placeholder={placeholder}
       value={editState.value}
       onChange={(e: ChangeEvent<HTMLInputElement>) =>

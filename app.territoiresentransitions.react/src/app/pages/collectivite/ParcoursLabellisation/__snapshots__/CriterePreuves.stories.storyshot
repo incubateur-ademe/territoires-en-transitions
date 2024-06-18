@@ -3,7 +3,7 @@
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Autres Etoiles CAE 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Signer un
      
@@ -44,7 +44,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Autres Etoiles ECI 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Ajouter les documents officiels de candidature
   </li>
@@ -64,7 +64,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
        (Établissement public de coopération intercommunale)
     </li>
     <li
-      className="fr-mb-1w"
+      className="mb-2"
     >
       Signer un
        
@@ -106,7 +106,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves CAE Score Superieur A 35 Pourcent 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Ajouter les documents officiels de candidature
   </li>
@@ -143,7 +143,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves CAE Score Superieur A 35 Pourcent Rempli 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Ajouter les documents officiels de candidature
   </li>
@@ -162,7 +162,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </li>
   </ul>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm mb-0 ml-6 mb-4"
   >
     Terminé
   </i>
@@ -193,7 +193,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
           className="flex gap-2"
         >
           <a
-            className="fr-text--sm fr-mb-1v"
+            className="fr-text--sm mb-1"
             data-test="name"
             href="/"
             onClick={[Function]}
@@ -228,7 +228,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile CAE 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Signer un
      
@@ -269,7 +269,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile ECI 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Signer un
      
@@ -310,7 +310,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
 exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves Premiere Etoile ECI Rempli 1`] = `
 <ul>
   <li
-    className="fr-mb-1w"
+    className="mb-2"
   >
     Signer un
      
@@ -333,7 +333,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
     </a>
   </li>
   <i
-    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm fr-mb-0 fr-ml-3w fr-mb-2w"
+    className="flex fr-icon fr-icon-checkbox-circle-fill before:text-success before:pr-3 fr-text--sm mb-0 ml-6 mb-4"
   >
     Terminé
   </i>
@@ -364,7 +364,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/CriterePreuves 
           className="flex gap-2"
         >
           <a
-            className="fr-text--sm fr-mb-1v"
+            className="fr-text--sm mb-1"
             data-test="name"
             href="/"
             onClick={[Function]}

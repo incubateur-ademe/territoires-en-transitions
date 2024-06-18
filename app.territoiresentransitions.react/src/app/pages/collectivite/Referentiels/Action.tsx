@@ -126,7 +126,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
         <Tabs
           defaultActiveTab={activeTab}
           onChange={handleChange}
-          className="fr-mt-9v"
+          className="mt-9"
         >
           <Tab label="Suivi de l'action" icon="seedling">
             <ActionFollowUp

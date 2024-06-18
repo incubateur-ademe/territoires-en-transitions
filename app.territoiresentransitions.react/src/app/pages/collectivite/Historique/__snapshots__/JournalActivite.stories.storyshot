@@ -6,7 +6,7 @@ exports[`Storyshots app/pages/collectivite/Historique/JournalActivite Exemple 1 
   data-test="JournalActivite"
 >
   <h1
-    className="text-center fr-mt-6w fr-mb-6w"
+    className="text-center my-12"
   >
     Journal d'activité
   </h1>

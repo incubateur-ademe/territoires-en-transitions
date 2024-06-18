@@ -435,7 +435,7 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         {annexes?.map((doc, index) => (
           <PreuveDoc key={index} preuve={doc as unknown as TPreuve} />
         ))}
-        <div className={annexes?.length ? 'fr-mt-2w' : undefined}>
+        <div className={annexes?.length ? 'mt-4' : undefined}>
           <AddAnnexeButton fiche_id={fiche.id!} />
         </div>
       </Section>

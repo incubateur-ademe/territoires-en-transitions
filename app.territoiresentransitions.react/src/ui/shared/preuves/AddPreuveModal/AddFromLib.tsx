@@ -72,7 +72,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
         />
         {total ? (
           <>
-            <p className="fr-mt-2w">Sélectionner les fichiers à ajouter</p>
+            <p className="mt-4">Sélectionner les fichiers à ajouter</p>
             <fieldset className="fr-fieldset" onChange={onChange}>
               <div className="overflow-auto" style={{height: '12rem'}}>
                 {fichiers.map(({id, filename}) => (
@@ -101,7 +101,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
           </>
         ) : null}
       </div>
-      {!total ? <p className="fr-mt-2w">Aucun fichier</p> : null}
+      {!total ? <p className="mt-4">Aucun fichier</p> : null}
       <button className="fr-btn mt-2" disabled={!canAdd} onClick={onSubmit}>
         Ajouter
       </button>

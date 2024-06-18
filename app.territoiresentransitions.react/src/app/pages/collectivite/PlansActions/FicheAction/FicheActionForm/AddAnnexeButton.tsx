@@ -39,7 +39,7 @@ export const AddAnnexeButton = (props: TAddDocsButtonProps) => {
     >
       <button
         data-test="AddAnnexeButton"
-        className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-2w"
+        className="fr-btn fr-btn--icon-left fr-icon-add-line mb-4"
         onClick={() => setOpened(true)}
       >
         Ajouter
