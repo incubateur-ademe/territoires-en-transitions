@@ -47,7 +47,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       <Field title="Personne pilote">
         <PersonnesDropdown
           values={resume?.pilotes.length ? pilotesValues : undefined}
-          onChange={upsertIndicateurPilote}
+          onChange={({personnes}) => upsertIndicateurPilote(personnes)}
           disabled={isReadonly}
         />
       </Field>

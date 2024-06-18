@@ -124,8 +124,8 @@ const ModifierFicheModale = ({
                       ? fiche.pilotes.map(p => getPersonneStringId(p))
                       : undefined
                   }
-                  onChange={pilotes => {
-                    setFiche({...fiche, pilotes});
+                  onChange={({personnes}) => {
+                    setFiche({...fiche, pilotes: personnes});
                   }}
                 />
               </Field>
