@@ -1,8 +1,7 @@
-import Modal from 'ui/shared/floating-ui/Modal';
+import {Button, Modal} from '@tet/ui';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 import {FicheAction} from '../../data/types';
-import {Button} from '@tet/ui';
 
 /** Affiche le formulaire de création d'un indicateur personnalisé dans un
  * dialogue (pour ouverture depuis une fiche action) */
