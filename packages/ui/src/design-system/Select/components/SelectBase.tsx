@@ -264,6 +264,8 @@ const SelectButton = forwardRef(
   ) => {
     const [isInputFocused, setIsInputFocused] = useState(false);
 
+    const firstOption = getFlatOptions(options)[0];
+
     return (
       <button
         ref={ref}
@@ -309,11 +311,15 @@ const SelectButton = forwardRef(
                   // Badge par défaut
                   <Badge
                     state={
-                      createProps &&
-                      createProps.userCreatedOptions.includes(values[0])
+                      firstOption.disabled
+                        ? 'grey'
+                        : createProps &&
+                          createProps.userCreatedOptions.includes(values[0])
                         ? 'standard'
                         : 'default'
                     }
+                    light={firstOption.disabled ?? undefined}
+                    disabled={firstOption.disabled}
                     title={getOptionLabel(values[0], getFlatOptions(options))}
                     onClose={!disabled && (() => onChange(values[0]))}
                   />
