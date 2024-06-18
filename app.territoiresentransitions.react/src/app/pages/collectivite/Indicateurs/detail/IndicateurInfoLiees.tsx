@@ -68,7 +68,9 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
                 ? resume.thematiques?.map(t => t.id)
                 : undefined
             }
-            onChange={upsertIndicateurPersoThematique}
+            onChange={({thematiques}) =>
+              upsertIndicateurPersoThematique(thematiques)
+            }
             disabled={isReadonly}
           />
         </Field>

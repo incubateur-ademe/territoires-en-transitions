@@ -62,10 +62,10 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                       ? thematiques.map(t => parseInt(t))
                       : undefined
                   }
-                  onChange={values =>
+                  onChange={({thematiques}) =>
                     updateFilterParam(
                       'thematiques',
-                      values.map(t => t.id.toString())
+                      thematiques.map(t => t.id.toString())
                     )
                   }
                 />
