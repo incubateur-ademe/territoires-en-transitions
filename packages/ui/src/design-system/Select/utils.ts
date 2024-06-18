@@ -9,7 +9,7 @@ import {naturalSort} from '../../utils/naturalSort';
 /** Type du champ valeur d'une option */
 export type OptionValue = number | string;
 /** Type de base d'une option générique */
-export type Option = {value: OptionValue; label: string};
+export type Option = {value: OptionValue; label: string; disabled?: boolean};
 /** Type d'une liste d'options dans un sélecteur */
 export type OptionSection = {
   title: string;

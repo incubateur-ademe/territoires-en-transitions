@@ -128,6 +128,35 @@ export const MultiSelectWithSectionOptions: Story = {
   },
 };
 
+export const DisabledOption: Story = {
+  args: {
+    options: [
+      {
+        value: 'disabledOption',
+        label: 'Option désactivée',
+        disabled: true,
+      },
+      ...optionsWithSections,
+    ],
+    multiple: true,
+  },
+  render: args => {
+    const [values, setValues] = useState<OptionValue[] | undefined>([
+      'disabledOption',
+    ]);
+    return (
+      <SelectMultiple
+        {...args}
+        values={values}
+        onChange={({values}) => {
+          setValues(values);
+        }}
+        isBadgeItem
+      />
+    );
+  },
+};
+
 export const SearchableMultiSelect: Story = {
   args: {
     options: optionsWithSections,

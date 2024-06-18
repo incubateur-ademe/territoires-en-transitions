@@ -117,6 +117,7 @@ const Option = ({
   isBadgeItem,
   createProps,
 }: OptionProps) => {
+  const disabled = option.disabled;
   const isActive = values?.includes(option.value);
   const isUserCreated = createProps?.userCreatedOptions.includes(option.value);
   return (
@@ -124,11 +125,15 @@ const Option = ({
       <button
         type="button"
         data-test={option.value}
-        className="flex items-start w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0"
+        className={classNames(
+          'flex items-start w-full p-2 pr-6 text-left text-sm',
+          {'hover:!bg-primary-0': !disabled}
+        )}
         onClick={e => {
           e.stopPropagation();
           onChange(option.value);
         }}
+        disabled={disabled}
       >
         <div className="flex w-6 mr-2 shrink-0">
           {isActive && (
@@ -145,7 +150,8 @@ const Option = ({
           ) : (createProps || isBadgeItem) && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}
-              state={isUserCreated ? 'standard' : 'default'}
+              state={disabled ? 'grey' : isUserCreated ? 'standard' : 'default'}
+              light={disabled ?? undefined}
               size="sm"
               trim={false}
             />

@@ -84,6 +84,32 @@ exports[`design-system/Select Disabled smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Select DisabledOption smoke-test 1`] = `
+<div class="w-full max-w-[24rem]">
+  <button aria-expanded="false"
+          aria-label="ouvrir le menu"
+          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          type="button"
+  >
+    <div class="flex px-4 min-h-[3rem] py-2">
+      <div class="flex grow flex-wrap gap-2 mr-4">
+        <div class="flex items-center gap-2 grow">
+          <div data-test="Badge-undefined"
+               class="bg-grey-3 border-grey-3 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded border-grey-4 bg-white"
+          >
+            <span class="text-grey-6 font-bold leading-4 text-left line-clamp-1 mt-0.5 text-sm uppercase">
+              Option désactivée
+            </span>
+          </div>
+        </div>
+      </div>
+      <span class="ri-arrow-down-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mt-2 ml-auto text-primary-9">
+      </span>
+    </div>
+  </button>
+</div>
+`;
+
 exports[`design-system/Select DisabledSearchableMultiSelectWithValue smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
