@@ -12,6 +12,7 @@ import {
 } from '../utils';
 import {OptionMenu} from './OptionMenu';
 import {CreateOption} from './SelectBase';
+import {ITEM_ALL} from '@design-system/Select/SelectFilter';
 
 type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
@@ -139,9 +140,9 @@ const Option = ({
           )}
         </div>
         <div className="flex mr-auto my-auto">
-          {customItem ? (
+          {customItem && option.value !== ITEM_ALL ? (
             customItem(option)
-          ) : createProps || isBadgeItem ? (
+          ) : (createProps || isBadgeItem) && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}
               state={isUserCreated ? 'standard' : 'default'}
