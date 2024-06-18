@@ -117,7 +117,7 @@ const Option = ({
   isBadgeItem,
   createProps,
 }: OptionProps) => {
-  const disabled = option.disabled;
+  const disabled = option.disabled ?? false;
   const isActive = values?.includes(option.value);
   const isUserCreated = createProps?.userCreatedOptions.includes(option.value);
   return (

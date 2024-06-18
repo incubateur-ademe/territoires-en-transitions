@@ -259,12 +259,17 @@ const SelectButton = forwardRef(
       disabled,
       small,
       ...props
-    }: SelectButtonProps,
+    }: Omit<SelectButtonProps, 'values'> & {values?: OptionValue[]},
     ref?: Ref<HTMLButtonElement>
   ) => {
     const [isInputFocused, setIsInputFocused] = useState(false);
 
-    const firstOption = getFlatOptions(options)[0];
+    /** Première valeur toujours affichée */
+    const firstValue = getFlatOptions(options).find(
+      option => option.value === values?.[0]
+    );
+
+    const firstValueDisabled = firstValue?.disabled ?? false;
 
     return (
       <button
@@ -298,28 +303,27 @@ const SelectButton = forwardRef(
           })}
         >
           <div className="flex grow flex-wrap gap-2 mr-4">
-            {values && Array.isArray(values) && values.length > 0 ? (
+            {firstValue ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
                 {customItem ? (
                   // Item custom
-                  customItem({
-                    value: values[0],
-                    label: getOptionLabel(values[0], getFlatOptions(options)),
-                  })
+                  customItem(firstValue)
                 ) : (
                   // Badge par défaut
                   <Badge
                     state={
-                      firstOption.disabled
+                      firstValueDisabled
                         ? 'grey'
                         : createProps &&
-                          createProps.userCreatedOptions.includes(values[0])
+                          createProps.userCreatedOptions.includes(
+                            firstValue?.value
+                          )
                         ? 'standard'
                         : 'default'
                     }
-                    light={firstOption.disabled ?? undefined}
-                    disabled={firstOption.disabled}
+                    light={firstValueDisabled ?? undefined}
+                    disabled={firstValueDisabled}
                     title={getOptionLabel(values[0], getFlatOptions(options))}
                     onClose={!disabled && (() => onChange(values[0]))}
                   />
