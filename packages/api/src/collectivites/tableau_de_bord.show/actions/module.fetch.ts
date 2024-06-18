@@ -4,7 +4,9 @@ import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
   Slug,
+  getDefaultModule,
 } from '../domain/module.schema';
+import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data-access/plan_actions.fetch';
 
 export type ReturnType<S extends Slug> =
   S extends 'indicateurs-de-suivi-de-mes-plans'
@@ -32,8 +34,7 @@ export async function moduleFetch<S extends Slug>({
       .eq('collectivite_id', collectiviteId)
       .eq('user_id', userId)
       .eq('slug', slug)
-      .limit(1)
-      .single();
+      .limit(1);
 
     const {data: rawData, error} = await query;
 
@@ -43,15 +44,26 @@ export async function moduleFetch<S extends Slug>({
 
     const data = objectToCamel(rawData);
 
+    const module = data.length
+      ? data[0]
+      : await getDefaultModule(slug, {
+          collectiviteId,
+          userId,
+          getPlanActionIds: () =>
+            planActionsFetch({dbClient, collectiviteId}).then(({plans}) =>
+              plans.map(plan => plan.id)
+            ),
+        });
+
     if (slug === 'indicateurs-de-suivi-de-mes-plans') {
-      return data as ReturnType<typeof slug>;
+      return module as ReturnType<typeof slug>;
     }
 
     if (
       slug === 'actions-dont-je-suis-pilote' ||
       slug === 'actions-recemment-modifiees'
     ) {
-      return data as ReturnType<typeof slug>;
+      return module as ReturnType<typeof slug>;
     }
 
     throw new Error(`Module: Slug inconnu '${slug}'`);
