@@ -6,7 +6,7 @@ import {
   TFicheActionStatuts,
 } from 'types/alias';
 
-type Options<T extends string> = {value: T; label: T}[];
+type Options<T extends string> = {value: T; label: T | string}[];
 
 export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsAttendus> =
   [
@@ -108,6 +108,19 @@ export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriori
     {value: 'Moyen', label: 'Moyen'},
     {value: 'Bas', label: 'Bas'},
   ];
+
+export type TModifiedSince =
+  | 'last-15-days'
+  | 'last-30-days'
+  | 'last-60-days'
+  | 'last-90-days';
+
+export const ficheActionModifiedSinceOptions: Options<TModifiedSince> = [
+  {value: 'last-15-days', label: 'les 15 derniers jours'},
+  {value: 'last-30-days', label: 'les 30 derniers jours'},
+  {value: 'last-60-days', label: 'les 60 derniers jours'},
+  {value: 'last-90-days', label: 'les 90 derniers jours'},
+];
 
 export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
   {

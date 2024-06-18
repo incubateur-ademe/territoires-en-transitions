@@ -1,8 +1,7 @@
 import {useState} from 'react';
 
 import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
-import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filtre as FiltreIndicateurs} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {
   Field,
   FormSection,
@@ -10,6 +9,7 @@ import {
   ModalFooterOKCancel,
   ModalProps,
   Select,
+  SelectFilter,
   SelectMultiple,
 } from '@tet/ui';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
@@ -18,32 +18,36 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import {Filtre as FiltreFichesAction} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import {
+  TModifiedSince,
+  ficheActionModifiedSinceOptions,
+  ficheActionStatutOptions,
+} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/listesStatiques';
+import {TFicheActionStatuts} from 'types/alias';
+import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = ModalProps & {
-  module: ModuleIndicateursSelect;
+  module: ModuleFicheActionsSelect;
   keysToInvalidate?: QueryKey[];
 };
 
-const ModalIndicateursSuiviPlan = ({
+const ModalActionsRecemmentModifiees = ({
   openState,
   module,
   keysToInvalidate,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
-  if (!collectiviteId) {
-    throw new Error('Aucune collectivité associée');
-  }
-
-  const plansActions = usePlansActionsListe(collectiviteId);
   const queryClient = useQueryClient();
 
-  const [filtreState, setFiltreState] = useState<FiltreIndicateurs>(
+  const plansActions = usePlansActionsListe(collectiviteId!);
+
+  const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
   );
 
-  const getPilotesValues = (filtreState: FiltreIndicateurs) => {
+  const getPilotesValues = (filtreState: FiltreFichesAction) => {
     const pilotes = [];
     if (filtreState.utilisateurPiloteIds) {
       pilotes.push(...filtreState.utilisateurPiloteIds);
@@ -63,7 +67,7 @@ const ModalIndicateursSuiviPlan = ({
         <>
           <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Nom du plan :">
+            <Field title="Plans d'action :">
               <SelectMultiple
                 values={filtreState.planActionIds}
                 options={
@@ -72,11 +76,7 @@ const ModalIndicateursSuiviPlan = ({
                     value: p.id,
                   })) ?? []
                 }
-                onChange={({values, selectedValue}) =>
-                  ((filtreState.planActionIds?.length === 1 &&
-                    selectedValue !== filtreState.planActionIds[0]) ||
-                    (filtreState.planActionIds &&
-                      filtreState.planActionIds.length > 1)) &&
+                onChange={({values}) =>
                   setFiltreState({
                     ...filtreState,
                     planActionIds: values as number[],
@@ -84,57 +84,40 @@ const ModalIndicateursSuiviPlan = ({
                 }
               />
             </Field>
-            <Field title="Pilote de l'indicateur :">
+            <Field title="Pilote">
               <PersonnesDropdown
                 values={pilotes.length ? pilotes : undefined}
-                onChange={personnes =>
+                onChange={personnes => {
                   setFiltreState({
                     ...filtreState,
                     ...splitPersonnesAndUsers(personnes),
-                  })
-                }
+                  });
+                }}
               />
             </Field>
-            <Field title="Thématique de l'indicateur :">
-              <ThematiquesDropdown
-                values={
-                  filtreState.thematiqueIds &&
-                  filtreState.thematiqueIds.length > 0
-                    ? filtreState.thematiqueIds
-                    : undefined
-                }
-                onChange={thematiques =>
+            <Field title="Statut">
+              <SelectFilter
+                values={filtreState.statuts ?? undefined}
+                options={ficheActionStatutOptions}
+                onChange={({values}) =>
                   setFiltreState({
                     ...filtreState,
-                    thematiqueIds: thematiques.map(t => t.id),
+                    statuts: values as TFicheActionStatuts[],
                   })
                 }
+                customItem={item => (
+                  <BadgeStatut statut={item.value as TFicheActionStatuts} />
+                )}
               />
             </Field>
-            <Field title="Complétion indicateur :">
+            <Field title="Période de modification : ">
               <Select
-                values={
-                  filtreState.estComplet === undefined
-                    ? undefined
-                    : filtreState.estComplet
-                    ? 'rempli'
-                    : 'incomplet'
-                }
-                options={[
-                  {
-                    label: 'Complet',
-                    value: 'rempli',
-                  },
-                  {
-                    label: 'Incomplet',
-                    value: 'incomplet',
-                  },
-                ]}
+                values={filtreState.modifiedSince}
+                options={ficheActionModifiedSinceOptions}
                 onChange={value =>
                   setFiltreState({
                     ...filtreState,
-                    estComplet:
-                      value === undefined ? undefined : value === 'rempli',
+                    modifiedSince: value as TModifiedSince,
                   })
                 }
               />
@@ -173,4 +156,4 @@ const ModalIndicateursSuiviPlan = ({
   );
 };
 
-export default ModalIndicateursSuiviPlan;
+export default ModalActionsRecemmentModifiees;
