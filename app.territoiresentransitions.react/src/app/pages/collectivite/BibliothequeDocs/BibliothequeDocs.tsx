@@ -19,17 +19,15 @@ export const BibliothequeDocs = ({
 }: TBibliothequeDocsProps) => {
   return (
     <main data-test="BibliothequeDocs" className="fr-container mt-9 mb-16">
-      <h1 className="text-center fr-mt-4w fr-mb-4w">
-        Bibliothèque de documents
-      </h1>
+      <h1 className="text-center my-8">Bibliothèque de documents</h1>
 
       {labellisationEtAudit?.length ? (
-        <section className="fr-mt-4w" data-test="labellisation">
+        <section className="mt-8" data-test="labellisation">
           <PreuvesLabellisation preuves={labellisationEtAudit} />
         </section>
       ) : null}
 
-      <section className="fr-mt-4w" data-test="rapports">
+      <section className="mt-8" data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
         <AddRapportVisite />
         {rapports?.map(preuve => (
@@ -39,7 +37,7 @@ export const BibliothequeDocs = ({
         ))}
       </section>
 
-      <section className="fr-mt-4w">
+      <section className="mt-8">
         <h2>Documents</h2>
         <PreuvesTabs />
       </section>

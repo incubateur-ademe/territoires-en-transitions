@@ -56,13 +56,13 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
           ))}
         </div>
       ) : null}
-      <p className="fr-mt-2w">
+      <p className="mt-4">
         {demande_id ? auditLabellisation : auditSansLabellisation}
       </p>
       <div className="flex">
         <button
           data-test="validate"
-          className="fr-btn fr-btn--sm fr-mr-2w"
+          className="fr-btn fr-btn--sm mr-4"
           onClick={() => {
             onValidate(audit);
             close();

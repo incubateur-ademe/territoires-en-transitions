@@ -53,10 +53,10 @@ const IndicateurPersonnaliseBase = ({
         onUpdate={value => handleUpdate('titre', value)}
       />
       <div className="px-10 py-4">
-        <div className="flex flex-row justify-end fr-mb-2w">
+        <div className="flex flex-row justify-end mb-4">
           {!isReadonly && (
             <ToolbarIconButton
-              className="fr-mr-1w text-error-1"
+              className="mr-2 text-error-1"
               icon="delete"
               title="Supprimer"
               aria-label="Supprimer"
@@ -78,7 +78,7 @@ const IndicateurPersonnaliseBase = ({
           <Field title="Description et méthodologie de calcul">
             <TextareaControlled
               data-test="desc"
-              className="fr-input fr-mt-1w !outline-none"
+              className="fr-input mt-2 !outline-none"
               initialValue={description}
               readOnly={isReadonly}
               onBlur={e => handleUpdate('description', e.target.value)}
@@ -88,14 +88,14 @@ const IndicateurPersonnaliseBase = ({
           <FichesActionLiees definition={definition} />
           <Field title="Unité">
             <InputControlled
-              className="fr-input fr-mt-1w !outline-none"
+              className="fr-input mt-2 !outline-none"
               initialValue={unite}
               readOnly={isReadonly}
               onBlur={e => handleUpdate('unite', e.target.value)}
             />
           </Field>
         </div>
-        <ScrollTopButton className="fr-mt-4w" />
+        <ScrollTopButton className="mt-8" />
       </div>
       {showConfirm && (
         <Modal
@@ -124,7 +124,11 @@ const IndicateurPersonnaliseBase = ({
 };
 
 /** Charge les données et affiche le détail d'un indicateur personnalisé */
-export const IndicateurPersonnalise = ({indicateurId}: {indicateurId: number}) => {
+export const IndicateurPersonnalise = ({
+  indicateurId,
+}: {
+  indicateurId: number;
+}) => {
   const definition = useIndicateurDefinition(indicateurId);
   if (!definition) return null;
 

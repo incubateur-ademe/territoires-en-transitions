@@ -36,7 +36,7 @@ export const IndicateurCompose = ({
           definition={definition}
           actionsLieesCommunes={actionsLieesCommunes}
           isOpen
-          className="fr-mb-4w"
+          className="mb-8"
         />
       )}
 

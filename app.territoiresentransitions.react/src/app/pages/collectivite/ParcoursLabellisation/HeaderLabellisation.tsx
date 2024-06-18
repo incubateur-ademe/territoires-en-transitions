@@ -52,14 +52,14 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
-    <PageHeaderLeft>
+    <PageHeaderLeft className="mt-8">
       <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
       <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
       {status === 'non_demandee' && !isAuditeur ? (
         <>
           {etoiles === '1' && isCOT ? (
             <button
-              className="fr-btn self-start fr-mr-2w"
+              className="fr-btn self-start mr-4"
               data-test="1ereEtoileCOT"
               disabled={!peutDemanderEtoile}
               onClick={() => setOpened_1ereEtoileCOT(true)}

@@ -16,8 +16,8 @@ export type TAccepterCGUProps = {
 export const AccepterCGUContent = (props: TAccepterCGUProps) => {
   const {isLoading, onOK} = props;
   return (
-    <div className="fr-mb-4w" data-test="AccepterCGU">
-      <div className="flex flex-col fr-mb-2w">
+    <div className="mb-8" data-test="AccepterCGU">
+      <div className="flex flex-col mb-4">
         <ContractSVG className="self-center" />
       </div>
       <h4>Mise à jour des conditions générales d’utilisation </h4>

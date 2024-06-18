@@ -30,7 +30,7 @@ export const Justification = (props: TQuestionReponseProps) => {
   return (
     <Accordion
       id={`j-${id}`}
-      className="fr-mt-2w"
+      className="mt-4"
       titre="Justifier votre réponse (optionnel)"
       icon="fr-icon-draft-line"
       initialState={hasValue}

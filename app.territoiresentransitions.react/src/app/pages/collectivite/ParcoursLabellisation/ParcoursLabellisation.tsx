@@ -71,7 +71,7 @@ const ParcoursLabellisation = () => {
 
 const Title = ({referentiel}: {referentiel: string | null}) => (
   <>
-    <h1 className="text-center fr-mt-4w fr-mb-1w">Audit et labellisation</h1>
+    <h1 className="text-center mt-8 mb-2">Audit et labellisation</h1>
     {referentiel ? (
       <p className="text-center text-[22px]">
         Référentiel {referentielToName[referentiel as ReferentielOfIndicateur]}

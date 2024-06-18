@@ -56,7 +56,7 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
       )}
       {definitions && (
         <>
-          <div className="flex flex-row items-center justify-between fr-mb-3w">
+          <div className="flex flex-row items-center justify-between mb-6">
             <FilterSummary
               count={definitions.length}
               resetFilterParams={resetFilterParams}

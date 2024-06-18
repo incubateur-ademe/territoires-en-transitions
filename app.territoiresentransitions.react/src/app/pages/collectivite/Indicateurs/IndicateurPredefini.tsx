@@ -24,7 +24,7 @@ export const IndicateurPredefiniBase = ({
       />
       <HeaderIndicateur title={definition.titre} />
       <div className="px-10 py-4">
-        <div className="flex flex-row justify-end fr-mb-2w">
+        <div className="flex flex-row justify-end mb-4">
           <IndicateurSidePanelToolbar definition={definition} />
         </div>
         {/** affiche les indicateurs "enfants" */}
@@ -34,7 +34,7 @@ export const IndicateurPredefiniBase = ({
           /** ou juste le détail si il n'y a pas d'enfants */
           <IndicateurDetail definition={definition} />
         )}
-        <ScrollTopButton className="fr-mt-4w" />
+        <ScrollTopButton className="mt-8" />
       </div>
     </>
   );

@@ -13,7 +13,7 @@ export const TitreCentral = () => (
 
 export const TitreEtBouton = () => (
   <PageHeaderLeft>
-    <h2 className="fr-mb-2w">Titre</h2>
+    <h2 className="mb-4">Titre</h2>
     <button className="fr-btn self-start">Bouton</button>
   </PageHeaderLeft>
 );
@@ -21,7 +21,7 @@ export const TitreEtBouton = () => (
 export const SurtitreTitreEtBouton = () => (
   <PageHeaderLeft>
     <p className="m-0">Sur titre</p>
-    <h2 className="fr-mb-2w">Titre</h2>
+    <h2 className="mb-4">Titre</h2>
     <button className="fr-btn self-start">Bouton</button>
   </PageHeaderLeft>
 );

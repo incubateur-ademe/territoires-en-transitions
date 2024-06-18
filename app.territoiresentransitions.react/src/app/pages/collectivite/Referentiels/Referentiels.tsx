@@ -44,7 +44,7 @@ export const ActionsReferentiels = () => {
       </section>
       <button
         data-test="export-scores"
-        className="fr-btn fr-btn--icon-left fr-fi-download-line fr-mt-6w"
+        className="fr-btn fr-btn--icon-left fr-fi-download-line mt-12"
         disabled={isLoading}
         onClick={() => {
           exportScore();

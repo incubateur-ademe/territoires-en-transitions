@@ -228,7 +228,7 @@ const ConfirmModif = ({
           </p>
           <div className="flex flex-end">
             <button
-              className="fr-btn fr-btn--sm fr-mr-2w"
+              className="fr-btn fr-btn--sm mr-4"
               onClick={() => {
                 onDismissConfirm(true);
               }}

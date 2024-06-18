@@ -22,7 +22,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
 
   return (
     <>
-      <li className="fr-mt-2w fr-mb-1w">
+      <li className="mt-4 mb-2">
         {`Atteindre un score d’au moins ${toLocaleFixed(
           score_a_realiser * 100
         )} % d’actions réalisées et le prouver (via les documents preuves ou un texte justificatif)`}
@@ -31,7 +31,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
         <CritereRempli />
       ) : (
         <a
-          className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
+          className="fr-link fr-link--icon-right fr-fi-arrow-right-line mb-4"
           target="_blank"
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
