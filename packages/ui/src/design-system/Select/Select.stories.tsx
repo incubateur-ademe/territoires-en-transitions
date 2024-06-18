@@ -248,14 +248,38 @@ export const Filter: Story = {
   render: args => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
-      <SelectFilter
-        {...args}
-        values={values}
-        onChange={({values}) => {
-          setValues(values);
-          action('onChange');
-        }}
-      />
+      <div className="flex flex-col gap-6">
+        <SelectFilter
+          {...args}
+          values={values}
+          onChange={({values}) => {
+            setValues(values);
+            action('onChange');
+          }}
+        />
+        <SelectFilter
+          {...args}
+          values={values}
+          onChange={({values}) => {
+            setValues(values);
+            action('onChange');
+          }}
+          customItem={option => (
+            <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
+              {option.label}
+            </div>
+          )}
+        />
+        <SelectFilter
+          {...args}
+          values={values}
+          onChange={({values}) => {
+            setValues(values);
+            action('onChange');
+          }}
+          isBadgeItem
+        />
+      </div>
     );
   },
 };
