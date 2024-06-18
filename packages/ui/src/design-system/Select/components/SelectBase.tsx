@@ -296,7 +296,7 @@ const SelectButton = forwardRef(
           })}
         >
           <div className="flex grow flex-wrap gap-2 mr-4">
-            {values && Array.isArray(values) ? (
+            {values && Array.isArray(values) && values.length > 0 ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
                 {customItem ? (
@@ -340,10 +340,15 @@ const SelectButton = forwardRef(
                 </span>
               )
             )}
-            {
+            {isSearcheable &&
               // on affiche l'input si le sélecteur est désactivé et ne possède pas de valeur
-              // afin d'afficher le placeholder de l'input
-              isSearcheable && !(disabled && values) && (
+              // afin d'afficher le placeholder de l'input sinon uniquement les valeurs
+              !(
+                disabled &&
+                values &&
+                Array.isArray(values) &&
+                values.length > 0
+              ) && (
                 <input
                   data-test={`${dataTest}-input`}
                   type="text"
@@ -369,8 +374,7 @@ const SelectButton = forwardRef(
                   placeholder={placeholder ?? 'Rechercher par mots-clés'}
                   disabled={disabled}
                 />
-              )
-            }
+              )}
           </div>
           {/** Icône flèche d'ouverture */}
           <Icon

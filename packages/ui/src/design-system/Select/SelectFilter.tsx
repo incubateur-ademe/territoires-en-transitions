@@ -27,7 +27,7 @@ export const SelectFilter = ({
   const [filterOptions, setFilterOptions] = useState(options);
 
   useEffect(() => {
-    if (values) {
+    if (values && Array.isArray(values) && values.length > 0) {
       setFilterOptions([
         {label: 'Désélectionner les options', value: ITEM_ALL},
         ...options,

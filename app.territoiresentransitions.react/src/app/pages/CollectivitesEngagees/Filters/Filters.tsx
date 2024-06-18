@@ -69,11 +69,12 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                     ...filters,
                     typesPlan: (values as string[]) ?? [],
                   });
-                  tracker({fonction: 'filtre_type_de_plan', action: 'selection'});
+                  tracker({
+                    fonction: 'filtre_type_de_plan',
+                    action: 'selection',
+                  });
                 }}
-                values={
-                  filters.typesPlan?.length ? filters.typesPlan : undefined
-                }
+                values={filters.typesPlan}
                 small
               />
             </Field>
@@ -129,7 +130,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 }
                 tracker({fonction: 'filtre_region', action: 'selection'});
               }}
-              values={filters.regions?.length ? filters.regions : undefined}
+              values={filters.regions}
               small
               isSearcheable
             />
@@ -154,9 +155,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 });
                 tracker({fonction: 'filtre_departement', action: 'selection'});
               }}
-              values={
-                filters.departments?.length ? filters.departments : undefined
-              }
+              values={filters.departments}
               small
               isSearcheable
             />
@@ -172,11 +171,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 });
                 tracker({fonction: 'filtre_type', action: 'selection'});
               }}
-              values={
-                filters.typesCollectivite?.length
-                  ? filters.typesCollectivite
-                  : undefined
-              }
+              values={filters.typesCollectivite}
               small
             />
           </Field>
@@ -191,9 +186,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 });
                 tracker({fonction: 'filtre_population', action: 'selection'});
               }}
-              values={
-                filters.population?.length ? filters.population : undefined
-              }
+              values={filters.population}
               small
             />
           </Field>
@@ -236,11 +229,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                       action: 'selection',
                     });
                   }}
-                  values={
-                    filters.tauxDeRemplissage?.length
-                      ? filters.tauxDeRemplissage
-                      : undefined
-                  }
+                  values={filters.tauxDeRemplissage}
                   small
                 />
               </Field>
