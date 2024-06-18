@@ -160,7 +160,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
           <PersonnesDropdown
             dataTest="personnes-pilotes"
             values={fiche.pilotes?.map(p => getPersonneStringId(p))}
-            onChange={pilotes => updateFiche({...fiche, pilotes})}
+            onChange={({personnes}) =>
+              updateFiche({...fiche, pilotes: personnes})
+            }
             disabled={isReadonly}
           />
         </Field>
@@ -190,7 +192,9 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         <Field title="Élu·e référent·e">
           <PersonnesDropdown
             values={fiche.referents?.map(p => getPersonneStringId(p))}
-            onChange={referents => updateFiche({...fiche, referents})}
+            onChange={({personnes}) =>
+              updateFiche({...fiche, referents: personnes})
+            }
             disabled={isReadonly}
           />
         </Field>

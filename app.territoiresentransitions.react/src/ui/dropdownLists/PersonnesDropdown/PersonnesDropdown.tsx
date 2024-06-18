@@ -11,7 +11,13 @@ import {Personne, usePersonneListe} from './usePersonneListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
-  onChange: (personnes: Personne[]) => void;
+  onChange: ({
+    personnes,
+    selectedPersonne,
+  }: {
+    personnes: Personne[];
+    selectedPersonne: Personne;
+  }) => void;
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -53,15 +59,17 @@ const PersonnesDropdown = (props: Props) => {
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
     if (newTag?.data) {
-      props.onChange([
-        {
-          collectivite_id: collectivite_id!,
-          nom: newTag.data[0].nom,
-          tag_id: newTagId,
-          user_id: null,
-        },
-        ...getSelectedPersonnes(props.values),
-      ]);
+      const tag = {
+        collectivite_id: collectivite_id!,
+        nom: newTag.data[0].nom,
+        tag_id: newTagId,
+        user_id: null,
+      };
+
+      props.onChange({
+        personnes: [tag, ...getSelectedPersonnes(props.values)],
+        selectedPersonne: tag,
+      });
     }
   }, [newTagId]);
 
@@ -70,7 +78,12 @@ const PersonnesDropdown = (props: Props) => {
       {...props}
       dataTest={props.dataTest ?? 'personnes'}
       options={options}
-      onChange={({values}) => props.onChange(getSelectedPersonnes(values))}
+      onChange={({values, selectedValue}) =>
+        props.onChange({
+          personnes: getSelectedPersonnes(values),
+          selectedPersonne: getSelectedPersonnes([selectedValue])[0],
+        })
+      }
       createProps={{
         userCreatedOptions:
           personneListe?.filter(p => p.tag_id).map(p => p.tag_id!.toString()) ??
@@ -83,9 +96,14 @@ const PersonnesDropdown = (props: Props) => {
           });
         },
         onDelete: tag_id => {
-          props.onChange(
-            getSelectedPersonnes(props.values?.filter(v => v !== tag_id))
-          );
+          props.onChange({
+            personnes: getSelectedPersonnes(
+              props.values?.filter(v => v !== tag_id)
+            ),
+            selectedPersonne: getSelectedPersonnes(
+              props.values?.filter(v => v === tag_id)
+            )[0],
+          });
           deleteTag(parseInt(tag_id as string));
         },
         onCreate: inputValue =>

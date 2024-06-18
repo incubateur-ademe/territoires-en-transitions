@@ -74,10 +74,10 @@ export const FiltresIndicateurs = (props: FiltresIndicateursProps) => {
                 <Field title="Personne pilote">
                   <PersonnesDropdown
                     values={pilotes?.length ? pilotes : undefined}
-                    onChange={pilotes =>
+                    onChange={({personnes}) =>
                       updateFilterParam(
                         'pilotes',
-                        pilotes.map(p => getPersonneStringId(p))
+                        personnes.map(p => getPersonneStringId(p))
                       )
                     }
                   />
