@@ -109,7 +109,11 @@ export const DropdownFloater = ({
       <FloatingNode id={nodeId}>
         {isOpen && (
           <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
-            <FloatingFocusManager context={context} initialFocus={-1}>
+            <FloatingFocusManager
+              context={context}
+              initialFocus={-1}
+              modal={parentNodeId ? true : false}
+            >
               <div
                 data-test={dataTest}
                 {...getFloatingProps({
