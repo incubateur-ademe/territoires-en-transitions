@@ -17,6 +17,7 @@ export const filtreSpecifiqueSchema = z.object({
   statuts: statutSchema.array().optional(),
   priorites: niveauPrioriteSchema.array().optional(),
   modifiedSince: modifiedSinceSchema.optional(),
+  texteNomOuDescription: z.string().optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;

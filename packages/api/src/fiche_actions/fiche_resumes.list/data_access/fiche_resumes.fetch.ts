@@ -124,6 +124,13 @@ export async function ficheResumesFetch({
     query.gte('modified_at', getDateSince(filtre.modifiedSince));
   }
 
+  if (filtre.texteNomOuDescription) {
+    query.or(
+      `titre.ilike.*${filtre.texteNomOuDescription}*,description.ilike.*${filtre.texteNomOuDescription}*`
+    );
+    // query.ilike('titre', `%${filtre.texteNomOuDescription}%`);
+  }
+
   query.order('modified_at', {ascending: false});
 
   const {data, error, count} = await query.returns<Output>();

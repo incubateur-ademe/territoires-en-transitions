@@ -47,11 +47,8 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
-
-  const {data, isLoading} = useFicheResumesFetch({
-    options: (module as ModuleFicheActionsSelect)?.options,
-  });
+  const {data: dataModule, isLoading: isModuleLoading} = useModuleFetch(slug);
+  const module = dataModule as ModuleFicheActionsSelect;
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -61,6 +58,16 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   const [search, setSearch] = useState<string>();
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
+
+  const {data, isLoading} = useFicheResumesFetch({
+    options: {
+      ...module?.options,
+      filtre: {
+        ...module.options.filtre,
+        texteNomOuDescription: debouncedSearch,
+      },
+    },
+  });
 
   if (isModuleLoading || !module) {
     return null;
