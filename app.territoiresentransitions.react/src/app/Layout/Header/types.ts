@@ -7,8 +7,8 @@ export type TNavItem = {
   label: string;
   to: string;
   urlPrefix?: string[];
-  // indique que l'item n'est pas affiché quand la collectivité est en accès restreint
-  acces_restreint?: boolean;
+  // indique que l'item n'est pas affiché quand la collectivité est confidentielle
+  confidentiel?: boolean;
 };
 
 export type TNavDropdown = {
@@ -16,8 +16,8 @@ export type TNavDropdown = {
   items: TNavItem[];
   // optionnel : pour gérer l'état "actif' quand le sous-menu contient une vue avec des onglets
   urlPrefix?: string[];
-  // indique que l'item n'est pas affiché quand la collectivité est en accès restreint
-  acces_restreint?: boolean;
+  // indique que l'item n'est pas affiché quand la collectivité est confidentielle
+  confidentiel?: boolean;
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];

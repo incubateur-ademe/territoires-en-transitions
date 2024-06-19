@@ -1,5 +1,3 @@
-import {UserData} from 'core-logic/api/auth/AuthProvider';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {
   makeCollectiviteAccueilUrl,
   makeCollectiviteActionUrl,
@@ -15,15 +13,16 @@ import {
   makeCollectiviteUsersUrl,
   makeTableauBordLandingUrl,
 } from 'app/paths';
+import {UserData} from 'core-logic/api/auth/AuthProvider';
+import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TNavDropdown, TNavItem, TNavItemsList} from './types';
-import {makeCollectivitePlansActionsSyntheseVueUrl} from '../../paths';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
   collectivite: CurrentCollectivite,
   user: UserData | null
 ): TNavItemsList => {
-  return filtreItemsEnAccesRestreint(makeNavItemsBase(collectivite, user));
+  return filtreItemsConfidentiels(makeNavItemsBase(collectivite, user));
 };
 
 const makeNavItemsBase = (
@@ -31,13 +30,13 @@ const makeNavItemsBase = (
   user: UserData | null
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
-  const acces_restreint =
+  const confidentiel =
     collectivite.acces_restreint && collectivite.niveau_acces === null;
 
   // items communs qque soient les droits de l'utilisateur courant
-  const common = [
+  const common: TNavItemsList = [
     {
-      acces_restreint,
+      confidentiel,
       title: 'État des lieux',
       // Chemin de base pour garder le menu actif quand un change d'onglet
       urlPrefix: [
@@ -138,7 +137,7 @@ const makeNavItemsBase = (
       ],
     },
     {
-      acces_restreint,
+      confidentiel,
       title: "Plans d'action",
       urlPrefix: ['/plans/'],
       items: [
@@ -164,7 +163,7 @@ const makeNavItemsBase = (
       ],
     },
     {
-      acces_restreint,
+      confidentiel,
       label: 'Indicateurs',
       to: makeCollectiviteIndicateursUrl({
         collectiviteId,
@@ -174,7 +173,7 @@ const makeNavItemsBase = (
     },
   ];
 
-  // droit "visiteur" uniquement => renvoi que les items communs
+  //
   if (
     collectivite.niveau_acces === null &&
     !user?.isSupport &&
@@ -184,9 +183,52 @@ const makeNavItemsBase = (
   }
 
   // sinon renvoi les items communs et les items paramètres
-  return [
-    ...common,
+  return [...common];
+};
 
+// filtre les items (et sous-items) marqués comme étant confidentiel (la
+// collectivité a le flag acces_restreint (= confidentielle) et l'utilisateur courant n'est pas
+// membre la collectivité)
+const filtreItemsConfidentiels = (items: TNavItemsList): TNavItemsList =>
+  items
+    ?.filter(item => !item.confidentiel)
+    .map(item => {
+      return item.hasOwnProperty('items')
+        ? {
+            ...item,
+            items: filtreItemsConfidentiels(
+              (item as TNavDropdown).items
+            ) as TNavItem[],
+          }
+        : item;
+    });
+
+/** Génère les liens de navigation secondaires pour une collectivité donnée */
+export const makeSecondaryNavItems = (
+  collectivite: CurrentCollectivite,
+  user: UserData | null
+): TNavItemsList => {
+  return filtreItemsConfidentiels(
+    makeSecondaryNavItemsBase(collectivite, user)
+  );
+};
+
+const makeSecondaryNavItemsBase = (
+  collectivite: CurrentCollectivite,
+  user: UserData | null
+): TNavItemsList => {
+  const collectiviteId = collectivite.collectivite_id;
+
+  // On n'affiche pas le menu des paramètres si droit "visiteur"
+  if (
+    collectivite.niveau_acces === null &&
+    !user?.isSupport &&
+    !collectivite.est_auditeur
+  ) {
+    return [];
+  }
+
+  return [
     {
       title: 'Paramètres',
       items: [
@@ -212,20 +254,3 @@ const makeNavItemsBase = (
     },
   ];
 };
-
-// filtre les items (et sous-items) marqués comme étant en accès restreint (la
-// collectivité a le flag acces_restreint et l'utilisateur courant n'est pas
-// membre la collectivité)
-const filtreItemsEnAccesRestreint = (items: TNavItemsList): TNavItemsList =>
-  items
-    ?.filter(item => !item.acces_restreint)
-    .map(item => {
-      return item.hasOwnProperty('items')
-        ? {
-            ...item,
-            items: filtreItemsEnAccesRestreint(
-              (item as TNavDropdown).items
-            ) as TNavItem[],
-          }
-        : item;
-    });
