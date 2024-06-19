@@ -7,7 +7,7 @@ import {
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {Button, Input, Select} from '@tet/ui';
+import {Button, Input, Pagination, Select} from '@tet/ui';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
@@ -36,6 +36,8 @@ const orderByOptions: orderByOptionsType[] = [
   },
 ];
 
+const maxNbOfCards = 16;
+
 type Props = {
   view: TDBViewParam;
   slug: Slug;
@@ -52,8 +54,12 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
 
   const [order, setOrder] = useState(orderByOptions[0]);
 
+  /** Page courante */
+  const [currentPage, setCurrentPage] = useState(1);
+
   /** Texte de recherche pour l'input */
   const [search, setSearch] = useState<string>();
+
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
@@ -64,16 +70,17 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
         ...module?.options.filtre,
         texteNomOuDescription: debouncedSearch,
       },
-      page: 1,
-      limit: 10,
+      page: currentPage,
+      limit: maxNbOfCards,
     },
   });
+
+  const countTotal = data?.count || 0;
+  const nbOfPages = data?.nbOfPages || 0;
 
   if (isModuleLoading || !module) {
     return null;
   }
-
-  const total = data?.count;
 
   return (
     <ModulePage view={view} title={module.titre}>
@@ -92,10 +99,10 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
         </div>
         {/** Nombre total de résultats */}
         <span className="shrink-0 text-grey-7">
-          {isLoading ? '--' : total ? total : '0'}
+          {isLoading ? '--' : countTotal}
           {` `}
           {`action`}
-          {total && total > 1 ? 's' : ''}
+          {countTotal > 1 ? 's' : ''}
         </span>
         {/** Champ de recherche */}
         <Input
@@ -178,13 +185,13 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
               />
             ))}
           </div>
-          {/* <div className="mx-auto mt-16">
+          <div className="mx-auto mt-16">
             <Pagination
               selectedPage={currentPage}
               nbOfPages={nbOfPages}
               onChange={page => setCurrentPage(page)}
             />
-          </div> */}
+          </div>
         </>
       )}
     </ModulePage>
