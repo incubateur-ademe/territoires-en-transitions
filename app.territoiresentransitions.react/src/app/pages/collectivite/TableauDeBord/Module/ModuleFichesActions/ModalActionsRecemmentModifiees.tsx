@@ -3,6 +3,10 @@ import {useState} from 'react';
 import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
 import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {
+  Filtre as FiltreFichesAction,
+  ModifiedSince,
+} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import {
   Field,
   FormSection,
   Modal,
@@ -12,20 +16,18 @@ import {
   SelectFilter,
   SelectMultiple,
 } from '@tet/ui';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QueryKey, useQueryClient} from 'react-query';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {Filtre as FiltreFichesAction} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
-  TModifiedSince,
   ficheActionModifiedSinceOptions,
   ficheActionStatutOptions,
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/options/listesStatiques';
-import {TFicheActionStatuts} from 'types/alias';
+import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {QueryKey, useQueryClient} from 'react-query';
+import {TFicheActionStatuts} from 'types/alias';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = ModalProps & {
@@ -117,7 +119,7 @@ const ModalActionsRecemmentModifiees = ({
                 onChange={value =>
                   setFiltreState({
                     ...filtreState,
-                    modifiedSince: value as TModifiedSince,
+                    modifiedSince: value as ModifiedSince,
                   })
                 }
               />
