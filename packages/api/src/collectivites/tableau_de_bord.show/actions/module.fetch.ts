@@ -6,7 +6,7 @@ import {
   Slug,
   getDefaultModule,
 } from '../domain/module.schema';
-import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data-access/plan_actions.fetch';
+import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data_access/plan_actions.fetch';
 
 export type ReturnType<S extends Slug> =
   S extends 'indicateurs-de-suivi-de-mes-plans'

@@ -4,7 +4,7 @@ import {Button} from '@tet/ui';
 
 import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
+import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   TDBViewParam,
   makeCollectivitePlanActionFicheUrl,
@@ -30,7 +30,7 @@ const ModuleFichesActions = ({view, module}: Props) => {
   const userId = useAuth().user?.id;
   const history = useHistory();
 
-  const {data, isLoading} = useFicheActionResumeFetch({
+  const {data, isLoading} = useFicheResumesFetch({
     options: module.options,
   });
 

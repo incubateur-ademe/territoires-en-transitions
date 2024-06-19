@@ -2,7 +2,7 @@ import {z} from 'zod';
 import {
   fetchOptionsSchema as fichesFetchOptionsSchema,
   Filtre as FiltreFicheActions,
-} from '../../../fiche_actions/resumes.list/domain/fetch_options.schema';
+} from '../../../fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
   Filtre as FiltreIndicateurs,

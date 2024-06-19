@@ -1,7 +1,7 @@
 import {beforeAll, expect, test} from 'vitest';
 import {signIn, signOut} from '../../../tests/auth';
 import {supabase} from '../../../tests/supabase';
-import {ficheActionResumesFetch} from './fiche_action_resumes.fetch';
+import {ficheResumesFetch} from './fiche_resumes.fetch';
 
 const params = {
   dbClient: supabase,
@@ -17,7 +17,7 @@ beforeAll(async () => {
 });
 
 test('Fetch sans filtre', async () => {
-  const {data} = await ficheActionResumesFetch({
+  const {data} = await ficheResumesFetch({
     ...params,
     options: {filtre: {}},
   });
@@ -26,7 +26,7 @@ test('Fetch sans filtre', async () => {
 });
 
 test('Fetch avec filtre sur un statut', async () => {
-  const {data} = await ficheActionResumesFetch({
+  const {data} = await ficheResumesFetch({
     ...params,
     options: {filtre: {statuts: ['En cours']}},
   });
@@ -35,7 +35,7 @@ test('Fetch avec filtre sur un statut', async () => {
 });
 
 test('Fetch avec filtre sur un statut', async () => {
-  const {data} = await ficheActionResumesFetch({
+  const {data} = await ficheResumesFetch({
     ...params,
     options: {filtre: {modifiedSince: 'last-15-days'}},
   });
