@@ -91,7 +91,7 @@ export const PreuveDoc = ({
       {commentaire && !readonly && !isEditing && (
         <p
           data-test="comment"
-          className={classNames('text-xs fr-text-mention--grey mb-1 pl-2', {
+          className={classNames('text-xs text-grey-8 mb-1 pl-2', {
             classComment,
           })}
           onClick={(e: MouseEvent<HTMLParagraphElement>) => {
@@ -115,7 +115,7 @@ export const PreuveDoc = ({
 
       {/* Date de visite */}
       {!!dateVisite && (
-        <p className="text-xs fr-text-mention--grey mb-1 pl-2">
+        <p className="text-xs text-grey-8 mb-1 pl-2">
           Visite effectuée le {formatDate(dateVisite)}
         </p>
       )}
@@ -149,7 +149,7 @@ const PreuveTitle = ({preuve}: {preuve: TPreuve}) => {
   return (
     <AnchorAsButton
       data-test="name"
-      className={classNames('fr-text--sm mb-1', picto, {
+      className={classNames('text-sm mb-1', picto, {
         'fr-link--icon-left': Boolean(picto),
       })}
       onClick={() => openPreuve(preuve)}
@@ -224,7 +224,7 @@ const formatDateAndAuthor = (
   const le = formatDate(date);
   const modif = isModification ? 'Modifié' : 'Ajouté';
   return (
-    <p className="text-xs fr-text-mention--grey mb-1 pl-2">
+    <p className="text-xs text-grey-8 mb-1 pl-2">
       {modif} le {le} par {author}
     </p>
   );

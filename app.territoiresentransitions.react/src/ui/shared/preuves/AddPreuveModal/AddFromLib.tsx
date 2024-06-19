@@ -62,7 +62,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
 
   return (
     <>
-      <h6 className="fr-text--md">Tous les fichiers de ma collectivité</h6>
+      <h6 className="text-base">Tous les fichiers de ma collectivité</h6>
       <div>
         <UiSearchBar
           key="search"

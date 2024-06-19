@@ -43,7 +43,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
         render={() => (
           <div className="p-7 flex flex-col" data-test="PersoPotentielDlg">
             <h3>Personnaliser le potentiel de points</h3>
-            <span className="fr-text--md font-bold">
+            <span className="text-base font-bold mb-6">
               {type[0].toUpperCase() + type.slice(1)} {identifiant} : {nom}
             </span>
             <div className="w-full">
@@ -60,7 +60,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
           </div>
         )}
       >
-        <AnchorAsButton className="fr-link fr-link--icon-left fr-icon-settings-5-line ml-4 fr-text--sm">
+        <AnchorAsButton className="fr-link fr-link--icon-left fr-icon-settings-5-line ml-4 text-sm leading-6">
           Personnaliser
         </AnchorAsButton>
       </Modal>

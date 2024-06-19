@@ -28,7 +28,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Audit en cours
@@ -109,7 +109,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Labellisation en cours
@@ -146,7 +146,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Labellisation en cours
@@ -209,7 +209,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Demande envoyée
@@ -246,7 +246,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Demande envoyée
@@ -270,7 +270,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/HeaderLabellisa
        étoile
     </h2>
     <p
-      className="m-0 fr-text-mention--grey"
+      className="m-0 text-grey-8"
       data-test="HeaderMessage"
     >
       Demande envoyée

@@ -155,7 +155,7 @@ const getHeaderMessageContent = (
 };
 
 const HeaderMessage = ({children}: {children: ReactNode}) => (
-  <p className="m-0 fr-text-mention--grey" data-test="HeaderMessage">
+  <p className="m-0 text-grey-8" data-test="HeaderMessage">
     {children}
   </p>
 );

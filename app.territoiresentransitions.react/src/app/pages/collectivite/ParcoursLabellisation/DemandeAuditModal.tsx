@@ -53,7 +53,7 @@ export const DemandeAuditModalContent = (
   // car le critère fichier n'est pas atteint
   const aide =
     !labellisable && !preuves?.length ? (
-      <p className="fr-text--sm">
+      <p className="text-sm">
         * Pour passer en CNL penser à joindre les documents de labellisation.
       </p>
     ) : null;

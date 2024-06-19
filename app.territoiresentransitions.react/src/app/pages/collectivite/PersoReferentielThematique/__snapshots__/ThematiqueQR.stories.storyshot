@@ -750,10 +750,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
       className="grid grid-cols-2"
     >
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Nom
         </span>
@@ -761,10 +761,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         Ambérieu-en-Bugey
       </p>
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Type de collectivité
         </span>
@@ -776,10 +776,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         </span>
       </p>
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Code SIREN ou INSEE
         </span>
@@ -787,10 +787,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         01004
       </p>
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Région
         </span>
@@ -798,10 +798,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
         Auvergne-Rhône-Alpes
       </p>
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Population (
           Insee 12/01/2022
@@ -812,10 +812,10 @@ exports[`Storyshots app/pages/collectivite/PersoReferentielThematique/Thematique
          habitants
       </p>
       <p
-        className="fr-text--md"
+        className="text-base mb-6"
       >
         <span
-          className="fr-text--bold"
+          className="font-bold"
         >
           Département
         </span>

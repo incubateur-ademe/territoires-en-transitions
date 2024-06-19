@@ -196,7 +196,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -315,7 +315,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -384,7 +384,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
@@ -614,7 +614,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -794,7 +794,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle conclu <b>des ventes ou des contrats d’utilisation</b> sur les dix dernières années ?",
@@ -974,7 +974,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -1204,7 +1204,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "La collectivité a-t-elle la compétence <b>voirie</b> ?",
@@ -1441,7 +1441,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",
@@ -1626,7 +1626,7 @@ exports[`Storyshots app/pages/collectivite/PersoPotentielModal/PersoPotentielTab
             className="my-4"
           >
             <legend
-              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold fr-text--lg"
+              className="fr-fieldset__legend fr-fieldset__legend--regular !font-bold text-lg"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Quelle est la part de la collectivité dans l’EPCI compétent en matière de <b>politique du logement et cadre de vie ?</b>",

@@ -5,7 +5,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
   data-test="preuves-cae_1.2.4"
 >
   <p
-    className="fr-text--sm !mb-0 py-4"
+    className="text-sm !mb-0 py-4"
   >
     Il n'y a pas de document attendu pour cette
      
@@ -42,7 +42,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -84,14 +84,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Message Av
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
           lala
         </p>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -212,7 +212,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -247,14 +247,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
               commentaire preuve fichier
             </p>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 
@@ -323,7 +323,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -353,7 +353,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 
@@ -411,7 +411,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -441,14 +441,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
               commentaire
             </p>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 
@@ -506,7 +506,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -548,14 +548,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
           lala
         </p>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -574,7 +574,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -611,7 +611,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Avec Preuves Co
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -630,7 +630,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves At
   data-test="preuves-cae_1.2.3"
 >
   <p
-    className="fr-text--sm !mb-0 py-4"
+    className="text-sm !mb-0 py-4"
   >
     Il n'y a pas de document attendu pour cette
      
@@ -756,7 +756,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -791,14 +791,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
               commentaire preuve fichier
             </p>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 
@@ -867,7 +867,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -897,7 +897,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 
@@ -955,7 +955,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
                 className="flex gap-2"
               >
                 <a
-                  className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+                  className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
                   data-test="name"
                   href="/"
                   onClick={[Function]}
@@ -985,14 +985,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuvesAction Sans Preuves Co
               </div>
             </div>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
               data-test="comment"
               onClick={[Function]}
             >
               commentaire
             </p>
             <p
-              className="text-xs fr-text-mention--grey mb-1 pl-2"
+              className="text-xs text-grey-8 mb-1 pl-2"
             >
               Ajouté
                le 

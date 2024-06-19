@@ -89,7 +89,7 @@ export const ActionReferentielDisplayTitle = ({
     <div className="flex flex-row align-middle items-center font-bold gap-2 mr-2">
       <ActionReferentielTitlePill action={action} />
       <div>
-        <span className="fr-text--lg">{action.nom} </span>
+        <span className="text-lg">{action.nom} </span>
         <ActionPotentiel action={action} />
       </div>
     </div>

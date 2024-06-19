@@ -3,7 +3,7 @@
 exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFromLib Fichiers 1`] = `
 Array [
   <h6
-    className="fr-text--md"
+    className="text-base"
   >
     Tous les fichiers de ma collectivité
   </h6>,
@@ -196,7 +196,7 @@ Array [
 exports[`Storyshots ui/shared/preuves/AddPreuveModal/AddFromLib Vide 1`] = `
 Array [
   <h6
-    className="fr-text--md"
+    className="text-base"
   >
     Tous les fichiers de ma collectivité
   </h6>,

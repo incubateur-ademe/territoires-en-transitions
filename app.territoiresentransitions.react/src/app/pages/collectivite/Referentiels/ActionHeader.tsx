@@ -57,7 +57,7 @@ export const ActionHeader = ({
               )}
             </div>
           </div>
-          <div className="fr-container flex justify-between items-center fr-text--sm my-4">
+          <div className="fr-container flex justify-between items-center text-sm my-4">
             <div className="flex gap-4 items-center pl-1 text-grey425">
               <ActionProgressBar
                 action={action}

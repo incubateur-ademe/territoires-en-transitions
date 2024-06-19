@@ -24,35 +24,33 @@ export const CarteIdentite = (props: TCarteIdentiteProps) => {
     <>
       <h3>Informations administratives officielles</h3>
       <div className="grid grid-cols-2">
-        <p className="fr-text--md">
-          <span className="fr-text--bold">Nom</span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Nom</span>
           <br />
           {nom}
         </p>
-        <p className="fr-text--md">
-          <span className="fr-text--bold">Type de collectivité</span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Type de collectivité</span>
           <br />
           <span className="capitalize">{type_collectivite}</span>
         </p>
-        <p className="fr-text--md">
-          <span className="fr-text--bold">Code SIREN ou INSEE</span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Code SIREN ou INSEE</span>
           <br />
           {code_siren_insee}
         </p>
-        <p className="fr-text--md">
-          <span className="fr-text--bold">Région</span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Région</span>
           <br />
           {region_name}
         </p>
-        <p className="fr-text--md">
-          <span className="fr-text--bold">
-            Population ({population_source})
-          </span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Population ({population_source})</span>
           <br />
           {population_totale?.toLocaleString()} habitants
         </p>
-        <p className="fr-text--md">
-          <span className="fr-text--bold">Département</span>
+        <p className="text-base mb-6">
+          <span className="font-bold">Département</span>
           <br />
           {departement_name}
         </p>

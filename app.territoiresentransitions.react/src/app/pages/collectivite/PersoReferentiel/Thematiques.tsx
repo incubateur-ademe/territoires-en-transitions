@@ -15,7 +15,7 @@ const Thematique = (props: TThematiquesProps) => {
         <h1>Personnalisation des référentiels</h1>
         <h3>{collectivite.nom}</h3>
       </div>
-      <p className="fr-text--lg">
+      <p>
         Les actions proposées dans les référentiels Climat Air Énergie et
         Économie circulaire dépendent des compétences et caractéristiques de
         chaque collectivité.

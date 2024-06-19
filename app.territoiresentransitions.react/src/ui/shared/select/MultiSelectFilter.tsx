@@ -58,7 +58,7 @@ export const MultiSelectFilter = <T extends string>({
         ) : (
           <span
             className={classNames('pr-4 py-1', {
-              'fr-text-mention--grey': option.label === ITEM_ALL,
+              'text-grey-8': option.label === ITEM_ALL,
             })}
           >
             {option.label}

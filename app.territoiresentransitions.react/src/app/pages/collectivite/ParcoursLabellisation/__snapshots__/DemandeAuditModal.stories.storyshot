@@ -180,7 +180,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <p
-      className="fr-text--sm"
+      className="text-sm"
     >
       * Pour passer en CNL penser à joindre les documents de labellisation.
     </p>
@@ -316,7 +316,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <p
-      className="fr-text--sm"
+      className="text-sm"
     >
       * Pour passer en CNL penser à joindre les documents de labellisation.
     </p>
@@ -452,7 +452,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <p
-      className="fr-text--sm"
+      className="text-sm"
     >
       * Pour passer en CNL penser à joindre les documents de labellisation.
     </p>
@@ -742,7 +742,7 @@ exports[`Storyshots app/pages/collectivite/ParcoursLabellisation/DemandeAuditMod
       </div>
     </fieldset>
     <p
-      className="fr-text--sm"
+      className="text-sm"
     >
       * Pour passer en CNL penser à joindre les documents de labellisation.
     </p>

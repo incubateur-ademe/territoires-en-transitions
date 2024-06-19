@@ -164,7 +164,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -199,14 +199,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Fichier 1
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
           commentaire preuve fichier
         </p>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -278,7 +278,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -308,7 +308,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Lien 1`] 
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -380,7 +380,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-file-line fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-file-line fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -415,14 +415,14 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
           data-test="comment"
           onClick={[Function]}
         >
           commentaire preuve fichier
         </p>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 
@@ -441,7 +441,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
             className="flex gap-2"
           >
             <a
-              className="fr-text--sm mb-1 fr-fi-links-fill fr-link--icon-left"
+              className="text-sm mb-1 fr-fi-links-fill fr-link--icon-left"
               data-test="name"
               href="/"
               onClick={[Function]}
@@ -471,7 +471,7 @@ exports[`Storyshots ui/shared/preuves/Bibliotheque/PreuveReglementaire Multiple 
           </div>
         </div>
         <p
-          className="text-xs fr-text-mention--grey mb-1 pl-2"
+          className="text-xs text-grey-8 mb-1 pl-2"
         >
           Ajouté
            le 

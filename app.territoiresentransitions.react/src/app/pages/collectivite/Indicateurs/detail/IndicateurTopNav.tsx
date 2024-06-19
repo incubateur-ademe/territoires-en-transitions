@@ -9,7 +9,7 @@ export const IndicateurTopNav = () => {
     usePrevAndNextIndicateurLinks();
 
   return prevIndicateurLink || nextIndicateurLink ? (
-    <div className="!bg-bf925 min-h-[1.5rem] flex justify-between fr-text--sm !m-0 pb-6 px-10 overflow-hidden">
+    <div className="!bg-bf925 min-h-[1.5rem] flex justify-between text-sm !m-0 pb-6 px-10 overflow-hidden">
       {prevIndicateurLink ? (
         <Link
           to={prevIndicateurLink}
