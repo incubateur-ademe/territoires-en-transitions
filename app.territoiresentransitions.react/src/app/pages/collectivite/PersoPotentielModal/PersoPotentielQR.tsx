@@ -70,7 +70,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         className={classNames(
           'fr-fieldset__legend fr-fieldset__legend--regular',
           {
-            '!font-bold fr-text--lg': variant === 'modal',
+            '!font-bold text-lg': variant === 'modal',
           }
         )}
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}

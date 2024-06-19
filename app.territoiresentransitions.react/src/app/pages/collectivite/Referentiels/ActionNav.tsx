@@ -10,7 +10,7 @@ export const ActionTopNav = ({
   prevActionLink: string | undefined;
   nextActionLink: string | undefined;
 }) => (
-  <div className="min-h-[1.5rem] flex justify-between fr-text--sm !m-0 mt-4 overflow-hidden">
+  <div className="min-h-[1.5rem] flex justify-between text-sm leading-6 !m-0 mt-4 overflow-hidden">
     {prevActionLink ? (
       <Link
         to={prevActionLink}
