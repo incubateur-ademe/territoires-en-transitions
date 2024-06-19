@@ -18,7 +18,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {Filtre as FiltreFichesAction} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import {Filtre as FiltreFichesAction} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   TModifiedSince,
   ficheActionModifiedSinceOptions,

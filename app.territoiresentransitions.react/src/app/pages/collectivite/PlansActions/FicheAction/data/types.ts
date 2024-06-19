@@ -1,3 +1,4 @@
+import {FicheResume as FicheResumeZod} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 import {
   TActionInsert,
@@ -5,11 +6,10 @@ import {
   TFicheAction,
   TFicheActionServicePiloteInsert,
   TFicheActionStructureInsert,
+  TFinanceurMontant,
+  TFinanceurTagInsert,
   TPartenaireInsert,
   TSousThematiqueInsert,
-  TFinanceurTagInsert,
-  TFinanceurMontant,
-  TFicheResume,
   TThematiqueRow,
 } from 'types/alias';
 import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
@@ -52,7 +52,9 @@ export type Financeur = Omit<
   financeur_tag: TFinanceurTagInsert;
 };
 
-export type FicheResume = Omit<TFicheResume, 'plans' | 'pilotes'> & {
-  plans: TAxeInsert[] | [null] | null;
-  pilotes: Personne[] | null;
-};
+// export type FicheResume = Omit<TFicheResume, 'plans' | 'pilotes'> & {
+//   plans: TAxeInsert[] | [null] | null;
+//   pilotes: Personne[] | null;
+// };
+
+export type FicheResume = FicheResumeZod;

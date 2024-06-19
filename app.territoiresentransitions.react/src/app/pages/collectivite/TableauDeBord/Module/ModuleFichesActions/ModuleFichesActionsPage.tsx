@@ -7,10 +7,13 @@ import {
   ModuleFicheActionsSelect,
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/resumes.list/domain/fetch_options.schema';
+import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {Button, Input, Select} from '@tet/ui';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {useFicheActionResumeFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionResumeFetch';
+import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import {
   getQueryKey,
   useModuleFetch,
@@ -19,9 +22,6 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModulePage from '../ModulePage';
-import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
-import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
 type orderByOptionsType = {
   label: string;
@@ -49,7 +49,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
 
   const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
 
-  const {data, isLoading} = useFicheActionResumeFetch({
+  const {data, isLoading} = useFicheResumesFetch({
     options: (module as ModuleFicheActionsSelect)?.options,
   });
 
@@ -149,7 +149,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
           </p>
         </div>
       ) : (
-        /** Liste d'indicateurs */
+        /** Liste des fiches actions */
         <>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
             {data?.data?.map(fiche => (
@@ -163,15 +163,11 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
                     module.options,
                   ],
                 ]}
-                link={
-                  fiche.plans && fiche.plans[0] && fiche.plans[0].id
-                    ? makeCollectivitePlanActionFicheUrl({
-                        collectiviteId: collectiviteId!,
-                        ficheUid: fiche.id!.toString(),
-                        planActionUid: fiche.plans[0].id!.toString(),
-                      })
-                    : undefined
-                }
+                link={makeCollectivitePlanActionFicheUrl({
+                  collectiviteId: collectiviteId!,
+                  ficheUid: fiche.id.toString(),
+                  planActionUid: fiche.plan_id?.toString()!,
+                })}
               />
             ))}
           </div>

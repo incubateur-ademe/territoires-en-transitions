@@ -1,12 +1,13 @@
 import {z} from 'zod';
-import {DBClient, Views} from '../../../typeUtils';
+import {DBClient} from '../../../typeUtils';
 import {
   FetchOptions,
   Filtre as FiltreFicheActions,
   fetchOptionsSchema,
 } from '../domain/fetch_options.schema';
+import {FicheResume} from '../domain/fiche_resumes.schema';
 
-type Output = Array<Views<'fiche_resume'>>;
+type Output = Array<FicheResume>;
 
 const ficheActionColumns = [
   'id',
@@ -15,6 +16,7 @@ const ficheActionColumns = [
   'collectivite_id',
   'modified_at',
   'pilotes',
+  // 'plans',
   'date_fin_provisoire',
   'niveau_priorite',
   'restreint',
@@ -30,7 +32,7 @@ type Props = {
 /**
  * Charge une liste de résumés de fiches actions en fonction des filtres en paramètres.
  */
-export async function ficheActionResumesFetch({
+export async function ficheResumesFetch({
   dbClient,
   collectiviteId: unsafeCollectiviteId,
   options,
@@ -43,9 +45,10 @@ export async function ficheActionResumesFetch({
 
   const relatedTables = new Set<string>();
 
-  if (filtre.planActionIds?.length) {
-    relatedTables.add('fiche_action_axe!inner()');
-  }
+  // Toujours récupérer les axes pour avoir l'id du plan racine
+  relatedTables.add('plans:fiche_action_axe!inner(*)');
+  // if (filtre.planActionIds?.length) {
+  // }
 
   if (filtre.utilisateurPiloteIds?.length) {
     relatedTables.add('fiche_action_pilote!inner()');
@@ -132,8 +135,14 @@ export async function ficheActionResumesFetch({
 
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
 
-  // return {data: objectToCamel(data), count, nextPage};
-  return {data: data, count, nextPage};
+  // 4. Transforme les données pour les adapter au format attendu
+
+  const fiches = data.map(fiche => ({
+    ...fiche,
+    plan_id: fiche.plans?.[0]?.id,
+  }));
+
+  return {data: fiches, count, nextPage};
 }
 
 function getDateSince(value: NonNullable<FiltreFicheActions['modifiedSince']>) {

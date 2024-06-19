@@ -1,5 +1,5 @@
 import {objectToCamel} from 'ts-case-convert';
-import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data-access/plan_actions.fetch';
+import {planActionsFetch} from '../../../fiche_actions/plan_actions.list/data_access/plan_actions.fetch';
 import {DBClient} from '../../../typeUtils';
 import {
   ModuleSelect,
