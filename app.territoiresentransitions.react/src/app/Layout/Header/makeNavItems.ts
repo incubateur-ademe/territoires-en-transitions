@@ -10,11 +10,13 @@ import {
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsSyntheseUrl,
+  makeCollectivitePlansActionsTousUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
   makeTableauBordLandingUrl,
 } from 'app/paths';
 import {TNavDropdown, TNavItem, TNavItemsList} from './types';
+import {makeCollectivitePlansActionsSyntheseVueUrl} from '../../paths';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
@@ -34,10 +36,6 @@ const makeNavItemsBase = (
 
   // items communs qque soient les droits de l'utilisateur courant
   const common = [
-    {
-      label: 'Accueil',
-      to: makeCollectiviteAccueilUrl({collectiviteId}),
-    },
     {
       acces_restreint,
       title: 'État des lieux',
@@ -73,6 +71,10 @@ const makeNavItemsBase = (
         }),
       ],
       items: [
+        {
+          label: "Synthèse de l'état des lieux",
+          to: makeCollectiviteAccueilUrl({collectiviteId}),
+        },
         {
           label: 'Personnalisation des référentiels',
           to: makeCollectivitePersoRefUrl({
@@ -137,11 +139,29 @@ const makeNavItemsBase = (
     },
     {
       acces_restreint,
-      label: "Plans d'action",
-      to: makeCollectivitePlansActionsSyntheseUrl({
-        collectiviteId,
-      }),
+      title: "Plans d'action",
       urlPrefix: ['/plans/'],
+      items: [
+        {
+          label: 'Tableau de bord',
+          to: makeTableauBordLandingUrl({
+            collectiviteId,
+          }),
+          urlPrefix: ['/tableau-de-bord/'],
+        },
+        {
+          label: "Tous les plans d'action",
+          to: makeCollectivitePlansActionsTousUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: 'Répartition des fiches actions',
+          to: makeCollectivitePlansActionsSyntheseUrl({
+            collectiviteId,
+          }),
+        },
+      ],
     },
     {
       acces_restreint,
@@ -166,13 +186,7 @@ const makeNavItemsBase = (
   // sinon renvoi les items communs et les items paramètres
   return [
     ...common,
-    {
-      label: 'Tableau de bord',
-      to: makeTableauBordLandingUrl({
-        collectiviteId,
-      }),
-      urlPrefix: ['/tableau-de-bord/'],
-    },
+
     {
       title: 'Paramètres',
       items: [

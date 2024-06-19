@@ -1,16 +1,15 @@
 import {useQuery} from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FlatAxe, PlanNode} from './types';
-import {SideNavLinks} from 'ui/shared/SideNav';
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
+import {supabaseClient} from 'core-logic/api/supabase';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {SideNavLinks} from 'ui/shared/SideNav';
 import {generateTitle} from '../../FicheAction/data/utils';
+import {FlatAxe, PlanNode} from './types';
 import {childrenOfPlanNodes, flatAxesToPlanNodes, sortPlanNodes} from './utils';
 
 export const usePlansNavigation = () => {
@@ -36,14 +35,7 @@ export const generatePlanActionNavigationLinks = (
   hasFichesNonClassees: boolean,
   axes?: PlanNode[] | null
 ) => {
-  const plansLinks: SideNavLinks = [
-    {
-      link: makeCollectivitePlansActionsSyntheseUrl({
-        collectiviteId,
-      }),
-      displayName: 'Synthèse',
-    },
-  ];
+  const plansLinks: SideNavLinks = [];
 
   const plans = axes && sortPlanNodes(axes.filter(axe => axe.depth === 0));
 

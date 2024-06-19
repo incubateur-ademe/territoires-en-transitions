@@ -91,7 +91,7 @@ export const collectiviteFichesNonClasseesPath = `${collectivitePlansActionsBase
 export const collectiviteFicheNonClasseePath = `${collectiviteFichesNonClasseesPath}/:${ficheParam}`;
 
 // TDB = tableau de bord
-export const collectiviteTDBBasePath = `${collectivitePath}/tableau-de-bord`;
+export const collectiviteTDBBasePath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
 export const TDBViewId = 'tdbView';
 export const collectiviteTDBPath = `${collectiviteTDBBasePath}/:${TDBViewId}`;
 export type TDBViewParam = 'collectivite' | 'personnel';
@@ -269,6 +269,16 @@ export const makeCollectivitePlansActionsImporterUrl = ({
   collectiviteId: number;
 }) =>
   collectivitePlansActionsImporterPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectivitePlansActionsTousUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectivitePlansActionsBasePath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
