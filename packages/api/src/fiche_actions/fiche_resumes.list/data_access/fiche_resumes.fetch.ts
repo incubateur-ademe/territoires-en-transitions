@@ -141,6 +141,7 @@ export async function ficheResumesFetch({
   }
 
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
+  const nbOfPages = Math.ceil((count ?? 0) / limit);
 
   // 4. Transforme les données pour les adapter au format attendu
 
@@ -149,7 +150,7 @@ export async function ficheResumesFetch({
     plan_id: fiche.plans?.[0]?.id,
   }));
 
-  return {data: fiches, count, nextPage};
+  return {data: fiches, count, nextPage, nbOfPages};
 }
 
 function getDateSince(value: NonNullable<FiltreFicheActions['modifiedSince']>) {
