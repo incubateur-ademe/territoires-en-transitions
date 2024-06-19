@@ -1,3 +1,4 @@
+import {ModifiedSince} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,
@@ -109,13 +110,7 @@ export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriori
     {value: 'Bas', label: 'Bas'},
   ];
 
-export type TModifiedSince =
-  | 'last-15-days'
-  | 'last-30-days'
-  | 'last-60-days'
-  | 'last-90-days';
-
-export const ficheActionModifiedSinceOptions: Options<TModifiedSince> = [
+export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
   {value: 'last-15-days', label: 'les 15 derniers jours'},
   {value: 'last-30-days', label: 'les 30 derniers jours'},
   {value: 'last-60-days', label: 'les 60 derniers jours'},
