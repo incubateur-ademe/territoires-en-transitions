@@ -1,7 +1,6 @@
-import {Route} from 'react-router-dom';
+import {Link, Route} from 'react-router-dom';
 
 import {FicheActionPage} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionPage';
-import {PlanActionPage} from './PlanAction/PlanActionPage';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFicheNonClasseePath,
@@ -13,25 +12,73 @@ import {
   collectivitePlansActionsCreerPath,
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
-  collectivitePlansActionsSynthesePath,
-  collectivitePlansActionsSyntheseVuePath,
+  makeCollectivitePlansActionsNouveauUrl,
 } from 'app/paths';
-import {SynthesePage} from './Synthese/SynthesePage';
-import {SelectionPage} from './ParcoursCreationPlan/SelectionPage';
-import {ImporterPlanPage} from './ParcoursCreationPlan/ImporterPlanPage';
+import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
+import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
+import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
 import {CreerPlanPage} from './ParcoursCreationPlan/CreerPlanPage';
-import {SyntheseVuePage} from './Synthese/SyntheseVue/SyntheseVuePage';
+import {ImporterPlanPage} from './ParcoursCreationPlan/ImporterPlanPage';
+import {SelectionPage} from './ParcoursCreationPlan/SelectionPage';
+import {PlanActionPage} from './PlanAction/PlanActionPage';
+import {
+  generatePlanActionNavigationLinks,
+  usePlansNavigation,
+} from './PlanAction/data/usePlansNavigation';
 
 type Props = {
   collectivite_id: number;
+  readonly: boolean;
 };
 
 /**
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
-export const PlansActionsRoutes = ({collectivite_id}: Props) => {
+export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
+  const {data: axes} = usePlansNavigation();
+  const {data: fichesNonClasseesListe} =
+    useFichesNonClasseesListe(collectivite_id);
+
+  const {mutate: createFicheAction} = useCreateFicheAction();
+
+  const hasFicheNonClassees =
+    (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
+
   return (
-    <>
+    <CollectivitePageLayout
+      dataTest="PlansAction"
+      sideNav={{
+        links: generatePlanActionNavigationLinks(
+          collectivite_id,
+          hasFicheNonClassees,
+          axes
+        ),
+        actions: !readonly && (
+          <>
+            <li className="fr-sidemenu_item p-0 list-none">
+              <button
+                data-test="CreerFicheAction"
+                className="fr-btn fr-btn--primary"
+                onClick={() => createFicheAction()}
+              >
+                Créer une fiche action
+              </button>
+            </li>
+            <li className="fr-sidemenu_item mt-6 p-0 list-none">
+              <Link
+                data-test="AjouterPlanAction"
+                className="fr-btn fr-btn--tertiary"
+                to={makeCollectivitePlansActionsNouveauUrl({
+                  collectiviteId: collectivite_id,
+                })}
+              >
+                Ajouter un plan d'action
+              </Link>
+            </li>
+          </>
+        ),
+      }}
+    >
       {/* Création */}
       <Route exact path={collectivitePlansActionsNouveauPath}>
         <SelectionPage />
@@ -42,13 +89,7 @@ export const PlansActionsRoutes = ({collectivite_id}: Props) => {
       <Route exact path={collectivitePlansActionsCreerPath}>
         <CreerPlanPage />
       </Route>
-      {/* Synthèse */}
-      <Route exact path={[collectivitePlansActionsSynthesePath]}>
-        <SynthesePage collectiviteId={collectivite_id} />
-      </Route>
-      <Route exact path={[collectivitePlansActionsSyntheseVuePath]}>
-        <SyntheseVuePage />
-      </Route>
+
       {/* <FichesNonClassees /> */}
       <Route exact path={[collectiviteFichesNonClasseesPath]}>
         <FichesNonClassees />
@@ -70,6 +111,6 @@ export const PlansActionsRoutes = ({collectivite_id}: Props) => {
       <Route exact path={collectivitePlanActionAxePath}>
         <PlanActionPage />
       </Route>
-    </>
+    </CollectivitePageLayout>
   );
 };

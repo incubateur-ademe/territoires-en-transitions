@@ -1,34 +1,32 @@
 import {ReactNode} from 'react';
 import {Redirect, Route, RouteProps} from 'react-router-dom';
 
+import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
+import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
+import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
+import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
 import {
+  collectiviteAccueilPath,
   collectiviteActionPath,
+  collectiviteBibliothequePath,
   collectiviteIndicateurPath as collectiviteIndicateursPath,
-  collectiviteReferentielPath,
-  collectiviteUsersPath,
+  collectiviteJournalPath,
+  collectiviteLabellisationPath,
   collectivitePersoRefPath,
   collectivitePersoRefThematiquePath,
-  collectiviteLabellisationPath,
-  collectiviteJournalPath,
-  collectiviteBibliothequePath,
   collectivitePlansActionsBasePath,
+  collectiviteReferentielPath,
+  collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
-  collectiviteAccueilPath,
-  collectiviteTDBBasePath,
 } from 'app/paths';
-import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
-import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
-import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
-import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
-import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
-import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
-import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
-import {JournalActivitePage} from './Historique/JournalActivitePage';
-import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
-import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import AccueilPage from './Accueil/AccueilPage';
-import {TableauDeBordPage} from 'app/pages/collectivite/TableauDeBord/TableauDeBordPage';
+import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
+import {JournalActivitePage} from './Historique/JournalActivitePage';
+import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
+import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
+import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
+import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -54,9 +52,6 @@ export const CollectiviteRoutes = () => {
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
       </RouteEnAccesRestreint>
-      <RouteEnAccesRestreint path={collectiviteTDBBasePath}>
-        <TableauDeBordPage />
-      </RouteEnAccesRestreint>
 
       <Route path={collectiviteUsersPath}>
         <MembresPage />
@@ -81,8 +76,8 @@ export const CollectiviteRoutes = () => {
 };
 
 // protège une route quand la collectivité est en accès restreint (redirige vers
-// le tableau de bord)
-const RouteEnAccesRestreint = (props: RouteProps) => {
+// l'accueil')
+export const RouteEnAccesRestreint = (props: RouteProps) => {
   const {children, ...other} = props;
   const collectivite = useCurrentCollectivite();
   if (!collectivite) {

@@ -28,7 +28,7 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
     <div className="w-full">
       <HeaderTitle
         customClass={{text: 'text-[2rem]'}}
-        titre="Synthèse des fiches action"
+        titre="Répartition des fiches actions"
         isReadonly={true}
       />
       <div className="mx-auto p-10">
