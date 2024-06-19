@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {useHistory} from 'react-router-dom';
 
 import {TDBViewParam, makeCollectivitePlanActionFicheUrl} from 'app/paths';
 
@@ -45,7 +44,6 @@ type Props = {
 /** Page d'un module du tableau de bord plans d'action */
 const ModuleFichesActionsPage = ({view, slug}: Props) => {
   const collectiviteId = useCollectiviteId();
-  const history = useHistory();
 
   const {data: dataModule, isLoading: isModuleLoading} = useModuleFetch(slug);
   const module = dataModule as ModuleFicheActionsSelect;
@@ -63,9 +61,11 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
     options: {
       ...module?.options,
       filtre: {
-        ...module.options.filtre,
+        ...module?.options.filtre,
         texteNomOuDescription: debouncedSearch,
       },
+      page: 1,
+      limit: 10,
     },
   });
 
