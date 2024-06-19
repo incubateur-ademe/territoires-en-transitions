@@ -73,5 +73,16 @@ async function mergeWithDefaultModules(
     fetchedModulesMap.set(slug, defaultModule);
   }
 
-  return Array.from(fetchedModulesMap.values());
+  // Ordonne manuellement les modules pour qu'ils apparaissent dans l'ordre voulu
+  return [
+    fetchedModulesMap.get(
+      defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']
+    ) as ModuleSelect,
+    fetchedModulesMap.get(
+      defaultSlugsSchema.enum['actions-dont-je-suis-pilote']
+    ) as ModuleSelect,
+    fetchedModulesMap.get(
+      defaultSlugsSchema.enum['actions-recemment-modifiees']
+    ) as ModuleSelect,
+  ];
 }
