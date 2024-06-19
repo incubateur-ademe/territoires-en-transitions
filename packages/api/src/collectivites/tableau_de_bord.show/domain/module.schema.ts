@@ -119,6 +119,8 @@ export async function getDefaultModule(
         filtre: {
           modifiedSince: 'last-30-days',
         },
+        page: 1,
+        limit: 4,
       },
       createdAt: now,
       modifiedAt: now,
@@ -141,6 +143,8 @@ export async function getDefaultModule(
           planActionIds,
           // utilisateurPiloteIds: [userId],
         },
+        page: 1,
+        limit: 4,
       },
       createdAt: now,
       modifiedAt: now,

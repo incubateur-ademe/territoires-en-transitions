@@ -34,7 +34,8 @@ const ModuleFichesActions = ({view, module}: Props) => {
     options: module.options,
   });
 
-  const fiches = data?.data;
+  const fiches = data?.data || [];
+  const totalCount = data?.count || 0;
 
   return (
     <Module
@@ -62,10 +63,9 @@ const ModuleFichesActions = ({view, module}: Props) => {
         }
       }}
       isLoading={isLoading}
-      isEmpty={!fiches || fiches?.length === 0}
+      isEmpty={fiches.length === 0}
       footerButtons={
-        fiches &&
-        fiches.length > 4 && (
+        totalCount > 4 && (
           <Button
             variant="grey"
             size="sm"
@@ -80,41 +80,40 @@ const ModuleFichesActions = ({view, module}: Props) => {
             }
           >
             Afficher{' '}
-            {fiches.length === 5
+            {totalCount === 5
               ? '1 autre action'
-              : `les ${fiches.length - 4} autres actions`}
+              : `les ${totalCount - 4} autres actions`}
           </Button>
         )
       }
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-4 gap-4">
-        {fiches &&
-          fiches.map(
-            (fiche, index) =>
-              index < 4 && (
-                <FicheActionCard
-                  key={fiche.id}
-                  ficheAction={fiche}
-                  isEditable
-                  editKeysToInvalidate={[
-                    [
-                      'fiches_resume_collectivite',
-                      collectiviteId,
-                      module.options,
-                    ],
-                  ]}
-                  link={
-                    fiche.plans && fiche.plans[0] && fiche.plans[0].id
-                      ? makeCollectivitePlanActionFicheUrl({
-                          collectiviteId: collectiviteId!,
-                          ficheUid: fiche.id!.toString(),
-                          planActionUid: fiche.plans[0].id!.toString(),
-                        })
-                      : undefined
-                  }
-                />
-              )
-          )}
+        {fiches.map(
+          (fiche, index) =>
+            index < 4 && (
+              <FicheActionCard
+                key={fiche.id}
+                ficheAction={fiche}
+                isEditable
+                editKeysToInvalidate={[
+                  [
+                    'fiches_resume_collectivite',
+                    collectiviteId,
+                    module.options,
+                  ],
+                ]}
+                link={
+                  fiche.plans && fiche.plans[0] && fiche.plans[0].id
+                    ? makeCollectivitePlanActionFicheUrl({
+                        collectiviteId: collectiviteId!,
+                        ficheUid: fiche.id!.toString(),
+                        planActionUid: fiche.plans[0].id!.toString(),
+                      })
+                    : undefined
+                }
+              />
+            )
+        )}
       </div>
     </Module>
   );
