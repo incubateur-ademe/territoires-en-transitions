@@ -3,7 +3,7 @@ import {Link, useLocation} from 'react-router-dom';
 import {useId} from '@floating-ui/react';
 import classNames from 'classnames';
 import {HeaderPropsWithModalState, TNavDropdown, TNavItem} from './types';
-import {makeNavItems} from './makeNavItems';
+import {makeNavItems, makeSecondaryNavItems} from './makeNavItems';
 import {SelectCollectivite} from './SelectCollectivite';
 
 /**
@@ -39,6 +39,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 
   // récupère la liste des items à afficher dans le menu
   const items = makeNavItems(currentCollectivite, auth.user);
+  const secondaryItems = makeSecondaryNavItems(currentCollectivite, auth.user);
 
   return (
     <nav
@@ -57,7 +58,20 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
           )
         )}
       </ul>
-      {ownedCollectivites ? <SelectCollectivite {...props} /> : null}
+      <ul className="fr-nav__list">
+        {secondaryItems.map((item, i) =>
+          item.hasOwnProperty('to') ? (
+            <NavItem key={i} item={item as TNavItem} {...props} />
+          ) : (
+            <NavDropdown key={i} item={item as TNavDropdown} {...props} />
+          )
+        )}
+        {ownedCollectivites ? (
+          <li>
+            <SelectCollectivite {...props} />
+          </li>
+        ) : null}
+      </ul>
     </nav>
   );
 };
