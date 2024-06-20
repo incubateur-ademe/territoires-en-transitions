@@ -1,6 +1,7 @@
 import React from 'react';
 import {ChartHead, ChartTitle} from './headings';
 import EvolutionFiches, {useEvolutionFiches} from './EvolutionFiches';
+import classNames from 'classnames';
 
 type EvolutionPlansActionProps = {
   region?: string;
@@ -27,6 +28,9 @@ export function EvolutionPlansAction({
     department,
   );
 
+  const colsNumber =
+    (!collectivites ? 0 : 1) + (!fiches ? 0 : 1) + (!plans ? 0 : 1);
+
   return (
     <>
       {collectivites && fiches && plans && (
@@ -43,9 +47,14 @@ export function EvolutionPlansAction({
           </>
         </ChartHead>
       )}
-      <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+      <div
+        className={classNames('grid grid-cols-1 gap-6', {
+          'md:grid-cols-2 xl:grid-cols-3': colsNumber === 3,
+          'md:grid-cols-2': colsNumber === 2,
+        })}
+      >
         {collectivites && (
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
+          <div className="w-full">
             <ChartTitle>Nombre de collectivités avec 5+ fiches</ChartTitle>
             <EvolutionFiches
               vue="stats_locales_evolution_collectivite_avec_minimum_fiches"
@@ -55,7 +64,7 @@ export function EvolutionPlansAction({
           </div>
         )}
         {fiches && (
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
+          <div className="w-full">
             <ChartTitle>Nombre de fiches action créées</ChartTitle>
             <EvolutionFiches
               vue="stats_locales_evolution_nombre_fiches"
@@ -65,7 +74,12 @@ export function EvolutionPlansAction({
           </div>
         )}
         {plans && region === '' && department === '' && (
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
+          <div
+            className={classNames('w-full', {
+              'md:max-xl:col-span-2 md:max-xl:w-[50%] md:max-xl:mx-auto':
+                colsNumber === 3,
+            })}
+          >
             <ChartTitle>Historique du nombre de plans</ChartTitle>
             <EvolutionFiches
               vue="stats_evolution_nombre_plans"

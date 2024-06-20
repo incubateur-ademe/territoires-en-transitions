@@ -36,7 +36,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               className="fr-header__operator"
             >
               <div
-                className="fr-grid-row"
+                className="flex"
               >
                 <img
                   alt="ADEME"
@@ -592,7 +592,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
               className="fr-header__operator"
             >
               <div
-                className="fr-grid-row"
+                className="flex"
               >
                 <img
                   alt="ADEME"
@@ -1076,7 +1076,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
               className="fr-header__operator"
             >
               <div
-                className="fr-grid-row"
+                className="flex"
               >
                 <img
                   alt="ADEME"
@@ -1632,7 +1632,7 @@ exports[`Storyshots app/Layout/Header Not Connected 1`] = `
               className="fr-header__operator"
             >
               <div
-                className="fr-grid-row"
+                className="flex"
               >
                 <img
                   alt="ADEME"

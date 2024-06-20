@@ -45,40 +45,40 @@ const SyntheseGraphsList = ({
   );
 
   return data ? (
-    <div className="fr-grid-row fr-grid-row--gutters">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       {generateSyntheseGraphData(data).map(
         graph =>
           !!graph.data.length && (
-            <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
-              <Card
-                dataTest={`lien-graph-${graph.id}`}
-                href={
-                  graph.id === 'echeance'
-                    ? undefined
-                    : `${makeCollectivitePlansActionsSyntheseVueUrl({
-                        collectiviteId,
-                        vue: graph.id,
-                      })}${
-                        typeof selectedPlan.id === 'number'
-                          ? `?axes=${selectedPlan.id}`
-                          : ''
-                      }`
-                }
-              >
-                <div className="mb-2 text-center">{graph.title}</div>
-                <div className="font-normal">
-                  <Chart
-                    donut={{
-                      chart: {
-                        data: graph.data,
-                        displayOutsideLabel:
-                          graph.id === 'statuts' || graph.id === 'priorites',
-                      },
-                    }}
-                  />
-                </div>
-              </Card>
-            </div>
+            <Card
+              key={graph.title}
+              dataTest={`lien-graph-${graph.id}`}
+              className="h-full w-full"
+              href={
+                graph.id === 'echeance'
+                  ? undefined
+                  : `${makeCollectivitePlansActionsSyntheseVueUrl({
+                      collectiviteId,
+                      vue: graph.id,
+                    })}${
+                      typeof selectedPlan.id === 'number'
+                        ? `?axes=${selectedPlan.id}`
+                        : ''
+                    }`
+              }
+            >
+              <div className="mb-2 text-center">{graph.title}</div>
+              <div className="font-normal">
+                <Chart
+                  donut={{
+                    chart: {
+                      data: graph.data,
+                      displayOutsideLabel:
+                        graph.id === 'statuts' || graph.id === 'priorites',
+                    },
+                  }}
+                />
+              </div>
+            </Card>
           )
       )}
     </div>

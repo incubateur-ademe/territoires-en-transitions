@@ -43,7 +43,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                   className="fr-header__operator"
                 >
                   <div
-                    className="fr-grid-row"
+                    className="flex"
                   >
                     <img
                       alt="ADEME"

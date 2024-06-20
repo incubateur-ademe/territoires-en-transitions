@@ -169,8 +169,8 @@ const StatisticsDisplay = ({
           region={regionCode}
           department={departmentCode}
         />
-        <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="w-full">
             <ChartTitle>
               Nombre de labellisés CAE par niveau de labellisation
             </ChartTitle>
@@ -180,7 +180,7 @@ const StatisticsDisplay = ({
               department={departmentCode}
             />
           </div>
-          <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-5 fr-col-lg-5">
+          <div className="w-full">
             <ChartTitle>
               Nombre de labellisés ECI par niveau de labellisation
             </ChartTitle>

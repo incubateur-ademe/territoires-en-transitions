@@ -6,6 +6,7 @@ import {ChartHead} from './headings';
 import useSWR from 'swr';
 import {supabase} from '../initSupabase';
 import {addLocalFilters} from './utils';
+import classNames from 'classnames';
 
 const useCollectivitesAvecIndicateur = (
   codeRegion: string,
@@ -54,7 +55,7 @@ export function EvolutionIndicateurs({
         {data !== 1 && 's'}
         {data === 1 ? ' a' : ' ont'} renseigné des indicateurs
       </ChartHead>
-      <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <Column>
           <IndicateursRenseignes region={region} department={department} />
         </Column>
@@ -64,7 +65,7 @@ export function EvolutionIndicateurs({
             department={department}
           />
         </Column>
-        <Column>
+        <Column className="md:max-xl:col-span-2 md:max-xl:w-[50%] md:max-xl:mx-auto">
           <ValeursIndicateursPersoRenseignees
             region={region}
             department={department}
@@ -75,8 +76,10 @@ export function EvolutionIndicateurs({
   );
 }
 
-const Column = ({children}: {children: ReactNode[] | ReactNode}) => (
-  <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4">
-    {children}
-  </div>
-);
+const Column = ({
+  children,
+  className,
+}: {
+  children: ReactNode[] | ReactNode;
+  className?: string;
+}) => <div className={classNames('w-full', className)}>{children}</div>;
