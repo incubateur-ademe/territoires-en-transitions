@@ -56,7 +56,7 @@ const FicheActionCard = ({
       data-test="ActionCarte"
       id={carteId}
       className={classNames(
-        'relative group h-full rounded-xl border border-grey-3',
+        'relative group h-full rounded-xl border border-grey-3 bg-white',
         {'hover:border-primary-3 hover:bg-primary-1': !isNotClickable}
       )}
     >
