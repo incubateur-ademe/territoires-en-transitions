@@ -8,7 +8,7 @@ import {
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsSyntheseUrl,
-  makeCollectivitePlansActionsTousUrl,
+  makeCollectivitePlansActionsLandingUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
   makeTableauBordLandingUrl,
@@ -150,7 +150,7 @@ const makeNavItemsBase = (
         },
         {
           label: "Tous les plans d'action",
-          to: makeCollectivitePlansActionsTousUrl({
+          to: makeCollectivitePlansActionsLandingUrl({
             collectiviteId,
           }),
         },

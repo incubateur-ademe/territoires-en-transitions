@@ -8,8 +8,8 @@ import {
   collectivitePlanActionAxeFichePath,
   collectivitePlanActionAxePath,
   collectivitePlanActionFichePath,
+  collectivitePlanActionLandingPath,
   collectivitePlanActionPath,
-  collectivitePlansActionsBasePath,
   collectivitePlansActionsCreerPath,
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
@@ -81,7 +81,7 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
         ),
       }}
     >
-      <Route exact path={collectivitePlansActionsBasePath}>
+      <Route exact path={collectivitePlanActionLandingPath}>
         <Redirect
           to={makeCollectivitePlanActionUrl({
             collectiviteId: collectivite_id,
