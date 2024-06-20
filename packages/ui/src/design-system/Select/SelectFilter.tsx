@@ -5,6 +5,7 @@ import {
   SelectMultiple,
   SelectMultipleProps,
 } from './SelectMultiple';
+import {getFlatOptions} from '@design-system/Select/utils';
 
 /** constante pour gérer la sélection de tous les filtres */
 export const ITEM_ALL = 'tous';
@@ -26,21 +27,37 @@ export const SelectFilter = ({
 }: SelectMultipleProps) => {
   const [filterOptions, setFilterOptions] = useState(options);
 
+  /** Valeurs permanentes, associées à des options `disabled` */
+  const permanentValues = values?.filter(v =>
+    getFlatOptions(options).some(o => o.value === v && o.disabled)
+  );
+
+  /** Valeurs restantes lorsque l'on a retiré les valeurs permanentes */
+  const otherValues = values?.filter(v =>
+    getFlatOptions(options).some(o => o.value === v && !o.disabled)
+  );
+
   useEffect(() => {
-    if (values && Array.isArray(values) && values.length > 0) {
-      setFilterOptions([
-        {label: 'Désélectionner les options', value: ITEM_ALL},
-        ...options,
-      ]);
-    } else {
-      setFilterOptions(options);
+    if (values) {
+      if (otherValues.length > 0) {
+        setFilterOptions([
+          {label: 'Désélectionner les options', value: ITEM_ALL},
+          ...options,
+        ]);
+      } else {
+        setFilterOptions(options);
+      }
     }
   }, [values, options]);
 
   // gère la sélection/déselection d'item dans la liste
   const handleChange = (args: SelectMultipleOnChangeArgs) => {
     if (args.selectedValue === ITEM_ALL) {
-      onChange({selectedValue: ITEM_ALL});
+      if (permanentValues.length > 0) {
+        onChange({selectedValue: ITEM_ALL, values: permanentValues});
+      } else {
+        onChange({selectedValue: ITEM_ALL});
+      }
     } else {
       onChange(args);
     }
