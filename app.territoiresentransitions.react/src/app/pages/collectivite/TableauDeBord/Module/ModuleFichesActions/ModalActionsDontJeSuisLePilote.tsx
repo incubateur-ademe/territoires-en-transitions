@@ -26,7 +26,6 @@ import {
 import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
-import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 type Props = ModalProps & {
@@ -123,12 +122,8 @@ const ModalActionsDontJeSuisLePilote = ({
             <Field title="Pilote">
               <PersonnesDropdown
                 values={pilotes.length ? pilotes : undefined}
-                onChange={({personnes}) => {
-                  setFiltreState({
-                    ...filtreState,
-                    ...splitPersonnesAndUsers(personnes),
-                  });
-                }}
+                onChange={() => null}
+                disabled
                 disabledOptionsIds={[userId!]}
               />
             </Field>
