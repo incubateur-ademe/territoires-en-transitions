@@ -27,6 +27,7 @@ import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -40,6 +41,7 @@ const ModalActionsDontJeSuisLePilote = ({
 }: Props) => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
+  const userId = useAuth().user?.id;
 
   const plansActions = usePlansActionsListe(collectiviteId!);
 
@@ -127,6 +129,7 @@ const ModalActionsDontJeSuisLePilote = ({
                     ...splitPersonnesAndUsers(personnes),
                   });
                 }}
+                disabledOptionsIds={[userId!]}
               />
             </Field>
           </FormSection>
