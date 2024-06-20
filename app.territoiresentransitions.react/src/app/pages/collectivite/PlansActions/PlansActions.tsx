@@ -26,12 +26,12 @@ const PlansActions = () => {
 
       {/* Synthèse */}
       <Route exact path={[collectivitePlansActionsSynthesePath]}>
-        <CollectivitePageLayout>
+        <CollectivitePageLayout dataTest="PlansAction">
           <SynthesePage collectiviteId={collectivite.collectivite_id} />
         </CollectivitePageLayout>
       </Route>
       <Route exact path={[collectivitePlansActionsSyntheseVuePath]}>
-        <CollectivitePageLayout>
+        <CollectivitePageLayout dataTest="PlansAction">
           <SyntheseVuePage />
         </CollectivitePageLayout>
       </Route>

@@ -164,7 +164,7 @@ export const BadgesFilters = ({
               {filter.multiple ? (
                 <SelectMultiple
                   options={filter.options}
-                  values={filter.values}
+                  values={Array.isArray(filter.values) ? filter.values : []}
                   onChange={filter.onChange}
                   small
                 />

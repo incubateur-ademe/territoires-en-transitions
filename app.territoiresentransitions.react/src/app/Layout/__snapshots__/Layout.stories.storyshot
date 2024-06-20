@@ -160,19 +160,6 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <li
                 className="fr-nav__item"
               >
-                <a
-                  aria-controls="modal-header__menu"
-                  className="fr-nav__link"
-                  href="/collectivite/1/accueil"
-                  onClick={[Function]}
-                  target="_self"
-                >
-                  Accueil
-                </a>
-              </li>
-              <li
-                className="fr-nav__item"
-              >
                 <button
                   aria-expanded={false}
                   className="fr-nav__btn"
@@ -187,6 +174,19 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                     className="fr-menu__list"
                     onClickCapture={[Function]}
                   >
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Synthèse de l'état des lieux
+                      </a>
+                    </li>
                     <li
                       className="fr-nav__item"
                     >
@@ -258,15 +258,61 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               <li
                 className="fr-nav__item"
               >
-                <a
-                  aria-controls="modal-header__menu"
-                  className="fr-nav__link"
-                  href="/collectivite/1/plans/synthese"
+                <button
+                  aria-expanded={false}
+                  className="fr-nav__btn"
                   onClick={[Function]}
-                  target="_self"
                 >
                   Plans d'action
-                </a>
+                </button>
+                <div
+                  className="fr-menu fr-collapse"
+                >
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
+                  >
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/plans/tableau-de-bord"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Tableau de bord
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/plans/plan"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Tous les plans d'action
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/1/plans/synthese"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Répartition des fiches actions
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </li>
               <li
                 className="fr-nav__item"
@@ -281,6 +327,10 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                   Indicateurs
                 </a>
               </li>
+            </ul>
+            <ul
+              className="fr-nav__list"
+            >
               <li
                 className="fr-nav__item"
               >
