@@ -63,16 +63,18 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const {data, isLoading} = useFicheResumesFetch({
-    options: {
-      ...module?.options,
-      filtre: {
-        ...module?.options.filtre,
-        texteNomOuDescription: debouncedSearch,
-      },
-      page: currentPage,
-      limit: maxNbOfCards,
+  const ficheResumesOptions = {
+    ...module?.options,
+    filtre: {
+      ...module?.options.filtre,
+      texteNomOuDescription: debouncedSearch,
     },
+    page: currentPage,
+    limit: maxNbOfCards,
+  };
+
+  const {data, isLoading} = useFicheResumesFetch({
+    options: ficheResumesOptions,
   });
 
   const countTotal = data?.count || 0;
@@ -174,7 +176,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
                   [
                     'fiches_resume_collectivite',
                     collectiviteId,
-                    module.options,
+                    ficheResumesOptions,
                   ],
                 ]}
                 link={makeCollectivitePlanActionFicheUrl({
