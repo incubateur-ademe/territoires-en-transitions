@@ -9,6 +9,8 @@ export type TNavItem = {
   urlPrefix?: string[];
   // indique que l'item n'est pas affiché quand la collectivité est confidentielle
   confidentiel?: boolean;
+  // indique que l'item n'est pas affiché quand l'utilisateur est un visiteur
+  hideToVisitor?: boolean;
 };
 
 export type TNavDropdown = {
@@ -18,6 +20,8 @@ export type TNavDropdown = {
   urlPrefix?: string[];
   // indique que l'item n'est pas affiché quand la collectivité est confidentielle
   confidentiel?: boolean;
+  // indique que l'item n'est pas affiché quand l'utilisateur est un visiteur
+  hideToVisitor?: boolean;
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];

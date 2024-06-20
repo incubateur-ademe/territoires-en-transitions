@@ -22,8 +22,19 @@ export const makeNavItems = (
   collectivite: CurrentCollectivite,
   user: UserData | null
 ): TNavItemsList => {
-  return filtreItemsConfidentiels(makeNavItemsBase(collectivite, user));
+  return filtreItems(makeNavItemsBase(collectivite, user));
 };
+
+const isVisiteur = ({
+  user,
+  collectivite,
+}: {
+  user: UserData | null;
+  collectivite: CurrentCollectivite;
+}) =>
+  collectivite.niveau_acces === null &&
+  !user?.isSupport &&
+  !collectivite.est_auditeur;
 
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
@@ -32,6 +43,7 @@ const makeNavItemsBase = (
   const collectiviteId = collectivite.collectivite_id;
   const confidentiel =
     collectivite.acces_restreint && collectivite.niveau_acces === null;
+  const hideToVisitor = isVisiteur({user, collectivite});
 
   // items communs qque soient les droits de l'utilisateur courant
   return [
@@ -147,6 +159,7 @@ const makeNavItemsBase = (
             collectiviteId,
           }),
           urlPrefix: ['/tableau-de-bord/'],
+          hideToVisitor,
         },
         {
           label: "Tous les plans d'action",
@@ -177,16 +190,15 @@ const makeNavItemsBase = (
 // filtre les items (et sous-items) marqués comme étant confidentiel (la
 // collectivité a le flag acces_restreint (= confidentielle) et l'utilisateur courant n'est pas
 // membre la collectivité)
-const filtreItemsConfidentiels = (items: TNavItemsList): TNavItemsList =>
+const filtreItems = (items: TNavItemsList): TNavItemsList =>
   items
     ?.filter(item => !item.confidentiel)
+    .filter(item => !item.hideToVisitor)
     .map(item => {
       return item.hasOwnProperty('items')
         ? {
             ...item,
-            items: filtreItemsConfidentiels(
-              (item as TNavDropdown).items
-            ) as TNavItem[],
+            items: filtreItems((item as TNavDropdown).items) as TNavItem[],
           }
         : item;
     });
@@ -196,9 +208,7 @@ export const makeSecondaryNavItems = (
   collectivite: CurrentCollectivite,
   user: UserData | null
 ): TNavItemsList => {
-  return filtreItemsConfidentiels(
-    makeSecondaryNavItemsBase(collectivite, user)
-  );
+  return filtreItems(makeSecondaryNavItemsBase(collectivite, user));
 };
 
 const makeSecondaryNavItemsBase = (
@@ -208,11 +218,7 @@ const makeSecondaryNavItemsBase = (
   const collectiviteId = collectivite.collectivite_id;
 
   // On n'affiche pas le menu des paramètres si droit "visiteur"
-  if (
-    collectivite.niveau_acces === null &&
-    !user?.isSupport &&
-    !collectivite.est_auditeur
-  ) {
+  if (isVisiteur({user, collectivite})) {
     return [];
   }
 
