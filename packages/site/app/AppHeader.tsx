@@ -22,7 +22,7 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
         </p>
       </div>
       <div className="fr-header__operator">
-        <div className="fr-grid-row" style={{minWidth: 160 + 'px'}}>
+        <div className="flex" style={{minWidth: 160 + 'px'}}>
           <Image src="/ademe.jpg" alt="ADEME" width="70" height="80" />
           <Image
             src="/territoire-engage.jpg"
@@ -55,7 +55,10 @@ function Links() {
   >>(null);
   useEffect(() => {
     setAuthPaths(
-      getAuthPaths(document.location.hostname, getAppBaseUrl(document.location.hostname)),
+      getAuthPaths(
+        document.location.hostname,
+        getAppBaseUrl(document.location.hostname),
+      ),
     );
   }, []);
 
