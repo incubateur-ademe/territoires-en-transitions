@@ -303,7 +303,6 @@ const SelectButton = forwardRef(
           })}
         >
           <div className="flex grow flex-wrap gap-2 mr-4">
-            {/* {firstValue ? ( */}
             {values && Array.isArray(values) && values.length > 0 ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
