@@ -51,6 +51,29 @@ export const ControlledByParent: Story = {
   },
 };
 
+export const WithDescriptionAsComponent: Story = {
+  args: {
+    description: (
+      <>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim
+          blandit placerat. Cras dolor enim, luctus elementum fringilla vitae,
+          sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar
+          molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa
+          posuere faucibus.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dignissim
+          blandit placerat. Cras dolor enim, luctus elementum fringilla vitae,
+          sollicitudin eu leo. Nullam eget accumsan risus. Cras pulvinar
+          molestie euismod. Proin nec semper mauris. Nulla venenatis sed massa
+          posuere faucibus.
+        </p>
+      </>
+    ),
+  },
+};
+
 export const WithFooter: Story = {
   args: {
     footer: (
