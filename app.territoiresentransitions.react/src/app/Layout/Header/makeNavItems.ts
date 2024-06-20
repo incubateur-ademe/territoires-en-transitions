@@ -34,7 +34,7 @@ const makeNavItemsBase = (
     collectivite.acces_restreint && collectivite.niveau_acces === null;
 
   // items communs qque soient les droits de l'utilisateur courant
-  const common: TNavItemsList = [
+  return [
     {
       confidentiel,
       title: 'État des lieux',
@@ -172,18 +172,6 @@ const makeNavItemsBase = (
       urlPrefix: [makeCollectiviteIndicateursUrl({collectiviteId})],
     },
   ];
-
-  //
-  if (
-    collectivite.niveau_acces === null &&
-    !user?.isSupport &&
-    !collectivite.est_auditeur
-  ) {
-    return common;
-  }
-
-  // sinon renvoi les items communs et les items paramètres
-  return [...common];
 };
 
 // filtre les items (et sous-items) marqués comme étant confidentiel (la
