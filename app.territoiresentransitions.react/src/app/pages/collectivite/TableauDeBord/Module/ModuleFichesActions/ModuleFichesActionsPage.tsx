@@ -76,7 +76,6 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
   });
 
   const countTotal = data?.count || 0;
-  const nbOfPages = data?.nbOfPages || 0;
 
   if (isModuleLoading || !module) {
     return null;
@@ -168,6 +167,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
             {data?.data?.map(fiche => (
               <FicheActionCard
+                key={fiche.id}
                 ficheAction={fiche}
                 isEditable
                 editKeysToInvalidate={[
@@ -188,7 +188,8 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
           <div className="mx-auto mt-16">
             <Pagination
               selectedPage={currentPage}
-              nbOfPages={nbOfPages}
+              nbOfElements={countTotal}
+              maxElementsPerPage={maxNbOfCards}
               onChange={page => setCurrentPage(page)}
             />
           </div>

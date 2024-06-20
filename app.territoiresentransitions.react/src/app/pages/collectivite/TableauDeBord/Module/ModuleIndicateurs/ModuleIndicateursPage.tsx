@@ -79,9 +79,6 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
   /** Nombre d'indicateurs par page */
   const perPage = 9;
 
-  /** Nombre total de pages */
-  const nbOfPages = total ? Math.ceil(total / perPage) : 1;
-
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -194,7 +191,8 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
           <div className="mx-auto mt-16">
             <Pagination
               selectedPage={currentPage}
-              nbOfPages={nbOfPages}
+              nbOfElements={total ?? 0}
+              maxElementsPerPage={perPage}
               onChange={page => setCurrentPage(page)}
             />
           </div>
