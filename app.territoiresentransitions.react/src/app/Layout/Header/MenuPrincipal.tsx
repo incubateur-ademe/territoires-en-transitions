@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import {HeaderPropsWithModalState, TNavDropdown, TNavItem} from './types';
 import {makeNavItems, makeSecondaryNavItems} from './makeNavItems';
 import {SelectCollectivite} from './SelectCollectivite';
+import {recherchesCollectivitesUrl} from 'app/paths';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -56,6 +57,16 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
           ) : (
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />
           )
+        )}
+        {auth.isConnected && (
+          <NavItem
+            key="collectivites"
+            item={{
+              label: 'Collectivités',
+              to: recherchesCollectivitesUrl,
+            }}
+            {...props}
+          />
         )}
       </ul>
       <ul className="fr-nav__list">
