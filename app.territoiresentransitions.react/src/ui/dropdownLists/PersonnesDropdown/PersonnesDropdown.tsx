@@ -18,6 +18,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     personnes: Personne[];
     selectedPersonne: Personne;
   }) => void;
+  disabledOptionsIds?: string[];
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -30,6 +31,9 @@ const PersonnesDropdown = (props: Props) => {
     ? personneListe.map(personne => ({
         value: getPersonneStringId(personne),
         label: personne.nom!,
+        disabled: props.disabledOptionsIds?.includes(
+          getPersonneStringId(personne)
+        ),
       }))
     : [];
 
