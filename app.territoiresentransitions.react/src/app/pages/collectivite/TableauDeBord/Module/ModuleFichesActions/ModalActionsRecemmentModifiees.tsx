@@ -117,6 +117,7 @@ const ModalActionsRecemmentModifiees = ({
                 values={filtreState.modifiedSince}
                 options={ficheActionModifiedSinceOptions}
                 onChange={value =>
+                  value &&
                   setFiltreState({
                     ...filtreState,
                     modifiedSince: value as ModifiedSince,
