@@ -1,4 +1,4 @@
-import {Link, Route} from 'react-router-dom';
+import {Link, Redirect, Route} from 'react-router-dom';
 
 import {FicheActionPage} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionPage';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
@@ -9,9 +9,11 @@ import {
   collectivitePlanActionAxePath,
   collectivitePlanActionFichePath,
   collectivitePlanActionPath,
+  collectivitePlansActionsBasePath,
   collectivitePlansActionsCreerPath,
   collectivitePlansActionsImporterPath,
   collectivitePlansActionsNouveauPath,
+  makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from 'app/paths';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
@@ -79,6 +81,19 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
         ),
       }}
     >
+      <Route exact path={collectivitePlansActionsBasePath}>
+        <Redirect
+          to={makeCollectivitePlanActionUrl({
+            collectiviteId: collectivite_id,
+            planActionUid:
+              axes
+                ?.filter(axe => axe.depth === 0)
+                .at(0)
+                ?.id.toString() || '',
+          })}
+        />
+      </Route>
+
       {/* Création */}
       <Route exact path={collectivitePlansActionsNouveauPath}>
         <SelectionPage />
