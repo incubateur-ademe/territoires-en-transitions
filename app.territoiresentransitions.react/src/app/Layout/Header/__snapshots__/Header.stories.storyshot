@@ -91,15 +91,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             <ul
               className="fr-btns-group"
             >
-              <li>
-                <a
-                  className="fr-btn fr-icon-seedling-line"
-                  href="/recherches/collectivites"
-                  onClick={[Function]}
-                >
-                  Collectivités
-                </a>
-              </li>
               <li
                 onClick={[Function]}
               >
@@ -171,19 +162,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/accueil"
-              onClick={[Function]}
-              target="_self"
-            >
-              Accueil
-            </a>
-          </li>
-          <li
-            className="fr-nav__item"
-          >
             <button
               aria-expanded={false}
               className="fr-nav__btn"
@@ -198,6 +176,19 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 className="fr-menu__list"
                 onClickCapture={[Function]}
               >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Synthèse de l'état des lieux
+                  </a>
+                </li>
                 <li
                   className="fr-nav__item"
                 >
@@ -269,15 +260,61 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/plans/synthese"
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
               onClick={[Function]}
-              target="_self"
             >
               Plans d'action
-            </a>
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/tableau-de-bord"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Tableau de bord
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/plan"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Tous les plans d'action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/synthese"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Répartition des fiches actions
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
           <li
             className="fr-nav__item"
@@ -292,6 +329,23 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               Indicateurs
             </a>
           </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/recherches/collectivites"
+              onClick={[Function]}
+              target="_self"
+            >
+              Collectivités
+            </a>
+          </li>
+        </ul>
+        <ul
+          className="fr-nav__list"
+        >
           <li
             className="fr-nav__item"
           >
@@ -351,84 +405,86 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
               </ul>
             </div>
           </li>
-        </ul>
-        <ul
-          className="fr-nav__list"
-          data-test="SelectCollectivite"
-        >
-          <li
-            className="fr-nav__item !relative"
-          >
-            <button
-              aria-controls="SelectCollectivite"
-              aria-expanded={false}
-              className="fr-nav__btn min-w-[15rem]"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseMove={[Function]}
-              onPointerDown={[Function]}
-              onPointerEnter={[Function]}
+          <li>
+            <ul
+              className="fr-nav__list"
+              data-test="SelectCollectivite"
             >
-              <b
-                className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
+              <li
+                className="fr-nav__item !relative"
               >
-                Collectivité test
-              </b>
-              <span
-                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info ml-4"
-              >
-                admin
-              </span>
-            </button>
-            <div
-              className="fr-menu right-0 fr-collapse"
-              id="SelectCollectivite"
-            >
-              <ul
-                className="fr-menu__list"
-                onClickCapture={[Function]}
-              >
-                <li
-                  className="fr-nav__item"
+                <button
+                  aria-controls="SelectCollectivite"
+                  aria-expanded={false}
+                  className="fr-nav__btn min-w-[15rem]"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseMove={[Function]}
+                  onPointerDown={[Function]}
+                  onPointerEnter={[Function]}
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/2/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <b
+                    className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
                   >
-                    Collectivité test 2
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
-                    >
-                      édition
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
+                    Collectivité test
+                  </b>
+                  <span
+                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info ml-4"
+                  >
+                    admin
+                  </span>
+                </button>
+                <div
+                  className="fr-menu right-0 fr-collapse"
+                  id="SelectCollectivite"
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/3/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
                   >
-                    Collectivité test 3
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    <li
+                      className="fr-nav__item"
                     >
-                      lecture
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/2/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 2
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          édition
+                        </span>
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/3/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 3
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          lecture
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
@@ -438,15 +494,6 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
         <ul
           className="fr-btns-group"
         >
-          <li>
-            <a
-              className="fr-btn fr-icon-seedling-line"
-              href="/recherches/collectivites"
-              onClick={[Function]}
-            >
-              Collectivités
-            </a>
-          </li>
           <li
             onClick={[Function]}
           >
@@ -585,15 +632,6 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
             <ul
               className="fr-btns-group"
             >
-              <li>
-                <a
-                  className="fr-btn fr-icon-seedling-line"
-                  href="/recherches/collectivites"
-                  onClick={[Function]}
-                >
-                  Collectivités
-                </a>
-              </li>
               <li
                 onClick={[Function]}
               >
@@ -665,19 +703,6 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/accueil"
-              onClick={[Function]}
-              target="_self"
-            >
-              Accueil
-            </a>
-          </li>
-          <li
-            className="fr-nav__item"
-          >
             <button
               aria-expanded={false}
               className="fr-nav__btn"
@@ -692,6 +717,19 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                 className="fr-menu__list"
                 onClickCapture={[Function]}
               >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Synthèse de l'état des lieux
+                  </a>
+                </li>
                 <li
                   className="fr-nav__item"
                 >
@@ -763,15 +801,48 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/plans/synthese"
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
               onClick={[Function]}
-              target="_self"
             >
               Plans d'action
-            </a>
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/plan"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Tous les plans d'action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/synthese"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Répartition des fiches actions
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
           <li
             className="fr-nav__item"
@@ -786,84 +857,103 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
               Indicateurs
             </a>
           </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/recherches/collectivites"
+              onClick={[Function]}
+              target="_self"
+            >
+              Collectivités
+            </a>
+          </li>
         </ul>
         <ul
           className="fr-nav__list"
-          data-test="SelectCollectivite"
         >
-          <li
-            className="fr-nav__item !relative"
-          >
-            <button
-              aria-controls="SelectCollectivite"
-              aria-expanded={false}
-              className="fr-nav__btn min-w-[15rem]"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseMove={[Function]}
-              onPointerDown={[Function]}
-              onPointerEnter={[Function]}
+          <li>
+            <ul
+              className="fr-nav__list"
+              data-test="SelectCollectivite"
             >
-              <b
-                className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
+              <li
+                className="fr-nav__item !relative"
               >
-                Collectivité test
-              </b>
-              <span
-                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
-              >
-                visite
-              </span>
-            </button>
-            <div
-              className="fr-menu right-0 fr-collapse"
-              id="SelectCollectivite"
-            >
-              <ul
-                className="fr-menu__list"
-                onClickCapture={[Function]}
-              >
-                <li
-                  className="fr-nav__item"
+                <button
+                  aria-controls="SelectCollectivite"
+                  aria-expanded={false}
+                  className="fr-nav__btn min-w-[15rem]"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseMove={[Function]}
+                  onPointerDown={[Function]}
+                  onPointerEnter={[Function]}
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/2/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <b
+                    className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
                   >
-                    Collectivité test 2
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
-                    >
-                      édition
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
+                    Collectivité test
+                  </b>
+                  <span
+                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+                  >
+                    visite
+                  </span>
+                </button>
+                <div
+                  className="fr-menu right-0 fr-collapse"
+                  id="SelectCollectivite"
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/3/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
                   >
-                    Collectivité test 3
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    <li
+                      className="fr-nav__item"
                     >
-                      lecture
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/2/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 2
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          édition
+                        </span>
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/3/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 3
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          lecture
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
@@ -873,15 +963,6 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
         <ul
           className="fr-btns-group"
         >
-          <li>
-            <a
-              className="fr-btn fr-icon-seedling-line"
-              href="/recherches/collectivites"
-              onClick={[Function]}
-            >
-              Collectivités
-            </a>
-          </li>
           <li
             onClick={[Function]}
           >
@@ -1020,15 +1101,6 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
             <ul
               className="fr-btns-group"
             >
-              <li>
-                <a
-                  className="fr-btn fr-icon-seedling-line"
-                  href="/recherches/collectivites"
-                  onClick={[Function]}
-                >
-                  Collectivités
-                </a>
-              </li>
               <li
                 onClick={[Function]}
               >
@@ -1100,19 +1172,6 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/accueil"
-              onClick={[Function]}
-              target="_self"
-            >
-              Accueil
-            </a>
-          </li>
-          <li
-            className="fr-nav__item"
-          >
             <button
               aria-expanded={false}
               className="fr-nav__btn"
@@ -1127,6 +1186,19 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                 className="fr-menu__list"
                 onClickCapture={[Function]}
               >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/accueil"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Synthèse de l'état des lieux
+                  </a>
+                </li>
                 <li
                   className="fr-nav__item"
                 >
@@ -1198,15 +1270,61 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
           <li
             className="fr-nav__item"
           >
-            <a
-              aria-controls="modal-header__menu"
-              className="fr-nav__link"
-              href="/collectivite/1/plans/synthese"
+            <button
+              aria-expanded={false}
+              className="fr-nav__btn"
               onClick={[Function]}
-              target="_self"
             >
               Plans d'action
-            </a>
+            </button>
+            <div
+              className="fr-menu fr-collapse"
+            >
+              <ul
+                className="fr-menu__list"
+                onClickCapture={[Function]}
+              >
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/tableau-de-bord"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Tableau de bord
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/plan"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Tous les plans d'action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/synthese"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Répartition des fiches actions
+                  </a>
+                </li>
+              </ul>
+            </div>
           </li>
           <li
             className="fr-nav__item"
@@ -1221,6 +1339,23 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
               Indicateurs
             </a>
           </li>
+          <li
+            className="fr-nav__item"
+          >
+            <a
+              aria-controls="modal-header__menu"
+              className="fr-nav__link"
+              href="/recherches/collectivites"
+              onClick={[Function]}
+              target="_self"
+            >
+              Collectivités
+            </a>
+          </li>
+        </ul>
+        <ul
+          className="fr-nav__list"
+        >
           <li
             className="fr-nav__item"
           >
@@ -1280,84 +1415,86 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
               </ul>
             </div>
           </li>
-        </ul>
-        <ul
-          className="fr-nav__list"
-          data-test="SelectCollectivite"
-        >
-          <li
-            className="fr-nav__item !relative"
-          >
-            <button
-              aria-controls="SelectCollectivite"
-              aria-expanded={false}
-              className="fr-nav__btn min-w-[15rem]"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseMove={[Function]}
-              onPointerDown={[Function]}
-              onPointerEnter={[Function]}
+          <li>
+            <ul
+              className="fr-nav__list"
+              data-test="SelectCollectivite"
             >
-              <b
-                className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
+              <li
+                className="fr-nav__item !relative"
               >
-                Collectivité test
-              </b>
-              <span
-                className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
-              >
-                visite
-              </span>
-            </button>
-            <div
-              className="fr-menu right-0 fr-collapse"
-              id="SelectCollectivite"
-            >
-              <ul
-                className="fr-menu__list"
-                onClickCapture={[Function]}
-              >
-                <li
-                  className="fr-nav__item"
+                <button
+                  aria-controls="SelectCollectivite"
+                  aria-expanded={false}
+                  className="fr-nav__btn min-w-[15rem]"
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseMove={[Function]}
+                  onPointerDown={[Function]}
+                  onPointerEnter={[Function]}
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/2/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <b
+                    className="mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden md:max-w-[25vw] lg:max-w-[28vw]"
                   >
-                    Collectivité test 2
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
-                    >
-                      édition
-                    </span>
-                  </a>
-                </li>
-                <li
-                  className="fr-nav__item"
+                    Collectivité test
+                  </b>
+                  <span
+                    className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--new ml-4"
+                  >
+                    visite
+                  </span>
+                </button>
+                <div
+                  className="fr-menu right-0 fr-collapse"
+                  id="SelectCollectivite"
                 >
-                  <a
-                    aria-controls="modal-header__menu"
-                    className="fr-nav__link"
-                    href="/collectivite/3/accueil"
-                    onClick={[Function]}
-                    target="_self"
+                  <ul
+                    className="fr-menu__list"
+                    onClickCapture={[Function]}
                   >
-                    Collectivité test 3
-                    <span
-                      className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                    <li
+                      className="fr-nav__item"
                     >
-                      lecture
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/2/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 2
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          édition
+                        </span>
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
+                        href="/collectivite/3/accueil"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Collectivité test 3
+                        <span
+                          className="fr-badge fr-badge--sm fr-badge--no-icon pointer-events-none fr-badge--info float-right"
+                        >
+                          lecture
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
@@ -1367,15 +1504,6 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
         <ul
           className="fr-btns-group"
         >
-          <li>
-            <a
-              className="fr-btn fr-icon-seedling-line"
-              href="/recherches/collectivites"
-              onClick={[Function]}
-            >
-              Collectivités
-            </a>
-          </li>
           <li
             onClick={[Function]}
           >
