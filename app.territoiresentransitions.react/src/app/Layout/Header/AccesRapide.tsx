@@ -1,36 +1,15 @@
-import {Link, useLocation} from 'react-router-dom';
+import {signInPath, signUpPath} from 'app/paths';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {HeaderPropsWithModalState} from './types';
-import {
-  recherchesCollectivitesUrl,
-  recherchesPath,
-  signInPath,
-  signUpPath,
-} from 'app/paths';
 import MenuUtilisateur from './MenuUtilisateur';
+import {HeaderPropsWithModalState} from './types';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
   const {auth, setModalOpened} = props;
   const {isConnected, user} = auth;
-  const {pathname} = useLocation();
-  const isrecherchesPath = pathname === recherchesPath;
 
   return (
     <ul className="fr-btns-group">
-      {isConnected && (
-        <li>
-          <Link
-            to={recherchesCollectivitesUrl}
-            className={`fr-btn fr-icon-seedling-${
-              isrecherchesPath ? 'fill' : 'line'
-            }`}
-            onClick={() => setModalOpened(false)}
-          >
-            Collectivités
-          </Link>
-        </li>
-      )}
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>
