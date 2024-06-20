@@ -83,7 +83,8 @@ export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBase
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
 export const collectivitePlansActionsSynthesePath = `${collectivitePlansActionsBasePath}/synthese`;
 export const collectivitePlansActionsSyntheseVuePath = `${collectivitePlansActionsSynthesePath}/:${syntheseParam}`;
-export const collectivitePlanActionPath = `${collectivitePlansActionsBasePath}/plan/:${planParam}`;
+export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}/plan`;
+export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
 export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
 export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
@@ -273,12 +274,12 @@ export const makeCollectivitePlansActionsImporterUrl = ({
     collectiviteId.toString()
   );
 
-export const makeCollectivitePlansActionsTousUrl = ({
+export const makeCollectivitePlansActionsLandingUrl = ({
   collectiviteId,
 }: {
   collectiviteId: number;
 }) =>
-  collectivitePlansActionsBasePath.replace(
+  collectivitePlanActionLandingPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
