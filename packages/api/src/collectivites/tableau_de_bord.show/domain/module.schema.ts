@@ -117,7 +117,7 @@ export async function getDefaultModule(
       slug,
       options: {
         filtre: {
-          modifiedSince: 'last-30-days',
+          modifiedSince: 'last-90-days',
         },
         page: 1,
         limit: 4,
