@@ -6,13 +6,15 @@ export type SelectMultipleOnChangeArgs = {
   values?: OptionValue[];
 };
 
-export type SelectMultipleProps = Omit<SelectProps, 'onChange'> & {
+export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
   /**
    * Appelée à la sélection d'une option.
    * Reçoit la valeur de l'option cliquée,
    * ainsi que la liste de toutes les valeurs sélectionnées finale.
    * */
   onChange: (args: SelectMultipleOnChangeArgs) => void;
+  /** Valeurs sélectionnées */
+  values?: OptionValue[];
 };
 /**
  * Sélecteur de valeur multiple
