@@ -121,7 +121,7 @@ const ModalActionsDontJeSuisLePilote = ({
             <Field title="Pilote">
               <PersonnesDropdown
                 values={pilotes.length ? pilotes : undefined}
-                onChange={personnes => {
+                onChange={({personnes}) => {
                   setFiltreState({
                     ...filtreState,
                     ...splitPersonnesAndUsers(personnes),

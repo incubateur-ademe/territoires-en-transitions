@@ -87,7 +87,7 @@ const ModalIndicateursSuiviPlan = ({
             <Field title="Pilote de l'indicateur :">
               <PersonnesDropdown
                 values={pilotes.length ? pilotes : undefined}
-                onChange={personnes =>
+                onChange={({personnes}) =>
                   setFiltreState({
                     ...filtreState,
                     ...splitPersonnesAndUsers(personnes),
@@ -103,7 +103,7 @@ const ModalIndicateursSuiviPlan = ({
                     ? filtreState.thematiqueIds
                     : undefined
                 }
-                onChange={thematiques =>
+                onChange={({thematiques}) =>
                   setFiltreState({
                     ...filtreState,
                     thematiqueIds: thematiques.map(t => t.id),
