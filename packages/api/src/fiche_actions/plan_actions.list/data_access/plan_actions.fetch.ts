@@ -1,4 +1,4 @@
-import {DBClient, Tables} from '@tet/api';
+import {DBClient, Tables} from '../../../typeUtils';
 
 type TAxeRow = Tables<'axe'>;
 
