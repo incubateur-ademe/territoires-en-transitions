@@ -1,28 +1,41 @@
 import {MouseEventHandler} from 'react';
-import AnchorAsButton from './AnchorAsButton';
+import {Button, ButtonSize, ButtonVariant} from '@tet/ui';
 
 export type TDisableAllFiltersProps = {
-  filtersCount: number;
   onClick: MouseEventHandler;
+  hidden?: boolean;
+  disabled?: boolean;
   label?: string;
+  size?: ButtonSize;
+  variant?: ButtonVariant;
+  className?: string;
 };
 
 /**
- * Affiche le bouton "Désactiver tous les filtres des vues tabulaires
+ * Affiche le bouton "Désactiver tous les filtres" des menus de filtres
  */
-export const DisableAllFilters = (props: TDisableAllFiltersProps) => {
-  const {onClick, filtersCount, label = 'Désactiver tous les filtres'} = props;
-  if (!filtersCount) {
-    return null;
-  }
+export const DisableAllFilters = ({
+  onClick,
+  hidden = false,
+  disabled = false,
+  label = 'Désactiver tous les filtres',
+  variant = 'underlined',
+  size = 'md',
+  className,
+}: TDisableAllFiltersProps) => {
+  if (hidden) return null;
 
   return (
-    <AnchorAsButton
-      className="underline_href fr-link fr-link--icon-left fr-icon-close-circle-fill fr-ml-2w fr-pl-1v"
-      data-test="DisableAllFilters"
+    <Button
+      data-test="desactiver-les-filtres"
+      disabled={disabled}
+      variant={variant}
+      icon="close-circle-fill"
+      size={size}
+      className={className}
       onClick={onClick}
     >
       {label}
-    </AnchorAsButton>
+    </Button>
   );
 };

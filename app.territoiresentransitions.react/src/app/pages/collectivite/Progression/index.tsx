@@ -25,10 +25,10 @@ const Progression = () => {
           selectedColumns={visibleColumns}
           setSelectedColumns={visibleColumns => setOptions({visibleColumns})}
         />
-        <div className="pl-12">
+        <div className="pl-12 flex gap-4">
           {filtersCount} {labelFilters}
           <DisableAllFilters
-            filtersCount={filtersCount}
+            hidden={!filtersCount}
             onClick={() => setFilters(noFilters)}
           />
         </div>

@@ -19,14 +19,17 @@ const DetailTaches = () => {
 
   return (
     <>
-      <p>
-        {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
-        sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
+      <div className="flex gap-4 mb-6">
+        <div>
+          {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
+          sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
+        </div>
+
         <DisableAllFilters
-          filtersCount={filtersCount}
+          hidden={!filtersCount}
           onClick={() => setFilters(noFilters)}
         />
-      </p>
+      </div>
       <DetailTacheTable tableData={tableData} />
     </>
   );

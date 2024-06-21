@@ -136,24 +136,17 @@ exports[`Storyshots app/pages/collectivite/Historique/HistoriqueFiltres Avec Fil
        résultat
       s
     </span>
-    <div
-      className="w-max mt-4 border-b border-bf500 md:mt-auto"
+    <button
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6"
+      data-test="desactiver-les-filtres"
+      disabled={false}
+      onClick={[Function]}
     >
-      <button
-        className="flex items-center text-bf500 hover:!bg-none"
-        data-test="desactiver-les-filtres"
-        onClick={[Function]}
-      >
-        <span
-          className="fr-icon-close-circle-fill mr-1 scale-90"
-        />
-        <span
-          className="text-sm"
-        >
-          Désactiver tous les filtres
-        </span>
-      </button>
-    </div>
+      <span
+        className="ri-close-circle-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8 mb-0.5"
+      />
+      Désactiver tous les filtres
+    </button>
   </div>
 </div>
 `;

@@ -3,7 +3,7 @@ import FiltreType from './FiltreType';
 
 import {TFilters, TInitialFilters} from '../filters';
 import {FiltreDateDebut, FiltreDateFin} from './FiltreDate';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 export type HistoriqueFiltresProps = {
   itemsNumber: number;
@@ -37,7 +37,7 @@ const HistoriqueFiltres = ({
           <span className="text-sm text-gray-400">
             {itemsNumber} résultat{itemsNumber > 1 && 's'}
           </span>
-          <DesactiverLesFiltres onClick={() => setFilters(initialFilters)} />
+          <DisableAllFilters onClick={() => setFilters(initialFilters)} />
         </div>
       )}
     </div>

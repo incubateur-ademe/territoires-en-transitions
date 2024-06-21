@@ -17,19 +17,19 @@ const AidePriorisation = () => {
 
   return (
     <>
-      <p>
-        {filtersCount} {labelFilters}
-        <DisableAllFilters
-          filtersCount={filtersCount}
-          onClick={() => setFilters(noFilters)}
-        />
+      <div className="mb-6">
+        <div className="flex gap-4">
+          {filtersCount} {labelFilters}
+          <DisableAllFilters
+            hidden={!filtersCount}
+            onClick={() => setFilters(noFilters)}
+          />
+        </div>
+
         {filterInfoMessage ? (
-          <>
-            <br />
-            {filterInfoMessage}
-          </>
+          <div className="mt-2">{filterInfoMessage}</div>
         ) : null}
-      </p>
+      </div>
       <Table tableData={tableData} />
     </>
   );
