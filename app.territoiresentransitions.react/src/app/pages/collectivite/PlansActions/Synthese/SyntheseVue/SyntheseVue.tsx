@@ -8,7 +8,6 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 import FiltersPlanAction, {PlanActionFilter} from '../FiltersPlanAction';
 import {FiltersKeys} from '../../FicheAction/data/filters';
 import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
@@ -19,6 +18,7 @@ import {generateSyntheseVue} from '../utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
 import {FicheResume} from '../../FicheAction/data/types';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -127,11 +127,10 @@ const SyntheseVue = () => {
                   {total} fiche{total > 1 && 's'} action correspond
                   {total > 1 && 'ent'} à votre recherche
                 </p>
-                {filtersCount > 1 && (
-                  <DesactiverLesFiltres
-                    onClick={() => setFilters(initialFilters)}
-                  />
-                )}
+                <DisableAllFilters
+                  onClick={() => setFilters(initialFilters)}
+                  hidden={filtersCount <= 1}
+                />
               </div>
               <div className="grid grid-cols-2 gap-6">
                 {items.map(fiche => (

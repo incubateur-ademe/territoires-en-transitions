@@ -15,6 +15,7 @@ import {
 } from 'app/paths';
 import {useHistory, useLocation} from 'react-router-dom';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -130,18 +131,15 @@ const View = ({
               </h4>
             )}
           </div>
-          {getNumberOfActiveFilters(filters) > 0 && (
-            <Button
-              data-test="desactiver-les-filtres"
-              onClick={() => setFilters(initialFilters)}
-              icon="close-circle-fill"
-              variant="outlined"
-              size="sm"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Chargement...' : 'Désactiver tous les filtres'}
-            </Button>
-          )}
+
+          <DisableAllFilters
+            onClick={() => setFilters(initialFilters)}
+            variant="outlined"
+            size="sm"
+            hidden={!getNumberOfActiveFilters(filters)}
+            disabled={isLoading}
+            label={isLoading ? 'Chargement...' : 'Désactiver tous les filtres'}
+          />
         </div>
       </div>
       {/** Grille des résultats */}

@@ -1,9 +1,9 @@
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TFichesActionsListe} from '../../FicheAction/data/useFichesActionFiltresListe';
+import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
 
 type Props = {
   planId: string;
@@ -21,7 +21,7 @@ const PlanActionFiltresResultats = ({planId, filters}: Props) => {
         <span className="text-sm text-gray-400">
           {filters.total} résultat{filters.total > 1 && 's'}
         </span>
-        <DesactiverLesFiltres
+        <DisableAllFilters
           onClick={() => filters.setFilters(filters.initialFilters)}
         />
       </div>

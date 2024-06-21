@@ -10,13 +10,13 @@ const AuditSuivi = () => {
 
   return (
     <>
-      <p>
+      <div className="flex gap-4 mb-6">
         {filtersCount} {labelFilters}
         <DisableAllFilters
-          filtersCount={filtersCount}
+          hidden={!filtersCount}
           onClick={() => setFilters(noFilters)}
         />
-      </p>
+      </div>
       <Table tableData={tableData} />
     </>
   );

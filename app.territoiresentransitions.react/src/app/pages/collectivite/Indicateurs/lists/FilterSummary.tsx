@@ -14,13 +14,11 @@ export const FilterSummary = ({
 }) => (
   <div className="flex flex-row">
     <span className="fr-mr-2w">{getLabel(count, filterParamsCount)}</span>
-    {filterParamsCount ? (
-      <DisableAllFilters
-        filtersCount={filterParamsCount}
-        onClick={resetFilterParams}
-        label="Réinitialiser les filtres"
-      />
-    ) : null}
+    <DisableAllFilters
+      hidden={!filterParamsCount}
+      onClick={resetFilterParams}
+      label="Réinitialiser les filtres"
+    />
   </div>
 );
 
