@@ -157,10 +157,10 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
         </div>
       ) : /** État vide  */
       data?.data?.length === 0 ? (
-        <div className="flex flex-col items-center m-auto">
-          <PictoExpert />
+        <div className="flex flex-col items-center gap-2 m-auto">
+          <PictoExpert className="w-32 h-32" />
           <p className="text-primary-8">
-            Aucun indicateur ne correspond à votre recherche
+            Aucune fiche action ne correspond à votre recherche
           </p>
         </div>
       ) : (
