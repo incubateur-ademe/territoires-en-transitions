@@ -163,8 +163,8 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         </div>
       ) : /** État vide  */
       currentDefs?.length === 0 ? (
-        <div className="flex flex-col items-center m-auto">
-          <PictoIndicateurVide />
+        <div className="flex flex-col items-center gap-2 m-auto">
+          <PictoIndicateurVide className="w-32 h-32" />
           <p className="text-primary-8">
             Aucun indicateur ne correspond à votre recherche
           </p>

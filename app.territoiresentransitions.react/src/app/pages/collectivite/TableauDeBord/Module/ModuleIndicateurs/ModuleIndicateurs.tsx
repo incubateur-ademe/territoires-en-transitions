@@ -37,7 +37,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
     <Module
       title={module.titre}
       filtre={module.options.filtre}
-      symbole={<PictoIndicateurVide />}
+      symbole={<PictoIndicateurVide className="w-16 h-16" />}
       editModal={openState => (
         <ModalIndicateursSuiviPlan
           openState={openState}
