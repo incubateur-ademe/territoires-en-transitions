@@ -14,7 +14,10 @@ const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
  * ou le décompte à afficher à la place du graphe.
  */
 
-export const useIndicateurChartInfo = (indicateur_id: number | string) => {
+export const useIndicateurChartInfo = (
+  indicateur_id: number | string,
+  autoRefresh?: boolean
+) => {
   const collectivite_id = useCollectiviteId();
 
   return useQuery(
@@ -64,7 +67,7 @@ export const useIndicateurChartInfo = (indicateur_id: number | string) => {
       // dans tous les autres cas utilise l'id de la définition
       return {...info, id: indicateur_id};
     },
-    DISABLE_AUTO_REFETCH
+    autoRefresh ? undefined : DISABLE_AUTO_REFETCH
   );
 };
 // compte dans une liste d'indicateurs ceux qui sont remplis

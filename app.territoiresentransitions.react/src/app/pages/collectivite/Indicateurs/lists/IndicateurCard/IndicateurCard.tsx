@@ -70,7 +70,8 @@ const IndicateurCard = (props: IndicateurCardProps) => {
 
   // lit les données nécessaires à l'affichage du graphe
   const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
-    props.definition.id
+    props.definition.id,
+    autoRefresh
   );
 
   // charge les valeurs à afficher dans le graphe

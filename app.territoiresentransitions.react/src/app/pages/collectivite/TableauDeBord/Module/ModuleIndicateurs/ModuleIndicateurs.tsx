@@ -31,7 +31,11 @@ const ModuleIndicateurs = ({view, module}: Props) => {
 
   const filtre = moduleOptionsToFilters(module.options);
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(null, filtre);
+  const {data, isLoading} = useFilteredIndicateurDefinitions(
+    null,
+    filtre,
+    false
+  );
 
   return (
     <Module
@@ -99,6 +103,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
                     indicateurId: definition.id,
                   })}
                   card={{external: true}}
+                  autoRefresh
                 />
               )
           )}
