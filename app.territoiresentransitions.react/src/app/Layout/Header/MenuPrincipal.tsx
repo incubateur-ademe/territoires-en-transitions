@@ -64,6 +64,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
             item={{
               label: 'Collectivités',
               to: recherchesCollectivitesUrl,
+              urlPrefix: ['/recherches/'],
             }}
             {...props}
           />
