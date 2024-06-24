@@ -168,7 +168,7 @@ const makeNavItemsBase = (
           }),
         },
         {
-          label: 'Répartition des fiches actions',
+          label: 'Répartition des fiches action',
           to: makeCollectivitePlansActionsSyntheseUrl({
             collectiviteId,
           }),

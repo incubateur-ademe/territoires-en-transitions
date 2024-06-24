@@ -56,7 +56,9 @@ export const filtersToBadges = (data: FiltreKeys) => {
   });
 
   if (pilotes.length > 0) {
-    badgeValues.push(`Pilotes : ${pilotes.join(', ')}`);
+    badgeValues.push(
+      `Pilote${pilotes.length > 1 ? 's' : ''} : ${pilotes.join(', ')}`
+    );
   }
 
   return badgeValues;

@@ -94,7 +94,7 @@ export async function getDefaultModule(
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
-      titre: 'Actions dont je suis pilote',
+      titre: 'Actions dont je suis le pilote',
       type: 'fiche_action.list',
       slug,
       options: {
