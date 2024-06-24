@@ -151,7 +151,7 @@ const makeNavItemsBase = (
     {
       confidentiel,
       title: "Plans d'action",
-      urlPrefix: ['/plans/'],
+      urlPrefix: [`${collectivite.collectivite_id}/plans/`],
       items: [
         {
           label: 'Tableau de bord',
