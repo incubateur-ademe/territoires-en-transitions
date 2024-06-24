@@ -11,6 +11,8 @@ import {useQuery} from 'react-query';
 import {clearAuthTokens, getRootDomain, setAuthTokens} from '@tet/api';
 import {supabaseClient} from '../supabase';
 import {useCurrentSession} from './useCurrentSession';
+import {signUpPath} from 'app/paths';
+import {dcpFetch} from '@tet/api/dist/src/utilisateurs/shared/data_access/dcp.fetch';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -46,7 +48,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [authError, setAuthError] = useState<string | null>(null);
 
   // charge les données associées à l'utilisateur courant
-  const {data: dcp} = useDCP(user?.id);
+  const {data: dcp, isLoading: isLoadingDCP} = useDCP(user?.id);
   const {data: isSupport} = useIsSupport(user?.id);
   const userData = useMemo(
     () => (user && dcp ? {...user, ...dcp, isSupport} : null),
@@ -125,6 +127,12 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const isConnected = Boolean(user);
   const value = {connect, disconnect, user: userData, authError, isConnected};
 
+  // Redirige l'utilisateur vers la page d'authentification si nécessaire
+  const userInfoRequired = session && !isLoadingDCP && !dcp;
+  if (userInfoRequired) {
+    document.location.replace(`${signUpPath}&view=etape3`);
+  }
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
@@ -161,20 +169,11 @@ const clearCrispUserData = () => {
   }
 };
 
-// lecture des DCP
-const fetchDCP = async (user_id: string) => {
-  const {data} = await supabaseClient
-    .from('dcp')
-    .select('user_id,nom,prenom,telephone,cgu_acceptees_le')
-    .match({user_id});
-
-  return data?.length ? data[0] : null;
-};
-
 // hook qui utilise les queries DCP
 export const useDCP = (user_id?: string) => {
-  // fetch
-  return useQuery(['dcp', user_id], () => (user_id ? fetchDCP(user_id) : null));
+  return useQuery(['dcp', user_id], () =>
+    user_id ? dcpFetch({dbClient: supabaseClient, user_id}) : null
+  );
 };
 
 // vérifie si l'utilisateur courant à le droit "support"

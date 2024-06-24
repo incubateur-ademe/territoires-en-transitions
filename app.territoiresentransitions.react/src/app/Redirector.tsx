@@ -1,19 +1,18 @@
-import {useEffect} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
-import {homePath, makeCollectiviteAccueilUrl, signUpPath} from 'app/paths';
-import {useAuth, useDCP} from 'core-logic/api/auth/AuthProvider';
+import {getAuthPaths} from '@tet/api';
+import {homePath, makeCollectiviteAccueilUrl} from 'app/paths';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {
   acceptAgentInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {getAuthPaths} from '@tet/api';
+import {useEffect} from 'react';
+import {useHistory, useLocation} from 'react-router-dom';
 
 export const Redirector = () => {
   const history = useHistory();
   const {pathname} = useLocation();
-  const {isConnected, user} = useAuth();
-  const {data: DCP, isLoading: isLoadingDCP} = useDCP(user?.id);
+  const {isConnected} = useAuth();
   const {invitationId, invitationEmail, consume} = useInvitationState();
   const userCollectivites = useOwnedCollectivites();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
@@ -71,22 +70,6 @@ export const Redirector = () => {
       }
     }
   }, [isConnected, invitationId]);
-
-  // redirige vers l'étape 3 de la création de compte si il manque des infos aux DCP
-  const userInfoRequired =
-    isConnected &&
-    user?.id &&
-    !isLoadingDCP &&
-    (DCP === null || !DCP?.nom || !DCP?.prenom);
-    /* TODO: ajouter la condition suivante pour rendre obligatoire la saisie
-      du numéro de tél si il est absent de la base (mais il faudra alors ajouter
-      le pré-remplissage du formulaire avec les DCP déjà complétées)
-      || !DCP?.telephone*/
-  useEffect(() => {
-    if (userInfoRequired) {
-      document.location.replace(`${signUpPath}&view=etape3`);
-    }
-  }, [userInfoRequired]);
 
   return null;
 };

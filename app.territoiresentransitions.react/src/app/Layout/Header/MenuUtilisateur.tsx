@@ -6,6 +6,8 @@ import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
+import {useQuery} from '../../../core-logic/hooks/query';
+import {useQueryClient} from 'react-query';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
@@ -90,6 +92,7 @@ const MenuUtilisateurBtn = forwardRef(
  */
 const Deconnexion = ({auth}: {auth: TAuthContext}) => {
   const history = useHistory();
+  const queryClient = useQueryClient();
   return (
     <Link
       className="fr-nav__link"
@@ -98,6 +101,11 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
       to="/"
       onClick={() => {
         auth.disconnect().then(() => {
+          // Supprime le cache de la session
+          queryClient.removeQueries({
+            queryKey: ['session'],
+          });
+
           history.push('/');
         });
       }}

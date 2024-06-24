@@ -115,12 +115,11 @@ export const useSignupState = ({
     if (view === 'etape3') {
       // enregistre les DCP
       const {data} = await supabase.auth.getSession();
-      const user_id = data.session?.user?.id;
-      if (user_id) {
-        const email = defaultValues?.email || formData?.email;
-        const {telephone, prenom, nom} = formData as SignupDataStep3;
+      const user_id = data.session?.user.id;
+      const email = data.session?.user.email;
 
-        if (!email) return;
+      if (user_id && email) {
+        const {telephone, prenom, nom} = formData as SignupDataStep3;
 
         const {error} = await supabase.from('dcp').insert([
           {
@@ -131,6 +130,7 @@ export const useSignupState = ({
             user_id,
           },
         ]);
+
         // et l'acceptation des CGU
         const {error: error2} = await supabase.rpc('accepter_cgu');
 
