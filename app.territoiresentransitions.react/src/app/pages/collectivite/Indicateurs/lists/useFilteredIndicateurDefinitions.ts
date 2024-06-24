@@ -13,9 +13,13 @@ export type Filters = Indicateurs.Filters;
  */
 export const useFilteredIndicateurDefinitions = (
   view: IndicateurViewParamOption | null,
-  filter: Filters
+  filter: Filters,
+  disableAutoRefresh?: boolean
 ) => {
   const collectivite_id = useCollectiviteId();
+
+  // état par défaut pour supporter les anciens appels (infinite scroll)
+  const disableRefresh = disableAutoRefresh ?? true;
 
   return useQuery(
     ['indicateur_definitions', collectivite_id, view, filter],
@@ -34,6 +38,6 @@ export const useFilteredIndicateurDefinitions = (
 
       return data;
     },
-    DISABLE_AUTO_REFETCH
+    disableRefresh ? DISABLE_AUTO_REFETCH : {}
   );
 };

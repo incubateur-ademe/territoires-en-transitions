@@ -61,17 +61,21 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   const filtre = module && moduleOptionsToFilters(module.options);
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(null, {
-    ...filtre,
-    text: debouncedSearch,
-    sort:
-      order.value === 'rempli'
-        ? {
-            field: order.value,
-            direction: order.direction,
-          }
-        : undefined,
-  });
+  const {data, isLoading} = useFilteredIndicateurDefinitions(
+    null,
+    {
+      ...filtre,
+      text: debouncedSearch,
+      sort:
+        order.value === 'rempli'
+          ? {
+              field: order.value,
+              direction: order.direction,
+            }
+          : undefined,
+    },
+    false
+  );
 
   /** Nombre total d'indicateurs filtrés */
   const total = data?.length;
@@ -185,6 +189,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
                 className="hover:!bg-white"
                 card={{external: true}}
                 hideChart={!displayGraphs}
+                autoRefresh
               />
             ))}
           </div>
