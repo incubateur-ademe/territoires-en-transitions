@@ -1,8 +1,4 @@
-import {useHistory} from 'react-router-dom';
-
-import {Button, ButtonGroup} from '@tet/ui';
-import {TDBViewParam, makeTableauBordUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {TDBViewParam} from 'app/paths';
 
 type Props = {
   view: TDBViewParam;
@@ -13,9 +9,6 @@ type Props = {
 
 /** Vue générique parent pour les pages tableau de bord de la collectivité et personnel */
 const View = ({view, title, description, children}: Props) => {
-  const collectiviteId = useCollectiviteId();
-  const history = useHistory();
-
   return (
     <div data-test={`tdb-${view}`}>
       {/** Header */}
@@ -24,7 +17,8 @@ const View = ({view, title, description, children}: Props) => {
           <h2 className="mb-4">{title}</h2>
           <div className="text-lg text-grey-8">{description}</div>
         </div>
-        <div className="flex-shrink-0 flex items-center gap-4 mt-1">
+        {/* En attendant le dévelopement de la vue collectivité */}
+        {/* <div className="flex-shrink-0 flex items-center gap-4 mt-1">
           <ButtonGroup
             activeButtonId={view}
             size="xs"
@@ -54,7 +48,7 @@ const View = ({view, title, description, children}: Props) => {
             ]}
           />
           <Button variant="outlined" icon="settings-2-line" size="xs" />
-        </div>
+        </div> */}
       </div>
       {/** Contenu principal */}
       {children}
