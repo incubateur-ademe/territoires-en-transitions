@@ -46,8 +46,8 @@ const filterParts: {[key in keyof Filters]?: string} = {
 // Hack temporaire en attendant le nouveau modèle indicateurs
 // pour afficher des indicateurs spécifiques à certaines collectivités
 const sydevCollectiviteIds = [
-  5290, 5288, 5303, 5291, 5297, 5292, 5295, 5298, 5299, 5294, 5286, 5304, 5302,
-  5296, 5287, 5289, 5301, 5293, 5300,
+  5285, 5286, 5287, 5288, 5289, 5290, 5291, 5292, 5293, 5294, 5295, 5296, 5297,
+  5298, 5299, 5300, 5301, 5302, 5303, 5540,
 ];
 
 /**
