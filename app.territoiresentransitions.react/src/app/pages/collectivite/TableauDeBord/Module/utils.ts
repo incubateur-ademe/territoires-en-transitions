@@ -27,14 +27,16 @@ export const filtersToBadges = (data: FiltreKeys) => {
     }
     if (key === 'thematiques') {
       badgeValues.push(
-        `Thématiques : ${data[key]
+        `${makePlural('Thématique', data[key]?.length)} : ${data[key]
           ?.map(thematique => thematique.nom)
           .join(', ')}`
       );
     }
     if (key === 'planActions') {
       badgeValues.push(
-        `Plans d'action : ${data[key]
+        `Plan${data[key] && data[key]!.length > 1 ? 's' : ''} d'action : ${data[
+          key
+        ]
           ?.map(plan => generateTitle(plan.nom))
           .join(', ')}`
       );
@@ -43,10 +45,16 @@ export const filtersToBadges = (data: FiltreKeys) => {
       badgeValues.push(data[key] ? 'Complet' : 'Incomplet');
     }
     if (key === 'priorites') {
-      badgeValues.push(`Priorité : ${data[key]?.join(', ')}`);
+      badgeValues.push(
+        `${makePlural('Priorité', data[key]?.length)} : ${data[key]?.join(
+          ', '
+        )}`
+      );
     }
     if (key === 'statuts') {
-      badgeValues.push(`Statuts : ${data[key]?.join(', ')}`);
+      badgeValues.push(
+        `${makePlural('Statut', data[key]?.length)} : ${data[key]?.join(', ')}`
+      );
     }
     if (key === 'modifiedSince') {
       badgeValues.push(
@@ -63,3 +71,6 @@ export const filtersToBadges = (data: FiltreKeys) => {
 
   return badgeValues;
 };
+
+const makePlural = (word: string, count?: number) =>
+  count && count > 1 ? `${word}s` : word;
