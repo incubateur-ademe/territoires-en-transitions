@@ -38,6 +38,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
           picto={className => <MoneyPicto className={className} />}
           title="Budget non renseigné !"
           subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements."
+          isReadonly={isReadonly}
           action={{
             label: 'Renseigner un budget',
             onClick: () => setIsModalOpen(true),
