@@ -94,37 +94,46 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
         />
       </Route>
 
-      {/* Création */}
+      {/* Menu de création d'un plan */}
       <Route exact path={collectivitePlansActionsNouveauPath}>
         <SelectionPage />
       </Route>
+
+      {/* Importation d'un plan */}
       <Route exact path={collectivitePlansActionsImporterPath}>
         <ImporterPlanPage />
       </Route>
+
+      {/* Création d'un plan */}
       <Route exact path={collectivitePlansActionsCreerPath}>
         <CreerPlanPage />
       </Route>
 
-      {/* <FichesNonClassees /> */}
-      <Route exact path={[collectiviteFichesNonClasseesPath]}>
-        <FichesNonClassees />
-      </Route>
-      <Route
-        path={[
-          collectiviteFicheNonClasseePath,
-          collectivitePlanActionFichePath,
-          collectivitePlanActionAxeFichePath,
-        ]}
-      >
-        <FicheActionPage />
-      </Route>
-      {/** Plan action */}
+      {/** Vue détaillée d'un plan action */}
       <Route exact path={collectivitePlanActionPath}>
         <PlanActionPage />
       </Route>
-      {/** Axe */}
+
+      {/** Vue détaillée d'un axe */}
       <Route exact path={collectivitePlanActionAxePath}>
         <PlanActionPage />
+      </Route>
+
+      {/* Liste des fiches non classées */}
+      <Route exact path={[collectiviteFichesNonClasseesPath]}>
+        <FichesNonClassees />
+      </Route>
+
+      {/* Pages fiche action - ancienne version */}
+      <Route
+        exact
+        path={[
+          `${collectiviteFicheNonClasseePath}/old`,
+          `${collectivitePlanActionFichePath}/old`,
+          `${collectivitePlanActionAxeFichePath}/old`,
+        ]}
+      >
+        <FicheActionPage />
       </Route>
     </CollectivitePageLayout>
   );
