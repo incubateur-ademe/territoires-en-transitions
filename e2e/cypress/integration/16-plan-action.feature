@@ -189,7 +189,7 @@ Fonctionnalité: Gérer les fiches et les plans d'action
 
   Scénario: Visiter la page des graphiques de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"
-    Et que je suis sur la page "Plans action" de la collectivité "1"
+    Et que je suis sur la page "Synthèse plans action" de la collectivité "1"
 
     Quand je clique sur le bouton "Répartition par pilote"
     Alors le "Page graph de synthèse" est visible
