@@ -62,7 +62,11 @@ const FicheActionOnglets = ({
 
       {/* Notes et documents */}
       <Tab label="Notes et documents ">
-        <NotesEtDocumentsTab fiche={fiche} />
+        <NotesEtDocumentsTab
+          isReadonly={isReadonly}
+          fiche={fiche}
+          updateFiche={updateFiche}
+        />
       </Tab>
     </Tabs>
   );
