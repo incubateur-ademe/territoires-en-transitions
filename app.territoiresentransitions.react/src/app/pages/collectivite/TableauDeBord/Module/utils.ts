@@ -42,7 +42,7 @@ export const filtersToBadges = (data: FiltreKeys) => {
       );
     }
     if (key === 'estComplet') {
-      badgeValues.push(data[key] ? 'Complet' : 'Incomplet');
+      badgeValues.push(`Complétion : ${data[key] ? 'Complet' : 'Incomplet'}`);
     }
     if (key === 'priorites') {
       badgeValues.push(
