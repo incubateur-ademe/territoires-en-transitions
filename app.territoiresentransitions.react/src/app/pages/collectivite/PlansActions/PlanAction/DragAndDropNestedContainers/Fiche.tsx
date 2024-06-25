@@ -69,8 +69,7 @@ const Fiche = ({planId, axeId, url, fiche, editKeysToInvalidate}: Props) => {
           <FicheActionCard
             key={fiche.id}
             ficheAction={fiche}
-            planId={planId}
-            axeId={axeId}
+            axeIdToInvalidate={axeId}
             link={url}
             isEditable
             editKeysToInvalidate={editKeysToInvalidate}
