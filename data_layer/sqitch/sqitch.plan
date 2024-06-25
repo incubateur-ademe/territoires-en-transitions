@@ -674,4 +674,3 @@ utilisateur/membre [utilisateur/membre@v3.4.0] 2024-06-04T12:58:19Z Marc Rutkows
 @v3.5.0 2024-06-12T07:34:41Z Marc Rutkowski <marc@attractive-media.fr> # Améliore la gestion des invitations depuis la page Membres
 
 indicateur/filtre [indicateur/filtre@v3.5.0] 2024-06-25T09:00:01Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vérification des droits sur la fonction axes
-indicateur/detail [indicateur/detail@v3.5.0] 2024-06-25T09:07:06Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Bouge la vérification des droits sur la vue indicateur_definitions

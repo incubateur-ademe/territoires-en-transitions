@@ -12,7 +12,6 @@ select c.id           as collectivite_id,
        definition.unite
 from collectivite c
          cross join indicateur_definition definition
-where is_authenticated()
 union all
 select definition.collectivite_id as collectivite_id,
        null::indicateur_id        as indicateur_id,
@@ -21,7 +20,7 @@ select definition.collectivite_id as collectivite_id,
        definition.description,
        definition.unite
 from indicateur_personnalise_definition definition
-where can_read_acces_restreint(collectivite_id);
+where have_edition_acces(collectivite_id);
 comment on view indicateur_definitions
     is 'Les définitions des indicateurs prédéfinis et personnalisés';
 
