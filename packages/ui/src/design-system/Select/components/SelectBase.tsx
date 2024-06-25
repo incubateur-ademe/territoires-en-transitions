@@ -338,9 +338,10 @@ const SelectButton = forwardRef(
               !isSearcheable && (
                 <span
                   className={classNames(
-                    'my-auto text-left text-xs text-grey-6 line-clamp-1',
+                    'my-auto text-left text-sm text-grey-6 line-clamp-1',
                     {
                       '!text-grey-5': disabled,
+                      'text-xs': small,
                     }
                   )}
                 >
