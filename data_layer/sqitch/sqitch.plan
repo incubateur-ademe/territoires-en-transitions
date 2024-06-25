@@ -672,3 +672,6 @@ collectivite/collectivite [collectivite/collectivite@v3.1.0] 2024-05-27T09:20:41
 utilisateur/droits_v2 [utilisateur/droits_v2@v3.0.0] 2024-05-30T10:08:04Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'id d'invitation dans la rpc collectivite_membres
 utilisateur/membre [utilisateur/membre@v3.4.0] 2024-06-04T12:58:19Z Marc Rutkowski <marc@attractive-media.fr> # Répare la suppression d'un utilisateur pré-existant à son rattachement à une collectivité
 @v3.5.0 2024-06-12T07:34:41Z Marc Rutkowski <marc@attractive-media.fr> # Améliore la gestion des invitations depuis la page Membres
+
+indicateur/filtre [indicateur/filtre@v3.5.0] 2024-06-25T09:00:01Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vérification des droits sur la fonction axes
+indicateur/detail [indicateur/detail@v3.5.0] 2024-06-25T09:07:06Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Bouge la vérification des droits sur la vue indicateur_definitions
