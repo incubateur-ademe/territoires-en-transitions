@@ -44,7 +44,11 @@ const FicheActionOnglets = ({
 
       {/* Fiches des plans liées */}
       <Tab label="Fiches des plans liées">
-        <FichesLieesTab fiche={fiche} />
+        <FichesLieesTab
+          isReadonly={isReadonly}
+          fiche={fiche}
+          updateFiche={updateFiche}
+        />
       </Tab>
 
       {/* Actions des référentiels liées */}
