@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import {useEffect, useRef} from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import {generateTitle} from '../app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {Icon} from '@tet/ui';
 
 type Props = {
   titre: string | null;
@@ -93,7 +94,11 @@ const HeaderTitle = ({
               onBlur={handleChangeTitle}
               disabled={isReadonly}
             />
-            <span className="fr-fi-edit-line my-auto ml-6 hidden group-hover:block" />
+            {/* <span className="fr-fi-edit-line my-auto ml-6 hidden group-hover:block" /> */}
+            <Icon
+              icon="edit-line"
+              className="my-auto ml-6 text-grey-9 hidden group-hover:block"
+            />
           </>
         ) : (
           <span

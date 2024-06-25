@@ -165,7 +165,8 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
         </div>
       ) : (
         /** Liste des fiches actions */
-        <>
+        // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
+        <div>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
             {data?.data?.map(fiche => (
               <FicheActionCard
@@ -195,7 +196,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
               onChange={page => setCurrentPage(page)}
             />
           </div>
-        </>
+        </div>
       )}
     </ModulePage>
   );
