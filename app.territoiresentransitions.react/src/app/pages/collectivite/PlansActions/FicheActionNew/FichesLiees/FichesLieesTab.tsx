@@ -1,28 +1,69 @@
+import {Button} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import FichePicto from './FichePicto';
+import {useState} from 'react';
+import ModaleFichesLiees from './ModaleFichesLiees';
+import FichesLieesListe from './FichesLieesListe';
 
 type FichesLieesTabProps = {
+  isReadonly: boolean;
   fiche: FicheAction;
+  updateFiche: (fiche: FicheAction) => void;
 };
 
-const FichesLieesTab = ({fiche}: FichesLieesTabProps) => {
+const FichesLieesTab = ({
+  isReadonly,
+  fiche,
+  updateFiche,
+}: FichesLieesTabProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {fiches_liees: fiches} = fiche;
 
   const isEmpty = !fiches || fiches.length === 0;
 
-  return isEmpty ? (
-    <EmptyCard
-      picto={className => <FichePicto className={className} />}
-      title="Aucune fiche action de vos plans d'actions n'est liée !"
-      action={{
-        label: 'Lier une fiche action',
-        icon: 'link',
-        onClick: () => {},
-      }}
-    />
-  ) : (
-    <div>Fiches des plans liées</div>
+  return (
+    <>
+      {isEmpty ? (
+        <EmptyCard
+          picto={className => <FichePicto className={className} />}
+          title="Aucune fiche action de vos plans d'actions n'est liée !"
+          action={{
+            label: 'Lier une fiche action',
+            icon: 'link',
+            onClick: () => setIsModalOpen(true),
+          }}
+        />
+      ) : (
+        <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+          {/* Titre et bouton d'édition */}
+          <div className="flex justify-between">
+            <h5 className="text-primary-8 mb-0">Fiches des plans liées</h5>
+            {!isReadonly && (
+              <Button
+                icon="link"
+                size="xs"
+                variant="outlined"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Lier une fiche action
+              </Button>
+            )}
+          </div>
+
+          {/* Liste des fiches des plans liées */}
+          {fiches && fiches.length > 0 && <FichesLieesListe fiches={fiches} />}
+        </div>
+      )}
+
+      <ModaleFichesLiees
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        fiche={fiche}
+        updateFiche={updateFiche}
+      />
+    </>
   );
 };
 
