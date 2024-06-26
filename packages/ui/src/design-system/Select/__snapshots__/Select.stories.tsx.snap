@@ -32,7 +32,7 @@ exports[`design-system/Select CustomItem smoke-test 1`] = `
   >
     <div class="flex px-4 min-h-[3rem] py-2">
       <div class="flex grow flex-wrap gap-2 mr-4">
-        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+        <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
           Sélectionner une option
         </span>
       </div>
@@ -52,7 +52,7 @@ exports[`design-system/Select Default smoke-test 1`] = `
   >
     <div class="flex px-4 min-h-[3rem] py-2">
       <div class="flex grow flex-wrap gap-2 mr-4">
-        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+        <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
           Sélectionner une option
         </span>
       </div>
@@ -73,7 +73,7 @@ exports[`design-system/Select Disabled smoke-test 1`] = `
   >
     <div class="flex px-4 min-h-[3rem] py-2">
       <div class="flex grow flex-wrap gap-2 mr-4">
-        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1 !text-grey-5">
+        <span class="my-auto text-left text-sm text-grey-6 line-clamp-1 !text-grey-5">
           Sélectionner une option
         </span>
       </div>
@@ -154,7 +154,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
     >
       <div class="flex px-4 min-h-[3rem] py-2">
         <div class="flex grow flex-wrap gap-2 mr-4">
-          <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
             Sélectionner une ou plusieurs options
           </span>
         </div>
@@ -169,7 +169,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
     >
       <div class="flex px-4 min-h-[3rem] py-2">
         <div class="flex grow flex-wrap gap-2 mr-4">
-          <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
             Sélectionner une ou plusieurs options
           </span>
         </div>
@@ -184,7 +184,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
     >
       <div class="flex px-4 min-h-[3rem] py-2">
         <div class="flex grow flex-wrap gap-2 mr-4">
-          <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
             Sélectionner une ou plusieurs options
           </span>
         </div>
@@ -205,7 +205,7 @@ exports[`design-system/Select MultiSelectWithSectionOptions smoke-test 1`] = `
   >
     <div class="flex px-4 min-h-[3rem] py-2">
       <div class="flex grow flex-wrap gap-2 mr-4">
-        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+        <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
           Sélectionner une ou plusieurs options
         </span>
       </div>
@@ -271,7 +271,7 @@ exports[`design-system/Select SmallWithBadgeItems smoke-test 1`] = `
   >
     <div class="flex px-4 min-h-[2.5rem] py-1">
       <div class="flex grow flex-wrap gap-2 mr-4">
-        <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+        <span class="my-auto text-left text-sm text-grey-6 line-clamp-1 text-xs">
           Sélectionner une option
         </span>
       </div>
@@ -300,7 +300,7 @@ exports[`design-system/Select WithField smoke-test 1`] = `
     >
       <div class="flex px-4 min-h-[3rem] py-2">
         <div class="flex grow flex-wrap gap-2 mr-4">
-          <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+          <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
             Sélectionner une option
           </span>
         </div>
@@ -339,7 +339,7 @@ exports[`design-system/Select ZIndex smoke-test 1`] = `
           >
             <div class="flex px-4 min-h-[3rem] py-2">
               <div class="flex grow flex-wrap gap-2 mr-4">
-                <span class="my-auto text-left text-xs text-grey-6 line-clamp-1">
+                <span class="my-auto text-left text-sm text-grey-6 line-clamp-1">
                   Sélectionner une option
                 </span>
               </div>
