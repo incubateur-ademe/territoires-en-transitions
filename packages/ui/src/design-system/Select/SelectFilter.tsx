@@ -32,21 +32,19 @@ export const SelectFilter = ({
     getFlatOptions(options).some(o => o.value === v && o.disabled)
   );
 
-  /** Valeurs restantes lorsque l'on a retiré les valeurs permanentes */
-  const otherValues = values?.filter(v =>
-    getFlatOptions(options).some(o => o.value === v && !o.disabled)
-  );
-
   useEffect(() => {
-    if (values) {
-      if (otherValues.length > 0) {
-        setFilterOptions([
-          {label: 'Désélectionner les options', value: ITEM_ALL},
-          ...options,
-        ]);
-      } else {
-        setFilterOptions(options);
-      }
+    /** Valeurs restantes lorsque l'on a retiré les valeurs permanentes */
+    const otherValues = values?.filter(v =>
+      getFlatOptions(options).some(o => o.value === v && !o.disabled)
+    );
+
+    if (values && otherValues.length > 0) {
+      setFilterOptions([
+        {label: 'Désélectionner les options', value: ITEM_ALL},
+        ...options,
+      ]);
+    } else {
+      setFilterOptions(options);
     }
   }, [values, options]);
 
