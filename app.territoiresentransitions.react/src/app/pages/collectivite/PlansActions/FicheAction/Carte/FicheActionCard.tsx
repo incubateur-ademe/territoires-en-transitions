@@ -1,6 +1,11 @@
 import {NavLink} from 'react-router-dom';
 import classNames from 'classnames';
-import {format, isBefore, startOfToday} from 'date-fns';
+import {
+  format,
+  differenceInCalendarDays,
+  isBefore,
+  startOfToday,
+} from 'date-fns';
 
 import {Notification} from '@tet/ui';
 
@@ -50,6 +55,28 @@ const FicheActionCard = ({
   });
 
   const carteId = `fiche-${ficheAction.id}`;
+
+  const getModifiedSince = (date: string) => {
+    const modifiedDate = new Date(date);
+    const diff = differenceInCalendarDays(new Date(), modifiedDate);
+
+    if (diff === 0) {
+      return "aujourd'hui";
+    }
+    if (diff < 7) {
+      return `il y a ${diff} jours`;
+    }
+    if (diff < 14) {
+      return 'il y a une semaine';
+    }
+    if (diff < 21) {
+      return 'il y a 2 semaines';
+    }
+    if (diff < 28) {
+      return 'il y a 3 semaines';
+    }
+    return `le ${format(modifiedDate, 'dd/MM/yyyy')}`;
+  };
 
   return (
     <div
@@ -132,7 +159,7 @@ const FicheActionCard = ({
             {generateTitle(ficheAction.titre)}
           </span>
           {ficheAction.plans?.length && (
-            <div className="text-sm text-grey-6" title="Emplacements">
+            <div className="text-sm text-grey-8" title="Emplacements">
               {ficheAction.plans
                 ? ficheAction.plans
                     ?.map(plan => generateTitle(plan?.nom))
@@ -140,6 +167,9 @@ const FicheActionCard = ({
                 : 'Fiches non classées'}
             </div>
           )}
+          <span className="text-xs text-grey-8 italic">
+            Modifié {getModifiedSince(ficheAction.modified_at!)}
+          </span>
           {(ficheAction.pilotes || ficheAction.date_fin_provisoire) && (
             <div className="flex items-center gap-4 flex-wrap text-sm text-primary">
               {ficheAction.pilotes && (
