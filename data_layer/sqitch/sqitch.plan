@@ -676,3 +676,4 @@ utilisateur/membre [utilisateur/membre@v3.4.0] 2024-06-04T12:58:19Z Marc Rutkows
 indicateur/filtre [indicateur/filtre@v3.5.0] 2024-06-25T09:00:01Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vérification des droits sur la fonction axes
 @v3.6.0 2024-06-25T13:27:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vérification de droits sur les axes liés aux indicateurs.\nCette vérification est par ailleurs déjà faite sur la vue indicateur_definitions qui l'utilise.\nCette suppression permet de corriger le filtre des indicateurs par plan action.
 
+indicateur/filtre [indicateur/filtre@v3.6.0] 2024-06-25T15:16:51Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des indexes pour améliorer la performance des requêtes de filtrage des indicateurs
