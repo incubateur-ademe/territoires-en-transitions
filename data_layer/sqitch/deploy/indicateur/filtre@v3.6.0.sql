@@ -2,15 +2,10 @@
 
 BEGIN;
 
--- Supprime les index
-DROP INDEX IF EXISTS fiche_action_indicateur_indicateur_id_idx;
-DROP INDEX IF EXISTS fiche_action_indicateur_fiche_id_idx;
-DROP INDEX IF EXISTS fiche_action_indicateur_indicateur_personnalise_id_idx;
-DROP INDEX IF EXISTS fiche_action_axe_axe_id_idx;
-DROP INDEX IF EXISTS indicateur_definition_valeur_indicateur_idx;
+-- Recrée la même fonction sans la vérification des droits
+-- qui pose des problèmes de performance lors du `fetchFilteredIndicateurs`
+-- (requête +30s qui timeout sur l'app) 
 
-
--- Recrée la fonction axes
 create or replace function
     axes(indicateur_definitions)
     returns setof axe
@@ -40,5 +35,6 @@ begin
 end;
 comment on function axes(indicateur_definitions) is
     'Les axes (plans d''action) associés à un indicateur.';
+
 
 COMMIT;

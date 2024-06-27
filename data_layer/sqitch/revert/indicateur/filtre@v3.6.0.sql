@@ -2,15 +2,8 @@
 
 BEGIN;
 
--- Supprime les index
-DROP INDEX IF EXISTS fiche_action_indicateur_indicateur_id_idx;
-DROP INDEX IF EXISTS fiche_action_indicateur_fiche_id_idx;
-DROP INDEX IF EXISTS fiche_action_indicateur_indicateur_personnalise_id_idx;
-DROP INDEX IF EXISTS fiche_action_axe_axe_id_idx;
-DROP INDEX IF EXISTS indicateur_definition_valeur_indicateur_idx;
+-- Revert les axes pour appliquer de nouveau la verification de droits
 
-
--- Recrée la fonction axes
 create or replace function
     axes(indicateur_definitions)
     returns setof axe
@@ -36,7 +29,7 @@ begin
        -- indicateur perso
        or ($1.indicateur_perso_id is not null
         and fai.indicateur_personnalise_id = $1.indicateur_perso_id))
-        ;
+    and can_read_acces_restreint(axe.collectivite_id);
 end;
 comment on function axes(indicateur_definitions) is
     'Les axes (plans d''action) associés à un indicateur.';
