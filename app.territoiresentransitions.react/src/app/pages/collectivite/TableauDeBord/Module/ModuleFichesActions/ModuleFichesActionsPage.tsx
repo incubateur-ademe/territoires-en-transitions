@@ -7,7 +7,14 @@ import {
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Filtre as FiltreFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {Button, Input, Pagination, Select} from '@tet/ui';
+import {
+  Button,
+  Input,
+  Pagination,
+  Select,
+  TrackPageView,
+  useEventTracker,
+} from '@tet/ui';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
@@ -79,12 +86,18 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
 
   const countTotal = data?.count || 0;
 
+  const trackEvent = useEventTracker(`app/tdb/personnel/${slug}`);
+
   if (isModuleLoading || !module) {
     return null;
   }
 
   return (
     <ModulePage view={view} title={module.titre}>
+      <TrackPageView
+        pageName={`app/tdb/personnel/${slug}`}
+        properties={{collectivite_id: collectiviteId!}}
+      />
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
         {/** Tri */}
         <div className="w-64">
@@ -120,7 +133,15 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
           variant="outlined"
           icon="equalizer-line"
           size="sm"
-          onClick={() => setIsSettingsOpen(true)}
+          onClick={() => {
+            trackEvent(
+              (slug === 'actions-dont-je-suis-pilote'
+                ? 'tdb_modifier_filtres_actions_pilotes'
+                : 'tdb_modifier_filtres_actions_modifiees') as never,
+              {collectivite_id: collectiviteId} as never
+            );
+            setIsSettingsOpen(true);
+          }}
         />
         {isSettingsOpen && (
           <>

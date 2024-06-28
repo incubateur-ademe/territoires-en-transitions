@@ -1,4 +1,6 @@
+import {TrackPageView} from '@tet/ui';
 import {TDBViewParam} from 'app/paths';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type Props = {
   view: TDBViewParam;
@@ -9,8 +11,14 @@ type Props = {
 
 /** Vue générique parent pour les pages tableau de bord de la collectivité et personnel */
 const View = ({view, title, description, children}: Props) => {
+  const collectivite_id = useCollectiviteId()!;
+
   return (
     <div data-test={`tdb-${view}`}>
+      <TrackPageView
+        pageName={`app/tdb/${view}`}
+        properties={{collectivite_id}}
+      />
       {/** Header */}
       <div className="flex items-start gap-20 border-b pb-6 mb-12">
         <div className="flex-grow">

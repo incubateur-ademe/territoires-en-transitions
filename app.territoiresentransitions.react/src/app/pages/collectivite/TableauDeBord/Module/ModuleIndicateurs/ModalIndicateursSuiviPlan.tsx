@@ -11,6 +11,7 @@ import {
   ModalProps,
   Select,
   SelectMultiple,
+  useEventTracker,
 } from '@tet/ui';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
@@ -41,6 +42,10 @@ const ModalIndicateursSuiviPlan = ({
 
   const [filtreState, setFiltreState] = useState<FiltreIndicateurs>(
     module.options.filtre
+  );
+
+  const trackEvent = useEventTracker(
+    'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans'
   );
 
   const getPilotesValues = (filtreState: FiltreIndicateurs) => {
@@ -149,6 +154,9 @@ const ModalIndicateursSuiviPlan = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              trackEvent('tdb_valider_filtres_indicateurs', {
+                collectivite_id: collectiviteId!,
+              });
               await modulesSave({
                 dbClient: supabaseClient,
                 module: {
