@@ -7,18 +7,18 @@ import {
   startOfToday,
 } from 'date-fns';
 
-import {Notification} from '@tet/ui';
+import {Button, Notification} from '@tet/ui';
 
 import {FicheResume} from '../data/types';
 import {generateTitle} from '../data/utils';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
-import FicheActionSupprimerModal from '../FicheActionSupprimerModal';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import ModifierFicheModale from './ModifierFicheModale';
 import {useState} from 'react';
 import {QueryKey} from 'react-query';
+import FicheActionSupprimer from '../../FicheActionNew/FicheActionDescription/FicheActionSupprimer';
 
 type Props = {
   link?: string;
@@ -110,22 +110,25 @@ const FicheActionCard = ({
                 keysToInvalidate={editKeysToInvalidate}
               />
             )}
-            <button
+            <Button
               data-test="EditerFicheBouton"
               id={`fiche-${ficheAction.id}-edit-button`}
+              icon="edit-line"
               title="Modifier"
+              variant="grey"
+              size="xs"
+              className="invisible group-hover:visible"
               onClick={() => setIsEditOpen(!isEditOpen)}
-              className={classNames(
-                'invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-edit-line !bg-white hover:!bg-primary-3 rounded-lg'
-              )}
             />
           </>
-          <FicheActionSupprimerModal
-            buttonClassname="invisible group-hover:visible !bg-white rounded-lg"
+          <FicheActionSupprimer
+            ficheId={ficheAction.id}
+            title={ficheAction.titre}
             isInMultipleAxes={
-              (ficheAction.plans && ficheAction.plans.length > 1) || false
+              !!ficheAction.plans && ficheAction.plans.length > 1
             }
-            onDelete={() => deleteFiche()}
+            buttonClassName="invisible group-hover:visible"
+            buttonVariant="grey"
           />
         </div>
       )}

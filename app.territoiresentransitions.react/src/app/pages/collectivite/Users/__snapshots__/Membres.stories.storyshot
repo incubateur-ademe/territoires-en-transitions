@@ -233,7 +233,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -391,7 +391,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -546,7 +546,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -611,7 +611,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex flex-row gap-4"
               >
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -627,7 +627,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   />
                 </button>
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -885,7 +885,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1043,7 +1043,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1198,7 +1198,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1263,7 +1263,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex flex-row gap-4"
               >
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -1279,7 +1279,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   />
                 </button>
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -1537,7 +1537,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1695,7 +1695,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1850,7 +1850,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
@@ -1915,7 +1915,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                 className="flex flex-row gap-4"
               >
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -1931,7 +1931,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Qu Admin Qui In
                   />
                 </button>
                 <button
-                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                  className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                   disabled={false}
                   onBlur={[Function]}
                   onClick={[Function]}
@@ -2300,7 +2300,7 @@ exports[`Storyshots app/pages/collectivite/Users/Membres En Tant Que Lecteur 1`]
               className="px-4"
             >
               <button
-                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+                className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
                 data-test="delete"
                 disabled={false}
                 onBlur={[Function]}
