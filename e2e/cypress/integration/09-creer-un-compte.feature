@@ -20,7 +20,7 @@ Fonctionnalité: Créer un compte
       | header                           | visible   |
       | home                             | absent    |
       | formulaire de création de compte | visible   |
-      | footer | absent |
+      | footer                           | absent    |
 
     # étape 1 : saisie email/mdp
     Quand je clique sur le bouton "Compte avec mot de passe"
@@ -42,9 +42,9 @@ Fonctionnalité: Créer un compte
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors la page vérifie les conditions suivantes :
       | Elément                          | Condition |
-      | header                           | visible |
-      | home                             | absent  |
-      | formulaire de création de compte | visible |
+      | header                           | visible   |
+      | home                             | absent    |
+      | formulaire de création de compte | visible   |
 
     # étape 3 : saisie infos sur l'utilisateur + validation CGU
     Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
@@ -72,9 +72,9 @@ Fonctionnalité: Créer un compte
 
     Quand je clique sur le bouton "Compte avec mot de passe"
     Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
-      | Champ | Valeur   |
-      | email | <email>  |
-      | mdp | monmotdepassesécurisé |
+      | Champ | Valeur                |
+      | email | <email>               |
+      | mdp   | monmotdepassesécurisé |
 
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors le "message d'erreur" du "formulaire de création de compte" contient "Utilisateur déjà enregistré"
@@ -161,12 +161,12 @@ Fonctionnalité: Créer un compte
 
     Quand je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | header                                | visible   |
-      | home                                  | absent    |
-      | formulaire de connexion               | absent    |
-      | formulaire de création de compte      | absent    |
-      | toutes les collectivités              | absent    |
-      | le tableau de bord de la collectivité | visible   |
-      | footer                                | présent   |
+      | Elément                          | Condition |
+      | header                           | visible   |
+      | home                             | absent    |
+      | formulaire de connexion          | absent    |
+      | formulaire de création de compte | absent    |
+      | toutes les collectivités         | absent    |
+      | le tableau de bord personnel     | visible   |
+      | footer                           | présent   |
 

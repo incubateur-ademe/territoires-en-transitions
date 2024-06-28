@@ -20,6 +20,9 @@ export const Selectors = {
   'le tableau de bord de la collectivité': {
     selector: '[data-test=TableauBord]',
   },
+  'le tableau de bord personnel': {
+    selector: '[data-test="tdb-personnel"]',
+  },
   'toutes les collectivités': {
     selector: '[data-test=ToutesLesCollectivites]',
   },
