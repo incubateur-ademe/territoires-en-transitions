@@ -31,6 +31,7 @@ export * from './design-system/Pagination';
 export * from './design-system/Select';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
+export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
 
 // dossier utils
