@@ -153,7 +153,7 @@ Array [
         </button>
         <button
           aria-current="page"
-          className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+          className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
           disabled={false}
           onClick={[Function]}
           title="Page 2"
@@ -162,7 +162,7 @@ Array [
         </button>
         <button
           aria-current="page"
-          className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+          className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
           disabled={false}
           onClick={[Function]}
           title="Page 3"
@@ -171,7 +171,7 @@ Array [
         </button>
       </div>
       <button
-        className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
+        className="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
         disabled={false}
         onClick={[Function]}
         title="Page suivante"
