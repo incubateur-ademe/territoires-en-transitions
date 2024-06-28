@@ -15,6 +15,7 @@ import {
   Select,
   SelectFilter,
   SelectMultiple,
+  useEventTracker,
 } from '@tet/ui';
 import {
   ficheActionModifiedSinceOptions,
@@ -47,6 +48,10 @@ const ModalActionsRecemmentModifiees = ({
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
+  );
+
+  const trackEvent = useEventTracker(
+    'app/tdb/personnel/actions-recemment-modifiees'
   );
 
   const getPilotesValues = (filtreState: FiltreFichesAction) => {
@@ -135,6 +140,9 @@ const ModalActionsRecemmentModifiees = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              trackEvent('tdb_valider_filtres_actions_modifiees', {
+                collectivite_id: collectiviteId!,
+              });
               await modulesSave({
                 dbClient: supabaseClient,
                 module: {

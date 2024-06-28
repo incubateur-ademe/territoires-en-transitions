@@ -1,6 +1,14 @@
 import {useState} from 'react';
 
-import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Pagination,
+  Select,
+  TrackPageView,
+  useEventTracker,
+} from '@tet/ui';
 
 import {
   ModuleIndicateursSelect,
@@ -96,12 +104,20 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  const trackEvent = useEventTracker(
+    `app/tdb/personnel/indicateurs-de-suivi-de-mes-plans`
+  );
+
   if (isModuleLoading || !module) {
     return null;
   }
 
   return (
     <ModulePage view={view} title={module.titre}>
+      <TrackPageView
+        pageName={`app/tdb/personnel/${slug}`}
+        properties={{collectivite_id: collectiviteId!}}
+      />
       {/** Paramètres de la liste */}
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
         {/** Tri */}
@@ -147,7 +163,12 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
           variant="outlined"
           icon="equalizer-line"
           size="sm"
-          onClick={() => setIsSettingsOpen(true)}
+          onClick={() => {
+            trackEvent('tdb_modifier_filtres_indicateurs', {
+              collectivite_id: collectiviteId!,
+            });
+            setIsSettingsOpen(true);
+          }}
         />
         {isSettingsOpen && (
           <ModalIndicateursSuiviPlan

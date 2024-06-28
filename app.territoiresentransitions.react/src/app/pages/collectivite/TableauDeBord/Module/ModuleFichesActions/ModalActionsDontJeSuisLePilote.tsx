@@ -11,6 +11,7 @@ import {
   ModalProps,
   SelectFilter,
   SelectMultiple,
+  useEventTracker,
 } from '@tet/ui';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
@@ -46,6 +47,10 @@ const ModalActionsDontJeSuisLePilote = ({
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
+  );
+
+  const trackEvent = useEventTracker(
+    'app/tdb/personnel/actions-dont-je-suis-pilote'
   );
 
   const getPilotesValues = (filtreState: FiltreFichesAction) => {
@@ -137,6 +142,9 @@ const ModalActionsDontJeSuisLePilote = ({
           }}
           btnOKProps={{
             onClick: async () => {
+              trackEvent('tdb_valider_filtres_actions_pilotes', {
+                collectivite_id: collectiviteId!,
+              });
               await modulesSave({
                 dbClient: supabaseClient,
                 module: {
