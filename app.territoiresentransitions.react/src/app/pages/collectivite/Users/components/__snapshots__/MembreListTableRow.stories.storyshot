@@ -138,7 +138,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow A
     className="px-4"
   >
     <button
-      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
       data-test="delete"
       disabled={false}
       onBlur={[Function]}
@@ -277,7 +277,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow E
     className="px-4"
   >
     <button
-      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
       data-test="delete"
       disabled={false}
       onBlur={[Function]}
@@ -460,7 +460,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/MembreListTableRow L
     className="px-4"
   >
     <button
-      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5"
       data-test="delete"
       disabled={false}
       onBlur={[Function]}
