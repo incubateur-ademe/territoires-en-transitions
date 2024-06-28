@@ -7,4 +7,5 @@ export * from './utils/makeSearchString';
 export * from './utils/isAllowedOrigin';
 export * as Indicateurs from './indicateurs';
 export * as CollectiviteEngagee from './collectiviteEngagees';
+export * as FicheActions from './fiche_actions';
 export * from './panier_action_impact';
