@@ -4,7 +4,7 @@ exports[`design-system/Select CreateOption smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -27,7 +27,7 @@ exports[`design-system/Select CustomItem smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -47,7 +47,7 @@ exports[`design-system/Select Default smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -67,7 +67,7 @@ exports[`design-system/Select Disabled smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           disabled
           type="button"
   >
@@ -88,7 +88,7 @@ exports[`design-system/Select DisabledOption smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -114,7 +114,7 @@ exports[`design-system/Select DisabledSearchableMultiSelectWithValue smoke-test 
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           disabled
           type="button"
   >
@@ -149,7 +149,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
   <div class="flex flex-col gap-6">
     <button aria-expanded="false"
             aria-label="ouvrir le menu"
-            class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+            class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
             type="button"
     >
       <div class="flex px-4 min-h-[3rem] py-2">
@@ -164,7 +164,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
     </button>
     <button aria-expanded="false"
             aria-label="ouvrir le menu"
-            class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+            class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
             type="button"
     >
       <div class="flex px-4 min-h-[3rem] py-2">
@@ -179,7 +179,7 @@ exports[`design-system/Select Filter smoke-test 1`] = `
     </button>
     <button aria-expanded="false"
             aria-label="ouvrir le menu"
-            class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+            class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
             type="button"
     >
       <div class="flex px-4 min-h-[3rem] py-2">
@@ -200,7 +200,7 @@ exports[`design-system/Select MultiSelectWithSectionOptions smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -220,7 +220,7 @@ exports[`design-system/Select SearchableMultiSelect smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -243,7 +243,7 @@ exports[`design-system/Select SearchableSelectWithDebouncedApiCallOnTyping smoke
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[3rem] py-2">
@@ -266,7 +266,7 @@ exports[`design-system/Select SmallWithBadgeItems smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <button aria-expanded="false"
           aria-label="ouvrir le menu"
-          class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+          class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
           type="button"
   >
     <div class="flex px-4 min-h-[2.5rem] py-1">
@@ -285,7 +285,7 @@ exports[`design-system/Select SmallWithBadgeItems smoke-test 1`] = `
 exports[`design-system/Select WithField smoke-test 1`] = `
 <div class="w-full max-w-[24rem]">
   <div class="flex-grow flex flex-col gap-3">
-    <label>
+    <label class="ml-0 mb-0">
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -295,7 +295,7 @@ exports[`design-system/Select WithField smoke-test 1`] = `
     </label>
     <button aria-expanded="false"
             aria-label="ouvrir le menu"
-            class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+            class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
             type="button"
     >
       <div class="flex px-4 min-h-[3rem] py-2">
@@ -327,14 +327,14 @@ exports[`design-system/Select ZIndex smoke-test 1`] = `
            class="absolute inset-0 z-20 bg-pink-100"
       >
         <div class="flex-grow flex flex-col gap-3">
-          <label>
+          <label class="ml-0 mb-0">
             <div class="font-medium text-grey-8">
               Exemple
             </div>
           </label>
           <button aria-expanded="false"
                   aria-label="ouvrir le menu"
-                  class="w-full rounded-xl border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
+                  class="w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden"
                   type="button"
           >
             <div class="flex px-4 min-h-[3rem] py-2">
@@ -349,7 +349,7 @@ exports[`design-system/Select ZIndex smoke-test 1`] = `
           </button>
         </div>
         <div class="flex-grow flex flex-col gap-3 relative mt-6">
-          <label>
+          <label class="ml-0 mb-0">
             <div class="font-medium text-grey-8">
               Devrait être sous les options du select
             </div>

@@ -40,7 +40,7 @@ exports[`design-system/FormSection AvecFields smoke-test 1`] = `
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Titre du plan
           </div>
@@ -52,7 +52,7 @@ exports[`design-system/FormSection AvecFields smoke-test 1`] = `
         </div>
       </div>
       <div class="flex-grow flex flex-col gap-3">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Statut
           </div>
@@ -70,7 +70,7 @@ exports[`design-system/FormSection AvecFields smoke-test 1`] = `
         </div>
       </div>
       <div class="flex-grow flex flex-col gap-3">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Niveaude priorité
           </div>
@@ -152,7 +152,7 @@ exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Titre du plan
           </div>
@@ -164,7 +164,7 @@ exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
         </div>
       </div>
       <div class="flex-grow flex flex-col gap-3">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Statut
           </div>
@@ -182,7 +182,7 @@ exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
         </div>
       </div>
       <div class="flex-grow flex flex-col gap-3">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Niveaude priorité
           </div>
@@ -213,7 +213,7 @@ exports[`design-system/FormSection PlusieursSections smoke-test 1`] = `
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-        <label>
+        <label class="ml-0 mb-0">
           <div class="font-medium text-grey-8">
             Titre du plan
           </div>
@@ -233,7 +233,7 @@ exports[`design-system/FormSection SansHeader smoke-test 1`] = `
 <div class="w-full max-w-lg p-8">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-      <label>
+      <label class="ml-0 mb-0">
         <div class="font-medium text-grey-8">
           Titre du plan
         </div>
@@ -245,7 +245,7 @@ exports[`design-system/FormSection SansHeader smoke-test 1`] = `
       </div>
     </div>
     <div class="flex-grow flex flex-col gap-3 md:col-span-2">
-      <label>
+      <label class="ml-0 mb-0">
         <div class="font-medium text-grey-8">
           Statut
         </div>
