@@ -50,7 +50,7 @@ export const buttonThemeClassnames: Record<
   },
   outlined: {
     default: {
-      text: 'text-primary-7 hover:!text-primary-8',
+      text: 'text-primary-7 hover:text-primary-8',
       background: 'bg-primary-0 hover:!bg-primary-1',
       border: 'border-primary-7 hover:!border-primary-8',
       icon: 'fill-primary-7 group-hover:fill-primary-8',
