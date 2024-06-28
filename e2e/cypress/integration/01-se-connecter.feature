@@ -16,20 +16,20 @@ Fonctionnalité: Accéder au site et se connecter
       | Elément                 | Condition |
       | header                  | visible   |
       | home                    | absent    |
-      | formulaire de connexion | visible |
+      | formulaire de connexion | visible   |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YoLO@dodo.com |
-      | mdp | yolododo |
+      | mdp   | yolododo      |
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | header                                | visible   |
-      | home                                  | absent    |
-      | formulaire de connexion               | absent    |
-      | le tableau de bord de la collectivité | visible |
+      | Elément                      | Condition |
+      | header                       | visible   |
+      | home                         | absent    |
+      | formulaire de connexion      | absent    |
+      | le tableau de bord personnel | visible   |
 
   Scénario: Se connecter par lien unique en tant qu'utilisateur déjà rattaché
     Etant donné que j'ouvre le site
@@ -58,11 +58,11 @@ Fonctionnalité: Accéder au site et se connecter
     Quand je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors je suis redirigé sur l'app
     Et la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | header                                | visible   |
-      | home                                  | absent    |
-      | formulaire de connexion               | absent    |
-      | le tableau de bord de la collectivité | visible   |
+      | Elément                      | Condition |
+      | header                       | visible   |
+      | home                         | absent    |
+      | formulaire de connexion      | absent    |
+      | le tableau de bord personnel | visible   |
 
   Scénario: Se connecter en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
@@ -80,7 +80,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer | absent |
+      | footer                  | absent    |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
@@ -143,7 +143,7 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |
       | home                    | absent    |
       | formulaire de connexion | visible   |
-      | footer | absent |
+      | footer                  | absent    |
 
     Quand je clique sur le bouton "Connexion avec mot de passe"
     Et que je remplis le "formulaire de connexion" avec les valeurs suivantes :
@@ -156,8 +156,8 @@ Fonctionnalité: Accéder au site et se connecter
       | header                  | visible   |                                                 |
       | home                    | absent    |                                                 |
       | formulaire de connexion | visible   |                                                 |
-      | formulaire de connexion | contient | L'email ou le mot de passe ne correspondent pas |
-      | footer                  | absent   |                                                 |
+      | formulaire de connexion | contient  | L'email ou le mot de passe ne correspondent pas |
+      | footer                  | absent    |                                                 |
 
   Scénario: Demander un lien de réinitialisation et réinitialiser le mot de passe
     Etant donné que la mailbox de "yolo" est vidée
@@ -177,7 +177,7 @@ Fonctionnalité: Accéder au site et se connecter
       | formulaire de connexion                    | visible   |
       | demande de lien de réinitialisation du mdp | visible   |
 
-# étape 1 : demande la réinit.
+    # étape 1 : demande la réinit.
     Quand je remplis le "demande de lien de réinitialisation du mdp" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | YoLO@dodo.cOm |
@@ -185,7 +185,7 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition | Valeur |
       | formulaire de connexion                    | visible   |        |
-      | message de réinitialisation envoyé | visible |  |
+      | message de réinitialisation envoyé         | visible   |        |
       | demande de lien de réinitialisation du mdp | absent    |        |
 
     # étape 2 : saisie code OTP
@@ -204,7 +204,7 @@ Fonctionnalité: Accéder au site et se connecter
       | Elément                               | Condition |
       | formulaire de connexion               | absent    |
       | formulaire de réinitialisation du mdp | absent    |
-      | le tableau de bord de la collectivité | visible   |
+      | le tableau de bord personnel          | visible   |
 
   Scénario: Demander un lien de réinitialisation du mot de passe et visualiser une erreur
     Etant donné que j'ouvre le site
@@ -229,7 +229,7 @@ Fonctionnalité: Accéder au site et se connecter
     Alors la page vérifie les conditions suivantes :
       | Elément                                    | Condition | Valeur                                       |
       | formulaire de connexion                    | visible   |                                              |
-      | message de réinitialisation envoyé | absent |  |
+      | message de réinitialisation envoyé         | absent    |                                              |
       | demande de lien de réinitialisation du mdp | visible   |                                              |
       | demande de lien de réinitialisation du mdp | contient  | L'envoi du lien de réinitialisation a échoué |
 
@@ -260,14 +260,14 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | header                                | visible   |
-      | home                                  | absent    |
-      | formulaire de connexion               | absent    |
-      | formulaire de création de compte      | absent    |
-      | toutes les collectivités              | absent    |
-      | le tableau de bord de la collectivité | visible   |
-      | footer                                | présent   |
+      | Elément                          | Condition |
+      | header                           | visible   |
+      | home                             | absent    |
+      | formulaire de connexion          | absent    |
+      | formulaire de création de compte | absent    |
+      | toutes les collectivités         | absent    |
+      | le tableau de bord personnel     | visible   |
+      | footer                           | présent   |
 
   Scénario: Se connecter et accepter les CGU
     Etant donné que je suis connecté en tant qu'utilisateur de la collectivité 1 n'ayant pas encore accepté les CGU

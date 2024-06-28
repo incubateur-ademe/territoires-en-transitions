@@ -47,9 +47,9 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
 
     Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"
     Alors le "formulaire de création de compte" est visible
-    Et le "formulaire de création de compte" vérifie les conditions suivantes :    
-      | Champ | Condition           | Valeur        |
-      | email | contient la valeur  | nono@dodo.com |
+    Et le "formulaire de création de compte" vérifie les conditions suivantes :
+      | Champ | Condition          | Valeur        |
+      | email | contient la valeur | nono@dodo.com |
 
     Quand je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors le "message lien envoyé" est visible
@@ -66,11 +66,11 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
     Et que je clique sur le bouton "cgu" du "formulaire de création de compte"
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors la page vérifie les conditions suivantes :
-      | Elément                               | Condition |
-      | header                                | visible   |
-      | home                                  | absent    |
-      | formulaire de connexion               | absent    |
-      | le tableau de bord de la collectivité | visible |
+      | Elément                      | Condition |
+      | header                       | visible   |
+      | home                         | absent    |
+      | formulaire de connexion      | absent    |
+      | le tableau de bord personnel | visible   |
 
     Quand je suis sur la page "Gestion des membres" de la collectivité "1"
     Alors le tableau des membres doit contenir l'utilisateur "nono@dodo.com"
