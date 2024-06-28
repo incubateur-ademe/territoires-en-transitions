@@ -6,11 +6,12 @@ import {
   TFicheAction,
   TFicheActionServicePiloteInsert,
   TFicheActionStructureInsert,
-  TFinanceurMontant,
-  TFinanceurTagInsert,
   TPartenaireInsert,
-  TSousThematiqueInsert,
+  TFinanceurTagInsert,
+  TFinanceurMontant,
+  TFicheResume,
   TThematiqueRow,
+  TSousThematiqueRow,
 } from 'types/alias';
 import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
@@ -30,7 +31,7 @@ export type FicheAction = Omit<
   | 'fiches_liees'
 > & {
   thematiques: TThematiqueRow[] | null;
-  sous_thematiques: TSousThematiqueInsert[] | null;
+  sous_thematiques: TSousThematiqueRow[] | null;
   partenaires: TPartenaireInsert[] | null;
   structures: TFicheActionStructureInsert[] | null;
   pilotes: Personne[] | null;

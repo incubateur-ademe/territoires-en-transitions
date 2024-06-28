@@ -1,7 +1,8 @@
 import {useParams} from 'react-router-dom';
 import {useFicheAction} from '../FicheAction/data/useFicheAction';
-import FicheActionHeader from './FicheActionHeader';
 import {useEditFicheAction} from '../FicheAction/data/useUpsertFicheAction';
+import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
+import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
 
 type FicheActionProps = {
   isReadonly: boolean;
@@ -27,6 +28,14 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
           isReadonly={isReadonly}
           updateTitle={titre => updateFiche({...fiche, titre})}
         />
+        <div className="grid grid-cols-4">
+          <FicheActionDescription
+            isReadonly={isReadonly}
+            fiche={fiche}
+            className="col-span-4"
+            updateFiche={updateFiche}
+          />
+        </div>
       </div>
     </div>
   );

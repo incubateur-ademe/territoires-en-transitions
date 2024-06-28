@@ -79,7 +79,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Admin 1`
     className="flex gap-4 flex-wrap justify-end"
   >
     <button
-      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
       disabled={false}
       onClick={[Function]}
       type="button"
@@ -178,7 +178,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Edition 
     className="flex gap-4 flex-wrap justify-end"
   >
     <button
-      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+      className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
       disabled={false}
       onClick={[Function]}
       type="button"
