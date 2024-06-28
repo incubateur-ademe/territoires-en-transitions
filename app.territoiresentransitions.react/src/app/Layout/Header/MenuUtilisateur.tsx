@@ -6,7 +6,6 @@ import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
-import {useQuery} from '../../../core-logic/hooks/query';
 import {useQueryClient} from 'react-query';
 
 /**
