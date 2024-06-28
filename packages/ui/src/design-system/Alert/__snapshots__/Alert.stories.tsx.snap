@@ -148,7 +148,7 @@ exports[`design-system/Alert WithFooter smoke-test 1`] = `
         <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
           Valider
         </button>
-        <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+        <button class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
           Annuler
         </button>
       </div>

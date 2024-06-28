@@ -13,7 +13,7 @@ exports[`design-system/Button AnchorButtons smoke-test 1`] = `
     Internal link
   </a>
   <a href="https://territoiresentransitions.fr"
-     class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-3.5"
+     class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-3.5"
   >
     <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -59,7 +59,7 @@ exports[`design-system/Button AnchorButtons smoke-test 1`] = `
     External link
   </a>
   <a href="https://territoiresentransitions.fr"
-     class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+     class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
      target="_blank"
      rel="noreferrer noopener"
   >
@@ -164,7 +164,7 @@ exports[`design-system/Button Variants smoke-test 1`] = `
     <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
     </span>
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5">
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5">
     <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
   </button>
@@ -222,7 +222,7 @@ exports[`design-system/Button Variants smoke-test 1`] = `
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-secondary-1 hover:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 text-sm py-2.5 px-6">
     Secondary
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
     Outlined
   </button>
   <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6">
@@ -274,7 +274,7 @@ exports[`design-system/Button Variants smoke-test 1`] = `
     </span>
     Secondary
   </button>
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
     <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
     Outlined

@@ -14,7 +14,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
               </i>
             </div>
           </div>
-          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5 lg:hidden h-fit">
+          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5 lg:hidden h-fit">
             <span class="ri-menu-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
             </span>
           </button>
