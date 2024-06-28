@@ -3,7 +3,9 @@
 exports[`design-system/Field Default smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -22,7 +24,9 @@ exports[`design-system/Field Default smoke-test 1`] = `
 exports[`design-system/Field DisabledWithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8 text-grey-5">
         Description de l'action
       </div>
@@ -50,7 +54,9 @@ exports[`design-system/Field DisabledWithHint smoke-test 1`] = `
 exports[`design-system/Field WithError smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -76,7 +82,9 @@ exports[`design-system/Field WithError smoke-test 1`] = `
 exports[`design-system/Field WithHint smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -103,7 +111,9 @@ exports[`design-system/Field WithHint smoke-test 1`] = `
 exports[`design-system/Field WithInfo smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -129,7 +139,9 @@ exports[`design-system/Field WithInfo smoke-test 1`] = `
 exports[`design-system/Field WithSuccess smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>
@@ -155,7 +167,9 @@ exports[`design-system/Field WithSuccess smoke-test 1`] = `
 exports[`design-system/Field WithWarning smoke-test 1`] = `
 <div class="flex">
   <div class="flex-grow flex flex-col gap-3">
-    <label for="un_nom">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
       <div class="font-medium text-grey-8">
         Description de l'action
       </div>

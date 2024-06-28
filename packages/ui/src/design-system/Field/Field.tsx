@@ -38,7 +38,7 @@ export const Field = ({
 }: Props) => {
   return (
     <div className={classNames(`flex-grow flex flex-col gap-3`, className)}>
-      <label htmlFor={htmlFor}>
+      <label htmlFor={htmlFor} className="ml-0 mb-0">
         {/** Title */}
         <div
           className={classNames('font-medium text-grey-8', {
