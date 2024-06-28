@@ -1,11 +1,15 @@
 import {getAuthPaths} from '@tet/api';
-import {homePath, makeCollectiviteAccueilUrl} from 'app/paths';
+import {
+  homePath,
+  makeCollectiviteAccueilUrl,
+  makeTableauBordLandingUrl,
+} from 'app/paths';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {
   acceptAgentInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
-import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
+import {useMesCollectivitesEtPlans} from 'core-logic/hooks/useOwnedCollectivites';
 import {useEffect} from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
 
@@ -14,31 +18,32 @@ export const Redirector = () => {
   const {pathname} = useLocation();
   const {isConnected} = useAuth();
   const {invitationId, invitationEmail, consume} = useInvitationState();
-  const userCollectivites = useOwnedCollectivites();
+  const {data: userInfo} = useMesCollectivitesEtPlans();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
   //    on redirige vers la page "Collectivités"
   // - est associé à une ou plus collectivité(s) :
-  //    on redirige vers le tableau de bord de la première collectivité
+  //      on redirige vers la 1ère collectivité sur la page :
+  //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
+  //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (userCollectivites && isLandingConnected) {
-      if (
-        userCollectivites &&
-        userCollectivites.length >= 1 &&
-        userCollectivites[0].collectivite_id
-      ) {
-        history.push(
-          makeCollectiviteAccueilUrl({
-            collectiviteId: userCollectivites[0].collectivite_id,
-          })
-        );
+    if (isLandingConnected && userInfo) {
+      const collectiviteId = userInfo?.collectivites?.[0]?.collectivite_id;
+      const auMoinsUnPlanActionsPilotable = !!userInfo?.plans?.length;
+
+      if (collectiviteId) {
+        if (auMoinsUnPlanActionsPilotable) {
+          history.push(makeTableauBordLandingUrl({collectiviteId}));
+        } else {
+          history.push(makeCollectiviteAccueilUrl({collectiviteId}));
+        }
       } else {
         history.push(homePath);
       }
     }
-  }, [isLandingConnected, userCollectivites]);
+  }, [isLandingConnected, userInfo]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
