@@ -87,6 +87,55 @@ export interface TrackingPlan extends Record<never, Page> {
     events: never;
   };
 
+  /** Page tableau de bord de la collectivité */
+  'app/tdb/collectivite': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: never;
+  };
+
+  /** Page tableau de bord personnel */
+  'app/tdb/personnel': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      // clic sur le bouton "éditer" de chaque module
+      tdb_modifier_filtres_indicateurs: {};
+      tdb_modifier_filtres_actions_pilotes: {};
+      tdb_modifier_filtres_actions_modifiees: {};
+    };
+  };
+
+  /** Page TDB "indicateurs de suivi de mes plans" */
+  'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_indicateurs: {};
+      tdb_valider_filtres_indicateurs: {};
+    };
+  };
+
+  /** Page TDB “actions dont je suis le pilote" */
+  'app/tdb/personnel/actions-dont-je-suis-pilote': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_actions_pilotes: {};
+      tdb_valider_filtres_actions_pilotes: {};
+    };
+  };
+
+  /** Page TDB "actions récemment modifiées" */
+  'app/tdb/personnel/actions-recemment-modifiees': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_actions_modifiees: {};
+      tdb_valider_filtres_actions_modifiees: {};
+    };
+  };
+
   /* La page à la racine de https://auth.territoiresentransitions.fr */
   'auth/': NoProps;
 
