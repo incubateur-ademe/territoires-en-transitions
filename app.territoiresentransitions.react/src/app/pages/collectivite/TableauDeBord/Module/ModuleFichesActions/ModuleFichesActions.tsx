@@ -23,6 +23,11 @@ type Props = {
   module: ModuleFicheActionsSelect;
 };
 
+const SLUG_TO_TRACKING_ID = {
+  'actions-dont-je-suis-pilote': 'actions_pilotes',
+  'actions-recemment-modifiees': 'actions_modifiees',
+} as const;
+
 /** Module pour les différents modules liés aux fiches action
  * dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({view, module}: Props) => {
@@ -42,6 +47,9 @@ const ModuleFichesActions = ({view, module}: Props) => {
       title={module.titre}
       filtre={module.options.filtre}
       symbole={<PictoExpert />}
+      trackingId={
+        SLUG_TO_TRACKING_ID[module.slug as keyof typeof SLUG_TO_TRACKING_ID]
+      }
       editModal={openState => {
         if (module.slug === 'actions-dont-je-suis-pilote') {
           return (
