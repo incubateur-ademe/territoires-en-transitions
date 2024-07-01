@@ -1,7 +1,8 @@
 import {Filtre} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Button} from '@tet/ui';
+import {Button, useEventTracker} from '@tet/ui';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import classNames from 'classnames';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import React, {useState} from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
@@ -15,6 +16,8 @@ type Props = {
   title: string;
   /** Symbole du module (picto svg) */
   symbole?: React.ReactNode;
+  /** ID de tracking */
+  trackingId: 'indicateurs' | 'actions_pilotes' | 'actions_modifiees';
   /** Fonction d'affichage de la modale avec les filtres du modules,
    * à afficher au clique des boutons d'édition.
    * Récupère le state d'ouverture en argument */
@@ -38,6 +41,7 @@ const Module = ({
   title,
   filtre,
   symbole,
+  trackingId,
   editModal,
   isLoading,
   isEmpty,
@@ -45,6 +49,9 @@ const Module = ({
   footerButtons,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const collectivite_id = useCollectiviteId()!;
+
+  const trackEvent = useEventTracker('app/tdb/personnel');
 
   if (isLoading) {
     return (
@@ -84,7 +91,12 @@ const Module = ({
             icon="edit-line"
             size="xs"
             className="ml-auto"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              trackEvent(`tdb_modifier_filtres_${trackingId}`, {
+                collectivite_id,
+              });
+              setIsModalOpen(true);
+            }}
           />
           {isModalOpen &&
             editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
