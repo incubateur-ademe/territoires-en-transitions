@@ -1,13 +1,17 @@
 import {useQuery} from 'react-query';
 
 import {supabaseClient} from 'core-logic/api/supabase';
-import {TFilArianeLink} from 'ui/shared/FilAriane';
 import {
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from 'app/paths';
 import {TAxeRow} from 'types/alias';
 import {generateTitle} from '../../FicheAction/data/utils';
+
+type FilArianeLink = {
+  label: string;
+  href?: string;
+};
 
 type FilArianeArgs = {
   collectiviteId: number;
@@ -21,14 +25,14 @@ export const generateFilArianeLinks = ({
   chemin,
   titreFiche,
   noLinks,
-}: FilArianeArgs): TFilArianeLink[] => {
+}: FilArianeArgs): FilArianeLink[] => {
   return [
     ...chemin.map((axe, i) => {
       // Lien plan d'action
       if (i === 0) {
         return {
-          displayedName: generateTitle(axe.nom),
-          path: !noLinks
+          label: generateTitle(axe.nom),
+          href: !noLinks
             ? makeCollectivitePlanActionUrl({
                 collectiviteId,
                 planActionUid: chemin[0].id.toString(),
@@ -39,8 +43,8 @@ export const generateFilArianeLinks = ({
       // Lien axe niveau 1
       if (i === 1) {
         return {
-          displayedName: generateTitle(axe.nom),
-          path: !noLinks
+          label: generateTitle(axe.nom),
+          href: !noLinks
             ? makeCollectivitePlanActionAxeUrl({
                 collectiviteId,
                 planActionUid: chemin[0].id.toString(),
@@ -51,10 +55,10 @@ export const generateFilArianeLinks = ({
       }
       // Autres axes
       return {
-        displayedName: generateTitle(axe.nom),
+        label: generateTitle(axe.nom),
       };
     }),
-    {displayedName: generateTitle(titreFiche)},
+    {label: generateTitle(titreFiche)},
   ];
 };
 
