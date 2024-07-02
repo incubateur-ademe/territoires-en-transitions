@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {FicheAction} from '../../FicheAction/data/types';
-import {Badge, Button, Divider, Icon} from '@tet/ui';
+import {Button, Divider, Icon} from '@tet/ui';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import FilledCalendarPicto from './FilledCalendarPicto';
@@ -42,7 +42,7 @@ const FicheActionPlanning = ({
   return (
     <div
       className={classNames(
-        'bg-white border border-grey-3 rounded-lg py-10 px-8 flex flex-col items-center gap-7 text-center relative',
+        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center gap-5 text-center relative',
         className
       )}
     >
@@ -51,7 +51,7 @@ const FicheActionPlanning = ({
           icon="edit-line"
           size="xs"
           variant="grey"
-          className="absolute top-6 right-6"
+          className="absolute top-4 lg:top-5 xl:top-6 right-4 lg:right-5 xl:right-6"
           onClick={() => setIsModalOpen(true)}
         />
       )}
@@ -91,11 +91,11 @@ const FicheActionPlanning = ({
           {(((!!dateDebut || !!dateFinPrevisionnelle) &&
             (!!statut || !!niveauPriorite || !!ameliorationContinue)) ||
             !!statut ||
-            !!niveauPriorite) && <Divider className="-mb-6" />}
+            !!niveauPriorite) && <Divider className="-mb-4" />}
 
           {/* Statut et niveau de priorité */}
           {(!!statut || !!niveauPriorite) && (
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               {!!statut && <BadgeStatut statut={statut} />}
               {!!niveauPriorite && <BadgePriorite priorite={niveauPriorite} />}
             </div>
@@ -103,7 +103,7 @@ const FicheActionPlanning = ({
 
           {/* Action récurrente */}
           {!!ameliorationContinue && (
-            <div className="flex gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center items-center">
               <Icon
                 icon="loop-left-line"
                 className="text-primary-10"
