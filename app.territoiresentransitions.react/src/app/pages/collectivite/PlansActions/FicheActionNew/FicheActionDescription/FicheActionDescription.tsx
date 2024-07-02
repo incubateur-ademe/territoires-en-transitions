@@ -26,7 +26,7 @@ const FicheActionDescription = ({
   return (
     <div
       className={classNames(
-        'bg-primary-7 rounded-lg py-10 px-8 flex flex-col gap-7',
+        'bg-primary-7 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-7',
         className
       )}
     >
