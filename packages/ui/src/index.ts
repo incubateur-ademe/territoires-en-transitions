@@ -14,6 +14,7 @@ export * from './components/tracking';
 export * from './design-system/Accordion';
 export * from './design-system/Alert';
 export * from './design-system/Badge';
+export * from './design-system/Breadcrumbs';
 export * from './design-system/Button';
 export * from './design-system/Card';
 export * from './design-system/Checkbox';
