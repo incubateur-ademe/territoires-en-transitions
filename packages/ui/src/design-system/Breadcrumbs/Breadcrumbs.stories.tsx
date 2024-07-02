@@ -91,3 +91,13 @@ export const Sizes: Story = {
     );
   },
 };
+
+export const ReadOnlyMode: Story = {
+  render: () => {
+    return (
+      <div className="flex flex-col gap-8">
+        <Breadcrumbs buttons={buttons} />
+      </div>
+    );
+  },
+};

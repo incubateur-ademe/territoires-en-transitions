@@ -11,7 +11,7 @@ const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
 
 type BreadcrumbsProps = {
   /** Liste des boutons à afficher dans le fil d'ariane */
-  buttons: {
+  buttons?: {
     label: string;
     href?: string;
     onClick?: () => void;
@@ -25,10 +25,18 @@ type BreadcrumbsProps = {
 /**
  * Fil d'ariane, avec liens ou boutons
  */
-export const Breadcrumbs = ({buttons, size, onClick}: BreadcrumbsProps) => {
+export const Breadcrumbs = ({
+  buttons,
+  size = 'md',
+  onClick,
+}: BreadcrumbsProps) => {
+  const readOnlyMode =
+    buttons.filter(button => button.href || button.onClick).length === 0 &&
+    !onClick;
+
   return (
     <div className="flex flex-wrap gap-x-1 gap-y-0.5">
-      {buttons.map((button, index) => {
+      {(buttons ?? []).map((button, index) => {
         const isLastElement = index === buttons.length - 1;
 
         return (
@@ -37,13 +45,15 @@ export const Breadcrumbs = ({buttons, size, onClick}: BreadcrumbsProps) => {
             className="flex items-center shrink-0 gap-x-1"
           >
             <Button
-              disabled={isLastElement}
+              disabled={isLastElement && !readOnlyMode}
               className={classNames(
                 'font-normal border-none hover:!pb-px text-left',
                 {
-                  '!cursor-default !text-primary-9': isLastElement,
-                  '!text-grey-6 hover:!text-primary-9 transition':
-                    !isLastElement,
+                  '!cursor-default': isLastElement || readOnlyMode,
+                  '!text-primary-9': isLastElement && !readOnlyMode,
+                  '!text-grey-6': !isLastElement || readOnlyMode,
+                  'hover:!text-primary-9 transition':
+                    !isLastElement && !readOnlyMode,
                 }
               )}
               variant="underlined"
