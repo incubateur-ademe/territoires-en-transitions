@@ -1,6 +1,5 @@
 import {Link, useParams} from 'react-router-dom';
 
-import FilAriane from 'ui/shared/FilAriane';
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {FicheAction} from '../data/types';
 import {
@@ -11,6 +10,7 @@ import {TAxeInsert, TAxeRow} from 'types/alias';
 import {useState} from 'react';
 import classNames from 'classnames';
 import {generateTitle} from '../data/utils';
+import {Breadcrumbs} from '@tet/ui';
 
 type Props = {
   fiche: FicheAction;
@@ -60,16 +60,13 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
   const {data} = usePlanActionChemin(axe_id);
 
   return (
-    <FilAriane
-      links={
-        data
-          ? generateFilArianeLinks({
-              collectiviteId,
-              chemin: data.chemin as TAxeRow[],
-              titreFiche: generateTitle(titreFiche),
-            })
-          : []
-      }
+    <Breadcrumbs
+      size="xs"
+      buttons={generateFilArianeLinks({
+        collectiviteId,
+        chemin: (data?.chemin ?? []) as TAxeRow[],
+        titreFiche: generateTitle(titreFiche),
+      })}
     />
   );
 };

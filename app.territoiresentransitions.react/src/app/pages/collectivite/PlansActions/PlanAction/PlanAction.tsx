@@ -10,9 +10,9 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {checkAxeHasFiche} from './data/utils';
 import {usePlanAction} from './data/usePlanAction';
 import {PlanNode} from './data/types';
-import FilAriane from 'ui/shared/FilAriane';
 import {makeCollectivitePlanActionUrl} from 'app/paths';
 import {generateTitle} from '../FicheAction/data/utils';
+import {Breadcrumbs} from '@tet/ui';
 
 type PlanActionProps = {
   /** Axe racine du plan d'action (depth = 0) */
@@ -51,16 +51,17 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
         {/** Lien plan d'action page axe */}
         {isAxePage && (
           <div className="py-6">
-            <FilAriane
-              links={[
+            <Breadcrumbs
+              size="xs"
+              buttons={[
                 {
-                  path: makeCollectivitePlanActionUrl({
+                  label: generateTitle(plan.nom),
+                  href: makeCollectivitePlanActionUrl({
                     collectiviteId: collectivite?.collectivite_id!,
                     planActionUid: axe.id.toString(),
                   }),
-                  displayedName: generateTitle(plan.nom),
                 },
-                {displayedName: generateTitle(axe.nom)},
+                {label: generateTitle(axe.nom)},
               ]}
             />
           </div>

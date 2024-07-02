@@ -3,10 +3,10 @@ import {ProgressionRow} from 'app/pages/collectivite/Progression/queries';
 import {ReferentielParamOption} from 'app/paths';
 import {useEffect, useState} from 'react';
 import {TableOptions} from 'react-table';
-import FilArianeButtons from 'ui/shared/FilArianeButtons';
 import TagFilters from 'ui/shared/filters/TagFilters';
 import ChartCard from './ChartCard';
 import {getIndexTitles} from '../utils';
+import {Breadcrumbs} from '@tet/ui';
 
 export type TBarChartScoreTable =
   | Pick<
@@ -176,11 +176,12 @@ const BarChartCardWithSubrows = ({
               visibility: scoreBreadcrumb.length > 1 ? 'visible' : 'hidden',
             }}
           >
-            <FilArianeButtons
-              displayedNames={scoreBreadcrumb.map(
-                currentScore => currentScore.name
-              )}
-              handleClick={handleOpenParentIndex}
+            <Breadcrumbs
+              size="xs"
+              buttons={scoreBreadcrumb.map(currentScore => ({
+                label: currentScore.name,
+              }))}
+              onClick={handleOpenParentIndex}
             />
           </div>
           {percentage === undefined && (
