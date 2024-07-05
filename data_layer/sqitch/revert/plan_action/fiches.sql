@@ -11,7 +11,14 @@ DROP INDEX IF EXISTS fiche_action_structure_tag_structure_tag_id_idx;
 DROP INDEX IF EXISTS fiche_action_partenaire_tag_partenaire_tag_id_idx;
 
 
-DROP FUNCTION IF EXISTS fiche_action_pilote_dcp(public.fiche_action_pilote);
+ALTER TABLE fiche_action_pilote 
+DROP CONSTRAINT IF EXISTS fiche_action_pilote_user_id_fkey;
+
+ALTER TABLE fiche_action_pilote
+ADD CONSTRAINT fiche_action_pilote_user_id_fkey 
+FOREIGN KEY (user_id)
+REFERENCES auth.users(id);
+
 
 
 CREATE OR REPLACE FUNCTION public.fiche_action_service_tag(public.fiches_action)
