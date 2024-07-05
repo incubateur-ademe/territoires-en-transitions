@@ -680,3 +680,4 @@ indicateur/filtre [indicateur/filtre@v3.6.0] 2024-06-25T15:16:51Z Frederic Arnou
 plan_action/fiches [plan_action/fiches@v3.6.0] 2024-07-02T09:46:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Crée une Fiche Action avec le statut "à venir" par défaut
 @v3.7.0 2024-07-02T13:19:49Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Crée une Fiche Action avec le statut "à venir" par défaut
 
+plan_action/fiches [plan_action/fiches@v3.7.0] 2024-07-02T13:21:08Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Amélioration des performances des requêtes de filtre

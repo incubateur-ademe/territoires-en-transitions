@@ -15,8 +15,6 @@ const ficheActionColumns = [
   'statut',
   'collectivite_id',
   'modified_at',
-  'pilotes',
-  // 'plans',
   'date_fin_provisoire',
   'niveau_priorite',
   'restreint',
@@ -46,17 +44,12 @@ export async function ficheResumesFetch({
   const relatedTables = new Set<string>();
 
   // Toujours récupérer les axes pour avoir l'id du plan racine
-  relatedTables.add('plans:fiche_action_axe!inner(*)');
-  // if (filtre.planActionIds?.length) {
-  // }
+  relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
 
-  if (filtre.utilisateurPiloteIds?.length) {
-    relatedTables.add('fiche_action_pilote!inner()');
-  }
-
-  if (filtre.personnePiloteIds?.length) {
-    relatedTables.add('fiche_action_pilote!inner()');
-  }
+  // Toujours récupérer les pilotes liés à la fiche
+  relatedTables.add(
+    'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:fiche_action_pilote_dcp(prenom, nom, user_id))'
+  );
 
   if (filtre.structurePiloteIds?.length) {
     relatedTables.add('fiche_action_structure_tag!inner()');
@@ -70,7 +63,7 @@ export async function ficheResumesFetch({
   // 👇
 
   const query = dbClient
-    .from('fiches_action')
+    .from('fiche_action')
     .select([...ficheActionColumns, ...relatedTables].join(','), {
       count: 'exact',
     })
@@ -87,15 +80,17 @@ export async function ficheResumesFetch({
   // 👇
 
   if (filtre.planActionIds?.length) {
-    query.in('fiche_action_axe.plan', filtre.planActionIds);
+    query.in('fiche_action_axe.axe.plan', filtre.planActionIds);
   }
 
   if (filtre.utilisateurPiloteIds?.length) {
-    query.in('fiche_action_pilote.user_id', filtre.utilisateurPiloteIds);
+    query.not('pilotes', 'is', null);
+    query.in('pilotes.user_id', filtre.utilisateurPiloteIds);
   }
 
   if (filtre.personnePiloteIds?.length) {
-    query.in('fiche_action_pilote.tag_id', filtre.personnePiloteIds);
+    query.not('pilotes', 'is', null);
+    query.in('pilotes.tag_id', filtre.personnePiloteIds);
   }
 
   if (filtre.structurePiloteIds?.length) {
@@ -128,7 +123,6 @@ export async function ficheResumesFetch({
     query.or(
       `titre.ilike.*${filtre.texteNomOuDescription}*,description.ilike.*${filtre.texteNomOuDescription}*`
     );
-    // query.ilike('titre', `%${filtre.texteNomOuDescription}%`);
   }
 
   query.order('modified_at', {ascending: false});
@@ -147,7 +141,23 @@ export async function ficheResumesFetch({
 
   const fiches = data.map(fiche => ({
     ...fiche,
-    plan_id: fiche.plans?.[0]?.id,
+    plan_id: fiche.plans?.[0]?.plan,
+    pilotes:
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (fiche.pilotes as any[])?.flatMap(({personne_tag, utilisateur}) => {
+        if (personne_tag) {
+          return personne_tag;
+        }
+
+        if (utilisateur) {
+          return {
+            ...utilisateur,
+            nom: `${utilisateur.prenom} ${utilisateur.nom}`,
+          };
+        }
+
+        return [];
+      }) ?? null,
   }));
 
   return {data: fiches, count, nextPage, nbOfPages};
