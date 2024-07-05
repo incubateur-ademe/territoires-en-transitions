@@ -30,7 +30,6 @@ CREATE INDEX IF NOT EXISTS fiche_action_partenaire_tag_partenaire_tag_id_idx
 -- Supprime les computed field associés à la vue `fiche_actions`
 -- qui étaient utilisés pour les filtres du tableau de bord.
 -- (à la place on filtre désormais directement sur la table `fiche_action`)
--- 👇
 
 DROP FUNCTION IF EXISTS public.fiche_action_service_tag(public.fiches_action);
 
@@ -43,21 +42,16 @@ DROP FUNCTION IF EXISTS public.fiche_action_axe(public.fiches_action);
 DROP FUNCTION IF EXISTS public.fiche_action_pilote(public.fiches_action);
 
 
--- On garde ce computed field pour les DCP associés à fiche_action_pilote
--- dont la foreign key pointe sur auth.users au lieu de public.dcp
-CREATE OR REPLACE FUNCTION public.fiche_action_pilote_dcp(public.fiche_action_pilote)
-    RETURNS SETOF public.dcp ROWS 1
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
+-- Change la foreign key de `fiche_action_pilote` pour pointer sur `public.dcp` 
+-- au lieu de `auth.users`. Cela permet à PostgREST de requêter la ressource `dcp` liée.
 
-    SELECT dcp.*
-    FROM dcp
-    WHERE dcp.user_id = $1.user_id
-    ;
-END;
+ALTER TABLE fiche_action_pilote 
+DROP CONSTRAINT IF EXISTS fiche_action_pilote_user_id_fkey;
+
+ALTER TABLE fiche_action_pilote
+ADD CONSTRAINT fiche_action_pilote_user_id_fkey 
+FOREIGN KEY (user_id)
+REFERENCES dcp(user_id);
 
 
 COMMIT;
