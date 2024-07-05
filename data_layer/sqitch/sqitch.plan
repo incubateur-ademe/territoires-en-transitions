@@ -681,3 +681,5 @@ plan_action/fiches [plan_action/fiches@v3.6.0] 2024-07-02T09:46:13Z Frederic Arn
 @v3.7.0 2024-07-02T13:19:49Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Crée une Fiche Action avec le statut "à venir" par défaut
 
 plan_action/fiches [plan_action/fiches@v3.7.0] 2024-07-02T13:21:08Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Amélioration des performances des requêtes de filtre
+@v3.8.0 2024-07-05T19:06:22Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Amélioration des performances des requêtes de filtre
+
