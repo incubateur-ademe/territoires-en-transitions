@@ -48,7 +48,7 @@ export async function ficheResumesFetch({
 
   // Toujours récupérer les pilotes liés à la fiche
   relatedTables.add(
-    'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:fiche_action_pilote_dcp(prenom, nom, user_id))'
+    'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:dcp(prenom, nom, user_id))'
   );
 
   if (filtre.structurePiloteIds?.length) {
