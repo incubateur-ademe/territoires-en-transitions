@@ -170,13 +170,13 @@ const FicheActionCard = ({
           <span className="text-xs text-grey-8 italic">
             Modifié {getModifiedSince(ficheAction.modified_at!)}
           </span>
-          {(ficheAction.pilotes || ficheAction.date_fin_provisoire) && (
+          {(ficheAction.pilotes?.length || ficheAction.date_fin_provisoire) && (
             <div className="flex items-center gap-4 flex-wrap text-sm text-primary">
-              {ficheAction.pilotes && (
+              {ficheAction.pilotes?.length && (
                 <div className="flex items-start" title="Pilotes">
                   <span className="fr-icon-user-line mr-1.5 before:!w-4" />
                   <span className="mt-0.5">
-                    {ficheAction.pilotes?.map(pilote => pilote.nom).join(' | ')}
+                    {ficheAction.pilotes.map(pilote => pilote.nom).join(' | ')}
                   </span>
                 </div>
               )}
