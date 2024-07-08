@@ -1,4 +1,4 @@
-const EmtpyCalendarPicto = ({className}: {className?: string}) => {
+const EmptyCalendarPicto = ({className}: {className?: string}) => {
   return (
     <svg
       className={className}
@@ -58,4 +58,4 @@ const EmtpyCalendarPicto = ({className}: {className?: string}) => {
   );
 };
 
-export default EmtpyCalendarPicto;
+export default EmptyCalendarPicto;
