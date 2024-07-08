@@ -37,7 +37,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
             className="col-span-full lg:col-span-2 xl:col-span-3"
             updateFiche={updateFiche}
           />
-          <div className="max-lg:col-span-full lg:row-span-2 max-lg:grid max-lg:grid-cols-1 md:max-lg:grid-cols-3 lg:flex lg:flex-col gap-5">
+          <div className="max-lg:col-span-full lg:row-span-3 max-lg:grid max-lg:grid-cols-1 md:max-lg:grid-cols-3 lg:flex lg:flex-col gap-5">
             <FicheActionPlanning
               isReadonly={isReadonly}
               fiche={fiche}

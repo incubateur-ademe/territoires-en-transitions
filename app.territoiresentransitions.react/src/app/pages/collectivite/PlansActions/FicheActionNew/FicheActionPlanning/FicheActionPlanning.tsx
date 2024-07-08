@@ -4,7 +4,7 @@ import {Button, Divider, Icon} from '@tet/ui';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import FilledCalendarPicto from './FilledCalendarPicto';
-import EmtpyCalendarPicto from './EmptyCalendarPicto';
+import EmptyCalendarPicto from './EmptyCalendarPicto';
 import {useState} from 'react';
 import FAPlanningModal from './FAPlanningModal';
 
@@ -68,7 +68,7 @@ const FicheActionPlanning = ({
           {!!dateDebut && (
             <div>
               <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
-                Date de début :
+                Date de début
               </h6>
               <p className="text-sm leading-4 text-primary-10 mb-0">
                 {getFormattedDate(dateDebut)}
@@ -80,7 +80,7 @@ const FicheActionPlanning = ({
           {!!dateFinPrevisionnelle && (
             <div>
               <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
-                Date de fin prévisionnelle :
+                Date de fin prévisionnelle
               </h6>
               <p className="text-sm leading-4 text-primary-10 mb-0">
                 {getFormattedDate(dateFinPrevisionnelle)}
@@ -117,7 +117,7 @@ const FicheActionPlanning = ({
         </>
       ) : (
         <>
-          <EmtpyCalendarPicto className="mx-auto" />
+          <EmptyCalendarPicto className="mx-auto" />
 
           <p className="text-base text-primary-9 text-center mb-0">
             Date de début | Date de fin prévisionnelle | Statut | Niveau de
