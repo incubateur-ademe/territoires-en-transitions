@@ -149,13 +149,13 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
         dataTest="section-acteurs"
         childrenContainerClassName="gap-6"
       >
-        <Field title="Structure pilote">
+        {/* <Field title="Structure pilote">
           <StructurePiloteDropdown
             structures={fiche.structures}
             onSelect={structures => updateFiche({...fiche, structures})}
             isReadonly={isReadonly}
           />
-        </Field>
+        </Field> */}
         <Field title="Personne pilote">
           <PersonnesDropdown
             dataTest="personnes-pilotes"
@@ -198,21 +198,21 @@ const FicheActionForm = ({fiche, isReadonly}: TFicheActionForm) => {
             disabled={isReadonly}
           />
         </Field>
-        <Field title="Direction ou service pilote">
+        {/* <Field title="Direction ou service pilote">
           <ServicePiloteDropdown
             services={fiche.services}
             onSelect={services => updateFiche({...fiche, services})}
             isReadonly={isReadonly}
           />
-        </Field>
+        </Field> */}
         <div className="border-t border-gray-300" />
-        <Field title="Partenaires">
+        {/* <Field title="Partenaires">
           <PartenairesDropdown
             partenaires={fiche.partenaires}
             onSelect={partenaires => updateFiche({...fiche, partenaires})}
             isReadonly={isReadonly}
           />
-        </Field>
+        </Field> */}
         <div className="border-t border-gray-300" />
         <Field title="Cibles">
           <MultiSelectTagsDropdown
