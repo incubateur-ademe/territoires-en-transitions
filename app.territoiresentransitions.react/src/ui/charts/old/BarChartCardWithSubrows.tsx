@@ -178,7 +178,7 @@ const BarChartCardWithSubrows = ({
           >
             <Breadcrumbs
               size="xs"
-              buttons={scoreBreadcrumb.map(currentScore => ({
+              items={scoreBreadcrumb.map(currentScore => ({
                 label: currentScore.name,
               }))}
               onClick={handleOpenParentIndex}

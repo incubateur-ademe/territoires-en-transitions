@@ -6,7 +6,7 @@ import {Button} from '@design-system/Button';
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   args: {
-    buttons: [
+    items: [
       {label: 'Plan Vélo 2020 - 2024'},
       {
         label:
@@ -36,7 +36,7 @@ export const Default: Story = {
     return (
       <div className="flex flex-col gap-8">
         <Breadcrumbs
-          buttons={currentButtons}
+          items={currentButtons}
           onClick={(index: number) =>
             setCurrentButtons(prevState => prevState.slice(0, index + 1))
           }
@@ -57,28 +57,28 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-8">
         <Breadcrumbs
           size="xs"
-          buttons={currentButtons}
+          items={currentButtons}
           onClick={(index: number) =>
             setCurrentButtons(prevState => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="sm"
-          buttons={currentButtons}
+          items={currentButtons}
           onClick={(index: number) =>
             setCurrentButtons(prevState => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="md"
-          buttons={currentButtons}
+          items={currentButtons}
           onClick={(index: number) =>
             setCurrentButtons(prevState => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="xl"
-          buttons={currentButtons}
+          items={currentButtons}
           onClick={(index: number) =>
             setCurrentButtons(prevState => prevState.slice(0, index + 1))
           }
@@ -96,7 +96,7 @@ export const ReadOnlyMode: Story = {
   render: () => {
     return (
       <div className="flex flex-col gap-8">
-        <Breadcrumbs buttons={buttons} />
+        <Breadcrumbs items={buttons} />
       </div>
     );
   },
