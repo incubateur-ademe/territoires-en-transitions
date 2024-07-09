@@ -33,7 +33,6 @@ export type TextareaProps = HTMLAttributes<HTMLTextAreaElement> & {
 export const Textarea = forwardRef(
   (
     {
-      value,
       displaySize = 'md',
       state = 'default',
       resize = 'vertical',
@@ -51,7 +50,7 @@ export const Textarea = forwardRef(
     return (
       <div
         className={classNames(
-          'inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5',
+          'flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5',
           borderColor,
           containerClassname
         )}
@@ -60,7 +59,6 @@ export const Textarea = forwardRef(
           {...props}
           ref={ref}
           disabled={disabled}
-          value={value}
           className={classNames(
             'grow text-grey-8 px-4 outline-none ',
             {

@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Textarea Default smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+<div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <textarea class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y">
   </textarea>
 </div>
 `;
 
 exports[`design-system/Textarea SmallVariant smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+<div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <textarea placeholder="Small"
             class="grow text-grey-8 px-4 outline-none  text-sm py-2 resize-y"
   >
@@ -16,27 +16,42 @@ exports[`design-system/Textarea SmallVariant smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Textarea WithAutoResize smoke-test 1`] = `
+<div class="flex items-start w-full">
+  <div class="w-px -mr-px"
+       style="height: 48px;"
+  >
+  </div>
+  <div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+    <textarea class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-none"
+              style="height: 48px;"
+    >
+    </textarea>
+  </div>
+</div>
+`;
+
 exports[`design-system/Textarea WithColorBorders smoke-test 1`] = `
 <div class="flex flex-col gap-4">
-  <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-info-1">
+  <div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-info-1">
     <textarea placeholder="Info"
               class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y"
     >
     </textarea>
   </div>
-  <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
+  <div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
     <textarea placeholder="Error"
               class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y"
     >
     </textarea>
   </div>
-  <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-success-1">
+  <div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-success-1">
     <textarea placeholder="Success"
               class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y"
     >
     </textarea>
   </div>
-  <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-warning-1">
+  <div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-warning-1">
     <textarea placeholder="Warning"
               class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y"
     >
@@ -46,7 +61,7 @@ exports[`design-system/Textarea WithColorBorders smoke-test 1`] = `
 `;
 
 exports[`design-system/Textarea WithPlaceholder smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+<div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <textarea placeholder="Saisir une valeur"
             class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y"
   >
@@ -55,7 +70,7 @@ exports[`design-system/Textarea WithPlaceholder smoke-test 1`] = `
 `;
 
 exports[`design-system/Textarea WithValue smoke-test 1`] = `
-<div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+<div class="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <textarea class="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y">
     Test
   </textarea>

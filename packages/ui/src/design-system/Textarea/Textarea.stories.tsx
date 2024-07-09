@@ -2,7 +2,7 @@ import {Meta, StoryObj} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {Textarea} from './Textarea';
 import {useRef, useState} from 'react';
-import {Input} from '@design-system/Input';
+import {AutoResizedTextarea} from './AutoResizedTextarea';
 
 const meta: Meta<typeof Textarea> = {
   component: Textarea,
@@ -22,12 +22,10 @@ const meta: Meta<typeof Textarea> = {
         {...args}
         ref={ref}
         value={value}
-        onChange={e => {
-          console.log(e);
-
-          action('onChange')(e.target);
+        onChange={(evt: any) => {
+          action('onChange')(evt.target);
           action('ref.current.value')(ref.current.value);
-          //   setValue(e);
+          setValue(evt.target.value);
         }}
       />
     );
@@ -74,4 +72,9 @@ export const SmallVariant: Story = {
     placeholder: 'Small',
     displaySize: 'sm',
   },
+};
+
+/** Avec redimensionnement automatique du champ lors de la saisie */
+export const WithAutoResize: Story = {
+  render: () => <AutoResizedTextarea />,
 };
