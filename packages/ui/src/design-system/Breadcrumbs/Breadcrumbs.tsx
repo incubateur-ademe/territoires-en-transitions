@@ -59,8 +59,8 @@ export const Breadcrumbs = ({
               variant="underlined"
               size={size}
               onClick={() => {
-                onClick(index);
-                button.onClick();
+                onClick?.(index);
+                button.onClick?.();
               }}
               href={button.href}
             >

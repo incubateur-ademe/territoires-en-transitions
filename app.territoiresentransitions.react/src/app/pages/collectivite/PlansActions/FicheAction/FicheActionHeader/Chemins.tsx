@@ -1,4 +1,4 @@
-import {Link, useParams} from 'react-router-dom';
+import {Link, useHistory, useParams} from 'react-router-dom';
 
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {FicheAction} from '../data/types';
@@ -58,6 +58,7 @@ type CheminProps = {
 /** Affiche un fil d'ariane avec le chemin jusqu'à la racine du plan */
 const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
   const {data} = usePlanActionChemin(axe_id);
+  const history = useHistory();
 
   return (
     <Breadcrumbs
@@ -66,7 +67,10 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
         collectiviteId,
         chemin: (data?.chemin ?? []) as TAxeRow[],
         titreFiche: generateTitle(titreFiche),
-      })}
+      }).map(item => ({
+        label: item.label,
+        onClick: item.href ? () => history.push(item.href!) : undefined,
+      }))}
     />
   );
 };

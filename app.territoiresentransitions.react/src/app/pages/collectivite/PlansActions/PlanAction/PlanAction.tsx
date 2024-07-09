@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 
 import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 import PlanActionFooter from './PlanActionFooter';
@@ -24,6 +24,7 @@ type PlanActionProps = {
 };
 
 export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
+  const history = useHistory();
   const collectivite = useCurrentCollectivite();
 
   const isReadonly = collectivite?.readonly ?? false;
@@ -56,10 +57,13 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
               items={[
                 {
                   label: generateTitle(plan.nom),
-                  href: makeCollectivitePlanActionUrl({
-                    collectiviteId: collectivite?.collectivite_id!,
-                    planActionUid: axe.id.toString(),
-                  }),
+                  onClick: () =>
+                    history.push(
+                      makeCollectivitePlanActionUrl({
+                        collectiviteId: collectivite?.collectivite_id!,
+                        planActionUid: axe.id.toString(),
+                      })
+                    ),
                 },
                 {label: generateTitle(axe.nom)},
               ]}
