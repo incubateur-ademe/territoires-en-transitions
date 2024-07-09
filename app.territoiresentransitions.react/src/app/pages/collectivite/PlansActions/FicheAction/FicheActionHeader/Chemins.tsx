@@ -62,7 +62,7 @@ const Chemin = ({collectiviteId, axe_id, titreFiche}: CheminProps) => {
   return (
     <Breadcrumbs
       size="xs"
-      buttons={generateFilArianeLinks({
+      items={generateFilArianeLinks({
         collectiviteId,
         chemin: (data?.chemin ?? []) as TAxeRow[],
         titreFiche: generateTitle(titreFiche),

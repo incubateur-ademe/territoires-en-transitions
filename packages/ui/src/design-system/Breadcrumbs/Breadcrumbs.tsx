@@ -10,15 +10,15 @@ const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
 };
 
 type BreadcrumbsProps = {
-  /** Liste des boutons à afficher dans le fil d'ariane */
-  buttons?: {
+  /** Liste d'items à afficher dans le fil d'ariane */
+  items: {
     label: string;
     href?: string;
     onClick?: () => void;
   }[];
-  /** Click détecté sur un des boutons, avec envoi de son index */
+  /** Click détecté sur un des items, avec envoi de son index */
   onClick?: (index: number) => void;
-  /** Taille des boutons */
+  /** Taille des items */
   size?: ButtonSize;
 };
 
@@ -26,18 +26,18 @@ type BreadcrumbsProps = {
  * Fil d'ariane, avec liens ou boutons
  */
 export const Breadcrumbs = ({
-  buttons,
+  items,
   size = 'md',
   onClick,
 }: BreadcrumbsProps) => {
   const readOnlyMode =
-    buttons.filter(button => button.href || button.onClick).length === 0 &&
+    items.filter(button => button.href || button.onClick).length === 0 &&
     !onClick;
 
   return (
     <div className="flex flex-wrap gap-x-1 gap-y-0.5">
-      {(buttons ?? []).map((button, index) => {
-        const isLastElement = index === buttons.length - 1;
+      {items.map((button, index) => {
+        const isLastElement = index === items.length - 1;
 
         return (
           <div
@@ -67,7 +67,7 @@ export const Breadcrumbs = ({
               {button.label}
             </Button>
 
-            {/* Icône `>` entre chaque bouton */}
+            {/* Icône `>` entre chaque item */}
             {!isLastElement && (
               <Icon
                 icon="arrow-right-s-line"

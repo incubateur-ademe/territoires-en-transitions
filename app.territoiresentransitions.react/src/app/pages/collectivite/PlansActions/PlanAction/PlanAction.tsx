@@ -53,7 +53,7 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
           <div className="py-6">
             <Breadcrumbs
               size="xs"
-              buttons={[
+              items={[
                 {
                   label: generateTitle(plan.nom),
                   href: makeCollectivitePlanActionUrl({

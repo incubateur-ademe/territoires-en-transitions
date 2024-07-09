@@ -26,7 +26,7 @@ const PlanChemin = ({fiche, axe_id}: Props) => {
       <div className="py-0.5 pr-1">
         <Breadcrumbs
           size="xs"
-          buttons={generateFilArianeLinks({
+          items={generateFilArianeLinks({
             collectiviteId: fiche.collectivite_id!,
             chemin: (data?.chemin ?? []) as TAxeRow[],
             titreFiche: generateTitle(fiche.titre),
