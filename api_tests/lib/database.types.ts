@@ -9694,8 +9694,29 @@ export type Database = {
             foreignKeyName: "fiche_action_pilote_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: "collectivite_membre_crm"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_pilote_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "crm_personnes"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_pilote_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_pilote_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp_display"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -10851,20 +10872,14 @@ export type Database = {
         Row: {
           categorie_tag_id: number
           indicateur_id: number
-          modified_at: string
-          modified_by: string | null
         }
         Insert: {
           categorie_tag_id: number
           indicateur_id: number
-          modified_at?: string
-          modified_by?: string | null
         }
         Update: {
           categorie_tag_id?: number
           indicateur_id?: number
-          modified_at?: string
-          modified_by?: string | null
         }
         Relationships: [
           {
@@ -10893,13 +10908,6 @@ export type Database = {
             columns: ["indicateur_id"]
             isOneToOne: false
             referencedRelation: "indicateur_definition"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_categorie_tag_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -13190,6 +13198,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      indicateurs_json: {
+        Row: {
+          created_at: string
+          indicateurs: Json
+        }
+        Insert: {
+          created_at?: string
+          indicateurs: Json
+        }
+        Update: {
+          created_at?: string
+          indicateurs?: Json
+        }
+        Relationships: []
       }
       justification: {
         Row: {
@@ -28508,60 +28531,6 @@ export type Database = {
             }
             Returns: string
           }
-      fiche_action_axe: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          collectivite_id: number
-          created_at: string
-          id: number
-          modified_at: string
-          modified_by: string | null
-          nom: string | null
-          parent: number | null
-          plan: number | null
-          type: number | null
-        }[]
-      }
-      fiche_action_personne_tag: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          fiche_id: number
-          tag_id: number | null
-          user_id: string | null
-        }[]
-      }
-      fiche_action_pilote: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          fiche_id: number
-          tag_id: number | null
-          user_id: string | null
-        }[]
-      }
-      fiche_action_service_tag: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          fiche_id: number
-          service_tag_id: number
-        }[]
-      }
-      fiche_action_structure_tag: {
-        Args: {
-          "": unknown
-        }
-        Returns: {
-          fiche_id: number
-          structure_tag_id: number
-        }[]
-      }
       fiche_resume:
         | {
             Args: {
