@@ -5,6 +5,7 @@ import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
+import classNames from 'classnames';
 
 const getFormattedDate = (date: string) => {
   return new Date(date).toLocaleDateString('fr-FR', {
@@ -26,6 +27,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
   if (!data || !data.fiche) return null;
 
   const {fiche} = data;
+  const isTwoColumns = !!fiche.calendrier;
 
   return (
     <div
@@ -45,10 +47,18 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
             className="col-span-full lg:col-span-2 xl:col-span-3"
             updateFiche={updateFiche}
           />
-          <div className="max-lg:col-span-full lg:row-span-3 max-lg:grid max-lg:grid-cols-1 md:max-lg:grid-cols-3 lg:flex lg:flex-col gap-5">
+          <div
+            className={classNames(
+              'max-lg:col-span-full lg:row-span-3 max-lg:grid max-lg:grid-cols-1 lg:flex lg:flex-col gap-5',
+              {
+                'md:max-lg:grid-cols-3': !isTwoColumns,
+                'md:max-lg:grid-cols-2': isTwoColumns,
+              }
+            )}
+          >
             <div className="flex flex-col gap-5">
               {fiche.modified_at && (
-                <div className="bg-white border border-grey-3 rounded-lg py-3.5 px-5 lg:px-6 xl:px-8 text-sm text-primary-10 max-md:text-center font-medium italic">
+                <div className="bg-white border border-grey-3 rounded-lg py-3.5 px-5 lg:px-6 xl:px-8 text-sm text-primary-10 max-lg:text-center font-medium italic">
                   Dernière modification le {getFormattedDate(fiche.modified_at)}
                 </div>
               )}
@@ -56,6 +66,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
                 isReadonly={isReadonly}
                 fiche={fiche}
                 updateFiche={updateFiche}
+                className="grow"
               />
             </div>
 
@@ -63,7 +74,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
               isReadonly={isReadonly}
               fiche={fiche}
               updateFiche={updateFiche}
-              className="md:max-lg:col-span-2"
+              className={classNames({'md:max-lg:col-span-2': !isTwoColumns})}
             />
           </div>
           <div className="col-span-full lg:col-span-2 xl:col-span-3 bg-white border border-grey-3 rounded-lg py-10 px-8">
