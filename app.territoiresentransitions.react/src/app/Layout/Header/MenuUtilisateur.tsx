@@ -1,12 +1,12 @@
 import {forwardRef, Ref} from 'react';
 import {Link, useHistory, useLocation} from 'react-router-dom';
+import {useQueryClient} from 'react-query';
 import classNames from 'classnames';
 import {monComptePath} from 'app/paths';
 import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
-import {useQueryClient} from 'react-query';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
