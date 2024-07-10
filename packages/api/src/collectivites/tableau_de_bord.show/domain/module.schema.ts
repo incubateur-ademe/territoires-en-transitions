@@ -6,7 +6,7 @@ import {
 import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
   Filtre as FiltreIndicateurs,
-} from '../../../indicateurs/indicateurs.list/domain/fetch_options.schema';
+} from '../../../indicateurs/domain/fetch_options.schema';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
 

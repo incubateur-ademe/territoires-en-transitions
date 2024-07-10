@@ -9,7 +9,8 @@ import {
   collectiviteAccueilPath,
   collectiviteActionPath,
   collectiviteBibliothequePath,
-  collectiviteIndicateurPath as collectiviteIndicateursPath,
+  collectiviteIndicateurPath,
+  collectiviteIndicateurReferentielPath,
   collectiviteJournalPath,
   collectiviteLabellisationPath,
   collectivitePersoRefPath,
@@ -46,7 +47,7 @@ export const CollectiviteRoutes = () => {
         <ActionPage />
       </Route>
 
-      <RouteEnAccesRestreint path={collectiviteIndicateursPath}>
+      <RouteEnAccesRestreint path={collectiviteIndicateurPath}>
         <IndicateursPage />
       </RouteEnAccesRestreint>
       <RouteEnAccesRestreint path={collectiviteIndicateurReferentielPath}>

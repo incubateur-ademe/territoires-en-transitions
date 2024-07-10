@@ -3,7 +3,7 @@ import {useHistory} from 'react-router-dom';
 import {Button} from '@tet/ui';
 
 import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {moduleOptionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
+import {Indicateurs} from '@tet/api';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -29,7 +29,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
   const userId = useAuth().user?.id;
   const history = useHistory();
 
-  const filtre = moduleOptionsToFilters(module.options);
+  const filtre = Indicateurs.moduleOptionsToFilters(module.options);
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(
     null,
