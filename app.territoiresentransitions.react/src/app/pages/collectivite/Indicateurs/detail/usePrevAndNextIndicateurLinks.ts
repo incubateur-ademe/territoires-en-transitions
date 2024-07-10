@@ -12,9 +12,14 @@ import {useFilteredIndicateurDefinitions} from '../lists/useFilteredIndicateurDe
 export const usePrevAndNextIndicateurLinks = () => {
   // paramètres de la page courante
   const collectiviteId = useCollectiviteId()!;
-  const {vue, indicateurId} = useParams<{
+  const {
+    vue,
+    indicateurIdentiantReferentielParam: identifiantReferentiel,
+    indicateurId,
+  } = useParams<{
     vue: IndicateurViewParamOption;
     indicateurId: string;
+    indicateurIdentiantReferentielParam: string;
   }>();
 
   // définitions
@@ -24,7 +29,7 @@ export const usePrevAndNextIndicateurLinks = () => {
   if (['cae', 'eci', 'crte'].includes(vue)) {
     definitions = definitions?.sort((a, b) =>
       // les liens doivent être dans l'ordre de la numérotation pour cae/eci/crte
-      (a.id as string).localeCompare(b.id as string, 'fr', {
+      (a.identifiant as string).localeCompare(b.identifiant as string, 'fr', {
         ignorePunctuation: true,
         numeric: true,
       })
@@ -34,8 +39,10 @@ export const usePrevAndNextIndicateurLinks = () => {
   if (!definitions?.length) return {};
 
   // index de l'indicateur courant
-  const currentIndicateurIndex = definitions.findIndex(
-    ({id}) => id.toString() === indicateurId
+  const currentIndicateurIndex = definitions.findIndex(({identifiant, id}) =>
+    identifiant
+      ? identifiant === identifiantReferentiel
+      : id.toString() === indicateurId
   );
 
   // indicateur précédent
@@ -46,6 +53,7 @@ export const usePrevAndNextIndicateurLinks = () => {
         collectiviteId,
         indicateurView: vue,
         indicateurId: prevIndicateur.id,
+        identifiantReferentiel: prevIndicateur.identifiant,
       })
     : undefined;
 
@@ -58,6 +66,7 @@ export const usePrevAndNextIndicateurLinks = () => {
         collectiviteId,
         indicateurView: vue,
         indicateurId: nextIndicateur.id,
+        identifiantReferentiel: nextIndicateur.identifiant,
       })
     : undefined;
 

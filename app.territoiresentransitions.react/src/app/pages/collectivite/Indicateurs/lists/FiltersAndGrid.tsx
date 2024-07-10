@@ -11,6 +11,7 @@ import {
 import {FiltresIndicateurs} from './FiltresIndicateurs';
 import {useFilteredIndicateurDefinitions} from './useFilteredIndicateurDefinitions';
 import {useIndicateursFilterState} from './useIndicateursFilterState';
+import {ID_NOUVEAU} from 'app/pages/collectivite/Indicateurs/Indicateurs';
 
 /** Affiche les filtres et la grille d'indicateurs donnés */
 export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
@@ -47,7 +48,7 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
           to={makeCollectiviteIndicateursUrl({
             collectiviteId: collectivite.collectivite_id,
             indicateurView: 'perso',
-            indicateurId: 'nouveau',
+            indicateurId: ID_NOUVEAU,
           })}
         >
           Créer un indicateur

@@ -41,20 +41,13 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
         <div className="grid grid-cols-2 gap-4 mb-8">
           {indicateurs.map(indicateur => (
             <IndicateurCard
-              key={indicateur.nom}
-              definition={{
-                id:
-                  indicateur.indicateur_id ??
-                  indicateur.indicateur_personnalise_id!,
-                nom: indicateur.nom ?? '',
-              }}
+              key={indicateur.titre}
+              definition={indicateur}
               href={makeCollectiviteIndicateursUrl({
                 collectiviteId: collectiviteId!,
-                indicateurView: getIndicateurGroup(indicateur.indicateur_id),
-                indicateurId:
-                  indicateur.indicateur_id ??
-                  indicateur.indicateur_personnalise_id ??
-                  undefined,
+                indicateurView: getIndicateurGroup(indicateur),
+                indicateurId: indicateur.id,
+                identifiantReferentiel: indicateur.identifiant,
               })}
               card={{external: true}}
               selectState={{
