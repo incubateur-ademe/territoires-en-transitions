@@ -1,5 +1,8 @@
 import {Link, useParams} from 'react-router-dom';
-import {indicateurIdParam} from 'app/paths';
+import {
+  indicateurIdParam,
+  indicateurIdentiantReferentielParam,
+} from 'app/paths';
 import {FiltersAndGrid} from './lists/FiltersAndGrid';
 import {IndicateurPersonnalise} from './IndicateurPersonnalise';
 import {IndicateurPredefini} from './IndicateurPredefini';
@@ -35,6 +38,9 @@ const ITEMS: IndicateurViewParamOption[] = [
   'crte',
 ];
 
+// id d'un indicateur en cours de création
+export const ID_NOUVEAU = -1;
+
 // génère les liens à afficher dans la navigation latérale
 const generateIndicateursNavLinks = (collectiviteId: number): SideNavLinks => {
   return ITEMS.map(indicateurView => ({
@@ -49,13 +55,20 @@ export const viewTitles: Record<IndicateurViewParamOption, string> = {
 };
 
 /** Affiche le détail d'un indicateur */
-const IndicateurDetail = (props: {indicateurId: string; isPerso: boolean}) => {
+const IndicateurDetail = (
+  props:
+    | {
+        indicateurId: number;
+        isPerso: true;
+      }
+    | {indicateurId: number | string; isPerso: false}
+) => {
   const {indicateurId, isPerso} = props;
-  if (indicateurId === 'nouveau') {
+  if (indicateurId === ID_NOUVEAU) {
     return <IndicateurPersoNouveau className="fr-p-6w" />;
   }
-  const Indicateur = isPerso ? IndicateurPersonnalise : IndicateurPredefini;
-  return <Indicateur indicateurId={indicateurId} />;
+  if (isPerso) return <IndicateurPersonnalise indicateurId={indicateurId} />;
+  return <IndicateurPredefini indicateurId={indicateurId} />;
 };
 
 /**
@@ -68,10 +81,17 @@ const Indicateurs = () => {
   const params = useParams<{
     [indicateurViewParam]?: IndicateurViewParamOption;
     [indicateurIdParam]?: string;
+    [indicateurIdentiantReferentielParam]?: string;
   }>();
-  const indicateurId = params[indicateurIdParam];
+  let indicateurId, isPerso;
+  if (params[indicateurIdParam] !== undefined) {
+    indicateurId = parseInt(params[indicateurIdParam]);
+    isPerso = true;
+  } else {
+    indicateurId = params[indicateurIdentiantReferentielParam];
+    isPerso = false;
+  }
   const view = params[indicateurViewParam] || 'perso';
-  const isPerso = view === 'perso';
 
   if (!collectivite) {
     return null;
@@ -88,7 +108,7 @@ const Indicateurs = () => {
             to={makeCollectiviteIndicateursUrl({
               collectiviteId: collectivite.collectivite_id,
               indicateurView: 'perso',
-              indicateurId: 'nouveau',
+              indicateurId: ID_NOUVEAU,
             })}
           >
             Créer un indicateur
@@ -103,7 +123,10 @@ const Indicateurs = () => {
         }
       >
         {indicateurId !== undefined ? (
-          <IndicateurDetail indicateurId={indicateurId} isPerso={isPerso} />
+          <IndicateurDetail
+            indicateurId={indicateurId as number}
+            isPerso={isPerso}
+          />
         ) : (
           <>
             <HeaderIndicateursList view={view} />

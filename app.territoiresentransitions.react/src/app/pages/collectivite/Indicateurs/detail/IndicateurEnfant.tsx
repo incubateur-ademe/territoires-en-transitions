@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {TIndicateurPredefini} from '../types';
+import {TIndicateurDefinition} from '../types';
 import {useToggle} from 'ui/shared/useToggle';
 import {IndicateurEnfantHeader} from './IndicateurEnfantHeader';
 import {IndicateurEnfantContent} from './IndicateurEnfantContent';
@@ -11,7 +11,7 @@ export const IndicateurEnfant = ({
   isOpen,
   className,
 }: {
-  definition: TIndicateurPredefini;
+  definition: TIndicateurDefinition;
   actionsLieesCommunes: string[];
   isOpen?: boolean;
   className?: string;

@@ -1,3 +1,4 @@
+import {objectToSnake} from 'ts-case-convert';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import FichesLiees from '../PlansActions/FicheAction/FicheActionForm/FichesLiees';
 import {FicheResume} from '../PlansActions/FicheAction/data/types';
@@ -26,9 +27,9 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   return (
     <FichesLiees
       ficheCouranteId={null}
-      fiches={fiches}
+      fiches={fiches ? objectToSnake(fiches) : []}
       onSelect={(fiches_liees: FicheResume[]) =>
-        updateFichesActionLiees({fiches, fiches_liees})
+        updateFichesActionLiees(fiches_liees.map(f => f.id) as number[])
       }
       isReadonly={isReadonly}
     />
