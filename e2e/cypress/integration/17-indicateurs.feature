@@ -126,3 +126,350 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Et que je suis sur la page "Indicateurs personnalisés" de la collectivité courante
     Alors le texte "Aucun indicateur personnalisé" est visible
 
+  Scénario: Appliquer des données de l'opendata à mes résultats (sans conflit)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+    Et le tableau des résultats de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des résultats importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "resultat" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+    Et la source "CITEPA" est sélectionnée
+    Alors le tableau des résultats est en lecture seule et contient :
+      | Année | Résultat | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+    Et le bouton "Appliquer à mes résultats" est visible
+
+    # la source "mes données" est toujours vide
+    Quand je sélectionne la source "Mes données"
+    Et la source "Mes données" est sélectionnée
+    Et le tableau des résultats de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # applique les données aux résultats
+    Quand je sélectionne la source "CITEPA"
+    Et que je clique sur le bouton "Appliquer à mes résultats"
+    Alors le bouton "Appliquer à mes résultats" est absent
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire               |
+      | 2021  | 120      | Copié de la source citepa |
+      | 2020  | 100      | Copié de la source citepa |
+
+  Scénario: Appliquer des données de l'opendata à mes résultats (avec conflit et écrasement)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+    Et le tableau des résultats de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des résultats importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "resultat" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+    Et la source "CITEPA" est sélectionnée
+    Alors le tableau des résultats est en lecture seule et contient :
+      | Année | Résultat | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+    Et le bouton "Appliquer à mes résultats" est visible
+
+    # la source "mes données" est toujours vide
+    Quand je sélectionne la source "Mes données"
+    Et la source "Mes données" est sélectionnée
+    Et le tableau des résultats de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des données utilisateur
+    Quand j'ajoute le résultat 123 pour l'année 2021
+    Et que j'ajoute le résultat 456 pour l'année 2022
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire |
+      | 2022  | 456      |             |
+      | 2021  | 123      |             |
+
+    Quand je sélectionne la source "CITEPA"
+    Alors le tableau des résultats est en lecture seule et contient :
+      | Année | Résultat | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+
+    # applique les données aux résultats => ouvre le dialogue
+    Quand je clique sur le bouton "Appliquer à mes résultats"
+    Alors le "dialogue de résolution des conflits" est visible
+    Et le dialogue de résolution des conflits contient :
+      | Date | Mes résultats | Résultats CITEPA | Après validation |
+      | 2021 | 123           | 120              | 123              |
+      | 2020 |               | 100              | 100              |
+
+    # choisi d'écraser les valeurs en conflit
+    Quand je coche la case "Remplacer mes résultats"
+    Alors le dialogue de résolution des conflits contient :
+      | Date | Mes résultats | Résultats CITEPA | Après validation |
+      | 2021 | 123           | 120              | 120              |
+      | 2020 |               | 100              | 100              |
+
+    Quand je clique sur le bouton "Valider" du "dialogue de résolution des conflits"
+    Alors le bouton "Appliquer à mes résultats" est absent
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire               |
+      | 2022  | 456      |                           |
+      | 2021  | 120      |                           |
+      | 2020  | 100      | Copié de la source citepa |
+
+  Scénario: Appliquer des données de l'opendata à mes résultats (avec conflit mais sans écrasement)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+    Et le tableau des résultats de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des résultats importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "resultat" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+
+    # ajoute des données utilisateur
+    Quand je sélectionne la source "Mes données"
+    Et que j'ajoute le résultat 123 pour l'année 2021
+    Et que j'ajoute le résultat 456 pour l'année 2022
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire |
+      | 2022  | 456      |             |
+      | 2021  | 123      |             |
+
+    Quand je sélectionne la source "CITEPA"
+    Alors le tableau des résultats est en lecture seule et contient :
+      | Année | Résultat | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+
+    # applique les données aux résultats => ouvre le dialogue
+    Quand je clique sur le bouton "Appliquer à mes résultats"
+    Alors le "dialogue de résolution des conflits" est visible
+    Et le dialogue de résolution des conflits contient :
+      | Date | Mes résultats | Résultats CITEPA | Après validation |
+      | 2021 | 123           | 120              | 123              |
+      | 2020 |               | 100              | 100              |
+
+    Quand je clique sur le bouton "Valider" du "dialogue de résolution des conflits"
+    # le bouton reste visible puisqu'il reste des données "écrasables"
+    Alors le bouton "Appliquer à mes résultats" est visible
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Alors le tableau des résultats de l'indicateur contient :
+      | Année | Résultat | Commentaire               |
+      | 2022  | 456      |                           |
+      | 2021  | 123      |                           |
+      | 2020  | 100      | Copié de la source citepa |
+
+  Scénario: Appliquer des données de l'opendata à mes objectifs (sans conflit)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+
+    Quand je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des objectifs importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "objectif" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+    Et la source "CITEPA" est sélectionnée
+    Et le tableau des objectifs est en lecture seule et contient :
+      | Année | Résultat | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+    Et le bouton "Appliquer à mes objectifs" est visible
+
+    # la source "mes données" est toujours vide
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # applique les données aux objectifs
+    Quand je sélectionne la source "CITEPA"
+    Et que je clique sur le bouton "Appliquer à mes objectifs"
+    Alors le bouton "Appliquer à mes objectifs" est absent
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur contient :
+      | Année | Objectif | Commentaire               |
+      | 2021  | 120      | Copié de la source citepa |
+      | 2020  | 100      | Copié de la source citepa |
+
+  Scénario: Appliquer des données de l'opendata à mes objectifs (avec conflit et écrasement)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+
+    Quand je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des objectifs importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "objectif" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+    Et la source "CITEPA" est sélectionnée
+    Et le tableau des objectifs est en lecture seule et contient :
+      | Année | Objectif | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+    Et le bouton "Appliquer à mes objectifs" est visible
+
+    # la source "mes données" est toujours vide
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des données utilisateur
+    Quand j'ajoute l'objectif 123 pour l'année 2021
+    Et que j'ajoute l'objectif 456 pour l'année 2022
+    Alors le tableau des objectifs de l'indicateur contient :
+      | Année | Objectif | Commentaire |
+      | 2022  | 456      |             |
+      | 2021  | 123      |             |
+
+    Quand je sélectionne la source "CITEPA"
+    Alors le tableau des objectifs est en lecture seule et contient :
+      | Année | Objectif | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+
+    # applique les données aux objectifs => ouvre le dialogue
+    Quand je clique sur le bouton "Appliquer à mes objectifs"
+    Alors le "dialogue de résolution des conflits" est visible
+    Et le dialogue de résolution des conflits contient :
+      | Date | Mes objectifs | Objectifs CITEPA | Après validation |
+      | 2021 | 123           | 120              | 123              |
+      | 2020 |               | 100              | 100              |
+
+    # choisi d'écraser les valeurs en conflit
+    Quand je coche la case "Remplacer mes objectifs"
+    Alors le dialogue de résolution des conflits contient :
+      | Date | Mes objectifs | Objectifs CITEPA | Après validation |
+      | 2021 | 123           | 120              | 120              |
+      | 2020 |               | 100              | 100              |
+
+    Quand je clique sur le bouton "Valider" du "dialogue de résolution des conflits"
+    Alors le bouton "Appliquer à mes objectifs" est absent
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur contient :
+      | Année | Objectif | Commentaire               |
+      | 2022  | 456      |                           |
+      | 2021  | 120      |                           |
+      | 2020  | 100      | Copié de la source citepa |
+
+  Scénario: Appliquer des données de l'opendata à mes objectifs (avec conflit mais sans écrasement)
+    Etant donné une collectivité nommée "Le Bois Joli"
+    Et un utilisateur avec les droits en "edition"
+
+    # pas de données importées et pas de données collectivité
+    Quand je suis connecté avec les droits en "edition"
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources est absent
+
+    Quand je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur est vide
+    Et le graphique de l'indicateur est vide
+
+    # ajoute des objectifs importés
+    Quand l'indicateur "cae_18" dispose de données "citepa" de type "objectif" avec les valeurs suivantes :
+      | Année | Valeur |
+      | 2020  | 100    |
+      | 2021  | 120    |
+    Et que je visite l'indicateur "cae/cae_18" de la collectivité courante
+    Alors le sélecteur de sources contient "Mes données, CITEPA"
+
+    # ajoute des données utilisateur
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Et que j'ajoute l'objectif 123 pour l'année 2021
+    Et que j'ajoute l'objectif 456 pour l'année 2022
+    Alors le tableau des objectifs de l'indicateur contient :
+      | Année | Objectif | Commentaire |
+      | 2022  | 456      |             |
+      | 2021  | 123      |             |
+
+    Quand je sélectionne la source "CITEPA"
+    Alors le tableau des objectifs est en lecture seule et contient :
+      | Année | Objectif | Commentaire |
+      | 2021  | 120      |             |
+      | 2020  | 100      |             |
+
+    # applique les données aux objectifs => ouvre le dialogue
+    Quand je clique sur le bouton "Appliquer à mes objectifs"
+    Alors le "dialogue de résolution des conflits" est visible
+    Et le dialogue de résolution des conflits contient :
+      | Date | Mes objectifs | Objectifs CITEPA | Après validation |
+      | 2021 | 123           | 120              | 123              |
+      | 2020 |               | 100              | 100              |
+
+    Quand je clique sur le bouton "Valider" du "dialogue de résolution des conflits"
+    # le bouton reste visible puisqu'il reste des données "écrasables"
+    Alors le bouton "Appliquer à mes objectifs" est visible
+
+    # vérifie que les données copiées sont affichées
+    Quand je sélectionne la source "Mes données"
+    Et que je clique sur l'onglet Objectifs
+    Alors le tableau des objectifs de l'indicateur contient :
+      | Année | Objectif | Commentaire               |
+      | 2022  | 456      |                           |
+      | 2021  | 123      |                           |
+      | 2020  | 100      | Copié de la source citepa |

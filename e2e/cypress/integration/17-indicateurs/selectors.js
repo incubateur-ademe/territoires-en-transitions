@@ -13,4 +13,12 @@ export const LocalSelectors = {
       Supprimer: 'button[aria-label=Supprimer]',
     },
   },
+  'Appliquer à mes résultats': {selector: '[data-test="apply-resultat"]'},
+  'Appliquer à mes objectifs': {selector: '[data-test="apply-objectif"]'},
+  'dialogue de résolution des conflits': {
+    selector: '[data-test=conflits]',
+    children: {Valider: 'button[type=submit]'},
+  },
+  'Remplacer mes résultats': {selector: '#replace-data'},
+  'Remplacer mes objectifs': {selector: '#replace-data'},
 };
