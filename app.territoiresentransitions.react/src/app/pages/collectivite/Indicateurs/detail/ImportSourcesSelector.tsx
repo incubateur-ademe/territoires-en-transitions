@@ -37,42 +37,36 @@ export const ImportSourcesSelector = ({
     useIndexedSources(sources);
 
   // source sélectionnée
-  const s = sources.find(s => s.id === currentSource);
-  const sourceType = getSourceType(currentSource);
-  const source =
-    (s &&
-      sourceType && {
-        id: s.id,
-        type: sourceType,
-        nom: s.libelle,
-      }) ||
-    undefined;
-
-  // libellé en fonction du type de source
+  const source = sources.find(s => s.id === currentSource);
+  const sourceType = getSourceType(source);
   const sourceTypeLabel = getSourceTypeLabel(sourceType);
-
-  // compare les données open-data avec les données courantes (si la source est externe)
-  const comparaison = useOpenDataComparaison({
-    definition,
-    importSource: currentSource,
-    type: sourceType,
-  });
 
   // collectivité courante
   const collectivite = useCurrentCollectivite();
-  const collectivite_id = collectivite?.collectivite_id || null;
+  const collectiviteId = collectivite?.collectivite_id || null;
+
+  // compare les données open-data avec les données courantes (si la source est externe)
+  const openDataComparaison = useOpenDataComparaison({
+    collectiviteId,
+    definition,
+    importSource: currentSource,
+  });
+  const comparaison =
+    openDataComparaison && sourceType
+      ? openDataComparaison[`${sourceType}s`]
+      : null;
 
   // détermine si le bouton "appliquer à mes objectifs/résultats" doit être affiché
   const canApplyOpenData =
     collectivite &&
     !collectivite.readonly &&
     currentSource !== SOURCE_COLLECTIVITE &&
-    sourceTypeLabel &&
+    sourceType &&
     !!(comparaison?.conflits || comparaison?.ajouts);
 
   // mutation pour appliquer les données
   const {mutate: applyOpenData} = useApplyOpenData({
-    collectivite_id,
+    collectiviteId,
     definition,
     source,
   });
@@ -87,29 +81,23 @@ export const ImportSourcesSelector = ({
     /** onglets de sélection de la source si il y a des sources open-data dispo */
     <>
       <Tabs
+        data-test="sources"
         tabsListClassName="!justify-start"
         defaultActiveTab={idToIndex(currentSource)}
         onChange={activeTab => {
           const sourceId = indexToId(activeTab);
           setCurrentSource(sourceId);
-          if (sourceId !== SOURCE_COLLECTIVITE)
+          if (sourceId !== SOURCE_COLLECTIVITE && sourceType)
             trackEvent('view_open_data', {
-              collectivite_id: collectivite_id!,
-              indicateur_id: definition.id as string,
+              collectivite_id: collectiviteId!,
+              indicateur_id: String(definition.id),
               source_id: sourceId,
-              type: sourceType || 'resultat',
+              type: sourceType,
             });
         }}
       >
         {indexedSources?.map(({id, libelle}) => (
-          <Tab
-            key={id}
-            label={
-              getSourceType(currentSource) === 'objectif'
-                ? `Objectifs ${libelle}`
-                : libelle
-            }
-          />
+          <Tab key={id} label={libelle} />
         ))}
       </Tabs>
       {canApplyOpenData && (
@@ -121,6 +109,7 @@ export const ImportSourcesSelector = ({
             title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
             footer={
               <Button
+                data-test={`apply-${sourceType}`}
                 size="sm"
                 onClick={() => {
                   // ouvrir le dialogue de résolution des conflits si nécessaire
@@ -129,7 +118,7 @@ export const ImportSourcesSelector = ({
                     setIsOpen(true);
                   } else {
                     // applique les changements si nécessaire
-                    applyOpenData({comparaison, overwrite: false});
+                    applyOpenData({overwrite: false});
                   }
                 }}
               >
@@ -140,16 +129,17 @@ export const ImportSourcesSelector = ({
           {canApplyOpenData && isOpen && source && sourceType && (
             /** modale de résolution des conflits */
             <Modal
+              dataTest="conflits"
               size="xl"
               openState={{isOpen, setIsOpen}}
-              title={`Appliquer les ${sourceTypeLabel} ${source.nom}`}
+              title={`Appliquer les ${sourceTypeLabel} ${source.libelle}`}
               render={() => (
                 <>
                   <TrackPageView
                     pageName="app/indicateurs/predefini/conflits"
                     properties={{
-                      collectivite_id: collectivite_id!,
-                      indicateur_id: definition.id as string,
+                      collectivite_id: collectiviteId!,
+                      indicateur_id: String(definition.id),
                     }}
                   />
                   <ApplyOpenDataModal
@@ -167,7 +157,7 @@ export const ImportSourcesSelector = ({
                   btnOKProps={{
                     onClick: () => {
                       // applique les changements si nécessaire
-                      applyOpenData({comparaison, overwrite});
+                      applyOpenData({overwrite});
                       close();
                     },
                   }}
@@ -206,13 +196,9 @@ const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
       ? SOURCE_COLLECTIVITE
       : indexedSources?.[index]?.id ?? SOURCE_COLLECTIVITE;
 
-  // donne le type d'une source
-  const getSourceType = (id: string) => {
-    if (id === SOURCE_COLLECTIVITE) {
-      return null;
-    }
-    const index = idToIndex(id);
-    return indexedSources?.[index]?.type || 'resultat';
+  // donne les types de données disponibles pour une source
+  const getSourceType = (source: IndicateurImportSource | undefined) => {
+    return source && source.id !== SOURCE_COLLECTIVITE ? source.type : null;
   };
 
   return {indexedSources, idToIndex, indexToId, getSourceType};

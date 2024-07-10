@@ -1,24 +1,22 @@
 import {useEffect, useState} from 'react';
 import {useQuery} from 'react-query';
+import {Indicateurs} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {naturalSort} from 'utils/naturalSort';
-import {SourceType} from '../types';
 import {SOURCE_COLLECTIVITE} from '../constants';
+import {SourceType} from '../types';
 
 export type IndicateurImportSource = {
   id: string;
   libelle: string;
-  type?: SourceType;
+  type: SourceType | null;
 };
 
 /**
  * Fourni la liste des sources de données d'un indicateur ainsi que la source
  * courante et une fonction pour changer la source courante.
  */
-export const useIndicateurImportSources = (
-  indicateur_id: string | number | undefined
-) => {
+export const useIndicateurImportSources = (indicateur_id: number) => {
   const collectivite_id = useCollectiviteId();
   // charge la liste des sources disponibles
   const {data: sources, isLoading: isLoading1} = useImportSources(
@@ -58,29 +56,18 @@ export const useIndicateurImportSources = (
  * Charge la liste des différentes sources de données d'un indicateur
  */
 const useImportSources = (
-  collectivite_id: number | null,
-  indicateur_id: string | number | undefined
+  collectiviteId: number | null,
+  indicateurId: number
 ) => {
   return useQuery(
-    ['indicateur_import_sources', collectivite_id, indicateur_id],
+    ['indicateur_import_sources', collectiviteId, indicateurId],
     async () => {
-      if (
-        !collectivite_id ||
-        !indicateur_id ||
-        typeof indicateur_id !== 'string'
-      )
-        return;
+      if (!collectiviteId) return;
 
-      const {data} = await supabaseClient
-        .from('indicateur_definitions')
-        .select('import_sources(*)')
-        .match({collectivite_id, indicateur_id})
-        .returns<Array<{import_sources: IndicateurImportSource[]}>>();
-
-      return (
-        data?.[0]?.import_sources?.sort((a, b) =>
-          naturalSort(a.libelle, b.libelle)
-        ) || null
+      return Indicateurs.fetch.selectIndicateurSources(
+        supabaseClient,
+        indicateurId,
+        collectiviteId
       );
     }
   );
@@ -91,7 +78,7 @@ const useImportSources = (
  */
 const useHasCustomValues = (
   collectivite_id: number | null,
-  indicateur_id: string | number | undefined
+  indicateur_id: number | undefined
 ) => {
   return useQuery(
     ['indicateur_has_custom_values', collectivite_id, indicateur_id],
@@ -103,7 +90,7 @@ const useHasCustomValues = (
       )
         return;
       const {count} = await supabaseClient
-        .from('indicateurs')
+        .from('indicateur_valeur')
         .select('', {count: 'exact', head: true})
         .match({collectivite_id, indicateur_id, type: 'resultat'})
         .not('valeur', 'is', null);

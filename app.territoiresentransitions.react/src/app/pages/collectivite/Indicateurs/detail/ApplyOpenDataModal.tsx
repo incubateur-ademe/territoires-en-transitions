@@ -1,20 +1,17 @@
 import {Alert, Checkbox} from '@tet/ui';
-import {OpenDataComparaison} from './useApplyOpenData';
-import {SourceType, TIndicateurDefinition} from '../types';
+import {Indicateurs} from '@tet/api';
+import {TIndicateurDefinition} from '../types';
 import {SOURCE_TYPE_LABEL} from '../constants';
 import classNames from 'classnames';
+import {IndicateurImportSource} from './useImportSources';
 
 export type Props = {
   /** Indicateur concerné */
   definition: TIndicateurDefinition;
   /** Comparaison entre les données de la collectivité et celles à appliquer */
-  comparaison: OpenDataComparaison;
+  comparaison: Indicateurs.domain.ValeurComparaison;
   /** Informations sur la source de données à appliquer */
-  source: {
-    type: SourceType;
-    id: string;
-    nom: string;
-  };
+  source: IndicateurImportSource;
   /** Indique si les données en conflit doivent être écrasées */
   overwrite: boolean;
   /** Appeler pour changer le flag indiquant si les données en conflit doivent être écrasées */
@@ -38,7 +35,9 @@ export const ApplyOpenDataModal = ({
   if (!comparaison || !source || !definition) return;
 
   const {lignes, conflits} = comparaison;
-  const {type, nom} = source;
+  const {type, libelle} = source;
+  if (!type) return;
+
   const sourceType = SOURCE_TYPE_LABEL[type];
 
   return (
@@ -48,12 +47,12 @@ export const ApplyOpenDataModal = ({
           <Alert
             state="warning"
             title="Conflit détecté"
-            description={`Vous êtes sur le point d’appliquer les « ${sourceType} ${nom} » à vos ${sourceType}.
-            Attention : certaines données des « ${sourceType} ${nom} » entrent en conflit avec vos ${sourceType} et ont des valeurs différentes.`}
+            description={`Vous êtes sur le point d’appliquer les « ${sourceType} ${libelle} » à vos ${sourceType}.
+            Attention : certaines données des « ${sourceType} ${libelle} » entrent en conflit avec vos ${sourceType} et ont des valeurs différentes.`}
           />
           <Checkbox
             id="replace-data"
-            label={`Remplacer mes ${sourceType} en cours par les ${sourceType} ${nom}`}
+            label={`Remplacer mes ${sourceType} en cours par les ${sourceType} ${libelle}`}
             checked={overwrite}
             onChange={() => setOverwrite(!overwrite)}
           />
@@ -71,27 +70,34 @@ export const ApplyOpenDataModal = ({
                 <span className="font-normal"> ({definition.unite})</span>
               </th>
               <th scope="col">
-                <span className="capitalize">{sourceType}</span> {nom}
+                <span className="capitalize">{sourceType}</span> {libelle}
                 <span className="font-normal"> ({definition.unite})</span>
               </th>
             </tr>
           </thead>
-          <tbody>
-            {lignes.map(({annee, valeur, nouvelleValeur, conflit}) => (
-              <tr key={annee}>
-                <td>{annee}</td>
-                <td
-                  className={classNames({
-                    'line-through': conflit && overwrite,
-                  })}
-                >
-                  {valeur === null || isNaN(valeur)
-                    ? ''
-                    : NumFormat.format(valeur)}
-                </td>
-                <td>{NumFormat.format(nouvelleValeur ?? valeur)}</td>
-              </tr>
-            ))}
+          <tbody data-test="avant">
+            {lignes?.map(
+              ({
+                annee,
+                valeurAEcraser: valeur,
+                valeurAAppliquer: nouvelleValeur,
+                conflit,
+              }) => (
+                <tr key={annee}>
+                  <td>{annee}</td>
+                  <td
+                    className={classNames({
+                      'line-through': conflit && overwrite,
+                    })}
+                  >
+                    {valeur === null || isNaN(valeur)
+                      ? ''
+                      : NumFormat.format(valeur)}
+                  </td>
+                  <td>{NumFormat.format(nouvelleValeur ?? valeur)}</td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
         <table className="fr-table fr-table--bordered fr-table--blue-ecume md:max-w-[32%]">
@@ -100,21 +106,34 @@ export const ApplyOpenDataModal = ({
               <th className="whitespace-break-spaces !text-center !px-8 !py-[0.31rem]">
                 Après validation{`\n`}
                 <span className="capitalize">
-                  {sourceType} {nom}
+                  {sourceType} {libelle}
                 </span>
                 <span className="font-normal"> ({definition.unite})</span>
               </th>
             </tr>
           </thead>
-          <tbody>
-            {lignes.map(({annee, valeur, nouvelleValeur, conflit}) => {
-              const v = !conflit || overwrite ? nouvelleValeur : valeur;
-              return (
-                <tr key={annee}>
-                  <td>{isNaN(v) ? <>&nbsp;</> : NumFormat.format(v)}</td>
-                </tr>
-              );
-            })}
+          <tbody data-test="apres">
+            {lignes.map(
+              ({
+                annee,
+                valeurAEcraser: valeur,
+                valeurAAppliquer: nouvelleValeur,
+                conflit,
+              }) => {
+                const v = !conflit || overwrite ? nouvelleValeur : valeur;
+                return (
+                  <tr key={annee}>
+                    <td>
+                      {v === null || isNaN(v) ? (
+                        <>&nbsp;</>
+                      ) : (
+                        NumFormat.format(v)
+                      )}
+                    </td>
+                  </tr>
+                );
+              }
+            )}
           </tbody>
         </table>
       </div>
