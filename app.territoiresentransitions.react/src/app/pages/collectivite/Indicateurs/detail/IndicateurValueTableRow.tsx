@@ -7,7 +7,7 @@ import {
   onlyNumericWithFloatRegExp,
   useInputFilterRef,
 } from 'ui/shared/form/utils';
-import {TIndicateurValeurEtCommentaires} from '../useIndicateurValeurs';
+import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {
   OPTION_DELETE,
   TUseTableRowStateArgs,
@@ -26,6 +26,7 @@ const OPTIONS = [
 
 /** Affiche une ligne du tableau */
 export const IndicateurValueTableRow = ({
+  type,
   row,
   autoFocus,
   values,
@@ -38,11 +39,17 @@ export const IndicateurValueTableRow = ({
   autoFocus?: boolean;
   /** valeurs courantes pour pouvoir vérifier si une nouvelle ligne va écraser
    * une valeur existante */
-  values?: TIndicateurValeurEtCommentaires[];
+  values?: TIndicateurValeur[];
   /*** affiche une icône devant la ligne quand elle est marquée "confidentiel" */
   confidentiel?: boolean;
 }) => {
-  const state = useTableRowState({row, editHandlers, onValueSaved, values});
+  const state = useTableRowState({
+    row,
+    editHandlers,
+    onValueSaved,
+    values,
+    type,
+  });
   const {
     annee,
     valeur,
@@ -168,11 +175,7 @@ const ValueImported = ({valeur}: {valeur: string}) => {
 };
 
 /** Affiche une ligne du tableau en lecture seule */
-export const ValueTableRowReadOnly = ({
-  row,
-}: {
-  row?: TIndicateurValeurEtCommentaires;
-}) => {
+export const ValueTableRowReadOnly = ({row}: {row?: TIndicateurValeur}) => {
   if (!row) return null;
   const {annee, valeur, commentaire, source, type} = row;
 

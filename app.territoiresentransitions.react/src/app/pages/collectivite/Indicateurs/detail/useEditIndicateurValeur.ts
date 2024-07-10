@@ -1,32 +1,28 @@
 import {useMutation, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  SourceType,
-  TIndicateurDefinition,
-  TIndicateurPredefini,
-} from '../types';
+import {SourceType, TIndicateurDefinition} from '../types';
+import {Indicateurs} from '@tet/api';
 
 type TEditIndicateurValeurArgs = {
-  collectivite_id: number | null;
+  collectiviteId: number | null;
   definition: TIndicateurDefinition;
   type: SourceType;
+  valeursBrutes: Indicateurs.domain.Valeur[];
 };
 
 /** Fourni des fonctions pour éditer ou "supprimer" une valeur/commentaire d'un indicateur */
 export const useEditIndicateurValeur = (
-  args: Omit<TEditIndicateurValeurArgs, 'collectivite_id'>
+  args: Omit<TEditIndicateurValeurArgs, 'collectiviteId'>
 ) => {
-  const collectivite_id = useCollectiviteId();
-  const editArgs = {collectivite_id, ...args};
+  const collectiviteId = useCollectiviteId();
+  const editArgs = {collectiviteId, ...args};
 
   const {mutate: editValeur} = useUpsertIndicateurValeur(editArgs);
-  const {mutate: editComment} = useUpsertIndicateurCommentaire(editArgs);
   const {mutate: deleteValue} = useDeleteIndicateurValeur(editArgs);
 
   return {
     editValeur,
-    editComment,
     deleteValue,
   };
 };
@@ -34,76 +30,38 @@ export type TEditIndicateurValeurHandlers = ReturnType<
   typeof useEditIndicateurValeur
 >;
 
-// où écrire en fonction du type de valeur et si c'est un indicateur personnalisé ou non
-const tableValeur = (type: SourceType, isPerso?: boolean) =>
-  isPerso
-    ? (`indicateur_personnalise_${type}` as const)
-    : (`indicateur_${type}` as const);
-const tableCommentaire = (type: SourceType, isPerso?: boolean) =>
-  isPerso
-    ? (`indicateur_perso_${type}_commentaire` as const)
-    : (`indicateur_${type}_commentaire` as const);
-
 /** Met à jour la valeur d'un indicateur */
 const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
-  const {collectivite_id, definition, type} = args;
-  const {isPerso} = definition;
-  const indicateur_id = definition.id;
+  const {collectiviteId, definition, type, valeursBrutes} = args;
+  const indicateurId = definition.id;
 
   return useMutation({
     mutationKey: 'upsert_indicateur_valeur',
     mutationFn: async ({
       annee,
       valeur,
+      commentaire,
+      valeurId,
     }: {
       annee: number;
       valeur: number | null;
+      commentaire: string | null;
+      valeurId: number | null;
     }) => {
-      return (
-        collectivite_id &&
-        indicateur_id !== undefined &&
-        supabaseClient.from(tableValeur(type, isPerso)).upsert(
-          {
-            collectivite_id,
-            indicateur_id: indicateur_id as string,
-            annee,
-            valeur,
-          },
-          {onConflict: 'collectivite_id,indicateur_id,annee'}
-        )
-      );
-    },
-    onSuccess: useOnSuccess(args),
-  });
-};
+      const valeurBrute =
+        valeursBrutes?.find(v => v.id === valeurId || v.annee === annee) || {};
 
-/** Met à jour la valeur d'un commentaire */
-const useUpsertIndicateurCommentaire = (args: TEditIndicateurValeurArgs) => {
-  const {collectivite_id, definition, type} = args;
-  const {isPerso} = definition;
-  const indicateur_id = definition.id;
-
-  return useMutation({
-    mutationKey: 'upsert_indicateur_commentaire',
-    mutationFn: async ({
-      annee,
-      commentaire,
-    }: {
-      annee: number;
-      commentaire: string;
-    }) => {
       return (
-        collectivite_id &&
-        indicateur_id !== undefined &&
-        supabaseClient.from(tableCommentaire(type, isPerso)).upsert(
-          {
-            collectivite_id,
-            indicateur_id: indicateur_id as string,
-            annee,
-            commentaire,
-          },
-          {onConflict: 'collectivite_id,indicateur_id,annee'}
-        )
+        collectiviteId &&
+        indicateurId !== undefined &&
+        Indicateurs.save.upsertIndicateurValeur(supabaseClient, {
+          ...valeurBrute,
+          indicateurId,
+          collectiviteId,
+          [type]: valeur,
+          [`${type}Commentaire`]: commentaire,
+          annee,
+        })
       );
     },
     onSuccess: useOnSuccess(args),
@@ -111,66 +69,61 @@ const useUpsertIndicateurCommentaire = (args: TEditIndicateurValeurArgs) => {
 };
 
 const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
-  const {collectivite_id, definition, type} = args;
-  const {isPerso} = definition;
-  const indicateur_id = definition.id;
+  const {collectiviteId} = args;
 
   return useMutation({
     mutationKey: 'delete_indicateur_valeur',
-    mutationFn: async ({annee}: {annee: number}) => {
-      if (!collectivite_id || isNaN(annee) || indicateur_id === undefined) {
+    mutationFn: async ({valeurId}: {valeurId: number}) => {
+      if (!collectiviteId || isNaN(valeurId)) {
         return;
       }
-      return Promise.all([
-        supabaseClient
-          .from(tableValeur(type, isPerso))
-          .update({valeur: null})
-          .match({collectivite_id, indicateur_id, annee}),
-
-        supabaseClient
-          .from(tableCommentaire(type, isPerso))
-          .update({commentaire: ''})
-          .match({collectivite_id, indicateur_id, annee}),
-      ]);
+      return Indicateurs.delete.deleteIndicateurValeur(
+        supabaseClient,
+        valeurId
+      );
     },
     onSuccess: useOnSuccess(args),
   });
 };
 
 // recharge les valeurs et l'état "rempli"
-export const useOnSuccess = (args: TEditIndicateurValeurArgs) => {
-  const {collectivite_id, definition, type} = args;
-  const {id: indicateur_id} = definition;
-  const parent = (definition as TIndicateurPredefini).parent;
+export const useOnSuccess = (
+  args: Omit<TEditIndicateurValeurArgs, 'valeursBrutes'>
+) => {
+  const {collectiviteId, definition, type} = args;
+  const {id: indicateurId, estPerso, identifiant} = definition;
+  const parents = estPerso
+    ? (definition as Indicateurs.domain.IndicateurDefinitionPredefini).parents
+    : null;
 
   const queryClient = useQueryClient();
   return () => {
-    if (!collectivite_id) return;
+    if (!collectiviteId) return;
     // pour actualiser le graphe
     queryClient.invalidateQueries([
       'indicateur_chart_info',
-      collectivite_id,
-      indicateur_id,
+      collectiviteId,
+      indicateurId,
     ]);
     queryClient.invalidateQueries([
       'indicateur_valeurs',
-      collectivite_id,
-      indicateur_id,
+      collectiviteId,
+      indicateurId,
     ]);
     // pour actualiser le tableau
     queryClient.invalidateQueries([
       'indicateur_valeurs_detail',
-      collectivite_id,
-      indicateur_id,
+      collectiviteId,
+      indicateurId,
       type,
     ]);
     // pour actualiser le badge 'à compléter / complété'
     queryClient.invalidateQueries([
       'indicateur_definition',
-      collectivite_id,
+      collectiviteId,
       // pour les indicateurs composés on doit recharger la définition parente
       // pour que le flag 'rempli' de l'indicateur enfant modifié soit actualisé
-      parent || indicateur_id,
+      parents?.[0] || identifiant || indicateurId,
     ]);
   };
 };

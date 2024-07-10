@@ -1,32 +1,37 @@
 import {ChangeEvent, useEffect, useState} from 'react';
-import {TIndicateurValeurEtCommentaires} from '../useIndicateurValeurs';
+import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {TEditIndicateurValeurHandlers} from './useEditIndicateurValeur';
+import {SourceType} from '../types';
 
 export const OPTION_DELETE = 'delete';
 
 export type TUseTableRowStateArgs = {
+  /** type de données */
+  type: SourceType;
   /** donnée de la ligne (`undefined` pour une nouvelle ligne) */
-  row?: TIndicateurValeurEtCommentaires;
+  row?: TIndicateurValeur;
   /** fonctions pour mettre à jour les données ou supprimer la ligne */
   editHandlers: TEditIndicateurValeurHandlers;
   /** valeurs courantes pour pouvoir vérifier si une nouvelle ligne va écraser
    * une valeur existante */
-  values?: TIndicateurValeurEtCommentaires[];
+  values?: TIndicateurValeur[];
   /** appelé quand la valeur d'une nouvelle ligne est enregisrée */
   onValueSaved?: (annee: number) => void;
 };
 
-const getInitialState = (row?: TIndicateurValeurEtCommentaires) => ({
+const getInitialState = (row?: TIndicateurValeur) => ({
+  id: row?.id,
   annee: row?.annee?.toString() || '',
   valeur: row?.valeur?.toString() || '',
   commentaire: row?.commentaire || '',
   confirmAvantEcrasement: null,
 });
+
 type TState = Omit<
   ReturnType<typeof getInitialState>,
   'confirmAvantEcrasement'
 > & {
-  confirmAvantEcrasement: null | TIndicateurValeurEtCommentaires;
+  confirmAvantEcrasement: null | TIndicateurValeur;
 };
 
 export const useTableRowState = ({
@@ -35,7 +40,7 @@ export const useTableRowState = ({
   editHandlers,
   onValueSaved,
 }: TUseTableRowStateArgs) => {
-  const {editValeur, editComment, deleteValue} = editHandlers;
+  const {editValeur, deleteValue} = editHandlers;
 
   const initialState = getInitialState(row);
   const [state, setState] = useState<TState>(initialState);
@@ -87,8 +92,8 @@ export const useTableRowState = ({
       setState(initialState);
     }
 
-    // sinon enregistre la valeur si elle a changé
-    else if (valeur !== row?.valeur) {
+    // sinon enregistre la valeur
+    else {
       const isNewRow = !row?.annee;
 
       // mais pour une nouvelle ligne on vérifie d'abord si l'année est déjà
@@ -101,7 +106,13 @@ export const useTableRowState = ({
         }
       }
 
-      editValeur({annee, valeur});
+      editValeur({
+        annee,
+        valeur,
+        commentaire: state?.commentaire || row?.commentaire || null,
+        valeurId: row?.id || null,
+      });
+
       // réinitialise l'état si on vient d'ajouter une nouvelle ligne, sinon le
       // refetch après enregistrement provoquera l'affichage de 2 lignes dans le tableau
       if (isNewRow) {
@@ -109,21 +120,14 @@ export const useTableRowState = ({
         setState(getInitialState(undefined));
       }
     }
-
-    // vérifie si le commentaire a changé
-    const {commentaire} = state;
-    if (row && row.commentaire !== commentaire) {
-      editComment({annee, commentaire});
-    }
   };
 
   const onSelectMenuOption = (value: string) => {
     if (value === OPTION_DELETE) {
-      const annee = parseInt(state.annee || '');
-      if (isNaN(annee)) {
+      if (typeof state.id !== 'number') {
         return;
       }
-      deleteValue({annee});
+      deleteValue({valeurId: state.id});
     }
   };
 
@@ -132,6 +136,7 @@ export const useTableRowState = ({
       saveChange(true);
     } else {
       setState({
+        id: null,
         annee: '',
         valeur: '',
         commentaire: '',
