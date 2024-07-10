@@ -6,6 +6,14 @@ import FicheActionDescription from './FicheActionDescription/FicheActionDescript
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 
+const getFormattedDate = (date: string) => {
+  return new Date(date).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+  });
+};
+
 type FicheActionProps = {
   isReadonly: boolean;
 };
@@ -38,11 +46,19 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
             updateFiche={updateFiche}
           />
           <div className="max-lg:col-span-full lg:row-span-3 max-lg:grid max-lg:grid-cols-1 md:max-lg:grid-cols-3 lg:flex lg:flex-col gap-5">
-            <FicheActionPlanning
-              isReadonly={isReadonly}
-              fiche={fiche}
-              updateFiche={updateFiche}
-            />
+            <div className="flex flex-col gap-5">
+              {fiche.modified_at && (
+                <div className="bg-white border border-grey-3 rounded-lg py-3.5 px-5 lg:px-6 xl:px-8 text-sm text-primary-10 max-md:text-center font-medium italic">
+                  Dernière modification le {getFormattedDate(fiche.modified_at)}
+                </div>
+              )}
+              <FicheActionPlanning
+                isReadonly={isReadonly}
+                fiche={fiche}
+                updateFiche={updateFiche}
+              />
+            </div>
+
             <FicheActionActeurs
               isReadonly={isReadonly}
               fiche={fiche}
