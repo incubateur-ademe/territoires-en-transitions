@@ -45,9 +45,11 @@ export type IndicateurDefinitionInsert = z.input<typeof indicateurDefinitionSche
 /**
  * Schéma zod d'un élément d'une liste d'indicateurs
  */
-export const indicateurListItemSchema = z.object ({
-    id : z.number(),
-    titre : z.string()
+export const indicateurListItemSchema = z.object({
+  id: z.number(),
+  titre: z.string(),
+  estPerso: z.boolean(),
+  identifiant: z.string().nullable(),
 });
 /**
  * Type TS d'un élément d'une liste d'indicateurs
@@ -57,26 +59,32 @@ export type IndicateurListItem = z.input<typeof indicateurListItemSchema>;
 /**
  * Schéma zod d'un indicateur pour un affichage en graphique
  */
-export const IndicateurChartInfoSchema = z.object ({
-    id : z.number(),
-    titre: z.string(),
-    titreLong : z.string().nullable(),
-    unite: z.string(),
-    rempli: z.boolean(),
-    confidentiel: z.boolean(),
-    participationScore: z.boolean(),
-    sansValeur : z.boolean().nullable(),
-    enfants: z.object({
-        id : z.number(),
-        rempli : z.boolean()
-    }).array().nullable(),
-    count: z.number().nullable(),
-    total: z.number().nullable(),
-    valeurs : z.object({
-        annee : z.number(),
-        resultat : z.number(),
-        objectif : z.number()
-    }).array().nullable()
+export const IndicateurChartInfoSchema = z.object({
+  id: z.number(),
+  titre: z.string(),
+  titreLong: z.string().nullable(),
+  unite: z.string(),
+  rempli: z.boolean(),
+  confidentiel: z.boolean(),
+  participationScore: z.boolean(),
+  sansValeur: z.boolean().nullable(),
+  enfants: z
+    .object({
+      id: z.number(),
+      rempli: z.boolean(),
+    })
+    .array()
+    .nullable(),
+  count: z.number().nullable(),
+  total: z.number().nullable(),
+  valeurs: z
+    .object({
+      annee: z.number(),
+      resultat: z.number(),
+      objectif: z.number(),
+    })
+    .array()
+    .nullable(),
 });
 
 /**
@@ -88,30 +96,31 @@ export type IndicateurChartInfo = z.input<typeof IndicateurChartInfoSchema>;
  * Schéma zod de la définition d'un indicateur
  */
 export const definitionSchema = z.object({
-    id : z.number().readonly(),
-    groupementId : z.number().nullable(),
-    collectiviteId : z.number().nullable(), // perso
-    identifiant : z.string().nullable().readonly(),
-    titre : z.string(),
-    titreLong : z.string().nullable(),
-    description : z.string().nullable(),
-    unite : z.string(),
-    borneMin : z.number().nullable(),
-    borneMax : z.number().nullable(),
-    participationScore : z.boolean().readonly(),
-    sansValeur : z.boolean(),
-    commentaire : z.string().nullable(),
-    confidentiel : z.boolean(),
-    rempli : z.boolean().readonly(),
-    estPerso : z.boolean().readonly(),
-    actions : actionSchema.array(),
-    type : categorieSchema.readonly(),
-    programmes : categorieSchema.array().readonly(),
-    prioritaire : z.boolean().readonly(),
-    thematiques : thematiqueSchema.array(),
-    enfants : z.number().array().readonly(),
-    parents : z.number().array().readonly()
+  id: z.number(),
+  groupementId: z.number().nullable(),
+  collectiviteId: z.number().nullable(), // perso
+  identifiant: z.string().nullable(),
+  titre: z.string(),
+  titreLong: z.string().nullable(),
+  description: z.string().nullable(),
+  unite: z.string(),
+  borneMin: z.number().nullable(),
+  borneMax: z.number().nullable(),
+  participationScore: z.boolean(),
+  sansValeur: z.boolean(),
+  commentaire: z.string().nullable(),
+  confidentiel: z.boolean(),
+  rempli: z.boolean(),
+  estPerso: z.boolean(),
+  actions: actionSchema.array(),
+  type: categorieSchema,
+  programmes: categorieSchema.array(),
+  prioritaire: z.boolean(),
+  thematiques: thematiqueSchema.array(),
+  enfants: z.number().array(),
+  parents: z.number().array(),
 });
+
 /**
  * Type TS de la définition d'un indicateur
  */
