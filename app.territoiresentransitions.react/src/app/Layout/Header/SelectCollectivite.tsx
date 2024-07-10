@@ -40,7 +40,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
                 'fr-nav__btn': listCollectivites.length,
                 'fr-nav__link': !listCollectivites.length,
               },
-              'min-w-[15rem]'
+              'min-w-[15rem] flex items-center'
             )}
             aria-controls={ID}
             aria-expanded={opened}
