@@ -6,6 +6,7 @@ import FicheActionDescription from './FicheActionDescription/FicheActionDescript
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import classNames from 'classnames';
+import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 
 const getFormattedDate = (date: string) => {
   return new Date(date).toLocaleDateString('fr-FR', {
@@ -57,9 +58,18 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
             )}
           >
             <div className="flex flex-col gap-5">
+              <FicheActionRestreint
+                isRestreint={fiche.restreint ?? false}
+                updateRestreint={restreint =>
+                  updateFiche({...fiche, restreint})
+                }
+              />
               {fiche.modified_at && (
-                <div className="bg-white border border-grey-3 rounded-lg py-3.5 px-5 lg:px-6 xl:px-8 text-sm text-primary-10 max-lg:text-center font-medium italic">
-                  Dernière modification le {getFormattedDate(fiche.modified_at)}
+                <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 h-14 text-sm text-primary-10 font-medium italic flex items-center max-lg:justify-center">
+                  <span>
+                    Dernière modification le{' '}
+                    {getFormattedDate(fiche.modified_at)}
+                  </span>
                 </div>
               )}
               <FicheActionPlanning
