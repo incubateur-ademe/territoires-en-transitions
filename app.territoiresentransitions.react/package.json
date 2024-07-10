@@ -58,6 +58,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
     "react-table": "^7.8.0",
+    "ts-case-convert": "^2.0.7",
     "tss-react": "^4.9.2",
     "use-debounce": "^8.0.1",
     "uuid": "^8.3.2",
