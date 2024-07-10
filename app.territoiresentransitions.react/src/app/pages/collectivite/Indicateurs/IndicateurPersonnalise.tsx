@@ -5,26 +5,26 @@ import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
-import {TIndicateurPersonnalise} from './types';
-import {useUpsertIndicateurPersoDefinition} from './useUpsertIndicateurPersoDefinition';
+import {useUpdateIndicateurPersoDefinition} from './useUpdateIndicateurPersoDefinition';
 import {useExportIndicateurs} from './useExportIndicateurs';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
-import {useIndicateurPersonnalise} from './useIndicateurDefinition';
+import {useIndicateurDefinition} from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/detail/IndicateurDetailChart';
 import {useDeleteIndicateurPerso} from './useRemoveIndicateurPerso';
+import {Indicateurs} from '@tet/api';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
   definition,
 }: {
-  definition: TIndicateurPersonnalise;
+  definition: Indicateurs.domain.IndicateurDefinition;
 }) => {
-  const {description, unite, nom, rempli} = definition;
-  const {mutate: saveDefinition} = useUpsertIndicateurPersoDefinition();
+  const {description, unite, titre, rempli} = definition;
+  const {mutate: updateDefinition} = useUpdateIndicateurPersoDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
   const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
@@ -39,18 +39,7 @@ const IndicateurPersonnaliseBase = ({
     const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
-      const {id, description, commentaire, unite, titre} = definition;
-      saveDefinition({
-        definition: {
-          collectivite_id,
-          id,
-          commentaire,
-          description,
-          unite,
-          titre,
-          [name]: nouveau,
-        },
-      });
+      updateDefinition({...definition, [name]: nouveau});
     }
   };
 
@@ -63,7 +52,7 @@ const IndicateurPersonnaliseBase = ({
   return (
     <>
       <HeaderIndicateur
-        title={nom}
+        title={titre}
         isReadonly={isReadonly}
         onUpdate={value => handleUpdate('titre', value)}
       />
@@ -92,7 +81,7 @@ const IndicateurPersonnaliseBase = ({
           definition={definition}
           rempli={definition.rempli}
           titre={definition.titre}
-          fileName={definition.nom}
+          fileName={definition.titre}
         />
 
         <BadgeACompleter a_completer={!rempli} className="mt-10 mb-6" />
@@ -123,7 +112,7 @@ const IndicateurPersonnaliseBase = ({
       {showConfirm && (
         <Modal
           openState={{isOpen: showConfirm, setIsOpen: setShowConfirm}}
-          title={`Suppression indicateur "${definition.nom}"`}
+          title={`Suppression indicateur "${definition.titre}"`}
           description="Êtes-vous sûr de vouloir supprimer cet indicateur personnalisé ? Vous perdrez définitivement les données associées à cet indicateur."
           renderFooter={({close}) => (
             <ModalFooterOKCancel
@@ -147,12 +136,8 @@ const IndicateurPersonnaliseBase = ({
 };
 
 /** Charge les données et affiche le détail d'un indicateur personnalisé */
-export const IndicateurPersonnalise = ({
-  indicateurId,
-}: {
-  indicateurId: string;
-}) => {
-  const {data: definition} = useIndicateurPersonnalise(parseInt(indicateurId));
+export const IndicateurPersonnalise = ({indicateurId}: {indicateurId: number}) => {
+  const definition = useIndicateurDefinition(indicateurId);
   if (!definition) return null;
 
   return <IndicateurPersonnaliseBase definition={definition} />;
