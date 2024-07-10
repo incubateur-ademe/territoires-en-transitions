@@ -33,6 +33,7 @@ const FicheActionPlanning = ({
 
   const {
     amelioration_continue: ameliorationContinue,
+    calendrier: justificationCalendrier,
     date_debut: dateDebut,
     date_fin_provisoire: dateFinPrevisionnelle,
     niveau_priorite: niveauPriorite,
@@ -42,7 +43,7 @@ const FicheActionPlanning = ({
   return (
     <div
       className={classNames(
-        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center gap-5 text-center relative',
+        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center justify-center gap-5 text-center relative',
         className
       )}
     >
@@ -91,7 +92,7 @@ const FicheActionPlanning = ({
           {(((!!dateDebut || !!dateFinPrevisionnelle) &&
             (!!statut || !!niveauPriorite || !!ameliorationContinue)) ||
             !!statut ||
-            !!niveauPriorite) && <Divider className="-mb-4" />}
+            !!niveauPriorite) && <Divider className="-mb-5" />}
 
           {/* Statut et niveau de priorité */}
           {(!!statut || !!niveauPriorite) && (
@@ -113,6 +114,16 @@ const FicheActionPlanning = ({
                 l'action se répète tous les ans
               </span>
             </div>
+          )}
+
+          {/* Justification si l'action est en pause ou abandonnée */}
+          {!!justificationCalendrier && (
+            <>
+              <Divider className="-mb-5" />
+              <p className="text-sm text-primary-10 text-left leading-[22px] mb-0">
+                {justificationCalendrier}
+              </p>
+            </>
           )}
         </>
       ) : (

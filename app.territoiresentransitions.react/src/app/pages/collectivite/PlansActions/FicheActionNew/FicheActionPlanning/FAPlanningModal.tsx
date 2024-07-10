@@ -95,6 +95,7 @@ const FAPlanningModal = ({
               <div className="col-span-2 mb-2">
                 <Checkbox
                   label="L'action se répète tous les ans"
+                  message="Sans date de fin prévisionnelle"
                   checked={editedFiche.amelioration_continue ?? false}
                   onChange={evt => {
                     const isChecked = evt.target.checked;
@@ -133,7 +134,7 @@ const FAPlanningModal = ({
               </Field>
 
               {/* Statut */}
-              <Field title="Statut">
+              <Field title="Statut" className="max-md:col-span-2">
                 <Select
                   options={ficheActionStatutOptions}
                   values={editedFiche.statut ?? []}
@@ -150,7 +151,7 @@ const FAPlanningModal = ({
               </Field>
 
               {/* Niveau de priorité */}
-              <Field title="Niveau de priorité">
+              <Field title="Niveau de priorité" className="max-md:col-span-2">
                 <Select
                   options={ficheActionNiveauPrioriteOptions}
                   values={editedFiche.niveau_priorite ?? []}
@@ -177,6 +178,10 @@ const FAPlanningModal = ({
                 <Input
                   type="text"
                   value={editedFiche.calendrier ?? ''}
+                  disabled={
+                    editedFiche.statut !== 'En pause' &&
+                    editedFiche.statut !== 'Abandonné'
+                  }
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
