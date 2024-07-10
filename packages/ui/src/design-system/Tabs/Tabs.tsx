@@ -6,6 +6,7 @@ import {Icon} from '../Icon';
 export type TabSize = 'xs' | 'sm' | 'md';
 
 type TabsProps = {
+  'data-test'?: string;
   /** Permet d'ajuster les styles du container */
   className?: string;
   /** Permet d'ajuster les styles de la liste d'onglets */
@@ -26,6 +27,7 @@ type TabsProps = {
  *  Affiche un groupe d'onglets.
  */
 export const Tabs = ({
+  'data-test': dataTest,
   className,
   tabsListClassName,
   tabPanelClassName,
@@ -59,7 +61,7 @@ export const Tabs = ({
   );
 
   return (
-    <div className={classNames(className)}>
+    <div className={classNames(className)} data-test={dataTest}>
       <ul
         className={classNames(
           'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
