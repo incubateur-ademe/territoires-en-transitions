@@ -55,7 +55,7 @@ const FicheActionActeurs = ({
           icon="edit-line"
           size="xs"
           variant="grey"
-          className="absolute top-4 lg:top-5 xl:top-6 right-4 lg:right-5 xl:right-6"
+          className="absolute top-4 right-3"
           onClick={() => setIsModalOpen(true)}
         />
       )}
