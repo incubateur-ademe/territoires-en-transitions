@@ -1,14 +1,23 @@
+import {SharedDomain} from '@tet/api';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TIndicateurDefinition} from '../types';
-import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
-import {useUpsertIndicateurPilote} from './useUpsertIndicateurPilote';
-import {useUpsertIndicateurServicePilote} from './useUpsertIndicateurServicePilote';
-import {useUpsertIndicateurPersoThematique} from './useUpsertIndicateurPersoThematique';
+import {
+  useIndicateurPilotes,
+  useUpsertIndicateurPilote,
+} from './useIndicateurPilotes';
+import {
+  useIndicateurServices,
+  useUpsertIndicateurServices,
+} from './useIndicateurServices';
+import {
+  useIndicateurThematiques,
+  useUpsertIndicateurThematiques,
+} from './useIndicateurThematiques';
 import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
 import {Field} from '@tet/ui';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {objectToCamel, objectToSnake} from 'ts-case-convert';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -21,49 +30,66 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   const {definition} = props;
 
   // charge les informations complémentaires associées à l'indicateur
-  const {data: resume} = useIndicateurInfoLiees(definition);
+  const {data: pilotes} = useIndicateurPilotes(definition);
+  const {data: services} = useIndicateurServices(definition);
+  const {data: thematiques} = useIndicateurThematiques(definition);
 
   // fonctions de mise à jour des données
   const {mutate: upsertIndicateurPilote} =
     useUpsertIndicateurPilote(definition);
   const {mutate: upsertIndicateurServicePilote} =
-    useUpsertIndicateurServicePilote(definition);
+    useUpsertIndicateurServices(definition);
   const {mutate: upsertIndicateurPersoThematique} =
-    useUpsertIndicateurPersoThematique(definition);
+    useUpsertIndicateurThematiques(definition);
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
   const isReadonly = !collectivite || collectivite.readonly;
 
-  // Il y a un bug dans la fonction useIndicateurInfoLiees
-  // qui duplique les pilotes lorsque l'on sélectionne
-  // à la fois des user et des tags
-  const pilotes = resume?.pilotes?.map(p => getPersonneStringId(p));
-  const pilotesValues = [...new Set(pilotes)];
+  // extrait les userId et les tagId
+  const pilotesValues = pilotes
+    ?.map(p => p.userId || p.tagId?.toString())
+    .filter(id => !!id) as string[];
 
   return (
     <>
       {/** personne pilote */}
       <Field title="Personne pilote">
         <PersonnesDropdown
-          values={pilotesValues}
-          onChange={({personnes}) => upsertIndicateurPilote(personnes)}
+          values={pilotes?.length ? pilotesValues : undefined}
+          onChange={({personnes}) => {
+            upsertIndicateurPilote(
+              personnes.map(personne => {
+                const pilote = pilotes?.find(
+                  p =>
+                    p.tagId === personne.tag_id || p.userId === personne.user_id
+                );
+                return pilote
+                  ? pilote
+                  : ({
+                      collectiviteId: collectivite.collectivite_id,
+                      tagId: personne.tag_id,
+                      userId: personne.user_id,
+                    } as SharedDomain.Personne);
+              })
+            );
+          }}
           disabled={isReadonly}
         />
       </Field>
       {/** services pilotes */}
       <Field title="Direction ou service pilote">
         <ServicePiloteDropdown
-          services={resume?.services || []}
-          onSelect={upsertIndicateurServicePilote}
+          services={services ? objectToSnake(services) : []}
+          onSelect={s => upsertIndicateurServicePilote(objectToCamel(s))}
           isReadonly={isReadonly}
         />
       </Field>
       {/** Thématiques */}
-      {definition.isPerso && (
+      {definition.estPerso && (
         <Field title="Thématique">
           <ThematiquesDropdown
-            values={resume?.thematiques?.map(t => t.id)}
+            values={thematiques}
             onChange={({thematiques}) =>
               upsertIndicateurPersoThematique(thematiques)
             }
