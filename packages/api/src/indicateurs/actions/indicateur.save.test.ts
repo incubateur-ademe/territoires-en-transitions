@@ -297,23 +297,33 @@ test('Test upsertFiches', async () => {
         statut : 'En cours',
         titre : 'test'
     }];
-    await upsertFiches(supabase, def!, 1, fr);
+    await upsertFiches(
+      supabase,
+      def!.id,
+      1,
+      fr.map(f => f.id)
+    );
     const data = await selectIndicateurFiches(supabase, 123, 1);
     expect(data).not.toBeNull();
     expect(data).toHaveLength(1);
     // Enlève fiche sur indicateur personnalisé
-    await upsertFiches(supabase, def!,  1, []);
+    await upsertFiches(supabase, def!.id, 1, []);
     const data3 = await selectIndicateurFiches(supabase, 123, 1);
     expect(data3).not.toBeNull();
     expect(data3).toHaveLength(0);
     // Ajout fiche sur indicateur prédéfini
     const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    await upsertFiches(supabase, def2!,  1, fr);
+    await upsertFiches(
+      supabase,
+      def2!.id,
+      1,
+      fr?.map(f => f.id)
+    );
     const data4 = await selectIndicateurFiches(supabase, 1, 1);
     expect(data4).not.toBeNull();
     expect(data4).toHaveLength(1);
     // Enlève fiche sur indicateur prédéfini
-    await upsertFiches(supabase, def2!, 1, []);
+    await upsertFiches(supabase, def2!.id, 1, []);
     const data5 = await selectIndicateurFiches(supabase, 1, 1 );
     expect(data5).not.toBeNull();
     expect(data5).toHaveLength(0);

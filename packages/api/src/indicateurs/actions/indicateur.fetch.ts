@@ -15,7 +15,7 @@ import {
   selectGroupementParCollectivite,
   selectGroupements,
 } from '../../collectivites/shared/actions/groupement.fetch';
-import {Source, Valeur} from '../domain';
+import {Source} from '../domain';
 import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
 import {Tag, Thematique} from '../../shared/domain';
 
@@ -912,8 +912,8 @@ async function transformeDefinition(
       services,
       fiches,
       fiches_non_classees, // Ajoute le champ 'est_perso'
-      enfants: item?.enfants?.map(e => e.id),
-      parents: item?.parents?.map(p => p.id),
+      enfants: item?.enfants?.map((e: any) => e.id),
+      parents: item?.parents?.map((p: any) => p.id),
     };
   });
 }

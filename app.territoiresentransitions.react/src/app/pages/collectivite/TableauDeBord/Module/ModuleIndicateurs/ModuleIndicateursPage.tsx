@@ -15,7 +15,7 @@ import {
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
 import {Filters} from '@tet/api/dist/src/indicateurs';
-import {moduleOptionsToFilters} from '@tet/api/dist/src/indicateurs/fetchFilteredIndicateurs';
+import {Indicateurs} from '@tet/api';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -67,7 +67,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const filtre = module && moduleOptionsToFilters(module.options);
+  const filtre = module && Indicateurs.moduleOptionsToFilters(module.options);
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(
     null,
