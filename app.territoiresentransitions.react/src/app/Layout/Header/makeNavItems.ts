@@ -12,6 +12,7 @@ import {
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
   makeTableauBordLandingUrl,
+  makeCollectiviteToutesLesFichesUrl,
 } from 'app/paths';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -164,6 +165,12 @@ const makeNavItemsBase = (
         {
           label: "Tous les plans d'action",
           to: makeCollectivitePlansActionsLandingUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: 'Toutes les fiches action',
+          to: makeCollectiviteToutesLesFichesUrl({
             collectiviteId,
           }),
         },
