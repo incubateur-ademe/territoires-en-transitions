@@ -19,6 +19,7 @@ const ficheActionColumns = [
   'niveau_priorite',
   'restreint',
   'amelioration_continue',
+  'budget_previsionnel',
 ];
 
 type Props = {
@@ -43,13 +44,21 @@ export async function ficheResumesFetch({
 
   const relatedTables = new Set<string>();
 
-  // Toujours récupérer les axes pour avoir l'id du plan racine
-  relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
-
   // Toujours récupérer les pilotes liés à la fiche
   relatedTables.add(
     'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:dcp(prenom, nom, user_id))'
   );
+
+  if (
+    filtre.personneReferenteIds?.length ||
+    filtre.utilisateurReferentIds?.length
+  ) {
+    relatedTables.add('referents:fiche_action_referent!inner(*)');
+  }
+
+  if (filtre.planActionIds?.length) {
+    relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
+  }
 
   if (filtre.structurePiloteIds?.length) {
     relatedTables.add('fiche_action_structure_tag!inner()');
@@ -57,6 +66,18 @@ export async function ficheResumesFetch({
 
   if (filtre.servicePiloteIds?.length) {
     relatedTables.add('fiche_action_service_tag!inner(*)');
+  }
+
+  if (filtre.thematiqueIds?.length) {
+    relatedTables.add('fiche_action_thematique!inner(*)');
+  }
+
+  if (filtre.financeurIds?.length) {
+    relatedTables.add('fiche_action_financeur_tag!inner(*)');
+  }
+
+  if (filtre.hasIndicateurLies) {
+    relatedTables.add('fiche_action_indicateur!inner()');
   }
 
   // 2. Crée la requête avec les tables liées
@@ -93,6 +114,16 @@ export async function ficheResumesFetch({
     query.in('pilotes.tag_id', filtre.personnePiloteIds);
   }
 
+  if (filtre.utilisateurReferentIds?.length) {
+    query.not('referents', 'is', null);
+    query.in('referents.user_id', filtre.utilisateurReferentIds);
+  }
+
+  if (filtre.personneReferenteIds?.length) {
+    query.not('referents', 'is', null);
+    query.in('referents.tag_id', filtre.personneReferenteIds);
+  }
+
   if (filtre.structurePiloteIds?.length) {
     query.in(
       'fiche_action_structure_tag.structure_tag_id',
@@ -105,6 +136,29 @@ export async function ficheResumesFetch({
       'fiche_action_service_tag.service_tag_id',
       filtre.servicePiloteIds
     );
+  }
+
+  if (filtre.thematiqueIds?.length) {
+    query.in('fiche_action_thematique.thematique_id', filtre.thematiqueIds);
+  }
+
+  if (filtre.financeurIds?.length) {
+    query.in(
+      'fiche_action_financeur_tag.financeur_tag_id',
+      filtre.financeurIds
+    );
+  }
+
+  if (filtre.hasIndicateurLies) {
+    query.not('fiche_action_indicateur', 'is', null);
+  }
+
+  if (filtre.budgetPrevisionnel) {
+    query.not('budget_previsionnel', 'is', null);
+  }
+
+  if (filtre.restreint) {
+    query.is('restreint', true);
   }
 
   if (filtre.statuts?.length) {
