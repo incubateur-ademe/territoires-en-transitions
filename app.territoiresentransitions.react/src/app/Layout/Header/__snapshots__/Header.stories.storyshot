@@ -416,7 +416,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                 <button
                   aria-controls="SelectCollectivite"
                   aria-expanded={false}
-                  className="fr-nav__btn min-w-[15rem]"
+                  className="fr-nav__btn min-w-[15rem] flex items-center"
                   onBlur={[Function]}
                   onClick={[Function]}
                   onFocus={[Function]}
@@ -900,7 +900,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                 <button
                   aria-controls="SelectCollectivite"
                   aria-expanded={false}
-                  className="fr-nav__btn min-w-[15rem]"
+                  className="fr-nav__btn min-w-[15rem] flex items-center"
                   onBlur={[Function]}
                   onClick={[Function]}
                   onFocus={[Function]}
@@ -1456,7 +1456,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                 <button
                   aria-controls="SelectCollectivite"
                   aria-expanded={false}
-                  className="fr-nav__btn min-w-[15rem]"
+                  className="fr-nav__btn min-w-[15rem] flex items-center"
                   onBlur={[Function]}
                   onClick={[Function]}
                   onFocus={[Function]}
