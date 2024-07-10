@@ -56,7 +56,7 @@ export type TPersonneTagInsert = TablesInsert<'personne_tag'>;
 export type TFicheResume = Views<'fiche_resume'>;
 
 export type TPersonne = CompositeTypes<'personne'>;
-export type TIndicateur = CompositeTypes<'indicateur_generique'>;
+
 export type TFinanceurMontant = CompositeTypes<'financeur_montant'>;
 
 export type TFicheActionCibles = Enums<'fiche_action_cibles'>;
