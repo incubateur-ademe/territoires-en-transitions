@@ -48,6 +48,7 @@ const IndicateurChartContainer = (
     collectiviteId,
     indicateurView: view,
     indicateurId: definition.id,
+    identifiantReferentiel: definition.identifiant,
   });
 
   return (
@@ -60,7 +61,7 @@ const IndicateurChartContainer = (
           readonly={isReadonly}
         />
       ) : (
-        definition.nom
+        definition.titre
       )}
     </div>
   );

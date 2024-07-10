@@ -33,6 +33,8 @@ export const homePath = recherchesCollectivitesUrl;
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
 export const indicateurIdParam = 'indicateurId';
+export const indicateurIdentiantReferentielParam =
+  'indicateurIdentiantReferentielParam';
 export const referentielParam = 'referentielId';
 export const referentielVueParam = 'referentielVue';
 const actionParam = 'actionId';
@@ -61,7 +63,8 @@ export type ActionVueParamOption =
 export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
-export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}/:${indicateurIdParam}?`;
+export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
+export const collectiviteIndicateurReferentielPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
@@ -143,15 +146,25 @@ export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
   indicateurView,
   indicateurId,
+  identifiantReferentiel,
 }: {
   collectiviteId: number;
   indicateurView?: IndicateurViewParamOption;
-  indicateurId?: number | string;
+  indicateurId?: number;
+  identifiantReferentiel?: string | null;
 }) =>
-  collectiviteIndicateurPath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${indicateurViewParam}`, indicateurView || '')
-    .replace(`:${indicateurIdParam}`, indicateurId?.toString() || '');
+  identifiantReferentiel
+    ? collectiviteIndicateurReferentielPath
+        .replace(`:${collectiviteParam}`, collectiviteId.toString())
+        .replace(`:${indicateurViewParam}`, indicateurView || '')
+        .replace(
+          `:${indicateurIdentiantReferentielParam}`,
+          identifiantReferentiel?.toString() || ''
+        )
+    : collectiviteIndicateurPath
+        .replace(`:${collectiviteParam}`, collectiviteId.toString())
+        .replace(`:${indicateurViewParam}`, indicateurView || '')
+        .replace(`:${indicateurIdParam}`, indicateurId?.toString() || '');
 
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());

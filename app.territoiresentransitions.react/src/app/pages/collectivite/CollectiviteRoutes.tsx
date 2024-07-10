@@ -49,6 +49,9 @@ export const CollectiviteRoutes = () => {
       <RouteEnAccesRestreint path={collectiviteIndicateursPath}>
         <IndicateursPage />
       </RouteEnAccesRestreint>
+      <RouteEnAccesRestreint path={collectiviteIndicateurReferentielPath}>
+        <IndicateursPage />
+      </RouteEnAccesRestreint>
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
       </RouteEnAccesRestreint>
