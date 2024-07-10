@@ -26,11 +26,15 @@ const FicheActionDescription = ({
   return (
     <div
       className={classNames(
-        'bg-primary-7 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-7',
+        'bg-primary-7 rounded-lg py-7 lg:py-8 px-5 lg:px-6 xl:px-7 flex flex-col gap-7',
         className
       )}
     >
-      <div className="flex justify-between items-start">
+      <div
+        className={classNames('flex justify-between items-start', {
+          'max-sm:-mb-4 -mb-8': !thematiques || !thematiques?.length,
+        })}
+      >
         {/* Liste des thématiques et sous-thématiques sous forme de badges */}
         {(thematiques?.length || sousThematiques?.length) && (
           <div className="flex flex-wrap gap-4">
