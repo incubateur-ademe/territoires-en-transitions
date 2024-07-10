@@ -3,11 +3,10 @@ import {IndicateurPersoNouveauForm} from 'app/pages/collectivite/Indicateurs/Ind
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   TIndicateurPersoDefinitionWrite,
-  useUpsertIndicateurPersoDefinition,
-} from './useUpsertIndicateurPersoDefinition';
+  useInsertIndicateurPersoDefinition,
+} from './useInsertIndicateurPersoDefinition';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import classNames from 'classnames';
-import {TThematiqueRow} from 'types/alias';
 import {FicheAction} from '../PlansActions/FicheAction/data/types';
 
 /** Affiche la page de création d'un indicateur personnalisé  */
@@ -23,7 +22,7 @@ const IndicateurPersoNouveau = ({
 }) => {
   const collectiviteId = useCollectiviteId()!;
   const newDefinition = {
-    collectivite_id: collectiviteId,
+    collectiviteId,
     titre: '',
     description: '',
     unite: '',
@@ -33,13 +32,13 @@ const IndicateurPersoNouveau = ({
   const history = useHistory();
   const ficheId = fiche?.id;
 
-  const {mutate: save, isLoading} = useUpsertIndicateurPersoDefinition({
-    onSuccess: data => {
+  const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
+    onSuccess: indicateurId => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
         collectiviteId,
         indicateurView: 'perso',
-        indicateurId: data.id,
+        indicateurId,
       });
       onClose?.();
       if (ficheId !== undefined) {
@@ -50,11 +49,8 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const onSave = (
-    definition: TIndicateurPersoDefinitionWrite,
-    thematiques: TThematiqueRow[]
-  ) => {
-    save({definition, ficheId, thematiques});
+  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    save({definition, ficheId});
   };
 
   return (

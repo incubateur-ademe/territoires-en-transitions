@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
-import {TIndicateurPersoDefinitionWrite} from './useUpsertIndicateurPersoDefinition';
+import {TIndicateurPersoDefinitionWrite} from './useInsertIndicateurPersoDefinition';
 import FormField from 'ui/shared/form/FormField';
 import {TThematiqueRow} from 'types/alias';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -21,10 +21,7 @@ export const IndicateurPersoNouveauForm = (props: {
   indicateur: TIndicateurPersoDefinitionWrite;
   isSaving?: boolean;
   thematiquesFiche?: TThematiqueRow[] | null;
-  onSave: (
-    data: TIndicateurPersoDefinitionWrite,
-    thematiques: TThematiqueRow[]
-  ) => void;
+  onSave: (data: TIndicateurPersoDefinitionWrite) => void;
   onCancel?: () => void;
 }) => {
   const {indicateur, isSaving, thematiquesFiche, onSave, onCancel} = props;
@@ -33,7 +30,7 @@ export const IndicateurPersoNouveauForm = (props: {
   );
 
   const handleSave = (data: TIndicateurPersoDefinitionWrite) => {
-    onSave(data, thematiques);
+    onSave({...data, thematiques});
   };
 
   return (

@@ -4,6 +4,7 @@ import {useHistory} from 'react-router-dom';
 // import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {useEventTracker} from '@tet/ui';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {Indicateurs} from '@tet/api';
 
 export const useDeleteIndicateurPerso = (
   collectivite_id: number,
@@ -17,26 +18,14 @@ export const useDeleteIndicateurPerso = (
     ['delete_indicateur_perso', indicateur_id],
     async () => {
       if (collectivite_id === undefined || indicateur_id === undefined) {
-        return;
+        throw Error('invalid args');
       }
-
-      const {error} = await supabaseClient
-        .from('indicateur_personnalise_definition')
-        .delete()
-        .match({collectivite_id, id: indicateur_id});
-
-      if (error) {
-        console.error(error);
-        throw error;
-      }
-
-      queryClient.invalidateQueries([
-        'indicateur_definitions',
-        collectivite_id,
-        'perso',
-      ]);
+      return Indicateurs.delete.deleteIndicateur(
+        supabaseClient,
+        indicateur_id,
+        collectivite_id
+      );
     },
-
     {
       meta: {
         success: "L'indicateur personnalisé a été supprimé",
@@ -44,6 +33,12 @@ export const useDeleteIndicateurPerso = (
       },
       onSuccess: () => {
         tracker('indicateur_suppression', {collectivite_id, indicateur_id});
+
+        queryClient.invalidateQueries([
+          'indicateur_definitions',
+          collectivite_id,
+          'perso',
+        ]);
 
         history.push(
           makeCollectiviteIndicateursUrl({
