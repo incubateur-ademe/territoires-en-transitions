@@ -3,13 +3,13 @@ import classNames from 'classnames';
 
 import {Button} from '@tet/ui';
 import IndicateurChart from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
-import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
-import {useIndicateurChartInfo} from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
+import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
 import {useIndicateurValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import {getLeftLineChartMargin} from 'ui/charts/Line/utils';
+import {transformeValeurs} from './transformeValeurs';
 
 type Props = {
-  definition: TIndicateurListItem;
+  definition: TIndicateurDefinition;
   titre: string;
   fileName: string;
   rempli: boolean | null;
@@ -30,26 +30,23 @@ const IndicateurDetailChart = ({
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
 
-  // lit les données nécessaires à l'affichage du graphe
-  const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
-    definition.id
-  );
-
   // charge les valeurs à afficher dans le graphe
-  const {data: valeurs, isLoading: isLoadingValeurs} = useIndicateurValeurs({
-    id: chartInfo?.id,
-    importSource: source,
-    autoRefresh: true,
-  });
+  const {data: valeursBrutes, isLoading: isLoadingValeurs} =
+    useIndicateurValeurs({
+      id: definition.id,
+      importSource: source,
+      autoRefresh: true,
+    });
 
-  // Assemblage des données pour le graphique
+  // sépare les données objectifs/résultats
+  const {valeurs} = transformeValeurs(valeursBrutes, source);
   const data = {
-    unite: chartInfo?.unite,
-    valeurs: valeurs || [],
+    unite: definition.unite,
+    valeurs,
   };
 
   // Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître
-  const hasValeurOrObjectif = data.valeurs.map(v => v.valeur).length > 0;
+  const hasValeurOrObjectif = valeurs.length > 0;
 
   return (
     <div
@@ -64,7 +61,7 @@ const IndicateurDetailChart = ({
         >
           {titre}
         </div>
-        {rempli && (
+        {!!rempli && (
           <Button
             size="xs"
             variant="outlined"
@@ -78,7 +75,7 @@ const IndicateurDetailChart = ({
 
       <IndicateurChart
         className="min-h-[16rem]"
-        isLoading={isLoadingInfo || isLoadingValeurs}
+        isLoading={isLoadingValeurs}
         data={data}
         chartConfig={{
           theme: {

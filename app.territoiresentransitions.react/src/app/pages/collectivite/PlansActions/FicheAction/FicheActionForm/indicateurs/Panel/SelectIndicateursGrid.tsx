@@ -67,11 +67,7 @@ const IndicateurChartContainer = (
   const {definition, selectedIndicateurs, onSelect} = props;
 
   const selected =
-    selectedIndicateurs?.some(
-      i =>
-        i.indicateur_id === definition.id ||
-        i.indicateur_personnalise_id === definition.id
-    ) ?? false;
+    selectedIndicateurs?.some(i => i.id === definition.id) ?? false;
 
   return (
     <div ref={ref} className="min-h-[5rem]">
@@ -89,7 +85,7 @@ const IndicateurChartContainer = (
           hideChartWithoutValue
         />
       ) : (
-        definition.nom
+        definition.titre
       )}
     </div>
   );

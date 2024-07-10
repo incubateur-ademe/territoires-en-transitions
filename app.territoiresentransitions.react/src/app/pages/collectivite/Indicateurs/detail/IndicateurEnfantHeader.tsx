@@ -27,10 +27,10 @@ export const IndicateurEnfantHeader = ({
     >
       <div>
         <ExpandToggle open={open} />
-        <span className="font-bold">{definition.nom}</span>
+        <span className="font-bold">{definition.titre}</span>
       </div>
       <div className="flex gap-2">
-        {definition.participation_score && (
+        {definition.participationScore && (
           <Badge title="Participe au score" state="grey" />
         )}
         <BadgeACompleter

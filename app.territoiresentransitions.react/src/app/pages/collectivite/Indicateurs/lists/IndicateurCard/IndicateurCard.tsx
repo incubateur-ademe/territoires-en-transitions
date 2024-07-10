@@ -13,7 +13,6 @@ import {
   TIndicateurChartInfo,
   TIndicateurListItem,
 } from 'app/pages/collectivite/Indicateurs/types';
-import {useIndicateurValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,
@@ -22,6 +21,7 @@ import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
 import {getIndicateurRestant} from './utils';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
+import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/detail/transformeValeurs';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -66,28 +66,19 @@ const IndicateurCard = (props: IndicateurCardProps) => {
     );
   }
 
-  /** Par défaut le rafraîchissement automatique est désactivée car trop gourmand sur de longues listes */
-  const autoRefresh = props.autoRefresh ?? false;
-
   // lit les données nécessaires à l'affichage du graphe
-  const {data: chartInfo, isLoading: isLoadingInfo} = useIndicateurChartInfo(
-    props.definition.id,
-    autoRefresh
+  const {data: chartInfo, isLoading} = useIndicateurChartInfo(
+    props.definition.id
   );
 
-  // charge les valeurs à afficher dans le graphe
-  const {data: valeurs, isLoading: isLoadingValeurs} = useIndicateurValeurs({
-    id: chartInfo?.id,
-    autoRefresh,
-  });
+  // sépare les données objectifs/résultats
+  const {valeurs} = transformeValeurs(chartInfo?.valeurs || []);
 
   // Assemblage des données pour le graphique
   const data = {
     unite: chartInfo?.unite,
-    valeurs: valeurs || [],
+    valeurs,
   };
-
-  const isLoading = isLoadingValeurs || isLoadingInfo;
 
   return (
     <IndicateurCardBase
@@ -105,7 +96,7 @@ export default IndicateurCard;
 export type IndicateurCardBaseProps = IndicateurCardProps & {
   data: IndicateurChartData;
   isLoading: boolean;
-  chartInfo?: TIndicateurChartInfo;
+  chartInfo?: TIndicateurChartInfo | null;
 };
 
 /**
@@ -135,7 +126,7 @@ export const IndicateurCardBase = ({
   // uniquement utilisé pour `totalNbIndicateurs`
   const totalEnfants = chartInfo?.enfants?.length;
   /** Nombre total d'indicateurs, qu'il y ait des enfants ou non */
-  const totalNbIndicateurs = chartInfo?.sans_valeur
+  const totalNbIndicateurs = chartInfo?.sansValeur
     ? totalEnfants
     : (totalEnfants ?? 0) + 1;
 
@@ -144,7 +135,8 @@ export const IndicateurCardBase = ({
     chartInfo && getIndicateurRestant(chartInfo);
 
   /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
-  const hasValeurOrObjectif = data.valeurs.map(v => v.valeur).length > 0;
+  const hasValeurOrObjectif =
+    data.valeurs.filter(v => typeof v.valeur === 'number').length > 0;
 
   const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
 
@@ -171,16 +163,15 @@ export const IndicateurCardBase = ({
           checked={selectState.selected}
           onChange={() =>
             selectState.setSelected({
-              indicateur_id:
-                typeof definition.id === 'string' ? definition.id : null,
-              indicateur_personnalise_id:
-                typeof definition.id === 'number' ? definition.id : null,
-              nom: definition.nom,
-              description: chartInfo?.titre_long ?? '',
+              id: definition.id,
+              titre: definition.titre,
+              estPerso: definition.estPerso,
+              identifiant: definition.identifiant || null,
+              description: chartInfo?.titreLong ?? '',
               unite: chartInfo?.unite ?? '',
             })
           }
-          label={chartInfo?.nom}
+          label={chartInfo?.titre}
           labelClassname="!font-bold"
         />
       ) : (
@@ -198,12 +189,11 @@ export const IndicateurCardBase = ({
                   evt.preventDefault();
                   evt.stopPropagation();
                   selectState.setSelected({
-                    indicateur_id:
-                      typeof definition.id === 'string' ? definition.id : null,
-                    indicateur_personnalise_id:
-                      typeof definition.id === 'number' ? definition.id : null,
-                    nom: definition.nom,
-                    description: chartInfo?.titre_long ?? '',
+                    id: definition.id,
+                    titre: definition.titre,
+                    estPerso: definition.estPerso,
+                    identifiant: definition.identifiant || null,
+                    description: chartInfo?.titreLong ?? '',
                     unite: chartInfo?.unite ?? '',
                   });
                 }}
@@ -215,14 +205,14 @@ export const IndicateurCardBase = ({
               />
             )}
           </div>
-          <div className="font-bold line-clamp-2">{chartInfo?.nom}</div>
+          <div className="font-bold line-clamp-2">{chartInfo?.titre}</div>
         </>
       )}
       {/** Graphique */}
       {showChart && (
         <>
           {isIndicateurParent &&
-          chartInfo?.sans_valeur &&
+          chartInfo?.sansValeur &&
           indicateursACompleterRestant === 0 ? (
             <div className="flex flex-col grow justify-center items-center gap-3 min-h-[18rem] bg-primary-0 rounded-lg">
               <PictoIndicateurComplet />
@@ -302,10 +292,10 @@ export const IndicateurCardBase = ({
           <>
             {/** Barre horizontale */}
             {hasValeurOrObjectif &&
-              (isIndicateurParent || chartInfo.participation_score) && (
+              (isIndicateurParent || chartInfo.participationScore) && (
                 <div className="h-px bg-primary-3" />
               )}
-            {(isIndicateurParent || chartInfo.participation_score) && (
+            {(isIndicateurParent || chartInfo.participationScore) && (
               <div className="flex flex-wrap gap-2 items-center text-sm text-grey-8">
                 {/* Nombre d'indicateurs */}
                 {isIndicateurParent && totalNbIndicateurs && (
@@ -318,11 +308,11 @@ export const IndicateurCardBase = ({
                 {/** Barre verticale */}
                 {isIndicateurParent &&
                   totalNbIndicateurs &&
-                  chartInfo.participation_score && (
+                  chartInfo.participationScore && (
                     <div className="w-px h-3 bg-grey-5" />
                   )}
                 {/** Participation au score */}
-                {chartInfo.participation_score && (
+                {chartInfo.participationScore && (
                   <div>Participe au score Climat Air Énergie</div>
                 )}
               </div>

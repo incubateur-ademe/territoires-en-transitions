@@ -50,7 +50,7 @@ export const IndicateurSidePanelToolbar = ({
               <div className="overflow-y-auto fr-px-3w fr-py-2w">
                 <div
                   className="fr-text--sm"
-                  dangerouslySetInnerHTML={{__html: definition.description}}
+                  dangerouslySetInnerHTML={{__html: definition.description!}}
                 />
               </div>
             )}

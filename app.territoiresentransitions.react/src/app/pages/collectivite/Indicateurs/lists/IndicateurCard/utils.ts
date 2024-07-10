@@ -16,7 +16,7 @@ export const getIndicateurRestant = (
   // Si parent
   if (isIndicateurParent) {
     // sans valeur, uniquement des enfants
-    if (chartInfo.sans_valeur) {
+    if (chartInfo.sansValeur) {
       return indicateursEnfantsAcompleterRestant;
       // avec valeur
     } else {
@@ -47,13 +47,7 @@ export const selectIndicateur = ({
   selectedIndicateurs?: Indicateur[] | null;
 }): Indicateur[] => {
   if (selected) {
-    return (
-      selectedIndicateurs?.filter(
-        i =>
-          i.indicateur_id !== indicateur.indicateur_id ||
-          i.indicateur_personnalise_id !== indicateur.indicateur_personnalise_id
-      ) ?? []
-    );
+    return selectedIndicateurs?.filter(i => i.id !== indicateur.id) ?? [];
   } else {
     return [...(selectedIndicateurs ?? []), indicateur];
   }

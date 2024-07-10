@@ -62,8 +62,8 @@ const useFilename = (
   if (definitions.length === 1) {
     const def = definitions[0];
     if (typeof def.id === 'number') {
-      return `${def.nom} - ${exportedAt}.xlsx`;
+      return `${def.titre} - ${exportedAt}.xlsx`;
     }
-    return `${def.id} - ${def.nom} - ${exportedAt}.xlsx`;
+    return `${def.id} - ${def.titre} - ${exportedAt}.xlsx`;
   }
 };

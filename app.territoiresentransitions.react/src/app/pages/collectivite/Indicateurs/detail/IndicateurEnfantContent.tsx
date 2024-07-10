@@ -1,4 +1,4 @@
-import {TIndicateurPredefini} from '../types';
+import {TIndicateurDefinition} from '../types';
 import {Spacer} from 'ui/dividers/Spacer';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import {FichesActionLiees} from '../FichesActionLiees';
@@ -14,13 +14,14 @@ export const IndicateurEnfantContent = ({
   definition,
   actionsLieesCommunes,
 }: {
-  definition: TIndicateurPredefini;
+  definition: TIndicateurDefinition;
   actionsLieesCommunes: string[];
 }) => {
   // charge les actions liées à l'indicateur
-  const actionsLiees = definition.action_ids?.filter(
-    action_id => !actionsLieesCommunes.includes(action_id)
-  );
+  const actionsLiees = definition.actions
+    ?.map(action => action.id)
+    .filter(actionId => !actionsLieesCommunes.includes(actionId));
+
   const {sources, currentSource, setCurrentSource} = useIndicateurImportSources(
     definition.id
   );
@@ -39,8 +40,8 @@ export const IndicateurEnfantContent = ({
         definition={definition}
         rempli={definition.rempli}
         source={currentSource}
-        titre={definition.titre_long}
-        fileName={definition.nom}
+        titre={definition.titreLong || ''}
+        fileName={definition.titre}
       />
       <IndicateurValuesTabs
         definition={definition}

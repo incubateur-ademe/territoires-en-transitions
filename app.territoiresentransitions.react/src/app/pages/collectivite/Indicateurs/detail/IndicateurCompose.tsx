@@ -1,5 +1,6 @@
 import {IndicateurEnfant} from './IndicateurEnfant';
-import {TIndicateurPredefini} from '../types';
+import {TIndicateurDefinition} from '../types';
+import {useIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/useIndicateurDefinition';
 
 /**
  * Affiche le détail d'un indicateur composé
@@ -7,9 +8,11 @@ import {TIndicateurPredefini} from '../types';
 export const IndicateurCompose = ({
   definition,
 }: {
-  definition: TIndicateurPredefini;
+  definition: TIndicateurDefinition;
 }) => {
-  const {enfants} = definition;
+  const {enfants: enfantIds} = definition;
+  const enfants = useIndicateurDefinitions(enfantIds || []);
+
   if (!enfants?.length) return null;
 
   const actionsLieesCommunes = findCommonLinkedActions([
@@ -27,7 +30,7 @@ export const IndicateurCompose = ({
       {/** TODO : ajouter ici le graphe combinant les indicateurs "enfant" */}
 
       {/** indicateur parent (sauf si il est marqué "sans valeur") */}
-      {!definition.sans_valeur && (
+      {!definition.sansValeur && (
         <IndicateurEnfant
           key={definition.id}
           definition={definition}
@@ -51,9 +54,9 @@ export const IndicateurCompose = ({
   );
 };
 // détermine les actions liées communes à un ensemble de définitions
-const findCommonLinkedActions = (definitions: TIndicateurPredefini[]) => {
+const findCommonLinkedActions = (definitions: TIndicateurDefinition[]) => {
   // extrait les tableaux d'ids
-  const actionsIds = definitions.map(({action_ids}) => action_ids);
+  const actionsIds = definitions.map(({actions}) => actions.map(a => a.id));
 
   return (
     actionsIds

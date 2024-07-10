@@ -2,7 +2,7 @@ import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {referentielToName} from 'app/labels';
 import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
-import {TIndicateurPredefini} from '../types';
+import {TIndicateurDefinition} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
@@ -16,9 +16,9 @@ import {Badge, Field} from '@tet/ui';
 export const IndicateurDetail = ({
   definition,
 }: {
-  definition: TIndicateurPredefini;
+  definition: TIndicateurDefinition;
 }) => {
-  const {id, action_ids} = definition;
+  const {id, actions} = definition;
   const {sources, currentSource, setCurrentSource} =
     useIndicateurImportSources(id);
 
@@ -36,13 +36,13 @@ export const IndicateurDetail = ({
         definition={definition}
         rempli={definition.rempli}
         source={currentSource}
-        titre={definition.titre_long}
-        fileName={definition.nom}
+        titre={definition.titreLong || definition.titre}
+        fileName={definition.titre}
       />
 
       <div className="flex items-center mt-10 mb-6 gap-4">
         <BadgeACompleter a_completer={!definition.rempli} />
-        {definition.participation_score && (
+        {definition.participationScore && (
           <Badge
             title={`Participe au score ${referentielToName.cae}`}
             uppercase={false}
@@ -58,11 +58,9 @@ export const IndicateurDetail = ({
         <IndicateurInfoLiees definition={definition} />
         {
           /** actions liées */
-          action_ids?.length ? (
-            <Field
-              title={action_ids.length > 1 ? 'Actions liées' : 'Action liée'}
-            >
-              <ActionsLieesCards actions={action_ids} />
+          actions?.length ? (
+            <Field title={actions.length > 1 ? 'Actions liées' : 'Action liée'}>
+              <ActionsLieesCards actions={actions?.map(a => a.id)} />
             </Field>
           ) : null
         }
