@@ -42,7 +42,7 @@ const FicheActionActeurs = ({
   return (
     <div
       className={classNames(
-        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col justify-center gap-7 relative',
+        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-7 relative',
         {
           'items-start': !isEmpty,
           'items-center': isEmpty,
@@ -61,12 +61,7 @@ const FicheActionActeurs = ({
       )}
 
       {!isEmpty ? (
-        <div
-          className={classNames('flex flex-col sm:max-lg:flex-row gap-y-3', {
-            'gap-x-12': !fiche.calendrier,
-            'gap-x-6': !!fiche.calendrier,
-          })}
-        >
+        <div className="flex flex-col gap-y-3 gap-x-6">
           <div className="flex flex-col gap-3">
             <FAListeActeurs
               titre="Personne pilote"

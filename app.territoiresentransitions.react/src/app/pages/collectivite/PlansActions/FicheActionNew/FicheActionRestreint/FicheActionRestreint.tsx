@@ -16,7 +16,7 @@ const FicheActionRestreint = ({
   return (
     <div
       onClick={() => setIsModalOpen(true)}
-      className="relative cursor-pointer bg-white hover:bg-primary-2 transition-colors border border-grey-3 rounded-lg py-2 px-2.5 h-14 text-sm text-primary-10 font-medium italic flex gap-2 items-center max-lg:justify-center"
+      className="relative cursor-pointer bg-white hover:bg-primary-2 transition-colors border border-grey-3 rounded-lg py-2 px-2.5 h-14 text-sm text-primary-10 font-medium italic flex gap-2 items-center max-md:justify-center"
     >
       <Notification
         icon={isRestreint ? 'lock-fill' : 'group-fill'}
@@ -33,7 +33,7 @@ const FicheActionRestreint = ({
         icon="edit-line"
         size="xs"
         variant="grey"
-        className="lg:ml-auto max-lg:absolute right-3"
+        className="md:ml-auto max-md:absolute right-3"
         onClick={() => setIsModalOpen(true)}
       />
 
