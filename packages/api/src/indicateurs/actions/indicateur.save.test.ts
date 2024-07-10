@@ -10,156 +10,168 @@ import {
     upsertThematiques, upsertValeursUtilisateurAvecSource
 } from "./indicateur.save";
 import {
-    selectIndicateurActions, selectIndicateurCategoriesUtilisateur,
-    selectIndicateurDefinition,
-    selectIndicateurFiches, selectIndicateurPilotes, selectIndicateurServices,
-    selectIndicateurThematiques,
-    selectIndicateurValeur, selectIndicateurValeurs
-} from "./indicateur.fetch";
-import {IndicateurDefinitionInsert} from "../domain/definition.schema";
-import {Valeur} from "../domain/valeur.schema";
-import {Thematique} from "../../shared/domain/thematique.schema";
-import {FicheResume} from "../../fiche_actions/domain/resume.schema";
-import {Personne} from "../../shared/domain/personne.schema";
-import {Action} from "../../referentiel/domain/action.schema";
-import {Tag} from "../../shared/domain/tag.schema";
-
-
+  selectIndicateurActions,
+  selectIndicateurCategoriesUtilisateur,
+  selectIndicateurDefinition,
+  selectIndicateurFiches,
+  selectIndicateurPilotes,
+  selectIndicateurServicesId,
+  selectIndicateurThematiquesId,
+  selectIndicateurValeur,
+  selectIndicateurValeurs,
+} from './indicateur.fetch';
+import {IndicateurDefinitionInsert} from '../domain/definition.schema';
+import {Valeur} from '../domain/valeur.schema';
+import {Thematique} from '../../shared/domain/thematique.schema';
+import {FicheResume} from '../../fiche_actions/domain/resume.schema';
+import {Personne} from '../../shared/domain/personne.schema';
+import {Action} from '../../referentiel/domain/action.schema';
+import {Tag} from '../../shared/domain/tag.schema';
 
 beforeAll(async () => {
-    await signIn('yolododo');
-    await testReset();
+  await signIn('yolododo');
+  await testReset();
 
-    return async () => {
-        await signOut();
-    };
+  return async () => {
+    await signOut();
+  };
 });
 
 test('Test updateIndicateurDefinition', async () => {
-    // Modification indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, 123, 1);
-    const defToUpdate = JSON.parse(JSON.stringify(def!));
-    defToUpdate.commentaire = 'test nouveau com';
-    defToUpdate.description = 'test nouvel des'
-    await updateIndicateurDefinition(supabase, defToUpdate, 1);
-    const newDef = await selectIndicateurDefinition(supabase, 123, 1);
-    expect(def!.commentaire).not.eq(newDef!.commentaire);
-    expect(def!.description).not.eq(newDef!.description);
+  // Modification indicateur personnalisé
+  const def = await selectIndicateurDefinition(supabase, 123, 1);
+  const defToUpdate = JSON.parse(JSON.stringify(def!));
+  defToUpdate.commentaire = 'test nouveau com';
+  defToUpdate.description = 'test nouvel des';
+  await updateIndicateurDefinition(supabase, defToUpdate, 1);
+  const newDef = await selectIndicateurDefinition(supabase, 123, 1);
+  expect(def!.commentaire).not.eq(newDef!.commentaire);
+  expect(def!.description).not.eq(newDef!.description);
 
-    // Modification indicateur prédéfini
-    const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    const def2ToUpdate = JSON.parse(JSON.stringify(def2!));
-    def2ToUpdate.commentaire = 'test nouveau com';
-    def2ToUpdate.description = 'test nouvel des'
-    await updateIndicateurDefinition(supabase, def2ToUpdate, 1);
-    const newDef2 = await selectIndicateurDefinition(supabase, 1, 1);
-    expect(def2!.commentaire).not.eq(newDef2!.commentaire);
-    expect(def2!.description).eq(newDef2!.description); // Ne peut pas modifier la description d'un indicateur prédéfini
-
+  // Modification indicateur prédéfini
+  const def2 = await selectIndicateurDefinition(supabase, 1, 1);
+  const def2ToUpdate = JSON.parse(JSON.stringify(def2!));
+  def2ToUpdate.commentaire = 'test nouveau com';
+  def2ToUpdate.description = 'test nouvel des';
+  await updateIndicateurDefinition(supabase, def2ToUpdate, 1);
+  const newDef2 = await selectIndicateurDefinition(supabase, 1, 1);
+  expect(def2!.commentaire).not.eq(newDef2!.commentaire);
+  expect(def2!.description).eq(newDef2!.description); // Ne peut pas modifier la description d'un indicateur prédéfini
 });
 
 test('Test insertIndicateurDefinition', async () => {
-    const def : IndicateurDefinitionInsert = {
-        titre : 'test',
-        collectiviteId: 1,
-        thematiques: [{id : 1, nom :''}]
-    }
+  const def: IndicateurDefinitionInsert = {
+    titre: 'test',
+    collectiviteId: 1,
+    thematiques: [{id: 1, nom: ''}],
+  };
 
-    const newId = await insertIndicateurDefinition(supabase, def);
-    const data = await selectIndicateurDefinition(supabase, newId!, 1);
-    expect(data).not.toBeNull();
-    expect(data?.thematiques[0].id).eq(1);
+  const newId = await insertIndicateurDefinition(supabase, def);
+  const data = await selectIndicateurDefinition(supabase, newId!, 1);
+  expect(data).not.toBeNull();
+  expect(data?.thematiques[0].id).eq(1);
 });
 
 test('Test upsertIndicateurValeur', async () => {
-    const valeur : Valeur = {
-        collectiviteId : 1,
-        indicateurId : 1,
-        resultat : 1.3,
-        objectif : 2,
-        resultatCommentaire : 'test',
-        annee : 2022
-    };
-    // Ajout valeur
-    const newId = await upsertIndicateurValeur(supabase, valeur);
-    const data = await selectIndicateurValeur(supabase, newId!);
-    expect(data).not.toBeNull();
-    data!.objectif = 2.3;
-    // Modification valeur
-    await upsertIndicateurValeur(supabase, data!);
-    const result = await selectIndicateurValeur(supabase, newId!);
-    expect(result!.objectif).eq(2.3);
-    expect(data!.id).eq(result!.id);
+  const valeur: Valeur = {
+    collectiviteId: 1,
+    indicateurId: 1,
+    resultat: 1.3,
+    objectif: 2,
+    resultatCommentaire: 'test',
+    annee: 2022,
+  };
+  // Ajout valeur
+  const newId = await upsertIndicateurValeur(supabase, valeur);
+  const data = await selectIndicateurValeur(supabase, newId!);
+  expect(data).not.toBeNull();
+  data!.objectif = 2.3;
+  // Modification valeur
+  await upsertIndicateurValeur(supabase, data!);
+  const result = await selectIndicateurValeur(supabase, newId!);
+  expect(result!.objectif).eq(2.3);
+  expect(data!.id).eq(result!.id);
 });
 
 test('Test upsertThematiques', async () => {
-    // Ajout thématique sur indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, 123, 1);
-    const them : Thematique[] = [{
-        id : 1,
-        nom : 'test'
-    }];
-    await upsertThematiques(supabase, def!, them);
-    const data = await selectIndicateurThematiques(supabase, 123);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    // Enlève thématique sur indicateur personnalisé
-    await upsertThematiques(supabase, def!, []);
-    const data2 = await selectIndicateurThematiques(supabase, 123);
-    expect(data2).not.toBeNull();
-    expect(data2).toHaveLength(0);
-    // Ajout thématique sur indicateur prédéfini (pas possible)
-    const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    await upsertThematiques(supabase, def2!, them);
-    const data3 = await selectIndicateurThematiques(supabase, 1);
-    expect(data3).not.toBeNull();
-    expect(data3).toHaveLength(0);
+  // Ajout thématique sur indicateur personnalisé
+  const def = await selectIndicateurDefinition(supabase, 123, 1);
+  const them: Thematique[] = [
+    {
+      id: 1,
+      nom: 'test',
+    },
+  ];
+  await upsertThematiques(supabase, def!, them);
+  const data = await selectIndicateurThematiquesId(supabase, 123);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  // Enlève thématique sur indicateur personnalisé
+  await upsertThematiques(supabase, def!, []);
+  const data2 = await selectIndicateurThematiquesId(supabase, 123);
+  expect(data2).not.toBeNull();
+  expect(data2).toHaveLength(0);
+  // Ajout thématique sur indicateur prédéfini (pas possible)
+  const def2 = await selectIndicateurDefinition(supabase, 1, 1);
+  await upsertThematiques(supabase, def2!, them);
+  const data3 = await selectIndicateurThematiquesId(supabase, 1);
+  expect(data3).not.toBeNull();
+  expect(data3).toHaveLength(0);
 });
 
 test('Test upsertServices', async () => {
-    // Données
-    const serv = await dbAdmin.from('service_tag')
-        .insert({nom : 'serv2', collectivite_id : 2}).select();
-    await dbAdmin.from('indicateur_service_tag')
-        .insert({indicateur_id : 1, service_tag_id : serv!.data![0].id, collectivite_id : 2});
+  // Données
+  const serv = await dbAdmin
+    .from('service_tag')
+    .insert({nom: 'serv2', collectivite_id: 2})
+    .select();
+  await dbAdmin
+    .from('indicateur_service_tag')
+    .insert({
+      indicateur_id: 1,
+      service_tag_id: serv!.data![0].id,
+      collectivite_id: 2,
+    });
 
-    // Ajout service inexistant sur indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, 123, 1);
-    const tags : Tag[] = [{
-        nom : 'test',
-        collectiviteId: 1
-    }];
-    await upsertServices(supabase, def!, 1, tags);
-    const data = await selectIndicateurServices(supabase, 123, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    // Ajout service existant sur indicateur personnalisé
-    tags[0].id = data[0];
-    tags.push({nom : '', collectiviteId: 1, id: 1});
-    await upsertServices(supabase, def!, 1, tags);
-    const data2 = await selectIndicateurServices(supabase, 123, 1);
-    expect(data2).not.toBeNull();
-    expect(data2).toHaveLength(2);
-    // Enlève services sur indicateur personnalisé
-    await upsertServices(supabase, def!, 1, []);
-    const data3 = await selectIndicateurServices(supabase, 123, 1);
-    expect(data3).not.toBeNull();
-    expect(data3).toHaveLength(0);
-    // Ajout services sur indicateur prédéfini
-    const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    await upsertServices(supabase, def2!, 1, tags);
-    const data4 = await selectIndicateurServices(supabase, 1, 1);
-    expect(data4).not.toBeNull();
-    expect(data4).toHaveLength(2);
-    // Enlève services sur indicateur prédéfini
-    await upsertServices(supabase, def2!, 1, []);
-    const data5 = await selectIndicateurServices(supabase, 1, 1);
-    expect(data5).not.toBeNull();
-    expect(data5).toHaveLength(0);
-    // Vérifie qu'on supprime pas les services des autres collectivités
-    const data6 = await selectIndicateurServices(supabase, 1, 2);
-    expect(data6).not.toBeNull();
-    expect(data6).toHaveLength(1);
+  // Ajout service inexistant sur indicateur personnalisé
+  const def = await selectIndicateurDefinition(supabase, 123, 1);
+  const tags: Tag[] = [
+    {
+      nom: 'test',
+      collectiviteId: 1,
+    },
+  ];
+  await upsertServices(supabase, def!, 1, tags);
+  const data = await selectIndicateurServicesId(supabase, 123, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  // Ajout service existant sur indicateur personnalisé
+  tags[0].id = data[0];
+  tags.push({nom: '', collectiviteId: 1, id: 1});
+  await upsertServices(supabase, def!, 1, tags);
+  const data2 = await selectIndicateurServicesId(supabase, 123, 1);
+  expect(data2).not.toBeNull();
+  expect(data2).toHaveLength(2);
+  // Enlève services sur indicateur personnalisé
+  await upsertServices(supabase, def!, 1, []);
+  const data3 = await selectIndicateurServicesId(supabase, 123, 1);
+  expect(data3).not.toBeNull();
+  expect(data3).toHaveLength(0);
+  // Ajout services sur indicateur prédéfini
+  const def2 = await selectIndicateurDefinition(supabase, 1, 1);
+  await upsertServices(supabase, def2!, 1, tags);
+  const data4 = await selectIndicateurServicesId(supabase, 1, 1);
+  expect(data4).not.toBeNull();
+  expect(data4).toHaveLength(2);
+  // Enlève services sur indicateur prédéfini
+  await upsertServices(supabase, def2!, 1, []);
+  const data5 = await selectIndicateurServicesId(supabase, 1, 1);
+  expect(data5).not.toBeNull();
+  expect(data5).toHaveLength(0);
+  // Vérifie qu'on supprime pas les services des autres collectivités
+  const data6 = await selectIndicateurServicesId(supabase, 1, 2);
+  expect(data6).not.toBeNull();
+  expect(data6).toHaveLength(1);
 });
 
 test('Test upsertCategoriesUtilisateur', async () => {
