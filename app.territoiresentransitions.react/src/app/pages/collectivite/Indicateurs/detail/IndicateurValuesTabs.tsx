@@ -6,8 +6,9 @@ import {SOURCE_COLLECTIVITE} from '../constants';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {IndicateurValuesTable} from './IndicateurValuesTable';
 import {useToggleIndicateurConfidentiel} from './useToggleIndicateurConfidentiel';
-import {useIndicateurInfoLiees} from './useIndicateurInfoLiees';
 import {Tooltip} from '@tet/ui';
+import {useIndicateurValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/detail/transformeValeurs';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
@@ -19,20 +20,36 @@ export const IndicateurValuesTabs = ({
 }) => {
   const {activeTab, onChangeTab} = useActiveTab();
   const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite.readonly;
+  const isReadonly =
+    !collectivite ||
+    collectivite.readonly ||
+    (!!importSource && importSource !== SOURCE_COLLECTIVITE);
   const {mutate: toggleIndicateurConfidentiel, isLoading} =
     useToggleIndicateurConfidentiel(definition);
-  const {data} = useIndicateurInfoLiees(definition);
-  const {confidentiel} = data || {};
+  const {confidentiel} = definition;
+
+  const {data: valeursBrutes} = useIndicateurValeurs({
+    id: definition.id,
+    importSource,
+  });
+  const {objectifs, resultats} = transformeValeurs(valeursBrutes, importSource);
 
   // force l'affichage de l'onglet Résultats sil il n'y a pas d'onglet Objectifs
   // quand on passe d'une source de données à une autre
-  const avecObjectifs = !importSource || importSource === SOURCE_COLLECTIVITE;
+  const avecResultats =
+    !importSource ||
+    importSource === SOURCE_COLLECTIVITE ||
+    resultats?.length > 0;
+  const avecObjectifs =
+    !importSource ||
+    importSource === SOURCE_COLLECTIVITE ||
+    objectifs?.length > 0;
+
   useEffect(() => {
-    if (activeTab === 1 && !avecObjectifs) {
+    if (activeTab === 1 && !(avecObjectifs && avecResultats)) {
       onChangeTab(0);
     }
-  }, [avecObjectifs, activeTab]);
+  }, [avecObjectifs, avecResultats, activeTab]);
 
   return (
     <>
@@ -54,26 +71,28 @@ export const IndicateurValuesTabs = ({
         </Tooltip>
       )}
       <Tabs defaultActiveTab={activeTab} onChange={onChangeTab}>
-        <Tab label="Résultats" icon="checkbox">
-          {activeTab === 0 && (
+        {avecResultats ? (
+          <Tab label="Résultats" icon="checkbox">
             <IndicateurValuesTable
               definition={definition}
               type="resultat"
+              valeurs={resultats}
+              valeursBrutes={valeursBrutes!}
               isReadonly={isReadonly}
               importSource={importSource}
               confidentiel={confidentiel}
             />
-          )}
-        </Tab>
+          </Tab>
+        ) : null}
         {avecObjectifs ? (
           <Tab label="Objectifs" icon="calendar-2">
-            {activeTab === 1 && (
-              <IndicateurValuesTable
-                definition={definition}
-                type="objectif"
-                isReadonly={isReadonly}
-              />
-            )}
+            <IndicateurValuesTable
+              definition={definition}
+              type="objectif"
+              valeurs={objectifs}
+              valeursBrutes={valeursBrutes!}
+              isReadonly={isReadonly}
+            />
           </Tab>
         ) : null}
       </Tabs>

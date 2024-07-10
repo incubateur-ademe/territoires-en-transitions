@@ -2,10 +2,7 @@ import {useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {TIndicateurDefinition, SourceType} from '../types';
 import {SOURCE_COLLECTIVITE} from '../constants';
-import {
-  TIndicateurValeurEtCommentaires,
-  useIndicateurValeursEtCommentaires,
-} from '../useIndicateurValeurs';
+import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {
   TEditIndicateurValeurHandlers,
   useEditIndicateurValeur,
@@ -16,10 +13,13 @@ import {
   ValueTableRowReadOnly,
   IndicateurValueTableRow,
 } from './IndicateurValueTableRow';
+import {Indicateurs} from '@tet/api';
 
 type IndicateurValuesTableProps = {
   definition: TIndicateurDefinition;
   type: SourceType;
+  valeurs: TIndicateurValeur[];
+  valeursBrutes: Indicateurs.domain.Valeur[];
   importSource?: string;
   isReadonly: boolean;
   confidentiel?: boolean;
@@ -27,17 +27,16 @@ type IndicateurValuesTableProps = {
 
 /** Charge les données et affiche le tableau des valeurs */
 export const IndicateurValuesTable = (props: IndicateurValuesTableProps) => {
-  const {definition, type, importSource} = props;
-  const {data: values} = useIndicateurValeursEtCommentaires({
+  const {definition, type, valeurs, valeursBrutes} = props;
+  const editHandlers = useEditIndicateurValeur({
     definition,
     type,
-    importSource,
+    valeursBrutes,
   });
-  const editHandlers = useEditIndicateurValeur({definition, type});
 
-  return values ? (
-    <ValuesTableBase values={values} editHandlers={editHandlers} {...props} />
-  ) : null;
+  return (
+    <ValuesTableBase values={valeurs} editHandlers={editHandlers} {...props} />
+  );
 };
 
 // seuil au-dessus duquel afficher le bouton "Afficher tous les résultats"
@@ -46,7 +45,7 @@ const SHOW_MORE_THRESHOLD = 2;
 /** Affiche le tableau des valeurs associées à un indicateur */
 const ValuesTableBase = (
   props: IndicateurValuesTableProps & {
-    values: TIndicateurValeurEtCommentaires[];
+    values: TIndicateurValeur[];
     editHandlers: TEditIndicateurValeurHandlers;
   }
 ) => {
@@ -65,6 +64,7 @@ const ValuesTableBase = (
   const valuesToShow =
     haveManyValues && !showAll ? values.slice(0, SHOW_MORE_THRESHOLD) : values;
   const [lastAddedYear, setLastAddedYear] = useState<number | null>(null);
+  const sourceTypeLabel = type === 'resultat' ? 'résultat' : 'objectif';
 
   // affiche tous les résultats si la dernière ligne ajoutée ne fait pas partie
   // des lignes affichées par défaut
@@ -85,7 +85,7 @@ const ValuesTableBase = (
           <th className="w-2">&nbsp;</th>
           <th scope="col">Année</th>
           <th scope="col">
-            {type === 'resultat' ? 'Résultat' : 'Objectif'}
+            {sourceTypeLabel[0].toUpperCase() + sourceTypeLabel.slice(1)}
             {unite && <span className="font-normal"> ({unite})</span>}
           </th>
           <th scope="col">Commentaires (Source, etc…)</th>
@@ -101,6 +101,7 @@ const ValuesTableBase = (
             {!importSource || importSource === SOURCE_COLLECTIVITE ? (
               <IndicateurValueTableRow
                 key="new"
+                type={type}
                 values={values}
                 editHandlers={editHandlers}
                 onValueSaved={setLastAddedYear}
@@ -109,12 +110,11 @@ const ValuesTableBase = (
             {valuesToShow.map((row, index) => (
               <IndicateurValueTableRow
                 key={`${row.type}-${row.annee}`}
+                type={type}
                 row={row}
                 editHandlers={editHandlers}
                 autoFocus={row.annee === lastAddedYear}
-                confidentiel={
-                  confidentiel && index === 0 && row.type !== 'import'
-                }
+                confidentiel={confidentiel && index === 0 && !row.source}
               />
             ))}
           </>
@@ -123,6 +123,7 @@ const ValuesTableBase = (
           <tr>
             <td colSpan={4}>
               <AnchorAsButton
+                aria-expanded={showAll}
                 className={classNames(
                   'fr-link--icon-right text-bf500',
                   showAll
@@ -132,8 +133,8 @@ const ValuesTableBase = (
                 onClick={toggleShowAll}
               >
                 {showAll
-                  ? 'Afficher uniquement les résultats récents'
-                  : 'Afficher tous les résultats'}
+                  ? `Afficher uniquement les ${sourceTypeLabel}s récents`
+                  : `Afficher tous les ${sourceTypeLabel}s`}
               </AnchorAsButton>
             </td>
           </tr>
