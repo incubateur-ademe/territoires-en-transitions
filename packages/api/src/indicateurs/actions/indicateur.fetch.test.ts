@@ -1,146 +1,199 @@
 import {
-    selectIndicateurValeur,
-    selectIndicateurValeurs,
-    selectIndicateurPilotes,
-    selectIndicateurServices,
-    selectIndicateurThematiques,
-    selectIndicateurFiches,
-    selectIndicateurActions,
-    selectIndicateurListItems,
-    selectIndicateurDefinition,
-    selectIndicateurComplet,
-    selectIndicateurChartInfo,
-    selectIndicateurCategoriesUtilisateur,
-    getValeursComparaison,
-    selectIndicateurSources
+  selectIndicateurValeur,
+  selectIndicateurValeurs,
+  selectIndicateurPilotes,
+  selectIndicateurServicesId,
+  selectIndicateurThematiquesId,
+  selectIndicateurFiches,
+  selectIndicateurActions,
+  selectIndicateurListItems,
+  selectIndicateurDefinition,
+  selectIndicateurComplet,
+  selectIndicateurChartInfo,
+  selectIndicateurCategoriesUtilisateur,
+  getValeursComparaison,
+  selectIndicateurSources,
 } from './indicateur.fetch';
-import {beforeAll, expect, test} from "vitest";
-import {signIn, signOut} from "../../tests/auth";
-import {dbAdmin, supabase} from "../../tests/supabase";
-import {testReset} from "../../tests/testReset";
-
+import {beforeAll, expect, test} from 'vitest';
+import {signIn, signOut} from '../../tests/auth';
+import {dbAdmin, supabase} from '../../tests/supabase';
+import {testReset} from '../../tests/testReset';
 
 beforeAll(async () => {
-    await signIn('yolododo');
-    await testReset();
-    // Groupement
-    const gp =
-        await dbAdmin.from('groupement').insert({nom: 'test'}).select('id');
-    await dbAdmin.from('groupement_collectivite')
-        .insert({collectivite_id : 1, groupement_id : gp.data![0].id});
-    const gp2 =
-        await dbAdmin.from('groupement').insert({nom: 'test2'}).select('id');
-    await dbAdmin.from('groupement_collectivite')
-        .insert({collectivite_id : 2, groupement_id : gp2.data![0].id});
+  await signIn('yolododo');
+  await testReset();
+  // Groupement
+  const gp = await dbAdmin
+    .from('groupement')
+    .insert({nom: 'test'})
+    .select('id');
+  await dbAdmin
+    .from('groupement_collectivite')
+    .insert({collectivite_id: 1, groupement_id: gp.data![0].id});
+  const gp2 = await dbAdmin
+    .from('groupement')
+    .insert({nom: 'test2'})
+    .select('id');
+  await dbAdmin
+    .from('groupement_collectivite')
+    .insert({collectivite_id: 2, groupement_id: gp2.data![0].id});
 
-    // Indicateur privé
-    const indi = await dbAdmin.from('indicateur_definition').insert({
-        titre : 'testGroupement', unite : '%', groupement_id : gp.data![0].id
-    });
+  // Indicateur privé
+  const indi = await dbAdmin.from('indicateur_definition').insert({
+    titre: 'testGroupement',
+    unite: '%',
+    groupement_id: gp.data![0].id,
+  });
 
-    // Categories
-    const cat = await dbAdmin.from('categorie_tag').upsert(
-        {collectivite_id : 1, nom : 'test'}).select('id');
-    await dbAdmin.from('indicateur_categorie_tag').insert(
-        {categorie_tag_id : cat.data![0].id, indicateur_id : 1});
-    const cat2 = await dbAdmin.from('categorie_tag').upsert(
-        {groupement_id : gp.data![0].id, nom : 'testGP'}).select('id');
-    await dbAdmin.from('indicateur_categorie_tag').insert(
-        {categorie_tag_id : cat2.data![0].id, indicateur_id : 1});
-    const cat3 = await dbAdmin.from('categorie_tag').upsert(
-        {groupement_id : gp2.data![0].id, nom : 'testGP2'}).select('id');
-    await dbAdmin.from('indicateur_categorie_tag').insert(
-        {categorie_tag_id : cat3.data![0].id, indicateur_id : 1});
-    const cat4 = await dbAdmin.from('categorie_tag').upsert(
-        {collectivite_id : 2, nom : 'test2'}).select('id');
-    await dbAdmin.from('indicateur_categorie_tag').insert(
-        {categorie_tag_id : cat4.data![0].id, indicateur_id : 1});
-    // Pilotes
-    await dbAdmin.from('indicateur_pilote').insert(
-        {collectivite_id : 1, user_id : null, tag_id : 1, indicateur_id : 1});
-    // Services
-    await dbAdmin.from('indicateur_service_tag').insert(
-        {collectivite_id : 1, service_tag_id : 1, indicateur_id : 1});
-    // Thématiques
-    await dbAdmin.from('indicateur_thematique').insert(
-        {thematique_id : 1, indicateur_id : 123});
-    // Fiches
-    await dbAdmin.from('fiche_action_indicateur').insert(
-        {fiche_id : 1, indicateur_id : 123});
-    // Actions
-    await dbAdmin.from('indicateur_action').insert(
-        {action_id : 'eci_4', indicateur_id : 123});
-    // Commentaire
-    await dbAdmin.from('indicateur_collectivite').insert(
-        {indicateur_id : 1, collectivite_id : 1, commentaire : 'test1'}
-    )
-    await dbAdmin.from('indicateur_collectivite').insert(
-        {indicateur_id : 1, collectivite_id : 2, commentaire : 'test2'}
-    )
-    // Metadonnées
-    const meta = await dbAdmin.from('indicateur_source_metadonnee').insert({
-        source_id : 'citepa',
-        date_version : new Date().toLocaleDateString('sv-SE')
+  // Categories
+  const cat = await dbAdmin
+    .from('categorie_tag')
+    .upsert({collectivite_id: 1, nom: 'test'})
+    .select('id');
+  await dbAdmin
+    .from('indicateur_categorie_tag')
+    .insert({categorie_tag_id: cat.data![0].id, indicateur_id: 1});
+  const cat2 = await dbAdmin
+    .from('categorie_tag')
+    .upsert({groupement_id: gp.data![0].id, nom: 'testGP'})
+    .select('id');
+  await dbAdmin
+    .from('indicateur_categorie_tag')
+    .insert({categorie_tag_id: cat2.data![0].id, indicateur_id: 1});
+  const cat3 = await dbAdmin
+    .from('categorie_tag')
+    .upsert({groupement_id: gp2.data![0].id, nom: 'testGP2'})
+    .select('id');
+  await dbAdmin
+    .from('indicateur_categorie_tag')
+    .insert({categorie_tag_id: cat3.data![0].id, indicateur_id: 1});
+  const cat4 = await dbAdmin
+    .from('categorie_tag')
+    .upsert({collectivite_id: 2, nom: 'test2'})
+    .select('id');
+  await dbAdmin
+    .from('indicateur_categorie_tag')
+    .insert({categorie_tag_id: cat4.data![0].id, indicateur_id: 1});
+  // Pilotes
+  await dbAdmin
+    .from('indicateur_pilote')
+    .insert({collectivite_id: 1, user_id: null, tag_id: 1, indicateur_id: 1});
+  // Services
+  await dbAdmin
+    .from('indicateur_service_tag')
+    .insert({collectivite_id: 1, service_tag_id: 1, indicateur_id: 1});
+  // Thématiques
+  await dbAdmin
+    .from('indicateur_thematique')
+    .insert({thematique_id: 1, indicateur_id: 123});
+  // Fiches
+  await dbAdmin
+    .from('fiche_action_indicateur')
+    .insert({fiche_id: 1, indicateur_id: 123});
+  // Actions
+  await dbAdmin
+    .from('indicateur_action')
+    .insert({action_id: 'eci_4', indicateur_id: 123});
+  // Commentaire
+  await dbAdmin
+    .from('indicateur_collectivite')
+    .insert({indicateur_id: 1, collectivite_id: 1, commentaire: 'test1'});
+  await dbAdmin
+    .from('indicateur_collectivite')
+    .insert({indicateur_id: 1, collectivite_id: 2, commentaire: 'test2'});
+  // Metadonnées
+  const meta = await dbAdmin
+    .from('indicateur_source_metadonnee')
+    .insert({
+      source_id: 'citepa',
+      date_version: new Date().toLocaleDateString('sv-SE'),
+    })
+    .select('id');
+  const meta2 = await dbAdmin
+    .from('indicateur_source_metadonnee')
+    .insert({
+      source_id: 'citepa',
+      producteur: 'test',
+      date_version: new Date().toLocaleDateString('sv-SE'),
+    })
+    .select('id');
+  const meta3 = await dbAdmin
+    .from('indicateur_source_metadonnee')
+    .insert({
+      source_id: 'orcae',
+      date_version: new Date().toLocaleDateString('sv-SE'),
+    })
+    .select('id');
 
-    }).select('id');
-    const meta2 = await dbAdmin.from('indicateur_source_metadonnee').insert({
-        source_id : 'citepa',
-        producteur : 'test',
-        date_version : new Date().toLocaleDateString('sv-SE')
+  // Valeurs
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 1,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 8,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 1,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.5,
+    metadonnee_id: meta.data![0].id,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 1,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.9,
+    metadonnee_id: meta2.data![0].id,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 1,
+    date_valeur: '2020-01-01',
+    collectivite_id: 2,
+    resultat: 1.5,
+    metadonnee_id: meta.data![0].id,
+  });
 
-    }).select('id');
-    const meta3 = await dbAdmin.from('indicateur_source_metadonnee').insert({
-        source_id : 'orcae',
-        date_version : new Date().toLocaleDateString('sv-SE')
-
-    }).select('id');
-
-    // Valeurs
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 1, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.2});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 8, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.2});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 1, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.5, metadonnee_id : meta.data![0].id});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 1, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.9, metadonnee_id : meta2.data![0].id});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 1, date_valeur : '2020-01-01', collectivite_id : 2, resultat : 1.5, metadonnee_id : meta.data![0].id});
-
-    return async () => {
-        await signOut();
-    };
+  return async () => {
+    await signOut();
+  };
 });
 
 test('Test selectIndicateurSources', async () => {
-    const data = await selectIndicateurSources(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
+  const data = await selectIndicateurSources(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
 });
 
 test('Test selectIndicateurCategoriesUtilisateur', async () => {
-    const data = await selectIndicateurCategoriesUtilisateur(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
+  const data = await selectIndicateurCategoriesUtilisateur(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
 });
 
 test('Test selectIndicateurPilote', async () => {
-    const data = await selectIndicateurPilotes(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    expect(data[0].nom).eq('Lou Piote');
+  const data = await selectIndicateurPilotes(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  expect(data[0].nom).eq('Lou Piote');
 });
 
 test('Test selectIndicateurServices', async () => {
-    const data = await selectIndicateurServices(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
+  const data = await selectIndicateurServicesId(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
 });
 
 test('Test selectIndicateurThematiques', async () => {
-    const data = await selectIndicateurThematiques(supabase, 123);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
+  const data = await selectIndicateurThematiquesId(supabase, 123);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
 });
 
 test('Test selectIndicateurFiches', async () => {
