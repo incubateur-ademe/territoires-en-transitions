@@ -29,7 +29,10 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
 import {TFicheActionStatuts} from 'types/alias';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {
+  getPilotesValues,
+  splitPilotePersonnesAndUsers,
+} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -53,17 +56,6 @@ const ModalActionsRecemmentModifiees = ({
   const trackEvent = useEventTracker(
     'app/tdb/personnel/actions-recemment-modifiees'
   );
-
-  const getPilotesValues = (filtreState: FiltreFichesAction) => {
-    const pilotes = [];
-    if (filtreState.utilisateurPiloteIds) {
-      pilotes.push(...filtreState.utilisateurPiloteIds);
-    }
-    if (filtreState.personnePiloteIds) {
-      pilotes.push(...filtreState.personnePiloteIds.map(String));
-    }
-    return pilotes;
-  };
 
   const pilotes = getPilotesValues(filtreState);
 
@@ -97,7 +89,7 @@ const ModalActionsRecemmentModifiees = ({
                 onChange={({personnes}) => {
                   setFiltreState({
                     ...filtreState,
-                    ...splitPersonnesAndUsers(personnes),
+                    ...splitPilotePersonnesAndUsers(personnes),
                   });
                 }}
               />

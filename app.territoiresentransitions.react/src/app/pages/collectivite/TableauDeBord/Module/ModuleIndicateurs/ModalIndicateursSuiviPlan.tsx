@@ -20,7 +20,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import {splitPersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {splitPilotePersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
@@ -95,7 +95,7 @@ const ModalIndicateursSuiviPlan = ({
                 onChange={({personnes}) =>
                   setFiltreState({
                     ...filtreState,
-                    ...splitPersonnesAndUsers(personnes),
+                    ...splitPilotePersonnesAndUsers(personnes),
                   })
                 }
               />

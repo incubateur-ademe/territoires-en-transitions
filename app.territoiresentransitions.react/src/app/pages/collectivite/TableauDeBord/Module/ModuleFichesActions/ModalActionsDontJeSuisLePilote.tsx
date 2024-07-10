@@ -28,6 +28,7 @@ import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import {getPilotesValues} from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -52,17 +53,6 @@ const ModalActionsDontJeSuisLePilote = ({
   const trackEvent = useEventTracker(
     'app/tdb/personnel/actions-dont-je-suis-pilote'
   );
-
-  const getPilotesValues = (filtreState: FiltreFichesAction) => {
-    const pilotes = [];
-    if (filtreState.utilisateurPiloteIds) {
-      pilotes.push(...filtreState.utilisateurPiloteIds);
-    }
-    if (filtreState.personnePiloteIds) {
-      pilotes.push(...filtreState.personnePiloteIds.map(String));
-    }
-    return pilotes;
-  };
 
   const pilotes = getPilotesValues(filtreState);
 
