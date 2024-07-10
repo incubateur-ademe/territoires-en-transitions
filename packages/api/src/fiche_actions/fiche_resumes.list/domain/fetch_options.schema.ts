@@ -18,6 +18,9 @@ export const filtreSpecifiqueSchema = z.object({
   priorites: niveauPrioriteSchema.array().optional(),
   modifiedSince: modifiedSinceSchema.optional(),
   texteNomOuDescription: z.string().optional(),
+  budgetPrevisionnel: z.boolean().default(false).optional(),
+  restreint: z.boolean().default(false).optional(),
+  hasIndicateurLies: z.boolean().default(false).optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
@@ -30,8 +33,12 @@ export const filtreSchema = filtreRessourceLieesSchema
     planActionIds: true,
     utilisateurPiloteIds: true,
     personnePiloteIds: true,
+    utilisateurReferentIds: true,
+    personneReferenteIds: true,
     structurePiloteIds: true,
     servicePiloteIds: true,
+    thematiqueIds: true,
+    financeurIds: true,
   })
   .merge(filtreSpecifiqueSchema);
 

@@ -41,6 +41,18 @@ export async function filtreValuesFetch({
       relatedTables.add('personnePilotes:collectivite_personne_tag!inner(*)');
     }
 
+    if (filtre.utilisateurReferentIds?.length) {
+      relatedTables.add(
+        'utilisateurReferents:collectivite_utilisateur!inner(*)'
+      );
+    }
+
+    if (filtre.personneReferenteIds?.length) {
+      relatedTables.add(
+        'personneReferentes:collectivite_personne_tag!inner(*)'
+      );
+    }
+
     if (filtre.structurePiloteIds?.length) {
       relatedTables.add('structurePilotes:collectivite_structure_tag!inner(*)');
     }
@@ -51,6 +63,10 @@ export async function filtreValuesFetch({
 
     if (filtre.thematiqueIds?.length) {
       relatedTables.add('thematiques:collectivite_thematique!inner(*)');
+    }
+
+    if (filtre.financeurIds?.length) {
+      relatedTables.add('financeurs:collectivite_financeur_tag!inner(*)');
     }
 
     if (relatedTables.size === 0) {
@@ -81,6 +97,17 @@ export async function filtreValuesFetch({
       query.in('collectivite_personne_tag.id', filtre.personnePiloteIds);
     }
 
+    if (filtre.utilisateurReferentIds?.length) {
+      query.in(
+        'collectivite_utilisateur.user_id',
+        filtre.utilisateurReferentIds
+      );
+    }
+
+    if (filtre.personneReferenteIds?.length) {
+      query.in('collectivite_personne_tag.id', filtre.personneReferenteIds);
+    }
+
     if (filtre.structurePiloteIds?.length) {
       query.in('collectivite_structure_tag.id', filtre.structurePiloteIds);
     }
@@ -91,6 +118,10 @@ export async function filtreValuesFetch({
 
     if (filtre.thematiqueIds?.length) {
       query.in('collectivite_thematique.id', filtre.thematiqueIds);
+    }
+
+    if (filtre.financeurIds?.length) {
+      query.in('financeur_tag.id', filtre.financeurIds);
     }
 
     const {data: rawData, error} = await query.single();
