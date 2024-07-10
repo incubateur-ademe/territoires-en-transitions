@@ -68,8 +68,8 @@ const FicheActionTitle = ({
         <Button
           icon="edit-line"
           variant="grey"
-          size="sm"
-          className="mt-2.5 invisible group-hover:visible"
+          size="xs"
+          className="mt-3.5 invisible group-hover:visible"
           onClick={handleChangeMode}
         />
       )}
