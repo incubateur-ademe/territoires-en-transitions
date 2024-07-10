@@ -20,6 +20,10 @@ const ModuleFiltreBadges = ({filtre, className}: Props) => {
 
   const selectedFilters = filtersToBadges({...filtreValues, ...filtre});
 
+  if (selectedFilters.length === 0) {
+    return null;
+  }
+
   return (
     <div className={classNames('flex flex-wrap gap-4', className)}>
       {selectedFilters.map(filter => (

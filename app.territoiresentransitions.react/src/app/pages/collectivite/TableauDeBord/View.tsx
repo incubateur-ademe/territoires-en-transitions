@@ -20,7 +20,7 @@ const View = ({view, title, description, children}: Props) => {
         properties={{collectivite_id}}
       />
       {/** Header */}
-      <div className="flex items-start gap-20 border-b pb-6 mb-12">
+      <div className="flex items-start gap-20 mb-12">
         <div className="flex-grow">
           <h2 className="mb-4">{title}</h2>
           <div className="text-lg text-grey-8">{description}</div>
