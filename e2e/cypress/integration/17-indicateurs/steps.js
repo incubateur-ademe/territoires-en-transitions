@@ -160,6 +160,11 @@ When(
         values: {
           source_id: sourceId,
           date_version: new Date().toISOString(),
+          diffuseur: 'ORCAE',
+          producteur: 'Atmo AURA',
+          methodologie:
+            'inventaire cadastral des émissions de GES / scope 1 & 2',
+          limites: 'secrétisation des données pour certains secteurs',
         },
         columns: 'id',
       }).then(({data}) => {

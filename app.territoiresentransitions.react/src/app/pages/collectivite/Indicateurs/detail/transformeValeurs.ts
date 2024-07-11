@@ -12,12 +12,15 @@ export function transformeValeurs(
         | 'objectif'
         | 'objectifCommentaire'
         | 'resultatCommentaire'
+        | 'source'
       >[]
     | undefined,
-  source?: string
+  sourceId?: string
 ) {
   const objectifs: TIndicateurValeur[] = [];
   const resultats: TIndicateurValeur[] = [];
+  let derniereSourceVersion = 0;
+  let derniereSource = null;
 
   valeursBrutes?.forEach(
     ({
@@ -27,6 +30,7 @@ export function transformeValeurs(
       resultat,
       objectifCommentaire,
       resultatCommentaire,
+      source,
     }) => {
       if (typeof objectif === 'number') {
         objectifs.push({
@@ -35,7 +39,7 @@ export function transformeValeurs(
           valeur: objectif,
           commentaire: objectifCommentaire || '',
           type: 'objectif',
-          source: source || null,
+          source: sourceId || null,
         });
       }
 
@@ -46,8 +50,15 @@ export function transformeValeurs(
           valeur: resultat,
           commentaire: resultatCommentaire || '',
           type: 'resultat',
-          source: source || null,
+          source: sourceId || null,
         });
+      }
+      if (source) {
+        const version = new Date(source.dateVersion).getTime();
+        if (version > derniereSourceVersion) {
+          derniereSourceVersion = version;
+          derniereSource = source;
+        }
       }
     }
   );
@@ -57,5 +68,7 @@ export function transformeValeurs(
     valeurs: [...objectifs, ...resultats],
     objectifs,
     resultats,
+    // dernière métadonnées disponibles pour la source voulue
+    metadonnee: derniereSource as Indicateurs.domain.Valeur['source'] | null,
   };
 }
