@@ -1097,8 +1097,8 @@ Deno.test("Test accès financeur_tag", async () => {
   await signOut();
 });
 
-// indicateur_resultat
-Deno.test("Test accès indicateur_resultat", async () => {
+// indicateur_valeur
+Deno.test("Test accès indicateur_valeur", async () => {
   await testReset();
   // Passe la collectivite 1 sans acces restreint
   await testChangeAccessRestreint(1, false);
@@ -1107,7 +1107,7 @@ Deno.test("Test accès indicateur_resultat", async () => {
   // a accès aux données de la collectivité 1
   await signIn("yolododo");
   const result1 = await supabase
-    .from("indicateur_resultat")
+    .from("indicateur_valeur")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result1.data);
@@ -1118,7 +1118,7 @@ Deno.test("Test accès indicateur_resultat", async () => {
   // a accès aux données de la collectivité 1
   await signIn("yulududu");
   const result2 = await supabase
-    .from("indicateur_resultat")
+    .from("indicateur_valeur")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result2.data);
@@ -1132,7 +1132,7 @@ Deno.test("Test accès indicateur_resultat", async () => {
   // a toujours accès aux données de la collectivité 1
   await signIn("yolododo");
   const result3 = await supabase
-    .from("indicateur_resultat")
+    .from("indicateur_valeur")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result3.data);
@@ -1143,7 +1143,7 @@ Deno.test("Test accès indicateur_resultat", async () => {
   // n'a plus accès aux données de la collectivité 1
   await signIn("yulududu");
   const result4 = await supabase
-    .from("indicateur_resultat")
+    .from("indicateur_valeur")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result4.data);
@@ -1151,8 +1151,9 @@ Deno.test("Test accès indicateur_resultat", async () => {
   await signOut();
 });
 
-// indicateur_objectif
-Deno.test("Test accès indicateur_objectif", async () => {
+
+// indicateur_definition
+Deno.test("Test accès indicateur_definition", async () => {
   await testReset();
   // Passe la collectivite 1 sans acces restreint
   await testChangeAccessRestreint(1, false);
@@ -1161,7 +1162,7 @@ Deno.test("Test accès indicateur_objectif", async () => {
   // a accès aux données de la collectivité 1
   await signIn("yolododo");
   const result1 = await supabase
-    .from("indicateur_objectif")
+    .from("indicateur_definition")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result1.data);
@@ -1172,7 +1173,7 @@ Deno.test("Test accès indicateur_objectif", async () => {
   // a accès aux données de la collectivité 1
   await signIn("yulududu");
   const result2 = await supabase
-    .from("indicateur_objectif")
+    .from("indicateur_definition")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result2.data);
@@ -1186,7 +1187,7 @@ Deno.test("Test accès indicateur_objectif", async () => {
   // a toujours accès aux données de la collectivité 1
   await signIn("yolododo");
   const result3 = await supabase
-    .from("indicateur_objectif")
+    .from("indicateur_definition")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result3.data);
@@ -1197,223 +1198,7 @@ Deno.test("Test accès indicateur_objectif", async () => {
   // n'a plus accès aux données de la collectivité 1
   await signIn("yulududu");
   const result4 = await supabase
-    .from("indicateur_objectif")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result4.data);
-  assertEquals(true, result4.data.length == 0);
-  await signOut();
-});
-
-// indicateur_resultat_commentaire
-Deno.test("Test accès indicateur_resultat_commentaire", async () => {
-  await testReset();
-  // Passe la collectivite 1 sans acces restreint
-  await testChangeAccessRestreint(1, false);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result1 = await supabase
-    .from("indicateur_resultat_commentaire")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result1.data);
-  assertEquals(true, result1.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result2 = await supabase
-    .from("indicateur_resultat_commentaire")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result2.data);
-  assertEquals(true, result2.data.length > 0);
-  await signOut();
-
-  // Passe la collectivite 1 en acces restreint
-  await testChangeAccessRestreint(1, true);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a toujours accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result3 = await supabase
-    .from("indicateur_resultat_commentaire")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result3.data);
-  assertEquals(true, result3.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // n'a plus accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result4 = await supabase
-    .from("indicateur_resultat_commentaire")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result4.data);
-  assertEquals(true, result4.data.length == 0);
-  await signOut();
-});
-
-// indicateur_personnalise_definition
-Deno.test("Test accès indicateur_personnalise_definition", async () => {
-  await testReset();
-  // Passe la collectivite 1 sans acces restreint
-  await testChangeAccessRestreint(1, false);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result1 = await supabase
-    .from("indicateur_personnalise_definition")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result1.data);
-  assertEquals(true, result1.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result2 = await supabase
-    .from("indicateur_personnalise_definition")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result2.data);
-  assertEquals(true, result2.data.length > 0);
-  await signOut();
-
-  // Passe la collectivite 1 en acces restreint
-  await testChangeAccessRestreint(1, true);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a toujours accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result3 = await supabase
-    .from("indicateur_personnalise_definition")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result3.data);
-  assertEquals(true, result3.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // n'a plus accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result4 = await supabase
-    .from("indicateur_personnalise_definition")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result4.data);
-  assertEquals(true, result4.data.length == 0);
-  await signOut();
-});
-
-// indicateur_personnalise_resultat
-Deno.test("Test accès indicateur_personnalise_resultat", async () => {
-  await testReset();
-  // Passe la collectivite 1 sans acces restreint
-  await testChangeAccessRestreint(1, false);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result1 = await supabase
-    .from("indicateur_personnalise_resultat")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result1.data);
-  assertEquals(true, result1.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result2 = await supabase
-    .from("indicateur_personnalise_resultat")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result2.data);
-  assertEquals(true, result2.data.length > 0);
-  await signOut();
-
-  // Passe la collectivite 1 en acces restreint
-  await testChangeAccessRestreint(1, true);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a toujours accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result3 = await supabase
-    .from("indicateur_personnalise_resultat")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result3.data);
-  assertEquals(true, result3.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // n'a plus accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result4 = await supabase
-    .from("indicateur_personnalise_resultat")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result4.data);
-  assertEquals(true, result4.data.length == 0);
-  await signOut();
-});
-
-// indicateur_personnalise_objectif
-Deno.test("Test accès indicateur_personnalise_objectif", async () => {
-  await testReset();
-  // Passe la collectivite 1 sans acces restreint
-  await testChangeAccessRestreint(1, false);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result1 = await supabase
-    .from("indicateur_personnalise_objectif")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result1.data);
-  assertEquals(true, result1.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // a accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result2 = await supabase
-    .from("indicateur_personnalise_objectif")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result2.data);
-  assertEquals(true, result2.data.length > 0);
-  await signOut();
-
-  // Passe la collectivite 1 en acces restreint
-  await testChangeAccessRestreint(1, true);
-
-  // Test que yolododo, qui appartient à la collectivite 1,
-  // a toujours accès aux données de la collectivité 1
-  await signIn("yolododo");
-  const result3 = await supabase
-    .from("indicateur_personnalise_objectif")
-    .select()
-    .eq("collectivite_id", 1);
-  assertExists(result3.data);
-  assertEquals(true, result3.data.length > 0);
-  await signOut();
-
-  // Test que yulududu, qui n'appartient pas à la collectivite 1,
-  // n'a plus accès aux données de la collectivité 1
-  await signIn("yulududu");
-  const result4 = await supabase
-    .from("indicateur_personnalise_objectif")
+    .from("indicateur_definition")
     .select()
     .eq("collectivite_id", 1);
   assertExists(result4.data);
