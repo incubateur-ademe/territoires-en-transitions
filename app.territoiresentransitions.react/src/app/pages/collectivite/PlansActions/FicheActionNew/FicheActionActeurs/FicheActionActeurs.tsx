@@ -1,10 +1,10 @@
-import classNames from 'classnames';
-import {FicheAction} from '../../FicheAction/data/types';
-import {Button} from '@tet/ui';
-import FAListeActeurs from './FAListeActeurs';
 import {useState} from 'react';
-import FAActeursModal from './FAActeursModal';
-import EmptyActeursPicto from './EmptyActeursPicto';
+import classNames from 'classnames';
+import {Button} from '@tet/ui';
+import {FicheAction} from '../../FicheAction/data/types';
+import ListeActeurs from './ListeActeurs';
+import ModaleActeurs from './ModaleActeurs';
+import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
 import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
 import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
 // import CollaborateurPicto from './PictosActeurs/CollaborateurPicto';
@@ -52,6 +52,7 @@ const FicheActionActeurs = ({
     >
       {!isReadonly && (
         <Button
+          title="Modifier les acteurs"
           icon="edit-line"
           size="xs"
           variant="grey"
@@ -63,22 +64,22 @@ const FicheActionActeurs = ({
       {!isEmpty ? (
         <div className="flex flex-col gap-y-3 gap-x-6">
           <div className="flex flex-col gap-3">
-            <FAListeActeurs
+            <ListeActeurs
               titre="Personne pilote"
               liste={pilotes?.map(pilote => pilote.nom!)}
               picto={className => <PersonnePilotePicto className={className} />}
             />
-            {/* <FAListeActeurs
+            {/* <ListeActeurs
               titre="Collaborateurs"
               liste={[]}
               picto={className => <CollaborateurPicto className={className} />}
             /> */}
-            <FAListeActeurs
+            <ListeActeurs
               titre="Direction ou service pilote"
               liste={services?.map(service => service.nom!)}
               picto={className => <ServicePilotePicto className={className} />}
             />
-            <FAListeActeurs
+            <ListeActeurs
               titre="Structure pilote"
               liste={structures?.map(structure => structure.nom!)}
               picto={className => (
@@ -88,22 +89,22 @@ const FicheActionActeurs = ({
           </div>
 
           <div className="flex flex-col gap-3">
-            <FAListeActeurs
+            <ListeActeurs
               titre="Élu·e référent·e"
               liste={referents?.map(referent => referent.nom!)}
               picto={className => <EluPicto className={className} />}
             />
-            <FAListeActeurs
+            <ListeActeurs
               titre="Partenaires"
               liste={partenaires?.map(partenaire => partenaire.nom!)}
               picto={className => <PartenairePicto className={className} />}
             />
-            <FAListeActeurs
+            <ListeActeurs
               titre="Cibles"
               liste={cibles?.map(cible => cible)}
               picto={className => <CiblePicto className={className} />}
             />
-            {/* <FAListeActeurs
+            {/* <ListeActeurs
               titre="Participation citoyenne"
               liste={[]}
               picto={className => <CitoyenPicto className={className} />}
@@ -131,7 +132,7 @@ const FicheActionActeurs = ({
         </>
       )}
 
-      <FAActeursModal
+      <ModaleActeurs
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         fiche={fiche}

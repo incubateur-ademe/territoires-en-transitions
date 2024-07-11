@@ -22,10 +22,10 @@ const meta: Meta<typeof Textarea> = {
         {...args}
         ref={ref}
         value={value}
-        onChange={(evt: any) => {
-          action('onChange')(evt.target);
+        onChange={evt => {
+          action('onChange')(evt.currentTarget);
           action('ref.current.value')(ref.current.value);
-          setValue(evt.target.value);
+          setValue(evt.currentTarget.value);
         }}
       />
     );
