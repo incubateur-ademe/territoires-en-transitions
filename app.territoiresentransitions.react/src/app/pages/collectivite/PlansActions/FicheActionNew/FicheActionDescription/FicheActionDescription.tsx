@@ -1,7 +1,7 @@
-import {Badge} from '@tet/ui';
 import classNames from 'classnames';
+import {Badge} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
-import FicheActionMenu from './FicheActionMenu';
+import MenuDescription from './MenuDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
@@ -58,7 +58,7 @@ const FicheActionDescription = ({
         )}
 
         {/* Boutons d'action sur la fiche */}
-        <FicheActionMenu
+        <MenuDescription
           isReadonly={isReadonly}
           fiche={fiche}
           updateFiche={updateFiche}

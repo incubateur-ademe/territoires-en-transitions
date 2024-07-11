@@ -1,10 +1,10 @@
-type FAListeActeursProps = {
+type ListeActeursProps = {
   titre: string;
   liste: string[] | undefined;
   picto: (className: string) => React.ReactNode;
 };
 
-const FAListeActeurs = ({titre, liste, picto}: FAListeActeursProps) => {
+const ListeActeurs = ({titre, liste, picto}: ListeActeursProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-3">
@@ -32,4 +32,4 @@ const FAListeActeurs = ({titre, liste, picto}: FAListeActeursProps) => {
   );
 };
 
-export default FAListeActeurs;
+export default ListeActeurs;
