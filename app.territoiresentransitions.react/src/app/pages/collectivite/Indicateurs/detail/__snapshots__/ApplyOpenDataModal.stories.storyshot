@@ -99,7 +99,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -156,7 +158,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             141 299
@@ -273,7 +277,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -330,7 +336,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             150 000
@@ -446,7 +454,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -503,7 +513,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             141 299
@@ -620,7 +632,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -677,7 +691,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             150 000
@@ -747,7 +763,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -802,7 +820,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             141 299
@@ -918,7 +938,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="avant"
+      >
         <tr>
           <td>
             2022
@@ -975,7 +997,9 @@ exports[`Storyshots app/pages/collectivite/Indicateurs/detail/ApplyOpenDataModal
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        data-test="apres"
+      >
         <tr>
           <td>
             141 299

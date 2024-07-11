@@ -61,7 +61,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Admin 1`
           className="flex grow flex-wrap gap-2 mr-4"
         >
           <span
-            className="my-auto text-left text-xs text-grey-6 line-clamp-1"
+            className="my-auto text-left text-sm text-grey-6 line-clamp-1"
           >
             Sélectionner une option
           </span>
@@ -160,7 +160,7 @@ exports[`Storyshots app/pages/collectivite/Users/components/Invite Mode Edition 
           className="flex grow flex-wrap gap-2 mr-4"
         >
           <span
-            className="my-auto text-left text-xs text-grey-6 line-clamp-1"
+            className="my-auto text-left text-sm text-grey-6 line-clamp-1"
           >
             Sélectionner une option
           </span>

@@ -308,7 +308,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                         onClick={[Function]}
                         target="_self"
                       >
-                        Répartition des fiches actions
+                        Répartition des fiches action
                       </a>
                     </li>
                   </ul>
@@ -320,7 +320,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                 <a
                   aria-controls="modal-header__menu"
                   className="fr-nav__link"
-                  href="/collectivite/1/indicateurs/cles/"
+                  href="/collectivite/1/indicateurs/cles/id/"
                   onClick={[Function]}
                   target="_self"
                 >
