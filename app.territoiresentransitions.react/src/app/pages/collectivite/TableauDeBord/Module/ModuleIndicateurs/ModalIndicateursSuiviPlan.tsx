@@ -2,7 +2,7 @@ import {useState} from 'react';
 
 import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
 import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filtre as FiltreIndicateurs} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {Indicateurs} from '@tet/api';
 import {
   Field,
   FormSection,
@@ -40,7 +40,7 @@ const ModalIndicateursSuiviPlan = ({
   const plansActions = usePlansActionsListe(collectiviteId);
   const queryClient = useQueryClient();
 
-  const [filtreState, setFiltreState] = useState<FiltreIndicateurs>(
+  const [filtreState, setFiltreState] = useState<Indicateurs.domain.Filtre>(
     module.options.filtre
   );
 
@@ -48,7 +48,7 @@ const ModalIndicateursSuiviPlan = ({
     'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans'
   );
 
-  const getPilotesValues = (filtreState: FiltreIndicateurs) => {
+  const getPilotesValues = (filtreState: Indicateurs.domain.Filtre) => {
     const pilotes = [];
     if (filtreState.utilisateurPiloteIds) {
       pilotes.push(...filtreState.utilisateurPiloteIds);

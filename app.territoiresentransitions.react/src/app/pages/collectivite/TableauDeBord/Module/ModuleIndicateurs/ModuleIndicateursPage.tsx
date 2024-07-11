@@ -14,7 +14,6 @@ import {
   ModuleIndicateursSelect,
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Filters} from '@tet/api/dist/src/indicateurs';
 import {Indicateurs} from '@tet/api';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
@@ -33,7 +32,7 @@ import ModulePage from '../ModulePage';
 
 type orderByOptionsType = {
   label: string;
-  value: keyof Filters;
+  value: keyof Indicateurs.Filters;
   direction: 'asc' | 'desc';
 };
 
