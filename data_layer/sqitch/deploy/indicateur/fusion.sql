@@ -72,12 +72,12 @@ drop function public.pilotes; -- Utilise public.indicateur_defintions
 drop function public.plan_action_export; -- Utilise public.fiches_action
 drop view public.indicateur_summary; -- Utilise public.rempli et private.rempli
 drop function public.rempli(indicateur_definitions); -- Utilise private.rempli
-drop trigger rewrite_indicateur_id on public.indicateur_confidentiel; -- Utilise public.rewrite_indicateur_id
-drop trigger rewrite_indicateur_id on public.indicateur_objectif; -- Utilise public.rewrite_indicateur_id
-drop trigger rewrite_indicateur_id on public.indicateur_pilote; -- Utilise public.rewrite_indicateur_id
-drop trigger rewrite_indicateur_id on public.indicateur_resultat; -- Utilise public.rewrite_indicateur_id
-drop trigger rewrite_indicateur_id on public.indicateur_service_tag; -- Utilise public.rewrite_indicateur_id
-drop trigger rewrite_indicateur_id on public.fiche_action_indicateur; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.indicateur_confidentiel; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.indicateur_objectif; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.indicateur_pilote; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.indicateur_resultat; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.indicateur_service_tag; -- Utilise public.rewrite_indicateur_id
+drop trigger if exists rewrite_indicateur_id on public.fiche_action_indicateur; -- Utilise public.rewrite_indicateur_id
 drop function public.rewrite_indicateur_id; -- trigger
 drop function public.services; -- Utilise public.indicateur_definitions
 drop function public.thematiques; -- Utilise public.indicateur_definitions
@@ -130,6 +130,7 @@ drop view public.stats_locales_evolution_resultat_indicateur_referentiel; -- Uti
 drop materialized view stats.locales_evolution_resultat_indicateur_referentiel;
 drop materialized view stats.report_indicateur_personnalise;
 drop materialized view stats.report_indicateur_resultat;
+drop materialized view if exists old.indicateur_perso_uid_mapping;
 
 -- Supprime les tables indicateurs du schéma public
 drop table public.action_impact_indicateur;
@@ -475,8 +476,17 @@ insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeu
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, v.commentaire, null, null
 from archive.indicateur_resultat_commentaire v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = coalesce(aid.valeur_indicateur, aid.id)
-where v.annee is not null
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+where v.annee is not null and aid.valeur_indicateur is not null
+on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
+    set resultat_commentaire = excluded.resultat_commentaire;
+
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire)
+select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, v.commentaire, null, null
+from archive.indicateur_resultat_commentaire v
+join archive.indicateur_definition aid on v.indicateur_id = aid.id
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.id
+where v.annee is not null and aid.valeur_indicateur is null
 on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
     set resultat_commentaire = excluded.resultat_commentaire;
 
@@ -484,7 +494,17 @@ insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeu
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, v.valeur, null
 from archive.indicateur_objectif v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = coalesce(aid.valeur_indicateur, aid.id)
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+where aid.valeur_indicateur is not null
+on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
+    set objectif = excluded.objectif;
+
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire)
+select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, v.valeur, null
+from archive.indicateur_objectif v
+join archive.indicateur_definition aid on v.indicateur_id = aid.id
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.id
+where aid.valeur_indicateur is null
 on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
     set objectif = excluded.objectif;
 
@@ -492,7 +512,17 @@ insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeu
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, null, v.commentaire
 from archive.indicateur_objectif_commentaire v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = coalesce(aid.valeur_indicateur, aid.id)
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+where aid.valeur_indicateur is not null
+on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
+    set objectif_commentaire = excluded.objectif_commentaire;
+
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire)
+select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, null, v.commentaire
+from archive.indicateur_objectif_commentaire v
+join archive.indicateur_definition aid on v.indicateur_id = aid.id
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.id
+where aid.valeur_indicateur is null
 on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
     set objectif_commentaire = excluded.objectif_commentaire;
 
@@ -567,18 +597,19 @@ join public.indicateur_definition pid on pia.indicateur_id = pid.identifiant_ref
 
 -- indicateur_pilote <- indicateur_pilote
 insert into public.indicateur_pilote (indicateur_id, user_id, tag_id, collectivite_id)
-select pid.id, aip.user_id, aip.tag_id, aip.collectivite_id
+select pid.id, aip.user_id, aip.tag_id, coalesce(aip.collectivite_id, pid.collectivite_id)
 from archive.indicateur_pilote aip
 join public.indicateur_definition pid on
     case when aip.indicateur_id is null then
              aip.indicateur_perso_id = pid.old_id
          else
              aip.indicateur_id = pid.identifiant_referentiel
-    end;
+    end
+on conflict(indicateur_id, tag_id, collectivite_id) where tag_id is not null do nothing;
 
 -- indicateur_service_tag <- indicateur_service_tag
 insert into public.indicateur_service_tag (indicateur_id, service_tag_id, collectivite_id)
-select pid.id, aist.service_tag_id, aist.collectivite_id
+select pid.id, aist.service_tag_id, coalesce(aist.collectivite_id, pid.collectivite_id)
 from archive.indicateur_service_tag aist
 join public.indicateur_definition pid on
     case when aist.indicateur_id is null then
@@ -589,7 +620,7 @@ join public.indicateur_definition pid on
 
 -- indicateur_collectivite <- indicateur_confidentiel + indicateur_resultat_commentaire sans annee
 insert into public.indicateur_collectivite (indicateur_id, collectivite_id, commentaire, confidentiel)
-select pid.id, aic.collectivite_id, null, true
+select pid.id, coalesce(aic.collectivite_id, pid.collectivite_id), null, true
 from archive.indicateur_confidentiel aic
 join public.indicateur_definition pid on
     case when aic.indicateur_id is null then
