@@ -1,12 +1,13 @@
 import {useState} from 'react';
 import classNames from 'classnames';
 
-import {Button} from '@tet/ui';
+import {Button, Icon} from '@tet/ui';
 import IndicateurChart from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
 import {useIndicateurValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import {getLeftLineChartMargin} from 'ui/charts/Line/utils';
 import {transformeValeurs} from './transformeValeurs';
+import {DataSourceTooltip} from './DataSourceTooltip';
 
 type Props = {
   definition: TIndicateurDefinition;
@@ -39,7 +40,7 @@ const IndicateurDetailChart = ({
     });
 
   // sépare les données objectifs/résultats
-  const {valeurs} = transformeValeurs(valeursBrutes, source);
+  const {valeurs, metadonnee} = transformeValeurs(valeursBrutes, source);
   const data = {
     unite: definition.unite,
     valeurs,
@@ -101,7 +102,11 @@ const IndicateurDetailChart = ({
           title: titre,
         }}
       />
-
+      {!!metadonnee && (
+        <DataSourceTooltip metadonnee={metadonnee}>
+          <Icon icon="information-line" className="text-primary" />
+        </DataSourceTooltip>
+      )}
       {!hasValeurOrObjectif && (
         <div className="mx-auto text-sm text-grey-7">
           Aucune valeur renseignée pour l’instant
