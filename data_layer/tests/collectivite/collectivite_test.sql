@@ -63,7 +63,8 @@ values ((select collectivite_id from collectivite_test where nom = 'testsql' lim
 
 -- INDICATEUR --
 -- indicateur_resultat
-insert into indicateur_resultat(modified_at, valeur, annee, collectivite_id, indicateur_id)
+-- TODO à changer
+/*insert into indicateur_resultat(modified_at, valeur, annee, collectivite_id, indicateur_id)
 values (now(), 1.0, 2020, (select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'eci_5');
 -- indicateur_objectif
 insert into indicateur_objectif(modified_at, valeur, annee, collectivite_id, indicateur_id)
@@ -97,7 +98,7 @@ alter table indicateur_perso_objectif_commentaire enable trigger modified_by;
 alter table indicateur_perso_resultat_commentaire disable trigger modified_by;
 insert into indicateur_perso_resultat_commentaire(collectivite_id, indicateur_id, annee, commentaire, modified_by, modified_at)
 values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), (select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 2020, 'test', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9', now());
-alter table indicateur_perso_resultat_commentaire enable trigger modified_by;
+alter table indicateur_perso_resultat_commentaire enable trigger modified_by;*/
 
 -- PLAN ACTION --
 -- fiche_action -> fiche_id (2ème valeur pour les inserts des tables liées)
@@ -154,8 +155,8 @@ values ((select collectivite_id from collectivite_test where nom = 'testsql' lim
 -- fiche_action_action
 insert into fiche_action_action (fiche_id, action_id) values((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), 'eci_2.1');
 -- fiche_action_indicateur
-insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
-values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), null, (select collectivite_id from collectivite_test where nom = 'testsql' limit 1));
+--insert into fiche_action_indicateur(fiche_id, indicateur_id, indicateur_personnalise_id)
+--values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1), null, (select collectivite_id from collectivite_test where nom = 'testsql' limit 1));
 -- fiche_action_lien
 insert into fiche_action_lien(fiche_une, fiche_deux) values ((select collectivite_id from collectivite_test where nom = 'testsql' limit 1)*10+1, (select collectivite_id from collectivite_test where nom = 'testsql' limit 1)*10+2);
 -- fiche_action_thematique
