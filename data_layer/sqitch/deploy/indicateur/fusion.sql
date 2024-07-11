@@ -562,7 +562,7 @@ select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), aim.id, v.v
 from archive.indicateur_resultat_import v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
 join public.indicateur_definition pid on pid.identifiant_referentiel = coalesce(aid.valeur_indicateur, aid.id)
-join public.indicateur_source_metadonnee aim on v.source = aim.source_id and v.source = aim.nom_donnees;
+join public.indicateur_source_metadonnee aim on v.source_id = aim.source_id and v.source = aim.nom_donnees;
 
 -- indicateur_groupe <- indicateur_definition.parent
 insert into public.indicateur_groupe (parent, enfant)
