@@ -1,7 +1,5 @@
 import {Link} from 'react-router-dom';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useExportIndicateurs} from '../useExportIndicateurs';
-import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
 import {FilterSummary} from './FilterSummary';
 import {
@@ -21,12 +19,6 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
 
   // charge et filtre les définitions
   const {data: definitions} = useFilteredIndicateurDefinitions(view, filters);
-
-  // fonction d'export
-  const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs(
-    definitions,
-    view
-  );
 
   // route non valide
   if (!collectivite) {
@@ -70,17 +62,6 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
               resetFilterParams={resetFilterParams}
               filterParamsCount={filterParamsCount}
             />
-            {definitions?.length ? (
-              <ToolbarIconButton
-                className="fr-mr-1w"
-                disabled={isLoading}
-                icon="download"
-                title={`Exporter ${definitions.length} indicateur${
-                  definitions.length > 1 ? 's' : ''
-                }`}
-                onClick={() => exportIndicateurs()}
-              />
-            ) : null}
           </div>
 
           <IndicateurChartsGrid definitions={definitions} view={view} />
