@@ -1,6 +1,6 @@
-import {Button, Notification} from '@tet/ui';
 import {useState} from 'react';
-import RestreintModal from './RestreintModal';
+import {Button, Notification} from '@tet/ui';
+import ModaleAcces from './ModaleAcces';
 
 type FicheActionRestreintProps = {
   isRestreint: boolean;
@@ -30,6 +30,7 @@ const FicheActionRestreint = ({
         </span>
       </span>
       <Button
+        title="Modifier la restriction d'accès"
         icon="edit-line"
         size="xs"
         variant="grey"
@@ -37,7 +38,7 @@ const FicheActionRestreint = ({
         onClick={() => setIsModalOpen(true)}
       />
 
-      <RestreintModal
+      <ModaleAcces
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         isRestreint={isRestreint}
