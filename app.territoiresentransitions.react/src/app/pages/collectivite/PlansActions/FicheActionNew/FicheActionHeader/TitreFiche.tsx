@@ -28,7 +28,10 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   };
 
   return (
-    <div className="w-full flex justify-between items-start mb-2 group">
+    <div
+      className="w-full flex justify-between items-start mb-2 group cursor-text"
+      onClick={() => !isReadonly && !isEditing && handleChangeMode()}
+    >
       {/* Titre de la fiche action */}
       {isEditing ? (
         // Titre en version édition
@@ -51,12 +54,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
         />
       ) : (
         // Titre en version lecture
-        <h1
-          className="mt-1.5 mb-2"
-          onClick={() => !isReadonly && handleChangeMode()}
-        >
-          {titre ?? 'Sans titre'}
-        </h1>
+        <h1 className="mt-1.5 mb-2">{titre ?? 'Sans titre'}</h1>
       )}
 
       {/* Bouton d'édition du titre de la fiche action */}

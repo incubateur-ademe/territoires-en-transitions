@@ -1,6 +1,7 @@
+import {useEffect, useState} from 'react';
+import _ from 'lodash';
 import {Button, Field, FormSectionGrid, Modal} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
-import {useEffect, useState} from 'react';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesDropdown from 'ui/dropdownLists/ServicesDropdown/ServicesDropdown';
@@ -8,19 +9,19 @@ import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDr
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/CiblesDropdown/CiblesDropdown';
 
-type FAPlanningModalProps = {
+type ModaleActeursProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
-const FAActeursModal = ({
+const ModaleActeurs = ({
   isOpen,
   setIsOpen,
   fiche,
   updateFiche,
-}: FAPlanningModalProps) => {
+}: ModaleActeursProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   useEffect(() => {
@@ -28,7 +29,9 @@ const FAActeursModal = ({
   }, [fiche]);
 
   const handleSave = () => {
-    updateFiche(editedFiche);
+    if (!_.isEqual(fiche, editedFiche)) {
+      updateFiche(editedFiche);
+    }
   };
 
   return (
@@ -136,4 +139,4 @@ const FAActeursModal = ({
   );
 };
 
-export default FAActeursModal;
+export default ModaleActeurs;

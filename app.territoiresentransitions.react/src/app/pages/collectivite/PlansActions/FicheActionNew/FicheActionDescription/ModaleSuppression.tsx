@@ -1,8 +1,8 @@
+import classNames from 'classnames';
 import {Button, ButtonVariant, Modal} from '@tet/ui';
 import {useDeleteFicheAction} from '../../FicheAction/data/useDeleteFicheAction';
-import classNames from 'classnames';
 
-type FicheActionSupprimerProps = {
+type ModaleSuppressionProps = {
   ficheId: number | null;
   title: string | null;
   isInMultipleAxes: boolean;
@@ -13,13 +13,13 @@ type FicheActionSupprimerProps = {
 /**
  * Bouton + modale de suppression d'une fiche action
  */
-const FicheActionSupprimer = ({
+const ModaleSuppression = ({
   ficheId,
   title,
   isInMultipleAxes,
   buttonClassName,
   buttonVariant = 'outlined',
-}: FicheActionSupprimerProps) => {
+}: ModaleSuppressionProps) => {
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheId!,
     axeId: null,
@@ -67,6 +67,7 @@ const FicheActionSupprimer = ({
         </div>
       )}
     >
+      {/* Bouton d'ouverture de la modale */}
       <Button
         data-test="SupprimerFicheBouton"
         icon="delete-bin-6-line"
@@ -79,4 +80,4 @@ const FicheActionSupprimer = ({
   );
 };
 
-export default FicheActionSupprimer;
+export default ModaleSuppression;
