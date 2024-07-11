@@ -322,7 +322,7 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
             <a
               aria-controls="modal-header__menu"
               className="fr-nav__link"
-              href="/collectivite/1/indicateurs/cles/"
+              href="/collectivite/1/indicateurs/cles/id/"
               onClick={[Function]}
               target="_self"
             >
@@ -865,7 +865,7 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
             <a
               aria-controls="modal-header__menu"
               className="fr-nav__link"
-              href="/collectivite/1/indicateurs/cles/"
+              href="/collectivite/1/indicateurs/cles/id/"
               onClick={[Function]}
               target="_self"
             >
@@ -1362,7 +1362,7 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
             <a
               aria-controls="modal-header__menu"
               className="fr-nav__link"
-              href="/collectivite/1/indicateurs/cles/"
+              href="/collectivite/1/indicateurs/cles/id/"
               onClick={[Function]}
               target="_self"
             >

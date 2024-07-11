@@ -18,12 +18,22 @@ export default {
 export const AvecConflits = {
   args: {
     definition: {unite: 'teqCO2'},
-    source: {id: 'pcaet', nom: 'PCAET', type: 'objectif'},
+    source: {id: 'pcaet', libelle: 'PCAET', type: 'objectif'},
     comparaison: {
       conflits: 2,
       lignes: [
-        {annee: 2022, valeur: 141_299, nouvelleValeur: 150_000, conflit: true},
-        {annee: 2021, valeur: 141_299, nouvelleValeur: 140_000, conflit: true},
+        {
+          annee: 2022,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 150_000,
+          conflit: true,
+        },
+        {
+          annee: 2021,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 140_000,
+          conflit: true,
+        },
       ],
     },
   },
@@ -36,17 +46,23 @@ export const AvecConflitsEcrasement = {
 export const SansConflits = {
   args: {
     definition: {unite: 'teqCO2'},
-    source: {id: 'pcaet', nom: 'PCAET', type: 'objectif'},
+    source: {id: 'pcaet', libelle: 'PCAET', type: 'objectif'},
     comparaison: {
       conflits: 0,
+      ajouts: 1,
       lignes: [
         {
           annee: 2022,
-          nouvelleValeur: 141_299,
+          valeurAAppliquer: 141_299,
           conflit: false,
           estNouveau: true,
         },
-        {annee: 2021, valeur: 141_299, nouvelleValeur: 141_299, conflit: false},
+        {
+          annee: 2021,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 141_299,
+          conflit: false,
+        },
       ],
     },
   },
@@ -55,12 +71,22 @@ export const SansConflits = {
 export const EnConflitPartiel = {
   args: {
     definition: {unite: 'teqCO2'},
-    source: {id: 'pcaet', nom: 'PCAET', type: 'objectif'},
+    source: {id: 'pcaet', libelle: 'PCAET', type: 'objectif'},
     comparaison: {
       conflits: 1,
       lignes: [
-        {annee: 2022, valeur: 141_299, nouvelleValeur: 150_000, conflit: true},
-        {annee: 2021, valeur: 141_299, nouvelleValeur: 141_299, conflit: false},
+        {
+          annee: 2022,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 150_000,
+          conflit: true,
+        },
+        {
+          annee: 2021,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 141_299,
+          conflit: false,
+        },
       ],
     },
   },
@@ -73,12 +99,22 @@ export const EnConflitPartielEcrasement = {
 export const VarianteResultats = {
   args: {
     definition: {unite: 'teqCO2'},
-    source: {id: 'pcaet', nom: 'PCAET', type: 'resultat'},
+    source: {id: 'pcaet', libelle: 'PCAET', type: 'resultat'},
     comparaison: {
       conflits: 1,
       lignes: [
-        {annee: 2022, valeur: 141_299, nouvelleValeur: 150_000, conflit: true},
-        {annee: 2021, valeur: 141_299, nouvelleValeur: 141_299, conflit: false},
+        {
+          annee: 2022,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 150_000,
+          conflit: true,
+        },
+        {
+          annee: 2021,
+          valeurAEcraser: 141_299,
+          valeurAAppliquer: 141_299,
+          conflit: false,
+        },
       ],
     },
   },
