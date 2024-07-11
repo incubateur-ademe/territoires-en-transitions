@@ -1,3 +1,5 @@
+import {useState} from 'react';
+import _ from 'lodash';
 import {
   Button,
   Checkbox,
@@ -6,65 +8,35 @@ import {
   Input,
   Modal,
   Select,
+  Textarea,
 } from '@tet/ui';
+import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import {FicheAction} from '../../FicheAction/data/types';
-import {useState} from 'react';
 import {
   ficheActionNiveauPrioriteOptions,
   ficheActionStatutOptions,
 } from '../../FicheAction/data/options/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
-import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import BadgePriorite from '../../components/BadgePriorite';
+import {getIsoFormattedDate} from '../utils';
 
-const getFormattedDate = (date: string) => {
-  const localDate = new Date(date);
-  const year = localDate.getFullYear();
-  const month = localDate.getMonth() + 1;
-  const day = localDate.getDate();
-  return `${year}-${month < 10 ? `0${month}` : month}-${
-    day < 10 ? `0${day}` : day
-  }`;
-};
-
-const isInputChanged = (input: string | null, prevValue: string | null) => {
-  const inputToSave = (input ?? '').trim();
-  if (inputToSave !== prevValue) return true;
-  return false;
-};
-
-const isSelectChanged = (value: string | null, prevValue: string | null) => {
-  if (value !== prevValue) return true;
-  else return false;
-};
-
-type FAPlanningModalProps = {
+type ModalePlanningProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
-const FAPlanningModal = ({
+const ModalePlanning = ({
   isOpen,
   setIsOpen,
   fiche,
   updateFiche,
-}: FAPlanningModalProps) => {
+}: ModalePlanningProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   const handleSave = () => {
-    if (
-      isInputChanged(editedFiche.date_debut, fiche.date_debut) ||
-      isInputChanged(
-        editedFiche.date_fin_provisoire,
-        fiche.date_fin_provisoire
-      ) ||
-      isInputChanged(editedFiche.calendrier, fiche.calendrier) ||
-      isSelectChanged(editedFiche.statut, fiche.statut) ||
-      isSelectChanged(editedFiche.niveau_priorite, fiche.niveau_priorite) ||
-      editedFiche.amelioration_continue !== fiche.amelioration_continue
-    ) {
+    if (!_.isEqual(fiche, editedFiche)) {
       updateFiche(editedFiche);
     }
   };
@@ -73,7 +45,7 @@ const FAPlanningModal = ({
     <Modal
       openState={{isOpen, setIsOpen}}
       title="Planning prévisionnel"
-      size="md"
+      size="lg"
       render={({descriptionId, close}) => (
         <div>
           <div id={descriptionId} className="flex flex-col gap-8">
@@ -82,7 +54,7 @@ const FAPlanningModal = ({
               <Field title="Date de début" className="col-span-2">
                 <Input
                   type="date"
-                  value={getFormattedDate(editedFiche.date_debut ?? '')}
+                  value={getIsoFormattedDate(editedFiche.date_debut ?? '')}
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
@@ -121,7 +93,7 @@ const FAPlanningModal = ({
                       : undefined
                   }
                   disabled={editedFiche.amelioration_continue ?? false}
-                  value={getFormattedDate(
+                  value={getIsoFormattedDate(
                     editedFiche.date_fin_provisoire ?? ''
                   )}
                   onChange={evt =>
@@ -175,8 +147,8 @@ const FAPlanningModal = ({
                 hint="Si l’action est en pause ou abandonnée, expliquez pourquoi"
                 className="col-span-2"
               >
-                <Input
-                  type="text"
+                <Textarea
+                  className="min-h-[50px]"
                   value={editedFiche.calendrier ?? ''}
                   disabled={
                     editedFiche.statut !== 'En pause' &&
@@ -185,7 +157,7 @@ const FAPlanningModal = ({
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      calendrier: evt.target.value,
+                      calendrier: evt.currentTarget.value,
                     }))
                   }
                 />
@@ -214,4 +186,4 @@ const FAPlanningModal = ({
   );
 };
 
-export default FAPlanningModal;
+export default ModalePlanning;
