@@ -1,20 +1,13 @@
+import {useState} from 'react';
 import classNames from 'classnames';
-import {FicheAction} from '../../FicheAction/data/types';
 import {Button, Divider, Icon} from '@tet/ui';
+import {FicheAction} from '../../FicheAction/data/types';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
-import FilledCalendarPicto from './FilledCalendarPicto';
-import EmptyCalendarPicto from './EmptyCalendarPicto';
-import {useState} from 'react';
-import FAPlanningModal from './FAPlanningModal';
-
-const getFormattedDate = (date: string) => {
-  return new Date(date).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-};
+import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
+import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
+import ModalePlanning from './ModalePlanning';
+import {getTextFormattedDate} from '../utils';
 
 type FicheActionPlanningProps = {
   isReadonly: boolean;
@@ -49,6 +42,7 @@ const FicheActionPlanning = ({
     >
       {!isReadonly && (
         <Button
+          title="Modifier le planning prévisionnel"
           icon="edit-line"
           size="xs"
           variant="grey"
@@ -72,7 +66,7 @@ const FicheActionPlanning = ({
                 Date de début
               </h6>
               <p className="text-sm leading-4 text-primary-10 mb-0">
-                {getFormattedDate(dateDebut)}
+                {getTextFormattedDate(dateDebut)}
               </p>
             </div>
           )}
@@ -84,7 +78,7 @@ const FicheActionPlanning = ({
                 Date de fin prévisionnelle
               </h6>
               <p className="text-sm leading-4 text-primary-10 mb-0">
-                {getFormattedDate(dateFinPrevisionnelle)}
+                {getTextFormattedDate(dateFinPrevisionnelle)}
               </p>
             </div>
           )}
@@ -143,7 +137,7 @@ const FicheActionPlanning = ({
         </>
       )}
 
-      <FAPlanningModal
+      <ModalePlanning
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
