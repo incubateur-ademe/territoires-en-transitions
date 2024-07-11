@@ -47,12 +47,15 @@ export const CollectiviteRoutes = () => {
         <ActionPage />
       </Route>
 
-      <RouteEnAccesRestreint path={collectiviteIndicateurPath}>
+      <RouteEnAccesRestreint
+        path={[
+          collectiviteIndicateurPath,
+          collectiviteIndicateurReferentielPath,
+        ]}
+      >
         <IndicateursPage />
       </RouteEnAccesRestreint>
-      <RouteEnAccesRestreint path={collectiviteIndicateurReferentielPath}>
-        <IndicateursPage />
-      </RouteEnAccesRestreint>
+
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
         <PlansActionsPage />
       </RouteEnAccesRestreint>
