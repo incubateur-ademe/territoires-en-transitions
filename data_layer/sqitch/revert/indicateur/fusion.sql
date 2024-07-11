@@ -410,8 +410,8 @@ create table public.indicateur_pilote
         references personne_tag
             on delete cascade,
     indicateur_perso_id integer
-        constraint indicateur_pilote_indicateur_personnalise_definition_id_fk
-            references indicateur_personnalise_definition,
+        references indicateur_personnalise_definition
+            on delete cascade,
     constraint indicateur_pilote_indicateur_id_collectivite_id_user_id_tag_key
         unique (indicateur_id, indicateur_perso_id, collectivite_id, user_id, tag_id),
     constraint perso_ou_predefini
