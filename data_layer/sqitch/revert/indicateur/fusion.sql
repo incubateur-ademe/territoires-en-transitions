@@ -2953,9 +2953,11 @@ alter table public.indicateur_personnalise_definition enable row level security;
 create policy allow_read on indicateur_personnalise_definition for select using (
     can_read_acces_restreint(collectivite_id));
 create policy allow_insert on indicateur_personnalise_definition for insert with check (
-    have_edition_acces(collectivite_id) OR private.est_auditeur(collectivite_id));
+    have_edition_acces(collectivite_id));
 create policy allow_update on indicateur_personnalise_definition for update using (
-    have_edition_acces(collectivite_id) OR private.est_auditeur(collectivite_id));
+    have_edition_acces(collectivite_id));
+create policy allow_delete on indicateur_personnalise_definition for delete using (
+    have_edition_acces(collectivite_id));
 
 alter table public.indicateurs_json enable row level security;
 alter table public.indicateur_terristory_json enable row level security;
