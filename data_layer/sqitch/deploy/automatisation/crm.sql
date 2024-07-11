@@ -218,9 +218,12 @@ select collectivite_id,
            select i.pourcentage
            from (
                     select c.id as collectivite_id,
-                           (count(ic)::double precision / (select count(*) from indicateur_definition)::double precision
-                               * 100::double precision) as pourcentage
-                    from collectivite c
+                          case when (
+                            select count(*) from indicateur_definition)=0 then 0::double precision
+                            else (count(ic)::double precision / (select count(*) from indicateur_definition)::double precision
+                               * 100::double precision
+                            ) end as pourcentage
+                            from collectivite c
                              left join indicateur_confidentiel ic on ic.collectivite_id = c.id
                         and ic.indicateur_id is not null
                     group by c.id
