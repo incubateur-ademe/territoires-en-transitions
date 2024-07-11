@@ -1,10 +1,10 @@
 import {FiltreValues} from '@tet/api/dist/src/collectivites/shared/domain/filtre_ressource_liees.schema';
-import {FiltreSpecifique as FiltreSpecifiqueIndicateurs} from '@tet/api/dist/src/indicateurs/indicateurs.list/domain/fetch_options.schema';
+import {Indicateurs} from '@tet/api';
 import {FiltreSpecifique as FiltreSpecifiqueFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 
 type FiltreKeys = FiltreValues &
-  FiltreSpecifiqueIndicateurs &
+  Indicateurs.domain.FiltreSpecifique &
   FiltreSpecifiqueFicheActions;
 
 /** Converti les filtres sélectionnés en tableau de string
