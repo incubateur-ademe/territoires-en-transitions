@@ -38,6 +38,8 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
         {/* Header de la fiche action (titre, fil d'ariane) */}
         <FicheActionHeader
           titre={fiche.titre}
+          collectiviteId={fiche.collectivite_id!}
+          axes={fiche.axes}
           isReadonly={isReadonly}
           updateTitle={titre => updateFiche({...fiche, titre})}
         />
