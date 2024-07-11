@@ -31,6 +31,8 @@ $$
     select test_reset_indicateurs();
 -- 06-auth.sql
     select test_reset_users();
+-- pour restaurer les personnes pilotes
+    select test_reset_plan_action();
 -- Supprime toutes les collectivités de test et cot.
     delete from collectivite_test cascade where true;
     delete from cot where true;
