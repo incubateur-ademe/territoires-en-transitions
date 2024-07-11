@@ -1,7 +1,7 @@
 import {Button, Input} from '@tet/ui';
 import {useState} from 'react';
 
-type FicheActionTitleProps = {
+type TitreFicheProps = {
   titre: string | null;
   isReadonly: boolean;
   updateTitle: (value: string) => void;
@@ -10,11 +10,7 @@ type FicheActionTitleProps = {
 /**
  * Titre éditable d'une fiche action
  */
-const FicheActionTitle = ({
-  titre,
-  isReadonly,
-  updateTitle,
-}: FicheActionTitleProps) => {
+const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(titre ?? '');
 
@@ -32,7 +28,7 @@ const FicheActionTitle = ({
   };
 
   return (
-    <div className="w-full flex justify-between items-start mb-6 group">
+    <div className="w-full flex justify-between items-start mb-2 group">
       {/* Titre de la fiche action */}
       {isEditing ? (
         // Titre en version édition
@@ -77,4 +73,4 @@ const FicheActionTitle = ({
   );
 };
 
-export default FicheActionTitle;
+export default TitreFiche;
