@@ -1,23 +1,25 @@
-import {Button, Checkbox, FormSectionGrid, Modal} from '@tet/ui';
 import {useState} from 'react';
+import {Button, Checkbox, FormSectionGrid, Modal} from '@tet/ui';
 
-type RestreintModalProps = {
+type ModaleAccesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   isRestreint: boolean;
   updateRestreint: (isRestreint: boolean) => void;
 };
 
-const RestreintModal = ({
+const ModaleAcces = ({
   isOpen,
   setIsOpen,
   isRestreint,
   updateRestreint,
-}: RestreintModalProps) => {
+}: ModaleAccesProps) => {
   const [editedRestreint, setEditedFiche] = useState(isRestreint);
 
   const handleSave = () => {
-    updateRestreint(editedRestreint);
+    if (isRestreint !== editedRestreint) {
+      updateRestreint(editedRestreint);
+    }
   };
 
   return (
@@ -61,4 +63,4 @@ const RestreintModal = ({
   );
 };
 
-export default RestreintModal;
+export default ModaleAcces;

@@ -5,16 +5,8 @@ import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
-import classNames from 'classnames';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
-
-const getFormattedDate = (date: string) => {
-  return new Date(date).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-  });
-};
+import {getFormattedDate} from './utils';
 
 type FicheActionProps = {
   isReadonly: boolean;

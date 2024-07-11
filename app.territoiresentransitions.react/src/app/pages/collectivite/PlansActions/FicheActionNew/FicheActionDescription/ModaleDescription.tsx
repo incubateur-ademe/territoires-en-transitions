@@ -1,49 +1,24 @@
-import {Button, Field, FormSectionGrid, Input, Modal} from '@tet/ui';
-import {FicheAction} from '../../FicheAction/data/types';
 import {useState} from 'react';
+import _ from 'lodash';
+import {Button, Field, FormSectionGrid, Input, Modal, Textarea} from '@tet/ui';
+import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
+import {FicheAction} from '../../FicheAction/data/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
-import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
-
-const isInputChanged = (input: string | null, prevValue: string | null) => {
-  const inputToSave = (input ?? '').trim();
-  if (inputToSave !== prevValue) return true;
-  return false;
-};
-
-const isSelectChanged = (selectedIds: number[], prevSelectedIds: number[]) => {
-  if (selectedIds.join() !== prevSelectedIds.join()) return true;
-  else return false;
-};
 
 /**
  * Bouton + modale pour l'édition des informations principales d'une fiche action
  */
-type FicheActionModifierProps = {
+type ModaleDescriptionProps = {
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
-const FicheActionModifier = ({
-  fiche,
-  updateFiche,
-}: FicheActionModifierProps) => {
+const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   const handleSave = () => {
-    if (
-      isInputChanged(editedFiche.titre, fiche.titre) ||
-      isInputChanged(editedFiche.description, fiche.description) ||
-      isInputChanged(editedFiche.ressources, fiche.ressources) ||
-      isSelectChanged(
-        editedFiche.thematiques?.map(t => t.id) ?? [],
-        fiche.thematiques?.map(t => t.id) ?? []
-      ) ||
-      isSelectChanged(
-        editedFiche.sous_thematiques?.map(t => t.id) ?? [],
-        fiche.sous_thematiques?.map(t => t.id) ?? []
-      )
-    ) {
+    if (!_.isEqual(fiche, editedFiche)) {
       updateFiche(editedFiche);
     }
   };
@@ -102,14 +77,14 @@ const FicheActionModifier = ({
               </Field>
 
               {/* Description */}
-              <Field title="Description de l'action :" className="col-span-2">
-                <Input
-                  type="text"
+              <Field title="Description de l'action" className="col-span-2">
+                <Textarea
+                  className="min-h-[100px]"
                   value={editedFiche.description ?? ''}
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      description: evt.target.value,
+                      description: evt.currentTarget.value,
                     }))
                   }
                 />
@@ -117,16 +92,16 @@ const FicheActionModifier = ({
 
               {/* Ressources */}
               <Field
-                title="Moyens humains et techniques :"
+                title="Moyens humains et techniques"
                 className="col-span-2"
               >
-                <Input
-                  type="text"
+                <Textarea
+                  className="min-h-[100px]"
                   value={editedFiche.ressources ?? ''}
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      ressources: evt.target.value,
+                      ressources: evt.currentTarget.value,
                     }))
                   }
                 />
@@ -152,9 +127,10 @@ const FicheActionModifier = ({
         </div>
       )}
     >
+      {/* Bouton d'ouverture de la modale */}
       <Button
         icon="edit-fill"
-        title="Modifier la fiche"
+        title="Modifier les informations"
         variant="outlined"
         size="xs"
         className="h-fit"
@@ -164,4 +140,4 @@ const FicheActionModifier = ({
   );
 };
 
-export default FicheActionModifier;
+export default ModaleDescription;

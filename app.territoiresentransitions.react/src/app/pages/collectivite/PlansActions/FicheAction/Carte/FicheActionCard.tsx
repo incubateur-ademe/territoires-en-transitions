@@ -18,7 +18,7 @@ import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import ModifierFicheModale from './ModifierFicheModale';
 import {useState} from 'react';
 import {QueryKey} from 'react-query';
-import FicheActionSupprimer from '../../FicheActionNew/FicheActionDescription/FicheActionSupprimer';
+import ModaleSuppression from '../../FicheActionNew/FicheActionDescription/ModaleSuppression';
 
 type Props = {
   link?: string;
@@ -121,7 +121,7 @@ const FicheActionCard = ({
               onClick={() => setIsEditOpen(!isEditOpen)}
             />
           </>
-          <FicheActionSupprimer
+          <ModaleSuppression
             ficheId={ficheAction.id}
             title={ficheAction.titre}
             isInMultipleAxes={
