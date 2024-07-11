@@ -81,7 +81,7 @@ drop trigger rewrite_indicateur_id on public.fiche_action_indicateur; -- Utilise
 drop function public.rewrite_indicateur_id; -- trigger
 drop function public.services; -- Utilise public.indicateur_definitions
 drop function public.thematiques; -- Utilise public.indicateur_definitions
-drop trigger upsert on public.fiches_action; -- Utilise public.upsert_fiche_action
+drop trigger if exists upsert on public.fiches_action; -- Utilise public.upsert_fiche_action
 drop function public.upsert_fiche_action; -- Utilise private.ajouter_indicateur & trigger
 drop function private.ajouter_indicateur;
 drop function private.enlever_indicateur;
