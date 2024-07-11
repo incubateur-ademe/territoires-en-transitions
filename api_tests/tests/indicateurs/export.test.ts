@@ -3,6 +3,8 @@ import { fakeCredentials, signOut } from '../../lib/auth.ts';
 import { testReset } from '../../lib/rpcs/testReset.ts';
 import { assertIsBlobWithExpectedSize } from '../../lib/assert.ts';
 
+// TODO à remettre quand l'export des indicateurs sera réactivé
+/**
 await new Promise((r) => setTimeout(r, 0));
 
 Deno.test('Exporter un indicateur prédéfini', async () => {
@@ -120,3 +122,4 @@ const genValeurs = <T>(
   }
   return ret;
 };
+ */
