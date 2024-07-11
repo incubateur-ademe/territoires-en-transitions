@@ -13,12 +13,13 @@ const fetchIndicateurSummary = async (collectivite_id: number) => {
   const {error, data} = await supabaseClient
     .from('indicateur_summary')
     .select('*')
-    .match({collectivite_id})
-    .in('categorie', CATEGORIES);
+    .match({collectivite_id});
 
   if (error) throw new Error(error.message);
 
-  return data;
+  return data.filter(
+    s => s.categorie && CATEGORIES.includes(s.categorie as Categorie)
+  );
 };
 
 /**
