@@ -1,11 +1,9 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurDetail} from './detail/IndicateurDetail';
 import {IndicateurCompose} from './detail/IndicateurCompose';
 import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
 import {TIndicateurDefinition} from './types';
-import {useExportIndicateurs} from './useExportIndicateurs';
 import {useIndicateurDefinition} from './useIndicateurDefinition';
 import {TrackPageView} from '@tet/ui';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -16,10 +14,6 @@ export const IndicateurPredefiniBase = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
-  const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
-    definition,
-  ]);
-
   const collectivite_id = useCollectiviteId()!;
 
   return (
@@ -31,13 +25,6 @@ export const IndicateurPredefiniBase = ({
       <HeaderIndicateur title={definition.titre} />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
-          <ToolbarIconButton
-            className="fr-mr-1w"
-            disabled={isLoading}
-            icon="download"
-            title="Exporter"
-            onClick={() => exportIndicateurs()}
-          />
           <IndicateurSidePanelToolbar definition={definition} />
         </div>
         {/** affiche les indicateurs "enfants" */}

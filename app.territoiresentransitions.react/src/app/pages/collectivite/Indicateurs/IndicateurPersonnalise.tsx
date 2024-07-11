@@ -6,7 +6,6 @@ import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
 import {useUpdateIndicateurPersoDefinition} from './useUpdateIndicateurPersoDefinition';
-import {useExportIndicateurs} from './useExportIndicateurs';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
@@ -27,9 +26,6 @@ const IndicateurPersonnaliseBase = ({
   const {mutate: updateDefinition} = useUpdateIndicateurPersoDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
-  const {mutate: exportIndicateurs, isLoading} = useExportIndicateurs([
-    definition,
-  ]);
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
@@ -58,17 +54,9 @@ const IndicateurPersonnaliseBase = ({
       />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
-          <ToolbarIconButton
-            className="fr-mr-1w"
-            disabled={isLoading}
-            icon="download"
-            title="Exporter"
-            onClick={() => exportIndicateurs()}
-          />
           {!isReadonly && (
             <ToolbarIconButton
               className="fr-mr-1w text-error-1"
-              disabled={isLoading}
               icon="delete"
               title="Supprimer"
               aria-label="Supprimer"
