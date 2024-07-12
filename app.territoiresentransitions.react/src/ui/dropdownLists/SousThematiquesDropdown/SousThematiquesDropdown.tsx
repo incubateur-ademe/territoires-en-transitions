@@ -31,24 +31,33 @@ const SousThematiquesDropdown = ({
     }));
 
   const getSelectedSousThematiques = (values?: OptionValue[]) =>
-    sousThematiqueListe?.filter(st => values?.some(v => v === st.id)) ?? [];
+    (sousThematiqueListe ?? []).filter(st => values?.some(v => v === st.id));
 
   // Supprime les sous-thématiques quand une thématique est supprimée de la fiche
   useEffect(() => {
     if (sousThematiques) {
-      // Récupère la liste des thématiques incluses dans les sous-thématiques
+      // Récupère la liste des thématiques inclues dans les sous-thématiques
       const selectedThematiques: number[] = [];
       sousThematiques.forEach(st => {
-        if (!selectedThematiques.some(stt => stt === st.thematique_id)) {
-          selectedThematiques.push(st.id);
+        if (
+          !selectedThematiques.some(
+            selectedtThem => selectedtThem === st.thematique_id
+          )
+        ) {
+          selectedThematiques.push(st.thematique_id);
         }
       });
 
       // Si les listes sont différentes, on update la fiche
-      if (selectedThematiques.some(stt => !thematiques.some(t => t === stt))) {
+      if (
+        selectedThematiques.some(
+          selectedtThem => !thematiques.some(t => t === selectedtThem)
+        )
+      ) {
         const newSousThematiques = sousThematiques.filter(st =>
-          thematiques.some(stt => stt === st.thematique_id)
+          thematiques.some(t => t === st.thematique_id)
         );
+
         onChange({
           sousThematiques: getSelectedSousThematiques(
             newSousThematiques?.map(st => st.id)
