@@ -72,7 +72,6 @@ const ModaleActeurs = ({
               <Field title="Structures pilote">
                 <StructuresDropdown
                   values={editedFiche.structures?.map(s => s.id)}
-                  placeholder="Sélectionnez ou créez un pilote"
                   onChange={({structures}) =>
                     setEditedFiche(prevState => ({...prevState, structures}))
                   }
@@ -92,7 +91,6 @@ const ModaleActeurs = ({
                       referents: personnes,
                     }))
                   }
-                  disabled={false}
                 />
               </Field>
 
