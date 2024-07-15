@@ -9,12 +9,11 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {TIndicateurDefinition} from '../types';
 import {SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL} from '../constants';
 import {useOnSuccess} from './useEditIndicateurValeur';
-import {IndicateurImportSource} from './useImportSources';
 
 type UseApplyOpenDataArgs = {
   collectiviteId: number | null;
   definition: Indicateurs.domain.IndicateurDefinition;
-  source?: IndicateurImportSource;
+  source?: Indicateurs.fetch.IndicateurImportSource;
 };
 
 /**
@@ -46,7 +45,7 @@ export const useApplyOpenData = ({
         dbClient: supabaseClient,
         indicateurId: definition.id,
         collectiviteId,
-        source: source.id,
+        source,
         appliquerResultat,
         appliquerObjectif,
         ecraserResultat: appliquerResultat && overwrite,

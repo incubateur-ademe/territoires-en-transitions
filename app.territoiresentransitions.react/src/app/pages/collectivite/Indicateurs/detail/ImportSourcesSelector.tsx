@@ -9,10 +9,10 @@ import {
   TrackPageView,
   useEventTracker,
 } from '@tet/ui';
+import {Indicateurs} from '@tet/api';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TIndicateurDefinition} from '../types';
 import {SOURCE_COLLECTIVITE} from '../constants';
-import {IndicateurImportSource} from './useImportSources';
 import {useApplyOpenData, useOpenDataComparaison} from './useApplyOpenData';
 import {ApplyOpenDataModal} from './ApplyOpenDataModal';
 import {getSourceTypeLabel} from '../constants';
@@ -28,7 +28,7 @@ export const ImportSourcesSelector = ({
   setCurrentSource,
 }: {
   definition: TIndicateurDefinition;
-  sources: IndicateurImportSource[];
+  sources: Indicateurs.fetch.IndicateurImportSource[];
   currentSource: string;
   setCurrentSource: (value: string) => void;
 }) => {
@@ -175,7 +175,9 @@ export const ImportSourcesSelector = ({
  * Ajoute la source "mes données" à l'index 0 et renvoi des fonctions
  * utilitaires pour transformer les id en index et réciproquement.
  */
-const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
+const useIndexedSources = (
+  sources?: Indicateurs.fetch.IndicateurImportSource[] | null
+) => {
   // ajoute la source "mes données"
   const indexedSources = sources?.length
     ? [{id: SOURCE_COLLECTIVITE, libelle: 'Mes données'}, ...sources]
@@ -197,7 +199,9 @@ const useIndexedSources = (sources?: IndicateurImportSource[] | null) => {
       : indexedSources?.[index]?.id ?? SOURCE_COLLECTIVITE;
 
   // donne les types de données disponibles pour une source
-  const getSourceType = (source: IndicateurImportSource | undefined) => {
+  const getSourceType = (
+    source: Indicateurs.fetch.IndicateurImportSource | undefined
+  ) => {
     return source && source.id !== SOURCE_COLLECTIVITE ? source.type : null;
   };
 

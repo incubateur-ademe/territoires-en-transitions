@@ -15,8 +15,8 @@ import {
   selectGroupementParCollectivite,
   selectGroupements,
 } from '../../collectivites/shared/actions/groupement.fetch';
-import {Source} from '../domain';
 import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
+import {Source, SourceMetadonnee} from '../domain';
 import {Tag, Thematique} from '../../shared/domain';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
@@ -66,6 +66,16 @@ const COLONNES_DEFINITION = [
  * @param collectiviteId identifiant de la collectivité
  * @return liste des sources
  */
+// type des données retournées
+export type IndicateurImportSource = Awaited<
+  ReturnType<typeof selectIndicateurSources>
+>[0];
+
+// type des données lues (<!> changer cette définition si la liste des colonnes lues change)
+type IndicateurSource = Source &
+  SourceMetadonnee &
+  Pick<Valeur, 'objectif' | 'resultat'>;
+
 export async function selectIndicateurSources(
   dbClient: DBClient,
   indicateurId: number,
@@ -74,16 +84,16 @@ export async function selectIndicateurSources(
   const {data} = await dbClient
     .from('indicateur_valeur')
     .select(
-      'objectif,resultat,...indicateur_source_metadonnee(...indicateur_source(*))'
+      'objectif,resultat,...indicateur_source_metadonnee(*, ...indicateur_source(*))'
     )
     .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId)
-    .returns<Array<Source & Pick<Valeur, 'objectif' | 'resultat'>>>();
+    .returns<IndicateurSource[]>();
 
   // fait le décompte des valeurs objectif et résultat pour chaque source
   const sourcesById: Record<
     string,
-    {objectifs: number; resultats: number; source: Source}
+    {objectifs: number; resultats: number; source: IndicateurSource}
   > = {};
 
   data?.forEach(source => {
@@ -91,7 +101,7 @@ export async function selectIndicateurSources(
     sourcesById[source.id] = sourcesById[source.id] || {
       objectifs: 0,
       resultats: 0,
-      source,
+      source: objectToCamel(source),
     };
     if (typeof source.objectif === 'number') sourcesById[source.id].objectifs++;
     if (typeof source.resultat === 'number') sourcesById[source.id].resultats++;

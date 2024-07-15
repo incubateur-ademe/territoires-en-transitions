@@ -4,13 +4,6 @@ import {Indicateurs} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {SOURCE_COLLECTIVITE} from '../constants';
-import {SourceType} from '../types';
-
-export type IndicateurImportSource = {
-  id: string;
-  libelle: string;
-  type: SourceType | null;
-};
 
 /**
  * Fourni la liste des sources de données d'un indicateur ainsi que la source
