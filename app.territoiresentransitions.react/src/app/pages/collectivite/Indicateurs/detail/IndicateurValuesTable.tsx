@@ -114,7 +114,11 @@ const ValuesTableBase = (
                 row={row}
                 editHandlers={editHandlers}
                 autoFocus={row.annee === lastAddedYear}
-                confidentiel={confidentiel && index === 0 && !row.source}
+                confidentiel={
+                  confidentiel &&
+                  index === 0 &&
+                  (!row.source || row.source === SOURCE_COLLECTIVITE)
+                }
               />
             ))}
           </>
