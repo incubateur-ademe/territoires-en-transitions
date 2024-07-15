@@ -165,9 +165,9 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     # vérifie que les données copiées sont affichées
     Quand je sélectionne la source "Mes données"
     Alors le tableau des résultats de l'indicateur contient :
-      | Année | Résultat | Commentaire               |
-      | 2021  | 120      | Copié de la source citepa |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Résultat | Commentaire                                                           |
+      | 2021  | 120      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
 
   Scénario: Appliquer des données de l'opendata à mes résultats (avec conflit et écrasement)
     Etant donné une collectivité nommée "Le Bois Joli"
@@ -236,10 +236,10 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     # vérifie que les données copiées sont affichées
     Quand je sélectionne la source "Mes données"
     Alors le tableau des résultats de l'indicateur contient :
-      | Année | Résultat | Commentaire               |
-      | 2022  | 456      |                           |
-      | 2021  | 120      |                           |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Résultat | Commentaire                                                           |
+      | 2022  | 456      |                                                                       |
+      | 2021  | 120      |                                                                       |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
 
   Scénario: Appliquer des données de l'opendata à mes résultats (avec conflit mais sans écrasement)
     Etant donné une collectivité nommée "Le Bois Joli"
@@ -290,10 +290,10 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     # vérifie que les données copiées sont affichées
     Quand je sélectionne la source "Mes données"
     Alors le tableau des résultats de l'indicateur contient :
-      | Année | Résultat | Commentaire               |
-      | 2022  | 456      |                           |
-      | 2021  | 123      |                           |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Résultat | Commentaire                                                           |
+      | 2022  | 456      |                                                                       |
+      | 2021  | 123      |                                                                       |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
 
   Scénario: Appliquer des données de l'opendata à mes objectifs (sans conflit)
     Etant donné une collectivité nommée "Le Bois Joli"
@@ -337,9 +337,9 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Quand je sélectionne la source "Mes données"
     Et que je clique sur l'onglet Objectifs
     Alors le tableau des objectifs de l'indicateur contient :
-      | Année | Objectif | Commentaire               |
-      | 2021  | 120      | Copié de la source citepa |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Objectif | Commentaire                                                           |
+      | 2021  | 120      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
 
   Scénario: Appliquer des données de l'opendata à mes objectifs (avec conflit et écrasement)
     Etant donné une collectivité nommée "Le Bois Joli"
@@ -411,10 +411,10 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Quand je sélectionne la source "Mes données"
     Et que je clique sur l'onglet Objectifs
     Alors le tableau des objectifs de l'indicateur contient :
-      | Année | Objectif | Commentaire               |
-      | 2022  | 456      |                           |
-      | 2021  | 120      |                           |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Objectif | Commentaire                                                           |
+      | 2022  | 456      |                                                                       |
+      | 2021  | 120      |                                                                       |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
 
   Scénario: Appliquer des données de l'opendata à mes objectifs (avec conflit mais sans écrasement)
     Etant donné une collectivité nommée "Le Bois Joli"
@@ -469,7 +469,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
     Quand je sélectionne la source "Mes données"
     Et que je clique sur l'onglet Objectifs
     Alors le tableau des objectifs de l'indicateur contient :
-      | Année | Objectif | Commentaire               |
-      | 2022  | 456      |                           |
-      | 2021  | 123      |                           |
-      | 2020  | 100      | Copié de la source citepa |
+      | Année | Objectif | Commentaire                                                           |
+      | 2022  | 456      |                                                                       |
+      | 2021  | 123      |                                                                       |
+      | 2020  | 100      | CITEPA, 2024, inventaire cadastral des émissions de GES / scope 1 & 2 |
