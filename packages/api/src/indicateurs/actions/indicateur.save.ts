@@ -22,7 +22,10 @@ export type upsertValeursUtilisateurAvecSourceParametres = {
   dbClient: DBClient;
   indicateurId: number;
   collectiviteId: number;
-  source: IndicateurImportSource;
+  source: Pick<
+    IndicateurImportSource,
+    'id' | 'libelle' | 'dateVersion' | 'methodologie'
+  >;
   appliquerResultat: boolean;
   appliquerObjectif: boolean;
   ecraserResultat: boolean;
