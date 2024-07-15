@@ -12,14 +12,17 @@ import {insertTags} from "../../shared/actions/tag.save";
 import {Tag} from "../../shared/domain/tag.schema";
 import {Thematique} from '../../shared/domain/thematique.schema';
 import {Action} from '../../referentiel/domain/action.schema';
-import {getValeursComparaison} from './indicateur.fetch';
+import {
+  IndicateurImportSource,
+  getValeursComparaison,
+} from './indicateur.fetch';
 import {selectTags} from '../../shared/actions/tag.fetch';
 
 export type upsertValeursUtilisateurAvecSourceParametres = {
   dbClient: DBClient;
   indicateurId: number;
   collectiviteId: number;
-  source: string;
+  source: IndicateurImportSource;
   appliquerResultat: boolean;
   appliquerObjectif: boolean;
   ecraserResultat: boolean;
@@ -424,10 +427,19 @@ export async function upsertValeursUtilisateurAvecSource(
     args.dbClient,
     args.indicateurId,
     args.collectiviteId,
-    args.source
+    args.source.id
   );
   const valeursToUpsert: Map<number, Valeur> = new Map<number, Valeur>();
+
   if (valeurs) {
+    const commentaire = [
+      args.source.libelle,
+      !!args.source.dateVersion &&
+        new Date(args.source.dateVersion)?.getFullYear(),
+      args.source.methodologie,
+    ]
+      .filter(s => !!s)
+      .join(', ');
     if (args.appliquerResultat) {
       for (const ligne of valeurs.resultats.lignes) {
         // Si nouvelle ligne, ou nouveau résultat qu'on écrase
@@ -441,7 +453,7 @@ export async function upsertValeursUtilisateurAvecSource(
             resultat: ligne.valeurAAppliquer,
           };
           if (!ligne.idAEcraser)
-            valeurToUpsert.resultatCommentaire = `Copié de la source ${args.source}`;
+            valeurToUpsert.resultatCommentaire = commentaire;
           valeursToUpsert.set(ligne.annee, valeurToUpsert);
         }
       }
@@ -461,7 +473,7 @@ export async function upsertValeursUtilisateurAvecSource(
                 objectif: ligne.valeurAAppliquer,
               };
           if (!ligne.idAEcraser)
-            valeurToUpsert.objectifCommentaire = `Copié de la source ${args.source}`;
+            valeurToUpsert.objectifCommentaire = commentaire;
           valeursToUpsert.set(ligne.annee, valeurToUpsert);
         }
       }

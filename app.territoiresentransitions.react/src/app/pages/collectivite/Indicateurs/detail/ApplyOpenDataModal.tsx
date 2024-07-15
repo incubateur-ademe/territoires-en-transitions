@@ -3,7 +3,6 @@ import {Indicateurs} from '@tet/api';
 import {TIndicateurDefinition} from '../types';
 import {SOURCE_TYPE_LABEL} from '../constants';
 import classNames from 'classnames';
-import {IndicateurImportSource} from './useImportSources';
 
 export type Props = {
   /** Indicateur concerné */
@@ -11,7 +10,7 @@ export type Props = {
   /** Comparaison entre les données de la collectivité et celles à appliquer */
   comparaison: Indicateurs.domain.ValeurComparaison;
   /** Informations sur la source de données à appliquer */
-  source: IndicateurImportSource;
+  source: Indicateurs.fetch.IndicateurImportSource;
   /** Indique si les données en conflit doivent être écrasées */
   overwrite: boolean;
   /** Appeler pour changer le flag indiquant si les données en conflit doivent être écrasées */
