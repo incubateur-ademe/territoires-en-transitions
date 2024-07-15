@@ -33,7 +33,7 @@ export const useToggleIndicateurConfidentiel = (
       queryClient.invalidateQueries([
         'indicateur_definition',
         collectivite_id,
-        definition.id,
+        definition.identifiant || definition.id,
       ]);
     },
   });
