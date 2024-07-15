@@ -75,6 +75,12 @@ export async function fetchFilteredIndicateurs(
     parts.add(
       'indicateur_categorie_tag!inner(categorie_tag!inner(id,nom,collectivite_id,groupement_id))'
     );
+
+  // pour pouvoir trier sur la complétude (dans le TDB)
+  if (filters.rempli === undefined && filters.sort?.field === 'rempli') {
+    parts.add('indicateur_valeur(id)');
+  }
+
   // construit la requête
   const query = dbClient
     .from('indicateur_definition')
@@ -251,7 +257,10 @@ export async function fetchFilteredIndicateurs(
   }
 
   orderByOptions.forEach(sort => {
-    query.order(sort.field, {ascending: sort.direction === 'asc'});
+    if (sort.field !== 'rempli') {
+      // la colonne `rempli` n'existe pas dans la base (on fait le tri a posteriori)
+      query.order(sort.field, {ascending: sort.direction === 'asc'});
+    }
   });
   const {data, ...remaining} = await query;
   let rows = data || [];
@@ -271,6 +280,17 @@ export async function fetchFilteredIndicateurs(
         .filter((g: Groupement) => g.id === r.groupement_id)[0]
         .collectivites?.includes(collectiviteId)
   );
+
+  // tri local sur la complétude
+  if (filters.sort?.field === 'rempli') {
+    rows.sort((a: any, b: any) => {
+      return (
+        (b.indicateur_valeur?.length || -1) -
+        (a.indicateur_valeur?.length || -1)
+      );
+    });
+  }
+
   return {
     ...remaining,
     data: rows
