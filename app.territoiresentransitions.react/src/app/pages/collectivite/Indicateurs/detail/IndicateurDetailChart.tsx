@@ -15,6 +15,7 @@ type Props = {
   fileName: string;
   rempli: boolean | null;
   source?: string;
+  className?: string;
 };
 
 /**
@@ -27,6 +28,7 @@ const IndicateurDetailChart = ({
   source,
   titre,
   fileName,
+  className,
 }: Props) => {
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
@@ -52,7 +54,10 @@ const IndicateurDetailChart = ({
   return (
     <div
       data-test={`chart-${definition.id}`}
-      className="flex flex-col p-6 border border-grey-4 rounded-lg"
+      className={classNames(
+        'flex flex-col p-6 border border-grey-4 rounded-lg',
+        className
+      )}
     >
       <div className="flex justify-between gap-16 mb-6">
         <div
