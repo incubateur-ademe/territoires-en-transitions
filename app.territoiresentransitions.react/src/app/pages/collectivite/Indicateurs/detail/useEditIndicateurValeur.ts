@@ -93,8 +93,8 @@ export const useOnSuccess = (
   const {collectiviteId, definition, type} = args;
   const {id: indicateurId, estPerso, identifiant} = definition;
   const parents = estPerso
-    ? (definition as Indicateurs.domain.IndicateurDefinitionPredefini).parents
-    : null;
+    ? null
+    : (definition as Indicateurs.domain.IndicateurDefinitionPredefini).parents;
 
   const queryClient = useQueryClient();
   return () => {
@@ -121,9 +121,16 @@ export const useOnSuccess = (
     queryClient.invalidateQueries([
       'indicateur_definition',
       collectiviteId,
-      // pour les indicateurs composés on doit recharger la définition parente
-      // pour que le flag 'rempli' de l'indicateur enfant modifié soit actualisé
-      parents?.[0] || identifiant || indicateurId,
+      identifiant || indicateurId,
     ]);
+    // pour les indicateurs composés on doit recharger les définitions des enfants
+    // pour que le flag 'rempli' de l'indicateur enfant modifié soit actualisé
+    if (parents?.[0]) {
+      queryClient.invalidateQueries([
+        'indicateur_definitions',
+        collectiviteId,
+        parents?.[0],
+      ]);
+    }
   };
 };

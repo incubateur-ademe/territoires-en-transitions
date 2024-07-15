@@ -30,11 +30,14 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
 };
 
 /** Charge la définition détaillée de plusieurs indicateurs */
-export const useIndicateurDefinitions = (indicateurIds: number[]) => {
+export const useIndicateurDefinitions = (
+  parentId: number,
+  indicateurIds: number[]
+) => {
   const collectiviteId = useCollectiviteId();
 
   const {data} = useQuery(
-    ['indicateur_definitions', collectiviteId, indicateurIds],
+    ['indicateur_definitions', collectiviteId, parentId, indicateurIds],
     async () => {
       if (!collectiviteId) return;
       return Indicateurs.fetch.selectIndicateurDefinitions(
