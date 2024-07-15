@@ -203,8 +203,9 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
                 definition={definition}
                 href={makeCollectiviteIndicateursUrl({
                   collectiviteId: collectiviteId!,
-                  indicateurView: getIndicateurGroup(definition.id),
+                  indicateurView: getIndicateurGroup(definition.identifiant),
                   indicateurId: definition.id,
+                  identifiantReferentiel: definition.identifiant,
                 })}
                 className="hover:!bg-white"
                 card={{external: true}}

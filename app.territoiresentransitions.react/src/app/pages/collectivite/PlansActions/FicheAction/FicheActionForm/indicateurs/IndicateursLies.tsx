@@ -45,7 +45,7 @@ const IndicateursLies = ({fiche, indicateurs, onSelect, isReadonly}: Props) => {
               definition={indicateur}
               href={makeCollectiviteIndicateursUrl({
                 collectiviteId: collectiviteId!,
-                indicateurView: getIndicateurGroup(indicateur.id),
+                indicateurView: getIndicateurGroup(indicateur.identifiant),
                 indicateurId: indicateur.id,
                 identifiantReferentiel: indicateur.identifiant,
               })}
