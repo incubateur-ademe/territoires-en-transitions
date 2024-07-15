@@ -37,6 +37,7 @@ export const IndicateurEnfantContent = ({
         />
       )}
       <IndicateurDetailChart
+        className="mb-10"
         definition={definition}
         rempli={definition.rempli}
         source={currentSource}
