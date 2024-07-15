@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Folders Default smoke-test 1`] = `
+<div class="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
+  <div class="flex flex-col gap-4 px-3">
+    <button id="1"
+            class="transition-all font-medium text-sm text-left w-full py-2 px-4 rounded-lg flex items-center justify-between gap-2 bg-white text-primary-9 hover:!bg-primary-1"
+    >
+      Folder 1
+      <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </button>
+    <button id="2"
+            class="transition-all font-medium text-sm text-left w-full py-2 px-4 rounded-lg flex items-center justify-between gap-2 bg-white text-primary-9 hover:!bg-primary-1"
+    >
+      Folder 2
+      <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </button>
+    <button id="3"
+            class="transition-all font-medium text-sm text-left w-full py-2 px-4 rounded-lg flex items-center justify-between gap-2 bg-white text-primary-9 hover:!bg-primary-1"
+    >
+      Folder 3
+      <span class="ri-arrow-right-s-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </button>
+  </div>
+</div>
+`;
