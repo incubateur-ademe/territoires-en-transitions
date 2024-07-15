@@ -100,8 +100,9 @@ const ModuleIndicateurs = ({view, module}: Props) => {
                   definition={definition}
                   href={makeCollectiviteIndicateursUrl({
                     collectiviteId: collectiviteId!,
-                    indicateurView: getIndicateurGroup(definition.id),
+                    indicateurView: getIndicateurGroup(definition.identifiant),
                     indicateurId: definition.id,
+                    identifiantReferentiel: definition.identifiant,
                   })}
                   card={{external: true}}
                   autoRefresh
