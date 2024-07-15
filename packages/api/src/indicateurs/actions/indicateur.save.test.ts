@@ -381,15 +381,20 @@ test('Test upsertValeursUtilisateurAvecSource', async () => {
         metadonnee_id : meta.data![0].id});
 
     const args = {
-        dbClient : supabase,
-        indicateurId : 1,
-        collectiviteId : 1,
-        source : 'citepa',
-        appliquerResultat : false,
-        appliquerObjectif : true,
-        ecraserResultat : true,
-        ecraserObjectif : true
-    }
+      dbClient: supabase,
+      indicateurId: 1,
+      collectiviteId: 1,
+      source: {
+        id: 'citepa',
+        libelle: 'CITEPA',
+        dateVersion: '2026-01-01',
+        methodologie: 'méthodologie...',
+      },
+      appliquerResultat: false,
+      appliquerObjectif: true,
+      ecraserResultat: true,
+      ecraserObjectif: true,
+    };
 
     // Test que le résultat n'a pas été appliqué
     await upsertValeursUtilisateurAvecSource(args);

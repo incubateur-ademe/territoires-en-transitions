@@ -73,7 +73,7 @@ export type IndicateurImportSource = Awaited<
 
 // type des données lues (<!> changer cette définition si la liste des colonnes lues change)
 type IndicateurSource = Source &
-  SourceMetadonnee &
+  Omit<SourceMetadonnee, 'id'> &
   Pick<Valeur, 'objectif' | 'resultat'>;
 
 export async function selectIndicateurSources(
