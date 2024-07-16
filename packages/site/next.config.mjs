@@ -14,6 +14,7 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {protocol: 'https', hostname: '**.strapiapp.com'},
       {protocol: 'http', hostname: '127.0.0.1'},
