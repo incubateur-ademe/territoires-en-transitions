@@ -244,6 +244,11 @@ export async function fetchFilteredIndicateurs(
     }
   }
 
+  // pour pouvoir trier sur la complétude (dans le TDB)
+  if (filters.rempli === undefined && filters.sort?.field === 'rempli') {
+    query.eq('indicateur_valeur.collectivite_id', collectiviteId);
+  }
+
   /** Par défaut tri par ordre alphabétique */
   const orderByOptions = [
     {
