@@ -12,6 +12,7 @@ const ToutesLesFichesAction = () => {
         <h2 className="mb-0">Toutes les actions</h2>
       </div>
       <FichesActionListe
+        defaultSort="titre"
         filtres={filters}
         settingsModal={openState => (
           <ModalFiltresToutesLesFichesAction

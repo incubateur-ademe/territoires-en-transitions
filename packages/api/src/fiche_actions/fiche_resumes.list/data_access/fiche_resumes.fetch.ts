@@ -1,6 +1,7 @@
 import {z} from 'zod';
 import {DBClient} from '../../../typeUtils';
 import {
+  SortFichesAction,
   FetchOptions,
   Filtre as FiltreFicheActions,
   fetchOptionsSchema,
@@ -91,11 +92,18 @@ export async function ficheResumesFetch({
     .range((page - 1) * limit, page * limit - 1)
     .eq('collectivite_id', collectiviteId);
 
-  if (sort?.length) {
-    sort.forEach(sort => {
-      query.order(sort.field, {ascending: sort.direction === 'asc'});
-    });
-  }
+  // Par défaut tri par ordre alphabétique
+  const constantSort: SortFichesAction = {
+    field: 'titre',
+    direction: 'desc',
+  };
+
+  // S'il l'utilisateur a spécifié un tri, on le met en premier
+  const finalSort = sort ? [...sort, constantSort] : [constantSort];
+
+  finalSort.forEach(sort => {
+    query.order(sort.field, {ascending: sort.direction === 'asc'});
+  });
 
   // 3. Ajoute les clauses correspondant aux filtres
   // 👇
@@ -178,8 +186,6 @@ export async function ficheResumesFetch({
       `titre.ilike.*${filtre.texteNomOuDescription}*,description.ilike.*${filtre.texteNomOuDescription}*`
     );
   }
-
-  query.order('modified_at', {ascending: false});
 
   const {data, error, count} = await query.returns<Output>();
 
