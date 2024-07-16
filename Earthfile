@@ -2,6 +2,7 @@ VERSION 0.7
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global BACKEND_DIR='./backend'
 ARG --global SITE_DIR='./packages/site'
 ARG --global AUTH_DIR='./packages/auth'
 ARG --global PANIER_DIR='./packages/panier'
@@ -18,6 +19,8 @@ ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
+# TODO changer le tag
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$APP_TAG 
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -274,6 +277,7 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     COPY ./package-lock.json ./
     # dépendances des modules
     COPY $APP_DIR/package.json ./$APP_DIR/
+    COPY $BACKEND_DIR/package.json ./$BACKEND_DIR/
     COPY $AUTH_DIR/package.json ./$AUTH_DIR/
     COPY $SITE_DIR/package.json ./$SITE_DIR/
     COPY $PANIER_DIR/package.json ./$PANIER_DIR/
@@ -286,6 +290,33 @@ front-deps: ## construit l'image contenant les dépendances des modules front
 front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+
+backend-pre-build:
+    # Build stage: todo: check if we use the same image as frontends
+    FROM +front-deps
+
+    COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
+    RUN npm run build:backend && npm prune --omit=dev
+
+    SAVE ARTIFACT . /app
+
+backend-build:
+    # TODO: why not us an alpine node:lts-alpine ?
+    FROM +node-fr
+ 
+    ENV NODE_ENV production
+    ENV PORT 3000
+ 
+    COPY --chown=node:node +backend-pre-build/app/package*.json .
+    COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
+    COPY --chown=node:node +backend-pre-build/app/backend/package.json ./backend/package.json
+    COPY --chown=node:node +backend-pre-build/app/backend/node_modules ./backend/node_modules
+    COPY --chown=node:node +backend-pre-build/app/backend/dist ./backend/dist
+ 
+    EXPOSE ${PORT}
+ 
+    CMD ["node", "backend/dist/main.js"]
+    SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
