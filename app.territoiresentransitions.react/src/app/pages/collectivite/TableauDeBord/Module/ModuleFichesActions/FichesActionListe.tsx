@@ -4,7 +4,8 @@ import {Button, Input, ModalOpenState, Pagination, Select} from '@tet/ui';
 import {
   FetchOptions,
   Filtre,
-  Filtre as FiltreFicheActions,
+  SortFichesAction,
+  SortFichesActionValue,
 } from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
@@ -16,21 +17,30 @@ import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAct
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
 
-type orderByOptionsType = {
+type sortByOptionsType = SortFichesAction & {
   label: string;
-  value: keyof FiltreFicheActions;
-  direction: 'asc' | 'desc';
 };
 
-const orderByOptions: orderByOptionsType[] = [
+const sortByOptions: sortByOptionsType[] = [
   {
     label: 'Date de modification',
-    value: 'modifiedSince',
+    field: 'modified_at',
     direction: 'desc',
+  },
+  {
+    label: 'Date de création',
+    field: 'created_at',
+    direction: 'desc',
+  },
+  {
+    label: 'Ordre alphabétique',
+    field: 'titre',
+    direction: 'asc',
   },
 ];
 
 type Props = {
+  defaultSort?: SortFichesActionValue;
   filtres: Filtre;
   settingsModal: (openState: ModalOpenState) => React.ReactNode;
   maxNbOfCards?: number;
@@ -38,6 +48,7 @@ type Props = {
 };
 
 const FichesActionListe = ({
+  defaultSort = 'modified_at',
   filtres,
   settingsModal,
   maxNbOfCards = 15,
@@ -47,7 +58,9 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const [order, setOrder] = useState(orderByOptions[0]);
+  const [sort, setSort] = useState(
+    sortByOptions.find(o => o.field === defaultSort)!
+  );
 
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,6 +78,12 @@ const FichesActionListe = ({
     },
     page: currentPage,
     limit: maxNbOfCards,
+    sort: [
+      {
+        field: sort.field,
+        direction: sort.direction,
+      },
+    ],
   };
 
   const {data, isLoading} = useFicheResumesFetch({
@@ -79,11 +98,11 @@ const FichesActionListe = ({
         {/** Tri */}
         <div className="w-64">
           <Select
-            options={orderByOptions}
+            options={sortByOptions.map(o => ({value: o.field, label: o.label}))}
             onChange={value =>
-              value && setOrder(orderByOptions.find(o => o.value === value)!)
+              value && setSort(sortByOptions.find(o => o.field === value)!)
             }
-            values={order.value}
+            values={sort.field}
             customItem={v => <span className="text-grey-8">{v.label}</span>}
             small
           />

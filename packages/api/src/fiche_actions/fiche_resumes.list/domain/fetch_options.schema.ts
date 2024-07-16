@@ -44,10 +44,18 @@ export const filtreSchema = filtreRessourceLieesSchema
 
 export type Filtre = z.infer<typeof filtreSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema([
-  'titre',
-  'modified_at',
-]).extend({
+const sortValues = ['modified_at', 'created_at', 'titre'] as const;
+
+export type SortFichesActionValue = (typeof sortValues)[number];
+
+const sortFicheSchema = z.object({
+  field: z.enum(sortValues),
+  direction: z.enum(['asc', 'desc']).default('desc'),
+});
+
+export type SortFichesAction = z.infer<typeof sortFicheSchema>;
+
+export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
   filtre: filtreSchema,
 });
 
