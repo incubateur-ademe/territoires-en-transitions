@@ -8,18 +8,10 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  SelectFilter,
 } from '@tet/ui';
 import {QueryKey} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {
-  ficheActionNiveauPrioriteOptions,
-  ficheActionStatutOptions,
-} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/listesStatiques';
-import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
-import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
-import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 import {
   getPilotesValues,
   getReferentsValues,
@@ -29,6 +21,8 @@ import {
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 
 type Props = ModalProps & {
   filters: Filtre;
@@ -78,45 +72,27 @@ const ModalFiltresToutesLesFichesAction = ({
             </Field>
             <FormSectionGrid>
               <Field title="Statut de l'action">
-                <SelectFilter
-                  values={filtreState.statuts ?? undefined}
-                  options={ficheActionStatutOptions}
-                  onChange={({values}) => {
-                    const {statuts, ...rest} = filtreState;
-                    if (values) {
-                      setFiltreState({
-                        ...filtreState,
-                        statuts: values as TFicheActionStatuts[],
-                      });
-                    } else {
-                      setFiltreState(rest);
-                    }
+                <StatutsFilterDropdown
+                  values={filtreState.statuts}
+                  onChange={({statuts}) => {
+                    const {statuts: st, ...rest} = filtreState;
+                    setFiltreState({
+                      ...rest,
+                      ...(statuts ? {statuts} : {}),
+                    });
                   }}
-                  customItem={item => (
-                    <BadgeStatut statut={item.value as TFicheActionStatuts} />
-                  )}
                 />
               </Field>
               <Field title="Niveau de priorité">
-                <SelectFilter
-                  values={filtreState.priorites ?? undefined}
-                  options={ficheActionNiveauPrioriteOptions}
-                  onChange={({values}) => {
-                    const {priorites, ...rest} = filtreState;
-                    if (values) {
-                      setFiltreState({
-                        ...filtreState,
-                        priorites: values as TFicheActionNiveauxPriorite[],
-                      });
-                    } else {
-                      setFiltreState(rest);
-                    }
+                <PrioritesFilterDropdown
+                  values={filtreState.priorites}
+                  onChange={({priorites}) => {
+                    const {priorites: st, ...rest} = filtreState;
+                    setFiltreState({
+                      ...rest,
+                      ...(priorites ? {priorites} : {}),
+                    });
                   }}
-                  customItem={item => (
-                    <BadgePriorite
-                      priorite={item.value as TFicheActionNiveauxPriorite}
-                    />
-                  )}
                 />
               </Field>
             </FormSectionGrid>

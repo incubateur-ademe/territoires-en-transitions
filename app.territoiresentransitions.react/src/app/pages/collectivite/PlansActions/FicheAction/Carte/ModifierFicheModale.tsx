@@ -8,17 +8,9 @@ import {
   Input,
   Modal,
   ModalFooterOKCancel,
-  Select,
 } from '@tet/ui';
 
-import BadgeStatut from '../../components/BadgeStatut';
 import {FicheResume} from '../data/types';
-import {
-  ficheActionNiveauPrioriteOptions,
-  ficheActionStatutOptions,
-} from '../data/options/listesStatiques';
-import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
-import BadgePriorite from '../../components/BadgePriorite';
 import {useUpdateFicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
 import {format} from 'date-fns';
 import {
@@ -28,6 +20,8 @@ import {
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 
 type Props = {
   initialFiche: FicheResume;
@@ -82,37 +76,25 @@ const ModifierFicheModale = ({
             </Field>
             <FormSectionGrid>
               <Field title="Statut">
-                <Select
-                  data-test="Statut"
-                  values={fiche.statut ?? undefined}
-                  options={ficheActionStatutOptions}
+                <StatutsSelectDropdown
+                  values={fiche.statut}
                   onChange={statut =>
                     setFiche({
                       ...fiche,
-                      statut: (statut as TFicheActionStatuts) ?? null,
+                      statut: statut ?? null,
                     })
                   }
-                  customItem={item => (
-                    <BadgeStatut statut={item.value as TFicheActionStatuts} />
-                  )}
                 />
               </Field>
               <Field title="Niveau de priorité">
-                <Select
-                  values={fiche.niveau_priorite ?? undefined}
-                  options={ficheActionNiveauPrioriteOptions}
+                <PrioritesSelectDropdown
+                  values={fiche.niveau_priorite}
                   onChange={priorite =>
                     setFiche({
                       ...fiche,
-                      niveau_priorite:
-                        (priorite as TFicheActionNiveauxPriorite) ?? null,
+                      niveau_priorite: priorite ?? null,
                     })
                   }
-                  customItem={item => (
-                    <BadgePriorite
-                      priorite={item.value as TFicheActionNiveauxPriorite}
-                    />
-                  )}
                 />
               </Field>
             </FormSectionGrid>
