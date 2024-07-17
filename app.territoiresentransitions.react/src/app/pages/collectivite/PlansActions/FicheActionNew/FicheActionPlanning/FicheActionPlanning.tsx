@@ -8,6 +8,7 @@ import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import ModalePlanning from './ModalePlanning';
 import {getTextFormattedDate} from '../utils';
+import EmptyCard from '../EmptyCard';
 
 type FicheActionPlanningProps = {
   isReadonly: boolean;
@@ -33,30 +34,33 @@ const FicheActionPlanning = ({
     statut,
   } = fiche;
 
-  return (
-    <div
-      className={classNames(
-        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center justify-center gap-5 text-center relative',
-        className
-      )}
-    >
-      {!isReadonly && (
-        <Button
-          title="Modifier le planning prévisionnel"
-          icon="edit-line"
-          size="xs"
-          variant="grey"
-          className="absolute top-4 right-3"
-          onClick={() => setIsModalOpen(true)}
-        />
-      )}
+  const isEmpty =
+    !ameliorationContinue &&
+    !dateDebut &&
+    !dateFinPrevisionnelle &&
+    !niveauPriorite &&
+    !statut;
 
-      {ameliorationContinue ||
-      dateDebut ||
-      dateFinPrevisionnelle ||
-      niveauPriorite ||
-      statut ? (
-        <>
+  return (
+    <>
+      {!isEmpty ? (
+        <div
+          className={classNames(
+            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center justify-center gap-5 text-center relative',
+            className
+          )}
+        >
+          {!isReadonly && (
+            <Button
+              title="Modifier le planning prévisionnel"
+              icon="edit-line"
+              size="xs"
+              variant="grey"
+              className="absolute top-4 right-3"
+              onClick={() => setIsModalOpen(true)}
+            />
+          )}
+
           <FilledCalendarPicto className="mx-auto" />
 
           {/* Date de début */}
@@ -119,22 +123,19 @@ const FicheActionPlanning = ({
               </p>
             </>
           )}
-        </>
+        </div>
       ) : (
-        <>
-          <EmptyCalendarPicto className="mx-auto" />
-
-          <p className="text-base text-primary-9 text-center mb-0">
-            Date de début | Date de fin prévisionnelle | Statut | Niveau de
-            priorité
-          </p>
-
-          {!isReadonly && (
-            <Button size="xs" onClick={() => setIsModalOpen(true)}>
-              Ajouter le planning prévisionnel
-            </Button>
-          )}
-        </>
+        <EmptyCard
+          picto={className => <EmptyCalendarPicto className={className} />}
+          title="Aucun planning n'est renseigné !"
+          subTitle="Date de début | Date de fin prévisionnelle | Statut | Niveau de priorité"
+          isReadonly={isReadonly}
+          action={{
+            label: 'Ajouter le planning prévisionnel',
+            onClick: () => setIsModalOpen(true),
+          }}
+          className={className}
+        />
       )}
 
       <ModalePlanning
@@ -143,7 +144,7 @@ const FicheActionPlanning = ({
         fiche={fiche}
         updateFiche={updateFiche}
       />
-    </div>
+    </>
   );
 };
 
