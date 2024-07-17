@@ -6,6 +6,7 @@ import FicheActionDescription from './FicheActionDescription/FicheActionDescript
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
+import FicheActionOnglets from './FicheActionOnglets';
 import {getFormattedDate} from './utils';
 
 type FicheActionProps = {
@@ -83,9 +84,13 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
           </div>
 
           {/* Contenu de la fiche action */}
-          <div className="col-span-full lg:col-span-2 xl:col-span-7 bg-white border border-grey-3 rounded-lg py-10 px-8">
+          {/* <div className="col-span-full lg:col-span-2 xl:col-span-7 bg-white border border-grey-3 rounded-lg py-10 px-8">
             Onglets
-          </div>
+          </div> */}
+          <FicheActionOnglets
+            fiche={fiche}
+            className="col-span-full lg:col-span-2 xl:col-span-7"
+          />
         </div>
       </div>
     </div>
