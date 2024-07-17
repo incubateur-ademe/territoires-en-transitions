@@ -2,7 +2,7 @@ import FilterField from 'ui/shared/filters/FilterField';
 import {TOption} from 'ui/shared/select/commons';
 import {TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionEcheanceOptions} from '../../FicheAction/data/options/listesStatiques';
+import {ficheActionEcheanceOptions} from '../../../../../../ui/dropdownLists/listesStatiques';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import {TFicheActionEcheances} from 'types/alias';
 

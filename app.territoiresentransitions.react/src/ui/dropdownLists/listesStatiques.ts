@@ -1,13 +1,17 @@
 import {ModifiedSince} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import {Statut} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,
   TFicheActionNiveauxPriorite,
   TFicheActionResultatsAttendus,
-  TFicheActionStatuts,
 } from 'types/alias';
 
-type Options<T extends string> = {value: T; label: T | string}[];
+type Options<T extends string> = {
+  value: T;
+  label: T | string;
+  disabled?: boolean;
+}[];
 
 export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsAttendus> =
   [
@@ -95,7 +99,7 @@ export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
   },
 ];
 
-export const ficheActionStatutOptions: Options<TFicheActionStatuts> = [
+export const ficheActionStatutOptions: Options<Statut> = [
   {value: 'À venir', label: 'À venir'},
   {value: 'En cours', label: 'En cours'},
   {value: 'Réalisé', label: 'Réalisé'},

@@ -1,6 +1,6 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionEcheanceOptions} from '../../../FicheAction/data/options/listesStatiques';
+import {ficheActionEcheanceOptions} from '../../../../../../../ui/dropdownLists/listesStatiques';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {TFicheActionEcheances} from 'types/alias';
 

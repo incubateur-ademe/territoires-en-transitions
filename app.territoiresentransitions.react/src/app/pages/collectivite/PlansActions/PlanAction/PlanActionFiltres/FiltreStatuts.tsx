@@ -3,7 +3,7 @@ import {TOption} from 'ui/shared/select/commons';
 import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
 import {SANS_STATUT, TFiltreProps} from '../../FicheAction/data/filters';
 import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionStatutOptions} from '../../FicheAction/data/options/listesStatiques';
+import {ficheActionStatutOptions} from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
 import {TFicheActionStatuts} from 'types/alias';
 

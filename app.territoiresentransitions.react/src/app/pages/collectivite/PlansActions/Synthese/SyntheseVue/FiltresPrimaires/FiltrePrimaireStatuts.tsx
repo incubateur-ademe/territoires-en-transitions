@@ -1,6 +1,6 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionStatutOptions} from '../../../FicheAction/data/options/listesStatiques';
+import {ficheActionStatutOptions} from '../../../../../../../ui/dropdownLists/listesStatiques';
 import {TFicheActionStatuts} from 'types/alias';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {SANS_STATUT} from '../../../FicheAction/data/filters';

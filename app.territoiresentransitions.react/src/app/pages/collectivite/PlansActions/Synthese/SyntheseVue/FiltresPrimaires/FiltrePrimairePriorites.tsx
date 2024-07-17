@@ -1,6 +1,6 @@
 import TagFilters from 'ui/shared/filters/TagFilters';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionNiveauPrioriteOptions} from '../../../FicheAction/data/options/listesStatiques';
+import {ficheActionNiveauPrioriteOptions} from '../../../../../../../ui/dropdownLists/listesStatiques';
 import {TFicheActionNiveauxPriorite} from 'types/alias';
 import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
 import {SANS_PRIORITE} from '../../../FicheAction/data/filters';

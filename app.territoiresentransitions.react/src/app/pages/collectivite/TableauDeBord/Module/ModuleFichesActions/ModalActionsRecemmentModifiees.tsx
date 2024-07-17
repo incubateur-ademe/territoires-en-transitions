@@ -13,26 +13,21 @@ import {
   ModalFooterOKCancel,
   ModalProps,
   Select,
-  SelectFilter,
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import {
-  ficheActionModifiedSinceOptions,
-  ficheActionStatutOptions,
-} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/listesStatiques';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
-import {TFicheActionStatuts} from 'types/alias';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
+import {ficheActionModifiedSinceOptions} from 'ui/dropdownLists/listesStatiques';
+import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -95,18 +90,14 @@ const ModalActionsRecemmentModifiees = ({
               />
             </Field>
             <Field title="Statut">
-              <SelectFilter
-                values={filtreState.statuts ?? undefined}
-                options={ficheActionStatutOptions}
-                onChange={({values}) =>
+              <StatutsFilterDropdown
+                values={filtreState.statuts}
+                onChange={({statuts}) =>
                   setFiltreState({
                     ...filtreState,
-                    statuts: values as TFicheActionStatuts[],
+                    statuts,
                   })
                 }
-                customItem={item => (
-                  <BadgeStatut statut={item.value as TFicheActionStatuts} />
-                )}
               />
             </Field>
             <Field title="Période de modification : ">
