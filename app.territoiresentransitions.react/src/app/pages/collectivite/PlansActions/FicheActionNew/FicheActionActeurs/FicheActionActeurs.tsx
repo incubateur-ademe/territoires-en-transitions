@@ -12,6 +12,7 @@ import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 import EluPicto from './PictosActeurs/EluPicto';
 import PartenairePicto from './PictosActeurs/PartenairePicto';
 import CiblePicto from './PictosActeurs/CiblePicto';
+import EmptyCard from '../EmptyCard';
 // import CitoyenPicto from './PictosActeurs/CitoyenPicto';
 
 type FicheActionActeursProps = {
@@ -40,29 +41,24 @@ const FicheActionActeurs = ({
     (!cibles || cibles.length === 0);
 
   return (
-    <div
-      className={classNames(
-        'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-7 relative',
-        {
-          'items-start': !isEmpty,
-          'items-center': isEmpty,
-        },
-        className
-      )}
-    >
-      {!isReadonly && (
-        <Button
-          title="Modifier les acteurs"
-          icon="edit-line"
-          size="xs"
-          variant="grey"
-          className="absolute top-4 right-3"
-          onClick={() => setIsModalOpen(true)}
-        />
-      )}
-
+    <>
       {!isEmpty ? (
-        <div className="flex flex-col gap-y-3 gap-x-6">
+        <div
+          className={classNames(
+            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 relative flex flex-col tems-start gap-y-3 gap-x-6',
+            className
+          )}
+        >
+          {!isReadonly && (
+            <Button
+              title="Modifier les acteurs"
+              icon="edit-line"
+              size="xs"
+              variant="grey"
+              className="absolute top-4 right-3"
+              onClick={() => setIsModalOpen(true)}
+            />
+          )}
           <div className="flex flex-col gap-3">
             <ListeActeurs
               titre="Personne pilote"
@@ -112,24 +108,17 @@ const FicheActionActeurs = ({
           </div>
         </div>
       ) : (
-        <>
-          <EmptyActeursPicto className="mx-auto" />
-
-          <h6 className="text-lg leading-5 text-center text-primary-9 mb-0 px-2">
-            Aucun acteur du projet n'est renseigné !
-          </h6>
-
-          <p className="text-base text-primary-9 text-center mb-0">
-            Personne pilote | Structures pilotes | Élu·es référent·es |
-            Directions ou service pilote | Partenaires | Cibles
-          </p>
-
-          {!isReadonly && (
-            <Button size="xs" onClick={() => setIsModalOpen(true)}>
-              Ajouter les acteurs
-            </Button>
-          )}
-        </>
+        <EmptyCard
+          picto={className => <EmptyActeursPicto className={className} />}
+          title="Aucun acteur du projet n'est renseigné !"
+          subTitle="Personne pilote | Structures pilotes | Élu·es référent·es | Directions ou service pilote | Partenaires | Cibles"
+          isReadonly={isReadonly}
+          action={{
+            label: 'Ajouter les acteurs',
+            onClick: () => setIsModalOpen(true),
+          }}
+          className={className}
+        />
       )}
 
       <ModaleActeurs
@@ -138,7 +127,7 @@ const FicheActionActeurs = ({
         fiche={fiche}
         updateFiche={updateFiche}
       />
-    </div>
+    </>
   );
 };
 
