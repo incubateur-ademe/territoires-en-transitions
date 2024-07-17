@@ -1,4 +1,6 @@
 import {Financeur} from '../../FicheAction/data/types';
+import EmptyCard from '../EmptyCard';
+import MoneyPicto from './MoneyPicto';
 
 type BudgetTabProps = {
   budgetPrevisionnel: number | null;
@@ -16,7 +18,19 @@ const BudgetTab = ({
     (!financeurs || financeurs.length === 0) &&
     !financements;
 
-  return isEmpty ? <div>Budget non renseigné !</div> : <div>Budget</div>;
+  return isEmpty ? (
+    <EmptyCard
+      picto={className => <MoneyPicto className={className} />}
+      title="Budget non renseigné !"
+      subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements."
+      action={{
+        label: 'Renseigner un budget',
+        onClick: () => {},
+      }}
+    />
+  ) : (
+    <div>Budget</div>
+  );
 };
 
 export default BudgetTab;
