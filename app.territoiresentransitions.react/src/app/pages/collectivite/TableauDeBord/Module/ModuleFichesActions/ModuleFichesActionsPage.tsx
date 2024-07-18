@@ -13,15 +13,18 @@ import {
 } from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
-import FichesActionListe from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
+import FichesActionListe, {
+  SortFicheActionSettings,
+} from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
 
 type Props = {
   view: TDBViewParam;
   slug: Slug;
+  sortSettings?: SortFicheActionSettings;
 };
 
 /** Page d'un module du tableau de bord plans d'action */
-const ModuleFichesActionsPage = ({view, slug}: Props) => {
+const ModuleFichesActionsPage = ({view, slug, sortSettings}: Props) => {
   const collectiviteId = useCollectiviteId();
 
   const {data: dataModule, isLoading: isModuleLoading} = useModuleFetch(slug);
@@ -41,6 +44,7 @@ const ModuleFichesActionsPage = ({view, slug}: Props) => {
       />
       <FichesActionListe
         filtres={module.options.filtre}
+        sortSettings={sortSettings}
         onSettingsClick={() => {
           trackEvent(
             (slug === 'actions-dont-je-suis-pilote'

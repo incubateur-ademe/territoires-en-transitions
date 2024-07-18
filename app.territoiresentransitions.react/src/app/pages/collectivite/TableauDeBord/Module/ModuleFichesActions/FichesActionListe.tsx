@@ -21,6 +21,13 @@ type sortByOptionsType = SortFichesAction & {
   label: string;
 };
 
+type SortSettings<T> = {
+  defaultSort: T;
+  sortOptionsDisplayed?: T[];
+};
+
+export type SortFicheActionSettings = SortSettings<SortFichesActionValue>;
+
 const sortByOptions: sortByOptionsType[] = [
   {
     label: 'Date de modification',
@@ -40,15 +47,18 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  defaultSort?: SortFichesActionValue;
   filtres: Filtre;
   settingsModal: (openState: ModalOpenState) => React.ReactNode;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;
+  sortSettings?: SortFicheActionSettings;
 };
 
+/** Liste de fiches action avec tri et options de fitlre */
 const FichesActionListe = ({
-  defaultSort = 'modified_at',
+  sortSettings = {
+    defaultSort: 'modified_at',
+  },
   filtres,
   settingsModal,
   maxNbOfCards = 15,
@@ -58,9 +68,26 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  /** Tri sélectionné */
   const [sort, setSort] = useState(
-    sortByOptions.find(o => o.field === defaultSort)!
+    sortByOptions.find(o => o.field === sortSettings.defaultSort)!
   );
+
+  /** Récupère les différentes options de tri à partir des paramètres ou par défault */
+  const getSortOptions = () => {
+    const optionsDisplayed = sortSettings.sortOptionsDisplayed;
+
+    if (optionsDisplayed) {
+      return sortByOptions
+        .filter(o => optionsDisplayed.includes(o.field))
+        .map(o => ({label: o.label, value: o.field}));
+    } else {
+      return sortByOptions.map(o => ({label: o.label, value: o.field}));
+    }
+  };
+
+  /** Options de tri affichées */
+  const sortOptions = getSortOptions();
 
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,6 +98,7 @@ const FichesActionListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
+  /** Options données à la fonction de récupération des fiches action */
   const ficheResumesOptions: FetchOptions = {
     filtre: {
       ...filtres,
@@ -98,12 +126,13 @@ const FichesActionListe = ({
         {/** Tri */}
         <div className="w-64">
           <Select
-            options={sortByOptions.map(o => ({value: o.field, label: o.label}))}
+            options={sortOptions}
             onChange={value =>
               value && setSort(sortByOptions.find(o => o.field === value)!)
             }
             values={sort.field}
             customItem={v => <span className="text-grey-8">{v.label}</span>}
+            disabled={sortOptions.length === 1}
             small
           />
         </div>
