@@ -81,7 +81,7 @@ const Module = ({
   }
 
   return (
-    <ModuleContainer>
+    <ModuleContainer className="!border-grey-3">
       <div className="flex items-start gap-20">
         <h6 className="mb-0">{title}</h6>
         <>

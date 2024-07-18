@@ -1,4 +1,3 @@
-import {Divider} from '@design-system/Divider';
 import classNames from 'classnames';
 
 type ModalFooterVariant = 'center' | 'right' | 'space';
@@ -28,8 +27,7 @@ export const ModalFooter = ({
   variant = 'right',
 }: ModalFooterProps) => {
   return (
-    <>
-      <Divider className="mt-4" />
+    <div className="mt-4">
       {content}
       <div
         className={classNames(
@@ -39,7 +37,7 @@ export const ModalFooter = ({
       >
         {children}
       </div>
-    </>
+    </div>
   );
 };
 
