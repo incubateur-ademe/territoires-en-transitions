@@ -1,5 +1,6 @@
 export const getFormattedDate = (date: string) => {
-  return new Date(date).toLocaleDateString('fr-FR', {
+  const localDate = date ? new Date(date) : new Date();
+  return localDate.toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'numeric',
     year: 'numeric',
@@ -7,7 +8,8 @@ export const getFormattedDate = (date: string) => {
 };
 
 export const getTextFormattedDate = (date: string) => {
-  return new Date(date).toLocaleDateString('fr-FR', {
+  const localDate = date ? new Date(date) : new Date();
+  return localDate.toLocaleDateString('fr-FR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -15,6 +17,6 @@ export const getTextFormattedDate = (date: string) => {
 };
 
 export const getIsoFormattedDate = (date: string) => {
-  const localDate = new Date(date);
+  const localDate = date ? new Date(date) : new Date();
   return localDate.toISOString().slice(0, 10);
 };
