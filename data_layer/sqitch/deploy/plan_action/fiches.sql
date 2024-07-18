@@ -54,5 +54,25 @@ ON UPDATE CASCADE
 ON DELETE RESTRICT;
 
 
+-- Ajoute une fonction de relation calculée pour récupérer le plan racine d'une fiche
+-- Pas possible de faire ça nativement en PostgREST pour une relation recursive
+-- cf https://postgrest.org/en/v12/references/api/resource_embedding.html#recursive-relationships
+
+CREATE OR REPLACE FUNCTION public.fiche_action_plan(public.fiche_action)
+    RETURNS SETOF public.axe
+    LANGUAGE SQL
+    STABLE
+    SECURITY DEFINER
+    SET search_path TO ''
+BEGIN ATOMIC
+    SELECT plan.*
+    FROM public.fiche_action_axe 
+    JOIN public.axe ON fiche_action_axe.axe_id = axe.id
+    JOIN public.axe AS plan ON axe.plan = plan.id
+    WHERE fiche_action_axe.fiche_id = $1.id
+    ;
+END;
+
+
 COMMIT;
 

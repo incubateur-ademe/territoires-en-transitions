@@ -2,6 +2,10 @@
 
 BEGIN;
 
+-- Supprime la nouvelle relation calculée
+
+DROP FUNCTION IF EXISTS public.fiche_action_plan(public.fiche_action);
+
 
 -- Recrée les computed fields associées à la collectivité
 -- 👇

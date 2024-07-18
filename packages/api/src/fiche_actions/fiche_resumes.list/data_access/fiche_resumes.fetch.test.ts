@@ -46,6 +46,29 @@ test('Fetch avec filtre sur un service', async () => {
   }
 });
 
+test('Fetch avec filtre sur un plan', async () => {
+  const {data} = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        texteNomOuDescription:
+          'Ajouter caméra de surveillance au parking à vélo 2020-2024',
+      },
+    },
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  expect(data).toHaveLength(1);
+  expect(data[0].plans?.[0]).toMatchObject({
+    nom: 'Plan Vélo 2020-2024', // correspond au plan racine
+    parent: null,
+    collectivite_id: 1,
+  });
+});
+
 test('Fetch avec filtre sur un statut', async () => {
   const {data} = await ficheResumesFetch({
     ...params,

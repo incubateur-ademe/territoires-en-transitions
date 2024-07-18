@@ -54,7 +54,7 @@ export async function ficheResumesFetch({
   relatedTables.add('services:service_tag(*)');
 
   // Toujours récupérer le plan lié à la fiche
-  relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
+  relatedTables.add('plans:fiche_action_plan(*)');
 
   if (
     filtre.personneReferenteIds?.length ||
@@ -111,7 +111,8 @@ export async function ficheResumesFetch({
   // 👇
 
   if (filtre.planActionIds?.length) {
-    query.in('fiche_action_axe.axe.plan', filtre.planActionIds);
+    query.not('plans', 'is', null);
+    query.in('plans.plan', filtre.planActionIds);
   }
 
   if (filtre.utilisateurPiloteIds?.length) {
