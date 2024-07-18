@@ -447,35 +447,44 @@ insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeu
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, v.valeur, null, null, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
 from archive.indicateur_resultat v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = coalesce(aid.valeur_indicateur, aid.id)
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+where v.annee is not null and aid.valeur_indicateur is not null
 on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do nothing ;
 
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
-select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, v.commentaire, null, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
-from archive.indicateur_resultat_commentaire v
+select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, v.valeur, null, null, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
+from archive.indicateur_resultat v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
-where v.annee is not null and aid.valeur_indicateur is not null
-on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
-    set resultat_commentaire = excluded.resultat_commentaire;
+join public.indicateur_definition pid on pid.identifiant_referentiel = aid.id
+where v.annee is not null and aid.valeur_indicateur is null
+on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do nothing ;
+
+-- insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
+-- select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, v.commentaire, null, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
+-- from archive.indicateur_resultat_commentaire v
+-- join archive.indicateur_definition aid on v.indicateur_id = aid.id
+-- join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+-- where v.annee is not null and aid.valeur_indicateur is not null and v.commentaire is not null and v.commentaire != ''
+-- on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
+--     set resultat_commentaire = excluded.resultat_commentaire;
 
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, v.commentaire, null, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
 from archive.indicateur_resultat_commentaire v
 join archive.indicateur_definition aid on v.indicateur_id = aid.id
 join public.indicateur_definition pid on pid.identifiant_referentiel = aid.id
-where v.annee is not null and aid.valeur_indicateur is null
+where v.annee is not null and aid.valeur_indicateur is null and v.commentaire is not null and v.commentaire != ''
 on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
     set resultat_commentaire = excluded.resultat_commentaire;
 
-insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
-select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, v.valeur, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
-from archive.indicateur_objectif v
-join archive.indicateur_definition aid on v.indicateur_id = aid.id
-join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
-where aid.valeur_indicateur is not null
-on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
-    set objectif = excluded.objectif;
+-- insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
+-- select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, v.valeur, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
+-- from archive.indicateur_objectif v
+-- join archive.indicateur_definition aid on v.indicateur_id = aid.id
+-- join public.indicateur_definition pid on pid.identifiant_referentiel = aid.valeur_indicateur
+-- where aid.valeur_indicateur is not null
+-- on conflict (indicateur_id, collectivite_id, date_valeur) where metadonnee_id is null do update
+--     set objectif = excluded.objectif;
 
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat, resultat_commentaire, objectif, objectif_commentaire, modified_at, created_at, modified_by, created_by)
 select pid.id, v.collectivite_id, to_date(v.annee::varchar, 'yyyy'), null, null, null, v.valeur, null, v.modified_at, v.modified_at, v.modified_by, v.modified_by
@@ -559,7 +568,8 @@ join public.indicateur_definition pid on
              afai.indicateur_personnalise_id = pid.old_id
          else
              afai.indicateur_id = pid.identifiant_referentiel
-    end;
+    end
+on conflict do nothing;
 
 -- action_impact_indicateur <- action_impact_indicateur
 insert into public.action_impact_indicateur (action_impact_id, indicateur_id)
@@ -583,7 +593,7 @@ join public.indicateur_definition pid on
          else
              aip.indicateur_id = pid.identifiant_referentiel
     end
-on conflict(indicateur_id, tag_id, collectivite_id) where tag_id is not null do nothing;
+on conflict do nothing;
 
 -- indicateur_service_tag <- indicateur_service_tag
 insert into public.indicateur_service_tag (indicateur_id, service_tag_id, collectivite_id)
@@ -594,7 +604,8 @@ join public.indicateur_definition pid on
              aist.indicateur_perso_id = pid.old_id
          else
              aist.indicateur_id = pid.identifiant_referentiel
-    end;
+    end
+on conflict do nothing;
 
 -- indicateur_collectivite <- indicateur_confidentiel + indicateur_resultat_commentaire sans annee
 insert into public.indicateur_collectivite (indicateur_id, collectivite_id, commentaire, confidentiel)
@@ -607,13 +618,13 @@ join public.indicateur_definition pid on
              aic.indicateur_id = pid.identifiant_referentiel
     end;
 
-insert into public.indicateur_collectivite (indicateur_id, collectivite_id, commentaire)
-select pid.id, irc.collectivite_id, irc.commentaire
-from archive.indicateur_resultat_commentaire irc
-join public.indicateur_definition pid on irc.indicateur_id = pid.identifiant_referentiel
-where irc.annee is null
-on conflict (indicateur_id, collectivite_id) do update
-    set commentaire = excluded.commentaire;
+-- insert into public.indicateur_collectivite (indicateur_id, collectivite_id, commentaire)
+-- select pid.id, irc.collectivite_id, irc.commentaire
+-- from archive.indicateur_resultat_commentaire irc
+-- join public.indicateur_definition pid on irc.indicateur_id = pid.identifiant_referentiel
+-- where irc.annee is null
+-- on conflict (indicateur_id, collectivite_id) do update
+--     set commentaire = excluded.commentaire;
 
 -- indicateur_thematique <- public.indicateur_personnalise_thematique + indicateur_definition.thematiques
 insert into public.indicateur_thematique (indicateur_id, thematique_id)
@@ -2615,6 +2626,5 @@ create trigger modified_by
     on indicateur_definition
     for each row
 execute procedure enforce_modified_by();
-
 
 COMMIT;
