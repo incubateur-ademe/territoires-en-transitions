@@ -47,7 +47,7 @@ export async function ficheResumesFetch({
 
   // Toujours récupérer les pilotes liés à la fiche
   relatedTables.add(
-    'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:dcp(prenom, nom, user_id))'
+    'pilotes:fiche_action_pilote(personne_tag(nom, tag_id:id), utilisateur:dcp(prenom, nom, user_id))'
   );
 
   // Toujours récupérer les services liés à la fiche
