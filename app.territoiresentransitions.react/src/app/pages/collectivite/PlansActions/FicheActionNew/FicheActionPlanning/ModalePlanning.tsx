@@ -54,7 +54,11 @@ const ModalePlanning = ({
               <Field title="Date de début" className="col-span-2">
                 <Input
                   type="date"
-                  value={getIsoFormattedDate(editedFiche.date_debut ?? '')}
+                  value={
+                    editedFiche.date_debut
+                      ? getIsoFormattedDate(editedFiche.date_debut)
+                      : ''
+                  }
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
@@ -93,9 +97,11 @@ const ModalePlanning = ({
                       : undefined
                   }
                   disabled={editedFiche.amelioration_continue ?? false}
-                  value={getIsoFormattedDate(
-                    editedFiche.date_fin_provisoire ?? ''
-                  )}
+                  value={
+                    editedFiche.date_fin_provisoire
+                      ? getIsoFormattedDate(editedFiche.date_fin_provisoire)
+                      : ''
+                  }
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
