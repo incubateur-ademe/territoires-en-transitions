@@ -3,7 +3,7 @@ import {
   niveauPrioritesSchema,
   statutsSchema,
 } from '../fiche_resumes.list/domain/enum.schema';
-import {axeSchema} from "./axe.schema";
+import {axeSchema} from './axe.schema';
 import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
 
 /**
@@ -28,6 +28,16 @@ export const resumeSchema = z.object({
   restreint: z.boolean(),
   statut: statutsSchema,
   titre: z.string(),
+
+  services: z
+    .array(
+      z.object({
+        nom: z.string().nullable(),
+        collectiviteId: z.number().nullable(),
+        id: z.number().nullish(),
+      })
+    )
+    .nullable(),
 });
 
 /**

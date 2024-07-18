@@ -50,6 +50,7 @@ export const ficheResumeFactory = ({
     statut: null,
     titre: '',
     restreint: false,
+    services: [],
   };
 };
 
@@ -66,4 +67,5 @@ export const ficheActionToResume = (fiche: FicheAction): FicheResume => ({
   statut: fiche.statut,
   titre: fiche.titre!,
   restreint: fiche.restreint,
+  services: fiche.services,
 });

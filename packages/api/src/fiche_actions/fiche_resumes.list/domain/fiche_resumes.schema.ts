@@ -55,6 +55,16 @@ export const ficheResumeSchema = z.object({
       })
     )
     .nullable(),
+
+  services: z
+    .array(
+      z.object({
+        nom: z.string().nullable(),
+        collectivite_id: z.number().nullable(),
+        id: z.number().nullish(),
+      })
+    )
+    .nullable(),
 });
 
 export type FicheResume = z.infer<typeof ficheResumeSchema>;

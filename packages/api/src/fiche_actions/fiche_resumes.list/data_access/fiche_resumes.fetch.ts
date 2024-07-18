@@ -50,6 +50,9 @@ export async function ficheResumesFetch({
     'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:dcp(prenom, nom, user_id))'
   );
 
+  // Toujours récupérer les services liés à la fiche
+  relatedTables.add('services:service_tag(*)');
+
   // Toujours récupérer le plan lié à la fiche
   relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
 

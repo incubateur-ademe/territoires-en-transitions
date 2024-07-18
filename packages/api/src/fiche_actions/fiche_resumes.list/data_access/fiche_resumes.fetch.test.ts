@@ -22,7 +22,28 @@ test('Fetch sans filtre', async () => {
     options: {filtre: {}},
   });
 
-  expect(data).toMatchObject({});
+  if (!data) {
+    expect.fail();
+  }
+});
+
+test('Fetch avec filtre sur un service', async () => {
+  const {data} = await ficheResumesFetch({
+    ...params,
+    options: {filtre: {servicePiloteIds: [2]}},
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  for (const fiche of data) {
+    expect(fiche).toMatchObject({
+      services: expect.arrayContaining([
+        {id: 2, nom: 'Ultra service', collectivite_id: 1},
+      ]),
+    });
+  }
 });
 
 test('Fetch avec filtre sur un statut', async () => {
