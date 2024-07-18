@@ -1,17 +1,17 @@
 import {z} from 'zod';
 
 export const filtreRessourceLieesSchema = z.object({
-  planActionIds: z.number().array().optional(),
+  planActionIds: z.coerce.number().array().optional(),
 
   utilisateurPiloteIds: z.string().array().optional(),
-  personnePiloteIds: z.number().array().optional(),
+  personnePiloteIds: z.coerce.number().array().optional(),
   utilisateurReferentIds: z.string().array().optional(),
-  personneReferenteIds: z.number().array().optional(),
-  structurePiloteIds: z.number().array().optional(),
-  servicePiloteIds: z.number().array().optional(),
+  personneReferenteIds: z.coerce.number().array().optional(),
+  structurePiloteIds: z.coerce.number().array().optional(),
+  servicePiloteIds: z.coerce.number().array().optional(),
 
-  thematiqueIds: z.number().array().optional(),
-  financeurIds: z.number().array().optional(),
+  thematiqueIds: z.coerce.number().array().optional(),
+  financeurIds: z.coerce.number().array().optional(),
 });
 
 export type FiltreRessourceLiees = z.infer<typeof filtreRessourceLieesSchema>;
