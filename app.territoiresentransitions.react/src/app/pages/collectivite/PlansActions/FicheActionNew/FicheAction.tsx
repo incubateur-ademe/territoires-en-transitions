@@ -84,12 +84,11 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
           </div>
 
           {/* Contenu de la fiche action */}
-          {/* <div className="col-span-full lg:col-span-2 xl:col-span-7 bg-white border border-grey-3 rounded-lg py-10 px-8">
-            Onglets
-          </div> */}
           <FicheActionOnglets
             fiche={fiche}
+            isReadonly={isReadonly}
             className="col-span-full lg:col-span-2 xl:col-span-7"
+            updateFiche={updateFiche}
           />
         </div>
       </div>

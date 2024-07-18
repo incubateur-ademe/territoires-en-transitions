@@ -1,11 +1,15 @@
 import {Ref, forwardRef, useEffect, useState} from 'react';
 import {NumericFormat, NumericFormatProps} from 'react-number-format';
-import {InputBase, InputBaseProps} from './InputBase';
+import {IconContent, InputBase, InputBaseProps} from './InputBase';
 
 export type InputNumberProps = Omit<NumericFormatProps, 'type' | 'value'> & {
   value: InputBaseProps['value'];
   /** Type de saisie numérique attendue */
   numType?: 'float' | 'int';
+  /** Contenu optionnel pour la zone d'icône à droite du champ */
+  icon?: InputBaseProps['icon'];
+  /** Pour styler le container */
+  containerClassname?: InputBaseProps['containerClassname'];
 };
 
 const DECIMAL_SEP = ',';
