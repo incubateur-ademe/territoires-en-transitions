@@ -39,7 +39,7 @@ test('Fetch avec filtre sur une personne', async () => {
 
   for (const fiche of data) {
     expect(fiche).toMatchObject({
-      pilotes: expect.arrayContaining([{id: 1, nom: 'Lou Piote'}]),
+      pilotes: expect.arrayContaining([{tag_id: 1, nom: 'Lou Piote'}]),
     });
   }
 });
