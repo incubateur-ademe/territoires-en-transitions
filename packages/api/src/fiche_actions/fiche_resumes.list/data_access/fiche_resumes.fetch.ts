@@ -115,12 +115,21 @@ export async function ficheResumesFetch({
     query.in('plans.plan', filtre.planActionIds);
   }
 
-  if (filtre.utilisateurPiloteIds?.length) {
+  if (filtre.utilisateurPiloteIds?.length && filtre.personnePiloteIds?.length) {
+    query.not('pilotes', 'is', null);
+    query.or(
+      `user_id.in.(${filtre.utilisateurPiloteIds.join(
+        ','
+      )}),tag_id.in.(${filtre.personnePiloteIds.join(',')})`,
+      {
+        foreignTable: 'pilotes',
+      }
+    );
+    query.in('pilotes.tag_id', filtre.personnePiloteIds);
+  } else if (filtre.utilisateurPiloteIds?.length) {
     query.not('pilotes', 'is', null);
     query.in('pilotes.user_id', filtre.utilisateurPiloteIds);
-  }
-
-  if (filtre.personnePiloteIds?.length) {
+  } else if (filtre.personnePiloteIds?.length) {
     query.not('pilotes', 'is', null);
     query.in('pilotes.tag_id', filtre.personnePiloteIds);
   }

@@ -27,6 +27,71 @@ test('Fetch sans filtre', async () => {
   }
 });
 
+test('Fetch avec filtre sur une personne', async () => {
+  const {data} = await ficheResumesFetch({
+    ...params,
+    options: {filtre: {personnePiloteIds: [1]}},
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  for (const fiche of data) {
+    expect(fiche).toMatchObject({
+      pilotes: expect.arrayContaining([{id: 1, nom: 'Lou Piote'}]),
+    });
+  }
+});
+
+test('Fetch avec filtre sur un utilisateur', async () => {
+  const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
+
+  const {data} = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {utilisateurPiloteIds: [yoloDodoUuid]},
+    },
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  for (const fiche of data) {
+    expect(fiche).toMatchObject({
+      pilotes: expect.arrayContaining([
+        {
+          user_id: yoloDodoUuid,
+          nom: expect.any(String),
+          prenom: expect.any(String),
+        },
+      ]),
+    });
+  }
+});
+
+test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
+  const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
+
+  const {data} = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {utilisateurPiloteIds: [yoloDodoUuid], personnePiloteIds: [1]},
+    },
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  expect(data.length).toBeGreaterThan(0);
+
+  for (const fiche of data) {
+    expect(fiche.pilotes.length).toBeGreaterThan(0);
+  }
+});
+
 test('Fetch avec filtre sur un service', async () => {
   const {data} = await ficheResumesFetch({
     ...params,
