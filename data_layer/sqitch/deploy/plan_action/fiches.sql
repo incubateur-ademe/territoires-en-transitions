@@ -54,6 +54,19 @@ ON UPDATE CASCADE
 ON DELETE RESTRICT;
 
 
+-- Ajoute la foreign key de `structure_tag` vers `collectivite` si elle n'existe pas.
+
+ALTER TABLE "public"."structure_tag"
+DROP CONSTRAINT IF EXISTS "structure_tag_collectivite_id_fkey";
+
+ALTER TABLE "public"."structure_tag" 
+ADD CONSTRAINT "structure_tag_collectivite_id_fkey"
+FOREIGN KEY ("collectivite_id") 
+REFERENCES "public"."collectivite" ("id") 
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+
 -- Ajoute une fonction de relation calculée pour récupérer le plan racine d'une fiche
 -- Pas possible de faire ça nativement en PostgREST pour une relation recursive
 -- cf https://postgrest.org/en/v12/references/api/resource_embedding.html#recursive-relationships
