@@ -8,10 +8,17 @@ import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 
 type FicheActionOngletsProps = {
   fiche: FicheAction;
+  isReadonly: boolean;
   className?: string;
+  updateFiche: (fiche: FicheAction) => void;
 };
 
-const FicheActionOnglets = ({fiche, className}: FicheActionOngletsProps) => {
+const FicheActionOnglets = ({
+  fiche,
+  isReadonly,
+  className,
+  updateFiche,
+}: FicheActionOngletsProps) => {
   return (
     <Tabs
       className={className}
@@ -28,7 +35,11 @@ const FicheActionOnglets = ({fiche, className}: FicheActionOngletsProps) => {
 
       {/* Budget */}
       <Tab label="Budget">
-        <BudgetTab fiche={fiche} />
+        <BudgetTab
+          isReadonly={isReadonly}
+          fiche={fiche}
+          updateFiche={updateFiche}
+        />
       </Tab>
 
       {/* Fiches des plans liées */}
