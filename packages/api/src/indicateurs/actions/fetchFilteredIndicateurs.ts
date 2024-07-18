@@ -124,6 +124,10 @@ export async function fetchFilteredIndicateurs(
         // S'il y a un tri que sur le type
         query.in('indicateur_categorie_tag.categorie_tag.nom', filters.type);
       }
+    } else {
+      // quand on ne travaille pas sur un sous-ensemble on limite aux indicateurs
+      // prédéfinis et à ceux de la collectivité voulue
+      query.or(`collectivite_id.is.null,collectivite_id.eq.${collectiviteId}`);
     }
   }
 
