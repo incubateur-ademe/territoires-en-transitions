@@ -27,6 +27,7 @@ const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
   sort: 'sort',
 };
 
+/** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const collectiviteId = useCollectiviteId();
 
@@ -42,8 +43,10 @@ const ToutesLesFichesAction = () => {
         <h2 className="mb-0">Toutes les actions</h2>
       </div>
       <FichesActionListe
-        defaultSort="titre"
         filtres={filters}
+        sortSettings={{
+          defaultSort: 'titre',
+        }}
         settingsModal={openState => (
           <ModalFiltresToutesLesFichesAction
             openState={openState}

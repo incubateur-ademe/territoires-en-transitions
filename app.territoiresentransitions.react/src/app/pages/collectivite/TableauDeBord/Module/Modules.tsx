@@ -4,6 +4,7 @@ import {defaultSlugsSchema} from '@tet/api/dist/src/collectivites/tableau_de_bor
 import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateursPage';
 import {TDBViewParam} from 'app/paths';
+import {SortFicheActionSettings} from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action
@@ -18,7 +19,29 @@ const Modules = () => {
     slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote'] ||
     slug === defaultSlugsSchema.enum['actions-recemment-modifiees']
   ) {
-    return <ModuleFichesActionsPage view={tdbView} slug={slug} />;
+    const getSortSettings = (
+      slug: string
+    ): SortFicheActionSettings | undefined => {
+      if (slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote']) {
+        return {
+          defaultSort: 'titre',
+        };
+      }
+      if (slug === defaultSlugsSchema.enum['actions-recemment-modifiees']) {
+        return {
+          defaultSort: 'modified_at',
+          sortOptionsDisplayed: ['modified_at'],
+        };
+      }
+    };
+
+    return (
+      <ModuleFichesActionsPage
+        view={tdbView}
+        slug={slug}
+        sortSettings={getSortSettings(slug)}
+      />
+    );
   }
 
   if (slug === defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']) {
