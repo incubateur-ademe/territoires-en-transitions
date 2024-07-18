@@ -1,3 +1,4 @@
+import {QueryKey} from 'react-query';
 import classNames from 'classnames';
 import {Button, ButtonVariant, Modal} from '@tet/ui';
 import {useDeleteFicheAction} from '../../FicheAction/data/useDeleteFicheAction';
@@ -6,6 +7,8 @@ type ModaleSuppressionProps = {
   ficheId: number | null;
   title: string | null;
   isInMultipleAxes: boolean;
+  axeId?: number | null;
+  keysToInvalidate?: QueryKey[];
   buttonClassName?: string;
   buttonVariant?: ButtonVariant;
 };
@@ -17,18 +20,16 @@ const ModaleSuppression = ({
   ficheId,
   title,
   isInMultipleAxes,
+  axeId,
+  keysToInvalidate,
   buttonClassName,
   buttonVariant = 'outlined',
 }: ModaleSuppressionProps) => {
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheId!,
-    axeId: null,
+    axeId: axeId ?? null,
+    keysToInvalidate: keysToInvalidate,
   });
-
-  const handleDelete = () => {
-    deleteFiche();
-    close();
-  };
 
   return (
     <Modal
@@ -60,7 +61,13 @@ const ModaleSuppression = ({
             <Button onClick={close} aria-label="Annuler" variant="outlined">
               Annuler
             </Button>
-            <Button onClick={handleDelete} aria-label="Valider">
+            <Button
+              onClick={() => {
+                deleteFiche();
+                close();
+              }}
+              aria-label="Valider"
+            >
               Valider
             </Button>
           </div>
