@@ -12,7 +12,7 @@ import {
   ficheActionNiveauPrioriteOptions,
   ficheActionResultatsAttendusOptions,
   ficheActionStatutOptions,
-} from '../data/options/listesStatiques';
+} from '../../../../../../ui/dropdownLists/listesStatiques';
 import {FicheAction} from '../data/types';
 import {useEditFicheAction} from '../data/useUpsertFicheAction';
 import BadgeStatut from '../../components/BadgeStatut';

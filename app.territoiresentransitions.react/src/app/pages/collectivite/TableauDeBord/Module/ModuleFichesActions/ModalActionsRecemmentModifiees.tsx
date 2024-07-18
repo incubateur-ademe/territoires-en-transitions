@@ -80,7 +80,7 @@ const ModalActionsRecemmentModifiees = ({
             </Field>
             <Field title="Pilote">
               <PersonnesDropdown
-                values={pilotes.length ? pilotes : undefined}
+                values={pilotes}
                 onChange={({personnes}) => {
                   setFiltreState({
                     ...filtreState,
