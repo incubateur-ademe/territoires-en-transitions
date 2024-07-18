@@ -12,7 +12,7 @@ exports[`design-system/Field Default smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
@@ -36,7 +36,7 @@ exports[`design-system/Field DisabledWithHint smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
              disabled
@@ -63,7 +63,7 @@ exports[`design-system/Field WithError smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
@@ -94,7 +94,7 @@ exports[`design-system/Field WithHint smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
@@ -120,7 +120,7 @@ exports[`design-system/Field WithInfo smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-info-1">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
@@ -148,7 +148,7 @@ exports[`design-system/Field WithSuccess smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-success-1">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
@@ -176,7 +176,7 @@ exports[`design-system/Field WithWarning smoke-test 1`] = `
     </label>
     <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-warning-1">
       <input type="text"
-             class="grow text-grey-8 px-4 outline-none text-md py-3"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
              id="un_nom"
              placeholder="Placeholder"
       >
