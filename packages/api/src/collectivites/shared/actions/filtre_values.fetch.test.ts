@@ -114,6 +114,24 @@ test('Filtre sur un service pilote', async () => {
   });
 });
 
+test('Filtre sur un financeur', async () => {
+  const {data} = await getFiltreValues({
+    filtre: {
+      financeurIds: [1],
+    },
+  });
+
+  expect(data).toEqual({
+    financeurs: expect.arrayContaining([
+      {
+        id: 1,
+        nom: 'Balthazar Picsou',
+        collectiviteId: 1,
+      },
+    ]),
+  });
+});
+
 test('Filtre sur plusieurs services pilotes', async () => {
   const {data} = await getFiltreValues({
     filtre: {
@@ -121,17 +139,19 @@ test('Filtre sur plusieurs services pilotes', async () => {
     },
   });
 
-  expect(data).toMatchObject({
-    servicePilotes: [
+  expect(data).toEqual({
+    servicePilotes: expect.arrayContaining([
       {
         id: 1,
         nom: 'Super service',
+        collectiviteId: 1,
       },
       {
         id: 2,
         nom: 'Ultra service',
+        collectiviteId: 1,
       },
-    ],
+    ]),
   });
 });
 

@@ -30,7 +30,7 @@ export async function filtreValuesFetch({
     const relatedTables = new Set<string>();
 
     if (filtre.planActionIds?.length) {
-      relatedTables.add('planActions:collectivite_axe!inner(*)');
+      relatedTables.add('planActions:axe!inner(*)');
     }
 
     if (filtre.utilisateurPiloteIds?.length) {
@@ -38,7 +38,7 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.personnePiloteIds?.length) {
-      relatedTables.add('personnePilotes:collectivite_personne_tag!inner(*)');
+      relatedTables.add('personnePilotes:personne_tag!inner(*)');
     }
 
     if (filtre.utilisateurReferentIds?.length) {
@@ -48,17 +48,17 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.personneReferenteIds?.length) {
-      relatedTables.add(
-        'personneReferentes:collectivite_personne_tag!inner(*)'
-      );
+      relatedTables.add('personneReferentes:personne_tag!inner(*)');
     }
 
     if (filtre.structurePiloteIds?.length) {
-      relatedTables.add('structurePilotes:collectivite_structure_tag!inner(*)');
+      relatedTables.add('structurePilotes:structure_tag!inner(*)');
     }
 
     if (filtre.servicePiloteIds?.length) {
-      relatedTables.add('servicePilotes:collectivite_service_tag!inner(*)');
+      relatedTables.add(
+        'servicePilotes:service_tag!service_tag_collectivite_id_fkey!inner(*)'
+      );
     }
 
     if (filtre.thematiqueIds?.length) {
@@ -66,7 +66,7 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.financeurIds?.length) {
-      relatedTables.add('financeurs:collectivite_financeur_tag!inner(*)');
+      relatedTables.add('financeurs:financeur_tag!inner(*)');
     }
 
     if (relatedTables.size === 0) {
@@ -86,7 +86,7 @@ export async function filtreValuesFetch({
     // 👇
 
     if (filtre.planActionIds?.length) {
-      query.in('collectivite_axe.id', filtre.planActionIds);
+      query.in('axe.id', filtre.planActionIds);
     }
 
     if (filtre.utilisateurPiloteIds?.length) {
@@ -94,7 +94,7 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.personnePiloteIds?.length) {
-      query.in('collectivite_personne_tag.id', filtre.personnePiloteIds);
+      query.in('personne_tag.id', filtre.personnePiloteIds);
     }
 
     if (filtre.utilisateurReferentIds?.length) {
@@ -105,15 +105,15 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.personneReferenteIds?.length) {
-      query.in('collectivite_personne_tag.id', filtre.personneReferenteIds);
+      query.in('personne_tag.id', filtre.personneReferenteIds);
     }
 
     if (filtre.structurePiloteIds?.length) {
-      query.in('collectivite_structure_tag.id', filtre.structurePiloteIds);
+      query.in('structure_tag.id', filtre.structurePiloteIds);
     }
 
     if (filtre.servicePiloteIds?.length) {
-      query.in('collectivite_service_tag.id', filtre.servicePiloteIds);
+      query.in('service_tag.id', filtre.servicePiloteIds);
     }
 
     if (filtre.thematiqueIds?.length) {

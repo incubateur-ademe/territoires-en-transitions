@@ -2,56 +2,57 @@
 
 BEGIN;
 
--- Ajoute des index sur `fiche_action` et autres tables liées
--- pour améliorer les performances des requêtes de jointure et de filtre
-
-CREATE INDEX IF NOT EXISTS fiche_action_collectivite_id_idx
-  ON fiche_action (collectivite_id);
-
-CREATE INDEX IF NOT EXISTS fiche_action_collectivite_id_modified_at_idx
-  ON fiche_action (collectivite_id, modified_at);
-
-CREATE INDEX IF NOT EXISTS fiche_action_lien_fiche_une_idx
-  ON fiche_action_lien (fiche_une);
-
-CREATE INDEX IF NOT EXISTS fiche_action_lien_fiche_deux_idx
-  ON fiche_action_lien (fiche_deux);
-
-CREATE INDEX IF NOT EXISTS fiche_action_service_tag_service_tag_id_idx
-  ON fiche_action_service_tag (service_tag_id);
-
-CREATE INDEX IF NOT EXISTS fiche_action_structure_tag_structure_tag_id_idx
-  ON fiche_action_structure_tag (structure_tag_id);
-
-CREATE INDEX IF NOT EXISTS fiche_action_partenaire_tag_partenaire_tag_id_idx
-  ON fiche_action_partenaire_tag (partenaire_tag_id);
-
-
 -- Supprime les computed field associés à la vue `fiche_actions`
 -- qui étaient utilisés pour les filtres du tableau de bord.
 -- (à la place on filtre désormais directement sur la table `fiche_action`)
 
-DROP FUNCTION IF EXISTS public.fiche_action_service_tag(public.fiches_action);
+DROP FUNCTION IF EXISTS public.collectivite_service_tag(public.collectivite);
 
-DROP FUNCTION IF EXISTS public.fiche_action_structure_tag(public.fiches_action);
+DROP FUNCTION IF EXISTS public.collectivite_structure_tag(public.collectivite);
 
-DROP FUNCTION IF EXISTS public.fiche_action_personne_tag(public.fiches_action);
+DROP FUNCTION IF EXISTS public.collectivite_personne_tag(public.collectivite);
 
-DROP FUNCTION IF EXISTS public.fiche_action_axe(public.fiches_action);
-
-DROP FUNCTION IF EXISTS public.fiche_action_pilote(public.fiches_action);
+DROP FUNCTION IF EXISTS public.collectivite_axe(public.collectivite);
 
 
--- Change la foreign key de `fiche_action_pilote` pour pointer sur `public.dcp` 
--- au lieu de `auth.users`. Cela permet à PostgREST de requêter la ressource `dcp` liée.
+-- Ajoute la foreign key de `financeur_tag` vers `collectivite` si elle n'existe pas.
 
-ALTER TABLE fiche_action_pilote 
-DROP CONSTRAINT IF EXISTS fiche_action_pilote_user_id_fkey;
+ALTER TABLE "public"."financeur_tag"
+DROP CONSTRAINT IF EXISTS "financeur_tag_collectivite_id_fkey";
 
-ALTER TABLE fiche_action_pilote
-ADD CONSTRAINT fiche_action_pilote_user_id_fkey 
-FOREIGN KEY (user_id)
-REFERENCES dcp(user_id);
+ALTER TABLE "public"."financeur_tag" 
+ADD CONSTRAINT "financeur_tag_collectivite_id_fkey"
+FOREIGN KEY ("collectivite_id") 
+REFERENCES "public"."collectivite" ("id") 
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+
+-- Ajoute la foreign key de `personne_tag` vers `collectivite` si elle n'existe pas.
+
+ALTER TABLE "public"."personne_tag"
+DROP CONSTRAINT IF EXISTS "personne_tag_collectivite_id_fkey";
+
+ALTER TABLE "public"."personne_tag" 
+ADD CONSTRAINT "personne_tag_collectivite_id_fkey"
+FOREIGN KEY ("collectivite_id") 
+REFERENCES "public"."collectivite" ("id") 
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+
+-- Ajoute la foreign key de `service_tag` vers `collectivite` si elle n'existe pas.
+
+ALTER TABLE "public"."service_tag"
+DROP CONSTRAINT IF EXISTS "service_tag_collectivite_id_fkey";
+
+ALTER TABLE "public"."service_tag" 
+ADD CONSTRAINT "service_tag_collectivite_id_fkey"
+FOREIGN KEY ("collectivite_id") 
+REFERENCES "public"."collectivite" ("id") 
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
 
 
 COMMIT;
+

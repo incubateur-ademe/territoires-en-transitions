@@ -2,79 +2,50 @@
 
 BEGIN;
 
-DROP INDEX IF EXISTS fiche_action_collectivite_id_idx;
-DROP INDEX IF EXISTS fiche_action_collectivite_id_modified_at_idx;
-DROP INDEX IF EXISTS fiche_action_lien_fiche_une_idx;
-DROP INDEX IF EXISTS fiche_action_lien_fiche_deux_idx;
-DROP INDEX IF EXISTS fiche_action_service_tag_service_tag_id_idx;
-DROP INDEX IF EXISTS fiche_action_structure_tag_structure_tag_id_idx;
-DROP INDEX IF EXISTS fiche_action_partenaire_tag_partenaire_tag_id_idx;
 
+-- Recrée les computed fields associées à la collectivité
+-- 👇
 
-ALTER TABLE fiche_action_pilote 
-DROP CONSTRAINT IF EXISTS fiche_action_pilote_user_id_fkey;
-
-ALTER TABLE fiche_action_pilote
-ADD CONSTRAINT fiche_action_pilote_user_id_fkey 
-FOREIGN KEY (user_id)
-REFERENCES auth.users(id);
-
-
-
-CREATE OR REPLACE FUNCTION public.fiche_action_service_tag(public.fiches_action)
-    RETURNS SETOF public.fiche_action_service_tag
+CREATE OR REPLACE FUNCTION public.collectivite_service_tag(public.collectivite)
+    RETURNS SETOF public.service_tag
     LANGUAGE SQL
     STABLE
     SECURITY DEFINER
     SET search_path TO ''
 BEGIN ATOMIC
     SELECT *
-    FROM public.fiche_action_service_tag
-    WHERE fiche_id = $1.id
+    FROM public.service_tag
+    WHERE collectivite_id = $1.id
     ;
 END;
 
-CREATE OR REPLACE FUNCTION public.fiche_action_structure_tag(public.fiches_action)
-    RETURNS SETOF public.fiche_action_structure_tag
+CREATE OR REPLACE FUNCTION public.collectivite_structure_tag(public.collectivite)
+    RETURNS SETOF public.structure_tag
     LANGUAGE SQL
     STABLE
     SECURITY DEFINER
     SET search_path TO ''
 BEGIN ATOMIC
     SELECT *
-    FROM public.fiche_action_structure_tag
-    WHERE fiche_id = $1.id
+    FROM public.structure_tag
+    WHERE collectivite_id = $1.id
     ;
 END;
 
-CREATE OR REPLACE FUNCTION public.fiche_action_personne_tag(public.fiches_action)
-    RETURNS SETOF public.fiche_action_pilote
+CREATE OR REPLACE FUNCTION public.collectivite_personne_tag(public.collectivite)
+    RETURNS SETOF public.personne_tag
     LANGUAGE SQL
     STABLE
     SECURITY DEFINER
     SET search_path TO ''
 BEGIN ATOMIC
     SELECT *
-    FROM public.fiche_action_pilote
-    WHERE fiche_id = $1.id
+    FROM public.personne_tag
+    WHERE collectivite_id = $1.id
     ;
 END;
 
-
-CREATE OR REPLACE FUNCTION public.fiche_action_pilote(public.fiches_action)
-    RETURNS SETOF public.fiche_action_pilote
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT *
-    FROM public.fiche_action_pilote
-    WHERE fiche_id = $1.id
-    ;
-END;
-
-CREATE OR REPLACE FUNCTION public.fiche_action_axe(public.fiches_action)
+CREATE OR REPLACE FUNCTION public.collectivite_axe(public.collectivite)
     RETURNS SETOF public.axe
     LANGUAGE SQL
     STABLE
@@ -82,9 +53,8 @@ CREATE OR REPLACE FUNCTION public.fiche_action_axe(public.fiches_action)
     SET search_path TO ''
 BEGIN ATOMIC
     SELECT axe.*
-    FROM public.fiche_action_axe
-    JOIN public.axe ON fiche_action_axe.axe_id = axe.id
-    WHERE fiche_action_axe.fiche_id = $1.id
+    FROM public.axe
+    WHERE collectivite_id = $1.id
     ;
 END;
 
