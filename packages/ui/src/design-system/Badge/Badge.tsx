@@ -18,7 +18,7 @@ type Props = {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
-  title: string;
+  title: React.ReactNode;
   /** État */
   state?: BadgeState;
   /** Taille du badge */
