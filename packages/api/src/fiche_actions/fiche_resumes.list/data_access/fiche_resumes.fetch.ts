@@ -50,15 +50,14 @@ export async function ficheResumesFetch({
     'pilotes:fiche_action_pilote(personne_tag(nom, id), utilisateur:dcp(prenom, nom, user_id))'
   );
 
+  // Toujours récupérer le plan lié à la fiche
+  relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
+
   if (
     filtre.personneReferenteIds?.length ||
     filtre.utilisateurReferentIds?.length
   ) {
     relatedTables.add('referents:fiche_action_referent!inner(*)');
-  }
-
-  if (filtre.planActionIds?.length) {
-    relatedTables.add('plans:fiche_action_axe!inner(...axe!inner(*))');
   }
 
   if (filtre.structurePiloteIds?.length) {
@@ -78,7 +77,7 @@ export async function ficheResumesFetch({
   }
 
   if (filtre.hasIndicateurLies) {
-    relatedTables.add('fiche_action_indicateur!inner()');
+    relatedTables.add('fiche_action_indicateur()');
   }
 
   // 2. Crée la requête avec les tables liées
