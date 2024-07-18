@@ -92,9 +92,9 @@ const FicheActionCard = ({
         <div
           data-test="FicheCartePrivee"
           title="Fiche en accès restreint"
-          className="absolute -top-5 left-8"
+          className="absolute -top-4 left-5"
         >
-          <Notification icon="lock-fill" />
+          <Notification icon="lock-fill" size="xs" classname="!p-1.5" />
         </div>
       )}
       {/** Menu d'options */}
@@ -144,14 +144,17 @@ const FicheActionCard = ({
         )}
         onClick={e => isNotClickable && e.preventDefault()}
       >
-        <div className="flex flex-col gap-3 h-full p-6">
+        <div className="flex flex-col gap-3 h-full p-4">
           {(ficheAction.niveau_priorite || ficheAction.statut) && (
             <div className="flex items-center gap-4">
               {ficheAction.statut && (
-                <BadgeStatut statut={ficheAction.statut} />
+                <BadgeStatut size="sm" statut={ficheAction.statut} />
               )}
               {ficheAction.niveau_priorite && (
-                <BadgePriorite priorite={ficheAction.niveau_priorite} />
+                <BadgePriorite
+                  size="sm"
+                  priorite={ficheAction.niveau_priorite}
+                />
               )}
             </div>
           )}
