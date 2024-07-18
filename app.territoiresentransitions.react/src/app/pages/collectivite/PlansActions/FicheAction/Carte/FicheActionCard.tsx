@@ -48,12 +48,6 @@ const FicheActionCard = ({
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const {mutate: deleteFiche} = useDeleteFicheAction({
-    ficheId: ficheAction.id!,
-    axeId: axeId || null,
-    keysToInvalidate: editKeysToInvalidate,
-  });
-
   const carteId = `fiche-${ficheAction.id}`;
 
   const getModifiedSince = (date: string) => {
@@ -127,6 +121,8 @@ const FicheActionCard = ({
             isInMultipleAxes={
               !!ficheAction.plans && ficheAction.plans.length > 1
             }
+            axeId={axeId || null}
+            keysToInvalidate={editKeysToInvalidate}
             buttonClassName="invisible group-hover:visible"
             buttonVariant="grey"
           />
