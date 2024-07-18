@@ -42,7 +42,7 @@ export type InputBaseProps = Omit<
   containerClassname?: string;
 };
 
-type IconContent =
+export type IconContent =
   // affiche un composant `Icon`
   | {value?: IconValue}
   // affiche un texte
@@ -79,7 +79,7 @@ export const InputBase = forwardRef(
           type={type}
           ref={ref}
           className={classNames(
-            'grow text-grey-8 px-4 outline-none',
+            'grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs',
             {
               'text-sm py-2': displaySize === 'sm',
               'text-md py-3': displaySize === 'md',
