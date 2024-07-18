@@ -7,7 +7,7 @@ import {
   startOfToday,
 } from 'date-fns';
 
-import {Notification} from '@tet/ui';
+import {Icon, Notification, Tooltip} from '@tet/ui';
 
 import {FicheResume} from '../data/types';
 import {generateTitle} from '../data/utils';
@@ -174,13 +174,27 @@ const FicheActionCard = ({
             Modifié {getModifiedSince(ficheAction.modified_at!)}
           </span>
           {(ficheAction.pilotes?.length || ficheAction.date_fin_provisoire) && (
-            <div className="flex items-center gap-4 flex-wrap text-sm text-primary">
+            <div className="flex items-center gap-4 flex-wrap text-sm text-grey-8">
               {ficheAction.pilotes?.length && (
                 <div className="flex items-start" title="Pilotes">
-                  <span className="fr-icon-user-line mr-1.5 before:!w-4" />
-                  <span className="mt-0.5">
-                    {ficheAction.pilotes.map(pilote => pilote.nom).join(' | ')}
-                  </span>
+                  <Icon icon="user-line" size="sm" className="mr-1.5" />
+                  {ficheAction.pilotes[0].nom}
+                  {ficheAction.pilotes.length > 1 && (
+                    <Tooltip
+                      label={
+                        <div className="flex flex-col gap-1">
+                          {ficheAction.pilotes.map((pilote, i) => (
+                            <span key={i}>{pilote.nom}</span>
+                          ))}
+                        </div>
+                      }
+                      openingDelay={250}
+                    >
+                      <span className="ml-1.5 font-medium text-primary-8">
+                        +{ficheAction.pilotes.length - 1}
+                      </span>
+                    </Tooltip>
+                  )}
                 </div>
               )}
               {ficheAction.date_fin_provisoire && (
