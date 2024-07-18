@@ -102,12 +102,7 @@ const ModalIndicateursSuiviPlan = ({
             </Field>
             <Field title="Thématique de l'indicateur :">
               <ThematiquesDropdown
-                values={
-                  filtreState.thematiqueIds &&
-                  filtreState.thematiqueIds.length > 0
-                    ? filtreState.thematiqueIds
-                    : undefined
-                }
+                values={filtreState.thematiqueIds}
                 onChange={({thematiques}) =>
                   setFiltreState({
                     ...filtreState,
