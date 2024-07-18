@@ -51,22 +51,31 @@ const ModalFiltresToutesLesFichesAction = ({
               <PersonnesDropdown
                 values={pilotes}
                 onChange={({personnes}) => {
+                  const {personnePiloteIds, utilisateurPiloteIds, ...rest} =
+                    filtreState;
+                  const {personnePiloteIds: pIds, utilisateurPiloteIds: uIds} =
+                    splitPilotePersonnesAndUsers(personnes);
                   setFiltreState({
-                    ...filtreState,
-                    ...splitPilotePersonnesAndUsers(personnes),
+                    ...rest,
+                    ...(pIds.length > 0 ? {personnePiloteIds: pIds} : {}),
+                    ...(uIds.length > 0
+                      ? {
+                          utilisateurPiloteIds: uIds,
+                        }
+                      : {}),
                   });
                 }}
               />
             </Field>
             <Field title="Direction ou service pilote">
               <ServicesPilotesDropdown
-                values={
-                  filtreState.servicePiloteIds?.length
-                    ? filtreState.servicePiloteIds
-                    : undefined
-                }
+                values={filtreState.servicePiloteIds}
                 onChange={({services}) => {
-                  setFiltreState({...filtreState, servicePiloteIds: services});
+                  const {servicePiloteIds, ...rest} = filtreState;
+                  setFiltreState({
+                    ...rest,
+                    ...(services ? {servicePiloteIds: services} : {}),
+                  });
                 }}
               />
             </Field>
@@ -98,30 +107,27 @@ const ModalFiltresToutesLesFichesAction = ({
             </FormSectionGrid>
             <Field title="Thématique">
               <ThematiquesDropdown
-                values={
-                  filtreState.thematiqueIds &&
-                  filtreState.thematiqueIds.length > 0
-                    ? filtreState.thematiqueIds
-                    : undefined
-                }
-                onChange={({thematiques}) =>
+                values={filtreState.thematiqueIds}
+                onChange={({thematiques}) => {
+                  const {thematiqueIds, ...rest} = filtreState;
                   setFiltreState({
-                    ...filtreState,
-                    thematiqueIds: thematiques.map(t => t.id),
-                  })
-                }
+                    ...rest,
+                    ...(thematiques.length > 0
+                      ? {thematiqueIds: thematiques.map(t => t.id)}
+                      : {}),
+                  });
+                }}
               />
             </Field>
             <Field title="Financeur">
               <FinanceursDropdown
-                values={
-                  filtreState.financeurIds &&
-                  filtreState.financeurIds.length > 0
-                    ? filtreState.financeurIds
-                    : undefined
-                }
+                values={filtreState.financeurIds}
                 onChange={({financeurs}) => {
-                  setFiltreState({...filtreState, financeurIds: financeurs});
+                  const {financeurIds, ...rest} = filtreState;
+                  setFiltreState({
+                    ...rest,
+                    ...(financeurs ? {financeurIds: financeurs} : {}),
+                  });
                 }}
               />
             </Field>
@@ -130,9 +136,20 @@ const ModalFiltresToutesLesFichesAction = ({
             <PersonnesDropdown
               values={referents}
               onChange={({personnes}) => {
+                const {personneReferenteIds, utilisateurReferentIds, ...rest} =
+                  filtreState;
+                const {
+                  personneReferenteIds: pIds,
+                  utilisateurReferentIds: uIds,
+                } = splitReferentPersonnesAndUsers(personnes);
                 setFiltreState({
-                  ...filtreState,
-                  ...splitReferentPersonnesAndUsers(personnes),
+                  ...rest,
+                  ...(pIds.length > 0 ? {personneReferenteIds: pIds} : {}),
+                  ...(uIds.length > 0
+                    ? {
+                        utilisateurReferentIds: uIds,
+                      }
+                    : {}),
                 });
               }}
             />
@@ -140,32 +157,35 @@ const ModalFiltresToutesLesFichesAction = ({
           <Checkbox
             label="Budget renseigné"
             checked={filtreState.budgetPrevisionnel}
-            onChange={() =>
+            onChange={() => {
+              const {budgetPrevisionnel, ...rest} = filtreState;
               setFiltreState({
-                ...filtreState,
-                budgetPrevisionnel: !filtreState.budgetPrevisionnel,
-              })
-            }
+                ...rest,
+                ...(!budgetPrevisionnel ? {budgetPrevisionnel: true} : {}),
+              });
+            }}
           />
           <Checkbox
             label="Confidentialité"
             checked={filtreState.restreint}
-            onChange={() =>
+            onChange={() => {
+              const {restreint, ...rest} = filtreState;
               setFiltreState({
-                ...filtreState,
-                restreint: !filtreState.restreint,
-              })
-            }
+                ...rest,
+                ...(!restreint ? {restreint: true} : {}),
+              });
+            }}
           />
           <Checkbox
             label="Indicateur(s) lié"
             checked={filtreState.hasIndicateurLies}
-            onChange={() =>
+            onChange={() => {
+              const {hasIndicateurLies, ...rest} = filtreState;
               setFiltreState({
-                ...filtreState,
-                hasIndicateurLies: !filtreState.hasIndicateurLies,
-              })
-            }
+                ...rest,
+                ...(!hasIndicateurLies ? {hasIndicateurLies: true} : {}),
+              });
+            }}
           />
         </>
       )}
