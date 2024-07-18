@@ -6,7 +6,6 @@ import {
   TFicheAction,
   TFinanceurTagInsert,
   TFinanceurMontant,
-  TFicheResume,
   TThematiqueRow,
   TSousThematiqueRow,
   TFicheActionStructureRow,
