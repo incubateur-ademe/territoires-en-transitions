@@ -1,12 +1,15 @@
+import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import DocumentPicto from './DocumentPicto';
 import NotesPicto from './NotesPicto';
 
 type NotesEtDocumentsTabProps = {
-  notes: string | null;
+  fiche: FicheAction;
 };
 
-const NotesEtDocumentsTab = ({notes}: NotesEtDocumentsTabProps) => {
+const NotesEtDocumentsTab = ({fiche}: NotesEtDocumentsTabProps) => {
+  const {notes_complementaires: notes} = fiche;
+
   const isEmpty = !notes;
 
   return isEmpty ? (
