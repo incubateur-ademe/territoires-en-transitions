@@ -1,18 +1,18 @@
-import {Financeur} from '../../FicheAction/data/types';
+import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import MoneyPicto from './MoneyPicto';
 
 type BudgetTabProps = {
-  budgetPrevisionnel: number | null;
-  financeurs: Financeur[];
-  financements: string | null;
+  fiche: FicheAction;
 };
 
-const BudgetTab = ({
-  budgetPrevisionnel,
-  financeurs,
-  financements,
-}: BudgetTabProps) => {
+const BudgetTab = ({fiche}: BudgetTabProps) => {
+  const {
+    budget_previsionnel: budgetPrevisionnel,
+    financeurs,
+    financements,
+  } = fiche;
+
   const isEmpty =
     budgetPrevisionnel === null &&
     (!financeurs || financeurs.length === 0) &&

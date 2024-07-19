@@ -1,12 +1,14 @@
-import {FicheResume} from '../../FicheAction/data/types';
+import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import FichePicto from './FichePicto';
 
 type FichesLieesTabProps = {
-  fiches: FicheResume[] | null;
+  fiche: FicheAction;
 };
 
-const FichesLieesTab = ({fiches}: FichesLieesTabProps) => {
+const FichesLieesTab = ({fiche}: FichesLieesTabProps) => {
+  const {fiches_liees: fiches} = fiche;
+
   const isEmpty = !fiches || fiches.length === 0;
 
   return isEmpty ? (
