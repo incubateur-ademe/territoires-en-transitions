@@ -1,12 +1,14 @@
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import DatavizPicto from './DatavizPicto';
 
 type IndicateursTabProps = {
-  indicateurs: Indicateur[] | null;
+  fiche: FicheAction;
 };
 
-const IndicateursTab = ({indicateurs}: IndicateursTabProps) => {
+const IndicateursTab = ({fiche}: IndicateursTabProps) => {
+  const {indicateurs} = fiche;
+
   const isEmpty = indicateurs === null || indicateurs.length === 0;
 
   return isEmpty ? (
