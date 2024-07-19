@@ -21,33 +21,29 @@ const FicheActionOnglets = ({fiche, className}: FicheActionOngletsProps) => {
 
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
-        <IndicateursTab indicateurs={fiche.indicateurs} />
+        <IndicateursTab fiche={fiche} />
       </Tab>
 
       {/* TODO: Notes de suivi */}
 
       {/* Budget */}
       <Tab label="Budget">
-        <BudgetTab
-          budgetPrevisionnel={fiche.budget_previsionnel}
-          financeurs={fiche.financeurs}
-          financements={fiche.financements}
-        />
+        <BudgetTab fiche={fiche} />
       </Tab>
 
       {/* Fiches des plans liées */}
       <Tab label="Fiches des plans liées">
-        <FichesLieesTab fiches={fiche.fiches_liees} />
+        <FichesLieesTab fiche={fiche} />
       </Tab>
 
       {/* Actions des référentiels liées */}
       <Tab label="Actions des référentiels liées">
-        <ActionsLieesTab actions={fiche.actions} />
+        <ActionsLieesTab fiche={fiche} />
       </Tab>
 
       {/* Notes et documents */}
       <Tab label="Notes et documents ">
-        <NotesEtDocumentsTab notes={fiche.notes_complementaires} />
+        <NotesEtDocumentsTab fiche={fiche} />
       </Tab>
     </Tabs>
   );

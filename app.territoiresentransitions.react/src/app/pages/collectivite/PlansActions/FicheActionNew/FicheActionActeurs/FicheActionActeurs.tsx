@@ -45,7 +45,7 @@ const FicheActionActeurs = ({
       {!isEmpty ? (
         <div
           className={classNames(
-            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 relative flex flex-col tems-start gap-y-3 gap-x-6',
+            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 relative flex flex-col items-start gap-y-3 gap-x-6',
             className
           )}
         >
