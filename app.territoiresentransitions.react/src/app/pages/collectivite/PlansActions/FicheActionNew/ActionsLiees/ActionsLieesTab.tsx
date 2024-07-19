@@ -1,12 +1,14 @@
-import {TActionInsert} from 'types/alias';
+import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import ActionPicto from './ActionPicto';
 
 type ActionsLieesTabProps = {
-  actions: TActionInsert[] | null;
+  fiche: FicheAction;
 };
 
-const ActionsLieesTab = ({actions}: ActionsLieesTabProps) => {
+const ActionsLieesTab = ({fiche}: ActionsLieesTabProps) => {
+  const {actions} = fiche;
+
   const isEmpty = !actions || actions.length === 0;
 
   return isEmpty ? (
