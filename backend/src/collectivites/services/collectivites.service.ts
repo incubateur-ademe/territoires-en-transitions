@@ -29,13 +29,9 @@ export default class CollectivitesService {
   }
 
   async getEpciBySiren(siren: string) {
-    return this.databaseService.db
-      .select()
-      .from(this.epciTable)
-      .leftJoin(
-        this.collectiviteTable,
-        eq(this.epciTable.collectivite_id, this.collectiviteTable.id),
-      )
-      .where(eq(this.epciTable.siren, siren));
+    return this.databaseService.supabaseDb
+      .from('epci')
+      .select('*')
+      .eq('siren', siren);
   }
 }
