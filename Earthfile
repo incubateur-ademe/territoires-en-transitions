@@ -326,9 +326,9 @@ backend-deploy: ## Déploie le backend dans une app Koyeb existante
         --docker $BACKEND_IMG_NAME \
         --env GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA \
         --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
-        --env DATABASE_URL=@SUPABASE_DATABASE_URL_PREPROD \
-        --env SUPABASE_URL=@SUPABASE_URL_PREPROD \
-        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_PREPROD
+        --env DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
+        --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
+        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
