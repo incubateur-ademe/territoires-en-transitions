@@ -31,6 +31,7 @@ ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
 
 postgres:
     FROM postgres:15
@@ -317,6 +318,11 @@ backend-build:
  
     CMD ["node", "backend/dist/main.js"]
     SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
+
+backend-deploy: ## Déploie le backend dans une app Koyeb existante
+    ARG --required KOYEB_API_KEY
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-backend/backend --docker $BACKEND_IMG_NAME --env GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
