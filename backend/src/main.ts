@@ -1,5 +1,5 @@
 // WARNING: Do this import first
-import './common/configs/SentryInit';
+import './common/services/sentry.service';
 import * as Sentry from '@sentry/nestjs';
 import {
   BaseExceptionFilter,
@@ -7,7 +7,7 @@ import {
   NestFactory,
 } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SENTRY_DSN } from './common/configs/SentryInit';
+import { SENTRY_DSN } from './common/services/sentry.service';
 import * as fs from 'fs';
 
 const port = process.env.PORT || 8080;
@@ -29,6 +29,11 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
+
+  // Seulement une v1 pour l'instant
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['version'],
+  });
 
   if (SENTRY_DSN) {
     console.log('Sentry enabled with DSN:', SENTRY_DSN);
