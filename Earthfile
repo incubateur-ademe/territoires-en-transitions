@@ -322,7 +322,7 @@ backend-build:
 backend-deploy: ## Déploie le backend dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
     FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-backend/backend --docker $BACKEND_IMG_NAME --env GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
+    RUN ./koyeb services update $ENV_NAME-backend/backend --docker $BACKEND_IMG_NAME --env GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
