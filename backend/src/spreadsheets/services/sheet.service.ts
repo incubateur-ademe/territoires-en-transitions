@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as auth from 'google-auth-library';
 import { google, sheets_v4, drive_v3 } from 'googleapis';
 import * as retry from 'async-retry';
@@ -10,6 +10,8 @@ const drive = google.drive({ version: 'v3' });
 
 @Injectable()
 export default class SheetService {
+  private readonly logger = new Logger(SheetService.name);
+
   readonly RETRY_STRATEGY: retry.Options = {
     minTimeout: 60000, // Wait for 1min due to sheet api quota limitation
   };
@@ -107,7 +109,9 @@ export default class SheetService {
     const authClient = await this.getAuthClient();
     await retry(async (bail, num): Promise<void> => {
       try {
-        //logger.info(`Overwrite data to sheet ${spreadsheetId} (attempt ${num})`);
+        this.logger.log(
+          `Overwrite data to sheet ${spreadsheetId} (attempt ${num})`,
+        );
         await sheets.spreadsheets.values.update({
           auth: authClient,
           spreadsheetId,
