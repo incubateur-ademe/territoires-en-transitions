@@ -43,3 +43,29 @@ jobs:
           --platform=linux/amd64 
           +backend-build
           --ENV_NAME=${{ github.event.inputs.target }}
+
+  deploy-backend:
+    name: Déploie le backend
+    needs: build-backend
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.7.20
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Deploy app on Koyeb
+        run: >
+          earthly 
+          --use-inline-cache 
+          +backend-deploy
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
