@@ -9,17 +9,16 @@ import {
 import { AppModule } from './app.module';
 import { SENTRY_DSN } from './common/services/sentry.service';
 import * as fs from 'fs';
+import { Logger } from '@nestjs/common';
 
+const logger = new Logger('main');
 const port = process.env.PORT || 8080;
-console.log(`Launching NestJS app on port ${port}`);
+logger.log(`Launching NestJS app on port ${port}`);
 
 async function bootstrap() {
   if (process.env.GCLOUD_SERVICE_ACCOUNT_KEY) {
     const serviceAccountFile = `${__dirname}/keyfile.json`;
-    console.log(
-      'Writing Google Cloud credentials to file:',
-      serviceAccountFile,
-    );
+    logger.log('Writing Google Cloud credentials to file:', serviceAccountFile);
     fs.writeFileSync(
       serviceAccountFile,
       process.env.GCLOUD_SERVICE_ACCOUNT_KEY,
@@ -36,7 +35,7 @@ async function bootstrap() {
   });
 
   if (SENTRY_DSN) {
-    console.log('Sentry enabled with DSN:', SENTRY_DSN);
+    logger.log('Sentry enabled with DSN: ', SENTRY_DSN);
     Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
   }
 
