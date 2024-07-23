@@ -1,15 +1,15 @@
 // WARNING: Do this import first
-import './common/services/sentry.service';
-import * as Sentry from '@sentry/nestjs';
+import { Logger } from '@nestjs/common';
 import {
   BaseExceptionFilter,
   HttpAdapterHost,
   NestFactory,
 } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { SENTRY_DSN } from './common/services/sentry.service';
+import * as Sentry from '@sentry/nestjs';
 import * as fs from 'fs';
-import { Logger } from '@nestjs/common';
+import { AppModule } from './app.module';
+import './common/services/sentry.service';
+import { SENTRY_DSN } from './common/services/sentry.service';
 
 const logger = new Logger('main');
 const port = process.env.PORT || 8080;
