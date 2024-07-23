@@ -273,6 +273,8 @@ node-fr: ## construit l'image de base pour les images utilisant node
 
 front-deps: ## construit l'image contenant les dépendances des modules front
     FROM +node-fr
+    # tsconfig global
+    COPY ./tsconfig.json ./
     # dépendances globales
     COPY ./package.json ./
     COPY ./package-lock.json ./
@@ -297,6 +299,7 @@ backend-pre-build:
     FROM +front-deps
 
     COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
+    COPY --chown=node:node $API_DIR/. $API_DIR
     RUN npm run build:backend && npm prune --omit=dev
 
     SAVE ARTIFACT . /app
@@ -316,7 +319,7 @@ backend-build:
  
     EXPOSE ${PORT}
  
-    CMD ["node", "backend/dist/main.js"]
+    CMD ["node", "backend/dist/backend/src/main.js"]
     SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
 
 backend-deploy: ## Déploie le backend dans une app Koyeb existante
