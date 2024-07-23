@@ -69,3 +69,4 @@ jobs:
           +backend-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}

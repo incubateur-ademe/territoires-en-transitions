@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as auth from 'google-auth-library';
-import { google, sheets_v4, drive_v3 } from 'googleapis';
 import * as retry from 'async-retry';
 import * as gaxios from 'gaxios';
-import SheetValueRenderOption from '../models/SheetValueRenderOption';
+import * as auth from 'google-auth-library';
+import { drive_v3, google, sheets_v4 } from 'googleapis';
 import SheetValueInputOption from '../models/SheetValueInputOption';
+import SheetValueRenderOption from '../models/SheetValueRenderOption';
 const sheets = google.sheets({ version: 'v4' });
 const drive = google.drive({ version: 'v3' });
 
@@ -45,6 +45,10 @@ export default class SheetService {
   async copyFile(fileId: string, copyTitle: string): Promise<string> {
     const authClient = await this.getAuthClient();
 
+    this.logger.log(
+      `Copie du Spreadsheet ${fileId} vers un nouveau fichier avec le nom ${copyTitle}`,
+    );
+
     const copyOptions: drive_v3.Params$Resource$Files$Copy = {
       auth: authClient,
       fileId: fileId,
@@ -54,6 +58,16 @@ export default class SheetService {
     };
     const copyResponse = await drive.files.copy(copyOptions);
     return copyResponse.data.id!;
+  }
+
+  async deleteFile(fileId: string) {
+    const authClient = await this.getAuthClient();
+    const deleteOptions: drive_v3.Params$Resource$Files$Delete = {
+      auth: authClient,
+      fileId: fileId,
+    };
+    await drive.files.delete(deleteOptions);
+    this.logger.log(`Spreadsheet ${fileId} correctement supprimé.`);
   }
 
   async getRawDataFromSheet(
@@ -110,7 +124,7 @@ export default class SheetService {
     await retry(async (bail, num): Promise<void> => {
       try {
         this.logger.log(
-          `Overwrite data to sheet ${spreadsheetId} (attempt ${num})`,
+          `Overwrite data to sheet ${spreadsheetId} in range ${range} (attempt ${num})`,
         );
         await sheets.spreadsheets.values.update({
           auth: authClient,
@@ -137,30 +151,5 @@ export default class SheetService {
         bail(error as Error);
       }
     }, this.RETRY_STRATEGY);
-  }
-
-  async testDownload() {
-    console.log('Copying file...');
-    const fileCopyId = await this.copyFile(
-      '1_l9NkgNIefC4BZLMhZ20GzrG3xlH2kxuH2vFzCgDFw8',
-      'Trajectoire SNBC Territorialisée - Compute',
-    );
-
-    console.log('File copied with id:', fileCopyId);
-
-    const epciCode = 200043495;
-    // Write the epci code
-    await this.overwriteRawDataToSheet(fileCopyId, 'Caract_territoire!F6', [
-      [epciCode],
-    ]);
-
-    // Getting computed data from spreadsheet
-    const data = await this.getRawDataFromSheet(
-      fileCopyId,
-      'Caract_territoire!F1239',
-      SheetValueRenderOption.UNFORMATTED_VALUE,
-    );
-
-    return data;
   }
 }
