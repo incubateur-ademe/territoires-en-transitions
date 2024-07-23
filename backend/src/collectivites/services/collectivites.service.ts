@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
-import DatabaseService from 'src/common/services/database.service';
+import DatabaseService from '../../common/services/database.service';
 
 @Injectable()
 export default class CollectivitesService {
@@ -29,9 +29,9 @@ export default class CollectivitesService {
   }
 
   async getEpciBySiren(siren: string) {
-    return this.databaseService.supabaseDb
-      .from('epci')
-      .select('*')
-      .eq('siren', siren);
+    return this.databaseService.db
+      .select()
+      .from(this.epciTable)
+      .where(eq(this.epciTable.siren, siren));
   }
 }
