@@ -2172,15 +2172,6 @@ values
     ('vue', 'indicateurs', 'edition', 'non', 'oui', 'non', 'non'),
     ('vue', 'indicateurs', 'admin', 'non', 'oui', 'non', 'non'),
     ('vue', 'indicateurs', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Vue indicateurs_collectivite
-    ('vue', 'indicateurs_collectivite', 'public', 'non', 'non', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'connecte', 'non', 'non', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'verifie', 'non', 'restreint', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'support', 'non', 'oui', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'edition', 'non', 'oui', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'indicateurs_collectivite', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue mes_collectivites
     ('vue', 'mes_collectivites', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'mes_collectivites', 'connecte', 'non', 'soi', 'non', 'non'),

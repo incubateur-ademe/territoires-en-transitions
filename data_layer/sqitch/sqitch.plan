@@ -689,3 +689,4 @@ indicateur/fusion 2024-05-10T12:26:07Z Amandine Jacquelin <conta@LanceLibre> # F
 plan_action/fiches [plan_action/fiches@v4.0.0] 2024-07-18T12:26:04Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Vue toutes les fiches action
 @v4.1.0 2024-07-23T13:06:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Vue toutes les fiches action
 
+indicateur/fusion [indicateur/fusion@v4.0.0] 2024-07-23T08:37:40Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime des types inutiles
