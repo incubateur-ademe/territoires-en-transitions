@@ -324,6 +324,7 @@ backend-build:
 
 backend-deploy: ## Déploie le backend dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
+    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-backend/backend \
         --docker $BACKEND_IMG_NAME \
@@ -331,7 +332,8 @@ backend-deploy: ## Déploie le backend dans une app Koyeb existante
         --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
         --env DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
         --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
-        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
+        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
+        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
