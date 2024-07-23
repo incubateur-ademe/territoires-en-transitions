@@ -1,13 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { SheetModule } from './spreadsheets/sheet.module';
-import { CommonModule } from './common/common.module';
+import { ConfigModule } from '@nestjs/config';
 import { CollectivitesModule } from './collectivites/collectivites.module';
+import { CommonModule } from './common/common.module';
+import { IndicateursModule } from './indicateurs/indicateurs.module';
+import { SheetModule } from './spreadsheets/sheet.module';
 
 @Module({
-  imports: [CommonModule, SheetModule, CollectivitesModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
+    }),
+    CommonModule,
+    SheetModule,
+    CollectivitesModule,
+    IndicateursModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
