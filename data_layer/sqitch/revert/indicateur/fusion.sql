@@ -2,6 +2,7 @@
 
 BEGIN;
 
+
 -- Recrée le type indicateur_generique
 create type indicateur_generique as
 (
