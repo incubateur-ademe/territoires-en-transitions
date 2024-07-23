@@ -687,3 +687,5 @@ indicateur/fusion 2024-05-10T12:26:07Z Amandine Jacquelin <conta@LanceLibre> # F
 @v4.0.0 2024-07-17T06:12:39Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Nouveau modèle indicateur. Fusionne les indicateurs predefini et personnalisés. Fusionne les résultats et objectifs.
 
 plan_action/fiches [plan_action/fiches@v4.0.0] 2024-07-18T12:26:04Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Vue toutes les fiches action
+@v4.1.0 2024-07-23T13:06:12Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Vue toutes les fiches action
+
