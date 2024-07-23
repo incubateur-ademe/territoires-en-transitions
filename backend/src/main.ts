@@ -1,5 +1,5 @@
 // WARNING: Do this import first
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import {
   BaseExceptionFilter,
   HttpAdapterHost,
@@ -28,6 +28,13 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
+
+  // TODO: configure validation
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidUnknownValues: true,
+    }),
+  );
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
