@@ -1,5 +1,5 @@
-import {NextRequest, NextResponse} from 'next/server';
 import {isAllowedOrigin} from '@tet/api';
+import {NextRequest, NextResponse} from 'next/server';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP et CORS
@@ -35,7 +35,8 @@ export function middleware(request: NextRequest) {
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
+      http://localhost:8080
       ws://${request.nextUrl.host}
       *.posthog.com;
     base-uri 'self';
