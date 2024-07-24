@@ -6,7 +6,7 @@
  */
 export const getRootDomain = (hostname: string) => {
   const parts = hostname.split('.');
-  return parts.length > 2 ? parts.toSpliced(0, 1).join('.') : hostname;
+  return parts.length > 2 ? parts.slice(1).join('.') : hostname;
 };
 
 /**
@@ -83,9 +83,17 @@ export const getRejoindreCollectivitePath = (
 };
 
 /** Donne l'url d'une page collectivité */
-export const getCollectivitePath = (hostname: string, collectivite_id: number) =>
-  `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
+export const getCollectivitePath = (
+  hostname: string,
+  collectivite_id: number
+) => `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
 
-  /** Donne l'url d'un plan d'action */
-export const getCollectivitePlanPath = (hostname: string, collectivite_id: number, plan_id: number) =>
-  `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+/** Donne l'url d'un plan d'action */
+export const getCollectivitePlanPath = (
+  hostname: string,
+  collectivite_id: number,
+  plan_id: number
+) =>
+  `${getAppBaseUrl(
+    hostname
+  )}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;

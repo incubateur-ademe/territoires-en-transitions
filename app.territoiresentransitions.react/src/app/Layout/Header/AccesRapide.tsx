@@ -1,7 +1,8 @@
-import {signInPath, signUpPath} from 'app/paths';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import { trpc } from '@tet/api/src/trpc';
+import { signUpPath } from 'app/paths';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import MenuUtilisateur from './MenuUtilisateur';
-import {HeaderPropsWithModalState} from './types';
+import { HeaderPropsWithModalState } from './types';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
@@ -32,11 +33,15 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
           <li>
             <a
               data-test="signin"
-              href={signInPath}
               className="fr-btn fr-icon-account-line"
-              onClick={() => setModalOpened(false)}
+              onClick={() => {
+                console.log("Test")
+                trpc.trajectoires.snbc.query({ collectivite_id: 3828 });
+
+                setModalOpened(false)
+              }}
             >
-              Se connecter
+              Se connecter 
             </a>
           </li>
         </>

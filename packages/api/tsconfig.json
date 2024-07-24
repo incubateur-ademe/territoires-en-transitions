@@ -1,24 +1,22 @@
 {
+  "extends": "../../tsconfig.json", // Extend the config options from the root,
   "compilerOptions": {
     "module": "commonjs",
-    "target": "esnext",
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "target": "ES2021",
+    "strictPropertyInitialization": false,
+    //"esModuleInterop": true, // TODO: check why this is not working
     "noEmit": false,
     "moduleResolution": "node",
     "isolatedModules": true,
-    "composite": true,
+    //"composite": true, // TODO: check why this is not working
     "allowJs": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist"
+    "outDir": "./dist"
   },
   "include": ["**/*.ts", "vitest.config.mts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist",
+            "./backend/src/spreadsheets/services/sheet.service.ts"]
 }
