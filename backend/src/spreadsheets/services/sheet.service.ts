@@ -80,7 +80,10 @@ export default class SheetService {
     const authClient = await this.getAuthClient();
 
     const sheetValues = await retry(
-      async (bail, num): Promise<sheets_v4.Schema$ValueRange | undefined> => {
+      async (
+        bail: (e: Error) => void,
+        num: number,
+      ): Promise<sheets_v4.Schema$ValueRange | undefined> => {
         try {
           const getOptions: sheets_v4.Params$Resource$Spreadsheets$Values$Get =
             {
@@ -121,35 +124,38 @@ export default class SheetService {
     valueInputOption?: SheetValueInputOption,
   ) {
     const authClient = await this.getAuthClient();
-    await retry(async (bail, num): Promise<void> => {
-      try {
-        this.logger.log(
-          `Overwrite data to sheet ${spreadsheetId} in range ${range} (attempt ${num})`,
-        );
-        await sheets.spreadsheets.values.update({
-          auth: authClient,
-          spreadsheetId,
-          range: range,
-          valueInputOption: valueInputOption || SheetValueInputOption.RAW,
-          requestBody: {
-            values: data,
-          },
-        });
-      } catch (error) {
-        //logger.exception(error);
-        if (error instanceof gaxios.GaxiosError) {
-          //const gaxiosError = error as gaxios.GaxiosError;
-          /*logger.error(
+    await retry(
+      async (bail: (e: Error) => void, num: number): Promise<void> => {
+        try {
+          this.logger.log(
+            `Overwrite data to sheet ${spreadsheetId} in range ${range} (attempt ${num})`,
+          );
+          await sheets.spreadsheets.values.update({
+            auth: authClient,
+            spreadsheetId,
+            range: range,
+            valueInputOption: valueInputOption || SheetValueInputOption.RAW,
+            requestBody: {
+              values: data,
+            },
+          });
+        } catch (error) {
+          //logger.exception(error);
+          if (error instanceof gaxios.GaxiosError) {
+            //const gaxiosError = error as gaxios.GaxiosError;
+            /*logger.error(
                       `Error while overwriting sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
                   );*/
-          if (error.status === 429) {
-            //logger.info(`Quota error, retrying`);
-            throw error;
+            if (error.status === 429) {
+              //logger.info(`Quota error, retrying`);
+              throw error;
+            }
           }
+          // No need to trigger retry if it's not a quota error
+          bail(error as Error);
         }
-        // No need to trigger retry if it's not a quota error
-        bail(error as Error);
-      }
-    }, this.RETRY_STRATEGY);
+      },
+      this.RETRY_STRATEGY,
+    );
   }
 }
