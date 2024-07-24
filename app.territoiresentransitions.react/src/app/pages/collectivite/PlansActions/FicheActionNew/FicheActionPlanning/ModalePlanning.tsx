@@ -15,7 +15,7 @@ import {FicheAction} from '../../FicheAction/data/types';
 import {
   ficheActionNiveauPrioriteOptions,
   ficheActionStatutOptions,
-} from '../../FicheAction/data/options/listesStatiques';
+} from 'ui/dropdownLists/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import {getIsoFormattedDate} from '../utils';
