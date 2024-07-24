@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
 import TrajectoiresService from '../service/trajectoires.service';
 
@@ -8,8 +8,16 @@ export class TrajectoiresController {
 
   constructor(private readonly trajectoiresService: TrajectoiresService) {}
 
-  @Get('snbc') // TODO: plutôt un post
+  @Get('snbc') // TODO: laisser uniquement le POST?
   calculeTrajectoireSnbc(@Query() request: CalculTrajectoireRequest) {
+    this.logger.log(
+      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+    );
+    return this.trajectoiresService.calculeTrajectoireSnbc(request);
+  }
+
+  @Post('snbc')
+  postCalculeTrajectoireSnbc(@Body() request: CalculTrajectoireRequest) {
     this.logger.log(
       `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );

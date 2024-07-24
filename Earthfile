@@ -32,6 +32,8 @@ ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 
 postgres:
     FROM postgres:15
@@ -310,6 +312,9 @@ backend-build:
  
     ENV NODE_ENV production
     ENV PORT 3000
+    ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
+    ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
+    ENV APPLICATION_VERSION=$APPLICATION_VERSION
  
     COPY --chown=node:node +backend-pre-build/app/package*.json .
     COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
@@ -328,7 +333,8 @@ backend-deploy: ## Déploie le backend dans une app Koyeb existante
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-backend/backend \
         --docker $BACKEND_IMG_NAME \
-        --env GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA \
+        --env ENV_NAME=$ENV_NAME \
+        --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
         --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
         --env DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
         --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
