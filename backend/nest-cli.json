@@ -4,6 +4,20 @@
   "sourceRoot": "src",
   "entryFile": "backend/src/main",
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "classValidatorShim": true,
+          "introspectComments": true,
+          "dtoFileNameSuffix": [
+            ".model.ts",
+            ".entity.ts",
+            ".request.ts"
+          ]
+        }
+      }
+    ],
     "deleteOutDir": true
   }
 }
