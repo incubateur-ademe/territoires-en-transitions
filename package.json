@@ -40,7 +40,8 @@
   "workspaces": [
     "packages/*",
     "app.territoiresentransitions.react",
-    "backend"
+    "backend",
+    "web"
   ],
   "overrides": {
     "react-refresh": "^0.11.0"

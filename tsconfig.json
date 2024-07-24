@@ -11,7 +11,10 @@
       "forceConsistentCasingInFileNames": true,
       "noFallthroughCasesInSwitch": true,
       "paths": {
-        "@library/*": ["./packages/api/src/*"]
+        "@library/*": ["./packages/api/src/*"],
+        "@backend/*": ["./backend/src/*"],
+        "@web/*": ["./web/*"],
+        "@app/*": ["./app.territoiresentransitions.react/src/*"],
       }
     }
   }
