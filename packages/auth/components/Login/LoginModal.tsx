@@ -1,7 +1,8 @@
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {LoginProps, LoginView} from './type';
-import {Login} from './Login';
+import { Modal } from '@tet/ui';
+import { useState } from 'react';
+import { trpc } from '../../app/trpc';
+import { Login } from './Login';
+import { LoginProps, LoginView } from './type';
 
 /**
  * Encapsule le panneau d'authentification dans une modale
@@ -10,7 +11,10 @@ export const LoginModal = (props: LoginProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const {view, onCancel} = props;
 
-  const onClose = () => {
+  const onClose = async () => {
+    const data = await trpc.trajectoires.snbc.query({
+      collectivite_id: 3828
+    })
     setIsOpen(false);
     onCancel();
   };
