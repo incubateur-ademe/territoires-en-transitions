@@ -5,6 +5,7 @@ import {
   HttpAdapterHost,
   NestFactory,
 } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as Sentry from '@sentry/nestjs';
 import * as fs from 'fs';
 import { AppModule } from './app.module';
@@ -45,6 +46,13 @@ async function bootstrap() {
     logger.log('Sentry enabled with DSN: ', SENTRY_DSN);
     Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
   }
+
+  const config = new DocumentBuilder()
+    .setTitle('Api Territoires en Transitions')
+    .setVersion(process.env.GIT_COMMIT_SHORT_SHA || 'dev') //  TODO: application tag
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs/v1', app, document);
 
   await app.listen(port);
 }
