@@ -11,6 +11,7 @@ import * as fs from 'fs';
 import { AppModule } from './app.module';
 import './common/services/sentry.service';
 import { SENTRY_DSN } from './common/services/sentry.service';
+import { TrpcRouter } from './trpc.router';
 
 const logger = new Logger('main');
 const port = process.env.PORT || 8080;
@@ -29,6 +30,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
+
+  app.enableCors();
 
   // TODO: configure validation
   app.useGlobalPipes(
@@ -53,6 +56,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs/v1', app, document);
+
+  // Configure tRPC
+  const trpc = app.get(TrpcRouter);
+  trpc.applyMiddleware(app);
 
   await app.listen(port);
 }
