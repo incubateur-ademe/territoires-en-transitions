@@ -1,6 +1,6 @@
 import {SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {ficheActionCiblesOptions} from 'app/pages/collectivite/PlansActions/FicheAction/data/options/listesStatiques';
 import {TFicheActionCibles} from 'types/alias';
+import {ficheActionCiblesOptions} from '../listesStatiques';
 
 type CiblesDropdownProps = Omit<
   SelectMultipleProps,
