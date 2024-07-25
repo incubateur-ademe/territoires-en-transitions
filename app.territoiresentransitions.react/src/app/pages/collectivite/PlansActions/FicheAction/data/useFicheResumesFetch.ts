@@ -9,7 +9,8 @@ type Props = {
   options?: FetchOptions;
 };
 
-export const useFicheResumesFetch = ({options}: Props) => {
+export const useFicheResumesFetch = (props?: Props) => {
+  const {options} = props || {};
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
