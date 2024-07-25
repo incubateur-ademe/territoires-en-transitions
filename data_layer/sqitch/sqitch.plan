@@ -691,5 +691,3 @@ plan_action/fiches [plan_action/fiches@v4.0.0] 2024-07-18T12:26:04Z Frederic Arn
 
 indicateur/fusion [indicateur/fusion@v4.0.0] 2024-07-23T08:37:40Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime des types inutiles
 plan_action/fiches [plan_action/fiches@v4.1.0] 2024-07-23T16:34:40Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tri par ordre alphabétique case insensitive
-@v4.2.0 2024-07-24T11:17:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.2.0
-
