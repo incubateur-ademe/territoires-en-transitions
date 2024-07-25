@@ -1,7 +1,6 @@
 import AutocompleteInputSelect from 'ui/shared/select/AutocompleteInputSelect';
 import {TOption, TOptionSection} from 'ui/shared/select/commons';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useFicheResumeListe} from '../data/useFicheResumeListe';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -12,6 +11,7 @@ import {generateTitle} from '../data/utils';
 import FicheActionCard from '../Carte/FicheActionCard';
 import {naturalSort} from 'utils/naturalSort';
 import {Field} from '@tet/ui';
+import {useFicheResumesFetch} from '../data/useFicheResumesFetch';
 
 type Props = {
   ficheCouranteId: number | null;
@@ -26,7 +26,9 @@ const FichesLiees = ({
   onSelect,
   isReadonly,
 }: Props) => {
-  const {data: ficheListe} = useFicheResumeListe();
+  const {data} = useFicheResumesFetch();
+  const ficheListe = data?.data || [];
+
   const collectiviteId = useCollectiviteId()!;
 
   const ficheListeSansFicheCourante = ficheListe?.filter(
