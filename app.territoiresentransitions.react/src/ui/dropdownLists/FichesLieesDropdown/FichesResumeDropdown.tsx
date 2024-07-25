@@ -9,7 +9,7 @@ import {naturalSort} from 'utils/naturalSort';
 import {TAxeInsert} from 'types/alias';
 import {FicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/types';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {useFichesResumeListe} from './useFichesResumeListe';
+import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 
 const sortByLabel = (a: Option, b: Option) => {
   if (!a.label) return -1;
@@ -37,7 +37,8 @@ const FichesResumeDropdown = ({
   ...props
 }: FichesResumeDropdownProps) => {
   // Liste de toutes les fiches
-  const {data: fichesListe} = useFichesResumeListe();
+  const {data, isLoading} = useFicheResumesFetch({});
+  const fichesListe = data?.data || [];
 
   // Liste des fiches hors fiche actuellement consultée
   const fichesDisponiblesListe = fichesListe?.filter(
