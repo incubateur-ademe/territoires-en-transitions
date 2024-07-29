@@ -47,7 +47,7 @@ const ModalFiltresToutesLesFichesAction = ({
       render={() => (
         <>
           <FormSection title="Nouveau filtre :" className="!grid-cols-1">
-            <Field title="Pilote">
+            <Field title="Personne pilote">
               <PersonnesDropdown
                 values={pilotes}
                 onChange={({personnes}) => {
@@ -79,6 +79,33 @@ const ModalFiltresToutesLesFichesAction = ({
                 }}
               />
             </Field>
+
+            <Field title="Élu·e référent·e">
+              <PersonnesDropdown
+                values={referents}
+                onChange={({personnes}) => {
+                  const {
+                    personneReferenteIds,
+                    utilisateurReferentIds,
+                    ...rest
+                  } = filtreState;
+                  const {
+                    personneReferenteIds: pIds,
+                    utilisateurReferentIds: uIds,
+                  } = splitReferentPersonnesAndUsers(personnes);
+                  setFiltreState({
+                    ...rest,
+                    ...(pIds.length > 0 ? {personneReferenteIds: pIds} : {}),
+                    ...(uIds.length > 0
+                      ? {
+                          utilisateurReferentIds: uIds,
+                        }
+                      : {}),
+                  });
+                }}
+              />
+            </Field>
+
             <FormSectionGrid>
               <Field title="Statut de l'action">
                 <StatutsFilterDropdown
@@ -132,30 +159,9 @@ const ModalFiltresToutesLesFichesAction = ({
               />
             </Field>
           </FormSection>
-          <Field title="Élu·e référent·e">
-            <PersonnesDropdown
-              values={referents}
-              onChange={({personnes}) => {
-                const {personneReferenteIds, utilisateurReferentIds, ...rest} =
-                  filtreState;
-                const {
-                  personneReferenteIds: pIds,
-                  utilisateurReferentIds: uIds,
-                } = splitReferentPersonnesAndUsers(personnes);
-                setFiltreState({
-                  ...rest,
-                  ...(pIds.length > 0 ? {personneReferenteIds: pIds} : {}),
-                  ...(uIds.length > 0
-                    ? {
-                        utilisateurReferentIds: uIds,
-                      }
-                    : {}),
-                });
-              }}
-            />
-          </Field>
+
           <Checkbox
-            label="Budget renseigné"
+            label="Budget prévisionnel total renseigné"
             checked={filtreState.budgetPrevisionnel}
             onChange={() => {
               const {budgetPrevisionnel, ...rest} = filtreState;
@@ -166,7 +172,7 @@ const ModalFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Confidentialité"
+            label="Fiche action en mode privé"
             checked={filtreState.restreint}
             onChange={() => {
               const {restreint, ...rest} = filtreState;
@@ -177,7 +183,7 @@ const ModalFiltresToutesLesFichesAction = ({
             }}
           />
           <Checkbox
-            label="Indicateur(s) lié"
+            label="Indicateur(s) lié(s)"
             checked={filtreState.hasIndicateurLies}
             onChange={() => {
               const {hasIndicateurLies, ...rest} = filtreState;

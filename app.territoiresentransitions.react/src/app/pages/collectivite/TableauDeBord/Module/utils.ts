@@ -36,16 +36,14 @@ export const filtersToBadges = (data: FiltreKeys) => {
     }
     if (key === 'thematiques') {
       badgeValues.push(
-        `${makePlural('Thématique', data[key]?.length)} : ${data[key]
+        `Thématique : ${data[key]
           ?.map(thematique => thematique.nom)
           .join(', ')}`
       );
     }
     if (key === 'planActions') {
       badgeValues.push(
-        `Plan${data[key] && data[key]!.length > 1 ? 's' : ''} d'action : ${data[
-          key
-        ]
+        `Plan d'action : ${data[key]
           ?.map(plan => generateTitle(plan.nom))
           .join(', ')}`
       );
@@ -60,34 +58,23 @@ export const filtersToBadges = (data: FiltreKeys) => {
       data[key] && badgeValues.push('Confidentialité');
     }
     if (key === 'hasIndicateurLies') {
-      data[key] && badgeValues.push('Indicateur(s) lié');
+      data[key] && badgeValues.push('Indicateur(s) lié(s)');
     }
     if (key === 'priorites') {
-      badgeValues.push(
-        `${makePlural('Priorité', data[key]?.length)} : ${data[key]?.join(
-          ', '
-        )}`
-      );
+      badgeValues.push(`Priorité : ${data[key]?.join(', ')}`);
     }
     if (key === 'statuts') {
-      badgeValues.push(
-        `${makePlural('Statut', data[key]?.length)} : ${data[key]?.join(', ')}`
-      );
+      badgeValues.push(`Statut : ${data[key]?.join(', ')}`);
     }
     if (key === 'servicePilotes') {
       badgeValues.push(
-        `${makePlural('Service', data[key]?.length)} ${makePlural(
-          'pilote',
-          data[key]?.length
-        )} : ${data[key]?.map(service => service.nom).join(', ')}`
+        `Direction ou service pilote : ${data[key]
+          ?.map(service => service.nom)
+          .join(', ')}`
       );
     }
     if (key === 'financeurs') {
-      badgeValues.push(
-        `${makePlural('Financeur', data[key]?.length)} : ${data[key]
-          ?.map(i => i.nom)
-          .join(', ')}`
-      );
+      badgeValues.push(`Financeur : ${data[key]?.map(i => i.nom).join(', ')}`);
     }
     if (key === 'modifiedSince') {
       badgeValues.push(
@@ -97,19 +84,12 @@ export const filtersToBadges = (data: FiltreKeys) => {
   });
 
   if (pilotes.length > 0) {
-    badgeValues.push(
-      `Pilote${pilotes.length > 1 ? 's' : ''} : ${pilotes.join(', ')}`
-    );
+    badgeValues.push(`Pilote : ${pilotes.join(', ')}`);
   }
 
   if (referents.length > 0) {
-    badgeValues.push(
-      `Référent${referents.length > 1 ? 's' : ''} : ${referents.join(', ')}`
-    );
+    badgeValues.push(`Élu·e référent·e : ${referents.join(', ')}`);
   }
 
   return badgeValues;
 };
-
-const makePlural = (word: string, count?: number) =>
-  count && count > 1 ? `${word}s` : word;

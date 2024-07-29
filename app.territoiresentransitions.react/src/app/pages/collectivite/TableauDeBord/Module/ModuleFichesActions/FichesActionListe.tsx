@@ -181,6 +181,15 @@ const FichesActionListe = ({
           <p className="text-primary-8">
             Aucune fiche action ne correspond à votre recherche
           </p>
+
+          <Button
+            size="sm"
+            onClick={() => {
+              setIsSettingsOpen(true);
+            }}
+          >
+            Modifier le filtre
+          </Button>
         </div>
       ) : (
         /** Liste des fiches actions */

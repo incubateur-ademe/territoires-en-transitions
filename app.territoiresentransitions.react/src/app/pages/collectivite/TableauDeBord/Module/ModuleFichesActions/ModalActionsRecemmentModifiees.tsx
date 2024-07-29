@@ -61,7 +61,7 @@ const ModalActionsRecemmentModifiees = ({
         <>
           <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Plans d'action :">
+            <Field title="Plans d'action">
               <SelectMultiple
                 values={filtreState.planActionIds}
                 options={
@@ -78,7 +78,7 @@ const ModalActionsRecemmentModifiees = ({
                 }
               />
             </Field>
-            <Field title="Pilote">
+            <Field title="Personne pilote">
               <PersonnesDropdown
                 values={pilotes}
                 onChange={({personnes}) => {
@@ -100,7 +100,7 @@ const ModalActionsRecemmentModifiees = ({
                 }
               />
             </Field>
-            <Field title="Période de modification : ">
+            <Field title="Période de modification">
               <Select
                 values={filtreState.modifiedSince}
                 options={ficheActionModifiedSinceOptions}
