@@ -7,6 +7,7 @@ import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Car
 import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   TDBViewParam,
+  makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
@@ -117,7 +118,10 @@ const ModuleFichesActions = ({view, module}: Props) => {
                         ficheUid: fiche.id!.toString(),
                         planActionUid: fiche.plans[0].id!.toString(),
                       })
-                    : undefined
+                    : makeCollectiviteFicheNonClasseeUrl({
+                        collectiviteId: collectiviteId!,
+                        ficheUid: fiche.id.toString(),
+                      })
                 }
               />
             )
