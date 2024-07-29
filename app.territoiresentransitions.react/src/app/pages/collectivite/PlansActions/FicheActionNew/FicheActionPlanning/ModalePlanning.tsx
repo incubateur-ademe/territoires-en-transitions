@@ -7,18 +7,12 @@ import {
   Input,
   Modal,
   ModalFooterOKCancel,
-  Select,
   Textarea,
 } from '@tet/ui';
-import {TFicheActionNiveauxPriorite, TFicheActionStatuts} from 'types/alias';
 import {FicheAction} from '../../FicheAction/data/types';
-import {
-  ficheActionNiveauPrioriteOptions,
-  ficheActionStatutOptions,
-} from 'ui/dropdownLists/listesStatiques';
-import BadgeStatut from '../../components/BadgeStatut';
-import BadgePriorite from '../../components/BadgePriorite';
 import {getIsoFormattedDate} from '../utils';
+import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 
 type ModalePlanningProps = {
   isOpen: boolean;
@@ -111,16 +105,12 @@ const ModalePlanning = ({
 
           {/* Statut */}
           <Field title="Statut" className="max-md:col-span-2">
-            <Select
-              options={ficheActionStatutOptions}
-              values={editedFiche.statut ?? []}
-              customItem={option => (
-                <BadgeStatut statut={option.label as TFicheActionStatuts} />
-              )}
-              onChange={value =>
+            <StatutsSelectDropdown
+              values={editedFiche.statut}
+              onChange={statut =>
                 setEditedFiche(prevState => ({
                   ...prevState,
-                  statut: value as TFicheActionStatuts,
+                  statut,
                 }))
               }
             />
@@ -128,18 +118,12 @@ const ModalePlanning = ({
 
           {/* Niveau de priorité */}
           <Field title="Niveau de priorité" className="max-md:col-span-2">
-            <Select
-              options={ficheActionNiveauPrioriteOptions}
-              values={editedFiche.niveau_priorite ?? []}
-              customItem={option => (
-                <BadgePriorite
-                  priorite={option.label as TFicheActionNiveauxPriorite}
-                />
-              )}
-              onChange={value =>
+            <PrioritesSelectDropdown
+              values={editedFiche.niveau_priorite}
+              onChange={priorite =>
                 setEditedFiche(prevState => ({
                   ...prevState,
-                  niveau_priorite: value as TFicheActionNiveauxPriorite,
+                  niveau_priorite: priorite,
                 }))
               }
             />
