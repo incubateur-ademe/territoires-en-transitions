@@ -28,7 +28,7 @@ const FicheActionOnglets = ({
 
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
-        <IndicateursTab fiche={fiche} />
+        <IndicateursTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
       {/* TODO: Notes de suivi */}
