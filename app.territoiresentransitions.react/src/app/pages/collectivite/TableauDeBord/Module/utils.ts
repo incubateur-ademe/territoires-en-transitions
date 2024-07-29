@@ -84,7 +84,7 @@ export const filtersToBadges = (data: FiltreKeys) => {
   });
 
   if (pilotes.length > 0) {
-    badgeValues.push(`Pilote : ${pilotes.join(', ')}`);
+    badgeValues.push(`Personne pilote : ${pilotes.join(', ')}`);
   }
 
   if (referents.length > 0) {
