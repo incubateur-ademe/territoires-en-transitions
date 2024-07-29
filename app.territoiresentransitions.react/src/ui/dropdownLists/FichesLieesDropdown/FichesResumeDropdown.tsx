@@ -37,7 +37,7 @@ const FichesResumeDropdown = ({
   ...props
 }: FichesResumeDropdownProps) => {
   // Liste de toutes les fiches
-  const {data, isLoading} = useFicheResumesFetch({});
+  const {data} = useFicheResumesFetch({});
   const fichesListe = data?.data || [];
 
   // Liste des fiches hors fiche actuellement consultée
