@@ -1,30 +1,25 @@
 import {differenceInCalendarDays, format} from 'date-fns';
+import {fr} from 'date-fns/locale';
 
-export const getFormattedDate = (date: string) => {
-  const localDate = date ? new Date(date) : new Date();
-  return localDate.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-  });
-};
-
+// Renvoie une date avec le mois en toutes lettres
 export const getTextFormattedDate = (date: string) => {
   const localDate = date ? new Date(date) : new Date();
-  return localDate.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  const dayOfMonth = format(localDate, 'd');
+
+  if (dayOfMonth === '1') {
+    return format(localDate, 'do MMMM yyyy', {locale: fr});
+  } else return format(localDate, 'd MMMM yyyy', {locale: fr});
 };
 
+// Renvoie le format ISO d'une date avec uniquement jour mois et année
 export const getIsoFormattedDate = (date: string) => {
   const localDate = date ? new Date(date) : new Date();
   return localDate.toISOString().slice(0, 10);
 };
 
+// Renvoie une durée entre une date donnée et aujourd'hui
 export const getModifiedSince = (date: string) => {
-  const modifiedDate = new Date(date);
+  const modifiedDate = date ? new Date(date) : new Date();
   const diff = differenceInCalendarDays(new Date(), modifiedDate);
 
   if (diff === 0) {
