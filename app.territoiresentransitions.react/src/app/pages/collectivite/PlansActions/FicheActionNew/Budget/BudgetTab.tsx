@@ -73,7 +73,16 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financeurs :
             </span>
-            <FinanceursListe financeurs={financeurs} />
+            {!!financeurs && financeurs.length ? (
+              <FinanceursListe financeurs={financeurs} />
+            ) : (
+              <Badge
+                title="Non renseigné"
+                state="standard"
+                uppercase={false}
+                light
+              />
+            )}
           </div>
 
           {/* Financements */}

@@ -3,7 +3,7 @@ import {Financeur} from '../../FicheAction/data/types';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdownSingle';
 
 type FinanceursInputProps = {
-  financeurs: Financeur[];
+  financeurs: Financeur[] | null;
   onUpdate: (financeurs: Financeur[]) => void;
 };
 
@@ -33,7 +33,7 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
                 placeholder="Ajouter un montant"
                 onValueChange={values =>
                   onUpdate(
-                    financeurs.map(f =>
+                    (financeurs ?? []).map(f =>
                       f.financeur_tag.id === financeur.financeur_tag.id
                         ? {
                             ...f,
@@ -51,7 +51,7 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
                 variant="grey"
                 onClick={() =>
                   onUpdate(
-                    financeurs.filter(
+                    (financeurs ?? []).filter(
                       f => f.financeur_tag.id !== financeur.financeur_tag.id
                     )
                   )
