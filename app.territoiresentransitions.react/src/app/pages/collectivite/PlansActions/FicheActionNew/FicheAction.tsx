@@ -1,4 +1,5 @@
 import {useParams} from 'react-router-dom';
+import {format} from 'date-fns';
 import {useFicheAction} from '../FicheAction/data/useFicheAction';
 import {useEditFicheAction} from '../FicheAction/data/useUpsertFicheAction';
 import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
@@ -7,7 +8,6 @@ import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import FicheActionOnglets from './FicheActionOnglets';
-import {getFormattedDate} from './utils';
 
 type FicheActionProps = {
   isReadonly: boolean;
@@ -62,7 +62,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
                 <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 h-14 text-sm text-primary-10 font-medium italic flex items-center max-md:justify-center">
                   <span>
                     Dernière modification le{' '}
-                    {getFormattedDate(fiche.modified_at)}
+                    {format(new Date(fiche.modified_at), 'dd/MM/yyyy')}
                   </span>
                 </div>
               )}
