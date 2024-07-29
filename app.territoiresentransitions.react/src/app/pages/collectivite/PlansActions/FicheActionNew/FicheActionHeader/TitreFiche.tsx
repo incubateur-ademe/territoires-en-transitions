@@ -23,6 +23,8 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
       if (titleToSave !== titre && titleToSave.length) {
         updateTitle(titleToSave);
         setEditedTitle(titleToSave);
+      } else {
+        setEditedTitle(titre ?? '');
       }
     }
   };
@@ -54,7 +56,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
         />
       ) : (
         // Titre en version lecture
-        <h1 className="mt-1.5 mb-2">{titre ?? 'Sans titre'}</h1>
+        <h1 className="mt-1.5 mb-2">{titre || 'Sans titre'}</h1>
       )}
 
       {/* Bouton d'édition du titre de la fiche action */}
