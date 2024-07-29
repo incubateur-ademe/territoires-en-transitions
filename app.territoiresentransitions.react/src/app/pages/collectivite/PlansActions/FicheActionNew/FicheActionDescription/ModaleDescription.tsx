@@ -84,7 +84,7 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      description: evt.currentTarget.value,
+                      description: (evt.target as HTMLTextAreaElement).value,
                     }))
                   }
                 />
@@ -101,7 +101,7 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      ressources: evt.currentTarget.value,
+                      ressources: (evt.target as HTMLTextAreaElement).value,
                     }))
                   }
                 />
