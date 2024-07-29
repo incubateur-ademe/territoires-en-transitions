@@ -122,7 +122,7 @@ const FicheActionActeurs = ({
       )}
 
       <ModaleActeurs
-        isOpen={isModalOpen}
+        isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
         updateFiche={updateFiche}

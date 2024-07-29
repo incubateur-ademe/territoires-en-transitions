@@ -50,6 +50,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
             <div className="flex flex-col gap-5">
               {/* Information sur le mode public / privé */}
               <FicheActionRestreint
+                isReadonly={isReadonly}
                 isRestreint={fiche.restreint ?? false}
                 updateRestreint={restreint =>
                   updateFiche({...fiche, restreint})

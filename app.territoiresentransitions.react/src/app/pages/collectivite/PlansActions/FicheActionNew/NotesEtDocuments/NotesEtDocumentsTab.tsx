@@ -26,6 +26,7 @@ const NotesEtDocumentsTab = ({
       <EmptyCard
         picto={className => <DocumentPicto className={className} />}
         title="Aucun document ajouté"
+        isReadonly={isReadonly}
         action={{
           label: 'Ajouter un document',
           onClick: () => {},
