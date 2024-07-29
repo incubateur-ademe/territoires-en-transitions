@@ -20,14 +20,10 @@ export const useFicheResumesFetch = (props?: Props) => {
         throw new Error('Aucune collectivité associée');
       }
 
-      if (!options) {
-        return null;
-      }
-
       return await ficheResumesFetch({
         dbClient: supabaseClient,
         collectiviteId,
-        options,
+        options: options ?? {filtre: {}},
       });
     }
   );
