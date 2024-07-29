@@ -39,7 +39,7 @@ export type FicheAction = Omit<
   actions: TActionInsert[] | null;
   indicateurs: Indicateur[] | null;
   services: TFicheActionServicePiloteRow[] | null;
-  financeurs: Financeur[];
+  financeurs: Financeur[] | null;
   fiches_liees: FicheResume[] | null;
 };
 
