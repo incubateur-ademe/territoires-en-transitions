@@ -100,7 +100,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
       )}
 
       <ModaleBudget
-        isOpen={isModalOpen}
+        isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
         updateFiche={updateFiche}

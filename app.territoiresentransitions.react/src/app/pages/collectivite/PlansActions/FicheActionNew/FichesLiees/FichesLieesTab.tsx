@@ -29,6 +29,7 @@ const FichesLieesTab = ({
         <EmptyCard
           picto={className => <FichePicto className={className} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
+          isReadonly={isReadonly}
           action={{
             label: 'Lier une fiche action',
             icon: 'link',
@@ -58,7 +59,7 @@ const FichesLieesTab = ({
       )}
 
       <ModaleFichesLiees
-        isOpen={isModalOpen}
+        isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
         updateFiche={updateFiche}

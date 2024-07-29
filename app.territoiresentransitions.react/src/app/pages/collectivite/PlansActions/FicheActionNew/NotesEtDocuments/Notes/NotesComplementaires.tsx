@@ -50,12 +50,16 @@ const NotesComplementaires = ({
           </div>
 
           {/* Note complémentaire */}
-          <CarteNote notes={notes} updateNotes={updateNotes} />
+          <CarteNote
+            isReadonly={isReadonly}
+            notes={notes}
+            updateNotes={updateNotes}
+          />
         </div>
       )}
 
       <ModaleCreationNote
-        isOpen={isModalOpen}
+        isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         updateNotes={updateNotes}
       />

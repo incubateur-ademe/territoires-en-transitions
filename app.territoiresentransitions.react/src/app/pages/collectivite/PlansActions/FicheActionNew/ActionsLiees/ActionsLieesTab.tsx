@@ -29,6 +29,7 @@ const ActionsLieesTab = ({
         <EmptyCard
           picto={className => <ActionPicto className={className} />}
           title="Aucune action des référentiels n'est liée !"
+          isReadonly={isReadonly}
           action={{
             label: 'Lier une action des référentiels',
             icon: 'link',
@@ -62,7 +63,7 @@ const ActionsLieesTab = ({
       )}
 
       <ModaleActionsLiees
-        isOpen={isModalOpen}
+        isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         fiche={fiche}
         updateFiche={updateFiche}

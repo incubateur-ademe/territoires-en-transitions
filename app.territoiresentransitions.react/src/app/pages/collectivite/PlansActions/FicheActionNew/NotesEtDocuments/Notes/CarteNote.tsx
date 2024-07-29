@@ -3,27 +3,30 @@ import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
 
 type CarteNoteProps = {
+  isReadonly: boolean;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };
 
-const CarteNote = ({notes, updateNotes}: CarteNoteProps) => {
+const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
   const [openAlert, setOpenAlert] = useState(false);
 
   return (
     <>
       <div className="relative group">
         {/* Boutons d'édition et de suppression de la carte */}
-        <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-          <ModaleEditionNote notes={notes} updateNotes={updateNotes} />
-          <Button
-            icon="delete-bin-6-line"
-            title="Supprimer la note"
-            variant="grey"
-            size="xs"
-            onClick={() => setOpenAlert(true)}
-          />
-        </div>
+        {!isReadonly && (
+          <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
+            <ModaleEditionNote notes={notes} updateNotes={updateNotes} />
+            <Button
+              icon="delete-bin-6-line"
+              title="Supprimer la note"
+              variant="grey"
+              size="xs"
+              onClick={() => setOpenAlert(true)}
+            />
+          </div>
+        )}
 
         {/* Contenu de la carte */}
         <Card className="rounded-xl">
@@ -38,7 +41,7 @@ const CarteNote = ({notes, updateNotes}: CarteNoteProps) => {
 
       {/* Alerte de suppression de la note */}
       <Alert
-        isOpen={openAlert}
+        isOpen={openAlert && !isReadonly}
         onClose={() => setOpenAlert(false)}
         className="absolute bottom-0 left-0 right-0 w-screen z-modal border-t border-t-info-1"
         title="Supprimer la note"
