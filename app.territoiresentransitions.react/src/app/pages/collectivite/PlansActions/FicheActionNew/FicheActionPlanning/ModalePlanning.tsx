@@ -163,7 +163,7 @@ const ModalePlanning = ({
                   onChange={evt =>
                     setEditedFiche(prevState => ({
                       ...prevState,
-                      calendrier: evt.currentTarget.value,
+                      calendrier: (evt.target as HTMLTextAreaElement).value,
                     }))
                   }
                 />
