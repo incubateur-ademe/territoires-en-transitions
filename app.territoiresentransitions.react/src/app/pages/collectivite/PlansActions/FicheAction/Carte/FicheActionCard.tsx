@@ -161,21 +161,19 @@ const FicheActionCard = ({
           <span className={classNames('font-medium text-primary-10')}>
             {generateTitle(ficheAction.titre)}
           </span>
-          {ficheAction.plans?.length && (
-            <div className="text-sm text-grey-8" title="Emplacements">
-              {ficheAction.plans
-                ? ficheAction.plans
-                    ?.map(plan => generateTitle(plan?.nom))
-                    .join(' | ')
-                : 'Fiches non classées'}
-            </div>
-          )}
+          <div className="text-sm text-grey-8" title="Emplacements">
+            {!!ficheAction.plans && ficheAction.plans.length > 0
+              ? ficheAction.plans
+                  ?.map(plan => generateTitle(plan?.nom))
+                  .join(' | ')
+              : 'Fiche non classée'}
+          </div>
           <span className="text-xs text-grey-8 italic">
             Modifié {getModifiedSince(ficheAction.modified_at!)}
           </span>
           {(ficheAction.pilotes?.length || ficheAction.date_fin_provisoire) && (
             <div className="flex items-center gap-4 flex-wrap text-sm text-grey-8">
-              {ficheAction.pilotes?.length && (
+              {ficheAction.pilotes && ficheAction.pilotes.length > 0 && (
                 <div className="flex items-start" title="Pilotes">
                   <Icon icon="user-line" size="sm" className="mr-1.5" />
                   {ficheAction.pilotes[0].nom}
@@ -199,7 +197,7 @@ const FicheActionCard = ({
               )}
               {ficheAction.date_fin_provisoire && (
                 <>
-                  {ficheAction.pilotes && (
+                  {ficheAction.pilotes && ficheAction.pilotes.length > 0 && (
                     <div className="w-[1px] h-6 bg-grey-3" />
                   )}
                   <div

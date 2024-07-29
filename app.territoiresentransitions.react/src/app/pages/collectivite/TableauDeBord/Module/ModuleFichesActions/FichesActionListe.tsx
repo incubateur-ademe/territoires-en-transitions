@@ -15,7 +15,10 @@ import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/Modu
 
 import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
+import {
+  makeCollectiviteFicheNonClasseeUrl,
+  makeCollectivitePlanActionFicheUrl,
+} from 'app/paths';
 
 type sortByOptionsType = SortFichesAction & {
   label: string;
@@ -208,11 +211,18 @@ const FichesActionListe = ({
                     ficheResumesOptions,
                   ],
                 ]}
-                link={makeCollectivitePlanActionFicheUrl({
-                  collectiviteId: collectiviteId!,
-                  ficheUid: fiche.id.toString(),
-                  planActionUid: fiche.plan_id?.toString()!,
-                })}
+                link={
+                  fiche.plan_id
+                    ? makeCollectivitePlanActionFicheUrl({
+                        collectiviteId: collectiviteId!,
+                        ficheUid: fiche.id.toString(),
+                        planActionUid: fiche.plan_id.toString(),
+                      })
+                    : makeCollectiviteFicheNonClasseeUrl({
+                        collectiviteId: collectiviteId!,
+                        ficheUid: fiche.id.toString(),
+                      })
+                }
               />
             ))}
           </div>
