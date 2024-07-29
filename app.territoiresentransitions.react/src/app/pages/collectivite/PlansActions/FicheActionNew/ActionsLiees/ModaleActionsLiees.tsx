@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {Button, Field, FormSectionGrid, Modal} from '@tet/ui';
+import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import ActionsReferentielsDropdown from 'ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 
@@ -34,43 +34,30 @@ const ModaleActionsLiees = ({
       openState={{isOpen, setIsOpen}}
       title="Lier une action des référentiels"
       size="lg"
-      render={({descriptionId, close}) => (
-        <div>
-          <div id={descriptionId} className="flex flex-col gap-8">
-            <FormSectionGrid>
-              <Field
-                title="Actions des référentiels liées"
-                className="col-span-2"
-              >
-                <ActionsReferentielsDropdown
-                  values={editedFiche.actions?.map(action => action.id)}
-                  onChange={({actions}) =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      actions,
-                    }))
-                  }
-                />
-              </Field>
-            </FormSectionGrid>
-          </div>
-
-          {/* Boutons pour valider / annuler les modifications */}
-          <div className="flex justify-end gap-4 mt-12">
-            <Button onClick={close} aria-label="Annuler" variant="outlined">
-              Annuler
-            </Button>
-            <Button
-              onClick={() => {
-                handleSave();
-                close();
-              }}
-              aria-label="Valider"
-            >
-              Valider
-            </Button>
-          </div>
-        </div>
+      render={({descriptionId}) => (
+        <Field fieldId={descriptionId} title="Actions des référentiels liées">
+          <ActionsReferentielsDropdown
+            values={editedFiche.actions?.map(action => action.id)}
+            onChange={({actions}) =>
+              setEditedFiche(prevState => ({
+                ...prevState,
+                actions,
+              }))
+            }
+          />
+        </Field>
+      )}
+      // Boutons pour valider / annuler les modifications
+      renderFooter={({close}) => (
+        <ModalFooterOKCancel
+          btnCancelProps={{onClick: close}}
+          btnOKProps={{
+            onClick: () => {
+              handleSave();
+              close();
+            },
+          }}
+        />
       )}
     />
   );
