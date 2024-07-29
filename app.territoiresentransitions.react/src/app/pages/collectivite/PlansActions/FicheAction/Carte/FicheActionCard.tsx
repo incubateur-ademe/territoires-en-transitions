@@ -2,8 +2,7 @@ import {Fragment, useState} from 'react';
 import {NavLink} from 'react-router-dom';
 import {QueryKey} from 'react-query';
 import classNames from 'classnames';
-import {format, isBefore, startOfToday} from 'date-fns';
-import {fr} from 'date-fns/locale';
+import {isBefore, startOfToday} from 'date-fns';
 import {Button, Icon, Notification, Tooltip} from '@tet/ui';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {FicheResume} from '../data/types';
@@ -12,7 +11,10 @@ import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import ModifierFicheModale from './ModifierFicheModale';
 import ModaleSuppression from '../../FicheActionNew/FicheActionDescription/ModaleSuppression';
-import {getModifiedSince} from '../../FicheActionNew/utils';
+import {
+  getTextFormattedDate,
+  getModifiedSince,
+} from '../../FicheActionNew/utils';
 
 type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
@@ -175,12 +177,14 @@ const FicheActionCard = ({
           {/* Bas de carte */}
           <div className="mt-auto flex flex-col gap-3">
             {/* Date de dernière modification */}
-            <span
-              className="text-xs font-medium italic"
-              title="Dernière modification"
-            >
-              Modifié {getModifiedSince(ficheAction.modified_at!)}
-            </span>
+            {!!ficheAction.modified_at && (
+              <span
+                className="text-xs font-medium italic"
+                title="Dernière modification"
+              >
+                Modifié {getModifiedSince(ficheAction.modified_at)}
+              </span>
+            )}
 
             {/* Personnes pilote et date de fin prévisionnelle */}
             {(ficheAction.pilotes?.length ||
@@ -222,11 +226,7 @@ const FicheActionCard = ({
                       className={classNames({'text-error-1': isLate})}
                     >
                       <Icon icon="calendar-line" size="sm" className="mr-1" />
-                      {format(
-                        new Date(ficheAction.date_fin_provisoire),
-                        'dd MMMM yyyy',
-                        {locale: fr}
-                      )}
+                      {getTextFormattedDate(ficheAction.date_fin_provisoire)}
                     </span>
                   </Fragment>
                 )}
