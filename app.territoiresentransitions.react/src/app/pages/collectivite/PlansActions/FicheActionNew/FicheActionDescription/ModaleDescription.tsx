@@ -1,6 +1,14 @@
 import {useState} from 'react';
 import _ from 'lodash';
-import {Button, Field, FormSectionGrid, Input, Modal, Textarea} from '@tet/ui';
+import {
+  Button,
+  Field,
+  FormSectionGrid,
+  Input,
+  Modal,
+  ModalFooterOKCancel,
+  Textarea,
+} from '@tet/ui';
 import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
 import {FicheAction} from '../../FicheAction/data/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -27,104 +35,93 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
     <Modal
       title="Modifier la fiche"
       size="lg"
-      render={({descriptionId, close}) => (
-        <div>
-          <div id={descriptionId} className="flex flex-col gap-8">
-            <FormSectionGrid>
-              {/* Nom de la fiche action */}
-              <Field title="Nom de la fiche action" className="col-span-2">
-                <Input
-                  type="text"
-                  value={editedFiche.titre ?? ''}
-                  onChange={evt =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      titre: evt.target.value,
-                    }))
-                  }
-                />
-              </Field>
+      render={({descriptionId}) => (
+        <FormSectionGrid formSectionId={descriptionId}>
+          {/* Nom de la fiche action */}
+          <Field title="Nom de la fiche action" className="col-span-2">
+            <Input
+              type="text"
+              value={editedFiche.titre ?? ''}
+              onChange={evt =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  titre: evt.target.value,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Dropdown thématiques */}
-              <Field title="Thématique" className="col-span-2">
-                <ThematiquesDropdown
-                  values={editedFiche.thematiques?.map(t => t.id)}
-                  onChange={({thematiques}) =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      thematiques: thematiques,
-                    }))
-                  }
-                />
-              </Field>
+          {/* Dropdown thématiques */}
+          <Field title="Thématique" className="col-span-2">
+            <ThematiquesDropdown
+              values={editedFiche.thematiques?.map(t => t.id)}
+              onChange={({thematiques}) =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  thematiques: thematiques,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Dropdown sous-thématiques */}
-              <Field title="Sous-thématique" className="col-span-2">
-                <SousThematiquesDropdown
-                  thematiques={(editedFiche.thematiques ?? []).map(
-                    (t: TThematiqueRow) => t.id
-                  )}
-                  sousThematiques={
-                    editedFiche.sous_thematiques as TSousThematiqueRow[]
-                  }
-                  onChange={({sousThematiques}) =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      sous_thematiques: sousThematiques,
-                    }))
-                  }
-                />
-              </Field>
+          {/* Dropdown sous-thématiques */}
+          <Field title="Sous-thématique" className="col-span-2">
+            <SousThematiquesDropdown
+              thematiques={(editedFiche.thematiques ?? []).map(
+                (t: TThematiqueRow) => t.id
+              )}
+              sousThematiques={
+                editedFiche.sous_thematiques as TSousThematiqueRow[]
+              }
+              onChange={({sousThematiques}) =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  sous_thematiques: sousThematiques,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Description */}
-              <Field title="Description de l'action" className="col-span-2">
-                <Textarea
-                  className="min-h-[100px]"
-                  value={editedFiche.description ?? ''}
-                  onChange={evt =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      description: (evt.target as HTMLTextAreaElement).value,
-                    }))
-                  }
-                />
-              </Field>
+          {/* Description */}
+          <Field title="Description de l'action" className="col-span-2">
+            <Textarea
+              className="min-h-[100px]"
+              value={editedFiche.description ?? ''}
+              onChange={evt =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  description: (evt.target as HTMLTextAreaElement).value,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Ressources */}
-              <Field
-                title="Moyens humains et techniques"
-                className="col-span-2"
-              >
-                <Textarea
-                  className="min-h-[100px]"
-                  value={editedFiche.ressources ?? ''}
-                  onChange={evt =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      ressources: (evt.target as HTMLTextAreaElement).value,
-                    }))
-                  }
-                />
-              </Field>
-            </FormSectionGrid>
-          </div>
-
-          {/* Boutons pour valider / annuler les modifications */}
-          <div className="flex justify-end gap-4 mt-12">
-            <Button onClick={close} aria-label="Annuler" variant="outlined">
-              Annuler
-            </Button>
-            <Button
-              onClick={() => {
-                handleSave();
-                close();
-              }}
-              aria-label="Valider"
-            >
-              Valider
-            </Button>
-          </div>
-        </div>
+          {/* Ressources */}
+          <Field title="Moyens humains et techniques" className="col-span-2">
+            <Textarea
+              className="min-h-[100px]"
+              value={editedFiche.ressources ?? ''}
+              onChange={evt =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  ressources: (evt.target as HTMLTextAreaElement).value,
+                }))
+              }
+            />
+          </Field>
+        </FormSectionGrid>
+      )}
+      // Boutons pour valider / annuler les modifications
+      renderFooter={({close}) => (
+        <ModalFooterOKCancel
+          btnCancelProps={{onClick: close}}
+          btnOKProps={{
+            onClick: () => {
+              handleSave();
+              close();
+            },
+          }}
+        />
       )}
     >
       {/* Bouton d'ouverture de la modale */}
