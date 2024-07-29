@@ -11,6 +11,8 @@ export type FieldState =
   | 'disabled';
 
 type Props = {
+  /** Id */
+  fieldId?: string;
   /** Titre */
   title: string;
   /** Enfant: input, select... */
@@ -27,6 +29,7 @@ type Props = {
 
 /** Wrapper pour élément de formulaire donnant des informations et un état */
 export const Field = ({
+  fieldId,
   title,
   className,
   hint,
@@ -37,7 +40,10 @@ export const Field = ({
   small,
 }: Props) => {
   return (
-    <div className={classNames(`flex-grow flex flex-col gap-3`, className)}>
+    <div
+      id={fieldId}
+      className={classNames(`flex-grow flex flex-col gap-3`, className)}
+    >
       <label htmlFor={htmlFor} className="ml-0 mb-0">
         {/** Title */}
         <div

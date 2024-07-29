@@ -35,6 +35,7 @@ const ModaleEditionNote = ({notes, updateNotes}: ModaleEditionNoteProps) => {
           </Field>
         </div>
       )}
+      // Boutons pour valider / annuler les modifications
       renderFooter={({close}) => (
         <ModalFooterOKCancel
           btnCancelProps={{onClick: close}}
