@@ -84,11 +84,6 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
       if (environment === 'production' || environment === 'test') {
         // @ts-ignore
-        window.userGuiding.identify(userData.user_id, {
-          Environment: environment,
-          Surname: userData.nom,
-          Name: userData.prenom,
-          Email: userData.email,
         });
       }
     } else {
