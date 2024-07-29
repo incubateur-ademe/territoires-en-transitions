@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {Button, Field, FormSectionGrid, Modal} from '@tet/ui';
+import {Field, FormSectionGrid, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
@@ -39,99 +39,89 @@ const ModaleActeurs = ({
       openState={{isOpen, setIsOpen}}
       title="Acteurs du projet"
       size="lg"
-      render={({descriptionId, close}) => (
-        <div>
-          <div id={descriptionId} className="flex flex-col gap-8">
-            <FormSectionGrid>
-              {/* Personnes pilote */}
-              <Field title="Personnes pilote">
-                <PersonnesDropdown
-                  dataTest="personnes-pilotes"
-                  values={editedFiche.pilotes?.map(p => getPersonneStringId(p))}
-                  placeholder="Sélectionnez ou créez un pilote"
-                  onChange={({personnes}) =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      pilotes: personnes,
-                    }))
-                  }
-                />
-              </Field>
+      render={({descriptionId}) => (
+        <FormSectionGrid formSectionId={descriptionId}>
+          {/* Personnes pilote */}
+          <Field title="Personnes pilote">
+            <PersonnesDropdown
+              dataTest="personnes-pilotes"
+              values={editedFiche.pilotes?.map(p => getPersonneStringId(p))}
+              placeholder="Sélectionnez ou créez un pilote"
+              onChange={({personnes}) =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  pilotes: personnes,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Directions ou services pilote */}
-              <Field title="Directions ou services pilote">
-                <ServicesDropdown
-                  values={editedFiche.services?.map(s => s.id)}
-                  onChange={({services}) =>
-                    setEditedFiche(prevState => ({...prevState, services}))
-                  }
-                />
-              </Field>
+          {/* Directions ou services pilote */}
+          <Field title="Directions ou services pilote">
+            <ServicesDropdown
+              values={editedFiche.services?.map(s => s.id)}
+              onChange={({services}) =>
+                setEditedFiche(prevState => ({...prevState, services}))
+              }
+            />
+          </Field>
 
-              {/* Structures pilote */}
-              <Field title="Structures pilote">
-                <StructuresDropdown
-                  values={editedFiche.structures?.map(s => s.id)}
-                  onChange={({structures}) =>
-                    setEditedFiche(prevState => ({...prevState, structures}))
-                  }
-                />
-              </Field>
+          {/* Structures pilote */}
+          <Field title="Structures pilote">
+            <StructuresDropdown
+              values={editedFiche.structures?.map(s => s.id)}
+              onChange={({structures}) =>
+                setEditedFiche(prevState => ({...prevState, structures}))
+              }
+            />
+          </Field>
 
-              {/* Élu·e référent·e */}
-              <Field title="Élu·e référent·e">
-                <PersonnesDropdown
-                  values={editedFiche.referents?.map(r =>
-                    getPersonneStringId(r)
-                  )}
-                  placeholder="Sélectionnez ou créez un·e élu·e référent·e"
-                  onChange={({personnes}) =>
-                    setEditedFiche(prevState => ({
-                      ...prevState,
-                      referents: personnes,
-                    }))
-                  }
-                />
-              </Field>
+          {/* Élu·e référent·e */}
+          <Field title="Élu·e référent·e">
+            <PersonnesDropdown
+              values={editedFiche.referents?.map(r => getPersonneStringId(r))}
+              placeholder="Sélectionnez ou créez un·e élu·e référent·e"
+              onChange={({personnes}) =>
+                setEditedFiche(prevState => ({
+                  ...prevState,
+                  referents: personnes,
+                }))
+              }
+            />
+          </Field>
 
-              {/* Partenaires */}
-              <Field title="Partenaires">
-                <PartenairesDropdown
-                  values={editedFiche.partenaires?.map(p => p.id)}
-                  onChange={({partenaires}) =>
-                    setEditedFiche(prevState => ({...prevState, partenaires}))
-                  }
-                />
-              </Field>
+          {/* Partenaires */}
+          <Field title="Partenaires">
+            <PartenairesDropdown
+              values={editedFiche.partenaires?.map(p => p.id)}
+              onChange={({partenaires}) =>
+                setEditedFiche(prevState => ({...prevState, partenaires}))
+              }
+            />
+          </Field>
 
-              {/* Cibles */}
-              <Field title="Cibles">
-                <CiblesDropdown
-                  values={editedFiche.cibles ?? []}
-                  onChange={({cibles}) =>
-                    setEditedFiche(prevState => ({...prevState, cibles}))
-                  }
-                />
-              </Field>
-            </FormSectionGrid>
-          </div>
-
-          {/* Boutons pour valider / annuler les modifications */}
-          <div className="flex justify-end gap-4 mt-12">
-            <Button onClick={close} aria-label="Annuler" variant="outlined">
-              Annuler
-            </Button>
-            <Button
-              onClick={() => {
-                handleSave();
-                close();
-              }}
-              aria-label="Valider"
-            >
-              Valider
-            </Button>
-          </div>
-        </div>
+          {/* Cibles */}
+          <Field title="Cibles">
+            <CiblesDropdown
+              values={editedFiche.cibles ?? []}
+              onChange={({cibles}) =>
+                setEditedFiche(prevState => ({...prevState, cibles}))
+              }
+            />
+          </Field>
+        </FormSectionGrid>
+      )}
+      // Boutons pour valider / annuler les modifications
+      renderFooter={({close}) => (
+        <ModalFooterOKCancel
+          btnCancelProps={{onClick: close}}
+          btnOKProps={{
+            onClick: () => {
+              handleSave();
+              close();
+            },
+          }}
+        />
       )}
     />
   );
