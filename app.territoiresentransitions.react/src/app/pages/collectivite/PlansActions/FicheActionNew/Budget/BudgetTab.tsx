@@ -1,5 +1,6 @@
 import {useState} from 'react';
-import {Badge, Button} from '@tet/ui';
+import classNames from 'classnames';
+import {Button} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import EmptyCard from '../EmptyCard';
 import MoneyPicto from './MoneyPicto';
@@ -61,40 +62,51 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
           </div>
 
           {/* Budget prévisionnel total */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Budget prévisionnel total :
             </span>
-            <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
+            {budgetPrevisionnel ? (
+              <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
+            ) : (
+              <span className="text-sm text-grey-7 leading-7">
+                Non renseigné
+              </span>
+            )}
           </div>
 
           {/* Financeurs */}
-          <div className="flex gap-x-4 gap-y-2 flex-wrap">
+          <div className="flex gap-x-3 gap-y-2 flex-wrap">
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financeurs :
             </span>
-            {!!financeurs && financeurs.length ? (
+            {financeurs && financeurs.length ? (
               <FinanceursListe financeurs={financeurs} />
             ) : (
-              <Badge
-                title="Non renseigné"
-                state="standard"
-                uppercase={false}
-                light
-              />
+              <span className="text-sm text-grey-7 leading-7">
+                Non renseignés
+              </span>
             )}
           </div>
 
           {/* Financements */}
-          <div className="flex flex-col gap-1">
+          <div
+            className={classNames({
+              'flex flex-col gap-1': financements && financements.length,
+            })}
+          >
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financements :
             </span>
-            <p className="mb-0 text-primary-10 text-sm font-normal leading-6">
-              {financements && financements.length
-                ? financements
-                : 'Non renseigné !'}
-            </p>
+            {financements && financements.length ? (
+              <p className="mb-0 text-primary-10 text-sm leading-6">
+                {financements}
+              </p>
+            ) : (
+              <span className="ml-3 text-sm text-grey-7 leading-7">
+                Non renseignés
+              </span>
+            )}
           </div>
         </div>
       )}
