@@ -72,7 +72,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     };
   }, []);
 
-  // Initialise les données crisp.
+  // Initialise les widgets externes.
   useEffect(() => {
     if (userData) {
       setCrispUserData(userData);
@@ -84,7 +84,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
       if (environment === 'production' || environment === 'test') {
         // @ts-ignore
-        });
+        window.StonlyWidget('identify', userData.user_id);
       }
     } else {
       clearCrispUserData();
