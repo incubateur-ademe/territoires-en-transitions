@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {FicheAction} from '../../FicheAction/data/types';
 import ModaleDescription from './ModaleDescription';
+import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 import ModaleSuppression from './ModaleSuppression';
 
 type MenuDescriptionProps = {
@@ -21,6 +22,7 @@ const MenuDescription = ({
   return !isReadonly ? (
     <div className={classNames('flex gap-4', className)}>
       <ModaleDescription fiche={fiche} updateFiche={updateFiche} />
+      <ModaleEmplacement fiche={fiche} />
       <ModaleSuppression
         ficheId={ficheId}
         title={titre}
