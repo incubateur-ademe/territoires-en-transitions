@@ -1,36 +1,19 @@
 import {FicheAction} from '../../FicheAction/data/types';
-import EmptyCard from '../EmptyCard';
-import DatavizPicto from './DatavizPicto';
+import IndicateursHeader from './IndicateursHeader';
+import IndicateursListe from './IndicateursListe';
 
 type IndicateursTabProps = {
   isReadonly: boolean;
   fiche: FicheAction;
+  updateFiche: (fiche: FicheAction) => void;
 };
 
-const IndicateursTab = ({isReadonly, fiche}: IndicateursTabProps) => {
-  const {indicateurs} = fiche;
-
-  const isEmpty = indicateurs === null || indicateurs.length === 0;
-
-  return isEmpty ? (
-    <EmptyCard
-      picto={className => <DatavizPicto className={className} />}
-      title="Aucun indicateur associé !"
-      subTitle="Mesurez les résultats de l'action grâce à des indicateurs de réalisation et de résultats"
-      isReadonly={isReadonly}
-      action={{
-        label: 'Créer un indicateur personnalisé',
-        icon: 'add-line',
-        onClick: () => {},
-      }}
-      secondaryAction={{
-        label: 'Associer des indicateurs',
-        icon: 'link',
-        onClick: () => {},
-      }}
-    />
-  ) : (
-    <div>Indicateurs</div>
+const IndicateursTab = ({updateFiche, ...props}: IndicateursTabProps) => {
+  return (
+    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+      <IndicateursHeader {...props} updateFiche={updateFiche} />
+      <IndicateursListe {...props} />
+    </div>
   );
 };
 
