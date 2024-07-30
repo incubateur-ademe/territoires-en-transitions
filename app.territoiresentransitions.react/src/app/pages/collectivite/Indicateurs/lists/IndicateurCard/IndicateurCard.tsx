@@ -144,7 +144,7 @@ export const IndicateurCardBase = ({
     <Card
       dataTest={`chart-${definition.id}`}
       className={classNames(
-        'relative font-normal !gap-3',
+        'relative font-normal !gap-3 !p-6',
         {'border-primary-7': selectState?.checkbox && selectState?.selected},
         className
       )}
@@ -259,7 +259,7 @@ export const IndicateurCardBase = ({
               />
               {isNotLoadingNotFilled && !readonly && !!href && (
                 <Button size="xs" className="mx-auto">
-                  Compléter
+                  Compléter l'indicateur
                 </Button>
               )}
               {/** Légende */}

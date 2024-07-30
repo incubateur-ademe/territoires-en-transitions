@@ -1,36 +1,57 @@
+import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import {
+  getIndicateurGroup,
+  selectIndicateur,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {FicheAction} from '../../FicheAction/data/types';
-import EmptyCard from '../EmptyCard';
-import DatavizPicto from './DatavizPicto';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 
 type IndicateursListeProps = {
   isReadonly: boolean;
   fiche: FicheAction;
+  indicateurs: Indicateur[];
+  updateFiche: (fiche: FicheAction) => void;
 };
 
-const IndicateursListe = ({isReadonly, fiche}: IndicateursListeProps) => {
-  const {indicateurs} = fiche;
+const IndicateursListe = ({
+  isReadonly,
+  fiche,
+  indicateurs,
+  updateFiche,
+}: IndicateursListeProps) => {
+  const collectiviteId = useCollectiviteId()!;
 
-  const isEmpty = indicateurs === null || indicateurs.length === 0;
-
-  return isEmpty ? (
-    <EmptyCard
-      picto={className => <DatavizPicto className={className} />}
-      title="Aucun indicateur associé !"
-      subTitle="Mesurez les résultats de l'action grâce à des indicateurs de réalisation et de résultats"
-      isReadonly={isReadonly}
-      action={{
-        label: 'Créer un indicateur personnalisé',
-        icon: 'add-line',
-        onClick: () => {},
-      }}
-      secondaryAction={{
-        label: 'Associer des indicateurs',
-        icon: 'link',
-        onClick: () => {},
-      }}
-    />
-  ) : (
-    <div>Indicateurs</div>
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
+      {indicateurs.map(indicateur => (
+        <IndicateurCard
+          key={`${indicateur.id}-${indicateur.titre}`}
+          readonly={isReadonly}
+          definition={indicateur}
+          autoRefresh
+          card={{external: true}}
+          href={makeCollectiviteIndicateursUrl({
+            collectiviteId,
+            indicateurView: getIndicateurGroup(indicateur.identifiant),
+            indicateurId: indicateur.id,
+            identifiantReferentiel: indicateur.identifiant,
+          })}
+          selectState={{
+            selected: true,
+            setSelected: indicateur => {
+              const newIndicateurs = selectIndicateur({
+                indicateur,
+                selected: true,
+                selectedIndicateurs: indicateurs,
+              });
+              updateFiche({...fiche, indicateurs: newIndicateurs});
+            },
+          }}
+        />
+      ))}
+    </div>
   );
 };
 

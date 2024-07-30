@@ -17,6 +17,7 @@ import {
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import {SideNavLinks} from 'ui/shared/SideNav';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {Icon} from '@tet/ui';
 
 // correspondances entre item et libellé
 export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
@@ -65,7 +66,15 @@ const IndicateurDetail = (
 ) => {
   const {indicateurId, isPerso} = props;
   if (indicateurId === ID_NOUVEAU) {
-    return <IndicateurPersoNouveau className="fr-p-6w" />;
+    return (
+      <div className="p-12">
+        <h4 className="mb-12">
+          <Icon icon="line-chart-line" size="lg" className="pr-3" />
+          Créer un indicateur
+        </h4>
+        <IndicateurPersoNouveau />
+      </div>
+    );
   }
   if (isPerso) return <IndicateurPersonnalise indicateurId={indicateurId} />;
   return <IndicateurPredefini indicateurId={indicateurId} />;

@@ -51,9 +51,6 @@ const EmptyCard = ({
       {/* Appels à l'action */}
       {!isReadonly && (
         <div className="flex justify-center items-center gap-4 mt-3">
-          <Button size="xs" icon={action.icon} onClick={action.onClick}>
-            {action.label}
-          </Button>
           {secondaryAction && (
             <Button
               size="xs"
@@ -64,6 +61,9 @@ const EmptyCard = ({
               {secondaryAction.label}
             </Button>
           )}
+          <Button size="xs" icon={action.icon} onClick={action.onClick}>
+            {action.label}
+          </Button>
         </div>
       )}
     </div>
