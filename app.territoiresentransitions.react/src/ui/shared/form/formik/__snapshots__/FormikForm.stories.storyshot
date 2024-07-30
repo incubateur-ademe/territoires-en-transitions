@@ -7,141 +7,166 @@ exports[`Storyshots ui/shared/form/formik/FormikForm Defaut 1`] = `
   onSubmit={[Function]}
 >
   <div
-    className="fr-input-group flex-grow"
+    className="flex-grow flex flex-col gap-3"
   >
     <label
-      className="fr-label mb-2"
+      className="ml-0 mb-0"
       htmlFor="input"
     >
       <div
-        className="font-medium"
+        className="font-medium text-grey-8"
       >
         Basique input
       </div>
     </label>
-    <input
-      className="fr-input"
-      id="input"
-      label="Basique input"
-      name="input"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onKeyDown={[Function]}
-      type="text"
-      value=""
-    />
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+        id="input"
+        label="Basique input"
+        name="input"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value=""
+      />
+    </div>
   </div>
   <div
-    className="fr-input-group flex-grow"
+    className="flex-grow flex flex-col gap-3"
   >
     <label
-      className="fr-label mb-2"
+      className="ml-0 mb-0"
       htmlFor="inputDisabled"
     >
       <div
-        className="font-medium"
+        className="font-medium text-grey-8"
       >
         Input désactivé
       </div>
     </label>
-    <input
-      className="fr-input"
-      disabled={true}
-      id="inputDisabled"
-      label="Input désactivé"
-      name="inputDisabled"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onKeyDown={[Function]}
-      type="text"
-    />
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+        disabled={true}
+        id="inputDisabled"
+        label="Input désactivé"
+        name="inputDisabled"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+      />
+    </div>
   </div>
   <div
-    className="fr-input-group flex-grow"
+    className="flex-grow flex flex-col gap-3"
   >
     <label
-      className="fr-label mb-2"
+      className="ml-0 mb-0"
       htmlFor="email"
     >
       <div
-        className="font-medium"
+        className="font-medium text-grey-8"
       >
         Adresse email avec hint *
       </div>
       <span
-        className="fr-hint-text !mt-1 !mb-0"
+        className="block mt-2 text-xs text-grey-7"
       >
         Entrez une adresse valide
       </span>
     </label>
-    <input
-      className="fr-input"
-      hint="Entrez une adresse valide"
-      id="email"
-      label="Adresse email avec hint *"
-      name="email"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onKeyDown={[Function]}
-      placeholder="yolo@dodo.com"
-      type="text"
-      value=""
-    />
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+        hint="Entrez une adresse valide"
+        id="email"
+        label="Adresse email avec hint *"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        placeholder="yolo@dodo.com"
+        type="text"
+        value=""
+      />
+    </div>
   </div>
   <div
-    className="fr-input-group flex-grow"
+    className="flex-grow flex flex-col gap-3"
   >
     <label
-      className="fr-label mb-2"
+      className="ml-0 mb-0"
       htmlFor="password"
     >
       <div
-        className="font-medium"
+        className="font-medium text-grey-8"
       >
         Mot de passe *
       </div>
     </label>
-    <input
-      className="fr-input"
-      id="password"
-      label="Mot de passe *"
-      name="password"
-      onBlur={[Function]}
-      onChange={[Function]}
-      type="password"
-    />
+    <div
+      className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+    >
+      <input
+        className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3 border-r border-solid border-grey-4"
+        id="password"
+        label="Mot de passe *"
+        name="password"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="password"
+      />
+      <button
+        className="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+        disabled={false}
+        onClick={[Function]}
+        style={
+          Object {
+            "color": undefined,
+          }
+        }
+        title="Voir le mot de passe"
+        type="button"
+      >
+        <span
+          className="ri-eye-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8"
+        />
+      </button>
+    </div>
   </div>
   <div
-    className="fr-input-group flex-grow"
+    className="flex-grow flex flex-col gap-3"
   >
     <label
-      className="fr-label mb-2"
+      className="ml-0 mb-0"
       htmlFor="textarea"
     >
       <div
-        className="font-medium"
+        className="font-medium text-grey-8"
       >
         Text area
       </div>
     </label>
     <div
-      className="flex items-start w-full"
+      className="flex items-stretch w-full border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
     >
-      <div
-        className="w-[1px] mr-[-1px]"
-      />
       <textarea
-        className="resize-none w-full py-2 px-3 text-sm cursor-text outline outline-offset-0 !outline-1 outline-gray-300 focus:outline-blue-500 disabled:text-gray-900 fr-input !outline-none"
+        className="grow text-grey-8 px-4 outline-none  text-md py-3 resize-y min-h-[4rem]"
+        disabled={false}
         id="textarea"
         label="Text area"
         name="textarea"
         onBlur={[Function]}
         onChange={[Function]}
-        style={
-          Object {
-            "minHeight": "4rem",
-          }
-        }
         type="area"
       />
     </div>

@@ -45,7 +45,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
           onSubmit={() => undefined}
         >
           {({values, isValid, handleBlur, resetForm}) => (
-            <Form>
+            <Form className="flex flex-col gap-6">
               <FormikInput
                 data-test="prenom"
                 name="prenom"
