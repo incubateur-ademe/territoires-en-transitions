@@ -47,7 +47,7 @@ export const AddLink = (props: TAddLinkProps) => {
       {({values, isValid}) => {
         return (
           <Form data-test="AddLink">
-            <div className="fr-form-group">
+            <div className="fr-form-group flex flex-col gap-6">
               <FormikInput name="titre" label="Titre (obligatoire)" />
               <FormikInput name="url" label="Lien (obligatoire)" />
             </div>

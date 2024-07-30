@@ -20,86 +20,99 @@ exports[`Storyshots app/pages/Profil/MonCompte Defaut 1`] = `
     </p>
     <form
       action="#"
+      className="flex flex-col gap-6"
       onReset={[Function]}
       onSubmit={[Function]}
     >
       <div
-        className="fr-input-group flex-grow"
+        className="flex-grow flex flex-col gap-3"
       >
         <label
-          className="fr-label mb-2"
+          className="ml-0 mb-0"
           htmlFor="prenom"
         >
           <div
-            className="font-medium"
+            className="font-medium text-grey-8"
           >
             Prénom
           </div>
         </label>
-        <input
-          className="fr-input"
-          data-test="prenom"
-          id="prenom"
-          label="Prénom"
-          name="prenom"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value="Yolo"
-        />
+        <div
+          className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+        >
+          <input
+            className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+            data-test="prenom"
+            id="prenom"
+            label="Prénom"
+            name="prenom"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            type="text"
+            value="Yolo"
+          />
+        </div>
       </div>
       <div
-        className="fr-input-group flex-grow"
+        className="flex-grow flex flex-col gap-3"
       >
         <label
-          className="fr-label mb-2"
+          className="ml-0 mb-0"
           htmlFor="nom"
         >
           <div
-            className="font-medium"
+            className="font-medium text-grey-8"
           >
             Nom
           </div>
         </label>
-        <input
-          className="fr-input"
-          data-test="nom"
-          id="nom"
-          label="Nom"
-          name="nom"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value="Dodo"
-        />
+        <div
+          className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+        >
+          <input
+            className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+            data-test="nom"
+            id="nom"
+            label="Nom"
+            name="nom"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            type="text"
+            value="Dodo"
+          />
+        </div>
       </div>
       <div
-        className="fr-input-group flex-grow"
+        className="flex-grow flex flex-col gap-3"
       >
         <label
-          className="fr-label mb-2"
+          className="ml-0 mb-0"
           htmlFor="email"
         >
           <div
-            className="font-medium"
+            className="font-medium text-grey-8"
           >
             Email
           </div>
         </label>
-        <input
-          className="fr-input"
-          data-test="email"
-          id="email"
-          label="Email"
-          name="email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          type="text"
-          value="yolo@dodo.com"
-        />
+        <div
+          className="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4"
+        >
+          <input
+            className="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+            data-test="email"
+            id="email"
+            label="Email"
+            name="email"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            type="text"
+            value="yolo@dodo.com"
+          />
+        </div>
       </div>
     </form>
   </div>

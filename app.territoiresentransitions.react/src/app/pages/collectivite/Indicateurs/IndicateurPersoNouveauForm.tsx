@@ -1,10 +1,9 @@
 import {useState} from 'react';
-import classNames from 'classnames';
 import * as Yup from 'yup';
 import {Form, Formik} from 'formik';
+import {Alert, Button, Field, FormSectionGrid} from '@tet/ui';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import {TIndicateurPersoDefinitionWrite} from './useInsertIndicateurPersoDefinition';
-import FormField from 'ui/shared/form/FormField';
 import {TThematiqueRow} from 'types/alias';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
@@ -41,38 +40,50 @@ export const IndicateurPersoNouveauForm = (props: {
       onSubmit={handleSave}
     >
       {({isValid}) => (
-        <Form>
-          <div className="bg-grey975 fr-py-7w fr-px-10w">
-            <p>
-              Les indicateurs personnalisés vous permettent de suivre de manière
+        <Form className="flex flex-col gap-8">
+          {/* Message d'information sur les indicateurs personnalisés */}
+          <Alert
+            description=" Les indicateurs personnalisés vous permettent de suivre de manière
               spécifique les actions menées par votre collectivité. Associez-les
-              à une ou plusieurs fiches action pour faciliter leur mise à jour !
-            </p>
-            <FormikInput name="titre" label="Nom de l’indicateur" />
-            <FormikInput name="unite" label="Unité" />
-            <FormikInput type="area" name="description" label="Description" />
-            <FormField className="fr-mt-4w" label="Thématique">
+              à une ou plusieurs fiches action pour faciliter leur mise à jour !"
+          />
+
+          {/* Champs du formulaire */}
+          <FormSectionGrid>
+            <div className="col-span-2 flex gap-6">
+              <FormikInput
+                name="titre"
+                label="Nom de l’indicateur"
+                className="w-[75%]"
+              />
+              <FormikInput name="unite" label="Unité" className="w-[25%]" />
+            </div>
+
+            <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
                 values={thematiques?.map(t => t.id)}
                 onChange={({thematiques}) => setThematiques(thematiques)}
               />
-            </FormField>
-          </div>
-          <div className="flex flex-row justify-end gap-4 pt-5">
+            </Field>
+
+            <FormikInput
+              type="area"
+              name="description"
+              label="Description"
+              className="col-span-2"
+            />
+          </FormSectionGrid>
+
+          {/* Boutons de validation / annulation */}
+          <div className="flex flex-row justify-end gap-4">
             {onCancel && (
-              <button className="fr-btn fr-btn--secondary" onClick={onCancel}>
+              <Button variant="outlined" onClick={onCancel}>
                 Annuler
-              </button>
+              </Button>
             )}
-            <button
-              className={classNames('fr-btn', {
-                'fr-btn--icon-right fr-icon-arrow-right-line': !isSaving,
-              })}
-              data-test="ok"
-              disabled={isSaving || !isValid}
-            >
+            <Button data-test="ok" disabled={isSaving || !isValid}>
               {isSaving ? 'Enregistrement en cours...' : 'Valider et compléter'}
-            </button>
+            </Button>
           </div>
         </Form>
       )}
