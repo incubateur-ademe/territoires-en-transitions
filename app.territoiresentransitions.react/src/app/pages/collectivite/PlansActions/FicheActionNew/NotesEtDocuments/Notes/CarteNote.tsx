@@ -34,7 +34,9 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
             <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
               <Icon icon="edit-box-line" className="text-primary-10" />
             </div>
-            <div className="text-primary-10 text-base font-bold">{notes}</div>
+            <div className="text-primary-10 text-base font-bold whitespace-pre-wrap">
+              {notes}
+            </div>
           </div>
         </Card>
       </div>
