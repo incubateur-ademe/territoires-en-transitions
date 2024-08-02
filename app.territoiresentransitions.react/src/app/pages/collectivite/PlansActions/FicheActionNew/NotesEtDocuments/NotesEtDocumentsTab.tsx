@@ -1,6 +1,5 @@
 import {FicheAction} from '../../FicheAction/data/types';
-import EmptyCard from '../EmptyCard';
-import DocumentPicto from './Documents/DocumentPicto';
+import Documents from './Documents/Documents';
 import NotesComplementaires from './Notes/NotesComplementaires';
 
 type NotesEtDocumentsTabProps = {
@@ -23,15 +22,7 @@ const NotesEtDocumentsTab = ({
           updateFiche({...fiche, notes_complementaires: notes})
         }
       />
-      <EmptyCard
-        picto={className => <DocumentPicto className={className} />}
-        title="Aucun document ajouté"
-        isReadonly={isReadonly}
-        action={{
-          label: 'Ajouter un document',
-          onClick: () => {},
-        }}
-      />
+      <Documents isReadonly={isReadonly} ficheId={fiche.id} />
     </div>
   );
 };
