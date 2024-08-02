@@ -40,7 +40,6 @@ export const Card = ({
   footer,
   isSelected,
   className,
-  onClick,
   disabled,
   external,
   ...otherProps
@@ -48,7 +47,9 @@ export const Card = ({
   const isLink = isAnchor(otherProps);
 
   const hasHoverEffect =
-    (isSelected !== undefined || !!onClick || (isLink && !!otherProps.href)) &&
+    (isSelected !== undefined ||
+      !!otherProps.onClick ||
+      (isLink && !!otherProps.href)) &&
     !disabled;
 
   const appliedClassname = classNames(
