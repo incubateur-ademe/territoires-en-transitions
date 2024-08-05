@@ -5,6 +5,7 @@
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
+import {Button} from '@tet/ui';
 
 export type TAddLink = (titre: string, url: string) => void;
 
@@ -46,18 +47,30 @@ export const AddLink = (props: TAddLinkProps) => {
     >
       {({values, isValid}) => {
         return (
-          <Form data-test="AddLink">
-            <div className="fr-form-group flex flex-col gap-6">
-              <FormikInput name="titre" label="Titre (obligatoire)" />
-              <FormikInput name="url" label="Lien (obligatoire)" />
+          <Form data-test="AddLink" className="flex flex-col gap-8">
+            <div className="flex gap-6">
+              <FormikInput
+                name="titre"
+                label="Titre (obligatoire)"
+                className="w-[35%]"
+              />
+              <FormikInput
+                name="url"
+                label="Lien (obligatoire)"
+                className="w-[65%]"
+              />
             </div>
-            <button
-              className="fr-btn fr-mt-2w"
-              data-test="ok"
-              disabled={!values.titre || !values.url || !isValid}
-            >
-              Ajouter
-            </button>
+            <div className="flex gap-4 ml-auto">
+              <Button variant="outlined" onClick={onClose}>
+                Annuler
+              </Button>
+              <Button
+                data-test="ok"
+                disabled={!values.titre || !values.url || !isValid}
+              >
+                Ajouter
+              </Button>
+            </div>
           </Form>
         );
       }}

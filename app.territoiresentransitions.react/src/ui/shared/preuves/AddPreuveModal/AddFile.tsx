@@ -2,7 +2,7 @@
  * Affiche le composant d'upload de fichiers
  */
 import {ChangeEvent, FormEvent, useState} from 'react';
-import InputFile from 'ui/shared/InputFile';
+import {Button, Field, Input} from '@tet/ui';
 import {HINT, EXPECTED_FORMATS_LIST} from './constants';
 import {filesToUploadList} from './filesToUploadList';
 import {TFileItem} from './FileItem';
@@ -75,23 +75,34 @@ export const AddFile = (props: TAddFileProps) => {
   };
 
   return (
-    <form data-test="AddFile" onSubmit={onSubmit}>
-      <InputFile
-        label="Ajouter un ou plusieurs fichier(s)"
-        hint={HINT}
-        accept={EXPECTED_FORMATS_LIST}
-        multiple
-        onChange={onChange}
-        //disabled={isLoading}
-      />
+    <div data-test="AddFile" className="flex flex-col gap-8">
+      <Field
+        title="Ajouter un ou plusieurs fichier(s)"
+        message={HINT}
+        state="info"
+      >
+        <Input
+          type="file"
+          accept={EXPECTED_FORMATS_LIST}
+          multiple
+          onChange={onChange}
+        />
+      </Field>
+
       <FileItemsList
         items={currentSelection}
         onRunningStopped={onRunningStopped}
         onRemoveFailed={onRemoveFailed}
       />
-      <button className="fr-btn mt-2" disabled={isDisabled} data-test="ok">
-        Ajouter
-      </button>
-    </form>
+
+      <div className="flex gap-4 ml-auto">
+        <Button variant="outlined" onClick={onClose}>
+          Annuler
+        </Button>
+        <Button onClick={onSubmit} disabled={isDisabled} data-test="ok">
+          Ajouter
+        </Button>
+      </div>
+    </div>
   );
 };

@@ -170,6 +170,21 @@ exports[`design-system/Input TypeDateAvecValeur smoke-test 1`] = `
 </div>
 `;
 
+exports[`design-system/Input TypeFile smoke-test 1`] = `
+<div class="bg-grey-1 border border-dashed rounded-lg flex justify-center items-center p-4 border-info-1">
+  <input id="input-file"
+         type="file"
+         class="invisible w-0"
+         value
+  >
+  <label for="input-file"
+         class="w-fit m-0 border-solid cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5"
+  >
+    Choisir un fichier
+  </label>
+</div>
+`;
+
 exports[`design-system/Input TypeNumberFloat smoke-test 1`] = `
 <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
   <input type="text"

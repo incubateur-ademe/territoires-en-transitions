@@ -24,12 +24,12 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
     <>
       <div className="relative group">
         {/* Menu de la carte document */}
-        {!isReadonly && (
+        {/* {!isReadonly && (
           <MenuCarteDocument
             document={document}
             className="invisible group-hover:visible absolute top-4 right-4 "
           />
-        )}
+        )} */}
 
         {/* Carte*/}
         <Card

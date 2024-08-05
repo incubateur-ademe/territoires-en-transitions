@@ -10,7 +10,13 @@ import {preset} from '@tailwind-preset';
 export type InputSize = 'md' | 'sm';
 
 // types de champ accepté
-export type InputType = 'text' | 'password' | 'date' | 'search' | 'tel';
+export type InputType =
+  | 'text'
+  | 'password'
+  | 'date'
+  | 'search'
+  | 'tel'
+  | 'file';
 
 // couleur des bordures en fonction du `state`
 const stateToBorderColor: Record<FieldState, string> = {

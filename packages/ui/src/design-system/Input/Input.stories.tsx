@@ -207,7 +207,7 @@ export const TypePattern: Story = {
     type: 'pattern',
     format: '# # # #',
     mask: '_',
-    allowEmptyFormatting: true
+    allowEmptyFormatting: true,
   },
 };
 
@@ -216,7 +216,7 @@ export const TypePatternAvecValeur: Story = {
     type: 'pattern',
     format: '# # # #',
     mask: '_',
-    value: '1234'
+    value: '1234',
   },
 };
 
@@ -245,6 +245,12 @@ export const TypeTelAvecValeur: Story = {
   args: {
     type: 'tel',
     value: '0123456789',
+  },
+};
+
+export const TypeFile: Story = {
+  args: {
+    type: 'file',
   },
 };
 
