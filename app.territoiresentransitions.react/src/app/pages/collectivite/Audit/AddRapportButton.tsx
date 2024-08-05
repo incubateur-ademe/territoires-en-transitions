@@ -1,6 +1,7 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
+import {Modal} from '@tet/ui';
+
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {useAddPreuveToAudit} from './useAddPreuveToAudit';
 
@@ -23,18 +24,10 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
   return (
     <Modal
       size="lg"
-      externalOpen={opened}
-      setExternalOpen={setOpened}
-      render={() => {
-        return (
-          <>
-            <h4>Ajouter le rapport d'audit</h4>
-            <AddPreuveModal
-              onClose={() => setOpened(false)}
-              handlers={handlers}
-            />
-          </>
-        );
+      openState={{isOpen: opened, setIsOpen: setOpened}}
+      title="Ajouter le rapport d'audit"
+      render={({close}) => {
+        return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >
       <button

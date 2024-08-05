@@ -1,7 +1,7 @@
 /**
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
-import {Tabs, Tab} from 'ui/shared/Tabs';
+import {Tab, Tabs} from '@tet/ui';
 import {AddLink, TAddLink} from './AddLink';
 import {AddFile, TAddFileFromLib} from './AddFile';
 import AddFromLib from './AddFromLib';
@@ -28,14 +28,14 @@ export const AddPreuveModal = (props: TAddPreuveModalProps) => {
   return (
     <Tabs data-test="AddPreuveModal" defaultActiveTab={defaultActiveTab}>
       {addLink ? (
-        <Tab label="&nbsp;Lien" icon="links">
+        <Tab label="Lien">
           <AddLink {...props} onAddLink={addLink} />
         </Tab>
-      ) : null}
-      <Tab label="&nbsp;Fichier" icon="upload-2">
+      ) : undefined}
+      <Tab label="Fichier">
         <AddFile {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
-      <Tab label="&nbsp;Bibliothèque" icon="archive">
+      <Tab label="Bibliothèque">
         <AddFromLib {...props} onAddFileFromLib={addFileFromLib} />
       </Tab>
     </Tabs>

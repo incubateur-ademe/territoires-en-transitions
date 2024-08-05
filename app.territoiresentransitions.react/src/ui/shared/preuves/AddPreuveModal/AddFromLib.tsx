@@ -1,19 +1,11 @@
-import {ChangeEvent, FormEvent, useState} from 'react';
-import {UiSearchBar} from 'ui/UiSearchBar';
+import {useEffect, useState} from 'react';
+import {Button, Field, Option, SelectFilter} from '@tet/ui';
 import {TBibliothequeFichier} from '../Bibliotheque/types';
-import {
-  useFichiers,
-  NB_ITEMS_PER_PAGE,
-  TFilters,
-} from '../Bibliotheque/useFichiers';
+import {useFichiers, TFilters} from '../Bibliotheque/useFichiers';
 import {TAddFileFromLib} from './AddFile';
-import {Pagination} from '@tet/ui';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 export type TAddFromLibProps = {
   items: TBibliothequeFichier[];
-  total: number;
-  filters: TFilters;
   setFilters: (filters: TFilters) => void;
   onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
@@ -24,103 +16,67 @@ export type TAddFromLibProps = {
  * et permet de sélectionner les fichiers à ajouter comme preuve
  */
 export const AddFromLib = (props: TAddFromLibProps) => {
-  const {
-    items: fichiers,
-    total,
-    filters,
-    onAddFileFromLib,
-    onClose,
-    setFilters,
-  } = props;
+  const {items: fichiers, onAddFileFromLib, onClose, setFilters} = props;
 
-  const [currentSelection, setCurrentSelection] = useState<{
-    [key: number]: boolean;
-  }>({});
+  const [selectedFiles, setSelectedFiles] = useState<Option[] | undefined>();
+  const [options, setOptions] = useState<Option[]>(
+    fichiers.map(f => ({label: f.filename, value: f.id}))
+  );
 
-  const tracker = useFonctionTracker();
+  useEffect(() => {
+    const remainingOptions = fichiers
+      .filter(f => !(selectedFiles ?? []).some(file => file.value === f.id))
+      .map(f => ({label: f.filename, value: f.id}));
 
-  const canAdd = Object.values(currentSelection).find(v => !!v);
+    setOptions([...(selectedFiles ?? []), ...remainingOptions]);
+  }, [JSON.stringify(fichiers), JSON.stringify(selectedFiles)]);
 
-  // met à jour notre sélection interne lorsqu'une case est dé/cochée
-  const onChange = (e: ChangeEvent<HTMLFieldSetElement>) => {
-    if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
-      const {target} = e as unknown as ChangeEvent<HTMLInputElement>;
-      const {checked, id} = target;
-      setCurrentSelection({...currentSelection, [id]: checked});
-    }
-  };
-
-  // appelle la fonction d'ajout pour chaque item sélectionné
-  // TODO: passer un tableau pour faire un seul appel
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    Object.entries(currentSelection)
-      .filter(([, checked]) => checked)
-      .map(([id]) => onAddFileFromLib(parseInt(id)));
+  const onSubmit = () => {
+    (selectedFiles ?? []).map(file => onAddFileFromLib(file.value as number));
     onClose();
   };
 
   return (
-    <>
-      <h6 className="fr-text--md">Tous les fichiers de ma collectivité</h6>
-      <div>
-        <UiSearchBar
-          key="search"
-          value={filters.search}
+    <div className="flex flex-col gap-8">
+      <Field title="Tous les fichiers de ma collectivité">
+        <SelectFilter
+          debounce={500}
+          options={options}
+          values={(selectedFiles ?? []).map(f => f.value)}
+          onSearch={search => setFilters({search, page: 1})}
+          onChange={({values}) => {
+            setSelectedFiles(
+              options.filter(opt => (values ?? []).some(v => v === opt.value))
+            );
+            setFilters({search: '', page: 1});
+          }}
           placeholder="Rechercher par nom"
-          search={search => setFilters({page: 1, search})}
+          isSearcheable
         />
-        {total ? (
-          <>
-            <p className="fr-mt-2w">Sélectionner les fichiers à ajouter</p>
-            <fieldset className="fr-fieldset" onChange={onChange}>
-              <div className="overflow-auto" style={{height: '12rem'}}>
-                {fichiers.map(({id, filename}) => (
-                  <div key={id} className="fr-fieldset__element">
-                    <div className="fr-checkbox-group">
-                      <input type="checkbox" name={filename} id={`${id}`} />
-                      <label className="fr-label" htmlFor={`${id}`}>
-                        {filename}
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </fieldset>
+      </Field>
 
-            <Pagination
-              className="mx-auto"
-              nbOfElements={total}
-              maxElementsPerPage={NB_ITEMS_PER_PAGE}
-              selectedPage={filters.page ?? 1}
-              onChange={page => {
-                setFilters({...filters, page});
-                tracker({fonction: 'pagination', action: 'clic'});
-              }}
-            />
-          </>
-        ) : null}
+      <div className="flex gap-4 ml-auto">
+        <Button variant="outlined" onClick={onClose}>
+          Annuler
+        </Button>
+        <Button
+          disabled={!selectedFiles || !selectedFiles.length}
+          onClick={onSubmit}
+        >
+          Ajouter
+        </Button>
       </div>
-      {!total ? <p className="fr-mt-2w">Aucun fichier</p> : null}
-      <button className="fr-btn mt-2" disabled={!canAdd} onClick={onSubmit}>
-        Ajouter
-      </button>
-    </>
+    </div>
   );
 };
 
 const AddFromLibConnected = (
-  props: Omit<TAddFromLibProps, 'items' | 'total' | 'filters' | 'setFilters'>
+  props: Omit<TAddFromLibProps, 'items' | 'setFilters'>
 ) => {
   const [filters, setFilters] = useState({search: '', page: 1});
   const data = useFichiers(filters);
   return data ? (
-    <AddFromLib
-      {...props}
-      {...data}
-      filters={filters}
-      setFilters={setFilters}
-    />
+    <AddFromLib {...props} {...data} setFilters={setFilters} />
   ) : null;
 };
 
