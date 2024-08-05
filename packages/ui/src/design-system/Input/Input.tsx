@@ -7,6 +7,7 @@ import {InputNumber, InputNumberProps} from './InputNumber';
 import {InputPattern, InputPatternProps} from './InputPattern';
 import {InputOTP, InputOTPProps} from './InputOTP';
 import {InputTel, InputTelProps} from './InputTel';
+import {InputFile, InputFileProps} from './InputFile';
 
 type InputProps =
   | (Omit<InputBaseProps, 'type'> & {type: 'text'})
@@ -16,7 +17,8 @@ type InputProps =
   | (InputPasswordProps & {type: 'password'})
   | (InputPatternProps & {type: 'pattern'})
   | (InputTelProps & {type: 'tel'})
-  | (InputOTPProps & {type: 'otp'});
+  | (InputOTPProps & {type: 'otp'})
+  | (InputFileProps & {type: 'file'});
 
 /**
  * Affiche un champ de saisie, éventuellement combiné à une zone d'icône (ou de
@@ -52,6 +54,10 @@ export const Input = forwardRef(
 
     if (type === 'tel') {
       return <InputTel {...(props as InputTelProps)} ref={ref} />;
+    }
+
+    if (type === 'file') {
+      return <InputFile {...(props as InputFileProps)} ref={ref} />;
     }
 
     return <InputBase {...(props as InputBaseProps)} ref={ref} />;

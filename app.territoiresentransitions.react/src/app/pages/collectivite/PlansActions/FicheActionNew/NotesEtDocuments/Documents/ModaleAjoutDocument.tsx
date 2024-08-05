@@ -1,4 +1,6 @@
-import {Modal, ModalFooterOKCancel} from '@tet/ui';
+import {Modal} from '@tet/ui';
+import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
+import {useAddAnnexe} from '../../../FicheAction/data/useAddAnnexe';
 
 type ModaleAjoutDocumentProps = {
   ficheId: number;
@@ -11,17 +13,17 @@ const ModaleAjoutDocument = ({
   isOpen,
   setIsOpen,
 }: ModaleAjoutDocumentProps) => {
+  const handlers = useAddAnnexe(ficheId);
+
   return (
     <Modal
       openState={{isOpen, setIsOpen}}
       title="Ajouter un document"
       size="lg"
-      render={({descriptionId}) => <div id={descriptionId}>{/* to do */}</div>}
-      renderFooter={({close}) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
-          btnOKProps={{onClick: close}}
-        />
+      render={({descriptionId, close}) => (
+        <div id={descriptionId}>
+          <AddPreuveModal onClose={close} handlers={handlers} />
+        </div>
       )}
     />
   );
