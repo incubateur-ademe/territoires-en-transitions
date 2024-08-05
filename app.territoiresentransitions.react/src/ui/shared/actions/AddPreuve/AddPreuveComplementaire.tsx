@@ -1,6 +1,6 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
+import {Modal} from '@tet/ui';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
@@ -53,23 +53,18 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   return (
     <Modal
       size="lg"
-      externalOpen={opened}
-      setExternalOpen={onClose}
+      openState={{isOpen: opened, setIsOpen: setOpened}}
       disableDismiss={selectSubActionIsRequired}
+      title="Ajouter un document complémentaire"
       render={() => {
-        return (
-          <>
-            <h4>Ajouter un document complémentaire</h4>
-            {selectSubActionIsRequired ? (
-              <SelectSubAction
-                action={action}
-                subaction_id={subaction_id}
-                setSubaction={setSubaction}
-              />
-            ) : (
-              <AddPreuveModal onClose={onClose} handlers={handlers} />
-            )}
-          </>
+        return selectSubActionIsRequired ? (
+          <SelectSubAction
+            action={action}
+            subaction_id={subaction_id}
+            setSubaction={setSubaction}
+          />
+        ) : (
+          <AddPreuveModal onClose={onClose} handlers={handlers} />
         );
       }}
     >
