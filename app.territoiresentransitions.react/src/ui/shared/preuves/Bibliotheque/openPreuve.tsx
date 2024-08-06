@@ -8,8 +8,6 @@ import {saveBlob} from './saveBlob';
  * - en téléchargement pour les fichiers
  */
 export const openPreuve = async (preuve: TPreuve) => {
-  console.log(preuve);
-
   const {fichier, lien} = preuve;
   if (fichier) {
     downloadPreuve(preuve);
