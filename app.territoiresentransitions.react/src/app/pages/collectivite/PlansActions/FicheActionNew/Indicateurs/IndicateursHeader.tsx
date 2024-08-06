@@ -32,7 +32,7 @@ const IndicateursHeader = ({
           Objectifs :
         </span>
         <span
-          className={classNames('text-sm leading-6', {
+          className={classNames('text-sm leading-6 whitespace-pre-wrap', {
             'text-primary-10': objectifs && objectifs.length,
             'text-grey-7': !objectifs || !objectifs.length,
           })}

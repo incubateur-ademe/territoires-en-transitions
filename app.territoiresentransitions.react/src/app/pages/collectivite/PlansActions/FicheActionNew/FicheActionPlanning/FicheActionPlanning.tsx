@@ -118,7 +118,7 @@ const FicheActionPlanning = ({
           {!!justificationCalendrier && (
             <>
               <Divider className="-mb-5" />
-              <p className="text-sm text-primary-10 text-left leading-[22px] mb-0">
+              <p className="text-sm text-primary-10 text-left leading-[22px] whitespace-pre-wrap mb-0">
                 {justificationCalendrier}
               </p>
             </>
