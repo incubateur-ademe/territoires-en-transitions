@@ -1,27 +1,19 @@
--- Revert tet:taxonomie/personnes from pg
+-- Deploy tet:taxonomie/personnes to pg
 
 BEGIN;
 
-create or replace function personnes_collectivite(collectivite_id integer) returns SETOF personne
+create or replace function personnes_collectivite(
+    collectivite_id integer
+)
+    returns setof personne
     language sql
-as
-$$
-select *
-from (select pt.nom,
-             pt.collectivite_id,
-             pt.id      as tag_id,
-             null::uuid as user_id
-      from personne_tag pt
-      where pt.collectivite_id = personnes_collectivite.collectivite_id
-      union
-      select concat(cm.prenom, ' ', cm.nom) as nom,
-             personnes_collectivite.collectivite_id,
-             null::integer                  as tag_id,
-             cm.user_id::uuid               as user_id
-      from collectivite_membres(personnes_collectivite.collectivite_id) cm) req
-where can_read_acces_restreint(req.collectivite_id);
-$$;
-
-drop view private.personnes_collectivite;
+    security definer
+begin
+    atomic
+    select p.nom, p.collectivite_id, p.tag_id, p.user_id
+    from private.personnes_collectivite p
+    where can_read_acces_restreint(personnes_collectivite.collectivite_id)
+      and p.collectivite_id = personnes_collectivite.collectivite_id;
+end;
 
 COMMIT;
