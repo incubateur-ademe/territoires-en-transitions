@@ -1,8 +1,9 @@
 import {Enums, DBClient} from '../../typeUtils';
 import {unaccent} from '../../utils/unaccent';
 import {selectGroupements} from '../../collectivites/shared/actions/groupement.fetch';
-import {FetchOptions} from '../domain/fetch_options.schema';
+import {FetchOptions, Filtre} from '../domain/fetch_options.schema';
 import {Groupement} from '../../collectivites/shared/domain/groupement.schema';
+import {Indicateurs} from '../..';
 
 // Sous-ensemble d'indicateurs
 export type Subset = 'cae' | 'eci' | 'crte' | 'perso' | 'cles' | 'selection';
@@ -314,7 +315,7 @@ export async function fetchFilteredIndicateurs(
 }
 
 export function moduleOptionsToFilters(
-    options: Pick<FetchOptions, 'filtre'>
+  options: Pick<FetchOptions, 'filtre'>
 ): Filters {
   const {filtre} = options;
 
@@ -329,4 +330,20 @@ export function moduleOptionsToFilters(
     // page,
     // limit,
   };
+}
+
+export function filtersToModuleOptions(filters: Indicateurs.Filters): Filtre {
+  const options: Filtre = {
+    thematiqueIds: filters.thematique_ids,
+    planActionIds: filters.plan_ids,
+    utilisateurPiloteIds: filters.pilote_user_ids,
+    personnePiloteIds: filters.pilote_tag_ids,
+    servicePiloteIds: filters.service_ids,
+  };
+
+  if (filters.rempli !== undefined) {
+    options.estComplet = filters.rempli;
+  }
+
+  return options;
 }
