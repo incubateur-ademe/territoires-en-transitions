@@ -174,7 +174,9 @@ export const fetchPersonnes = async (
         nom: data[i]["nom"],
       };
     }
-    toReturn.set(personne.nom ?? "", personne);
+    if(!toReturn.get(personne.nom) || !toReturn.get(personne.nom).user){
+      toReturn.set(personne.nom ?? "", personne);
+    }
   }
   return toReturn;
 };
