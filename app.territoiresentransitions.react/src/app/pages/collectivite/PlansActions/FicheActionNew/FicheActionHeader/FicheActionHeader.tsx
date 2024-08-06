@@ -1,9 +1,7 @@
-import {useHistory, useParams} from 'react-router-dom';
-import {Breadcrumbs} from '@tet/ui';
-import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
+import {Divider} from '@tet/ui';
 import {TAxeInsert} from 'types/alias';
 import TitreFiche from './TitreFiche';
-import CheminFiche from './CheminFiche';
+import CheminsFiche from './CheminsFiche';
 
 type FicheActionHeaderProps = {
   titre: string | null;
@@ -15,49 +13,16 @@ type FicheActionHeaderProps = {
 
 const FicheActionHeader = (props: FicheActionHeaderProps) => {
   const {titre, collectiviteId, axes} = props;
-  const history = useHistory();
-
-  // Plan actuellement consulté
-  const {planUid} = useParams<{planUid: string}>();
-
-  // Si plusieurs emplacements, on récupère l'axe qui correpond
-  // au plan actuellement consulté
-  const axeId = !!axes
-    ? axes.length === 1
-      ? axes[0].id
-      : axes.find(a => a.plan === parseInt(planUid))?.id
-    : null;
 
   return (
-    <div className="w-full mb-10">
+    <div className="w-full mb-4">
       {/* Titre éditable de la fiche action */}
       <TitreFiche {...props} />
 
-      {/* Fil d'ariane avec emplacement actuellement consulté de la fiche action */}
-      {axeId ? (
-        <CheminFiche
-          titre={titre ?? 'Sans titre'}
-          axeId={axeId}
-          collectiviteId={collectiviteId}
-        />
-      ) : (
-        <Breadcrumbs
-          items={[
-            {
-              label: 'Fiches non classées',
-              onClick: () =>
-                history.push(
-                  makeCollectiviteFichesNonClasseesUrl({
-                    collectiviteId: collectiviteId,
-                  })
-                ),
-            },
-            {
-              label: titre ?? 'Sans titre',
-            },
-          ]}
-        />
-      )}
+      {/* Fils d'ariane avec emplacements de la fiche */}
+      <CheminsFiche {...{titre, collectiviteId, axes}} />
+
+      <Divider className="mt-6" />
     </div>
   );
 };
