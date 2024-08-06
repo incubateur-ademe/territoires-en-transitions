@@ -71,7 +71,7 @@ const FicheActionDescription = ({
         <h6 className="text-lg leading-6 text-grey-1 mb-2">
           Description de l'action :
         </h6>
-        <p className="text-base text-grey-1 mb-0">
+        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
           {description || 'Non renseigné !'}
         </p>
       </div>
@@ -81,7 +81,7 @@ const FicheActionDescription = ({
         <h6 className="text-lg leading-6 text-grey-1 mb-2">
           Moyens humains et techniques :
         </h6>
-        <p className="text-base text-grey-1 mb-0">
+        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
           {ressources || 'Non renseigné !'}
         </p>
       </div>

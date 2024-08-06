@@ -99,7 +99,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
               Financements :
             </span>
             {financements && financements.length ? (
-              <p className="mb-0 text-primary-10 text-sm leading-6">
+              <p className="mb-0 text-primary-10 text-sm leading-6 whitespace-pre-wrap">
                 {financements}
               </p>
             ) : (
