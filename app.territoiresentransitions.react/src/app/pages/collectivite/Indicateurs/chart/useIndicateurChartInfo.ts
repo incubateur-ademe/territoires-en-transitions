@@ -9,11 +9,14 @@ import {Indicateurs} from '@tet/api';
  * Détermine notamment l'id à utiliser pour lire les valeurs à afficher dans le graphe
  * ou le décompte à afficher à la place du graphe.
  */
-export const useIndicateurChartInfo = (indicateurId: number) => {
+export const useIndicateurChartInfo = (
+  indicateurId: number,
+  autoRefresh?: boolean
+) => {
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
-    ['indicateur_chart_info', collectiviteId, indicateurId],
+    ['indicateur_chart_info', collectiviteId, indicateurId, autoRefresh],
     async () =>
       collectiviteId
         ? Indicateurs.fetch.selectIndicateurChartInfo(
@@ -22,6 +25,6 @@ export const useIndicateurChartInfo = (indicateurId: number) => {
             collectiviteId
           )
         : null,
-    DISABLE_AUTO_REFETCH
+    autoRefresh ? {} : {...DISABLE_AUTO_REFETCH}
   );
 };

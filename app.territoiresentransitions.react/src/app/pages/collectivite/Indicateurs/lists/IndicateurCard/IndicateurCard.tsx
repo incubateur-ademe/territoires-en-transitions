@@ -58,7 +58,10 @@ export type IndicateurCardProps = {
 };
 
 /** Carte qui permet d'afficher un graphique dans une liste */
-const IndicateurCard = (props: IndicateurCardProps) => {
+const IndicateurCard = ({
+  autoRefresh = false,
+  ...props
+}: IndicateurCardProps) => {
   /** La carte ne peut pas être à la fois un  */
   if (props.selectState?.checkbox && !!props.href) {
     throw new Error(
@@ -68,7 +71,8 @@ const IndicateurCard = (props: IndicateurCardProps) => {
 
   // lit les données nécessaires à l'affichage du graphe
   const {data: chartInfo, isLoading} = useIndicateurChartInfo(
-    props.definition.id
+    props.definition.id,
+    autoRefresh
   );
 
   // sépare les données objectifs/résultats
