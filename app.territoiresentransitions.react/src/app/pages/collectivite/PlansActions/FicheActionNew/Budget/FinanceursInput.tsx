@@ -67,6 +67,7 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
         <Field title="Ajouter un financeur" className="col-span-3">
           <FinanceursDropdown
             key={(financeurs ?? []).length}
+            placeholder="Rechercher par mots-clés ou créer un tag"
             value={undefined}
             disabledOptionsIds={(financeurs ?? []).map(
               f => f.financeur_tag.id!
