@@ -32,7 +32,10 @@ const ModaleAcces = ({
           <Checkbox
             variant="switch"
             label="Fiche action en mode privé"
-            message="Seulement les membres de la collectivité peuvent voir la fiche"
+            message="Si le mode privé est activé, la fiche action n'est plus
+            consultable par les personnes n’étant pas membres de votre
+            collectivité. La fiche reste consultable par l’ADEME et le service support
+            de la plateforme."
             containerClassname="col-span-2"
             checked={editedRestreint}
             onChange={() => setEditedFiche(prevState => !prevState)}
