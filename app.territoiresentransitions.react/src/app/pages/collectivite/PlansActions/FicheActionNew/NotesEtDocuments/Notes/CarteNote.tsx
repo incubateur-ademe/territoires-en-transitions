@@ -1,6 +1,7 @@
 import {Alert, Button, Card, Icon} from '@tet/ui';
 import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
+import AlerteSuppression from '../AlerteSuppression';
 
 type CarteNoteProps = {
   isReadonly: boolean;
@@ -29,7 +30,7 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
         )}
 
         {/* Contenu de la carte */}
-        <Card className="rounded-xl">
+        <Card className="rounded-xl !p-4">
           <div className="flex gap-4">
             <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
               <Icon icon="edit-box-line" className="text-primary-10" />
@@ -42,32 +43,12 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
       </div>
 
       {/* Alerte de suppression de la note */}
-      <Alert
+      <AlerteSuppression
         isOpen={openAlert && !isReadonly}
-        onClose={() => setOpenAlert(false)}
-        className="absolute bottom-0 left-0 right-0 w-screen z-modal border-t border-t-info-1"
+        setIsOpen={setOpenAlert}
         title="Supprimer la note"
-        description="La note sera définitivement supprimée. Voulez-vous vraiment la supprimer ?"
-        footer={
-          <div className="flex gap-3">
-            <Button
-              variant="outlined"
-              size="xs"
-              onClick={() => setOpenAlert(false)}
-            >
-              Annuler
-            </Button>
-            <Button
-              size="xs"
-              onClick={() => {
-                updateNotes(null);
-                setOpenAlert(false);
-              }}
-            >
-              Confirmer
-            </Button>
-          </div>
-        }
+        message="La note sera définitivement supprimée. Voulez-vous vraiment la supprimer ?"
+        onDelete={() => updateNotes(null)}
       />
     </>
   );
