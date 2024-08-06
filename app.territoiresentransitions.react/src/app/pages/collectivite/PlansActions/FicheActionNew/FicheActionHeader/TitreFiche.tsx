@@ -20,7 +20,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
     setIsEditing(prevState => !prevState);
     if (isEditing) {
       const titleToSave = editedTitle.trim();
-      if (titleToSave !== titre && titleToSave.length) {
+      if (titleToSave !== titre) {
         updateTitle(titleToSave);
         setEditedTitle(titleToSave);
       } else {
