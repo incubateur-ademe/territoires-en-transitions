@@ -138,10 +138,6 @@ const ModalePlanning = ({
             <Textarea
               className="min-h-[50px]"
               value={editedFiche.calendrier ?? ''}
-              disabled={
-                editedFiche.statut !== 'En pause' &&
-                editedFiche.statut !== 'Abandonné'
-              }
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,

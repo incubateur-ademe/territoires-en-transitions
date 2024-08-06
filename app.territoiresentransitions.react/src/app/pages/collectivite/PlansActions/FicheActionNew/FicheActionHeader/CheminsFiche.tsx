@@ -53,7 +53,7 @@ const CheminsFiche = ({titre, collectiviteId, axes}: CheminsFicheProps) => {
                 ),
             },
             {
-              label: titre ?? 'Sans titre',
+              label: titre || 'Sans titre',
             },
           ]}
         />
