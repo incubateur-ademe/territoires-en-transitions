@@ -38,7 +38,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
         <EmptyCard
           picto={className => <MoneyPicto className={className} />}
           title="Budget non renseigné !"
-          subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements."
+          subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements"
           isReadonly={isReadonly}
           action={{
             label: 'Renseigner un budget',
@@ -98,15 +98,20 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Financements :
             </span>
-            {financements && financements.length ? (
-              <p className="mb-0 text-primary-10 text-sm leading-6 whitespace-pre-wrap">
-                {financements}
-              </p>
-            ) : (
-              <span className="ml-3 text-sm text-grey-7 leading-7">
-                Non renseignés
-              </span>
-            )}
+
+            <p
+              className={classNames(
+                'mb-0 text-sm leading-6 whitespace-pre-wrap',
+                {
+                  'text-primary-10': !!financements && financements.length > 0,
+                  'text-grey-7': !financements || financements.length === 0,
+                }
+              )}
+            >
+              {financements && financements.length
+                ? financements
+                : 'Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions…'}
+            </p>
           </div>
         </div>
       )}

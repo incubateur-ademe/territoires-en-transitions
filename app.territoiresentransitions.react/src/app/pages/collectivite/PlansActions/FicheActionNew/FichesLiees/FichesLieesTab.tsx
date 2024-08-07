@@ -29,6 +29,7 @@ const FichesLieesTab = ({
         <EmptyCard
           picto={className => <FichePicto className={className} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
+          subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
           isReadonly={isReadonly}
           action={{
             label: 'Lier une fiche action',
