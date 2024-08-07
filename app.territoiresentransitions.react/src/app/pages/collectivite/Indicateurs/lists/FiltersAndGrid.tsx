@@ -9,12 +9,12 @@ import {
 import {FiltresIndicateurs} from './FiltresIndicateurs';
 import {useFilteredIndicateurDefinitions} from './useFilteredIndicateurDefinitions';
 import {useIndicateursFilterState} from './useIndicateursFilterState';
-import {ID_NOUVEAU} from 'app/pages/collectivite/Indicateurs/Indicateurs';
+import {ID_NOUVEAU} from 'app/pages/collectivite/Indicateurs/OldIndicateurs';
 
 /** Affiche les filtres et la grille d'indicateurs donnés */
 export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
   const collectivite = useCurrentCollectivite();
-  const filterState = useIndicateursFilterState();
+  const filterState = useIndicateursFilterState('/');
   const {filters, resetFilterParams, filterParamsCount} = filterState;
 
   // charge et filtre les définitions

@@ -1,10 +1,14 @@
 import {ReactNode} from 'react';
 import classNames from 'classnames';
 import {IndicateurViewParamOption} from 'app/paths';
-import {viewTitles} from './Indicateurs';
+import {viewTitles} from './OldIndicateurs';
 
 /** Affiche l'en-tête d'une liste d'indicateurs */
-export const HeaderIndicateursList = ({view}: {view: IndicateurViewParamOption}) => (
+export const HeaderIndicateursList = ({
+  view,
+}: {
+  view: IndicateurViewParamOption;
+}) => (
   <Header
     className="bg-primary text-white"
     title={viewTitles[view]}

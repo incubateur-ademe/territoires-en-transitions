@@ -13,6 +13,7 @@ import {
   makeCollectiviteUsersUrl,
   makeTableauBordLandingUrl,
   makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteTousLesIndicateursUrl,
 } from 'app/paths';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -184,12 +185,23 @@ const makeNavItemsBase = (
     },
     {
       confidentiel,
-      label: 'Indicateurs',
-      to: makeCollectiviteIndicateursUrl({
-        collectiviteId,
-        indicateurView: 'cles',
-      }),
+      title: 'Indicateurs',
       urlPrefix: [makeCollectiviteIndicateursUrl({collectiviteId})],
+      items: [
+        {
+          label: 'Tous les indicateurs',
+          to: makeCollectiviteTousLesIndicateursUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          label: 'Ancienne vue',
+          to: makeCollectiviteIndicateursUrl({
+            collectiviteId,
+            indicateurView: 'cles',
+          }),
+        },
+      ],
     },
   ];
 };
