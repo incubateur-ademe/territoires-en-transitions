@@ -29,7 +29,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
   return (
     <div
       className={classNames(
-        'absolute z-[800] top-0 h-screen max-h-screen overflow-x-scroll w-[50%] lg:w-[33%] xl:w-[30%] bg-white rounded-l-lg border-l border-l-grey-3 transition-all duration-500',
+        'absolute z-[800] top-0 h-screen max-h-screen overflow-x-auto w-[50%] lg:w-[33%] xl:w-[30%] bg-white rounded-l-lg border-l border-l-grey-3 transition-all duration-500',
         {
           '-right-[50%] lg:-right-[33%] xl:-right-[30%]': !isOpen,
           'right-0': isOpen,

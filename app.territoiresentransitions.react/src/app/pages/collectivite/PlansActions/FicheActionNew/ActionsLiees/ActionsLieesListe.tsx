@@ -14,10 +14,13 @@ const ActionsLieesListe = ({actionsIds}: ActionsLieesListeProps) => {
 
   return (
     actionsLiees.length > 0 && (
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-        {actionsLiees.map(action => (
-          <ActionCard key={action.action_id} action={action} openInNewTab />
-        ))}
+      // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
+      <div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+          {actionsLiees.map(action => (
+            <ActionCard key={action.action_id} action={action} openInNewTab />
+          ))}
+        </div>
       </div>
     )
   );
