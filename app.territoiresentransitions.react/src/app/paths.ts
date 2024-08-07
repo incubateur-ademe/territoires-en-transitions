@@ -63,8 +63,10 @@ export type ActionVueParamOption =
 export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
-export const collectiviteIndicateurPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
-export const collectiviteIndicateurReferentielPath = `${collectivitePath}/indicateurs/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
+export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
+export const collectiviteTousLesIndicateursPath = `${collectiviteIndicateursBasePath}/tous-les-indicateurs`;
+export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
+export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
@@ -142,6 +144,16 @@ export const makeTableauBordModuleUrl = ({
     .replace(`:${TDBViewId}`, view)
     .replace(`:${TDBModuleId}`, module);
 };
+
+export const makeCollectiviteTousLesIndicateursUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteTousLesIndicateursPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,

@@ -1,7 +1,6 @@
 import {ReactNode} from 'react';
 import {Redirect, Route, RouteProps} from 'react-router-dom';
 
-import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
 import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
 import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
@@ -9,8 +8,7 @@ import {
   collectiviteAccueilPath,
   collectiviteActionPath,
   collectiviteBibliothequePath,
-  collectiviteIndicateurPath,
-  collectiviteIndicateurReferentielPath,
+  collectiviteIndicateursBasePath,
   collectiviteJournalPath,
   collectiviteLabellisationPath,
   collectivitePersoRefPath,
@@ -28,6 +26,7 @@ import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabelli
 import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
+import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -47,12 +46,7 @@ export const CollectiviteRoutes = () => {
         <ActionPage />
       </Route>
 
-      <RouteEnAccesRestreint
-        path={[
-          collectiviteIndicateurPath,
-          collectiviteIndicateurReferentielPath,
-        ]}
-      >
+      <RouteEnAccesRestreint path={collectiviteIndicateursBasePath}>
         <IndicateursPage />
       </RouteEnAccesRestreint>
 
