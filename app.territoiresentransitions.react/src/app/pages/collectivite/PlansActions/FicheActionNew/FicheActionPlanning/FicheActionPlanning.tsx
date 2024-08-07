@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import classNames from 'classnames';
-import {isBefore, startOfToday} from 'date-fns';
+import {format, isBefore, startOfToday} from 'date-fns';
 import {Button, Divider, Icon} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import BadgeStatut from '../../components/BadgeStatut';
@@ -29,18 +29,14 @@ const FicheActionPlanning = ({
   const {
     amelioration_continue: ameliorationContinue,
     calendrier: justificationCalendrier,
+    created_at: dateCreation,
     date_debut: dateDebut,
     date_fin_provisoire: dateFinPrevisionnelle,
     niveau_priorite: niveauPriorite,
     statut,
   } = fiche;
 
-  const isEmpty =
-    !ameliorationContinue &&
-    !dateDebut &&
-    !dateFinPrevisionnelle &&
-    !niveauPriorite &&
-    !statut;
+  const isEmpty = !ameliorationContinue && !dateDebut && !dateFinPrevisionnelle;
 
   const isLate =
     dateFinPrevisionnelle &&
@@ -69,38 +65,46 @@ const FicheActionPlanning = ({
           <FilledCalendarPicto className="mx-auto" />
 
           {/* Date de début */}
-          {!!dateDebut && (
-            <div>
-              <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
-                Date de début
-              </h6>
-              <p className="text-sm leading-4 text-primary-10 mb-0">
-                {getTextFormattedDate({date: dateDebut})}
-              </p>
-            </div>
-          )}
+
+          <div>
+            <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
+              Date de début
+            </h6>
+            <p
+              className={classNames('text-sm leading-4 mb-0', {
+                'text-grey-7': !dateDebut,
+                'text-primary-10': !!dateDebut,
+              })}
+            >
+              {!!dateDebut
+                ? getTextFormattedDate({date: dateDebut})
+                : 'Non renseignée'}
+            </p>
+          </div>
 
           {/* Date de fin prévisionnelle */}
-          {!!dateFinPrevisionnelle && (
+          {!ameliorationContinue && (
             <div>
               <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
                 Date de fin prévisionnelle
               </h6>
               <p
                 className={classNames('text-sm leading-4 mb-0', {
-                  'text-error-1': isLate,
-                  'text-primary-10': !isLate,
+                  'text-grey-7': !dateFinPrevisionnelle,
+                  'text-error-1': !!dateFinPrevisionnelle && isLate,
+                  'text-primary-10': !!dateFinPrevisionnelle && !isLate,
                 })}
               >
-                {getTextFormattedDate({date: dateFinPrevisionnelle})}
+                {!!dateFinPrevisionnelle
+                  ? getTextFormattedDate({date: dateFinPrevisionnelle})
+                  : 'Non renseignée'}
               </p>
             </div>
           )}
 
-          {(((!!dateDebut || !!dateFinPrevisionnelle) &&
-            (!!statut || !!niveauPriorite || !!ameliorationContinue)) ||
-            !!statut ||
-            !!niveauPriorite) && <Divider className="-mb-5" />}
+          {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
+            <Divider className="-mb-5" />
+          )}
 
           {/* Statut et niveau de priorité */}
           {(!!statut || !!niveauPriorite) && (
@@ -112,13 +116,13 @@ const FicheActionPlanning = ({
 
           {/* Action récurrente */}
           {!!ameliorationContinue && (
-            <div className="flex flex-wrap gap-2 justify-center items-center">
+            <div className="flex flex-wrap gap-2 justify-center items-start">
               <Icon
                 icon="loop-left-line"
                 className="text-primary-10"
                 size="sm"
               />
-              <span className="text-sm text-primary-8">
+              <span className="text-sm text-primary-10 font-medium">
                 l'action se répète tous les ans
               </span>
             </div>
@@ -133,12 +137,40 @@ const FicheActionPlanning = ({
               </p>
             </>
           )}
+
+          {/* Date de création de la fiche */}
+
+          {!!dateCreation && (
+            <>
+              <Divider className="-mb-5" />
+              <p className="text-sm text-primary-10 text-left mb-0">
+                Fiche action créée le{' '}
+                <span className="font-medium">
+                  {format(new Date(dateCreation), 'dd/MM/yyyy')}
+                </span>
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <EmptyCard
-          picto={className => <EmptyCalendarPicto className={className} />}
+          picto={className => (
+            <>
+              <EmptyCalendarPicto className={className} />
+              {(!!statut || !!niveauPriorite) && (
+                <div className="flex flex-wrap justify-center gap-4 mb-2">
+                  {!!statut && <BadgeStatut statut={statut} />}
+                  {!!niveauPriorite && (
+                    <BadgePriorite priorite={niveauPriorite} />
+                  )}
+                </div>
+              )}
+            </>
+          )}
           title="Aucun planning n'est renseigné !"
-          subTitle="Date de début | Date de fin prévisionnelle | Statut | Niveau de priorité"
+          subTitle={`Date de début | Date de fin prévisionnelle${
+            !statut ? ' | Statut' : ''
+          }${!niveauPriorite ? ' | Niveau de priorité' : ''}`}
           isReadonly={isReadonly}
           action={{
             label: 'Ajouter le planning prévisionnel',
