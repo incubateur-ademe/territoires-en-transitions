@@ -54,7 +54,8 @@ const ModalePlanning = ({
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,
-                  date_debut: evt.target.value,
+                  date_debut:
+                    evt.target.value.length !== 0 ? evt.target.value : null,
                 }))
               }
             />
@@ -97,7 +98,8 @@ const ModalePlanning = ({
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,
-                  date_fin_provisoire: evt.target.value,
+                  date_fin_provisoire:
+                    evt.target.value.length !== 0 ? evt.target.value : null,
                 }))
               }
             />
