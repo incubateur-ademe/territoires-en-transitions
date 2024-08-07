@@ -9,7 +9,6 @@ import {
   ModalFooterOKCancel,
   ModalProps,
 } from '@tet/ui';
-import {QueryKey} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
@@ -27,14 +26,12 @@ import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/Prio
 type Props = ModalProps & {
   filters: Filtre;
   setFilters: (filters: Filtre) => void;
-  keysToInvalidate?: QueryKey[];
 };
 
 const ModalFiltresToutesLesFichesAction = ({
   openState,
   filters,
   setFilters,
-  keysToInvalidate,
 }: Props) => {
   const [filtreState, setFiltreState] = useState<Filtre>(filters);
 

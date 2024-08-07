@@ -9,18 +9,16 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  Select,
-  SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {QueryKey, useQueryClient} from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {splitPilotePersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
@@ -37,7 +35,6 @@ const ModalIndicateursSuiviPlan = ({
     throw new Error('Aucune collectivité associée');
   }
 
-  const plansActions = usePlansActionsListe(collectiviteId);
   const queryClient = useQueryClient();
 
   const [filtreState, setFiltreState] = useState<Indicateurs.domain.Filtre>(
@@ -69,22 +66,17 @@ const ModalIndicateursSuiviPlan = ({
           <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
           <FormSection title="Filtrer sur :" className="!grid-cols-1">
             <Field title="Nom du plan :">
-              <SelectMultiple
+              <PlansActionDropdown
+                type="multiple"
                 values={filtreState.planActionIds}
-                options={
-                  plansActions?.plans.map(p => ({
-                    label: generateTitle(p.nom),
-                    value: p.id,
-                  })) ?? []
-                }
-                onChange={({values, selectedValue}) =>
+                onChange={({plans, selectedPlan}) =>
                   ((filtreState.planActionIds?.length === 1 &&
-                    selectedValue !== filtreState.planActionIds[0]) ||
+                    selectedPlan !== filtreState.planActionIds[0]) ||
                     (filtreState.planActionIds &&
                       filtreState.planActionIds.length > 1)) &&
                   setFiltreState({
                     ...filtreState,
-                    planActionIds: values as number[],
+                    planActionIds: plans as number[],
                   })
                 }
               />
@@ -112,7 +104,7 @@ const ModalIndicateursSuiviPlan = ({
               />
             </Field>
             <Field title="Complétion indicateur :">
-              <Select
+              <IndicateurCompletsDropdown
                 values={
                   filtreState.estComplet === undefined
                     ? undefined
@@ -120,16 +112,6 @@ const ModalIndicateursSuiviPlan = ({
                     ? 'rempli'
                     : 'incomplet'
                 }
-                options={[
-                  {
-                    label: 'Complet',
-                    value: 'rempli',
-                  },
-                  {
-                    label: 'Incomplet',
-                    value: 'incomplet',
-                  },
-                ]}
                 onChange={value =>
                   setFiltreState({
                     ...filtreState,
