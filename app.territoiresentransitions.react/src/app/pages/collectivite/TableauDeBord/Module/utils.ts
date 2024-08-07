@@ -51,6 +51,15 @@ export const filtersToBadges = (data: FiltreKeys) => {
     if (key === 'estComplet') {
       badgeValues.push(`Complétion : ${data[key] ? 'Complet' : 'Incomplet'}`);
     }
+    if (key === 'participationScore') {
+      data[key] && badgeValues.push('Participe au score CAE');
+    }
+    if (key === 'isPerso') {
+      data[key] && badgeValues.push('Indicateur personnalisé');
+    }
+    if (key === 'confidentiel') {
+      data[key] && badgeValues.push('Indicateur privé');
+    }
     if (key === 'budgetPrevisionnel') {
       data[key] && badgeValues.push('Budget renseigné');
     }

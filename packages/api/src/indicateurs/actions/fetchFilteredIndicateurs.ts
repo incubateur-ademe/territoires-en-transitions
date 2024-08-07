@@ -28,6 +28,7 @@ export type Filters = {
   participation_score?: boolean;
   rempli?: boolean;
   confidentiel?: boolean;
+  isPerso?: boolean;
   fiches_non_classees?: boolean;
   text?: string;
   sort?: {
@@ -321,11 +322,18 @@ export function moduleOptionsToFilters(
 
   return {
     thematique_ids: filtre.thematiqueIds,
+    action_id: filtre.actionId,
     plan_ids: filtre.planActionIds,
     pilote_user_ids: filtre.utilisateurPiloteIds,
     pilote_tag_ids: filtre.personnePiloteIds,
     service_ids: filtre.servicePiloteIds,
+    type: filtre.type,
+    participation_score: filtre.participationScore,
     rempli: filtre.estComplet,
+    confidentiel: filtre.confidentiel,
+    fiches_non_classees: filtre.fichesNonClassees,
+    text: filtre.text,
+    isPerso: filtre.isPerso,
     // sort: sort?.map(({field, direction}) => ({field, direction}))[0],
     // page,
     // limit,
@@ -343,6 +351,18 @@ export function filtersToModuleOptions(filters: Indicateurs.Filters): Filtre {
 
   if (filters.rempli !== undefined) {
     options.estComplet = filters.rempli;
+  }
+
+  if (filters.participation_score !== undefined) {
+    options.participationScore = filters.participation_score;
+  }
+
+  if (filters.confidentiel !== undefined) {
+    options.confidentiel = filters.confidentiel;
+  }
+
+  if (filters.isPerso !== undefined) {
+    options.isPerso = filters.isPerso;
   }
 
   return options;

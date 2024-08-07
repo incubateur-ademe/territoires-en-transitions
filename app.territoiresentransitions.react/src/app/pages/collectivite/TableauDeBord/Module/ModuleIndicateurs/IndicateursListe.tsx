@@ -19,7 +19,10 @@ import {Indicateurs} from '@tet/api';
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
-import {filtersToModuleOptions} from '@tet/api/dist/src/indicateurs/actions/fetchFilteredIndicateurs';
+import {
+  filtersToModuleOptions,
+  Subset,
+} from '@tet/api/dist/src/indicateurs/actions/fetchFilteredIndicateurs';
 
 type sortByOptionsType = {
   label: string;
@@ -99,8 +102,20 @@ const IndicateursListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
+  /** Défini le subset utilisé */
+  const getSubset = (): Subset | null => {
+    if (filtres?.participation_score) {
+      return 'cae';
+    }
+    if (filtres?.isPerso) {
+      return 'perso';
+    }
+
+    return null;
+  };
+
   const {data, isLoading} = useFilteredIndicateurDefinitions(
-    null,
+    getSubset(),
     {
       ...filtres,
       text: debouncedSearch,
