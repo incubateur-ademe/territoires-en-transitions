@@ -18,7 +18,9 @@ export const getAuthorAndDate = (
   date: string | null,
   author: string | null
 ) => {
-  const formattedDate = date ? getTextFormattedDate(date) : null;
+  const formattedDate = date
+    ? getTextFormattedDate({date: date, shortMonth: true})
+    : null;
 
   if (date || author) {
     return `Ajouté${date ? ` le ${formattedDate}` : ''}${

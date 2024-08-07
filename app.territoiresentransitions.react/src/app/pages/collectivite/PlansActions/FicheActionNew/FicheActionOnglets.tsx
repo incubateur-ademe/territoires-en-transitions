@@ -22,7 +22,7 @@ const FicheActionOnglets = ({
   return (
     <Tabs
       className={className}
-      tabsListClassName="lg:!justify-start lg:pl-0 lg:flex-nowrap lg:overflow-x-scroll"
+      tabsListClassName="lg:!justify-start lg:pl-0 lg:flex-nowrap lg:overflow-x-auto"
     >
       {/* TODO: Tâches */}
 

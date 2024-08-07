@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import classNames from 'classnames';
+import {isBefore, startOfToday} from 'date-fns';
 import {Button, Divider, Icon} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import BadgeStatut from '../../components/BadgeStatut';
@@ -41,6 +42,10 @@ const FicheActionPlanning = ({
     !niveauPriorite &&
     !statut;
 
+  const isLate =
+    dateFinPrevisionnelle &&
+    isBefore(new Date(dateFinPrevisionnelle), startOfToday());
+
   return (
     <>
       {!isEmpty ? (
@@ -70,7 +75,7 @@ const FicheActionPlanning = ({
                 Date de début
               </h6>
               <p className="text-sm leading-4 text-primary-10 mb-0">
-                {getTextFormattedDate(dateDebut)}
+                {getTextFormattedDate({date: dateDebut})}
               </p>
             </div>
           )}
@@ -81,8 +86,13 @@ const FicheActionPlanning = ({
               <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
                 Date de fin prévisionnelle
               </h6>
-              <p className="text-sm leading-4 text-primary-10 mb-0">
-                {getTextFormattedDate(dateFinPrevisionnelle)}
+              <p
+                className={classNames('text-sm leading-4 mb-0', {
+                  'text-error-1': isLate,
+                  'text-primary-10': !isLate,
+                })}
+              >
+                {getTextFormattedDate({date: dateFinPrevisionnelle})}
               </p>
             </div>
           )}
