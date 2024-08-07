@@ -42,7 +42,7 @@ const ModaleActeurs = ({
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Personnes pilote */}
-          <Field title="Personnes pilote">
+          <Field title="Personne pilote">
             <PersonnesDropdown
               dataTest="personnes-pilotes"
               values={editedFiche.pilotes?.map(p => getPersonneStringId(p))}
@@ -57,7 +57,7 @@ const ModaleActeurs = ({
           </Field>
 
           {/* Directions ou services pilote */}
-          <Field title="Directions ou services pilote">
+          <Field title="Direction ou service pilote">
             <ServicesDropdown
               values={editedFiche.services?.map(s => s.id)}
               onChange={({services}) =>
@@ -67,7 +67,7 @@ const ModaleActeurs = ({
           </Field>
 
           {/* Structures pilote */}
-          <Field title="Structures pilote">
+          <Field title="Structure pilote">
             <StructuresDropdown
               values={editedFiche.structures?.map(s => s.id)}
               onChange={({structures}) =>

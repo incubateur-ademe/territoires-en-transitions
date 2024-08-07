@@ -111,7 +111,7 @@ const FicheActionActeurs = ({
         <EmptyCard
           picto={className => <EmptyActeursPicto className={className} />}
           title="Aucun acteur du projet n'est renseigné !"
-          subTitle="Personne pilote | Structures pilotes | Élu·es référent·es | Directions ou service pilote | Partenaires | Cibles"
+          subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles"
           isReadonly={isReadonly}
           action={{
             label: 'Ajouter les acteurs',
