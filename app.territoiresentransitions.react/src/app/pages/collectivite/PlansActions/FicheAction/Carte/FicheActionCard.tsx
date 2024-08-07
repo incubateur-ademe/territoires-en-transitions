@@ -226,7 +226,10 @@ const FicheActionCard = ({
                       className={classNames({'text-error-1': isLate})}
                     >
                       <Icon icon="calendar-line" size="sm" className="mr-1" />
-                      {getTextFormattedDate(ficheAction.date_fin_provisoire)}
+                      {getTextFormattedDate({
+                        date: ficheAction.date_fin_provisoire,
+                        shortMonth: true,
+                      })}
                     </span>
                   </Fragment>
                 )}

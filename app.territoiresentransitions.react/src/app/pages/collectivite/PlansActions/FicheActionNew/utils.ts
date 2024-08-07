@@ -2,13 +2,24 @@ import {differenceInCalendarDays, format} from 'date-fns';
 import {fr} from 'date-fns/locale';
 
 // Renvoie une date avec le mois en toutes lettres
-export const getTextFormattedDate = (date: string) => {
+export const getTextFormattedDate = ({
+  date,
+  shortMonth,
+}: {
+  date: string;
+  shortMonth?: boolean;
+}) => {
   const localDate = date ? new Date(date) : new Date();
   const dayOfMonth = format(localDate, 'd');
 
   if (dayOfMonth === '1') {
-    return format(localDate, 'do MMMM yyyy', {locale: fr});
-  } else return format(localDate, 'd MMMM yyyy', {locale: fr});
+    return shortMonth
+      ? format(localDate, 'do MMM yyyy', {locale: fr})
+      : format(localDate, 'do MMMM yyyy', {locale: fr});
+  } else
+    return shortMonth
+      ? format(localDate, 'd MMM yyyy', {locale: fr})
+      : format(localDate, 'd MMMM yyyy', {locale: fr});
 };
 
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
