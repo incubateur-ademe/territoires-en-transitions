@@ -29,6 +29,7 @@ const ActionsLieesTab = ({
         <EmptyCard
           picto={className => <ActionPicto className={className} />}
           title="Aucune action des référentiels n'est liée !"
+          subTitle="Ici vous pouvez lier votre action avec une action des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
           isReadonly={isReadonly}
           action={{
             label: 'Lier une action des référentiels',

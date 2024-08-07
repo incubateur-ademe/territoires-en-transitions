@@ -32,7 +32,7 @@ const IndicateursAssocies = ({
         <EmptyCard
           picto={className => <DatavizPicto className={className} />}
           title="Aucun indicateur associé !"
-          subTitle="Mesurez les résultats de l'action grâce à des indicateurs de réalisation et de résultats"
+          subTitle="Observez votre progression grâce aux indicateurs"
           isReadonly={isReadonly}
           action={{
             label: 'Associer des indicateurs',
