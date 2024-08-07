@@ -1,26 +1,20 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "target": "es6",
     "jsx": "react-jsx",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
+    "allowJs": false,
+    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist",
-    "baseUrl": "./src/",
-    "paths": {
-      "@tailwind-preset": ["tailwind-preset.ts"],
-      "@design-system/*": ["design-system/*"],
-      "@components/*": ["components/*"],
-      "@assets/*": ["assets/*"]
-    }
+    "strict": true
   },
-  "include": ["src/*.ts", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "extends": "../tsconfig.base.json"
 }

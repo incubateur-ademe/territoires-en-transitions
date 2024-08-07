@@ -1,0 +1,33 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tet/ui": ["./packages/ui/src/index.ts"],
+      "@tet/ui/*": ["./packages/ui/src/*"],
+
+      "@tet/api": ["./packages/api/src/index.ts"],
+      "@tet/api/*": ["./packages/api/src/*"],
+
+      "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
+      "@tet/auth/*": ["./packages/auth/*"],
+      "@tet/site/*": ["./packages/site/src/*"],
+      "@tet/panier/*": ["./packages/panier/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
