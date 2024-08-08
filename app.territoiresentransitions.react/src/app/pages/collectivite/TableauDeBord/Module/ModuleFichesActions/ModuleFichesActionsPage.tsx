@@ -15,7 +15,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
 import FichesActionListe, {
   SortFicheActionSettings,
-} from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
+} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 
 type Props = {
   view: TDBViewParam;
