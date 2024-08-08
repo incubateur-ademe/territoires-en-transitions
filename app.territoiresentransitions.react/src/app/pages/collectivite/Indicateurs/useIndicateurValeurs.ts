@@ -3,7 +3,7 @@ import {Indicateurs} from '@tet/api';
 import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {SOURCE_COLLECTIVITE} from './constants';
-import {useIndicateurImportSources} from './detail/useImportSources';
+import {useIndicateurImportSources} from './Indicateur/detail/useImportSources';
 
 // export type TIndicateurValeur = Indicateurs.domain.Valeur;
 export type TIndicateurValeur = {

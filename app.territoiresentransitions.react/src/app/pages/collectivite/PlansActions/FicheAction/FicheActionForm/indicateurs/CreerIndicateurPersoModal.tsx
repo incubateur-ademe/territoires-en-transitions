@@ -1,6 +1,6 @@
 import {Button, Modal} from '@tet/ui';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
+import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/Indicateur/IndicateurPersoNouveau';
 import {FicheAction} from '../../data/types';
 
 /** Affiche le formulaire de création d'un indicateur personnalisé dans un

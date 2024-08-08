@@ -21,7 +21,7 @@ import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
 import {getIndicateurRestant} from './utils';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/detail/transformeValeurs';
+import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {

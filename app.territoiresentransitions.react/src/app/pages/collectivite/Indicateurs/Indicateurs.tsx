@@ -1,6 +1,6 @@
 import CollectivitePageLayout from 'app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import {RouteEnAccesRestreint} from 'app/pages/collectivite/CollectiviteRoutes';
-import {OldIndicateursPage} from 'app/pages/collectivite/Indicateurs/OldIndicateursPage';
+import {IndicateurPage} from 'app/pages/collectivite/Indicateurs/Indicateur/IndicateurPage';
 import {TousLesIndicateursPage} from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/TousLesIndicateursPage';
 import {
   collectiviteIndicateurPath,
@@ -12,6 +12,7 @@ import {Route, Switch} from 'react-router-dom';
 const Indicateurs = () => {
   return (
     <Switch>
+      {/** Liste tous les indicateurs */}
       <Route exact path={collectiviteTousLesIndicateursPath}>
         <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
           <CollectivitePageLayout>
@@ -20,13 +21,16 @@ const Indicateurs = () => {
         </div>
       </Route>
 
+      {/** Page d'un indicateur */}
       <RouteEnAccesRestreint
         path={[
           collectiviteIndicateurPath,
           collectiviteIndicateurReferentielPath,
         ]}
       >
-        <OldIndicateursPage />
+        <CollectivitePageLayout>
+          <IndicateurPage />
+        </CollectivitePageLayout>
       </RouteEnAccesRestreint>
     </Switch>
   );
