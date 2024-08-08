@@ -13,7 +13,7 @@ import {
 import {TDBViewParam} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
-import IndicateursListe from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/IndicateursListe';
+import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 
 type Props = {
   view: TDBViewParam;

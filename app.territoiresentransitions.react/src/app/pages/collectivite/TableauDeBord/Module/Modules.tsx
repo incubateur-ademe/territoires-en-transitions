@@ -4,7 +4,7 @@ import {defaultSlugsSchema} from '@tet/api/dist/src/collectivites/tableau_de_bor
 import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateursPage';
 import {TDBViewParam} from 'app/paths';
-import {SortFicheActionSettings} from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
+import {SortFicheActionSettings} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action
