@@ -13,6 +13,8 @@ import {
   VideoFetchedData,
 } from '../../../types';
 
+const LIMIT = 50;
+
 export const getMetaData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
     ['populate[0]', 'seo'],
@@ -59,12 +61,31 @@ export const getData = async (id: number) => {
   ]);
 
   if (data) {
-    const {data: idList} = await fetchCollection('actualites', [
+    const {data: ids, meta} = await fetchCollection('actualites', [
       ['fields[0]', 'DateCreation'],
       ['fields[1]', 'createdAt'],
       ['fields[2]', 'Epingle'],
       ['sort[0]', 'createdAt:desc'],
+      ['pagination[start]', '0'],
+      ['pagination[limit]', `${LIMIT}`],
     ]);
+
+    const {pagination} = meta;
+    let idList = ids;
+    let page = 1;
+
+    while (page < Math.ceil(pagination.total / pagination.limit)) {
+      const {data} = await fetchCollection('actualites', [
+        ['fields[0]', 'DateCreation'],
+        ['fields[1]', 'createdAt'],
+        ['fields[2]', 'Epingle'],
+        ['sort[0]', 'createdAt:desc'],
+        ['pagination[start]', `${page * LIMIT}`],
+        ['pagination[limit]', `${LIMIT}`],
+      ]);
+      idList.push(...data);
+      page++;
+    }
 
     const sortedIds = idList
       ? idList
