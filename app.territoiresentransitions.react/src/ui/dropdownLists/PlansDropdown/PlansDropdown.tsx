@@ -1,7 +1,7 @@
 import {Option, SelectMultiple} from '@tet/ui';
 
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {generateTitle} from '../data/utils';
+import {generateTitle} from '../../../app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {TAxeRow} from 'types/alias';
 
