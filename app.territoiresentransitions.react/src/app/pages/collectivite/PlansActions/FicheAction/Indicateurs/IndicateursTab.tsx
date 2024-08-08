@@ -1,4 +1,4 @@
-import {FicheAction} from '../../FicheAction/data/types';
+import {FicheAction} from '../data/types';
 import IndicateursHeader from './IndicateursHeader';
 import IndicateursAssocies from './IndicateursAssocies';
 

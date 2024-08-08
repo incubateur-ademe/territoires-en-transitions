@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {Badge} from '@tet/ui';
-import {FicheAction} from '../../FicheAction/data/types';
+import {FicheAction} from '../data/types';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {

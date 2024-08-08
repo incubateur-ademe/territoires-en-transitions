@@ -1,12 +1,12 @@
 import {useState} from 'react';
 import {Button, Divider} from '@tet/ui';
-import {FicheAction} from '../../FicheAction/data/types';
-import Content from '../../FicheAction/FicheActionForm/indicateurs/Panel/Content';
-import EmptyCard from '../EmptyCard';
+import {FicheAction} from '../data/types';
+import Content from './SideMenu/Content';
+import EmptyCard from '../../FicheActionNew/EmptyCard';
 import DatavizPicto from './DatavizPicto';
 import IndicateursListe from './IndicateursListe';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
-import SideMenu from '../SideMenu';
+import SideMenu from '../../FicheActionNew/SideMenu';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
