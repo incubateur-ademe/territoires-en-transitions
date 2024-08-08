@@ -1,7 +1,7 @@
 import {useQuery} from 'react-query';
 import {restoreSessionFromAuthTokens} from '@tet/api';
 import {supabaseClient} from '../supabase';
-import {ENV} from 'environmentVariables';
+import {ENV} from '@tet/app/environmentVariables';
 
 export const useCurrentSession = () => {
   const {data, error} = useQuery(['session'], async () => {

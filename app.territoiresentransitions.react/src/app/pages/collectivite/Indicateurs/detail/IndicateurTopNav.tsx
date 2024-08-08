@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import Link from 'next/link';
 import {usePrevAndNextIndicateurLinks} from './usePrevAndNextIndicateurLinks';
 
 /**
@@ -12,7 +12,7 @@ export const IndicateurTopNav = () => {
     <div className="!bg-bf925 min-h-[1.5rem] flex justify-between fr-text--sm !m-0 fr-pb-3w fr-px-5w overflow-hidden">
       {prevIndicateurLink ? (
         <Link
-          to={prevIndicateurLink}
+          href={prevIndicateurLink}
           className="fr-fi-arrow-left-line fr-btn--icon-left active-transparent"
         >
           Indicateur précédent
@@ -22,7 +22,7 @@ export const IndicateurTopNav = () => {
       )}
       {nextIndicateurLink && (
         <Link
-          to={nextIndicateurLink}
+          href={nextIndicateurLink}
           className="justify-self-end fr-fi-arrow-right-line fr-btn--icon-right active-transparent"
         >
           Indicateur suivant

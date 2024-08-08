@@ -1,14 +1,14 @@
-import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
-import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
-import {Link} from 'react-router-dom';
+import {Card} from '@tet/ui';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
+import Link from 'next/link';
+import Chart from 'ui/charts/Chart';
+import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
+import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
 import {PlanActionFilter} from './FiltersPlanAction';
 import {generateSyntheseGraphData} from './utils';
-import Chart from 'ui/charts/Chart';
-import {Card} from '@tet/ui';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -94,7 +94,7 @@ const SyntheseGraphsList = ({
         <div className="flex justify-center mt-6">
           <Link
             className="fr-btn"
-            to={makeCollectivitePlansActionsNouveauUrl({
+            href={makeCollectivitePlansActionsNouveauUrl({
               collectiviteId,
             })}
           >

@@ -1,5 +1,3 @@
-import {Link} from 'react-router-dom';
-
 import {Referentiel} from 'types/litterals';
 import {toPercentString} from 'utils/score';
 import {referentielToName} from 'app/labels';
@@ -10,6 +8,7 @@ import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import {makeCollectiviteAccueilUrl} from 'app/paths';
 import classNames from 'classnames';
 import {Icon} from '@tet/ui';
+import Link from 'next/link';
 
 type Props = {
   collectivite: TCollectiviteCarte;
@@ -30,7 +29,7 @@ export const CollectiviteCarte = ({collectivite, canUserClickCard}: Props) => {
     <Link
       data-test="CollectiviteCarte"
       onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
-      to={
+      href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,

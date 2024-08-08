@@ -1,11 +1,13 @@
+'use client';
+
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
 import classNames from 'classnames';
 import {HeaderProps, HeaderPropsWithModalState} from './types';
 import {MenuPrincipal} from './MenuPrincipal';
 import {AccesRapide} from './AccesRapide';
 import {MaintenanceNotice} from './MaintenanceNotice';
-import ademeSrc from 'app/static/img/ademe.svg';
+import ademeSrc from '../../static/img/ademe.svg';
+import Link from 'next/link';
 
 /** Valeur de la hauteur sur header de l'application */
 export const appHeaderHeight = 183;
@@ -50,7 +52,7 @@ const Body = (props: HeaderPropsWithModalState) => {
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
             <div className="fr-header__service">
-              <Link to="/" title="Accueil - Territoires en Transitions">
+              <Link href="/" title="Accueil - Territoires en Transitions">
                 <p className="fr-header__service-title m-0">
                   Territoires en Transitions
                 </p>

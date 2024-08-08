@@ -1,15 +1,16 @@
 import {supabaseClient} from 'core-logic/api/supabase';
 import {QueryKey, useMutation, useQueryClient} from 'react-query';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
-import {FicheResume} from './types';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {usePathname} from 'next/navigation';
+import {useHistory, useParams} from 'react-router-dom';
 import {PlanNode} from '../../PlanAction/data/types';
+import {FicheResume} from './types';
 
 type Args = {
   ficheId: number;
@@ -26,7 +27,7 @@ export const useDeleteFicheAction = (args: Args) => {
   const queryClient = useQueryClient();
   const history = useHistory();
   const {planUid} = useParams<{planUid: string}>();
-  const {pathname} = useLocation();
+  const pathname = usePathname();
 
   const {ficheId, axeId} = args;
   const planActionId = parseInt(planUid);

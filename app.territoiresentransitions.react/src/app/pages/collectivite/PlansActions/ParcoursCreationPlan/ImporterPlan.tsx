@@ -2,7 +2,7 @@ import {Alert} from '@tet/ui';
 import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {Link} from 'react-router-dom';
+import Link from 'next/link';
 import ContextMenu from 'ui/shared/select/ContextMenu';
 import {MenuTriggerButton} from 'ui/shared/select/MenuTriggerButton';
 
@@ -76,7 +76,7 @@ const ImporterPlan = () => {
           <div className="flex items-center gap-6 ml-auto mt-6">
             <Link
               className="fr-btn fr-btn--tertiary fr-btn--icon-left !mb-0 fr-icon-arrow-left-line hover:!bg-[#EEEEEE]"
-              to={makeCollectivitePlansActionsNouveauUrl({
+              href={makeCollectivitePlansActionsNouveauUrl({
                 collectiviteId: collectivite_id!,
               })}
             >

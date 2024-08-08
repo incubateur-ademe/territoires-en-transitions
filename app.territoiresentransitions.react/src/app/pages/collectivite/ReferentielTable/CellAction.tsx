@@ -1,9 +1,9 @@
-import {CellProps} from 'react-table';
-import {Link} from 'react-router-dom';
-import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
-import {ActionReferentiel} from './useReferentiel';
-import {Kbd} from 'ui/shared/Kbd';
 import {Tooltip} from '@tet/ui';
+import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
+import Link from 'next/link';
+import {CellProps} from 'react-table';
+import {Kbd} from 'ui/shared/Kbd';
+import {ActionReferentiel} from './useReferentiel';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
@@ -85,7 +85,7 @@ export const CellAction = (props: TCellProps) => {
               <Link
                 className="hover:underline active:underline active:!bg-transparent"
                 onClick={evt => evt.stopPropagation()}
-                to={makeCollectiviteTacheUrl({
+                href={makeCollectiviteTacheUrl({
                   collectiviteId,
                   actionId: row.original.action_id,
                   referentielId,

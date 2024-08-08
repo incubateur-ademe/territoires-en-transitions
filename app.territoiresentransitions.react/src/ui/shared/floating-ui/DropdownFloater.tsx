@@ -1,3 +1,5 @@
+'use client';
+
 import {cloneElement, useState} from 'react';
 import {
   useFloating,
@@ -8,11 +10,11 @@ import {
   useClick,
   FloatingPortal,
   FloatingFocusManager,
-  Placement,
   autoUpdate,
+  Placement,
   size,
   OffsetOptions,
-} from '@floating-ui/react';
+} from '@next/floating-ui/react';
 
 type DropdownFloaterProps = {
   children: JSX.Element;

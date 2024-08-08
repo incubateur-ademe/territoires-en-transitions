@@ -1,11 +1,12 @@
-import {useEffect} from 'react';
-import {Link, useLocation} from 'react-router-dom';
-import {useId} from '@floating-ui/react';
+import {useId} from '@next/floating-ui/react';
+import {recherchesCollectivitesUrl} from 'app/paths';
 import classNames from 'classnames';
-import {HeaderPropsWithModalState, TNavDropdown, TNavItem} from './types';
+import Link from 'next/link';
+import {usePathname} from 'next/navigation';
+import {useEffect} from 'react';
 import {makeNavItems, makeSecondaryNavItems} from './makeNavItems';
 import {SelectCollectivite} from './SelectCollectivite';
-import {recherchesCollectivitesUrl} from 'app/paths';
+import {HeaderPropsWithModalState, TNavDropdown, TNavItem} from './types';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -94,7 +95,7 @@ const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
   const {to, label, urlPrefix} = item;
 
   // vérifie si l'item correspond au début du chemin courant
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const current =
     pathname.startsWith(to) || pathIncludes(pathname, urlPrefix)
       ? 'page'
@@ -103,7 +104,7 @@ const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
   return (
     <li className="fr-nav__item">
       <Link
-        to={to}
+        href={to}
         target="_self"
         className="fr-nav__link"
         aria-controls="modal-header__menu"
@@ -132,7 +133,7 @@ const NavDropdown = (
   const opened = openedId === id; // vérifie si le menu est ouvert
 
   // vérifie si le menu contient un item correspondant au chemin courant
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const current =
     pathIncludes(pathname, urlPrefix) ||
     items.findIndex(({to}) => pathname.startsWith(to)) !== -1

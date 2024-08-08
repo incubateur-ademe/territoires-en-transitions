@@ -33,7 +33,13 @@ export type DCP = {
 export const AuthContext = createContext<TAuthContext | null>(null);
 
 // le hook donnant accès au context
-export const useAuth = () => useContext(AuthContext) as TAuthContext;
+export const useAuth = () => {
+  const context = useContext(AuthContext) as TAuthContext;
+  if (!context) {
+    throw new Error('useAuth doit être utilisé dans un AuthProvider');
+  }
+  return context;
+};
 
 // le fournisseur de contexte
 export const AuthProvider = ({children}: {children: ReactNode}) => {

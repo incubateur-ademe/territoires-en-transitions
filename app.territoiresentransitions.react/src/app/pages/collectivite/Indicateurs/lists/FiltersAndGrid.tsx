@@ -1,15 +1,15 @@
-import {Link} from 'react-router-dom';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import IndicateurChartsGrid from './IndicateurChartsGrid';
-import {FilterSummary} from './FilterSummary';
+import {ID_NOUVEAU} from 'app/pages/collectivite/Indicateurs/Indicateurs';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import Link from 'next/link';
+import {FilterSummary} from './FilterSummary';
 import {FiltresIndicateurs} from './FiltresIndicateurs';
+import IndicateurChartsGrid from './IndicateurChartsGrid';
 import {useFilteredIndicateurDefinitions} from './useFilteredIndicateurDefinitions';
 import {useIndicateursFilterState} from './useIndicateursFilterState';
-import {ID_NOUVEAU} from 'app/pages/collectivite/Indicateurs/Indicateurs';
 
 /** Affiche les filtres et la grille d'indicateurs donnés */
 export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
@@ -37,7 +37,7 @@ export const FiltersAndGrid = ({view}: {view: IndicateurViewParamOption}) => {
         <p>Aucun indicateur personnalisé</p>
         <Link
           className="fr-btn"
-          to={makeCollectiviteIndicateursUrl({
+          href={makeCollectiviteIndicateursUrl({
             collectiviteId: collectivite.collectivite_id,
             indicateurView: 'perso',
             indicateurId: ID_NOUVEAU,

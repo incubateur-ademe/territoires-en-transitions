@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useHistory, Link} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {
   actionPath,
@@ -14,6 +14,7 @@ import {makeCollectiviteReferentielUrl} from 'app/paths';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useActionTitleList} from 'core-logic/hooks/referentiel';
 import {ActionTitleRead} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
+import Link from 'next/link';
 
 /**
  * Returns a list of menu items
@@ -73,7 +74,7 @@ export const OrientationQuickNav = (props: {
     <nav className="flex flex-row text-sm text-grey425 items-start">
       <div className="flex flex-row flex-nowrap">
         <Link
-          to={makeCollectiviteReferentielUrl({
+          href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: action.referentiel,
           })}

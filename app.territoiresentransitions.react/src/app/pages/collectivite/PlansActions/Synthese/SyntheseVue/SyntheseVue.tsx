@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link, useLocation, useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import HeaderTitle from 'ui/HeaderTitle';
 import {
   makeCollectiviteFicheNonClasseeUrl,
@@ -19,6 +19,7 @@ import {generateSyntheseVue} from '../utils';
 import {ITEM_ALL} from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
 import {FicheResume} from '../../FicheAction/data/types';
+import Link from 'next/link';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -76,7 +77,7 @@ const SyntheseVue = () => {
         <div className="py-6">
           <Link
             className="p-1 shrink-0 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
-            to={makeCollectivitePlansActionsSyntheseUrl({
+            href={makeCollectivitePlansActionsSyntheseUrl({
               collectiviteId: collectivite_id!,
             })}
           >

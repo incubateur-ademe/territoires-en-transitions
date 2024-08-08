@@ -1,4 +1,4 @@
-import {Link, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {
   indicateurIdParam,
   indicateurIdentiantReferentielParam,
@@ -17,6 +17,7 @@ import {
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import {SideNavLinks} from 'ui/shared/SideNav';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import Link from 'next/link';
 
 // correspondances entre item et libellé
 export const VIEW_TITLES: Record<IndicateurViewParamOption, string> = {
@@ -105,7 +106,7 @@ const Indicateurs = () => {
           <Link
             data-test="create-perso"
             className="fr-btn fr-btn--tertiary"
-            to={makeCollectiviteIndicateursUrl({
+            href={makeCollectiviteIndicateursUrl({
               collectiviteId: collectivite.collectivite_id,
               indicateurView: 'perso',
               indicateurId: ID_NOUVEAU,

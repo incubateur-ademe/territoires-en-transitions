@@ -9,7 +9,7 @@ import {
   useId,
   useInteractions,
   useRole,
-} from '@floating-ui/react';
+} from '@next/floating-ui/react';
 import classNames from 'classnames';
 
 export type RenderProps = {

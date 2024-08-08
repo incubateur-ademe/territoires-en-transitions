@@ -1,15 +1,46 @@
 {
-  "name": "territoiresentransitions.fr",
+  "name": "@tet/source",
   "private": true,
   "version": "1.0.0",
   "description": "Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique pour faciliter et accélérer la mise en œuvre des actions de transition écologique dans les collectivités territoriales.",
-  "directories": {
-    "doc": "docs"
-  },
   "engines": {
     "node": "20"
   },
   "devDependencies": {
+    "@nx/devkit": "19.5.4",
+    "@nx/eslint": "19.5.4",
+    "@nx/eslint-plugin": "19.5.4",
+    "@nx/jest": "19.5.4",
+    "@nx/js": "19.5.4",
+    "@nx/next": "19.5.4",
+    "@nx/playwright": "19.5.4",
+    "@nx/workspace": "19.5.4",
+    "@playwright/test": "^1.36.0",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/jest": "^29.4.0",
+    "@types/node": "18.16.9",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "babel-jest": "^29.4.1",
+    "eslint": "~8.57.0",
+    "eslint-config-next": "14.2.3",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-playwright": "^0.15.3",
+    "eslint-plugin-react": "7.32.2",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "jest": "^29.4.1",
+    "jest-environment-jsdom": "^29.4.1",
+    "nx": "19.5.4",
+    "prettier": "^2.6.2",
+    "ts-jest": "^29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "~5.5.2",
     "concurrently": "^8.2.1",
     "supabase": "1.151.1"
   },
@@ -27,24 +58,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/betagouv/territoires-en-transitions.git"
+    "url": "git+https://github.com/incubateur-ademe/territoires-en-transitions.git"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/betagouv/territoires-en-transitions/issues"
-  },
-  "homepage": "https://github.com/betagouv/territoires-en-transitions#readme",
   "workspaces": [
     "packages/*",
     "app.territoiresentransitions.react"
   ],
-  "overrides": {
-    "react-refresh": "^0.11.0"
-  },
   "dependencies": {
     "react-icons": "^5.0.1",
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.0.1",
+    "next": "^14.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tslib": "^2.3.0"
   }
 }

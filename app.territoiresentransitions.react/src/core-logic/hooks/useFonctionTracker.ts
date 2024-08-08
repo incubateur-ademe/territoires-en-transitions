@@ -3,7 +3,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useLocalisation} from 'core-logic/hooks/useLocalisation';
-import {ENV} from 'environmentVariables';
+import {ENV} from '@tet/app/environmentVariables';
 import {useMemo, useRef} from 'react';
 
 /**

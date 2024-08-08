@@ -1,11 +1,11 @@
-import {useLocation} from 'react-router-dom';
-import {useAuth} from '../core-logic/api/auth/AuthProvider';
-import {useEffect} from 'react';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TablesInsert} from '@tet/api';
+import {ENV} from '@tet/app/environmentVariables';
 import {supabaseClient} from 'core-logic/api/supabase';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useLocalisation} from 'core-logic/hooks/useLocalisation';
-import {ENV} from 'environmentVariables';
+import {usePathname} from 'next/navigation';
+import {useEffect} from 'react';
+import {useAuth} from '../core-logic/api/auth/AuthProvider';
 
 /**
  * Représente la visite d'une page.
@@ -27,13 +27,14 @@ const track = async (visite: Visite): Promise<boolean> => {
  * Permet d'enregistrer les visites.
  */
 export const VisitTracker = () => {
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const localisation = useLocalisation();
   const {user} = useAuth();
   const collectivite_id = useCollectiviteId();
 
   useEffect(() => {
     if (!user) return;
+
     const visite: Visite = {
       page: localisation.page,
       tag: localisation.tag,
@@ -53,4 +54,3 @@ export const VisitTracker = () => {
 
   return null;
 };
-
