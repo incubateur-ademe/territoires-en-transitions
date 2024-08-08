@@ -4,7 +4,7 @@ import {Field, FormSectionGrid, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesDropdown from 'ui/dropdownLists/ServicesDropdown/ServicesDropdown';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/CiblesDropdown/CiblesDropdown';
@@ -58,7 +58,8 @@ const ModaleActeurs = ({
 
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote">
-            <ServicesDropdown
+            <ServicesPilotesDropdown
+              placeholder="Sélectionnez ou créez un pilote"
               values={editedFiche.services?.map(s => s.id)}
               onChange={({services}) =>
                 setEditedFiche(prevState => ({...prevState, services}))

@@ -13,11 +13,11 @@ import {
   useIndicateurThematiques,
   useUpsertIndicateurThematiques,
 } from './useIndicateurThematiques';
-import ServicePiloteDropdown from '../../PlansActions/FicheAction/FicheActionForm/ServicePiloteDropdown';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import {Field} from '@tet/ui';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {objectToCamel, objectToSnake} from 'ts-case-convert';
+import {objectToCamel} from 'ts-case-convert';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -79,10 +79,12 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       </Field>
       {/** services pilotes */}
       <Field title="Direction ou service pilote">
-        <ServicePiloteDropdown
-          services={services ? objectToSnake(services) : []}
-          onSelect={s => upsertIndicateurServicePilote(objectToCamel(s))}
-          isReadonly={isReadonly}
+        <ServicesPilotesDropdown
+          values={services?.map(s => s.id!)}
+          onChange={({services}) =>
+            upsertIndicateurServicePilote(objectToCamel(services))
+          }
+          disabled={isReadonly}
         />
       </Field>
       {/** Thématiques */}
