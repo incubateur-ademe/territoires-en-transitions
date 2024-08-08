@@ -21,8 +21,7 @@ select collectivite_id,
        fiches_mod_3mois,
        fiches_mod_6mois,
        pa_date_creation,
-       pa_view_1mois,
-       pa_view_3mois,
+       pa_view_2mois,
        pa_view_6mois,
        pa_non_vides,
        pa_pilotables,
@@ -37,11 +36,12 @@ select collectivite_id,
        min1_indicateur_predef_prive,
        min1_indicateur_perso_prive,
        pourcentage_indicateur_predef_prives,
-       type_pa
+       pai,
+       fiches_pai
 from crm_usages
 where false;
 
-select id, nom, nb_prive, pourcentage_prive
+select id, titre, nb_prive, pourcentage_prive
 from crm_indicateurs;
 
 select type, nb_plan, nb_plan_90pc_fa_privees
