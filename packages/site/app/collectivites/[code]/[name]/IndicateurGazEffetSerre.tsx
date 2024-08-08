@@ -1,8 +1,10 @@
 import {Indicateurs} from 'app/collectivites/utils';
-import {IndicateurDefaultData} from './IndicateursCollectivite';
+import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 import {secteurIdToLabel} from 'src/utils/labels';
 import IndicateurCard from './IndicateurCard';
-import {getFormattedNumber} from 'src/utils/getFormattedNumber';
+import {IndicateurDefaultData} from './IndicateursCollectivite';
+
+const getYear = (dateIso: string) => new Date(dateIso).getFullYear();
 
 type IndicateurGazEffetSerreProps = {
   defaultData?: IndicateurDefaultData;
@@ -15,14 +17,18 @@ const IndicateurGazEffetSerre = ({
 }: IndicateurGazEffetSerreProps) => {
   if (!defaultData || !data || data.length === 0) return null;
 
-  const lastYear = Math.max(...data.map(d => d.annee));
+  const lastYear = Math.max(...data.map(d => getYear(d.date_valeur)));
 
   const lastYearData = data.filter(
-    d => d.annee === lastYear && secteurIdToLabel[d.indicateur_id] !== 'Total',
+    d =>
+      getYear(d.date_valeur) === lastYear &&
+      secteurIdToLabel[d.indicateur_id] !== 'Total',
   );
 
   const lastYearTotal = data.find(
-    d => d.annee === lastYear && secteurIdToLabel[d.indicateur_id] === 'Total',
+    d =>
+      getYear(d.date_valeur) === lastYear &&
+      secteurIdToLabel[d.indicateur_id] === 'Total',
   );
 
   if (lastYearData.length <= 1 && !lastYearTotal) return null;
@@ -32,16 +38,19 @@ const IndicateurGazEffetSerre = ({
       defaultData={defaultData}
       data={lastYearData.map(d => ({
         id: secteurIdToLabel[d.indicateur_id],
-        value: d.valeur,
+        value: d.resultat ?? 0,
       }))}
       boxTitle={`${
         lastYearTotal
-          ? `${getFormattedNumber(Math.round(lastYearTotal?.valeur))} `
+          ? `${getFormattedNumber(Math.round(lastYearTotal.resultat ?? 0))} `
           : ''
       }${defaultData.titre_encadre}`}
       graphTitle={`Répartition des émissions de gaz à effet de serre (hors puits) par secteur en ${lastYear}`}
       source={
-        lastYearData.length ? lastYearData[0].source : lastYearTotal?.source
+        lastYearData.length
+          ? // FIXME: il faut changer la requête pour récupérer le libellé de la source à la place de l'id
+            lastYearData[0].metadonnee_id?.toString() ?? ''
+          : lastYearTotal?.metadonnee_id?.toString() ?? ''
       }
       unit="t CO₂eq"
       unitSingular={true}

@@ -5,7 +5,7 @@ import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 
 export type Labellisations = Tables<'labellisation'>;
-export type Indicateurs = Tables<'indicateur_resultat_import'>;
+export type Indicateurs = Tables<'indicateur_valeur'>;
 export type IndicateurArtificialisation =
   Tables<'indicateur_artificialisation'>;
 
