@@ -74,7 +74,9 @@ const ModalFiltresToutesLesFichesAction = ({
                   const {servicePiloteIds, ...rest} = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(services ? {servicePiloteIds: services} : {}),
+                    ...(services
+                      ? {servicePiloteIds: services.map(s => s.id)}
+                      : {}),
                   });
                 }}
               />
