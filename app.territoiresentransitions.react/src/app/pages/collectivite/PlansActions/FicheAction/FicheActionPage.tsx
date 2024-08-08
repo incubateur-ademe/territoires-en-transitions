@@ -6,10 +6,16 @@ const FicheAction = lazy(
   () => import('app/pages/collectivite/PlansActions/FicheAction/FicheAction')
 );
 
-export const FicheActionPage = () => {
+type FicheActionPageProps = {
+  readonly: boolean;
+};
+
+const FicheActionPage = (props: FicheActionPageProps) => {
   return (
     <Suspense fallback={renderLoader()}>
-      <FicheAction />
+      <FicheAction {...props} />
     </Suspense>
   );
 };
+
+export default FicheActionPage;
