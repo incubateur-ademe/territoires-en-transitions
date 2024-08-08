@@ -186,7 +186,7 @@ const makeNavItemsBase = (
     {
       confidentiel,
       title: 'Indicateurs',
-      urlPrefix: [makeCollectiviteIndicateursUrl({collectiviteId})],
+      urlPrefix: [`${collectivite.collectivite_id}/indicateurs/`],
       items: [
         {
           label: 'Tous les indicateurs',
