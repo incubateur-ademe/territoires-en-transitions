@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {Modal} from '@tet/ui';
-import {FicheAction} from '../../FicheAction/data/types';
+import {FicheAction} from '../data/types';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 
 type ModaleCreerIndicateurProps = {

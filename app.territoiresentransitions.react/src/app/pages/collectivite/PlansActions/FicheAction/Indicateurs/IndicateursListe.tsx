@@ -4,7 +4,7 @@ import {
   selectIndicateur,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {FicheAction} from '../../FicheAction/data/types';
+import {FicheAction} from '../data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
 

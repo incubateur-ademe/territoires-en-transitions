@@ -1,7 +1,7 @@
 import {Tab, Tabs} from '@tet/ui';
 import {FicheAction} from '../FicheAction/data/types';
 import BudgetTab from './Budget/BudgetTab';
-import IndicateursTab from './Indicateurs/IndicateursTab';
+import IndicateursTab from '../FicheAction/Indicateurs/IndicateursTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
