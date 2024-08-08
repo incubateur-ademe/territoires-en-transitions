@@ -17,7 +17,7 @@ import {PlansActionsRoutes} from './PlansActionsRoutes';
 import {SynthesePage} from './Synthese/SynthesePage';
 import {SyntheseVuePage} from './Synthese/SyntheseVue/SyntheseVuePage';
 import {ToutesLesFichesActionPage} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
-import FicheActionPage from './FicheActionNew/FicheActionPage';
+import FicheActionPage from './FicheAction/FicheActionPage';
 
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();

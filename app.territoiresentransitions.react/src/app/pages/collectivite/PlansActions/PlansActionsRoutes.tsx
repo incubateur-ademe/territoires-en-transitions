@@ -1,13 +1,8 @@
 import {Link, Redirect, Route} from 'react-router-dom';
-
-import {FicheActionPage} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionPage';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
-  collectiviteFicheNonClasseePath,
   collectiviteFichesNonClasseesPath,
-  collectivitePlanActionAxeFichePath,
   collectivitePlanActionAxePath,
-  collectivitePlanActionFichePath,
   collectivitePlanActionLandingPath,
   collectivitePlanActionPath,
   collectivitePlansActionsCreerPath,
@@ -122,18 +117,6 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
       {/* Liste des fiches non classées */}
       <Route exact path={[collectiviteFichesNonClasseesPath]}>
         <FichesNonClassees />
-      </Route>
-
-      {/* Pages fiche action - ancienne version */}
-      <Route
-        exact
-        path={[
-          `${collectiviteFicheNonClasseePath}/old`,
-          `${collectivitePlanActionFichePath}/old`,
-          `${collectivitePlanActionAxeFichePath}/old`,
-        ]}
-      >
-        <FicheActionPage />
       </Route>
     </CollectivitePageLayout>
   );
