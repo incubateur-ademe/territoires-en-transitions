@@ -696,3 +696,4 @@ automatisation/crm [automatisation/crm@v4.2.0] 2024-07-29T09:02:13Z Frederic Arn
 @v4.3.0 2024-07-29T15:19:46Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # MAJ des champs remontés dans le CRM
 
 automatisation/crm [automatisation/crm@v4.3.0] 2024-08-08T08:15:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # MAJ des champs remontés dans le CRM
+@v4.4.0 2024-08-08T08:35:19Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # [crm] mets à jour les requêtes de stats d'usage pour le CRM
