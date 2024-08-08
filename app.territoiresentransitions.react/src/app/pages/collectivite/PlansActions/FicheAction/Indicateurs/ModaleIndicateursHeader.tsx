@@ -8,7 +8,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
 } from '@tet/ui';
-import {FicheAction} from '../../FicheAction/data/types';
+import {FicheAction} from '../data/types';
 import EffetsAttendusDropdown from 'ui/dropdownLists/EffetsAttendusDropdown/EffetsAttendusDropdown';
 
 type ModaleIndicateursHeaderProps = {
