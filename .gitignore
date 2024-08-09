@@ -12,3 +12,4 @@ docker-data
 .arg
 
 node_modules
+.DS_Store

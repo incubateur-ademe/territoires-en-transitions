@@ -20,6 +20,7 @@
     "dev:panier": "concurrently --names \"api,ui,panier,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgRed.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/panier -- -p 3002\" \"npm run dev -w @tet/auth -- -p 3003\"",
     "build": "if [ \"$SCALINGO_BUILD\" = \"site\" ]; then npm run build:site; else npm run build:app; fi",
     "build:auth": "npm run build -w @tet/api -w @tet/ui -w @tet/auth",
+    "build:backend": "npm run build -w @tet/backend",
     "build:app": "npm run build -w @tet/api -w @tet/ui -w @tet/app",
     "build:site": "npm run build -w @tet/api -w @tet/ui -w @tet/site",
     "build:panier": "npm run build -w @tet/api -w @tet/ui -w @tet/panier",
@@ -38,7 +39,8 @@
   "homepage": "https://github.com/betagouv/territoires-en-transitions#readme",
   "workspaces": [
     "packages/*",
-    "app.territoiresentransitions.react"
+    "app.territoiresentransitions.react",
+    "backend"
   ],
   "overrides": {
     "react-refresh": "^0.11.0"
