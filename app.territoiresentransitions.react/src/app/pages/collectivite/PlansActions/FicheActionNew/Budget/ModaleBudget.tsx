@@ -28,7 +28,7 @@ const ModaleBudget = ({
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
-  }, [isOpen, fiche]);
+  }, [isOpen]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
