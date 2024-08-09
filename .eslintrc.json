@@ -10,7 +10,11 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allowCircularSelfDependency": true,
+            "banTransitiveDependencies": true,
+            // Exception due to issue in tailwind alias import with Nx structure
+            // https://github.com/tailwindlabs/tailwindcss/issues/11097
+            "allow": ["../ui/src/tailwind-preset"],
             "depConstraints": [
               {
                 "sourceTag": "*",
