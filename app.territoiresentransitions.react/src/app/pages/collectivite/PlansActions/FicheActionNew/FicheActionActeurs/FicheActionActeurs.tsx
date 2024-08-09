@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import classNames from 'classnames';
 import {Button} from '@tet/ui';
 import {FicheAction} from '../../FicheAction/data/types';
@@ -20,6 +20,7 @@ type FicheActionActeursProps = {
   fiche: FicheAction;
   className?: string;
   updateFiche: (fiche: FicheAction) => void;
+  refetchFiche: () => void;
 };
 
 const FicheActionActeurs = ({
@@ -27,6 +28,7 @@ const FicheActionActeurs = ({
   fiche,
   className,
   updateFiche,
+  refetchFiche,
 }: FicheActionActeursProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -39,6 +41,10 @@ const FicheActionActeurs = ({
     !referents &&
     !partenaires &&
     (!cibles || cibles.length === 0);
+
+  useEffect(() => {
+    if (!isModalOpen) refetchFiche();
+  }, [isModalOpen]);
 
   return (
     <>

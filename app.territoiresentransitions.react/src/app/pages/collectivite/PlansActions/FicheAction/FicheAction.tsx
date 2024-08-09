@@ -15,7 +15,7 @@ type FicheActionProps = {
 
 const FicheAction = ({isReadonly}: FicheActionProps) => {
   const {ficheUid} = useParams<{ficheUid: string}>();
-  const data = useFicheAction(ficheUid);
+  const {data, refetch} = useFicheAction(ficheUid);
   const {mutate: updateFiche} = useEditFicheAction();
 
   if (!data || !data.fiche) return null;
@@ -81,6 +81,7 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
               isReadonly={isReadonly}
               fiche={fiche}
               updateFiche={updateFiche}
+              refetchFiche={refetch}
             />
           </div>
 
