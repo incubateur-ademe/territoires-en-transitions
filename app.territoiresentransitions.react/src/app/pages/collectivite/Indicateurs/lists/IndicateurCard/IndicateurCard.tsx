@@ -201,7 +201,9 @@ export const IndicateurCardBase = ({
                 title="Dissocier l'indicateur"
                 size="xs"
                 variant="grey"
-                className="ml-auto hidden group-hover:flex -my-2"
+                className={classNames('ml-auto hidden -my-2', {
+                  'group-hover:flex': !readonly,
+                })}
               />
             )}
           </div>
