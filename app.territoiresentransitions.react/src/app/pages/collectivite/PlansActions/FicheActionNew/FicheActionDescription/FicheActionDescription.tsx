@@ -72,7 +72,7 @@ const FicheActionDescription = ({
           Description de l'action :
         </h6>
         <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {description || 'Non renseigné !'}
+          {description || 'Non renseigné'}
         </p>
       </div>
 
@@ -82,7 +82,7 @@ const FicheActionDescription = ({
           Moyens humains et techniques :
         </h6>
         <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {ressources || 'Non renseigné !'}
+          {ressources || 'Non renseigné'}
         </p>
       </div>
     </div>
