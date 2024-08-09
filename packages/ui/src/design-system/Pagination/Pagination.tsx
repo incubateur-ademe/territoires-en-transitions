@@ -1,8 +1,8 @@
 import classNames from 'classnames';
-import {Button} from '@design-system/Button';
-import {useEffect, useState} from 'react';
+import { Button } from '@tet/ui/design-system/Button';
+import { useEffect, useState } from 'react';
 import PaginationPageButton from './PaginationPageButton';
-import {calculatePaginationArray} from './utils';
+import { calculatePaginationArray } from './utils';
 
 type PaginationProps = {
   /** Page sélectionnée */
@@ -35,7 +35,7 @@ export const Pagination = ({
   );
   const [pageButtons, setPageButtons] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(selectedPage);
-  const [windowWidth, setWindowWidth] = useState<number | undefined>();
+  const [windowWidth, setWindowWidth] = useState<number>(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const handleChangePage = (page: number) => {

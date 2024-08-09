@@ -1,15 +1,15 @@
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {supabase} from 'src/clientAPI';
-import {getRootDomain, setAuthTokens} from '@tet/api';
+import { getRootDomain, setAuthTokens } from '@tet/api';
 import {
   Credentials,
-  LoginView,
   isValidLoginView,
   LoginData,
-} from '@components/Login';
-import {VerifyOTPData, ResendFunction} from '@components/VerifyOTP';
-import {useGetPasswordStrength} from '@components/PasswordStrengthMeter/useGetPasswordStrength';
+  LoginView,
+} from '@tet/auth/components/Login';
+import { useGetPasswordStrength } from '@tet/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
+import { ResendFunction, VerifyOTPData } from '@tet/auth/components/VerifyOTP';
+import { supabase } from '@tet/auth/src/clientAPI';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 /**
  * Gère l'appel à la fonction de login et la redirection après un login réussi
@@ -31,7 +31,7 @@ export const useLoginState = ({
   const getPasswordStrength = useGetPasswordStrength();
 
   const [view, setView] = useState<LoginView>(
-    isValidLoginView(defaultView) ? (defaultView as LoginView) : 'etape1',
+    isValidLoginView(defaultView) ? (defaultView as LoginView) : 'etape1'
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,14 +44,14 @@ export const useLoginState = ({
 
     // connexion par lien
     if (view === 'etape1' && !(formData as Credentials).password) {
-      const {email} = formData;
+      const { email } = formData;
       if (!email) return;
 
       // demande l'envoi du lien OTP de connexion
       setIsLoading(true);
-      const {error} = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: {shouldCreateUser: false, emailRedirectTo: redirectTo},
+        options: { shouldCreateUser: false, emailRedirectTo: redirectTo },
       });
       setIsLoading(false);
 
@@ -67,11 +67,11 @@ export const useLoginState = ({
 
     // connexion par mot de passe
     if (view === 'etape1' && (formData as Credentials).password) {
-      const {email, password} = formData as Credentials;
+      const { email, password } = formData as Credentials;
       if (!email || !password) return;
 
       setIsLoading(true);
-      const {data, error} = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -102,7 +102,7 @@ export const useLoginState = ({
 
       // vérifie le compte
       setIsLoading(true);
-      const {data, error} = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         email,
         type: 'magiclink',
         token: otp,
@@ -132,7 +132,7 @@ export const useLoginState = ({
 
       // vérifie le compte
       setIsLoading(true);
-      const {data, error} = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         email,
         type: 'recovery',
         token: otp,
@@ -154,12 +154,12 @@ export const useLoginState = ({
 
     // demande de réinitialisation
     if (view === 'mdp_oublie') {
-      const {email} = formData;
+      const { email } = formData;
       if (!email) return;
 
       // demande la réinit. du mot de passe
       setIsLoading(true);
-      const {error} = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo,
       });
       setIsLoading(false);
@@ -176,9 +176,9 @@ export const useLoginState = ({
 
     // réinitialisation du mot de passe
     if (view === 'reset_mdp') {
-      const {password} = formData as Credentials;
+      const { password } = formData as Credentials;
       setIsLoading(true);
-      const {error} = await supabase.auth.updateUser({password});
+      const { error } = await supabase.auth.updateUser({ password });
       setIsLoading(false);
 
       if (error) {
@@ -191,7 +191,7 @@ export const useLoginState = ({
   };
 
   // rappelle la fonction nécessaire si l'utilisateur demande le renvoi d'un email
-  const onResend: ResendFunction = async ({type, email}) => {
+  const onResend: ResendFunction = async ({ type, email }) => {
     if (type && email) {
       // réinitialise les erreurs
       setError(null);
@@ -201,7 +201,7 @@ export const useLoginState = ({
       if (type === 'login') {
         ret = await supabase.auth.signInWithOtp({
           email,
-          options: {shouldCreateUser: false, emailRedirectTo: redirectTo},
+          options: { shouldCreateUser: false, emailRedirectTo: redirectTo },
         });
       } else if (type === 'reset_password') {
         ret = await supabase.auth.resetPasswordForEmail(email, {
@@ -233,6 +233,4 @@ export const useLoginState = ({
 
 // détermine le domaine racine depuis l'url courante car il est nécessaire
 // pour le partage des tokens entre sous-domaines
-const getDomain = () =>
-  document.location.hostname.split('.').toSpliced(0, 1).join('.') ||
-  'localhost';
+const getDomain = () => getRootDomain(document.location.hostname);

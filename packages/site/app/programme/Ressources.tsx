@@ -1,10 +1,10 @@
-import InfoSection from '@components/sections/InfoSection';
+import InfoSection from '@tet/site/components/sections/InfoSection';
 
 type RessourcesProps = {
   description: string;
 };
 
-const Ressources = ({description}: RessourcesProps) => {
+const Ressources = ({ description }: RessourcesProps) => {
   return (
     <InfoSection
       content={description}

@@ -1,5 +1,5 @@
-import {Ref, forwardRef, useState} from 'react';
-import {InputBase, InputBaseProps} from './InputBase';
+import { ForwardedRef, forwardRef, useState } from 'react';
+import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputPasswordProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
@@ -8,7 +8,10 @@ export type InputPasswordProps = Omit<InputBaseProps, 'icon' | 'type'>;
  * Un bouton permet d'afficher/masquer le contenu du champ.
  */
 export const InputPassword = forwardRef(
-  ({...remainingProps}: InputPasswordProps, ref?: Ref<HTMLInputElement>) => {
+  (
+    { ...remainingProps }: InputPasswordProps,
+    ref: ForwardedRef<HTMLInputElement>
+  ) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
 
     return (

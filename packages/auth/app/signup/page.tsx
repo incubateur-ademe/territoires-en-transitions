@@ -1,11 +1,10 @@
 'use client';
 
-import {useState} from 'react';
-import {useSearchParams} from 'next/navigation';
-import {SignupModal} from '@components/Signup';
-import {useCollectivites} from './useCollectivites';
-import {useSignupState} from './useSignupState';
-import {useRedirectTo} from '@components/Login/useRedirectTo';
+import { useRedirectTo } from '@tet/auth/components/Login/useRedirectTo';
+import { SignupModal } from '@tet/auth/components/Signup';
+import { useState } from 'react';
+import { useCollectivites } from './useCollectivites';
+import { useSignupState } from './useSignupState';
 
 /**
  * Affiche la page de création de compte
@@ -14,21 +13,32 @@ import {useRedirectTo} from '@components/Login/useRedirectTo';
  * `redirect_to`, l'utilisateur est redirigé sur la page voulue, et à défaut sur
  * l'app.
  */
-const SignupPage = () => {
-  const [filter, setFilter] = useState('');
-  const {data: collectivites} = useCollectivites(filter);
-
-  const searchParams = useSearchParams();
-  const defaultView = searchParams.get('view');
-  const defaultValues = {
-    email: searchParams.get('email'),
-    otp: searchParams.get('otp'),
+const SignupPage = ({
+  searchParams: { view = null, email = null, otp = null, redirect_to = '/' },
+}: {
+  searchParams: {
+    view: string | null;
+    email: string | null;
+    otp: string | null;
+    redirect_to: string;
   };
-  const redirectTo = searchParams.get('redirect_to') || '/';
-  const state = useSignupState({redirectTo, defaultView, defaultValues});
+}) => {
+  const [filter, setFilter] = useState('');
+  const { data: collectivites } = useCollectivites(filter);
+
+  const defaultValues = {
+    email,
+    otp,
+  };
+
+  const state = useSignupState({
+    redirectTo: redirect_to,
+    defaultView: view,
+    defaultValues,
+  });
 
   // redirige immédiatement si l'utilisateur est déjà connecté
-  useRedirectTo(redirectTo);
+  useRedirectTo(redirect_to);
 
   return (
     <SignupModal

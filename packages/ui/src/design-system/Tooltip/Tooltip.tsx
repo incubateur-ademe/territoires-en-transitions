@@ -16,8 +16,8 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import {cloneElement, useCallback, useRef, useState} from 'react';
-import {preset} from '@tailwind-preset';
+import { cloneElement, useCallback, useRef, useState } from 'react';
+import { preset } from '@tet/ui/tailwind-preset';
 
 const colorTheme = preset.theme.extend.colors;
 
@@ -57,14 +57,14 @@ export const Tooltip = ({
   const arrowRef = useRef(null);
 
   // Configuration du comportement de la tooltip
-  const {x, y, refs, strategy, context} = useFloating({
+  const { x, y, refs, strategy, context } = useFloating({
     placement,
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
       offset(offsetValue),
       flip(),
-      shift({padding: 8}),
+      shift({ padding: 8 }),
       arrow({
         element: arrowRef,
       }),
@@ -97,18 +97,18 @@ export const Tooltip = ({
   };
 
   // Configuration des interactions
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     (activatedBy === 'click' ? useClick : useHover)(context, {
-      delay: {open: openingDelay, close: 0},
+      delay: { open: openingDelay, close: 0 },
     }),
     useFocus(context),
-    useRole(context, {role: 'tooltip'}),
+    useRole(context, { role: 'tooltip' }),
     useDismiss(context),
   ]);
 
   return (
     <>
-      {cloneElement(children, getReferenceProps({ref, ...children.props}))}
+      {cloneElement(children, getReferenceProps({ ref, ...children.props }))}
       {isOpen && (
         <div
           ref={refs.setFloating}
@@ -156,7 +156,7 @@ export const Tooltip = ({
 // https://github.com/gregberge/react-merge-refs/issues/5#issuecomment-643341631
 const useMergedRefs = (refs: Array<unknown>) =>
   useCallback((current: ReferenceType) => {
-    refs.forEach(ref => {
+    refs.forEach((ref) => {
       if (typeof ref === 'function') {
         ref(current);
       } else if (ref && !Object.isFrozen(ref)) {

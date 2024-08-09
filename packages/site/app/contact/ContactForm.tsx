@@ -1,16 +1,16 @@
 'use client';
 
-import {ToastFloater} from '@components/floating-ui/ToastFloater';
+import { ToastFloater } from '@tet/site/components/floating-ui/ToastFloater';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
-import {supabase} from '../initSupabase';
-import {options} from './data';
-import {Button} from '@tet/ui';
-import {useRouter, useSearchParams} from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { supabase } from '../initSupabase';
+import { options } from './data';
+import { Button } from '@tet/ui';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormData = {
   categorie: string;
-  objet: {value: number | string; label: string};
+  objet: { value: number | string; label: string };
   prenom: string;
   nom: string;
   email: string;
@@ -19,7 +19,7 @@ type FormData = {
 
 const initFormData: FormData = {
   categorie: '',
-  objet: {value: '', label: ''},
+  objet: { value: '', label: '' },
   prenom: '',
   nom: '',
   email: '',
@@ -36,9 +36,9 @@ const ContactForm = () => {
   const isContactPanier = searchParams.get('panier') === 'true' ? true : false;
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData(prevState => {
+    setFormData((prevState) => {
       return {
         ...prevState,
         [event.target.name]: event.target.value,
@@ -50,10 +50,10 @@ const ContactForm = () => {
     const option = event.target.options[event.target.selectedIndex];
     const categorie = option.closest('optgroup')?.label ?? '';
 
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
       categorie,
-      objet: {value: event.target.value, label: option.innerText},
+      objet: { value: event.target.value, label: option.innerText },
     }));
   };
 
@@ -65,9 +65,12 @@ const ContactForm = () => {
       objet: formData.objet.label,
     };
 
-    const {data, error} = await supabase.functions.invoke('site_send_message', {
-      body: sentData,
-    });
+    const { data, error } = await supabase.functions.invoke(
+      'site_send_message',
+      {
+        body: sentData,
+      }
+    );
 
     if (data) {
       setStatus('success');
@@ -87,15 +90,15 @@ const ContactForm = () => {
   useEffect(() => {
     if (isContactPanier) {
       const stringToFind = "Informations sur le panier d'actions à impact";
-      const optionGroup = options.find(opt =>
-        opt.options.some(o => o.label === stringToFind),
+      const optionGroup = options.find((opt) =>
+        opt.options.some((o) => o.label === stringToFind)
       );
       const option = optionGroup?.options.find(
-        opt => opt.label === stringToFind,
+        (opt) => opt.label === stringToFind
       );
 
       if (optionGroup && option) {
-        setFormData(prevState => ({
+        setFormData((prevState) => ({
           ...prevState,
           categorie: optionGroup.group,
           objet: option,
@@ -126,9 +129,9 @@ const ContactForm = () => {
             <option value="" disabled hidden>
               Selectionnez une option
             </option>
-            {options.map(group => (
+            {options.map((group) => (
               <optgroup key={group.group} label={group.group}>
-                {group.options.map(opt => (
+                {group.options.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>

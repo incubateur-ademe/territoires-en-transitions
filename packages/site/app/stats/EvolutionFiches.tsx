@@ -1,10 +1,10 @@
 'use client';
 
+import LineChart from '@tet/site/components/charts/LineChart';
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {colors, fromMonth} from './shared';
-import {addLocalFilters} from './utils';
-import LineChart from '@components/charts/LineChart';
+import { supabase } from '../initSupabase';
+import { colors } from './shared';
+import { addLocalFilters } from './utils';
 
 type Vue =
   | 'stats_locales_evolution_nombre_fiches'
@@ -33,7 +33,7 @@ const labels = {
 export function useEvolutionFiches(
   vue: Vue,
   codeRegion: string,
-  codeDepartement: string,
+  codeDepartement: string
 ) {
   return useSWR(`${vue}-${codeRegion}-${codeDepartement}`, async () => {
     let select = supabase.from(vue).select().gte('mois', '2023-01-01');
@@ -42,7 +42,7 @@ export function useEvolutionFiches(
       select = addLocalFilters(select, codeDepartement, codeRegion);
     }
 
-    const {data, error} = await select;
+    const { data, error } = await select;
 
     if (error) {
       throw new Error(vue);
@@ -54,24 +54,24 @@ export function useEvolutionFiches(
       evolution: [
         {
           id: labels[colonneValeur[vue] as keyof typeof labels],
-          // @ts-ignore
-          data: data.map(d => ({x: d.mois, y: d[colonneValeur[vue]]})),
+          // @ts-expect-error erreur non gérée
+          data: data.map((d) => ({ x: d.mois, y: d[colonneValeur[vue]] })),
         },
       ],
-      // @ts-ignore
+      // @ts-expect-error erreur non gérée
       last: data[data.length - 1][colonneValeur[vue]],
     };
   });
 }
 
-type Props = {vue: Vue; region?: string; department?: string};
+type Props = { vue: Vue; region?: string; department?: string };
 
 export default function EvolutionFiches({
   vue,
   region = '',
   department = '',
 }: Props) {
-  const {data} = useEvolutionFiches(vue, region, department);
+  const { data } = useEvolutionFiches(vue, region, department);
 
   if (!data) {
     return null;

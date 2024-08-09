@@ -1,4 +1,4 @@
-import {getTetButtonClassnames} from '@components/dstet/buttons/utils';
+import { getTetButtonClassnames } from '@tet/site/components/dstet/buttons/utils';
 import classNames from 'classnames';
 import './RadioAsButton.css';
 
@@ -21,7 +21,7 @@ const RadioAsButton = ({
     <div
       className={classNames(
         'button block relative !w-full h-[50px]',
-        getTetButtonClassnames('outlined', 'big'),
+        getTetButtonClassnames('outlined', 'big')
       )}
     >
       <input

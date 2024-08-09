@@ -1,6 +1,6 @@
-import {SupabaseClient} from '@supabase/supabase-js';
-import {Database} from '../database.types';
-import {MesCollectivite, Panier, PanierBase} from './types';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '../database.types';
+import { MesCollectivite, Panier, PanierBase } from './types';
 
 /**
  * On sélectionne toutes les colonnes du panier : *
@@ -35,10 +35,10 @@ export class PanierAPI {
   }
 
   async panierFromLanding(collectivite_id?: number): Promise<PanierBase> {
-    const {data, error} =
+    const { data, error } =
       collectivite_id === undefined
         ? await this.supabase.rpc('panier_from_landing')
-        : await this.supabase.rpc('panier_from_landing', {collectivite_id});
+        : await this.supabase.rpc('panier_from_landing', { collectivite_id });
 
     if (error) throw error;
     return data as PanierBase;
@@ -53,7 +53,7 @@ export class PanierAPI {
     return this.supabase
       .channel('realtime panier')
       .on(
-        // @ts-ignore: Le typage Supabase à un souci.
+        // @ts-expect-error: Le typage Supabase à un souci.
         // Typer avec en important `@supabase/realtime-js` pour y remédier fait planter webpack.
         'postgres_changes',
         {
@@ -155,7 +155,7 @@ export class PanierAPI {
       );
     }
 
-    const {data, error} = await builder.single<Panier>();
+    const { data, error } = await builder.single<Panier>();
     if (error) throw error;
     return data;
   }
@@ -174,7 +174,7 @@ export class PanierAPI {
     collectivite_id: number,
     panier_id: string
   ): Promise<number> {
-    const {data, error} = await this.supabase.rpc('plan_from_panier', {
+    const { data, error } = await this.supabase.rpc('plan_from_panier', {
       collectivite_id,
       panier_id,
     });
@@ -187,7 +187,7 @@ export class PanierAPI {
    * créer un plan à partir d'un panier.
    */
   async mesCollectivites(): Promise<MesCollectivite> {
-    const {data, error} = await this.supabase
+    const { data, error } = await this.supabase
       .from('mes_collectivites')
       .select('collectivite_id, nom, niveau_acces, est_auditeur')
       .in('niveau_acces', ['admin', 'edition'])

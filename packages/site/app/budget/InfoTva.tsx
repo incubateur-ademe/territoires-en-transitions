@@ -1,14 +1,14 @@
 'use client';
 
-import Markdown from '@components/markdown/Markdown';
-import {Alert} from '@tet/ui';
+import Markdown from '../../components/markdown/Markdown';
+import { Alert } from '@tet/ui';
 
 export type InfoTvaProps = {
   titre: string;
   description: string;
 };
 
-const InfoTva = ({titre, description}: InfoTvaProps) => {
+const InfoTva = ({ titre, description }: InfoTvaProps) => {
   return (
     <Alert
       className="p-3 mt-10 rounded-[10px]"

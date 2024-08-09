@@ -1,6 +1,6 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {AccueilData} from './types';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { AccueilData } from './types';
 
 export const getMetaData = async () => {
   const data = await fetchSingle('page-accueil', [
@@ -75,7 +75,7 @@ export const getData = async (): Promise<AccueilData | null> => {
                 .Description as unknown as string,
               image: data.attributes.Accompagnement.Programme.Image
                 .data as unknown as StrapiItem,
-              button: {titre: 'Découvrir le programme', href: '/programme'},
+              button: { titre: 'Découvrir le programme', href: '/programme' },
             },
             {
               titre: data.attributes.Accompagnement.Compte
@@ -97,7 +97,7 @@ export const getData = async (): Promise<AccueilData | null> => {
                 titre: data.attributes.Temoignages.Titre as unknown as string,
                 description: data.attributes.Temoignages
                   .Description as unknown as string,
-                contenu: temoignages.map(d => ({
+                contenu: temoignages.map((d) => ({
                   id: d.id,
                   auteur: d.attributes.temoignage?.auteur as unknown as string,
                   description:

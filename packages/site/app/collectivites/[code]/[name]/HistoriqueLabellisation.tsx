@@ -1,6 +1,6 @@
-import {RedStar} from '@components/labellisation/Star';
-import {Labellisations} from 'app/collectivites/utils';
-import {referentielToLabel} from 'src/utils/labels';
+import { RedStar } from '@tet/site/components/labellisation/Star';
+import { Labellisations } from '@tet/site/app/collectivites/utils';
+import { referentielToLabel } from '@tet/site/src/utils/labels';
 
 type HistoriqueLabellisationProps = {
   referentiel: 'cae' | 'eci';
@@ -14,7 +14,7 @@ const HistoriqueLabellisation = ({
   if (!historique.length) return null;
 
   const sortedHistorique = historique.sort(
-    (a, b) => (b.annee ?? 0) - (a.annee ?? 0),
+    (a, b) => (b.annee ?? 0) - (a.annee ?? 0)
   );
 
   return (
@@ -26,7 +26,7 @@ const HistoriqueLabellisation = ({
         Évolution du score
       </p>
       <div className="flex flex-col gap-3 w-full max-md:max-w-[226px]">
-        {sortedHistorique.map(hist => (
+        {sortedHistorique.map((hist) => (
           <div
             key={hist.id}
             className="border border-primary-4 rounded-[10px] h-[49px] w-full px-4 flex items-center justify-between"
@@ -44,8 +44,8 @@ const HistoriqueLabellisation = ({
               )}
               <div className="flex gap-[5px]">
                 {[1, 2, 3, 4, 5]
-                  .filter(e => e <= hist.etoiles)
-                  .map(e => (
+                  .filter((e) => e <= hist.etoiles)
+                  .map((e) => (
                     <RedStar key={e} className="w-[11px] h-[11px]" />
                   ))}
               </div>

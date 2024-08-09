@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import QuoteIcon from '@components/icones/QuoteIcon';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import QuoteIcon from '@tet/site/components/icones/QuoteIcon';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type TestimonialCardProps = {
   content: string;

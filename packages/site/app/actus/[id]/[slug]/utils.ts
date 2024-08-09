@@ -1,9 +1,9 @@
 import {
   ParagrapheCustomArticleData,
   ParagrapheCustomFetchedData,
-} from 'app/types';
-import {fetchCollection, fetchItem} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+} from '@tet/site/app/types';
+import { fetchCollection, fetchItem } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import {
   ArticleData,
   ContenuArticleFetchedData,
@@ -61,7 +61,7 @@ export const getData = async (id: number) => {
   ]);
 
   if (data) {
-    const {data: ids, meta} = await fetchCollection('actualites', [
+    const { data: ids, meta } = await fetchCollection('actualites', [
       ['fields[0]', 'DateCreation'],
       ['fields[1]', 'createdAt'],
       ['fields[2]', 'Epingle'],
@@ -70,12 +70,12 @@ export const getData = async (id: number) => {
       ['pagination[limit]', `${LIMIT}`],
     ]);
 
-    const {pagination} = meta;
-    let idList = ids;
+    const { pagination } = meta;
+    const idList = ids;
     let page = 1;
 
     while (page < Math.ceil(pagination.total / pagination.limit)) {
-      const {data} = await fetchCollection('actualites', [
+      const { data } = await fetchCollection('actualites', [
         ['fields[0]', 'DateCreation'],
         ['fields[1]', 'createdAt'],
         ['fields[2]', 'Epingle'],
@@ -89,7 +89,7 @@ export const getData = async (id: number) => {
 
     const sortedIds = idList
       ? idList
-          .map(d => ({
+          .map((d) => ({
             id: d.id,
             epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
             dateCreation:
@@ -107,7 +107,9 @@ export const getData = async (id: number) => {
           })
       : null;
 
-    const idPosition = sortedIds ? sortedIds.findIndex(el => el.id === id) : 0;
+    const idPosition = sortedIds
+      ? sortedIds.findIndex((el) => el.id === id)
+      : 0;
     const prevId = sortedIds
       ? idPosition !== 0
         ? sortedIds[idPosition - 1].id
@@ -128,7 +130,7 @@ export const getData = async (id: number) => {
       couverture: data.attributes.Couverture.data as unknown as StrapiItem,
       contenu: (
         data.attributes.Sections as unknown as ContenuArticleFetchedData
-      ).map(section => {
+      ).map((section) => {
         if (section.__component === 'contenu.paragraphe') {
           return {
             type: 'paragraphe',
@@ -170,7 +172,7 @@ export const getData = async (id: number) => {
             type: 'info',
             data: (section as InfoFetchedData).Texte,
           };
-        } else return {type: 'paragraphe', data: {}};
+        } else return { type: 'paragraphe', data: {} };
       }),
       prevId,
       nextId,

@@ -1,13 +1,13 @@
-import Markdown from '@components/markdown/Markdown';
-import {Liste} from './types';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import ReactIcon from '@components/react-icons/ReactIcon';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { Liste } from './types';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
 
-const ListeGrilleService = ({liste}: {liste: Liste}) => {
+const ListeGrilleService = ({ liste }: { liste: Liste }) => {
   return (
     liste.length > 0 && (
       <div className="grid max-md:grid-cols-1 grid-cols-2 gap-8 mt-6">
-        {liste.map(l => (
+        {liste.map((l) => (
           <div key={l.id} className="rounded-2xl p-12 bg-white">
             <div>
               <div className="flex items-center gap-2">

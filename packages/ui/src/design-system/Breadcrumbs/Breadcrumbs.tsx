@@ -1,5 +1,5 @@
-import {Button, ButtonSize} from '@design-system/Button';
-import {Icon, IconSize} from '@design-system/Icon';
+import { Button, ButtonSize } from '@tet/ui/design-system/Button';
+import { Icon, IconSize } from '@tet/ui/design-system/Icon';
 import classNames from 'classnames';
 
 const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
@@ -31,7 +31,7 @@ export const Breadcrumbs = ({
   onClick,
 }: BreadcrumbsProps) => {
   const readOnlyMode =
-    items.filter(button => button.href || button.onClick).length === 0 &&
+    items.filter((button) => button.href || button.onClick).length === 0 &&
     !onClick;
 
   return (

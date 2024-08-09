@@ -1,10 +1,10 @@
-import {Ref, forwardRef} from 'react';
+import { Ref, forwardRef } from 'react';
 import classNames from 'classnames';
 
-import {ButtonHTMLProps, isAnchor} from 'utils/types';
-import {buttonSizeClassnames, buttonThemeClassnames} from './theme';
+import { ButtonHTMLProps, isAnchor } from '@tet/ui/utils/types';
+import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import ButtonContent from './ButtonContent';
-import {ButtonContentProps, ButtonProps} from './types';
+import { ButtonContentProps, ButtonProps } from './types';
 
 /**
  * Composant bouton par défaut, ayant pour props toutes les props habituelles d'un button tag.
@@ -32,7 +32,7 @@ export const Button = forwardRef(
 
     const buttonState = disabled ? 'disabled' : 'default';
 
-    const {text, background, border} =
+    const { text, background, border } =
       buttonThemeClassnames[variant][buttonState];
 
     const sizeClassName =
@@ -76,17 +76,17 @@ export const Button = forwardRef(
     /** On affiche un bouton par défaut */
     if (isButton) {
       // On réintegre la prop disabled qui a été déstructurée plus haut
-      const buttonProps = {...props, disabled} as ButtonHTMLProps;
+      const buttonProps = { ...props, disabled } as ButtonHTMLProps;
       return (
         <button
           ref={ref as Ref<HTMLButtonElement>}
           {...buttonProps}
           className={classNames(
             buttonClassname,
-            {'flex-row-reverse': iconPosition === 'right'},
+            { 'flex-row-reverse': iconPosition === 'right' },
             className
           )}
-          onClick={evt => {
+          onClick={(evt) => {
             evt.stopPropagation();
             buttonProps.onClick?.(evt);
           }}
@@ -117,7 +117,7 @@ export const Button = forwardRef(
           )}
           target={openInNewTab ? '_blank' : anchorProps.target}
           rel={openInNewTab ? 'noreferrer noopener' : anchorProps.rel}
-          onClick={evt => {
+          onClick={(evt) => {
             evt.stopPropagation();
             if (disabled) evt.preventDefault();
             else anchorProps.onClick?.(evt);

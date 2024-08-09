@@ -14,7 +14,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import {SignupDataStep1, SignupPropsWithState} from './type';
-import {PasswordStrengthMeter} from '@components/PasswordStrengthMeter';
+import {PasswordStrengthMeter} from '@tet/auth/components/PasswordStrengthMeter';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (isPasswordless: boolean, email: string) => {
@@ -83,7 +83,7 @@ const SignupStep1Form = (
   props: SignupPropsWithState & {
     form: ReturnType<typeof useSignupStep1>;
     isPasswordless?: boolean;
-  },
+  }
 ) => {
   const {
     error,
@@ -110,7 +110,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error
+    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
     eventTracker('cta_submit');
   };
 
@@ -151,7 +151,7 @@ const SignupStep1Form = (
         btnCancelProps={{onClick: onCancel}}
         btnOKProps={{
           type: 'submit',
-          disabled: !isValid || isLoading || (res && res.score < 4),
+          disabled: !isValid || isLoading || (!!res && res.score < 4),
         }}
       />
     </form>

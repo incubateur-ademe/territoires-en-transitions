@@ -1,8 +1,8 @@
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import Slideshow from './Slideshow';
-import {ButtonVariant} from '@tet/ui';
+import { ButtonVariant } from '@tet/ui';
 
 type TestimonialSlideshowProps = {
   contenu: {
@@ -32,12 +32,12 @@ const TestimonialSlideshow = ({
   return (
     <Slideshow
       className={classNames('p-8 bg-grey-1', className)}
-      slides={contenu.map(t => (
+      slides={contenu.map((t) => (
         <div
           key={t.id}
           className={classNames(
             'flex max-lg:flex-col justify-start items-start bg-grey-1',
-            {'gap-8': t.portrait},
+            { 'gap-8': t.portrait }
           )}
         >
           {t.portrait ? (

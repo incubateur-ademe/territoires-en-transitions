@@ -1,0 +1,12 @@
+{
+  "name": "@tet/auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/auth",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["@tet/ui"],
+  "// targets": "to see all targets run: nx show project @tet/auth --web",
+  "targets": {
+    "dev": {}
+  }
+}

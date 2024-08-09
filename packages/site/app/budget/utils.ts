@@ -1,5 +1,5 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type TTableauBudget = {
   années: {
@@ -60,9 +60,9 @@ export const getStrapiData = async () => {
           budgetData.principes_liste as unknown as {
             id: number;
             legende: string;
-            image: {data: StrapiItem};
+            image: { data: StrapiItem };
           }[]
-        ).map(p => ({
+        ).map((p) => ({
           ...p,
           image: p.image.data,
         })),
@@ -81,9 +81,9 @@ export const getStrapiData = async () => {
               id: number;
               titre?: string;
               legende: string;
-              image: {data: StrapiItem};
+              image: { data: StrapiItem };
             }[]
-          ).map(d => ({
+          ).map((d) => ({
             ...d,
             image: d.image.data,
           })),

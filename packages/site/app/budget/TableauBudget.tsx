@@ -1,13 +1,13 @@
 import classNames from 'classnames';
-import {TTableauBudget} from './utils';
-import {getFormattedNumber} from 'src/utils/getFormattedNumber';
+import { TTableauBudget } from './utils';
+import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
 
 type TableauBudgetProps = {
   data: TTableauBudget;
 };
 
-const getColumns = (data: {[key: string]: string}) => {
-  let columns = [];
+const getColumns = (data: { [key: string]: string }) => {
+  const columns = [];
 
   for (const index in data) {
     columns.push({
@@ -20,8 +20,8 @@ const getColumns = (data: {[key: string]: string}) => {
 };
 
 const getTotal = (
-  data: {[key: string]: {[key: string]: number}},
-  index: string,
+  data: { [key: string]: { [key: string]: number } },
+  index: string
 ) => {
   let total = 0;
   for (const line in data) {
@@ -30,7 +30,7 @@ const getTotal = (
   return total;
 };
 
-const TableauBudget = ({data}: TableauBudgetProps) => {
+const TableauBudget = ({ data }: TableauBudgetProps) => {
   const colonnes = getColumns(data.années);
   const lignes = Object.keys(data.tableau);
 
@@ -43,18 +43,18 @@ const TableauBudget = ({data}: TableauBudgetProps) => {
         <tr className="h-[36px] bg-primary-2 border border-primary-3">
           <th
             className="border border-primary-3 text-left max-md:p-1 p-3"
-            style={{width: columnWidth}}
+            style={{ width: columnWidth }}
           ></th>
-          {colonnes.map(c => (
+          {colonnes.map((c) => (
             <th
               key={c.index}
               className={classNames(
                 'border border-primary-3 text-left max-md:max-w-[60px] max-md:break-words max-md:p-1 p-3',
                 {
                   'bg-primary-4': parseInt(c.index) === colonnes.length,
-                },
+                }
               )}
-              style={{width: columnWidth}}
+              style={{ width: columnWidth }}
             >
               {c.value}
             </th>
@@ -64,12 +64,12 @@ const TableauBudget = ({data}: TableauBudgetProps) => {
 
       {/* Lignes de données */}
       <tbody>
-        {lignes.map(ligne => (
+        {lignes.map((ligne) => (
           <tr key={ligne} className="h-[36px] border border-primary-3">
             <td className="border border-primary-3 text-primary-9 max-md:p-1 p-3">
               {ligne}
             </td>
-            {colonnes.map(c => (
+            {colonnes.map((c) => (
               <td
                 key={`${ligne}-${c.index}`}
                 className={classNames('border border-primary-3max-md:p-1 p-3', {
@@ -87,7 +87,7 @@ const TableauBudget = ({data}: TableauBudgetProps) => {
           <td className="border border-primary-3 text-primary-9 max-md:p-1 p-3">
             Total TTC
           </td>
-          {colonnes.map(c => (
+          {colonnes.map((c) => (
             <td
               key={`Total-${c.index}`}
               className="border border-primary-3 font-bold max-md:p-1 p-3"

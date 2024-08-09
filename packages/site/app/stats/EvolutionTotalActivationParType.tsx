@@ -1,14 +1,14 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {fromMonth} from './shared';
-import {addLocalFilters} from './utils';
-import {ChartHead} from './headings';
-import LineChart from '@components/charts/LineChart';
-import {statsColors, theme} from '@components/charts/chartsTheme';
-import ChartWithLegend from '@components/charts/ChartWithLegend';
-import {SliceTooltipProps} from '@nivo/line';
+import { supabase } from '../initSupabase';
+import { fromMonth } from './shared';
+import { addLocalFilters } from './utils';
+import { ChartHead } from './headings';
+import LineChart from '@tet/site/components/charts/LineChart';
+import { statsColors, theme } from '@tet/site/components/charts/chartsTheme';
+import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
+import { SliceTooltipProps } from '@nivo/line';
 
 /**
  * L'évolution des activations par type de collectivité
@@ -19,7 +19,7 @@ import {SliceTooltipProps} from '@nivo/line';
  */
 export function useEvolutionTotalActivation(
   codeRegion: string,
-  codeDepartement: string,
+  codeDepartement: string
 ) {
   return useSWR(
     `stats_locales_evolution_total_activation-${codeRegion}-${codeDepartement}`,
@@ -31,7 +31,7 @@ export function useEvolutionTotalActivation(
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error(error.message);
@@ -45,23 +45,23 @@ export function useEvolutionTotalActivation(
         evolution: [
           {
             id: 'EPCI à fiscalité propre',
-            data: data.map(d => ({x: d.mois, y: d.total_epci})),
+            data: data.map((d) => ({ x: d.mois, y: d.total_epci })),
           },
           {
             id: 'Communes',
-            data: data.map(d => ({x: d.mois, y: d.total_commune})),
+            data: data.map((d) => ({ x: d.mois, y: d.total_commune })),
           },
           {
             id: 'Syndicats',
-            data: data.map(d => ({x: d.mois, y: d.total_syndicat})),
+            data: data.map((d) => ({ x: d.mois, y: d.total_syndicat })),
           },
           {
             id: 'Autres collectivités',
-            data: data.map(d => ({x: d.mois, y: d.total_autre})),
+            data: data.map((d) => ({ x: d.mois, y: d.total_autre })),
           },
         ],
       };
-    },
+    }
   );
 }
 
@@ -74,11 +74,11 @@ export default function EvolutionTotalActivationParType({
   region = '',
   department = '',
 }: EvolutionTotalActivationParTypeProps) {
-  const {data} = useEvolutionTotalActivation(region, department);
+  const { data } = useEvolutionTotalActivation(region, department);
 
   if (!data) return null;
 
-  const {courant, evolution} = data;
+  const { courant, evolution } = data;
 
   return (
     <div>
@@ -94,25 +94,25 @@ export default function EvolutionTotalActivationParType({
       </ChartHead>
 
       <ChartWithLegend
-        graph={colors => (
+        graph={(colors) => (
           <LineChart
             data={evolution}
             customColors={colors}
             axisLeftLabel="Évolution des collectivités activées"
             stacked
             enableArea
-            customTooltip={({slice}: SliceTooltipProps) => {
+            customTooltip={({ slice }: SliceTooltipProps) => {
               return (
                 <div style={theme.tooltip?.container}>
                   <div>
                     <strong>
                       {slice.points
-                        .map(p => p.data.y as number)
+                        .map((p) => p.data.y as number)
                         .reduce((a, b) => a + b, 0)}
                     </strong>{' '}
                     collectivités, dont :
                   </div>
-                  {slice.points.map(point => (
+                  {slice.points.map((point) => (
                     <div
                       key={point.id}
                       style={{
@@ -128,7 +128,7 @@ export default function EvolutionTotalActivationParType({
             }}
           />
         )}
-        labels={evolution.map(e => e.id)}
+        labels={evolution.map((e) => e.id)}
         customColors={statsColors}
         containerClassname="mt-8 mb-12"
         graphContainerClassname="h-[400px]"

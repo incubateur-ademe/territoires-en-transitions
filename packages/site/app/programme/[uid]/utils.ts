@@ -1,4 +1,4 @@
-import {fetchCollection} from 'src/strapi/strapi';
+import { fetchCollection } from '@tet/site/src/strapi/strapi';
 import {
   InfoData,
   InfoFetchedData,
@@ -8,10 +8,10 @@ import {
   ParagrapheFetchedData,
   ServicesFetchedData,
 } from './types';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getServiceStrapiData = async (uid: string) => {
-  const {data} = await fetchCollection('services', [
+  const { data } = await fetchCollection('services', [
     ['filters[uid]', `${uid}`],
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
@@ -48,7 +48,7 @@ export const getServiceStrapiData = async (uid: string) => {
       },
       titre: serviceData.titre,
       contenu: (serviceData.contenu as unknown as ServicesFetchedData).map(
-        c => {
+        (c) => {
           if (c.__component === 'services.paragraphe') {
             const paragrapheData = c as ParagrapheFetchedData;
             return {
@@ -71,7 +71,7 @@ export const getServiceStrapiData = async (uid: string) => {
               titre: listeData.titre,
               sousTitre: listeData.sous_titre,
               introduction: listeData.introduction,
-              liste: listeData.liste.map(ct => ({
+              liste: listeData.liste.map((ct) => ({
                 id: ct.id,
                 icone: ct.icone,
                 preTitre: ct.pre_titre,
@@ -89,7 +89,7 @@ export const getServiceStrapiData = async (uid: string) => {
               boutons: infoData.boutons,
             } as InfoData;
           }
-        },
+        }
       ),
     };
   } else return null;

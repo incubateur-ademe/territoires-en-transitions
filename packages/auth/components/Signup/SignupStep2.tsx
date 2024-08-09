@@ -1,5 +1,5 @@
 import {SignupPropsWithState} from './type';
-import {VerifyOTP} from '@components/VerifyOTP/VerifyOTP';
+import {VerifyOTP} from '@tet/auth/components/VerifyOTP/VerifyOTP';
 
 /**
  * Affiche l'étape 2 du panneau de création de compte

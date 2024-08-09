@@ -1,12 +1,12 @@
 'use client';
 
-import {Button} from '@tet/ui';
-import Section from '@components/sections/Section';
-import {InfoData} from './types';
+import { Button } from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { InfoData } from './types';
 import classNames from 'classnames';
 
-const InfoService = ({titre, boutons}: InfoData) => {
-  const areButtons = boutons.filter(b => !!b.url).length !== 0;
+const InfoService = ({ titre, boutons }: InfoData) => {
+  const areButtons = boutons.filter((b) => !!b.url).length !== 0;
 
   return (
     <Section containerClassName="bg-primary-7">
@@ -15,11 +15,11 @@ const InfoService = ({titre, boutons}: InfoData) => {
       <div
         className={classNames(
           'max-lg:w-fit lg:h-fit flex max-lg:flex-col justify-center items-center max-lg:divide-y lg:divide-x mx-auto',
-          {'gap-8': areButtons},
+          { 'gap-8': areButtons }
         )}
       >
         {areButtons
-          ? boutons.map(b => (
+          ? boutons.map((b) => (
               <Button
                 key={b.label}
                 href={b.url}
@@ -31,7 +31,7 @@ const InfoService = ({titre, boutons}: InfoData) => {
                 {b.label}
               </Button>
             ))
-          : boutons.map(b => (
+          : boutons.map((b) => (
               <div
                 key={b.label}
                 className="text-white text-base text-center font-bold max-lg:pt-8 lg:px-8 max-lg:w-full lg:h-full flex-1"

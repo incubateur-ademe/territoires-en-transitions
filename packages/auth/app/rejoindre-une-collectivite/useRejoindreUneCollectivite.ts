@@ -1,16 +1,16 @@
-import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {supabase} from 'src/clientAPI';
-import {
-  CollectiviteInfo,
-  CollectiviteNom,
-  RejoindreUneCollectiviteData,
-} from '@components/RejoindreUneCollectivite';
 import {
   getCollectivitePath,
   makeSearchString,
   restoreSessionFromAuthTokens,
 } from '@tet/api';
+import {
+  CollectiviteInfo,
+  CollectiviteNom,
+  RejoindreUneCollectiviteData,
+} from '@tet/auth/components/RejoindreUneCollectivite';
+import {supabase} from '@tet/auth/src/clientAPI';
+import {useRouter} from 'next/navigation';
+import {useState} from 'react';
 
 export const NB_COLLECTIVITES_FETCH = 10;
 
@@ -28,7 +28,7 @@ export const useRejoindreUneCollectivite = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [collectivites, setCollectivites] = useState<Array<CollectiviteNom>>(
-    [],
+    []
   );
   const [collectiviteSelectionnee, setCollectiviteSelectionnee] =
     useState<CollectiviteInfo | null>(null);
@@ -80,7 +80,7 @@ export const useRejoindreUneCollectivite = ({
     setIsLoading(false);
     if (!error && data) {
       setCollectivites(
-        data.filter(c => !c.collectivite_test?.length) as CollectiviteNom[],
+        data.filter(c => !c.collectivite_test?.length) as CollectiviteNom[]
       );
     }
   };
@@ -109,7 +109,7 @@ export const useRejoindreUneCollectivite = ({
     collectiviteSelectionnee?.id &&
     collectivites &&
     !collectivites?.find(
-      c => c.collectivite_id === collectiviteSelectionnee?.id,
+      c => c.collectivite_id === collectiviteSelectionnee?.id
     );
 
   return {

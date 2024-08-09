@@ -1,6 +1,13 @@
-import {Ref, RefObject, forwardRef, useEffect, useState} from 'react';
-import {useAutoResize} from './useAutoResize';
-import {Textarea, TextareaProps} from './Textarea';
+import {
+  ChangeEvent,
+  Ref,
+  RefObject,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react';
+import { Textarea, TextareaProps } from './Textarea';
+import { useAutoResize } from './useAutoResize';
 
 export const AutoResizedTextarea = forwardRef(
   (props: TextareaProps, ref?: Ref<HTMLTextAreaElement>) => {
@@ -9,13 +16,13 @@ export const AutoResizedTextarea = forwardRef(
 
     useEffect(() => setValue(value), [props.value]);
 
-    const {textareaRef, shadowRef} = useAutoResize(
+    const { textareaRef, shadowRef } = useAutoResize(
       value?.toString(),
       ref as RefObject<HTMLTextAreaElement>
     );
 
-    const handleChange = evt => {
-      props.onChange?.(evt.target.value);
+    const handleChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+      props.onChange?.(evt);
       setValue(evt.target.value);
     };
 

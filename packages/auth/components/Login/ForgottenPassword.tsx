@@ -56,7 +56,7 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error
+    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
     eventTracker('cta_submit');
   };
 

@@ -1,12 +1,12 @@
-import {Liste} from './types';
-import Markdown from '@components/markdown/Markdown';
-import ReactIcon from '@components/react-icons/ReactIcon';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import { Liste } from './types';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
-const ListeVerticaleService = ({liste}: {liste: Liste}) => {
+const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
   return (
     <>
-      {liste.map(l => (
+      {liste.map((l) => (
         <div
           key={l.id}
           className="flex max-md:flex-col gap-6 bg-primary-1 rounded-2xl p-8"

@@ -1,6 +1,6 @@
-import {Button} from '@design-system/Button';
-import {ButtonProps} from '@design-system/Button/types';
-import {Dispatch, ReactElement, SetStateAction} from 'react';
+import { Button } from '@tet/ui/design-system/Button';
+import { ButtonProps } from '@tet/ui/design-system/Button/types';
+import { Dispatch, MouseEvent, ReactElement, SetStateAction } from 'react';
 
 type HeaderBodyProps = {
   /** Titre du header */
@@ -31,7 +31,7 @@ const HeaderBody = ({
       <a
         href={customRootUrl ?? '/'}
         className="block max-lg:w-full hover:!bg-primary-1 lg:rounded-lg bg-none"
-        onClick={evt => evt.stopPropagation()}
+        onClick={(evt) => evt.stopPropagation()}
       >
         <div className="max-lg:w-full max-lg:py-4 max-lg:flex-wrap flex gap-x-4">
           <div className="max-lg:py-2 max-lg:px-4 max-lg:w-full max-lg:border-b border-b-primary-4 flex justify-between">
@@ -52,7 +52,7 @@ const HeaderBody = ({
               size="sm"
               variant="outlined"
               className="lg:hidden h-fit"
-              onClick={evt => {
+              onClick={(evt: MouseEvent) => {
                 evt.preventDefault();
                 setOpenedMenu(true);
               }}

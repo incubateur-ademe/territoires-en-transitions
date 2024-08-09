@@ -1,11 +1,11 @@
-import DonutChartWithLegend from '@components/charts/DonutChartWithLegend';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {IndicateurDefaultData} from './IndicateursCollectivite';
-import Markdown from '@components/markdown/Markdown';
+import DonutChartWithLegend from '@tet/site/components/charts/DonutChartWithLegend';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { IndicateurDefaultData } from './IndicateursCollectivite';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 type IndicateurCardProps = {
   defaultData: IndicateurDefaultData;
-  data: {id: string; value: number}[];
+  data: { id: string; value: number }[];
   boxTitle: string;
   graphTitle: string;
   source?: string;
@@ -73,7 +73,7 @@ const IndicateurCard = ({
             <DonutChartWithLegend
               graphContainerClassname="h-[300px] -mx-8"
               data={data}
-              customMargin={{top: 40, right: 100, bottom: 40, left: 100}}
+              customMargin={{ top: 40, right: 100, bottom: 40, left: 100 }}
               unit={unit}
               unitSingular={unitSingular}
               decimals={decimals}

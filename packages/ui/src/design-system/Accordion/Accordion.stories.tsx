@@ -1,7 +1,7 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {Accordion, AccordionControlled} from './Accordion';
-import DoubleCheckIcon from '@assets/DoubleCheckIcon';
+import { Meta, StoryObj } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+import { Accordion, AccordionControlled } from './Accordion';
+import DoubleCheckIcon from '@tet/ui/assets/DoubleCheckIcon';
 
 const meta: Meta<typeof Accordion> = {
   component: Accordion,

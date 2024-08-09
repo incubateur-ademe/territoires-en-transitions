@@ -1,7 +1,6 @@
+import {FormState} from '@tet/auth/components/Login/useFormState';
+import {ResendFunction, VerifyOTPData} from '@tet/auth/components/VerifyOTP';
 import {ZxcvbnResult} from '@zxcvbn-ts/core';
-import {Enums} from '@tet/api';
-import {ResendFunction, VerifyOTPData} from '@components/VerifyOTP';
-import {FormState} from '@components/Login/useFormState';
 
 const ValidSignupView = [
   'etape1',
@@ -56,7 +55,7 @@ export type SignupProps = {
   /** Pour contrôler la robustesse des mots de passe */
   getPasswordStrength: (
     password: string,
-    otherValues: string[],
+    otherValues: string[]
   ) => ZxcvbnResult | null;
 };
 

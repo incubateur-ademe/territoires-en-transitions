@@ -1,10 +1,10 @@
 'use client';
 
-import Section from '@components/sections/Section';
+import Section from '@tet/site/components/sections/Section';
 import CarteConseiller from './CarteConseiller';
-import {Input, Pagination} from '@tet/ui';
-import {ConseillerType, getData} from './utils';
-import {useEffect, useState} from 'react';
+import { Input, Pagination } from '@tet/ui';
+import { ConseillerType, getData } from './utils';
+import { useEffect, useState } from 'react';
 
 const PAGINATION_LIMIT = 12;
 
@@ -15,7 +15,7 @@ const Annuaire = () => {
   const [data, setData] = useState<ConseillerType[]>([]);
 
   const getConseillersData = async () => {
-    const {data, pagination} = await getData({
+    const { data, pagination } = await getData({
       page: selectedPage,
       limit: PAGINATION_LIMIT,
       search: searchInput,
@@ -38,15 +38,15 @@ const Annuaire = () => {
         </h1>
         <Input
           className="!w-[435px]"
-          onChange={evt => setSearchInput(evt.target.value)}
-          onSearch={() => {}}
+          onChange={(evt) => setSearchInput(evt.target.value)}
+          onSearch={() => undefined}
           type="search"
           placeholder="Rechercher un nom, prénom, structure ou région"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {data.map(carte => (
+        {data.map((carte) => (
           <CarteConseiller
             key={`${carte.prenom}-${carte.nom}-${carte.id}`}
             {...carte}
@@ -60,7 +60,7 @@ const Annuaire = () => {
         nbOfElements={total}
         maxElementsPerPage={PAGINATION_LIMIT}
         idToScrollTo="annuaire-header"
-        onChange={selectedPage => setSelectPage(selectedPage)}
+        onChange={(selectedPage) => setSelectPage(selectedPage)}
       />
     </Section>
   );

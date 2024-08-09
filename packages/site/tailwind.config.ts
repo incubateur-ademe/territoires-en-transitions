@@ -1,5 +1,5 @@
-import {Config} from 'tailwindcss';
-import {preset} from '@tet/ui';
+import { Config } from 'tailwindcss';
+import { preset } from '../ui/src/tailwind-preset';
 
 export default {
   presets: [preset as Config],

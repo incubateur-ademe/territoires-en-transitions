@@ -5,9 +5,9 @@ import Accompagnement from './Accompagnement';
 import Informations from './Informations';
 import AccueilBanner from './AccueilBanner';
 import Newsletter from './Newsletter';
-import {getData} from './utils';
-import NoResult from '@components/info/NoResult';
-import {AccueilData} from './types';
+import { getData } from './utils';
+import NoResult from '@tet/site/components/info/NoResult';
+import { AccueilData } from './types';
 
 const Accueil = async () => {
   const data: AccueilData | null = await getData();

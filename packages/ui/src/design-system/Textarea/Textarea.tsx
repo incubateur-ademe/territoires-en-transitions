@@ -1,6 +1,6 @@
-import {FieldState} from '@design-system/Field';
+import { FieldState } from '@tet/ui/design-system/Field';
 import classNames from 'classnames';
-import {HTMLAttributes, Ref, forwardRef} from 'react';
+import { HTMLAttributes, Ref, forwardRef } from 'react';
 
 // Variantes de taille
 export type TextareaSize = 'md' | 'sm';

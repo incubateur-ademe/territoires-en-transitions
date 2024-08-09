@@ -1,5 +1,5 @@
 const getRange = (start: number, end: number) =>
-  Array.from({length: end - start + 1}, (_, k) => start + k);
+  Array.from({ length: end - start + 1 }, (_, k) => start + k);
 
 /** Calcule le tableau pagination en fonction de la page courante,
  * du nombre total de pages, et de la taille d'écran */
@@ -71,9 +71,16 @@ export const calculatePaginationArray = ({
 
   // Construction du tableau final
   const finalArray = [...leftRange];
-  !displayAllPages && finalArray.push(leftIntersection);
+  if (!displayAllPages && leftIntersection !== undefined) {
+    finalArray.push(leftIntersection);
+  }
+
   finalArray.push(...middleRange);
-  isMiddlePage && !displayAllPages && finalArray.push(rightIntersection);
+
+  if (isMiddlePage && !displayAllPages && rightIntersection !== undefined) {
+    finalArray.push(rightIntersection);
+  }
+
   finalArray.push(...rightRange);
 
   return finalArray;

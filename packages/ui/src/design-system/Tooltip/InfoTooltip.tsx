@@ -1,5 +1,5 @@
-import {Icon, IconSize} from '@design-system/Icon';
-import {Tooltip, TooltipProps} from '@design-system/Tooltip';
+import { Icon, IconSize } from '@tet/ui/design-system/Icon';
+import { Tooltip, TooltipProps } from '@tet/ui/design-system/Tooltip';
 import classNames from 'classnames';
 
 type InfoTooltipProps = Omit<TooltipProps, 'children'> & {
@@ -24,7 +24,7 @@ export const InfoTooltip = ({
         className={classNames('text-grey-6', iconClassName, {
           'cursor-pointer': tooltipProps.activatedBy === 'click',
         })}
-        onClick={evt => evt.stopPropagation()}
+        onClick={(evt) => evt.stopPropagation()}
       />
     </Tooltip>
   );

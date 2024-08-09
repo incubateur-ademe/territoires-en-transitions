@@ -1,9 +1,9 @@
 import './global.css';
 import AppHeader from './AppHeader';
-import {Metadata, Viewport} from 'next';
-import {getMetaData} from './utils';
-import Footer from '@components/layout/Footer';
-import {PHProvider} from 'providers/posthog';
+import { Metadata, Viewport } from 'next';
+import { getMetaData } from './utils';
+import Footer from '@tet/site/components/layout/Footer';
+import { PHProvider } from '@tet/site/providers/posthog';
 import TrackPage from './TrackPage';
 
 export const viewport: Viewport = {
@@ -69,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({children}: {children: JSX.Element}) {
+export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
     <PHProvider>
       <html>

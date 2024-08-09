@@ -10,7 +10,7 @@ import {
   TrackPageView,
 } from '@tet/ui';
 import {LoginData, LoginPropsWithState} from './type';
-import {PasswordStrengthMeter} from '@components/PasswordStrengthMeter';
+import {PasswordStrengthMeter} from '@tet/auth/components/PasswordStrengthMeter';
 
 /** Gestionnaire d'état pour le formulaire */
 const useResetPassword = (email: string) => {
@@ -53,7 +53,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
   const eventTracker = useEventTracker('auth/login/reset_mdp');
   const onSubmitForm = handleSubmit((data: LoginData) => {
     onSubmit?.(data);
-    // @ts-expect-error
+    // @ts-expect-error on ne veut pas gérer l'erreur
     eventTracker('cta_submit', {});
   });
 
@@ -75,7 +75,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
         <ModalFooterOKCancel
           btnOKProps={{
             type: 'submit',
-            disabled: !isValid || isLoading || (res && res.score < 4),
+            disabled: !isValid || isLoading || (!!res && res.score < 4),
           }}
           btnCancelProps={{onClick: onCancel}}
         />

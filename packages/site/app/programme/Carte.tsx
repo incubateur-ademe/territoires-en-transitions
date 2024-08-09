@@ -1,9 +1,9 @@
 'use client';
 
 /* eslint-disable react/no-unescaped-entities */
-import Section from '@components/sections/Section';
-import CarteAvecFiltres from '@components/carte/CarteAvecFiltres';
-import {useEffect, useRef, useState} from 'react';
+import Section from '@tet/site/components/sections/Section';
+import CarteAvecFiltres from '@tet/site/components/carte/CarteAvecFiltres';
+import { useEffect, useRef, useState } from 'react';
 
 const Carte = () => {
   const ref = useRef<HTMLDivElement>(null);

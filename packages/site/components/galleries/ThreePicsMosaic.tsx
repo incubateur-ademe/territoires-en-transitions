@@ -1,12 +1,12 @@
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type ThreePicsMosaicProps = {
   images: StrapiItem[];
 };
 
-const ThreePicsMosaic = ({images}: ThreePicsMosaicProps) => {
+const ThreePicsMosaic = ({ images }: ThreePicsMosaicProps) => {
   const isPortrait = images.length
     ? images[0].attributes.height >= images[0].attributes.width
     : false;

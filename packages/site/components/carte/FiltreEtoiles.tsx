@@ -1,27 +1,30 @@
 'use client';
 
-import {RedStar} from '@components/labellisation/Star';
-import {useEffect, useState} from 'react';
+import { RedStar } from '@tet/site/components/labellisation/Star';
+import { useEffect, useState } from 'react';
 
 type FiltreEtoilesProps = {
   initEtoiles: number[];
   onChangeEtoiles: (etoiles: number[]) => void;
 };
 
-const FiltreEtoiles = ({initEtoiles, onChangeEtoiles}: FiltreEtoilesProps) => {
+const FiltreEtoiles = ({
+  initEtoiles,
+  onChangeEtoiles,
+}: FiltreEtoilesProps) => {
   const [etoiles, setEtoiles] = useState(
-    [1, 2, 3, 4, 5].map(et => {
+    [1, 2, 3, 4, 5].map((et) => {
       if (initEtoiles.includes(et)) return true;
       else return false;
-    }),
+    })
   );
 
   useEffect(() => {
     setEtoiles(
-      [1, 2, 3, 4, 5].map(et => {
+      [1, 2, 3, 4, 5].map((et) => {
         if (initEtoiles.includes(et)) return true;
         else return false;
-      }),
+      })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initEtoiles.length]);
@@ -52,8 +55,8 @@ const FiltreEtoiles = ({initEtoiles, onChangeEtoiles}: FiltreEtoilesProps) => {
           />
           <label htmlFor={`${index + 1}etoiles`} className="hover:shadow-none">
             {[1, 2, 3, 4, 5]
-              .filter(e => e <= index + 1)
-              .map(e => (
+              .filter((e) => e <= index + 1)
+              .map((e) => (
                 <RedStar key={e} className="h-[23px] w-[26px]" />
               ))}
           </label>

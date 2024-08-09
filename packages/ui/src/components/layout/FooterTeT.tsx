@@ -1,8 +1,8 @@
-import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
-import AdemeLogo from '@assets/AdemeLogo';
-import {Footer, LinkObject} from '../../design-system/Footer/Footer';
-import {Button} from '@design-system/Button';
-import {SITE_BASE_URL} from 'utils/constants';
+import RepubliqueFrancaiseLogo from '@tet/ui/assets/RepubliqueFrancaiseLogo';
+import AdemeLogo from '@tet/ui/assets/AdemeLogo';
+import { Footer, LinkObject } from '../../design-system/Footer/Footer';
+import { Button } from '@tet/ui/design-system/Button';
+import { SITE_BASE_URL } from '@tet/ui/utils/constants';
 
 type FooterTeTProps = {
   id?: string;
@@ -35,8 +35,8 @@ export const FooterTeT = ({
       ]}
       content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."
       contentLinks={[
-        {label: 'ademe.fr', href: 'https://www.ademe.fr/', external: true},
-        {label: 'beta.gouv', href: 'https://beta.gouv.fr/', external: true},
+        { label: 'ademe.fr', href: 'https://www.ademe.fr/', external: true },
+        { label: 'beta.gouv', href: 'https://beta.gouv.fr/', external: true },
       ]}
       bottomContent={
         <div className="flex flex-wrap gap-x-1 mb-0">

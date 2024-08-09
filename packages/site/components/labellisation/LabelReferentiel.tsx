@@ -1,18 +1,18 @@
-import {EtoilesLabel} from 'app/types';
-import {referentielToLabel} from 'src/utils/labels';
-import {GreyStar, RedStar} from './Star';
+import { EtoilesLabel } from '@tet/site/app/types';
+import { referentielToLabel } from '@tet/site/src/utils/labels';
+import { GreyStar, RedStar } from './Star';
 
 type LabelReferentielProps = {
   referentiel: 'cae' | 'eci';
   etoiles: EtoilesLabel;
 };
 
-const LabelReferentiel = ({referentiel, etoiles}: LabelReferentielProps) => {
+const LabelReferentiel = ({ referentiel, etoiles }: LabelReferentielProps) => {
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="flex gap-[17px]">
-        {[1, 2, 3, 4, 5].map(i =>
-          etoiles >= i ? <RedStar key={i} /> : <GreyStar key={i} />,
+        {[1, 2, 3, 4, 5].map((i) =>
+          etoiles >= i ? <RedStar key={i} /> : <GreyStar key={i} />
         )}
       </div>
 

@@ -1,15 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import Section from '@components/sections/Section';
+import Section from '@tet/site/components/sections/Section';
 import ActiveUsers from './ActiveUsers';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
-import {EtatDesLieux} from './EtatDesLieux';
-import {EvolutionIndicateurs} from './EvolutionIndicateurs';
-import {EvolutionPlansAction} from './EvolutionPlansAction';
+import { EtatDesLieux } from './EtatDesLieux';
+import { EvolutionIndicateurs } from './EvolutionIndicateurs';
+import { EvolutionPlansAction } from './EvolutionPlansAction';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
-import {ChartTitle, SectionHead} from './headings';
+import { ChartTitle, SectionHead } from './headings';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
 import dynamic from 'next/dynamic';
@@ -42,7 +42,7 @@ const StatisticsDisplay = ({
           <p>Chargement...</p>
         </div>
       ),
-    },
+    }
   );
 
   return (

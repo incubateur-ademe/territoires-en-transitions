@@ -1,4 +1,4 @@
-import {defaultColors} from './chartsTheme';
+import { defaultColors } from './chartsTheme';
 import DonutChart from './DonutChart';
 
 type DonutChartWithLegendProps = {
@@ -11,7 +11,7 @@ type DonutChartWithLegendProps = {
   unit?: string;
   unitSingular?: boolean;
   decimals?: number;
-  customMargin?: {top: number; right: number; bottom: number; left: number};
+  customMargin?: { top: number; right: number; bottom: number; left: number };
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
 };
@@ -21,8 +21,8 @@ const DonutChartWithLegend = ({
   data,
   ...otherProps
 }: DonutChartWithLegendProps) => {
-  let dataWithColor = data
-    .filter(d => d.value !== 0)
+  const dataWithColor = data
+    .filter((d) => d.value !== 0)
     .map((d, index) => ({
       ...d,
       color: d.color ? d.color : defaultColors[index % defaultColors.length],
@@ -34,7 +34,7 @@ const DonutChartWithLegend = ({
         <DonutChart data={dataWithColor} {...otherProps} />
       </div>
       <div className="grid grid-cols-3 justify-center gap-x-8 gap-y-3 my-6">
-        {dataWithColor.map(d => (
+        {dataWithColor.map((d) => (
           <div key={d.id} className="flex flex-row items-center gap-2 h-[26px]">
             <div
               style={{

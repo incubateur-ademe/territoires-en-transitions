@@ -1,6 +1,6 @@
-import {Ref, forwardRef, useImperativeHandle, useRef} from 'react';
 import classNames from 'classnames';
-import {InputBase, InputBaseProps} from './InputBase';
+import { ForwardedRef, MutableRefObject, forwardRef } from 'react';
+import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
 
@@ -8,14 +8,14 @@ export type InputDateProps = Omit<InputBaseProps, 'icon' | 'type'>;
  * Affiche un champ de saisie date
  */
 export const InputDate = forwardRef(
-  ({className, ...props}: InputDateProps, ref?: Ref<HTMLInputElement>) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    useImperativeHandle(ref, () => inputRef.current);
-
+  (
+    { className, ...props }: InputDateProps,
+    ref: ForwardedRef<HTMLInputElement>
+  ) => {
     return (
       <InputBase
         type="date"
-        ref={inputRef}
+        ref={ref}
         className={classNames(
           /** cache l'icône du sélecteur de date (fonctionne uniquement pour chrome et probablement edge mais pas pour firefox ni safari) */
           '[&::-webkit-calendar-picker-indicator]:hidden',
@@ -26,7 +26,7 @@ export const InputDate = forwardRef(
             type: 'button',
             icon: 'calendar-line',
             onClick: () => {
-              inputRef.current?.showPicker();
+              (ref as MutableRefObject<HTMLInputElement>).current.showPicker();
             },
           },
         }}

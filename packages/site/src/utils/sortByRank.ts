@@ -1,4 +1,4 @@
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const sortByRank = (array: StrapiItem[]): StrapiItem[] =>
   array.sort((a, b) => {

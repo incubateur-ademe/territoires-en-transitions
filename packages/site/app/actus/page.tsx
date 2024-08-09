@@ -1,14 +1,14 @@
 'use server';
 
-import {fetchCollection} from 'src/strapi/strapi';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import Section from '@components/sections/Section';
-import BlogCard from '@components/cards/BlogCard';
-import MasonryGallery from '@components/galleries/MasonryGallery';
-import {Metadata} from 'next';
-import {convertNameToSlug} from 'src/utils/convertNameToSlug';
-import {notFound} from 'next/navigation';
+import { fetchCollection } from '@tet/site/src/strapi/strapi';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import BlogCard from '@tet/site/components/cards/BlogCard';
+import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
+import { Metadata } from 'next';
+import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
+import { notFound } from 'next/navigation';
 
 const LIMIT = 50;
 
@@ -28,19 +28,19 @@ type ActuCard = {
 };
 
 const getData = async () => {
-  const {data, meta} = await fetchCollection('actualites', [
+  const { data, meta } = await fetchCollection('actualites', [
     ['populate[0]', 'Couverture'],
     ['sort[0]', 'createdAt:desc'],
     ['pagination[start]', '0'],
     ['pagination[limit]', `${LIMIT}`],
   ]);
 
-  const {pagination} = meta;
-  let cards = data;
+  const { pagination } = meta;
+  const cards = data;
   let page = 1;
 
   while (page < Math.ceil(pagination.total / pagination.limit)) {
-    const {data} = await fetchCollection('actualites', [
+    const { data } = await fetchCollection('actualites', [
       ['populate[0]', 'Couverture'],
       ['sort[0]', 'createdAt:desc'],
       ['pagination[start]', `${page * LIMIT}`],
@@ -51,7 +51,7 @@ const getData = async () => {
   }
 
   const formattedData: ActuCard[] | null = cards
-    ? cards.map(d => ({
+    ? cards.map((d) => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         dateCreation:
@@ -85,7 +85,7 @@ const Actualites = async () => {
     <Section>
       <h1>Actualités</h1>
       <MasonryGallery
-        data={data.map(actu => (
+        data={data.map((actu) => (
           <BlogCard
             key={actu.id}
             backgroundColor="#f5f5fe"

@@ -1,9 +1,9 @@
 'use client';
 
-import {useState} from 'react';
-import {Icon, Tooltip, useCopyToClipboard} from '@tet/ui';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import { useState } from 'react';
+import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 type CarteConseillerProps = {
   prenom: string;
@@ -29,7 +29,7 @@ const CarteConseiller = ({
   photo,
 }: CarteConseillerProps) => {
   const [displayCopyMsg, setDisplayCopyMsg] = useState(false);
-  const {copy} = useCopyToClipboard();
+  const { copy } = useCopyToClipboard();
 
   return (
     <div className="bg-white px-3 py-5 rounded-xl border border-primary-4 flex justify-between items-center gap-4">

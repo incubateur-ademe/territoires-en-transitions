@@ -1,29 +1,29 @@
 'use client';
 
-import DonutChart from '@components/charts/DonutChart';
-import {TTableauBudget} from './utils';
-import {useEffect, useState} from 'react';
+import DonutChart from '../../components/charts/DonutChart';
+import { TTableauBudget } from './utils';
+import { useEffect, useState } from 'react';
 
 export type RepartitionCoutsProps = {
   titre: string;
   data: TTableauBudget;
 };
 
-const getChartData = (data: {[key: string]: {[key: string]: number}}) => {
-  let chartData = [];
+const getChartData = (data: { [key: string]: { [key: string]: number } }) => {
+  const chartData = [];
 
   for (const line in data) {
     const total = Object.values(data[line]).reduce(
       (total, currValue) => total + currValue,
-      0,
+      0
     );
-    chartData.push({id: line, value: total});
+    chartData.push({ id: line, value: total });
   }
 
   return chartData.sort((a, b) => b.value - a.value);
 };
 
-const RepartitionCouts = ({titre, data}: RepartitionCoutsProps) => {
+const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
   const chartData = getChartData(data.tableau);
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
 

@@ -1,17 +1,17 @@
 'use server';
 
-import NoResult from '@components/info/NoResult';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import PhoneIcon from '@components/icones/PhoneIcon';
+import NoResult from '@tet/site/components/info/NoResult';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import PhoneIcon from '@tet/site/components/icones/PhoneIcon';
 import ContactForm from './ContactForm';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getStrapiData} from './utils';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getStrapiData } from './utils';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 
 export async function generateMetadata(
-  params: {params: {}},
-  parent: ResolvingMetadata,
+  params: { params: unknown },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

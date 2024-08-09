@@ -1,5 +1,5 @@
-import {Icon, IconValue} from '@design-system/Icon';
-import {FormSectionGrid, FormSectionGridProps} from './FormSectionGrid';
+import { Icon, IconValue } from '@tet/ui/design-system/Icon';
+import { FormSectionGrid, FormSectionGridProps } from './FormSectionGrid';
 
 type FormSectionProps = {
   /** Titre de la section */

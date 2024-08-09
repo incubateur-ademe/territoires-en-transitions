@@ -1,25 +1,25 @@
-import {useRef} from 'react';
-import {Meta, StoryObj} from '@storybook/react';
+import { useRef } from 'react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import DoubleCheckIcon from '@assets/DoubleCheckIcon';
+import DoubleCheckIcon from '@tet/ui/assets/DoubleCheckIcon';
 
-import {Button} from './Button';
-import {SITE_BASE_URL} from 'utils/constants';
+import { Button } from './Button';
+import { SITE_BASE_URL } from '@tet/ui/utils/constants';
 
 const meta: Meta<typeof Button> = {
   component: Button,
   argTypes: {
     variant: {
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
     size: {
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
     icon: {
-      control: {type: 'text'},
+      control: { type: 'text' },
     },
     iconPosition: {
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
   },
 };
@@ -56,7 +56,7 @@ export const WithRemixIcon: Story = {
 export const WithCustomSVGIcon: Story = {
   args: {
     children: 'SVG Icon',
-    icon: className => <DoubleCheckIcon className={className} />,
+    icon: (className: string) => <DoubleCheckIcon className={className} />,
     iconPosition: 'left',
   },
 };
@@ -66,7 +66,7 @@ export const Sizes: Story = {
   render: () => (
     <div
       className="grid gap-5 items-end"
-      style={{gridTemplateColumns: 'repeat(4,fit-content(0))'}}
+      style={{ gridTemplateColumns: 'repeat(4,fit-content(0))' }}
     >
       {/* Icon Buttons */}
       <Button size="xs" icon="leaf-line" />
@@ -103,7 +103,7 @@ export const Variants: Story = {
   render: () => (
     <div
       className="grid gap-5 items-end bg-grey-2 p-10"
-      style={{gridTemplateColumns: 'repeat(6,fit-content(0))'}}
+      style={{ gridTemplateColumns: 'repeat(6,fit-content(0))' }}
     >
       {/* Icon buttons */}
       <Button icon="leaf-line" variant="primary" size="sm" />
@@ -320,7 +320,7 @@ export const CustomStyles: Story = {
       <Button className="!bg-success-3 !border-success-3 hover:!bg-success hover:!border-success">
         Custom Class
       </Button>
-      <Button style={{fontStyle: 'italic', borderRadius: '2rem'}}>
+      <Button style={{ fontStyle: 'italic', borderRadius: '2rem' }}>
         Custom Style
       </Button>
     </div>

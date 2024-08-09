@@ -1,5 +1,5 @@
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type ThumbnailsListProps = {
   thumbnails: {
@@ -9,10 +9,10 @@ type ThumbnailsListProps = {
   }[];
 };
 
-const ThumbnailsList = ({thumbnails}: ThumbnailsListProps) => {
+const ThumbnailsList = ({ thumbnails }: ThumbnailsListProps) => {
   return (
     <div className="flex max-md:flex-col flex-wrap justify-center gap-14 max-md:px-12">
-      {thumbnails.map(thumbnail => (
+      {thumbnails.map((thumbnail) => (
         <div
           key={thumbnail.id}
           className="flex flex-col items-center gap-8 w-fit max-md:mx-auto"

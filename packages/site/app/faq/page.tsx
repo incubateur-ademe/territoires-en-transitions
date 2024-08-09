@@ -1,12 +1,12 @@
 'use server';
 
-import Section from '@components/sections/Section';
-import {Metadata} from 'next';
-import {fetchCollection} from 'src/strapi/strapi';
-import {sortByRank} from 'src/utils/sortByRank';
+import Section from '@tet/site/components/sections/Section';
+import { Metadata } from 'next';
+import { fetchCollection } from '@tet/site/src/strapi/strapi';
+import { sortByRank } from '@tet/site/src/utils/sortByRank';
 import ContactEquipe from './ContactEquipe';
 import ListeQuestions from './ListeQuestions';
-import NoResult from '@components/info/NoResult';
+import NoResult from '@tet/site/components/info/NoResult';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -22,10 +22,10 @@ export type FaqData = {
 };
 
 const getData = async () => {
-  const {data} = await fetchCollection('faqs');
+  const { data } = await fetchCollection('faqs');
 
   const formattedData = data
-    ? sortByRank(data).map(d => ({
+    ? sortByRank(data).map((d) => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         contenu: d.attributes.Contenu as unknown as string,

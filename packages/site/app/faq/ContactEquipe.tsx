@@ -1,10 +1,10 @@
 'use client';
 
 /* eslint-disable react/no-unescaped-entities */
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
-import CommunityPicto from 'public/pictogrammes/CommunityPicto';
-import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
+import Section from '@tet/site/components/sections/Section';
+import CommunityPicto from '@tet/site/public/pictogrammes/CommunityPicto';
+import PictoWithBackground from '@tet/site/public/pictogrammes/PictoWithBackground';
+import { Button } from '@tet/ui';
 
 const ContactEquipe = () => {
   return (

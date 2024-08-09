@@ -1,16 +1,16 @@
-import {Meta, StoryObj} from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import {FormSection} from './FormSection';
-import {FormSectionGrid} from './FormSectionGrid';
-import {Field} from '@design-system/Field';
-import {Input} from '@design-system/Input';
+import { FormSection } from './FormSection';
+import { FormSectionGrid } from './FormSectionGrid';
+import { Field } from '@tet/ui/design-system/Field';
+import { Input } from '@tet/ui/design-system/Input';
 
 const meta: Meta<typeof FormSection> = {
   component: FormSection,
-  render: args => {
+  render: (args) => {
     return (
       <div className="w-full max-w-lg p-8">
-        <FormSection title="Titre de la section" {...args}>
+        <FormSection {...args} title="Titre de la section">
           {args.children}
         </FormSection>
       </div>
@@ -85,7 +85,6 @@ export const PlusieursSections: Story = {
     );
   },
 };
-
 
 export const SansHeader: Story = {
   args: {},

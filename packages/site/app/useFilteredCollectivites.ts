@@ -1,5 +1,5 @@
-import {makeSearchString} from '@tet/api';
-import {supabase} from 'app/initSupabase';
+import { makeSearchString } from '@tet/api';
+import { supabase } from '@tet/site/app/initSupabase';
 import useSWR from 'swr';
 
 export const useFilteredCollectivites = (search: string) => {
@@ -15,7 +15,7 @@ export const useFilteredCollectivites = (search: string) => {
       query.or(processedSearch);
     }
 
-    const {error, data} = await query;
+    const { error, data } = await query;
 
     if (error) {
       throw new Error(`site_labellisation-filtered-${search}`);
@@ -24,6 +24,6 @@ export const useFilteredCollectivites = (search: string) => {
       return null;
     }
 
-    return {filteredCollectivites: data || []};
+    return { filteredCollectivites: data || [] };
   });
 };

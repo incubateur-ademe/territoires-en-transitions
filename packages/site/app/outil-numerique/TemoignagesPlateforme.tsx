@@ -1,6 +1,6 @@
-import Section from '@components/sections/Section';
-import TestimonialSlideshow from '@components/slideshow/TestimonialSlideshow';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type TemoignagesPlateformeProps = {
   temoignages: {
@@ -12,7 +12,7 @@ type TemoignagesPlateformeProps = {
   }[];
 };
 
-const TemoignagesPlateforme = ({temoignages}: TemoignagesPlateformeProps) => {
+const TemoignagesPlateforme = ({ temoignages }: TemoignagesPlateformeProps) => {
   return (
     <Section
       containerClassName="bg-primary-7 max-md:!p-2"

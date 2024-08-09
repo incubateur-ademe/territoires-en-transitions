@@ -1,4 +1,4 @@
-import {EtoilesLabel} from 'app/types';
+import { EtoilesLabel } from '@tet/site/app/types';
 import LabelReferentiel from './LabelReferentiel';
 import LogoTeTe from './LogoTeTe';
 
@@ -8,7 +8,7 @@ type CodingPictoProps = {
   className?: string;
 };
 
-const LabellisationLogo = ({cae, eci, className}: CodingPictoProps) => {
+const LabellisationLogo = ({ cae, eci, className }: CodingPictoProps) => {
   if (!cae && !eci) return null;
 
   return (

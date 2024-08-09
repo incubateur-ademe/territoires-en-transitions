@@ -1,8 +1,8 @@
-import {Fragment} from 'react';
+import { Fragment } from 'react';
 import classNames from 'classnames';
 
-import {Badge} from '@design-system/Badge';
-import {Icon} from '@design-system/Icon';
+import { Badge } from '@tet/ui/design-system/Badge';
+import { Icon } from '@tet/ui/design-system/Icon';
 
 import {
   OptionValue,
@@ -10,9 +10,9 @@ import {
   SelectOption,
   isOptionSection,
 } from '../utils';
-import {OptionMenu} from './OptionMenu';
-import {CreateOption} from './SelectBase';
-import {ITEM_ALL} from '@design-system/Select/SelectFilter';
+import { OptionMenu } from './OptionMenu';
+import { CreateOption } from './SelectBase';
+import { ITEM_ALL } from '@tet/ui/design-system/Select/SelectFilter';
 
 type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
@@ -64,7 +64,7 @@ const Options = ({
                     {option.title}
                   </div>
                   {/** options */}
-                  {option.options.map(option => (
+                  {option.options.map((option) => (
                     <Option
                       key={option.value}
                       option={option}
@@ -127,9 +127,9 @@ const Option = ({
         data-test={option.value}
         className={classNames(
           'flex items-start w-full p-2 pr-6 text-left text-sm',
-          {'hover:!bg-primary-0': !disabled}
+          { 'hover:!bg-primary-0': !disabled }
         )}
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           onChange(option.value);
         }}

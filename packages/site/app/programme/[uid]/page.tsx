@@ -1,17 +1,17 @@
 'use server';
 
-import {getServiceStrapiData} from './utils';
-import {InfoData, ListeData, ParagrapheData} from './types';
+import { getServiceStrapiData } from './utils';
+import { InfoData, ListeData, ParagrapheData } from './types';
 import ParagrapheService from './ParagrapheService';
 import ListeService from './ListeService';
 import InfoService from './InfoService';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
-import {notFound} from 'next/navigation';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata(
-  {params}: {params: {uid: string}},
-  parent: ResolvingMetadata,
+  { params }: { params: { uid: string } },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getServiceStrapiData(params.uid);
@@ -25,10 +25,10 @@ export async function generateMetadata(
 }
 
 type ServiceProgrammeProps = {
-  params: {uid: string};
+  params: { uid: string };
 };
 
-const ServiceProgramme = async ({params: {uid}}: ServiceProgrammeProps) => {
+const ServiceProgramme = async ({ params: { uid } }: ServiceProgrammeProps) => {
   const data = await getServiceStrapiData(uid);
 
   if (!data || data.contenu.length === 0) return notFound();

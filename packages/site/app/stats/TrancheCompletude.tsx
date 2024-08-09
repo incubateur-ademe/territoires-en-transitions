@@ -1,10 +1,10 @@
 'use client';
 
 import useSWR from 'swr';
-import {ResponsivePie} from '@nivo/pie';
-import {supabase} from '../initSupabase';
-import {theme} from './shared';
-import {addLocalFilters} from './utils';
+import { ResponsivePie } from '@nivo/pie';
+import { supabase } from '../initSupabase';
+import { theme } from './shared';
+import { addLocalFilters } from './utils';
 
 export function useTrancheCompletude(
   codeRegion: string,
@@ -17,11 +17,11 @@ export function useTrancheCompletude(
         .from('stats_locales_tranche_completude')
         .select()
         .gt('lower_bound', 0)
-        .order('lower_bound', {ascending: false});
+        .order('lower_bound', { ascending: false });
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error('stats_tranche_completude');
@@ -30,7 +30,7 @@ export function useTrancheCompletude(
         return null;
       }
       return {
-        tranches: data.map(d => {
+        tranches: data.map((d) => {
           return {
             id: d.lower_bound,
             label:
@@ -42,9 +42,9 @@ export function useTrancheCompletude(
           };
         }),
         inities: getSum(data),
-        termines: getSum(data.filter(d => d.lower_bound === 100)),
+        termines: getSum(data.filter((d) => d.lower_bound === 100)),
         presqueTermines: getSum(
-          data.filter(d => d.lower_bound !== null && d.lower_bound >= 80)
+          data.filter((d) => d.lower_bound !== null && d.lower_bound >= 80)
         ),
       };
     }
@@ -53,17 +53,21 @@ export function useTrancheCompletude(
 
 // somme des compteurs par référentiel pour calculer les décomptes
 // initiés/terminés/remplis à 80% et plus
-const getSum = (data: Array<{cae: number | null; eci: number | null}>) =>
+const getSum = (data: Array<{ cae: number | null; eci: number | null }>) =>
   data.reduce((cnt, d) => cnt + (d.cae ?? 0) + (d.eci ?? 0), 0);
 
-type Props = {referentiel: 'eci' | 'cae'; region?: string; department?: string};
+type Props = {
+  referentiel: 'eci' | 'cae';
+  region?: string;
+  department?: string;
+};
 
 export default function TrancheCompletude({
   referentiel,
   region = '',
   department = '',
 }: Props) {
-  let {data} = useTrancheCompletude(region, department);
+  const { data } = useTrancheCompletude(region, department);
   if (!data) return null;
 
   let tranches = data.tranches;
@@ -72,8 +76,9 @@ export default function TrancheCompletude({
   // on affiche une seule tranche : NA
   if (
     (referentiel === 'eci' &&
-      !data.tranches.filter(tr => tr.eci !== 0).length) ||
-    (referentiel === 'cae' && !data.tranches.filter(tr => tr.cae !== 0).length)
+      !data.tranches.filter((tr) => tr.eci !== 0).length) ||
+    (referentiel === 'cae' &&
+      !data.tranches.filter((tr) => tr.cae !== 0).length)
   ) {
     tranches = [
       {
@@ -86,17 +91,17 @@ export default function TrancheCompletude({
   }
 
   return (
-    <div style={{height: 300}}>
+    <div style={{ height: 300 }}>
       <ResponsivePie
         colors={
-          !tranches.filter(tr => tr.label === 'NA').length
+          !tranches.filter((tr) => tr.label === 'NA').length
             ? ['#21AB8E', '#34BAB5', '#FFCA00', '#FFB7AE', '#FF732C']
             : ['#CCC']
         }
         theme={theme}
         data={tranches}
         value={referentiel}
-        margin={{top: 40, right: 85, bottom: 25, left: 85}}
+        margin={{ top: 40, right: 85, bottom: 25, left: 85 }}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
@@ -111,7 +116,7 @@ export default function TrancheCompletude({
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor="#333333"
         arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{from: 'color'}}
+        arcLinkLabelsColor={{ from: 'color' }}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{
           from: 'color',
@@ -119,7 +124,9 @@ export default function TrancheCompletude({
         }}
         tooltip={() => null}
         animate={false}
-        enableArcLabels={!data.tranches.filter(tr => tr.label === 'NA').length}
+        enableArcLabels={
+          !data.tranches.filter((tr) => tr.label === 'NA').length
+        }
       />
     </div>
   );

@@ -1,7 +1,7 @@
 'use server';
 
-import Section from '@components/sections/Section';
-import {Metadata} from 'next';
+import Section from '@tet/site/components/sections/Section';
+import { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -30,11 +30,12 @@ export default async function Home() {
       <p>
         Le site constitué par l’ensemble des pages rattachées au nom Territoires
         en Transitions est la propriété de l’Agence de l’Environnement et de la
-        Maîtrise de l’Energie (ADEME), 
+        Maîtrise de l’Energie (ADEME),
         <br />
-        Établissement Public à caractère Industriel et Commercial (EPIC) régi par les articles L131-3 à L131-7 et
-        R131-1 à R131-26 du Code de l’environnement, inscrit au registre du
-        commerce d’Angers sous le n° 385 290 309 et ayant son siège social au :
+        Établissement Public à caractère Industriel et Commercial (EPIC) régi
+        par les articles L131-3 à L131-7 et R131-1 à R131-26 du Code de
+        l’environnement, inscrit au registre du commerce d’Angers sous le n° 385
+        290 309 et ayant son siège social au :
         <br />
         20, avenue du Grésillé - BP 90406 - 49004 Angers Cedex 01
         <br />
@@ -42,7 +43,8 @@ export default async function Home() {
       </p>
       <h2>Direction de publication</h2>
       <p>
-      Le directeur de la publication est Monsieur Sylvain WASERMAN, en qualité de représentant légal de l’ADEME.
+        Le directeur de la publication est Monsieur Sylvain WASERMAN, en qualité
+        de représentant légal de l’ADEME.
       </p>
       <p>
         La personne responsable de l’accès aux documents administratifs et des
@@ -53,7 +55,9 @@ export default async function Home() {
       <p>
         Koyeb
         <br />
-        société par actions simplifiée au capital social de 37 518,80 euros, immatriculée en France au Registre du Commerce de Nanterre sous le numéro 850 183 948, ayant son siège social au :   
+        société par actions simplifiée au capital social de 37 518,80 euros,
+        immatriculée en France au Registre du Commerce de Nanterre sous le
+        numéro 850 183 948, ayant son siège social au :
         <br />
         9, Rue des longsprès – 92100 Boulogne-Billancourt, France
       </p>

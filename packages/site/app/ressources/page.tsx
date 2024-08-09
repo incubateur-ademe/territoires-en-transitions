@@ -1,5 +1,5 @@
-import Section from '@components/sections/Section';
-import {Metadata} from 'next';
+import Section from '@tet/site/components/sections/Section';
+import { Metadata } from 'next';
 import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
@@ -94,7 +94,13 @@ export default async function Page() {
 /**
  * Affiche un dossier et son contenu de façon recursive.
  */
-function Dossier({directory, depth}: {directory: Directory; depth: number}) {
+function Dossier({
+  directory,
+  depth,
+}: {
+  directory: Directory;
+  depth: number;
+}) {
   const H = `h${Math.min(depth + 1, 6)}` as keyof JSX.IntrinsicElements;
 
   return (

@@ -1,8 +1,8 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {HeaderTeT} from './HeaderTeT';
-import {Button} from '@design-system/Button';
-import {APP_BASE_URL, SITE_BASE_URL} from 'utils/constants';
-import TeTeLogo from '@assets/TeTeLogo';
+import { Meta, StoryObj } from '@storybook/react';
+import { HeaderTeT } from './HeaderTeT';
+import { Button } from '@tet/ui/design-system/Button';
+import { APP_BASE_URL, SITE_BASE_URL } from '@tet/ui/utils/constants';
+import TeTeLogo from '@tet/ui/assets/TeTeLogo';
 
 const meta: Meta<typeof HeaderTeT> = {
   title: 'Components/Layout/Header TeT',
@@ -24,7 +24,7 @@ export const HeaderApp: Story = {
 export const HeaderSite: Story = {
   args: {
     customLogos: [<TeTeLogo className="h-full" />],
-    quickAccessButtons: props => [
+    quickAccessButtons: (props) => [
       <Button
         {...props}
         icon="user-add-line"
@@ -43,7 +43,7 @@ export const HeaderPanier: Story = {
   render: () => (
     <div className="h-screen">
       <HeaderTeT
-        quickAccessButtons={props => [
+        quickAccessButtons={(props) => [
           <Button
             {...props}
             key="outil"

@@ -1,6 +1,6 @@
 // Composant copié depuis l'app
 
-import {Placement} from '@floating-ui/react';
+import { Placement } from '@floating-ui/react';
 import classNames from 'classnames';
 
 /**
@@ -8,7 +8,7 @@ import classNames from 'classnames';
  * (Select, MultiSelect, MultiSelectFilter)
  */
 export type TSelectOption = TOption | TOptionSection;
-export type TOption = {value: string; label: string};
+export type TOption = { value: string; label: string };
 export type TOptionSection = {
   title: string;
   options: TOption[];
@@ -38,7 +38,7 @@ export type TSelectSelectionButtonBase = {
 
 // Type guards
 export function isOptionSection(
-  option: TSelectOption,
+  option: TSelectOption
 ): option is TOptionSection {
   return (option as TOptionSection).title !== undefined;
 }
@@ -49,6 +49,7 @@ export function isOption(option: TSelectOption): option is TOption {
 
 /** Extrait le label d'une option dans une liste d'options */
 export const getOptionLabel = (optionValue: string, options: TOption[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
   options.find((v: TOption) => v.value === optionValue)?.label!;
 
 /** Renvoie un tableau d'options, quelles soient dans une section ou non */
@@ -58,7 +59,7 @@ export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
       return selectOptions.reduce(
         (acc: TOption[], v) =>
           isOptionSection(v) ? acc.concat(v.options) : acc,
-        [],
+        []
       );
     } else {
       return selectOptions as unknown as TOption[];
@@ -69,12 +70,12 @@ export const getOptions = (selectOptions: TSelectOption[]): TOption[] => {
 };
 
 export const sortOptionByAlphabet = (
-  options: TSelectOption[],
+  options: TSelectOption[]
 ): TSelectOption[] => {
   const optionArray: TOption[] = [];
   const sectionArray: TOptionSection[] = [];
 
-  options.forEach(option => {
+  options.forEach((option) => {
     if (isOption(option)) {
       optionArray.push(option);
     } else {
@@ -84,8 +85,8 @@ export const sortOptionByAlphabet = (
 
   // sort options
   optionArray.sort((a, b) => {
-    let labelA = a.label.toUpperCase();
-    let labelB = b.label.toUpperCase();
+    const labelA = a.label.toUpperCase();
+    const labelB = b.label.toUpperCase();
     if (labelA < labelB) {
       return -1;
     }
@@ -96,10 +97,10 @@ export const sortOptionByAlphabet = (
   });
 
   // sort sections
-  sectionArray.forEach(section => {
+  sectionArray.forEach((section) => {
     section.options.sort((a, b) => {
-      let labelA = a.label.toUpperCase();
-      let labelB = b.label.toUpperCase();
+      const labelA = a.label.toUpperCase();
+      const labelB = b.label.toUpperCase();
       if (labelA < labelB) {
         return -1;
       }
@@ -120,7 +121,7 @@ export const sortOptionByAlphabet = (
  */
 export const filterOptions = (
   options: TSelectOption[],
-  filterValue: string,
+  filterValue: string
 ): TSelectOption[] =>
   options.reduce((acc: TSelectOption[], currentOption) => {
     if (isOption(currentOption)) {
@@ -132,8 +133,8 @@ export const filterOptions = (
     }
 
     if (isOptionSection(currentOption)) {
-      const filteredOptions = currentOption.options.filter(option =>
-        option.label.toLowerCase().includes(filterValue.toLowerCase()),
+      const filteredOptions = currentOption.options.filter((option) =>
+        option.label.toLowerCase().includes(filterValue.toLowerCase())
       );
       if (filteredOptions.length > 0) {
         return [
@@ -165,14 +166,18 @@ export const optionCheckMarkClassname = 'block fr-fi-check-line scale-75';
 
 /** Affiche une marque de sélection (ou seulement son emplacement) devant un
  * item de la liste */
-export const Checkmark = ({isSelected}: {isSelected: boolean}) => (
+export const Checkmark = ({ isSelected }: { isSelected: boolean }) => (
   <div className="w-6 mr-2 shrink-0">
     {isSelected ? <span className="block fr-fi-check-line scale-75" /> : null}
   </div>
 );
 
 /** Affiche l'icône plier/déplier */
-export const ExpandCollapseIcon = ({isOpen}: {isOpen: boolean | undefined}) => (
+export const ExpandCollapseIcon = ({
+  isOpen,
+}: {
+  isOpen: boolean | undefined;
+}) => (
   <span
     className={classNames(buttonDisplayedIconClassname, {
       'rotate-180': isOpen,

@@ -1,15 +1,15 @@
 'use client';
 
-/* eslint-disable @next/next/no-img-element */
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+
 import classNames from 'classnames';
-import {CSSProperties, useEffect, useState} from 'react';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { CSSProperties, useEffect, useState } from 'react';
 
 const imagePlaceholder = '/placeholder.svg';
 
 type Size = 'large' | 'medium' | 'small' | 'thumbnail';
 
-type Format = {[size: string]: {url: string}};
+type Format = { [size: string]: { url: string } };
 
 const addBaseURL = (url: string) => {
   const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
@@ -22,7 +22,7 @@ const addBaseURL = (url: string) => {
 const getImageSrc = (
   size: Size | undefined,
   formats: Format,
-  url: string | undefined,
+  url: string | undefined
 ) => {
   if (url) {
     const tempURL = size && formats?.size ? `${formats[size].url}` : url;
@@ -52,7 +52,7 @@ export const StrapiImage = ({
   const [src, setSrc] = useState(imagePlaceholder);
 
   const formats = Object.keys(attributes.formats ?? {})
-    .map(srcKey => ({
+    .map((srcKey) => ({
       url: addBaseURL(`${attributes.formats[srcKey].url}`),
       width: attributes.formats[srcKey].width as unknown as number,
     }))
@@ -63,8 +63,8 @@ export const StrapiImage = ({
       getImageSrc(
         size,
         attributes.formats as unknown as Format,
-        attributes.url as unknown as string,
-      ),
+        attributes.url as unknown as string
+      )
     );
   }, [size, attributes]);
 
@@ -74,7 +74,7 @@ export const StrapiImage = ({
         className={classNames('block', className)}
         src={src}
         srcSet={`${
-          formats.length ? `${formats.map(f => `${f.url} ${f.width}w`)},` : ''
+          formats.length ? `${formats.map((f) => `${f.url} ${f.width}w`)},` : ''
         } ${src} ${attributes.width}w`}
         alt={`${attributes.alternativeText ?? ''}`}
         onError={() => setSrc(imagePlaceholder)}

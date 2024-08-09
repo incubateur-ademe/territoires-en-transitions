@@ -1,20 +1,20 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {Textarea} from './Textarea';
-import {useRef, useState} from 'react';
-import {AutoResizedTextarea} from './AutoResizedTextarea';
+import { Meta, StoryObj } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+import { Textarea } from './Textarea';
+import { useRef, useState } from 'react';
+import { AutoResizedTextarea } from './AutoResizedTextarea';
 
 const meta: Meta<typeof Textarea> = {
   component: Textarea,
   argTypes: {
     displaySize: {
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
     resize: {
-      control: {type: 'select'},
+      control: { type: 'select' },
     },
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(args.value);
     const ref = useRef(null);
     return (
@@ -24,7 +24,7 @@ const meta: Meta<typeof Textarea> = {
         value={value}
         onChange={(evt: any) => {
           action('onChange')(evt.target);
-          action('ref.current.value')(ref.current.value);
+          action('ref.current.value')(ref.current?.value);
           setValue(evt.target.value);
         }}
       />

@@ -1,5 +1,5 @@
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {fetchCollection} from 'src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { fetchCollection } from '@tet/site/src/strapi/strapi';
 
 export type ConseillerType = {
   id: number;
@@ -37,7 +37,7 @@ export const getData = async ({
   return {
     data: !conseillers.data
       ? []
-      : (conseillers.data.map(d => ({
+      : (conseillers.data.map((d) => ({
           id: d.id,
           prenom: d.attributes.prenom as unknown as string,
           nom: d.attributes.nom as unknown as string,

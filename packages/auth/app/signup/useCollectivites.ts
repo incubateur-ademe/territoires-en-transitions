@@ -1,6 +1,5 @@
+import {supabase} from '@tet/auth/src/clientAPI';
 import useSWR from 'swr';
-import {NonNullableFields, Views} from '@tet/api';
-import {supabase} from 'src/clientAPI';
 
 /** Charge la liste des collectivités */
 const getCollectivites = async (nom?: string) => {
