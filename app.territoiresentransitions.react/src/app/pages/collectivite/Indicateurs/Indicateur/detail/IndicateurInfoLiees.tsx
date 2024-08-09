@@ -59,19 +59,11 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
           values={pilotes?.length ? pilotesValues : undefined}
           onChange={({personnes}) => {
             upsertIndicateurPilote(
-              personnes.map(personne => {
-                const pilote = pilotes?.find(
-                  p =>
-                    p.tagId === personne.tag_id || p.userId === personne.user_id
-                );
-                return pilote
-                  ? pilote
-                  : ({
-                      collectiviteId: collectivite.collectivite_id,
-                      tagId: personne.tag_id,
-                      userId: personne.user_id,
-                    } as SharedDomain.Personne);
-              })
+              personnes.map(personne => ({
+                collectiviteId: collectivite.collectivite_id,
+                tagId: personne.tag_id,
+                userId: personne.user_id,
+              }))
             );
           }}
           disabled={isReadonly}
