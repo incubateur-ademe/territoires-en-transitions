@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {Modal} from '@tet/ui';
 import {FicheAction} from '../data/types';
@@ -15,12 +14,6 @@ const ModaleCreerIndicateur = ({
   setIsOpen,
   fiche,
 }: ModaleCreerIndicateurProps) => {
-  const [editedFiche, setEditedFiche] = useState(fiche);
-
-  useEffect(() => {
-    if (isOpen) setEditedFiche(fiche);
-  }, [isOpen, fiche]);
-
   return (
     <Modal
       openState={{isOpen, setIsOpen}}

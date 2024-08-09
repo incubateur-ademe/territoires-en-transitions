@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {
   Checkbox,
@@ -28,6 +28,10 @@ const ModalePlanning = ({
   updateFiche,
 }: ModalePlanningProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+
+  useEffect(() => {
+    if (isOpen) setEditedFiche(fiche);
+  }, [isOpen]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
