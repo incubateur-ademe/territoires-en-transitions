@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import {Badge} from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
-import {getLocalDateString} from 'src/utils/getLocalDateString';
+import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
 
 type BlogCardProps = {
   title: string;
@@ -37,7 +37,7 @@ const BlogCard = ({
         'fr-card fr-card--no-border border rounded-[20px]',
         {
           'fr-enlarge-link': !!href,
-        },
+        }
       )}
       style={{
         backgroundColor: backgroundColor ? backgroundColor : '#fff',
@@ -76,7 +76,7 @@ const BlogCard = ({
       <div
         className={classNames(
           'fr-card__header overflow-hidden rounded-t-lg border-[#e5e7eb]',
-          {'border-b': !backgroundColor},
+          { 'border-b': !backgroundColor }
         )}
       >
         <div className="fr-card__img duration-700">

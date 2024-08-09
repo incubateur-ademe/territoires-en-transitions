@@ -1,28 +1,28 @@
 'use client';
 
-import {Accordion, Tab, Tabs} from '@tet/ui';
-import {FaqData} from './page';
-import Markdown from '@components/markdown/Markdown';
-import {useCallback, useEffect, useState} from 'react';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { Accordion, Tab, Tabs } from '@tet/ui';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { FaqData } from './page';
 
 const onglets = [
-  {title: 'Le programme Territoire Engagé', param: 'programme'},
-  {title: "L'outil numérique", param: 'outil-numerique'},
+  { title: 'Le programme Territoire Engagé', param: 'programme' },
+  { title: "L'outil numérique", param: 'outil-numerique' },
 ];
 
 type ListeQuestionsProps = {
   questions: FaqData[];
 };
 
-const ListeQuestions = ({questions}: ListeQuestionsProps) => {
+const ListeQuestions = ({ questions }: ListeQuestionsProps) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
   const ongletParam = searchParams.get('onglet');
   const currentTab = ongletParam
-    ? onglets.findIndex(onglet => onglet.param === ongletParam)
+    ? onglets.findIndex((onglet) => onglet.param === ongletParam)
     : 0;
 
   const handleChangeTab = (activeTab: number) => {
@@ -45,8 +45,8 @@ const ListeQuestions = ({questions}: ListeQuestionsProps) => {
         <Tab key={index} label={onglet.title}>
           <div className="flex flex-col gap-4">
             {questions
-              .filter(question => question.onglet === onglet.title)
-              .map(q => (
+              .filter((question) => question.onglet === onglet.title)
+              .map((q) => (
                 <div key={q.id}>
                   <Accordion
                     id={q.id.toString()}

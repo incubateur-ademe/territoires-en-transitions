@@ -1,5 +1,5 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
   // Fetch du contenu de la page programme
@@ -59,9 +59,9 @@ export const getStrapiData = async () => {
                 programmeData.objectifs_liste as unknown as {
                   id: number;
                   legende: string;
-                  image: {data: StrapiItem};
+                  image: { data: StrapiItem };
                 }[]
-              ).map(obj => ({
+              ).map((obj) => ({
                 id: obj.id,
                 description: obj.legende,
                 image: obj.image.data,
@@ -81,11 +81,11 @@ export const getStrapiData = async () => {
                     uid: string;
                     titre: string;
                     description: string;
-                    image: {data: StrapiItem};
+                    image: { data: StrapiItem };
                     sous_page: boolean | undefined;
                   };
                 }[]
-              ).map(serv => ({
+              ).map((serv) => ({
                 id: serv.id,
                 uid: serv.attributes.uid,
                 titre: serv.attributes.titre,
@@ -110,7 +110,7 @@ export const getStrapiData = async () => {
                   titre: string;
                   legende: string;
                 }[]
-              ).map(benef => ({
+              ).map((benef) => ({
                 id: benef.id,
                 titre: benef.titre,
                 description: benef.legende,
@@ -128,7 +128,7 @@ export const getStrapiData = async () => {
                   titre: string;
                   legende: string;
                 }[]
-              ).map(et => ({
+              ).map((et) => ({
                 id: et.id,
                 titre: et.titre,
                 description: et.legende,

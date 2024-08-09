@@ -1,11 +1,11 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {colors, formatInteger, fromMonth} from './shared';
-import {ChartTitle} from './headings';
-import {addLocalFilters} from './utils';
-import LineChart from '@components/charts/LineChart';
+import { supabase } from '../initSupabase';
+import { colors, formatInteger, fromMonth } from './shared';
+import { ChartTitle } from './headings';
+import { addLocalFilters } from './utils';
+import LineChart from '@tet/site/components/charts/LineChart';
 
 function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
   return useSWR(
@@ -15,11 +15,11 @@ function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
         .from('stats_locales_evolution_indicateur_referentiel')
         .select()
         .gte('mois', fromMonth)
-        .order('mois', {ascending: true});
+        .order('mois', { ascending: true });
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error('stats_locales_evolution_indicateur_referentiel');
@@ -30,11 +30,11 @@ function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
       return [
         {
           id: 'Indicateurs',
-          data: data.map(d => ({x: d.mois, y: d.indicateurs})),
+          data: data.map((d) => ({ x: d.mois, y: d.indicateurs })),
           last: data[data.length - 1].indicateurs,
         },
       ];
-    },
+    }
   );
 }
 type IndicateursRenseignesProps = {
@@ -46,7 +46,7 @@ export default function IndicateursRenseignes({
   region = '',
   department = '',
 }: IndicateursRenseignesProps) {
-  const {data} = useIndicateursRenseignes(region, department);
+  const { data } = useIndicateursRenseignes(region, department);
 
   if (!data) return null;
 

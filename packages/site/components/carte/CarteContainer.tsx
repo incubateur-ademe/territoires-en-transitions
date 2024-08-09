@@ -1,10 +1,10 @@
 'use client';
 
-import {MapContainer, useMap} from 'react-leaflet';
+import { MapContainer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
-import {CSSProperties, ReactNode, useEffect, useState} from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import './style.css';
 
 /**
@@ -13,7 +13,7 @@ import './style.css';
  */
 function Debugger() {
   const map = useMap();
-  // @ts-ignore
+  // @ts-expect-error erreur non gérée
   window['map'] = map;
   return null;
 }
@@ -35,16 +35,20 @@ type CarteContainerProps = {
  *
  */
 
-const CarteContainer = ({children, style, forcedZoom}: CarteContainerProps) => {
+const CarteContainer = ({
+  children,
+  style,
+  forcedZoom,
+}: CarteContainerProps) => {
   const [windowWidth, setWindowWidth] = useState<number | undefined>(
-    window.innerWidth,
+    window.innerWidth
   );
 
   useEffect(() => {
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
     return () =>
       window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth),
+        setWindowWidth(window.innerWidth)
       );
   }, []);
 
@@ -63,7 +67,7 @@ const CarteContainer = ({children, style, forcedZoom}: CarteContainerProps) => {
       }
       zoomSnap={0.1}
       scrollWheelZoom={false}
-      style={{width: '100%', background: '#fff', ...style}}
+      style={{ width: '100%', background: '#fff', ...style }}
       className="aspect-square"
     >
       <Debugger />

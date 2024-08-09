@@ -1,13 +1,13 @@
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {GallerieArticleData} from 'app/types';
+import { GallerieArticleData } from '@tet/site/app/types';
 
 type GallerieArticleProps = {
   data: GallerieArticleData;
 };
 
 const GallerieArticle = ({
-  data: {data, colonnes, legende, legendeVisible},
+  data: { data, colonnes, legende, legendeVisible },
 }: GallerieArticleProps) => {
   return (
     <div className="flex flex-col mb-6 items-center mx-auto">
@@ -18,7 +18,7 @@ const GallerieArticle = ({
             'md:grid-cols-2': colonnes >= 2,
             'lg:grid-cols-3': colonnes >= 3,
             'xl:grid-cols-4': colonnes === 4,
-          },
+          }
         )}
       >
         {data.map((image, index) => (
@@ -26,7 +26,7 @@ const GallerieArticle = ({
             key={index}
             data={image}
             className={classNames(
-              'w-full h-full min-h-[250px] max-h-[300px] object-cover',
+              'w-full h-full min-h-[250px] max-h-[300px] object-cover'
             )}
             displayCaption={false}
           />

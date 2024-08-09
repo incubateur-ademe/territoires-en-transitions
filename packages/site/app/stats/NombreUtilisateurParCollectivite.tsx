@@ -1,16 +1,16 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {fromMonth} from './shared';
-import {ChartHead} from './headings';
-import {addLocalFilters} from './utils';
-import ChartWithLegend from '@components/charts/ChartWithLegend';
-import LineChart from '@components/charts/LineChart';
+import { supabase } from '../initSupabase';
+import { fromMonth } from './shared';
+import { ChartHead } from './headings';
+import { addLocalFilters } from './utils';
+import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
+import LineChart from '@tet/site/components/charts/LineChart';
 
 function useNombreUtilisateurParCollectivite(
   codeRegion: string,
-  codeDepartement: string,
+  codeDepartement: string
 ) {
   return useSWR(
     `stats_locales_evolution_nombre_utilisateur_par_collectivite-${codeRegion}-${codeDepartement}`,
@@ -22,7 +22,7 @@ function useNombreUtilisateurParCollectivite(
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error('stats_evolution_nombre_utilisateur_par_collectivite');
@@ -35,15 +35,15 @@ function useNombreUtilisateurParCollectivite(
         evolution: [
           {
             id: "Nombre moyen d'utilisateurs",
-            data: data.map(d => ({x: d.mois, y: d.moyen})),
+            data: data.map((d) => ({ x: d.mois, y: d.moyen })),
           },
           {
             id: "Nombre maximum d'utilisateurs",
-            data: data.map(d => ({x: d.mois, y: d.maximum})),
+            data: data.map((d) => ({ x: d.mois, y: d.maximum })),
           },
         ],
       };
-    },
+    }
   );
 }
 
@@ -56,11 +56,11 @@ export default function NombreUtilisateurParCollectivite({
   region = '',
   department = '',
 }: NombreUtilisateurParCollectiviteProps) {
-  const {data} = useNombreUtilisateurParCollectivite(region, department);
+  const { data } = useNombreUtilisateurParCollectivite(region, department);
 
   if (!data) return null;
 
-  const {courant, evolution} = data;
+  const { courant, evolution } = data;
   const colors = ['#FF732C', '#7AB1E8'];
 
   return (
@@ -74,7 +74,7 @@ export default function NombreUtilisateurParCollectivite({
       <div className="fr-grid-row fr-grid-row--center"></div>
 
       <ChartWithLegend
-        graph={colors => (
+        graph={(colors) => (
           <LineChart
             data={evolution}
             yFormat=" >-.2f"
@@ -83,7 +83,7 @@ export default function NombreUtilisateurParCollectivite({
             enablePoints
           />
         )}
-        labels={evolution.map(e => e.id)}
+        labels={evolution.map((e) => e.id)}
         customColors={colors}
         containerClassname="mt-8"
         graphContainerClassname="h-[400px]"

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import CollectiviteSearch from './CollectiviteSearch';
 
 type AccueilBannerProps = {
@@ -9,7 +9,7 @@ type AccueilBannerProps = {
   couverture?: StrapiItem;
 };
 
-const AccueilBanner = ({titre, couverture}: AccueilBannerProps) => {
+const AccueilBanner = ({ titre, couverture }: AccueilBannerProps) => {
   return (
     <Section
       className={classNames('flex-col', {

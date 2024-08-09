@@ -1,6 +1,6 @@
-import Markdown from '@components/markdown/Markdown';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type DescriptionCoutsProps = {
   titre: string;
@@ -12,12 +12,12 @@ export type DescriptionCoutsProps = {
   }[];
 };
 
-const DescriptionCouts = ({titre, liste}: DescriptionCoutsProps) => {
+const DescriptionCouts = ({ titre, liste }: DescriptionCoutsProps) => {
   return (
     <>
       <h5>{titre}</h5>
       <div className="flex flex-col gap-10">
-        {liste.map(description => (
+        {liste.map((description) => (
           <div key={description.id} className="flex items-start gap-5">
             <StrapiImage
               data={description.image}

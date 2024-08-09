@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
-import BlogCard from '@components/cards/BlogCard';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Section from '@components/sections/Section';
-import CodingPicto from 'public/pictogrammes/CodingPicto';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import BlogCard from '@tet/site/components/cards/BlogCard';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import Section from '@tet/site/components/sections/Section';
+import CodingPicto from '@tet/site/public/pictogrammes/CodingPicto';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type ServicesProps = {
   titre: string;
@@ -21,7 +21,7 @@ type ServicesProps = {
     | null;
 };
 
-const Services = ({titre, description, contenu}: ServicesProps) => {
+const Services = ({ titre, description, contenu }: ServicesProps) => {
   return contenu && contenu.length ? (
     <Section containerClassName="bg-primary-1" className="items-center">
       <CodingPicto className="mt-6" size={148} />
@@ -36,7 +36,7 @@ const Services = ({titre, description, contenu}: ServicesProps) => {
       <h3 className="text-primary-9 text-center mb-16">{description}</h3>
       <CardsWrapper cols={3}>
         {contenu.length > 0 &&
-          contenu.map(c => (
+          contenu.map((c) => (
             <BlogCard
               key={c.id}
               title={c.titre}

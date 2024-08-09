@@ -1,4 +1,4 @@
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type ServicesFetchedData = (
   | ParagrapheFetchedData
@@ -11,11 +11,11 @@ export type ParagrapheFetchedData = {
   taille_paragraphe?: 'md' | 'lg';
   titre?: string;
   titre_centre?: boolean;
-  image_titre?: {data: StrapiItem};
+  image_titre?: { data: StrapiItem };
   taille_image_titre?: 'sm' | 'md' | 'lg';
   sous_titre?: string;
   texte?: string;
-  images?: {data: StrapiItem[]};
+  images?: { data: StrapiItem[] };
   alignement_image_droite?: boolean;
 };
 
@@ -44,7 +44,7 @@ export type ListeFetchedData = {
     pre_titre?: string;
     titre?: string;
     texte: string;
-    image?: {data: StrapiItem};
+    image?: { data: StrapiItem };
   }[];
   disposition_cartes: 'Gallerie' | 'Grille' | 'Verticale' | 'Vignettes';
 };

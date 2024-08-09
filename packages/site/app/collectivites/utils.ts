@@ -1,8 +1,8 @@
-import {Tables} from '@tet/api';
-import {supabase} from 'app/initSupabase';
-import {EtoilesLabel} from 'app/types';
-import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { Tables } from '@tet/api';
+import { supabase } from '@tet/site/app/initSupabase';
+import { EtoilesLabel } from '@tet/site/app/types';
+import { fetchCollection, fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type Labellisations = Tables<'labellisation'>;
 export type Indicateurs = Tables<'indicateur_valeur'>;
@@ -38,12 +38,12 @@ type Collectivite = {
 };
 
 export const fetchCollectivite = async (code_siren_insee: string) => {
-  const {data, error} = await supabase
+  const { data, error } = await supabase
     .from('site_labellisation')
     .select(
-      '*,labellisations, indicateurs_gaz_effet_serre, indicateur_artificialisation',
+      '*,labellisations, indicateurs_gaz_effet_serre, indicateur_artificialisation'
     )
-    .match({code_siren_insee});
+    .match({ code_siren_insee });
 
   if (error) {
     throw new Error(`site_labellisation-${code_siren_insee}`);
@@ -58,7 +58,7 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
   if (collectivite.type_collectivite === 'commune') {
     const response = await fetch(
       `https://api.collectivite.fr/api/commune/url/${code_siren_insee}`,
-      {method: 'GET'},
+      { method: 'GET' }
     );
 
     if (response.status === 200) {
@@ -66,11 +66,11 @@ export const fetchCollectivite = async (code_siren_insee: string) => {
     }
   }
 
-  return {collectivite, annuaireUrl};
+  return { collectivite, annuaireUrl };
 };
 
 export const getStrapiData = async (codeSirenInsee: string) => {
-  const {data} = await fetchCollection('collectivites', [
+  const { data } = await fetchCollection('collectivites', [
     ['filters[code_siren_insee]', `${codeSirenInsee}`],
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
@@ -85,7 +85,7 @@ export const getStrapiData = async (codeSirenInsee: string) => {
   if (data && data.length) {
     const collectiviteData = data[0].attributes;
     const isContentDefined =
-      (collectiviteData.actions as unknown as {}[]).length > 0;
+      (collectiviteData.actions as unknown as unknown[]).length > 0;
 
     const metaImage =
       (collectiviteData.seo?.metaImage?.data as unknown as StrapiItem)
@@ -130,9 +130,9 @@ export const getStrapiData = async (codeSirenInsee: string) => {
                 auteur: string;
                 role: string;
                 temoignage: string;
-                portrait: {data: StrapiItem};
+                portrait: { data: StrapiItem };
               }[]
-            ).map(temoignage => ({
+            ).map((temoignage) => ({
               ...temoignage,
               portrait: temoignage.portrait.data,
             })),
@@ -141,9 +141,9 @@ export const getStrapiData = async (codeSirenInsee: string) => {
                 id: number;
                 titre: string;
                 contenu: string;
-                image: {data: StrapiItem};
+                image: { data: StrapiItem };
               }[]
-            ).map(action => ({
+            ).map((action) => ({
               ...action,
               image: action.image.data,
             })),

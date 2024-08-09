@@ -1,12 +1,12 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {colors, fromMonth} from './shared';
-import {addLocalFilters} from './utils';
-import {ChartHead} from './headings';
-import LineChart from '@components/charts/LineChart';
-import ChartWithLegend from '@components/charts/ChartWithLegend';
+import { supabase } from '../initSupabase';
+import { colors, fromMonth } from './shared';
+import { addLocalFilters } from './utils';
+import { ChartHead } from './headings';
+import LineChart from '@tet/site/components/charts/LineChart';
+import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
 
 export function useActiveUsers(codeRegion: string, codeDepartement: string) {
   return useSWR(
@@ -19,7 +19,7 @@ export function useActiveUsers(codeRegion: string, codeDepartement: string) {
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error('stats_evolution_utilisateur');
@@ -33,15 +33,15 @@ export function useActiveUsers(codeRegion: string, codeDepartement: string) {
         evolution: [
           {
             id: 'Nouveaux utilisateurs',
-            data: data.map(d => ({x: d.mois, y: d.utilisateurs})),
+            data: data.map((d) => ({ x: d.mois, y: d.utilisateurs })),
           },
           {
             id: 'Total utilisateurs',
-            data: data.map(d => ({x: d.mois, y: d.total_utilisateurs})),
+            data: data.map((d) => ({ x: d.mois, y: d.total_utilisateurs })),
           },
         ],
       };
-    },
+    }
   );
 }
 
@@ -54,13 +54,13 @@ export default function ActiveUsers({
   region = '',
   department = '',
 }: ActiveUsersProps) {
-  const {data} = useActiveUsers(region, department);
+  const { data } = useActiveUsers(region, department);
 
   if (!data) {
     return null;
   }
 
-  const {precedent, courant, evolution} = data;
+  const { precedent, courant, evolution } = data;
 
   return (
     <div>
@@ -74,7 +74,7 @@ export default function ActiveUsers({
       </ChartHead>
 
       <ChartWithLegend
-        graph={colors => (
+        graph={(colors) => (
           <LineChart
             data={evolution}
             customColors={colors}
@@ -82,7 +82,7 @@ export default function ActiveUsers({
             enablePoints
           />
         )}
-        labels={evolution.map(e => e.id)}
+        labels={evolution.map((e) => e.id)}
         customColors={colors}
         containerClassname="mt-8 mb-12"
         graphContainerClassname="h-[400px]"

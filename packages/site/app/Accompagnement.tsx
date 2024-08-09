@@ -1,8 +1,8 @@
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {AccompagnementContent} from './types';
+import Card from '@tet/site/components/cards/Card';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import CardsSection from '@tet/site/components/sections/CardsSection';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { AccompagnementContent } from './types';
 
 type AccompagnementProps = {
   titre: string;
@@ -10,7 +10,11 @@ type AccompagnementProps = {
   contenu: AccompagnementContent[];
 };
 
-const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
+const Accompagnement = ({
+  titre,
+  description,
+  contenu,
+}: AccompagnementProps) => {
   return (
     <CardsSection
       title={titre}
@@ -24,7 +28,7 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
               className="border-none"
               title={c.titre}
               description={c.description}
-              button={{title: c.button.titre, href: c.button.href}}
+              button={{ title: c.button.titre, href: c.button.href }}
               image={
                 <StrapiImage
                   data={c.image}
