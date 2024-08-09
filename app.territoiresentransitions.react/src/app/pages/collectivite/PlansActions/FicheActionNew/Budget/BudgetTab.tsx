@@ -66,7 +66,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Budget prévisionnel total :
             </span>
-            {budgetPrevisionnel ? (
+            {budgetPrevisionnel !== null ? (
               <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
             ) : (
               <span className="text-sm text-grey-7 leading-7">
