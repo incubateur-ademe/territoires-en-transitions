@@ -63,7 +63,7 @@ const PlansActions = () => {
           collectivitePlanActionAxeFichePath,
         ]}
       >
-        <FicheActionPage readonly={collectivite.readonly} />
+        <FicheActionPage isReadonly={collectivite.readonly} />
       </Route>
 
       {/* Autres routes */}

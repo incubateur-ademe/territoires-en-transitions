@@ -7,7 +7,7 @@ const FicheAction = lazy(
 );
 
 type FicheActionPageProps = {
-  readonly: boolean;
+  isReadonly: boolean;
 };
 
 const FicheActionPage = (props: FicheActionPageProps) => {
