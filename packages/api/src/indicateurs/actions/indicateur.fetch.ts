@@ -1,23 +1,27 @@
-import {DBClient} from "../../typeUtils";
-import {objectToCamel} from 'ts-case-convert';
-import {Valeur, ValeurComparaison, ValeurComparaisonLigne} from "../domain/valeur.schema";
-import {Action} from "../../referentiel/domain/action.schema";
-import {FicheResume} from "../../fiche_actions/domain/resume.schema";
+import { DBClient } from '../../typeUtils';
+import { objectToCamel } from 'ts-case-convert';
 import {
-    IndicateurChartInfo,
-    IndicateurDefinition,
-    IndicateurDefinitionComplet,
-    IndicateurListItem
-} from "../domain/definition.schema";
-import {Personne} from "../../shared/domain/personne.schema";
-import {Groupement} from "../../collectivites/shared/domain/groupement.schema";
+  Valeur,
+  ValeurComparaison,
+  ValeurComparaisonLigne,
+} from '../domain/valeur.schema';
+import { Action } from '../../referentiel/domain/action.schema';
+import { FicheResume } from '../../fiche_actions/domain/resume.schema';
+import {
+  IndicateurChartInfo,
+  IndicateurDefinition,
+  IndicateurDefinitionComplet,
+  IndicateurListItem,
+} from '../domain/definition.schema';
+import { Personne } from '../../shared/domain/personne.schema';
+import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
 } from '../../collectivites/shared/actions/groupement.fetch';
-import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
-import {Source, SourceMetadonnee} from '../domain';
-import {Tag, Thematique} from '../../shared/domain';
+import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
+import { Source, SourceMetadonnee } from '../domain';
+import { Tag, Thematique } from '../../shared/domain';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -81,7 +85,7 @@ export async function selectIndicateurSources(
   indicateurId: number,
   collectiviteId: number
 ) {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_valeur')
     .select(
       'objectif,resultat,...indicateur_source_metadonnee(*, ...indicateur_source(*))'
@@ -93,10 +97,10 @@ export async function selectIndicateurSources(
   // fait le décompte des valeurs objectif et résultat pour chaque source
   const sourcesById: Record<
     string,
-    {objectifs: number; resultats: number; source: IndicateurSource}
+    { objectifs: number; resultats: number; source: IndicateurSource }
   > = {};
 
-  data?.forEach(source => {
+  data?.forEach((source) => {
     if (!source.id) return;
     sourcesById[source.id] = sourcesById[source.id] || {
       objectifs: 0,
@@ -108,7 +112,7 @@ export async function selectIndicateurSources(
   });
 
   return Object.values(sourcesById)
-    .map(({objectifs, resultats, source}) => ({
+    .map(({ objectifs, resultats, source }) => ({
       ...source,
       // TODO: gérer les sources contenant des objectifs ET des résultats ?
       type:
@@ -133,7 +137,7 @@ export async function selectIndicateurCategoriesUtilisateur(
   indicateurId: number,
   collectiviteId: number
 ): Promise<number[]> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_categorie_tag')
     .select('...categorie_tag!inner(id, collectivite_id)')
     .eq('indicateur_id', indicateurId)
@@ -153,7 +157,7 @@ export async function selectIndicateurPilotes(
   indicateurId: number,
   collectiviteId: number
 ): Promise<Personne[]> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_pilote')
     .select(
       `id, collectivite_id, user_id, tag_id, tag:personne_tag(*), user:indicateur_pilote_user(*)`
@@ -165,7 +169,7 @@ export async function selectIndicateurPilotes(
   if (!data) {
     return [];
   }
-  return data.map(p => {
+  return data.map((p) => {
     return {
       collectiviteId: p.collectivite_id,
       userId: p.user_id,
@@ -188,13 +192,13 @@ export async function selectIndicateurServicesId(
   indicateurId: number,
   collectiviteId: number
 ): Promise<number[]> {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_service_tag')
     .select(`service_tag_id`)
     .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId);
 
-  return data?.map(d => d.service_tag_id) || [];
+  return data?.map((d) => d.service_tag_id) || [];
 }
 
 /**
@@ -209,7 +213,7 @@ export async function selectIndicateurServices(
   indicateurId: number,
   collectiviteId: number
 ): Promise<Tag[]> {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_service_tag')
     .select('...service_tag!inner(*)')
     .eq('indicateur_id', indicateurId)
@@ -229,12 +233,12 @@ export async function selectIndicateurThematiquesId(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<number[]> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_thematique')
     .select(`thematique_id`)
     .eq('indicateur_id', indicateurId);
 
-  return data?.map(d => d.thematique_id) || [];
+  return data?.map((d) => d.thematique_id) || [];
 }
 
 /**
@@ -247,7 +251,7 @@ export async function selectIndicateurThematiques(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<Thematique[]> {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_thematique')
     .select(`...thematique!inner(id,nom)`)
     .eq('indicateur_id', indicateurId)
@@ -268,7 +272,7 @@ export async function selectIndicateurFiches(
   indicateurId: number,
   collectiviteId: number
 ): Promise<FicheResume[]> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('fiche_action_indicateur')
     .select(`...fiche_resume!inner(*)`)
     .eq('indicateur_id', indicateurId)
@@ -288,7 +292,7 @@ export async function selectIndicateurActions(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<Action[]> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_action')
     .select(`...action_relation(*)`)
     .eq('indicateur_id', indicateurId)
@@ -325,7 +329,7 @@ export async function selectIndicateurListItems(
     // Tous les indicateurs personnalisés
     query.eq('collectivite_id', collectiviteId);
   }
-  const {data, error} = await query;
+  const { data, error } = await query;
   // Filtre les indicateurs privés
   let dataFilter = data ? data : [];
   if (predefini) {
@@ -333,7 +337,7 @@ export async function selectIndicateurListItems(
       dbClient,
       collectiviteId
     );
-    const groupementIds = groupement.map(gp => gp.id);
+    const groupementIds = groupement.map((gp) => gp.id);
     dataFilter = dataFilter.filter(
       (item: any) =>
         item.groupement_id === null ||
@@ -346,7 +350,7 @@ export async function selectIndicateurListItems(
     const plusInfo =
       plusInfoFilter && plusInfoFilter[0]
         ? plusInfoFilter[0]
-        : {collectivite_id: collectiviteId};
+        : { collectivite_id: collectiviteId };
     if (!item.prive || plusInfo.acces_prive) {
       return {
         id: item.id,
@@ -374,12 +378,12 @@ export async function selectIndicateurValeurs(
   collectiviteId: number,
   source: string | null
 ): Promise<Valeur[]> {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_valeur')
     .select(`${COLONNES_VALEURS.join(',')}`)
     .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId)
-    .order('date_valeur', {ascending: false});
+    .order('date_valeur', { ascending: false });
   let toReturn;
   if (!source) {
     // Récupère les valeurs renseignées par l'utilisateur (sans source)
@@ -457,12 +461,12 @@ export async function selectIndicateurValeur(
   dbClient: DBClient,
   valeurId: number
 ): Promise<Valeur | null> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_valeur')
     .select(`${COLONNES_VALEURS.join(',')}`)
     .eq('id', valeurId);
 
-  let toReturn = data ? dateEnAnnee(data, false) : null;
+  const toReturn = data ? dateEnAnnee(data, false) : null;
   return toReturn ? (objectToCamel(toReturn)[0] as Valeur) : null;
 }
 
@@ -498,7 +502,7 @@ export async function selectIndicateurDefinitions(
   indicateurIds: number[],
   collectiviteId: number
 ): Promise<IndicateurDefinition[] | null> {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_definition')
     .select(COLONNES_DEFINITION.join(','))
     .in('id', indicateurIds)
@@ -524,7 +528,7 @@ export async function selectIndicateurReferentielDefinition(
 ): Promise<IndicateurDefinition | null> {
   if (identifiant === undefined) return null;
 
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('indicateur_definition')
     .select(COLONNES_DEFINITION.join(','))
     .eq('identifiant_referentiel', identifiant)
@@ -550,7 +554,7 @@ export async function selectIndicateurComplet(
   indicateurId: number,
   collectiviteId: number
 ): Promise<IndicateurDefinitionComplet | null> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION.join(',')}, ` +
@@ -566,7 +570,7 @@ export async function selectIndicateurComplet(
     .eq('pilotes.collectivite_id', collectiviteId)
     .eq('fiches.fiche_resume.collectivite_id', collectiviteId);
 
-  let toReturn = data
+  const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, true)
     : null;
   return toReturn
@@ -586,7 +590,7 @@ export async function selectIndicateurChartInfo(
   indicateurId: number,
   collectiviteId: number
 ): Promise<IndicateurChartInfo | null> {
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION_COURTE.join(',')}, groupement_id,` +
@@ -609,20 +613,20 @@ export async function selectIndicateurChartInfo(
     dbClient,
     collectiviteId
   );
-  const groupementIds = groupement.map(gp => gp.id);
-  let toReturn =
+  const groupementIds = groupement.map((gp) => gp.id);
+  const toReturn =
     data
       ?.filter(
         (item: any) =>
           item.groupement_id === null ||
           groupementIds.includes(item.groupement_id)
       )
-      .map(item => {
+      .map((item) => {
         // Récupère l'information de la confidentialité
         const plusInfo =
           item.plus && item.plus[0]
             ? item.plus[0]
-            : {confidentiel: false, collectiviteId: collectiviteId};
+            : { confidentiel: false, collectiviteId: collectiviteId };
 
         // Transforme les valeurs
         let valeursTransforme = dateEnAnnee(item.valeurs, true);
@@ -755,10 +759,10 @@ export async function getValeursComparaison(
   const lignesObjectif: ValeurComparaisonLigne[] = [];
 
   // Parcours chaque ligne à appliquer
-  valeursSource.map(aAppliquer => {
+  valeursSource.map((aAppliquer) => {
     // cherche si une valeur a déjà été saisie pour la même année
     const aEcraser = valeursUtilisateur?.find(
-      d => d.annee === aAppliquer.annee
+      (d) => d.annee === aAppliquer.annee
     );
     const ligneCommune: ValeurComparaisonLigne = {
       conflit: false,
@@ -830,7 +834,7 @@ async function transformeDefinition(
   complet: boolean
 ) {
   const groupement = await selectGroupements(dbClient);
-  return data.map(item => {
+  return data.map((item) => {
     // Extraire les informations de 'plus' si elles existent
     const plusInfo =
       item.plus && item.plus[0]
@@ -842,7 +846,7 @@ async function transformeDefinition(
           };
 
     let type;
-    let programmes: any[] = [];
+    const programmes: any[] = [];
     let prioritaire = false;
     let categoriesUtilisateur = undefined;
     let valeurs = undefined;
@@ -894,14 +898,14 @@ async function transformeDefinition(
           groupe[0].collectivites &&
           groupe[0].collectivites.includes(collectiviteId)
         ) {
-          programmes.push({id: cat.id, nom: cat.nom});
+          programmes.push({ id: cat.id, nom: cat.nom });
         }
       } else if (cat.nom === 'resultat' || cat.nom === 'impact') {
         type = cat;
       } else if (cat.nom === 'prioritaire') {
         prioritaire = true;
       } else {
-        programmes.push({id: cat.id, nom: cat.nom});
+        programmes.push({ id: cat.id, nom: cat.nom });
       }
     });
 

@@ -1,20 +1,20 @@
-import {useEffect} from 'react';
-import {usePostHog} from 'posthog-js/react';
-import {PageName, PageProperties} from './trackingPlan';
+import { useEffect } from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { PageName, PageProperties } from './trackingPlan';
 
 // extrait l'id de la collectivité depuis l'objet donné si une des propriétés
 // attendues est présente
 const getCollectiviteId = (properties: unknown) => {
-  if (typeof properties === 'object') {
-    if ('collectivite_id' in properties) {
-      return `${properties.collectivite_id}`;
-    }
-    if ('collectivite_preset' in properties) {
-      return `${properties.collectivite_preset}`;
-    }
+  if (!properties || typeof properties !== 'object') {
+    return null;
   }
 
-  return null;
+  if ('collectivite_id' in properties) {
+    return `${properties.collectivite_id}`;
+  }
+  if ('collectivite_preset' in properties) {
+    return `${properties.collectivite_preset}`;
+  }
 };
 
 /**
@@ -25,8 +25,8 @@ const getCollectiviteId = (properties: unknown) => {
 type TrackPageViewProps<N extends PageName> = {
   pageName: N;
 } & (PageProperties<N> extends object
-  ? {properties: PageProperties<N>}
-  : {properties?: undefined});
+  ? { properties: PageProperties<N> }
+  : { properties?: undefined });
 
 /**
  * Envoi une page view à PostHog lors du rendering.
@@ -49,7 +49,7 @@ export function TrackPageView<N extends PageName>({
     if (posthog) {
       // Spécifie le groupe des évenements qui suivent cet appel
       // https://posthog.com/docs/getting-started/group-analytics
-      posthog.group('collectivite', getCollectiviteId(properties));
+      posthog.group('collectivite', getCollectiviteId(properties) ?? '');
 
       // Envoie la pageview manuellement à PostHog conformément au tracking plan
       posthog.capture('$pageview', {

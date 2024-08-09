@@ -1,10 +1,10 @@
-import AdemeLogo from '@assets/AdemeLogo';
-import RepubliqueFrancaiseLogo from '@assets/RepubliqueFrancaiseLogo';
-import {Button} from '@design-system/Button';
-import {ButtonProps} from '@design-system/Button/types';
-import {Header} from '@design-system/Header/Header';
+import AdemeLogo from '@tet/ui/assets/AdemeLogo';
+import RepubliqueFrancaiseLogo from '@tet/ui/assets/RepubliqueFrancaiseLogo';
+import { Button } from '@tet/ui/design-system/Button';
+import { ButtonProps } from '@tet/ui/design-system/Button/types';
+import { Header } from '@tet/ui/design-system/Header/Header';
 
-import {ReactElement} from 'react';
+import { ReactElement } from 'react';
 
 type HeaderTeTProps = {
   /** Logos supplémentaires à afficher en fonction de la page visitée */

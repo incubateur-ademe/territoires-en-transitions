@@ -1,7 +1,7 @@
-import {Icon} from '@design-system/Icon';
+import { Icon } from '@tet/ui/design-system/Icon';
 import classNames from 'classnames';
-import {AlertState, alertClassnames, stateToIcon} from './utils';
-import {useState} from 'react';
+import { AlertState, alertClassnames, stateToIcon } from './utils';
+import { useState } from 'react';
 
 type AlertProps = {
   /** Titre du bloc alerte */
@@ -44,7 +44,7 @@ export const Alert = ({
   return (
     <div
       className={classNames(
-        {'w-full px-4 lg:px-6': fullPageWidth},
+        { 'w-full px-4 lg:px-6': fullPageWidth },
         styles.background,
         className
       )}
@@ -99,7 +99,7 @@ export const Alert = ({
  * Affiche un bloc alerte avec gestion autonome de son état d'ouverture
  */
 
-export const ControlledAlert = ({...props}: AlertProps) => {
+export const ControlledAlert = ({ ...props }: AlertProps) => {
   const [isAlertOpen, setIsAlertOpen] = useState(true);
 
   return (

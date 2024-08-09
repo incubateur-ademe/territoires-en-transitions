@@ -1,13 +1,13 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {forwardRef, useState} from 'react';
+import { Meta, StoryObj } from '@storybook/react';
+import { forwardRef, useState } from 'react';
 
-import {Modal} from '.';
-import {Button} from '@design-system/Button';
-import {ModalFooter} from '@design-system/Modal/ModalFooter';
+import { Modal } from '.';
+import { Button } from '@tet/ui/design-system/Button';
+import { ModalFooter } from '@tet/ui/design-system/Modal/ModalFooter';
 
 const meta: Meta<typeof Modal> = {
   component: Modal,
-  decorators: [story => <div className="p-8">{story()}</div>],
+  decorators: [(story) => <div className="p-8">{story()}</div>],
 };
 
 export default meta;
@@ -29,7 +29,7 @@ export const Default: Story = {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
-  render: args => {
+  render: (args) => {
     return (
       <Modal {...args}>
         <OpenButton text="Ouvrir la modale" />
@@ -53,13 +53,13 @@ export const AvecFooter: Story = {
     subTitle: 'Un sous titre',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
-    renderFooter: ({close}) => (
+    renderFooter: ({ close }) => (
       <ModalFooter>
         <Button onClick={close}>Fermer</Button>
       </ModalFooter>
     ),
   },
-  render: args => {
+  render: (args) => {
     return (
       <Modal {...args}>
         <OpenButton text="Ouvrir la modale" />
@@ -76,11 +76,11 @@ export const LongContent: Story = {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
-  render: args => {
+  render: (args) => {
     return (
       <Modal
         {...args}
-        render={({close}) => (
+        render={({ close }) => (
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
             <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
             <p>Un autre paragraphe.</p>
@@ -104,7 +104,7 @@ export const WithRender: Story = {
     title: 'Un titre simple',
     subTitle: 'Un sous titre',
   },
-  render: args => {
+  render: (args) => {
     return (
       <Modal
         {...args}
@@ -123,8 +123,8 @@ export const WithRender: Story = {
 };
 
 export const onlyRender: Story = {
-  args: {noCloseButton: true},
-  render: args => {
+  args: { noCloseButton: true },
+  render: (args) => {
     return (
       <Modal
         {...args}
@@ -147,7 +147,7 @@ export const Size: Story = {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
-  render: args => {
+  render: (args) => {
     return (
       <div className="flex items-center gap-6">
         <Modal {...args} size="sm">
@@ -174,7 +174,7 @@ export const Controlled: Story = {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
-  render: args => {
+  render: (args) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (

@@ -1,6 +1,12 @@
-import {Ref, forwardRef, useEffect, useState} from 'react';
-import {NumericFormat, NumericFormatProps} from 'react-number-format';
-import {InputBase, InputBaseProps} from './InputBase';
+import {
+  ClipboardEvent,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react';
+import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputNumberProps = Omit<NumericFormatProps, 'type' | 'value'> & {
   value: InputBaseProps['value'];
@@ -19,8 +25,13 @@ const THOUSAND_SEP = ' ';
  */
 export const InputNumber = forwardRef(
   (
-    {numType = 'int', defaultValue, value, ...remainingProps}: InputNumberProps,
-    ref?: Ref<HTMLInputElement>
+    {
+      numType = 'int',
+      defaultValue,
+      value,
+      ...remainingProps
+    }: InputNumberProps,
+    ref?: ForwardedRef<HTMLInputElement>
   ) => {
     const [currentValue, setCurrentValue] = useState(defaultValue);
 
@@ -34,7 +45,7 @@ export const InputNumber = forwardRef(
         getInputRef={ref}
         thousandSeparator={THOUSAND_SEP}
         decimalSeparator={DECIMAL_SEP}
-        onPaste={e => {
+        onPaste={(e: ClipboardEvent) => {
           // rend la chaîne copiée compatible avec le `decimalSeparator` spécifié
           const data = e.clipboardData.getData('text/plain');
           if (typeof data === 'string' && data.includes('.')) {
@@ -44,7 +55,7 @@ export const InputNumber = forwardRef(
         }}
         type="text"
         value={currentValue}
-        {...(numType === 'int' ? {decimalScale: 0} : {})}
+        {...(numType === 'int' ? { decimalScale: 0 } : {})}
         {...remainingProps}
       />
     );

@@ -1,8 +1,8 @@
-import {CSSProperties} from 'react';
+import { CSSProperties } from 'react';
 import classNames from 'classnames';
 
-import {DefaultButtonProps, ButtonSize} from './types';
-import {Button} from './Button';
+import { DefaultButtonProps, ButtonSize } from './types';
+import { Button } from './Button';
 
 type Props = {
   /** Listes de boutons à afficher avec leurs propriétés */
@@ -51,6 +51,8 @@ export const ButtonGroup = ({
           borderBottomLeftRadius: 0,
         };
     }
+
+    return {};
   };
 
   return (

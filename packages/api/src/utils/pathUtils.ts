@@ -5,8 +5,17 @@
  * - garde `localhost` inchangé
  */
 export const getRootDomain = (hostname: string) => {
+  // Si le hostname est une IP, on le renvoie tel quel
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+    return hostname;
+  }
+
   const parts = hostname.split('.');
-  return parts.length > 2 ? parts.toSpliced(0, 1).join('.') : hostname;
+  if (parts.length < 3) {
+    return hostname;
+  }
+
+  return parts.slice(-2).join('.');
 };
 
 /**
@@ -64,7 +73,7 @@ export const getAppBaseUrl = (hostname: string) =>
  */
 export const getAuthPaths = (hostname: string, redirect_to: string) => {
   const base = getAuthBaseUrl(hostname);
-  const params = new URLSearchParams({redirect_to});
+  const params = new URLSearchParams({ redirect_to });
   return {
     base,
     login: `${base}/login?${params}`,
@@ -78,14 +87,22 @@ export const getRejoindreCollectivitePath = (
   hostname: string,
   redirect_to: string
 ) => {
-  const params = new URLSearchParams({redirect_to});
+  const params = new URLSearchParams({ redirect_to });
   return `${getAuthBaseUrl(hostname)}/rejoindre-une-collectivite?${params}`;
 };
 
 /** Donne l'url d'une page collectivité */
-export const getCollectivitePath = (hostname: string, collectivite_id: number) =>
-  `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
+export const getCollectivitePath = (
+  hostname: string,
+  collectivite_id: number
+) => `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
 
-  /** Donne l'url d'un plan d'action */
-export const getCollectivitePlanPath = (hostname: string, collectivite_id: number, plan_id: number) =>
-  `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+/** Donne l'url d'un plan d'action */
+export const getCollectivitePlanPath = (
+  hostname: string,
+  collectivite_id: number,
+  plan_id: number
+) =>
+  `${getAppBaseUrl(
+    hostname
+  )}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;

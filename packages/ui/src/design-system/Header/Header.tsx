@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import {Button} from '@design-system/Button';
-import {ReactElement, useState} from 'react';
-import {ButtonProps} from '@design-system/Button/types';
+import { Button } from '@tet/ui/design-system/Button';
+import { ReactElement, useState } from 'react';
+import { ButtonProps } from '@tet/ui/design-system/Button/types';
 import HeaderBody from './HeaderBody';
 import HeaderMenu from './HeaderMenu';
 
@@ -49,7 +49,7 @@ export const Header = ({
       />
 
       {/* Partie inférieure du header - Barre de navigation */}
-      <HeaderMenu {...{quickAccessButtons, openedMenu, setOpenedMenu}} />
+      <HeaderMenu {...{ quickAccessButtons, openedMenu, setOpenedMenu }} />
     </header>
   );
 };

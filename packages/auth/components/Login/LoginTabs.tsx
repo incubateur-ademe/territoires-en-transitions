@@ -84,7 +84,7 @@ const SignupStep1Form = (
   props: LoginPropsWithState & {
     form: ReturnType<typeof useLoginForm>;
     isPasswordless?: boolean;
-  },
+  }
 ) => {
   const {
     error,
@@ -110,7 +110,7 @@ const SignupStep1Form = (
     setEmail(data.email);
     // envoi les données
     onSubmit(data);
-    // @ts-expect-error
+    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
     eventTracker('cta_submit');
   };
 

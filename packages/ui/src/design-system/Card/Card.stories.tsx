@@ -1,7 +1,7 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {Card} from './Card';
-import {Button} from '@design-system/Button';
-import {Badge} from '@design-system/Badge';
+import { Meta, StoryObj } from '@storybook/react';
+import { Card } from './Card';
+import { Button } from '@tet/ui/design-system/Button';
+import { Badge } from '@tet/ui/design-system/Badge';
 
 const meta: Meta<typeof Card> = {
   component: Card,
@@ -110,10 +110,10 @@ export const CompleteCard: Story = {
       <div className="flex justify-between items-center gap-4">
         <Badge title="Un badge" size="sm" state="success" />
         <div className="flex gap-4">
-          <Button variant="outlined" size="xs" onClick={() => {}}>
+          <Button variant="outlined" size="xs" onClick={() => undefined}>
             Annuler
           </Button>
-          <Button variant="primary" size="xs" onClick={() => {}}>
+          <Button variant="primary" size="xs" onClick={() => undefined}>
             Valider
           </Button>
         </div>

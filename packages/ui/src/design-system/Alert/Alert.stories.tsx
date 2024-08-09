@@ -1,12 +1,12 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {ControlledAlert, Alert} from './Alert';
-import {useState} from 'react';
-import {Button} from '@design-system/Button';
+import { Meta, StoryObj } from '@storybook/react';
+import { ControlledAlert, Alert } from './Alert';
+import { useState } from 'react';
+import { Button } from '@tet/ui/design-system/Button';
 
 const meta: Meta<typeof Alert> = {
   component: Alert,
   argTypes: {
-    state: {control: 'select'},
+    state: { control: 'select' },
   },
   args: {
     title: 'Titre',
@@ -22,23 +22,23 @@ type Story = StoryObj<typeof Alert>;
 export const Default: Story = {};
 
 export const Error: Story = {
-  args: {state: 'error'},
+  args: { state: 'error' },
 };
 
 export const Success: Story = {
-  args: {state: 'success'},
+  args: { state: 'success' },
 };
 
 export const Warning: Story = {
-  args: {state: 'warning'},
+  args: { state: 'warning' },
 };
 
 export const WithClosingButton: Story = {
-  render: args => <ControlledAlert {...args} />,
+  render: (args) => <ControlledAlert {...args} />,
 };
 
 export const ControlledByParent: Story = {
-  render: args => {
+  render: (args) => {
     const [isOpen, setIsOpen] = useState(true);
 
     return isOpen ? (

@@ -1,4 +1,4 @@
-import {Icon} from '@design-system/Icon';
+import { Icon } from '@tet/ui/design-system/Icon';
 import classNames from 'classnames';
 
 type TagProps = {
@@ -38,17 +38,17 @@ export const Tag = ({
         isUserCreated
           ? 'text-gray-900 bg-white border border-gray-300'
           : 'text-white bg-primary',
-        {'pr-2': canClose},
+        { 'pr-2': canClose },
         className
       )}
     >
-      <span className={classNames('py-0.5 text-sm', {'line-clamp-1': trim})}>
+      <span className={classNames('py-0.5 text-sm', { 'line-clamp-1': trim })}>
         {title}
       </span>
       {canClose && (
         <div
           className="flex ml-1 rounded-full cursor-pointer"
-          onClick={evt => {
+          onClick={(evt) => {
             evt.stopPropagation();
             onClose();
           }}

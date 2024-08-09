@@ -1,17 +1,17 @@
-import {useState} from 'react';
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
+import { useState } from 'react';
+import { Meta, StoryObj } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
-import {Field} from '@design-system/Field';
+import { Field } from '@tet/ui/design-system/Field';
 
-import {Select, SelectMultiple} from '.';
-import {OptionValue, SelectOption, getFlatOptions} from './utils';
-import {SelectFilter} from '@design-system/Select/SelectFilter';
-import {SelectBase} from '@design-system/Select/components/SelectBase';
+import { Select, SelectMultiple } from '.';
+import { OptionValue, SelectOption, getFlatOptions } from './utils';
+import { SelectFilter } from '@tet/ui/design-system/Select/SelectFilter';
+import { SelectBase } from '@tet/ui/design-system/Select/components/SelectBase';
 
 const singleOptions: SelectOption[] = [
-  {value: 'option1', label: 'Option 1'},
-  {value: 'option2', label: 'Option 2'},
+  { value: 'option1', label: 'Option 1' },
+  { value: 'option2', label: 'Option 2' },
   {
     value: 'option3',
     label:
@@ -20,13 +20,13 @@ const singleOptions: SelectOption[] = [
 ];
 
 const optionsWithSections: SelectOption[] = [
-  {value: 'ss1', label: 'Option sans section 1'},
-  {value: 'ss2', label: 'Option sans section 2'},
+  { value: 'ss1', label: 'Option sans section 1' },
+  { value: 'ss2', label: 'Option sans section 2' },
   {
     title: 'Section 1',
     options: [
-      {value: 'option1', label: 'Option 1'},
-      {value: 'option2', label: 'Option 2'},
+      { value: 'option1', label: 'Option 1' },
+      { value: 'option2', label: 'Option 2' },
       {
         value: 'option3',
         label:
@@ -37,15 +37,17 @@ const optionsWithSections: SelectOption[] = [
   {
     title: 'Section 2',
     options: [
-      {value: 'option4', label: 'Option 4'},
-      {value: 'option5', label: 'Option 5'},
+      { value: 'option4', label: 'Option 4' },
+      { value: 'option5', label: 'Option 5' },
     ],
   },
 ];
 
 const meta: Meta<typeof Select> = {
   component: SelectBase,
-  decorators: [story => <div className="w-full max-w-[24rem]">{story()}</div>],
+  decorators: [
+    (story) => <div className="w-full max-w-[24rem]">{story()}</div>,
+  ],
 };
 
 export default meta;
@@ -53,14 +55,14 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 export const Default: Story = {
-  args: {options: singleOptions},
-  render: args => {
+  args: { options: singleOptions },
+  render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
         values={value}
-        onChange={v => {
+        onChange={(v) => {
           setValue(v);
           action('onChange');
         }}
@@ -70,14 +72,14 @@ export const Default: Story = {
 };
 
 export const SmallWithBadgeItems: Story = {
-  args: {options: singleOptions, small: true, isBadgeItem: true},
-  render: args => {
+  args: { options: singleOptions, small: true, isBadgeItem: true },
+  render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
         values={value}
-        onChange={v => {
+        onChange={(v) => {
           setValue(v);
           action('onChange');
         }}
@@ -87,22 +89,22 @@ export const SmallWithBadgeItems: Story = {
 };
 
 export const Disabled: Story = {
-  args: {options: singleOptions, onChange: () => null, disabled: true},
+  args: { options: singleOptions, onChange: () => null, disabled: true },
 };
 
 export const CustomItem: Story = {
-  args: {options: singleOptions},
-  render: args => {
+  args: { options: singleOptions },
+  render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
         values={value}
-        onChange={v => {
+        onChange={(v) => {
           setValue(v);
           action('onChange');
         }}
-        customItem={option => (
+        customItem={(option) => (
           <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
             {option.label}
           </div>
@@ -113,14 +115,14 @@ export const CustomItem: Story = {
 };
 
 export const MultiSelectWithSectionOptions: Story = {
-  args: {options: optionsWithSections, multiple: true},
-  render: args => {
+  args: { options: optionsWithSections, multiple: true },
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
       <SelectMultiple
         {...args}
         values={values}
-        onChange={({values}) => {
+        onChange={({ values }) => {
           setValues(values);
         }}
       />
@@ -140,7 +142,7 @@ export const DisabledOption: Story = {
     ],
     multiple: true,
   },
-  render: args => {
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>([
       'disabledOption',
     ]);
@@ -148,7 +150,7 @@ export const DisabledOption: Story = {
       <SelectMultiple
         {...args}
         values={values}
-        onChange={({values}) => {
+        onChange={({ values }) => {
           setValues(values);
         }}
         isBadgeItem
@@ -165,13 +167,13 @@ export const SearchableMultiSelect: Story = {
     emptySearchPlaceholder:
       "Placeholder custom pour la liste d'option sans résultat",
   },
-  render: args => {
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
       <SelectMultiple
         {...args}
         values={values}
-        onChange={({values}) => {
+        onChange={({ values }) => {
           setValues(values);
         }}
       />
@@ -186,7 +188,7 @@ export const DisabledSearchableMultiSelectWithValue: Story = {
     isSearcheable: true,
     multiple: true,
   },
-  render: args => {
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>([
       'option1',
       'option2',
@@ -195,7 +197,7 @@ export const DisabledSearchableMultiSelectWithValue: Story = {
       <SelectMultiple
         {...args}
         values={values}
-        onChange={({values}) => {
+        onChange={({ values }) => {
           setValues(values);
         }}
       />
@@ -208,16 +210,16 @@ export const SearchableSelectWithDebouncedApiCallOnTyping: Story = {
     debounce: 500,
     options: singleOptions,
   },
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Select
         {...args}
         values={value}
-        onChange={v => {
+        onChange={(v) => {
           setValue(v);
         }}
-        onSearch={v => console.log(v)}
+        onSearch={(v) => console.log(v)}
       />
     );
   },
@@ -227,24 +229,24 @@ export const CreateOption: Story = {
   args: {
     multiple: true,
   },
-  render: args => {
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     const [options, setOptions] = useState(singleOptions);
     const userCreatedOptions = getFlatOptions(options)
-      .filter(o => typeof o.value === 'number')
-      .map(o => o.value);
+      .filter((o) => typeof o.value === 'number')
+      .map((o) => o.value);
 
     return (
       <SelectMultiple
         {...args}
         options={options}
         values={values}
-        onChange={({values}) => {
+        onChange={({ values }) => {
           setValues(values);
         }}
         createProps={{
           userCreatedOptions,
-          onCreate: label => {
+          onCreate: (label) => {
             const newOption: SelectOption = {
               label,
               value: Date.now(),
@@ -256,14 +258,16 @@ export const CreateOption: Story = {
           },
           onUpdate: (value, label) =>
             setOptions(
-              getFlatOptions(options).map(o =>
-                o.value !== value ? o : {label, value}
+              getFlatOptions(options).map((o) =>
+                o.value !== value ? o : { label, value }
               )
             ),
-          onDelete: value => {
-            setOptions(getFlatOptions(options).filter(o => o.value !== value));
+          onDelete: (value) => {
+            setOptions(
+              getFlatOptions(options).filter((o) => o.value !== value)
+            );
             setValues(
-              values.length > 1 ? values.filter(v => v !== value) : undefined
+              values.length > 1 ? values.filter((v) => v !== value) : undefined
             );
           },
         }}
@@ -273,15 +277,15 @@ export const CreateOption: Story = {
 };
 
 export const Filter: Story = {
-  args: {options: optionsWithSections},
-  render: args => {
+  args: { options: optionsWithSections },
+  render: (args) => {
     const [values, setValues] = useState<OptionValue[] | undefined>();
     return (
       <div className="flex flex-col gap-6">
         <SelectFilter
           {...args}
           values={values}
-          onChange={({values}) => {
+          onChange={({ values }) => {
             setValues(values);
             action('onChange');
           }}
@@ -289,11 +293,11 @@ export const Filter: Story = {
         <SelectFilter
           {...args}
           values={values}
-          onChange={({values}) => {
+          onChange={({ values }) => {
             setValues(values);
             action('onChange');
           }}
-          customItem={option => (
+          customItem={(option) => (
             <div className="flex items-center px-2 py-1 text-sm text-white bg-warning-1 rounded-xl">
               {option.label}
             </div>
@@ -302,7 +306,7 @@ export const Filter: Story = {
         <SelectFilter
           {...args}
           values={values}
-          onChange={({values}) => {
+          onChange={({ values }) => {
             setValues(values);
             action('onChange');
           }}
@@ -314,8 +318,8 @@ export const Filter: Story = {
 };
 
 export const WithField: Story = {
-  args: {options: singleOptions},
-  render: args => {
+  args: { options: singleOptions },
+  render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
     return (
       <Field
@@ -327,7 +331,7 @@ export const WithField: Story = {
         <Select
           {...args}
           values={value}
-          onChange={v => {
+          onChange={(v) => {
             setValue(v);
             action('onChange');
           }}
@@ -350,7 +354,7 @@ export const ZIndex: Story = {
                 parentId="yolo"
                 options={optionsWithSections}
                 values={value}
-                onChange={v => {
+                onChange={(v) => {
                   setValue(v);
                   action('onChange');
                 }}

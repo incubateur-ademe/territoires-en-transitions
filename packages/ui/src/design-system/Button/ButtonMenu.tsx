@@ -1,8 +1,8 @@
-import {ButtonProps} from './types';
-import {Button} from './Button';
-import {NotificationVariant} from '../Notification';
-import {NotificationButton} from './NotificationButton';
-import {DropdownFloater} from '@design-system/Select/components/DropdownFloater';
+import { ButtonProps } from './types';
+import { Button } from './Button';
+import { NotificationVariant } from '../Notification';
+import { NotificationButton } from './NotificationButton';
+import { DropdownFloater } from '@tet/ui/design-system/Select/components/DropdownFloater';
 
 /** Ouverture d'un menu flottant au click sur le bouton */
 

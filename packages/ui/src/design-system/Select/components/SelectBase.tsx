@@ -1,11 +1,11 @@
-import {Placement} from '@floating-ui/react';
-import {Ref, forwardRef, useEffect, useState} from 'react';
+import { Placement } from '@floating-ui/react';
+import { Ref, forwardRef, useEffect, useState } from 'react';
 import classNames from 'classnames';
-import {useDebouncedCallback} from 'use-debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
-import {DropdownFloater} from '@design-system/Select/components/DropdownFloater';
-import {Icon} from '@design-system/Icon';
-import {Badge} from '@design-system/Badge';
+import { DropdownFloater } from '@tet/ui/design-system/Select/components/DropdownFloater';
+import { Icon } from '@tet/ui/design-system/Icon';
+import { Badge } from '@tet/ui/design-system/Badge';
 
 import Options from './Options';
 import {
@@ -116,8 +116,8 @@ export const SelectBase = (props: SelectProps) => {
   useEffect(() => setLoading(isLoading), [isLoading]);
 
   /** Fonction de debounce */
-  const handleDebouncedInputChange = useDebouncedCallback(v => {
-    onSearch(v);
+  const handleDebouncedInputChange = useDebouncedCallback((v) => {
+    onSearch?.(v);
     setLoading(false);
   }, debounce);
 
@@ -159,7 +159,7 @@ export const SelectBase = (props: SelectProps) => {
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
       disabled={disabled}
-      render={({close}) => (
+      render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
           {createProps?.onCreate &&
@@ -170,7 +170,7 @@ export const SelectBase = (props: SelectProps) => {
                 data-test={dataTest && `${dataTest}-creer-tag`}
                 className="flex w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
                 onClick={() => {
-                  createProps.onCreate(inputValue);
+                  createProps.onCreate?.(inputValue);
                   handleInputChange('');
                 }}
               >
@@ -198,7 +198,7 @@ export const SelectBase = (props: SelectProps) => {
                 ? sortOptionByAlphabet(filteredOptions)
                 : filteredOptions
             }
-            onChange={value => {
+            onChange={(value) => {
               onChange(value);
               setInputValue('');
               if (!multiple) {
@@ -259,14 +259,14 @@ const SelectButton = forwardRef(
       disabled,
       small,
       ...props
-    }: Omit<SelectButtonProps, 'values'> & {values?: OptionValue[]},
+    }: Omit<SelectButtonProps, 'values'> & { values?: OptionValue[] },
     ref?: Ref<HTMLButtonElement>
   ) => {
     const [isInputFocused, setIsInputFocused] = useState(false);
 
     /** Première valeur toujours affichée */
     const firstValue = getFlatOptions(options).find(
-      option => option.value === values?.[0]
+      (option) => option.value === values?.[0]
     );
 
     const firstValueDisabled = firstValue?.disabled ?? false;
@@ -279,12 +279,12 @@ const SelectButton = forwardRef(
         aria-label="ouvrir le menu"
         className={classNames(
           'w-full rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
-          {'rounded-b-none': isOpen}
+          { 'rounded-b-none': isOpen }
         )}
         disabled={disabled}
         type="button"
         {...props}
-        onKeyDown={evt => {
+        onKeyDown={(evt) => {
           /** Seul moyen trouvé pour ne pas prendre en compte la key "Space"
            * qui trigger le click du bouton et toggle le dropdown quand
            * l'utilisateur saisi un espace dans l'input.
@@ -292,7 +292,7 @@ const SelectButton = forwardRef(
            * Mais quid des select sans input ainsi que toute la partie du bouton autour de l'input */
           if (isInputFocused && evt.code === 'Space') {
             evt.preventDefault();
-            onSearch(inputValue + ' ');
+            onSearch?.(inputValue + ' ');
           }
         }}
       >
@@ -306,7 +306,7 @@ const SelectButton = forwardRef(
             {values && Array.isArray(values) && values.length > 0 ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
-                {customItem ? (
+                {customItem && firstValue ? (
                   // Item custom
                   customItem(firstValue)
                 ) : (
@@ -316,16 +316,19 @@ const SelectButton = forwardRef(
                       firstValueDisabled
                         ? 'grey'
                         : createProps &&
+                          firstValue &&
                           createProps.userCreatedOptions.includes(
-                            firstValue?.value
+                            firstValue.value
                           )
                         ? 'standard'
                         : 'default'
                     }
                     light={firstValueDisabled ?? undefined}
                     disabled={firstValueDisabled}
-                    title={getOptionLabel(values[0], getFlatOptions(options))}
-                    onClose={!disabled && (() => onChange(values[0]))}
+                    title={
+                      getOptionLabel(values[0], getFlatOptions(options)) ?? ''
+                    }
+                    onClose={() => !disabled && onChange(values[0])}
                   />
                 )}
                 {/** Nombre de valeurs sélectionnées supplémentaires */}
@@ -371,10 +374,10 @@ const SelectButton = forwardRef(
                     }
                   )}
                   value={inputValue}
-                  onChange={e => {
-                    onSearch(e.target.value);
+                  onChange={(e) => {
+                    onSearch?.(e.target.value);
                   }}
-                  onClick={evt => {
+                  onClick={(evt) => {
                     evt.preventDefault();
                     if (isOpen) {
                       evt.stopPropagation();
@@ -393,8 +396,8 @@ const SelectButton = forwardRef(
             size="sm"
             className={classNames(
               'mt-2 ml-auto text-primary-9',
-              {'rotate-180': isOpen},
-              {'!text-grey-5': disabled}
+              { 'rotate-180': isOpen },
+              { '!text-grey-5': disabled }
             )}
           />
         </div>

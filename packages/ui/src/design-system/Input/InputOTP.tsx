@@ -1,10 +1,10 @@
-import {Ref, forwardRef} from 'react';
-import {InputBase, InputBaseProps} from './InputBase';
+import { Ref, forwardRef } from 'react';
+import { InputBase, InputBaseProps } from './InputBase';
 import {
   InputPattern,
   InputPatternProps,
-} from '@design-system/Input/InputPattern';
-import {validateInputNumLength} from './validateInputNumLength';
+} from '@tet/ui/design-system/Input/InputPattern';
+import { validateInputNumLength } from './validateInputNumLength';
 
 export type InputOTPProps = Omit<
   InputPatternProps,
@@ -27,7 +27,10 @@ export const validateOTP = (value: string) =>
  * `onValidChange` est appelée si la saisie est correcte et fourni le code sans le formatage.
  */
 export const InputOTP = forwardRef(
-  ({value, ...remainingProps}: InputOTPProps, ref?: Ref<HTMLInputElement>) => {
+  (
+    { value, ...remainingProps }: InputOTPProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
     return (
       <InputPattern
         className="w-32 text-lg text-center"

@@ -1,7 +1,7 @@
-import {Ref, forwardRef} from 'react';
-import {PatternFormat, PatternFormatProps} from 'react-number-format';
-import {InputBase, InputBaseProps} from './InputBase';
-import {validateInputNumLength} from '@design-system/Input/validateInputNumLength';
+import { Ref, forwardRef } from 'react';
+import { PatternFormat, PatternFormatProps } from 'react-number-format';
+import { InputBase, InputBaseProps } from './InputBase';
+import { validateInputNumLength } from '@tet/ui/design-system/Input/validateInputNumLength';
 
 export type InputTelProps = Omit<
   PatternFormatProps,
@@ -20,7 +20,10 @@ export const validateTel = (value: string) => validateInputNumLength(value, 10);
  * La valeur est formatée automatiquement suivant le format donné.
  */
 export const InputTel = forwardRef(
-  ({value, ...remainingProps}: InputTelProps, ref?: Ref<HTMLInputElement>) => {
+  (
+    { value, ...remainingProps }: InputTelProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
     return (
       <PatternFormat
         type="tel"

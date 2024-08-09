@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {AnchorHTMLProps, DivHTMLProps, isAnchor} from 'utils/types';
+import { AnchorHTMLProps, DivHTMLProps, isAnchor } from '@tet/ui/utils/types';
 
 /** Types custom de Card */
 type BaseCardProps = {
@@ -76,7 +76,7 @@ export const Card = ({
       </a>
     );
   } else {
-    const divCardProps = {...otherProps} as DivHTMLProps;
+    const divCardProps = { ...otherProps } as DivHTMLProps;
     return (
       <div
         {...divCardProps}
@@ -90,7 +90,7 @@ export const Card = ({
   }
 };
 
-const CardContent = ({header, footer, children}: BaseCardProps) => (
+const CardContent = ({ header, footer, children }: BaseCardProps) => (
   <>
     {!!header && (
       <div className="text-primary-8 text-sm font-bold">{header}</div>

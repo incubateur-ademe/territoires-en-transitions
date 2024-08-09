@@ -1,7 +1,10 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {BadgesFilters} from './BadgesFilters';
-import {useState} from 'react';
-import {OptionValue, SelectMultipleOnChangeArgs} from '@design-system/Select';
+import { Meta, StoryObj } from '@storybook/react';
+import { BadgesFilters } from './BadgesFilters';
+import { useState } from 'react';
+import {
+  OptionValue,
+  SelectMultipleOnChangeArgs,
+} from '@tet/ui/design-system/Select';
 
 const meta: Meta<typeof BadgesFilters> = {
   component: BadgesFilters,
@@ -24,8 +27,8 @@ export const FiltersWithBadges: Story = {
             {
               title: 'Option 1',
               options: [
-                {value: 'option11', label: 'Option 1.1'},
-                {value: 'option12', label: 'Option 1.2'},
+                { value: 'option11', label: 'Option 1.1' },
+                { value: 'option12', label: 'Option 1.2' },
                 {
                   value: 'option13',
                   label: 'Option 1.3',
@@ -38,8 +41,8 @@ export const FiltersWithBadges: Story = {
               title: 'Option 2',
               tag: 'Opt 2',
               options: [
-                {value: 'option21', label: 'Option 2.1'},
-                {value: 'option22', label: 'Option 2.2'},
+                { value: 'option21', label: 'Option 2.1' },
+                { value: 'option22', label: 'Option 2.2' },
                 {
                   value: 'option23',
                   label: 'Option 2.3',
@@ -57,22 +60,22 @@ export const FiltersWithBadges: Story = {
                 {
                   title: 'Option 3.1',
                   options: [
-                    {value: 'option311', label: 'Option 3.1.1'},
-                    {value: 'option312', label: 'Option 3.1.2'},
+                    { value: 'option311', label: 'Option 3.1.1' },
+                    { value: 'option312', label: 'Option 3.1.2' },
                   ],
                 },
                 {
                   title: 'Option 3.2',
                   options: [
-                    {value: 'option321', label: 'Option 3.2.1'},
-                    {value: 'option322', label: 'Option 3.2.2'},
+                    { value: 'option321', label: 'Option 3.2.1' },
+                    { value: 'option322', label: 'Option 3.2.2' },
                   ],
                 },
                 {
                   title: 'Option 3.3',
                   options: [
-                    {value: 'option331', label: 'Option 3.3.1'},
-                    {value: 'option332', label: 'Option 3.3.2'},
+                    { value: 'option331', label: 'Option 3.3.1' },
+                    { value: 'option332', label: 'Option 3.3.2' },
                   ],
                 },
               ],

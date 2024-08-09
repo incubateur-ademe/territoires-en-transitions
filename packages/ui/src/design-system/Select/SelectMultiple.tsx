@@ -1,5 +1,5 @@
-import {SelectBase, SelectProps} from './components/SelectBase';
-import {OptionValue} from './utils';
+import { SelectBase, SelectProps } from './components/SelectBase';
+import { OptionValue } from './utils';
 
 export type SelectMultipleOnChangeArgs = {
   selectedValue: OptionValue;
@@ -29,8 +29,8 @@ export const SelectMultiple = ({
   return (
     <SelectBase
       {...props}
-      onChange={v => {
-        let allValues = values as OptionValue[];
+      onChange={(v) => {
+        let allValues: OptionValue[] | undefined = values as OptionValue[];
 
         if (allValues) {
           if (allValues.includes(v)) {
@@ -38,7 +38,7 @@ export const SelectMultiple = ({
             allValues.length === 1
               ? // renvoie undefined si la seule valeur présente dans les valeurs du sélecteur est la même que la valeur de l'option
                 (allValues = undefined)
-              : (allValues = allValues.filter(val => val !== v));
+              : (allValues = allValues.filter((val) => val !== v));
           } else {
             // ajoût d'une valeur
             allValues = [...allValues, v];
@@ -47,7 +47,7 @@ export const SelectMultiple = ({
         } else {
           allValues = [v];
         }
-        onChange({selectedValue: v, values: allValues});
+        onChange({ selectedValue: v, values: allValues });
       }}
       multiple
       values={values}
