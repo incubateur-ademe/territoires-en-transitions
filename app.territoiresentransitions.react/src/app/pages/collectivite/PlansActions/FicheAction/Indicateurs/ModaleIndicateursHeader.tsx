@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import _ from 'lodash';
 import {
   Button,
@@ -21,10 +21,6 @@ const ModaleIndicateursHeader = ({
   updateFiche,
 }: ModaleIndicateursHeaderProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
-
-  useEffect(() => {
-    setEditedFiche(fiche);
-  }, [fiche]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Checkbox, FormSectionGrid, Modal, ModalFooterOKCancel} from '@tet/ui';
 
 type ModaleAccesProps = {
@@ -15,6 +15,10 @@ const ModaleAcces = ({
   updateRestreint,
 }: ModaleAccesProps) => {
   const [editedRestreint, setEditedFiche] = useState(isRestreint);
+
+  useEffect(() => {
+    if (isOpen) setEditedFiche(isRestreint);
+  }, [isOpen]);
 
   const handleSave = () => {
     if (isRestreint !== editedRestreint) {

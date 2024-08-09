@@ -1,5 +1,5 @@
 import {Button, Input} from '@tet/ui';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 type TitreFicheProps = {
   titre: string | null;
@@ -13,6 +13,12 @@ type TitreFicheProps = {
 const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(titre ?? '');
+
+  useEffect(() => {
+    if (titre) {
+      setEditedTitle(titre);
+    }
+  }, [titre]);
 
   // Switch entre les modes lecture et édition
   // Lors du switch d'édition à lecture -> sauvegarde des modifications

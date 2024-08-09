@@ -25,8 +25,8 @@ const ModaleActeurs = ({
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   useEffect(() => {
-    setEditedFiche(fiche);
-  }, [fiche]);
+    if (isOpen) setEditedFiche(fiche);
+  }, [isOpen]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
