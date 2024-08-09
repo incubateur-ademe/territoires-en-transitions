@@ -2,14 +2,10 @@
 
 BEGIN;
 
-set statement_timeout = '10min';
+set statement_timeout to 3600000;
 
 drop view public.crm_usages;
 drop materialized view stats.crm_usages;
-
-
--- Lignes modifiées :
--- 1. colonne ajoutée `type_pa_non_vides`
 
 create materialized view stats.crm_usages as
 WITH premier_rattachements AS (
@@ -153,16 +149,23 @@ SELECT c.collectivite_id,
        (
        SELECT count(*) AS count
        FROM visite
-       WHERE visite.page = ANY (ARRAY['plan'::visite_page, 'fiche'::visite_page, 'tableau_de_bord'::visite_page])
+       WHERE visite.page = 'plan'::visite_page
          AND visite.collectivite_id = c.collectivite_id
-         AND visite."time" >= (CURRENT_TIMESTAMP - '2 mons'::interval)
-       )                                                               AS pa_view_2mois,
+         AND visite."time" > (CURRENT_TIMESTAMP - '1 mon'::interval)
+       )                                                               AS pa_view_1mois,
        (
        SELECT count(*) AS count
        FROM visite
-       WHERE visite.page = ANY (ARRAY['plan'::visite_page, 'fiche'::visite_page, 'tableau_de_bord'::visite_page])
+       WHERE visite.page = 'plan'::visite_page
          AND visite.collectivite_id = c.collectivite_id
-         AND visite."time" >= (CURRENT_TIMESTAMP - '6 mons'::interval)
+         AND visite."time" > (CURRENT_TIMESTAMP - '3 mons'::interval)
+       )                                                               AS pa_view_3mois,
+       (
+       SELECT count(*) AS count
+       FROM visite
+       WHERE visite.page = 'plan'::visite_page
+         AND visite.collectivite_id = c.collectivite_id
+         AND visite."time" > (CURRENT_TIMESTAMP - '6 mons'::interval)
        )                                                               AS pa_view_6mois,
        (
        SELECT count(*) AS count
@@ -180,34 +183,24 @@ SELECT c.collectivite_id,
             ) f
        WHERE f.nb_fiche > 4
        )                                                               AS pa_non_vides,
-      (
-      SELECT count(pa.id) AS count
-      FROM 
-        (
-        SELECT p.collectivite_id, p.id, count(p.fiche_id) as nb_fiches
-        FROM 
-        (
-          SELECT f.collectivite_id,
-           p.id, 
-           f.id as fiche_id
-           FROM fiche_action f
-           LEFT JOIN fiche_action_pilote fap ON f.id = fap.fiche_id
-           LEFT JOIN fiche_action_structure_tag fas ON fas.fiche_id = f.id
-           LEFT JOIN fiche_action_service_tag faserv ON faserv.fiche_id = f.id
-           JOIN fiche_action_axe faa ON f.id = faa.fiche_id
-           JOIN axe a ON a.id = faa.axe_id
-           JOIN axe p ON a.plan = p.id
-           WHERE (titre IS NOT NULL or titre != 'Nouvelle fiche')
-           AND f.collectivite_id = c.collectivite_id
-           AND f.statut IS NOT NULL
-           AND p.nom IS NOT NULL
-           GROUP BY f.collectivite_id, p.id, f.id
-           HAVING (COUNT(DISTINCT fap.user_id) + COUNT(DISTINCT fap.tag_id) + COUNT(DISTINCT fas.structure_tag_id) + COUNT(DISTINCT faserv.service_tag_id)) > 0
-        ) p
-      group by p.collectivite_id, p.id
-      ) pa 
-      WHERE pa.nb_fiches > 4
-      )                                                                AS pa_pilotables,
+       (
+       SELECT count(*) AS count
+       FROM (
+            SELECT p.id,
+                   count(f_1.*) AS nb_fiche
+            FROM fiche_action f_1
+            JOIN fiche_action_pilote fap ON f_1.id = fap.fiche_id
+            JOIN fiche_action_axe faa ON f_1.id = faa.fiche_id
+            JOIN axe a ON a.id = faa.axe_id
+            JOIN axe p ON a.plan = p.id
+            WHERE f_1.collectivite_id = c.collectivite_id
+              AND (f_1.titre IS NOT NULL OR f_1.titre::text <> 'Nouvelle fiche'::text)
+              AND f_1.statut IS NOT NULL
+              AND p.nom IS NOT NULL
+            GROUP BY p.id
+            ) f
+       WHERE f.nb_fiche > 4
+       )                                                               AS pa_pilotables,
        (
        SELECT count(*) AS count
        FROM fiche_action f
@@ -215,23 +208,13 @@ SELECT c.collectivite_id,
          AND (f.titre IS NOT NULL OR f.titre::text <> 'Nouvelle fiche'::text)
        )                                                               AS fiches_non_vides,
        (
-       SELECT count(f_2.*) AS count
-       FROM (
-            SELECT f.id
-            FROM fiche_action f
-            LEFT JOIN fiche_action_pilote fap ON f.id = fap.fiche_id
-            LEFT JOIN fiche_action_structure_tag fas ON fas.fiche_id = f.id
-            LEFT JOIN fiche_action_service_tag faserv ON faserv.fiche_id = f.id
-            WHERE f.collectivite_id = c.collectivite_id
-              AND (f.titre IS NOT NULL AND f.titre <> 'Nouvelle fiche')
-              AND f.statut IS NOT NULL
-            GROUP BY f.id
-            HAVING (COUNT(DISTINCT fap.user_id) + 
-                  COUNT(DISTINCT fap.tag_id) + 
-                  COUNT(DISTINCT fas.structure_tag_id) + 
-                  COUNT(DISTINCT faserv.service_tag_id)) > 0
-            ) f_2
-        )                                                              AS fiches_pilotables,                                                            
+       SELECT count(*) AS count
+       FROM fiche_action f
+       JOIN fiche_action_pilote fap ON f.id = fap.fiche_id
+       WHERE f.collectivite_id = c.collectivite_id
+         AND (f.titre IS NOT NULL OR f.titre::text <> 'Nouvelle fiche'::text)
+         AND f.statut IS NOT NULL
+       )                                                               AS fiches_pilotables,
        (
        SELECT count(*) > 4
        FROM fiche_action f
@@ -328,53 +311,40 @@ SELECT c.collectivite_id,
             ) i
        WHERE i.collectivite_id = c.collectivite_id
        )                                                               AS pourcentage_indicateur_predef_prives,
-       (SELECT array_to_string(array_agg(DISTINCT pat.type::text), ',') AS array_to_string
+       (
+       SELECT array_agg(DISTINCT pat.type) AS array_agg
        FROM (
             SELECT p.id,
                    count(f_1.*) AS nb_fiche
             FROM fiche_action f_1
+            JOIN fiche_action_pilote fap ON f_1.id = fap.fiche_id
             JOIN fiche_action_axe faa ON f_1.id = faa.fiche_id
             JOIN axe a_1 ON a_1.id = faa.axe_id
             JOIN axe p ON a_1.plan = p.id
             WHERE f_1.collectivite_id = c.collectivite_id
               AND (f_1.titre IS NOT NULL OR f_1.titre::text <> 'Nouvelle fiche'::text)
+              AND f_1.statut IS NOT NULL
               AND p.nom IS NOT NULL
             GROUP BY p.id
             ) f
        JOIN axe a ON f.id = a.id
        LEFT JOIN plan_action_type pat ON a.type = pat.id
        WHERE f.nb_fiche > 4
-       )                                                               AS type_pa_non_vides,
-       
-       (
-       select count(*)
-       from axe a
-       where a.nom = 'Plan d''action à impact'
-       and a.collectivite_id = c.collectivite_id
-       )                                                             AS pai,
-       (
-       select count(f_1.*) as nb_fiches
-       from fiche_action f_1
-       JOIN fiche_action_axe faa ON f_1.id = faa.fiche_id
-       JOIN axe a on a.id = faa.axe_id
-       where a.nom = 'Plan d''action à impact'
-       and f_1.collectivite_id = c.collectivite_id
-        )                                                             AS fiches_pai
+       )                                                               AS type_pa
 FROM stats.collectivite c
 JOIN stats.collectivite_active USING (collectivite_id)
 LEFT JOIN comptes x USING (collectivite_id)
 LEFT JOIN stats.pourcentage_completude pc USING (collectivite_id)
 LEFT JOIN premier_rattachements pr USING (collectivite_id)
 ORDER BY c.nom;
-
-
 comment on column stats.crm_usages.pa_date_creation is 'Date de création du premier plan (avec +5 FA non vides) pour chaque collectivité concernées';
-comment on column stats.crm_usages.pa_view_2mois is 'Nombre de consultations des pages "plans, fiches ou TDB" au cours des 2 derniers mois';
-comment on column stats.crm_usages.pa_view_6mois is 'Nombre de consultations des pages "plans, fiches ou TDB" au cours des 6 derniers mois';
+comment on column stats.crm_usages.pa_view_1mois is 'Nombre de consultations de Plans d''action (tous plans confondus, non vides) au cours du mois dernier';
+comment on column stats.crm_usages.pa_view_3mois is 'Nombre de consultations de Plans d''action (tous plans confondus, non vides) au cours des 3 derniers mois';
+comment on column stats.crm_usages.pa_view_6mois is 'Nombre de consultations de Plans d''action (tous plans confondus, non vides) au cours des 6 derniers mois.';
 comment on column stats.crm_usages.pa_non_vides is 'Nombre de plans non vides (minimum un titre de PA et 5 FA non vides)';
-comment on column stats.crm_usages.pa_pilotables is 'Nombre de plans “pilotables” (= plan avec à minima 5 fiches avec titre, statut, et l’un des 3 champs suivants renseignés : pilote, service, structure)';
+comment on column stats.crm_usages.pa_pilotables is 'Nombre de plans “pilotables” (= avec min. 5 FA, qui ont à minima, le titre, le pilote et le statut renseigné)';
 comment on column stats.crm_usages.fiches_non_vides is 'Nombre de fiches actions non vides';
-comment on column stats.crm_usages.fiches_pilotables is 'Nombre de fiches actions pilotables (= à minima titre, statut, et l’un des 3 champs suivants renseignés : pilote, service, structure)';
+comment on column stats.crm_usages.fiches_pilotables is 'Nombre de fiches actions pilotables ( = à minima le titre, le pilote et le statut renseigné)';
 comment on column stats.crm_usages._5fiches_1pilotage is 'Nombre de collectivités qui ont au moins 5 FA avec au moins le titre + 1 critère de pilotage renseigné (soit statut ou priorité ou date prévisionnelle ou responsable)';
 comment on column stats.crm_usages.fiches_changement_statut is 'Nombre de changements de statut de fiches actions dans les 6 derniers mois par collectivité (tous les status)';
 comment on column stats.crm_usages.pourcentage_fa_privee is '% de fiches action privées par collectivité';
@@ -384,10 +354,9 @@ comment on column stats.crm_usages.min1_indicateur_prive is 'Vrai si au moins un
 comment on column stats.crm_usages.min1_indicateur_predef_prive is 'Vrai si au moins un indicateur prédéfini privé';
 comment on column stats.crm_usages.min1_indicateur_perso_prive is 'Vrai si au moins un indicateur perso privé';
 comment on column stats.crm_usages.pourcentage_indicateur_predef_prives is '% d''indicateur prédéfini privé par collectivité';
-comment on column stats.crm_usages.type_pa_non_vides is 'Liste de tous les types des plans de la collectivité non vides (minimum un titre de PA et 5 FA non vides)';
-comment on column stats.crm_usages.pai is 'Nombre de plans d''actions à impact importés';
-comment on column stats.crm_usages.fiches_pai is 'Nombre de fiches dans plans d''actions à impact';
+comment on column stats.crm_usages.type_pa is 'Liste de tous les types des plans pilotables de la collectivité';
 
+-- public.crm_usages;
 create view public.crm_usages as
 SELECT crm_usages.collectivite_id,
        crm_usages.key,
@@ -408,7 +377,8 @@ SELECT crm_usages.collectivite_id,
        crm_usages.fiches_mod_3mois,
        crm_usages.fiches_mod_6mois,
        crm_usages.pa_date_creation,
-       crm_usages.pa_view_2mois,
+       crm_usages.pa_view_1mois,
+       crm_usages.pa_view_3mois,
        crm_usages.pa_view_6mois,
        crm_usages.pa_non_vides,
        crm_usages.pa_pilotables,
@@ -423,11 +393,8 @@ SELECT crm_usages.collectivite_id,
        crm_usages.min1_indicateur_predef_prive,
        crm_usages.min1_indicateur_perso_prive,
        crm_usages.pourcentage_indicateur_predef_prives,
-       crm_usages.type_pa_non_vides,
-       crm_usages.pai,
-       crm_usages.fiches_pai
+       crm_usages.type_pa
 FROM stats.crm_usages
 WHERE is_service_role();
-
 
 COMMIT;

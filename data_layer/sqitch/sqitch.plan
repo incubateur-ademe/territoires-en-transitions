@@ -695,3 +695,8 @@ indicateur/fusion [indicateur/fusion@v4.0.0] 2024-07-23T08:37:40Z Frederic Arnou
 automatisation/crm [automatisation/crm@v4.2.0] 2024-07-29T09:02:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # MAJ des champs remontés dans le CRM
 @v4.3.0 2024-07-29T15:19:46Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # MAJ des champs remontés dans le CRM
 
+automatisation/crm [automatisation/crm@v4.3.0] 2024-08-08T08:15:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # MAJ des champs remontés dans le CRM
+@v4.4.0 2024-08-08T08:35:19Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # [crm] mets à jour les requêtes de stats d'usage pour le CRM
+
+taxonomie/personne [taxonomie/personne@v4.3.0] 2024-08-06T16:55:02Z ,,, <jacquelina@LanceLibre> # Ajoute l'autorisation au service role
+@v4.5.0 2024-08-09T10:08:39Z ,,, <jacquelina@LanceLibre> # Ajoute les droits au service role sur la fonction personnes_collectivite

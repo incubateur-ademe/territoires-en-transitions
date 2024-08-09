@@ -160,7 +160,8 @@ async def personnalize_then_post_consequences(
     # S'il n'y pas de nom de table
     # ou si les personnalisations ont été insérées
     # ou si des personnalisations plus récentes existaient
-    if not payload.consequences_table or response.status_code == 201 or response.status_code == 400:
+    if (not payload.consequences_table or
+            response.status_code == 200 or response.status_code == 201 or response.status_code == 400):
         for evaluation_payload in payload.evaluation_payloads:
             # on reprend les conséquences calculées pour le référentiel de la payload
             # pour calculer les scores.

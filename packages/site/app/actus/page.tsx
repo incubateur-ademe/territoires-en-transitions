@@ -10,6 +10,8 @@ import {Metadata} from 'next';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
 import {notFound} from 'next/navigation';
 
+const LIMIT = 50;
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Actualités',
@@ -26,13 +28,30 @@ type ActuCard = {
 };
 
 const getData = async () => {
-  const {data} = await fetchCollection('actualites', [
+  const {data, meta} = await fetchCollection('actualites', [
     ['populate[0]', 'Couverture'],
     ['sort[0]', 'createdAt:desc'],
+    ['pagination[start]', '0'],
+    ['pagination[limit]', `${LIMIT}`],
   ]);
 
-  const formattedData: ActuCard[] | null = data
-    ? data.map(d => ({
+  const {pagination} = meta;
+  let cards = data;
+  let page = 1;
+
+  while (page < Math.ceil(pagination.total / pagination.limit)) {
+    const {data} = await fetchCollection('actualites', [
+      ['populate[0]', 'Couverture'],
+      ['sort[0]', 'createdAt:desc'],
+      ['pagination[start]', `${page * LIMIT}`],
+      ['pagination[limit]', `${LIMIT}`],
+    ]);
+    cards.push(...data);
+    page++;
+  }
+
+  const formattedData: ActuCard[] | null = cards
+    ? cards.map(d => ({
         id: d.id,
         titre: d.attributes.Titre as unknown as string,
         dateCreation:
