@@ -1,25 +1,29 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import DatabaseService from '../../common/services/database.service';
+
+export const collectiviteTable = pgTable('collectivite', {
+  id: serial('id').primaryKey(),
+  access_restreint: boolean('access_restreint'),
+});
+export type CollectiviteType = InferSelectModel<typeof collectiviteTable>;
+export type CreateCollectiviteType = InferInsertModel<typeof collectiviteTable>;
+
+export const epciTable = pgTable('epci', {
+  id: serial('id').primaryKey(),
+  collectivite_id: integer('collectivite_id')
+    .notNull()
+    .references(() => collectiviteTable.id),
+  nom: text('nom').notNull(),
+  siren: text('siren'),
+});
+export type EpciType = InferSelectModel<typeof epciTable>;
+export type CreateEpciType = InferInsertModel<typeof epciTable>;
 
 @Injectable()
 export default class CollectivitesService {
   private readonly logger = new Logger(CollectivitesService.name);
-
-  public readonly collectiviteTable = pgTable('collectivite', {
-    id: serial('id').primaryKey(),
-    access_restreint: boolean('access_restreint'),
-  });
-
-  public readonly epciTable = pgTable('epci', {
-    id: serial('id').primaryKey(),
-    collectivite_id: integer('collectivite_id')
-      .notNull()
-      .references(() => this.collectiviteTable.id),
-    nom: text('nom').notNull(),
-    siren: text('siren'),
-  });
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -29,8 +33,8 @@ export default class CollectivitesService {
     );
     const epciByIdResult = await this.databaseService.db
       .select()
-      .from(this.epciTable)
-      .where(eq(this.epciTable.collectivite_id, collectiviteId));
+      .from(epciTable)
+      .where(eq(epciTable.collectivite_id, collectiviteId));
     if (!epciByIdResult?.length) {
       throw new NotFoundException(
         `EPCI avec l'identifiant de collectivite ${collectiviteId} introuvable`,
@@ -45,8 +49,8 @@ export default class CollectivitesService {
     this.logger.log(`Récupération de l'epci à partir du siren ${siren}`);
     const epciBySirenResult = await this.databaseService.db
       .select()
-      .from(this.epciTable)
-      .where(eq(this.epciTable.siren, siren));
+      .from(epciTable)
+      .where(eq(epciTable.siren, siren));
     if (!epciBySirenResult?.length) {
       throw new NotFoundException(`EPCI avec le siren ${siren} introuvable`);
     }

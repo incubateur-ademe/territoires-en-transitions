@@ -16,3 +16,32 @@ values
      1 , '01/01/2021', null, 12, null, 13, null),
     ((select id from indicateur_definition where titre = 'Mon indicateur perso' limit 1),
      1 , '01/01/2021', null, 22.33, null, 23.33, null);
+
+-- Insertion pour le calcul de la trajectoire snbc
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
+                                      resultat_commentaire, objectif, objectif_commentaire)
+values
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.c' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 56729, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.d' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 41448, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.i' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 19760, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.g' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 28860, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.e' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 102045, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.f' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 1039, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.h' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 3371, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.j' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 807, null, null, null);
