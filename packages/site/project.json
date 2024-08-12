@@ -7,6 +7,10 @@
   "implicitDependencies": ["@tet/ui"],
   "// targets": "to see all targets run: nx show project @tet/site --web",
   "targets": {
-    "dev": {}
+    "dev": {
+      "options": {
+        "port": 3001
+      }
+    }
   }
 }

@@ -46,7 +46,7 @@
       "plugin": "@nx/webpack/plugin",
       "options": {
         "buildTargetName": "build",
-        "serveTargetName": "serve",
+        "serveTargetName": "dev",
         "previewTargetName": "preview"
       }
     }
