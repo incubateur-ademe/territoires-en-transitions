@@ -24,7 +24,7 @@ type TabsProps = {
 const Tabs = ({
   className,
   children,
-  defaultActiveTab,
+  defaultActiveTab = 0,
   onChange,
   ...remainingProps
 }: TabsProps) => {
@@ -98,7 +98,7 @@ const Tabs = ({
                   'fr-tabs__tab--icon-left': icon,
                 })}
                 onClick={() => changeTab(index)}
-                onKeyDown={e => onKeyDownTab(e, index)}
+                onKeyDown={(e) => onKeyDownTab(e, index)}
               >
                 {element.props.label}
               </button>
@@ -109,12 +109,6 @@ const Tabs = ({
       {tabsPanel}
     </div>
   );
-};
-
-Tabs.defaultProps = {
-  className: '',
-  defaultActiveTab: 0,
-  onChange: undefined,
 };
 
 export default Tabs;

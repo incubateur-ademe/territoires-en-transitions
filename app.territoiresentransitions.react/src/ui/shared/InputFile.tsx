@@ -20,8 +20,8 @@ const InputFile = ({
   label,
   errorMessage,
   hint,
-  onChange,
-  multiple,
+  onChange = () => undefined,
+  multiple = false,
   accept,
   ...remainingProps
 }: InputFileProps) => {
@@ -50,15 +50,6 @@ const InputFile = ({
       )}
     </div>
   );
-};
-
-InputFile.defaultProps = {
-  className: '',
-  hint: '',
-  errorMessage: '',
-  accept: undefined,
-  multiple: false,
-  onChange: () => {},
 };
 
 export default InputFile;

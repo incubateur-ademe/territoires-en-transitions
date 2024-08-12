@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 interface LazyDetailsProps {
   summary: React.ReactNode;
@@ -10,15 +10,19 @@ interface LazyDetailsProps {
 /**
  * A details like component that attaches children on open.
  */
-export function LazyDetails(props: LazyDetailsProps) {
-  const [open, setOpen] = useState(props.startOpen);
+export function LazyDetails({
+  startOpen = false,
+  onChange = () => undefined,
+  ...props
+}: LazyDetailsProps) {
+  const [open, setOpen] = useState(startOpen);
   return (
     <section className="flex flex-col">
       <header
         className="w-full cursor-pointer"
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
-          props.onChange(!open);
+          onChange(!open);
           setOpen(!open);
         }}
       >
@@ -28,8 +32,3 @@ export function LazyDetails(props: LazyDetailsProps) {
     </section>
   );
 }
-
-LazyDetails.defaultProps = {
-  startOpen: false,
-  onChange: () => undefined,
-};
