@@ -23,6 +23,17 @@
       "@tet/api": ["./packages/api/src/index.ts"],
       "@tet/api/*": ["./packages/api/src/*"],
 
+      // Alias temporaires pour les dépendances de l'application
+      "ui/*": ["./app.territoiresentransitions.react/src/ui/*"],
+      "utils/*": ["./app.territoiresentransitions.react/src/utils/*"],
+      "app/*": ["./app.territoiresentransitions.react/src/app/*"],
+      "core-logic/*": ["./app.territoiresentransitions.react/src/core-logic/*"],
+      "types/*": ["./app.territoiresentransitions.react/src/types/*"],
+      "ui": ["./app.territoiresentransitions.react/src/ui/*"],
+      "environmentVariables": [
+        "./app.territoiresentransitions.react/src/environmentVariables"
+      ],
+
       "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "@tet/auth/*": ["./packages/auth/*"],
       "@tet/panier/*": ["./packages/panier/src/*"]

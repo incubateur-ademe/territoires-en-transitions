@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
-import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
+import { ModuleFicheActionsSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
 import {
   Field,
   FormSection,
@@ -12,15 +12,15 @@ import {
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QueryKey, useQueryClient} from 'react-query';
+import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { QueryKey, useQueryClient } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {Filtre as FiltreFichesAction} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {getPilotesValues} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import { Filtre as FiltreFichesAction } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 
@@ -61,12 +61,12 @@ const ModalActionsDontJeSuisLePilote = ({
               <SelectMultiple
                 values={filtreState.planActionIds}
                 options={
-                  plansActions?.plans.map(p => ({
+                  plansActions?.plans.map((p) => ({
                     label: generateTitle(p.nom),
                     value: p.id,
                   })) ?? []
                 }
-                onChange={({values}) =>
+                onChange={({ values }) =>
                   setFiltreState({
                     ...filtreState,
                     planActionIds: values as number[],
@@ -78,7 +78,7 @@ const ModalActionsDontJeSuisLePilote = ({
               <Field title="Statut">
                 <StatutsFilterDropdown
                   values={filtreState.statuts}
-                  onChange={({statuts}) =>
+                  onChange={({ statuts }) =>
                     setFiltreState({
                       ...filtreState,
                       statuts,
@@ -89,7 +89,7 @@ const ModalActionsDontJeSuisLePilote = ({
               <Field title="Niveau de priorité">
                 <PrioritesFilterDropdown
                   values={filtreState.priorites}
-                  onChange={({priorites}) =>
+                  onChange={({ priorites }) =>
                     setFiltreState({
                       ...filtreState,
                       priorites,
@@ -109,7 +109,7 @@ const ModalActionsDontJeSuisLePilote = ({
           </FormSection>
         </>
       )}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => close(),
@@ -130,7 +130,7 @@ const ModalActionsDontJeSuisLePilote = ({
                 },
               });
 
-              keysToInvalidate?.forEach(key =>
+              keysToInvalidate?.forEach((key) =>
                 queryClient.invalidateQueries(key)
               );
 

@@ -1,37 +1,37 @@
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import {Button} from '@tet/ui';
+import { Button } from '@tet/ui';
 
-import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Indicateurs} from '@tet/api';
+import { ModuleIndicateursSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Indicateurs } from '@tet/api';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   TDBViewParam,
   makeCollectiviteIndicateursUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import Module from '../Module';
-import {getQueryKey} from '../useModulesFetch';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { getQueryKey } from '../useModulesFetch';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
 
 type Props = {
   view: TDBViewParam;
   module: ModuleIndicateursSelect;
 };
 
-const ModuleIndicateurs = ({view, module}: Props) => {
+const ModuleIndicateurs = ({ view, module }: Props) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
   const history = useHistory();
 
   const filtre = Indicateurs.moduleOptionsToFilters(module.options);
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(
+  const { data, isLoading } = useFilteredIndicateurDefinitions(
     null,
     filtre,
     false
@@ -43,7 +43,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
       filtre={module.options.filtre}
       symbole={<PictoIndicateurVide className="w-16 h-16" />}
       trackingId="indicateurs"
-      editModal={openState => (
+      editModal={(openState) => (
         <ModalIndicateursSuiviPlan
           openState={openState}
           module={module}
@@ -104,7 +104,7 @@ const ModuleIndicateurs = ({view, module}: Props) => {
                     indicateurId: definition.id,
                     identifiantReferentiel: definition.identifiant,
                   })}
-                  card={{external: true}}
+                  card={{ external: true }}
                   autoRefresh
                 />
               )

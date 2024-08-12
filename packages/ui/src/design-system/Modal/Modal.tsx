@@ -1,4 +1,3 @@
-import { cloneElement, ForwardedRef, useState } from 'react';
 import {
   FloatingFocusManager,
   FloatingNode,
@@ -13,6 +12,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+import { cloneElement, RefObject, useState } from 'react';
 
 import { preset } from '@tet/ui/tailwind-preset';
 import { Button } from '../Button';
@@ -38,7 +38,7 @@ export type RenderProps = {
   /** l'id à la description pour l'accessibilité */
   descriptionId: string;
   /** Référence du container de la modale */
-  ref: ForwardedRef<HTMLElement>;
+  ref: RefObject<HTMLElement>;
 };
 
 export type ModalOpenState = {

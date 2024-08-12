@@ -1,7 +1,7 @@
-import React, {useImperativeHandle, useRef, useState} from 'react';
-import Menu, {MenuProps} from '@mui/material/Menu';
-import MenuItem, {MenuItemProps} from '@mui/material/MenuItem';
-import {ExpandToggle} from 'ui/icons/ExpandToggle';
+import React, { useImperativeHandle, useRef, useState } from 'react';
+import Menu, { MenuProps } from '@mui/material/Menu';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
+import { ExpandToggle } from 'ui/icons/ExpandToggle';
 
 export interface NestedMenuItemProps extends Omit<MenuItemProps, 'button'> {
   /**
@@ -26,8 +26,9 @@ export interface NestedMenuItemProps extends Omit<MenuItemProps, 'button'> {
   /**
    * Props passed to container element.
    */
-  ContainerProps?: React.HTMLAttributes<HTMLElement> &
-    React.RefAttributes<HTMLElement | null>;
+  ContainerProps?: React.HTMLAttributes<HTMLElement> & {
+    ref?: React.Ref<HTMLElement | null>;
+  };
   /**
    * Props passed to sub `<Menu/>` element
    */
@@ -56,7 +57,7 @@ const NestedMenuItem = React.forwardRef<
     ...MenuItemProps
   } = props;
 
-  const {ref: containerRefProp, ...ContainerProps} = ContainerPropsProp;
+  const { ref: containerRefProp, ...ContainerProps } = ContainerPropsProp;
 
   const menuItemRef = useRef<HTMLLIElement>(null);
   useImperativeHandle(ref, () => menuItemRef.current!);
@@ -86,11 +87,18 @@ const NestedMenuItem = React.forwardRef<
   // Check if any immediate children are active
   const isSubmenuFocused = () => {
     const active = containerRef.current?.ownerDocument?.activeElement;
-    for (const child of menuContainerRef.current?.children ?? []) {
+    const children = menuContainerRef.current?.children;
+
+    if (!children) {
+      return false;
+    }
+
+    for (const child of children) {
       if (child === active) {
         return true;
       }
     }
+
     return false;
   };
 
@@ -156,7 +164,7 @@ const NestedMenuItem = React.forwardRef<
       <Menu
         // Set pointer events to 'none' to prevent the invisible Popover div
         // from capturing events for clicks and hovers
-        style={{pointerEvents: 'none'}}
+        style={{ pointerEvents: 'none' }}
         anchorEl={menuItemRef.current}
         anchorOrigin={{
           vertical: 'top',
@@ -174,7 +182,7 @@ const NestedMenuItem = React.forwardRef<
           setIsSubMenuOpen(false);
         }}
       >
-        <div ref={menuContainerRef} style={{pointerEvents: 'auto'}}>
+        <div ref={menuContainerRef} style={{ pointerEvents: 'auto' }}>
           {children}
         </div>
       </Menu>

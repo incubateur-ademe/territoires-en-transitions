@@ -1,0 +1,10 @@
+{
+  "name": "@tet/app",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "app.territoiresentransitions.react",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["@tet/ui", "@tet/api"],
+  "// targets": "to see all targets run: nx show project @tet/app --web",
+  "targets": {}
+}

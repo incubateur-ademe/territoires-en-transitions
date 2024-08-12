@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
 import {
   Checkbox,
@@ -9,9 +9,9 @@ import {
   ModalFooterOKCancel,
   ModalProps,
 } from '@tet/ui';
-import {QueryKey} from 'react-query';
+import { QueryKey } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   getPilotesValues,
   getReferentsValues,
@@ -50,14 +50,16 @@ const ModalFiltresToutesLesFichesAction = ({
             <Field title="Personne pilote">
               <PersonnesDropdown
                 values={pilotes}
-                onChange={({personnes}) => {
-                  const {personnePiloteIds, utilisateurPiloteIds, ...rest} =
+                onChange={({ personnes }) => {
+                  const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
                     filtreState;
-                  const {personnePiloteIds: pIds, utilisateurPiloteIds: uIds} =
-                    splitPilotePersonnesAndUsers(personnes);
+                  const {
+                    personnePiloteIds: pIds,
+                    utilisateurPiloteIds: uIds,
+                  } = splitPilotePersonnesAndUsers(personnes);
                   setFiltreState({
                     ...rest,
-                    ...(pIds.length > 0 ? {personnePiloteIds: pIds} : {}),
+                    ...(pIds.length > 0 ? { personnePiloteIds: pIds } : {}),
                     ...(uIds.length > 0
                       ? {
                           utilisateurPiloteIds: uIds,
@@ -70,11 +72,11 @@ const ModalFiltresToutesLesFichesAction = ({
             <Field title="Direction ou service pilote">
               <ServicesPilotesDropdown
                 values={filtreState.servicePiloteIds}
-                onChange={({services}) => {
-                  const {servicePiloteIds, ...rest} = filtreState;
+                onChange={({ services }) => {
+                  const { servicePiloteIds, ...rest } = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(services ? {servicePiloteIds: services} : {}),
+                    ...(services ? { servicePiloteIds: services } : {}),
                   });
                 }}
               />
@@ -83,7 +85,7 @@ const ModalFiltresToutesLesFichesAction = ({
             <Field title="Élu·e référent·e">
               <PersonnesDropdown
                 values={referents}
-                onChange={({personnes}) => {
+                onChange={({ personnes }) => {
                   const {
                     personneReferenteIds,
                     utilisateurReferentIds,
@@ -95,7 +97,7 @@ const ModalFiltresToutesLesFichesAction = ({
                   } = splitReferentPersonnesAndUsers(personnes);
                   setFiltreState({
                     ...rest,
-                    ...(pIds.length > 0 ? {personneReferenteIds: pIds} : {}),
+                    ...(pIds.length > 0 ? { personneReferenteIds: pIds } : {}),
                     ...(uIds.length > 0
                       ? {
                           utilisateurReferentIds: uIds,
@@ -110,11 +112,11 @@ const ModalFiltresToutesLesFichesAction = ({
               <Field title="Statut de l'action">
                 <StatutsFilterDropdown
                   values={filtreState.statuts}
-                  onChange={({statuts}) => {
-                    const {statuts: st, ...rest} = filtreState;
+                  onChange={({ statuts }) => {
+                    const { statuts: st, ...rest } = filtreState;
                     setFiltreState({
                       ...rest,
-                      ...(statuts ? {statuts} : {}),
+                      ...(statuts ? { statuts } : {}),
                     });
                   }}
                 />
@@ -122,11 +124,11 @@ const ModalFiltresToutesLesFichesAction = ({
               <Field title="Niveau de priorité">
                 <PrioritesFilterDropdown
                   values={filtreState.priorites}
-                  onChange={({priorites}) => {
-                    const {priorites: st, ...rest} = filtreState;
+                  onChange={({ priorites }) => {
+                    const { priorites: st, ...rest } = filtreState;
                     setFiltreState({
                       ...rest,
-                      ...(priorites ? {priorites} : {}),
+                      ...(priorites ? { priorites } : {}),
                     });
                   }}
                 />
@@ -135,12 +137,12 @@ const ModalFiltresToutesLesFichesAction = ({
             <Field title="Thématique">
               <ThematiquesDropdown
                 values={filtreState.thematiqueIds}
-                onChange={({thematiques}) => {
-                  const {thematiqueIds, ...rest} = filtreState;
+                onChange={({ thematiques }) => {
+                  const { thematiqueIds, ...rest } = filtreState;
                   setFiltreState({
                     ...rest,
                     ...(thematiques.length > 0
-                      ? {thematiqueIds: thematiques.map(t => t.id)}
+                      ? { thematiqueIds: thematiques.map((t) => t.id) }
                       : {}),
                   });
                 }}
@@ -149,11 +151,11 @@ const ModalFiltresToutesLesFichesAction = ({
             <Field title="Financeur">
               <FinanceursDropdown
                 values={filtreState.financeurIds}
-                onChange={({financeurs}) => {
-                  const {financeurIds, ...rest} = filtreState;
+                onChange={({ financeurs }) => {
+                  const { financeurIds, ...rest } = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(financeurs ? {financeurIds: financeurs} : {}),
+                    ...(financeurs ? { financeurIds: financeurs } : {}),
                   });
                 }}
               />
@@ -164,10 +166,10 @@ const ModalFiltresToutesLesFichesAction = ({
             label="Budget prévisionnel total renseigné"
             checked={filtreState.budgetPrevisionnel}
             onChange={() => {
-              const {budgetPrevisionnel, ...rest} = filtreState;
+              const { budgetPrevisionnel, ...rest } = filtreState;
               setFiltreState({
                 ...rest,
-                ...(!budgetPrevisionnel ? {budgetPrevisionnel: true} : {}),
+                ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
               });
             }}
           />
@@ -175,10 +177,10 @@ const ModalFiltresToutesLesFichesAction = ({
             label="Fiche action en mode privé"
             checked={filtreState.restreint}
             onChange={() => {
-              const {restreint, ...rest} = filtreState;
+              const { restreint, ...rest } = filtreState;
               setFiltreState({
                 ...rest,
-                ...(!restreint ? {restreint: true} : {}),
+                ...(!restreint ? { restreint: true } : {}),
               });
             }}
           />
@@ -186,16 +188,16 @@ const ModalFiltresToutesLesFichesAction = ({
             label="Indicateur(s) lié(s)"
             checked={filtreState.hasIndicateurLies}
             onChange={() => {
-              const {hasIndicateurLies, ...rest} = filtreState;
+              const { hasIndicateurLies, ...rest } = filtreState;
               setFiltreState({
                 ...rest,
-                ...(!hasIndicateurLies ? {hasIndicateurLies: true} : {}),
+                ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
               });
             }}
           />
         </>
       )}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => close(),

@@ -1,11 +1,11 @@
-import {MutableRefObject} from 'react';
+import { Button, ButtonProps } from '@tet/ui';
 import html2canvas from 'html2canvas';
-import {Button, ButtonProps} from '@tet/ui';
+import { MouseEvent, RefObject } from 'react';
 
-import {downloadFromCanvas} from '../../utils/downloadFromCanvas';
+import { downloadFromCanvas } from '../../utils/downloadFromCanvas';
 
 type DownloadCanvasButtonProps = {
-  containerRef: MutableRefObject<HTMLDivElement | null>;
+  containerRef: RefObject<HTMLElement>;
   fileName: string;
   fileType: 'png' | 'jpg' | 'jpeg';
 } & ButtonProps;
@@ -21,12 +21,15 @@ const DownloadCanvasButton = ({
   children,
   ...props
 }: DownloadCanvasButtonProps): JSX.Element => {
-  const handleDownload = () => {
+  const handleDownload = (
+    event: MouseEvent<HTMLAnchorElement> & MouseEvent<HTMLButtonElement>
+  ) => {
     if (containerRef && containerRef.current) {
-      html2canvas(containerRef.current, {scale: 2}).then(canvas => {
+      html2canvas(containerRef.current, { scale: 2 }).then((canvas) => {
         downloadFromCanvas(canvas, fileName, fileType);
       });
-      if (props.onClick) props.onClick();
+
+      if (props.onClick) props.onClick(event);
     }
   };
 

@@ -1,20 +1,20 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {Button, Input, ModalOpenState, Pagination, Select} from '@tet/ui';
+import { Button, Input, ModalOpenState, Pagination, Select } from '@tet/ui';
 import {
   FetchOptions,
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
-} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+} from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 
-import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -73,7 +73,7 @@ const FichesActionListe = ({
 
   /** Tri sélectionné */
   const [sort, setSort] = useState(
-    sortByOptions.find(o => o.field === sortSettings.defaultSort)!
+    sortByOptions.find((o) => o.field === sortSettings.defaultSort)!
   );
 
   /** Récupère les différentes options de tri à partir des paramètres ou par défault */
@@ -82,10 +82,10 @@ const FichesActionListe = ({
 
     if (optionsDisplayed) {
       return sortByOptions
-        .filter(o => optionsDisplayed.includes(o.field))
-        .map(o => ({label: o.label, value: o.field}));
+        .filter((o) => optionsDisplayed.includes(o.field))
+        .map((o) => ({ label: o.label, value: o.field }));
     } else {
-      return sortByOptions.map(o => ({label: o.label, value: o.field}));
+      return sortByOptions.map((o) => ({ label: o.label, value: o.field }));
     }
   };
 
@@ -117,7 +117,7 @@ const FichesActionListe = ({
     ],
   };
 
-  const {data, isLoading} = useFicheResumesFetch({
+  const { data, isLoading } = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
 
@@ -130,11 +130,11 @@ const FichesActionListe = ({
         <div className="w-64">
           <Select
             options={sortOptions}
-            onChange={value =>
-              value && setSort(sortByOptions.find(o => o.field === value)!)
+            onChange={(value) =>
+              value && setSort(sortByOptions.find((o) => o.field === value)!)
             }
             values={sort.field}
-            customItem={v => <span className="text-grey-8">{v.label}</span>}
+            customItem={(v) => <span className="text-grey-8">{v.label}</span>}
             disabled={sortOptions.length === 1}
             small
           />
@@ -149,8 +149,8 @@ const FichesActionListe = ({
         {/** Champ de recherche */}
         <Input
           type="search"
-          onChange={e => setSearch(e.target.value)}
-          onSearch={v => setDebouncedSearch(v)}
+          onChange={(e) => setSearch(e.target.value)}
+          onSearch={(v) => setDebouncedSearch(v)}
           value={search}
           containerClassname="ml-auto w-full md:w-96"
           placeholder="Rechercher par nom ou description"
@@ -167,7 +167,10 @@ const FichesActionListe = ({
           }}
         />
         {isSettingsOpen &&
-          settingsModal({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
+          settingsModal({
+            isOpen: isSettingsOpen,
+            setIsOpen: setIsSettingsOpen,
+          })}
       </div>
       {/** Liste des filtres appliqués */}
       <ModuleFiltreBadges filtre={filtres} />
@@ -199,7 +202,7 @@ const FichesActionListe = ({
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
-            {data?.data?.map(fiche => (
+            {data?.data?.map((fiche) => (
               <FicheActionCard
                 key={fiche.id}
                 ficheAction={fiche}
@@ -232,7 +235,7 @@ const FichesActionListe = ({
               selectedPage={currentPage}
               nbOfElements={countTotal}
               maxElementsPerPage={maxNbOfCards}
-              onChange={page => setCurrentPage(page)}
+              onChange={(page) => setCurrentPage(page)}
             />
           </div>
         </div>

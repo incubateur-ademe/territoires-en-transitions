@@ -1,9 +1,9 @@
-import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import ModalFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ModalFiltresToutesLesFichesAction';
 import FichesActionListe from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
-import {makeCollectiviteToutesLesFichesUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useSearchParams} from 'core-logic/hooks/query';
+import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useSearchParams } from 'core-logic/hooks/query';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
 const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
@@ -32,7 +32,7 @@ const ToutesLesFichesAction = () => {
   const collectiviteId = useCollectiviteId();
 
   const [filters, setFilters] = useSearchParams<Filtre>(
-    makeCollectiviteToutesLesFichesUrl({collectiviteId: collectiviteId!}),
+    makeCollectiviteToutesLesFichesUrl({ collectiviteId: collectiviteId! }),
     {},
     nameToparams
   );
@@ -47,11 +47,11 @@ const ToutesLesFichesAction = () => {
         sortSettings={{
           defaultSort: 'titre',
         }}
-        settingsModal={openState => (
+        settingsModal={(openState) => (
           <ModalFiltresToutesLesFichesAction
             openState={openState}
             filters={filters}
-            setFilters={filters => setFilters(filters)}
+            setFilters={(filters) => setFilters(filters)}
           />
         )}
       />

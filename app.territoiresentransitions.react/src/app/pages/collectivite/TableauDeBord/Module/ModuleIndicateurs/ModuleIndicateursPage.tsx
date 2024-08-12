@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
 import {
   Button,
@@ -13,19 +13,19 @@ import {
 import {
   ModuleIndicateursSelect,
   Slug,
-} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Indicateurs} from '@tet/api';
+} from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Indicateurs } from '@tet/api';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
   useModuleFetch,
 } from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
-import {TDBViewParam, makeCollectiviteIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { TDBViewParam, makeCollectiviteIndicateursUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModulePage from '../ModulePage';
@@ -54,10 +54,10 @@ type Props = {
   slug: Slug;
 };
 
-const ModuleIndicateursPage = ({view, slug}: Props) => {
+const ModuleIndicateursPage = ({ view, slug }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
+  const { data: module, isLoading: isModuleLoading } = useModuleFetch(slug);
 
   const [order, setOrder] = useState(orderByOptions[0]);
 
@@ -68,7 +68,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   const filtre = module && Indicateurs.moduleOptionsToFilters(module.options);
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(
+  const { data, isLoading } = useFilteredIndicateurDefinitions(
     null,
     {
       ...filtre,
@@ -115,7 +115,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
         pageName={`app/tdb/personnel/${slug}`}
-        properties={{collectivite_id: collectiviteId!}}
+        properties={{ collectivite_id: collectiviteId! }}
       />
       {/** Paramètres de la liste */}
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
@@ -123,11 +123,11 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         <div className="w-56">
           <Select
             options={orderByOptions}
-            onChange={value =>
-              value && setOrder(orderByOptions.find(o => o.value === value)!)
+            onChange={(value) =>
+              value && setOrder(orderByOptions.find((o) => o.value === value)!)
             }
             values={order.value}
-            customItem={v => <span className="text-grey-8">{v.label}</span>}
+            customItem={(v) => <span className="text-grey-8">{v.label}</span>}
             small
           />
         </div>
@@ -150,8 +150,8 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         {/** Champ de recherche */}
         <Input
           type="search"
-          onChange={e => setSearch(e.target.value)}
-          onSearch={v => setDebouncedSearch(v)}
+          onChange={(e) => setSearch(e.target.value)}
+          onSearch={(v) => setDebouncedSearch(v)}
           value={search}
           containerClassname="ml-auto w-full md:w-96"
           placeholder="Rechercher par nom ou description"
@@ -171,7 +171,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         />
         {isSettingsOpen && (
           <ModalIndicateursSuiviPlan
-            openState={{isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen}}
+            openState={{ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen }}
             module={module as ModuleIndicateursSelect}
             keysToInvalidate={[getQueryKey(slug)]}
           />
@@ -197,7 +197,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
         /** Liste d'indicateurs */
         <>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
-            {currentDefs?.map(definition => (
+            {currentDefs?.map((definition) => (
               <IndicateurCard
                 key={definition.id}
                 definition={definition}
@@ -208,7 +208,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
                   identifiantReferentiel: definition.identifiant,
                 })}
                 className="hover:!bg-white"
-                card={{external: true}}
+                card={{ external: true }}
                 hideChart={!displayGraphs}
                 autoRefresh
               />
@@ -219,7 +219,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
               selectedPage={currentPage}
               nbOfElements={total ?? 0}
               maxElementsPerPage={perPage}
-              onChange={page => setCurrentPage(page)}
+              onChange={(page) => setCurrentPage(page)}
             />
           </div>
         </>

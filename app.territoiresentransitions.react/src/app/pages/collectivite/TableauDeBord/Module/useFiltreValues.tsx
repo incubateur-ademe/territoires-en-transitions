@@ -1,16 +1,16 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {filtreValuesFetch} from '@tet/api/dist/src/collectivites/shared/actions/filtre_values.fetch';
-import {FiltreRessourceLiees} from '@tet/api/dist/src/collectivites/shared/domain/filtre_ressource_liees.schema';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { filtreValuesFetch } from '@tet/api/collectivites/shared/actions/filtre_values.fetch';
+import { FiltreRessourceLiees } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 
 type Args = {
   filtre: FiltreRessourceLiees;
 };
 
 /** Charge les valeurs des filtres sélectionnés */
-export const useFiltreValues = ({filtre}: Args) => {
+export const useFiltreValues = ({ filtre }: Args) => {
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
@@ -20,7 +20,7 @@ export const useFiltreValues = ({filtre}: Args) => {
         throw new Error('Aucune collectivité associée');
       }
 
-      const {data} = await filtreValuesFetch({
+      const { data } = await filtreValuesFetch({
         dbClient: supabaseClient,
         collectiviteId,
         filtre,

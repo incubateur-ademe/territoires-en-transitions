@@ -1,7 +1,7 @@
-import {FiltreValues} from '@tet/api/dist/src/collectivites/shared/domain/filtre_ressource_liees.schema';
-import {Indicateurs} from '@tet/api';
-import {FiltreSpecifique as FiltreSpecifiqueFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
+import { Indicateurs } from '@tet/api';
+import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 
 type FiltreKeys = FiltreValues &
   Indicateurs.domain.FiltreSpecifique &
@@ -17,34 +17,34 @@ export const filtersToBadges = (data: FiltreKeys) => {
   const pilotes: string[] = [];
   const referents: string[] = [];
 
-  dataKeys.forEach(key => {
+  dataKeys.forEach((key) => {
     if (key === 'utilisateurPilotes') {
-      const users = data[key]?.map(user => `${user.prenom} ${user.nom}`);
+      const users = data[key]?.map((user) => `${user.prenom} ${user.nom}`);
       users && pilotes.push(...users);
     }
     if (key === 'personnePilotes') {
-      const personnes = data[key]?.map(tag => tag.nom);
+      const personnes = data[key]?.map((tag) => tag.nom);
       personnes && pilotes.push(...personnes);
     }
     if (key === 'utilisateurReferents') {
-      const users = data[key]?.map(user => `${user.prenom} ${user.nom}`);
+      const users = data[key]?.map((user) => `${user.prenom} ${user.nom}`);
       users && referents.push(...users);
     }
     if (key === 'personneReferentes') {
-      const personnes = data[key]?.map(tag => tag.nom);
+      const personnes = data[key]?.map((tag) => tag.nom);
       personnes && referents.push(...personnes);
     }
     if (key === 'thematiques') {
       badgeValues.push(
         `Thématique : ${data[key]
-          ?.map(thematique => thematique.nom)
+          ?.map((thematique) => thematique.nom)
           .join(', ')}`
       );
     }
     if (key === 'planActions') {
       badgeValues.push(
         `Plan d'action : ${data[key]
-          ?.map(plan => generateTitle(plan.nom))
+          ?.map((plan) => generateTitle(plan.nom))
           .join(', ')}`
       );
     }
@@ -69,12 +69,14 @@ export const filtersToBadges = (data: FiltreKeys) => {
     if (key === 'servicePilotes') {
       badgeValues.push(
         `Direction ou service pilote : ${data[key]
-          ?.map(service => service.nom)
+          ?.map((service) => service.nom)
           .join(', ')}`
       );
     }
     if (key === 'financeurs') {
-      badgeValues.push(`Financeur : ${data[key]?.map(i => i.nom).join(', ')}`);
+      badgeValues.push(
+        `Financeur : ${data[key]?.map((i) => i.nom).join(', ')}`
+      );
     }
     if (key === 'modifiedSince') {
       badgeValues.push(
