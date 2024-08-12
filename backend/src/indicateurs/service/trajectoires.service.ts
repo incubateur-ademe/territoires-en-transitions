@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DateTime } from 'luxon';
+import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
@@ -100,36 +101,8 @@ export default class TrajectoiresService {
     );
 
     // Récupère les valeurs des indicateurs pour l'année 2015
-    const indicateurValeurs =
-      await this.indicateursService.getReferentielIndicateursValeurs(
-        request.collectivite_id,
-        this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
-        this.SNBC_DATE_REFERENCE,
-        this.SNBC_DATE_REFERENCE,
-      );
-
-    // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
-    const valeursARemplir: number[] = [];
-    const identifiantsReferentielManquants: string[] = [];
-    this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL.forEach((identifiant) => {
-      const indicateurValeur = indicateurValeurs.find(
-        (indicateurValeur) =>
-          indicateurValeur.indicateur_definition?.identifiant_referentiel ===
-          identifiant,
-      );
-      if (
-        indicateurValeur &&
-        indicateurValeur.indicateur_valeur.resultat !== null &&
-        indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
-      ) {
-        valeursARemplir.push(
-          indicateurValeur.indicateur_valeur.resultat / 1000,
-        );
-      } else {
-        identifiantsReferentielManquants.push(identifiant);
-        valeursARemplir.push(0);
-      }
-    });
+    const { identifiantsReferentielManquants, valeursARemplir } =
+      await this.getValeursPourSNBC(request.collectivite_id);
 
     if (identifiantsReferentielManquants.length > 0) {
       throw new UnprocessableEntityException(
@@ -201,5 +174,81 @@ export default class TrajectoiresService {
     });
 
     return indicateurValeursResultat;
+  }
+
+  /**
+   * Récupère les valeurs nécessaires pour calculer la trajectoire SNBC
+   * @param collectiviteId Identifiant de la collectivité
+   * @return
+   * - identifiantReferentielManquant - Identifiants référentiels des indicateurs dont la valeur est manquante
+   * - valeursARemplir - TODO ?
+   */
+  async getValeursPourSNBC(collectiviteId: number) {
+    // Récupère les valeurs des indicateurs pour l'année 2015
+    const indicateurValeurs =
+      await this.indicateursService.getReferentielIndicateursValeurs(
+        collectiviteId,
+        this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+        this.SNBC_DATE_REFERENCE,
+        this.SNBC_DATE_REFERENCE,
+      );
+
+    // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    const valeursARemplir: number[] = [];
+    const identifiantsReferentielManquants: string[] = [];
+    this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL.forEach((identifiant) => {
+      const indicateurValeur = indicateurValeurs.find(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_definition?.identifiant_referentiel ===
+          identifiant,
+      );
+      if (
+        indicateurValeur &&
+        indicateurValeur.indicateur_valeur.resultat !== null &&
+        indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
+      ) {
+        valeursARemplir.push(
+          indicateurValeur.indicateur_valeur.resultat / 1000,
+        );
+      } else {
+        identifiantsReferentielManquants.push(identifiant);
+        valeursARemplir.push(0);
+      }
+    });
+    return { valeursARemplir, identifiantsReferentielManquants };
+  }
+
+  /**
+   * Vérifie si la collectivité concernée est une epci et à déjà fait les calculs,
+   * ou a les données nécessaires pour lancer le calcul de trajectoire SNBC
+   * @param request
+   * @return le statut pour déterminer la page à afficher TODO format statut
+   */
+  async checkDataSnbc(request: CollectiviteRequest) {
+    // Vérifie si la collectivité est une commune :
+    try {
+      await this.collectivitesService.getEpciByCollectiviteId(
+        request.collectivite_id,
+      );
+    } catch (error) {
+      // si oui, retourne 'commune'
+      return 'commune';
+    }
+    // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
+    // TODO
+    if (1 == 1) {
+      // si oui, retourne 'déjà calculé'
+      return 'déjà calculé';
+    }
+    // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
+    const { identifiantsReferentielManquants } = await this.getValeursPourSNBC(
+      request.collectivite_id,
+    );
+    // si oui, retourne 'à calculer'
+    if (identifiantsReferentielManquants.length == 0) {
+      return 'à calculer';
+    }
+    // sinon, retourne 'à compléter'
+    return ' à compléter';
   }
 }
