@@ -2,6 +2,7 @@ import {
   makeCollectiviteAccueilUrl,
   makeCollectiviteActionUrl,
   makeCollectiviteBibliothequeUrl,
+  makeCollectiviteTrajectoirelUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationRootUrl,
   makeCollectiviteLabellisationUrl,
@@ -199,6 +200,10 @@ const makeNavItemsBase = (
           to: makeCollectiviteIndicateursCollectiviteUrl({
             collectiviteId,
           }),
+        },
+        {
+          label: 'Trajectoire SNBC territorialisée',
+          to: makeCollectiviteTrajectoirelUrl({collectiviteId}),
         },
       ],
     },

@@ -15,6 +15,7 @@ import {
   collectivitePersoRefThematiquePath,
   collectivitePlansActionsBasePath,
   collectiviteReferentielPath,
+  collectiviteTrajectoirePath,
   collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
 } from 'app/paths';
@@ -27,6 +28,7 @@ import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
 import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import {PlansActionsPage} from './PlansActions/PlansActionsPage';
 import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
+import {TrajectoirePage} from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -48,6 +50,9 @@ export const CollectiviteRoutes = () => {
 
       <RouteEnAccesRestreint path={collectiviteIndicateursBasePath}>
         <IndicateursPage />
+      </RouteEnAccesRestreint>
+      <RouteEnAccesRestreint path={[collectiviteTrajectoirePath]}>
+        <TrajectoirePage />
       </RouteEnAccesRestreint>
 
       <RouteEnAccesRestreint path={collectivitePlansActionsBasePath}>
