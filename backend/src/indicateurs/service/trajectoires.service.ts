@@ -4,16 +4,38 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
 import IndicateursService from './indicateurs.service';
+import IndicateurSourcesService, {
+  CreateIndicateurSourceMetadonneeType,
+  CreateIndicateurSourceType,
+} from './indicateurSources.service';
 
 @Injectable()
 export default class TrajectoiresService {
   private readonly logger = new Logger(TrajectoiresService.name);
 
-  private readonly SNBC_DATE_REFENCE = '2015-01-01';
+  private readonly SNBC_SOURCE: CreateIndicateurSourceType = {
+    id: 'snbc',
+    libelle: 'SNBC',
+  };
+  private readonly SNBC_SOURCE_METADONNEES: CreateIndicateurSourceMetadonneeType =
+    {
+      source_id: this.SNBC_SOURCE.id,
+      date_version: DateTime.fromISO('2024-07-11T00:00:00', {
+        zone: 'utc',
+      }).toJSDate(),
+      // nom_donnees: 'SNBC',
+      // TODO diffuseur: 'ADEME',
+      // TODO producteur: 'ADEME',
+      // methodologie: '',
+      // limites: '',
+    };
+
+  private readonly SNBC_DATE_REFERENCE = '2015-01-01';
   private readonly SNBC_SIREN_CELLULE = 'Caract_territoire!F6';
   private readonly SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL = [
     'cae_1.c', // B6
@@ -28,7 +50,7 @@ export default class TrajectoiresService {
   private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!B6:B13';
   private readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
     'TOUS SECTEURS!G253:AP262';
-  private readonly SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANRS_REFERENTIEL = [
+  private readonly SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL = [
     'cae_1.c', // 253
     'cae_1.d', // 254
     'cae_1.i', // 255
@@ -43,6 +65,7 @@ export default class TrajectoiresService {
 
   constructor(
     private readonly collectivitesService: CollectivitesService,
+    private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly indicateursService: IndicateursService,
     private readonly sheetService: SheetService,
   ) {}
@@ -53,13 +76,36 @@ export default class TrajectoiresService {
       request.collectivite_id,
     );
 
+    // Création de la source métadonnée SNBC si elle n'existe pas
+    let indicateurSourceMetadonnee =
+      await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
+        this.SNBC_SOURCE.id,
+        this.SNBC_SOURCE_METADONNEES.date_version,
+      );
+    if (!indicateurSourceMetadonnee) {
+      this.logger.log(
+        `Création de la metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()}`,
+      );
+      await this.indicateurSourcesService.upsertIndicateurSource(
+        this.SNBC_SOURCE,
+      );
+
+      indicateurSourceMetadonnee =
+        await this.indicateurSourcesService.createIndicateurSourceMetadonnee(
+          this.SNBC_SOURCE_METADONNEES,
+        );
+    }
+    this.logger.log(
+      `La metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()} existe avec l'identifiant ${indicateurSourceMetadonnee.id}`,
+    );
+
     // Récupère les valeurs des indicateurs pour l'année 2015
     const indicateurValeurs =
       await this.indicateursService.getReferentielIndicateursValeurs(
         request.collectivite_id,
         this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
-        this.SNBC_DATE_REFENCE,
-        this.SNBC_DATE_REFENCE,
+        this.SNBC_DATE_REFERENCE,
+        this.SNBC_DATE_REFERENCE,
       );
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -142,7 +188,7 @@ export default class TrajectoiresService {
     const indicateurValeursResultat: any[] = [];
     trajectoireCalculResultat.data?.forEach((ligne, index) => {
       const identifiantReferentiel =
-        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANRS_REFERENTIEL[index];
+        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL[index];
       if (identifiantReferentiel) {
         ligne.forEach((valeur, index) => {
           indicateurValeursResultat.push({
