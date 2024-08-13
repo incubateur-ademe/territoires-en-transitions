@@ -58,7 +58,10 @@ const ActionsLieesTab = ({
 
           {/* Liste des actions des référentiels liées */}
           {actions && actions.length > 0 && (
-            <ActionsLieesListe actionsIds={actions?.map(action => action.id)} />
+            <ActionsLieesListe
+              actionsIds={actions?.map(action => action.id)}
+              isFicheTab
+            />
           )}
         </div>
       )}

@@ -1,6 +1,6 @@
 import {TIndicateurDefinition} from '../types';
 import {Spacer} from 'ui/dividers/Spacer';
-import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
+import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
@@ -59,7 +59,7 @@ export const IndicateurEnfantContent = ({
                   : 'Action référentiel liée'
               }
             >
-              <ActionsLieesCards actions={actionsLiees} />
+              <ActionsLieesListe actionsIds={actionsLiees} />
             </Field>
           ) : (
             <Spacer size={3} />

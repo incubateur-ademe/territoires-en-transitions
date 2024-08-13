@@ -1,6 +1,6 @@
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {referentielToName} from 'app/labels';
-import {ActionsLieesCards} from '../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
+import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {TIndicateurDefinition} from '../types';
 import {FichesActionLiees} from '../FichesActionLiees';
@@ -60,7 +60,7 @@ export const IndicateurDetail = ({
           /** actions liées */
           actions?.length ? (
             <Field title={actions.length > 1 ? 'Actions liées' : 'Action liée'}>
-              <ActionsLieesCards actions={actions?.map(a => a.id)} />
+              <ActionsLieesListe actionsIds={(actions ?? []).map(a => a.id)} />
             </Field>
           ) : null
         }

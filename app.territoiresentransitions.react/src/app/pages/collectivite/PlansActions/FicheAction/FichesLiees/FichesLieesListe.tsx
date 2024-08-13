@@ -5,18 +5,29 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import FicheActionCard from '../Carte/FicheActionCard';
+import classNames from 'classnames';
 
 type FichesLieesListeProps = {
   fiches: FicheResume[];
+  isFicheTab?: boolean;
 };
 
-const FichesLieesListe = ({fiches}: FichesLieesListeProps) => {
+const FichesLieesListe = ({
+  fiches,
+  isFicheTab = false,
+}: FichesLieesListeProps) => {
   const collectiviteId = useCollectiviteId()!;
+
+  if (fiches.length === 0) return null;
 
   return (
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
     <div>
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+      <div
+        className={classNames('grid lg:grid-cols-2 xl:grid-cols-3 gap-3', {
+          'sm:grid-cols-2 md:grid-cols-3': isFicheTab,
+        })}
+      >
         {fiches.map(fiche => (
           <FicheActionCard
             key={fiche.id}
