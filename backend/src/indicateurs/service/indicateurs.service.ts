@@ -27,6 +27,7 @@ import CollectivitesService, {
   collectiviteTable,
 } from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
+import { GetIndicateursValeursOptions } from '../models/getIndicateursValeursOptions.models';
 import IndicateurSourcesService, {
   indicateurSourceMetadonneeTable,
 } from './indicateurSources.service';
@@ -118,31 +119,49 @@ export default class IndicateursService {
     private readonly collectivitesService: CollectivitesService,
   ) {}
 
-  async getReferentielIndicateursValeurs(
-    collectiviteId: number,
-    identifiantsReferentiel: string[],
-    dateDebut?: string,
-    dateFin?: string,
-  ) {
+  /**
+   * Récupère les valeurs d'indicateurs selon les options données
+   * @param options
+   */
+  async getIndicateursValeurs(options: GetIndicateursValeursOptions) {
     this.logger.log(
-      `Récupération des valeurs des indicateurs ${identifiantsReferentiel.join(',')} pour la collectivite ${collectiviteId} et la plage de date ${dateDebut} - ${dateFin}`,
+      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
     );
+
     const conditions: SQLWrapper[] = [
-      eq(indicateurValeurTable.collectivite_id, collectiviteId),
-      inArray(
-        indicateurDefinitionTable.identifiant_referentiel,
-        identifiantsReferentiel,
-      ),
+      eq(indicateurValeurTable.collectivite_id, options.collectiviteId),
     ];
-
-    if (dateDebut) {
-      conditions.push(gte(indicateurValeurTable.date_valeur, dateDebut));
+    if (
+      options.identifiantsReferentiel &&
+      options.identifiantsReferentiel.length > 0
+    ) {
+      conditions.push(
+        inArray(
+          indicateurDefinitionTable.identifiant_referentiel,
+          options.identifiantsReferentiel,
+        ),
+      );
     }
-    if (dateFin) {
-      conditions.push(lte(indicateurValeurTable.date_valeur, dateFin));
+    if (options.dateDebut) {
+      conditions.push(
+        gte(indicateurValeurTable.date_valeur, options.dateDebut),
+      );
+    }
+    if (options.dateFin) {
+      conditions.push(lte(indicateurValeurTable.date_valeur, options.dateFin));
+    }
+    if (options.indicateurId) {
+      conditions.push(eq(indicateurValeurTable.id, options.indicateurId));
+    }
+    if (options.sourceId) {
+      conditions.push(
+        eq(indicateurSourceMetadonneeTable.source_id, options.sourceId),
+      );
+    } else if (options.sourceId === null) {
+      conditions.push(isNull(indicateurValeurTable.metadonnee_id));
     }
 
-    return this.databaseService.db
+    const result = this.databaseService.db
       .select()
       .from(indicateurValeurTable)
       .leftJoin(
@@ -157,6 +176,13 @@ export default class IndicateursService {
         ),
       )
       .where(and(...conditions));
+
+    // Enlève les doublons quand il y a plusieurs valeurs pour un même indicateur, collectivité, année
+    // Garde en priorité la valeur utilisateur, puis celle avec la version la plus récente
+    if (options.sourceId !== null && options.cleanDoublon === true) {
+      // TODO adapter le code de packages/api/indicateur/indicateur.fetch.ts/selectIndicateursValeurs()
+    }
+    return result;
   }
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
