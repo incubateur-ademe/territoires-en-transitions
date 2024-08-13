@@ -12,6 +12,7 @@
           "introspectComments": true,
           "dtoFileNameSuffix": [
             ".model.ts",
+            ".models.ts",
             ".entity.ts",
             ".request.ts"
           ]
