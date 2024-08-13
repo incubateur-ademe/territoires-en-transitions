@@ -36,8 +36,8 @@
 
       "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "@tet/auth/*": ["./packages/auth/*"],
-      "@tet/panier/*": ["./packages/panier/src/*"]
       "@tet/site/*": ["./packages/site/*"],
+      "@tet/panier/*": ["./packages/panier/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

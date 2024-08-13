@@ -1,7 +1,7 @@
 import './global.css';
-import Footer from '@components/Layout/Footer';
-import Header from '@components/Layout/Header';
-import {StoreProvider} from 'providers';
+import Footer from '@tet/panier/components/Layout/Footer';
+import Header from '@tet/panier/components/Layout/Header';
+import { StoreProvider } from '../providers';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -27,7 +27,11 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fr">
       <StoreProvider>

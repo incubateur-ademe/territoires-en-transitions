@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import type {ActionImpactDetails} from '@tet/api';
-import {actionImpactAPI} from 'src/clientAPI';
+import {actionImpactAPI} from '@tet/panier/src/clientAPI';
 
 
 export default function ActionImpactDetails({id}: { id: number }) {

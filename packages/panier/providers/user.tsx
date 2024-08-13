@@ -1,8 +1,8 @@
 'use client';
 
-import {User} from '@supabase/supabase-js';
-import {restoreSessionFromAuthTokens} from '@tet/api';
-import {supabase} from 'src/clientAPI';
+import { User } from '@supabase/supabase-js';
+import { restoreSessionFromAuthTokens } from '@tet/api';
+import { supabase } from '@tet/panier/src/clientAPI';
 import {
   Dispatch,
   SetStateAction,
@@ -19,7 +19,7 @@ type UserContextType = {
 
 const contextDefaultValue: UserContextType = {
   user: null,
-  setUser: (user: SetStateAction<User | null>) => {},
+  setUser: (user: SetStateAction<User | null>) => undefined,
 };
 
 /**
@@ -36,13 +36,13 @@ export const useUserContext = () => {
 /**
  * Provider pour le contexte du user
  */
-export const UserProvider = ({children}: {children: React.ReactNode}) => {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(contextDefaultValue.user);
 
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
-      data: {subscription},
+      data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, updatedSession) => {
       setUser(updatedSession?.user ?? null);
     });
@@ -55,7 +55,7 @@ export const UserProvider = ({children}: {children: React.ReactNode}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{user, setUser}}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

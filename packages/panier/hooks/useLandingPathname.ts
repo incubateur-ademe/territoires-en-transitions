@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {usePathname} from 'next/navigation';
-import {useCollectiviteContext, usePanierContext} from 'providers';
+import {useCollectiviteContext, usePanierContext} from '@tet/panier/providers';
 
 const useLandingPathname = () => {
   const [landingPathname, setLandingPathname] = useState('/landing');

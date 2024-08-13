@@ -11,7 +11,7 @@ import {
   ModalFooterSection,
 } from '@tet/ui';
 import LienExterneModale from './LienExterneModale';
-import Markdown from '@components/Markdown';
+import Markdown from '@tet/panier/components/Markdown';
 
 const URL_AIDES_TERRITOIRES = 'https://aides-territoires.beta.gouv.fr';
 

@@ -8,9 +8,8 @@ import {
   Select,
   useEventTracker,
 } from '@tet/ui';
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {panierAPI} from 'src/clientAPI';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import {
   MesCollectivite,
@@ -18,26 +17,27 @@ import {
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
 } from '@tet/api';
-import StepperValidation from '@components/Stepper/StepperValidation';
+import StepperValidation from '@tet/panier/components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,
   usePanierContext,
   useUserContext,
-} from 'providers';
+} from '@tet/panier/providers';
+import { panierAPI } from '@tet/panier/src/clientAPI';
 
 const ValiderPanierModale = () => {
-  const {panier} = usePanierContext();
-  const {user} = useUserContext();
+  const { panier } = usePanierContext();
+  const { user } = useUserContext();
   const contenu = panier?.contenu ?? [];
 
-  let steps = [
+  const steps = [
     "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
     'Je modifie les fiches à ma guise et invite mes collaborateurs à contribuer en ligne.',
   ];
 
   !user &&
     steps.unshift(
-      'Je créé mon compte en quelques clics et me rattache à ma collectivité',
+      'Je créé mon compte en quelques clics et me rattache à ma collectivité'
     );
 
   return (
@@ -47,7 +47,7 @@ const ValiderPanierModale = () => {
       </h3>
       <div className="w-full bg-primary-0 border border-primary-3 rounded-lg py-6 px-8 flex flex-col items-center relative">
         <Fireworks
-          autorun={{speed: 3, duration: 600}}
+          autorun={{ speed: 3, duration: 600 }}
           className="absolute top-0 left-0 w-full h-full"
         />
         <span className="text-7xl text-primary-7 font-extrabold mb-6">
@@ -85,7 +85,7 @@ const ModeDeconnecte = () => {
   // récupère les urls du module auth.
   const authPaths = getAuthPaths(
     document.location.hostname,
-    redirectTo.toString(),
+    redirectTo.toString()
   );
 
   return (
@@ -103,8 +103,8 @@ const ModeDeconnecte = () => {
  * selon s'il est possible de créer un plan d'action dans une collectivité.
  */
 const ModeConnecte = () => {
-  const {data} = useSWR<MesCollectivite>(['mesCollectivites'], () =>
-    panierAPI.mesCollectivites(),
+  const { data } = useSWR<MesCollectivite>(['mesCollectivites'], () =>
+    panierAPI.mesCollectivites()
   );
 
   // const data: MesCollectivite = [
@@ -143,7 +143,7 @@ const ModeConnectePasRattache = () => {
     <Button
       href={getRejoindreCollectivitePath(
         document.location.hostname,
-        redirectTo.toString(),
+        redirectTo.toString()
       )}
     >
       Rejoindre une collectivité
@@ -166,19 +166,17 @@ const ModeConnecteRattache = ({
   collectivites: MesCollectivite;
 }) => {
   const tracker = useEventTracker('panier/panier');
-  const {panier} = usePanierContext();
+  const { panier } = usePanierContext();
   const router = useRouter();
-  const {collectiviteId: savedCollectiviteId} = useCollectiviteContext();
+  const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
 
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    savedCollectiviteId
-      ? savedCollectiviteId
-      : collectivites[0].collectivite_id,
+    savedCollectiviteId ? savedCollectiviteId : collectivites[0].collectivite_id
   );
 
   const handleOnClick = async () => {
     const collectivite = collectivites.find(
-      c => c.collectivite_id === collectiviteId,
+      (c) => c.collectivite_id === collectiviteId
     )!;
     await tracker('cta_creer_le_plan_click', {
       collectivite_preset: collectivite.collectivite_id,
@@ -186,13 +184,13 @@ const ModeConnecteRattache = ({
     });
     const plan_id = await panierAPI.createPlanFromPanier(
       collectivite.collectivite_id,
-      panier?.id ?? '',
+      panier?.id ?? ''
     );
 
     const href = getCollectivitePlanPath(
       document.location.hostname,
       collectivite.collectivite_id,
-      plan_id,
+      plan_id
     );
     router.push(href);
   };
@@ -201,12 +199,12 @@ const ModeConnecteRattache = ({
     <>
       <Field title="Nom de la collectivité" className="w-full">
         <Select
-          options={collectivites.map(c => ({
+          options={collectivites.map((c) => ({
             value: c.collectivite_id,
             label: c.nom,
           }))}
           values={collectiviteId}
-          onChange={value => {
+          onChange={(value) => {
             setCollectiviteId(value);
           }}
         />

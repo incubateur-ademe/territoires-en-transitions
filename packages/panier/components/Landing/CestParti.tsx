@@ -1,8 +1,9 @@
 'use client';
 
-import {panierAPI} from 'src/clientAPI';
-import {useParams, usePathname, useRouter} from 'next/navigation';
-import {useEventTracker, Button} from '@tet/ui';
+
+import { panierAPI } from '@tet/panier/src/clientAPI';
+import { Button, useEventTracker } from '@tet/ui';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const CestParti = () => {
   const params = useParams();

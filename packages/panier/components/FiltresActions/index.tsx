@@ -1,14 +1,19 @@
 'use client';
 
-import {useEffect, useState} from 'react';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {BadgesFilters, OptionValue, useEventTracker} from '@tet/ui';
-import {usePanierContext} from 'providers';
+import {
+  BadgesFilters,
+  OptionValue,
+  SelectMultipleOnChangeArgs,
+  useEventTracker,
+} from '@tet/ui';
+import { usePanierContext } from '@tet/panier/providers';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
@@ -16,12 +21,16 @@ type FiltresActionsProps = {
   thematiques: ActionImpactThematique[];
 };
 
-const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
+const FiltresActions = ({
+  budgets,
+  temps,
+  thematiques,
+}: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const tracker = useEventTracker('panier/panier');
-  const {panier} = usePanierContext();
+  const { panier } = usePanierContext();
 
   const [thematiquesValues, setThematiquesValues] = useState<
     OptionValue[] | undefined
@@ -37,27 +46,27 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
     const thematiquesParams = searchParams
       .get('t')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     const budgetsParams = searchParams
       .get('b')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     const tempsParams = searchParams
       .get('m')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     // const competencesParams = searchParams.get('c');
 
-    if (!!thematiquesParams) setThematiquesValues(thematiquesParams);
-    if (!!budgetsParams) setBudgetsValues(budgetsParams);
-    if (!!tempsParams) setTempsValues(tempsParams);
+    if (thematiquesParams) setThematiquesValues(thematiquesParams);
+    if (budgetsParams) setBudgetsValues(budgetsParams);
+    if (tempsParams) setTempsValues(tempsParams);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     // Mise à jour de l'url (et du panier) lorsqu'un filtre est modifié
-    let paramsArray = [];
+    const paramsArray = [];
 
     if (!!thematiquesValues && thematiquesValues?.length > 0) {
       paramsArray.push(`t=${thematiquesValues.join(',')}`);
@@ -82,7 +91,7 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
         niveau_budget_ids: budgetsValues,
         niveau_temps_ids: tempsValues,
       });
-      router.push(href, {scroll: false});
+      router.push(href, { scroll: false });
     };
 
     trackThenNavigate();
@@ -94,25 +103,28 @@ const FiltresActions = ({budgets, temps, thematiques}: FiltresActionsProps) => {
       filters={[
         {
           title: 'Thématiques',
-          options: thematiques.map(t => ({value: t.id, label: t.nom})),
+          options: thematiques.map((t) => ({ value: t.id, label: t.nom })),
           values: thematiquesValues,
-          onChange: ({values}) => setThematiquesValues(values),
+          onChange: (args) =>
+            setThematiquesValues((args as SelectMultipleOnChangeArgs).values),
           multiple: true,
         },
         {
           title: 'Ordre de grandeur budgétaire',
           tag: 'Budget',
-          options: budgets.map(b => ({value: b.niveau, label: b.nom})),
+          options: budgets.map((b) => ({ value: b.niveau, label: b.nom })),
           values: budgetsValues,
-          onChange: ({values}) => setBudgetsValues(values),
+          onChange: (args) =>
+            setBudgetsValues((args as SelectMultipleOnChangeArgs).values),
           multiple: true,
         },
         {
           title: 'Temps de mise en oeuvre',
           tag: 'Durée',
-          options: temps.map(t => ({value: t.niveau, label: t.nom})),
+          options: temps.map((t) => ({ value: t.niveau, label: t.nom })),
           values: tempsValues,
-          onChange: ({values}) => setTempsValues(values),
+          onChange: (args) =>
+            setTempsValues((args as SelectMultipleOnChangeArgs).values),
           multiple: true,
         },
       ]}

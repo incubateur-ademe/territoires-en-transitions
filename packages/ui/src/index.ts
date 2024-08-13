@@ -1,5 +1,7 @@
+'use client';
+
 // exporte les presets tailwind
-export {preset} from './tailwind-preset';
+export { preset } from './tailwind-preset';
 
 /* composants exportés */
 

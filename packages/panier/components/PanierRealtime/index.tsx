@@ -1,23 +1,22 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
   Panier,
 } from '@tet/api';
-import {PanierOngletName, useEventTracker, useOngletTracker} from '@tet/ui';
-import {panierAPI, supabase} from 'src/clientAPI';
-import ListeActions from '@components/ListeActions';
-import PanierActions from '@components/PanierActions';
+import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
+import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
+import ListeActions from '@tet/panier/components/ListeActions';
+import PanierActions from '@tet/panier/components/PanierActions';
 import {
   useCollectiviteContext,
   usePanierContext,
   useUserContext,
-} from 'providers';
+} from '@tet/panier/providers';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -44,9 +43,9 @@ const PanierRealtime = ({
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
 
   const router = useRouter();
-  const {setCollectiviteId} = useCollectiviteContext();
-  const {setPanier} = usePanierContext();
-  const {setUser} = useUserContext();
+  const { setCollectiviteId } = useCollectiviteContext();
+  const { setPanier } = usePanierContext();
+  const { setUser } = useUserContext();
 
   const tracker = useEventTracker('panier/panier', currentTab);
   const ongletTracker = useOngletTracker('panier/panier');
@@ -63,7 +62,6 @@ const PanierRealtime = ({
   useEffect(() => {
     const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
     return () => {
-      // @ts-ignore
       supabase.removeChannel(channel);
     };
   }, [router, panier.id, setUser]);
@@ -90,7 +88,7 @@ const PanierRealtime = ({
 
   const handleUpdateStatus = async (
     actionId: number,
-    statusId: string | null,
+    statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
     await tracker('statut', {
@@ -118,15 +116,16 @@ const PanierRealtime = ({
           et valorisez le chemin déjà parcouru
         </h1>
         <p className="text-grey-9 text-lg font-medium mb-6">
-          Ajoutez les actions à votre panier. Vous pouvez aussi les classer en
-          fonction de leur état d'avancement.
+          {
+            "Ajoutez les actions à votre panier. Vous pouvez aussi les classer en fonction de leur état d'avancement."
+          }
         </p>
         <ListeActions
           actionsListe={panier.states}
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
-          {...{budgets, temps, thematiques}}
+          {...{ budgets, temps, thematiques }}
         />
       </div>
 

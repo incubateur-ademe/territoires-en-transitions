@@ -44,6 +44,7 @@
     "nodemailer": "^6.9.14",
     "posthog-js": "^1.131.3",
     "react": "18.3.1",
+    "react-canvas-confetti": "^2.0.7",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.51.1",
     "react-icons": "^5.0.1",
@@ -139,16 +140,15 @@
     "dev:app": "nx run-many -t dev -p @tet/app @tet/auth",
     "dev:site": "nx dev @tet/site",
     "dev:auth": "nx dev @tet/auth",
-    "// dev:panier": "concurrently --names \"api,ui,panier,auth\" -c \"bgMagenta.bold,bgBlue.bold,bgRed.bold,bgCyan.bold\" \"npm run dev -w @tet/api\" \"npm run dev -w @tet/ui\" \"npm run dev -w @tet/panier -- -p 3002\" \"npm run dev -w @tet/auth -- -p 3003\"",
+    "dev:panier": "nx run-many -t dev -p @tet/panier @tet/auth",
     "build:app": "nx build @tet/app",
     "build:auth": "nx build @tet/auth",
     "build:site": "nx build @tet/site",
-    "// build:panier": "npm run build -w @tet/api -w @tet/ui -w @tet/panier"
+    "build:panier": "nx build @tet/panier"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/incubateur-ademe/territoires-en-transitions.git"
   },
-  "keywords": [],
   "license": "ISC"
 }

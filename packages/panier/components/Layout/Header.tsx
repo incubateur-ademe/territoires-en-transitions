@@ -1,8 +1,7 @@
 'use client';
 
-import {Button, HeaderTeT} from '@tet/ui';
-import useLandingPathname from 'hooks/useLandingPathname';
-import {SITE_BASE_URL} from 'src/utils/constants';
+import useLandingPathname from '@tet/panier/hooks/useLandingPathname';
+import { Button, HeaderTeT, SITE_BASE_URL } from '@tet/ui';
 
 const Header = () => {
   const landingPathname = useLandingPathname();
@@ -10,7 +9,7 @@ const Header = () => {
   return (
     <HeaderTeT
       customRootUrl={landingPathname}
-      quickAccessButtons={props => [
+      quickAccessButtons={(props) => [
         <Button
           {...props}
           key="outil"

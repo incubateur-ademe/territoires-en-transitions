@@ -8,7 +8,7 @@ import {
 import {PanierOngletName, Tab, Tabs} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
-import FiltresActions from '@components/FiltresActions';
+import FiltresActions from '@tet/panier/components/FiltresActions';
 
 const getTabLabel = (
   tab: {label: string; status: string | null},
