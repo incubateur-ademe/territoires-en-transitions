@@ -1,6 +1,6 @@
 import {createClient} from '@supabase/supabase-js';
 import * as Sentry from '@sentry/react';
-import {ENV} from 'environmentVariables';
+import {ENV} from '@tet/app/environmentVariables';
 import {Database} from '@tet/api';
 
 /**

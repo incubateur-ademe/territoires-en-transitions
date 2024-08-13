@@ -4,7 +4,7 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-} from '@floating-ui/react';
+} from '@next/floating-ui/react';
 
 type TToastFloater = {
   open: boolean;

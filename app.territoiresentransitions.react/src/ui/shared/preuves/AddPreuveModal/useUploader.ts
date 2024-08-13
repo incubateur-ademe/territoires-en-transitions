@@ -1,4 +1,4 @@
-import {ENV} from 'environmentVariables';
+import {ENV} from '@tet/app/environmentVariables';
 import {useEffect, useState} from 'react';
 import {useDebouncedCallback} from 'use-debounce';
 import {

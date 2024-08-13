@@ -1,4 +1,3 @@
-import {Link} from 'react-router-dom';
 import {makeCollectiviteActionUrl} from 'app/paths';
 import {ActionReferentielDescription} from 'ui/referentiels/ActionReferentielDescription';
 import {ActionReferentielDisplayTitle} from 'ui/referentiels/ActionReferentielDisplayTitle';
@@ -6,6 +5,7 @@ import {referentielId} from 'utils/actions';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import Link from 'next/link';
 
 /**
  * Used on referentiels page, links to action page.
@@ -22,7 +22,7 @@ export const ActionReferentielLinkCard = ({
       <div className="pt-8 flex flex-row justify-between">
         <div className="flex flex-col w-4/5">
           <Link
-            to={makeCollectiviteActionUrl({
+            href={makeCollectiviteActionUrl({
               collectiviteId: collectiviteId!,
               referentielId: referentiel,
               actionId: action.id,

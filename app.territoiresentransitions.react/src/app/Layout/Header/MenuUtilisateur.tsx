@@ -1,12 +1,14 @@
-import {forwardRef, Ref} from 'react';
-import {Link, useHistory, useLocation} from 'react-router-dom';
-import {useQueryClient} from 'react-query';
-import classNames from 'classnames';
 import {monComptePath} from 'app/paths';
+import classNames from 'classnames';
 import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
+import {usePathname} from 'next/navigation';
+import {forwardRef, Ref} from 'react';
+import {useQueryClient} from 'react-query';
+import {useHistory} from 'react-router-dom';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
+import {HeaderPropsWithModalState} from './types';
+import Link from 'next/link';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
@@ -14,7 +16,7 @@ import './MenuUtilisateur.css';
 const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
   const {auth, setModalOpened} = props;
   const {user} = auth;
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   if (!user) {
     return null;
   }
@@ -34,7 +36,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           }}
         >
           <Link
-            to={monComptePath}
+            href={monComptePath}
             className="fr-nav__link"
             aria-current={isUserPath ? 'page' : undefined}
           >
@@ -97,7 +99,7 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
       className="fr-nav__link"
       style={{backgroundImage: 'none'}}
       data-test="logoutBtn"
-      to="/"
+      href="/"
       onClick={() => {
         auth.disconnect().then(() => {
           // Supprime le cache de la session

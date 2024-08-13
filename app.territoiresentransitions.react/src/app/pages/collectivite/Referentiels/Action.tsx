@@ -1,4 +1,4 @@
-import {Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {addTargetToContentAnchors} from 'utils/content';
 import {Tabs, Tab} from 'ui/shared/Tabs';
 import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
@@ -28,6 +28,7 @@ import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisat
 import {useFilteredIndicateurDefinitions} from '../Indicateurs/lists/useFilteredIndicateurDefinitions';
 import IndicateurChartsGrid from '../Indicateurs/lists/IndicateurChartsGrid';
 import {Alert} from '@tet/ui';
+import Link from 'next/link';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -58,7 +59,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const {status: auditStatus} = useCycleLabellisation(action.referentiel);
 
   if (!action || !collectivite) {
-    return <Link to="./referentiels" />;
+    return <Link href="./referentiels" />;
   }
 
   const activeTab = actionVue ? TABS_INDEX[actionVue] : TABS_INDEX['suivi'];
@@ -90,7 +91,7 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   };
 
   if (!action || !collectiviteId) {
-    return <Link to="./referentiels" />;
+    return <Link href="./referentiels" />;
   }
 
   return (

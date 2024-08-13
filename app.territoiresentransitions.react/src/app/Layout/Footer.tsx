@@ -1,3 +1,4 @@
+'use client';
 import {FooterTeT, SITE_BASE_URL} from '@tet/ui';
 
 const Footer = () => {

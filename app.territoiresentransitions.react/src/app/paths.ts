@@ -1,13 +1,8 @@
 import {Referentiel} from 'types/litterals';
-import {getAuthPaths} from '@tet/api';
 
-const authPaths = getAuthPaths(
-  document.location.hostname,
-  document.location.href
-);
-export const signInPath = authPaths.login;
-export const signUpPath = authPaths.signUp;
-export const resetPwdPath = authPaths.resetPwd;
+export const signInPath = '/login';
+export const signUpPath = '/signup';
+export const resetPwdPath = '/recover';
 
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';

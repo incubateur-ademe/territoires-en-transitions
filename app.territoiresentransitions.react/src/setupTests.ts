@@ -16,7 +16,7 @@ jest.mock('app/pages/collectivite/Historique/useHistoriqueUtilisateurListe.ts');
 // corrige une génération aléatoire d'ids
 // https://github.com/floating-ui/floating-ui/issues/2319
 jest.mock('@floating-ui/react', () => {
-  const originalModule = jest.requireActual('@floating-ui/react');
+  const originalModule = jest.requireActual('@next/floating-ui/react');
   return {
     __esModule: true,
     ...originalModule,

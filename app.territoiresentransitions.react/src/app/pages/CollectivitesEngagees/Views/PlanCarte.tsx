@@ -1,12 +1,12 @@
-import {Link} from 'react-router-dom';
 import classNames from 'classnames';
 
 import {Badge} from '@tet/ui';
 
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {makeCollectivitePlanActionUrl} from 'app/paths';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {CollectiviteEngagee} from '@tet/api';
+import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {makeCollectivitePlanActionUrl} from 'app/paths';
+import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import Link from 'next/link';
 
 type Props = {
   plan: CollectiviteEngagee.TPlanCarte;
@@ -26,7 +26,7 @@ export const PlanCarte = ({plan, canUserClickCard}: Props) => {
     <Link
       data-test="PlanCarte"
       onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
-      to={
+      href={
         canUserClickCard
           ? makeCollectivitePlanActionUrl({
               collectiviteId: plan.collectivite_id,

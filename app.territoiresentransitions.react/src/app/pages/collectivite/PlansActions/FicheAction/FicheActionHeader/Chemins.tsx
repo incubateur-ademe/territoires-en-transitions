@@ -1,5 +1,4 @@
-import {Link, useHistory, useParams} from 'react-router-dom';
-
+import {useHistory, useParams} from 'react-router-dom';
 import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
 import {FicheAction} from '../data/types';
 import {
@@ -11,6 +10,7 @@ import {useState} from 'react';
 import classNames from 'classnames';
 import {generateTitle} from '../data/utils';
 import {Breadcrumbs} from '@tet/ui';
+import Link from 'next/link';
 
 type Props = {
   fiche: FicheAction;
@@ -22,11 +22,9 @@ const Chemins = ({fiche}: Props) => {
       {!fiche.axes || fiche.axes.length === 0 ? (
         <Link
           className="p-1 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
-          to={() =>
-            makeCollectiviteFichesNonClasseesUrl({
-              collectiviteId: fiche.collectivite_id!,
-            })
-          }
+          href={makeCollectiviteFichesNonClasseesUrl({
+            collectiviteId: fiche.collectivite_id!,
+          })}
         >
           Fiches non classées
         </Link>

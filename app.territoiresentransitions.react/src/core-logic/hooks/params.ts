@@ -1,18 +1,20 @@
-import {useParams, useRouteMatch} from 'react-router-dom';
 import {
   ActionVueParamOption,
-  collectivitePath,
   LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
+import {useParams} from 'react-router-dom';
 
 export const useCollectiviteId = (): number | null => {
+  // TODO: maybe use a react context here
+
   // on utilise ici useRouteMatch au lieu de useParams car le header
   // n'est plus encapsulé dans la <Route> "/:collectiviteId/*"
   // ce qui fait que le paramètre est toujours vide avec useParams
-  const match = useRouteMatch<{collectiviteId: string}>(collectivitePath);
-  const collectiviteId = match?.params?.collectiviteId;
-  return collectiviteId ? parseInt(collectiviteId) : null;
+  // const match = useRouteMatch<{collectiviteId: string}>(collectivitePath);
+  // const collectiviteId = match?.params?.collectiviteId;
+  // return collectiviteId ? parseInt(collectiviteId) : null;
+  return 1;
 };
 
 export const useReferentielId = (): string | null => {

@@ -1,12 +1,13 @@
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
+
+import classNames from 'classnames';
 import {format} from 'date-fns';
 import {fr} from 'date-fns/locale';
-import classNames from 'classnames';
 
 import {referentielToName} from 'app/labels';
-import {HistoriqueType, THistoriqueItem} from './types';
+import Link from 'next/link';
 import {ReferentielOfIndicateur} from 'types/litterals';
+import {HistoriqueType, THistoriqueItem} from './types';
 
 export type HistoriqueDescription = {
   titre: string;
@@ -119,7 +120,7 @@ const Modification = ({
           )}
           {!!pageLink && (
             <Link
-              to={pageLink}
+              href={pageLink}
               className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
             >
               Voir la page{' '}

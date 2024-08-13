@@ -1,82 +1,61 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
-import {QueryClient, QueryClientProvider} from 'react-query';
-import {ReactQueryDevtools} from 'react-query/devtools';
-import {TrackingProvider, createTrackingClient} from '@tet/ui';
-import {ENV} from 'environmentVariables';
-import {E2E} from './E2E';
+'use client';
+
 import {CollectiviteRoutes} from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
 import {Redirector} from 'app/Redirector';
-import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {Toasters} from 'app/Toasters';
+import {
+  Redirect,
+  Route,
+  BrowserRouter as Router,
+  Switch,
+} from 'react-router-dom';
+import {E2E} from './E2E';
 
-import {ancienRecherchesPath, profilPath, recherchesCollectivitesUrl, recherchesLandingPath} from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
+import {
+  ancienRecherchesPath,
+  profilPath,
+  recherchesCollectivitesUrl,
+  recherchesLandingPath,
+} from 'app/paths';
 import {ProfilPage} from './pages/Profil/ProfilPage';
-import Layout from 'app/Layout';
-import {AuthProvider} from 'core-logic/api/auth/AuthProvider';
-import {ScoreListenerProvider} from 'core-logic/hooks/useScoreListener';
+
 import {VisitTracker} from 'app/VisitTracker';
+import {ScoreListenerProvider} from 'core-logic/hooks/useScoreListener';
 import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#000091',
-    },
-  },
-});
-
-const queryClient = new QueryClient();
-const trackingClient = createTrackingClient(ENV.posthog);
-
-export const App = () => {
+export default async function App() {
   return (
-    <TrackingProvider client={trackingClient}>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <Router>
-            <ScoreListenerProvider>
-              <Layout>
-                <E2E />
-                <ScrollToTopOnPageChange />
-                <Toasters />
-                <Redirector />
-                <VisitTracker />
-                <AccepterCGUModal />
-                <Switch>
-                  <Route exact path="/">
-                    <Home />
-                  </Route>
-                  <Route path={profilPath}>
-                    <ProfilPage />
-                  </Route>
-                  <Redirect
-                    exact
-                    from={ancienRecherchesPath}
-                    to={recherchesCollectivitesUrl}
-                  />
-                  <Route path={recherchesLandingPath}>
-                    <CollectivitesEngageesPage />
-                  </Route>
-                  <Route path={'/collectivite/:collectiviteId'}>
-                    <CollectiviteRoutes />
-                  </Route>
-                </Switch>
-              </Layout>
-            </ScoreListenerProvider>
-          </Router>
-        </ThemeProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-    </TrackingProvider>
+    <Router>
+      <ScoreListenerProvider>
+        <E2E />
+        <ScrollToTopOnPageChange />
+        <Toasters />
+        <Redirector />
+        <VisitTracker />
+        <AccepterCGUModal />
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path={profilPath}>
+            <ProfilPage />
+          </Route>
+          <Redirect
+            exact
+            from={ancienRecherchesPath}
+            to={recherchesCollectivitesUrl}
+          />
+          <Route path={recherchesLandingPath}>
+            <CollectivitesEngageesPage />
+          </Route>
+          <Route path={'/collectivite/:collectiviteId'}>
+            <CollectiviteRoutes />
+          </Route>
+        </Switch>
+      </ScoreListenerProvider>
+    </Router>
   );
-};
+}

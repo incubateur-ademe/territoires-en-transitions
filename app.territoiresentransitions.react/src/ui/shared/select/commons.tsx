@@ -1,4 +1,4 @@
-import {Placement} from '@floating-ui/react';
+import {Placement} from '@next/floating-ui/react';
 import {Icon} from '@tet/ui';
 import classNames from 'classnames';
 

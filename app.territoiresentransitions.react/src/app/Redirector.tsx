@@ -10,12 +10,13 @@ import {
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import {useMesCollectivitesEtPlans} from 'core-logic/hooks/useOwnedCollectivites';
+import {usePathname} from 'next/navigation';
 import {useEffect} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
 export const Redirector = () => {
   const history = useHistory();
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const {isConnected} = useAuth();
   const {invitationId, invitationEmail, consume} = useInvitationState();
   const {data: userInfo} = useMesCollectivitesEtPlans();

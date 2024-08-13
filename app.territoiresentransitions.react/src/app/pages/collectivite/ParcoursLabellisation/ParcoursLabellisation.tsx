@@ -1,14 +1,14 @@
-import {Link} from 'react-router-dom';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
 import {referentielToName} from 'app/labels';
-import {useCycleLabellisation} from './useCycleLabellisation';
-import HeaderLabellisation from './HeaderLabellisation';
-import {ReferentielOfIndicateur} from 'types/litterals';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
+import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import Link from 'next/link';
+import {ReferentielOfIndicateur} from 'types/litterals';
+import HeaderLabellisation from './HeaderLabellisation';
 import {LabellisationTabs} from './LabellisationTabs';
+import {useCycleLabellisation} from './useCycleLabellisation';
 import {useIsUnchangedReferentiel} from './useIsUnchangedReferentiel';
 
 const ParcoursLabellisation = () => {
@@ -39,7 +39,7 @@ const ParcoursLabellisation = () => {
             <div className="flex justify-center">
               <Link
                 className="fr-btn fr-btn--secondary "
-                to={makeCollectiviteReferentielUrl({
+                href={makeCollectiviteReferentielUrl({
                   collectiviteId,
                   referentielId: referentiel as ReferentielParamOption,
                 })}

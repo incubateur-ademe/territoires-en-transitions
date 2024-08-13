@@ -5,7 +5,8 @@ import {
 import classNames from 'classnames';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {Link, useHistory} from 'react-router-dom';
+import Link from 'next/link';
+import {useHistory} from 'react-router-dom';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
@@ -83,7 +84,7 @@ const SelectFlowButton = ({
     <Link
       data-test={dataTest}
       className="flex flex-col w-full p-6 text-center !bg-none"
-      to={url}
+      href={url}
     >
       <div
         className={`${iconClass} flex !w-20 !h-20 mx-auto mt-3 mb-6 before:!h-16 before:!w-16 before:!m-auto text-primary-4`}

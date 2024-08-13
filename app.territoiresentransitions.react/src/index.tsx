@@ -1,7 +1,7 @@
 import {createRoot} from 'react-dom/client';
 import * as Sentry from '@sentry/react';
 import {App} from 'app/App';
-import {ENV} from 'environmentVariables';
+import {ENV} from '@tet/app/environmentVariables';
 import 'css';
 import React from 'react';
 
