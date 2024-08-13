@@ -1,17 +1,12 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../../types';
 import {Indicateurs, SharedDomain} from '@tet/api';
 
 /** Met à jour les personnes pilotes d'un indicateur */
-export const useUpsertIndicateurPilote = (
-  definition: TIndicateurDefinition
-) => {
+export const useUpsertIndicateurPilote = (indicateurId: number) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
-
-  const {id: indicateur_id} = definition;
 
   return useMutation({
     mutationKey: `upsert_indicateur_pilotes`,
@@ -19,7 +14,7 @@ export const useUpsertIndicateurPilote = (
       if (!collectivite_id) return;
       return Indicateurs.save.upsertPilotes(
         supabaseClient,
-        definition,
+        indicateurId,
         collectivite_id,
         pilotes
       );
@@ -29,7 +24,7 @@ export const useUpsertIndicateurPilote = (
       queryClient.invalidateQueries([
         'indicateur_pilotes',
         collectivite_id,
-        indicateur_id,
+        indicateurId,
       ]);
       queryClient.invalidateQueries(['personnes', collectivite_id]);
     },
@@ -37,18 +32,16 @@ export const useUpsertIndicateurPilote = (
 };
 
 /** Charge les personnes pilotes d'un indicateur */
-export const useIndicateurPilotes = (definition: TIndicateurDefinition) => {
+export const useIndicateurPilotes = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
 
-  const {id: indicateur_id} = definition;
-
   return useQuery(
-    ['indicateur_pilotes', collectivite_id, indicateur_id],
+    ['indicateur_pilotes', collectivite_id, indicateurId],
     async () => {
       if (!collectivite_id) return;
       return Indicateurs.fetch.selectIndicateurPilotes(
         supabaseClient,
-        definition.id,
+        indicateurId,
         collectivite_id
       );
     }

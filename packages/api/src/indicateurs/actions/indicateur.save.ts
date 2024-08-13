@@ -1,15 +1,15 @@
-import {DBClient} from "../../typeUtils";
-import {Valeur, valeurSchema} from "../domain/valeur.schema";
+import {DBClient} from '../../typeUtils';
+import {Valeur, valeurSchema} from '../domain/valeur.schema';
 import {
-    IndicateurDefinition,
-    IndicateurDefinitionInsert,
-    indicateurDefinitionSchemaInsert
-} from "../domain/definition.schema";
-import {TablesInsert} from "../../typeUtils";
-import {objectToSnake} from "ts-case-convert";
-import {Personne} from "../../shared/domain/personne.schema";
-import {insertTags} from "../../shared/actions/tag.save";
-import {Tag} from "../../shared/domain/tag.schema";
+  IndicateurDefinition,
+  IndicateurDefinitionInsert,
+  indicateurDefinitionSchemaInsert,
+} from '../domain/definition.schema';
+import {TablesInsert} from '../../typeUtils';
+import {objectToSnake} from 'ts-case-convert';
+import {Personne} from '../../shared/domain/personne.schema';
+import {insertTags} from '../../shared/actions/tag.save';
+import {Tag} from '../../shared/domain/tag.schema';
 import {Thematique} from '../../shared/domain/thematique.schema';
 import {Action} from '../../referentiel/domain/action.schema';
 import {
@@ -292,13 +292,13 @@ export async function upsertCategoriesUtilisateur(
 /**
  * Modifie les pilotes d'un indicateur
  * @param dbClient client supabase
- * @param indicateur indicateur concerné
+ * @param indicateurId id de l'indicateur concerné
  * @param collectiviteId identifiant de la collectivité
  * @param pilotes liste des pilotes à upsert
  */
 export async function upsertPilotes(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateurId: number,
   collectiviteId: number,
   pilotes: Personne[]
 ) {
@@ -321,7 +321,7 @@ export async function upsertPilotes(
   await dbClient
     .from('indicateur_pilote')
     .delete()
-    .eq('indicateur_id', indicateur.id)
+    .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId)
     .not('id', 'in', `(${passageIds.join(',')})`);
 
@@ -337,7 +337,7 @@ export async function upsertPilotes(
   ].map(p => ({
     ...p,
     collectivite_id: collectiviteId,
-    indicateur_id: indicateur.id,
+    indicateur_id: indicateurId,
   }));
 
   // Sauvegarde les nouveaux pilotes
@@ -490,5 +490,3 @@ export async function upsertValeursUtilisateurAvecSource(
     );
   }
 }
-
-

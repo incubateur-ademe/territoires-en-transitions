@@ -33,17 +33,15 @@ export const useUpsertIndicateurThematiques = (
 };
 
 /** Charge les thématiques d'un indicateur */
-export const useIndicateurThematiques = (definition: TIndicateurDefinition) => {
+export const useIndicateurThematiques = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
 
-  const {id: indicateur_id} = definition;
-
   return useQuery(
-    ['indicateur_thematiques', collectivite_id, indicateur_id],
+    ['indicateur_thematiques', collectivite_id, indicateurId],
     async () => {
       return Indicateurs.fetch.selectIndicateurThematiquesId(
         supabaseClient,
-        definition.id
+        indicateurId
       );
     }
   );

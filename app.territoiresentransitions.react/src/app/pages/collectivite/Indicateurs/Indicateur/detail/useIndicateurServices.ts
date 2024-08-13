@@ -37,10 +37,8 @@ export const useUpsertIndicateurServices = (
 };
 
 /** Charge les services pilotes d'un indicateur */
-export const useIndicateurServices = (definition: TIndicateurDefinition) => {
+export const useIndicateurServices = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();
-
-  const {id: indicateurId} = definition;
 
   return useQuery(
     ['indicateur_services', collectiviteId, indicateurId],
@@ -48,7 +46,7 @@ export const useIndicateurServices = (definition: TIndicateurDefinition) => {
       if (!collectiviteId) return;
       return Indicateurs.fetch.selectIndicateurServices(
         supabaseClient,
-        definition.id,
+        indicateurId,
         collectiviteId
       );
     }

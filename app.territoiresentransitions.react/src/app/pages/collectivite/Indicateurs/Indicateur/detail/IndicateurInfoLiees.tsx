@@ -1,4 +1,3 @@
-import {SharedDomain} from '@tet/api';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {TIndicateurDefinition} from '../../types';
 import {
@@ -30,13 +29,14 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   const {definition} = props;
 
   // charge les informations complémentaires associées à l'indicateur
-  const {data: pilotes} = useIndicateurPilotes(definition);
-  const {data: services} = useIndicateurServices(definition);
-  const {data: thematiques} = useIndicateurThematiques(definition);
+  const {data: pilotes} = useIndicateurPilotes(definition.id);
+  const {data: services} = useIndicateurServices(definition.id);
+  const {data: thematiques} = useIndicateurThematiques(definition.id);
 
   // fonctions de mise à jour des données
-  const {mutate: upsertIndicateurPilote} =
-    useUpsertIndicateurPilote(definition);
+  const {mutate: upsertIndicateurPilote} = useUpsertIndicateurPilote(
+    definition.id
+  );
   const {mutate: upsertIndicateurServicePilote} =
     useUpsertIndicateurServices(definition);
   const {mutate: upsertIndicateurPersoThematique} =
