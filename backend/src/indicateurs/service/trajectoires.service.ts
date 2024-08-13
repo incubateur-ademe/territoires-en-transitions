@@ -4,9 +4,13 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { DateTime } from 'luxon';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import CollectivitesService, {
+  EpciType,
+} from '../../collectivites/services/collectivites.service';
+import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
 import IndicateursService from './indicateurs.service';
@@ -71,11 +75,62 @@ export default class TrajectoiresService {
     private readonly sheetService: SheetService,
   ) {}
 
-  async calculeTrajectoireSnbc(request: CalculTrajectoireRequest) {
+  getIdentifiantDossierResultat() {
+    return process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID;
+  }
+
+  getNomFichierTrajectoire(epci: EpciType) {
+    return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
+  }
+
+  async downloadTrajectoireSnbc(
+    request: CalculTrajectoireRequest,
+    res: Response,
+  ) {
     // Récupère l'EPCI associé pour obtenir son SIREN
     const epci = await this.collectivitesService.getEpciByCollectiviteId(
       request.collectivite_id,
     );
+
+    const nomFichier = this.getNomFichierTrajectoire(epci);
+    let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
+      nomFichier,
+      this.getIdentifiantDossierResultat(),
+    );
+
+    if (!trajectoireCalculSheetId || request.reset_fichier) {
+      this.logger.log(
+        `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id} pour le téléchargement`,
+      );
+      const { trajectoireCalculSheetId: nouveauTrajectoireCalculSheetId } =
+        await this.calculeTrajectoireSnbc(request, epci);
+      trajectoireCalculSheetId = nouveauTrajectoireCalculSheetId;
+    }
+
+    return this.sheetService
+      .downloadFile(trajectoireCalculSheetId, `${nomFichier}.xlsx`, res)
+      .catch((error) => {
+        this.logger.error(
+          `Erreur lors du téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}: ${getErrorMessage(error)}`,
+          error,
+        );
+        res.setHeader('Content-Type', 'application/json');
+        res.removeHeader('Content-Disposition');
+        res.removeHeader('Content-Length');
+        res.status(500).json({ message: getErrorMessage(error) });
+      });
+  }
+
+  async calculeTrajectoireSnbc(
+    request: CalculTrajectoireRequest,
+    epci?: EpciType,
+  ) {
+    // Récupère l'EPCI associé pour obtenir son SIREN
+    if (!epci) {
+      epci = await this.collectivitesService.getEpciByCollectiviteId(
+        request.collectivite_id,
+      );
+    }
 
     // Création de la source métadonnée SNBC si elle n'existe pas
     let indicateurSourceMetadonnee =
@@ -116,15 +171,33 @@ export default class TrajectoiresService {
       );
     }
 
-    const nomFichier = `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
-    // TODO: récupérer si le fichier existe déjà et le réutiliser sauf si on force ?
-    const trajectoireCalculSheetId = await this.sheetService.copyFile(
-      process.env.TRAJECTOIRE_SNBC_SHEET_ID,
+    const nomFichier = this.getNomFichierTrajectoire(epci);
+    let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
       nomFichier,
+      process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID,
     );
-    this.logger.log(
-      `Fichier de trajectoire SNBC créé à partir du master ${process.env.TRAJECTOIRE_SNBC_SHEET_ID} avec l'identifiant ${trajectoireCalculSheetId}`,
-    );
+    if (trajectoireCalculSheetId && !request.reset_fichier) {
+      this.logger.log(
+        `Fichier de trajectoire SNBC trouvé avec l'identifiant ${trajectoireCalculSheetId}`,
+      );
+    } else {
+      if (trajectoireCalculSheetId) {
+        this.logger.log(
+          `Suppression du fichier de trajectoire SNBC existant ayant l'identifiant ${trajectoireCalculSheetId}`,
+        );
+        await this.sheetService.deleteFile(trajectoireCalculSheetId);
+      }
+      trajectoireCalculSheetId = await this.sheetService.copyFile(
+        process.env.TRAJECTOIRE_SNBC_SHEET_ID,
+        nomFichier,
+        process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+          ? [process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID]
+          : undefined,
+      );
+      this.logger.log(
+        `Fichier de trajectoire SNBC créé à partir du master ${process.env.TRAJECTOIRE_SNBC_SHEET_ID} avec l'identifiant ${trajectoireCalculSheetId}`,
+      );
+    }
 
     // Ecriture du SIREN
     const sirenNulber = parseInt(epci.siren || '');
@@ -153,10 +226,6 @@ export default class TrajectoiresService {
         this.SNBC_TRAJECTOIRE_RESULTAT_CELLULES,
       );
 
-    if (!request.conserve_fichier_temporaire) {
-      await this.sheetService.deleteFile(trajectoireCalculSheetId);
-    }
-
     // TODO: type it
     const indicateurValeursResultat: any[] = [];
     trajectoireCalculResultat.data?.forEach((ligne, index) => {
@@ -173,7 +242,7 @@ export default class TrajectoiresService {
       }
     });
 
-    return indicateurValeursResultat;
+    return { trajectoireCalculSheetId, indicateurValeursResultat };
   }
 
   /**
