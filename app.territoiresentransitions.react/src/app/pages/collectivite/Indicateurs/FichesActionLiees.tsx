@@ -1,12 +1,13 @@
+import {Field} from '@tet/ui';
 import {objectToSnake} from 'ts-case-convert';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import FichesLiees from '../PlansActions/FicheAction/FicheActionForm/FichesLiees';
-import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {
   useFichesActionLiees,
   useUpdateFichesActionLiees,
 } from './useFichesActionLiees';
 import {TIndicateurDefinition} from './types';
+import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
+import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 
 export type TFichesActionProps = {
   definition: TIndicateurDefinition;
@@ -25,13 +26,21 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const isReadonly = collectivite?.readonly ?? false;
 
   return (
-    <FichesLiees
-      ficheCouranteId={null}
-      fiches={fiches ? objectToSnake(fiches) : []}
-      onSelect={(fiches_liees: FicheResume[]) =>
-        updateFichesActionLiees(fiches_liees.map(f => f.id) as number[])
-      }
-      isReadonly={isReadonly}
-    />
+    <>
+      <Field title="Fiches des plans liées">
+        <FichesResumeDropdown
+          disabled={isReadonly}
+          ficheCouranteId={null}
+          values={(fiches ? objectToSnake(fiches) : []).map(f =>
+            f.id.toString()
+          )}
+          onChange={({fiches: nouvellesFiches}) =>
+            updateFichesActionLiees(nouvellesFiches.map(f => f.id))
+          }
+        />
+      </Field>
+
+      <FichesLieesListe fiches={fiches ? objectToSnake(fiches) : []} />
+    </>
   );
 };

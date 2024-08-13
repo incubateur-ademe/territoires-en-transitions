@@ -1,9 +1,10 @@
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import FichesLiees from '../PlansActions/FicheAction/FicheActionForm/FichesLiees';
-import {FicheResume} from '../PlansActions/FicheAction/data/types';
 import {useFichesActionLiees} from './useFichesActionLiees';
 import {useUpdateFichesActionLiees} from './useUpdateFichesActionLiees';
 import {useCreateFicheResume} from '../PlansActions/FicheAction/data/useCreateFicheResume';
+import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
+import {Field} from '@tet/ui';
+import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
 
 export type TFichesActionProps = {
   actionId: string;
@@ -25,24 +26,28 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const isReadonly = collectivite?.readonly ?? false;
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       {!isReadonly && (
         <button
-          className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mb-4w"
+          className="fr-btn fr-btn--icon-left fr-icon-add-line"
           onClick={() => createFicheResume()}
         >
           Créer une fiche action
         </button>
       )}
 
-      <FichesLiees
-        ficheCouranteId={null}
-        fiches={fiches}
-        onSelect={(fiches_liees: FicheResume[]) =>
-          updateFichesActionLiees({fiches, fiches_liees})
-        }
-        isReadonly={isReadonly}
-      />
-    </>
+      <Field title="Fiches des plans liées">
+        <FichesResumeDropdown
+          disabled={isReadonly}
+          ficheCouranteId={null}
+          values={fiches.map(f => f.id.toString())}
+          onChange={({fiches: nouvellesFiches}) =>
+            updateFichesActionLiees({fiches, fiches_liees: nouvellesFiches})
+          }
+        />
+      </Field>
+
+      <FichesLieesListe fiches={fiches} />
+    </div>
   );
 };

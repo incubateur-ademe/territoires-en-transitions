@@ -55,7 +55,9 @@ const FichesLieesTab = ({
           </div>
 
           {/* Liste des fiches des plans liées */}
-          {fiches && fiches.length > 0 && <FichesLieesListe fiches={fiches} />}
+          {fiches && fiches.length > 0 && (
+            <FichesLieesListe fiches={fiches} isFicheTab />
+          )}
         </div>
       )}
 
