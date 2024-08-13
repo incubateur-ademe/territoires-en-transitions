@@ -10,11 +10,8 @@ import {generateTitle} from '../data/utils';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import ModifierFicheModale from './ModifierFicheModale';
-import ModaleSuppression from '../../FicheActionNew/FicheActionDescription/ModaleSuppression';
-import {
-  getTextFormattedDate,
-  getModifiedSince,
-} from '../../FicheActionNew/utils';
+import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
+import {getTextFormattedDate, getModifiedSince} from '../utils';
 
 type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
