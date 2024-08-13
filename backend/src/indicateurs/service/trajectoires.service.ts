@@ -13,6 +13,7 @@ import CollectivitesService, {
 import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
+import { CheckDataSNBCStatus } from '../models/enums.models';
 import IndicateursService, {
   CreateIndicateurValeurType,
 } from './indicateurs.service';
@@ -283,12 +284,13 @@ export default class TrajectoiresService {
   async getValeursPourSNBC(collectiviteId: number) {
     // Récupère les valeurs des indicateurs pour l'année 2015
     const indicateurValeurs =
-      await this.indicateursService.getReferentielIndicateursValeurs(
+      await this.indicateursService.getIndicateursValeurs({
         collectiviteId,
-        this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
-        this.SNBC_DATE_REFERENCE,
-        this.SNBC_DATE_REFERENCE,
-      );
+        identifiantsReferentiel:
+          this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+        dateDebut: this.SNBC_DATE_REFERENCE,
+        dateFin: this.SNBC_DATE_REFERENCE,
+      });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const valeursARemplir: number[] = [];
@@ -323,31 +325,35 @@ export default class TrajectoiresService {
    * @param request
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
-  async checkDataSnbc(request: CollectiviteRequest) {
+  async checkDataSnbc(
+    request: CollectiviteRequest,
+  ): Promise<{ status: CheckDataSNBCStatus }> {
     // Vérifie si la collectivité est une commune :
+    // TODO: créer une autre fonction pour ne pas partir en exception
     try {
       await this.collectivitesService.getEpciByCollectiviteId(
         request.collectivite_id,
       );
     } catch (error) {
-      // si oui, retourne 'commune'
-      return 'commune';
+      return { status: CheckDataSNBCStatus.COMMUNE_NON_SUPPORTEE };
     }
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
-    // TODO
-    if (1 == 1) {
-      // si oui, retourne 'déjà calculé'
-      return 'déjà calculé';
+    const valeurs = await this.indicateursService.getIndicateursValeurs({
+      collectiviteId: request.collectivite_id,
+      sourceId: this.SNBC_SOURCE.id,
+    });
+    if (valeurs.length > 0) {
+      return { status: CheckDataSNBCStatus.DEJA_CALCULE };
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
     const { identifiantsReferentielManquants } = await this.getValeursPourSNBC(
       request.collectivite_id,
     );
-    // si oui, retourne 'à calculer'
+    // si oui, retourne 'pret a calculer'
     if (identifiantsReferentielManquants.length == 0) {
-      return 'à calculer';
+      return { status: CheckDataSNBCStatus.PRET_A_CALCULER };
     }
-    // sinon, retourne 'à compléter'
-    return ' à compléter';
+    // sinon, retourne 'données manquantes'
+    return { status: CheckDataSNBCStatus.DONNEES_MANQUANTES };
   }
 }
