@@ -61,7 +61,7 @@ const IndicateurDetailChart = ({
     >
       <div className="flex justify-between gap-16 mb-6">
         <div
-          className={classNames('font-bold', {
+          className={classNames('font-bold text-primary-9', {
             'grow text-center': !hasValeurOrObjectif,
           })}
         >
