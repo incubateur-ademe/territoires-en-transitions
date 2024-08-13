@@ -6,6 +6,8 @@ import {
   inArray,
   InferInsertModel,
   InferSelectModel,
+  isNotNull,
+  isNull,
   lte,
   sql,
   SQLWrapper,
@@ -156,4 +158,110 @@ export default class IndicateursService {
       )
       .where(and(...conditions));
   }
+
+  async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
+    this.logger.log(
+      `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(',')}`,
+    );
+    return this.databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(
+        inArray(
+          indicateurDefinitionTable.identifiant_referentiel,
+          identifiantsReferentiel,
+        ),
+      );
+  }
+
+  async upsertIndicateurValeurs(
+    indicateurValeurs: CreateIndicateurValeurType[],
+  ) {
+    // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
+    const indicateurValeursAvecMetadonnees = indicateurValeurs.filter(
+      (v) => v.metadonnee_id,
+    );
+    const indicateurValeursSansMetadonnees = indicateurValeurs.filter(
+      (v) => !v.metadonnee_id,
+    );
+
+    if (indicateurValeursAvecMetadonnees.length) {
+      this.logger.log(
+        `Upsert des ${indicateurValeursAvecMetadonnees.length} valeurs avec métadonnées des indicateurs ${[
+          ...new Set(
+            indicateurValeursAvecMetadonnees.map((v) => v.indicateur_id),
+          ),
+        ].join(
+          ',',
+        )} pour les collectivités ${[...new Set(indicateurValeursAvecMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
+      );
+      return this.databaseService.db
+        .insert(indicateurValeurTable)
+        .values(indicateurValeursAvecMetadonnees)
+        .onConflictDoUpdate({
+          target: [
+            indicateurValeurTable.indicateur_id,
+            indicateurValeurTable.collectivite_id,
+            indicateurValeurTable.date_valeur,
+            indicateurValeurTable.metadonnee_id,
+          ],
+          targetWhere: isNotNull(indicateurValeurTable.metadonnee_id),
+          set: {
+            resultat: sql.raw(
+              `excluded.${indicateurValeurTable.resultat.name}`,
+            ),
+            resultat_commentaire: sql.raw(
+              `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+            ),
+            objectif: sql.raw(
+              `excluded.${indicateurValeurTable.objectif.name}`,
+            ),
+            objectif_commentaire: sql.raw(
+              `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+            ),
+          },
+        });
+    }
+
+    if (indicateurValeursSansMetadonnees.length) {
+      this.logger.log(
+        `Upsert des ${indicateurValeursSansMetadonnees.length} valeurs sans métadonnées des indicateurs ${[
+          ...new Set(
+            indicateurValeursSansMetadonnees.map((v) => v.indicateur_id),
+          ),
+        ].join(
+          ',',
+        )} pour les collectivités ${[...new Set(indicateurValeursSansMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
+      );
+      await this.databaseService.db
+        .insert(indicateurValeurTable)
+        .values(indicateurValeursSansMetadonnees)
+        .onConflictDoUpdate({
+          target: [
+            indicateurValeurTable.indicateur_id,
+            indicateurValeurTable.collectivite_id,
+            indicateurValeurTable.date_valeur,
+          ],
+          targetWhere: isNull(indicateurValeurTable.metadonnee_id),
+          set: {
+            resultat: sql.raw(
+              `excluded.${indicateurValeurTable.resultat.name}`,
+            ),
+            resultat_commentaire: sql.raw(
+              `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+            ),
+            objectif: sql.raw(
+              `excluded.${indicateurValeurTable.objectif.name}`,
+            ),
+            objectif_commentaire: sql.raw(
+              `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+            ),
+          },
+        });
+    }
+  }
 }
+
+/*
+insert into "indicateur_valeur" ("id", "collectivite_id", "indicateur_id", "date_valeur", "metadonnee_id", "resultat", "resultat_commentaire", "objectif", "objectif_commentaire", "estimation", "modified_at", "created_at", "modified_by", "created_by") values (default, $1, $2, $3, $4, default, default, $5, default, default, default, default, default, default) on conflict ("indicateur_id","collectivite_id","date_valeur","metadonnee_id") do update set "objectif" = excluded.objectif where "indicateur_valeur"."metadonnee_id" is not null
+*/
