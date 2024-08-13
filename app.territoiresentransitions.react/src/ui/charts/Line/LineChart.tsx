@@ -46,7 +46,7 @@ const LineChart = ({
   return (
     <div className="flex flex-col w-full">
       {axisLeftLegend && (
-        <div className="ml-3 text-sm text-grey-9">{axisLeftLegend}</div>
+        <div className="ml-3 text-sm text-primary-8">{axisLeftLegend}</div>
       )}
       <div className={classNames('h-[24rem]', className)}>
         {/** Chart */}
