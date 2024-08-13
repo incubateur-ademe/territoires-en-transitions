@@ -1,6 +1,6 @@
 import {Button, Field, Input} from '@tet/ui';
 import {Financeur} from '../data/types';
-import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdownSingle';
+import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 
 type FinanceursInputProps = {
   financeurs: Financeur[] | null;
@@ -18,7 +18,11 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
         >
           <Field title={`Financeur ${index + 1}`} className="col-span-3">
             <FinanceursDropdown
-              value={financeur.financeur_tag?.id}
+              values={
+                financeur.financeur_tag.id
+                  ? [financeur.financeur_tag.id]
+                  : undefined
+              }
               disabled={true}
               onChange={() => {}}
             />
@@ -68,12 +72,16 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
           <FinanceursDropdown
             key={(financeurs ?? []).length}
             placeholder="Rechercher par mots-clés ou créer un tag"
-            value={undefined}
+            values={undefined}
             disabledOptionsIds={(financeurs ?? []).map(
               f => f.financeur_tag.id!
             )}
-            onChange={value =>
-              value && onUpdate([...(financeurs ?? []), {financeur_tag: value}])
+            onChange={({selectedFinanceur}) =>
+              selectedFinanceur &&
+              onUpdate([
+                ...(financeurs ?? []),
+                {financeur_tag: selectedFinanceur},
+              ])
             }
           />
         </Field>
