@@ -13,7 +13,9 @@ import CollectivitesService, {
 import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
-import IndicateursService from './indicateurs.service';
+import IndicateursService, {
+  CreateIndicateurValeurType,
+} from './indicateurs.service';
 import IndicateurSourcesService, {
   CreateIndicateurSourceMetadonneeType,
   CreateIndicateurSourceType,
@@ -52,7 +54,7 @@ export default class TrajectoiresService {
     'cae_1.h', // B12
     'cae_1.j', // B13
   ];
-  private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!B6:B13';
+  private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!D6:D13';
   private readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
     'TOUS SECTEURS!G253:AP262';
   private readonly SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL = [
@@ -200,8 +202,8 @@ export default class TrajectoiresService {
     }
 
     // Ecriture du SIREN
-    const sirenNulber = parseInt(epci.siren || '');
-    if (isNaN(sirenNulber)) {
+    const sirenNumber = parseInt(epci.siren || '');
+    if (isNaN(sirenNumber)) {
       throw new InternalServerErrorException(
         `Le SIREN de l'EPCI ${epci.nom} (${epci.siren}) n'est pas un nombre`,
       );
@@ -210,7 +212,7 @@ export default class TrajectoiresService {
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
       this.SNBC_SIREN_CELLULE,
-      [[sirenNulber]],
+      [[sirenNumber]],
     );
 
     // Ecriture des informations d'émission
@@ -226,21 +228,47 @@ export default class TrajectoiresService {
         this.SNBC_TRAJECTOIRE_RESULTAT_CELLULES,
       );
 
-    // TODO: type it
-    const indicateurValeursResultat: any[] = [];
-    trajectoireCalculResultat.data?.forEach((ligne, index) => {
+    const indicateurResultatDefinitions =
+      await this.indicateursService.getReferentielIndicateurDefinitions(
+        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
+      );
+    const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
+    trajectoireCalculResultat.data?.forEach((ligne, ligneIndex) => {
       const identifiantReferentiel =
-        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL[index];
+        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL[ligneIndex];
       if (identifiantReferentiel) {
-        ligne.forEach((valeur, index) => {
-          indicateurValeursResultat.push({
-            identifiant_referentiel: identifiantReferentiel,
-            date_valeur: `${2015 + index}-01-01`,
-            resultat: valeur,
+        const indicateurResultatDefinition = indicateurResultatDefinitions.find(
+          (definition) =>
+            definition.identifiant_referentiel === identifiantReferentiel,
+        );
+        if (indicateurResultatDefinition) {
+          ligne.forEach((valeur, columnIndex) => {
+            const floatValeur = parseFloat(valeur);
+            if (!isNaN(floatValeur)) {
+              indicateurValeursResultat.push({
+                indicateur_id: indicateurResultatDefinition.id,
+                collectivite_id: request.collectivite_id,
+                metadonnee_id: indicateurSourceMetadonnee.id,
+                date_valeur: `${2015 + columnIndex}-01-01`,
+                objectif: floatValeur,
+              });
+            } else {
+              this.logger.warn(
+                `Valeur non numérique ${valeur} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL}`,
+              );
+            }
           });
-        });
+        } else {
+          this.logger.warn(`Indicateur ${identifiantReferentiel} non trouvé`);
+        }
       }
     });
+    this.logger.log(
+      `Ecriture des ${indicateurValeursResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+    );
+    await this.indicateursService.upsertIndicateurValeurs(
+      indicateurValeursResultat,
+    );
 
     return { trajectoireCalculSheetId, indicateurValeursResultat };
   }
@@ -269,7 +297,9 @@ export default class TrajectoiresService {
       const indicateurValeur = indicateurValeurs.find(
         (indicateurValeur) =>
           indicateurValeur.indicateur_definition?.identifiant_referentiel ===
-          identifiant,
+            identifiant &&
+          indicateurValeur.indicateur_valeur.resultat !== null &&
+          indicateurValeur.indicateur_valeur.resultat !== undefined,
       );
       if (
         indicateurValeur &&

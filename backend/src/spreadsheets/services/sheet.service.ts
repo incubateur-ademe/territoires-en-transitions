@@ -4,8 +4,10 @@ import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
-import SheetValueInputOption from '../models/SheetValueInputOption';
-import SheetValueRenderOption from '../models/SheetValueRenderOption';
+import {
+  SheetValueInputOption,
+  SheetValueRenderOption,
+} from '../models/sheetoptions.models';
 const sheets = google.sheets({ version: 'v4' });
 const drive = google.drive({ version: 'v3' });
 
