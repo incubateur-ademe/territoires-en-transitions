@@ -3,11 +3,11 @@ import {format} from 'date-fns';
 import {useFicheAction} from './data/useFicheAction';
 import {useEditFicheAction} from './data/useUpsertFicheAction';
 import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
-import FicheActionDescription from '../FicheActionNew/FicheActionDescription/FicheActionDescription';
-import FicheActionPlanning from '../FicheActionNew/FicheActionPlanning/FicheActionPlanning';
-import FicheActionActeurs from '../FicheActionNew/FicheActionActeurs/FicheActionActeurs';
-import FicheActionRestreint from '../FicheActionNew/FicheActionRestreint/FicheActionRestreint';
-import FicheActionOnglets from '../FicheActionNew/FicheActionOnglets';
+import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
+import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
+import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
+import FicheActionOnglets from './FicheActionOnglets';
 
 type FicheActionProps = {
   isReadonly: boolean;
