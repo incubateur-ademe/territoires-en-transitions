@@ -9,7 +9,7 @@ import {naturalSort} from 'utils/naturalSort';
 import {TAxeInsert} from 'types/alias';
 import {FicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/types';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {useFicheResumesFetch} from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import {useFichesResumeListe} from './useFichesResumeListe';
 
 const sortByLabel = (a: Option, b: Option) => {
   if (!a.label) return -1;
@@ -37,13 +37,14 @@ const FichesResumeDropdown = ({
   ...props
 }: FichesResumeDropdownProps) => {
   // Liste de toutes les fiches
-  const {data} = useFicheResumesFetch({});
-  const fichesListe = data?.data || [];
+  const {data: fichesListe} = useFichesResumeListe();
 
   // Liste des fiches hors fiche actuellement consultée
   const fichesDisponiblesListe = fichesListe?.filter(
     fiche => fiche.id !== ficheCouranteId
   );
+
+  console.log(fichesListe, fichesDisponiblesListe);
 
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedFiches = (values?: OptionValue[]) => {

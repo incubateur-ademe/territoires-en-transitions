@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {FicheAction} from '../data/types';
-import FichesResumeDropdown from 'ui/dropdownLists/FichesLieesDropdown/FichesResumeDropdown';
+import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
 
 type ModaleFichesLieesProps = {
   isOpen: boolean;
