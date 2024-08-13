@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as retry from 'async-retry';
+import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
@@ -42,7 +43,69 @@ export default class SheetService {
     return this.authClient;
   }
 
-  async copyFile(fileId: string, copyTitle: string): Promise<string> {
+  getMimeTypeFromFileName(fileName: string): string {
+    if (fileName.endsWith('.xlsx')) {
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    }
+    // TODO: complete if needed
+    return 'application/vnd.google-apps.spreadsheet';
+  }
+
+  async downloadFile(fileId: string, fileName: string, res: Response) {
+    const authClient = await this.getAuthClient();
+
+    const mimeType = this.getMimeTypeFromFileName(fileName);
+    this.logger.log(
+      `Téléchargement du fichier ${fileId} au format ${mimeType}`,
+    );
+
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader(
+      'Access-Control-Expose-Headers',
+      'Content-Disposition, Filename',
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Filename', fileName);
+
+    const downloadOptions: drive_v3.Params$Resource$Files$Export = {
+      auth: authClient,
+      fileId: fileId,
+      mimeType: mimeType,
+    };
+    const downloadResponse = await drive.files.export(downloadOptions, {
+      responseType: 'stream',
+    });
+    return downloadResponse.data.pipe(res);
+  }
+
+  async getFileIdByName(
+    fileName: string,
+    parentFolderId?: string,
+  ): Promise<string | null> {
+    const authClient = await this.getAuthClient();
+
+    this.logger.log(`Recherche du fichier avec le nom ${fileName}`);
+
+    const searchOptions: drive_v3.Params$Resource$Files$List = {
+      auth: authClient,
+      q: `name='${fileName}'${
+        parentFolderId ? ` and '${parentFolderId}' in parents` : ''
+      }`,
+      fields: 'files(id)',
+    };
+    const searchResponse = await drive.files.list(searchOptions);
+    const files = searchResponse.data.files;
+    if (files && files.length > 0) {
+      return files[0].id!;
+    }
+    return null;
+  }
+
+  async copyFile(
+    fileId: string,
+    copyTitle: string,
+    parents?: string[],
+  ): Promise<string> {
     const authClient = await this.getAuthClient();
 
     this.logger.log(
@@ -54,6 +117,7 @@ export default class SheetService {
       fileId: fileId,
       requestBody: {
         name: copyTitle,
+        parents: parents,
       },
     };
     const copyResponse = await drive.files.copy(copyOptions);
@@ -82,7 +146,7 @@ export default class SheetService {
     const sheetValues = await retry(
       async (
         bail: (e: Error) => void,
-        num: number,
+        _num: number,
       ): Promise<sheets_v4.Schema$ValueRange | undefined> => {
         try {
           const getOptions: sheets_v4.Params$Resource$Spreadsheets$Values$Get =
@@ -92,19 +156,21 @@ export default class SheetService {
               range: range,
               valueRenderOption: valueRenderOption,
             };
-          //logger.info(`Get raw data from sheet ${spreadsheetId} with range ${range} (attempt ${num})`);
+          this.logger.log(
+            `Get raw data from sheet ${spreadsheetId} with range ${range} (attempt ${_num})`,
+          );
           const sheetResponse =
             await sheets.spreadsheets.values.get(getOptions);
           return sheetResponse.data;
         } catch (error) {
-          //logger.exception(error);
+          this.logger.error(error);
           if (error instanceof gaxios.GaxiosError) {
-            //const gaxiosError = error as gaxios.GaxiosError;
-            /*logger.error(
-                      `Error while retrieving sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
-                  );*/
+            const gaxiosError = error as gaxios.GaxiosError;
+            this.logger.error(
+              `Error while retrieving sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`,
+            );
             if (error.status === 429) {
-              //logger.info(`Error due to api quota limitation, retrying`);
+              this.logger.log(`Error due to api quota limitation, retrying`);
               throw error;
             }
           }
@@ -140,14 +206,14 @@ export default class SheetService {
             },
           });
         } catch (error) {
-          //logger.exception(error);
+          this.logger.error(error);
           if (error instanceof gaxios.GaxiosError) {
-            //const gaxiosError = error as gaxios.GaxiosError;
-            /*logger.error(
-                      `Error while overwriting sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
-                  );*/
+            const gaxiosError = error as gaxios.GaxiosError;
+            this.logger.error(
+              `Error while overwriting sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`,
+            );
             if (error.status === 429) {
-              //logger.info(`Quota error, retrying`);
+              this.logger.log(`Quota error, retrying`);
               throw error;
             }
           }
