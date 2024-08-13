@@ -11,10 +11,10 @@ export default class CalculTrajectoireRequest {
 
   @ApiProperty({
     required: false,
-    description: 'Ne supprime pas le spreadsheet temporaire de calcul',
+    description: 'Recrée le fichier de trajectoire à partir du template',
   })
   @IsBoolean()
   @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
   @IsOptional()
-  conserve_fichier_temporaire?: boolean;
+  reset_fichier?: boolean;
 }
