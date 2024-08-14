@@ -26,7 +26,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../models/indicateur.models';
 import {
-  VerificationDonneesSNBCResponse,
+  VerificationDonneesSNBCResult,
   VerificationDonneesSNBCStatus,
 } from '../models/verificationDonneesTrajectoire.models';
 import IndicateursService from './indicateurs.service';
@@ -219,6 +219,49 @@ export default class TrajectoiresService {
       throw new UnprocessableEntityException(
         `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
       );
+    } else if (
+      resultatVerification.status ===
+        VerificationDonneesSNBCStatus.DEJA_CALCULE &&
+      resultatVerification.valeurs &&
+      resultatVerification.epci
+    ) {
+      const trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
+        this.getNomFichierTrajectoire(resultatVerification.epci),
+        this.getIdentifiantDossierResultat(),
+      );
+      if (trajectoireCalculSheetId) {
+        const indicateurEmissionsDefinitions =
+          await this.indicateursService.getReferentielIndicateurDefinitions(
+            this
+              .SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+          );
+        const emissionGesTrajectoire =
+          this.indicateursService.groupeIndicateursValeursParIndicateur(
+            resultatVerification.valeurs,
+            indicateurEmissionsDefinitions,
+          );
+
+        const indicateurConsommationDefinitions =
+          await this.indicateursService.getReferentielIndicateurDefinitions(
+            this
+              .SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL,
+          );
+        const consommationsTrajectoire =
+          this.indicateursService.groupeIndicateursValeursParIndicateur(
+            resultatVerification.valeurs,
+            indicateurConsommationDefinitions,
+          );
+
+        const result: CalculTrajectoireResult = {
+          spreadsheet_id: trajectoireCalculSheetId,
+          trajectoire: {
+            emissions_ges: emissionGesTrajectoire,
+            consommations_finales: consommationsTrajectoire,
+          },
+        };
+
+        return result;
+      }
     }
     epci = resultatVerification.epci;
 
@@ -550,8 +593,8 @@ export default class TrajectoiresService {
     request: CollectiviteRequest,
     epci?: EpciType,
     force_recuperation_donnees = false,
-  ): Promise<VerificationDonneesSNBCResponse> {
-    const response: VerificationDonneesSNBCResponse = {
+  ): Promise<VerificationDonneesSNBCResult> {
+    const response: VerificationDonneesSNBCResult = {
       status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
     };
 
@@ -575,6 +618,7 @@ export default class TrajectoiresService {
       sourceId: this.SNBC_SOURCE.id,
     });
     if (valeurs.length > 0) {
+      response.valeurs = valeurs.map((v) => v.indicateur_valeur);
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
       if (!force_recuperation_donnees) {
         return response;
