@@ -176,7 +176,7 @@ export const Modal = ({
                       icon="close-line"
                       variant="grey"
                       size="xs"
-                      className="absolute max-md:top-4 top-8 max-md:right-4 right-8"
+                      className="!absolute max-md:top-4 top-8 max-md:right-4 right-8"
                     />
                   )}
                   {(title || subTitle || description) && (
