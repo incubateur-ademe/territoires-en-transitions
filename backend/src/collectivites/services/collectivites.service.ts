@@ -1,31 +1,42 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { eq, InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
-
-export const collectiviteTable = pgTable('collectivite', {
-  id: serial('id').primaryKey(),
-  access_restreint: boolean('access_restreint'),
-});
-export type CollectiviteType = InferSelectModel<typeof collectiviteTable>;
-export type CreateCollectiviteType = InferInsertModel<typeof collectiviteTable>;
-
-export const epciTable = pgTable('epci', {
-  id: serial('id').primaryKey(),
-  collectivite_id: integer('collectivite_id')
-    .notNull()
-    .references(() => collectiviteTable.id),
-  nom: text('nom').notNull(),
-  siren: text('siren'),
-});
-export type EpciType = InferSelectModel<typeof epciTable>;
-export type CreateEpciType = InferInsertModel<typeof epciTable>;
+import {
+  collectiviteTable,
+  communeTable,
+  epciTable,
+} from '../models/collectivite.models';
 
 @Injectable()
 export default class CollectivitesService {
   private readonly logger = new Logger(CollectivitesService.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
+
+  async getCollectivite(collectiviteId: number) {
+    this.logger.log(
+      `Récupération de la collectivite avec l'identifiant ${collectiviteId}`,
+    );
+    const collectiviteByIdResult = await this.databaseService.db
+      .select()
+      .from(collectiviteTable)
+      .leftJoin(
+        communeTable,
+        eq(communeTable.collectivite_id, collectiviteTable.id),
+      )
+      .leftJoin(epciTable, eq(epciTable.collectivite_id, collectiviteTable.id))
+      .where(eq(collectiviteTable.id, collectiviteId));
+    if (!collectiviteByIdResult?.length) {
+      throw new NotFoundException(
+        `Commune avec l'identifiant de collectivite ${collectiviteId} introuvable`,
+      );
+    }
+
+    this.logger.log(
+      `Commune trouvé avec l'id ${collectiviteByIdResult[0].collectivite.id}`,
+    );
+    return collectiviteByIdResult[0];
+  }
 
   async getEpciByCollectiviteId(collectiviteId: number) {
     this.logger.log(

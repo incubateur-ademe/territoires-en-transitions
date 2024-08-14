@@ -36,6 +36,7 @@
     "gaxios": "^6.7.0",
     "google-auth-library": "^9.11.0",
     "googleapis": "^140.0.1",
+    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "postgres": "^3.4.4",
     "reflect-metadata": "^0.2.0",

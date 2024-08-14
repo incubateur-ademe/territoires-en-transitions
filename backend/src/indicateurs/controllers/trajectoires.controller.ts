@@ -1,15 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Logger,
-  Post,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
-import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
+import {
+  CalculTrajectoireRequest,
+  CalculTrajectoireResponse,
+} from '../models/calcultrajectoire.models';
 import TrajectoiresService from '../service/trajectoires.service';
 
 @Controller('trajectoires')
@@ -18,20 +13,17 @@ export class TrajectoiresController {
 
   constructor(private readonly trajectoiresService: TrajectoiresService) {}
 
-  @Get('snbc') // TODO: laisser uniquement le POST?
-  calculeTrajectoireSnbc(@Query() request: CalculTrajectoireRequest) {
+  @Get('snbc')
+  async calculeTrajectoireSnbc(
+    @Query() request: CalculTrajectoireRequest,
+  ): Promise<CalculTrajectoireResponse> {
     this.logger.log(
       `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    return this.trajectoiresService.calculeTrajectoireSnbc(request);
-  }
-
-  @Post('snbc')
-  postCalculeTrajectoireSnbc(@Body() request: CalculTrajectoireRequest) {
-    this.logger.log(
-      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
-    );
-    return this.trajectoiresService.calculeTrajectoireSnbc(request);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { spreadsheet_id, ...response } =
+      await this.trajectoiresService.calculeTrajectoireSnbc(request);
+    return response;
   }
 
   @Get('snbc/telechargement')
@@ -45,11 +37,11 @@ export class TrajectoiresController {
     return this.trajectoiresService.downloadTrajectoireSnbc(request, res);
   }
 
-  @Get('snbc/check')
-  checkDataSnbc(@Query() request: CollectiviteRequest) {
+  @Get('snbc/verification')
+  verificationDonneesSnbc(@Query() request: CollectiviteRequest) {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    return this.trajectoiresService.checkDataSnbc(request);
+    return this.trajectoiresService.verificationDonneesSnbc(request);
   }
 }

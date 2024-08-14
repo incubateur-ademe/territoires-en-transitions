@@ -1,41 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { and, eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
-
-export const indicateurSourceTable = pgTable('indicateur_source', {
-  id: text('id').primaryKey(),
-  libelle: text('libelle').notNull(),
-  ordre_affichage: integer('ordre_affichage'),
-});
-export type IndicateurSourceType = InferSelectModel<
-  typeof indicateurSourceTable
->;
-export type CreateIndicateurSourceType = InferInsertModel<
-  typeof indicateurSourceTable
->;
-
-export const indicateurSourceMetadonneeTable = pgTable(
-  'indicateur_source_metadonnee',
-  {
-    id: serial('id').primaryKey(),
-    source_id: text('source_id')
-      .references(() => indicateurSourceTable.id)
-      .notNull(),
-    date_version: timestamp('date_version').notNull(),
-    nom_donnees: text('nom_donnees'),
-    diffuseur: text('diffuseur'),
-    producteur: text('producteur'),
-    methodologie: text('methodologie'),
-    limites: text('limites'),
-  },
-);
-export type IndicateurSourceMetadonneeType = InferSelectModel<
-  typeof indicateurSourceMetadonneeTable
->;
-export type CreateIndicateurSourceMetadonneeType = InferInsertModel<
-  typeof indicateurSourceMetadonneeTable
->;
+import {
+  CreateIndicateurSourceMetadonneeType,
+  CreateIndicateurSourceType,
+  indicateurSourceMetadonneeTable,
+  IndicateurSourceMetadonneeType,
+  indicateurSourceTable,
+} from '../models/indicateur.models';
 
 @Injectable()
 export default class IndicateurSourcesService {
