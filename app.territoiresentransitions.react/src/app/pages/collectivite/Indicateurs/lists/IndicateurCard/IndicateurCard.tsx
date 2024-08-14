@@ -154,7 +154,7 @@ export const IndicateurCardBase = ({
       {chartInfo?.confidentiel && (
         <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
           <div className="absolute -top-5 left-5">
-            <Notification icon="lock-fill" size="sm" />
+            <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
           </div>
         </Tooltip>
       )}
