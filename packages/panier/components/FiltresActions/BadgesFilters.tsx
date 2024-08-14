@@ -1,6 +1,9 @@
-import {Badge} from '@design-system/Badge';
-import {ButtonMenu} from '@design-system/Button';
-import {Field} from '@design-system/Field';
+import classNames from 'classnames';
+import {useEffect, useState} from 'react';
+
+import {Badge} from '@tet/ui';
+import {ButtonMenu} from '@tet/ui';
+import {Field} from '@tet/ui';
 import {
   OptionValue,
   Select,
@@ -8,9 +11,7 @@ import {
   SelectMultipleOnChangeArgs,
   SelectOption,
   getFlatOptions,
-} from '@design-system/Select';
-import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+} from '@tet/ui';
 
 type FilterType = {
   /** Titre affiché dans <Field /> */
@@ -20,11 +21,11 @@ type FilterType = {
   /** Liste des options du select */
   options: SelectOption[];
   /** Valeurs par défaut du select */
-  values: OptionValue | OptionValue[] | undefined;
+  values?: OptionValue[];
   /** Active la multi sélection dans les filtres */
   multiple?: boolean;
   /** Détecte le changement de valeur du select */
-  onChange: (args: SelectMultipleOnChangeArgs | OptionValue) => void;
+  onChange: (args: SelectMultipleOnChangeArgs) => void;
 };
 
 type BadgeType = {
@@ -49,30 +50,19 @@ export const BadgesFilters = ({
 
   /** Gère la fermeture d'un badge et la mise à jour du filtre associé */
   const handleCloseBadge = (badge: BadgeType) => {
-    if (Array.isArray(badge.filter.values)) {
-      const selectedValue = badge.value;
+    const selectedValue = badge.value;
 
-      const newValuesArray = badge.filter.values?.filter(
-        v => v !== badge.value
-      );
+    const values: OptionValue[] | undefined = badge.filter.values?.filter(
+      v => v !== badge.value,
+    );
 
-      const values =
-        newValuesArray && newValuesArray.length > 0
-          ? newValuesArray
-          : undefined;
-
-      badge.filter.onChange({selectedValue, values});
-    } else {
-      badge.filter.onChange(undefined);
-    }
+    badge.filter.onChange({selectedValue, values});
   };
 
   /** Supprime tous les filtres sélectionnés */
   const handleClearFilters = () => {
     badgesList?.forEach(badge => {
-      badge.filter.multiple
-        ? badge.filter.onChange({selectedValue: badge.value, values: undefined})
-        : badge.filter.onChange(undefined);
+      badge.filter.onChange({selectedValue: badge.value, values: undefined});
     });
   };
 
@@ -84,30 +74,21 @@ export const BadgesFilters = ({
       if (filter.values !== undefined) {
         const options = getFlatOptions(filter.options);
 
-        if (Array.isArray(filter.values)) {
-          filter.values.forEach(value => {
-            const option = options.find(opt => opt.value === value);
+        filter.values.forEach(value => {
+          const option = options.find(opt => opt.value === value);
 
+          option &&
             newList.push({
               filter,
               value: option.value,
               label: option.label,
             });
-          });
-        } else {
-          const option = options.find(opt => opt.value === filter.values);
-
-          newList.push({
-            filter,
-            value: option.value,
-            label: option.label,
-          });
-        }
+        });
       }
     });
 
     newList.length > 0 ? setBadgesList(newList) : setBadgesList(null);
-  }, [JSON.stringify(filters.map(f => f.values))]);
+  }, [filters]);
 
   return (
     <div
@@ -154,7 +135,8 @@ export const BadgesFilters = ({
         icon="equalizer-fill"
         className={btnMenuClassName}
         notification={
-          badgesList?.length && {
+          badgesList &&
+          badgesList.length > 0 && {
             number: badgesList?.length,
           }
         }
@@ -162,23 +144,12 @@ export const BadgesFilters = ({
         <div className="flex flex-col gap-4 w-72">
           {filters.map(filter => (
             <Field key={filter.title} title={filter.title}>
-              {filter.multiple ? (
-                <SelectMultiple
-                  options={filter.options}
-                  values={Array.isArray(filter.values) ? filter.values : []}
-                  onChange={filter.onChange}
-                  small
-                />
-              ) : (
-                <Select
-                  options={filter.options}
-                  values={filter.values}
-                  onChange={args => {
-                    filter.onChange(args);
-                  }}
-                  small
-                />
-              )}
+              <SelectMultiple
+                options={filter.options}
+                values={filter.values}
+                onChange={filter.onChange}
+                small
+              />
             </Field>
           ))}
         </div>
