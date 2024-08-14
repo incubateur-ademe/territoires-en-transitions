@@ -94,7 +94,7 @@ const FicheActionCard = ({
           title="Fiche en accès restreint"
           className="absolute -top-4 left-5"
         >
-          <Notification icon="lock-fill" size="xs" classname="!p-1.5" />
+          <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
         </div>
       )}
       {/** Menu d'options */}

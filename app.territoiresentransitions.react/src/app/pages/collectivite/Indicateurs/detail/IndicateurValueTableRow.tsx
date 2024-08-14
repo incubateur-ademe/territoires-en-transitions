@@ -83,7 +83,7 @@ export const IndicateurValueTableRow = ({
               label={<p className="min-w-max">Le résultat est en mode privé</p>}
             >
               <div className="absolute top-3 -left-5">
-                <Notification icon="lock-fill" />
+                <Notification icon="lock-fill" classname="!h-10 w-10" />
               </div>
             </Tooltip>
           )}
