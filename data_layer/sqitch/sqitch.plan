@@ -735,3 +735,4 @@ cron/refresh_stats_views_locales [cron/refresh_stats_views_locales@v4.12.3] 2024
 plan_action/plan_action [plan_action/plan_action@v4.12.3] 2024-09-25T11:24:37Z System Administrator <root@AirdeThibaut2.lan> # Ajout de statuts pour les fiches action
 
 referentiel/referentiel 2024-10-07T16:09:16Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la table référentiel
+labellisation/preuve_v2 [labellisation/preuve_v2@v4.5.0] 2024-08-13T15:07:27Z ,,, <jacquelina@LanceLibre> # Ajoute la notion de confidentialité à un document
