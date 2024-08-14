@@ -102,7 +102,6 @@ const FicheActionCard = ({
             }
             axeId={axeIdToInvalidate || null}
             keysToInvalidate={editKeysToInvalidate}
-            buttonVariant="grey"
           />
         </div>
       )}

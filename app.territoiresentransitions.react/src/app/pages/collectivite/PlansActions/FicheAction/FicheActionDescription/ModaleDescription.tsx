@@ -128,7 +128,7 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
       <Button
         icon="edit-fill"
         title="Modifier les informations"
-        variant="outlined"
+        variant="white"
         size="xs"
         className="h-fit"
         onClick={() => setEditedFiche(fiche)}

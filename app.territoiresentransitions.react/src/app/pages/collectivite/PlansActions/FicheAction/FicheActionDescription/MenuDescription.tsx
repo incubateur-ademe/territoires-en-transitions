@@ -27,7 +27,7 @@ const MenuDescription = ({
         ficheId={ficheId}
         title={titre}
         isInMultipleAxes={!!axes && axes.length > 1}
-        buttonClassName="!text-error-1 hover:!text-[#db4f4f]"
+        buttonVariant="white"
       />
     </div>
   ) : null;
