@@ -7,8 +7,9 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {BadgesFilters, OptionValue, useEventTracker} from '@tet/ui';
+import {OptionValue, useEventTracker} from '@tet/ui';
 import {usePanierContext} from 'providers';
+import {BadgesFilters} from '@components/FiltresActions/BadgesFilters';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
