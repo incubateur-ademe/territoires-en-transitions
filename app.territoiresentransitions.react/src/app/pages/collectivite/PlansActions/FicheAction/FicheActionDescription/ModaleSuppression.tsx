@@ -1,7 +1,7 @@
 import {QueryKey} from 'react-query';
-import classNames from 'classnames';
-import {Button, ButtonVariant, Modal, ModalFooterOKCancel} from '@tet/ui';
+import {ButtonVariant, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
+import DeleteButton from '../DeleteButton';
 
 type ModaleSuppressionProps = {
   ficheId: number | null;
@@ -9,7 +9,6 @@ type ModaleSuppressionProps = {
   isInMultipleAxes: boolean;
   axeId?: number | null;
   keysToInvalidate?: QueryKey[];
-  buttonClassName?: string;
   buttonVariant?: ButtonVariant;
 };
 
@@ -22,8 +21,7 @@ const ModaleSuppression = ({
   isInMultipleAxes,
   axeId,
   keysToInvalidate,
-  buttonClassName,
-  buttonVariant = 'outlined',
+  buttonVariant,
 }: ModaleSuppressionProps) => {
   const {mutate: deleteFiche} = useDeleteFicheAction({
     ficheId: ficheId!,
@@ -34,7 +32,7 @@ const ModaleSuppression = ({
   return (
     <Modal
       title="Supprimer la fiche"
-      subTitle={title ?? 'Fiche sans titre'}
+      subTitle={title || 'Fiche sans titre'}
       render={({descriptionId}) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
@@ -69,13 +67,11 @@ const ModaleSuppression = ({
       )}
     >
       {/* Bouton d'ouverture de la modale */}
-      <Button
+      <DeleteButton
         data-test="SupprimerFicheBouton"
-        icon="delete-bin-6-line"
         title="Supprimer la fiche"
         variant={buttonVariant}
         size="xs"
-        className={classNames('h-fit', buttonClassName)}
       />
     </Modal>
   );

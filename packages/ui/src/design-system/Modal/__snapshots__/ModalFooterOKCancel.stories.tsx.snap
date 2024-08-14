@@ -4,7 +4,7 @@ exports[`design-system/Modal/ModalFooterOKCancel AnnulerValider smoke-test 1`] =
 <div class="mt-4">
   <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Annuler
     </button>
@@ -21,7 +21,7 @@ exports[`design-system/Modal/ModalFooterOKCancel CustomLabels smoke-test 1`] = `
 <div class="mt-4">
   <div class="flex gap-4 flex-wrap justify-end">
     <button type="button"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       Dismiss
     </button>

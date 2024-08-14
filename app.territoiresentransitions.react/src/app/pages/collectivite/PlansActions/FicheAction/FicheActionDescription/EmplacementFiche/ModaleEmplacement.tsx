@@ -40,7 +40,7 @@ const ModaleEmplacement = ({fiche}: ModaleEmplacementProps) => {
       <Button
         icon="folder-2-line"
         title="Ranger la fiche dans un plan d’action"
-        variant="outlined"
+        variant="white"
         size="xs"
         className="h-fit"
       />

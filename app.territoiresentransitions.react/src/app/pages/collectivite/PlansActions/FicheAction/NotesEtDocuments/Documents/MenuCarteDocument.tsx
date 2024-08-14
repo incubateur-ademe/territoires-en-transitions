@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import {Button} from '@tet/ui';
 import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
+import DeleteButton from '../../DeleteButton';
 
 type MenuCarteDocumentProps = {
   document: TPreuve;
@@ -45,10 +46,8 @@ const MenuCarteDocument = ({
         />
 
         {/* Supprimer le document */}
-        <Button
-          icon="delete-bin-6-line"
+        <DeleteButton
           title="Supprimer le document"
-          variant="grey"
           size="xs"
           onClick={onDelete}
         />

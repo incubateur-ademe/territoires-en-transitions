@@ -1,7 +1,8 @@
-import {Alert, Button, Card, Icon} from '@tet/ui';
+import {Card, Icon} from '@tet/ui';
 import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
 import AlerteSuppression from '../AlerteSuppression';
+import DeleteButton from '../../DeleteButton';
 
 type CarteNoteProps = {
   isReadonly: boolean;
@@ -19,10 +20,8 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
         {!isReadonly && (
           <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
             <ModaleEditionNote notes={notes} updateNotes={updateNotes} />
-            <Button
-              icon="delete-bin-6-line"
+            <DeleteButton
               title="Supprimer la note"
-              variant="grey"
               size="xs"
               onClick={() => setOpenAlert(true)}
             />

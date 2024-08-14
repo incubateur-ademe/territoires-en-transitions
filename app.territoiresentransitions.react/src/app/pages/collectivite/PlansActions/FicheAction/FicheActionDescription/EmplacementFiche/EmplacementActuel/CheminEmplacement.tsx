@@ -1,6 +1,7 @@
-import {Button, Icon} from '@tet/ui';
+import {Icon} from '@tet/ui';
 import {usePlanActionChemin} from '../../../../PlanAction/data/usePlanActionChemin';
 import {useRemoveFicheFromAxe} from '../../../data/useRemoveFicheFromAxe';
+import DeleteButton from '../../../DeleteButton';
 
 type CheminEmplacementProps = {
   ficheId: number;
@@ -19,9 +20,8 @@ const CheminEmplacement = ({ficheId, axeId}: CheminEmplacementProps) => {
     <div className="border border-grey-3 rounded-lg flex divide-x-[0.5px] divide-primary-3 py-3 items-center w-fit">
       {/* Bouton de suppression d'un emplacement */}
       <div className="px-5 py-2">
-        <Button
+        <DeleteButton
           data-test="EnleverFichePlanBouton"
-          icon="delete-bin-6-line"
           title="Supprimer l'emplacement"
           variant="outlined"
           size="sm"

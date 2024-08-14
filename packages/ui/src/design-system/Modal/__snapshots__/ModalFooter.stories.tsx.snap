@@ -6,7 +6,7 @@ exports[`design-system/Modal/ModalFooter AvecContenuOptionnel smoke-test 1`] = `
     Contenu optionnel
   </p>
   <div class="flex gap-4 flex-wrap justify-end">
-    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
       Cancel
     </button>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
@@ -29,7 +29,7 @@ exports[`design-system/Modal/ModalFooter Center smoke-test 1`] = `
 exports[`design-system/Modal/ModalFooter Default smoke-test 1`] = `
 <div class="mt-4">
   <div class="flex gap-4 flex-wrap justify-end">
-    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
       Cancel
     </button>
     <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
@@ -43,13 +43,13 @@ exports[`design-system/Modal/ModalFooter Space smoke-test 1`] = `
 <div class="mt-4">
   <div class="flex gap-4 flex-wrap justify-between">
     <div class="flex gap-4 flex-wrap">
-      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
         Non pertinent
       </button>
-      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
         En cours
       </button>
-      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
         Réalisé
       </button>
     </div>
