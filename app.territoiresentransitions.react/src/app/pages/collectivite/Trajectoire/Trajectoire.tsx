@@ -1,60 +1,74 @@
-import {useState} from 'react';
-import {Button, ButtonGroup, Tabs, Tab} from '@tet/ui';
-import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
+import {Alert, Button, Card} from '@tet/ui';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import {CheckDataSNBCStatus, useTrajectoireCheck} from './useTrajectoire';
+import {ReactComponent as DbErrorPicto} from './db-error.svg';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Affiche la trajectoire SNBC
  */
-const Trajectoire = () => {
-  // indicateur (ges | énergie) sélectionné
-  const [indicateurIdx, setIndicateurIdx] = useState<number>(0);
-  const indicateur = INDICATEURS_TRAJECTOIRE[indicateurIdx];
+const TrajectoireContent = () => {
+  const {data, error, isLoading} = useTrajectoireCheck();
+  if (isLoading) {
+    return (
+      <div className="h-56 flex justify-center items-center">
+        <SpinnerLoader className="w-8 h-8 fill-primary-5" />
+      </div>
+    );
+  }
+  if (
+    error ||
+    !data ||
+    !data.status ||
+    data.status === CheckDataSNBCStatus.COMMUNE_NON_SUPPORTEE
+  ) {
+    return <DonneesNonDispo />;
+  }
 
-  // secteur séléctionné
-  const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
-  const [secteurIdx, setSecteurIdx] = useState<number>(0);
+  if (data.status === CheckDataSNBCStatus.DONNEES_MANQUANTES) {
+    return <DonneesNonDispo aCompleter />;
+  }
+};
+
+/**
+ * Affiche un message quand les données pour faire le calcul de la trajectoire
+ * ne sont pas disponibles.
+ */
+const DonneesNonDispo = ({aCompleter}: {aCompleter?: boolean}) => {
+  const collectiviteId = useCollectiviteId()!;
 
   return (
-    <div className="grow bg-grey-2 -mb-8 py-12">
-      <div className="fr-container">
-        <div className="flex items-start mb-4">
-          <div className="flex-grow">
-            <h2 className="mb-1">Trajectoire SNBC territorialisée</h2>
-            <Button size="sm" variant="underlined" external href={HELPDESK_URL}>
-              En savoir plus
-            </Button>
-          </div>
-          <Button size="sm">Calculer une nouvelle trajectoire</Button>
-        </div>
-        <hr />
-        <div className="flex items-start justify-between">
-          {!!indicateur?.secteurs && (
-            <Tabs
-              defaultActiveTab={secteurIdx}
-              onChange={setSecteurIdx}
-              size="sm"
-            >
-              {secteurs.map(({nom}) => (
-                <Tab key={nom} label={nom} />
-              ))}
-            </Tabs>
-          )}
-          <ButtonGroup
-            size="sm"
-            activeButtonId={indicateur.id}
-            buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
-              id,
-              children: nom,
-              onClick: () => {
-                setIndicateurIdx(idx);
-                setSecteurIdx(0);
-              },
-            }))}
-          />
-        </div>
-      </div>
-    </div>
+    <Card className="flex items-center">
+      <DbErrorPicto />
+      <h2>Données disponibles insuffisantes pour le calcul</h2>
+      <p>
+        Nous ne disposons pas encore des données suffisantes pour permettre le
+        calcul automatique de la trajectoire SNBC territorialisée de votre
+        collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
+        données disponibles en open data avec vos propres données. Vous pourrez
+        ainsi visualiser facilement votre trajectoire SNBC territorialisée et la
+        comparer aux objectifs fixés et résultats observés.
+      </p>
+      {aCompleter ? (
+        <Button href={makeCollectiviteIndicateursUrl({collectiviteId})}>
+          Compléter mes données
+        </Button>
+      ) : (
+        <Alert
+          className="self-stretch"
+          title="Revenez dans quelques jours !"
+          description="Dans la prochaine version, vous pourrez compléter vos données et ainsi calculer votre trajectoire."
+        />
+      )}
+    </Card>
   );
 };
+
+const Trajectoire = () => (
+  <div className="flex items-start gap-20 mb-12">
+    <TrajectoireContent />
+  </div>
+);
 
 export default Trajectoire;
