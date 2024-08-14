@@ -306,6 +306,19 @@ exports[`Storyshots app/Layout/Header Connected 1`] = `
                   <a
                     aria-controls="modal-header__menu"
                     className="fr-nav__link"
+                    href="/collectivite/1/plans/toutes-les-fiches-action"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Toutes les fiches action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
                     href="/collectivite/1/plans/synthese"
                     onClick={[Function]}
                     target="_self"
@@ -849,6 +862,19 @@ exports[`Storyshots app/Layout/Header Connected Visite 1`] = `
                   <a
                     aria-controls="modal-header__menu"
                     className="fr-nav__link"
+                    href="/collectivite/1/plans/toutes-les-fiches-action"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Toutes les fiches action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
                     href="/collectivite/1/plans/synthese"
                     onClick={[Function]}
                     target="_self"
@@ -1338,6 +1364,19 @@ exports[`Storyshots app/Layout/Header Connected Visite Support 1`] = `
                     target="_self"
                   >
                     Tous les plans d'action
+                  </a>
+                </li>
+                <li
+                  className="fr-nav__item"
+                >
+                  <a
+                    aria-controls="modal-header__menu"
+                    className="fr-nav__link"
+                    href="/collectivite/1/plans/toutes-les-fiches-action"
+                    onClick={[Function]}
+                    target="_self"
+                  >
+                    Toutes les fiches action
                   </a>
                 </li>
                 <li
