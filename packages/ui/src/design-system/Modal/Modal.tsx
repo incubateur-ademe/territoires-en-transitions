@@ -16,6 +16,7 @@ import classNames from 'classnames';
 
 import {preset} from '@tailwind-preset';
 import {Button} from '../Button';
+import {OpenState} from '../../utils/types';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -41,13 +42,6 @@ export type RenderProps = {
   ref: React.MutableRefObject<HTMLElement>;
 };
 
-export type ModalOpenState = {
-  /** état d'ouverture de la modale */
-  isOpen: boolean;
-  /* accompagne "isOpen" afin de pouvoir fermer la modale */
-  setIsOpen: (opened: boolean) => void;
-};
-
 /** Types des props du composant générique Modal */
 export type ModalProps = {
   /** Fonction de rendu du contenu de la modale */
@@ -65,7 +59,7 @@ export type ModalProps = {
   /** Titre et description centrés par défaut */
   textAlign?: 'left' | 'center' | 'right';
   /** Permet de contrôler l'ouverture de la modale */
-  openState?: ModalOpenState;
+  openState?: OpenState;
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
   /** max-width prédéfinies dans le DSFR, valeur par défaut "md" */
