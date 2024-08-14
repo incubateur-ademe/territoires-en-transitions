@@ -16,7 +16,7 @@ exports[`design-system/Footer Default smoke-test 1`] = `
       <ul class="!list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
         <li class="pl-4 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -33,7 +33,7 @@ exports[`design-system/Footer Default smoke-test 1`] = `
       <ul class="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -44,7 +44,7 @@ exports[`design-system/Footer Default smoke-test 1`] = `
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://app.territoiresentransitions.fr"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
              target="_blank"
              rel="noreferrer noopener"
           >

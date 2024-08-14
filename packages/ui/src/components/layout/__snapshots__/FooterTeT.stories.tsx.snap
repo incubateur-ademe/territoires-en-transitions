@@ -250,7 +250,7 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
       <ul class="!list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
         <li class="pl-4 first-of-type:pl-0 pb-0">
           <a href="https://www.ademe.fr/"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -261,7 +261,7 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
         </li>
         <li class="pl-4 first-of-type:pl-0 pb-0">
           <a href="https://beta.gouv.fr/"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -278,21 +278,21 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
       <ul class="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr/accessibilite"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
           >
             Accessibilité : non conforme
           </a>
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr/mentions"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
           >
             Mentions légales
           </a>
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://www.ademe.fr/donnees-personnelles/"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -303,14 +303,14 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr/cookies"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
           >
             Gestion des cookies
           </a>
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://github.com/incubateur-ademe/territoires-en-transitions"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
              target="_blank"
              rel="noreferrer noopener"
           >
@@ -321,7 +321,7 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
         </li>
         <li class="pl-2 first-of-type:pl-0 pb-0">
           <a href="https://territoiresentransitions.fr/cgu"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
           >
             Conditions générales d’utilisation
           </a>
@@ -331,7 +331,7 @@ exports[`Components/Layout/Footer TeT Default smoke-test 1`] = `
         <div class="flex flex-wrap gap-x-1 mb-0">
           Sauf mention contraire, tous les contenus de ce site sont sous
           <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
              target="_blank"
              rel="noreferrer noopener"
           >

@@ -7,7 +7,7 @@ exports[`design-system/Input AvecBordsColorés smoke-test 1`] = `
          placeholder="placeholder"
          value
   >
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
           style="color: rgb(245, 91, 91);"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
@@ -36,7 +36,7 @@ exports[`design-system/Input AvecIconeBouton smoke-test 1`] = `
          value
   >
   <button title="Rechercher"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -54,7 +54,7 @@ exports[`design-system/Input AvecIconeBoutonEtDesactive smoke-test 1`] = `
   >
   <button title="Rechercher"
           disabled
-          class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
     </span>
@@ -147,7 +147,7 @@ exports[`design-system/Input TypeDate smoke-test 1`] = `
          value
   >
   <button type="button"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -162,7 +162,7 @@ exports[`design-system/Input TypeDateAvecValeur smoke-test 1`] = `
          value="2024-01-17"
   >
   <button type="button"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-calendar-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -238,7 +238,7 @@ exports[`design-system/Input TypePassword smoke-test 1`] = `
   >
   <button type="button"
           title="Voir le mot de passe"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-eye-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -254,7 +254,7 @@ exports[`design-system/Input TypePasswordAvecValeur smoke-test 1`] = `
   >
   <button type="button"
           title="Voir le mot de passe"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-eye-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -290,7 +290,7 @@ exports[`design-system/Input TypeSearch smoke-test 1`] = `
   >
   <button title="Rechercher"
           disabled
-          class="w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-3.5 rounded-none border-none"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
     </span>
@@ -305,7 +305,7 @@ exports[`design-system/Input TypeSearchAvecValeur smoke-test 1`] = `
          value="valeur recherchée"
   >
   <button title="Rechercher"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -320,7 +320,7 @@ exports[`design-system/Input TypeSearchLoading smoke-test 1`] = `
          value="valeur recherchée"
   >
   <button title="Rechercher"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-3.5 rounded-none border-none"
   >
     <span class="ri-loader-4-line animate-spin font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -366,7 +366,7 @@ exports[`design-system/Input VarianteSmallEtBouton smoke-test 1`] = `
          value
   >
   <button title="Rechercher"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-2.5 rounded-none border-none"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-2.5 rounded-none border-none"
   >
     <span class="ri-search-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
