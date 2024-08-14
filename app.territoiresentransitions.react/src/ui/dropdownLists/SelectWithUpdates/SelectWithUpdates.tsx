@@ -59,6 +59,8 @@ const SelectWithUpdates = ({
     onSuccess: refetchOptions,
   });
 
+  const newTagId = newTag?.data?.[0].id;
+
   const handleTagCreate = (tagName: string) => {
     createTag({
       collectivite_id: collectiviteId!,
@@ -67,6 +69,7 @@ const SelectWithUpdates = ({
   };
 
   useEffect(() => {
+    // Sélectionne le nouveau tag une fois la création terminée
     if (newTag?.data) {
       const tag = {
         collectivite_id: collectiviteId!,
@@ -79,7 +82,7 @@ const SelectWithUpdates = ({
         selectedValue: tag,
       });
     }
-  }, [optionsListe?.length]);
+  }, [newTagId]);
 
   // ***
   // Mise à jour d'un tag de la liste d'options
