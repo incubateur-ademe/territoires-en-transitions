@@ -1,4 +1,5 @@
 import {IconValue} from '@design-system/Icon';
+import {NotificationProps} from '@design-system/Notification';
 import {AnchorHTMLProps, ButtonHTMLProps} from 'utils/types';
 
 export type ButtonState = 'default' | 'disabled';
@@ -26,6 +27,8 @@ export type ButtonContentProps = {
   icon?: IconValue;
   /** Désactive les interractions avec le bouton */
   disabled?: boolean;
+  /** À donner pour afficher une notification */
+  notification?: NotificationProps;
 };
 
 type BaseButtonProps = {

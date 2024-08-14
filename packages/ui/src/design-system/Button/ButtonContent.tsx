@@ -1,7 +1,9 @@
+import classNames from 'classnames';
+
+import {Notification} from '../Notification';
 import {Icon, IconSize} from '@design-system/Icon';
 import {buttonThemeClassnames} from './theme';
 import {ButtonContentProps, ButtonSize, ButtonVariant} from './types';
-import classNames from 'classnames';
 
 const getIconSize = (
   size: ButtonSize,
@@ -27,11 +29,22 @@ const ButtonContent = ({
   icon,
   children,
   disabled,
+  notification,
 }: ButtonContentProps) => {
   const buttonState = disabled ? 'disabled' : 'default';
 
   return (
     <>
+      {notification && (
+        <Notification
+          size="xs"
+          {...notification}
+          classname={classNames(
+            'absolute -top-2.5 -right-2.5',
+            notification.classname
+          )}
+        />
+      )}
       {!!icon && (
         <Icon
           icon={icon}

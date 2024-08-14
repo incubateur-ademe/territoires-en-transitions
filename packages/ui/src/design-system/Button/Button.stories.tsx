@@ -106,7 +106,14 @@ export const Variants: Story = {
       style={{gridTemplateColumns: 'repeat(6,fit-content(0))'}}
     >
       {/* Icon buttons */}
-      <Button icon="leaf-line" variant="primary" size="sm" />
+      <Button
+        icon="leaf-line"
+        variant="primary"
+        size="sm"
+        notification={{
+          number: 4,
+        }}
+      />
       <Button icon="leaf-line" variant="secondary" size="sm" />
       <Button icon="leaf-line" variant="outlined" size="sm" />
       <Button icon="leaf-line" variant="white" size="sm" />
@@ -243,6 +250,57 @@ export const Variants: Story = {
         variant="underlined"
         disabled
         size="sm"
+      >
+        Underlined
+      </Button>
+    </div>
+  ),
+};
+/** Bouton avec différents variants. */
+export const WithNotification: Story = {
+  render: () => (
+    <div
+      className="grid gap-5 items-end bg-grey-2 p-10"
+      style={{gridTemplateColumns: 'repeat(6,fit-content(0))'}}
+    >
+      <Button
+        icon="leaf-line"
+        variant="primary"
+        size="sm"
+        notification={{
+          number: 4,
+        }}
+      />
+      <Button
+        variant="primary"
+        size="sm"
+        notification={{
+          icon: 'lock-fill',
+          variant: 'warning',
+        }}
+      >
+        Primary
+      </Button>
+      <Button
+        icon="leaf-line"
+        variant="outlined"
+        size="sm"
+        notification={{
+          number: 105,
+          variant: 'error',
+        }}
+      />
+      <Button
+        icon="leaf-line"
+        iconPosition="left"
+        variant="underlined"
+        size="sm"
+        href={SITE_BASE_URL}
+        notification={{
+          number: 2,
+          variant: 'info',
+          classname: '-top-5 -right-5',
+        }}
       >
         Underlined
       </Button>
