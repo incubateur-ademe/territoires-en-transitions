@@ -1,13 +1,13 @@
 import {useState} from 'react';
 
-import {Button, Input, ModalOpenState, Pagination, Select} from '@tet/ui';
+import {Button, Input, Pagination, Select} from '@tet/ui';
 import {
   FetchOptions,
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
 } from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-
+import {OpenState} from '@tet/ui/dist/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
@@ -51,7 +51,7 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   filtres: Filtre;
-  settingsModal: (openState: ModalOpenState) => React.ReactNode;
+  settingsModal: (openState: OpenState) => React.ReactNode;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;
   sortSettings?: SortFicheActionSettings;

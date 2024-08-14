@@ -17,3 +17,11 @@ export function isAnchor(
 ): props is AnchorHTMLProps {
   return (props as AnchorHTMLProps).href !== undefined;
 }
+
+/** Type générique pour la gestion d'un état d'ouverture  */
+export type OpenState = {
+  /** état d'ouverture */
+  isOpen: boolean;
+  /* accompagne "isOpen" afin de pouvoir fermer la modale */
+  setIsOpen: (opened: boolean) => void;
+};
