@@ -5,22 +5,32 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
+import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import { EpciType } from '../../collectivites/models/collectivite.models';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
-import CollectivitesService, {
-  EpciType,
-} from '../../collectivites/services/collectivites.service';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import CalculTrajectoireRequest from '../models/calcultrajectoire.request';
-import { CheckDataSNBCStatus } from '../models/enums.models';
-import IndicateursService, {
-  CreateIndicateurValeurType,
-} from './indicateurs.service';
-import IndicateurSourcesService, {
+import {
+  CalculTrajectoireRequest,
+  CalculTrajectoireResult,
+  DonneesARemplirResult,
+  DonneesCalculTrajectoireARemplir,
+} from '../models/calcultrajectoire.models';
+import {
   CreateIndicateurSourceMetadonneeType,
   CreateIndicateurSourceType,
-} from './indicateurSources.service';
+  CreateIndicateurValeurType,
+  IndicateurAvecValeurs,
+  IndicateurValeurAvecMetadonnesDefinition,
+} from '../models/indicateur.models';
+import {
+  VerificationDonneesSNBCResponse,
+  VerificationDonneesSNBCStatus,
+} from '../models/verificationDonneesTrajectoire.models';
+import IndicateursService from './indicateurs.service';
+import IndicateurSourcesService from './indicateurSources.service';
 
 @Injectable()
 export default class TrajectoiresService {
@@ -46,15 +56,25 @@ export default class TrajectoiresService {
   private readonly SNBC_DATE_REFERENCE = '2015-01-01';
   private readonly SNBC_SIREN_CELLULE = 'Caract_territoire!F6';
   private readonly SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL = [
-    'cae_1.c', // B6
-    'cae_1.d', // B7
-    'cae_1.i', // B8
-    'cae_1.g', // B9
-    'cae_1.e', // B10
-    'cae_1.f', // B11
-    'cae_1.h', // B12
-    'cae_1.j', // B13
+    ['cae_1.c'], // B6
+    ['cae_1.d'], // B7
+    ['cae_1.i'], // B8
+    ['cae_1.g'], // B9
+    ['cae_1.e'], // B10
+    ['cae_1.f'], // B11
+    ['cae_1.h'], // B12
+    ['cae_1.j'], // B13
   ];
+  private readonly SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL = [
+    ['cae_2.e'], // I29
+    ['cae_2.f'], // I30
+    ['cae_2.k'], // I31
+    ['cae_2.i'], // I32
+    ['cae_2.g', 'cae_2.h'], // I33
+    ['cae_2.j'], // I34
+    ['cae_2.l_pcaet'], // I35
+  ];
+
   private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!D6:D13';
   private readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
     'TOUS SECTEURS!G253:AP262';
@@ -105,9 +125,11 @@ export default class TrajectoiresService {
       this.logger.log(
         `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id} pour le téléchargement`,
       );
-      const { trajectoireCalculSheetId: nouveauTrajectoireCalculSheetId } =
-        await this.calculeTrajectoireSnbc(request, epci);
-      trajectoireCalculSheetId = nouveauTrajectoireCalculSheetId;
+      const { spreadsheet_id } = await this.calculeTrajectoireSnbc(
+        request,
+        epci,
+      );
+      trajectoireCalculSheetId = spreadsheet_id;
     }
 
     return this.sheetService
@@ -127,7 +149,7 @@ export default class TrajectoiresService {
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequest,
     epci?: EpciType,
-  ) {
+  ): Promise<CalculTrajectoireResult> {
     // Récupère l'EPCI associé pour obtenir son SIREN
     if (!epci) {
       epci = await this.collectivitesService.getEpciByCollectiviteId(
@@ -159,10 +181,19 @@ export default class TrajectoiresService {
     );
 
     // Récupère les valeurs des indicateurs pour l'année 2015
-    const { identifiantsReferentielManquants, valeursARemplir } =
-      await this.getValeursPourSNBC(request.collectivite_id);
+    const donneesCalculTrajectoireARemplir =
+      await this.getValeursPourCalculTrajectoire(request.collectivite_id);
 
-    if (identifiantsReferentielManquants.length > 0) {
+    const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
+      donneesCalculTrajectoireARemplir,
+    );
+    if (!donneesSuffisantes) {
+      const identifiantsReferentielManquants = [
+        ...donneesCalculTrajectoireARemplir.emissionsGes
+          .identifiantsReferentielManquants,
+        ...donneesCalculTrajectoireARemplir.consommationsFinales
+          .identifiantsReferentielManquants,
+      ];
       throw new UnprocessableEntityException(
         `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
       );
@@ -216,11 +247,15 @@ export default class TrajectoiresService {
       [[sirenNumber]],
     );
 
-    // Ecriture des informations d'émission
+    // Ecriture des informations d'émission GES
+    const spreadsheetData =
+      donneesCalculTrajectoireARemplir.emissionsGes.valeursARemplir.map(
+        (valeur) => [valeur || 0],
+      );
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
       this.SNBC_EMISSIONS_GES_CELLULES,
-      valeursARemplir.map((valeur) => [valeur]),
+      spreadsheetData,
     );
 
     const trajectoireCalculResultat =
@@ -234,6 +269,7 @@ export default class TrajectoiresService {
         this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
       );
     const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
+    const indicateursAvecValeurs: IndicateurAvecValeurs[] = [];
     trajectoireCalculResultat.data?.forEach((ligne, ligneIndex) => {
       const identifiantReferentiel =
         this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL[ligneIndex];
@@ -243,16 +279,23 @@ export default class TrajectoiresService {
             definition.identifiant_referentiel === identifiantReferentiel,
         );
         if (indicateurResultatDefinition) {
+          const indicateurAvecValeurs: IndicateurAvecValeurs = {
+            definition: indicateurResultatDefinition,
+            valeurs: [],
+          };
+          indicateursAvecValeurs.push(indicateurAvecValeurs);
+
           ligne.forEach((valeur, columnIndex) => {
             const floatValeur = parseFloat(valeur);
             if (!isNaN(floatValeur)) {
-              indicateurValeursResultat.push({
+              const indicateurValeur: CreateIndicateurValeurType = {
                 indicateur_id: indicateurResultatDefinition.id,
                 collectivite_id: request.collectivite_id,
                 metadonnee_id: indicateurSourceMetadonnee.id,
                 date_valeur: `${2015 + columnIndex}-01-01`,
                 objectif: floatValeur,
-              });
+              };
+              indicateurValeursResultat.push(indicateurValeur);
             } else {
               this.logger.warn(
                 `Valeur non numérique ${valeur} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL}`,
@@ -267,56 +310,124 @@ export default class TrajectoiresService {
     this.logger.log(
       `Ecriture des ${indicateurValeursResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    await this.indicateursService.upsertIndicateurValeurs(
-      indicateurValeursResultat,
-    );
+    const upsertedIndicateurValeurs =
+      await this.indicateursService.upsertIndicateurValeurs(
+        indicateurValeursResultat,
+      );
+    upsertedIndicateurValeurs?.forEach((v) => {
+      const indicateurAvecValeurs = indicateursAvecValeurs.find(
+        (indicateur) => indicateur.definition.id === v.indicateur_id,
+      );
+      if (indicateurAvecValeurs) {
+        indicateurAvecValeurs.valeurs.push(v);
+      }
+    });
 
-    return { trajectoireCalculSheetId, indicateurValeursResultat };
+    const result: CalculTrajectoireResult = {
+      spreadsheet_id: trajectoireCalculSheetId,
+      trajectoire: indicateursAvecValeurs,
+    };
+    return result;
   }
 
   /**
    * Récupère les valeurs nécessaires pour calculer la trajectoire SNBC
    * @param collectiviteId Identifiant de la collectivité
    * @return
-   * - identifiantReferentielManquant - Identifiants référentiels des indicateurs dont la valeur est manquante
-   * - valeursARemplir - TODO ?
    */
-  async getValeursPourSNBC(collectiviteId: number) {
-    // Récupère les valeurs des indicateurs pour l'année 2015
-    const indicateurValeurs =
+  async getValeursPourCalculTrajectoire(
+    collectiviteId: number,
+  ): Promise<DonneesCalculTrajectoireARemplir> {
+    // Récupère les valeurs des indicateurs d'émission pour l'année 2015
+    const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
         collectiviteId,
-        identifiantsReferentiel:
+        identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+        ),
         dateDebut: this.SNBC_DATE_REFERENCE,
         dateFin: this.SNBC_DATE_REFERENCE,
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
-    const valeursARemplir: number[] = [];
+    const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
+      this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeursEmissionsGes,
+    );
+
+    // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015
+    const indicateurValeursConsommationsFinales =
+      await this.indicateursService.getIndicateursValeurs({
+        collectiviteId,
+        identifiantsReferentiel: _.flatten(
+          this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+        ),
+        dateDebut: this.SNBC_DATE_REFERENCE,
+        dateFin: this.SNBC_DATE_REFERENCE,
+      });
+
+    // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
+      this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeursConsommationsFinales,
+    );
+    return {
+      emissionsGes: donneesEmissionsGes,
+      consommationsFinales: donneesConsommationsFinales,
+    };
+  }
+
+  /**
+   * Détermine le tableau de valeurs à insérer dans le spreadsheet.
+   * Lorsqu'il y a plusieurs identifiants pour une ligne, les valeurs sont sommées.
+   */
+  getValeursARemplirPourIdentifiants(
+    identifiantsReferentiel: string[][],
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
+  ): DonneesARemplirResult {
+    const valeursARemplir: (number | null)[] = [];
     const identifiantsReferentielManquants: string[] = [];
-    this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL.forEach((identifiant) => {
-      const indicateurValeur = indicateurValeurs.find(
-        (indicateurValeur) =>
-          indicateurValeur.indicateur_definition?.identifiant_referentiel ===
-            identifiant &&
-          indicateurValeur.indicateur_valeur.resultat !== null &&
-          indicateurValeur.indicateur_valeur.resultat !== undefined,
-      );
-      if (
-        indicateurValeur &&
-        indicateurValeur.indicateur_valeur.resultat !== null &&
-        indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
-      ) {
-        valeursARemplir.push(
-          indicateurValeur.indicateur_valeur.resultat / 1000,
+    identifiantsReferentiel.forEach((identifiants, index) => {
+      valeursARemplir[index] = 0;
+      identifiants.forEach((identifiant) => {
+        const indicateurValeur = indicateurValeurs.find(
+          (indicateurValeur) =>
+            indicateurValeur.indicateur_definition?.identifiant_referentiel ===
+              identifiant &&
+            indicateurValeur.indicateur_valeur.resultat !== null &&
+            indicateurValeur.indicateur_valeur.resultat !== undefined,
         );
-      } else {
-        identifiantsReferentielManquants.push(identifiant);
-        valeursARemplir.push(0);
-      }
+        if (
+          indicateurValeur &&
+          indicateurValeur.indicateur_valeur.resultat !== null &&
+          indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
+        ) {
+          if (valeursARemplir[index] !== null) {
+            // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
+            valeursARemplir[index] +=
+              indicateurValeur.indicateur_valeur.resultat / 1000;
+          }
+        } else {
+          identifiantsReferentielManquants.push(identifiant);
+          valeursARemplir[index] = null;
+        }
+      });
     });
     return { valeursARemplir, identifiantsReferentielManquants };
+  }
+
+  verificationDonneesARemplirSuffisantes(
+    donnees: DonneesCalculTrajectoireARemplir,
+  ): boolean {
+    const { emissionsGes, consommationsFinales } = donnees;
+    const valeurEmissionGesValides = emissionsGes.valeursARemplir.filter(
+      (v) => v !== null,
+    ).length;
+    const valeurConsommationFinalesValides =
+      consommationsFinales.valeursARemplir.filter((v) => v !== null).length;
+    return (
+      valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 5
+    );
   }
 
   /**
@@ -325,35 +436,44 @@ export default class TrajectoiresService {
    * @param request
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
-  async checkDataSnbc(
+  async verificationDonneesSnbc(
     request: CollectiviteRequest,
-  ): Promise<{ status: CheckDataSNBCStatus }> {
+  ): Promise<VerificationDonneesSNBCResponse> {
+    const response: VerificationDonneesSNBCResponse = {
+      status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
+    };
+
     // Vérifie si la collectivité est une commune :
-    // TODO: créer une autre fonction pour ne pas partir en exception
-    try {
-      await this.collectivitesService.getEpciByCollectiviteId(
-        request.collectivite_id,
-      );
-    } catch (error) {
-      return { status: CheckDataSNBCStatus.COMMUNE_NON_SUPPORTEE };
+    const collectivite = await this.collectivitesService.getCollectivite(
+      request.collectivite_id,
+    );
+    if (collectivite.commune || !collectivite.epci) {
+      response.status = VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE;
+      return response;
     }
+
+    response.epci = collectivite.epci;
+
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
       collectiviteId: request.collectivite_id,
       sourceId: this.SNBC_SOURCE.id,
     });
     if (valeurs.length > 0) {
-      return { status: CheckDataSNBCStatus.DEJA_CALCULE };
+      response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
+      return response;
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
-    const { identifiantsReferentielManquants } = await this.getValeursPourSNBC(
+    const { emissionsGes } = await this.getValeursPourCalculTrajectoire(
       request.collectivite_id,
     );
     // si oui, retourne 'pret a calculer'
-    if (identifiantsReferentielManquants.length == 0) {
-      return { status: CheckDataSNBCStatus.PRET_A_CALCULER };
+    if (emissionsGes.identifiantsReferentielManquants.length == 0) {
+      response.status = VerificationDonneesSNBCStatus.PRET_A_CALCULER;
+      return response;
     }
     // sinon, retourne 'données manquantes'
-    return { status: CheckDataSNBCStatus.DONNEES_MANQUANTES };
+    response.status = VerificationDonneesSNBCStatus.DONNEES_MANQUANTES;
+    return response;
   }
 }
