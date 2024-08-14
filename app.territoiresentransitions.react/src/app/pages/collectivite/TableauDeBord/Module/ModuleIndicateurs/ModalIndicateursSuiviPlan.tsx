@@ -37,20 +37,20 @@ const ModalIndicateursSuiviPlan = ({
 
   const queryClient = useQueryClient();
 
-  const [filtreState, setFiltreState] = useState<Indicateurs.domain.Filtre>(
-    module.options.filtre
-  );
+  const [filtreState, setFiltreState] = useState<
+    Indicateurs.domain.FetchFiltre | undefined
+  >(module.options.filtre);
 
   const trackEvent = useEventTracker(
     'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans'
   );
 
-  const getPilotesValues = (filtreState: Indicateurs.domain.Filtre) => {
+  const getPilotesValues = (filtreState?: Indicateurs.domain.FetchFiltre) => {
     const pilotes = [];
-    if (filtreState.utilisateurPiloteIds) {
+    if (filtreState?.utilisateurPiloteIds) {
       pilotes.push(...filtreState.utilisateurPiloteIds);
     }
-    if (filtreState.personnePiloteIds) {
+    if (filtreState?.personnePiloteIds) {
       pilotes.push(...filtreState.personnePiloteIds.map(String));
     }
     return pilotes;
@@ -67,12 +67,12 @@ const ModalIndicateursSuiviPlan = ({
           <Field title="Nom du plan :">
             <PlansActionDropdown
               type="multiple"
-              values={filtreState.planActionIds}
+              values={filtreState?.planActionIds}
               onChange={({plans, selectedPlan}) =>
-                ((filtreState.planActionIds?.length === 1 &&
-                  selectedPlan !== filtreState.planActionIds[0]) ||
-                  (filtreState.planActionIds &&
-                    filtreState.planActionIds.length > 1)) &&
+                ((filtreState?.planActionIds?.length === 1 &&
+                  selectedPlan !== filtreState?.planActionIds[0]) ||
+                  (filtreState?.planActionIds &&
+                    filtreState?.planActionIds.length > 1)) &&
                 setFiltreState({
                   ...filtreState,
                   planActionIds: plans as number[],
@@ -93,7 +93,7 @@ const ModalIndicateursSuiviPlan = ({
           </Field>
           <Field title="Thématique de l'indicateur :">
             <ThematiquesDropdown
-              values={filtreState.thematiqueIds}
+              values={filtreState?.thematiqueIds}
               onChange={({thematiques}) =>
                 setFiltreState({
                   ...filtreState,
@@ -105,9 +105,9 @@ const ModalIndicateursSuiviPlan = ({
           <Field title="Complétion indicateur :">
             <IndicateurCompletsDropdown
               values={
-                filtreState.estComplet === undefined
+                filtreState?.estComplet === undefined
                   ? undefined
-                  : filtreState.estComplet
+                  : filtreState?.estComplet
                   ? 'rempli'
                   : 'incomplet'
               }

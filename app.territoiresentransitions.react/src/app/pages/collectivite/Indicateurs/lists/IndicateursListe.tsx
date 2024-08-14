@@ -9,24 +9,20 @@ import {
   Select,
 } from '@tet/ui';
 
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import PictoExpert from 'ui/pictogrammes/PictoExpert';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {Indicateurs} from '@tet/api';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
-import {
-  filtersToModuleOptions,
-  Subset,
-} from '@tet/api/dist/src/indicateurs/actions/fetchFilteredIndicateurs';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type sortByOptionsType = {
   label: string;
-  value: keyof Indicateurs.Filters;
+  value: keyof Indicateurs.FetchFiltre;
   direction: 'asc' | 'desc';
 };
 
@@ -35,12 +31,14 @@ type SortSettings<T> = {
   sortOptionsDisplayed?: T[];
 };
 
-export type SortIndicateurSettings = SortSettings<keyof Indicateurs.Filters>;
+export type SortIndicateurSettings = SortSettings<
+  keyof Indicateurs.FetchFiltre
+>;
 
 const sortByOptions: sortByOptionsType[] = [
   {
     label: 'Complétude',
-    value: 'rempli',
+    value: 'estComplet',
     direction: 'desc',
   },
   {
@@ -52,7 +50,7 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   settingsModal: (openState: ModalOpenState) => React.ReactNode;
-  filtres?: Indicateurs.Filters;
+  filtres?: Indicateurs.FetchFiltre;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;
   sortSettings?: SortIndicateurSettings;
@@ -103,28 +101,31 @@ const IndicateursListe = ({
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   /** Défini le subset utilisé */
-  const getSubset = (): Subset | null => {
-    if (filtres?.participation_score) {
-      return 'cae';
-    }
-    if (filtres?.isPerso) {
-      return 'perso';
-    }
+  // const getSubset = (): Subset | null => {
+  //   if (filtres?.participationScore) {
+  //     return 'cae';
+  //   }
+  //   if (filtres?.estPerso) {
+  //     return 'perso';
+  //   }
 
-    return null;
-  };
+  //   return null;
+  // };
 
   const {data, isLoading} = useFilteredIndicateurDefinitions(
-    getSubset(),
     {
-      ...filtres,
-      text: debouncedSearch,
+      filtre: {
+        ...filtres,
+        text: debouncedSearch,
+      },
       sort:
-        sort.value === 'rempli'
-          ? {
-              field: sort.value,
-              direction: sort.direction,
-            }
+        sort.value === 'estComplet'
+          ? [
+              {
+                field: sort.value,
+                direction: sort.direction,
+              },
+            ]
           : undefined,
     },
     false
@@ -197,9 +198,7 @@ const IndicateursListe = ({
           settingsModal({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
       </div>
       {/** Liste des filtres appliqués */}
-      {filtres && (
-        <ModuleFiltreBadges filtre={filtersToModuleOptions(filtres)} />
-      )}
+      {filtres && <ModuleFiltreBadges filtre={filtres} />}
 
       {/** Chargement */}
       {isLoading ? (

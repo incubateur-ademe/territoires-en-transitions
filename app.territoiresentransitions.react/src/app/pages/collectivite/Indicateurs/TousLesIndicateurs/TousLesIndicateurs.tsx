@@ -1,32 +1,31 @@
-import {moduleOptionsToFilters} from '@tet/api/dist/src/indicateurs';
-import {Filtre} from '@tet/api/dist/src/indicateurs/domain';
+import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import ModalFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/ModalFiltresTousLesIndicateurs';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
 
-const nameToParams: Record<keyof Filtre, string> = {
+const nameToParams: Record<keyof FetchFiltre, string> = {
   thematiqueIds: 't',
   actionId: 'a',
   planActionIds: 'pa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   servicePiloteIds: 's',
-  type: 'type',
+  categorieNoms: 'cat',
   participationScore: 'ps',
   estComplet: 'r',
-  confidentiel: 'c',
+  estConfidentiel: 'c',
   fichesNonClassees: 'fnc',
   text: 'text',
-  isPerso: 'p',
+  estPerso: 'p',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const TousLesIndicateurs = () => {
   const collectiviteId = useCollectiviteId();
 
-  const [filters, setFilters] = useSearchParams<Filtre>(
+  const [filters, setFilters] = useSearchParams<FetchFiltre>(
     makeCollectiviteTousLesIndicateursUrl({collectiviteId: collectiviteId!}),
     {},
     nameToParams
@@ -38,8 +37,8 @@ const TousLesIndicateurs = () => {
         <h2 className="mb-0">Tous les indicateurs</h2>
       </div>
       <IndicateursListe
-        filtres={moduleOptionsToFilters({filtre: filters})}
-        sortSettings={{defaultSort: 'rempli'}}
+        filtres={filters}
+        sortSettings={{defaultSort: 'estComplet'}}
         settingsModal={openState => (
           <ModalFiltresTousLesIndicateurs
             openState={openState}

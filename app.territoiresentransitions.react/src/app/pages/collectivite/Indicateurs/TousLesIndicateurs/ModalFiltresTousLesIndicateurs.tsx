@@ -13,15 +13,15 @@ import {
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import {Filtre} from '@tet/api/dist/src/indicateurs/domain';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import IndicateurTypesDropdown from 'ui/dropdownLists/indicateur/IndicateurTypesDropdown';
+import IndicateurCategoriesDropdown from 'ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import {useState} from 'react';
+import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
 
 type Props = ModalProps & {
-  filters: Filtre;
-  setFilters: (filters: Filtre) => void;
+  filters: FetchFiltre;
+  setFilters: (filters: FetchFiltre) => void;
 };
 
 const ModalFiltresTousLesIndicateurs = ({
@@ -29,7 +29,7 @@ const ModalFiltresTousLesIndicateurs = ({
   filters,
   setFilters,
 }: Props) => {
-  const [filtreState, setFiltreState] = useState<Filtre>(filters);
+  const [filtreState, setFiltreState] = useState<FetchFiltre>(filters);
   return (
     <Modal
       openState={openState}
@@ -97,19 +97,14 @@ const ModalFiltresTousLesIndicateurs = ({
           </FormSection>
 
           <FormSection title="Typologie :" className="!grid-cols-1">
-            <Field title="Type">
-              <IndicateurTypesDropdown
-                disabled
-                values={
-                  filtreState.type && filtreState.type.length > 0
-                    ? filtreState.type[0]
-                    : undefined
-                }
+            <Field title="Catégorie">
+              <IndicateurCategoriesDropdown
+                values={filtreState.categorieNoms}
                 onChange={value => {
-                  const {type, ...rest} = filtreState;
+                  const {categorieNoms, ...rest} = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(value ? {type: [value]} : {}),
+                    ...(value ? {categorieNoms: [value]} : {}),
                   });
                 }}
               />
@@ -156,21 +151,24 @@ const ModalFiltresTousLesIndicateurs = ({
             />
             <Checkbox
               label="Indicateur privé"
-              checked={filtreState.confidentiel}
+              checked={filtreState.estConfidentiel}
               onChange={() => {
-                const {confidentiel, ...rest} = filtreState;
+                const {estConfidentiel, ...rest} = filtreState;
                 setFiltreState({
                   ...rest,
-                  ...(!confidentiel ? {confidentiel: true} : {}),
+                  ...(!estConfidentiel ? {estConfidentiel: true} : {}),
                 });
               }}
             />
             <Checkbox
               label="Indicateur personnalisé"
-              checked={filtreState.isPerso}
+              checked={filtreState.estPerso}
               onChange={() => {
-                const {isPerso, ...rest} = filtreState;
-                setFiltreState({...rest, ...(!isPerso ? {isPerso: true} : {})});
+                const {estPerso, ...rest} = filtreState;
+                setFiltreState({
+                  ...rest,
+                  ...(!estPerso ? {estPerso: true} : {}),
+                });
               }}
             />
           </FormSection>

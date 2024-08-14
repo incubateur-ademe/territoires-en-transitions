@@ -48,10 +48,11 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const preuvesCount = useActionPreuvesCount(action);
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
-  const {data: indicateursLies} = useFilteredIndicateurDefinitions(
-    referentielId,
-    {action_id: action.id}
-  );
+  const {data: indicateursLies} = useFilteredIndicateurDefinitions({
+    filtre: {
+      actionId: action.id,
+    },
+  });
 
   const actionScores = useScoreRealise(action);
 

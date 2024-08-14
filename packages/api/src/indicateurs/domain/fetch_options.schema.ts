@@ -1,20 +1,17 @@
 import {z} from 'zod';
 import {filtreRessourceLieesSchema} from '../../collectivites/shared/domain/filtre_ressource_liees.schema';
 import {getQueryOptionsSchema} from '../../shared/domain/query_options.schema';
-
-export const typeSchema = z.enum(['resultat', 'impact']);
-
-export type TypeIndicateur = z.infer<typeof typeSchema>;
+import {categorieSchema} from './categorie.schema';
 
 export const filtreSpecifiqueSchema = z.object({
   actionId: z.string().optional(),
-  type: typeSchema.array().optional(),
   participationScore: z.boolean().optional(),
   estComplet: z.coerce.boolean().default(false).optional(),
-  confidentiel: z.coerce.boolean().default(false).optional(),
+  estConfidentiel: z.coerce.boolean().default(false).optional(),
   fichesNonClassees: z.coerce.boolean().default(false).optional(),
   text: z.string().optional(),
-  isPerso: z.coerce.boolean().default(false).optional(),
+  estPerso: z.coerce.boolean().default(false).optional(),
+  categorieNoms: z.array(categorieSchema.shape.nom).optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
@@ -32,10 +29,13 @@ export const filtreSchema = filtreRessourceLieesSchema
   })
   .merge(filtreSpecifiqueSchema);
 
-export type Filtre = z.infer<typeof filtreSchema>;
+export type FetchFiltre = z.infer<typeof filtreSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema(['text']).extend({
-  filtre: filtreSchema,
+export const fetchOptionsSchema = getQueryOptionsSchema([
+  'text',
+  'estComplet',
+]).extend({
+  filtre: filtreSchema.optional(),
 });
 
-export type FetchOptions = z.infer<typeof fetchOptionsSchema>;
+export type FetchOptions = z.input<typeof fetchOptionsSchema>;

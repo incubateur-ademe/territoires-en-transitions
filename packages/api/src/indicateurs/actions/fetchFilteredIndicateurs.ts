@@ -1,69 +1,36 @@
-import {Enums, DBClient} from '../../typeUtils';
-import {unaccent} from '../../utils/unaccent';
 import {selectGroupements} from '../../collectivites/shared/actions/groupement.fetch';
-import {FetchOptions, Filtre} from '../domain/fetch_options.schema';
 import {Groupement} from '../../collectivites/shared/domain/groupement.schema';
-import {Indicateurs} from '../..';
+import {DBClient} from '../../typeUtils';
+import {unaccent} from '../../utils/unaccent';
+import {FetchOptions, FetchFiltre} from '../domain/fetch_options.schema';
 
-// Sous-ensemble d'indicateurs
-export type Subset = 'cae' | 'eci' | 'crte' | 'perso' | 'cles' | 'selection';
-
-const subsetPassage = new Map<Subset, string>([
-  ['cae', 'cae'],
-  ['eci', 'eci'],
-  ['crte', 'crte'],
-  ['cles', 'clef'],
-  ['selection', 'prioritaire'],
-]);
-
-// Options de filtrage
-export type Filters = {
-  thematique_ids?: number[];
-  action_id?: string;
-  plan_ids?: number[];
-  pilote_user_ids?: string[];
-  pilote_tag_ids?: number[];
-  service_ids?: number[];
-  type?: Enums<'indicateur_referentiel_type'>[];
-  participation_score?: boolean;
-  rempli?: boolean;
-  confidentiel?: boolean;
-  isPerso?: boolean;
-  fiches_non_classees?: boolean;
-  text?: string;
-  sort?: {
-    field: keyof Filters;
-    direction: 'asc' | 'desc';
-  };
-};
-
-const filtresOptions: {[key in keyof Filters]?: string} = {
-  thematique_ids: 'indicateur_thematique!inner(thematique_id)',
-  action_id: 'indicateur_action!inner(action_id)',
-  plan_ids:
+const filtresOptions: {[key in keyof FetchFiltre]?: string} = {
+  thematiqueIds: 'indicateur_thematique!inner(thematique_id)',
+  actionId: 'indicateur_action!inner(action_id)',
+  planActionIds:
     'fiche_action_indicateur!inner(fiche_id, fiche_action!inner(fiche_action_axe!inner(axe!inner())))',
-  pilote_user_ids: 'indicateur_pilote!inner()',
-  pilote_tag_ids: 'indicateur_pilote!inner()',
-  service_ids: 'indicateur_service_tag!inner(service_tag_id)',
-  rempli: 'indicateur_valeur()',
-  confidentiel:
+  utilisateurPiloteIds: 'indicateur_pilote!inner()',
+  personnePiloteIds: 'indicateur_pilote!inner()',
+  servicePiloteIds: 'indicateur_service_tag!inner(service_tag_id)',
+  estComplet: 'indicateur_valeur()',
+  estConfidentiel:
     'indicateur_collectivite(commentaire, confidentiel, collectivite_id)',
-  fiches_non_classees:
+  fichesNonClassees:
     'fiche_action_indicateur!inner(fiche_id, fiche_action!inner(fiche_action_axe!inner(axe!inner())))',
+  categorieNoms: 'categorie_tag!inner(id,nom,collectivite_id,groupement_id)',
 };
 
 export async function fetchFilteredIndicateurs(
   dbClient: DBClient,
   collectiviteId: number,
-  subset: Subset | null,
-  filters: Filters
+  {filtre, sort}: FetchOptions
 ) {
+  const filters = filtre ?? {};
   const parts = new Set<string>();
-  const isPerso = subset === 'perso';
   const groupements: Groupement[] = await selectGroupements(dbClient);
 
   // Ajoute les relations supplémentaires en fonction des filtres voulus
-  let key: keyof Filters;
+  let key: keyof FetchFiltre;
   for (key in filters) {
     if (
       (filters[key] as Array<string | number>)?.length ||
@@ -73,13 +40,17 @@ export async function fetchFilteredIndicateurs(
       if (part) parts.add(part);
     }
   }
-  if (subset !== null && !isPerso)
+  if (filters.categorieNoms !== null && !filters.estPerso) {
     parts.add(
       'indicateur_categorie_tag!inner(categorie_tag!inner(id,nom,collectivite_id,groupement_id))'
     );
+  }
 
   // pour pouvoir trier sur la complétude (dans le TDB)
-  if (filters.rempli === undefined && filters.sort?.field === 'rempli') {
+  if (
+    filters.estComplet === undefined &&
+    sort?.find(s => s.field === 'estComplet')
+  ) {
     parts.add('indicateur_valeur(id)');
   }
 
@@ -98,39 +69,26 @@ export async function fetchFilteredIndicateurs(
     );
 
   // filtre par sous-ensemble voulu
-  if (isPerso) {
+  if (filters.estPerso) {
     // On ne récupère que les indicateurs personnalisés
     query.eq('collectivite_id', collectiviteId);
+  } else if (!filters.categorieNoms || filters.categorieNoms.length === 0) {
+    // quand on ne travaille pas sur un sous-ensemble on limite aux indicateurs
+    // prédéfinis et à ceux de la collectivité voulue
+    query.or(`collectivite_id.is.null,collectivite_id.eq.${collectiviteId}`);
   } else {
-    if (subset !== null || filters.type?.length) {
-      // On ne récupère que les indicateurs prédéfinis
-      query.is('collectivite_id', null);
-      // S'il y a un tri sur les catégories prédéfinies,
-      // on ne garde que les indicateurs ayant des catégories prédéfinies
-      query.is('indicateur_categorie_tag.categorie_tag.collectivite_id', null);
-      if (subset !== null) {
-        if (filters.type?.length) {
-          // S'il y a un tri sur le type et le programme
-          query.or(
-            `nom.eq.${subsetPassage.get(subset)!}, nom.in.${filters.type}`,
-            {referencedTable: 'indicateur_categorie_tag.categorie_tag'}
-          );
-        } else {
-          // S'il y a un tri que sur le programme
-          query.eq(
-            'indicateur_categorie_tag.categorie_tag.nom',
-            subsetPassage.get(subset)!
-          );
-        }
-      } else if (filters.type?.length) {
-        // S'il y a un tri que sur le type
-        query.in('indicateur_categorie_tag.categorie_tag.nom', filters.type);
-      }
-    } else {
-      // quand on ne travaille pas sur un sous-ensemble on limite aux indicateurs
-      // prédéfinis et à ceux de la collectivité voulue
-      query.or(`collectivite_id.is.null,collectivite_id.eq.${collectiviteId}`);
-    }
+    // S'il y a un tri que sur le programme
+
+    // On ne récupère que les indicateurs prédéfinis
+    query.is('collectivite_id', null);
+    // S'il y a un tri sur les catégories prédéfinies,
+    // on ne garde que les indicateurs ayant des catégories prédéfinies
+    query.is('categorie_tag.collectivite_id', null);
+
+    query.in(
+      'indicateur_categorie_tag.categorie_tag.nom',
+      filters.categorieNoms
+    );
   }
 
   // recherche par texte
@@ -138,7 +96,7 @@ export async function fetchFilteredIndicateurs(
   let searchById = false;
   if (text) {
     // par identifiant si le texte recherché commence par un #
-    if (text.startsWith('#') && !isPerso) {
+    if (text.startsWith('#') && !filtresOptions.estPerso) {
       const idToSearch = text.replaceAll(/[#\s]/g, '');
       if (idToSearch) {
         searchById = true;
@@ -160,49 +118,54 @@ export async function fetchFilteredIndicateurs(
   // si une de ces conditions est vraie alors le filtre "parent uniquement" sera désactivé
   const filtrerPar = {
     participationAuScore:
-      subset === 'cae' && filters.participation_score !== undefined,
-    confidentiel: filters.confidentiel,
-    planAction: !!filters.plan_ids?.length,
-    service: !!filters.service_ids?.length,
+      // filters.categorieNoms?.find(nom => nom === 'cae') &&
+      filters.participationScore !== undefined,
+    confidentiel: filters.estConfidentiel !== undefined,
+    planAction: !!filters.planActionIds?.length,
+    service: !!filters.servicePiloteIds?.length,
     personne:
-      !!filters.pilote_user_ids?.length || !!filters.pilote_tag_ids?.length,
-    fichesNonClassees: !!filters.fiches_non_classees,
+      !!filters.utilisateurPiloteIds?.length ||
+      !!filters.personnePiloteIds?.length,
+    fichesNonClassees: !!filters.fichesNonClassees,
   };
 
   // sélectionne uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
   // une recherche par id ou si un des filtres complémentaires est actif)
   const filtrerParParent =
-    subset !== null &&
-    subset !== 'crte' &&
-    subset !== 'perso' &&
+    !filtresOptions.estPerso &&
+    filters.categorieNoms?.length &&
+    !filters.categorieNoms.find(nom => nom === 'crte') &&
+    // subset !== null &&
+    //   subset !== 'crte' &&
+    //   subset !== 'perso' &&
     !searchById &&
-    !Object.values(filtrerPar).find(v => !!v);
+    !Object.values(filtrerPar).includes(true);
 
   if (filtrerParParent) {
     query.is('indicateur_parents', null);
   }
 
   // par thématique
-  if (filters.thematique_ids?.length) {
-    query.in('indicateur_thematique.thematique_id', filters.thematique_ids);
+  if (filters.thematiqueIds?.length) {
+    query.in('indicateur_thematique.thematique_id', filters.thematiqueIds);
   }
 
   // par action du référentiel (ne remonte que les parents)
-  if (filters.action_id) {
-    query.in('indicateur_action.action_id', [filters.action_id]);
+  if (filters.actionId) {
+    query.in('indicateur_action.action_id', [filters.actionId]);
   }
 
   // par plan
   if (filtrerPar.planAction) {
     query.in(
       'fiche_action_indicateur.fiche_action.fiche_action_axe.axe.plan',
-      filters.plan_ids!
+      filters.planActionIds!
     );
   }
 
   // filtre les indicateurs confidentiels
-  if (filters.confidentiel !== undefined) {
-    if (filters.confidentiel) {
+  if (filters.estConfidentiel !== undefined) {
+    if (filters.estConfidentiel) {
       query.not('indicateur_collectivite', 'is', null);
       query.eq('indicateur_collectivite.collectivite_id', collectiviteId);
       query.is('indicateur_collectivite.confidentiel', true);
@@ -216,7 +179,10 @@ export async function fetchFilteredIndicateurs(
   // par service pilote
   if (filtrerPar.service) {
     query.eq('indicateur_service_tag.collectivite_id', collectiviteId);
-    query.in('indicateur_service_tag.service_tag_id', filters.service_ids!);
+    query.in(
+      'indicateur_service_tag.service_tag_id',
+      filters.servicePiloteIds!
+    );
   }
 
   // par personne pilote
@@ -224,11 +190,11 @@ export async function fetchFilteredIndicateurs(
     const filterParams: string[] = [];
 
     // cumule les user_ids
-    filters.pilote_user_ids?.forEach(user_id => {
+    filters.utilisateurPiloteIds?.forEach(user_id => {
       filterParams.push(`user_id.eq.${user_id}`);
     });
     // et les tag_ids
-    filters.pilote_tag_ids?.forEach(tag_id => {
+    filters.personnePiloteIds?.forEach(tag_id => {
       filterParams.push(`tag_id.eq.${tag_id}`);
     });
 
@@ -238,12 +204,12 @@ export async function fetchFilteredIndicateurs(
 
   // participation au score CAE
   if (filtrerPar.participationAuScore) {
-    query.is('participation_score', filters.participation_score!);
+    query.is('participation_score', filters.participationScore!);
   }
   // filtre les indicateurs complétés / à compléter
-  if (filters.rempli !== undefined) {
+  if (filters.estComplet !== undefined) {
     query.eq('indicateur_valeur.collectivite_id', collectiviteId);
-    if (filters.rempli) {
+    if (filters.estComplet) {
       query.not('indicateur_valeur', 'is', null);
     } else {
       query.is('indicateur_valeur', null);
@@ -251,31 +217,32 @@ export async function fetchFilteredIndicateurs(
   }
 
   // pour pouvoir trier sur la complétude (dans le TDB)
-  if (filters.rempli === undefined && filters.sort?.field === 'rempli') {
+  if (
+    filters.estComplet === undefined &&
+    sort?.find(s => s.field === 'estComplet')
+  ) {
     query.eq('indicateur_valeur.collectivite_id', collectiviteId);
   }
 
-  /** Par défaut tri par ordre alphabétique */
-  const orderByOptions = [
-    {
-      field: 'titre',
-      direction: 'asc',
-    },
-  ];
+  // Par défaut tri par ordre alphabétique
+  const defaultSort = {
+    field: 'titre',
+    direction: 'asc',
+  };
 
-  if (filters.sort) {
-    orderByOptions.unshift(filters.sort);
-  }
+  // S'il l'utilisateur a spécifié un tri, on le met en premier
+  const finalSort = sort ? [...sort, defaultSort] : [defaultSort];
 
-  orderByOptions.forEach(sort => {
-    if (sort.field !== 'rempli') {
-      // la colonne `rempli` n'existe pas dans la base (on fait le tri a posteriori)
+  finalSort.forEach(sort => {
+    if (sort.field !== 'estComplet') {
+      // la colonne `estComplet` n'existe pas dans la base (on fait le tri a posteriori)
       query.order(sort.field, {ascending: sort.direction === 'asc'});
     }
   });
+
   const {data, ...remaining} = await query;
   let rows = data || [];
-  if (filters.confidentiel === false) {
+  if (filters.estConfidentiel === false) {
     // Filtre supplémentaire sur confidentiel car pas trouvé comment faire ma condition avec postgrest
     rows = rows.filter(
       (r: any) =>
@@ -293,7 +260,7 @@ export async function fetchFilteredIndicateurs(
   );
 
   // tri local sur la complétude
-  if (filters.sort?.field === 'rempli') {
+  if (sort?.find(s => s.field === 'estComplet')) {
     rows.sort((a: any, b: any) => {
       return (
         (b.indicateur_valeur?.length || -1) -
@@ -313,57 +280,4 @@ export async function fetchFilteredIndicateurs(
         identifiant: d.identifiant_referentiel as string,
       })),
   };
-}
-
-export function moduleOptionsToFilters(
-  options: Pick<FetchOptions, 'filtre'>
-): Filters {
-  const {filtre} = options;
-
-  return {
-    thematique_ids: filtre.thematiqueIds,
-    action_id: filtre.actionId,
-    plan_ids: filtre.planActionIds,
-    pilote_user_ids: filtre.utilisateurPiloteIds,
-    pilote_tag_ids: filtre.personnePiloteIds,
-    service_ids: filtre.servicePiloteIds,
-    type: filtre.type,
-    participation_score: filtre.participationScore,
-    rempli: filtre.estComplet,
-    confidentiel: filtre.confidentiel,
-    fiches_non_classees: filtre.fichesNonClassees,
-    text: filtre.text,
-    isPerso: filtre.isPerso,
-    // sort: sort?.map(({field, direction}) => ({field, direction}))[0],
-    // page,
-    // limit,
-  };
-}
-
-export function filtersToModuleOptions(filters: Indicateurs.Filters): Filtre {
-  const options: Filtre = {
-    thematiqueIds: filters.thematique_ids,
-    planActionIds: filters.plan_ids,
-    utilisateurPiloteIds: filters.pilote_user_ids,
-    personnePiloteIds: filters.pilote_tag_ids,
-    servicePiloteIds: filters.service_ids,
-  };
-
-  if (filters.rempli !== undefined) {
-    options.estComplet = filters.rempli;
-  }
-
-  if (filters.participation_score !== undefined) {
-    options.participationScore = filters.participation_score;
-  }
-
-  if (filters.confidentiel !== undefined) {
-    options.confidentiel = filters.confidentiel;
-  }
-
-  if (filters.isPerso !== undefined) {
-    options.isPerso = filters.isPerso;
-  }
-
-  return options;
 }

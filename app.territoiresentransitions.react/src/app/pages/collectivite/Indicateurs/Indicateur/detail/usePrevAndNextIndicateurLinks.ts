@@ -23,7 +23,7 @@ export const usePrevAndNextIndicateurLinks = () => {
   }>();
 
   // définitions
-  const {data} = useFilteredIndicateurDefinitions(vue, {});
+  const {data} = useFilteredIndicateurDefinitions({});
 
   let definitions = data;
   if (['cae', 'eci', 'crte'].includes(vue)) {

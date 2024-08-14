@@ -29,11 +29,8 @@ const ModuleIndicateurs = ({view, module}: Props) => {
   const userId = useAuth().user?.id;
   const history = useHistory();
 
-  const filtre = Indicateurs.moduleOptionsToFilters(module.options);
-
   const {data, isLoading} = useFilteredIndicateurDefinitions(
-    null,
-    filtre,
+    module.options,
     false
   );
 

@@ -4,7 +4,7 @@ import {
   ModuleIndicateursSelect,
   Slug,
 } from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Indicateurs} from '@tet/api';
+import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
@@ -13,7 +13,6 @@ import {
 import {TDBViewParam} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
-import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 
 type Props = {
   view: TDBViewParam;
@@ -25,7 +24,7 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
 
   const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
 
-  const filtre = module && Indicateurs.moduleOptionsToFilters(module.options);
+  const filtre = module?.options.filtre;
 
   const trackEvent = useEventTracker(
     `app/tdb/personnel/indicateurs-de-suivi-de-mes-plans`

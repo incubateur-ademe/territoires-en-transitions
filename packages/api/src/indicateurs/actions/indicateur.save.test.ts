@@ -245,6 +245,10 @@ test('Test upsertPilotes', async () => {
 
   // Ajout pilote inexistant sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
+  if (!def) {
+    expect.fail('Indicateur personnalisé non trouvé');
+  }
+
   const tags: Personne[] = [
     {
       nom: 'test',
@@ -253,7 +257,7 @@ test('Test upsertPilotes', async () => {
       collectiviteId: 1,
     },
   ];
-  await upsertPilotes(supabase, def!, 1, tags);
+  await upsertPilotes(supabase, def.id, 1, tags);
   const data = await selectIndicateurPilotes(supabase, 123, 1);
   expect(data).not.toBeNull();
   expect(data).not.toHaveLength(0);
@@ -264,24 +268,29 @@ test('Test upsertPilotes', async () => {
     userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
     collectiviteId: 1,
   });
-  await upsertPilotes(supabase, def!, 1, tags);
+  await upsertPilotes(supabase, def.id, 1, tags);
   const data2 = await selectIndicateurPilotes(supabase, 123, 1);
   expect(data2).not.toBeNull();
   expect(data2).toHaveLength(3);
   // Enlève pilote sur indicateur personnalisé
-  await upsertPilotes(supabase, def!, 1, []);
+  await upsertPilotes(supabase, def.id, 1, []);
   const data3 = await selectIndicateurPilotes(supabase, 123, 1);
   expect(data3).not.toBeNull();
   expect(data3).toHaveLength(0);
+
   // Ajout pilote sur indicateur prédéfini
   const def2 = await selectIndicateurDefinition(supabase, 1, 1);
+  if (!def2) {
+    expect.fail('Indicateur personnalisé non trouvé');
+  }
+
   tags[0].idTablePassage = null;
-  await upsertPilotes(supabase, def2!, 1, tags);
+  await upsertPilotes(supabase, def2.id, 1, tags);
   const data4 = await selectIndicateurPilotes(supabase, 1, 1);
   expect(data4).not.toBeNull();
   expect(data4).toHaveLength(3);
   // Enlève pilote sur indicateur prédéfini
-  await upsertPilotes(supabase, def2!, 1, []);
+  await upsertPilotes(supabase, def2.id, 1, []);
   const data5 = await selectIndicateurPilotes(supabase, 1, 1);
   expect(data5).not.toBeNull();
   expect(data5).toHaveLength(0);

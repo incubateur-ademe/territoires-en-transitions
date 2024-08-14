@@ -27,7 +27,7 @@ type Props = {
   /** État vide générique */
   isEmpty: boolean;
   /** Filtre du module */
-  filtre: Filtre;
+  filtre?: Filtre;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
@@ -71,7 +71,10 @@ const Module = ({
         <p className="m-0 font-bold text-primary-9">
           Aucun résultat pour ce filtre !
         </p>
-        <ModuleFiltreBadges className="my-6 justify-center" filtre={filtre} />
+        <ModuleFiltreBadges
+          className="my-6 justify-center"
+          filtre={filtre ?? {}}
+        />
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
         </Button>
@@ -103,7 +106,7 @@ const Module = ({
         </>
       </div>
       {/** Filtres du module */}
-      <ModuleFiltreBadges filtre={filtre} />
+      <ModuleFiltreBadges filtre={filtre ?? {}} />
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}
