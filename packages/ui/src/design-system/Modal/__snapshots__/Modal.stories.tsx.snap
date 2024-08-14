@@ -5,7 +5,7 @@ exports[`design-system/Modal AvecBackdropBlur smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>
@@ -17,7 +17,7 @@ exports[`design-system/Modal AvecFooter smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>
@@ -26,7 +26,7 @@ exports[`design-system/Modal AvecFooter smoke-test 1`] = `
 
 exports[`design-system/Modal Controlled smoke-test 1`] = `
 <div class="p-8">
-  <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
     Open
   </button>
 </div>
@@ -37,7 +37,7 @@ exports[`design-system/Modal Default smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>
@@ -49,7 +49,7 @@ exports[`design-system/Modal LongContent smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>
@@ -62,28 +62,28 @@ exports[`design-system/Modal Size smoke-test 1`] = `
     <button text="sm"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       sm
     </button>
     <button text="md"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       md
     </button>
     <button text="lg"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       lg
     </button>
     <button text="xl"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+            class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
     >
       xl
     </button>
@@ -96,7 +96,7 @@ exports[`design-system/Modal WithRender smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>
@@ -108,7 +108,7 @@ exports[`design-system/Modal onlyRender smoke-test 1`] = `
   <button text="Ouvrir la modale"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
   >
     Ouvrir la modale
   </button>

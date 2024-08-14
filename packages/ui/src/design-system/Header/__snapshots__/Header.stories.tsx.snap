@@ -14,7 +14,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
               </i>
             </div>
           </div>
-          <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5 lg:hidden h-fit">
+          <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5 lg:hidden h-fit">
             <span class="ri-menu-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
             </span>
           </button>
@@ -32,7 +32,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
     <ul class="max-lg:hidden list-none flex gap-2 divide-x divide-x-grey-4 mb-0">
       <li class="pl-2 first-of-type:pl-0 pb-0">
         <a href="https://app.territoiresentransitions.fr/auth/signin"
-           class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6 !px-4"
+           class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6 !px-4"
         >
           <span class="ri-user-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
           </span>
@@ -43,7 +43,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
   </div>
   <div class="w-full bg-white">
     <div class="mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 text-sm">
-      <button class="w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6 flex-row-reverse lg:hidden ml-auto max-lg:hidden">
+      <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6 flex-row-reverse lg:hidden ml-auto max-lg:hidden">
         <span class="ri-close-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
         </span>
         Fermer
@@ -51,7 +51,7 @@ exports[`design-system/Header Default smoke-test 1`] = `
       <ul class="list-none flex-col gap-4 mb-0 mt-6 lg:hidden max-lg:hidden">
         <li>
           <a href="https://app.territoiresentransitions.fr/auth/signin"
-             class="bg-none after:hidden w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6"
           >
             <span class="ri-user-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
             </span>

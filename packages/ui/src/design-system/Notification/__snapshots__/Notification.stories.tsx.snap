@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`design-system/Notification IconeUniquement smoke-test 1`] = `
-<div class="text-primary fill-primary bg-primary-3 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
+<div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
   <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
   </span>
 </div>
 `;
 
 exports[`design-system/Notification NombreEtIcone smoke-test 1`] = `
-<div class="text-primary fill-primary bg-primary-3 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-  <span class="font-extrabold leading-none">
+<div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+  <span class="font-extrabold leading-none pt-0.5">
     10
   </span>
   <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
@@ -18,7 +18,7 @@ exports[`design-system/Notification NombreEtIcone smoke-test 1`] = `
 `;
 
 exports[`design-system/Notification NombreUniquement smoke-test 1`] = `
-<div class="text-primary fill-primary bg-primary-3 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
+<div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
   <span class="font-extrabold leading-none">
     10
   </span>
@@ -27,94 +27,214 @@ exports[`design-system/Notification NombreUniquement smoke-test 1`] = `
 
 exports[`design-system/Notification Variantes smoke-test 1`] = `
 <div class="grid gap-5 items-center bg-grey-2 p-10"
-     style="grid-template-columns: repeat(5, fit-content(0px));"
+     style="grid-template-columns: repeat(9, fit-content(0px));"
 >
   <div class="flex flex-col gap-5">
-    <div class="text-primary fill-primary bg-primary-3 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-warning-1 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-warning-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-info-1 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-info-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-error-1 text-base inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-error-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
       </span>
     </div>
   </div>
   <div class="flex flex-col gap-5">
-    <div class="text-primary fill-primary bg-primary-3 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
+    <div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
-        10
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-8 min-w-[2rem] text-base p-2 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem]">
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-warning-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-warning-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-info-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-info-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-error-1 text-sm inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-error-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
       </span>
     </div>
   </div>
   <div class="flex flex-col gap-5">
-    <div class="text-primary fill-primary bg-primary-3 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
+    <div class="text-primary fill-primary bg-primary-3 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
       <span class="font-extrabold leading-none">
-        10
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-7 min-w-[1.75rem] text-sm p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem]">
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-warning-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-warning-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-info-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-info-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
       <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>
-    <div class="text-white fill-white bg-error-1 text-xs inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow">
-      <span class="font-extrabold leading-none">
-        10
+    <div class="text-white fill-white bg-error-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none pt-0.5">
+        102
       </span>
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="font-extrabold leading-none">
+        1
+      </span>
+    </div>
+  </div>
+  <div class="flex flex-col gap-5">
+    <div class="text-primary fill-primary bg-primary-3 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-warning-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-info-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      </span>
+    </div>
+    <div class="text-white fill-white bg-error-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow">
       <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
       </span>
     </div>

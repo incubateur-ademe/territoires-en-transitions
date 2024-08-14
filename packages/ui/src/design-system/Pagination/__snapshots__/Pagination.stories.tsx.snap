@@ -4,7 +4,7 @@ exports[`design-system/Pagination Default smoke-test 1`] = `
 <nav class="flex w-fit gap-6">
   <button title="Page précédente"
           disabled
-          class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5"
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5"
   >
     <span class="ri-arrow-left-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3">
     </span>
@@ -13,37 +13,37 @@ exports[`design-system/Pagination Default smoke-test 1`] = `
   <div class="flex gap-3">
     <button aria-current="page"
             title="Page 1"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       1
     </button>
     <button aria-current="page"
             title="Page 2"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       2
     </button>
     <button aria-current="page"
             title="Page 3"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       3
     </button>
     <button aria-current="page"
             title="Page 4"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       4
     </button>
     <button aria-current="page"
             title="Page 5"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       5
     </button>
   </div>
   <button title="Page suivante"
-          class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
@@ -56,7 +56,7 @@ exports[`design-system/Pagination ManyPages smoke-test 1`] = `
 <nav class="flex w-fit gap-6">
   <button title="Page précédente"
           disabled
-          class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5"
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5"
   >
     <span class="ri-arrow-left-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3">
     </span>
@@ -65,50 +65,50 @@ exports[`design-system/Pagination ManyPages smoke-test 1`] = `
   <div class="flex gap-3">
     <button aria-current="page"
             title="Page 1"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       1
     </button>
     <button aria-current="page"
             title="Page 2"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       2
     </button>
     <button aria-current="page"
             title="Page 3"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       3
     </button>
     <button aria-current="page"
             title="Page undefined"
             disabled
-            class="w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       ...
     </button>
     <button aria-current="page"
             title="Page 8"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       8
     </button>
     <button aria-current="page"
             title="Page 9"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       9
     </button>
     <button aria-current="page"
             title="Page 10"
-            class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
+            class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 !p-2 !w-9 justify-center"
     >
       10
     </button>
   </div>
   <button title="Page suivante"
-          class="w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:!text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5 flex-row-reverse"
   >
     <span class="ri-arrow-right-s-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-7 group-hover:fill-primary-8">
     </span>
