@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import HeaderTitle from 'ui/HeaderTitle';
-import {IndicateurTopNav} from './IndicateurTopNav';
 
 /** Affiche l'en-tête d'une page détail d'un indicateur */
 type HeaderProps = {
@@ -28,7 +27,6 @@ export const HeaderIndicateur = ({
         onUpdate={onUpdate}
         isReadonly={readonly}
       />
-      <IndicateurTopNav />
     </>
   );
 };
