@@ -32,7 +32,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
 
   return (
     <>
-      <div className="relative group h-full">
+      <div className="relative group">
         {/* Menu de la carte document */}
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
@@ -45,7 +45,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
         )}
 
         {/* Carte*/}
-        <Card className="rounded-xl h-full !p-4">
+        <Card className="rounded-xl !p-4">
           <div className="flex gap-4">
             {/* Icône document ou lien */}
             <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
