@@ -304,6 +304,19 @@ exports[`Storyshots app/Layout Exemple 1`] = `
                       <a
                         aria-controls="modal-header__menu"
                         className="fr-nav__link"
+                        href="/collectivite/1/plans/toutes-les-fiches-action"
+                        onClick={[Function]}
+                        target="_self"
+                      >
+                        Toutes les fiches action
+                      </a>
+                    </li>
+                    <li
+                      className="fr-nav__item"
+                    >
+                      <a
+                        aria-controls="modal-header__menu"
+                        className="fr-nav__link"
                         href="/collectivite/1/plans/synthese"
                         onClick={[Function]}
                         target="_self"
@@ -720,7 +733,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-4 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
                 href="https://www.ademe.fr/"
                 onClick={[Function]}
                 rel="noreferrer noopener"
@@ -736,7 +749,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-4 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
                 href="https://beta.gouv.fr/"
                 onClick={[Function]}
                 rel="noreferrer noopener"
@@ -764,7 +777,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/accessibilite"
                 onClick={[Function]}
               >
@@ -775,7 +788,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/mentions"
                 onClick={[Function]}
               >
@@ -786,7 +799,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://www.ademe.fr/donnees-personnelles/"
                 onClick={[Function]}
                 rel="noreferrer noopener"
@@ -802,7 +815,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/cookies"
                 onClick={[Function]}
               >
@@ -813,7 +826,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://github.com/incubateur-ademe/territoires-en-transitions"
                 onClick={[Function]}
                 rel="noreferrer noopener"
@@ -829,7 +842,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/cgu"
                 onClick={[Function]}
               >
@@ -840,7 +853,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/stats"
                 onClick={[Function]}
               >
@@ -851,7 +864,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
               className="pl-2 first-of-type:pl-0 pb-0"
             >
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
                 href="https://territoiresentransitions.fr/budget"
                 onClick={[Function]}
               >
@@ -867,7 +880,7 @@ exports[`Storyshots app/Layout Exemple 1`] = `
             >
               Sauf mention contraire, tous les contenus de ce site sont sous
               <a
-                className="bg-none after:hidden w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
+                className="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 !font-normal !border-b-grey-8"
                 href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
                 onClick={[Function]}
                 rel="noreferrer noopener"
