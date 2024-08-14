@@ -4,26 +4,12 @@ import {ButtonMenu} from './ButtonMenu';
 
 const meta: Meta<typeof ButtonMenu> = {
   component: ButtonMenu,
-  argTypes: {
-    notificationVariant: {
-      control: {type: 'select'},
-    },
-    variant: {
-      control: {type: 'select'},
-    },
-    size: {
-      control: {type: 'select'},
-    },
-    icon: {
-      control: {type: 'text'},
-    },
-    iconPosition: {
-      control: {type: 'select'},
-    },
-  },
+  argTypes: {},
   args: {
     icon: 'equalizer-fill',
-    notificationValue: 2,
+    notification: {
+      number: 2,
+    },
     children: (
       <div className="!w-44 text-sm">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium,

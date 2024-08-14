@@ -38,15 +38,12 @@ type FiltersMenuProps = {
   className?: string;
   /** Pour styler le bouton */
   btnMenuClassName?: string;
-  /** ClassName pour le container du NotificationButton */
-  notificationBtnClassName?: string;
 };
 
 export const BadgesFilters = ({
   filters,
   className,
   btnMenuClassName,
-  notificationBtnClassName,
 }: FiltersMenuProps) => {
   const [badgesList, setBadgesList] = useState<BadgeType[] | null>(null);
 
@@ -153,10 +150,14 @@ export const BadgesFilters = ({
 
       {/* Menu + Filtres Select */}
       <ButtonMenu
+        size="xs"
         icon="equalizer-fill"
-        notificationValue={badgesList?.length}
         className={btnMenuClassName}
-        notificationBtnClassName={notificationBtnClassName}
+        notification={
+          badgesList?.length && {
+            number: badgesList?.length,
+          }
+        }
       >
         <div className="flex flex-col gap-4 w-72">
           {filters.map(filter => (

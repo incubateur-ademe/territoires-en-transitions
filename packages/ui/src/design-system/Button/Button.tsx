@@ -22,6 +22,7 @@ export const Button = forwardRef(
       icon,
       iconPosition,
       external,
+      notification,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isOpen, // obligé de le déstructurer pour ne pas le passer au bouton
       ...props
@@ -39,7 +40,7 @@ export const Button = forwardRef(
       buttonSizeClassnames[size][isIconButton ? 'iconButton' : 'textButton'];
 
     const buttonClassname = classNames(
-      'w-fit flex items-center border-solid group',
+      'relative w-fit flex items-center border-solid group',
       {
         // Layout du bouton
         'gap-1': size === 'xs' || (size === 'sm' && variant === 'underlined'),
@@ -69,6 +70,7 @@ export const Button = forwardRef(
       size,
       icon,
       disabled,
+      notification,
     };
 
     const isButton = !isAnchor(props);
