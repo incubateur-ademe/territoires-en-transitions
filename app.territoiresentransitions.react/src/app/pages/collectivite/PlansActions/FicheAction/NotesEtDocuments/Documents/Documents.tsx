@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import Masonry from 'react-responsive-masonry';
 import {Button} from '@tet/ui';
 import {useAnnexesFicheAction} from '../../data/useAnnexesFicheAction';
 import EmptyCard from '../../EmptyCard';
@@ -48,7 +49,7 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
           </div>
 
           {/* Liste des documents */}
-          <div className="grid grid-cols-2 gap-3">
+          <Masonry columnsCount={2} gutter="0.75rem">
             {documents.map(doc => (
               <CarteDocument
                 key={doc.id}
@@ -56,7 +57,7 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
                 document={doc}
               />
             ))}
-          </div>
+          </Masonry>
         </div>
       )}
 

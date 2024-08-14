@@ -40,7 +40,7 @@ const IndicateursAssocies = ({
             onClick: () => setIsPanelOpen(prevState => !prevState),
           }}
           secondaryAction={{
-            label: 'Créer un indicateur personnalisé',
+            label: 'Créer un indicateur',
             icon: 'add-line',
             onClick: () => {
               setIsModalOpen(true);
@@ -69,7 +69,7 @@ const IndicateursAssocies = ({
                       setIsPanelOpen(false);
                     }}
                   >
-                    Créer un indicateur personnalisé
+                    Créer un indicateur
                   </Button>
                   <Button
                     size="xs"
