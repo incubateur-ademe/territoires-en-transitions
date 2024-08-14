@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { IsArray, ValidateNested } from 'class-validator';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -123,10 +125,26 @@ export type CreateIndicateurValeurType = InferInsertModel<
   typeof indicateurValeurTable
 >;
 
+export class IndicateurValeurGroupee implements Partial<IndicateurValeurType> {
+  id: number;
+
+  date_valeur: string;
+
+  resultat?: number | null;
+
+  resultat_commentaire?: string | null;
+
+  objectif?: number | null;
+
+  objectif_commentaire?: string | null;
+}
 export class IndicateurAvecValeurs {
   definition: IndicateurDefinitionType;
 
-  valeurs: IndicateurValeurType[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IndicateurValeurGroupee)
+  valeurs: IndicateurValeurGroupee[];
 }
 
 export class IndicateurValeurAvecMetadonnesDefinition {

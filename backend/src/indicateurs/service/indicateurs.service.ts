@@ -10,14 +10,19 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
+import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { GetIndicateursValeursOptions } from '../models/getIndicateursValeursOptions.models';
 import {
   CreateIndicateurValeurType,
+  IndicateurAvecValeurs,
   indicateurDefinitionTable,
+  IndicateurDefinitionType,
   indicateurSourceMetadonneeTable,
+  IndicateurValeurGroupee,
   indicateurValeurTable,
+  IndicateurValeurType,
 } from '../models/indicateur.models';
 import IndicateurSourcesService from './indicateurSources.service';
 
@@ -199,8 +204,40 @@ export default class IndicateursService {
         });
     }
   }
-}
 
-/*
-insert into "indicateur_valeur" ("id", "collectivite_id", "indicateur_id", "date_valeur", "metadonnee_id", "resultat", "resultat_commentaire", "objectif", "objectif_commentaire", "estimation", "modified_at", "created_at", "modified_by", "created_by") values (default, $1, $2, $3, $4, default, default, $5, default, default, default, default, default, default) on conflict ("indicateur_id","collectivite_id","date_valeur","metadonnee_id") do update set "objectif" = excluded.objectif where "indicateur_valeur"."metadonnee_id" is not null
-*/
+  groupeIndicateursValeursParIndicateur(
+    indicateurValeurs: IndicateurValeurType[],
+    indicateurDefinitions: IndicateurDefinitionType[],
+  ): IndicateurAvecValeurs[] {
+    const indicateurAvecValeurs = indicateurDefinitions.map(
+      (indicateurDefinition) => {
+        const valeurs = indicateurValeurs
+          .filter((v) => v.indicateur_id === indicateurDefinition.id)
+          .map((v) => {
+            const indicateurValeurGroupee: IndicateurValeurGroupee = {
+              id: v.id,
+              date_valeur: v.date_valeur,
+              resultat: v.resultat,
+              resultat_commentaire: v.resultat_commentaire,
+              objectif: v.objectif,
+              objectif_commentaire: v.objectif_commentaire,
+            };
+            return _.omitBy(
+              indicateurValeurGroupee,
+              _.isNil,
+            ) as IndicateurValeurGroupee;
+          });
+        // Trie les valeurs par date
+        valeurs.sort((a, b) => {
+          return a.date_valeur.localeCompare(b.date_valeur);
+        });
+        const indicateurAvecValeurs: IndicateurAvecValeurs = {
+          definition: indicateurDefinition,
+          valeurs,
+        };
+        return indicateurAvecValeurs;
+      },
+    );
+    return indicateurAvecValeurs.filter((i) => i.valeurs.length > 0);
+  }
+}
