@@ -27,12 +27,24 @@ export class CalculTrajectoireRequest {
   reset_fichier?: boolean;
 }
 
+export class CalculTrajectoireResponseDonnees {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IndicateurAvecValeurs)
+  emissions_ges: IndicateurAvecValeurs[];
+
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IndicateurAvecValeurs)
+  consommations_finales: IndicateurAvecValeurs[];
+}
+
 export class CalculTrajectoireResponse {
   @ApiProperty({ description: 'Résultat du calcul de la trajectoire' })
-  @IsArray()
   @ValidateNested()
-  @Type(() => IndicateurAvecValeurs)
-  trajectoire: IndicateurAvecValeurs[];
+  @Type(() => CalculTrajectoireResponseDonnees)
+  trajectoire: CalculTrajectoireResponseDonnees;
 }
 
 export class CalculTrajectoireResult extends CalculTrajectoireResponse {
@@ -41,11 +53,14 @@ export class CalculTrajectoireResult extends CalculTrajectoireResponse {
 }
 
 export class DonneesARemplirResult {
-  valeursARemplir: (number | null)[];
-  identifiantsReferentielManquants: string[];
+  valeurs: {
+    identifiants_referentiel: string[];
+    valeur: number | null;
+  }[];
+  identifiants_referentiel_manquants: string[];
 }
 
 export class DonneesCalculTrajectoireARemplir {
-  emissionsGes: DonneesARemplirResult;
-  consommationsFinales: DonneesARemplirResult;
+  emissions_ges: DonneesARemplirResult;
+  consommations_finales: DonneesARemplirResult;
 }

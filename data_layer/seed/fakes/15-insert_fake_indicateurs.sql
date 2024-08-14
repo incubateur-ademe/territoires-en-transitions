@@ -32,7 +32,7 @@ VALUES
     (48, 1, '2024-01-01', 1, 1.5, null, null, null),
     (17, 1, '2024-01-01', 1, null, null, 16, null);
 
--- Insertion pour le calcul de la trajectoire snbc
+-- Insertion pour le calcul de la trajectoire snbc. Cas du pays du Laon
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
                                       resultat_commentaire, objectif, objectif_commentaire)
 values
@@ -59,5 +59,67 @@ values
         '2015-01-01', null, 3371, null, null, null),
     ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.j' limit 1),
      (select collectivite_id from epci where siren = '200043495' limit 1),
-        '2015-01-01', null, 807, null, null, null);
-        '2015-01-01', null, 807, null, null, null);
+        '2015-01-01', null, 807, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.e' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 334.7, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.f' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 247.25, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.i' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 24.77, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.g' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 402.75, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.h' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', null, 3.82, null, null, null);
+
+
+-- Insertion pour le calcul de la trajectoire snbc. Cas de strasbourg
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
+                                      resultat_commentaire, objectif, objectif_commentaire)
+values
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.c' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 447868, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.d' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 471107, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.i' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 348525, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.g' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 28839, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.e' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 653598, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.f' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 21492, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.h' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 39791, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.j' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 13500, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.e' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 3092.7, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.f' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 3295.15, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.i' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 61, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.g' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 2529.89, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.h' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 138.76, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.j' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2015-01-01', null, 0, null, null, null);
