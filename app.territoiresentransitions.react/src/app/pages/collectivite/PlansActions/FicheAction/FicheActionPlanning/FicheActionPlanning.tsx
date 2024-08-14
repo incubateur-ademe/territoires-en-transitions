@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import classNames from 'classnames';
-import {format, isBefore, startOfToday} from 'date-fns';
+import {isBefore, startOfToday} from 'date-fns';
+import _ from 'lodash';
 import {Button, Divider, Icon} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import BadgeStatut from '../../components/BadgeStatut';
@@ -25,11 +26,11 @@ const FicheActionPlanning = ({
   updateFiche,
 }: FicheActionPlanningProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullJustification, setIsFullJustification] = useState(false);
 
   const {
     amelioration_continue: ameliorationContinue,
     calendrier: justificationCalendrier,
-    created_at: dateCreation,
     date_debut: dateDebut,
     date_fin_provisoire: dateFinPrevisionnelle,
     niveau_priorite: niveauPriorite,
@@ -41,6 +42,18 @@ const FicheActionPlanning = ({
   const isLate =
     dateFinPrevisionnelle &&
     isBefore(new Date(dateFinPrevisionnelle), startOfToday());
+
+  const truncatedJustification =
+    justificationCalendrier !== null
+      ? _.truncate(justificationCalendrier, {
+          length: 300,
+          separator: ' ',
+          omission: '',
+        })
+      : null;
+
+  const isJustificationTruncated =
+    truncatedJustification !== justificationCalendrier;
 
   return (
     <>
@@ -133,22 +146,22 @@ const FicheActionPlanning = ({
             <>
               <Divider className="-mb-5" />
               <p className="text-sm text-primary-10 text-left leading-[22px] whitespace-pre-wrap mb-0">
-                {justificationCalendrier}
+                {isFullJustification || !isJustificationTruncated
+                  ? justificationCalendrier
+                  : `${truncatedJustification}...`}
               </p>
-            </>
-          )}
-
-          {/* Date de création de la fiche */}
-
-          {!!dateCreation && (
-            <>
-              <Divider className="-mb-5" />
-              <p className="text-sm text-primary-10 text-left mb-0">
-                Fiche action créée le{' '}
-                <span className="font-medium">
-                  {format(new Date(dateCreation), 'dd/MM/yyyy')}
-                </span>
-              </p>
+              {isJustificationTruncated && (
+                <Button
+                  variant="underlined"
+                  size="xs"
+                  className="ml-auto"
+                  onClick={() =>
+                    setIsFullJustification(prevState => !prevState)
+                  }
+                >
+                  {isFullJustification ? 'Voir moins' : 'Voir plus'}
+                </Button>
+              )}
             </>
           )}
         </div>

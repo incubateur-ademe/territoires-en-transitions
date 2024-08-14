@@ -59,11 +59,17 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
 
               {/* Date de dernière modification */}
               {fiche.modified_at && (
-                <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 h-14 text-sm text-primary-10 font-medium italic flex items-center max-md:justify-center">
+                <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 text-sm text-primary-10 font-medium italic flex flex-col items-start max-md:items-center gap-1">
                   <span>
                     Dernière modification le{' '}
                     {format(new Date(fiche.modified_at), 'dd/MM/yyyy')}
                   </span>
+                  {fiche.created_at !== null && (
+                    <span className="text-sm text-primary-10 text-left">
+                      Fiche action créée le{' '}
+                      {format(new Date(fiche.created_at), 'dd/MM/yyyy')}
+                    </span>
+                  )}
                 </div>
               )}
 
