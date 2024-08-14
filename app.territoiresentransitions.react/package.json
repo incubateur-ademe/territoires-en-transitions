@@ -50,7 +50,6 @@
     "formik": "^2.2.9",
     "html2canvas": "^1.4.1",
     "http-proxy-middleware": "^3.0.0",
-    "posthog-js": "^1.108.4",
     "prettier": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -64,6 +63,9 @@
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.9"
+  },
+  "peerDependencies": {
+    "posthog-js": "^1.155.4"
   },
   "browserslist": {
     "production": [
