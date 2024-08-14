@@ -11,7 +11,6 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import * as _ from 'lodash';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { GetIndicateursValeursOptions } from '../models/getIndicateursValeursOptions.models';
 import {
@@ -24,17 +23,12 @@ import {
   indicateurValeurTable,
   IndicateurValeurType,
 } from '../models/indicateur.models';
-import IndicateurSourcesService from './indicateurSources.service';
 
 @Injectable()
 export default class IndicateursService {
   private readonly logger = new Logger(IndicateursService.name);
 
-  constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly collectivitesService: CollectivitesService,
-  ) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   /**
    * Récupère les valeurs d'indicateurs selon les options données

@@ -51,11 +51,12 @@ export type CreateIndicateurSourceMetadonneeType = InferInsertModel<
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
   groupement_id: integer('groupement_id'), // TODO: references
-  collectivite_id: integer('collectivite_id')
-    .notNull()
-    .references(() => collectiviteTable.id, {
+  collectivite_id: integer('collectivite_id').references(
+    () => collectiviteTable.id,
+    {
       onDelete: 'cascade',
-    }),
+    },
+  ),
   identifiant_referentiel: text('identifiant_referentiel').unique(),
   titre: text('titre').notNull(),
   titre_long: text('titre_long'),

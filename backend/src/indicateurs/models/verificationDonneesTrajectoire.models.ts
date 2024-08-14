@@ -1,6 +1,7 @@
 import { IsEnum } from 'class-validator';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import { DonneesCalculTrajectoireARemplir } from './calcultrajectoire.models';
+import { IndicateurValeurType } from './indicateur.models';
 
 /**
  * - <b>commune_non_supportee</b> : La collectivité est une commune, seulement les epci sont supportés
@@ -16,10 +17,13 @@ export enum VerificationDonneesSNBCStatus {
 }
 
 export class VerificationDonneesSNBCResponse {
-  epci?: EpciType;
-
   @IsEnum(VerificationDonneesSNBCStatus)
   status: VerificationDonneesSNBCStatus;
 
   donnees_entree?: DonneesCalculTrajectoireARemplir;
+}
+
+export class VerificationDonneesSNBCResult extends VerificationDonneesSNBCResponse {
+  epci?: EpciType;
+  valeurs?: IndicateurValeurType[];
 }

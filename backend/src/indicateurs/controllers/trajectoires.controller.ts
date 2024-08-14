@@ -1,4 +1,5 @@
 import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import {
@@ -14,6 +15,7 @@ export class TrajectoiresController {
   constructor(private readonly trajectoiresService: TrajectoiresService) {}
 
   @Get('snbc')
+  @ApiResponse({ type: CalculTrajectoireResponse })
   async calculeTrajectoireSnbc(
     @Query() request: CalculTrajectoireRequest,
   ): Promise<CalculTrajectoireResponse> {
@@ -38,10 +40,13 @@ export class TrajectoiresController {
   }
 
   @Get('snbc/verification')
-  verificationDonneesSnbc(@Query() request: CollectiviteRequest) {
+  async verificationDonneesSnbc(@Query() request: CollectiviteRequest) {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    return this.trajectoiresService.verificationDonneesSnbc(request);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { epci, valeurs, ...response } =
+      await this.trajectoiresService.verificationDonneesSnbc(request);
+    return response;
   }
 }
