@@ -92,7 +92,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                         size="xs"
                         className="text-grey-7"
                       />
-                      <span className="text-grey-8 text-xs font-medium italic">
+                      <span className="text-grey-8 text-xs font-medium italic whitespace-pre-wrap">
                         {commentaire}
                       </span>
                     </div>
@@ -103,6 +103,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                   <Divider className="-mb-5 w-full" />
                   <DocumentInput
                     editElement={editComment}
+                    type="textarea"
                     className="text-grey-8 text-xs"
                   />
                 </>
