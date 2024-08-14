@@ -118,7 +118,7 @@ export const DropdownFloater = ({
         children,
         getReferenceProps({
           ref: refs.setReference,
-          isOpen,
+          isOpen: open,
           ...children.props,
         })
       )}
