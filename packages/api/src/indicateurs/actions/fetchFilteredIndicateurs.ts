@@ -42,9 +42,7 @@ export async function fetchFilteredIndicateurs(
     }
   }
   if (filters.categorieNoms !== null && !filters.estPerso) {
-    parts.add(
-      'indicateur_categorie_tag!inner(categorie_tag!inner(id,nom,collectivite_id,groupement_id))'
-    );
+    parts.add('categorie_tag!inner(id,nom,collectivite_id,groupement_id)');
   }
 
   // pour pouvoir trier sur la complétude (dans le TDB)
@@ -86,10 +84,7 @@ export async function fetchFilteredIndicateurs(
     // on ne garde que les indicateurs ayant des catégories prédéfinies
     query.is('categorie_tag.collectivite_id', null);
 
-    query.in(
-      'indicateur_categorie_tag.categorie_tag.nom',
-      filters.categorieNoms
-    );
+    query.in('categorie_tag.nom', filters.categorieNoms);
   }
 
   // recherche par texte
