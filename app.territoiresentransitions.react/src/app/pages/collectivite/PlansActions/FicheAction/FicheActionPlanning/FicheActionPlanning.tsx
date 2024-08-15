@@ -122,8 +122,8 @@ const FicheActionPlanning = ({
           {/* Statut et niveau de priorité */}
           {(!!statut || !!niveauPriorite) && (
             <div className="flex flex-wrap justify-center gap-4">
-              {!!statut && <BadgeStatut statut={statut} />}
               {!!niveauPriorite && <BadgePriorite priorite={niveauPriorite} />}
+              {!!statut && <BadgeStatut statut={statut} />}
             </div>
           )}
 
