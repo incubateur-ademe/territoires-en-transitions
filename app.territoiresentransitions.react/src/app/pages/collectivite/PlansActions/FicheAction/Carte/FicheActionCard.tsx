@@ -184,7 +184,8 @@ const FicheActionCard = ({
 
             {/* Personnes pilote et date de fin prévisionnelle */}
             {(ficheAction.pilotes?.length ||
-              ficheAction.date_fin_provisoire) && (
+              ficheAction.date_fin_provisoire ||
+              ficheAction.amelioration_continue) && (
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                 {/* Personnes pilote */}
                 {!!ficheAction.pilotes && ficheAction.pilotes.length > 0 && (
@@ -229,6 +230,25 @@ const FicheActionCard = ({
                     </span>
                   </Fragment>
                 )}
+
+                {/* Action récurrente */}
+                {!ficheAction.date_fin_provisoire &&
+                  ficheAction.amelioration_continue && (
+                    <Fragment>
+                      {!!ficheAction.pilotes &&
+                        ficheAction.pilotes.length > 0 && (
+                          <div className="w-[1px] h-4 bg-grey-5" />
+                        )}
+                      <span title="Échéance">
+                        <Icon
+                          icon="loop-left-line"
+                          size="sm"
+                          className="mr-1"
+                        />
+                        Tous les ans
+                      </span>
+                    </Fragment>
+                  )}
               </div>
             )}
           </div>
