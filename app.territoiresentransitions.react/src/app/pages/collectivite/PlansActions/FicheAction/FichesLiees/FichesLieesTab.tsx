@@ -1,23 +1,33 @@
+import {useState} from 'react';
 import {Button} from '@tet/ui';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {FicheAction} from '../data/types';
 import EmptyCard from '../EmptyCard';
 import FichePicto from './FichePicto';
-import {useState} from 'react';
 import ModaleFichesLiees from './ModaleFichesLiees';
 import FichesLieesListe from './FichesLieesListe';
+import LoadingCard from '../LoadingCard';
 
 type FichesLieesTabProps = {
   isReadonly: boolean;
+  isFicheLoading: boolean;
+  isEditLoading: boolean;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
 const FichesLieesTab = ({
   isReadonly,
+  isFicheLoading,
+  isEditLoading,
   fiche,
   updateFiche,
 }: FichesLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (isFicheLoading) {
+    return <LoadingCard title="Fiches des plans liées" />;
+  }
 
   const {fiches_liees: fiches} = fiche;
 
@@ -44,20 +54,20 @@ const FichesLieesTab = ({
             <h5 className="text-primary-8 mb-0">Fiches des plans liées</h5>
             {!isReadonly && (
               <Button
-                icon="link"
+                icon={!isEditLoading ? 'link' : undefined}
                 size="xs"
                 variant="outlined"
+                disabled={isEditLoading}
                 onClick={() => setIsModalOpen(true)}
               >
+                {isEditLoading && <SpinnerLoader className="!h-4" />}
                 Lier une fiche action
               </Button>
             )}
           </div>
 
           {/* Liste des fiches des plans liées */}
-          {fiches && fiches.length > 0 && (
-            <FichesLieesListe fiches={fiches} isFicheTab />
-          )}
+          <FichesLieesListe fiches={fiches} isFicheTab />
         </div>
       )}
 

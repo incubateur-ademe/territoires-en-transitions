@@ -1,23 +1,27 @@
+import {useState} from 'react';
 import {Button} from '@tet/ui';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {FicheAction} from '../data/types';
 import EmptyCard from '../EmptyCard';
 import ActionPicto from './ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';
-import {useState} from 'react';
 import ModaleActionsLiees from './ModaleActionsLiees';
 
 type ActionsLieesTabProps = {
   isReadonly: boolean;
+  isEditLoading: boolean;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
 const ActionsLieesTab = ({
   isReadonly,
+  isEditLoading,
   fiche,
   updateFiche,
 }: ActionsLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {actions} = fiche;
 
@@ -44,25 +48,26 @@ const ActionsLieesTab = ({
             <h5 className="text-primary-8 mb-0">
               Actions des référentiels liées
             </h5>
-            {!isReadonly && (
+            {!isReadonly && !isLoading && (
               <Button
-                icon="link"
+                icon={!isEditLoading ? 'link' : undefined}
                 size="xs"
                 variant="outlined"
+                disabled={isEditLoading}
                 onClick={() => setIsModalOpen(true)}
               >
+                {isEditLoading && <SpinnerLoader className="!h-4" />}
                 Lier une action des référentiels
               </Button>
             )}
           </div>
 
           {/* Liste des actions des référentiels liées */}
-          {actions && actions.length > 0 && (
-            <ActionsLieesListe
-              actionsIds={actions?.map(action => action.id)}
-              isFicheTab
-            />
-          )}
+          <ActionsLieesListe
+            actionsIds={actions?.map(action => action.id)}
+            isFicheTab
+            onLoad={setIsLoading}
+          />
         </div>
       )}
 

@@ -9,6 +9,8 @@ import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 type FicheActionOngletsProps = {
   fiche: FicheAction;
   isReadonly: boolean;
+  isEditLoading: boolean;
+  isFicheLoading: boolean;
   className?: string;
   updateFiche: (fiche: FicheAction) => void;
 };
@@ -16,6 +18,8 @@ type FicheActionOngletsProps = {
 const FicheActionOnglets = ({
   fiche,
   isReadonly,
+  isFicheLoading,
+  isEditLoading,
   className,
   updateFiche,
 }: FicheActionOngletsProps) => {
@@ -30,6 +34,7 @@ const FicheActionOnglets = ({
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
           isReadonly={isReadonly}
+          isFicheLoading={isFicheLoading}
           fiche={fiche}
           updateFiche={updateFiche}
         />
@@ -50,6 +55,8 @@ const FicheActionOnglets = ({
       <Tab label="Fiches des plans liées">
         <FichesLieesTab
           isReadonly={isReadonly}
+          isFicheLoading={isFicheLoading}
+          isEditLoading={isEditLoading}
           fiche={fiche}
           updateFiche={updateFiche}
         />
@@ -59,6 +66,7 @@ const FicheActionOnglets = ({
       <Tab label="Actions des référentiels liées">
         <ActionsLieesTab
           isReadonly={isReadonly}
+          isEditLoading={isEditLoading}
           fiche={fiche}
           updateFiche={updateFiche}
         />

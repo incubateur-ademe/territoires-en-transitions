@@ -1,7 +1,9 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import classNames from 'classnames';
 import {Card, Divider, Icon} from '@tet/ui';
 import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import {openPreuve} from 'ui/shared/preuves/Bibliotheque/openPreuve';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import MenuCarteDocument from './MenuCarteDocument';
 import {getAuthorAndDate, getFormattedTitle} from './utils';
 import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
@@ -23,10 +25,23 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
   } = document;
 
   const handlers = useEditPreuve(document);
-  const {remove, editComment, editFilename} = handlers;
+  const {remove, editComment, editFilename, isLoading, isError} = handlers;
 
+  const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const isEditing = editComment.isEditing || editFilename.isEditing;
+
+  useEffect(() => {
+    if (isLoading) setIsEditLoading(true);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isError) setIsEditLoading(false);
+  }, [isError]);
+
+  useEffect(() => {
+    setIsEditLoading(false);
+  }, [commentaire, fichier?.filename, lien?.titre]);
 
   if (!fichier && !lien) return null;
 
@@ -48,11 +63,23 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
         <Card className="rounded-xl !p-4">
           <div className="flex gap-4">
             {/* Icône document ou lien */}
-            <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
-              <Icon
-                icon={!!fichier ? 'file-2-line' : 'links-line'}
-                className="text-primary-10"
-              />
+            <div
+              className={classNames(
+                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center',
+                {
+                  'bg-primary-1': isEditLoading,
+                  'bg-primary-3': !isEditLoading,
+                }
+              )}
+            >
+              {isEditLoading ? (
+                <SpinnerLoader className="mx-auto my-auto" />
+              ) : (
+                <Icon
+                  icon={!!fichier ? 'file-2-line' : 'links-line'}
+                  className="text-primary-10"
+                />
+              )}
             </div>
 
             {/* Contenu de la carte */}
@@ -119,7 +146,10 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
         setIsOpen={setIsDeleting}
         title="Supprimer le document"
         message="Le document sera définitivement supprimé de la fiche. Voulez-vous vraiment le supprimer ?"
-        onDelete={remove}
+        onDelete={() => {
+          remove();
+          setIsEditLoading(true);
+        }}
       />
     </>
   );
