@@ -4,6 +4,7 @@ import IndicateursAssocies from './IndicateursAssocies';
 
 type IndicateursTabProps = {
   isReadonly: boolean;
+  isFicheLoading: boolean;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };

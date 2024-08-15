@@ -154,4 +154,6 @@ export type TEditHandlers = {
   remove: () => void;
   editComment: TEditState;
   editFilename: TEditState;
+  isLoading: boolean;
+  isError: boolean;
 };

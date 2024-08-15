@@ -15,8 +15,8 @@ type FicheActionProps = {
 
 const FicheAction = ({isReadonly}: FicheActionProps) => {
   const {ficheUid} = useParams<{ficheUid: string}>();
-  const {data, refetch} = useFicheAction(ficheUid);
-  const {mutate: updateFiche} = useEditFicheAction();
+  const {data, refetch, isLoading} = useFicheAction(ficheUid);
+  const {mutate: updateFiche, isLoading: isEditLoading} = useEditFicheAction();
 
   if (!data || !data.fiche) return null;
 
@@ -95,6 +95,8 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
           <FicheActionOnglets
             fiche={fiche}
             isReadonly={isReadonly}
+            isFicheLoading={isLoading}
+            isEditLoading={isEditLoading}
             className="col-span-full lg:col-span-2 xl:col-span-7"
             updateFiche={updateFiche}
           />

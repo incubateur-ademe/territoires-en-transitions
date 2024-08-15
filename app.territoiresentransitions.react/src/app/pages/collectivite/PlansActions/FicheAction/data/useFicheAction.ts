@@ -22,9 +22,9 @@ const fetchFicheAction = async (fiche_id: string): Promise<TFetchedData> => {
 };
 
 export const useFicheAction = (fiche_id: string) => {
-  const {data, refetch} = useQuery(['fiche_action', fiche_id], () =>
+  const {data, refetch, isLoading} = useQuery(['fiche_action', fiche_id], () =>
     fetchFicheAction(fiche_id)
   );
 
-  return {data, refetch};
+  return {data, refetch, isLoading};
 };

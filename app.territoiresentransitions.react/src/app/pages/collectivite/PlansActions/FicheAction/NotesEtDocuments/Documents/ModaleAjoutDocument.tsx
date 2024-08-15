@@ -1,20 +1,20 @@
 import {Modal} from '@tet/ui';
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {useAddAnnexe} from '../../data/useAddAnnexe';
+import {
+  AddPreuveModal,
+  TAddPreuveModalHandlers,
+} from 'ui/shared/preuves/AddPreuveModal';
 
 type ModaleAjoutDocumentProps = {
-  ficheId: number;
+  handlers: TAddPreuveModalHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
 
 const ModaleAjoutDocument = ({
-  ficheId,
   isOpen,
+  handlers,
   setIsOpen,
 }: ModaleAjoutDocumentProps) => {
-  const handlers = useAddAnnexe(ficheId);
-
   return (
     <Modal
       openState={{isOpen, setIsOpen}}

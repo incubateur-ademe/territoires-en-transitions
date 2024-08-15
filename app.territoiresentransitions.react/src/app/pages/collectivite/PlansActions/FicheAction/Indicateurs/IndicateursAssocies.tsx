@@ -7,20 +7,25 @@ import DatavizPicto from './DatavizPicto';
 import IndicateursListe from './IndicateursListe';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
+import LoadingCard from '../LoadingCard';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
+  isFicheLoading: boolean;
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
 };
 
 const IndicateursAssocies = ({
   isReadonly,
+  isFicheLoading,
   fiche,
   updateFiche,
 }: IndicateursAssociesProps) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (isFicheLoading) return <LoadingCard />;
 
   const {indicateurs} = fiche;
 
