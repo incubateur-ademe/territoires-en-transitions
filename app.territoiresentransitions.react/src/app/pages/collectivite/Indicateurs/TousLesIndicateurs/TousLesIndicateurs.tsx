@@ -19,6 +19,7 @@ const nameToParams: Record<keyof FetchFiltre, string> = {
   fichesNonClassees: 'fnc',
   text: 'text',
   estPerso: 'p',
+  hasOpenData: 'od',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */

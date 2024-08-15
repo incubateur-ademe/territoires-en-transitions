@@ -334,3 +334,48 @@ test('Filtrer les indicateurs - tous les indicateurs', async () => {
   expect(status).toEqual(200);
   expect(data).toHaveLength(123);
 });
+
+test('Filtrer les indicateurs - par existence de données open-data', async () => {
+  // Ajoute 3 valeurs open-data :
+  // - 2 pour l'indicateur 48
+  // - 1 pour l'indicateur 17
+
+  const {data: metadonnee} = await dbAdmin
+    .from('indicateur_source_metadonnee')
+    .insert({
+      source_id: 'citepa',
+      date_version: new Date().toLocaleDateString('sv-SE'),
+    })
+    .select('id');
+
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 48,
+    date_valeur: '2025-01-01',
+    collectivite_id: 1,
+    resultat: 1.8,
+    metadonnee_id: metadonnee![0].id,
+  });
+
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 48,
+    date_valeur: '2024-01-01',
+    collectivite_id: 1,
+    resultat: 1.5,
+    metadonnee_id: metadonnee![0].id,
+  });
+
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 17,
+    date_valeur: '2024-01-01',
+    collectivite_id: 1,
+    objectif: 16,
+    metadonnee_id: metadonnee![0].id,
+  });
+
+  const {status, data} = await fetchIndicateurs({
+    hasOpenData: true,
+  });
+
+  expect(status).toEqual(200);
+  expect(data).toHaveLength(2);
+});

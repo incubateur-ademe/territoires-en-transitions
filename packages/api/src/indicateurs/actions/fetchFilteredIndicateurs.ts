@@ -12,7 +12,8 @@ const filtresOptions: {[key in keyof FetchFiltre]?: string} = {
   utilisateurPiloteIds: 'indicateur_pilote!inner()',
   personnePiloteIds: 'indicateur_pilote!inner()',
   servicePiloteIds: 'indicateur_service_tag!inner(service_tag_id)',
-  estComplet: 'indicateur_valeur()',
+  estComplet: 'indicateur_valeur(id)',
+  hasOpenData: 'indicateur_valeur(id)',
   estConfidentiel:
     'indicateur_collectivite(commentaire, confidentiel, collectivite_id)',
   fichesNonClassees:
@@ -206,6 +207,7 @@ export async function fetchFilteredIndicateurs(
   if (filtrerPar.participationAuScore) {
     query.is('participation_score', filters.participationScore!);
   }
+
   // filtre les indicateurs complétés / à compléter
   if (filters.estComplet !== undefined) {
     query.eq('indicateur_valeur.collectivite_id', collectiviteId);
@@ -222,6 +224,12 @@ export async function fetchFilteredIndicateurs(
     sort?.find(s => s.field === 'estComplet')
   ) {
     query.eq('indicateur_valeur.collectivite_id', collectiviteId);
+  }
+
+  if (filters.hasOpenData) {
+    query.not('indicateur_valeur', 'is', null);
+    query.eq('indicateur_valeur.collectivite_id', collectiviteId);
+    query.not('indicateur_valeur.metadonnee_id', 'is', null);
   }
 
   // Par défaut tri par ordre alphabétique

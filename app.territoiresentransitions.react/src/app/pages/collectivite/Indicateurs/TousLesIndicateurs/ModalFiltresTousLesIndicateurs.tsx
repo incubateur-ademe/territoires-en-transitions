@@ -145,9 +145,14 @@ const ModalFiltresTousLesIndicateurs = ({
             <div className="w-full border-t border-primary-3" />
             <Checkbox
               label="Données Open Data"
-              checked={false}
-              onChange={() => null}
-              disabled
+              checked={filtreState.hasOpenData}
+              onChange={() => {
+                const {hasOpenData, ...rest} = filtreState;
+                setFiltreState({
+                  ...rest,
+                  ...(!hasOpenData ? {hasOpenData: true} : {}),
+                });
+              }}
             />
             <Checkbox
               label="Indicateur privé"
