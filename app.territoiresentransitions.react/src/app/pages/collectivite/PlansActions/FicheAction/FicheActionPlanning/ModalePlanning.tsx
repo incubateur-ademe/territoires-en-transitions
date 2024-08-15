@@ -28,6 +28,8 @@ const ModalePlanning = ({
   updateFiche,
 }: ModalePlanningProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+  const [isDateDebutError, setIsDateDebutError] = useState(false);
+  const [isDateFinError, setIsDateFinError] = useState(false);
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -47,21 +49,44 @@ const ModalePlanning = ({
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Date de début */}
-          <Field title="Date de début" className="col-span-2">
+          <Field
+            title="Date de début"
+            className="col-span-2"
+            state={isDateDebutError ? 'error' : 'default'}
+            message={
+              isDateDebutError
+                ? 'La date de début doit être antérieure à la date de fin prévisionnelle'
+                : undefined
+            }
+          >
             <Input
               type="date"
+              state={isDateDebutError ? 'error' : 'default'}
+              max={
+                editedFiche.date_fin_provisoire !== null
+                  ? getIsoFormattedDate(editedFiche.date_fin_provisoire)
+                  : undefined
+              }
               value={
                 editedFiche.date_debut
                   ? getIsoFormattedDate(editedFiche.date_debut)
                   : ''
               }
-              onChange={evt =>
+              onChange={evt => {
+                if (
+                  editedFiche.date_fin_provisoire !== null &&
+                  new Date(evt.target.value) >
+                    new Date(editedFiche.date_fin_provisoire)
+                ) {
+                  setIsDateDebutError(true);
+                } else setIsDateDebutError(false);
+
                 setEditedFiche(prevState => ({
                   ...prevState,
                   date_debut:
                     evt.target.value.length !== 0 ? evt.target.value : null,
-                }))
-              }
+                }));
+              }}
             />
           </Field>
 
@@ -85,9 +110,24 @@ const ModalePlanning = ({
           </div>
 
           {/* Date de fin prévisionnelle */}
-          <Field title="Date de fin prévisionnelle" className="col-span-2">
+          <Field
+            title="Date de fin prévisionnelle"
+            className="col-span-2"
+            state={isDateFinError ? 'error' : 'default'}
+            message={
+              isDateFinError
+                ? 'La date de fin prévisionnelle doit être postérieure à la date de début'
+                : undefined
+            }
+          >
             <Input
               type="date"
+              state={isDateFinError ? 'error' : 'default'}
+              min={
+                editedFiche.date_debut !== null
+                  ? getIsoFormattedDate(editedFiche.date_debut)
+                  : undefined
+              }
               title={
                 editedFiche.amelioration_continue
                   ? "Ce champ ne peut pas être modifié si l'action se répète tous les ans"
@@ -99,13 +139,20 @@ const ModalePlanning = ({
                   ? getIsoFormattedDate(editedFiche.date_fin_provisoire)
                   : ''
               }
-              onChange={evt =>
+              onChange={evt => {
+                if (
+                  editedFiche.date_debut !== null &&
+                  new Date(evt.target.value) < new Date(editedFiche.date_debut)
+                ) {
+                  setIsDateFinError(true);
+                } else setIsDateFinError(false);
+
                 setEditedFiche(prevState => ({
                   ...prevState,
                   date_fin_provisoire:
                     evt.target.value.length !== 0 ? evt.target.value : null,
-                }))
-              }
+                }));
+              }}
             />
           </Field>
 
@@ -159,6 +206,7 @@ const ModalePlanning = ({
         <ModalFooterOKCancel
           btnCancelProps={{onClick: close}}
           btnOKProps={{
+            disabled: isDateDebutError || isDateFinError,
             onClick: () => {
               handleSave();
               close();
