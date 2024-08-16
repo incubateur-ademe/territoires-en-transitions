@@ -67,7 +67,13 @@ const FichesLieesTab = ({
           </div>
 
           {/* Liste des fiches des plans liées */}
-          <FichesLieesListe fiches={fiches} isFicheTab />
+          <FichesLieesListe
+            fiches={fiches}
+            updateFichesLiees={fichesLiees =>
+              updateFiche({...fiche, fiches_liees: fichesLiees})
+            }
+            isFicheTab
+          />
         </div>
       )}
 

@@ -24,6 +24,8 @@ type FicheActionCardProps = {
   /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche */
   axeIdToInvalidate?: number;
   editKeysToInvalidate?: QueryKey[];
+  /** Dissociation de la fiche action */
+  onUnlink?: () => void;
 };
 
 const FicheActionCard = ({
@@ -33,6 +35,7 @@ const FicheActionCard = ({
   isEditable = false,
   axeIdToInvalidate,
   editKeysToInvalidate,
+  onUnlink,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
 
@@ -46,37 +49,50 @@ const FicheActionCard = ({
   return (
     <div className="relative group">
       {/* Menu d'édition et de suppression */}
-      {!collectivite?.readonly && isEditable && (
+      {!collectivite?.readonly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-          <>
-            {isEditOpen && (
-              <ModifierFicheModale
-                initialFiche={ficheAction}
-                axeId={axeIdToInvalidate}
-                isOpen={isEditOpen}
-                setIsOpen={() => setIsEditOpen(!isEditOpen)}
-                keysToInvalidate={editKeysToInvalidate}
-              />
-            )}
+          {onUnlink && (
             <Button
-              data-test="EditerFicheBouton"
-              id={`fiche-${ficheAction.id}-edit-button`}
-              icon="edit-line"
-              title="Modifier la fiche"
+              icon="link-unlink"
+              title="Dissocier la fiche action"
               variant="grey"
               size="xs"
-              onClick={() => setIsEditOpen(!isEditOpen)}
+              onClick={onUnlink}
             />
-          </>
-          <ModaleSuppression
-            ficheId={ficheAction.id}
-            title={ficheAction.titre}
-            isInMultipleAxes={
-              !!ficheAction.plans && ficheAction.plans.length > 1
-            }
-            axeId={axeIdToInvalidate || null}
-            keysToInvalidate={editKeysToInvalidate}
-          />
+          )}
+          {isEditable && (
+            <>
+              <>
+                {isEditOpen && (
+                  <ModifierFicheModale
+                    initialFiche={ficheAction}
+                    axeId={axeIdToInvalidate}
+                    isOpen={isEditOpen}
+                    setIsOpen={() => setIsEditOpen(!isEditOpen)}
+                    keysToInvalidate={editKeysToInvalidate}
+                  />
+                )}
+                <Button
+                  data-test="EditerFicheBouton"
+                  id={`fiche-${ficheAction.id}-edit-button`}
+                  icon="edit-line"
+                  title="Modifier la fiche"
+                  variant="grey"
+                  size="xs"
+                  onClick={() => setIsEditOpen(!isEditOpen)}
+                />
+              </>
+              <ModaleSuppression
+                ficheId={ficheAction.id}
+                title={ficheAction.titre}
+                isInMultipleAxes={
+                  !!ficheAction.plans && ficheAction.plans.length > 1
+                }
+                axeId={axeIdToInvalidate || null}
+                keysToInvalidate={editKeysToInvalidate}
+              />
+            </>
+          )}
         </div>
       )}
 
