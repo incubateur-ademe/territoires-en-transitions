@@ -12,8 +12,6 @@ const filtresOptions: {[key in keyof FetchFiltre]?: string} = {
   utilisateurPiloteIds: 'indicateur_pilote!inner()',
   personnePiloteIds: 'indicateur_pilote!inner()',
   servicePiloteIds: 'indicateur_service_tag!inner(service_tag_id)',
-  estComplet: 'indicateur_valeur(id)',
-  hasOpenData: 'indicateur_valeur(id)',
   estConfidentiel:
     'indicateur_collectivite(commentaire, confidentiel, collectivite_id)',
   fichesNonClassees:
@@ -45,13 +43,11 @@ export async function fetchFilteredIndicateurs(
     parts.add('categorie_tag!inner(id,nom,collectivite_id,groupement_id)');
   }
 
-  // pour pouvoir trier sur la complétude (dans le TDB)
-  if (
-    filters.estComplet === undefined &&
-    sort?.find(s => s.field === 'estComplet')
-  ) {
-    parts.add('indicateur_valeur(id)');
-  }
+  // Partie nécessaire pour :
+  // - (toujours) récupérer la présence de valeurs open-data associées
+  // - (optionnel) filtrer sur la présence de valeurs open-data associées
+  // - (optionnel) filtrer ou trier sur l'état de complétude
+  parts.add('indicateur_valeur(id, metadonnee_id, collectivite_id)');
 
   // construit la requête
   const query = dbClient
@@ -281,6 +277,7 @@ export async function fetchFilteredIndicateurs(
         titre: d.titre as string,
         estPerso: d.estPerso as boolean,
         identifiant: d.identifiant_referentiel as string,
+        hasOpenData: d.indicateur_valeur?.some(v => v.metadonnee_id !== null),
       })),
   };
 }

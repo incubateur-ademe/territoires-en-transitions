@@ -338,6 +338,10 @@ test('Filtrer les indicateurs - tous les indicateurs', async () => {
   const {status, data} = await fetchIndicateurs({});
   expect(status).toEqual(200);
   expect(data.length).toBeGreaterThan(0);
+
+  for (const indicateur of data) {
+    expect(indicateur.hasOpenData).toBe(false);
+  }
 });
 
 test('Filtrer les indicateurs - par existence de données open-data', async () => {
@@ -383,4 +387,8 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
 
   expect(status).toEqual(200);
   expect(data).toHaveLength(2);
+
+  for (const indicateur of data) {
+    expect(indicateur.hasOpenData).toBe(true);
+  }
 });
