@@ -264,8 +264,10 @@ export async function fetchFilteredIndicateurs(
   if (sort?.at(0)?.field === 'estComplet') {
     rows.sort((a: any, b: any) => {
       return (
-        (b.indicateur_valeur?.length || -1) -
-        (a.indicateur_valeur?.length || -1)
+        (b.indicateur_valeur?.filter(v => v.metadonnee_id === null).length ||
+          -1) -
+        (a.indicateur_valeur?.filter(v => v.metadonnee_id === null).length ||
+          -1)
       );
     });
   }
