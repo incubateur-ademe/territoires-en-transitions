@@ -29,7 +29,7 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
         )}
 
         {/* Contenu de la carte */}
-        <Card className="rounded-xl !p-4">
+        <Card className="!p-4">
           <div className="flex gap-4">
             <div className="shrink-0 bg-primary-3 rounded-md h-9 w-9 flex items-center justify-center">
               <Icon icon="edit-box-line" className="text-primary-10" />
