@@ -52,3 +52,6 @@ out
 # Docker data
 docker-data
 .env
+
+
+storybook-static
