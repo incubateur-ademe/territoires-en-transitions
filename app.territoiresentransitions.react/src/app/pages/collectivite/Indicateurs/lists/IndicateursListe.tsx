@@ -100,18 +100,6 @@ const IndicateursListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  /** Défini le subset utilisé */
-  // const getSubset = (): Subset | null => {
-  //   if (filtres?.participationScore) {
-  //     return 'cae';
-  //   }
-  //   if (filtres?.estPerso) {
-  //     return 'perso';
-  //   }
-
-  //   return null;
-  // };
-
   const {data, isLoading} = useFilteredIndicateurDefinitions(
     {
       filtre: {

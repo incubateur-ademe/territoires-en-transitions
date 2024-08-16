@@ -233,7 +233,7 @@ export async function selectIndicateurThematiquesId(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<number[]> {
-  const {data, error} = await dbClient
+  const {data} = await dbClient
     .from('indicateur_thematique')
     .select(`thematique_id`)
     .eq('indicateur_id', indicateurId);

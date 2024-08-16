@@ -202,6 +202,8 @@ export async function fetchFilteredIndicateurs(
   // filtre les indicateurs complétés / à compléter
   if (filters.estComplet !== undefined) {
     query.eq('indicateur_valeur.collectivite_id', collectiviteId);
+    query.is('indicateur_valeur.metadonnee_id', null);
+
     if (filters.estComplet) {
       query.not('indicateur_valeur', 'is', null);
     } else {
@@ -258,8 +260,8 @@ export async function fetchFilteredIndicateurs(
         .collectivites?.includes(collectiviteId)
   );
 
-  // tri local sur la complétude
-  if (sort?.find(s => s.field === 'estComplet')) {
+  // tri programmatique sur la complétude
+  if (sort?.at(0)?.field === 'estComplet') {
     rows.sort((a: any, b: any) => {
       return (
         (b.indicateur_valeur?.length || -1) -

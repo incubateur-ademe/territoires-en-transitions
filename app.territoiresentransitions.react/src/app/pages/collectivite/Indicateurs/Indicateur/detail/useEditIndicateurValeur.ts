@@ -6,7 +6,10 @@ import {Indicateurs} from '@tet/api';
 
 type TEditIndicateurValeurArgs = {
   collectiviteId: number | null;
-  definition: TIndicateurDefinition;
+  definition: Pick<
+    TIndicateurDefinition,
+    'id' | 'identifiant' | 'estPerso' | 'parents'
+  >;
   type: SourceType;
   valeursBrutes: Indicateurs.domain.Valeur[];
 };
@@ -95,9 +98,7 @@ export const useOnSuccess = (
 ) => {
   const {collectiviteId, definition, type} = args;
   const {id: indicateurId, estPerso, identifiant} = definition;
-  const parents = estPerso
-    ? null
-    : (definition as Indicateurs.domain.IndicateurDefinitionPredefini).parents;
+  const parents = estPerso ? null : definition.parents;
 
   const queryClient = useQueryClient();
   return () => {

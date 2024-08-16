@@ -107,7 +107,7 @@ export type IndicateurCardBaseProps = IndicateurCardProps & {
  * Utilisé commme base de `IndicateurCard`.
  * Ne pas utilisé ce composant directement, il est uniquement créé pour pouvoir faire une story de la carte indicateur.
  */
-export const IndicateurCardBase = ({
+const IndicateurCardBase = ({
   data,
   selectState,
   href,

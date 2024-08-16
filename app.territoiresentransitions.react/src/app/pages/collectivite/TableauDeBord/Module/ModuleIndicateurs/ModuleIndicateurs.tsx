@@ -11,6 +11,7 @@ import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Modu
 import {
   TDBViewParam,
   makeCollectiviteIndicateursUrl,
+  makeCollectiviteTousLesIndicateursUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -55,9 +56,8 @@ const ModuleIndicateurs = ({view, module}: Props) => {
             size="sm"
             onClick={() =>
               history.push(
-                makeCollectiviteIndicateursUrl({
+                makeCollectiviteTousLesIndicateursUrl({
                   collectiviteId: collectiviteId!,
-                  indicateurView: 'cles',
                 })
               )
             }
