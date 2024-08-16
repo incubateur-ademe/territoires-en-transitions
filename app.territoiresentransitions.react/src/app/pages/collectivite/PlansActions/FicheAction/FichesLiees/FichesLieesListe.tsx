@@ -10,11 +10,13 @@ import classNames from 'classnames';
 type FichesLieesListeProps = {
   fiches: FicheResume[];
   isFicheTab?: boolean;
+  updateFichesLiees?: (fichesLiees: FicheResume[]) => void;
 };
 
 const FichesLieesListe = ({
   fiches,
   isFicheTab = false,
+  updateFichesLiees,
 }: FichesLieesListeProps) => {
   const collectiviteId = useCollectiviteId()!;
 
@@ -44,6 +46,11 @@ const FichesLieesListe = ({
                     collectiviteId,
                     ficheUid: fiche.id!.toString(),
                   })
+            }
+            onUnlink={
+              updateFichesLiees
+                ? () => updateFichesLiees(fiches.filter(f => f.id !== fiche.id))
+                : undefined
             }
           />
         ))}
