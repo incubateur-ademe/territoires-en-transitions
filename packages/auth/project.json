@@ -5,7 +5,6 @@
   "projectType": "application",
   "tags": [],
   "implicitDependencies": ["@tet/ui"],
-  "// targets": "to see all targets run: nx show project @tet/auth --web",
   "targets": {
     "dev": {
       "options": {
