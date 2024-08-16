@@ -60,7 +60,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
         )}
 
         {/* Carte*/}
-        <Card className="rounded-xl !p-4">
+        <Card className="!p-4">
           <div className="flex gap-4">
             {/* Icône document ou lien */}
             <div
