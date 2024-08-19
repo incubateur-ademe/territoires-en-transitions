@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {PreuveDoc} from './PreuveDoc';
 
@@ -47,8 +47,6 @@ export const PreuveFichierEditionCommentaire = {
       ...preuveComplementaireFichier,
     },
   },
-
-  parameters: {storyshots: false},
 };
 
 export const PreuveFichierCommentee = {
@@ -75,8 +73,6 @@ export const PreuveFichierEditionNom = {
       ...preuveComplementaireFichier,
     },
   },
-
-  parameters: {storyshots: false},
 };
 
 export const PreuveLien = {
@@ -91,8 +87,6 @@ export const PreuveLienEditionCommentaire = {
     handlers: handlerWithEditCommentOn,
     preuve: preuveComplementaireLien,
   },
-
-  parameters: {storyshots: false},
 };
 
 export const PreuveLienCommentee = {

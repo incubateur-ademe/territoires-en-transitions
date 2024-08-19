@@ -5,7 +5,6 @@ import {ConfirmerChangementNiveau} from './ConfirmerChangementNiveau';
 
 export default {
   component: ConfirmerChangementNiveau,
-  parameters: {storyshots: false},
 } as Meta;
 
 const handlers = {

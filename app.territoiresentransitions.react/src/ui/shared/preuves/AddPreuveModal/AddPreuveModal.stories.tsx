@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {AddPreuveModal} from './index';
 
@@ -14,6 +14,4 @@ export default {
   args: DEFAULT_ARGS,
 } as Meta;
 
-export const Default = {
-  parameters: {storyshots: false},
-};
+export const Default = {};
