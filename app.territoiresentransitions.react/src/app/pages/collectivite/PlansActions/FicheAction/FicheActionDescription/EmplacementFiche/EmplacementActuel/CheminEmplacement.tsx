@@ -23,7 +23,7 @@ const CheminEmplacement = ({ficheId, axeId}: CheminEmplacementProps) => {
         <DeleteButton
           data-test="EnleverFichePlanBouton"
           title="Supprimer l'emplacement"
-          variant="outlined"
+          variant="grey"
           size="sm"
           className="m-auto"
           onClick={() =>
