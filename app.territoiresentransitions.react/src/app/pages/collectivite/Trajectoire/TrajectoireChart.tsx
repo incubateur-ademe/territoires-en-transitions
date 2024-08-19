@@ -66,7 +66,7 @@ export const TrajectoireChart = ({
         }}
         line={{
           chart: {
-            data: secteurs,
+            data: secteurs.toReversed(),
             colors: COLORS,
             theme,
             margin: {top: 5, right: 5, bottom: 100, left: 50},
@@ -101,7 +101,7 @@ export const TrajectoireChart = ({
                 direction: 'row',
                 translateY: 70,
                 itemsSpacing: 10,
-                itemWidth: 120,
+                itemWidth: 125,
                 itemHeight: 20,
                 symbolSize: 12,
                 symbolShape: ({x, y, fill}) => {
