@@ -1,6 +1,12 @@
 import {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {Field, FormSectionGrid, Modal, ModalFooterOKCancel} from '@tet/ui';
+import {
+  Field,
+  FormSectionGrid,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
@@ -8,6 +14,7 @@ import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/Se
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/CiblesDropdown/CiblesDropdown';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModaleActeursProps = {
   isOpen: boolean;
@@ -23,6 +30,10 @@ const ModaleActeurs = ({
   updateFiche,
 }: ModaleActeursProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+
+  const tracker = useEventTracker('app/fiche-action');
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id || null;
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -118,6 +129,10 @@ const ModaleActeurs = ({
           btnCancelProps={{onClick: close}}
           btnOKProps={{
             onClick: () => {
+              collectiviteId &&
+                tracker('validation_modale_acteurs_fa', {
+                  collectivite_id: collectiviteId,
+                });
               handleSave();
               close();
             },

@@ -8,11 +8,13 @@ import {
   Modal,
   ModalFooterOKCancel,
   Textarea,
+  useEventTracker,
 } from '@tet/ui';
 import {FicheAction} from '../data/types';
 import {getIsoFormattedDate} from '../utils';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModalePlanningProps = {
   isOpen: boolean;
@@ -30,6 +32,10 @@ const ModalePlanning = ({
   const [editedFiche, setEditedFiche] = useState(fiche);
   const [isDateDebutError, setIsDateDebutError] = useState(false);
   const [isDateFinError, setIsDateFinError] = useState(false);
+
+  const tracker = useEventTracker('app/fiche-action');
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id || null;
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -208,6 +214,10 @@ const ModalePlanning = ({
           btnOKProps={{
             disabled: isDateDebutError || isDateFinError,
             onClick: () => {
+              collectiviteId &&
+                tracker('validation_modale_planning_fa', {
+                  collectivite_id: collectiviteId,
+                });
               handleSave();
               close();
             },
