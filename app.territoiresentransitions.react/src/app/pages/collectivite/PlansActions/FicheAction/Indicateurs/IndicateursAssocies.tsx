@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, Divider} from '@tet/ui';
+import {Button, Divider, useEventTracker} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import Content from './SideMenu/Content';
 import EmptyCard from '../EmptyCard';
@@ -8,6 +8,7 @@ import IndicateursListe from './IndicateursListe';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
 import LoadingCard from '../LoadingCard';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
@@ -24,6 +25,10 @@ const IndicateursAssocies = ({
 }: IndicateursAssociesProps) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const tracker = useEventTracker('app/fiche-action');
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id || null;
 
   if (isFicheLoading) return <LoadingCard />;
 
@@ -48,6 +53,10 @@ const IndicateursAssocies = ({
             label: 'Créer un indicateur',
             icon: 'add-line',
             onClick: () => {
+              collectiviteId &&
+                tracker('cta_indicateur_perso_fa', {
+                  collectivite_id: collectiviteId,
+                });
               setIsModalOpen(true);
               setIsPanelOpen(false);
             },
@@ -70,6 +79,10 @@ const IndicateursAssocies = ({
                     variant="outlined"
                     icon="add-line"
                     onClick={() => {
+                      collectiviteId &&
+                        tracker('cta_indicateur_perso_fa', {
+                          collectivite_id: collectiviteId,
+                        });
                       setIsModalOpen(true);
                       setIsPanelOpen(false);
                     }}

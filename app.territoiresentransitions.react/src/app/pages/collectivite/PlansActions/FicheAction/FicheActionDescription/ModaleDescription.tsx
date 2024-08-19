@@ -8,11 +8,13 @@ import {
   Modal,
   ModalFooterOKCancel,
   Textarea,
+  useEventTracker,
 } from '@tet/ui';
 import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
 import {FicheAction} from '../data/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Bouton + modale pour l'édition des informations principales d'une fiche action
@@ -24,6 +26,10 @@ type ModaleDescriptionProps = {
 
 const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
+
+  const tracker = useEventTracker('app/fiche-action');
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id || null;
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
@@ -121,6 +127,10 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
           btnCancelProps={{onClick: close}}
           btnOKProps={{
             onClick: () => {
+              collectiviteId &&
+                tracker('validation_modale_modifier_fa', {
+                  collectivite_id: collectiviteId,
+                });
               handleSave();
               close();
             },
