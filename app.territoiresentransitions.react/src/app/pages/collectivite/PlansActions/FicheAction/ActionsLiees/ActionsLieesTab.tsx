@@ -64,9 +64,18 @@ const ActionsLieesTab = ({
 
           {/* Liste des actions des référentiels liées */}
           <ActionsLieesListe
+            isReadonly={isReadonly}
             actionsIds={actions?.map(action => action.id)}
             isFicheTab
             onLoad={setIsLoading}
+            onUpdateActionsLiees={actionsLieesIds =>
+              updateFiche({
+                ...fiche,
+                actions: actions?.filter(action =>
+                  actionsLieesIds.some(id => id === action.id)
+                ),
+              })
+            }
           />
         </div>
       )}
