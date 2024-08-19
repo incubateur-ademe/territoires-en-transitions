@@ -64,83 +64,81 @@ const ModalIndicateursSuiviPlan = ({
   return (
     <Modal
       openState={openState}
+      title={module.titre}
       render={() => (
-        <>
-          <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
-          <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Nom du plan :">
-              <SelectMultiple
-                values={filtreState.planActionIds}
-                options={
-                  plansActions?.plans.map(p => ({
-                    label: generateTitle(p.nom),
-                    value: p.id,
-                  })) ?? []
-                }
-                onChange={({values, selectedValue}) =>
-                  ((filtreState.planActionIds?.length === 1 &&
-                    selectedValue !== filtreState.planActionIds[0]) ||
-                    (filtreState.planActionIds &&
-                      filtreState.planActionIds.length > 1)) &&
-                  setFiltreState({
-                    ...filtreState,
-                    planActionIds: values as number[],
-                  })
-                }
-              />
-            </Field>
-            <Field title="Pilote de l'indicateur :">
-              <PersonnesDropdown
-                values={pilotes.length ? pilotes : undefined}
-                onChange={({personnes}) =>
-                  setFiltreState({
-                    ...filtreState,
-                    ...splitPilotePersonnesAndUsers(personnes),
-                  })
-                }
-              />
-            </Field>
-            <Field title="Thématique de l'indicateur :">
-              <ThematiquesDropdown
-                values={filtreState.thematiqueIds}
-                onChange={({thematiques}) =>
-                  setFiltreState({
-                    ...filtreState,
-                    thematiqueIds: thematiques.map(t => t.id),
-                  })
-                }
-              />
-            </Field>
-            <Field title="Complétion indicateur :">
-              <Select
-                values={
-                  filtreState.estComplet === undefined
-                    ? undefined
-                    : filtreState.estComplet
-                    ? 'rempli'
-                    : 'incomplet'
-                }
-                options={[
-                  {
-                    label: 'Complet',
-                    value: 'rempli',
-                  },
-                  {
-                    label: 'Incomplet',
-                    value: 'incomplet',
-                  },
-                ]}
-                onChange={value =>
-                  setFiltreState({
-                    ...filtreState,
-                    estComplet:
-                      value === undefined ? undefined : value === 'rempli',
-                  })
-                }
-              />
-            </Field>
-          </FormSection>
-        </>
+        <FormSection title="Filtrer sur :" className="!grid-cols-1">
+          <Field title="Nom du plan :">
+            <SelectMultiple
+              values={filtreState.planActionIds}
+              options={
+                plansActions?.plans.map(p => ({
+                  label: generateTitle(p.nom),
+                  value: p.id,
+                })) ?? []
+              }
+              onChange={({values, selectedValue}) =>
+                ((filtreState.planActionIds?.length === 1 &&
+                  selectedValue !== filtreState.planActionIds[0]) ||
+                  (filtreState.planActionIds &&
+                    filtreState.planActionIds.length > 1)) &&
+                setFiltreState({
+                  ...filtreState,
+                  planActionIds: values as number[],
+                })
+              }
+            />
+          </Field>
+          <Field title="Pilote de l'indicateur :">
+            <PersonnesDropdown
+              values={pilotes.length ? pilotes : undefined}
+              onChange={({personnes}) =>
+                setFiltreState({
+                  ...filtreState,
+                  ...splitPilotePersonnesAndUsers(personnes),
+                })
+              }
+            />
+          </Field>
+          <Field title="Thématique de l'indicateur :">
+            <ThematiquesDropdown
+              values={filtreState.thematiqueIds}
+              onChange={({thematiques}) =>
+                setFiltreState({
+                  ...filtreState,
+                  thematiqueIds: thematiques.map(t => t.id),
+                })
+              }
+            />
+          </Field>
+          <Field title="Complétion indicateur :">
+            <Select
+              values={
+                filtreState.estComplet === undefined
+                  ? undefined
+                  : filtreState.estComplet
+                  ? 'rempli'
+                  : 'incomplet'
+              }
+              options={[
+                {
+                  label: 'Complet',
+                  value: 'rempli',
+                },
+                {
+                  label: 'Incomplet',
+                  value: 'incomplet',
+                },
+              ]}
+              onChange={value =>
+                setFiltreState({
+                  ...filtreState,
+                  estComplet:
+                    value === undefined ? undefined : value === 'rempli',
+                })
+              }
+            />
+          </Field>
+        </FormSection>
       )}
       renderFooter={({close}) => (
         <ModalFooterOKCancel

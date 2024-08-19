@@ -53,61 +53,59 @@ const ModalActionsDontJeSuisLePilote = ({
   return (
     <Modal
       openState={openState}
+      title={module.titre}
       render={() => (
-        <>
-          <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
-          <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Plans d'action">
-              <SelectMultiple
-                values={filtreState.planActionIds}
-                options={
-                  plansActions?.plans.map(p => ({
-                    label: generateTitle(p.nom),
-                    value: p.id,
-                  })) ?? []
-                }
-                onChange={({values}) =>
+        <FormSection title="Filtrer sur :" className="!grid-cols-1">
+          <Field title="Plans d'action">
+            <SelectMultiple
+              values={filtreState.planActionIds}
+              options={
+                plansActions?.plans.map(p => ({
+                  label: generateTitle(p.nom),
+                  value: p.id,
+                })) ?? []
+              }
+              onChange={({values}) =>
+                setFiltreState({
+                  ...filtreState,
+                  planActionIds: values as number[],
+                })
+              }
+            />
+          </Field>
+          <FormSectionGrid>
+            <Field title="Statut">
+              <StatutsFilterDropdown
+                values={filtreState.statuts}
+                onChange={({statuts}) =>
                   setFiltreState({
                     ...filtreState,
-                    planActionIds: values as number[],
+                    statuts,
                   })
                 }
               />
             </Field>
-            <FormSectionGrid>
-              <Field title="Statut">
-                <StatutsFilterDropdown
-                  values={filtreState.statuts}
-                  onChange={({statuts}) =>
-                    setFiltreState({
-                      ...filtreState,
-                      statuts,
-                    })
-                  }
-                />
-              </Field>
-              <Field title="Niveau de priorité">
-                <PrioritesFilterDropdown
-                  values={filtreState.priorites}
-                  onChange={({priorites}) =>
-                    setFiltreState({
-                      ...filtreState,
-                      priorites,
-                    })
-                  }
-                />
-              </Field>
-            </FormSectionGrid>
-            <Field title="Personne pilote">
-              <PersonnesDropdown
-                values={pilotes.length ? pilotes : undefined}
-                onChange={() => null}
-                disabled
-                disabledOptionsIds={[userId!]}
+            <Field title="Niveau de priorité">
+              <PrioritesFilterDropdown
+                values={filtreState.priorites}
+                onChange={({priorites}) =>
+                  setFiltreState({
+                    ...filtreState,
+                    priorites,
+                  })
+                }
               />
             </Field>
-          </FormSection>
-        </>
+          </FormSectionGrid>
+          <Field title="Personne pilote">
+            <PersonnesDropdown
+              values={pilotes.length ? pilotes : undefined}
+              onChange={() => null}
+              disabled
+              disabledOptionsIds={[userId!]}
+            />
+          </Field>
+        </FormSection>
       )}
       renderFooter={({close}) => (
         <ModalFooterOKCancel

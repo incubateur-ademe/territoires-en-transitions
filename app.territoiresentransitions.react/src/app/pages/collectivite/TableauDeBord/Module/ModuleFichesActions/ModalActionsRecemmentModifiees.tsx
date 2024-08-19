@@ -57,64 +57,62 @@ const ModalActionsRecemmentModifiees = ({
   return (
     <Modal
       openState={openState}
+      title={module.titre}
       render={() => (
-        <>
-          <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
-          <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Plans d'action">
-              <SelectMultiple
-                values={filtreState.planActionIds}
-                options={
-                  plansActions?.plans.map(p => ({
-                    label: generateTitle(p.nom),
-                    value: p.id,
-                  })) ?? []
-                }
-                onChange={({values}) =>
-                  setFiltreState({
-                    ...filtreState,
-                    planActionIds: values as number[],
-                  })
-                }
-              />
-            </Field>
-            <Field title="Personne pilote">
-              <PersonnesDropdown
-                values={pilotes}
-                onChange={({personnes}) => {
-                  setFiltreState({
-                    ...filtreState,
-                    ...splitPilotePersonnesAndUsers(personnes),
-                  });
-                }}
-              />
-            </Field>
-            <Field title="Statut">
-              <StatutsFilterDropdown
-                values={filtreState.statuts}
-                onChange={({statuts}) =>
-                  setFiltreState({
-                    ...filtreState,
-                    statuts,
-                  })
-                }
-              />
-            </Field>
-            <Field title="Période de modification">
-              <Select
-                values={filtreState.modifiedSince}
-                options={ficheActionModifiedSinceOptions}
-                onChange={value =>
-                  value &&
-                  setFiltreState({
-                    ...filtreState,
-                    modifiedSince: value as ModifiedSince,
-                  })
-                }
-              />
-            </Field>
-          </FormSection>
-        </>
+        <FormSection title="Filtrer sur :" className="!grid-cols-1">
+          <Field title="Plans d'action">
+            <SelectMultiple
+              values={filtreState.planActionIds}
+              options={
+                plansActions?.plans.map(p => ({
+                  label: generateTitle(p.nom),
+                  value: p.id,
+                })) ?? []
+              }
+              onChange={({values}) =>
+                setFiltreState({
+                  ...filtreState,
+                  planActionIds: values as number[],
+                })
+              }
+            />
+          </Field>
+          <Field title="Personne pilote">
+            <PersonnesDropdown
+              values={pilotes}
+              onChange={({personnes}) => {
+                setFiltreState({
+                  ...filtreState,
+                  ...splitPilotePersonnesAndUsers(personnes),
+                });
+              }}
+            />
+          </Field>
+          <Field title="Statut">
+            <StatutsFilterDropdown
+              values={filtreState.statuts}
+              onChange={({statuts}) =>
+                setFiltreState({
+                  ...filtreState,
+                  statuts,
+                })
+              }
+            />
+          </Field>
+          <Field title="Période de modification">
+            <Select
+              values={filtreState.modifiedSince}
+              options={ficheActionModifiedSinceOptions}
+              onChange={value =>
+                value &&
+                setFiltreState({
+                  ...filtreState,
+                  modifiedSince: value as ModifiedSince,
+                })
+              }
+            />
+          </Field>
+        </FormSection>
       )}
       renderFooter={({close}) => (
         <ModalFooterOKCancel
