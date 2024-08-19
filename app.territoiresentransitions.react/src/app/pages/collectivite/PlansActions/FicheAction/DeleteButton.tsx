@@ -8,7 +8,7 @@ const DeleteButton = forwardRef(
       variant = 'grey',
       className,
       ...props
-    }: Omit<ButtonProps, 'variant'> & {variant?: 'white' | 'grey' | 'outlined'},
+    }: Omit<ButtonProps, 'variant'> & {variant?: 'white' | 'grey'},
     ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
   ) => {
     return (
@@ -20,8 +20,6 @@ const DeleteButton = forwardRef(
         className={classNames(
           {
             '!text-error-1 hover:!text-[#db4f4f]': !props.disabled,
-            '!border-error-1 hover:!border-[#db4f4f] hover:!bg-[#fefafa]':
-              variant === 'outlined' && !props.disabled,
           },
           className
         )}
