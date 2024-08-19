@@ -699,6 +699,8 @@ dev:
         IF [ "$faster" = "no" ]
             RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
+            RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+
             # Seed si aucune collectivité en base
             RUN docker run --rm \
                 --network $network \
@@ -706,7 +708,6 @@ dev:
                 -c "select 1 / count(*) from collectivite;" \
                 || earthly +seed --DB_URL=$DB_URL
 
-            RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
         END
     END
 
