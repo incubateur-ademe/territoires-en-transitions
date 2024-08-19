@@ -69,18 +69,21 @@ const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 };
 
 const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
-  const {collectiviteId} = args;
+  const {collectiviteId, type, valeursBrutes} = args;
 
   return useMutation({
     mutationKey: 'delete_indicateur_valeur',
     mutationFn: async ({valeurId}: {valeurId: number}) => {
-      if (!collectiviteId || isNaN(valeurId)) {
+      const valeurBrute =
+          valeursBrutes?.find(v => v.id === valeurId);
+      if (!collectiviteId || isNaN(valeurId) || !valeurBrute) {
         return;
       }
-      return Indicateurs.delete.deleteIndicateurValeur(
-        supabaseClient,
-        valeurId
-      );
+      return Indicateurs.save.upsertIndicateurValeur(supabaseClient, {
+        ...valeurBrute,
+        [type]: null,
+        [`${type}Commentaire`]: null
+      });
     },
     onSuccess: useOnSuccess(args),
   });
