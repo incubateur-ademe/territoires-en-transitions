@@ -1,13 +1,6 @@
 import {useState} from 'react';
 
-import {
-  Button,
-  Checkbox,
-  Input,
-  ModalOpenState,
-  Pagination,
-  Select,
-} from '@tet/ui';
+import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
 
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
@@ -19,6 +12,7 @@ import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateu
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {OpenState} from '@tet/ui/dist/utils/types';
 
 type sortByOptionsType = {
   label: string;
@@ -49,7 +43,7 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  settingsModal: (openState: ModalOpenState) => React.ReactNode;
+  settingsModal: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;

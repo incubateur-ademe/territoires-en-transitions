@@ -109,9 +109,7 @@ export async function fetchFilteredIndicateurs(
   // détermine certains des filtres complémentaires à appliquer :
   // si une de ces conditions est vraie alors le filtre "parent uniquement" sera désactivé
   const filtrerPar = {
-    participationAuScore:
-      // filters.categorieNoms?.find(nom => nom === 'cae') &&
-      filters.participationScore !== undefined,
+    participationAuScore: filters.participationScore !== undefined,
     confidentiel: filters.estConfidentiel !== undefined,
     planAction: !!filters.planActionIds?.length,
     service: !!filters.servicePiloteIds?.length,
@@ -127,9 +125,6 @@ export async function fetchFilteredIndicateurs(
     !filtresOptions.estPerso &&
     filters.categorieNoms?.length &&
     !filters.categorieNoms.find(nom => nom === 'crte') &&
-    // subset !== null &&
-    //   subset !== 'crte' &&
-    //   subset !== 'perso' &&
     !searchById &&
     !Object.values(filtrerPar).includes(true);
 
