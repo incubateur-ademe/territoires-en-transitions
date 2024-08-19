@@ -13,7 +13,11 @@ type Props = {
   openState?: OpenState;
 } & ButtonProps;
 
-/** Ouverture d'un menu flottant au click sur le bouton */
+/**
+ * Ouverture d'un menu flottant au click sur le bouton.
+ *
+ * Ne pas oublier de donner une largeur fixe au menu s'il contient des élements qui peuvent être resizer comme un sélecteur avec une valeur.
+ */
 export const ButtonMenu = ({
   menuPlacement = 'bottom-end',
   openState,
@@ -24,7 +28,7 @@ export const ButtonMenu = ({
     <DropdownFloater
       placement={menuPlacement}
       openState={openState}
-      containerClassName="rounded-lg !border-t shadow-card"
+      containerClassName="relative rounded-lg !border-t shadow-card"
       render={() => <div className="p-4">{children}</div>}
     >
       <Button {...props} />
