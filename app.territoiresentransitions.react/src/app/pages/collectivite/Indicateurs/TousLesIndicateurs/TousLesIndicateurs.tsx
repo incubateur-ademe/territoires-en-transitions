@@ -1,6 +1,7 @@
 import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
+import {ButtonMenu} from '@tet/ui';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
-import ModalFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/ModalFiltresTousLesIndicateurs';
+import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
@@ -40,14 +41,21 @@ const TousLesIndicateurs = () => {
       <IndicateursListe
         filtres={filters}
         sortSettings={{defaultSort: 'estComplet'}}
-        settingsModal={openState => (
-          <ModalFiltresTousLesIndicateurs
+        settings={openState => (
+          <ButtonMenu
             openState={openState}
-            filters={filters}
-            setFilters={newFilters => {
-              setFilters(newFilters);
-            }}
-          />
+            variant="outlined"
+            icon="equalizer-line"
+            size="sm"
+          >
+            <MenuFiltresTousLesIndicateurs
+              openState={openState}
+              filters={filters}
+              setFilters={newFilters => {
+                setFilters(newFilters);
+              }}
+            />
+          </ButtonMenu>
         )}
       />
     </div>

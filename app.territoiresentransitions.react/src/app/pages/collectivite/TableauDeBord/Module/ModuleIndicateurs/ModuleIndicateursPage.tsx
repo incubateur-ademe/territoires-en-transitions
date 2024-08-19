@@ -1,4 +1,4 @@
-import {TrackPageView, useEventTracker} from '@tet/ui';
+import {Button, TrackPageView, useEventTracker} from '@tet/ui';
 
 import {
   ModuleIndicateursSelect,
@@ -47,12 +47,27 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
             collectivite_id: collectiviteId!,
           });
         }}
-        settingsModal={openState => (
-          <ModalIndicateursSuiviPlan
-            openState={openState}
-            module={module as ModuleIndicateursSelect}
-            keysToInvalidate={[getQueryKey(slug)]}
-          />
+        settings={openState => (
+          <>
+            <Button
+              variant="outlined"
+              icon="equalizer-line"
+              size="sm"
+              onClick={() => {
+                openState.setIsOpen(true);
+                trackEvent('tdb_modifier_filtres_indicateurs', {
+                  collectivite_id: collectiviteId!,
+                });
+              }}
+            />
+            {openState.isOpen && (
+              <ModalIndicateursSuiviPlan
+                openState={openState}
+                module={module as ModuleIndicateursSelect}
+                keysToInvalidate={[getQueryKey(slug)]}
+              />
+            )}
+          </>
         )}
       />
     </ModulePage>

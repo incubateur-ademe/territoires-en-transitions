@@ -43,7 +43,7 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  settingsModal: (openState: OpenState) => React.ReactNode;
+  settings: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;
@@ -56,7 +56,7 @@ const IndicateursListe = ({
     defaultSort: 'text',
   },
   filtres,
-  settingsModal,
+  settings,
   maxNbOfCards = 9,
   onSettingsClick,
 }: Props) => {
@@ -166,18 +166,8 @@ const IndicateursListe = ({
           placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
-        {/** Bouton d'édition des filtres */}
-        <Button
-          variant="outlined"
-          icon="equalizer-line"
-          size="sm"
-          onClick={() => {
-            setIsSettingsOpen(true);
-            onSettingsClick?.();
-          }}
-        />
-        {isSettingsOpen &&
-          settingsModal({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
+        {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
+        {settings({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
       </div>
       {/** Liste des filtres appliqués */}
       {filtres && <ModuleFiltreBadges filtre={filtres} />}
