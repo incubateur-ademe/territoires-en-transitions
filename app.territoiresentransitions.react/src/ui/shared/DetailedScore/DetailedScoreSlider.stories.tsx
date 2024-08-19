@@ -19,6 +19,4 @@ export const Exemple1 = {
     value: [0.3, 0.4, 0.3],
     onChange: action('onChange'),
   },
-
-  parameters: {storyshots: false},
 };

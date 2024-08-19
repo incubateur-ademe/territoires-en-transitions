@@ -10,7 +10,6 @@ import {fakeManyXLineData} from './Line/fixtures.tsx';
 
 const meta: Meta<typeof Chart> = {
   component: Chart,
-  parameters: {storyshots: false}, // @nivo/line semble fait échoué storyshot :(
   args: {
     donut: {
       chart: {

@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import {DetailedScore} from './DetailedScore';
 
@@ -11,6 +11,4 @@ export const Exemple1 = {
     avancement: [0.3, 0.5, 0.2],
     onSave: action('onSave'),
   },
-
-  parameters: {storyshots: false},
 };

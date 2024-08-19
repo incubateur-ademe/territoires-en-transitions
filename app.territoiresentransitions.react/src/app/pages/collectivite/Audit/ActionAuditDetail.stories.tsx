@@ -1,11 +1,8 @@
-import { Meta} from '@storybook/react';
-import {
-  ActionAuditDetailBase,
-} from './ActionAuditDetail';
+import {Meta} from '@storybook/react';
+import {ActionAuditDetailBase} from './ActionAuditDetail';
 
 export default {
   component: ActionAuditDetailBase,
-  parameters: {storyshots: false},
 } as Meta;
 
 export const NonRenseigne = {

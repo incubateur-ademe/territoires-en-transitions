@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {MultiSelectColumn} from './index';
 
 export default {
@@ -17,8 +17,6 @@ export const AucuneColonneMasquee = {
       {value: 'opt3', label: 'Option 3'},
     ],
   },
-
-  parameters: {storyshots: false},
 };
 
 export const UneColonneMasquee = {
@@ -33,8 +31,6 @@ export const UneColonneMasquee = {
       {value: 'opt3', label: 'Option 3'},
     ],
   },
-
-  parameters: {storyshots: false},
 };
 
 export const DeuxColonnesMasquees = {
@@ -49,8 +45,6 @@ export const DeuxColonnesMasquees = {
       {value: 'opt3', label: 'Option 3'},
     ],
   },
-
-  parameters: {storyshots: false},
 };
 
 export const ToutesLesColonnesMasquées = {
@@ -65,6 +59,4 @@ export const ToutesLesColonnesMasquées = {
       {value: 'opt3', label: 'Option 3'},
     ],
   },
-
-  parameters: {storyshots: false},
 };

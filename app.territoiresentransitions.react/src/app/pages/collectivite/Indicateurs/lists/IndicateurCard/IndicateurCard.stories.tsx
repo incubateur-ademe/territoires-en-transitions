@@ -6,7 +6,6 @@ import React, {useState} from 'react';
 
 const meta: Meta<typeof IndicateurCardBase> = {
   component: IndicateurCardBase,
-  parameters: {storyshots: false}, // @nivo/line semble fait échoué storyshot :(
   args: {
     className: 'max-w-[28rem]',
     definition: {
