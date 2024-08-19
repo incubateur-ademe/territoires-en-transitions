@@ -44,8 +44,6 @@ const FichesResumeDropdown = ({
     fiche => fiche.id !== ficheCouranteId
   );
 
-  console.log(fichesListe, fichesDisponiblesListe);
-
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedFiches = (values?: OptionValue[]) => {
     return (fichesDisponiblesListe ?? []).filter(fiche =>

@@ -5,15 +5,19 @@ import {useActionListe} from '../data/options/useActionListe';
 import ActionCard from './ActionCard';
 
 type ActionsLieesListeProps = {
+  isReadonly?: boolean;
   actionsIds: string[];
   isFicheTab?: boolean;
   onLoad?: (isLoading: boolean) => void;
+  onUpdateActionsLiees?: (actionsId: string[]) => void;
 };
 
 const ActionsLieesListe = ({
+  isReadonly,
   actionsIds,
   isFicheTab = false,
   onLoad,
+  onUpdateActionsLiees,
 }: ActionsLieesListeProps) => {
   const {data: actionListe, isLoading} = useActionListe();
 
@@ -38,7 +42,20 @@ const ActionsLieesListe = ({
         })}
       >
         {actionsLiees.map(action => (
-          <ActionCard key={action.action_id} action={action} openInNewTab />
+          <ActionCard
+            key={action.action_id}
+            isReadonly={isReadonly}
+            action={action}
+            onUnlink={
+              onUpdateActionsLiees
+                ? () =>
+                    onUpdateActionsLiees(
+                      actionsIds.filter(id => id !== action.action_id)
+                    )
+                : undefined
+            }
+            openInNewTab
+          />
         ))}
       </div>
     </div>

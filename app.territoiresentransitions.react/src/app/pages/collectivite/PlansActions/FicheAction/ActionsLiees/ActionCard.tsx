@@ -1,4 +1,4 @@
-import {Card} from '@tet/ui';
+import {Button, Card} from '@tet/ui';
 import {referentielToName} from 'app/labels';
 import {makeCollectiviteTacheUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -7,11 +7,18 @@ import {getActionStatut} from 'ui/referentiels/utils';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 type ActionCardProps = {
+  isReadonly?: boolean;
   action: TActionStatutsRow;
   openInNewTab?: boolean;
+  onUnlink?: () => void;
 };
 
-const ActionCard = ({action, openInNewTab = false}: ActionCardProps) => {
+const ActionCard = ({
+  isReadonly = true,
+  action,
+  openInNewTab = false,
+  onUnlink,
+}: ActionCardProps) => {
   const collectiviteId = useCollectiviteId()!;
   const {action_id: actionId, identifiant, nom, referentiel} = action;
   const statut = getActionStatut(action);
@@ -23,27 +30,41 @@ const ActionCard = ({action, openInNewTab = false}: ActionCardProps) => {
   });
 
   return (
-    <Card
-      data-test="ActionCarte"
-      id={`action-${action.action_id}`}
-      className="px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
-      href={link}
-      external={openInNewTab}
-      header={
-        // Statut de l'action
-        <ActionStatutBadge statut={statut} />
-      }
-    >
-      {/* Référentiel de l'action */}
-      <span className="text-grey-8 text-sm font-medium">
-        Référentiel {referentielToName[referentiel]}
-      </span>
+    <div className="relative group">
+      <div className="invisible group-hover:visible absolute top-4 right-4">
+        {!isReadonly && onUnlink && (
+          <Button
+            icon="link-unlink"
+            title="Dissocier l'action"
+            variant="grey"
+            size="xs"
+            onClick={onUnlink}
+          />
+        )}
+      </div>
 
-      {/* Identifiant et titre de l'action */}
-      <span className="text-base font-bold text-primary-9">
-        {identifiant} {nom}
-      </span>
-    </Card>
+      <Card
+        data-test="ActionCarte"
+        id={`action-${action.action_id}`}
+        className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
+        href={link}
+        external={openInNewTab}
+        header={
+          // Statut de l'action
+          <ActionStatutBadge statut={statut} />
+        }
+      >
+        {/* Référentiel de l'action */}
+        <span className="text-grey-8 text-sm font-medium">
+          Référentiel {referentielToName[referentiel]}
+        </span>
+
+        {/* Identifiant et titre de l'action */}
+        <span className="text-base font-bold text-primary-9">
+          {identifiant} {nom}
+        </span>
+      </Card>
+    </div>
   );
 };
 
