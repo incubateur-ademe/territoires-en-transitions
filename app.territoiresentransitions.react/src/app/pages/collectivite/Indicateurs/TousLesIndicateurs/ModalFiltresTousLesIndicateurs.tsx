@@ -100,11 +100,13 @@ const ModalFiltresTousLesIndicateurs = ({
             <Field title="Catégorie">
               <IndicateurCategoriesDropdown
                 values={filtreState.categorieNoms}
-                onChange={value => {
+                onChange={({categories}) => {
                   const {categorieNoms, ...rest} = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(value ? {categorieNoms: [value]} : {}),
+                    ...(categories?.length > 0
+                      ? {categorieNoms: categories}
+                      : {}),
                   });
                 }}
               />
