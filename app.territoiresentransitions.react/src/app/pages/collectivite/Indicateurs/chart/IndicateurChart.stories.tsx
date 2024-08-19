@@ -4,7 +4,6 @@ import {fakeIndicateurValeurs} from './fixtures';
 
 const meta: Meta<typeof IndicateurChart> = {
   component: IndicateurChart,
-  parameters: {storyshots: false}, // @nivo/line semble fait échoué storyshot :(
 };
 
 export default meta;

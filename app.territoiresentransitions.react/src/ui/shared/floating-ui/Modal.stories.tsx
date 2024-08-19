@@ -3,7 +3,6 @@ import Modal from './Modal';
 
 export default {
   component: Modal,
-  parameters: {storyshots: false},
 };
 
 export const Defaut = () => (

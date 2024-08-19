@@ -4,7 +4,6 @@ import {ConfirmerSuppressionMembre} from './ConfirmerSuppressionMembre';
 
 export default {
   component: ConfirmerSuppressionMembre,
-  parameters: {storyshots: false},
   args: {
     setIsOpen: action('setIsOpen'),
     updateMembre: action('updateMembre'),

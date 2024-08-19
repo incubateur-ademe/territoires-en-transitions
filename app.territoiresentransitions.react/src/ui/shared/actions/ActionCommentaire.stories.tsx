@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/react';
+import {Meta} from '@storybook/react';
 
 import {
   ActionCommentaireField,
@@ -10,8 +10,6 @@ export default {
 } as Meta;
 
 export const ExempleAction = {
-  parameters: {storyshots: false},
-
   args: {
     action: {
       type: 'action',
@@ -21,8 +19,6 @@ export const ExempleAction = {
 };
 
 export const ExempleTache = {
-  parameters: {storyshots: false},
-
   args: {
     action: {
       type: 'tache',
@@ -32,8 +28,6 @@ export const ExempleTache = {
 };
 
 export const CommentaireLong = {
-  parameters: {storyshots: false},
-
   args: {
     action: {
       type: 'tache',
