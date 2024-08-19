@@ -38,6 +38,8 @@ import IndicateurSourcesService from './indicateurSources.service';
 export default class TrajectoiresService {
   private readonly logger = new Logger(TrajectoiresService.name);
 
+  private readonly RARE_SOURCE_ID = 'rare';
+
   private readonly SNBC_SOURCE: CreateIndicateurSourceType = {
     id: 'snbc',
     libelle: 'SNBC',
@@ -507,6 +509,7 @@ export default class TrajectoiresService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
+        sourceId: this.RARE_SOURCE_ID,
         dateDebut: this.SNBC_DATE_REFERENCE,
         dateFin: this.SNBC_DATE_REFERENCE,
       });
@@ -524,6 +527,7 @@ export default class TrajectoiresService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
+        sourceId: this.RARE_SOURCE_ID,
         dateDebut: this.SNBC_DATE_REFERENCE,
         dateFin: this.SNBC_DATE_REFERENCE,
       });
@@ -573,7 +577,7 @@ export default class TrajectoiresService {
           /*console.log(
             `${identifiant}: ${indicateurValeur.indicateur_valeur.resultat} ${indicateurValeur.indicateur_definition?.unite}`,
           );*/
-          );
+
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
           if (valeursARemplir[index].valeur !== null) {
             valeursARemplir[index].valeur +=
