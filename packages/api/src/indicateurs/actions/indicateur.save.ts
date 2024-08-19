@@ -120,12 +120,12 @@ export async function upsertIndicateurValeur(
 ): Promise<number | null> {
   valeurSchema.parse(indicateurValeur); // Vérifie le type
   if (
-    indicateurValeur.resultat === null &&
-    indicateurValeur.objectif === null &&
-    indicateurValeur.estimation === null &&
-    (indicateurValeur.resultatCommentaire === null ||
+    !indicateurValeur.resultat &&
+    !indicateurValeur.objectif &&
+    !indicateurValeur.estimation  &&
+    (!indicateurValeur.resultatCommentaire ||
       indicateurValeur.resultatCommentaire === '') &&
-    (indicateurValeur.objectifCommentaire === null ||
+    (!indicateurValeur.objectifCommentaire ||
       indicateurValeur.objectifCommentaire === '')
   ) {
     if (indicateurValeur.id) {
