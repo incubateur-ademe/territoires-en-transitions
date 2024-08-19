@@ -31,10 +31,48 @@ export const useApiClient = () => {
     if (!response.ok) {
       throw new Error(`${body.message} (${response.status})`);
     }
-    return body.data as ResponseType;
+    return body as ResponseType;
+  };
+
+  // fait un appel GET pour télécharger un fichier
+  const getAsBlob = async (args: API_ARGS) => {
+    const response = await fetch(makeUrl(args), {
+      headers: {
+        ...authHeaders,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Download error (${response.status})`);
+    }
+    // récupère la réponse sous forme de blob
+    const blob = await response.blob();
+    // essaye d'extraire le nom de fichier des en-têtes
+    const filename = response.headers
+      .get('Content-Disposition')
+      ?.match(/filename="(.*)"/)?.[1];
+    return {blob, filename};
+  };
+
+  // fait un appel POST
+  const post = async <ResponseType>({route, params}: API_ARGS) => {
+    const response = await fetch(makeUrl({route}), {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'content-type': 'application/json',
+        ...authHeaders,
+      },
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      throw new Error(`${body.message} (${response.status})`);
+    }
+    return body as ResponseType;
   };
 
   return {
     get,
+    getAsBlob,
+    post,
   };
 };
