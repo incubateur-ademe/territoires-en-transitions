@@ -1,25 +1,30 @@
 import {useQuery} from 'react-query';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useApiClient} from 'core-logic/api/useApiClient';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
-export enum CheckDataSNBCStatus {
+export enum StatutTrajectoire {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
   DEJA_CALCULE = 'deja_calcule',
   PRET_A_CALCULER = 'pret_a_calculer',
   DONNEES_MANQUANTES = 'donnees_manquantes',
 }
 
+export const getStatusKey = (collectiviteId: number | null) => [
+  'snbc/verification',
+  collectiviteId,
+];
+
 /** Donne le statut du calcul de trajectoire d'une collectivité */
-export const useTrajectoireCheck = () => {
+export const useStatutTrajectoire = () => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
   return useQuery(
-    ['trajectoireCheck', collectiviteId],
+    getStatusKey(collectiviteId),
     async () =>
       collectiviteId &&
-      api.get<{status: CheckDataSNBCStatus}>({
-        route: '/trajectoires/snbc/check',
+      api.get<{status: StatutTrajectoire}>({
+        route: '/trajectoires/snbc/verification',
         params: {collectivite_id: collectiviteId},
       }),
     {
