@@ -204,12 +204,14 @@ export const Modal = ({
                       )}
                     </div>
                   )}
-                  {render?.({
-                    close: handleOpenChange,
-                    labelId,
-                    descriptionId,
-                    ref: refs.floating,
-                  })}
+                  <div className="flex flex-col gap-8 z-10">
+                    {render?.({
+                      close: handleOpenChange,
+                      labelId,
+                      descriptionId,
+                      ref: refs.floating,
+                    })}
+                  </div>
                   {renderFooter?.({
                     close: handleOpenChange,
                   })}
