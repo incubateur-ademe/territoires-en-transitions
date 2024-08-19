@@ -89,7 +89,7 @@ export default class TrajectoiresService {
       'cae_1.d', // 269 Tertiaire
       'cae_1.i', // 270 Industrie
       'cae_1.g', // 271 Agriculture
-      'cae_1.e', // 272 Transports
+      'cae_1.k', // 272 Transports
       'cae_1.h', // 273 Déchets
       'cae_1.j', // 274 Branche énergie
       'cae_63.a', // 227 UTCATF
