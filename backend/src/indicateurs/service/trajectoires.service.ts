@@ -14,7 +14,9 @@ import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   CalculTrajectoireRequest,
+  CalculTrajectoireReset,
   CalculTrajectoireResult,
+  CalculTrajectoireResultatMode,
   DonneesARemplirResult,
   DonneesCalculTrajectoireARemplir,
 } from '../models/calcultrajectoire.models';
@@ -139,7 +141,11 @@ export default class TrajectoiresService {
       this.getIdentifiantDossierResultat(),
     );
 
-    if (!trajectoireCalculSheetId || request.reset_fichier) {
+    if (
+      !trajectoireCalculSheetId ||
+      request.mode === CalculTrajectoireReset.NOUVEAU_SPREADSHEET ||
+      request.mode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT
+    ) {
       this.logger.log(
         `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id} pour le téléchargement`,
       );
@@ -168,6 +174,9 @@ export default class TrajectoiresService {
     request: CalculTrajectoireRequest,
     epci?: EpciType,
   ): Promise<CalculTrajectoireResult> {
+    let mode: CalculTrajectoireResultatMode =
+      CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
+
     // Création de la source métadonnée SNBC si elle n'existe pas
     let indicateurSourceMetadonnee =
       await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
@@ -223,8 +232,13 @@ export default class TrajectoiresService {
       resultatVerification.status ===
         VerificationDonneesSNBCStatus.DEJA_CALCULE &&
       resultatVerification.valeurs &&
-      resultatVerification.epci
+      resultatVerification.epci &&
+      request.mode !== CalculTrajectoireReset.NOUVEAU_SPREADSHEET && // L'utilisateur veut recréer un nouveau spreadsheet de calcul, on ne retourne pas les résultats existants
+      request.mode !== CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT // L'utilisateur veut mettre à jour le spreadsheet de calcul existant, on ne retourne pas les résultats existants
     ) {
+      this.logger.log(
+        `Résultats de la trajectoire SNBC déjà calculés, lecture des données en base (request mode: ${request.mode})`,
+      );
       const trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
         this.getNomFichierTrajectoire(resultatVerification.epci),
         this.getIdentifiantDossierResultat(),
@@ -252,7 +266,9 @@ export default class TrajectoiresService {
             indicateurConsommationDefinitions,
           );
 
+        mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResult = {
+          mode: mode,
           spreadsheet_id: trajectoireCalculSheetId,
           trajectoire: {
             emissions_ges: emissionGesTrajectoire,
@@ -276,7 +292,11 @@ export default class TrajectoiresService {
       nomFichier,
       process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID,
     );
-    if (trajectoireCalculSheetId && !request.reset_fichier) {
+    if (
+      trajectoireCalculSheetId &&
+      request.mode !== CalculTrajectoireReset.NOUVEAU_SPREADSHEET
+    ) {
+      mode = CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT;
       this.logger.log(
         `Fichier de trajectoire SNBC trouvé avec l'identifiant ${trajectoireCalculSheetId}`,
       );
@@ -404,6 +424,7 @@ export default class TrajectoiresService {
       );
 
     const result: CalculTrajectoireResult = {
+      mode: mode,
       spreadsheet_id: trajectoireCalculSheetId,
       trajectoire: {
         emissions_ges: emissionGesTrajectoire,
@@ -549,8 +570,9 @@ export default class TrajectoiresService {
           indicateurValeur.indicateur_valeur.resultat !== null &&
           indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
         ) {
-          console.log(
+          /*console.log(
             `${identifiant}: ${indicateurValeur.indicateur_valeur.resultat} ${indicateurValeur.indicateur_definition?.unite}`,
+          );*/
           );
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
           if (valeursARemplir[index].valeur !== null) {

@@ -1,15 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import optionalBooleanMapper from '../../common/services/optionalBooleanMapper';
 import { IndicateurAvecValeurs } from './indicateur.models';
+
+export enum CalculTrajectoireReset {
+  MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
+  NOUVEAU_SPREADSHEET = 'nouveau_spreadsheet',
+}
+
+export enum CalculTrajectoireResultatMode {
+  DONNEES_EN_BDD = 'donnees_en_bdd',
+  NOUVEAU_SPREADSHEET = 'nouveau_spreadsheet',
+  MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
+}
 
 export class CalculTrajectoireRequest {
   @ApiProperty({ description: 'Identifiant de la collectivité' })
@@ -19,12 +29,11 @@ export class CalculTrajectoireRequest {
 
   @ApiProperty({
     required: false,
-    description: 'Recrée le fichier de trajectoire à partir du template',
+    description: 'Mode pour forcer la recréation de la trajectoire',
   })
-  @IsBoolean()
-  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
+  @IsEnum(CalculTrajectoireReset)
   @IsOptional()
-  reset_fichier?: boolean;
+  mode?: CalculTrajectoireReset;
 }
 
 export class CalculTrajectoireResponseDonnees {
@@ -41,6 +50,9 @@ export class CalculTrajectoireResponseDonnees {
 }
 
 export class CalculTrajectoireResponse {
+  @IsEnum(CalculTrajectoireResultatMode)
+  mode: CalculTrajectoireResultatMode;
+
   @ApiProperty({ description: 'Résultat du calcul de la trajectoire' })
   @ValidateNested()
   @Type(() => CalculTrajectoireResponseDonnees)
