@@ -2,7 +2,6 @@ import {
   makeCollectiviteAccueilUrl,
   makeCollectiviteActionUrl,
   makeCollectiviteBibliothequeUrl,
-  makeCollectiviteIndicateursUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationRootUrl,
   makeCollectiviteLabellisationUrl,
@@ -185,23 +184,19 @@ const makeNavItemsBase = (
     },
     {
       confidentiel,
-      title: 'Indicateurs',
+      label: 'Indicateurs',
       urlPrefix: [`${collectivite.collectivite_id}/indicateurs/`],
-      items: [
-        {
-          label: 'Tous les indicateurs',
-          to: makeCollectiviteTousLesIndicateursUrl({
-            collectiviteId,
-          }),
-        },
-        {
-          label: 'Ancienne vue',
-          to: makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'cles',
-          }),
-        },
-      ],
+      to: makeCollectiviteTousLesIndicateursUrl({
+        collectiviteId,
+      }),
+      // items: [
+      //   {
+      //     label: 'Tous les indicateurs',
+      //     to: makeCollectiviteTousLesIndicateursUrl({
+      //       collectiviteId,
+      //     }),
+      //   },
+      // ],
     },
   ];
 };
