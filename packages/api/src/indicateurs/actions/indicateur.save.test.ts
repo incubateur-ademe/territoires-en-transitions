@@ -88,12 +88,18 @@ test('Test upsertIndicateurValeur', async () => {
   };
   // Ajout valeur
   const newId = await upsertIndicateurValeur(supabase, valeur);
-  const data = await selectIndicateurValeur(supabase, newId!);
+
+  if (!newId) {
+    expect.fail('Id de la valeur non retourné');
+  }
+
+  const data = await selectIndicateurValeur(supabase, newId);
   expect(data).not.toBeNull();
   data!.objectif = 2.3;
+
   // Modification valeur
   await upsertIndicateurValeur(supabase, data!);
-  const result = await selectIndicateurValeur(supabase, newId!);
+  const result = await selectIndicateurValeur(supabase, newId);
   expect(result!.objectif).eq(2.3);
   expect(data!.id).eq(result!.id);
 });

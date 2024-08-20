@@ -1,8 +1,9 @@
 import {selectGroupements} from '../../collectivites/shared/actions/groupement.fetch';
 import {Groupement} from '../../collectivites/shared/domain/groupement.schema';
+import {Tables} from '../../database.types';
 import {DBClient} from '../../typeUtils';
 import {unaccent} from '../../utils/unaccent';
-import {FetchOptions, FetchFiltre} from '../domain/fetch_options.schema';
+import {FetchFiltre, FetchOptions} from '../domain/fetch_options.schema';
 
 const filtresOptions: {[key in keyof FetchFiltre]?: string} = {
   thematiqueIds: 'indicateur_thematique!inner(thematique_id)',
@@ -236,19 +237,26 @@ export async function fetchFilteredIndicateurs(
     }
   });
 
-  const {data, ...remaining} = await query;
+  type Output = Tables<'indicateur_definition'> & {
+    indicateur_collectivite: Array<Tables<'indicateur_collectivite'>>;
+    indicateur_valeur: Array<Tables<'indicateur_valeur'>>;
+  };
+
+  const {data, ...remaining} = await query.returns<Array<Output>>();
+
   let rows = data || [];
+
   if (filters.estConfidentiel === false) {
     // Filtre supplémentaire sur confidentiel car pas trouvé comment faire ma condition avec postgrest
     rows = rows.filter(
-      (r: any) =>
+      r =>
         r.indicateur_collectivite.length === 0 ||
         r.indicateur_collectivite[0].confidentiel === false
     );
   }
   // Filtre sur les indicateurs d'un groupement
   rows = rows.filter(
-    (r: any) =>
+    r =>
       r.groupement_id === null ||
       groupements
         .filter((g: Groupement) => g.id === r.groupement_id)[0]
@@ -257,7 +265,7 @@ export async function fetchFilteredIndicateurs(
 
   // tri programmatique sur la complétude
   if (sort?.at(0)?.field === 'estComplet') {
-    rows.sort((a: any, b: any) => {
+    rows.sort((a, b) => {
       return (
         (b.indicateur_valeur?.filter(v => v.metadonnee_id === null).length ||
           -1) -
@@ -271,10 +279,10 @@ export async function fetchFilteredIndicateurs(
     ...remaining,
     data: rows
       // et conserve un id unique
-      .map((d: any) => ({
+      .map(d => ({
         id: d.id as number,
         titre: d.titre as string,
-        estPerso: d.estPerso as boolean,
+        estPerso: d.collectivite_id !== null,
         identifiant: d.identifiant_referentiel as string,
         hasOpenData: d.indicateur_valeur?.some(v => v.metadonnee_id !== null),
       })),

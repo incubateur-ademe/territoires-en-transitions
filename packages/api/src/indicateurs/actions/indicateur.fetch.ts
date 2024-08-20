@@ -22,6 +22,7 @@ import {
 import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
 import {Source, SourceMetadonnee} from '../domain';
 import {Tag, Thematique} from '../../shared/domain';
+import {Tables} from '../../database.types';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -141,7 +142,9 @@ export async function selectIndicateurCategoriesUtilisateur(
     .from('indicateur_categorie_tag')
     .select('...categorie_tag!inner(id, collectivite_id)')
     .eq('indicateur_id', indicateurId)
-    .eq('categorie_tag.collectivite_id', collectiviteId);
+    .eq('categorie_tag.collectivite_id', collectiviteId)
+    .returns<Array<Tables<'categorie_tag'>>>();
+
   return (data?.map(cat => cat.id) as number[]) || [];
 }
 

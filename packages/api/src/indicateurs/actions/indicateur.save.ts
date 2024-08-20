@@ -146,14 +146,15 @@ export async function upsertIndicateurValeur(
   };
   const {data, error} = await dbClient
     .from('indicateur_valeur')
-    .upsert(objectToSnake(toUpsert) as TablesInsert<'indicateur_valeur'>);
-  //.select('id');
+    .upsert(objectToSnake(toUpsert) as TablesInsert<'indicateur_valeur'>)
+    .select('id')
+    .single();
 
   if (error) {
     throw error;
   }
 
-  return data; // && data.length > 0 ? data[0].id : null;
+  return data.id;
 }
 
 /**
