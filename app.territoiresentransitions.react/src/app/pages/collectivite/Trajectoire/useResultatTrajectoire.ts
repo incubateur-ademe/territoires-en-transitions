@@ -83,11 +83,17 @@ export const useResultatTrajectoire = ({
       ?.filter(v => typeof v.resultat === 'number')
       .map(v => ({x: v.annee, y: v.resultat})) || [];
 
+  // détermine si les données sont dispos pour tous les secteurs
+  const donneesSectoriellesIncompletes =
+    !Array.isArray(valeursTousSecteurs) ||
+    valeursTousSecteurs.length < indicateur.secteurs.length;
+
   return {
     identifiant,
     objectifs,
     resultats,
     valeursTousSecteurs,
+    donneesSectoriellesIncompletes,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
   };

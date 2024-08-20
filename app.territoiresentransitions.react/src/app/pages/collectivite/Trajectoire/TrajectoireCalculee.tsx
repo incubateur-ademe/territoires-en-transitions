@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, ButtonGroup, Card, Tabs, Tab} from '@tet/ui';
+import {Button, ButtonGroup, Card, Tabs, Tab, Alert} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
@@ -8,6 +8,8 @@ import {TrajectoireChart} from './TrajectoireChart';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {DonneesPartiellementDisponibles} from 'app/pages/collectivite/Trajectoire/DonneesPartiellementDisponibles';
 
 /**
  * Affiche une trajectoire SNBC calculée
@@ -31,7 +33,7 @@ const TrajectoireCalculee = () => {
     resultats,
     valeursTousSecteurs,
     isLoadingObjectifsResultats,
-    //    isLoadingTrajectoire,
+    donneesSectoriellesIncompletes,
   } = useResultatTrajectoire({indicateur, secteurIdx});
 
   return (
@@ -81,20 +83,31 @@ const TrajectoireCalculee = () => {
       </div>
 
       <div className="flex flex-row gap-8">
-        {
-          /** Graphique */
-          valeursTousSecteurs && (
-            <Card className="w-4/6 h-fit">
-              <TrajectoireChart
-                unite={indicateur.unite}
-                titre={indicateur.titre}
-                secteurs={valeursTousSecteurs as LineData[]}
-                objectifs={{id: 'objectifs', data: objectifs}}
-                resultats={{id: 'resultats', data: resultats}}
+        <div className="flex flex-col gap-8 w-4/6">
+          {
+            /** Graphique */
+            valeursTousSecteurs && (
+              <Card className="h-fit">
+                <TrajectoireChart
+                  unite={indicateur.unite}
+                  titre={indicateur.titre}
+                  secteurs={valeursTousSecteurs as LineData[]}
+                  objectifs={{id: 'objectifs', data: objectifs}}
+                  resultats={{id: 'resultats', data: resultats}}
+                />
+              </Card>
+            )
+          }
+          {
+            /** Avertissement "Données partiellement disponibles" */
+            secteurIdx === 0 && donneesSectoriellesIncompletes && (
+              <DonneesPartiellementDisponibles
+                collectiviteId={collectiviteId}
+                identifiantReferentiel={identifiant}
               />
-            </Card>
-          )
-        }
+            )
+          }
+        </div>
 
         {/** Colonne de droite */}
         <div className="w-2/6 flex flex-col gap-8">
@@ -105,7 +118,7 @@ const TrajectoireCalculee = () => {
                 identifiantReferentiel={identifiant}
               />
             )}
-          {secteurIdx !== 0 && 'snbc2' in secteur && (
+          {secteurIdx !== 0 && secteur && 'snbc2' in secteur && (
             <Methodologie secteur={secteur} />
           )}
           <AllerPlusLoin />
