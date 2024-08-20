@@ -1,7 +1,10 @@
 export const HELPDESK_URL =
   'https://aide.territoiresentransitions.fr/fr/article/la-trajectoire-snbc-territorialisee-bientot-disponible-sur-territoires-en-transitions-1g46muy/#3-comment-sera-t-elle-mise-a-votre-disposition';
 
-  // liste des indicateurs Trajectoire
+// fichier dans le dossier `public`
+export const DOC_METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
+
+// liste des indicateurs Trajectoire
 export const INDICATEURS_TRAJECTOIRE = [
   {
     id: 'emissions_ges',
