@@ -8,7 +8,7 @@ type FicheActionHeaderProps = {
   collectiviteId: number;
   axes: TAxeInsert[] | null;
   isReadonly: boolean;
-  updateTitle: (value: string) => void;
+  updateTitle: (value: string | null) => void;
 };
 
 const FicheActionHeader = (props: FicheActionHeaderProps) => {

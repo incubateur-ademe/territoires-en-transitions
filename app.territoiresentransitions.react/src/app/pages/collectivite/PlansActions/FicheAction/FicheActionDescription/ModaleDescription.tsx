@@ -27,7 +27,11 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
+      const titleToSave = (editedFiche.titre ?? '').trim();
+      updateFiche({
+        ...editedFiche,
+        titre: titleToSave.length ? titleToSave : null,
+      });
     }
   };
 

@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 type TitreFicheProps = {
   titre: string | null;
   isReadonly: boolean;
-  updateTitle: (value: string) => void;
+  updateTitle: (value: string | null) => void;
 };
 
 /**
@@ -15,9 +15,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   const [editedTitle, setEditedTitle] = useState(titre ?? '');
 
   useEffect(() => {
-    if (titre) {
-      setEditedTitle(titre);
-    }
+    setEditedTitle(titre ?? '');
   }, [titre]);
 
   // Switch entre les modes lecture et édition
@@ -27,7 +25,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
     if (isEditing) {
       const titleToSave = editedTitle.trim();
       if (titleToSave !== titre) {
-        updateTitle(titleToSave);
+        updateTitle(titleToSave.length ? titleToSave : null);
         setEditedTitle(titleToSave);
       } else {
         setEditedTitle(titre ?? '');
