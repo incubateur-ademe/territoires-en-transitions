@@ -74,6 +74,9 @@ export const filtersToBadges = (data: FiltreKeys) => {
     if (key === 'restreint') {
       data[key] && badgeValues.push('Confidentialité');
     }
+    if (key === 'hasOpenData') {
+      data[key] && badgeValues.push('Données Open Data');
+    }
     if (key === 'hasIndicateurLies') {
       data[key] && badgeValues.push('Indicateur(s) lié(s)');
     }
