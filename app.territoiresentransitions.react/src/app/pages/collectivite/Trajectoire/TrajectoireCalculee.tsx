@@ -1,18 +1,12 @@
 import {useState} from 'react';
 import {Button, ButtonGroup, Card, Tabs, Tab} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIndicateurReferentielValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
-import {useTelechargementTrajectoire} from './useTelechargementTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
-import {useDownloadFile} from 'utils/useDownloadFile';
-
-// fichier dans le dossier `public`
-const METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
+import {AllerPlusLoin} from './AllerPlusLoin';
 
 /**
  * Affiche une trajectoire SNBC calculée
@@ -28,52 +22,15 @@ const TrajectoireCalculee = () => {
   const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
   const [secteurIdx, setSecteurIdx] = useState<number>(0);
 
-  // pour télécharger les fichiers
-  const {mutate: download, isLoading: isDownloading} =
-    useTelechargementTrajectoire();
-  const {mutate: downloadFile, isLoading: isDownloadingFile} =
-    useDownloadFile();
-
   // données de la trajectoire
-  const {data} = useResultatTrajectoire();
-  const trajectoire = data && data.trajectoire?.[indicateur.id];
-
-  // données objectifs/résultats
-  const identifiant =
-    secteurIdx === 0
-      ? indicateur.identifiant
-      : indicateur.secteurs[secteurIdx - 1].identifiant;
-  const {data: objectifsEtResults, isLoading: isLoadingObjectifsResultats} =
-    useIndicateurReferentielValeurs({
-      identifiant,
-    });
-  const objectifs =
-    objectifsEtResults
-      ?.filter(v => typeof v.objectif === 'number')
-      .map(v => ({x: v.annee, y: v.objectif})) || [];
-  const resultats =
-    objectifsEtResults
-      ?.filter(v => typeof v.resultat === 'number')
-      .map(v => ({x: v.annee, y: v.resultat})) || [];
-
-  const valeursTousSecteurs =
-    trajectoire &&
-    indicateur.secteurs
-      .map(s => {
-        const valeurs = trajectoire.find(
-          t => t.definition.identifiant_referentiel === s.identifiant
-        )?.valeurs;
-        return valeurs
-          ? {
-              id: s.nom,
-              data: valeurs.map(v => ({
-                x: new Date(v.date_valeur).getFullYear(),
-                y: v.objectif,
-              })),
-            }
-          : null;
-      })
-      .filter(v => !!v);
+  const {
+    identifiant,
+    objectifs,
+    resultats,
+    valeursTousSecteurs,
+    isLoadingObjectifsResultats,
+    //    isLoadingTrajectoire,
+  } = useResultatTrajectoire({indicateur, secteurIdx});
 
   return (
     <div className="grow py-12">
@@ -151,37 +108,7 @@ const TrajectoireCalculee = () => {
                 </Button>
               </Card>
             )}
-          <Card>
-            <h5>Aller plus loin</h5>
-            <p className="text-sm font-normal mb-2">
-              Téléchargez le fichier Excel de calcul pour comprendre le détail
-              des calculs et approfondir votre analyse.
-            </p>
-            <Button
-              variant="outlined"
-              onClick={() => download()}
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <>
-                  Téléchargement en cours <SpinnerLoader />
-                </>
-              ) : (
-                'Télécharger les données (.xlsx)'
-              )}
-            </Button>
-            <p className="text-sm font-normal mt-2 mb-2">
-              Télécharger les fichiers de l’étude détaillant la méthodologie,
-              etc.
-            </p>
-            <Button
-              variant="outlined"
-              onClick={() => downloadFile(METHODO)}
-              disabled={isDownloadingFile}
-            >
-              Télécharger la méthodologie (.pdf)
-            </Button>
-          </Card>
+          <AllerPlusLoin />
         </div>
       </div>
     </div>
