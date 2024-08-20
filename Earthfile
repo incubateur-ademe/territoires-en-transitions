@@ -272,6 +272,8 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     # dépendances globales
     COPY ./package.json ./
     COPY ./package-lock.json ./
+    COPY ./nx.json ./
+
     # installe les dépendances
     RUN npm ci
     SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
@@ -330,6 +332,7 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
+    COPY ./vitest.workspace.ts ./
     # la commande utilisée pour lancer les tests
     CMD npm run test:app
     SAVE IMAGE app-test:latest
