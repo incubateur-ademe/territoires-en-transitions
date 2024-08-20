@@ -136,6 +136,22 @@ export default class SheetService {
     this.logger.log(`Spreadsheet ${fileId} correctement supprimé.`);
   }
 
+  async getFileData(fileId: string): Promise<Buffer> {
+    const authClient = await this.getAuthClient();
+    const getOptions: drive_v3.Params$Resource$Files$Get = {
+      auth: authClient,
+      fileId: fileId,
+      alt: 'media',
+    };
+    const res = await drive.files.get(
+      getOptions,
+      { responseType: 'arraybuffer' }, // Use arraybuffer to get binary data
+    );
+
+    // @ts-ignore
+    return Buffer.from(res.data);
+  }
+
   async getRawDataFromSheet(
     spreadsheetId: string,
     range: string,
