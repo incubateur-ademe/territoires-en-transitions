@@ -145,3 +145,4 @@ export const INDICATEURS_TRAJECTOIRE = [
 // types dérivés de la liste des indicateurs Trajectoire
 export type IndicateurTrajectoire = (typeof INDICATEURS_TRAJECTOIRE)[number];
 export type IndicateurTrajectoireId = IndicateurTrajectoire['id'];
+export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];

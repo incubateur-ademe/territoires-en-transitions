@@ -6,7 +6,8 @@ import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
 import {AllerPlusLoin} from './AllerPlusLoin';
-import {ComparezLaTrajectoire} from 'app/pages/collectivite/Trajectoire/ComparezLaTrajectoire';
+import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
+import {Methodologie} from './Methodologie';
 
 /**
  * Affiche une trajectoire SNBC calculée
@@ -21,6 +22,7 @@ const TrajectoireCalculee = () => {
   // secteur sélectionné
   const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
   const [secteurIdx, setSecteurIdx] = useState<number>(0);
+  const secteur = indicateur.secteurs[secteurIdx];
 
   // données de la trajectoire
   const {
@@ -103,6 +105,9 @@ const TrajectoireCalculee = () => {
                 identifiantReferentiel={identifiant}
               />
             )}
+          {secteurIdx !== 0 && 'snbc2' in secteur && (
+            <Methodologie secteur={secteur} />
+          )}
           <AllerPlusLoin />
         </div>
       </div>
