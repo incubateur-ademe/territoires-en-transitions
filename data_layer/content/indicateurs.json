@@ -27,6 +27,26 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "<p>Prend en compte la capture et stockage du carbone</p>\n",
+      "id": "cae_1.aa",
+      "identifiant": "1.aa",
+      "nom": "Emissions GES totales nettes",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions GES totales nettes",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_1.1.1"
       ],
@@ -67,6 +87,26 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur r\u00e9sidentiel",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.csc",
+      "identifiant": "1.csc",
+      "nom": "Capture et stockage du carbone",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Capture et stockage du carbone",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -1107,6 +1147,27 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique de l'industrie hors branche \u00e9nergie",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.l_pcaet",
+      "identifiant": "2.l_pcaet",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie branche \u00e9nergie",
+      "parent": "cae_2.a",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique de l'industrie branche \u00e9nergie",
       "type": null,
       "unite": "GWh",
       "valeur_indicateur": null
