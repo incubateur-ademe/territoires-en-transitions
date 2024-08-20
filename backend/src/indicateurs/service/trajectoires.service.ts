@@ -4,13 +4,13 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
+import { JSZipGeneratorOptions } from 'jszip';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import * as XlsxTemplate from 'xlsx-template';
 import { EpciType } from '../../collectivites/models/collectivite.models';
-import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { getErrorMessage } from '../../common/services/errors.helper';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   CalculTrajectoireRequest,
@@ -20,6 +20,7 @@ import {
   DonneesARemplirResult,
   DonneesARemplirValeur,
   DonneesCalculTrajectoireARemplir,
+  VerificationTrajectoireRequest,
 } from '../models/calcultrajectoire.models';
 import {
   CreateIndicateurSourceMetadonneeType,
@@ -133,45 +134,107 @@ export default class TrajectoiresService {
   async downloadTrajectoireSnbc(
     request: CalculTrajectoireRequest,
     res: Response,
+    next: NextFunction,
   ) {
-    // Récupère l'EPCI associé pour obtenir son SIREN
-    const epci = await this.collectivitesService.getEpciByCollectiviteId(
-      request.collectivite_id,
-    );
+    try {
+      const resultatVerification = await this.verificationDonneesSnbc(request);
 
-    const nomFichier = this.getNomFichierTrajectoire(epci);
-    let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
-      nomFichier,
-      this.getIdentifiantDossierResultat(),
-    );
-
-    if (
-      !trajectoireCalculSheetId ||
-      request.mode === CalculTrajectoireReset.NOUVEAU_SPREADSHEET ||
-      request.mode === CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT
-    ) {
-      this.logger.log(
-        `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id} pour le téléchargement`,
-      );
-      const { spreadsheet_id } = await this.calculeTrajectoireSnbc(
-        request,
-        epci,
-      );
-      trajectoireCalculSheetId = spreadsheet_id;
-    }
-
-    return this.sheetService
-      .downloadFile(trajectoireCalculSheetId, `${nomFichier}.xlsx`, res)
-      .catch((error) => {
-        this.logger.error(
-          `Erreur lors du téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}: ${getErrorMessage(error)}`,
-          error,
+      if (
+        resultatVerification.status ===
+          VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE ||
+        !resultatVerification.epci
+      ) {
+        throw new UnprocessableEntityException(
+          `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`,
         );
-        res.setHeader('Content-Type', 'application/json');
-        res.removeHeader('Content-Disposition');
-        res.removeHeader('Content-Length');
-        res.status(500).json({ message: getErrorMessage(error) });
+      } else if (
+        resultatVerification.status ===
+          VerificationDonneesSNBCStatus.DONNEES_MANQUANTES ||
+        !resultatVerification.donnees_entree
+      ) {
+        const identifiantsReferentielManquants = [
+          ...(resultatVerification.donnees_entree?.emissions_ges
+            .identifiants_referentiel_manquants || []),
+          ...(resultatVerification.donnees_entree?.consommations_finales
+            .identifiants_referentiel_manquants || []),
+        ];
+        throw new UnprocessableEntityException(
+          `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
+        );
+      }
+      const epci = resultatVerification.epci;
+      const nomFichier = this.getNomFichierTrajectoire(epci);
+
+      const xlsxBuffer = await this.sheetService.getFileData(
+        '14dZbAf8yRqhfqKNnvXUTMgTT34dqkc32',
+      );
+
+      // Utilisation de xlsx-template car:
+      // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
+      // https://github.com/exceljs/exceljs: fails to read the file
+      // https://github.com/dtjohnson/xlsx-populate: pas de typage et ecriture semble corrompre le fichier
+
+      // Create a template
+      const template = new XlsxTemplate(xlsxBuffer);
+
+      const sirenSheetName = this.SNBC_SIREN_CELLULE.split('!')[0];
+      template.substitute(sirenSheetName, {
+        siren: parseInt(epci.siren),
       });
+
+      const emissionsGesConsommationsSheetName =
+        this.SNBC_EMISSIONS_GES_CELLULES.split('!')[0];
+      const emissionGesConsommationsSubstitionValeurs: any = {};
+      resultatVerification.donnees_entree?.emissions_ges.valeurs.forEach(
+        (valeur) => {
+          if (valeur.valeur === null) {
+            valeur.valeur = 0;
+          }
+          const substitutionKey = valeur.identifiants_referentiel
+            .join('-')
+            .replace(/\./g, '_');
+          emissionGesConsommationsSubstitionValeurs[substitutionKey] =
+            valeur.valeur / 1000;
+        },
+      );
+
+      resultatVerification.donnees_entree?.consommations_finales.valeurs.forEach(
+        (valeur) => {
+          if (valeur.valeur === null) {
+            valeur.valeur = 0;
+          }
+          const substitutionKey = valeur.identifiants_referentiel
+            .join('-')
+            .replace(/\./g, '_');
+          emissionGesConsommationsSubstitionValeurs[substitutionKey] =
+            valeur.valeur;
+        },
+      );
+      template.substitute(
+        emissionsGesConsommationsSheetName,
+        emissionGesConsommationsSubstitionValeurs,
+      );
+
+      const zipOptions: JSZipGeneratorOptions = {
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+        compressionOptions: {
+          level: 2,
+        },
+        mimeType:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      };
+
+      const generatedData = template.generate(zipOptions as any);
+
+      // Set the output file name.
+      res.attachment(`${nomFichier}.xlsx`);
+
+      // Send the workbook.
+      res.send(generatedData);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async calculeTrajectoireSnbc(
@@ -721,13 +784,17 @@ export default class TrajectoiresService {
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
   async verificationDonneesSnbc(
-    request: CollectiviteRequest,
+    request: VerificationTrajectoireRequest,
     epci?: EpciType,
     force_recuperation_donnees = false,
   ): Promise<VerificationDonneesSNBCResult> {
     const response: VerificationDonneesSNBCResult = {
       status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
     };
+
+    if (request.force_recuperation_donnees) {
+      force_recuperation_donnees = true;
+    }
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :

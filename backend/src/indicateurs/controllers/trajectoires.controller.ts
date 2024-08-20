@@ -1,10 +1,11 @@
-import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
+import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import {
   CalculTrajectoireRequest,
   CalculTrajectoireResponse,
+  VerificationTrajectoireRequest,
 } from '../models/calcultrajectoire.models';
 import TrajectoiresService from '../service/trajectoires.service';
 
@@ -32,15 +33,18 @@ export class TrajectoiresController {
   downloadDataSnbc(
     @Query() request: CollectiviteRequest,
     @Res() res: Response,
+    @Next() next: NextFunction,
   ) {
     this.logger.log(
       `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    return this.trajectoiresService.downloadTrajectoireSnbc(request, res);
+    this.trajectoiresService.downloadTrajectoireSnbc(request, res, next);
   }
 
   @Get('snbc/verification')
-  async verificationDonneesSnbc(@Query() request: CollectiviteRequest) {
+  async verificationDonneesSnbc(
+    @Query() request: VerificationTrajectoireRequest,
+  ) {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
