@@ -272,13 +272,6 @@ front-deps: ## construit l'image contenant les dépendances des modules front
     # dépendances globales
     COPY ./package.json ./
     COPY ./package-lock.json ./
-    # dépendances des modules
-    COPY $APP_DIR/package.json ./$APP_DIR/
-    COPY $AUTH_DIR/package.json ./$AUTH_DIR/
-    COPY $SITE_DIR/package.json ./$SITE_DIR/
-    COPY $PANIER_DIR/package.json ./$PANIER_DIR/
-    COPY $UI_DIR/package.json ./$UI_DIR/
-    COPY $API_DIR/package.json ./$API_DIR/
     # installe les dépendances
     RUN npm ci
     SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
@@ -337,10 +330,8 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
-    RUN npm run build -w @tet/api
-    RUN npm run build -w @tet/ui
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/app
+    CMD npm run test:app
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
@@ -361,7 +352,7 @@ package-api-test-build: ## construit une image pour exécuter les tests d'intég
     # copie les sources du module à tester
     COPY $API_DIR $API_DIR
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/api
+    CMD npm run test:api
     SAVE IMAGE package-api-test:latest
 
 package-api-test: ## lance les tests d'intégration de l'api
@@ -491,7 +482,7 @@ storybook-build: ## construit l'image du storybook du module `ui`
     ARG PORT=6007
     FROM +front-deps
     COPY $UI_DIR/. $UI_DIR
-    RUN npm run build-storybook -w @tet/ui
+    RUN npm exec nx build-storybook @tet/ui
     EXPOSE $PORT
     #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
     WORKDIR $UI_DIR
@@ -531,7 +522,7 @@ storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec
     # copie les sources
     COPY $UI_DIR $UI_DIR
     # commande utilisée pour exécuter les tests
-    CMD npm run test -w @tet/ui -- --no-index-json
+    CMD npm exec nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
     SAVE IMAGE storybook-test:latest
 
 storybook-test-run: # lance les tests du module `ui`
