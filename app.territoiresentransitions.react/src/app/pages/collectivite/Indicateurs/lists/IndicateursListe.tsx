@@ -46,7 +46,6 @@ type Props = {
   settings: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
   maxNbOfCards?: number;
-  onSettingsClick?: () => void;
   sortSettings?: SortIndicateurSettings;
 };
 
@@ -58,7 +57,6 @@ const IndicateursListe = ({
   filtres,
   settings,
   maxNbOfCards = 9,
-  onSettingsClick,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 

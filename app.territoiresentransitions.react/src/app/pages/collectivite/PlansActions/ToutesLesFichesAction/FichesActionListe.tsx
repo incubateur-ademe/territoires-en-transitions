@@ -51,7 +51,7 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   filtres: Filtre;
-  settingsModal: (openState: OpenState) => React.ReactNode;
+  settings: (openState: OpenState) => React.ReactNode;
   maxNbOfCards?: number;
   onSettingsClick?: () => void;
   sortSettings?: SortFicheActionSettings;
@@ -63,7 +63,7 @@ const FichesActionListe = ({
     defaultSort: 'modified_at',
   },
   filtres,
-  settingsModal,
+  settings,
   maxNbOfCards = 15,
   onSettingsClick,
 }: Props) => {
@@ -156,18 +156,8 @@ const FichesActionListe = ({
           placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
-        {/** Bouton d'édition des filtres du module + modale */}
-        <Button
-          variant="outlined"
-          icon="equalizer-line"
-          size="sm"
-          onClick={() => {
-            setIsSettingsOpen(true);
-            onSettingsClick?.();
-          }}
-        />
-        {isSettingsOpen &&
-          settingsModal({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
+        {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
+        {settings({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
       </div>
       {/** Liste des filtres appliqués */}
       <ModuleFiltreBadges filtre={filtres} />

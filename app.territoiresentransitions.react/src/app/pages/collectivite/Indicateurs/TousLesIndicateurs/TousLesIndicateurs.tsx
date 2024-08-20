@@ -49,7 +49,6 @@ const TousLesIndicateurs = () => {
             size="sm"
           >
             <MenuFiltresTousLesIndicateurs
-              openState={openState}
               filters={filters}
               setFilters={newFilters => {
                 setFilters(newFilters);

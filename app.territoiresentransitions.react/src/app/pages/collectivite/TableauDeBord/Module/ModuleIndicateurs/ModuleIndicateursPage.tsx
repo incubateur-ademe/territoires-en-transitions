@@ -42,11 +42,6 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
       />
       <IndicateursListe
         filtres={filtre}
-        onSettingsClick={() => {
-          trackEvent('tdb_modifier_filtres_indicateurs', {
-            collectivite_id: collectiviteId!,
-          });
-        }}
         settings={openState => (
           <>
             <Button

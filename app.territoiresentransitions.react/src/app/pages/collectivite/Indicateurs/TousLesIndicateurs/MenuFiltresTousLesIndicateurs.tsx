@@ -1,4 +1,4 @@
-import {Checkbox, Field, FormSection, ModalProps} from '@tet/ui';
+import {Checkbox, Field, FormSection} from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
@@ -11,7 +11,7 @@ import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCo
 import IndicateurCategoriesDropdown from 'ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
 
-type Props = ModalProps & {
+type Props = {
   filters: FetchFiltre;
   setFilters: (filters: FetchFiltre) => void;
 };
