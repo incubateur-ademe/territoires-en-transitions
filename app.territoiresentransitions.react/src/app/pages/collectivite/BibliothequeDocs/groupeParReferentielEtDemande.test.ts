@@ -1,8 +1,9 @@
-import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
-import {groupeParReferentielEtDemande} from './groupeParReferentielEtDemande';
+import { test, expect, describe } from 'vitest';
+import { TPreuveAuditEtLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
 
 describe('groupeParReferentielEtDemande', () => {
-  it('doit grouper les documents par référentiel et demande', () => {
+  test('doit grouper les documents par référentiel et demande', () => {
     expect(
       groupeParReferentielEtDemande([
         ...preuves_demande1,

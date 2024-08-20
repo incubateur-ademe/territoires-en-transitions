@@ -1,6 +1,6 @@
-import {assert} from 'chai';
-import {signIn, signOut} from '../tests/auth';
-import {supabase} from '../tests/supabase';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { signIn, signOut } from '../tests/auth';
+import { supabase } from '../tests/supabase';
 
 describe('Test les filtre de la page collectivités engagées', () => {
   beforeEach(async () => {
@@ -9,7 +9,7 @@ describe('Test les filtre de la page collectivités engagées', () => {
   });
 
   it('On devrait pouvoir filtrer les plans par département', async () => {
-    const {data, error} = await supabase
+    const { data, error } = await supabase
       .from('axe')
       .select(
         '*, type: plan_action_type, collectivite: collectivite_card!inner(*)'
@@ -17,9 +17,9 @@ describe('Test les filtre de la page collectivités engagées', () => {
       .is('parent', null)
       .eq('collectivite.departement_code', '01');
 
-    assert.isNull(error);
-    assert.isArray(data);
-    assert.equal(data?.length, 2);
+    expect(error).toBeNull();
+    expect(data).toEqual(expect.any(Array));
+    expect(data).toHaveLength(2);
   });
 
   afterEach(async () => {
