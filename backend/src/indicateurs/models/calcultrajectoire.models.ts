@@ -64,11 +64,15 @@ export class CalculTrajectoireResult extends CalculTrajectoireResponse {
   spreadsheet_id: string;
 }
 
+export class DonneesARemplirValeur {
+  identifiants_referentiel: string[];
+  valeur: number | null;
+  date_min: string | null;
+  date_max: string | null;
+}
+
 export class DonneesARemplirResult {
-  valeurs: {
-    identifiants_referentiel: string[];
-    valeur: number | null;
-  }[];
+  valeurs: DonneesARemplirValeur[];
   identifiants_referentiel_manquants: string[];
 }
 
