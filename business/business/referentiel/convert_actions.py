@@ -8,21 +8,17 @@ from dataclasses import asdict
 from glob import glob
 from typing import Dict, List, Optional
 
-from business.utils.models.actions import (
-    ActionCategorie,
-    ActionChildren,
-    ActionDefinition,
-    ActionReferentiel,
-    ActionId,
-    build_action_id,
-)
+from pydantic import BaseModel, ValidationError
+from tqdm import tqdm
+
 from business.utils.action_tree import ActionTree
 from business.utils.exceptions import MarkdownError
-from business.utils.markdown_import.markdown_parser import build_markdown_parser
+from business.utils.markdown_import.markdown_parser import \
+    build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
-from pydantic import ValidationError
-from pydantic import BaseModel
-from tqdm import tqdm
+from business.utils.models.actions import (ActionCategorie, ActionChildren,
+                                           ActionDefinition, ActionId,
+                                           ActionReferentiel, build_action_id)
 
 
 # Input models (from markdown)
@@ -113,6 +109,10 @@ def compute_definitions_and_childrens(
         markdown_action_tree, referentiel
     )
     children = list(children_by_id.values())
+    children.sort(key=lambda child: child.action_id)
+    for child in children:
+        child.children.sort()
+
     action_tree = ActionTree(children)
 
     # Report points and pourcentages that are written in the markdowns
@@ -151,6 +151,8 @@ def compute_definitions_and_childrens(
         )
         for action_id, md_action in md_actions_by_id.items()
     ]
+    definitions.sort(key=lambda definition: definition.action_id)
+
     return definitions, children
 
 

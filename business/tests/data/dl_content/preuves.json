@@ -2,202 +2,396 @@
   "preuves": [
     {
       "actions": [
-        "cae_1.1.1.3",
-        "cae_1.1.2.1"
+        "eci_1.1.1"
       ],
-      "description": "<p>PCAET avec EES et r\u00e9sum\u00e9 non technique ; \u00e9ventuel bilan interm\u00e9diaire</p>\n<p>Preuve identique \u00e0 la 1.1.2.1</p>\n",
-      "id": "rapport_diag_pcaet",
-      "nom": "Rapports diagnostic, strat\u00e9gie et plan d'actions du PCAET"
+      "description": "<p>Tout document d\u00e9montrant l\u2019existence d\u2019une politique ECi : d\u00e9lib\u00e9ration, note explicative.</p>\n",
+      "id": "delib_engagement_politique_eci",
+      "nom": "D\u00e9lib\u00e9ration indiquant l'engagement \u00e0 d\u00e9velopper une strat\u00e9gie et un programme d'actions Economie Circulaire"
     },
     {
       "actions": [
-        "cae_1.1.1.3"
+        "eci_1.1.1"
+      ],
+      "description": "<p>Si l\u2019ECi ne figure pas explicitement dans la d\u00e9l\u00e9gation, joindre une note explicative.</p>\n",
+      "id": "delib_elu_eci",
+      "nom": "D\u00e9lib\u00e9ration qui donne d\u00e9l\u00e9gation et/ou qui cite l\u2019\u00e9lu.e.s en charge de l\u2019ECi"
+    },
+    {
+      "actions": [
+        "eci_1.1.1"
+      ],
+      "description": "<p>Organigramme du candidat sur lequel sont surlign\u00e9s les services et directions qui participent \u00e0 la politique ECi.</p>\n",
+      "id": "organigramme_eci",
+      "nom": "L'organigramme de l'\u00e9quipe mobilis\u00e9e pour la mise en \u0153uvre de la politique Economie Circulaire (\u00e9lu et \u00e9quipe technique)"
+    },
+    {
+      "actions": [
+        "eci_1.1.1"
+      ],
+      "description": "<p>Toute ligne budg\u00e9taire relative \u00e0 la politique \u00e9conomie circulaire quel que soit le service mettant en oeuvre l\u2019action.</p>\n",
+      "id": "budget_eci",
+      "nom": "Justificatif d'une ligne budg\u00e9taire d\u00e9di\u00e9e \u00e0 la strat\u00e9gie et au programme d'actions Economie Circulaire en pr\u00e9cisant la part du budget ECi par rapport au budget global (%)"
+    },
+    {
+      "actions": [
+        "eci_1.1.1"
       ],
       "description": "",
-      "id": "engagement_convention_maires",
-      "nom": "D\u00e9lib\u00e9ration d'engagement dans la Convention des Maires"
+      "id": "fiches_equipe_maj",
+      "nom": "Fiches de poste des membres de l'\u00e9quipe mises \u00e0 jour"
     },
     {
       "actions": [
-        "cae_1.1.1.3"
+        "eci_1.1.2"
+      ],
+      "description": "<ul>\n<li>\n<p>Tout \u00e9l\u00e9ment de diagnostic disponible, m\u00eame issu de diagnostics relatifs \u00e0 des d\u00e9marches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU, SCoT, PCAET, PAT, SRDT, etc\u2026).</p>\n</li>\n<li>\n<p>Comptes-rendus de r\u00e9union de travail, etc.</p>\n</li>\n<li>\n<p>Les autres preuves d\u00e9taill\u00e9es dans cette sous-action sont des composantes du diagnostic.</p>\n</li>\n</ul>\n",
+      "id": "diag_eci",
+      "nom": "Diagnostic de l'\u00e9conomie circulaire"
+    },
+    {
+      "actions": [
+        "eci_1.1.2"
+      ],
+      "description": "<p>La synth\u00e8se doit indiquer les sources des enjeux, objectifs et actions.</p>\n",
+      "id": "synthese_enjeux_objectifs_actions_eci",
+      "nom": "Synth\u00e8se des enjeux, objectifs et actions \u00e9conomie circulaire des documents de planification analys\u00e9s"
+    },
+    {
+      "actions": [
+        "eci_1.1.2"
       ],
       "description": "",
-      "id": "rapport_dev_durable",
-      "nom": "Rapport D\u00e9veloppement Durable"
+      "id": "analyse_enjeux_eco",
+      "nom": "Analyse des enjeux \u00e9conomiques int\u00e9gr\u00e9s dans le diagnostic"
     },
     {
       "actions": [
-        "cae_1.1.1.3"
+        "eci_1.1.2"
       ],
       "description": "",
-      "id": "agenda21",
-      "nom": "Agenda 21 / Agenda 2030"
+      "id": "analyse_enjeux_envi",
+      "nom": "Analyse des enjeux environnementaux int\u00e9gr\u00e9s dans le diagnostic"
     },
     {
       "actions": [
-        "cae_1.1.1.3"
-      ],
-      "description": "<p>Possible de joindre aussi un \u00e9ventuel avenant ou bilan interm\u00e9diaire</p>\n",
-      "id": "tepos",
-      "nom": "TEPOS"
-    },
-    {
-      "actions": [
-        "cae_1.1.1.3"
-      ],
-      "description": "<p>Possible de joindre aussi un \u00e9ventuel avenant ou bilan interm\u00e9diaire</p>\n",
-      "id": "tepcv",
-      "nom": "Programme TEPCV"
-    },
-    {
-      "actions": [
-        "cae_1.1.2.1"
-      ],
-      "description": "<p>PCAET avec EES et r\u00e9sum\u00e9 non technique ; \u00e9ventuel bilan interm\u00e9diaire</p>\n<p>Preuve identique \u00e0 la 1.1.1.3 --&gt;</p>\n",
-      "id": "rapports_diagnostic_pcaet",
-      "nom": "Contrat de Relance de Transition \u00c9cologique (CRTE)"
-    },
-    {
-      "actions": [
-        "cae_1.1.3.2"
+        "eci_1.1.2"
       ],
       "description": "",
-      "id": "etude_vulnerabiliteCC",
-      "nom": "Etude de vuln\u00e9rabilit\u00e9 au changement climatique"
+      "id": "analyse_enjeux_sociaux",
+      "nom": "Analyse des enjeux sociaux int\u00e9gr\u00e9s dans le diagnostic"
     },
     {
       "actions": [
-        "cae_1.2.1.1"
+        "eci_1.1.2"
       ],
       "description": "",
-      "id": "schema_directeur_energies",
-      "nom": "Sch\u00e9ma directeur des \u00e9nergies"
+      "id": "liste_acteurs_initiatives_eci",
+      "nom": "La liste des acteurs et des initiatives en \u00e9conomie circulaire sur le territoire"
     },
     {
       "actions": [
-        "cae_1.2.1.3"
+        "eci_1.1.3"
+      ],
+      "description": "<p>La gouvernance interne, inter-services, peut \u00eatre justifi\u00e9e par des compte-rendu de comit\u00e9 de pilotage, feuille de pr\u00e9sence, sch\u00e9ma de gouvernance, etc.</p>\n",
+      "id": "liste_membres_copil_interne",
+      "nom": "Liste des membres du comit\u00e9 de pilotage interne"
+    },
+    {
+      "actions": [
+        "eci_1.1.3"
       ],
       "description": "",
-      "id": "etude_potentiel_ENR",
-      "nom": "Etude(s) de potentiel \u00e9nergies renouvelables"
+      "id": "liste_membres_copil_elargi",
+      "nom": "Liste des membres de la gouvernance \u00e9largie et leurs r\u00f4les"
     },
     {
       "actions": [
-        "cae_1.2.2.1"
+        "eci_1.1.3"
       ],
       "description": "",
-      "id": "plan_mobilite",
-      "nom": "Plan de mobilit\u00e9 (PDM) / Plan de Mobilit\u00e9 Simplifi\u00e9 / ancien Plan de D\u00e9placement Urbain / Sch\u00e9ma directeur mobilit\u00e9"
+      "id": "cr_reunions_gouvernance",
+      "nom": "Compte-rendu des r\u00e9unions de gouvernance et des groupes de travail pour la construction des actions \u00e9conomie circulaire"
     },
     {
       "actions": [
-        "cae_1.2.3.1",
-        "eci_2.1.0",
-        "eci_2.1.1"
+        "eci_1.1.4"
       ],
       "description": "",
-      "id": "PLPDMA",
-      "nom": "Programme local de pr\u00e9vention des d\u00e9chets - PLPDMA"
+      "id": "delib_strategie_eci",
+      "nom": "D\u00e9lib\u00e9ration relative \u00e0 l'adoption de la strat\u00e9gie, comprenant le budget associ\u00e9 et int\u00e9grant les enjeux issus du diagnostic"
     },
     {
       "actions": [
-        "cae_1.2.3.1",
-        "cae_3.3.5.3",
-        "eci_2.2.0",
-        "eci_4.1.0",
-        "eci_2.4.3"
-      ],
-      "description": "<p>Pour les audits d\u2019une ann\u00e9e N, disposer au moins du rapport N-2.</p>\n<p>Le rapport est un vrai document d\u2019information du public et non un simple document de communication. Vous trouverez <a href=\"https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles\">ici une page d\u2019information</a> sur le rapport du service public</p>\n<p>de pr\u00e9vention et de gestion des d\u00e9chets m\u00e9nagers et assimil\u00e9s et les exigences associ\u00e9es.</p>\n",
-      "id": "rapport_sppgd",
-      "nom": "Rapport du service public de pr\u00e9vention et de gestion des d\u00e9chets m\u00e9nagers et assimil\u00e9s (SPPGD)"
-    },
-    {
-      "actions": [
-        "cae_1.2.4.1"
+        "eci_1.1.4"
       ],
       "description": "",
-      "id": "PLH",
-      "nom": "Programme Local de l'Habitat"
+      "id": "plan_action_eci",
+      "nom": "Programme d'actions formalis\u00e9"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.1.5"
       ],
       "description": "",
-      "id": "PLU",
-      "nom": "Plan Local d'Urbanisme (Intercommunal)"
+      "id": "fiche_Optigede_eci",
+      "nom": "Fiches actions sur Optigede"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.1.5"
       ],
       "description": "",
-      "id": "reglement_plu",
-      "nom": "R\u00e8glement du PLU (extrait sur une zone)"
+      "id": "fiche_media_eci",
+      "nom": "Fiches \"belles histoires\" dans des m\u00e9dias accessibles"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.2.1"
       ],
       "description": "",
-      "id": "scot",
-      "nom": "Sch\u00e9ma de Coh\u00e9rence Territoriale (SCoT), notamment Plan d'Am\u00e9nagement et de D\u00e9veloppement Durable (PADD)"
+      "id": "plan_formation_eci",
+      "nom": "Vote/validation du plan formation par la collectivit\u00e9"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.2.1"
       ],
       "description": "",
-      "id": "superficie_zonages",
-      "nom": "\u00c9volution de la superficie des zonages"
+      "id": "participation_formation_eci",
+      "nom": "Attestations de participation aux formations r\u00e9alis\u00e9es"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.2.2"
       ],
       "description": "",
-      "id": "aeu",
-      "nom": "Synth\u00e8se/conclusions d\u2019\u00e9tudes environnementales Approche Environnementale de l'Urbanisme (AEU) ou \u00e9quivalent"
+      "id": "action_co_constuite_eci",
+      "nom": "Description de(s) l'action co-construite pour chaque comp\u00e9tence, avec l'explication de ce qui favorise l'\u00e9conomie circulaire"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
+        "eci_1.2.2"
       ],
       "description": "",
-      "id": "ref_amenagement_durable",
-      "nom": "R\u00e9f\u00e9rentiel Am\u00e9nagement Durable ou \u00e9quivalent"
+      "id": "fiche_Optigede_tranversalite_eci",
+      "nom": "Fiches actions sur Optigede"
     },
     {
       "actions": [
-        "cae_1.3.1.1"
-      ],
-      "description": "<p>Coefficient d'occupation des sols (COS) ou gabarit</p>\n",
-      "id": "delib_droits_construire",
-      "nom": "D\u00e9lib\u00e9ration sur la bonification de droits \u00e0 construire"
-    },
-    {
-      "actions": [
-        "cae_1.3.2.3"
+        "eci_1.2.3"
       ],
       "description": "",
-      "id": "cdc_projets_urba",
-      "nom": "Cahier des charges ou r\u00e8glement de consultation r\u00e9dig\u00e9 par la collectivit\u00e9 pour des projets d\u2019urbanisme ou de b\u00e2timents publics"
+      "id": "nouvelle_strategie_eci",
+      "nom": "Document approuv\u00e9 par un \u00e9lu pr\u00e9cisant comment l'\u00e9conomie circulaire est prise en compte dans les nouvelles strat\u00e9gies"
     },
     {
       "actions": [
-        "cae_1.3.2.3"
+        "eci_1.2.3"
       ],
       "description": "",
-      "id": "certif_batiment",
-      "nom": "Convention de partenariat avec des organismes certificateurs du b\u00e2timent"
+      "id": "CR_reunion_elaboration_nouvelle_strategie_eci",
+      "nom": "Compte-rendu des r\u00e9unions d'\u00e9laboration des nouvelles strat\u00e9gies"
     },
     {
       "actions": [
-        "cae_1.3.2.5"
+        "eci_1.2.4"
       ],
       "description": "",
-      "id": "cdc_cession_terrains",
-      "nom": "Cahier des charges de cession des terrains int\u00e9grant des prescriptions \u00e9nerg\u00e9tiques"
+      "id": "CR_reunion_inter_collectivites",
+      "nom": "Comptes-rendus des r\u00e9unions d'\u00e9change"
+    },
+    {
+      "actions": [
+        "eci_1.2.4"
+      ],
+      "description": "",
+      "id": "doc_cadrage_actions_inter_collectivites",
+      "nom": "Documents de cadrage des actions (liste d'actions, plan d'action , etc.)"
+    },
+    {
+      "actions": [
+        "eci_1.3.1"
+      ],
+      "description": "<p>Plateforme Territoires en Transitions ou une autre interface choisie par la collectivit\u00e9 (ex. tableau de bord Excel)</p>\n",
+      "id": "indicateurs_eci",
+      "nom": "Indicateurs sp\u00e9cifiques et objectifs renseign\u00e9s dans une interface d\u00e9di\u00e9"
+    },
+    {
+      "actions": [
+        "eci_1.3.2"
+      ],
+      "description": "",
+      "id": "synthese_bilan",
+      "nom": "Document de synth\u00e8se"
+    },
+    {
+      "actions": [
+        "eci_1.3.2"
+      ],
+      "description": "",
+      "id": "CR_reunion_partage_bilan",
+      "nom": "Compte-rendu des r\u00e9unions d'analyse des r\u00e9sultats"
+    },
+    {
+      "actions": [
+        "eci_1.3.2"
+      ],
+      "description": "",
+      "id": "com_externe_bilan",
+      "nom": "Support de communication externe"
+    },
+    {
+      "actions": [
+        "eci_1.3.2"
+      ],
+      "description": "",
+      "id": "plan_action_maj_suite_bilan",
+      "nom": "Programme d'actions mis \u00e0 jour"
+    },
+    {
+      "actions": [
+        "eci_4.1.0"
+      ],
+      "description": "",
+      "id": "presentation_sppgd",
+      "nom": "Proc\u00e8s-verbal du conseil syndical ou intercommunal faisant \u00e9tat de la pr\u00e9sentation du rapport en assembl\u00e9e et/ou de son adoption"
+    },
+    {
+      "actions": [
+        "eci_4.1.1"
+      ],
+      "description": "",
+      "id": "matrice_couts_SINOE",
+      "nom": "Matrice des co\u00fbts valid\u00e9e dans SINOE"
+    },
+    {
+      "actions": [
+        "eci_4.1.1"
+      ],
+      "description": "<p>onglet Analyse de la matrice des co\u00fbts ou diaporama par exemple</p>\n",
+      "id": "analyse_positionnement_couts",
+      "nom": "Document pr\u00e9sentant l'analyse de positionnement"
+    },
+    {
+      "actions": [
+        "eci_4.1.2"
+      ],
+      "description": "",
+      "id": "synthese_analyse_matrice_couts",
+      "nom": "Synth\u00e8se de l'analyse de la matrice des co\u00fbts"
+    },
+    {
+      "actions": [
+        "eci_4.1.2"
+      ],
+      "description": "",
+      "id": "etude_optimisation_couts",
+      "nom": "Rapport d'\u00e9tude"
+    },
+    {
+      "actions": [
+        "eci_4.1.3"
+      ],
+      "description": "",
+      "id": "actions_optimisation_couts",
+      "nom": "Preuves des actions"
+    },
+    {
+      "actions": [
+        "eci_4.1.4"
+      ],
+      "description": "",
+      "id": "com_optimisation_couts",
+      "nom": "Supports de communication"
+    },
+    {
+      "actions": [
+        "eci_4.2.1",
+        "eci_4.2.3"
+      ],
+      "description": "",
+      "id": "grille_tarifaire_RS",
+      "nom": "D\u00e9lib\u00e9ration de la grille tarifaire"
+    },
+    {
+      "actions": [
+        "eci_4.2.2"
+      ],
+      "description": "",
+      "id": "etude_ti",
+      "nom": "Documents d'avancement de l'\u00e9tude"
+    },
+    {
+      "actions": [
+        "eci_4.2.4"
+      ],
+      "description": "",
+      "id": "delib_ti",
+      "nom": "D\u00e9lib\u00e9ration de principe sur la mise en place de la Tarification Incitative (TI)"
+    },
+    {
+      "actions": [
+        "eci_4.2.4"
+      ],
+      "description": "",
+      "id": "grille_tarifaire_ti",
+      "nom": "D\u00e9lib\u00e9ration de tarif ou de grille tarifaire"
+    },
+    {
+      "actions": [
+        "eci_4.2.5"
+      ],
+      "description": "",
+      "id": "grille_tarifaire_ti_second_niveau",
+      "nom": "D\u00e9lib\u00e9ration de la grille tarifaire"
+    },
+    {
+      "actions": [
+        "eci_4.3.1"
+      ],
+      "description": "",
+      "id": "veille_financements",
+      "nom": "Liste de sources ou veille formalis\u00e9e"
+    },
+    {
+      "actions": [
+        "eci_4.3.2"
+      ],
+      "description": "<p>Exemple: Page internet, Newsletter, Journal, Blog, etc.</p>\n",
+      "id": "com_externe_financements",
+      "nom": "Outils de communication"
+    },
+    {
+      "actions": [
+        "eci_4.3.3"
+      ],
+      "description": "<p>Appels \u00e0 id\u00e9es, communication ouverte, etc.</p>\n",
+      "id": "recherche_acteurs_recherche_financements",
+      "nom": "Preuve des d\u00e9marches proactives de recherche d'acteurs int\u00e9ress\u00e9s"
+    },
+    {
+      "actions": [
+        "eci_4.3.3"
+      ],
+      "description": "<p>Comptes rendus de rendez-vous, agenda, etc.</p>\n",
+      "id": "accompagnement_acteurs_recherche_financements",
+      "nom": "Preuve des d\u00e9marches \u00e9tablies par la collectivit\u00e9 pour chaque projet accompagn\u00e9"
+    },
+    {
+      "actions": [
+        "eci_4.3.4"
+      ],
+      "description": "",
+      "id": "presentation_modalites_financements",
+      "nom": "Adoption du document de r\u00e9f\u00e9rence, dont les crit\u00e8res li\u00e9s \u00e0 la sobri\u00e9t\u00e9 (si \u00e9voqu\u00e9)"
+    },
+    {
+      "actions": [
+        "eci_4.3.4"
+      ],
+      "description": "",
+      "id": "liste_projets_finances",
+      "nom": "Liste des projets soutenus et montants associ\u00e9s"
     },
     {
       "actions": [
@@ -572,6 +766,214 @@
     },
     {
       "actions": [
+        "cae_6.1.1.2"
+      ],
+      "description": "",
+      "id": "cr_reunions_reseaux",
+      "nom": "Compte-rendu de r\u00e9union de r\u00e9seaux de collectivit\u00e9s"
+    },
+    {
+      "actions": [
+        "cae_6.1.1.2"
+      ],
+      "description": "",
+      "id": "prog_rencontres_interregion_CAE",
+      "nom": "Programme rencontres interr\u00e9gionales dans le domaine Energie et Climat"
+    },
+    {
+      "actions": [
+        "cae_6.1.1.5"
+      ],
+      "description": "",
+      "id": "note_info_projets_coop_internationale",
+      "nom": "Note d\u2019information sur les projets men\u00e9s ou financ\u00e9s dans le cadre de la coop\u00e9ration internationale"
+    },
+    {
+      "actions": [
+        "cae_6.1.3.4"
+      ],
+      "description": "",
+      "id": "plan_communication",
+      "nom": "Plan de Communication"
+    },
+    {
+      "actions": [
+        "cae_6.1.3.4"
+      ],
+      "description": "",
+      "id": "liste_articles",
+      "nom": "Liste des articles sur la th\u00e9matique de l\u2019environnement, \u00e9nergie, climat, d\u00e9veloppement durable"
+    },
+    {
+      "actions": [
+        "cae_6.1.3.4"
+      ],
+      "description": "",
+      "id": "liste_manifestations",
+      "nom": "Liste des manifestations l\u2019environnement, \u00e9nergie, climat, d\u00e9veloppement durable"
+    },
+    {
+      "actions": [
+        "cae_6.1.3.4"
+      ],
+      "description": "",
+      "id": "liste_conferences",
+      "nom": "Liste des Salons et conf\u00e9rences organis\u00e9s par une Agence Locale de l\u2019\u00c9nergie ou autres partenaires dans lesquels la collectivit\u00e9 est impliqu\u00e9e"
+    },
+    {
+      "actions": [
+        "cae_6.1.3.5"
+      ],
+      "description": "",
+      "id": "sondage_efficacite_comm",
+      "nom": "Sondage sur l\u2019efficacit\u00e9 des actions de communication"
+    },
+    {
+      "actions": [
+        "cae_6.2.1.1"
+      ],
+      "description": "",
+      "id": "liste_actions_sociales_copro",
+      "nom": "Liste et/ou descriptifs des actions en direction des copropri\u00e9t\u00e9s, des locataires de logements sociaux ou autres publics cibles"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "convention_structure_conseil_cae",
+      "nom": "Convention avec structures de conseil climat-air-\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "contrat_mission_partenaire_sensibilisation",
+      "nom": "Contrat de mission ou Convention cadre avec une structure partenaire en mati\u00e8re de sensibilisation/action \u00ab \u00e9nergie-climat \u00bb"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "rapport_activite_partenaire_sensibilisation",
+      "nom": "Rapport d\u2019activit\u00e9 de structures partenaires de la collectivit\u00e9 en mati\u00e8re de sensibilisation/action \u00ab \u00e9nergie-climat \u00bb"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "guide_aides_locales_cae",
+      "nom": "Guide des aides locales climat-air-\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "liste_aides_financieres",
+      "nom": "Liste et montants des aides financi\u00e8res aux particuliers et acteurs \u00e9conomiques"
+    },
+    {
+      "actions": [
+        "cae_6.2.3.1"
+      ],
+      "description": "",
+      "id": "bilan_opah",
+      "nom": "Rapport / bilan d\u2019OPAH ou OPATB"
+    },
+    {
+      "actions": [
+        "cae_6.3.1.2"
+      ],
+      "description": "",
+      "id": "liste_rencontres_interpro",
+      "nom": "Liste rencontres interprofessionnelles"
+    },
+    {
+      "actions": [
+        "cae_6.3.1.2"
+      ],
+      "description": "",
+      "id": "ex_actions_cooperation_entreprises_cae",
+      "nom": "Exemple d\u2019actions de coop\u00e9ration avec les entreprises sur les th\u00e9matiques climat, air et/ou \u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_6.3.1.2"
+      ],
+      "description": "",
+      "id": "liste_actions_partenariales_chambres_consulaires",
+      "nom": "Liste et/ou descriptifs d\u2019actions partenariales avec les chambres consulaires"
+    },
+    {
+      "actions": [
+        "cae_6.3.3.1"
+      ],
+      "description": "",
+      "id": "actions_partenariales_organismes_formation",
+      "nom": "Actions partenariales avec les organismes de formation, les \u00e9tablissements d'enseignements sup\u00e9rieurs ou de recherche"
+    },
+    {
+      "actions": [
+        "cae_6.4.1.7"
+      ],
+      "description": "",
+      "id": "PAT",
+      "nom": "Projet Alimentaire Territorial"
+    },
+    {
+      "actions": [
+        "cae_6.4.1.7"
+      ],
+      "description": "",
+      "id": "charte_agricole",
+      "nom": "Charte agricole"
+    },
+    {
+      "actions": [
+        "cae_6.4.2.4"
+      ],
+      "description": "",
+      "id": "charte_forestiere",
+      "nom": "Charte foresti\u00e8re"
+    },
+    {
+      "actions": [
+        "cae_6.5.1.1"
+      ],
+      "description": "",
+      "id": "charte_concertation",
+      "nom": "Charte ou guide de la concertation / participation"
+    },
+    {
+      "actions": [
+        "cae_6.5.1.1"
+      ],
+      "description": "",
+      "id": "co_constr_plan_climat",
+      "nom": "D\u00e9marche de co-construction du Plan Climat"
+    },
+    {
+      "actions": [
+        "cae_6.5.1.2"
+      ],
+      "description": "",
+      "id": "cr_comites_quartiers",
+      "nom": "Compte-rendu de comit\u00e9s de quartiers ou ateliers de concertation portant sur l\u2019\u00e9nergie et le climat"
+    },
+    {
+      "actions": [
+        "cae_6.5.3.1"
+      ],
+      "description": "",
+      "id": "listes_projets_envir_ecoles",
+      "nom": "Liste des projets environnementaux et climat-air-\u00e9nergie dans les \u00e9coles et structures accueillant du jeune public"
+    },
+    {
+      "actions": [
         "cae_2.1.1.3"
       ],
       "description": "",
@@ -716,387 +1118,131 @@
     },
     {
       "actions": [
-        "eci_5.1.1"
-      ],
-      "description": "<p>Documents de communication, supports de sensibilisation, attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vid\u00e9os p\u00e9dagogiques, etc.</p>\n",
-      "id": "participation_formation_grandpublic_eci",
-      "nom": "Preuve de participation aux formations"
-    },
-    {
-      "actions": [
-        "eci_5.1.2"
+        "cae_3.1.1.1"
       ],
       "description": "",
-      "id": "fiche_Optigede_actions_grandpublic_eci",
-      "nom": "Fiches actions sur Optigede"
+      "id": "rapport_annuel_gaz",
+      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le gaz"
     },
     {
       "actions": [
-        "eci_5.1.3"
+        "cae_3.1.1.1"
       ],
       "description": "",
-      "id": "enquete_besoins_acteurs",
-      "nom": "Synth\u00e8se de r\u00e9sultats de l'enqu\u00eate"
+      "id": "rapport_annuel_elec",
+      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le \u00e9lectricit\u00e9"
     },
     {
       "actions": [
-        "eci_5.1.3"
+        "cae_3.1.1.1"
       ],
       "description": "",
-      "id": "analyse_besoins_acteurs",
-      "nom": "Synth\u00e8se de l'analyse des besoins"
+      "id": "rapport_annuel_chauffage",
+      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le chauffage urbain"
     },
     {
       "actions": [
-        "eci_5.1.3"
+        "cae_3.1.2.3"
       ],
       "description": "",
-      "id": "espaces_communs_dialogue_acteurs",
-      "nom": "Description du/des espace(s) communs de dialogue"
+      "id": "convention_energie",
+      "nom": "Convention avec un fournisseur ou un syndicat d'\u00e9nergie"
     },
     {
       "actions": [
-        "eci_5.1.3"
+        "cae_3.3.1.1"
       ],
       "description": "",
-      "id": "partenariat_acteurs",
-      "nom": "Conventions de partenariat"
+      "id": "rapport_annuel_eau",
+      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le eau"
     },
     {
       "actions": [
-        "eci_5.2.1"
-      ],
-      "description": "<p>Attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vid\u00e9os p\u00e9dagogiques, etc.</p>\n",
-      "id": "participation_formation_collectivitesT_eci",
-      "nom": "Preuve de participation aux formations"
-    },
-    {
-      "actions": [
-        "eci_5.2.2"
+        "cae_3.3.1.4"
       ],
       "description": "",
-      "id": "fiche_Optigede_actions_collectivitesT_eci",
-      "nom": "Fiches actions sur Optigede"
+      "id": "facture_eau",
+      "nom": "Mod\u00e8le/exemple de facture d'eau"
     },
     {
       "actions": [
-        "eci_5.2.3"
+        "cae_3.3.1.5"
       ],
       "description": "",
-      "id": "collectivit\u00e9s_collab_possible",
-      "nom": "Liste des autres collectivit\u00e9s \u00e0 potentiel de collaboration"
+      "id": "plan_pluriannuel_reseau",
+      "nom": "Programme pluriannuel de travaux d\u2019am\u00e9lioration des r\u00e9seaux"
     },
     {
       "actions": [
-        "eci_5.2.3"
+        "cae_3.3.2.1"
       ],
       "description": "",
-      "id": "enjeux_collectivit\u00e9s",
-      "nom": "Liste des autres collectivit\u00e9s et des enjeux identifi\u00e9s"
+      "id": "rapport_annuel_assain",
+      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le assainissement"
     },
     {
       "actions": [
-        "eci_5.2.3"
+        "cae_3.3.2.1"
       ],
       "description": "",
-      "id": "convention_collab_collectivit\u00e9sT",
-      "nom": "Conventions ou accords de partenariat"
+      "id": "reglement_assain",
+      "nom": "R\u00e8glement d\u2019assainissement"
     },
     {
       "actions": [
-        "eci_5.3.1"
+        "cae_3.3.2.1"
       ],
       "description": "",
-      "id": "com_acteurseco_eci",
-      "nom": "Historique des documents diffus\u00e9s"
+      "id": "etude_valor_eau_usees",
+      "nom": "\u00c9tude de valorisation de la chaleur des eaux us\u00e9es ou la m\u00e9thanisation"
     },
     {
       "actions": [
-        "eci_5.3.1"
+        "cae_3.3.3.1"
       ],
       "description": "",
-      "id": "reunions_acteurseco_eci",
-      "nom": "Historique des supports de pr\u00e9sentation des r\u00e9unions d'information et les listes de participants"
+      "id": "PAPI",
+      "nom": "Programmes d\u2019Actions de Pr\u00e9vention des Inondations"
     },
     {
       "actions": [
-        "eci_5.3.2"
+        "cae_3.3.3.5"
       ],
       "description": "",
-      "id": "fiche_Optigede_actions_acteurseco_eci",
-      "nom": "Fiches actions sur Optigede"
+      "id": "delib_taxe_annuel_eau_pluv",
+      "nom": "D\u00e9lib\u00e9ration pour l\u2019instauration d\u2019une taxe annuelle pour la gestion des eaux pluviales urbaines"
     },
     {
       "actions": [
-        "eci_5.3.3"
+        "cae_3.3.4.1"
       ],
       "description": "",
-      "id": "carto_representants_locaux_acteurseco",
-      "nom": "Cartographie de repr\u00e9sentants locaux"
+      "id": "TVB",
+      "nom": "Trame Verte et Bleue"
     },
     {
       "actions": [
-        "eci_5.3.3"
+        "cae_3.3.5.1"
       ],
       "description": "",
-      "id": "convention_partenariat_repr_locaux_acteurs_eco",
-      "nom": "Conventions de partenariat"
+      "id": "etude_valor_rejets_thermique",
+      "nom": "\u00c9tude de valorisation des rejets thermiques de l\u2019UIOM"
     },
     {
       "actions": [
-        "eci_5.3.3"
+        "cae_3.3.5.1"
       ],
       "description": "",
-      "id": "com_partenariat_representants_locaux_acteurseco",
-      "nom": "Supports de communication"
+      "id": "plan_gestion_dechets",
+      "nom": "Plan de gestion des d\u00e9chets"
     },
     {
       "actions": [
-        "eci_1.1.1"
-      ],
-      "description": "<p>Tout document d\u00e9montrant l\u2019existence d\u2019une politique ECi : d\u00e9lib\u00e9ration, note explicative.</p>\n",
-      "id": "delib_engagement_politique_eci",
-      "nom": "D\u00e9lib\u00e9ration indiquant l'engagement \u00e0 d\u00e9velopper une strat\u00e9gie et un programme d'actions Economie Circulaire"
-    },
-    {
-      "actions": [
-        "eci_1.1.1"
-      ],
-      "description": "<p>Si l\u2019ECi ne figure pas explicitement dans la d\u00e9l\u00e9gation, joindre une note explicative.</p>\n",
-      "id": "delib_elu_eci",
-      "nom": "D\u00e9lib\u00e9ration qui donne d\u00e9l\u00e9gation et/ou qui cite l\u2019\u00e9lu.e.s en charge de l\u2019ECi"
-    },
-    {
-      "actions": [
-        "eci_1.1.1"
-      ],
-      "description": "<p>Organigramme du candidat sur lequel sont surlign\u00e9s les services et directions qui participent \u00e0 la politique ECi.</p>\n",
-      "id": "organigramme_eci",
-      "nom": "L'organigramme de l'\u00e9quipe mobilis\u00e9e pour la mise en \u0153uvre de la politique Economie Circulaire (\u00e9lu et \u00e9quipe technique)"
-    },
-    {
-      "actions": [
-        "eci_1.1.1"
-      ],
-      "description": "<p>Toute ligne budg\u00e9taire relative \u00e0 la politique \u00e9conomie circulaire quel que soit le service mettant en oeuvre l\u2019action.</p>\n",
-      "id": "budget_eci",
-      "nom": "Justificatif d'une ligne budg\u00e9taire d\u00e9di\u00e9e \u00e0 la strat\u00e9gie et au programme d'actions Economie Circulaire en pr\u00e9cisant la part du budget ECi par rapport au budget global (%)"
-    },
-    {
-      "actions": [
-        "eci_1.1.1"
+        "cae_3.3.5.1"
       ],
       "description": "",
-      "id": "fiches_equipe_maj",
-      "nom": "Fiches de poste des membres de l'\u00e9quipe mises \u00e0 jour"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "<ul>\n<li>\n<p>Tout \u00e9l\u00e9ment de diagnostic disponible, m\u00eame issu de diagnostics relatifs \u00e0 des d\u00e9marches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU, SCoT, PCAET, PAT, SRDT, etc\u2026).</p>\n</li>\n<li>\n<p>Comptes-rendus de r\u00e9union de travail, etc.</p>\n</li>\n<li>\n<p>Les autres preuves d\u00e9taill\u00e9es dans cette sous-action sont des composantes du diagnostic.</p>\n</li>\n</ul>\n",
-      "id": "diag_eci",
-      "nom": "Diagnostic de l'\u00e9conomie circulaire"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "<p>La synth\u00e8se doit indiquer les sources des enjeux, objectifs et actions.</p>\n",
-      "id": "synthese_enjeux_objectifs_actions_eci",
-      "nom": "Synth\u00e8se des enjeux, objectifs et actions \u00e9conomie circulaire des documents de planification analys\u00e9s"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "",
-      "id": "analyse_enjeux_eco",
-      "nom": "Analyse des enjeux \u00e9conomiques int\u00e9gr\u00e9s dans le diagnostic"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "",
-      "id": "analyse_enjeux_envi",
-      "nom": "Analyse des enjeux environnementaux int\u00e9gr\u00e9s dans le diagnostic"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "",
-      "id": "analyse_enjeux_sociaux",
-      "nom": "Analyse des enjeux sociaux int\u00e9gr\u00e9s dans le diagnostic"
-    },
-    {
-      "actions": [
-        "eci_1.1.2"
-      ],
-      "description": "",
-      "id": "liste_acteurs_initiatives_eci",
-      "nom": "La liste des acteurs et des initiatives en \u00e9conomie circulaire sur le territoire"
-    },
-    {
-      "actions": [
-        "eci_1.1.3"
-      ],
-      "description": "<p>La gouvernance interne, inter-services, peut \u00eatre justifi\u00e9e par des compte-rendu de comit\u00e9 de pilotage, feuille de pr\u00e9sence, sch\u00e9ma de gouvernance, etc.</p>\n",
-      "id": "liste_membres_copil_interne",
-      "nom": "Liste des membres du comit\u00e9 de pilotage interne"
-    },
-    {
-      "actions": [
-        "eci_1.1.3"
-      ],
-      "description": "",
-      "id": "liste_membres_copil_elargi",
-      "nom": "Liste des membres de la gouvernance \u00e9largie et leurs r\u00f4les"
-    },
-    {
-      "actions": [
-        "eci_1.1.3"
-      ],
-      "description": "",
-      "id": "cr_reunions_gouvernance",
-      "nom": "Compte-rendu des r\u00e9unions de gouvernance et des groupes de travail pour la construction des actions \u00e9conomie circulaire"
-    },
-    {
-      "actions": [
-        "eci_1.1.4"
-      ],
-      "description": "",
-      "id": "delib_strategie_eci",
-      "nom": "D\u00e9lib\u00e9ration relative \u00e0 l'adoption de la strat\u00e9gie, comprenant le budget associ\u00e9 et int\u00e9grant les enjeux issus du diagnostic"
-    },
-    {
-      "actions": [
-        "eci_1.1.4"
-      ],
-      "description": "",
-      "id": "plan_action_eci",
-      "nom": "Programme d'actions formalis\u00e9"
-    },
-    {
-      "actions": [
-        "eci_1.1.5"
-      ],
-      "description": "",
-      "id": "fiche_Optigede_eci",
-      "nom": "Fiches actions sur Optigede"
-    },
-    {
-      "actions": [
-        "eci_1.1.5"
-      ],
-      "description": "",
-      "id": "fiche_media_eci",
-      "nom": "Fiches \"belles histoires\" dans des m\u00e9dias accessibles"
-    },
-    {
-      "actions": [
-        "eci_1.2.1"
-      ],
-      "description": "",
-      "id": "plan_formation_eci",
-      "nom": "Vote/validation du plan formation par la collectivit\u00e9"
-    },
-    {
-      "actions": [
-        "eci_1.2.1"
-      ],
-      "description": "",
-      "id": "participation_formation_eci",
-      "nom": "Attestations de participation aux formations r\u00e9alis\u00e9es"
-    },
-    {
-      "actions": [
-        "eci_1.2.2"
-      ],
-      "description": "",
-      "id": "action_co_constuite_eci",
-      "nom": "Description de(s) l'action co-construite pour chaque comp\u00e9tence, avec l'explication de ce qui favorise l'\u00e9conomie circulaire"
-    },
-    {
-      "actions": [
-        "eci_1.2.2"
-      ],
-      "description": "",
-      "id": "fiche_Optigede_tranversalite_eci",
-      "nom": "Fiches actions sur Optigede"
-    },
-    {
-      "actions": [
-        "eci_1.2.3"
-      ],
-      "description": "",
-      "id": "nouvelle_strategie_eci",
-      "nom": "Document approuv\u00e9 par un \u00e9lu pr\u00e9cisant comment l'\u00e9conomie circulaire est prise en compte dans les nouvelles strat\u00e9gies"
-    },
-    {
-      "actions": [
-        "eci_1.2.3"
-      ],
-      "description": "",
-      "id": "CR_reunion_elaboration_nouvelle_strategie_eci",
-      "nom": "Compte-rendu des r\u00e9unions d'\u00e9laboration des nouvelles strat\u00e9gies"
-    },
-    {
-      "actions": [
-        "eci_1.2.4"
-      ],
-      "description": "",
-      "id": "CR_reunion_inter_collectivites",
-      "nom": "Comptes-rendus des r\u00e9unions d'\u00e9change"
-    },
-    {
-      "actions": [
-        "eci_1.2.4"
-      ],
-      "description": "",
-      "id": "doc_cadrage_actions_inter_collectivites",
-      "nom": "Documents de cadrage des actions (liste d'actions, plan d'action , etc.)"
-    },
-    {
-      "actions": [
-        "eci_1.3.1"
-      ],
-      "description": "<p>Plateforme Territoires en Transitions ou une autre interface choisie par la collectivit\u00e9 (ex. tableau de bord Excel)</p>\n",
-      "id": "indicateurs_eci",
-      "nom": "Indicateurs sp\u00e9cifiques et objectifs renseign\u00e9s dans une interface d\u00e9di\u00e9"
-    },
-    {
-      "actions": [
-        "eci_1.3.2"
-      ],
-      "description": "",
-      "id": "synthese_bilan",
-      "nom": "Document de synth\u00e8se"
-    },
-    {
-      "actions": [
-        "eci_1.3.2"
-      ],
-      "description": "",
-      "id": "CR_reunion_partage_bilan",
-      "nom": "Compte-rendu des r\u00e9unions d'analyse des r\u00e9sultats"
-    },
-    {
-      "actions": [
-        "eci_1.3.2"
-      ],
-      "description": "",
-      "id": "com_externe_bilan",
-      "nom": "Support de communication externe"
-    },
-    {
-      "actions": [
-        "eci_1.3.2"
-      ],
-      "description": "",
-      "id": "plan_action_maj_suite_bilan",
-      "nom": "Programme d'actions mis \u00e0 jour"
+      "id": "etude_valor_bio_dechets",
+      "nom": "\u00c9tude de valorisation des bio-d\u00e9chets, biogaz"
     },
     {
       "actions": [
@@ -1556,6 +1702,453 @@
     },
     {
       "actions": [
+        "eci_5.1.1"
+      ],
+      "description": "<p>Documents de communication, supports de sensibilisation, attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vid\u00e9os p\u00e9dagogiques, etc.</p>\n",
+      "id": "participation_formation_grandpublic_eci",
+      "nom": "Preuve de participation aux formations"
+    },
+    {
+      "actions": [
+        "eci_5.1.2"
+      ],
+      "description": "",
+      "id": "fiche_Optigede_actions_grandpublic_eci",
+      "nom": "Fiches actions sur Optigede"
+    },
+    {
+      "actions": [
+        "eci_5.1.3"
+      ],
+      "description": "",
+      "id": "enquete_besoins_acteurs",
+      "nom": "Synth\u00e8se de r\u00e9sultats de l'enqu\u00eate"
+    },
+    {
+      "actions": [
+        "eci_5.1.3"
+      ],
+      "description": "",
+      "id": "analyse_besoins_acteurs",
+      "nom": "Synth\u00e8se de l'analyse des besoins"
+    },
+    {
+      "actions": [
+        "eci_5.1.3"
+      ],
+      "description": "",
+      "id": "espaces_communs_dialogue_acteurs",
+      "nom": "Description du/des espace(s) communs de dialogue"
+    },
+    {
+      "actions": [
+        "eci_5.1.3"
+      ],
+      "description": "",
+      "id": "partenariat_acteurs",
+      "nom": "Conventions de partenariat"
+    },
+    {
+      "actions": [
+        "eci_5.2.1"
+      ],
+      "description": "<p>Attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vid\u00e9os p\u00e9dagogiques, etc.</p>\n",
+      "id": "participation_formation_collectivitesT_eci",
+      "nom": "Preuve de participation aux formations"
+    },
+    {
+      "actions": [
+        "eci_5.2.2"
+      ],
+      "description": "",
+      "id": "fiche_Optigede_actions_collectivitesT_eci",
+      "nom": "Fiches actions sur Optigede"
+    },
+    {
+      "actions": [
+        "eci_5.2.3"
+      ],
+      "description": "",
+      "id": "collectivit\u00e9s_collab_possible",
+      "nom": "Liste des autres collectivit\u00e9s \u00e0 potentiel de collaboration"
+    },
+    {
+      "actions": [
+        "eci_5.2.3"
+      ],
+      "description": "",
+      "id": "enjeux_collectivit\u00e9s",
+      "nom": "Liste des autres collectivit\u00e9s et des enjeux identifi\u00e9s"
+    },
+    {
+      "actions": [
+        "eci_5.2.3"
+      ],
+      "description": "",
+      "id": "convention_collab_collectivit\u00e9sT",
+      "nom": "Conventions ou accords de partenariat"
+    },
+    {
+      "actions": [
+        "eci_5.3.1"
+      ],
+      "description": "",
+      "id": "com_acteurseco_eci",
+      "nom": "Historique des documents diffus\u00e9s"
+    },
+    {
+      "actions": [
+        "eci_5.3.1"
+      ],
+      "description": "",
+      "id": "reunions_acteurseco_eci",
+      "nom": "Historique des supports de pr\u00e9sentation des r\u00e9unions d'information et les listes de participants"
+    },
+    {
+      "actions": [
+        "eci_5.3.2"
+      ],
+      "description": "",
+      "id": "fiche_Optigede_actions_acteurseco_eci",
+      "nom": "Fiches actions sur Optigede"
+    },
+    {
+      "actions": [
+        "eci_5.3.3"
+      ],
+      "description": "",
+      "id": "carto_representants_locaux_acteurseco",
+      "nom": "Cartographie de repr\u00e9sentants locaux"
+    },
+    {
+      "actions": [
+        "eci_5.3.3"
+      ],
+      "description": "",
+      "id": "convention_partenariat_repr_locaux_acteurs_eco",
+      "nom": "Conventions de partenariat"
+    },
+    {
+      "actions": [
+        "eci_5.3.3"
+      ],
+      "description": "",
+      "id": "com_partenariat_representants_locaux_acteurseco",
+      "nom": "Supports de communication"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3",
+        "cae_1.1.2.1"
+      ],
+      "description": "<p>PCAET avec EES et r\u00e9sum\u00e9 non technique ; \u00e9ventuel bilan interm\u00e9diaire</p>\n<p>Preuve identique \u00e0 la 1.1.2.1</p>\n",
+      "id": "rapport_diag_pcaet",
+      "nom": "Rapports diagnostic, strat\u00e9gie et plan d'actions du PCAET"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "",
+      "id": "engagement_convention_maires",
+      "nom": "D\u00e9lib\u00e9ration d'engagement dans la Convention des Maires"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "",
+      "id": "rapport_dev_durable",
+      "nom": "Rapport D\u00e9veloppement Durable"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "",
+      "id": "agenda21",
+      "nom": "Agenda 21 / Agenda 2030"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "<p>Possible de joindre aussi un \u00e9ventuel avenant ou bilan interm\u00e9diaire</p>\n",
+      "id": "tepos",
+      "nom": "TEPOS"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "<p>Possible de joindre aussi un \u00e9ventuel avenant ou bilan interm\u00e9diaire</p>\n",
+      "id": "tepcv",
+      "nom": "Programme TEPCV"
+    },
+    {
+      "actions": [
+        "cae_1.1.1.3"
+      ],
+      "description": "",
+      "id": "crte",
+      "nom": "Contrat de Relance de Transition \u00c9cologique (CRTE)"
+    },
+    {
+      "actions": [
+        "cae_1.1.3.2"
+      ],
+      "description": "",
+      "id": "etude_vulnerabiliteCC",
+      "nom": "Etude de vuln\u00e9rabilit\u00e9 au changement climatique"
+    },
+    {
+      "actions": [
+        "cae_1.2.1.1"
+      ],
+      "description": "",
+      "id": "schema_directeur_energies",
+      "nom": "Sch\u00e9ma directeur des \u00e9nergies"
+    },
+    {
+      "actions": [
+        "cae_1.2.1.3"
+      ],
+      "description": "",
+      "id": "etude_potentiel_ENR",
+      "nom": "Etude(s) de potentiel \u00e9nergies renouvelables"
+    },
+    {
+      "actions": [
+        "cae_1.2.2.1"
+      ],
+      "description": "",
+      "id": "plan_mobilite",
+      "nom": "Plan de mobilit\u00e9 (PDM) / Plan de Mobilit\u00e9 Simplifi\u00e9 / ancien Plan de D\u00e9placement Urbain / Sch\u00e9ma directeur mobilit\u00e9"
+    },
+    {
+      "actions": [
+        "cae_1.2.3.1",
+        "eci_2.1.0",
+        "eci_2.1.1"
+      ],
+      "description": "",
+      "id": "PLPDMA",
+      "nom": "Programme local de pr\u00e9vention des d\u00e9chets - PLPDMA"
+    },
+    {
+      "actions": [
+        "cae_1.2.3.1",
+        "cae_3.3.5.3",
+        "eci_2.2.0",
+        "eci_4.1.0",
+        "eci_2.4.3"
+      ],
+      "description": "<p>Pour les audits d\u2019une ann\u00e9e N, disposer au moins du rapport N-2.</p>\n<p>Le rapport est un vrai document d\u2019information du public et non un simple document de communication. Vous trouverez\n<a href=\"https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles\">\nici une page d\u2019information\n</a>\nsur le rapport du service public</p>\n<p>de pr\u00e9vention et de gestion des d\u00e9chets m\u00e9nagers et assimil\u00e9s et les exigences associ\u00e9es.</p>\n",
+      "id": "rapport_sppgd",
+      "nom": "Rapport du service public de pr\u00e9vention et de gestion des d\u00e9chets m\u00e9nagers et assimil\u00e9s (SPPGD)"
+    },
+    {
+      "actions": [
+        "cae_1.2.4.1"
+      ],
+      "description": "",
+      "id": "PLH",
+      "nom": "Programme Local de l'Habitat"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "PLU",
+      "nom": "Plan Local d'Urbanisme (Intercommunal)"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "reglement_plu",
+      "nom": "R\u00e8glement du PLU (extrait sur une zone)"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "scot",
+      "nom": "Sch\u00e9ma de Coh\u00e9rence Territoriale (SCoT), notamment Plan d'Am\u00e9nagement et de D\u00e9veloppement Durable (PADD)"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "superficie_zonages",
+      "nom": "\u00c9volution de la superficie des zonages"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "aeu",
+      "nom": "Synth\u00e8se/conclusions d\u2019\u00e9tudes environnementales Approche Environnementale de l'Urbanisme (AEU) ou \u00e9quivalent"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "",
+      "id": "ref_amenagement_durable",
+      "nom": "R\u00e9f\u00e9rentiel Am\u00e9nagement Durable ou \u00e9quivalent"
+    },
+    {
+      "actions": [
+        "cae_1.3.1.1"
+      ],
+      "description": "<p>Coefficient d'occupation des sols (COS) ou gabarit</p>\n",
+      "id": "delib_droits_construire",
+      "nom": "D\u00e9lib\u00e9ration sur la bonification de droits \u00e0 construire"
+    },
+    {
+      "actions": [
+        "cae_1.3.2.3"
+      ],
+      "description": "",
+      "id": "cdc_projets_urba",
+      "nom": "Cahier des charges ou r\u00e8glement de consultation r\u00e9dig\u00e9 par la collectivit\u00e9 pour des projets d\u2019urbanisme ou de b\u00e2timents publics"
+    },
+    {
+      "actions": [
+        "cae_1.3.2.3"
+      ],
+      "description": "",
+      "id": "certif_batiment",
+      "nom": "Convention de partenariat avec des organismes certificateurs du b\u00e2timent"
+    },
+    {
+      "actions": [
+        "cae_1.3.2.5"
+      ],
+      "description": "",
+      "id": "cdc_cession_terrains",
+      "nom": "Cahier des charges de cession des terrains int\u00e9grant des prescriptions \u00e9nerg\u00e9tiques"
+    },
+    {
+      "actions": [
+        "cae_5.1.1.1"
+      ],
+      "description": "",
+      "id": "orga_activites_cae",
+      "nom": "Organigramme de la collectivit\u00e9 et du service r\u00e9f\u00e9rent des activit\u00e9s climat-air-\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.1.1.1"
+      ],
+      "description": "",
+      "id": "schema_orga_services",
+      "nom": "Sch\u00e9ma d'organisation des services"
+    },
+    {
+      "actions": [
+        "cae_5.1.1.1"
+      ],
+      "description": "",
+      "id": "rapport_activites_services",
+      "nom": "Rapport d\u2019activit\u00e9 des services"
+    },
+    {
+      "actions": [
+        "cae_5.1.2.3"
+      ],
+      "description": "",
+      "id": "suivi_plan_actions_cae",
+      "nom": "Tableau de suivi du plan d\u2019actions climat-air-\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.1.3.1"
+      ],
+      "description": "",
+      "id": "plan_formation_cae",
+      "nom": "Plan de formation climat-air-\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.1.3.1"
+      ],
+      "description": "",
+      "id": "prog_formation_cae",
+      "nom": "Programme de formation et nombre/qualit\u00e9 des agents form\u00e9s"
+    },
+    {
+      "actions": [
+        "cae_5.1.3.1"
+      ],
+      "description": "",
+      "id": "ex_grille_entretien_indiv",
+      "nom": "Exemple de grille d\u2019entretien individuel du personnel"
+    },
+    {
+      "actions": [
+        "cae_5.1.3.1"
+      ],
+      "description": "",
+      "id": "ex_object_annuel_personnel_energie",
+      "nom": "Exemple d\u2019objectifs annuels du personnel dans le domaine de l\u2019\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.2.1.2"
+      ],
+      "description": "<p>ou budget des actions programm\u00e9es couvertes par le r\u00e9f\u00e9rentiel Climat-Air-\u00c9nergie</p>\n",
+      "id": "budget_plan_actions_cae",
+      "nom": "Budget du plan d\u2019actions de la politique Climat-Air-\u00c9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.2.1.3"
+      ],
+      "description": "",
+      "id": "eval_climat_budget",
+      "nom": "\u00c9valuation climat du budget de la collectivit\u00e9"
+    },
+    {
+      "actions": [
+        "cae_5.2.1.5"
+      ],
+      "description": "",
+      "id": "dossier_CEE",
+      "nom": "Dossier de certificats d\u2019\u00e9conomie d\u2019\u00e9nergie"
+    },
+    {
+      "actions": [
+        "cae_5.2.1.5"
+      ],
+      "description": "",
+      "id": "contrat_perfo_ener",
+      "nom": "Contrat de performance \u00e9nerg\u00e9tique"
+    },
+    {
+      "actions": [
+        "cae_5.2.2.2"
+      ],
+      "description": "",
+      "id": "commande_publique_eco_responsable",
+      "nom": "Charte ou r\u00e9f\u00e9rentiel commande publique \u00e9co-responsable"
+    },
+    {
+      "actions": [
+        "cae_5.2.2.2"
+      ],
+      "description": "",
+      "id": "directives_eco_responsabilite_achats",
+      "nom": "Directives ou circulaires internes en faveur de l\u2019\u00e9co-responsabilit\u00e9 des services dans leurs achats"
+    },
+    {
+      "actions": [
         "cae_4.1.1.1"
       ],
       "description": "<p>ou autre diagnostic sur la mobilit\u00e9</p>\n",
@@ -1801,599 +2394,6 @@
       "description": "",
       "id": "bilan_auto_partage",
       "nom": "Pr\u00e9sentation / Bilan offre auto-partage"
-    },
-    {
-      "actions": [
-        "eci_4.1.0"
-      ],
-      "description": "",
-      "id": "presentation_sppgd",
-      "nom": "Proc\u00e8s-verbal du conseil syndical ou intercommunal faisant \u00e9tat de la pr\u00e9sentation du rapport en assembl\u00e9e et/ou de son adoption"
-    },
-    {
-      "actions": [
-        "eci_4.1.1"
-      ],
-      "description": "",
-      "id": "matrice_couts_SINOE",
-      "nom": "Matrice des co\u00fbts valid\u00e9e dans SINOE"
-    },
-    {
-      "actions": [
-        "eci_4.1.1"
-      ],
-      "description": "<p>onglet Analyse de la matrice des co\u00fbts ou diaporama par exemple</p>\n",
-      "id": "analyse_positionnement_couts",
-      "nom": "Document pr\u00e9sentant l'analyse de positionnement"
-    },
-    {
-      "actions": [
-        "eci_4.1.2"
-      ],
-      "description": "",
-      "id": "synthese_analyse_matrice_couts",
-      "nom": "Synth\u00e8se de l'analyse de la matrice des co\u00fbts"
-    },
-    {
-      "actions": [
-        "eci_4.1.2"
-      ],
-      "description": "",
-      "id": "etude_optimisation_couts",
-      "nom": "Rapport d'\u00e9tude"
-    },
-    {
-      "actions": [
-        "eci_4.1.3"
-      ],
-      "description": "",
-      "id": "actions_optimisation_couts",
-      "nom": "Preuves des actions"
-    },
-    {
-      "actions": [
-        "eci_4.1.4"
-      ],
-      "description": "",
-      "id": "com_optimisation_couts",
-      "nom": "Supports de communication"
-    },
-    {
-      "actions": [
-        "eci_4.2.1",
-        "eci_4.2.3"
-      ],
-      "description": "",
-      "id": "grille_tarifaire_RS",
-      "nom": "D\u00e9lib\u00e9ration de la grille tarifaire"
-    },
-    {
-      "actions": [
-        "eci_4.2.2"
-      ],
-      "description": "",
-      "id": "etude_ti",
-      "nom": "Documents d'avancement de l'\u00e9tude"
-    },
-    {
-      "actions": [
-        "eci_4.2.4"
-      ],
-      "description": "",
-      "id": "delib_ti",
-      "nom": "D\u00e9lib\u00e9ration de principe sur la mise en place de la Tarification Incitative (TI)"
-    },
-    {
-      "actions": [
-        "eci_4.2.4"
-      ],
-      "description": "",
-      "id": "grille_tarifaire_ti",
-      "nom": "D\u00e9lib\u00e9ration de tarif ou de grille tarifaire"
-    },
-    {
-      "actions": [
-        "eci_4.2.5"
-      ],
-      "description": "",
-      "id": "grille_tarifaire_ti_second_niveau",
-      "nom": "D\u00e9lib\u00e9ration de la grille tarifaire"
-    },
-    {
-      "actions": [
-        "eci_4.3.1"
-      ],
-      "description": "",
-      "id": "veille_financements",
-      "nom": "Liste de sources ou veille formalis\u00e9e"
-    },
-    {
-      "actions": [
-        "eci_4.3.2"
-      ],
-      "description": "<p>Exemple: Page internet, Newsletter, Journal, Blog, etc.</p>\n",
-      "id": "com_externe_financements",
-      "nom": "Outils de communication"
-    },
-    {
-      "actions": [
-        "eci_4.3.3"
-      ],
-      "description": "<p>Appels \u00e0 id\u00e9es, communication ouverte, etc.</p>\n",
-      "id": "recherche_acteurs_recherche_financements",
-      "nom": "Preuve des d\u00e9marches proactives de recherche d'acteurs int\u00e9ress\u00e9s"
-    },
-    {
-      "actions": [
-        "eci_4.3.3"
-      ],
-      "description": "<p>Comptes rendus de rendez-vous, agenda, etc.</p>\n",
-      "id": "accompagnement_acteurs_recherche_financements",
-      "nom": "Preuve des d\u00e9marches \u00e9tablies par la collectivit\u00e9 pour chaque projet accompagn\u00e9"
-    },
-    {
-      "actions": [
-        "eci_4.3.4"
-      ],
-      "description": "",
-      "id": "presentation_modalites_financements",
-      "nom": "Adoption du document de r\u00e9f\u00e9rence, dont les crit\u00e8res li\u00e9s \u00e0 la sobri\u00e9t\u00e9 (si \u00e9voqu\u00e9)"
-    },
-    {
-      "actions": [
-        "eci_4.3.4"
-      ],
-      "description": "",
-      "id": "liste_projets_finances",
-      "nom": "Liste des projets soutenus et montants associ\u00e9s"
-    },
-    {
-      "actions": [
-        "cae_5.1.1.1"
-      ],
-      "description": "",
-      "id": "orga_activites_cae",
-      "nom": "Organigramme de la collectivit\u00e9 et du service r\u00e9f\u00e9rent des activit\u00e9s climat-air-\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.1.1.1"
-      ],
-      "description": "",
-      "id": "schema_orga_services",
-      "nom": "Sch\u00e9ma d'organisation des services"
-    },
-    {
-      "actions": [
-        "cae_5.1.1.1"
-      ],
-      "description": "",
-      "id": "rapport_activites_services",
-      "nom": "Rapport d\u2019activit\u00e9 des services"
-    },
-    {
-      "actions": [
-        "cae_5.1.2.3"
-      ],
-      "description": "",
-      "id": "suivi_plan_actions_cae",
-      "nom": "Tableau de suivi du plan d\u2019actions climat-air-\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.1.3.1"
-      ],
-      "description": "",
-      "id": "plan_formation_cae",
-      "nom": "Plan de formation climat-air-\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.1.3.1"
-      ],
-      "description": "",
-      "id": "prog_formation_cae",
-      "nom": "Programme de formation et nombre/qualit\u00e9 des agents form\u00e9s"
-    },
-    {
-      "actions": [
-        "cae_5.1.3.1"
-      ],
-      "description": "",
-      "id": "ex_grille_entretien_indiv",
-      "nom": "Exemple de grille d\u2019entretien individuel du personnel"
-    },
-    {
-      "actions": [
-        "cae_5.1.3.1"
-      ],
-      "description": "",
-      "id": "ex_object_annuel_personnel_energie",
-      "nom": "Exemple d\u2019objectifs annuels du personnel dans le domaine de l\u2019\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.2.1.2"
-      ],
-      "description": "<p>ou budget des actions programm\u00e9es couvertes par le r\u00e9f\u00e9rentiel Climat-Air-\u00c9nergie</p>\n",
-      "id": "budget_plan_actions_cae",
-      "nom": "Budget du plan d\u2019actions de la politique Climat-Air-\u00c9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.2.1.3"
-      ],
-      "description": "",
-      "id": "eval_climat_budget",
-      "nom": "\u00c9valuation climat du budget de la collectivit\u00e9"
-    },
-    {
-      "actions": [
-        "cae_5.2.1.5"
-      ],
-      "description": "",
-      "id": "dossier_CEE",
-      "nom": "Dossier de certificats d\u2019\u00e9conomie d\u2019\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_5.2.1.5"
-      ],
-      "description": "",
-      "id": "contrat_perfo_ener",
-      "nom": "Contrat de performance \u00e9nerg\u00e9tique"
-    },
-    {
-      "actions": [
-        "cae_5.2.2.2"
-      ],
-      "description": "",
-      "id": "commande_publique_eco_responsable",
-      "nom": "Charte ou r\u00e9f\u00e9rentiel commande publique \u00e9co-responsable"
-    },
-    {
-      "actions": [
-        "cae_5.2.2.2"
-      ],
-      "description": "",
-      "id": "directives_eco_responsabilite_achats",
-      "nom": "Directives ou circulaires internes en faveur de l\u2019\u00e9co-responsabilit\u00e9 des services dans leurs achats"
-    },
-    {
-      "actions": [
-        "cae_6.1.1.2"
-      ],
-      "description": "",
-      "id": "cr_reunions_reseaux",
-      "nom": "Compte-rendu de r\u00e9union de r\u00e9seaux de collectivit\u00e9s"
-    },
-    {
-      "actions": [
-        "cae_6.1.1.2"
-      ],
-      "description": "",
-      "id": "prog_rencontres_interregion_CAE",
-      "nom": "Programme rencontres interr\u00e9gionales dans le domaine Energie et Climat"
-    },
-    {
-      "actions": [
-        "cae_6.1.1.5"
-      ],
-      "description": "",
-      "id": "note_info_projets_coop_internationale",
-      "nom": "Note d\u2019information sur les projets men\u00e9s ou financ\u00e9s dans le cadre de la coop\u00e9ration internationale"
-    },
-    {
-      "actions": [
-        "cae_6.1.3.4"
-      ],
-      "description": "",
-      "id": "plan_communication",
-      "nom": "Plan de Communication"
-    },
-    {
-      "actions": [
-        "cae_6.1.3.4"
-      ],
-      "description": "",
-      "id": "liste_articles",
-      "nom": "Liste des articles sur la th\u00e9matique de l\u2019environnement, \u00e9nergie, climat, d\u00e9veloppement durable"
-    },
-    {
-      "actions": [
-        "cae_6.1.3.4"
-      ],
-      "description": "",
-      "id": "liste_manifestations",
-      "nom": "Liste des manifestations l\u2019environnement, \u00e9nergie, climat, d\u00e9veloppement durable"
-    },
-    {
-      "actions": [
-        "cae_6.1.3.4"
-      ],
-      "description": "",
-      "id": "liste_conferences",
-      "nom": "Liste des Salons et conf\u00e9rences organis\u00e9s par une Agence Locale de l\u2019\u00c9nergie ou autres partenaires dans lesquels la collectivit\u00e9 est impliqu\u00e9e"
-    },
-    {
-      "actions": [
-        "cae_6.1.3.5"
-      ],
-      "description": "",
-      "id": "sondage_efficacite_comm",
-      "nom": "Sondage sur l\u2019efficacit\u00e9 des actions de communication"
-    },
-    {
-      "actions": [
-        "cae_6.2.1.1"
-      ],
-      "description": "",
-      "id": "liste_actions_sociales_copro",
-      "nom": "Liste et/ou descriptifs des actions en direction des copropri\u00e9t\u00e9s, des locataires de logements sociaux ou autres publics cibles"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "convention_structure_conseil_cae",
-      "nom": "Convention avec structures de conseil climat-air-\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "contrat_mission_partenaire_sensibilisation",
-      "nom": "Contrat de mission ou Convention cadre avec une structure partenaire en mati\u00e8re de sensibilisation/action \u00ab \u00e9nergie-climat \u00bb"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "rapport_activite_partenaire_sensibilisation",
-      "nom": "Rapport d\u2019activit\u00e9 de structures partenaires de la collectivit\u00e9 en mati\u00e8re de sensibilisation/action \u00ab \u00e9nergie-climat \u00bb"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "guide_aides_locales_cae",
-      "nom": "Guide des aides locales climat-air-\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "liste_aides_financieres",
-      "nom": "Liste et montants des aides financi\u00e8res aux particuliers et acteurs \u00e9conomiques"
-    },
-    {
-      "actions": [
-        "cae_6.2.3.1"
-      ],
-      "description": "",
-      "id": "bilan_opah",
-      "nom": "Rapport / bilan d\u2019OPAH ou OPATB"
-    },
-    {
-      "actions": [
-        "cae_6.3.1.2"
-      ],
-      "description": "",
-      "id": "liste_rencontres_interpro",
-      "nom": "Liste rencontres interprofessionnelles"
-    },
-    {
-      "actions": [
-        "cae_6.3.1.2"
-      ],
-      "description": "",
-      "id": "ex_actions_cooperation_entreprises_cae",
-      "nom": "Exemple d\u2019actions de coop\u00e9ration avec les entreprises sur les th\u00e9matiques climat, air et/ou \u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_6.3.1.2"
-      ],
-      "description": "",
-      "id": "liste_actions_partenariales_chambres_consulaires",
-      "nom": "Liste et/ou descriptifs d\u2019actions partenariales avec les chambres consulaires"
-    },
-    {
-      "actions": [
-        "cae_6.3.3.1"
-      ],
-      "description": "",
-      "id": "actions_partenariales_organismes_formation",
-      "nom": "Actions partenariales avec les organismes de formation, les \u00e9tablissements d'enseignements sup\u00e9rieurs ou de recherche"
-    },
-    {
-      "actions": [
-        "cae_6.4.1.7"
-      ],
-      "description": "",
-      "id": "PAT",
-      "nom": "Projet Alimentaire Territorial"
-    },
-    {
-      "actions": [
-        "cae_6.4.1.7"
-      ],
-      "description": "",
-      "id": "charte_agricole",
-      "nom": "Charte agricole"
-    },
-    {
-      "actions": [
-        "cae_6.4.2.4"
-      ],
-      "description": "",
-      "id": "charte_forestiere",
-      "nom": "Charte foresti\u00e8re"
-    },
-    {
-      "actions": [
-        "cae_6.5.1.1"
-      ],
-      "description": "",
-      "id": "charte_concertation",
-      "nom": "Charte ou guide de la concertation / participation"
-    },
-    {
-      "actions": [
-        "cae_6.5.1.1"
-      ],
-      "description": "",
-      "id": "co_constr_plan_climat",
-      "nom": "D\u00e9marche de co-construction du Plan Climat"
-    },
-    {
-      "actions": [
-        "cae_6.5.1.2"
-      ],
-      "description": "",
-      "id": "cr_comites_quartiers",
-      "nom": "Compte-rendu de comit\u00e9s de quartiers ou ateliers de concertation portant sur l\u2019\u00e9nergie et le climat"
-    },
-    {
-      "actions": [
-        "cae_6.5.3.1"
-      ],
-      "description": "",
-      "id": "listes_projets_envir_ecoles",
-      "nom": "Liste des projets environnementaux et climat-air-\u00e9nergie dans les \u00e9coles et structures accueillant du jeune public"
-    },
-    {
-      "actions": [
-        "cae_3.1.1.1"
-      ],
-      "description": "",
-      "id": "rapport_annuel_gaz",
-      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le gaz"
-    },
-    {
-      "actions": [
-        "cae_3.1.1.1"
-      ],
-      "description": "",
-      "id": "rapport_annuel_elec",
-      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le \u00e9lectricit\u00e9"
-    },
-    {
-      "actions": [
-        "cae_3.1.1.1"
-      ],
-      "description": "",
-      "id": "rapport_annuel_chauffage",
-      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le chauffage urbain"
-    },
-    {
-      "actions": [
-        "cae_3.1.2.3"
-      ],
-      "description": "",
-      "id": "convention_energie",
-      "nom": "Convention avec un fournisseur ou un syndicat d'\u00e9nergie"
-    },
-    {
-      "actions": [
-        "cae_3.3.1.1"
-      ],
-      "description": "",
-      "id": "rapport_annuel_eau",
-      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le eau"
-    },
-    {
-      "actions": [
-        "cae_3.3.1.4"
-      ],
-      "description": "",
-      "id": "facture_eau",
-      "nom": "Mod\u00e8le/exemple de facture d'eau"
-    },
-    {
-      "actions": [
-        "cae_3.3.1.5"
-      ],
-      "description": "",
-      "id": "plan_pluriannuel_reseau",
-      "nom": "Programme pluriannuel de travaux d\u2019am\u00e9lioration des r\u00e9seaux"
-    },
-    {
-      "actions": [
-        "cae_3.3.2.1"
-      ],
-      "description": "",
-      "id": "rapport_annuel_assain",
-      "nom": "Rapport annuel d\u2019activit\u00e9s et de contr\u00f4le assainissement"
-    },
-    {
-      "actions": [
-        "cae_3.3.2.1"
-      ],
-      "description": "",
-      "id": "reglement_assain",
-      "nom": "R\u00e8glement d\u2019assainissement"
-    },
-    {
-      "actions": [
-        "cae_3.3.2.1"
-      ],
-      "description": "",
-      "id": "etude_valor_eau_usees",
-      "nom": "\u00c9tude de valorisation de la chaleur des eaux us\u00e9es ou la m\u00e9thanisation"
-    },
-    {
-      "actions": [
-        "cae_3.3.3.1"
-      ],
-      "description": "",
-      "id": "PAPI",
-      "nom": "Programmes d\u2019Actions de Pr\u00e9vention des Inondations"
-    },
-    {
-      "actions": [
-        "cae_3.3.3.5"
-      ],
-      "description": "",
-      "id": "delib_taxe_annuel_eau_pluv",
-      "nom": "D\u00e9lib\u00e9ration pour l\u2019instauration d\u2019une taxe annuelle pour la gestion des eaux pluviales urbaines"
-    },
-    {
-      "actions": [
-        "cae_3.3.4.1"
-      ],
-      "description": "",
-      "id": "TVB",
-      "nom": "Trame Verte et Bleue"
-    },
-    {
-      "actions": [
-        "cae_3.3.5.1"
-      ],
-      "description": "",
-      "id": "etude_valor_rejets_thermique",
-      "nom": "\u00c9tude de valorisation des rejets thermiques de l\u2019UIOM"
-    },
-    {
-      "actions": [
-        "cae_3.3.5.1"
-      ],
-      "description": "",
-      "id": "plan_gestion_dechets",
-      "nom": "Plan de gestion des d\u00e9chets"
-    },
-    {
-      "actions": [
-        "cae_3.3.5.1"
-      ],
-      "description": "",
-      "id": "etude_valor_bio_dechets",
-      "nom": "\u00c9tude de valorisation des bio-d\u00e9chets, biogaz"
     }
   ]
 }
