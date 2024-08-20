@@ -1,12 +1,12 @@
 import {useState} from 'react';
 import {Button, ButtonGroup, Card, Tabs, Tab} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
 import {AllerPlusLoin} from './AllerPlusLoin';
+import {ComparezLaTrajectoire} from 'app/pages/collectivite/Trajectoire/ComparezLaTrajectoire';
 
 /**
  * Affiche une trajectoire SNBC calculée
@@ -18,7 +18,7 @@ const TrajectoireCalculee = () => {
   const [indicateurIdx, setIndicateurIdx] = useState<number>(0);
   const indicateur = INDICATEURS_TRAJECTOIRE[indicateurIdx];
 
-  // secteur séléctionné
+  // secteur sélectionné
   const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
   const [secteurIdx, setSecteurIdx] = useState<number>(0);
 
@@ -34,6 +34,7 @@ const TrajectoireCalculee = () => {
 
   return (
     <div className="grow py-12">
+      {/** En-tête */}
       <div className="flex items-start mb-4">
         <div className="flex-grow">
           <h2 className="mb-1">Trajectoire SNBC territorialisée</h2>
@@ -43,19 +44,26 @@ const TrajectoireCalculee = () => {
         </div>
         <Button size="sm">Calculer une nouvelle trajectoire</Button>
       </div>
+
       <hr />
+
+      {/** Sélecteurs */}
       <div className="flex items-start justify-between">
-        {!!indicateur?.secteurs && (
-          <Tabs
-            defaultActiveTab={secteurIdx}
-            onChange={setSecteurIdx}
-            size="sm"
-          >
-            {secteurs.map(({nom}) => (
-              <Tab key={nom} label={nom} />
-            ))}
-          </Tabs>
-        )}
+        {
+          /** Sélecteur de secteur */
+          !!indicateur?.secteurs && (
+            <Tabs
+              defaultActiveTab={secteurIdx}
+              onChange={setSecteurIdx}
+              size="sm"
+            >
+              {secteurs.map(({nom}) => (
+                <Tab key={nom} label={nom} />
+              ))}
+            </Tabs>
+          )
+        }
+        {/** Sélecteur de trajectoire */}
         <ButtonGroup
           size="sm"
           activeButtonId={indicateur.id}
@@ -69,44 +77,31 @@ const TrajectoireCalculee = () => {
           }))}
         />
       </div>
-      <div className="flex flex-row gap-8">
-        {valeursTousSecteurs && (
-          <Card className="w-4/6 h-fit">
-            <TrajectoireChart
-              unite={indicateur.unite}
-              titre={indicateur.titre}
-              secteurs={valeursTousSecteurs as LineData[]}
-              objectifs={{id: 'objectifs', data: objectifs}}
-              resultats={{id: 'resultats', data: resultats}}
-            />
-          </Card>
-        )}
 
+      <div className="flex flex-row gap-8">
+        {
+          /** Graphique */
+          valeursTousSecteurs && (
+            <Card className="w-4/6 h-fit">
+              <TrajectoireChart
+                unite={indicateur.unite}
+                titre={indicateur.titre}
+                secteurs={valeursTousSecteurs as LineData[]}
+                objectifs={{id: 'objectifs', data: objectifs}}
+                resultats={{id: 'resultats', data: resultats}}
+              />
+            </Card>
+          )
+        }
+
+        {/** Colonne de droite */}
         <div className="w-2/6 flex flex-col gap-8">
           {!isLoadingObjectifsResultats &&
             (objectifs.length === 0 || resultats.length === 0) && (
-              <Card>
-                <h5>
-                  Comparez la trajectoire SNBC à vos objectifs et vos résultats
-                </h5>
-                <p className="text-sm font-normal">
-                  Vos résultats et vos objectifs ne sont pas disponibles pour
-                  cet indicateur. Veuillez les renseigner afin de pouvoir les
-                  comparer à votre trajectoire SNBC territorialisée. Vous
-                  pourrez ainsi visualiser les écarts plus facilement pour
-                  piloter votre stratégie.
-                </p>
-                <Button
-                  href={makeCollectiviteIndicateursUrl({
-                    collectiviteId,
-                    indicateurView: 'cae',
-                    identifiantReferentiel: identifiant,
-                  })}
-                  variant="outlined"
-                >
-                  Compléter mes indicateurs
-                </Button>
-              </Card>
+              <ComparezLaTrajectoire
+                collectiviteId={collectiviteId}
+                identifiantReferentiel={identifiant}
+              />
             )}
           <AllerPlusLoin />
         </div>
