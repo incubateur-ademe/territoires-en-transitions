@@ -55,7 +55,7 @@ const COLONNES_DEFINITION = [
   'thematiques:indicateur_thematique(...thematique_id(*))',
   'categories:indicateur_categorie_tag(...categorie_tag(id,nom,collectivite_id,groupement_id, groupement(groupement_collectivite(*))))',
   'valeurs:indicateur_valeur(' + `${COLONNES_VALEURS.join(',')}` + ')',
-  'enfants:indicateur_enfants(id)',
+  'enfants:indicateur_enfants(id, groupement_id)',
   'parents:indicateur_parents(id)',
 ] as const;
 
@@ -922,7 +922,12 @@ async function transformeDefinition(
       services,
       fiches,
       fiches_non_classees, // Ajoute le champ 'est_perso'
-      enfants: item?.enfants?.map((e: any) => e.id),
+      enfants: item?.enfants?.filter(
+          (e: any) => !e.groupement_id ||
+              groupement.filter(
+              (g: any) => g.id === e.groupement_id
+          )[0].collectivites?.includes(collectiviteId)
+      ).map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
     };
   });
