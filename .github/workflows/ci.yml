@@ -122,25 +122,31 @@ jobs:
         run: earthly --use-inline-cache --save-inline-cache --push +auth-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
   build-storybook-dev:
-    needs: prepare-front-deps
+    # needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      matrix:
+        node-version: ['20.x']
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions-setup@v1
-        with:
-          version: 0.8.1
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npx nx build-storybook @tet/ui
+      # - uses: earthly/actions-setup@v1
+      #   with:
+      #     version: 0.8.1
 
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+      # - name: Login into registry
+      #   run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
-      - name: Build and push storybook image
-        run: earthly --use-inline-cache --save-inline-cache --push +storybook-build
+      # - name: Build and push storybook image
+      #   run: earthly --use-inline-cache --save-inline-cache --push +storybook-build
 
   build-db:
     environment: dev
