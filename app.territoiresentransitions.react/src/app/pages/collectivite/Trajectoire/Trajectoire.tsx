@@ -1,10 +1,10 @@
 import {Alert, Button, Card} from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
 import {useCalculTrajectoire} from './useCalculTrajectoire';
-import TrajectoireCalculee from './TrajectoireCalculee';
+import {TrajectoireCalculee} from './TrajectoireCalculee';
+import {CommuneNonSupportee} from './CommuneNonSupportee';
+import {HELPDESK_URL} from './constants';
 import {ReactComponent as DbErrorPicto} from './db-error.svg';
 import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
 
@@ -25,13 +25,13 @@ const TrajectoireContent = () => {
     error ||
     !data ||
     !data.status ||
-    data.status === StatutTrajectoire.COMMUNE_NON_SUPPORTEE
+    data.status === StatutTrajectoire.DONNEES_MANQUANTES
   ) {
     return <DonneesNonDispo />;
   }
 
-  if (data.status === StatutTrajectoire.DONNEES_MANQUANTES) {
-    return <DonneesNonDispo aCompleter />;
+  if (data.status === StatutTrajectoire.COMMUNE_NON_SUPPORTEE) {
+    return <CommuneNonSupportee />;
   }
 
   if (data.status === StatutTrajectoire.PRET_A_CALCULER) {
@@ -49,14 +49,12 @@ const TrajectoireContent = () => {
  * Affiche un message quand les données pour faire le calcul de la trajectoire
  * ne sont pas disponibles.
  */
-const DonneesNonDispo = ({aCompleter}: {aCompleter?: boolean}) => {
-  const collectiviteId = useCollectiviteId()!;
-
+const DonneesNonDispo = () => {
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
       <h2>Données disponibles insuffisantes pour le calcul</h2>
-      <p>
+      <p className="font-normal text-lg text-center">
         Nous ne disposons pas encore des données suffisantes pour permettre le
         calcul automatique de la trajectoire SNBC territorialisée de votre
         collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
@@ -64,22 +62,11 @@ const DonneesNonDispo = ({aCompleter}: {aCompleter?: boolean}) => {
         ainsi visualiser facilement votre trajectoire SNBC territorialisée et la
         comparer aux objectifs fixés et résultats observés.
       </p>
-      {aCompleter ? (
-        <Button
-          href={makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'cae',
-          })}
-        >
-          Compléter mes données
-        </Button>
-      ) : (
-        <Alert
-          className="self-stretch"
-          title="Revenez dans quelques jours !"
-          description="Dans la prochaine version, vous pourrez compléter vos données et ainsi calculer votre trajectoire."
-        />
-      )}
+      <Alert
+        className="self-stretch"
+        title="Revenez dans quelques jours !"
+        description="Dans la prochaine version, vous pourrez compléter vos données et ainsi calculer votre trajectoire."
+      />
     </Card>
   );
 };
@@ -93,12 +80,13 @@ const Presentation = () => {
   return (
     <div className="flex flex-row gap-14 py-12">
       <div className="w-3/5">
-        <h2>Je calcule ma trajectoire SNBC territorialisée</h2>
-        <p>
+        <h1>Je calcule ma trajectoire SNBC territorialisée</h1>
+        <p className="font-bold text-lg">
           La trajectoire SNBC territorialisée n’est aucunement prescriptive.
+          <br />
           C’est un outil d’aide à la décision, un point de repère pour :
         </p>
-        <ul>
+        <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
           <li>
             Définir vos objectifs ou les interroger lorsque ceux-ci sont définis
             (par exemple à l’occasion d’un suivi annuel ou d’un bilan à
@@ -107,6 +95,16 @@ const Presentation = () => {
           <li>Quantifier les efforts à réaliser secteur par secteur</li>
           <li>Identifier sa contribution à la SNBC</li>
         </ul>
+        <Button
+          size="md"
+          variant="underlined"
+          external
+          href={HELPDESK_URL}
+          className="mb-6"
+        >
+          Pour plus d’informations
+        </Button>
+
         <Button onClick={() => calcul()} disabled={isLoading}>
           {isLoading ? (
             <>

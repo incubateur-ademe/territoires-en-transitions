@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, ButtonGroup, Card, Tabs, Tab, Alert} from '@tet/ui';
+import {Button, ButtonGroup, Card, Tabs, Tab} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
@@ -8,13 +8,12 @@ import {TrajectoireChart} from './TrajectoireChart';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {DonneesPartiellementDisponibles} from 'app/pages/collectivite/Trajectoire/DonneesPartiellementDisponibles';
+import {DonneesPartiellementDisponibles} from './DonneesPartiellementDisponibles';
 
 /**
  * Affiche une trajectoire SNBC calculée
  */
-const TrajectoireCalculee = () => {
+export const TrajectoireCalculee = () => {
   const collectiviteId = useCollectiviteId()!;
 
   // indicateur (ges | énergie) sélectionné
@@ -127,5 +126,3 @@ const TrajectoireCalculee = () => {
     </div>
   );
 };
-
-export default TrajectoireCalculee;

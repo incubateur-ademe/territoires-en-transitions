@@ -2,9 +2,7 @@ import {Button, Card} from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {useDownloadFile} from 'utils/useDownloadFile';
 import {useTelechargementTrajectoire} from './useTelechargementTrajectoire';
-
-// fichier dans le dossier `public`
-const METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
+import {DOC_METHODO} from './constants';
 
 export const AllerPlusLoin = () => {
   // pour télécharger les fichiers
@@ -38,7 +36,7 @@ export const AllerPlusLoin = () => {
       </p>
       <Button
         variant="outlined"
-        onClick={() => downloadFile(METHODO)}
+        onClick={() => downloadFile(DOC_METHODO)}
         disabled={isDownloadingFile}
       >
         Télécharger la méthodologie (.pdf)
