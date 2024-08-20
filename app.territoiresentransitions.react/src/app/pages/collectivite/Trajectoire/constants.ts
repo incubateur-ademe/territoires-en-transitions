@@ -135,11 +135,9 @@ export const INDICATEURS_TRAJECTOIRE = [
       {nom: 'Tertiaire', identifiant: 'cae_2.f'},
       {nom: 'Industrie', identifiant: 'cae_2.k'},
       {nom: 'Agriculture', identifiant: 'cae_2.i'},
-      //{nom: 'Transport', identifiant: 'cae_2.?'},
-      {nom: 'Transport routier', identifiant: 'cae_2.g'},
-      {nom: 'Autres Transports', identifiant: 'cae_2.h'},
+      {nom: 'Transports', identifiant: 'cae_2.m'},
       {nom: 'Déchets', identifiant: 'cae_2.j'},
-      //{nom: 'Branche énergie', identifiant: ['manquante à date']},
+      {nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet'},
     ],
   },
 ] as const;
