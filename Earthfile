@@ -485,7 +485,7 @@ storybook-build: ## construit l'image du storybook du module `ui`
     ARG PORT=6007
     FROM +front-deps
     COPY $UI_DIR/. $UI_DIR
-    RUN npm exec nx build-storybook @tet/ui
+    RUN npx nx build-storybook @tet/ui
     EXPOSE $PORT
     #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
     WORKDIR $UI_DIR
@@ -525,7 +525,7 @@ storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec
     # copie les sources
     COPY $UI_DIR $UI_DIR
     # commande utilisée pour exécuter les tests
-    CMD npm exec nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
+    CMD npx nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
     SAVE IMAGE storybook-test:latest
 
 storybook-test-run: # lance les tests du module `ui`
