@@ -18,6 +18,7 @@ import {
   CalculTrajectoireResult,
   CalculTrajectoireResultatMode,
   DonneesARemplirResult,
+  DonneesARemplirValeur,
   DonneesCalculTrajectoireARemplir,
 } from '../models/calcultrajectoire.models';
 import {
@@ -26,6 +27,7 @@ import {
   CreateIndicateurValeurType,
   IndicateurDefinitionType,
   IndicateurValeurAvecMetadonnesDefinition,
+  IndicateurValeurType,
 } from '../models/indicateur.models';
 import {
   VerificationDonneesSNBCResult,
@@ -228,7 +230,7 @@ export default class TrajectoiresService {
           .identifiants_referentiel_manquants || []),
       ];
       throw new UnprocessableEntityException(
-        `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
+        `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
       );
     } else if (
       resultatVerification.status ===
@@ -510,8 +512,6 @@ export default class TrajectoiresService {
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
         sourceId: this.RARE_SOURCE_ID,
-        dateDebut: this.SNBC_DATE_REFERENCE,
-        dateFin: this.SNBC_DATE_REFERENCE,
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -528,8 +528,6 @@ export default class TrajectoiresService {
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
         sourceId: this.RARE_SOURCE_ID,
-        dateDebut: this.SNBC_DATE_REFERENCE,
-        dateFin: this.SNBC_DATE_REFERENCE,
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -551,47 +549,154 @@ export default class TrajectoiresService {
     identifiantsReferentiel: string[][],
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
   ): DonneesARemplirResult {
-    const valeursARemplir: {
-      identifiants_referentiel: string[];
-      valeur: number | null;
-    }[] = [];
+    const valeursARemplir: DonneesARemplirValeur[] = [];
     const identifiantsReferentielManquants: string[] = [];
     identifiantsReferentiel.forEach((identifiants, index) => {
-      valeursARemplir[index] = {
+      const valeurARemplir: DonneesARemplirValeur = {
         identifiants_referentiel: identifiants,
         valeur: 0,
+        date_min: null,
+        date_max: null,
       };
+      valeursARemplir[index] = valeurARemplir;
       identifiants.forEach((identifiant) => {
-        const indicateurValeur = indicateurValeurs.find(
+        const identifiantIndicateurValeurs = indicateurValeurs.filter(
           (indicateurValeur) =>
             indicateurValeur.indicateur_definition?.identifiant_referentiel ===
               identifiant &&
             indicateurValeur.indicateur_valeur.resultat !== null &&
             indicateurValeur.indicateur_valeur.resultat !== undefined,
         );
+
+        const identifiantIndicateurValeur2015 =
+          identifiantIndicateurValeurs.find(
+            (indicateurValeur) =>
+              indicateurValeur.indicateur_valeur.date_valeur ===
+              this.SNBC_DATE_REFERENCE,
+          );
         if (
-          indicateurValeur &&
-          indicateurValeur.indicateur_valeur.resultat !== null &&
-          indicateurValeur.indicateur_valeur.resultat !== undefined // 0 est une valeur valide
+          identifiantIndicateurValeur2015 &&
+          identifiantIndicateurValeur2015.indicateur_valeur.resultat !== null &&
+          identifiantIndicateurValeur2015.indicateur_valeur.resultat !==
+            undefined // 0 est une valeur valide
         ) {
           /*console.log(
             `${identifiant}: ${indicateurValeur.indicateur_valeur.resultat} ${indicateurValeur.indicateur_definition?.unite}`,
           );*/
 
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
-          if (valeursARemplir[index].valeur !== null) {
-            valeursARemplir[index].valeur +=
-              indicateurValeur.indicateur_valeur.resultat;
+          if (valeurARemplir.valeur !== null) {
+            valeurARemplir.valeur +=
+              identifiantIndicateurValeur2015.indicateur_valeur.resultat;
+            if (
+              !valeurARemplir.date_max ||
+              identifiantIndicateurValeur2015.indicateur_valeur.date_valeur >
+                valeurARemplir.date_max
+            ) {
+              valeurARemplir.date_max =
+                identifiantIndicateurValeur2015.indicateur_valeur.date_valeur;
+            }
+            if (
+              !valeurARemplir.date_min ||
+              identifiantIndicateurValeur2015.indicateur_valeur.date_valeur <
+                valeurARemplir.date_min
+            ) {
+              valeurARemplir.date_min =
+                identifiantIndicateurValeur2015.indicateur_valeur.date_valeur;
+            }
           }
         } else {
-          identifiantsReferentielManquants.push(identifiant);
-          valeursARemplir[index].valeur = null;
+          const interpolationResultat = this.getInterpolationValeur(
+            identifiantIndicateurValeurs.map((v) => v.indicateur_valeur),
+          );
+
+          if (!interpolationResultat.valeur) {
+            identifiantsReferentielManquants.push(identifiant);
+            valeurARemplir.valeur = null;
+          } else {
+            // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null (pour un autre indicateur contribuant à la même valeur)
+            if (valeurARemplir.valeur !== null) {
+              valeurARemplir.valeur += interpolationResultat.valeur;
+              if (
+                !valeurARemplir.date_max ||
+                (interpolationResultat.date_max &&
+                  interpolationResultat.date_max > valeurARemplir.date_max)
+              ) {
+                valeurARemplir.date_max = interpolationResultat.date_max;
+              }
+              if (
+                !valeurARemplir.date_min ||
+                (interpolationResultat.date_min &&
+                  interpolationResultat.date_min < valeurARemplir.date_min)
+              ) {
+                valeurARemplir.date_min = interpolationResultat.date_min;
+              }
+            }
+          }
         }
       });
     });
     return {
       valeurs: valeursARemplir,
       identifiants_referentiel_manquants: identifiantsReferentielManquants,
+    };
+  }
+
+  getInterpolationValeur(indicateurValeurs: IndicateurValeurType[]): {
+    valeur: number | null;
+    date_min: string | null;
+    date_max: string | null;
+  } {
+    let valeur2015Interpolee: number | null = null;
+    let valeurAvant2015: number | null = null;
+    let dateAvant2015: string | null = null;
+    let valeurApres2015: number | null = null;
+    let dateApres2015: string | null = null;
+
+    indicateurValeurs.forEach((indicateurValeur) => {
+      if (
+        indicateurValeur.date_valeur < this.SNBC_DATE_REFERENCE &&
+        (!dateAvant2015 ||
+          (dateAvant2015 && indicateurValeur.date_valeur > dateAvant2015))
+      ) {
+        dateAvant2015 = indicateurValeur.date_valeur;
+        valeurAvant2015 = indicateurValeur.resultat;
+      } else if (
+        indicateurValeur.date_valeur > this.SNBC_DATE_REFERENCE &&
+        (!dateApres2015 ||
+          (dateApres2015 && indicateurValeur.date_valeur < dateApres2015))
+      ) {
+        dateApres2015 = indicateurValeur.date_valeur;
+        valeurApres2015 = indicateurValeur.resultat;
+      }
+    });
+
+    if (
+      valeurAvant2015 !== null &&
+      valeurApres2015 !== null &&
+      dateAvant2015 &&
+      dateApres2015
+    ) {
+      // Convert dates to timestamps (milliseconds since Epoch)
+      const time2015 = new Date(this.SNBC_DATE_REFERENCE).getTime();
+      const timeAvant2015 = new Date(dateAvant2015).getTime();
+      const timeApres2015 = new Date(dateApres2015).getTime();
+
+      // Calculate the interpolated value
+      if (valeurApres2015 - valeurAvant2015 === 0) {
+        valeur2015Interpolee = valeurAvant2015;
+      } else {
+        valeur2015Interpolee =
+          valeurAvant2015 +
+          ((time2015 - timeAvant2015) / (timeApres2015 - timeAvant2015)) *
+            (valeurApres2015 - valeurAvant2015);
+      }
+    }
+
+    return {
+      valeur: valeur2015Interpolee,
+      date_min: dateAvant2015,
+      date_max: dateApres2015,
     };
   }
 
