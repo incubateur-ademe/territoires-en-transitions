@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, ButtonGroup, Card, Tabs, Tab} from '@tet/ui';
+import {Button, ButtonGroup, Card, Tabs, Tab, Alert} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
@@ -111,6 +111,16 @@ export const TrajectoireCalculee = () => {
                   resultats={resultats}
                 ></TrajectoireSecteurChart>
               </Card>
+            )
+          }
+          {
+            /** Données non disponibles pour le secteur sélectionné */
+            secteur && !valeursSecteur && (
+              <Alert
+                state="warning"
+                title="Données non disponibles"
+                description="Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles."
+              />
             )
           }
           {
