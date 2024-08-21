@@ -706,3 +706,5 @@ stats/locales [stats/locales@v4.5.0] 2024-08-21T15:45:09Z ,,, <jacquelina@LanceL
 
 indicateur/indicateurs_gaz_effet_serre 2024-09-03T15:35:34Z Marc Rutkowski <marc@attractive-media.fr> # Reprend les identifiants référentiel dans la fonction utilisée pour afficher les secteurs GES sur la page collectivité du site
 @v4.7.0 2024-09-05T08:32:14Z Marc Rutkowski <marc@attractive-media.fr> # Tag du plan sqitch v4.7.0 - Réparation page Collectivité du site
+
+taxonomie/thematique [taxonomie/thematique@v4.5.0] 2024-08-21T09:51:00Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la thematique Agriculture et alimentation
