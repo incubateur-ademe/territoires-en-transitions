@@ -8,11 +8,7 @@ export default {
   parameters: {storyshots: false},
 } as Meta;
 
-const Template = args => (
-  <div className="h-96">
-    <TrajectoireChart {...args} />
-  </div>
-);
+const Template = args => <TrajectoireChart {...args} />;
 
 const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;

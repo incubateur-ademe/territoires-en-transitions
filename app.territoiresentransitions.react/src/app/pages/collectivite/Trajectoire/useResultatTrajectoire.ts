@@ -50,7 +50,8 @@ export const useResultatTrajectoire = ({
         )?.valeurs;
         return valeurs
           ? {
-              id: s.nom,
+              id: s.identifiant,
+              label: s.nom,
               data: valeurs.map(v => ({
                 x: new Date(v.date_valeur).getFullYear(),
                 y: v.objectif,

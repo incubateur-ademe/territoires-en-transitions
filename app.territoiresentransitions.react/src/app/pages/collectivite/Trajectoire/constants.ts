@@ -4,6 +4,23 @@ export const HELPDESK_URL =
 // fichier dans le dossier `public`
 export const DOC_METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
 
+// couleurs et libellés pour les graphes
+export const COLORS = [
+  '#FEF1D8',
+  '#F7B1C2',
+  '#A4E7C7',
+  '#D8EEFE',
+  '#B8D6F7',
+  '#FFD0BB',
+  '#FBE7B5',
+  '#D9D9D9',
+];
+export const LAYERS = {
+  objectifs: {color: '#F5895B', label: 'Mes objectifs'},
+  resultats: {color: '#6A6AF4', label: 'Mes résultats'},
+  trajectoire: {color: '#1E98C6', label: 'SNBC territorialisée'},
+};
+
 // liste des indicateurs Trajectoire
 export const INDICATEURS_TRAJECTOIRE = [
   {
