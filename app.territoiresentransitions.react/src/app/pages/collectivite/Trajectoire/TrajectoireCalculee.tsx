@@ -5,6 +5,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
+import {TrajectoireSecteurChart} from './TrajectoireSecteurChart';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
@@ -31,6 +32,7 @@ export const TrajectoireCalculee = () => {
     objectifs,
     resultats,
     valeursTousSecteurs,
+    valeursSecteur,
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
   } = useResultatTrajectoire({indicateur, secteurIdx});
@@ -84,8 +86,8 @@ export const TrajectoireCalculee = () => {
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-4/6">
           {
-            /** Graphique */
-            valeursTousSecteurs && (
+            /** Graphique "tous secteurs" */
+            secteurIdx === 0 && valeursTousSecteurs && (
               <Card className="h-fit">
                 <TrajectoireChart
                   unite={indicateur.unite}
@@ -93,6 +95,20 @@ export const TrajectoireCalculee = () => {
                   secteurs={valeursTousSecteurs as LineData[]}
                   objectifs={{id: 'objectifs', data: objectifs}}
                   resultats={{id: 'resultats', data: resultats}}
+                />
+              </Card>
+            )
+          }
+          {
+            /** Graphique du secteur sélectionné */
+            secteurIdx > 0 && valeursSecteur && (
+              <Card className="h-fit">
+                <TrajectoireSecteurChart
+                  unite={indicateur.unite}
+                  titre={indicateur.titre}
+                  secteur={valeursSecteur.data}
+                  objectifs={objectifs}
+                  resultats={resultats}
                 />
               </Card>
             )

@@ -68,6 +68,12 @@ export const useResultatTrajectoire = ({
       ? indicateur.identifiant
       : indicateur.secteurs[secteurIdx - 1].identifiant;
 
+  // dataset du secteur sélectionné
+  const valeursSecteur =
+    valeursTousSecteurs && secteurIdx > 0
+      ? valeursTousSecteurs.find(s => s?.id === identifiant)
+      : null;
+
   // charge les données objectifs/résultats
   const {data: objectifsEtResults, isLoading: isLoadingObjectifsResultats} =
     useIndicateurReferentielValeurs({
@@ -94,6 +100,7 @@ export const useResultatTrajectoire = ({
     objectifs,
     resultats,
     valeursTousSecteurs,
+    valeursSecteur,
     donneesSectoriellesIncompletes,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
