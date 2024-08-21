@@ -1,7 +1,7 @@
 import {Button, Card} from '@tet/ui';
 import {useDownloadFile} from 'utils/useDownloadFile';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useTelechargementTrajectoire} from './useTelechargementTrajectoire';
+import {useTelechargementModele} from './useTelechargementModele';
 import {DOC_METHODO} from './constants';
 import {ReactComponent as DbErrorPicto} from './db-error.svg';
 
@@ -11,7 +11,7 @@ import {ReactComponent as DbErrorPicto} from './db-error.svg';
 export const CommuneNonSupportee = () => {
   // pour télécharger les fichiers
   const {mutate: download, isLoading: isDownloading} =
-    useTelechargementTrajectoire();
+    useTelechargementModele();
   const {mutate: downloadFile, isLoading: isDownloadingFile} =
     useDownloadFile();
 
@@ -28,7 +28,7 @@ export const CommuneNonSupportee = () => {
       <p className="font-normal text-lg text-center">
         Nous mettons à votre disposition le fichier de calcul et de méthodologie
         pour vous informer sur les processus et les principes de cette méthode,
-        dans le cas où vous souhaiteriez vous en inspirer.La méthodogie
+        dans le cas où vous souhaiteriez vous en inspirer. La méthodogie
         permettant de calculer la trajectoire SNBC territorialisée a été
         développée pour l’ADEME par Solagro et l’Institut Negawatt. Fruit d’un
         travail de 18 mois avec la contribution de 13 collectivités pilotes
