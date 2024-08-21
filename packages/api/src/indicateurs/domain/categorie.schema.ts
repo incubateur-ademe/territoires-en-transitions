@@ -2,10 +2,10 @@ import {z} from 'zod';
 
 // À voir comment on gère les autres catégories plus tard
 export const categorieProgrammeEnumSchema = z.enum([
+  'clef',
   'cae',
   'eci',
   'crte',
-  'clef',
 ]);
 
 export type CategorieProgramme = z.infer<typeof categorieProgrammeEnumSchema>;

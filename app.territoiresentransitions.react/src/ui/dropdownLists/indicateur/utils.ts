@@ -11,7 +11,7 @@ export function getCategorieLabel(
     case categorieEnum.eci:
       return 'Référentiel ADEME ECI';
     case categorieEnum.crte:
-      return 'CRTE';
+      return 'Indicateurs Contrat de relance et de transition écologique (CRTE)';
     case categorieEnum.clef:
       return 'Indicateurs clés';
   }

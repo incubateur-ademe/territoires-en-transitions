@@ -334,7 +334,9 @@ const IndicateurCardBase = ({
                 {indicateursACompleterRestant
                   ? `${indicateursACompleterRestant} indicateur${
                       indicateursACompleterRestant > 1 ? 's' : ''
-                    } restants à compléter`
+                    } restant${
+                      indicateursACompleterRestant > 1 ? 's' : ''
+                    } à compléter`
                   : 'Compléter l’indicateur'}
               </Button>
             </>
