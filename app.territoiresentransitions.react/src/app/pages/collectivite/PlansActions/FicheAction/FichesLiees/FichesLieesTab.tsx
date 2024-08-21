@@ -69,10 +69,13 @@ const FichesLieesTab = ({
           {/* Liste des fiches des plans liées */}
           <FichesLieesListe
             fiches={fiches}
-            updateFichesLiees={fichesLiees =>
-              updateFiche({...fiche, fiches_liees: fichesLiees})
+            className="sm:grid-cols-2 md:grid-cols-3"
+            onUnlink={ficheId =>
+              updateFiche({
+                ...fiche,
+                fiches_liees: fiches.filter(f => f.id !== ficheId),
+              })
             }
-            isFicheTab
           />
         </div>
       )}

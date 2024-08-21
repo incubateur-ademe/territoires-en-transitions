@@ -9,14 +9,14 @@ import classNames from 'classnames';
 
 type FichesLieesListeProps = {
   fiches: FicheResume[];
-  isFicheTab?: boolean;
-  updateFichesLiees?: (fichesLiees: FicheResume[]) => void;
+  className?: string;
+  onUnlink?: (ficheId: number) => void;
 };
 
 const FichesLieesListe = ({
   fiches,
-  isFicheTab = false,
-  updateFichesLiees,
+  className,
+  onUnlink,
 }: FichesLieesListeProps) => {
   const collectiviteId = useCollectiviteId()!;
 
@@ -26,9 +26,10 @@ const FichesLieesListe = ({
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
     <div>
       <div
-        className={classNames('grid lg:grid-cols-2 xl:grid-cols-3 gap-3', {
-          'sm:grid-cols-2 md:grid-cols-3': isFicheTab,
-        })}
+        className={classNames(
+          'grid lg:grid-cols-2 xl:grid-cols-3 gap-3',
+          className
+        )}
       >
         {fiches.map(fiche => (
           <FicheActionCard
@@ -47,11 +48,7 @@ const FichesLieesListe = ({
                     ficheUid: fiche.id!.toString(),
                   })
             }
-            onUnlink={
-              updateFichesLiees
-                ? () => updateFichesLiees(fiches.filter(f => f.id !== fiche.id))
-                : undefined
-            }
+            onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
           />
         ))}
       </div>

@@ -66,14 +66,12 @@ const ActionsLieesTab = ({
           <ActionsLieesListe
             isReadonly={isReadonly}
             actionsIds={actions?.map(action => action.id)}
-            isFicheTab
+            className="sm:grid-cols-2 md:grid-cols-3"
             onLoad={setIsLoading}
-            onUpdateActionsLiees={actionsLieesIds =>
+            onUnlink={actionsLieeId =>
               updateFiche({
                 ...fiche,
-                actions: actions?.filter(action =>
-                  actionsLieesIds.some(id => id === action.id)
-                ),
+                actions: actions.filter(action => action.id !== actionsLieeId),
               })
             }
           />

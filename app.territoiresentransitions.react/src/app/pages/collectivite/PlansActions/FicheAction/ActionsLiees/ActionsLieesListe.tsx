@@ -7,17 +7,17 @@ import ActionCard from './ActionCard';
 type ActionsLieesListeProps = {
   isReadonly?: boolean;
   actionsIds: string[];
-  isFicheTab?: boolean;
+  className?: string;
   onLoad?: (isLoading: boolean) => void;
-  onUpdateActionsLiees?: (actionsId: string[]) => void;
+  onUnlink?: (actionId: string) => void;
 };
 
 const ActionsLieesListe = ({
   isReadonly,
   actionsIds,
-  isFicheTab = false,
+  className,
   onLoad,
-  onUpdateActionsLiees,
+  onUnlink,
 }: ActionsLieesListeProps) => {
   const {data: actionListe, isLoading} = useActionListe();
 
@@ -37,23 +37,17 @@ const ActionsLieesListe = ({
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
     <div>
       <div
-        className={classNames('grid lg:grid-cols-2 xl:grid-cols-3 gap-3', {
-          'sm:grid-cols-2 md:grid-cols-3': isFicheTab,
-        })}
+        className={classNames(
+          'grid lg:grid-cols-2 xl:grid-cols-3 gap-3',
+          className
+        )}
       >
         {actionsLiees.map(action => (
           <ActionCard
             key={action.action_id}
             isReadonly={isReadonly}
             action={action}
-            onUnlink={
-              onUpdateActionsLiees
-                ? () =>
-                    onUpdateActionsLiees(
-                      actionsIds.filter(id => id !== action.action_id)
-                    )
-                : undefined
-            }
+            onUnlink={onUnlink ? () => onUnlink(action.action_id) : undefined}
             openInNewTab
           />
         ))}
