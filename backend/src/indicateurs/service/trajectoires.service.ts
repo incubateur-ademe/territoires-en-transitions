@@ -123,12 +123,44 @@ export default class TrajectoiresService {
     private readonly sheetService: SheetService,
   ) {}
 
+  getIdentifiantSpreadsheetCalcul() {
+    return process.env.TRAJECTOIRE_SNBC_SHEET_ID!;
+  }
+
+  getIdentifiantXlsxCalcul() {
+    return process.env.TRAJECTOIRE_SNBC_XLSX_ID!;
+  }
+
   getIdentifiantDossierResultat() {
-    return process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID;
+    return process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID!;
   }
 
   getNomFichierTrajectoire(epci: EpciType) {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
+  }
+
+  async downloadModeleTrajectoireSnbc(res: Response, next: NextFunction) {
+    try {
+      if (!this.getIdentifiantXlsxCalcul()) {
+        throw new InternalServerErrorException(
+          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant",
+        );
+      }
+
+      const xlsxBuffer = await this.sheetService.getFileData(
+        this.getIdentifiantXlsxCalcul(),
+      );
+      const nomFichier = await this.sheetService.getFileName(
+        this.getIdentifiantXlsxCalcul(),
+      );
+      // Set the output file name.
+      res.attachment(nomFichier);
+
+      // Send the workbook.
+      res.send(xlsxBuffer);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async downloadTrajectoireSnbc(
@@ -137,7 +169,17 @@ export default class TrajectoiresService {
     next: NextFunction,
   ) {
     try {
-      const resultatVerification = await this.verificationDonneesSnbc(request);
+      if (!this.getIdentifiantXlsxCalcul()) {
+        throw new InternalServerErrorException(
+          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant",
+        );
+      }
+
+      const resultatVerification = await this.verificationDonneesSnbc(
+        request,
+        undefined,
+        true,
+      );
 
       if (
         resultatVerification.status ===
@@ -166,7 +208,7 @@ export default class TrajectoiresService {
       const nomFichier = this.getNomFichierTrajectoire(epci);
 
       const xlsxBuffer = await this.sheetService.getFileData(
-        '14dZbAf8yRqhfqKNnvXUTMgTT34dqkc32',
+        this.getIdentifiantXlsxCalcul(),
       );
 
       // Utilisation de xlsx-template car:
@@ -243,6 +285,18 @@ export default class TrajectoiresService {
   ): Promise<CalculTrajectoireResult> {
     let mode: CalculTrajectoireResultatMode =
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
+
+    if (!this.getIdentifiantSpreadsheetCalcul()) {
+      throw new InternalServerErrorException(
+        "L'identifiant de la feuille de calcul pour les trajectoires SNBC est manquante",
+      );
+    }
+
+    if (!this.getIdentifiantDossierResultat()) {
+      throw new InternalServerErrorException(
+        "L'identifiant du dossier pour le stockage des trajectoires SNBC calculées est manquant",
+      );
+    }
 
     // Création de la source métadonnée SNBC si elle n'existe pas
     let indicateurSourceMetadonnee =
@@ -348,16 +402,10 @@ export default class TrajectoiresService {
     }
     epci = resultatVerification.epci;
 
-    if (!process.env.TRAJECTOIRE_SNBC_SHEET_ID) {
-      throw new InternalServerErrorException(
-        "L'identifiant de la feuille de calcul pour les trajectoires SNBC est manquante",
-      );
-    }
-
     const nomFichier = this.getNomFichierTrajectoire(epci);
     let trajectoireCalculSheetId = await this.sheetService.getFileIdByName(
       nomFichier,
-      process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID,
+      this.getIdentifiantDossierResultat(),
     );
     if (
       trajectoireCalculSheetId &&
@@ -375,14 +423,12 @@ export default class TrajectoiresService {
         await this.sheetService.deleteFile(trajectoireCalculSheetId);
       }
       trajectoireCalculSheetId = await this.sheetService.copyFile(
-        process.env.TRAJECTOIRE_SNBC_SHEET_ID,
+        this.getIdentifiantSpreadsheetCalcul(),
         nomFichier,
-        process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
-          ? [process.env.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID]
-          : undefined,
+        [this.getIdentifiantDossierResultat()],
       );
       this.logger.log(
-        `Fichier de trajectoire SNBC créé à partir du master ${process.env.TRAJECTOIRE_SNBC_SHEET_ID} avec l'identifiant ${trajectoireCalculSheetId}`,
+        `Fichier de trajectoire SNBC créé à partir du master ${this.getIdentifiantSpreadsheetCalcul()} avec l'identifiant ${trajectoireCalculSheetId}`,
       );
     }
 
@@ -643,9 +689,9 @@ export default class TrajectoiresService {
           identifiantIndicateurValeur2015.indicateur_valeur.resultat !==
             undefined // 0 est une valeur valide
         ) {
-          /*console.log(
-            `${identifiant}: ${indicateurValeur.indicateur_valeur.resultat} ${indicateurValeur.indicateur_definition?.unite}`,
-          );*/
+          console.log(
+            `${identifiant}: ${identifiantIndicateurValeur2015.indicateur_valeur.resultat} ${identifiantIndicateurValeur2015.indicateur_definition?.unite}`,
+          );
 
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
           if (valeurARemplir.valeur !== null) {
@@ -669,6 +715,12 @@ export default class TrajectoiresService {
             }
           }
         } else {
+          identifiantIndicateurValeurs.forEach((v) => {
+            console.log(
+              `${identifiant}: ${v.indicateur_valeur.resultat} ${v.indicateur_definition?.unite} (${v.indicateur_valeur.date_valeur})`,
+            );
+          });
+
           const interpolationResultat = this.getInterpolationValeur(
             identifiantIndicateurValeurs.map((v) => v.indicateur_valeur),
           );

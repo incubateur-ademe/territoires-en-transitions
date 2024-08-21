@@ -29,6 +29,12 @@ export class TrajectoiresController {
     return response;
   }
 
+  @Get('snbc/modele')
+  downloadModeleSnbc(@Res() res: Response, @Next() next: NextFunction) {
+    this.logger.log(`Téléchargement du modele de trajectoire SNBC`);
+    this.trajectoiresService.downloadModeleTrajectoireSnbc(res, next);
+  }
+
   @Get('snbc/telechargement')
   downloadDataSnbc(
     @Query() request: CollectiviteRequest,
