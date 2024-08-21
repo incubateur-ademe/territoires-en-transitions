@@ -12,23 +12,19 @@ type TitreFicheProps = {
  */
 const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(titre ?? '');
+  const [editedTitle, setEditedTitle] = useState(titre);
 
-  useEffect(() => {
-    setEditedTitle(titre ?? '');
-  }, [titre]);
+  useEffect(() => setEditedTitle(titre), [titre]);
 
   // Switch entre les modes lecture et édition
   // Lors du switch d'édition à lecture -> sauvegarde des modifications
   const handleChangeMode = () => {
     setIsEditing(prevState => !prevState);
     if (isEditing) {
-      const titleToSave = editedTitle.trim();
+      const titleToSave = editedTitle?.trim() ?? null;
       if (titleToSave !== titre) {
-        updateTitle(titleToSave.length ? titleToSave : null);
+        updateTitle(titleToSave?.length ? titleToSave : null);
         setEditedTitle(titleToSave);
-      } else {
-        setEditedTitle(titre ?? '');
       }
     }
   };
@@ -42,7 +38,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
       {isEditing ? (
         // Titre en version édition
         <Input
-          value={editedTitle}
+          value={editedTitle ?? ''}
           autoFocus
           onChange={evt => setEditedTitle(evt.target.value)}
           onBlur={handleChangeMode}
