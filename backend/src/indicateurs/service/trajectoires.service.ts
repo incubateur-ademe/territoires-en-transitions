@@ -8,6 +8,7 @@ import { NextFunction, Response } from 'express';
 import { JSZipGeneratorOptions } from 'jszip';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import slugify from 'slugify';
 import * as XlsxTemplate from 'xlsx-template';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -136,7 +137,9 @@ export default class TrajectoiresService {
   }
 
   getNomFichierTrajectoire(epci: EpciType) {
-    return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
+    return slugify(`Trajectoire SNBC - ${epci.siren} - ${epci.nom}`, {
+      replacement: ' ',
+    });
   }
 
   async downloadModeleTrajectoireSnbc(res: Response, next: NextFunction) {
