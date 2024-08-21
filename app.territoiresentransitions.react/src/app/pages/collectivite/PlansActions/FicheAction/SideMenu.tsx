@@ -29,7 +29,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
   return (
     <div
       className={classNames(
-        'absolute z-[800] top-0 h-screen max-h-screen overflow-x-auto w-[50%] lg:w-[33%] xl:w-[30%] bg-white rounded-l-lg border-l border-l-grey-3 transition-all duration-500',
+        'absolute z-[800] top-0 h-screen max-h-screen overflow-hidden w-[50%] lg:w-[33%] xl:w-[30%] flex flex-col bg-white rounded-l-lg border-l border-l-grey-3 transition-all duration-500',
         {
           '-right-[50%] lg:-right-[33%] xl:-right-[30%]': !isOpen,
           'right-0': isOpen,
@@ -38,7 +38,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
       style={isOpen ? {boxShadow: '-5px 0px 10px 1px #ddd'} : {}}
     >
       {/* Titre + bouton de fermeture */}
-      <div className="p-4 flex justify-between items-center bg-white border-b border-b-grey-3 shadow-sm sticky z-[801] top-0">
+      <div className="p-4 flex justify-between items-center bg-white border-b border-b-grey-3 shadow-sm z-[801] top-0">
         <h5 className="mb-0">{title}</h5>
         <Button
           title="Fermer"
@@ -50,7 +50,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
       </div>
 
       {/* Contenu du side menu */}
-      {displayContent && children}
+      <div className="grow overflow-y-auto">{displayContent && children}</div>
     </div>
   );
 };

@@ -34,7 +34,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
   };
 
   return (
-    <div className="grow p-4 overflow-y-auto">
+    <div className="p-4">
       <div className=" relative flex flex-col gap-4 z-[1]">
         <Field title="Rechercher par nom ou description" small>
           <Input
