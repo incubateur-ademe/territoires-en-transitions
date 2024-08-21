@@ -7,6 +7,7 @@
  */
 
 import {useState} from 'react';
+import {Datum} from '@nivo/line';
 import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
@@ -20,8 +21,8 @@ export type TrajectoireChartProps = {
   titre: string;
   unite: string;
   secteurs: LineData[];
-  objectifs: LineData;
-  resultats: LineData;
+  objectifs: Datum[];
+  resultats: Datum[];
 };
 
 export const TrajectoireChart = ({
@@ -33,10 +34,15 @@ export const TrajectoireChart = ({
 }: TrajectoireChartProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const secteursNonVides = secteurs.filter(s => !!s.data?.length);
-  const objectifsEtResultats = [objectifs, resultats].filter(
-    s => !!s.data?.length
-  );
+  // affecte d'abord les couleurs avant de filtrer les dataset vides
+  const secteursNonVides = secteurs
+    .map((s, i) => ({...s, color: COLORS[i % COLORS.length]}))
+    .filter(s => !!s.data?.length);
+
+  const objectifsEtResultats = [
+    {id: 'objectifs', data: objectifs},
+    {id: 'resultats', data: resultats},
+  ].filter(s => !!s?.data?.length);
 
   return (
     <>
@@ -91,9 +97,9 @@ export const TrajectoireChart = ({
               className: 'text-primary-8 font-medium',
               size: 'sm',
               items: [
-                ...secteursNonVides.map(({label}, i) => ({
+                ...secteursNonVides.map(({label, color}, i) => ({
                   name: label!,
-                  color: COLORS[i % COLORS.length],
+                  color,
                   symbole: AreaSymbol,
                 })),
                 ...objectifsEtResultats.map(({id}) => ({
@@ -102,6 +108,50 @@ export const TrajectoireChart = ({
                   symbole: SolidLineSymbol,
                 })),
               ],
+            },
+            sliceTooltip: ({slice}) => {
+              const annee = slice.points[0].data.x;
+              const objectif = objectifs?.find(o => o.x === annee);
+              const resultat = resultats?.find(o => o.x === annee);
+              return (
+                <div className="flex flex-col gap-1 bg-white p-4 font-normal text-primary-8 text-sm shadow-sm">
+                  <span>
+                    En <strong>{slice.points[0].data.xFormatted}</strong>
+                  </span>
+                  {slice.points.map(point => {
+                    const secteur = secteursNonVides.find(
+                      s => s.id === point.serieId
+                    );
+                    return (
+                      secteur && (
+                        <div className="flex items-center gap-3" key={point.id}>
+                          {AreaSymbol(secteur.color)}
+                          {secteur.label}
+                          <strong>{point.data.yFormatted}</strong>
+                        </div>
+                      )
+                    );
+                  })}
+                  {(objectif || resultat) && (
+                    <div className="mt-2">
+                      {objectif && (
+                        <div className="flex items-center gap-3">
+                          {SolidLineSymbol(LAYERS.objectifs.color)}
+                          Objectif
+                          <strong>{objectif.y?.toString()}</strong>
+                        </div>
+                      )}
+                      {resultat && (
+                        <div className="flex items-center gap-3">
+                          {SolidLineSymbol(LAYERS.resultats.color)}
+                          Résultat
+                          <strong>{resultat.y?.toString()}</strong>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
             },
             layers: [
               'grid',
@@ -117,23 +167,21 @@ export const TrajectoireChart = ({
               // couche séparée pour les lignes objectifs/résultats car
               // `enableArea` est fixé globalement
               ({lineGenerator, xScale, yScale}) => {
-                return [objectifs, resultats].map(serie =>
-                  serie?.data?.length ? (
-                    <path
-                      d={lineGenerator(
-                        serie.data.map(d => ({
-                          x: (xScale as any)(d.x),
-                          y: (yScale as any)(d.y),
-                        }))
-                      )}
-                      fill="none"
-                      stroke={LAYERS[serie.id as LayerKey].color}
-                      style={{
-                        strokeWidth: 4,
-                      }}
-                    />
-                  ) : undefined
-                );
+                return objectifsEtResultats.map(serie => (
+                  <path
+                    d={lineGenerator(
+                      serie.data.map(d => ({
+                        x: (xScale as any)(d.x),
+                        y: (yScale as any)(d.y),
+                      }))
+                    )}
+                    fill="none"
+                    stroke={LAYERS[serie.id as LayerKey].color}
+                    style={{
+                      strokeWidth: 4,
+                    }}
+                  />
+                ));
               },
             ],
           },

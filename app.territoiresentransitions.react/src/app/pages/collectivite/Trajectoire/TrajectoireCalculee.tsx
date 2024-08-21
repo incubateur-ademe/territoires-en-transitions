@@ -93,8 +93,8 @@ export const TrajectoireCalculee = () => {
                   unite={indicateur.unite}
                   titre={indicateur.titre}
                   secteurs={valeursTousSecteurs as LineData[]}
-                  objectifs={{id: 'objectifs', data: objectifs}}
-                  resultats={{id: 'resultats', data: resultats}}
+                  objectifs={objectifs}
+                  resultats={resultats}
                 />
               </Card>
             )
