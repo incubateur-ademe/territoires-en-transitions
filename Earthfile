@@ -341,6 +341,7 @@ backend-deploy: ## Déploie le backend dans une app Koyeb existante
         --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
         --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
         --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
+        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
         --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
 
 app-build: ## construit l'image de l'app
