@@ -25,11 +25,12 @@ const genRandomValues = (offset = 0) =>
   }));
 
 const secteurs = INDICATEURS_TRAJECTOIRE[0].secteurs.map(secteur => ({
-  id: secteur.nom,
+  id: secteur.identifiant,
+  label: secteur.nom,
   data: genRandomValues(),
 }));
-const objectifs = {id: 'objectifs', data: genRandomValues(350)};
-const resultats = {id: 'resultats', data: genRandomValues(350)};
+const objectifs = genRandomValues(350);
+const resultats = genRandomValues(350);
 const titre = 'Comparaison des trajectoires d’émissions de GES';
 const unite = 'ktco2eq';
 
