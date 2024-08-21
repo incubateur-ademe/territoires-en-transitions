@@ -15,6 +15,10 @@ import {FicheAction} from '../data/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {getMaxLengthMessage} from '../utils';
+
+const DESCRIPTION_MAX_LENGTH = 20000;
+const MOYENS_MAX_LENGTH = 10000;
 
 /**
  * Bouton + modale pour l'édition des informations principales d'une fiche action
@@ -93,10 +97,23 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
           </Field>
 
           {/* Description */}
-          <Field title="Description de l'action" className="col-span-2">
+          <Field
+            title="Description de l'action"
+            className="col-span-2"
+            state={
+              editedFiche.description?.length === DESCRIPTION_MAX_LENGTH
+                ? 'info'
+                : 'default'
+            }
+            message={getMaxLengthMessage(
+              editedFiche.description ?? '',
+              DESCRIPTION_MAX_LENGTH
+            )}
+          >
             <Textarea
               className="min-h-[100px]"
               value={editedFiche.description ?? ''}
+              maxLength={DESCRIPTION_MAX_LENGTH}
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,
@@ -107,10 +124,23 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
           </Field>
 
           {/* Ressources */}
-          <Field title="Moyens humains et techniques" className="col-span-2">
+          <Field
+            title="Moyens humains et techniques"
+            className="col-span-2"
+            state={
+              editedFiche.ressources?.length === MOYENS_MAX_LENGTH
+                ? 'info'
+                : 'default'
+            }
+            message={getMaxLengthMessage(
+              editedFiche.ressources ?? '',
+              MOYENS_MAX_LENGTH
+            )}
+          >
             <Textarea
               className="min-h-[100px]"
               value={editedFiche.ressources ?? ''}
+              maxLength={MOYENS_MAX_LENGTH}
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,

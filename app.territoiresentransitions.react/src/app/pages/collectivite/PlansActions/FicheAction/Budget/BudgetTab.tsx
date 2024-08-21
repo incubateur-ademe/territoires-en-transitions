@@ -8,10 +8,6 @@ import ModaleBudget from './ModaleBudget';
 import FinanceursListe from './FinanceursListe';
 import BudgetBadge from './BudgetBadge';
 
-export const getFormattedNumber = (nb: number) => {
-  return nb.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-};
-
 type BudgetTabProps = {
   isReadonly: boolean;
   fiche: FicheAction;

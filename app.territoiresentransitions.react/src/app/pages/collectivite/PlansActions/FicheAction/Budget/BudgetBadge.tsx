@@ -1,5 +1,5 @@
 import {Badge} from '@tet/ui';
-import {getFormattedNumber} from './BudgetTab';
+import {getFormattedNumber} from '../utils';
 
 type BudgetBadgeProps = {
   budgetPrevisionnel: number;

@@ -10,6 +10,9 @@ import {
 } from '@tet/ui';
 import {FicheAction} from '../data/types';
 import EffetsAttendusDropdown from 'ui/dropdownLists/EffetsAttendusDropdown/EffetsAttendusDropdown';
+import {getMaxLengthMessage} from '../utils';
+
+const OBJECTIFS_MAX_LENGTH = 10000;
 
 type ModaleIndicateursHeaderProps = {
   fiche: FicheAction;
@@ -35,10 +38,23 @@ const ModaleIndicateursHeader = ({
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Objectifs */}
-          <Field title="Objectifs" className="col-span-2">
+          <Field
+            title="Objectifs"
+            className="col-span-2"
+            state={
+              editedFiche.objectifs?.length === OBJECTIFS_MAX_LENGTH
+                ? 'info'
+                : 'default'
+            }
+            message={getMaxLengthMessage(
+              editedFiche.objectifs ?? '',
+              OBJECTIFS_MAX_LENGTH
+            )}
+          >
             <Textarea
               className="min-h-[100px]"
               value={editedFiche.objectifs ?? ''}
+              maxLength={OBJECTIFS_MAX_LENGTH}
               onChange={evt =>
                 setEditedFiche(prevState => ({
                   ...prevState,
