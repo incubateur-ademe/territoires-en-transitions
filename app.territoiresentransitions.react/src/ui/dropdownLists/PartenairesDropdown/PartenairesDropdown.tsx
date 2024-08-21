@@ -1,6 +1,6 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TPartenaireRow} from 'types/alias';
-import SelectWithUpdates from '../SelectWithUpdates/SelectWithUpdates';
+import SelectWithUpdates from '../tags/SelectTags';
 import {usePartenairesListe} from './usePartenairesListe';
 
 type PartenairesDropdownProps = Omit<

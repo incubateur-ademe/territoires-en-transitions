@@ -3,7 +3,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {FicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/types';
 
-export const useFichesResumeListe = () => {
+export const useFichesActionsListe = () => {
   const collectivite_id = useCollectiviteId()!;
 
   return useQuery(['fiche_resume_collectivite', collectivite_id], async () => {

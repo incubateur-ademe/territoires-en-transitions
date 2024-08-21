@@ -1,6 +1,6 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TFicheActionServicePiloteRow} from 'types/alias';
-import SelectWithUpdates from '../SelectWithUpdates/SelectWithUpdates';
+import SelectWithUpdates from '../tags/SelectTags';
 import {useServicesPilotesListe} from './useServicesPilotesListe';
 
 type ServicesPilotesDropdownProps = Omit<

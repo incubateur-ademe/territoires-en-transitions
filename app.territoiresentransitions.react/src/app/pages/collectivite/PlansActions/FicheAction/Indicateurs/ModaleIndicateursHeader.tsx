@@ -9,7 +9,7 @@ import {
   Textarea,
 } from '@tet/ui';
 import {FicheAction} from '../data/types';
-import EffetsAttendusDropdown from 'ui/dropdownLists/EffetsAttendusDropdown/EffetsAttendusDropdown';
+import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import {getMaxLengthMessage} from '../utils';
 
 const OBJECTIFS_MAX_LENGTH = 10000;

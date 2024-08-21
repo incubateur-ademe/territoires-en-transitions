@@ -13,7 +13,7 @@ import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import CiblesDropdown from 'ui/dropdownLists/CiblesDropdown/CiblesDropdown';
+import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModaleActeursProps = {

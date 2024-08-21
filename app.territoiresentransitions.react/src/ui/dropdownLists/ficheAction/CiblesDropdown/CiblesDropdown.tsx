@@ -1,6 +1,6 @@
 import {SelectFilter, SelectMultipleProps} from '@tet/ui';
 import {TFicheActionCibles} from 'types/alias';
-import {ficheActionCiblesOptions} from '../listesStatiques';
+import {ficheActionCiblesOptions} from '../../listesStatiques';
 
 type CiblesDropdownProps = Omit<
   SelectMultipleProps,

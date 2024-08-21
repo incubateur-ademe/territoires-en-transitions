@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
 import {FicheAction} from '../data/types';
-import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
+import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 
 type ModaleFichesLieesProps = {
   isOpen: boolean;
@@ -36,7 +36,7 @@ const ModaleFichesLiees = ({
       size="lg"
       render={({descriptionId}) => (
         <Field fieldId={descriptionId} title="Fiches des plans liées">
-          <FichesResumeDropdown
+          <FichesActionsDropdown
             ficheCouranteId={fiche.id}
             values={editedFiche.fiches_liees?.map(f => f.id.toString())}
             onChange={({fiches}) =>

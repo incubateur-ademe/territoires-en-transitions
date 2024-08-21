@@ -6,7 +6,7 @@ import {
   useUpdateFichesActionLiees,
 } from './useFichesActionLiees';
 import {TIndicateurDefinition} from './types';
-import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
+import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 
 export type TFichesActionProps = {
@@ -28,7 +28,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   return (
     <>
       <Field title="Fiches des plans liées">
-        <FichesResumeDropdown
+        <FichesActionsDropdown
           disabled={isReadonly}
           ficheCouranteId={null}
           values={(fiches ? objectToSnake(fiches) : []).map(f =>
