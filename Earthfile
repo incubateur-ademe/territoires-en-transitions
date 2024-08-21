@@ -601,6 +601,8 @@ storybook-test-run: # lance les tests du module `ui`
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
+    USER root
+    RUN apk --update add jq
     COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
     ENTRYPOINT sh ./curl_test.sh
     SAVE IMAGE curl-test:latest

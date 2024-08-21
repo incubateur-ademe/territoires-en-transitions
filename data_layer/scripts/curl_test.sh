@@ -1,6 +1,6 @@
 #!/bin/sh
-
-
+POSTGREST_VERSION=$(curl -s "$URL/rest/v1/" | jq -r ".info.version")
+echo "verification de PostgREST avec l'url: $URL, version: $POSTGREST_VERSION"
 until curl --fail -X POST "$URL/rest/v1/rpc/is_authenticated" \
             -H "Content-Type: application/json" \
             -H "apikey: $API_KEY" \
