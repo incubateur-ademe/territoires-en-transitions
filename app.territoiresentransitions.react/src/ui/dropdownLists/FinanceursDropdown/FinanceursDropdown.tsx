@@ -1,7 +1,7 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TFinanceurTagInsert} from 'types/alias';
 import {useFinanceursListe} from './useFinanceursListe';
-import SelectWithUpdates from '../SelectWithUpdates/SelectWithUpdates';
+import SelectWithUpdates from '../tags/SelectTags';
 
 type FinanceursDropdownProps = Omit<
   SelectMultipleProps,

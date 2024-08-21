@@ -1,6 +1,6 @@
 import {SelectFilter, SelectMultipleProps} from '@tet/ui';
 import {TFicheActionResultatsAttendus} from 'types/alias';
-import {ficheActionResultatsAttendusOptions} from '../listesStatiques';
+import {ficheActionResultatsAttendusOptions} from '../../listesStatiques';
 
 type EffetsAttendusDropdownProps = Omit<
   SelectMultipleProps,

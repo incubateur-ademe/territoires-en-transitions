@@ -4,7 +4,7 @@ import {useUpdateFichesActionLiees} from './useUpdateFichesActionLiees';
 import {useCreateFicheResume} from '../PlansActions/FicheAction/data/useCreateFicheResume';
 import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import {Field} from '@tet/ui';
-import FichesResumeDropdown from 'ui/dropdownLists/FichesResumeDropdown/FichesResumeDropdown';
+import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 
 export type TFichesActionProps = {
   actionId: string;
@@ -37,7 +37,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
       )}
 
       <Field title="Fiches des plans liées">
-        <FichesResumeDropdown
+        <FichesActionsDropdown
           disabled={isReadonly}
           ficheCouranteId={null}
           values={fiches.map(f => f.id.toString())}

@@ -3,12 +3,9 @@ import {QueryKey} from 'react-query';
 import {TableTag} from '@tet/api';
 import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useTagUpdate, useDeleteTag, useTagCreate} from '../hooks';
+import {useTagUpdate, useDeleteTag, useTagCreate} from '.';
 
-type SelectWithUpdatesProps = Omit<
-  SelectMultipleProps,
-  'options' | 'onChange'
-> & {
+type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
   queryKey: QueryKey;
   tagTableName: TableTag;
   optionsListe?: {collectivite_id: number; id: number; nom: string}[];
@@ -24,7 +21,7 @@ type SelectWithUpdatesProps = Omit<
   }) => void;
 };
 
-const SelectWithUpdates = ({
+const SelectTags = ({
   queryKey,
   tagTableName,
   optionsListe,
@@ -32,7 +29,7 @@ const SelectWithUpdates = ({
   disabledOptionsIds,
   refetchOptions,
   ...props
-}: SelectWithUpdatesProps) => {
+}: SelectTagsProps) => {
   const collectiviteId = useCollectiviteId();
 
   // Liste d'options pour le select
@@ -142,4 +139,4 @@ const SelectWithUpdates = ({
   );
 };
 
-export default SelectWithUpdates;
+export default SelectTags;
