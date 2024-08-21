@@ -53,3 +53,21 @@ export const getModifiedSince = (date: string) => {
   }
   return `le ${format(modifiedDate, 'dd/MM/yyyy')}`;
 };
+
+// Renvoie un number formatté sous forme de string, avec un espace tous les 3 digits
+export const getFormattedNumber = (nb: number) => {
+  return nb.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+};
+
+// Message d'information sur le nombre de caractères pour les textarea
+export const getMaxLengthMessage = (element: string, maxLength: number) => {
+  if (element.length === maxLength) {
+    return `Le nombre maximum de caractères a été atteint (${getFormattedNumber(
+      maxLength
+    )})`;
+  } else {
+    return `${getFormattedNumber(element.length)} / ${getFormattedNumber(
+      maxLength
+    )} caractères`;
+  }
+};
