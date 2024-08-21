@@ -32,9 +32,14 @@ const useTrajectoire = () => {
 export const useResultatTrajectoire = ({
   indicateur,
   secteurIdx,
+  coef,
 }: {
+  /** indicateur trajectoire */
   indicateur: IndicateurTrajectoire;
+  /** index du secteur sélectionné */
   secteurIdx: number;
+  /** coefficient pour normaliser les données objectifs/résultats */
+  coef?: number;
 }) => {
   // données de la trajectoire
   const {data, isLoading: isLoadingTrajectoire} = useTrajectoire();
@@ -84,11 +89,11 @@ export const useResultatTrajectoire = ({
   const objectifs =
     objectifsEtResults
       ?.filter(v => typeof v.objectif === 'number')
-      .map(v => ({x: v.annee, y: v.objectif})) || [];
+      .map(v => ({x: v.annee, y: (v.objectif as number) * (coef || 1)})) || [];
   const resultats =
     objectifsEtResults
       ?.filter(v => typeof v.resultat === 'number')
-      .map(v => ({x: v.annee, y: v.resultat})) || [];
+      .map(v => ({x: v.annee, y: (v.resultat as number) * (coef || 1)})) || [];
 
   // détermine si les données sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =

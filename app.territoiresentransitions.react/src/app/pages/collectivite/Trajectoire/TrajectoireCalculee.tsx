@@ -24,7 +24,7 @@ export const TrajectoireCalculee = () => {
   // secteur sélectionné
   const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
   const [secteurIdx, setSecteurIdx] = useState<number>(0);
-  const secteur = indicateur.secteurs[secteurIdx];
+  const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
 
   // données de la trajectoire
   const {
@@ -35,7 +35,7 @@ export const TrajectoireCalculee = () => {
     valeursSecteur,
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
-  } = useResultatTrajectoire({indicateur, secteurIdx});
+  } = useResultatTrajectoire({indicateur, secteurIdx, coef: indicateur.coef});
 
   return (
     <div className="grow py-12">
@@ -87,7 +87,7 @@ export const TrajectoireCalculee = () => {
         <div className="flex flex-col gap-8 w-4/6">
           {
             /** Graphique "tous secteurs" */
-            secteurIdx === 0 && valeursTousSecteurs && (
+            !secteur && valeursTousSecteurs && (
               <Card className="h-fit">
                 <TrajectoireChart
                   unite={indicateur.unite}
@@ -101,15 +101,15 @@ export const TrajectoireCalculee = () => {
           }
           {
             /** Graphique du secteur sélectionné */
-            secteurIdx > 0 && valeursSecteur && (
+            secteur && valeursSecteur && (
               <Card className="h-fit">
                 <TrajectoireSecteurChart
                   unite={indicateur.unite}
-                  titre={indicateur.titre}
+                  titre={`${indicateur.titre}, secteur ${secteur.nom}`}
                   secteur={valeursSecteur.data}
                   objectifs={objectifs}
                   resultats={resultats}
-                />
+                ></TrajectoireSecteurChart>
               </Card>
             )
           }

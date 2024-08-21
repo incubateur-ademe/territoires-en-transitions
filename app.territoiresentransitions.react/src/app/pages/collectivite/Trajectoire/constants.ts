@@ -29,6 +29,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     titre: 'Comparaison des trajectoires d’émissions de GES',
     unite: 'teq CO2',
     identifiant: 'cae_1.a',
+    coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
     secteurs: [
       {
         nom: 'Résidentiel',
@@ -150,6 +151,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     titre: "Comparaison des trajectoires de consommation d'énergie",
     unite: 'GWh',
     identifiant: 'cae_2.a',
+    coef: 1, // pas de normalisation
     secteurs: [
       {nom: 'Résidentiel', identifiant: 'cae_2.e'},
       {nom: 'Tertiaire', identifiant: 'cae_2.f'},
