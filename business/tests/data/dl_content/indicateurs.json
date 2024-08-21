@@ -2795,6 +2795,7 @@
       "selection": true,
       "source": null,
       "thematiques": [
+        "agriculture_alimentation",
         "urbanisme_et_amenagement"
       ],
       "titre_long": "Part de surface agricole certifi\u00e9e agriculture biologique",
@@ -3762,6 +3763,7 @@
       "selection": false,
       "source": null,
       "thematiques": [
+        "agriculture_alimentation",
         "urbanisme_et_amenagement"
       ],
       "titre_long": "Part de la surface agricole utile en agriculture biologique",
@@ -4158,7 +4160,8 @@
       "selection": false,
       "source": null,
       "thematiques": [
-        "activites_economiques"
+        "activites_economiques",
+        "agriculture_alimentation"
       ],
       "titre_long": "Part de l\u2019alimentation sous signe de qualit\u00e9 en restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (%)",
       "type": null,
