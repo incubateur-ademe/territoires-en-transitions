@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Field, Modal, ModalFooterOKCancel, Textarea} from '@tet/ui';
 import {getMaxLengthMessage} from '../../utils';
 
@@ -16,6 +16,10 @@ const ModaleCreationNote = ({
   updateNotes,
 }: ModaleCreationNoteProps) => {
   const [editedNotes, setEditedNotes] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) setEditedNotes(null);
+  }, [isOpen]);
 
   const handleSave = () => {
     if (editedNotes !== null) updateNotes(editedNotes);
