@@ -4,6 +4,7 @@ import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
+import { initApplicationCredentials } from '../../common/services/gcloud.helper';
 import {
   SheetValueInputOption,
   SheetValueRenderOption,
@@ -35,6 +36,7 @@ export default class SheetService {
     | auth.Impersonated
   > {
     if (!this.authClient) {
+      initApplicationCredentials();
       this.authClient = await google.auth.getClient({
         scopes: [
           'https://www.googleapis.com/auth/spreadsheets',
@@ -134,6 +136,17 @@ export default class SheetService {
     };
     await drive.files.delete(deleteOptions);
     this.logger.log(`Spreadsheet ${fileId} correctement supprimé.`);
+  }
+
+  async getFileName(fileId: string): Promise<string> {
+    const authClient = await this.getAuthClient();
+    const getOptions: drive_v3.Params$Resource$Files$Get = {
+      auth: authClient,
+      fileId: fileId,
+      fields: 'name',
+    };
+    const res = await drive.files.get(getOptions);
+    return res.data.name!;
   }
 
   async getFileData(fileId: string): Promise<Buffer> {
