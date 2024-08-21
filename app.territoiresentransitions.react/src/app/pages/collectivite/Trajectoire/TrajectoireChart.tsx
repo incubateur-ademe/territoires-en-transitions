@@ -11,21 +11,9 @@ import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {theme} from 'ui/charts/chartsTheme';
+import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
+import {COLORS, LAYERS} from './constants';
 
-const COLORS = [
-  '#FEF1D8',
-  '#F7B1C2',
-  '#A4E7C7',
-  '#D8EEFE',
-  '#B8D6F7',
-  '#FFD0BB',
-  '#FBE7B5',
-  '#D9D9D9',
-];
-const LAYERS = {
-  objectifs: {color: '#F5895B', label: 'Objectifs'},
-  resultats: {color: '#6A6AF4', label: 'Résultats'},
-};
 type LayerKey = keyof typeof LAYERS;
 
 export type TrajectoireChartProps = {
@@ -44,6 +32,11 @@ export const TrajectoireChart = ({
   resultats,
 }: TrajectoireChartProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const secteursNonVides = secteurs.filter(s => !!s.data?.length);
+  const objectifsEtResultats = [objectifs, resultats].filter(
+    s => !!s.data?.length
+  );
 
   return (
     <>
@@ -66,10 +59,10 @@ export const TrajectoireChart = ({
         }}
         line={{
           chart: {
-            data: secteurs.toReversed(),
+            data: secteursNonVides.toReversed(),
             colors: COLORS,
             theme,
-            margin: {top: 5, right: 5, bottom: 100, left: 50},
+            margin: {top: 5, right: 5, bottom: 55, left: 50},
             xScale: {type: 'point'},
             yScale: {
               type: 'linear',
@@ -93,50 +86,23 @@ export const TrajectoireChart = ({
             enableSlices: 'x',
             animate: true,
             motionConfig: 'slow',
-            legend: {isOpen: false},
-            legends: [
-              // légende des secteurs
-              {
-                anchor: 'bottom',
-                direction: 'row',
-                translateY: 70,
-                itemsSpacing: 10,
-                itemWidth: 125,
-                itemHeight: 20,
-                symbolSize: 12,
-                symbolShape: ({x, y, fill}) => {
-                  return (
-                    <rect
-                      x={x}
-                      y={y + 2}
-                      fill={fill}
-                      width={14}
-                      height={10}
-                      radius={2}
-                    />
-                  );
-                },
-              },
-              // légende des lignes objectifs/résultats
-              {
-                anchor: 'bottom',
-                direction: 'row',
-                translateY: 95,
-                itemWidth: 120,
-                itemHeight: 20,
-                symbolShape: ({x, y, fill}) => {
-                  return (
-                    <rect x={x} y={y + 7} fill={fill} width={11} height={2} />
-                  );
-                },
-                data: [objectifs, resultats]
-                  .filter(serie => serie?.data?.length)
-                  .map(serie => ({
-                    id: serie.id,
-                    ...LAYERS[serie.id as LayerKey],
-                  })),
-              },
-            ],
+            legend: {
+              isOpen: true,
+              className: 'text-primary-8 font-medium',
+              size: 'sm',
+              items: [
+                ...secteursNonVides.map(({label}, i) => ({
+                  name: label!,
+                  color: COLORS[i % COLORS.length],
+                  symbole: AreaSymbol,
+                })),
+                ...objectifsEtResultats.map(({id}) => ({
+                  name: LAYERS[id as LayerKey].label,
+                  color: LAYERS[id as LayerKey].color,
+                  symbole: SolidLineSymbol,
+                })),
+              ],
+            },
             layers: [
               'grid',
               'markers',
