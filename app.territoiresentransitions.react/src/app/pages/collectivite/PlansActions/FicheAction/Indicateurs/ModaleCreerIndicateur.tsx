@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {Modal} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
