@@ -1,3 +1,4 @@
+import {CustomLayerProps} from '@nivo/line';
 import {ChartLegendItem} from '../ChartLegend';
 import {getDataColor} from '../utils';
 import {LineData} from './LineChart';
@@ -22,4 +23,29 @@ export const getLeftLineChartMargin = (valeurs: TIndicateurValeur[]) => {
   const valueLength = maxValue.toString().length;
   // 10px étant +- la largeur d'un caractère, on multiplie par 10 pour obtenir la largeur en px
   return valueLength <= 1 ? 16 : valueLength * 10;
+};
+
+/** Génère les lignes en appliquant le `style` donné dans la série */
+export const StyledLineLayer = ({
+  series,
+  lineGenerator,
+  xScale,
+  yScale,
+}: CustomLayerProps) => {
+  return series.map(({id, data, color, style}) => (
+    <path
+      key={id}
+      d={
+        lineGenerator(
+          data.map(d => ({
+            x: (xScale as any)(d.data.x),
+            y: (yScale as any)(d.data.y),
+          }))
+        ) || undefined
+      }
+      fill="none"
+      stroke={color}
+      style={style}
+    />
+  ));
 };
