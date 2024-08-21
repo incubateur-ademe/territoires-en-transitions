@@ -2,6 +2,7 @@ import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
 import {ButtonMenu} from '@tet/ui';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
+import {CreerIndicateurPersoModal} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/CreerIndicateurPersoModal';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
@@ -35,8 +36,9 @@ const TousLesIndicateurs = () => {
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
-      <div>
-        <h2 className="mb-0">Tous les indicateurs</h2>
+      <div className="flex items-end">
+        <h2 className="mb-0 mr-auto">Tous les indicateurs</h2>
+        <CreerIndicateurPersoModal buttonVariant="primary" />
       </div>
       <IndicateursListe
         filtres={filters}

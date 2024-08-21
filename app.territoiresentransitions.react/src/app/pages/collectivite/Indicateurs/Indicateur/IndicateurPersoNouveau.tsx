@@ -41,11 +41,7 @@ const IndicateurPersoNouveau = ({
         indicateurId,
       });
       onClose?.();
-      if (ficheId !== undefined) {
-        window.open(url, '_blank');
-      } else {
-        history.push(url);
-      }
+      window.open(url, '_blank');
     },
   });
 
