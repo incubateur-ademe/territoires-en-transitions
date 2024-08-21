@@ -72,7 +72,10 @@ const LineChart = ({
       </div>
       {/** Légende */}
       {legend?.isOpen && (
-        <ChartLegend {...legend} items={generateLineLegendItems(data)} />
+        <ChartLegend
+          {...legend}
+          items={legend?.items || generateLineLegendItems(data)}
+        />
       )}
     </div>
   );
