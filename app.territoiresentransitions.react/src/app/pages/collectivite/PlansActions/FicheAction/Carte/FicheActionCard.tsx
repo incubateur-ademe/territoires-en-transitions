@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {QueryKey} from 'react-query';
+import {useHistory} from 'react-router-dom';
 import classNames from 'classnames';
 import {Button, Card, Notification, Tooltip} from '@tet/ui';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -38,6 +39,7 @@ const FicheActionCard = ({
   onUnlink,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
+  const history = useHistory();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -47,7 +49,7 @@ const FicheActionCard = ({
     collectivite?.niveau_acces === null && ficheAction.restreint;
 
   return (
-    <div className="relative group">
+    <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
       {!collectivite?.readonly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
@@ -117,7 +119,7 @@ const FicheActionCard = ({
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
         )}
-        href={!isNotClickable && link ? link : undefined}
+        onClick={!isNotClickable && link ? () => history.push(link) : undefined}
         disabled={isNotClickable}
         external={openInNewTab}
         header={
