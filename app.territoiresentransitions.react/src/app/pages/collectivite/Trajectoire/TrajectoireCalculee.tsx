@@ -1,7 +1,7 @@
-import {useState} from 'react';
 import {Button, ButtonGroup, Card, Tabs, Tab, Alert} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useSearchParams} from 'core-logic/hooks/query';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
@@ -12,19 +12,28 @@ import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
 import {DonneesPartiellementDisponibles} from './DonneesPartiellementDisponibles';
 
+const defaultParams = {indicateurIdx: ['0'], secteurIdx: ['0']};
+const nameToparams: Record<keyof typeof defaultParams, string> = {
+  indicateurIdx: 'i',
+  secteurIdx: 's',
+} as const;
+
 /**
  * Affiche une trajectoire SNBC calculée
  */
 export const TrajectoireCalculee = () => {
   const collectiviteId = useCollectiviteId()!;
 
+  // conserve dans l'url les index de l'indicateur trajectoire et du secteur sélectionné
+  const [params, setParams] = useSearchParams('', defaultParams, nameToparams);
+  const indicateurIdx = parseInt(params.indicateurIdx[0]);
+  const secteurIdx = parseInt(params.secteurIdx[0]);
+
   // indicateur (ges | énergie) sélectionné
-  const [indicateurIdx, setIndicateurIdx] = useState<number>(0);
   const indicateur = INDICATEURS_TRAJECTOIRE[indicateurIdx];
 
   // secteur sélectionné
   const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
-  const [secteurIdx, setSecteurIdx] = useState<number>(0);
   const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
 
   // données de la trajectoire
@@ -61,7 +70,9 @@ export const TrajectoireCalculee = () => {
           !!indicateur?.secteurs && (
             <Tabs
               defaultActiveTab={secteurIdx}
-              onChange={setSecteurIdx}
+              onChange={idx =>
+                setParams({...params, secteurIdx: [String(idx)]})
+              }
               size="sm"
             >
               {secteurs.map(({nom}) => (
@@ -77,10 +88,8 @@ export const TrajectoireCalculee = () => {
           buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
             id,
             children: nom,
-            onClick: () => {
-              setIndicateurIdx(idx);
-              setSecteurIdx(0);
-            },
+            onClick: () =>
+              setParams({indicateurIdx: [String(idx)], secteurIdx: ['0']}),
           }))}
         />
       </div>
