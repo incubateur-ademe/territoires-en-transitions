@@ -52,6 +52,7 @@ const sortByOptions: sortByOptionsType[] = [
 type Props = {
   filtres: Filtre;
   settings: (openState: OpenState) => React.ReactNode;
+  resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortFicheActionSettings;
 };
@@ -62,6 +63,7 @@ const FichesActionListe = ({
     defaultSort: 'modified_at',
   },
   filtres,
+  resetFilters,
   settings,
   maxNbOfCards = 15,
 }: Props) => {
@@ -158,7 +160,7 @@ const FichesActionListe = ({
         {settings({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
       </div>
       {/** Liste des filtres appliqués */}
-      <ModuleFiltreBadges filtre={filtres} />
+      <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
 
       {/** Chargement */}
       {isLoading ? (

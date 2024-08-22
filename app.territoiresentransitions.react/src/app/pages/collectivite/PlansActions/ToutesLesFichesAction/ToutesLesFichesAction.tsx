@@ -45,6 +45,7 @@ const ToutesLesFichesAction = () => {
       </div>
       <FichesActionListe
         filtres={filters}
+        resetFilters={() => setFilters({})}
         sortSettings={{
           defaultSort: 'titre',
         }}

@@ -42,6 +42,7 @@ const TousLesIndicateurs = () => {
       </div>
       <IndicateursListe
         filtres={filters}
+        resetFilters={() => setFilters({})}
         sortSettings={{defaultSort: 'estComplet'}}
         settings={openState => (
           <ButtonMenu

@@ -45,6 +45,7 @@ const sortByOptions: sortByOptionsType[] = [
 type Props = {
   settings: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
+  resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
 };
@@ -55,6 +56,7 @@ const IndicateursListe = ({
     defaultSort: 'text',
   },
   filtres,
+  resetFilters,
   settings,
   maxNbOfCards = 9,
 }: Props) => {
@@ -168,7 +170,9 @@ const IndicateursListe = ({
         {settings({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
       </div>
       {/** Liste des filtres appliqués */}
-      {filtres && <ModuleFiltreBadges filtre={filtres} />}
+      {filtres && (
+        <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+      )}
 
       {/** Chargement */}
       {isLoading ? (
