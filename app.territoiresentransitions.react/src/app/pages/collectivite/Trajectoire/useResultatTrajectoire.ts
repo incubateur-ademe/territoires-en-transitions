@@ -3,7 +3,11 @@ import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useIndicateurReferentielValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import {IndicateurTrajectoire} from './constants';
-import {getKey, ResultatTrajectoire} from './useCalculTrajectoire';
+import {
+  getKey,
+  IndicateurAvecValeurs,
+  ResultatTrajectoire,
+} from './useCalculTrajectoire';
 
 /** Charge la trajectoire */
 const useTrajectoire = () => {
@@ -48,30 +52,22 @@ export const useResultatTrajectoire = ({
   // crée les datasets par secteur pour le graphique
   const valeursTousSecteurs =
     trajectoire &&
-    indicateur.secteurs
-      .map(s => {
-        const valeurs = trajectoire.find(
-          t => t.definition.identifiant_referentiel === s.identifiant
-        )?.valeurs;
-        return valeurs
-          ? {
-              id: s.identifiant,
-              label: s.nom,
-              data: valeurs.map(v => ({
-                x: new Date(v.date_valeur).getFullYear(),
-                y: v.objectif,
-              })),
-            }
-          : null;
-      })
-      .filter(v => !!v);
+    indicateur.secteurs &&
+    prepareDonneesParSecteur(indicateur.secteurs, trajectoire);
+
+  // secteur sélectionné
+  const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
 
   // identifiant référentiel de l'indicateur associé pour lequel il faut charger
   // les objectifs/résultats saisis par la collectivité
-  const identifiant =
-    secteurIdx === 0
-      ? indicateur.identifiant
-      : indicateur.secteurs[secteurIdx - 1].identifiant;
+  const identifiant = secteur ? secteur.identifiant : indicateur.identifiant;
+
+  // crée les datasets par sous-secteur si un secteur est sélectionné
+  const valeursSousSecteurs =
+    trajectoire &&
+    secteur &&
+    'sousSecteurs' in secteur &&
+    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire);
 
   // dataset du secteur sélectionné
   const valeursSecteur =
@@ -106,8 +102,37 @@ export const useResultatTrajectoire = ({
     resultats,
     valeursTousSecteurs,
     valeursSecteur,
+    valeursSousSecteurs,
     donneesSectoriellesIncompletes,
     isLoadingObjectifsResultats,
     isLoadingTrajectoire,
   };
+};
+
+// crée les datasets par secteur pour le graphique
+const prepareDonneesParSecteur = (
+  /** (sous-)secteurs à inclure */
+  secteurs: Readonly<Array<{nom: string; identifiant: string}>>,
+  /** données de la trajectoire */
+  indicateurs: IndicateurAvecValeurs[]
+) => {
+  if (!indicateurs?.length || !secteurs?.length) return undefined;
+
+  return secteurs
+    .map(s => {
+      const valeurs = indicateurs.find(
+        t => t.definition.identifiant_referentiel === s.identifiant
+      )?.valeurs;
+      return valeurs
+        ? {
+            id: s.identifiant,
+            label: s.nom,
+            data: valeurs.map(v => ({
+              x: new Date(v.date_valeur).getFullYear(),
+              y: v.objectif,
+            })),
+          }
+        : null;
+    })
+    .filter(v => !!v);
 };
