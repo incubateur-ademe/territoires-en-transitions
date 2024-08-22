@@ -6,6 +6,7 @@ import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
 import {TrajectoireChart} from './TrajectoireChart';
 import {TrajectoireSecteurChart} from './TrajectoireSecteurChart';
+import {TrajectoireChartSousSecteurs} from './TrajectoireChartSousSecteurs';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
@@ -33,6 +34,7 @@ export const TrajectoireCalculee = () => {
     resultats,
     valeursTousSecteurs,
     valeursSecteur,
+    valeursSousSecteurs,
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
   } = useResultatTrajectoire({indicateur, secteurIdx, coef: indicateur.coef});
@@ -109,7 +111,19 @@ export const TrajectoireCalculee = () => {
                   secteur={valeursSecteur.data}
                   objectifs={objectifs}
                   resultats={resultats}
-                ></TrajectoireSecteurChart>
+                />
+              </Card>
+            )
+          }
+          {
+            /** Graphique sous-sectoriel */
+            secteur && valeursSousSecteurs && (
+              <Card className="h-fit">
+                <TrajectoireChartSousSecteurs
+                  unite={indicateur.unite}
+                  titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
+                  sousSecteurs={valeursSousSecteurs as LineData[]}
+                />
               </Card>
             )
           }
