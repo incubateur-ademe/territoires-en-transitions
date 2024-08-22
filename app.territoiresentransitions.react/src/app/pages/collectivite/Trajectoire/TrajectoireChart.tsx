@@ -65,8 +65,8 @@ export const TrajectoireChart = ({
         }}
         line={{
           chart: {
-            data: secteursNonVides.toReversed(),
-            colors: COLORS,
+            data: secteursNonVides,
+            colors: {datum: 'color'},
             theme,
             margin: {top: 5, right: 5, bottom: 55, left: 50},
             xScale: {type: 'point'},
