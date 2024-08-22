@@ -118,7 +118,9 @@ export const TrajectoireChart = ({
                   <span>
                     En <strong>{slice.points[0].data.xFormatted}</strong>
                   </span>
-                  {slice.points.map(point => {
+                  {slice.points
+                    .sort((a, b) => (b.data.y as number) - (a.data.y as number))
+                    .map(point => {
                     const secteur = secteursNonVides.find(
                       s => s.id === point.serieId
                     );
