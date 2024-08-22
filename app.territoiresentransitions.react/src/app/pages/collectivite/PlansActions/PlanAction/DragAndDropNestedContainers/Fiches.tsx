@@ -1,4 +1,4 @@
-import {ActionCardSkeleton} from '../../components/ActionCard';
+import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
 import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -24,11 +24,11 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
       className={classNames('grid grid-cols-2 gap-6', {'my-2': !isDndActive})}
     >
       {isLoading
-        ? ficheIds.map(id => <ActionCardSkeleton key={id} />)
+        ? ficheIds.map(id => <FicheActionCardSkeleton key={id} />)
         : data &&
           data.map(fiche => {
             if (fiche.id! < 0) {
-              return <ActionCardSkeleton key={fiche.id} />;
+              return <FicheActionCardSkeleton key={fiche.id} />;
             } else {
               return (
                 <Fiche

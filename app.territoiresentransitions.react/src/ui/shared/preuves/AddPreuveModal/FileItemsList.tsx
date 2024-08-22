@@ -23,7 +23,10 @@ export const FileItemsList = (props: TFileItemsListProps) => {
 
   // et rend chaque groupe d'items
   return (
-    <div data-test="FileItems" className="pt-2 overflow-y-auto max-h-[220px]">
+    <div
+      data-test="FileItems"
+      className="overflow-y-auto max-h-[220px] flex flex-col gap-3"
+    >
       {renderItems(completed)}
       {renderItems(duplicated, {onRemoveFailed})}
       {renderItems(running, {onRunningStopped})}
@@ -35,7 +38,7 @@ export const FileItemsList = (props: TFileItemsListProps) => {
 // rendu des items
 const renderItems = (items: Array<TFileItem>, props?: {}) =>
   items.length ? (
-    <div className="pb-4">
+    <div className="flex flex-col gap-3">
       {items.map(item => (
         <FileItem key={item.file.name} {...item} {...props} />
       ))}

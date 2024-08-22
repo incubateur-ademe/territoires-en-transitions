@@ -1,13 +1,8 @@
 import {Link, Redirect, Route} from 'react-router-dom';
-
-import {FicheActionPage} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionPage';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
-  collectiviteFicheNonClasseePath,
   collectiviteFichesNonClasseesPath,
-  collectivitePlanActionAxeFichePath,
   collectivitePlanActionAxePath,
-  collectivitePlanActionFichePath,
   collectivitePlanActionLandingPath,
   collectivitePlanActionPath,
   collectivitePlansActionsCreerPath,
@@ -94,37 +89,34 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
         />
       </Route>
 
-      {/* Création */}
+      {/* Menu de création d'un plan */}
       <Route exact path={collectivitePlansActionsNouveauPath}>
         <SelectionPage />
       </Route>
+
+      {/* Importation d'un plan */}
       <Route exact path={collectivitePlansActionsImporterPath}>
         <ImporterPlanPage />
       </Route>
+
+      {/* Création d'un plan */}
       <Route exact path={collectivitePlansActionsCreerPath}>
         <CreerPlanPage />
       </Route>
 
-      {/* <FichesNonClassees /> */}
-      <Route exact path={[collectiviteFichesNonClasseesPath]}>
-        <FichesNonClassees />
-      </Route>
-      <Route
-        path={[
-          collectiviteFicheNonClasseePath,
-          collectivitePlanActionFichePath,
-          collectivitePlanActionAxeFichePath,
-        ]}
-      >
-        <FicheActionPage />
-      </Route>
-      {/** Plan action */}
+      {/** Vue détaillée d'un plan action */}
       <Route exact path={collectivitePlanActionPath}>
         <PlanActionPage />
       </Route>
-      {/** Axe */}
+
+      {/** Vue détaillée d'un axe */}
       <Route exact path={collectivitePlanActionAxePath}>
         <PlanActionPage />
+      </Route>
+
+      {/* Liste des fiches non classées */}
+      <Route exact path={[collectiviteFichesNonClasseesPath]}>
+        <FichesNonClassees />
       </Route>
     </CollectivitePageLayout>
   );

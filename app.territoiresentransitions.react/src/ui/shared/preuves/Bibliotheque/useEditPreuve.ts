@@ -12,10 +12,21 @@ type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
 export const useEditPreuve: TEditPreuve = preuve => {
-  const {mutate: removePreuve} = useRemovePreuve();
-  const {mutate: updatePreuveCommentaire} = useUpdatePreuveCommentaire();
-  const {mutate: updateBibliothequeFichierFilename} =
-    useUpdateBibliothequeFichierFilename();
+  const {
+    mutate: removePreuve,
+    isLoading: isRemovePreuveLoading,
+    isError: isRemovePreuveError,
+  } = useRemovePreuve();
+  const {
+    mutate: updatePreuveCommentaire,
+    isLoading: isUpdateCommentaireLoadind,
+    isError: isUpdateCommentaireError,
+  } = useUpdatePreuveCommentaire();
+  const {
+    mutate: updateBibliothequeFichierFilename,
+    isLoading: isUpdateFilenameLoading,
+    isError: isUpdateFilenameError,
+  } = useUpdateBibliothequeFichierFilename();
   const {commentaire, fichier} = preuve;
   const editComment = useEditState({
     initialValue: commentaire,
@@ -36,6 +47,12 @@ export const useEditPreuve: TEditPreuve = preuve => {
     remove,
     editComment,
     editFilename,
+    isLoading:
+      isRemovePreuveLoading ||
+      isUpdateCommentaireLoadind ||
+      isUpdateFilenameLoading,
+    isError:
+      isRemovePreuveError || isUpdateCommentaireError || isUpdateFilenameError,
   };
 };
 

@@ -2,39 +2,35 @@ import {Datum} from '@nivo/line';
 import {dedup} from 'utils/dedup';
 import {TIndicateurValeur} from '../useIndicateurValeurs';
 import {LineData} from 'ui/charts/Line/LineChart';
-import {defaultColors} from 'ui/charts/chartsTheme';
+import {preset} from '@tet/ui';
+
+const {
+  theme: {
+    extend: {colors},
+  },
+} = preset;
 
 /** Data de base sans valeur des graphiques Indicateur */
 export const indicateurBaseData: Record<string, LineData> = {
   objectif: {
     id: 'objectif',
-    label: 'Objectif',
+    label: 'Mes objectifs',
     data: [],
-    color: defaultColors[0],
+    color: '#F5895B',
     style: {
-      strokeDasharray: '2, 2',
       strokeWidth: 2,
     },
     symbole: color => (
-      <div className="flex gap-1">
-        <div
-          className="w-1.5 h-1 rounded-full"
-          style={{backgroundColor: color}}
-        />
-        <div
-          className="w-1.5 h-1 rounded-full"
-          style={{backgroundColor: color}}
-        />
-      </div>
+      <div className="h-1 w-4 rounded-full" style={{backgroundColor: color}} />
     ),
   },
   resultat: {
     id: 'resultat',
-    label: 'Résultat',
+    label: 'Mes résultats',
     data: [],
-    color: defaultColors[0],
+    color: colors.primary[7],
     style: {
-      strokeWidth: 3,
+      strokeWidth: 2,
     },
     symbole: color => (
       <div className="h-1 w-4 rounded-full" style={{backgroundColor: color}} />

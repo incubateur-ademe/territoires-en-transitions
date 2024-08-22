@@ -38,6 +38,7 @@ export const Breadcrumbs = ({
     <div className="flex flex-wrap gap-x-1 gap-y-0.5">
       {items.map((button, index) => {
         const isLastElement = index === items.length - 1;
+        const isClickable = onClick || button.onClick || button.href;
 
         return (
           <div
@@ -49,11 +50,12 @@ export const Breadcrumbs = ({
               className={classNames(
                 'font-normal border-none hover:!pb-px text-left',
                 {
-                  '!cursor-default': isLastElement || readOnlyMode,
+                  '!cursor-default':
+                    isLastElement || readOnlyMode || !isClickable,
                   '!text-primary-9': isLastElement && !readOnlyMode,
                   '!text-grey-6': !isLastElement || readOnlyMode,
                   'hover:!text-primary-9 transition':
-                    !isLastElement && !readOnlyMode,
+                    !isLastElement && !readOnlyMode && isClickable,
                 }
               )}
               variant="underlined"

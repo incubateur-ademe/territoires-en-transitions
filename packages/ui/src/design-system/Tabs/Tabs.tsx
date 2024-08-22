@@ -16,7 +16,7 @@ type TabsProps = {
   /** Taille des boutons */
   size?: TabSize;
   /** Onglets */
-  children: ReactElement[];
+  children: (ReactElement | undefined)[];
   /** Index (base 0) de l'onglet actif */
   defaultActiveTab?: number;
   /** Appelée quand l'onglet actif change */
@@ -69,46 +69,48 @@ export const Tabs = ({
         )}
         role="tablist"
       >
-        {children.map((element, index) => {
-          const isActive = activeTab === index;
-          return (
-            <li role="presentation" className="p-0" key={element.props.label}>
-              <button
-                className={classNames(
-                  // styles communs
-                  'px-3 py-1 font-bold w-max',
-                  // variante au survol
-                  'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
-                  {
-                    // variante de taille
-                    'text-md': size === 'md',
-                    'text-sm': size === 'sm',
-                    'text-xs': size === 'xs',
-                    // variante pour l'onglet actif
-                    'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
-                      isActive,
-                    // variante pour les onglets inactifs
-                    'text-primary-10': !isActive,
-                  }
-                )}
-                type="button"
-                role="tab"
-                id={`tab-${index}`}
-                aria-selected={isActive ? 'true' : 'false'}
-                onClick={() => handleChange(index)}
-              >
-                {element.props.icon && (
-                  <Icon
-                    icon={element.props.icon}
-                    size={size}
-                    className="mr-1"
-                  />
-                )}
-                {element.props.label}
-              </button>
-            </li>
-          );
-        })}
+        {children
+          .filter(elt => elt !== undefined)
+          .map((element, index) => {
+            const isActive = activeTab === index;
+            return (
+              <li role="presentation" className="p-0" key={element.props.label}>
+                <button
+                  className={classNames(
+                    // styles communs
+                    'px-3 py-1 font-bold w-max',
+                    // variante au survol
+                    'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
+                    {
+                      // variante de taille
+                      'text-md': size === 'md',
+                      'text-sm': size === 'sm',
+                      'text-xs': size === 'xs',
+                      // variante pour l'onglet actif
+                      'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
+                        isActive,
+                      // variante pour les onglets inactifs
+                      'text-primary-10': !isActive,
+                    }
+                  )}
+                  type="button"
+                  role="tab"
+                  id={`tab-${index}`}
+                  aria-selected={isActive ? 'true' : 'false'}
+                  onClick={() => handleChange(index)}
+                >
+                  {element.props.icon && (
+                    <Icon
+                      icon={element.props.icon}
+                      size={size}
+                      className="mr-1"
+                    />
+                  )}
+                  {element.props.label}
+                </button>
+              </li>
+            );
+          })}
       </ul>
       {tabsPanel}
     </div>

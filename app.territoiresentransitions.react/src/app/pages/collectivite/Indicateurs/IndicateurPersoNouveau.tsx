@@ -6,16 +6,13 @@ import {
   useInsertIndicateurPersoDefinition,
 } from './useInsertIndicateurPersoDefinition';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import classNames from 'classnames';
 import {FicheAction} from '../PlansActions/FicheAction/data/types';
 
 /** Affiche la page de création d'un indicateur personnalisé  */
 const IndicateurPersoNouveau = ({
-  className,
   fiche,
   onClose,
 }: {
-  className?: string;
   /** Fiche action à laquelle rattacher le nouvel indicateur */
   fiche?: FicheAction;
   onClose?: () => void;
@@ -54,19 +51,13 @@ const IndicateurPersoNouveau = ({
   };
 
   return (
-    <div className={classNames('fr-p-2w', className)}>
-      <h4>
-        <i className="fr-icon-line-chart-line fr-pr-2w" />
-        Créer un indicateur
-      </h4>
-      <IndicateurPersoNouveauForm
-        indicateur={newDefinition}
-        thematiquesFiche={fiche?.thematiques}
-        isSaving={isLoading}
-        onSave={onSave}
-        onCancel={onClose ? onClose : () => history.goBack()}
-      />
-    </div>
+    <IndicateurPersoNouveauForm
+      indicateur={newDefinition}
+      thematiquesFiche={fiche?.thematiques}
+      isSaving={isLoading}
+      onSave={onSave}
+      onCancel={onClose ? onClose : () => history.goBack()}
+    />
   );
 };
 

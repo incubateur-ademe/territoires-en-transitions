@@ -74,7 +74,9 @@ const ModalFiltresToutesLesFichesAction = ({
                   const {servicePiloteIds, ...rest} = filtreState;
                   setFiltreState({
                     ...rest,
-                    ...(services ? {servicePiloteIds: services} : {}),
+                    ...(services
+                      ? {servicePiloteIds: services.map(s => s.id)}
+                      : {}),
                   });
                 }}
               />
@@ -148,12 +150,16 @@ const ModalFiltresToutesLesFichesAction = ({
             </Field>
             <Field title="Financeur">
               <FinanceursDropdown
+                dataTest="financeurs"
                 values={filtreState.financeurIds}
                 onChange={({financeurs}) => {
                   const {financeurIds, ...rest} = filtreState;
+                  const financeursIds = financeurs
+                    .filter(f => f.id !== undefined)
+                    .map(f => f.id!);
                   setFiltreState({
                     ...rest,
-                    ...(financeurs ? {financeurIds: financeurs} : {}),
+                    ...(financeursIds ? {financeurIds: financeursIds} : {}),
                   });
                 }}
               />
