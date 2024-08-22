@@ -45,14 +45,6 @@ const ModuleFichesActionsPage = ({view, slug, sortSettings}: Props) => {
       <FichesActionListe
         filtres={module.options.filtre}
         sortSettings={sortSettings}
-        onSettingsClick={() => {
-          trackEvent(
-            (slug === 'actions-dont-je-suis-pilote'
-              ? 'tdb_modifier_filtres_actions_pilotes'
-              : 'tdb_modifier_filtres_actions_modifiees') as never,
-            {collectivite_id: collectiviteId} as never
-          );
-        }}
         settings={openState => (
           <>
             <Button

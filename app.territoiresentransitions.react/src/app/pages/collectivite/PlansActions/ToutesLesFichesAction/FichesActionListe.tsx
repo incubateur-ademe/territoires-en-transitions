@@ -53,7 +53,6 @@ type Props = {
   filtres: Filtre;
   settings: (openState: OpenState) => React.ReactNode;
   maxNbOfCards?: number;
-  onSettingsClick?: () => void;
   sortSettings?: SortFicheActionSettings;
 };
 
@@ -65,7 +64,6 @@ const FichesActionListe = ({
   filtres,
   settings,
   maxNbOfCards = 15,
-  onSettingsClick,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
