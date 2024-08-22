@@ -1,0 +1,37 @@
+name: CI (new)
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x']
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npm run test:app
+
+      # - uses: earthly/actions-setup@v1
+      #   with:
+      #     version: 0.8.1
+
+      # - name: Login into registry
+      #   run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      # - name: Build and push storybook image
+      #   run: earthly --use-inline-cache --save-inline-cache --push +storybook-build
