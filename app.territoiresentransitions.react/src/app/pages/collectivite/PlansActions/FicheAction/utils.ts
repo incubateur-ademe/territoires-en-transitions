@@ -1,5 +1,6 @@
 import {differenceInCalendarDays, format} from 'date-fns';
 import {fr} from 'date-fns/locale';
+import _ from 'lodash';
 
 // Renvoie une date avec le mois en toutes lettres
 export const getTextFormattedDate = ({
@@ -70,4 +71,20 @@ export const getMaxLengthMessage = (element: string, maxLength: number) => {
       maxLength
     )} caractères`;
   }
+};
+
+// Renvoie un texte tronqué
+export const getTruncatedText = (text: string | null, limit: number) => {
+  const truncatedText =
+    text !== null
+      ? _.truncate(text, {
+          length: limit,
+          separator: ' ',
+          omission: '',
+        })
+      : null;
+
+  const isTextTruncated = truncatedText !== text;
+
+  return {truncatedText: `${truncatedText}...`, isTextTruncated};
 };

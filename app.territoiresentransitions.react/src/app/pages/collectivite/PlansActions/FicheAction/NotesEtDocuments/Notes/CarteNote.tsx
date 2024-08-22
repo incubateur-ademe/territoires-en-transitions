@@ -1,8 +1,9 @@
-import {Card, Icon} from '@tet/ui';
+import {Button, Card, Icon} from '@tet/ui';
 import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
 import AlerteSuppression from '../AlerteSuppression';
 import DeleteButton from '../../DeleteButton';
+import {getTruncatedText} from '../../utils';
 
 type CarteNoteProps = {
   isReadonly: boolean;
@@ -12,6 +13,10 @@ type CarteNoteProps = {
 
 const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
   const [openAlert, setOpenAlert] = useState(false);
+  const [isFullNotes, setIsFullNotes] = useState(false);
+
+  const {truncatedText: truncatedNotes, isTextTruncated: isNotesTruncated} =
+    getTruncatedText(notes, 300);
 
   return (
     <>
@@ -35,9 +40,19 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
               <Icon icon="edit-box-line" className="text-primary-10" />
             </div>
             <div className="text-primary-10 text-base font-bold whitespace-pre-wrap">
-              {notes}
+              {isFullNotes || !isNotesTruncated ? notes : truncatedNotes}
             </div>
           </div>
+          {isNotesTruncated && (
+            <Button
+              variant="underlined"
+              size="xs"
+              className="ml-auto"
+              onClick={() => setIsFullNotes(prevState => !prevState)}
+            >
+              {isFullNotes ? 'Voir moins' : 'Voir plus'}
+            </Button>
+          )}
         </Card>
       </div>
 

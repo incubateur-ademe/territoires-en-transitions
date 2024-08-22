@@ -1,7 +1,9 @@
+import {useState} from 'react';
 import classNames from 'classnames';
-import {Badge} from '@tet/ui';
+import {Badge, Button} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import MenuDescription from './MenuDescription';
+import {getTruncatedText} from '../utils';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
@@ -16,12 +18,25 @@ const FicheActionDescription = ({
   className,
   updateFiche,
 }: FicheActionDescriptionProps) => {
+  const [isFullDescription, setIsFullDescription] = useState(false);
+  const [isFullRessources, setIsFullRessources] = useState(false);
+
   const {
     thematiques,
     sous_thematiques: sousThematiques,
     description,
     ressources,
   } = fiche;
+
+  const {
+    truncatedText: truncatedDescription,
+    isTextTruncated: isDescriptionTruncated,
+  } = getTruncatedText(description, 1000);
+
+  const {
+    truncatedText: truncatedRessources,
+    isTextTruncated: isRessourcesTruncated,
+  } = getTruncatedText(ressources, 1000);
 
   return (
     <div
@@ -72,8 +87,20 @@ const FicheActionDescription = ({
           Description de l'action :
         </h6>
         <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {description || 'Non renseigné'}
+          {(isFullDescription || !isDescriptionTruncated
+            ? description
+            : truncatedDescription) || 'Non renseigné'}
         </p>
+        {isDescriptionTruncated && (
+          <Button
+            variant="underlined"
+            size="xs"
+            className="ml-auto !text-grey-2 !border-grey-2"
+            onClick={() => setIsFullDescription(prevState => !prevState)}
+          >
+            {isFullDescription ? 'Voir moins' : 'Voir plus'}
+          </Button>
+        )}
       </div>
 
       {/* Moyens humains et techniques */}
@@ -82,8 +109,20 @@ const FicheActionDescription = ({
           Moyens humains et techniques :
         </h6>
         <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {ressources || 'Non renseigné'}
+          {(isFullRessources || !isRessourcesTruncated
+            ? ressources
+            : truncatedRessources) || 'Non renseigné'}
         </p>
+        {isRessourcesTruncated && (
+          <Button
+            variant="underlined"
+            size="xs"
+            className="ml-auto !text-grey-2 !border-grey-2"
+            onClick={() => setIsFullRessources(prevState => !prevState)}
+          >
+            {isFullRessources ? 'Voir moins' : 'Voir plus'}
+          </Button>
+        )}
       </div>
     </div>
   );
