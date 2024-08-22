@@ -14,7 +14,11 @@ export const COLORS = [
   '#FFD0BB',
   '#FBE7B5',
   '#D9D9D9',
+  '#A3DE00',
 ];
+
+export const COULEURS_SOUS_SECTEUR = ['#6A6AF4', '#F4C447', '#E1E1FD'];
+
 export const LAYERS = {
   objectifs: {color: '#F5895B', label: 'Mes objectifs'},
   resultats: {color: '#6A6AF4', label: 'Mes résultats'},
@@ -43,6 +47,11 @@ export const INDICATEURS_TRAJECTOIRE = [
           'La trajectoire nationale pour les besoins en chauffage est territorialisée à partir du nombre de maisons et appartements en résidences principales, auquel est appliqué une correction en fonction des données de rigueur climatique régionale (DJU).',
           'Les autres usages sont répartis par nombre de ménages. La démographie est également prise en compte pour les émissions et les consommations.',
         ],
+        sousSecteurs: [
+          {nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_1.ca'},
+          {nom: 'Chauffage / Logement collectif', identifiant: 'cae_1.cb'},
+          {nom: 'Autres usages', identifiant: 'cae_1.cc'},
+        ],
       },
       {
         nom: 'Tertiaire',
@@ -57,6 +66,10 @@ export const INDICATEURS_TRAJECTOIRE = [
           "L'usage chauffage est corrigé en fonction des données de rigueur climatique régionale (DJU).",
           'La démographie est également prise en compte pour les émissions et les consommations.',
         ],
+        sousSecteurs: [
+          {nom: 'Chauffage', identifiant: 'cae_1.da'},
+          {nom: 'Autres usages', identifiant: 'cae_1.db'},
+        ],
       },
       {
         nom: 'Industrie',
@@ -68,6 +81,15 @@ export const INDICATEURS_TRAJECTOIRE = [
         pivots: [
           "La territorialisation de la trajectoire industrie repose sur la ventilation des émissions et consommations par sous-secteurs industriels, d'après données d'emplois par branche (base FLORES de l'INSEE).",
           'Le point de départ est ensuite recalé avec les données observatoire.',
+        ],
+        sousSecteurs: [
+          {nom: 'Métaux primaires', identifiant: 'cae_1.ia'},
+          {nom: 'Chimie', identifiant: 'cae_1.ib'},
+          {nom: 'Non-métalliques', identifiant: 'cae_1.ic'},
+          {nom: 'Agro-industries', identifiant: 'cae_1.id'},
+          {nom: 'Equipements', identifiant: 'cae_1.ie'},
+          {nom: 'Papier-carton', identifiant: 'cae_1.if'},
+          {nom: 'Autres industries', identifiant: 'cae_1.ig'},
         ],
       },
       {
@@ -81,6 +103,11 @@ export const INDICATEURS_TRAJECTOIRE = [
         pivots: [
           "Les émissions relevées dans les territoires varient beaucoup en fonction des typologies d'agriculture.",
           "Ainsi, les émissions liées à la consommation d'énergie sont corrélées à la surface agricole utile (SAU) du territoire. De manière simplifiée, les émissions de CH4 liées à l'élevage s'appuient sur le pivot du nombre d'unités de GRos bétail (UGB), et les émissions de NH3 à la surface de terres labourables.",
+        ],
+        sousSecteurs: [
+          {nom: 'Energie', identifiant: 'cae_1.ga'},
+          {nom: 'Elevage', identifiant: 'cae_1.gb'},
+          {nom: 'Pratiques culturales', identifiant: 'cae_1.gc'},
         ],
       },
       {
@@ -96,6 +123,11 @@ export const INDICATEURS_TRAJECTOIRE = [
           "Pour affiner l'analyse, les usages de mobilité du quotidien (courte distance) sont reconstituées à partir des typologies des communes qui le consitituent. Cela permet de donner un ordre d'idée de la mobilité routière locale, et de la mobilité de transit.",
           'La mobilité routière locale est réajustée selon la démographie.',
           "Par manque de données du scénario SNBC, le découpage en sous-secteurs n'est possible que sur les émissions GES, pas sur les consommations énergétiques.",
+        ],
+        sousSecteurs: [
+          {nom: 'Routier / mobilité locale', identifiant: 'cae_1.ea'},
+          {nom: 'Routier / autre', identifiant: 'cae_1.eb'},
+          {nom: 'Autres', identifiant: 'cae_1.f'},
         ],
       },
       {
@@ -134,6 +166,14 @@ export const INDICATEURS_TRAJECTOIRE = [
           '',
           "L'évolution du puits de carbone local peut s'appuyer sur différents leviers pour atteindre ces objectifs (voir onglet Leviers UTCATF)",
         ],
+        sousSecteurs: [
+          {nom: 'Forêts', identifiant: 'cae_63.b'},
+          {nom: 'Cultures', identifiant: 'cae_63.e'},
+          {nom: 'Prairies', identifiant: 'cae_63.f'},
+          {nom: 'Zones humides', identifiant: 'cae_63.g'},
+          {nom: 'Sols artificiels', identifiant: 'cae_63.h'},
+          {nom: 'Produits bois', identifiant: 'cae_63.i'},
+        ],
       },
       {
         nom: 'CSC',
@@ -153,9 +193,36 @@ export const INDICATEURS_TRAJECTOIRE = [
     identifiant: 'cae_2.a',
     coef: 1, // pas de normalisation
     secteurs: [
-      {nom: 'Résidentiel', identifiant: 'cae_2.e'},
-      {nom: 'Tertiaire', identifiant: 'cae_2.f'},
-      {nom: 'Industrie', identifiant: 'cae_2.k'},
+      {
+        nom: 'Résidentiel',
+        identifiant: 'cae_2.e',
+        sousSecteurs: [
+          {nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_2.ea'},
+          {nom: 'Chauffage / Logement collectif', identifiant: 'cae_2.eb'},
+          {nom: 'Autres usages', identifiant: 'cae_2.ec'},
+        ],
+      },
+      {
+        nom: 'Tertiaire',
+        identifiant: 'cae_2.f',
+        sousSecteurs: [
+          {nom: 'Chauffage', identifiant: 'cae_2.fa'},
+          {nom: 'Autres usages', identifiant: 'cae_2.fb'},
+        ],
+      },
+      {
+        nom: 'Industrie',
+        identifiant: 'cae_2.k',
+        sousSecteurs: [
+          {nom: 'Métaux primaires', identifiant: 'cae_2.ka'},
+          {nom: 'Chimie', identifiant: 'cae_2.kb'},
+          {nom: 'Non-métalliques', identifiant: 'cae_2.kc'},
+          {nom: 'Agro-industries', identifiant: 'cae_2.kd'},
+          {nom: 'Equipements', identifiant: 'cae_2.ke'},
+          {nom: 'Papier-carton', identifiant: 'cae_2.kf'},
+          {nom: 'Autres industries', identifiant: 'cae_2.kg'},
+        ],
+      },
       {nom: 'Agriculture', identifiant: 'cae_2.i'},
       {nom: 'Transports', identifiant: 'cae_2.m'},
       {nom: 'Déchets', identifiant: 'cae_2.j'},
