@@ -82,7 +82,6 @@
     "@nx/next": "19.5.4",
     "@nx/playwright": "19.5.4",
     "@nx/react": "19.5.4",
-    "@nx/rollup": "19.5.4",
     "@nx/storybook": "^19.5.4",
     "@nx/vite": "19.5.4",
     "@nx/web": "19.5.4",
