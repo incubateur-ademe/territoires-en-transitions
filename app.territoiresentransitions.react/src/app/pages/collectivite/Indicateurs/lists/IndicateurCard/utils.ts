@@ -13,19 +13,17 @@ export const getIndicateurRestant = (
   const indicateursEnfantsAcompleterRestant =
     chartInfo?.enfants?.filter(enfant => !enfant.rempli).length ?? 0;
 
+  // Si parent sans valeur
+  if (chartInfo.sansValeur) {
+    return indicateursEnfantsAcompleterRestant;
+  }
   // Si parent
-  if (isIndicateurParent) {
-    // sans valeur, uniquement des enfants
-    if (chartInfo.sansValeur) {
+  else if (isIndicateurParent) {
+    // rempli
+    if (chartInfo.rempli) {
       return indicateursEnfantsAcompleterRestant;
-      // avec valeur
     } else {
-      // rempli
-      if (chartInfo.rempli) {
-        return indicateursEnfantsAcompleterRestant;
-      } else {
-        return indicateursEnfantsAcompleterRestant + 1;
-      }
+      return indicateursEnfantsAcompleterRestant + 1;
     }
     // Si pas d'enfant
   } else {

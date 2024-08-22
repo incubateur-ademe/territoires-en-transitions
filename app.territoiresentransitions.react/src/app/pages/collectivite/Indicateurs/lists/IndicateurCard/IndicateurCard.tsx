@@ -136,13 +136,17 @@ const IndicateurCardBase = ({
 
   /** Nombre total d'indicateurs restant à compléter, qu'il y ait des enfants ou non */
   const indicateursACompleterRestant =
-    chartInfo && getIndicateurRestant(chartInfo);
+    (chartInfo && getIndicateurRestant(chartInfo)) ?? 0;
 
   /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
   const hasValeurOrObjectif =
     data.valeurs.filter(v => typeof v.valeur === 'number').length > 0;
 
   const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
+
+  const isACompleter = chartInfo?.sansValeur
+    ? indicateursACompleterRestant > 0
+    : !chartInfo?.rempli;
 
   return (
     <Card
@@ -181,10 +185,7 @@ const IndicateurCardBase = ({
       ) : (
         <>
           <div className="flex items-center gap-6">
-            <BadgeACompleter
-              a_completer={indicateursACompleterRestant !== 0}
-              size="sm"
-            />
+            <BadgeACompleter a_completer={isACompleter} size="sm" />
             {selectState?.setSelected && (
               <Button
                 onClick={(
@@ -304,7 +305,7 @@ const IndicateurCardBase = ({
                 {/* Nombre d'indicateurs */}
                 {isIndicateurParent && totalNbIndicateurs && (
                   <div>
-                    {totalNbIndicateurs - (indicateursACompleterRestant || 0)}/
+                    {totalNbIndicateurs - indicateursACompleterRestant}/
                     {totalNbIndicateurs} indicateur
                     {totalNbIndicateurs > 1 && 's'}
                   </div>
@@ -323,22 +324,14 @@ const IndicateurCardBase = ({
             )}
           </>
         ) : (
-          !chartInfo.rempli &&
+          isACompleter &&
           !readonly &&
           href && (
             <>
               {/** Barre horizontale */}
               <div className="h-px bg-primary-3" />
               {/** Compléter indicateur bouton */}
-              <Button size="xs">
-                {indicateursACompleterRestant
-                  ? `${indicateursACompleterRestant} indicateur${
-                      indicateursACompleterRestant > 1 ? 's' : ''
-                    } restant${
-                      indicateursACompleterRestant > 1 ? 's' : ''
-                    } à compléter`
-                  : 'Compléter l’indicateur'}
-              </Button>
+              <Button size="xs">Compléter l’indicateur</Button>
             </>
           )
         ))}
