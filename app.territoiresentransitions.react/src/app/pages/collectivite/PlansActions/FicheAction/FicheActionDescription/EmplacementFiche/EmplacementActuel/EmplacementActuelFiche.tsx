@@ -20,7 +20,10 @@ const EmplacementActuelFiche = ({fiche}: EmplacementActuelFicheProps) => {
       </h6>
 
       {/* Liste des emplacements */}
-      <div className="flex flex-col gap-6 overflow-x-auto pb-4">
+      <div
+        data-test="PlanChemin"
+        className="flex flex-col gap-6 overflow-x-auto pb-4"
+      >
         {fiche.axes?.map(
           axe =>
             !!axe.id && (

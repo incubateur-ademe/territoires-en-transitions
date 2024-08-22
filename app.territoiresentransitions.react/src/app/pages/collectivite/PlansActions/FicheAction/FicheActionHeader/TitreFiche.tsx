@@ -38,6 +38,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
       {isEditing ? (
         // Titre en version édition
         <Input
+          data-test="HeaderTitleInput"
           value={editedTitle ?? ''}
           autoFocus
           onChange={evt => setEditedTitle(evt.target.value)}
@@ -56,7 +57,9 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
         />
       ) : (
         // Titre en version lecture
-        <h1 className="mt-1.5 mb-2">{titre || 'Sans titre'}</h1>
+        <h1 data-test="HeaderTitle" className="mt-1.5 mb-2">
+          {titre || 'Sans titre'}
+        </h1>
       )}
 
       {/* Bouton d'édition du titre de la fiche action */}

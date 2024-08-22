@@ -28,12 +28,14 @@ const ModaleAcces = ({
 
   return (
     <Modal
+      data-test="ModaleFicheConfidentialite"
       openState={{isOpen, setIsOpen}}
       title="Restriction des accès à la fiche"
       size="md"
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           <Checkbox
+            data-test="FicheToggleConfidentialite"
             variant="switch"
             label="Fiche action en mode privé"
             message="Si le mode privé est activé, la fiche action n'est plus

@@ -209,6 +209,10 @@ When(/^je clique sur la case "([^"]*)"$/, function (checkbox) {
     .click();
 });
 
+When('je clique sur le texte {string}', function (textName) {
+  cy.get(resolveSelector(this, textName).selector).click();
+});
+
 When('je coche la case {string}', function (checkbox) {
   cy.get(resolveSelector(this, checkbox).selector).within(() => {
     cy.root().should('not.be.checked');

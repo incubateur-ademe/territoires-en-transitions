@@ -58,6 +58,7 @@ const FicheActionPlanning = ({
         >
           {!isReadonly && (
             <Button
+              data-test="BoutonPlanning"
               title="Modifier le planning prévisionnel"
               icon="edit-line"
               size="xs"
@@ -182,6 +183,7 @@ const FicheActionPlanning = ({
             onClick: () => setIsModalOpen(true),
           }}
           className={className}
+          buttonDataTest="BoutonPlanning"
         />
       )}
 

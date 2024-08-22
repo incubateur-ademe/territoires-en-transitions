@@ -165,6 +165,7 @@ const ModalePlanning = ({
           {/* Statut */}
           <Field title="Statut" className="max-md:col-span-2">
             <StatutsSelectDropdown
+              dataTest="Statut"
               values={editedFiche.statut}
               onChange={statut =>
                 setEditedFiche(prevState => ({
@@ -212,6 +213,7 @@ const ModalePlanning = ({
         <ModalFooterOKCancel
           btnCancelProps={{onClick: close}}
           btnOKProps={{
+            ['data-test']: 'ok',
             disabled: isDateDebutError || isDateFinError,
             onClick: () => {
               collectiviteId &&

@@ -128,6 +128,7 @@ const ModaleActeurs = ({
         <ModalFooterOKCancel
           btnCancelProps={{onClick: close}}
           btnOKProps={{
+            ['data-test']: 'ok',
             onClick: () => {
               collectiviteId &&
                 tracker('validation_modale_acteurs_fa', {

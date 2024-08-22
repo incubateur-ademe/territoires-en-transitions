@@ -8,6 +8,9 @@ export const LocalSelectors = {
   'Fiche action': {
     selector: '[data-test=FicheAction]',
   },
+  'Titre de la fiche': {
+    selector: '[data-test=HeaderTitle]',
+  },
   'header input': {
     selector: '[data-test=HeaderTitleInput]',
   },

@@ -14,6 +14,10 @@ When(/j'ouvre la section "([^"]+)"/, titre => {
   cy.get(`[data-test=section-${titre}]`).click();
 });
 
+When("j'ouvre la modale {string}", titre => {
+  cy.get(`[data-test=Bouton${titre}]`).click();
+});
+
 When(
   /je sélectionne "([^"]*)" dans la liste déroulante "([^"]*)"/,
   (option, selecteur) => {
@@ -34,11 +38,12 @@ When(
 
 When(/je supprime la fiche/, () => {
   cy.get('[data-test=SupprimerFicheBouton]').click();
-  cy.contains('Confirmer').click();
+  cy.contains('Valider').click();
 });
 
 When(/je toggle la confidentialité de la fiche/, () => {
   cy.get('[data-test=FicheToggleConfidentialite]').click();
+  cy.contains('Valider').click();
 });
 
 When(/la carte "([^"]*)" est privée/, titre => {
@@ -49,9 +54,9 @@ When(/la carte "([^"]*)" est privée/, titre => {
 });
 
 When(/je ne peux pas cliquer sur la carte "([^"]*)"/, titre => {
-  cy.get('[data-test=ActionCarte]')
+  cy.get('[data-test=ActionCarteContent]')
     .contains(titre)
-    .should('have.css', 'pointer-events', 'none');
+    .should('not.have.attr', 'onClick');
 });
 
 When(/toutes les cartes sont publiques/, () => {
@@ -70,7 +75,7 @@ When(/je rends privées toutes les fiches d'un plan/, () => {
 
 When(/je supprime une fiche "([^"]*)" dans l'arborescence/, titre => {
   cy.get('[data-test=SupprimerFicheBouton]').first().click({force: true});
-  cy.contains('Confirmer').click();
+  cy.contains('Valider').click();
 });
 
 When(/la fiche "([^"]*)" n'est plus présente/, titre => {
@@ -80,6 +85,13 @@ When(/la fiche "([^"]*)" n'est plus présente/, titre => {
 When(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
   cy.get('[data-test=FicheFilAriane]').contains(axe).click();
 });
+
+When(
+  /je clique sur l'onglet (Emplacement actuel|Nouvel emplacement)/,
+  label => {
+    cy.get(`button[role=tab]`).contains(label).click();
+  }
+);
 
 /** PLAN D'ACTION */
 When(/je crée le plan "([^"]*)" avec le type "([^"]*)"/, (titre, type) => {
@@ -178,10 +190,6 @@ When(/le plan n'est plus présent dans la navigation/, () => {
 
 /** RANGER FICHE ACTION */
 
-When(/j'ouvre la modale ranger la fiche/, () => {
-  cy.get('[data-test=BoutonRangerFiche]').click();
-});
-
 When(/j'enlève la fiche du plan/, () => {
   cy.get('[data-test=EnleverFichePlanBouton]').click({force: true});
 });
@@ -189,7 +197,9 @@ When(/j'enlève la fiche du plan/, () => {
 When(
   /le plan "([^"]*)" est visible dans le tableau nouvel emplacement/,
   plan => {
-    cy.get('[data-test=TableauAxe]').contains(plan).should('be.visible');
+    cy.get('[data-test=TableauNouvelEmplacement]')
+      .contains(plan)
+      .should('be.visible');
   }
 );
 
@@ -198,11 +208,11 @@ When(/le fil d'ariane de la fiche contient "([^"]*)"/, chemin => {
 });
 
 When(/je clique sur l'axe "([^"]*)" du tableau nouvel emplacement/, axe => {
-  cy.get('[data-test=TableauAxe]').contains(axe).click();
+  cy.get('[data-test=TableauNouvelEmplacement]').contains(axe).click();
 });
 
 When(/je valide cet emplacement/, () => {
-  cy.contains('Valider cet emplacement').click();
+  cy.contains('Valider ce nouvel emplacement').click();
 });
 
 When(

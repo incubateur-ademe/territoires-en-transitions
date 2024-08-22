@@ -10,6 +10,7 @@ const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
 };
 
 type BreadcrumbsProps = {
+  dataTest?: string;
   /** Liste d'items à afficher dans le fil d'ariane */
   items: {
     label: string;
@@ -26,6 +27,7 @@ type BreadcrumbsProps = {
  * Fil d'ariane, avec liens ou boutons
  */
 export const Breadcrumbs = ({
+  dataTest,
   items,
   size = 'md',
   onClick,
@@ -35,7 +37,7 @@ export const Breadcrumbs = ({
     !onClick;
 
   return (
-    <div className="flex flex-wrap gap-x-1 gap-y-0.5">
+    <div data-test={dataTest} className="flex flex-wrap gap-x-1 gap-y-0.5">
       {items.map((button, index) => {
         const isLastElement = index === items.length - 1;
         const isClickable = onClick || button.onClick || button.href;
