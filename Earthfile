@@ -330,6 +330,7 @@ backend-build:
 backend-deploy: ## Déploie le backend dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
     ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
     ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-backend/backend \
