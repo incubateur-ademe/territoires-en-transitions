@@ -1,11 +1,3 @@
-/**
- * Affiche le graphique "Tous les secteurs"
- *
- * - Aires empilées des données sectorielles de la trajectoire SNBC territorialisée
- * - Mes objectifs (simple ligne)
- * - Mes résultats (simple ligne)
- */
-
 import {useState} from 'react';
 import {Datum} from '@nivo/line';
 import {Button} from '@tet/ui';
@@ -14,6 +6,7 @@ import {LineData} from 'ui/charts/Line/LineChart';
 import {theme} from 'ui/charts/chartsTheme';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {COLORS, LAYERS} from './constants';
+import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
 
 type LayerKey = keyof typeof LAYERS;
 
@@ -25,6 +18,13 @@ export type TrajectoireChartProps = {
   resultats: Datum[];
 };
 
+/**
+ * Affiche le graphique "Tous les secteurs"
+ *
+ * - Aires empilées des données sectorielles de la trajectoire SNBC territorialisée
+ * - Mes objectifs (simple ligne)
+ * - Mes résultats (simple ligne)
+ */
 export const TrajectoireChart = ({
   titre,
   unite,
@@ -40,8 +40,8 @@ export const TrajectoireChart = ({
     .filter(s => !!s.data?.length);
 
   const objectifsEtResultats = [
-    {id: 'objectifs', data: objectifs},
-    {id: 'resultats', data: resultats},
+    {id: 'objectifs', data: objectifs, color: LAYERS.objectifs.color},
+    {id: 'resultats', data: resultats, color: LAYERS.resultats.color},
   ].filter(s => !!s?.data?.length);
 
   return (
@@ -65,33 +65,9 @@ export const TrajectoireChart = ({
         }}
         line={{
           chart: {
-            data: secteursNonVides,
-            colors: {datum: 'color'},
-            theme,
-            margin: {top: 5, right: 5, bottom: 55, left: 50},
-            xScale: {type: 'point'},
-            yScale: {
-              type: 'linear',
-              min: 0,
-              max: 'auto',
-              stacked: true,
-            },
-            yFormat: ' >-.2f',
+            ...COMMON_CHART_PROPS,
             axisLeftLegend: unite,
-            axisBottom: {
-              legendPosition: 'end',
-              tickSize: 5,
-              tickPadding: 12,
-              tickRotation: -35,
-            },
-            enableArea: true,
-            areaOpacity: 0.8,
-            enablePoints: false,
-            lineWidth: 0,
-            curve: 'natural',
-            enableSlices: 'x',
-            animate: true,
-            motionConfig: 'slow',
+            data: secteursNonVides,
             legend: {
               isOpen: true,
               className: 'text-primary-8 font-medium',
@@ -109,52 +85,10 @@ export const TrajectoireChart = ({
                 })),
               ],
             },
-            sliceTooltip: ({slice}) => {
-              const annee = slice.points[0].data.x;
-              const objectif = objectifs?.find(o => o.x === annee);
-              const resultat = resultats?.find(o => o.x === annee);
-              return (
-                <div className="flex flex-col gap-1 bg-white p-4 font-normal text-primary-8 text-sm shadow-sm">
-                  <span>
-                    En <strong>{slice.points[0].data.xFormatted}</strong>
-                  </span>
-                  {slice.points
-                    .sort((a, b) => (b.data.y as number) - (a.data.y as number))
-                    .map(point => {
-                    const secteur = secteursNonVides.find(
-                      s => s.id === point.serieId
-                    );
-                    return (
-                      secteur && (
-                        <div className="flex items-center gap-3" key={point.id}>
-                          {AreaSymbol(secteur.color)}
-                          {secteur.label}
-                          <strong>{point.data.yFormatted}</strong>
-                        </div>
-                      )
-                    );
-                  })}
-                  {(objectif || resultat) && (
-                    <div className="mt-2">
-                      {objectif && (
-                        <div className="flex items-center gap-3">
-                          {SolidLineSymbol(LAYERS.objectifs.color)}
-                          Objectif
-                          <strong>{objectif.y?.toString()}</strong>
-                        </div>
-                      )}
-                      {resultat && (
-                        <div className="flex items-center gap-3">
-                          {SolidLineSymbol(LAYERS.resultats.color)}
-                          Résultat
-                          <strong>{resultat.y?.toString()}</strong>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            },
+            sliceTooltip: makeTrajectoireChartSliceTooltip({
+              objectifsEtResultats,
+              secteurs: secteursNonVides,
+            }),
             layers: [
               'grid',
               'markers',
@@ -192,3 +126,32 @@ export const TrajectoireChart = ({
     </>
   );
 };
+
+// propriétés communes avec le graphe sous-sectoriel
+export const COMMON_CHART_PROPS = {
+  colors: {datum: 'color'},
+  theme,
+  margin: {top: 5, right: 5, bottom: 55, left: 50},
+  xScale: {type: 'point'},
+  yScale: {
+    type: 'linear',
+    min: 0,
+    max: 'auto',
+    stacked: true,
+  },
+  yFormat: ' >-.2f',
+  axisBottom: {
+    legendPosition: 'end',
+    tickSize: 5,
+    tickPadding: 12,
+    tickRotation: -35,
+  },
+  enableArea: true,
+  areaOpacity: 0.8,
+  enablePoints: false,
+  lineWidth: 0,
+  curve: 'natural',
+  enableSlices: 'x',
+  animate: true,
+  motionConfig: 'slow',
+} as const;
