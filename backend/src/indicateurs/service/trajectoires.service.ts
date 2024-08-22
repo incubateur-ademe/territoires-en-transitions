@@ -158,6 +158,7 @@ export default class TrajectoiresService {
       );
       // Set the output file name.
       res.attachment(nomFichier);
+      res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
       // Send the workbook.
       res.send(xlsxBuffer);
@@ -274,6 +275,7 @@ export default class TrajectoiresService {
 
       // Set the output file name.
       res.attachment(`${nomFichier}.xlsx`);
+      res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
       // Send the workbook.
       res.send(generatedData);
