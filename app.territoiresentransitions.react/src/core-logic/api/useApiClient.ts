@@ -1,4 +1,5 @@
 import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
+import {getFileNameFromResponse} from 'core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 
@@ -46,10 +47,9 @@ export const useApiClient = () => {
     }
     // récupère la réponse sous forme de blob
     const blob = await response.blob();
+
     // essaye d'extraire le nom de fichier des en-têtes
-    const filename = response.headers
-      .get('Content-Disposition')
-      ?.match(/filename="(.*)"/)?.[1];
+    const filename = getFileNameFromResponse(response);
     return {blob, filename};
   };
 
