@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import classNames from 'classnames';
 import {isBefore, startOfToday} from 'date-fns';
-import _ from 'lodash';
 import {Button, Divider, Icon} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import BadgeStatut from '../../components/BadgeStatut';
@@ -9,7 +8,7 @@ import BadgePriorite from '../../components/BadgePriorite';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import ModalePlanning from './ModalePlanning';
-import {getTextFormattedDate} from '../utils';
+import {getTextFormattedDate, getTruncatedText} from '../utils';
 import EmptyCard from '../EmptyCard';
 
 type FicheActionPlanningProps = {
@@ -43,17 +42,10 @@ const FicheActionPlanning = ({
     dateFinPrevisionnelle &&
     isBefore(new Date(dateFinPrevisionnelle), startOfToday());
 
-  const truncatedJustification =
-    justificationCalendrier !== null
-      ? _.truncate(justificationCalendrier, {
-          length: 300,
-          separator: ' ',
-          omission: '',
-        })
-      : null;
-
-  const isJustificationTruncated =
-    truncatedJustification !== justificationCalendrier;
+  const {
+    truncatedText: truncatedJustification,
+    isTextTruncated: isJustificationTruncated,
+  } = getTruncatedText(justificationCalendrier, 300);
 
   return (
     <>
@@ -148,7 +140,7 @@ const FicheActionPlanning = ({
               <p className="text-sm text-primary-10 text-left leading-[22px] whitespace-pre-wrap mb-0">
                 {isFullJustification || !isJustificationTruncated
                   ? justificationCalendrier
-                  : `${truncatedJustification}...`}
+                  : truncatedJustification}
               </p>
               {isJustificationTruncated && (
                 <Button

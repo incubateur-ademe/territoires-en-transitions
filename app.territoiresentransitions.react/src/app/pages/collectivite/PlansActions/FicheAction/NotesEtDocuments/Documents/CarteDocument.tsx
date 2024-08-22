@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import classNames from 'classnames';
-import {Card, Divider, Icon} from '@tet/ui';
+import {Button, Card, Divider, Icon} from '@tet/ui';
 import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
 import {openPreuve} from 'ui/shared/preuves/Bibliotheque/openPreuve';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
@@ -9,6 +9,7 @@ import {getAuthorAndDate, getFormattedTitle} from './utils';
 import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
 import AlerteSuppression from '../AlerteSuppression';
 import DocumentInput from './DocumentInput';
+import {getTruncatedText} from '../../utils';
 
 type CarteDocumentProps = {
   isReadonly: boolean;
@@ -29,7 +30,11 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
 
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFullCommentaire, setIsFullCommentaire] = useState(false);
   const isEditing = editComment.isEditing || editFilename.isEditing;
+
+  const {truncatedText: truncatedCom, isTextTruncated: isComTruncated} =
+    getTruncatedText(commentaire, 160);
 
   useEffect(() => {
     if (isLoading) setIsEditLoading(true);
@@ -47,7 +52,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
 
   return (
     <>
-      <div className="relative group">
+      <div className="relative group h-full">
         {/* Menu de la carte document */}
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
@@ -60,7 +65,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
         )}
 
         {/* Carte*/}
-        <Card className="!p-4">
+        <Card className="!p-4 h-full">
           <div className="flex gap-4">
             {/* Icône document ou lien */}
             <div
@@ -120,9 +125,23 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                         className="text-grey-7"
                       />
                       <span className="text-grey-8 text-xs font-medium italic whitespace-pre-wrap">
-                        {commentaire}
+                        {isFullCommentaire || !isComTruncated
+                          ? commentaire
+                          : truncatedCom}
                       </span>
                     </div>
+                    {isComTruncated && (
+                      <Button
+                        variant="underlined"
+                        size="xs"
+                        className="ml-auto"
+                        onClick={() =>
+                          setIsFullCommentaire(prevState => !prevState)
+                        }
+                      >
+                        {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
+                      </Button>
+                    )}
                   </>
                 )
               ) : (

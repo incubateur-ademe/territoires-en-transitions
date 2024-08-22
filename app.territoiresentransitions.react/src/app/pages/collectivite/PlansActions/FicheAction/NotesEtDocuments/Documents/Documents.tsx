@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import Masonry from 'react-responsive-masonry';
 import {Button} from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {useAnnexesFicheAction} from '../../data/useAnnexesFicheAction';
@@ -77,7 +76,7 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
               Impossible de charger les documents...
             </span>
           ) : (
-            <Masonry columnsCount={2} gutter="0.75rem">
+            <div className="grid grid-cols-2 gap-3">
               {documents.map(doc => (
                 <CarteDocument
                   key={doc.id}
@@ -85,7 +84,7 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
                   document={doc}
                 />
               ))}
-            </Masonry>
+            </div>
           )}
         </div>
       )}

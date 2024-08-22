@@ -1,7 +1,9 @@
+import {useState} from 'react';
 import classNames from 'classnames';
-import {Badge} from '@tet/ui';
+import {Badge, Button} from '@tet/ui';
 import {FicheAction} from '../data/types';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
+import {getTruncatedText} from '../utils';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;
@@ -14,7 +16,14 @@ const IndicateursHeader = ({
   fiche,
   updateFiche,
 }: IndicateursHeaderProps) => {
+  const [isFullObjectifs, setIsFullObjectifs] = useState(false);
+
   const {objectifs, resultats_attendus: resultats} = fiche;
+
+  const {
+    truncatedText: truncatedObjectifs,
+    isTextTruncated: isObjectifsTruncated,
+  } = getTruncatedText(objectifs, 1000);
 
   return (
     <>
@@ -37,8 +46,22 @@ const IndicateursHeader = ({
             'text-grey-7': !objectifs || !objectifs.length,
           })}
         >
-          {objectifs && objectifs?.length ? objectifs : 'Non renseignés'}
+          {objectifs && objectifs?.length
+            ? isFullObjectifs || !isObjectifsTruncated
+              ? objectifs
+              : truncatedObjectifs
+            : 'Non renseignés'}
         </span>
+        {isObjectifsTruncated && (
+          <Button
+            variant="underlined"
+            size="xs"
+            className="ml-auto"
+            onClick={() => setIsFullObjectifs(prevState => !prevState)}
+          >
+            {isFullObjectifs ? 'Voir moins' : 'Voir plus'}
+          </Button>
+        )}
       </div>
 
       {/* Effets attendus */}
