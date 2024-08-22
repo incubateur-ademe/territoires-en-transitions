@@ -195,9 +195,11 @@ export async function fetchFilteredIndicateurs(
     query.is('participation_score', filters.participationScore!);
   }
 
+  // On ajoute toujours le filtre sur les valeurs de la collectivité
+  query.eq('indicateur_valeur.collectivite_id', collectiviteId);
+
   // filtre les indicateurs complétés / à compléter
   if (filters.estComplet !== undefined) {
-    query.eq('indicateur_valeur.collectivite_id', collectiviteId);
     query.is('indicateur_valeur.metadonnee_id', null);
 
     if (filters.estComplet) {
@@ -207,17 +209,8 @@ export async function fetchFilteredIndicateurs(
     }
   }
 
-  // pour pouvoir trier sur la complétude (dans le TDB)
-  if (
-    filters.estComplet === undefined &&
-    sort?.find(s => s.field === 'estComplet')
-  ) {
-    query.eq('indicateur_valeur.collectivite_id', collectiviteId);
-  }
-
   if (filters.hasOpenData) {
     query.not('indicateur_valeur', 'is', null);
-    query.eq('indicateur_valeur.collectivite_id', collectiviteId);
     query.not('indicateur_valeur.metadonnee_id', 'is', null);
   }
 
