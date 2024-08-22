@@ -25,9 +25,16 @@ const nomColonnes : string[] = ['Axe (x)', 'Sous-axe (x.x)','Sous-sous axe (x.x.
  * @param file fichier excel
  * @param collectivite_id id de la collectivité
  * @param planNom nom du plan à importer
+ * @param planType id du type de plan
  * @return ??
  */
-export const XLSXToPlan = async (supabaseClient: TSupabaseClient, file : any, collectivite_id : number, planNom : string) => {
+export const XLSXToPlan = async (
+    supabaseClient: TSupabaseClient,
+    file : any,
+    collectivite_id : number,
+    planNom : string,
+    planType : number | null
+) => {
     const sheet = file.Sheets[file.SheetNames[0]];
     // Récupère la ligne d'en-tête et la ligne de fin du fichier
     let derniereCellule = 0;
@@ -51,7 +58,7 @@ export const XLSXToPlan = async (supabaseClient: TSupabaseClient, file : any, co
     const memoire = await fetchData(supabaseClient, collectivite_id);
     // Traiter le fichier
     const fiches : TFicheActionImport[] = [];
-    const plan  : TAxeImport = {nom : planNom?planNom:"Nouveau plan importé", parent : null};
+    const plan  : TAxeImport = {nom : planNom?planNom:"Nouveau plan importé", parent : null, type : planType};
     for (let ligne=entete+1; ligne<derniereCellule+1; ligne++){
         fiches.push(await ligneXLSXToFiche(sheet, ligne, plan, memoire));
     }

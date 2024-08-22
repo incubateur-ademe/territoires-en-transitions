@@ -55,13 +55,29 @@ const saveAxes = async(
     const axeToSave : Database['public']['Tables']['axe']['Insert'] = {
         nom : axe.nom,
         collectivite_id : memoire.collectivite_id,
-        parent : !parent?null:parent.id
+        parent : !parent?null:parent.id,
+        type : !axe.type?null:axe.type
     };
-    const {error, data} = await supabaseClient.rpc('upsert_axe', axeToSave);
-    if (error) {
-        throw new Error(error.message);
+    const query = supabaseClient
+        .from('axe')
+        .select('id')
+        .eq('collectivite_id', memoire.collectivite_id)
+        .eq('nom', axeToSave.nom.trim());
+    if(!axeToSave.parent){
+        query.is('parent', null)
+    }else{
+        query.eq('parent', axeToSave.parent)
     }
-    axeToSave.id = data;
+    const existingAxe = await query;
+    if(existingAxe.data?.length > 0){
+        axeToSave.id = existingAxe.data[0].id;
+    }else{
+        const {error, data} = await supabaseClient.from('axe').insert(axeToSave).select('id');
+        if (error) {
+            throw new Error(error.message);
+        }
+        axeToSave.id = data[0].id;
+    }
     return axeToSave;
 }
 

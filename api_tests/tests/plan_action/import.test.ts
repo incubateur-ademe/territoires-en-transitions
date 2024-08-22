@@ -18,6 +18,7 @@ const pathToFormData = async (path: string): Promise<FormData> => {
   form.append("planId", "1");
   form.append("planNom", "import test");
   form.append("collectivite_id", "1");
+  form.append("planType", "1");
   return form;
 };
 

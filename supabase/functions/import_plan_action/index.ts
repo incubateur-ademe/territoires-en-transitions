@@ -31,6 +31,7 @@ serve(async (req) => {
   const data = await req.formData();
   const planId = data.get("planId") as string;
   const planNom = data.get("planNom") as string;
+  const planType = data.get("planType") as string;
   const file = data.get("file") as File;
   const collectivite_id = data.get("collectivite_id") as string;
 
@@ -43,6 +44,7 @@ serve(async (req) => {
       workbook,
       parseInt(collectivite_id),
       planNom,
+      parseInt(planType)
     );
 
     // renvoi ok

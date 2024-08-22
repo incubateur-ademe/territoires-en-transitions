@@ -9,6 +9,7 @@ export type TAxeImport = {
   id?: number | null;
   nom: string | null;
   parent: TAxeImport | null;
+  type? : number | null;
 };
 
 export type TFinanceur = Omit<
