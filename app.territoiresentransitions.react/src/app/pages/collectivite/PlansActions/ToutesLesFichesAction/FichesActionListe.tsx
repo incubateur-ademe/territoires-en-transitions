@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import {Button, Input, Pagination, Select} from '@tet/ui';
 import {
@@ -120,6 +120,10 @@ const FichesActionListe = ({
   const {data, isLoading} = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isLoading]);
 
   const countTotal = data?.count || 0;
 

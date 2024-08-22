@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
 
@@ -112,6 +112,10 @@ const IndicateursListe = ({
     },
     false
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtres]);
 
   /** Nombre total d'indicateurs filtrés */
   const countTotal = data?.length || 0;
