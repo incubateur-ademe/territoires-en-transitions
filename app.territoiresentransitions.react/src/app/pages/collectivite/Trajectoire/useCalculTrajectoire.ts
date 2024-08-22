@@ -11,7 +11,7 @@ export type ResultatTrajectoire = {
   };
 };
 
-type IndicateurAvecValeurs = {
+export type IndicateurAvecValeurs = {
   definition: Omit<
     Indicateurs.domain.IndicateurDefinitionPredefini,
     'identifiant'
