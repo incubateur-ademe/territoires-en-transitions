@@ -16,7 +16,7 @@ export const makeTrajectoireChartSliceTooltip = ({
       <div className="flex flex-col gap-1 bg-white p-4 font-normal text-primary-8 text-sm shadow-sm">
         {/** Année */}
         <span>
-          En <strong>{slice.points[0].data.xFormatted}</strong>
+          En <strong>{(slice.points[0].data.x as Date).getFullYear()}</strong>
         </span>
         {
           /** Légende des aires empilées par secteurs */

@@ -8,12 +8,12 @@
 
 import {useState} from 'react';
 import {Datum} from '@nivo/line';
+import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {DashedLineSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
-import {Button} from '@tet/ui';
-import {theme} from 'ui/charts/chartsTheme';
-import {LAYERS} from './constants';
 import {StyledLineLayer} from 'ui/charts/Line/utils';
+import {LAYERS} from './constants';
+import {COMMON_CHART_PROPS} from 'app/pages/collectivite/Trajectoire/TrajectoireChart';
 
 export type TrajectoireSecteurChartProps = {
   titre: string;
@@ -53,36 +53,18 @@ export const TrajectoireSecteurChart = ({
         }}
         line={{
           chart: {
-            colors: {
-              datum: 'color',
-            },
-            theme,
-            margin: {top: 15, right: 15, bottom: 70, left: 50},
-            xScale: {type: 'point'},
+            ...COMMON_CHART_PROPS,
+            enableArea: false,
             yScale: {
-              type: 'linear',
-              min: 0,
-              max: 'auto',
+              ...COMMON_CHART_PROPS.yScale,
               stacked: false,
             },
-            yFormat: ' >-.2f',
             axisLeftLegend: unite,
-            axisBottom: {
-              legendPosition: 'end',
-              tickSize: 5,
-              tickPadding: 30,
-              tickRotation: -35,
-            },
-            curve: 'natural',
-            enableSlices: 'x',
-            animate: true,
-            motionConfig: 'slow',
             legend: {
               isOpen: true,
               className: 'text-primary-8 font-medium',
               size: 'sm',
             },
-            enablePoints: false,
             layers: [
               'grid',
               'markers',
