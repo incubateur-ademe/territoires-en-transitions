@@ -4,7 +4,7 @@ import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {AreaSymbol} from 'ui/charts/ChartLegend';
 import {genInfobulleParAnnee} from './InfobulleParAnnee';
-import {COMMON_CHART_PROPS, COULEURS_SOUS_SECTEUR} from './constants';
+import {COMMON_CHART_PROPS, COULEURS_SECTEUR} from './constants';
 
 export type GrapheSousSecteursProps = {
   titre: string;
@@ -28,7 +28,7 @@ export const GrapheSousSecteurs = ({
   const sousSecteursNonVides = sousSecteurs
     .map((s, i) => ({
       ...s,
-      color: COULEURS_SOUS_SECTEUR[i % COULEURS_SOUS_SECTEUR.length],
+      color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
     }))
     .filter(s => !!s.data?.length);
 
