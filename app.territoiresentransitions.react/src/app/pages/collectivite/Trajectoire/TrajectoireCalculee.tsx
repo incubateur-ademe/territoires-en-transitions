@@ -65,6 +65,17 @@ export const TrajectoireCalculee = () => {
 
       {/** Sélecteurs */}
       <div className="flex items-start justify-between">
+        {/** Sélecteur de trajectoire */}
+        <ButtonGroup
+          size="sm"
+          activeButtonId={indicateur.id}
+          buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
+            id,
+            children: nom,
+            onClick: () =>
+              setParams({indicateurIdx: [String(idx)], secteurIdx: ['0']}),
+          }))}
+        />
         {
           /** Sélecteur de secteur */
           !!indicateur?.secteurs && (
