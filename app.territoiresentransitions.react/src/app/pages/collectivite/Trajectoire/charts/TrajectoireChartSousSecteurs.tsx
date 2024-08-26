@@ -3,9 +3,8 @@ import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {AreaSymbol} from 'ui/charts/ChartLegend';
-import {COULEURS_SOUS_SECTEUR} from './constants';
 import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
-import {COMMON_CHART_PROPS} from 'app/pages/collectivite/Trajectoire/TrajectoireChart';
+import {COMMON_CHART_PROPS, COULEURS_SOUS_SECTEUR} from './constants';
 
 export type TrajectoireChartSousSecteursProps = {
   titre: string;

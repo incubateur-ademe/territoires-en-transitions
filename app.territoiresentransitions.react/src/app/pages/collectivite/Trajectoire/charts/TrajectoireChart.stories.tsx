@@ -1,7 +1,7 @@
 import React from 'react';
 import {Meta} from '@storybook/react';
 import {TrajectoireChart} from './TrajectoireChart';
-import {INDICATEURS_TRAJECTOIRE} from './constants';
+import {INDICATEURS_TRAJECTOIRE} from '../constants';
 
 export default {
   component: TrajectoireChart,
@@ -20,7 +20,7 @@ const ANNEES = Array(ANNEE_JALON2 - ANNEE_REFERENCE + 1)
 
 const genRandomValues = (offset = 0) =>
   ANNEES.map(annee => ({
-    x: annee,
+    x: new Date(`${annee}-01-01`),
     y: (Math.random() * 100 + offset).toFixed(2),
   }));
 

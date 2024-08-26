@@ -4,9 +4,9 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
-import {TrajectoireChart} from './TrajectoireChart';
-import {TrajectoireSecteurChart} from './TrajectoireSecteurChart';
-import {TrajectoireChartSousSecteurs} from './TrajectoireChartSousSecteurs';
+import {TrajectoireChart} from './charts/TrajectoireChart';
+import {TrajectoireChartSecteur} from './charts/TrajectoireChartSecteur';
+import {TrajectoireChartSousSecteurs} from './charts/TrajectoireChartSousSecteurs';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
@@ -123,7 +123,7 @@ export const TrajectoireCalculee = () => {
             /** Graphique du secteur sélectionné */
             !!(secteur && valeursSecteur && valeursSecteur.data.length) && (
               <Card className="h-fit">
-                <TrajectoireSecteurChart
+                <TrajectoireChartSecteur
                   unite={indicateur.unite}
                   titre={`${indicateur.titre}, secteur ${secteur.nom}`}
                   secteur={valeursSecteur.data}
