@@ -3,10 +3,9 @@ import {Datum} from '@nivo/line';
 import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
-import {theme} from 'ui/charts/chartsTheme';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
-import {ANNEE_JALON2, ANNEE_REFERENCE, COLORS, LAYERS} from './constants';
 import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
+import {COMMON_CHART_PROPS, COLORS, LAYERS} from './constants';
 
 type LayerKey = keyof typeof LAYERS;
 
@@ -126,40 +125,3 @@ export const TrajectoireChart = ({
     </>
   );
 };
-
-// propriétés communes avec le graphe sous-sectoriel
-export const COMMON_CHART_PROPS = {
-  colors: {datum: 'color'},
-  theme,
-  margin: {top: 5, right: 5, bottom: 55, left: 50},
-  xScale: {
-    type: 'time',
-    precision: 'year',
-    format: '%Y',
-    max: `${ANNEE_JALON2 + 1}`,
-  },
-  yScale: {
-    type: 'linear',
-    min: 0,
-    max: 'auto',
-    stacked: true,
-  },
-  yFormat: ' >-.2f',
-  axisBottom: {
-    format: '%Y',
-    legendPosition: 'end',
-    tickSize: 5,
-    tickPadding: 15,
-    tickRotation: -35,
-    tickValues: ANNEE_JALON2 - ANNEE_REFERENCE,
-  },
-  gridXValues: ANNEE_JALON2 - ANNEE_REFERENCE,
-  enableArea: true,
-  areaOpacity: 0.8,
-  enablePoints: false,
-  lineWidth: 0,
-  curve: 'natural',
-  enableSlices: 'x',
-  animate: true,
-  motionConfig: 'slow',
-} as const;

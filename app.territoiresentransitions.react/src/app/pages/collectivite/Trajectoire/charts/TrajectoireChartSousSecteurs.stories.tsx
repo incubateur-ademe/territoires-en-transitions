@@ -1,7 +1,7 @@
 import React from 'react';
 import {Meta} from '@storybook/react';
 import {TrajectoireChartSousSecteurs} from './TrajectoireChartSousSecteurs';
-import {INDICATEURS_TRAJECTOIRE} from './constants';
+import {INDICATEURS_TRAJECTOIRE} from '../constants';
 
 export default {
   component: TrajectoireChartSousSecteurs,

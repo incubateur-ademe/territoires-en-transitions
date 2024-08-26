@@ -12,10 +12,9 @@ import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {DashedLineSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {StyledLineLayer} from 'ui/charts/Line/utils';
-import {LAYERS} from './constants';
-import {COMMON_CHART_PROPS} from 'app/pages/collectivite/Trajectoire/TrajectoireChart';
+import {COMMON_CHART_PROPS, LAYERS} from './constants';
 
-export type TrajectoireSecteurChartProps = {
+export type TrajectoireChartSecteurProps = {
   titre: string;
   unite: string;
   secteur: Datum[];
@@ -23,13 +22,13 @@ export type TrajectoireSecteurChartProps = {
   resultats: Datum[];
 };
 
-export const TrajectoireSecteurChart = ({
+export const TrajectoireChartSecteur = ({
   titre,
   unite,
   secteur,
   objectifs,
   resultats,
-}: TrajectoireSecteurChartProps) => {
+}: TrajectoireChartSecteurProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -56,7 +55,9 @@ export const TrajectoireSecteurChart = ({
             ...COMMON_CHART_PROPS,
             enableArea: false,
             yScale: {
-              ...COMMON_CHART_PROPS.yScale,
+              type: 'linear',
+              min: 0,
+              max: 'auto',
               stacked: false,
             },
             axisLeftLegend: unite,
