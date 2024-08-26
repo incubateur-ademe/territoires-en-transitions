@@ -208,6 +208,9 @@ export default class TrajectoiresService {
       const epci = resultatVerification.epci;
       const nomFichier = this.getNomFichierTrajectoire(epci);
 
+      this.logger.log(
+        `Récupération des données du fichier ${this.getIdentifiantXlsxCalcul()}`,
+      );
       const xlsxBuffer = await this.sheetService.getFileData(
         this.getIdentifiantXlsxCalcul(),
       );
@@ -218,13 +221,16 @@ export default class TrajectoiresService {
       // https://github.com/dtjohnson/xlsx-populate: pas de typage et ecriture semble corrompre le fichier
 
       // Create a template
+      this.logger.log(`Création du XlsxTemplate`);
       const template = new XlsxTemplate(xlsxBuffer);
 
+      this.logger.log(`Substitution du Siren`);
       const sirenSheetName = this.SNBC_SIREN_CELLULE.split('!')[0];
       template.substitute(sirenSheetName, {
         siren: parseInt(epci.siren),
       });
 
+      this.logger.log(`Substitution des valeurs des indicateurs`);
       const emissionsGesConsommationsSheetName =
         this.SNBC_EMISSIONS_GES_CELLULES.split('!')[0];
       const emissionGesConsommationsSubstitionValeurs: any = {};
@@ -268,13 +274,13 @@ export default class TrajectoiresService {
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       };
 
+      this.logger.log(`Génération du buffer de fichier Xlsx`);
       const generatedData = template.generate(zipOptions as any);
 
-      // Set the output file name.
+      this.logger.log(`Renvoi du fichier Xlsx généré`);
+      // Send the workbook.
       res.attachment(`${nomFichier}.xlsx`.normalize('NFD'));
       res.set('Access-Control-Expose-Headers', 'Content-Disposition');
-
-      // Send the workbook.
       res.send(generatedData);
     } catch (error) {
       next(error);
@@ -691,10 +697,6 @@ export default class TrajectoiresService {
           identifiantIndicateurValeur2015.indicateur_valeur.resultat !==
             undefined // 0 est une valeur valide
         ) {
-          console.log(
-            `${identifiant}: ${identifiantIndicateurValeur2015.indicateur_valeur.resultat} ${identifiantIndicateurValeur2015.indicateur_definition?.unite}`,
-          );
-
           // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null
           if (valeurARemplir.valeur !== null) {
             valeurARemplir.valeur +=
@@ -717,12 +719,6 @@ export default class TrajectoiresService {
             }
           }
         } else {
-          identifiantIndicateurValeurs.forEach((v) => {
-            console.log(
-              `${identifiant}: ${v.indicateur_valeur.resultat} ${v.indicateur_definition?.unite} (${v.indicateur_valeur.date_valeur})`,
-            );
-          });
-
           const interpolationResultat = this.getInterpolationValeur(
             identifiantIndicateurValeurs.map((v) => v.indicateur_valeur),
           );
