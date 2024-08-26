@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import * as XlsxTemplate from 'xlsx-template';
 import { EpciType } from '../../collectivites/models/collectivite.models';
+import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
@@ -20,6 +21,7 @@ import {
   DonneesARemplirResult,
   DonneesARemplirValeur,
   DonneesCalculTrajectoireARemplir,
+  ModeleTrajectoireTelechargementRequest,
   VerificationTrajectoireRequest,
 } from '../models/calcultrajectoire.models';
 import {
@@ -116,12 +118,17 @@ export default class TrajectoiresService {
       'cae_2.a', // 297 Total
     ];
 
+  private xlsxModeleBuffer: Buffer | null = null;
+  private xlsxVideBuffer: Buffer | null = null;
+
   constructor(
     private readonly collectivitesService: CollectivitesService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly indicateursService: IndicateursService,
     private readonly sheetService: SheetService,
-  ) {}
+  ) {
+    this.initXlsxBuffers();
+  }
 
   getIdentifiantSpreadsheetCalcul() {
     return process.env.TRAJECTOIRE_SNBC_SHEET_ID!;
@@ -139,7 +146,11 @@ export default class TrajectoiresService {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
   }
 
-  async downloadModeleTrajectoireSnbc(res: Response, next: NextFunction) {
+  async downloadModeleTrajectoireSnbc(
+    request: ModeleTrajectoireTelechargementRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
       if (!this.getIdentifiantXlsxCalcul()) {
         throw new InternalServerErrorException(
@@ -147,25 +158,132 @@ export default class TrajectoiresService {
         );
       }
 
-      const xlsxBuffer = await this.sheetService.getFileData(
-        this.getIdentifiantXlsxCalcul(),
-      );
+      await this.initXlsxBuffers(request.force_recuperation_xlsx);
       const nomFichier = await this.sheetService.getFileName(
         this.getIdentifiantXlsxCalcul(),
       );
+
       // Set the output file name.
       res.attachment(nomFichier);
       res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
       // Send the workbook.
-      res.send(xlsxBuffer);
+      res.send(this.xlsxVideBuffer);
     } catch (error) {
       next(error);
     }
   }
 
+  async initXlsxBuffers(forceRecuperation?: boolean) {
+    if (!this.xlsxModeleBuffer || forceRecuperation) {
+      this.logger.log(
+        `Récupération des données du fichier Xlsx de calcul ${this.getIdentifiantXlsxCalcul()} (force: ${forceRecuperation})`,
+      );
+      this.xlsxModeleBuffer = await this.sheetService.getFileData(
+        this.getIdentifiantXlsxCalcul(),
+      );
+
+      this.logger.log(`Création du buffer sans données du fichier Xlsx`);
+      const nouveauBuffer = Buffer.from(this.xlsxModeleBuffer);
+      this.xlsxVideBuffer = await this.generationXlsxDonneesSubstituees(
+        nouveauBuffer,
+        { siren: null },
+        null,
+      );
+    }
+  }
+
+  async getXlsxModeleBuffer(): Promise<Buffer> {
+    if (!this.xlsxModeleBuffer) {
+      this.logger.log(`Récupération du buffer du fichier Xlsx de calcul`);
+      await this.initXlsxBuffers();
+    } else {
+      this.logger.log(
+        `Utilisation du buffer du fichier Xlsx de calcul déjà chargé`,
+      );
+    }
+    return Buffer.from(this.xlsxModeleBuffer!);
+  }
+
+  getXlsxCleSubstitution(identifiantsReferentiel: string[]): string {
+    return identifiantsReferentiel.join('-').replace(/\./g, '_');
+  }
+
+  async generationXlsxDonneesSubstituees(
+    xlsxBuffer: Buffer,
+    siren: {
+      siren: number | null;
+    },
+    valeurIndicateurs: DonneesCalculTrajectoireARemplir | null,
+  ): Promise<Buffer> {
+    // Utilisation de xlsx-template car:
+    // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
+    // https://github.com/exceljs/exceljs: fails to read the file
+    // https://github.com/dtjohnson/xlsx-populate: pas de typage et ecriture semble corrompre le fichier
+
+    // Create a template
+    this.logger.log(`Création du XlsxTemplate`);
+    const template = new XlsxTemplate(xlsxBuffer);
+
+    this.logger.log(`Substitution du Siren`);
+    const sirenSheetName = this.SNBC_SIREN_CELLULE.split('!')[0];
+    template.substitute(sirenSheetName, siren);
+
+    this.logger.log(`Substitution des valeurs des indicateurs`);
+    const emissionsGesConsommationsSheetName =
+      this.SNBC_EMISSIONS_GES_CELLULES.split('!')[0];
+
+    const emissionGesConsommationsSubstitionValeurs: any = {};
+    this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL.forEach((identifiants) => {
+      const cleSubstitution = this.getXlsxCleSubstitution(identifiants);
+      emissionGesConsommationsSubstitionValeurs[cleSubstitution] = 0;
+    });
+    this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL.forEach((identifiants) => {
+      const cleSubstitution = this.getXlsxCleSubstitution(identifiants);
+      emissionGesConsommationsSubstitionValeurs[cleSubstitution] = 0;
+    });
+    valeurIndicateurs?.emissions_ges.valeurs.forEach((valeur) => {
+      if (valeur.valeur === null) {
+        valeur.valeur = 0;
+      }
+      const cleSubstitution = this.getXlsxCleSubstitution(
+        valeur.identifiants_referentiel,
+      );
+      emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
+        valeur.valeur / 1000;
+    });
+    valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
+      if (valeur.valeur === null) {
+        valeur.valeur = 0;
+      }
+      const cleSubstitution = this.getXlsxCleSubstitution(
+        valeur.identifiants_referentiel,
+      );
+      emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
+        valeur.valeur;
+    });
+    template.substitute(
+      emissionsGesConsommationsSheetName,
+      emissionGesConsommationsSubstitionValeurs,
+    );
+
+    const zipOptions: JSZipGeneratorOptions = {
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: {
+        level: 2,
+      },
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    };
+
+    this.logger.log(`Génération du buffer de fichier Xlsx`);
+    const generatedData = template.generate(zipOptions as any);
+    return generatedData;
+  }
+
   async downloadTrajectoireSnbc(
-    request: CalculTrajectoireRequest,
+    request: CollectiviteRequest,
     res: Response,
     next: NextFunction,
   ) {
@@ -211,71 +329,17 @@ export default class TrajectoiresService {
       this.logger.log(
         `Récupération des données du fichier ${this.getIdentifiantXlsxCalcul()}`,
       );
-      const xlsxBuffer = await this.sheetService.getFileData(
-        this.getIdentifiantXlsxCalcul(),
-      );
+      const xlsxBuffer = await this.getXlsxModeleBuffer();
 
-      // Utilisation de xlsx-template car:
-      // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
-      // https://github.com/exceljs/exceljs: fails to read the file
-      // https://github.com/dtjohnson/xlsx-populate: pas de typage et ecriture semble corrompre le fichier
-
-      // Create a template
-      this.logger.log(`Création du XlsxTemplate`);
-      const template = new XlsxTemplate(xlsxBuffer);
-
-      this.logger.log(`Substitution du Siren`);
-      const sirenSheetName = this.SNBC_SIREN_CELLULE.split('!')[0];
-      template.substitute(sirenSheetName, {
+      const sirenData = {
         siren: parseInt(epci.siren),
-      });
-
-      this.logger.log(`Substitution des valeurs des indicateurs`);
-      const emissionsGesConsommationsSheetName =
-        this.SNBC_EMISSIONS_GES_CELLULES.split('!')[0];
-      const emissionGesConsommationsSubstitionValeurs: any = {};
-      resultatVerification.donnees_entree?.emissions_ges.valeurs.forEach(
-        (valeur) => {
-          if (valeur.valeur === null) {
-            valeur.valeur = 0;
-          }
-          const substitutionKey = valeur.identifiants_referentiel
-            .join('-')
-            .replace(/\./g, '_');
-          emissionGesConsommationsSubstitionValeurs[substitutionKey] =
-            valeur.valeur / 1000;
-        },
-      );
-
-      resultatVerification.donnees_entree?.consommations_finales.valeurs.forEach(
-        (valeur) => {
-          if (valeur.valeur === null) {
-            valeur.valeur = 0;
-          }
-          const substitutionKey = valeur.identifiants_referentiel
-            .join('-')
-            .replace(/\./g, '_');
-          emissionGesConsommationsSubstitionValeurs[substitutionKey] =
-            valeur.valeur;
-        },
-      );
-      template.substitute(
-        emissionsGesConsommationsSheetName,
-        emissionGesConsommationsSubstitionValeurs,
-      );
-
-      const zipOptions: JSZipGeneratorOptions = {
-        type: 'nodebuffer',
-        compression: 'DEFLATE',
-        compressionOptions: {
-          level: 2,
-        },
-        mimeType:
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       };
 
-      this.logger.log(`Génération du buffer de fichier Xlsx`);
-      const generatedData = template.generate(zipOptions as any);
+      const generatedData = await this.generationXlsxDonneesSubstituees(
+        xlsxBuffer,
+        sirenData,
+        resultatVerification.donnees_entree,
+      );
 
       this.logger.log(`Renvoi du fichier Xlsx généré`);
       // Send the workbook.
@@ -495,6 +559,7 @@ export default class TrajectoiresService {
         request.collectivite_id,
         indicateurSourceMetadonnee.id,
         trajectoireCalculEmissionGesResultat.data,
+        1000,
         this.SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
         resultatVerification.donnees_entree.emissions_ges,
@@ -525,6 +590,7 @@ export default class TrajectoiresService {
         request.collectivite_id,
         indicateurSourceMetadonnee.id,
         trajectoireCalculConsommationsResultat.data,
+        1,
         this.SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
         resultatVerification.donnees_entree.consommations_finales,
@@ -559,6 +625,7 @@ export default class TrajectoiresService {
     collectiviteId: number,
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: any[][] | null,
+    facteur: number,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinitionType[],
     donneesEntree: DonneesARemplirResult,
@@ -595,7 +662,7 @@ export default class TrajectoiresService {
                   collectivite_id: collectiviteId,
                   metadonnee_id: indicateurSourceMetadonneeId,
                   date_valeur: `${2015 + columnIndex}-01-01`,
-                  objectif: floatValeur,
+                  objectif: floatValeur * facteur,
                 };
                 indicateurValeursResultat.push(indicateurValeur);
               } else {

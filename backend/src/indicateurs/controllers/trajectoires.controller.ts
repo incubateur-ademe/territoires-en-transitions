@@ -5,6 +5,7 @@ import CollectiviteRequest from '../../collectivites/models/collectivite.request
 import {
   CalculTrajectoireRequest,
   CalculTrajectoireResponse,
+  ModeleTrajectoireTelechargementRequest,
   VerificationTrajectoireRequest,
 } from '../models/calcultrajectoire.models';
 import TrajectoiresService from '../service/trajectoires.service';
@@ -30,9 +31,13 @@ export class TrajectoiresController {
   }
 
   @Get('snbc/modele')
-  downloadModeleSnbc(@Res() res: Response, @Next() next: NextFunction) {
+  downloadModeleSnbc(
+    @Query() request: ModeleTrajectoireTelechargementRequest,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
     this.logger.log(`Téléchargement du modele de trajectoire SNBC`);
-    this.trajectoiresService.downloadModeleTrajectoireSnbc(res, next);
+    this.trajectoiresService.downloadModeleTrajectoireSnbc(request, res, next);
   }
 
   @Get('snbc/telechargement')

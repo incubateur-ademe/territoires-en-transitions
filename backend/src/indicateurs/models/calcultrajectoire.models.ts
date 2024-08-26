@@ -23,6 +23,18 @@ export enum CalculTrajectoireResultatMode {
   MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
 }
 
+export class ModeleTrajectoireTelechargementRequest {
+  @ApiProperty({
+    required: false,
+    description:
+      'Récupère les données du fichier xlsx depuis le drive plutôt que le cache local',
+  })
+  @IsBoolean()
+  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
+  @IsOptional()
+  force_recuperation_xlsx?: boolean;
+}
+
 export class VerificationTrajectoireRequest extends CollectiviteRequest {
   @ApiProperty({
     required: false,
