@@ -7,12 +7,17 @@ import {
   isNotNull,
   isNull,
   lte,
+  or,
   sql,
+  SQL,
   SQLWrapper,
 } from 'drizzle-orm';
 import * as _ from 'lodash';
 import DatabaseService from '../../common/services/database.service';
-import { GetIndicateursValeursOptions } from '../models/getIndicateursValeursOptions.models';
+import {
+  GetIndicateursValeursRequest,
+  GetIndicateursValeursResponse,
+} from '../models/getIndicateurs.models';
 import {
   CreateIndicateurValeurType,
   IndicateurAvecValeurs,
@@ -28,48 +33,72 @@ import {
 export default class IndicateursService {
   private readonly logger = new Logger(IndicateursService.name);
 
+  /**
+   * Quand la source_id est NULL, cela signifie que ce sont des donnees saisies par la collectivite
+   */
+  public readonly NULL_SOURCE_ID = 'collectivite';
+
   constructor(private readonly databaseService: DatabaseService) {}
 
   /**
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
-  async getIndicateursValeurs(options: GetIndicateursValeursOptions) {
+  async getIndicateursValeurs(options: GetIndicateursValeursRequest) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
     );
 
-    const conditions: SQLWrapper[] = [
-      eq(indicateurValeurTable.collectivite_id, options.collectiviteId),
+    const conditions: (SQLWrapper | SQL)[] = [
+      eq(indicateurValeurTable.collectivite_id, options.collectivite_id),
     ];
     if (
-      options.identifiantsReferentiel &&
-      options.identifiantsReferentiel.length > 0
+      options.identifiants_referentiel &&
+      options.identifiants_referentiel.length > 0
     ) {
       conditions.push(
         inArray(
           indicateurDefinitionTable.identifiant_referentiel,
-          options.identifiantsReferentiel,
+          options.identifiants_referentiel,
         ),
       );
     }
-    if (options.dateDebut) {
+    if (options.date_debut) {
       conditions.push(
-        gte(indicateurValeurTable.date_valeur, options.dateDebut),
+        gte(indicateurValeurTable.date_valeur, options.date_debut),
       );
     }
-    if (options.dateFin) {
-      conditions.push(lte(indicateurValeurTable.date_valeur, options.dateFin));
+    if (options.date_fin) {
+      conditions.push(lte(indicateurValeurTable.date_valeur, options.date_fin));
     }
-    if (options.indicateurId) {
-      conditions.push(eq(indicateurValeurTable.id, options.indicateurId));
+    if (options.indicateur_id) {
+      conditions.push(eq(indicateurValeurTable.id, options.indicateur_id));
     }
-    if (options.sourceId) {
-      conditions.push(
-        eq(indicateurSourceMetadonneeTable.source_id, options.sourceId),
-      );
-    } else if (options.sourceId === null) {
-      conditions.push(isNull(indicateurValeurTable.metadonnee_id));
+    if (options.source_ids?.length) {
+      const nullSourceId = options.source_ids.includes(this.NULL_SOURCE_ID);
+      if (nullSourceId) {
+        const autreSourceIds = options.source_ids.filter(
+          (s) => s !== this.NULL_SOURCE_ID,
+        );
+        if (autreSourceIds.length) {
+          const orCondition = or(
+            isNull(indicateurSourceMetadonneeTable.source_id),
+            inArray(indicateurSourceMetadonneeTable.source_id, autreSourceIds),
+          );
+          if (orCondition) {
+            conditions.push(orCondition);
+          }
+        } else {
+          conditions.push(isNull(indicateurSourceMetadonneeTable.source_id));
+        }
+      } else {
+        conditions.push(
+          inArray(
+            indicateurSourceMetadonneeTable.source_id,
+            options.source_ids,
+          ),
+        );
+      }
     }
 
     const result = this.databaseService.db
@@ -88,12 +117,52 @@ export default class IndicateursService {
       )
       .where(and(...conditions));
 
+    const sql = result.toSQL();
+    console.log(JSON.stringify(sql));
+
     // Enlève les doublons quand il y a plusieurs valeurs pour un même indicateur, collectivité, année
     // Garde en priorité la valeur utilisateur, puis celle avec la version la plus récente
-    if (options.sourceId !== null && options.cleanDoublon === true) {
+    /*if (options.source_id !== null && options.clean_doublon === true) {
       // TODO adapter le code de packages/api/indicateur/indicateur.fetch.ts/selectIndicateursValeurs()
-    }
+    }*/
     return result;
+  }
+
+  async getIndicateurValeursGroupees(
+    options: GetIndicateursValeursRequest,
+  ): Promise<GetIndicateursValeursResponse> {
+    const indicateurValeurs = await this.getIndicateursValeurs(options);
+    const indicateurValeursSeules = indicateurValeurs.map(
+      (v) => v.indicateur_valeur,
+    );
+    const initialAcc: { [key: string]: IndicateurDefinitionType } = {};
+    const uniqueIndicateurDefinitions = Object.values(
+      indicateurValeurs.reduce((acc, v) => {
+        if (v.indicateur_definition?.id) {
+          acc[v.indicateur_definition.id.toString()] = v.indicateur_definition;
+        }
+        return acc;
+      }, initialAcc),
+    ) as IndicateurDefinitionType[];
+    uniqueIndicateurDefinitions.sort((a, b) => {
+      if (!a.identifiant_referentiel && !b.identifiant_referentiel) {
+        return 0;
+      }
+      if (!a.identifiant_referentiel) {
+        return 1;
+      }
+      if (!b.identifiant_referentiel) {
+        return -1;
+      }
+      return a.identifiant_referentiel.localeCompare(b.identifiant_referentiel);
+    });
+
+    // TODO: groupe par indicateur et source
+    const indicateurValeurGroupees = this.groupeIndicateursValeursParIndicateur(
+      indicateurValeursSeules,
+      uniqueIndicateurDefinitions,
+    );
+    return { indicateurs: indicateurValeurGroupees };
   }
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
@@ -215,6 +284,7 @@ export default class IndicateursService {
               resultat_commentaire: v.resultat_commentaire,
               objectif: v.objectif,
               objectif_commentaire: v.objectif_commentaire,
+              metadonnee_id: v.metadonnee_id, // TODO: to be removed
             };
             return _.omitBy(
               indicateurValeurGroupee,

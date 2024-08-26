@@ -691,11 +691,11 @@ export default class TrajectoiresService {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015
     const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: _.flatten(
+        collectivite_id: collectiviteId,
+        identifiants_referentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
-        sourceId: this.RARE_SOURCE_ID,
+        source_ids: [this.RARE_SOURCE_ID],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -707,11 +707,11 @@ export default class TrajectoiresService {
     // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015
     const indicateurValeursConsommationsFinales =
       await this.indicateursService.getIndicateursValeurs({
-        collectiviteId,
-        identifiantsReferentiel: _.flatten(
+        collectivite_id: collectiviteId,
+        identifiants_referentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
-        sourceId: this.RARE_SOURCE_ID,
+        source_ids: [this.RARE_SOURCE_ID],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -929,8 +929,8 @@ export default class TrajectoiresService {
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
-      collectiviteId: request.collectivite_id,
-      sourceId: this.SNBC_SOURCE.id,
+      collectivite_id: request.collectivite_id,
+      source_ids: [this.SNBC_SOURCE.id],
     });
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
