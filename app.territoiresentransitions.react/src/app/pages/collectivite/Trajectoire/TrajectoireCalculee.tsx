@@ -170,9 +170,7 @@ export const TrajectoireCalculee = () => {
                 identifiantReferentiel={identifiant}
               />
             )}
-          {secteurIdx !== 0 && secteur && 'snbc2' in secteur && (
-            <Methodologie secteur={secteur} />
-          )}
+          {secteur && <Methodologie secteur={secteur} />}
           <AllerPlusLoin />
         </div>
       </div>
