@@ -1,16 +1,17 @@
 import {Card} from '@tet/ui';
-import {SecteurTrajectoire} from 'app/pages/collectivite/Trajectoire/constants';
+import {SecteurTrajectoire, METHODO_PAR_SECTEUR} from './constants';
 
 /** Affiche l'encadré "Méthodologie" (lorsqu'un secteur est sélectionné) */
 export const Methodologie = ({secteur}: {secteur: SecteurTrajectoire}) => {
-  return (
+  const methodo = METHODO_PAR_SECTEUR[secteur.nom];
+  return methodo ? (
     <Card>
       <h5 className="mb-0">Méthodologie</h5>
-      {'snbc2' in secteur && (
+      {'snbc2' in methodo && (
         <>
           <p className="text-primary-8 font-bold mb-0">SNBC 2</p>
           <p className="mb-0 font-normal">
-            {secteur.snbc2.map(s => (
+            {methodo.snbc2.map(s => (
               <>
                 {s}
                 <br />
@@ -19,13 +20,13 @@ export const Methodologie = ({secteur}: {secteur: SecteurTrajectoire}) => {
           </p>
         </>
       )}
-      {'pivots' in secteur && (
+      {'pivots' in methodo && (
         <>
           <p className="text-primary-8 font-bold mb-0">
             Méthode de territorialisation
           </p>
           <p className="mb-0 font-normal">
-            {secteur.pivots.map(s => (
+            {methodo.pivots.map(s => (
               <>
                 {s}
                 <br />
@@ -35,5 +36,5 @@ export const Methodologie = ({secteur}: {secteur: SecteurTrajectoire}) => {
         </>
       )}
     </Card>
-  );
+  ) : null;
 };

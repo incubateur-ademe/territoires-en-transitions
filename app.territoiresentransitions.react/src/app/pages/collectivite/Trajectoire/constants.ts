@@ -18,150 +18,146 @@ export const INDICATEURS_TRAJECTOIRE = [
       {
         nom: 'Résidentiel',
         identifiant: 'cae_1.c',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 40 % des consommations d'énergie finale du résidentiel.",
-          '',
-          "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 94 % les émissions de GES du secteur.",
-        ],
-        pivots: [
-          'La trajectoire nationale pour les besoins en chauffage est territorialisée à partir du nombre de maisons et appartements en résidences principales, auquel est appliqué une correction en fonction des données de rigueur climatique régionale (DJU).',
-          'Les autres usages sont répartis par nombre de ménages. La démographie est également prise en compte pour les émissions et les consommations.',
-        ],
         sousSecteurs: [
-          {nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_1.ca'},
-          {nom: 'Chauffage / Logement collectif', identifiant: 'cae_1.cb'},
-          {nom: 'Autres usages', identifiant: 'cae_1.cc'},
+          {
+            nom: 'Chauffage / Maisons individuelles',
+            identifiant: 'cae_1.ca',
+          },
+          {
+            nom: 'Chauffage / Logement collectif',
+            identifiant: 'cae_1.cb',
+          },
+          {
+            nom: 'Autres usages',
+            identifiant: 'cae_1.cc',
+          },
         ],
       },
       {
         nom: 'Tertiaire',
         identifiant: 'cae_1.d',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 41 % des consommations d'énergie finale du tertiaire.",
-          '',
-          "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 99 % les émissions du secteur.",
-        ],
-        pivots: [
-          'La trajectoire nationale pour les besoins en chauffage et autres usages du tertiaire est territorialisée à partir du nombre salariés du territoire.',
-          "L'usage chauffage est corrigé en fonction des données de rigueur climatique régionale (DJU).",
-          'La démographie est également prise en compte pour les émissions et les consommations.',
-        ],
         sousSecteurs: [
-          {nom: 'Chauffage', identifiant: 'cae_1.da'},
-          {nom: 'Autres usages', identifiant: 'cae_1.db'},
+          {
+            nom: 'Chauffage',
+            identifiant: 'cae_1.da',
+          },
+          {
+            nom: 'Autres usages',
+            identifiant: 'cae_1.db',
+          },
         ],
       },
       {
         nom: 'Industrie',
         identifiant: 'cae_1.i',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 19 % des consommations d'énergie finale de l'industrie manufacturière.",
-          "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 81 % les émissions du secteur.",
-        ],
-        pivots: [
-          "La territorialisation de la trajectoire industrie repose sur la ventilation des émissions et consommations par sous-secteurs industriels, d'après données d'emplois par branche (base FLORES de l'INSEE).",
-          'Le point de départ est ensuite recalé avec les données observatoire.',
-        ],
         sousSecteurs: [
-          {nom: 'Métaux primaires', identifiant: 'cae_1.ia'},
-          {nom: 'Chimie', identifiant: 'cae_1.ib'},
-          {nom: 'Non-métalliques', identifiant: 'cae_1.ic'},
-          {nom: 'Agro-industries', identifiant: 'cae_1.id'},
-          {nom: 'Equipements', identifiant: 'cae_1.ie'},
-          {nom: 'Papier-carton', identifiant: 'cae_1.if'},
-          {nom: 'Autres industries', identifiant: 'cae_1.ig'},
+          {
+            nom: 'Métaux primaires',
+            identifiant: 'cae_1.ia',
+          },
+          {
+            nom: 'Chimie',
+            identifiant: 'cae_1.ib',
+          },
+          {
+            nom: 'Non-métalliques',
+            identifiant: 'cae_1.ic',
+          },
+          {
+            nom: 'Agro-industries',
+            identifiant: 'cae_1.id',
+          },
+          {
+            nom: 'Equipements',
+            identifiant: 'cae_1.ie',
+          },
+          {
+            nom: 'Papier-carton',
+            identifiant: 'cae_1.if',
+          },
+          {
+            nom: 'Autres industries',
+            identifiant: 'cae_1.ig',
+          },
         ],
       },
       {
         nom: 'Agriculture',
         identifiant: 'cae_1.g',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 49 % des consommations d'énergie finale du secteur de l'agriculture.",
-          '',
-          'Si la consommation énergétique en agriculture émet du CO2, les pratiques culturales et l\'élevage sont responsables d\'émissions importantes de NH3 et de CH4, ici converties en "équivalent CO2" (CO2eq) pour faciliter les calculs.',
-        ],
-        pivots: [
-          "Les émissions relevées dans les territoires varient beaucoup en fonction des typologies d'agriculture.",
-          "Ainsi, les émissions liées à la consommation d'énergie sont corrélées à la surface agricole utile (SAU) du territoire. De manière simplifiée, les émissions de CH4 liées à l'élevage s'appuient sur le pivot du nombre d'unités de GRos bétail (UGB), et les émissions de NH3 à la surface de terres labourables.",
-        ],
         sousSecteurs: [
-          {nom: 'Energie', identifiant: 'cae_1.ga'},
-          {nom: 'Elevage', identifiant: 'cae_1.gb'},
-          {nom: 'Pratiques culturales', identifiant: 'cae_1.gc'},
+          {
+            nom: 'Energie',
+            identifiant: 'cae_1.ga',
+          },
+          {
+            nom: 'Elevage',
+            identifiant: 'cae_1.gb',
+          },
+          {
+            nom: 'Pratiques culturales',
+            identifiant: 'cae_1.gc',
+          },
         ],
       },
       {
         nom: 'Transports',
         identifiant: 'cae_1.k',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 61 % des consommations d'énergie finale du secteur des transports.",
-          'La trajectoire nationale pour les usages de courte distance et de longue distance est différenciée dans la SNBC.',
-          "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 97 % les émissions du secteur",
-        ],
-        pivots: [
-          "Les consommations relevées dans les territoires varient beaucoup en fonction des infrastructures locales, notamment la présence d'autoroute.",
-          "Pour affiner l'analyse, les usages de mobilité du quotidien (courte distance) sont reconstituées à partir des typologies des communes qui le consitituent. Cela permet de donner un ordre d'idée de la mobilité routière locale, et de la mobilité de transit.",
-          'La mobilité routière locale est réajustée selon la démographie.',
-          "Par manque de données du scénario SNBC, le découpage en sous-secteurs n'est possible que sur les émissions GES, pas sur les consommations énergétiques.",
-        ],
         sousSecteurs: [
-          {nom: 'Routier / mobilité locale', identifiant: 'cae_1.ea'},
-          {nom: 'Routier / autre', identifiant: 'cae_1.eb'},
-          {nom: 'Autres', identifiant: 'cae_1.f'},
+          {
+            nom: 'Routier / mobilité locale',
+            identifiant: 'cae_1.ea',
+          },
+          {
+            nom: 'Routier / autre',
+            identifiant: 'cae_1.eb',
+          },
+          {
+            nom: 'Autres',
+            identifiant: 'cae_1.f',
+          },
         ],
       },
       {
         nom: 'Déchets',
         identifiant: 'cae_1.h',
-        snbc2: [
-          'La SNBC 2 prévoit une diminution de 66 % des émissions du secteur des déchets',
-        ],
-        pivots: [
-          "Les émissions liées au secteur des déchets dépendent de la localisation des infrastructures de traitement des déchets. Les données d'observatoires doivent être mobilisées.",
-          'La démographie est prise en compte.',
-          '',
-          "L'évolution des consommations et émissions des déchets s'applique par défaut sur les sites de traitements existants.",
-          "Par manque de données du scénario SNBC, le rythme d'évolution des consommations énergétiques du secteur déchets est calqué sur celui de l'industrie.",
-        ],
       },
       {
         nom: 'Branche énergie',
         identifiant: 'cae_1.j',
-        snbc2: [
-          "La SNBC 2 prévoit une diminution de 90 % des émissions du secteur de la branche énergie, qui regroupe consommations des équipements industriels liés à la fourniture d'énergie  (raffineries, centrales électriques, etc...)",
-        ],
-        pivots: [
-          "Les émissions liées au secteur de la branche énergie dépendent de la localisation des infrastructures. Les données d'observatoires doivent être mobilisées pour les territorialiser.",
-        ],
       },
       {
         nom: 'UTCATF',
         identifiant: 'cae_63.a',
-        snbc2: [
-          'La SNBC 2 prévoit une augmentation du puits de carbone lié au secteur "Utilisation des Terres, Changements d\'Affectation des Terres et Foresterie"',
-          'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives"',
-        ],
-        pivots: [
-          "Les puits de carbone dépend beaucoup de l'occupation des sols des territoires, la trajectoire de référence s'appuis sur la contribution actuelle au puits de carbone de chaque territoire.",
-          '',
-          "L'évolution du puits de carbone local peut s'appuyer sur différents leviers pour atteindre ces objectifs (voir onglet Leviers UTCATF)",
-        ],
         sousSecteurs: [
-          {nom: 'Forêts', identifiant: 'cae_63.b'},
-          {nom: 'Cultures', identifiant: 'cae_63.e'},
-          {nom: 'Prairies', identifiant: 'cae_63.f'},
-          {nom: 'Zones humides', identifiant: 'cae_63.g'},
-          {nom: 'Sols artificiels', identifiant: 'cae_63.h'},
-          {nom: 'Produits bois', identifiant: 'cae_63.i'},
+          {
+            nom: 'Forêts',
+            identifiant: 'cae_63.b',
+          },
+          {
+            nom: 'Cultures',
+            identifiant: 'cae_63.e',
+          },
+          {
+            nom: 'Prairies',
+            identifiant: 'cae_63.f',
+          },
+          {
+            nom: 'Zones humides',
+            identifiant: 'cae_63.g',
+          },
+          {
+            nom: 'Sols artificiels',
+            identifiant: 'cae_63.h',
+          },
+          {
+            nom: 'Produits bois',
+            identifiant: 'cae_63.i',
+          },
         ],
       },
       {
         nom: 'CSC',
         identifiant: 'cae_1.csc',
-        snbc2: [
-          'La SNBC 2 prévoit la création de systèmes industriels de "Capture et Stockage de Carbone"',
-          'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives". Ces systèmes, encore expérimentaux, entrent en action en 2030. Ils sont associés à des industries particulièrement émetrices.',
-        ],
       },
     ],
   },
@@ -211,6 +207,103 @@ export const INDICATEURS_TRAJECTOIRE = [
     ],
   },
 ] as const;
+
+export const METHODO_PAR_SECTEUR = {
+  Résidentiel: {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 40 % des consommations d'énergie finale du résidentiel.",
+      '',
+      "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 94 % les émissions de GES du secteur.",
+    ],
+    pivots: [
+      'La trajectoire nationale pour les besoins en chauffage est territorialisée à partir du nombre de maisons et appartements en résidences principales, auquel est appliqué une correction en fonction des données de rigueur climatique régionale (DJU).',
+      'Les autres usages sont répartis par nombre de ménages. La démographie est également prise en compte pour les émissions et les consommations.',
+    ],
+  },
+  Tertiaire: {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 41 % des consommations d'énergie finale du tertiaire.",
+      '',
+      "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 99 % les émissions du secteur.",
+    ],
+    pivots: [
+      'La trajectoire nationale pour les besoins en chauffage et autres usages du tertiaire est territorialisée à partir du nombre salariés du territoire.',
+      "L'usage chauffage est corrigé en fonction des données de rigueur climatique régionale (DJU).",
+      'La démographie est également prise en compte pour les émissions et les consommations.',
+    ],
+  },
+  Industrie: {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 19 % des consommations d'énergie finale de l'industrie manufacturière.",
+      "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 81 % les émissions du secteur.",
+    ],
+    pivots: [
+      "La territorialisation de la trajectoire industrie repose sur la ventilation des émissions et consommations par sous-secteurs industriels, d'après données d'emplois par branche (base FLORES de l'INSEE).",
+      'Le point de départ est ensuite recalé avec les données observatoire.',
+    ],
+  },
+  Agriculture: {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 49 % des consommations d'énergie finale du secteur de l'agriculture.",
+      '',
+      'Si la consommation énergétique en agriculture émet du CO2, les pratiques culturales et l\'élevage sont responsables d\'émissions importantes de NH3 et de CH4, ici converties en "équivalent CO2" (CO2eq) pour faciliter les calculs.',
+    ],
+    pivots: [
+      "Les émissions relevées dans les territoires varient beaucoup en fonction des typologies d'agriculture.",
+      "Ainsi, les émissions liées à la consommation d'énergie sont corrélées à la surface agricole utile (SAU) du territoire. De manière simplifiée, les émissions de CH4 liées à l'élevage s'appuient sur le pivot du nombre d'unités de GRos bétail (UGB), et les émissions de NH3 à la surface de terres labourables.",
+    ],
+  },
+  Transports: {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 61 % des consommations d'énergie finale du secteur des transports.",
+      'La trajectoire nationale pour les usages de courte distance et de longue distance est différenciée dans la SNBC.',
+      "Les consommations résiduelles s'appuient sur des vecteurs décarbonés permettant de diminuer de 97 % les émissions du secteur",
+    ],
+    pivots: [
+      "Les consommations relevées dans les territoires varient beaucoup en fonction des infrastructures locales, notamment la présence d'autoroute.",
+      "Pour affiner l'analyse, les usages de mobilité du quotidien (courte distance) sont reconstituées à partir des typologies des communes qui le consitituent. Cela permet de donner un ordre d'idée de la mobilité routière locale, et de la mobilité de transit.",
+      'La mobilité routière locale est réajustée selon la démographie.',
+      "Par manque de données du scénario SNBC, le découpage en sous-secteurs n'est possible que sur les émissions GES, pas sur les consommations énergétiques.",
+    ],
+  },
+  Déchets: {
+    snbc2: [
+      'La SNBC 2 prévoit une diminution de 66 % des émissions du secteur des déchets',
+    ],
+    pivots: [
+      "Les émissions liées au secteur des déchets dépendent de la localisation des infrastructures de traitement des déchets. Les données d'observatoires doivent être mobilisées.",
+      'La démographie est prise en compte.',
+      '',
+      "L'évolution des consommations et émissions des déchets s'applique par défaut sur les sites de traitements existants.",
+      "Par manque de données du scénario SNBC, le rythme d'évolution des consommations énergétiques du secteur déchets est calqué sur celui de l'industrie.",
+    ],
+  },
+  'Branche énergie': {
+    snbc2: [
+      "La SNBC 2 prévoit une diminution de 90 % des émissions du secteur de la branche énergie, qui regroupe consommations des équipements industriels liés à la fourniture d'énergie  (raffineries, centrales électriques, etc...)",
+    ],
+    pivots: [
+      "Les émissions liées au secteur de la branche énergie dépendent de la localisation des infrastructures. Les données d'observatoires doivent être mobilisées pour les territorialiser.",
+    ],
+  },
+  UTCATF: {
+    snbc2: [
+      'La SNBC 2 prévoit une augmentation du puits de carbone lié au secteur "Utilisation des Terres, Changements d\'Affectation des Terres et Foresterie"',
+      'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives"',
+    ],
+    pivots: [
+      "Les puits de carbone dépend beaucoup de l'occupation des sols des territoires, la trajectoire de référence s'appuis sur la contribution actuelle au puits de carbone de chaque territoire.",
+      '',
+      "L'évolution du puits de carbone local peut s'appuyer sur différents leviers pour atteindre ces objectifs (voir onglet Leviers UTCATF)",
+    ],
+  },
+  CSC: {
+    snbc2: [
+      'La SNBC 2 prévoit la création de systèmes industriels de "Capture et Stockage de Carbone"',
+      'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives". Ces systèmes, encore expérimentaux, entrent en action en 2030. Ils sont associés à des industries particulièrement émetrices.',
+    ],
+  },
+};
 
 // types dérivés de la liste des indicateurs Trajectoire
 export type IndicateurTrajectoire = (typeof INDICATEURS_TRAJECTOIRE)[number];
