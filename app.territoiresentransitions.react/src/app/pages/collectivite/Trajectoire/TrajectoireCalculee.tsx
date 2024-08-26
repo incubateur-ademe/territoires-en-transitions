@@ -4,9 +4,9 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
 import {useResultatTrajectoire} from './useResultatTrajectoire';
-import {TrajectoireChart} from './charts/TrajectoireChart';
-import {TrajectoireChartSecteur} from './charts/TrajectoireChartSecteur';
-import {TrajectoireChartSousSecteurs} from './charts/TrajectoireChartSousSecteurs';
+import {GrapheTousSecteurs} from './graphes/GrapheTousSecteurs';
+import {GrapheSecteur} from './graphes/GrapheSecteur';
+import {GrapheSousSecteurs} from './graphes/GrapheSousSecteurs';
 import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
@@ -109,7 +109,7 @@ export const TrajectoireCalculee = () => {
             /** Graphique "tous secteurs" */
             !secteur && valeursTousSecteurs && (
               <Card className="h-fit">
-                <TrajectoireChart
+                <GrapheTousSecteurs
                   unite={indicateur.unite}
                   titre={indicateur.titre}
                   secteurs={valeursTousSecteurs as LineData[]}
@@ -123,7 +123,7 @@ export const TrajectoireCalculee = () => {
             /** Graphique du secteur sélectionné */
             !!(secteur && valeursSecteur && valeursSecteur.data.length) && (
               <Card className="h-fit">
-                <TrajectoireChartSecteur
+                <GrapheSecteur
                   unite={indicateur.unite}
                   titre={`${indicateur.titre}, secteur ${secteur.nom}`}
                   secteur={valeursSecteur.data}
@@ -141,7 +141,7 @@ export const TrajectoireCalculee = () => {
               valeursSousSecteurs.length
             ) && (
               <Card className="h-fit">
-                <TrajectoireChartSousSecteurs
+                <GrapheSousSecteurs
                   unite={indicateur.unite}
                   titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
                   sousSecteurs={valeursSousSecteurs as LineData[]}

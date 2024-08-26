@@ -14,7 +14,7 @@ import {DashedLineSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {StyledLineLayer} from 'ui/charts/Line/utils';
 import {COMMON_CHART_PROPS, LAYERS} from './constants';
 
-export type TrajectoireChartSecteurProps = {
+export type GrapheSecteurProps = {
   titre: string;
   unite: string;
   secteur: Datum[];
@@ -22,13 +22,13 @@ export type TrajectoireChartSecteurProps = {
   resultats: Datum[];
 };
 
-export const TrajectoireChartSecteur = ({
+export const GrapheSecteur = ({
   titre,
   unite,
   secteur,
   objectifs,
   resultats,
-}: TrajectoireChartSecteurProps) => {
+}: GrapheSecteurProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

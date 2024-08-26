@@ -2,7 +2,7 @@ import {LineProps} from '@nivo/line';
 import {theme} from 'ui/charts/chartsTheme';
 
 // couleurs et libellés pour les graphes
-export const COLORS = [
+export const COULEURS_SECTEUR = [
   '#FEF1D8',
   '#F7B1C2',
   '#A4E7C7',

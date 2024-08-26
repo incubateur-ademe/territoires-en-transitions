@@ -3,10 +3,10 @@ import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {AreaSymbol} from 'ui/charts/ChartLegend';
-import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
+import {genInfobulleParAnnee} from './InfobulleParAnnee';
 import {COMMON_CHART_PROPS, COULEURS_SOUS_SECTEUR} from './constants';
 
-export type TrajectoireChartSousSecteursProps = {
+export type GrapheSousSecteursProps = {
   titre: string;
   unite: string;
   sousSecteurs: LineData[];
@@ -17,11 +17,11 @@ export type TrajectoireChartSousSecteursProps = {
  *
  * - Aires empilées des sous-secteurs associés au secteur affiché.
  */
-export const TrajectoireChartSousSecteurs = ({
+export const GrapheSousSecteurs = ({
   titre,
   unite,
   sousSecteurs,
-}: TrajectoireChartSousSecteursProps) => {
+}: GrapheSousSecteursProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // affecte d'abord les couleurs avant de filtrer les dataset vides
@@ -66,7 +66,7 @@ export const TrajectoireChartSousSecteurs = ({
                 symbole: AreaSymbol,
               })),
             },
-            sliceTooltip: makeTrajectoireChartSliceTooltip({
+            sliceTooltip: genInfobulleParAnnee({
               objectifsEtResultats: [],
               secteurs: sousSecteursNonVides,
             }),
