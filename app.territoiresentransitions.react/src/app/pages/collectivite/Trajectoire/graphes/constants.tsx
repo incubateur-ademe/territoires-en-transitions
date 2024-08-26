@@ -10,11 +10,10 @@ export const COULEURS_SECTEUR = [
   '#B8D6F7',
   '#FFD0BB',
   '#FBE7B5',
+  '#E4CDEE',
+  '#C6C3E3',
   '#D9D9D9',
-  '#A3DE00',
 ];
-
-export const COULEURS_SOUS_SECTEUR = ['#6A6AF4', '#F4C447', '#E1E1FD'];
 
 export const LAYERS = {
   objectifs: {color: '#F5895B', label: 'Mes objectifs'},
