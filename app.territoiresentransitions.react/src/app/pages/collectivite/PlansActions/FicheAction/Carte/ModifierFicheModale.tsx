@@ -130,7 +130,7 @@ const ModifierFicheModale = ({
                 <div className="mt-2">
                   <Checkbox
                     label="Action en amélioration continue"
-                    message="Sans date de fin"
+                    message="Sans date de fin prévisionnelle"
                     onChange={() => {
                       setFiche({
                         ...fiche,

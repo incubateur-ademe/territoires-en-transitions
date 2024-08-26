@@ -1,6 +1,6 @@
 import {useHistory, useParams} from 'react-router-dom';
 
-import {Button, Icon} from '@tet/ui';
+import {Breadcrumbs} from '@tet/ui';
 
 import {TDBViewParam, makeTableauBordUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
@@ -34,23 +34,21 @@ const ModulePage = ({view, title, children}: Props) => {
       {/** Header */}
       <div>
         <h2 className="mb-4">{title}</h2>
-        <div className="flex items-center gap-2 mt-4">
-          <Button
-            variant="underlined"
-            onClick={() =>
-              history.push(
-                makeTableauBordUrl({
-                  collectiviteId: collectiviteId!,
-                  view,
-                })
-              )
-            }
-          >
-            Tableau de bord
-          </Button>
-          <Icon icon="arrow-right-s-line" className="mt-0.5 text-grey-7" />
-          <span className="mt-0.5 text-grey-7">{title}</span>
-        </div>
+        <Breadcrumbs
+          items={[
+            {
+              label: 'Tableau de bord',
+              onClick: () =>
+                history.push(
+                  makeTableauBordUrl({
+                    collectiviteId: collectiviteId!,
+                    view,
+                  })
+                ),
+            },
+            {label: title},
+          ]}
+        />
       </div>
       {/** Contenu principal */}
       {children}

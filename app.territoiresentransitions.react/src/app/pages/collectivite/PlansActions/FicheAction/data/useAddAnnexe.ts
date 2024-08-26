@@ -6,13 +6,15 @@ import {useAddPreuveAnnexe} from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
 type TAddDocs = (demande_id: number) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
   addFileFromLib: TAddFileFromLib;
+  isLoading: boolean;
+  isError: boolean;
 };
 
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de
  * fichiers/liens à une fiche action */
 export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   const collectivite_id = useCollectiviteId();
-  const {mutate: addPreuve} = useAddPreuveAnnexe();
+  const {mutate: addPreuve, isLoading, isError} = useAddPreuveAnnexe();
 
   // associe un fichier de la bibliothèque à l'audit
   const addFileFromLib: TAddFileFromLib = fichier_id => {
@@ -41,5 +43,7 @@ export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   return {
     addFileFromLib,
     addLink,
+    isLoading: isLoading,
+    isError: isError,
   };
 };

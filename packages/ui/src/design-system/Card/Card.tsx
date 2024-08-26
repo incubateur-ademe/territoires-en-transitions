@@ -40,7 +40,6 @@ export const Card = ({
   footer,
   isSelected,
   className,
-  onClick,
   disabled,
   external,
   ...otherProps
@@ -48,11 +47,13 @@ export const Card = ({
   const isLink = isAnchor(otherProps);
 
   const hasHoverEffect =
-    (isSelected !== undefined || !!onClick || (isLink && !!otherProps.href)) &&
+    (isSelected !== undefined ||
+      !!otherProps.onClick ||
+      (isLink && !!otherProps.href)) &&
     !disabled;
 
   const appliedClassname = classNames(
-    'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group',
+    'p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition',
     {
       'hover:cursor-pointer hover:shadow-card': hasHoverEffect,
       'hover:border-grey-4': hasHoverEffect && !isSelected,

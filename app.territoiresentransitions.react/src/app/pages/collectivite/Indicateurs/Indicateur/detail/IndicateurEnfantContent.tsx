@@ -1,13 +1,13 @@
 import {TIndicateurDefinition} from '../../types';
 import {Spacer} from 'ui/dividers/Spacer';
-import {ActionsLieesCards} from '../../../PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
-import {FichesActionLiees} from '../../Indicateur/FichesActionLiees';
+import {FichesActionLiees} from '../FichesActionLiees';
 import {IndicateurValuesTabs} from './IndicateurValuesTabs';
 import {IndicateurInfoLiees} from './IndicateurInfoLiees';
 import {useIndicateurImportSources} from './useImportSources';
 import {ImportSourcesSelector} from './ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import {Field} from '@tet/ui';
+import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
 export const IndicateurEnfantContent = ({
@@ -59,7 +59,7 @@ export const IndicateurEnfantContent = ({
                   : 'Action référentiel liée'
               }
             >
-              <ActionsLieesCards actions={actionsLiees} />
+              <ActionsLieesListe actionsIds={actionsLiees} />
             </Field>
           ) : (
             <Spacer size={3} />

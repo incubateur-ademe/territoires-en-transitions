@@ -21,9 +21,10 @@ interface Page {
 export type PageName = keyof TrackingPlan;
 
 /** Propriétés d'une page */
-export type PageProperties<N extends PageName> = (TrackingPlan[N]['properties'] extends object
-? TrackingPlan[N]['properties']
-: undefined);
+export type PageProperties<N extends PageName> =
+  TrackingPlan[N]['properties'] extends object
+    ? TrackingPlan[N]['properties']
+    : undefined;
 
 /**
  * Liste des onglets de la page panier
@@ -133,6 +134,18 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       tdb_modifier_filtres_actions_modifiees: {};
       tdb_valider_filtres_actions_modifiees: {};
+    };
+  };
+
+  /** Page fiche action */
+  'app/fiche-action': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      validation_modale_modifier_fa: {};
+      validation_modale_acteurs_fa: {};
+      validation_modale_planning_fa: {};
+      cta_indicateur_perso_fa: {};
     };
   };
 

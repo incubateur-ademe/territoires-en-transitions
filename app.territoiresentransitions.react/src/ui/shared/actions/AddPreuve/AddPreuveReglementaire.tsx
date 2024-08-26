@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
+import {Modal} from '@tet/ui';
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {useAddPreuveReglementaireToAction} from './useAddPreuveToAction';
 
@@ -29,18 +29,10 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   return (
     <Modal
       size="lg"
-      externalOpen={opened}
-      setExternalOpen={setOpened}
-      render={() => {
-        return (
-          <>
-            <h4>Ajouter un document attendu</h4>
-            <AddPreuveModal
-              onClose={() => setOpened(false)}
-              handlers={handlers}
-            />
-          </>
-        );
+      openState={{isOpen: opened, setIsOpen: setOpened}}
+      title="Ajouter un document attendu"
+      render={({close}) => {
+        return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >
       <button
