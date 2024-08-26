@@ -52,6 +52,32 @@ export const AvecIcones: Story = {
   },
 };
 
+export const AvecIconesStylees: Story = {
+  args: {
+    defaultActiveTab: 1,
+    children: [
+      <Tab
+        label="Onglet 1"
+        icon="alert-fill"
+        iconClassName="text-warning-1"
+        iconPosition="right"
+        title="Contenu infobulle 1"
+      >
+        contenu onglet 1
+      </Tab>,
+      <Tab
+        label="Onglet 2"
+        icon="checkbox-circle-fill"
+        iconClassName="text-success-3"
+        iconPosition="right"
+        title="Contenu infobulle 2"
+      >
+        contenu onglet 2
+      </Tab>,
+    ],
+  },
+};
+
 export const TailleSM: Story = {
   args: {
     defaultActiveTab: 1,

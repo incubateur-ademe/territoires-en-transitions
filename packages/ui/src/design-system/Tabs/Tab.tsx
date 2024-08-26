@@ -13,8 +13,14 @@ interface TabProps {
   activeTab?: number;
   /** Libellé de l'onglet (injecté dans le composant `Tabs`) */
   label: string;
-  /** Picto optionnel affiché à gauche du libellé */
+  /** Picto optionnel affiché à gauche (par défaut) du libellé */
   icon?: IconValue;
+  /** Permet de styler le picto */
+  iconClassName?: string;
+  /** Positionnement du picto par rapport au libellé */
+  iconPosition?: 'left' | 'right';
+  /** Permet de donner un contenu au survol du bouton de l'onglet (infobulle) */
+  title?: string;
 }
 
 /**
