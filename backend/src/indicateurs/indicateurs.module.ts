@@ -3,6 +3,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { SheetModule } from '../spreadsheets/sheet.module';
 import { TrpcModule } from '../trpc/trpc.module';
+import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { TrajectoiresRouter } from './routers/trajectoires.router';
 import IndicateursService from './service/indicateurs.service';
@@ -23,6 +24,6 @@ import TrajectoiresService from './service/trajectoires.service';
     TrajectoiresService,
     TrajectoiresRouter,
   ],
-  controllers: [TrajectoiresController],
+  controllers: [IndicateursController, TrajectoiresController],
 })
 export class IndicateursModule {}

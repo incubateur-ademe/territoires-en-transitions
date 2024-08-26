@@ -138,6 +138,8 @@ export class IndicateurValeurGroupee implements Partial<IndicateurValeurType> {
   objectif?: number | null;
 
   objectif_commentaire?: string | null;
+
+  metadonnee_id?: number | null; // TODO: to be removed
 }
 export class IndicateurAvecValeurs {
   definition: IndicateurDefinitionType;
