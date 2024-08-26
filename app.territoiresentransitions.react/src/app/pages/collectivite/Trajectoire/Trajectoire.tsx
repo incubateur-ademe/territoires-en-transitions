@@ -21,12 +21,11 @@ const TrajectoireContent = () => {
     );
   }
 
-  if (
-    error ||
-    !data ||
-    !data.status ||
-    data.status === StatutTrajectoire.DONNEES_MANQUANTES
-  ) {
+  if (error || !data || !data.status) {
+    return <ErreurDeChargement />;
+  }
+
+  if (data.status === StatutTrajectoire.DONNEES_MANQUANTES) {
     return <DonneesNonDispo />;
   }
 
@@ -42,7 +41,7 @@ const TrajectoireContent = () => {
     return <TrajectoireCalculee />;
   }
 
-  return <DonneesNonDispo />;
+  return <ErreurDeChargement />;
 };
 
 /**
@@ -68,6 +67,20 @@ const DonneesNonDispo = () => {
         description="Dans la prochaine version, vous pourrez compléter vos données et ainsi calculer votre trajectoire."
       />
     </Card>
+  );
+};
+
+/**
+ * Affiche un message quand les données n'ont pas pu être chargées (erreur 500 par exemple)
+ */
+const ErreurDeChargement = () => {
+  return (
+    <Alert
+      state="error"
+      className="self-stretch"
+      title="Erreur lors du chargement des données"
+      description="Veuillez ré-essayer dans quelques instants. Si le problème persiste merci de contacter le support."
+    />
   );
 };
 
