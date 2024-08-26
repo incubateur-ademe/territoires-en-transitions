@@ -92,21 +92,19 @@ export const TrajectoireCalculee = () => {
             </Tabs>
           )
         }
-        {/** Sélecteur de trajectoire */}
-        <ButtonGroup
-          size="sm"
-          activeButtonId={indicateur.id}
-          buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
-            id,
-            children: nom,
-            onClick: () =>
-              setParams({indicateurIdx: [String(idx)], secteurIdx: ['0']}),
-          }))}
-        />
       </div>
 
       <div className="flex flex-row gap-8">
         <div className="flex flex-col gap-8 w-4/6">
+          {
+            /** Avertissement "Données partiellement disponibles" */
+            !secteur && donneesSectoriellesIncompletes && (
+              <DonneesPartiellementDisponibles
+                collectiviteId={collectiviteId}
+                identifiantReferentiel={identifiant}
+              />
+            )
+          }
           {
             /** Graphique "tous secteurs" */
             !secteur && valeursTousSecteurs && (
@@ -154,15 +152,6 @@ export const TrajectoireCalculee = () => {
                 state="warning"
                 title="Données non disponibles"
                 description="Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles."
-              />
-            )
-          }
-          {
-            /** Avertissement "Données partiellement disponibles" */
-            secteurIdx === 0 && donneesSectoriellesIncompletes && (
-              <DonneesPartiellementDisponibles
-                collectiviteId={collectiviteId}
-                identifiantReferentiel={identifiant}
               />
             )
           }
