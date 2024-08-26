@@ -60,6 +60,33 @@ type OpenDataSource = {
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<never, Page> {
+  /** Page "Tous les indicateurs" */
+  'app/indicateurs/tous': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      toggle_graphique: {actif: boolean};
+      filtres: {
+        filtreValues: {
+          thematiqueIds?: OptionValue[];
+          actionId?: string;
+          planActionIds?: OptionValue[];
+          utilisateurPiloteIds?: OptionValue[];
+          personnePiloteIds?: OptionValue[];
+          servicePiloteIds?: OptionValue[];
+          categorieNoms?: OptionValue[];
+          participationScore?: boolean;
+          estComplet?: boolean;
+          estConfidentiel?: boolean;
+          fichesNonClassees?: boolean;
+          text?: string;
+          estPerso?: boolean;
+          hasOpenData?: boolean;
+        };
+      };
+    };
+  };
+
   /** Page indicateur perso */
   'app/indicateurs/perso': {
     properties: {collectivite_id: number};

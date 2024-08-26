@@ -1,6 +1,13 @@
 import {useEffect, useState} from 'react';
 
-import {Button, Checkbox, Input, Pagination, Select} from '@tet/ui';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Pagination,
+  Select,
+  useEventTracker,
+} from '@tet/ui';
 
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
@@ -60,6 +67,8 @@ const IndicateursListe = ({
   settings,
   maxNbOfCards = 9,
 }: Props) => {
+  const tracker = useEventTracker('app/indicateurs/tous');
+
   const collectiviteId = useCollectiviteId();
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -151,7 +160,13 @@ const IndicateursListe = ({
           containerClassname="shrink-0"
           labelClassname="font-normal !text-grey-7"
           checked={displayGraphs}
-          onChange={() => setDisplayGraphs(!displayGraphs)}
+          onChange={() => {
+            setDisplayGraphs(!displayGraphs);
+            tracker('toggle_graphique', {
+              collectivite_id: collectiviteId!,
+              actif: !displayGraphs,
+            });
+          }}
         />
         {/** Nombre total de résultats */}
         <span className="shrink-0 text-grey-7">
