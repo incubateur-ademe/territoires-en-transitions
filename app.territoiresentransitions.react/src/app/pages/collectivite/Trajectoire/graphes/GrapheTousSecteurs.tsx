@@ -4,12 +4,12 @@ import {Button} from '@tet/ui';
 import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
-import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
-import {COMMON_CHART_PROPS, COLORS, LAYERS} from './constants';
+import {genInfobulleParAnnee} from './InfobulleParAnnee';
+import {COMMON_CHART_PROPS, COULEURS_SECTEUR, LAYERS} from './constants';
 
 type LayerKey = keyof typeof LAYERS;
 
-export type TrajectoireChartProps = {
+export type GrapheTousSecteursProps = {
   titre: string;
   unite: string;
   secteurs: LineData[];
@@ -24,18 +24,21 @@ export type TrajectoireChartProps = {
  * - Mes objectifs (simple ligne)
  * - Mes résultats (simple ligne)
  */
-export const TrajectoireChart = ({
+export const GrapheTousSecteurs = ({
   titre,
   unite,
   secteurs,
   objectifs,
   resultats,
-}: TrajectoireChartProps) => {
+}: GrapheTousSecteursProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // affecte d'abord les couleurs avant de filtrer les dataset vides
   const secteursNonVides = secteurs
-    .map((s, i) => ({...s, color: COLORS[i % COLORS.length]}))
+    .map((s, i) => ({
+      ...s,
+      color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
+    }))
     .filter(s => !!s.data?.length);
 
   const objectifsEtResultats = [
@@ -84,7 +87,7 @@ export const TrajectoireChart = ({
                 })),
               ],
             },
-            sliceTooltip: makeTrajectoireChartSliceTooltip({
+            sliceTooltip: genInfobulleParAnnee({
               objectifsEtResultats,
               secteurs: secteursNonVides,
             }),

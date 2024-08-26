@@ -1,14 +1,14 @@
 import React from 'react';
 import {Meta} from '@storybook/react';
-import {TrajectoireChart} from './TrajectoireChart';
+import {GrapheTousSecteurs} from './GrapheTousSecteurs';
 import {INDICATEURS_TRAJECTOIRE} from '../constants';
 
 export default {
-  component: TrajectoireChart,
+  component: GrapheTousSecteurs,
   parameters: {storyshots: false},
 } as Meta;
 
-const Template = args => <TrajectoireChart {...args} />;
+const Template = args => <GrapheTousSecteurs {...args} />;
 
 const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;

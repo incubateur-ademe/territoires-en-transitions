@@ -1,14 +1,14 @@
 import React from 'react';
 import {Meta} from '@storybook/react';
-import {TrajectoireChartSousSecteurs} from './TrajectoireChartSousSecteurs';
+import {GrapheSousSecteurs} from './GrapheSousSecteurs';
 import {INDICATEURS_TRAJECTOIRE} from '../constants';
 
 export default {
-  component: TrajectoireChartSousSecteurs,
+  component: GrapheSousSecteurs,
   parameters: {storyshots: false},
 } as Meta;
 
-const Template = args => <TrajectoireChartSousSecteurs {...args} />;
+const Template = args => <GrapheSousSecteurs {...args} />;
 
 const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;

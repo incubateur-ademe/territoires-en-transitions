@@ -3,14 +3,14 @@ import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {LineData} from 'ui/charts/Line/LineChart';
 
 /** Génère un composant infobulle pour les graphes de trajectoire */
-export const makeTrajectoireChartSliceTooltip = ({
+export const genInfobulleParAnnee = ({
   objectifsEtResultats,
   secteurs,
 }: {
   objectifsEtResultats: LineData[];
   secteurs: LineData[];
 }) => {
-  const TrajectoireChartSliceTooltip: SliceTooltip = ({slice}) => {
+  const InfobulleParAnnee: SliceTooltip = ({slice}) => {
     const annee = slice.points[0].data.x;
     return (
       <div className="flex flex-col gap-1 bg-white p-4 font-normal text-primary-8 text-sm shadow-sm">
@@ -52,5 +52,5 @@ export const makeTrajectoireChartSliceTooltip = ({
       </div>
     );
   };
-  return TrajectoireChartSliceTooltip;
+  return InfobulleParAnnee;
 };
