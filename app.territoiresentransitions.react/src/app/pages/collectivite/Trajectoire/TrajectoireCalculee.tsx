@@ -121,7 +121,7 @@ export const TrajectoireCalculee = () => {
           }
           {
             /** Graphique du secteur sélectionné */
-            secteur && valeursSecteur && (
+            !!(secteur && valeursSecteur && valeursSecteur.data.length) && (
               <Card className="h-fit">
                 <TrajectoireSecteurChart
                   unite={indicateur.unite}
@@ -135,7 +135,11 @@ export const TrajectoireCalculee = () => {
           }
           {
             /** Graphique sous-sectoriel */
-            secteur && valeursSousSecteurs && (
+            !!(
+              secteur &&
+              valeursSousSecteurs &&
+              valeursSousSecteurs.length
+            ) && (
               <Card className="h-fit">
                 <TrajectoireChartSousSecteurs
                   unite={indicateur.unite}
