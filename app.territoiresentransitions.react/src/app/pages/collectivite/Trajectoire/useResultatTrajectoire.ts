@@ -85,11 +85,17 @@ export const useResultatTrajectoire = ({
   const objectifs =
     objectifsEtResults
       ?.filter(v => typeof v.objectif === 'number')
-      .map(v => ({x: v.annee, y: (v.objectif as number) * (coef || 1)})) || [];
+      .map(v => ({
+        x: new Date(`${v.annee}-01-01`),
+        y: (v.objectif as number) * (coef || 1),
+      })) || [];
   const resultats =
     objectifsEtResults
       ?.filter(v => typeof v.resultat === 'number')
-      .map(v => ({x: v.annee, y: (v.resultat as number) * (coef || 1)})) || [];
+      .map(v => ({
+        x: new Date(`${v.annee}-01-01`),
+        y: (v.resultat as number) * (coef || 1),
+      })) || [];
 
   // détermine si les données sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =
@@ -128,7 +134,7 @@ const prepareDonneesParSecteur = (
             id: s.identifiant,
             label: s.nom,
             data: valeurs.map(v => ({
-              x: new Date(v.date_valeur).getFullYear(),
+              x: new Date(v.date_valeur),
               y: v.objectif,
             })),
           }

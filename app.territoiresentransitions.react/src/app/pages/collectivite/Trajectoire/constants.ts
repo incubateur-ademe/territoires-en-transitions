@@ -25,6 +25,10 @@ export const LAYERS = {
   trajectoire: {color: '#1E98C6', label: 'SNBC territorialisée'},
 };
 
+export const ANNEE_REFERENCE = 2015;
+//const ANNEE_JALON1 = 2030;
+export const ANNEE_JALON2 = 2050;
+
 // liste des indicateurs Trajectoire
 export const INDICATEURS_TRAJECTOIRE = [
   {

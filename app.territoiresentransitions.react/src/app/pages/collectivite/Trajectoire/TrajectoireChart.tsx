@@ -5,7 +5,7 @@ import Chart from 'ui/charts/Chart';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {theme} from 'ui/charts/chartsTheme';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
-import {COLORS, LAYERS} from './constants';
+import {ANNEE_JALON2, ANNEE_REFERENCE, COLORS, LAYERS} from './constants';
 import {makeTrajectoireChartSliceTooltip} from './TrajectoireChartSliceTooltip';
 
 type LayerKey = keyof typeof LAYERS;
@@ -132,7 +132,12 @@ export const COMMON_CHART_PROPS = {
   colors: {datum: 'color'},
   theme,
   margin: {top: 5, right: 5, bottom: 55, left: 50},
-  xScale: {type: 'point'},
+  xScale: {
+    type: 'time',
+    precision: 'year',
+    format: '%Y',
+    max: `${ANNEE_JALON2 + 1}`,
+  },
   yScale: {
     type: 'linear',
     min: 0,
@@ -141,11 +146,14 @@ export const COMMON_CHART_PROPS = {
   },
   yFormat: ' >-.2f',
   axisBottom: {
+    format: '%Y',
     legendPosition: 'end',
     tickSize: 5,
-    tickPadding: 12,
+    tickPadding: 15,
     tickRotation: -35,
+    tickValues: ANNEE_JALON2 - ANNEE_REFERENCE,
   },
+  gridXValues: ANNEE_JALON2 - ANNEE_REFERENCE,
   enableArea: true,
   areaOpacity: 0.8,
   enablePoints: false,
