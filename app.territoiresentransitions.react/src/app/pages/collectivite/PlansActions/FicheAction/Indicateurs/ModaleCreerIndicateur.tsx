@@ -5,7 +5,7 @@ import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/Indicateu
 type ModaleCreerIndicateurProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
+  fiche?: FicheAction;
 };
 
 const ModaleCreerIndicateur = ({

@@ -59,7 +59,9 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
               const {servicePiloteIds, ...rest} = filters;
               setFilters({
                 ...rest,
-                ...(services ? {servicePiloteIds: services} : {}),
+                ...(services
+                  ? {servicePiloteIds: services.map(s => s.id)}
+                  : {}),
               });
             }}
           />

@@ -13,8 +13,8 @@ import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {referentielToName} from 'app/labels';
 import {IndicateurValuesTabs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
 import {IndicateurInfoLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
-import {ActionsLieesCards} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/ActionsLieesCards';
 import {FichesActionLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
+import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -87,8 +87,8 @@ export const IndicateurPredefiniBase = ({
                         : 'Action liée'
                     }
                   >
-                    <ActionsLieesCards
-                      actions={definition.actions?.map(a => a.id)}
+                    <ActionsLieesListe
+                      actionsIds={(definition.actions ?? []).map(a => a.id)}
                     />
                   </Field>
                 ) : null

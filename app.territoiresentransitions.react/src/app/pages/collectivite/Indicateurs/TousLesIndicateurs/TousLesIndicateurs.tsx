@@ -1,11 +1,12 @@
 import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
-import {ButtonMenu} from '@tet/ui';
+import {Button, ButtonMenu} from '@tet/ui';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
-import {CreerIndicateurPersoModal} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionForm/indicateurs/CreerIndicateurPersoModal';
+import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {useState} from 'react';
 
 const nameToParams: Record<keyof FetchFiltre, string> = {
   thematiqueIds: 't',
@@ -26,10 +27,16 @@ const nameToParams: Record<keyof FetchFiltre, string> = {
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const TousLesIndicateurs = () => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+
+  const isReadonly = collectivite?.readonly ?? false;
+
+  const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   const [filters, setFilters] = useSearchParams<FetchFiltre>(
-    makeCollectiviteTousLesIndicateursUrl({collectiviteId: collectiviteId!}),
+    makeCollectiviteTousLesIndicateursUrl({
+      collectiviteId: collectivite?.collectivite_id!,
+    }),
     {},
     nameToParams
   );
@@ -38,7 +45,19 @@ const TousLesIndicateurs = () => {
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex items-end">
         <h2 className="mb-0 mr-auto">Tous les indicateurs</h2>
-        <CreerIndicateurPersoModal buttonVariant="primary" />
+        {!isReadonly && (
+          <>
+            <Button size="sm" onClick={() => setIsNewIndicateurOpen(true)}>
+              Créer un indicateur
+            </Button>
+            {isNewIndicateurOpen && (
+              <ModaleCreerIndicateur
+                isOpen={isNewIndicateurOpen}
+                setIsOpen={setIsNewIndicateurOpen}
+              />
+            )}
+          </>
+        )}
       </div>
       <IndicateursListe
         filtres={filters}

@@ -52,7 +52,9 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
               const {servicePiloteIds, ...rest} = filters;
               setFilters({
                 ...rest,
-                ...(services ? {servicePiloteIds: services} : {}),
+                ...(services
+                  ? {servicePiloteIds: services.map(s => s.id)}
+                  : {}),
               });
             }}
           />
@@ -126,7 +128,9 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
               const {financeurIds, ...rest} = filters;
               setFilters({
                 ...rest,
-                ...(financeurs ? {financeurIds: financeurs} : {}),
+                ...(financeurs
+                  ? {financeurIds: financeurs.map(f => f.id!)}
+                  : {}),
               });
             }}
           />
