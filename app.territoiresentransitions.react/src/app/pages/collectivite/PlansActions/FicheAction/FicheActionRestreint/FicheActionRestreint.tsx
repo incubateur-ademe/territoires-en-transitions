@@ -43,7 +43,7 @@ const FicheActionRestreint = ({
             icon="edit-line"
             size="xs"
             variant="grey"
-            className="md:ml-auto max-md:absolute right-3"
+            className="!absolute right-3"
             onClick={() => setIsModalOpen(true)}
           />
         )}

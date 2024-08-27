@@ -62,7 +62,7 @@ const FicheActionPlanning = ({
               icon="edit-line"
               size="xs"
               variant="grey"
-              className="absolute top-4 right-3"
+              className="!absolute top-4 right-3"
               onClick={() => setIsModalOpen(true)}
             />
           )}
