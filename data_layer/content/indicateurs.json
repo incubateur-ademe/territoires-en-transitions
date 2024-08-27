@@ -94,6 +94,69 @@
     {
       "action_ids": [],
       "description": "",
+      "id": "cae_1.ca",
+      "identifiant": "1.ca",
+      "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Chauffage / Maisons individuelles",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Chauffage / Maisons individuelles",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.cb",
+      "identifiant": "1.cb",
+      "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Chauffage / Logement collectif",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Chauffage / Logement collectif",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.cc",
+      "identifiant": "1.cc",
+      "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Autres usages",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Autres usages",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
       "id": "cae_1.csc",
       "identifiant": "1.csc",
       "nom": "Capture et stockage du carbone",
@@ -135,6 +198,48 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.da",
+      "identifiant": "1.da",
+      "nom": "Emissions de gaz \u00e0 effet de serre - tertiaire - Chauffage",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Tertiaire - Chauffage",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.db",
+      "identifiant": "1.db",
+      "nom": "Emissions de gaz \u00e0 effet de serre - tertiaire - Autres usages",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Tertiaire - Autres usages",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_1.2.2"
       ],
@@ -153,6 +258,48 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur du transport routier",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ea",
+      "identifiant": "1.ea",
+      "nom": "Emissions de gaz \u00e0 effet de serre - Transport routier - mobilit\u00e9 locale",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transport routier - mobilit\u00e9 locale",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.eb",
+      "identifiant": "1.eb",
+      "nom": "Emissions de gaz \u00e0 effet de serre - Transport routier - autre",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transport routier - autre",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -204,6 +351,69 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ga",
+      "identifiant": "1.ga",
+      "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Energie",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Energie",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.gb",
+      "identifiant": "1.gb",
+      "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Elevage",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Elevage",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.gc",
+      "identifiant": "1.gc",
+      "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Pratiques culturales",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Pratiques culturales",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_1.2.3"
       ],
@@ -250,6 +460,153 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ia",
+      "identifiant": "1.ia",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - M\u00e9taux primaires",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - M\u00e9taux primaires",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ib",
+      "identifiant": "1.ib",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Chimie",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Chimie",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ic",
+      "identifiant": "1.ic",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Non-m\u00e9talliques",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Non-m\u00e9talliques",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.id",
+      "identifiant": "1.id",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Agro-industries",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Agro-industries",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ie",
+      "identifiant": "1.ie",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Equipements",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Equipements",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.if",
+      "identifiant": "1.if",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Papier-carton",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Papier-carton",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_1.ig",
+      "identifiant": "1.ig",
+      "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Autres industries",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Autres industries",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_6.3.1"
       ],
@@ -268,6 +625,27 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur de l'industrie branche \u00e9nergie",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>Somme des transports routiers (cae_1.e) et autres transports (cae_1.f)</p>\n",
+      "id": "cae_1.k",
+      "identifiant": "1.k",
+      "nom": "Emissions de gaz \u00e0 effet de serre - Transports",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transports",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -1014,6 +1392,69 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.ea",
+      "identifiant": "2.ea",
+      "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Maisons individuelles",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur r\u00e9sidentiel - Chauffage / Maisons individuelles",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.eb",
+      "identifiant": "2.eb",
+      "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Logement collectif",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur r\u00e9sidentiel - Chauffage / Logement collectif",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.ec",
+      "identifiant": "2.ec",
+      "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Autres usages",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur r\u00e9sidentiel - Autres usages",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_6.3.1"
       ],
@@ -1032,6 +1473,48 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique du tertiaire",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.fa",
+      "identifiant": "2.fa",
+      "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Chauffage",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur tertiaire - Chauffage",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.fb",
+      "identifiant": "2.fb",
+      "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Autres usages",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur tertiaire - Autres usages",
       "type": null,
       "unite": "GWh",
       "valeur_indicateur": null
