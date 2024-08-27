@@ -284,7 +284,18 @@ export default class IndicateursService {
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
   ): IndicateurAvecValeurs[] {
-    const indicateurAvecValeurs = indicateurDefinitions.map(
+    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
+      {};
+    const uniqueIndicateurDefinitions = Object.values(
+      indicateurDefinitions.reduce((acc, def) => {
+        if (def?.id) {
+          acc[def.id.toString()] = def;
+        }
+        return acc;
+      }, initialDefinitionsAcc),
+    ) as IndicateurDefinitionType[];
+
+    const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
         const valeurs = indicateurValeurs
           .filter((v) => v.indicateur_id === indicateurDefinition.id)
@@ -321,7 +332,18 @@ export default class IndicateursService {
     indicateurDefinitions: IndicateurDefinitionType[],
     indicateurMetadonnees: IndicateurSourceMetadonneeType[],
   ): IndicateurAvecValeursParSource[] {
-    const indicateurAvecValeurs = indicateurDefinitions.map(
+    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
+      {};
+    const uniqueIndicateurDefinitions = Object.values(
+      indicateurDefinitions.reduce((acc, def) => {
+        if (def?.id) {
+          acc[def.id.toString()] = def;
+        }
+        return acc;
+      }, initialDefinitionsAcc),
+    ) as IndicateurDefinitionType[];
+
+    const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
         const valeurs = indicateurValeurs
           .filter((v) => v.indicateur_id === indicateurDefinition.id)
