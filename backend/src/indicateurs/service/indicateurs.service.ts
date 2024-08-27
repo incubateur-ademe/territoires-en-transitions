@@ -27,6 +27,7 @@ import {
   IndicateurDefinitionType,
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
+  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
@@ -104,7 +105,7 @@ export default class IndicateursService {
       }
     }
 
-    const result = await this.databaseService.db
+    let result = await this.databaseService.db
       .select()
       .from(indicateurValeurTable)
       .leftJoin(
@@ -120,12 +121,21 @@ export default class IndicateursService {
       )
       .where(and(...conditions));
 
+    this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
+    if (!options.ignore_dedoublonnage) {
+      // Gère le cas où plusieurs fois la même source avec des métadonnées différentes > on garde les données de la métadonnée la plus récente
+      result = this.dedoublonnageIndicateurValeursParSource(result);
+
+      this.logger.log(
+        `${result.length} valeurs d'indicateurs après dédoublonnage`,
+      );
+    }
     // Enlève les doublons quand il y a plusieurs valeurs pour un même indicateur, collectivité, année
     // Garde en priorité la valeur utilisateur, puis celle avec la version la plus récente
     /*if (options.source_id !== null && options.clean_doublon === true) {
       // TODO adapter le code de packages/api/indicateur/indicateur.fetch.ts/selectIndicateursValeurs()
     }*/
-    this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
+
     return result;
   }
 
@@ -278,6 +288,34 @@ export default class IndicateursService {
           },
         });
     }
+  }
+
+  dedoublonnageIndicateurValeursParSource(
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
+  ): IndicateurValeurAvecMetadonnesDefinition[] {
+    const initialAcc: {
+      [key: string]: IndicateurValeurAvecMetadonnesDefinition;
+    } = {};
+    const uniqueIndicateurValeurs = Object.values(
+      indicateurValeurs.reduce((acc, v) => {
+        const cleUnicite = `${v.indicateur_valeur.indicateur_id}_${v.indicateur_valeur.collectivite_id}_${v.indicateur_valeur.date_valeur}_${v.indicateur_source_metadonnee?.source_id || this.NULL_SOURCE_ID}`;
+        if (!acc[cleUnicite]) {
+          acc[cleUnicite] = v;
+        } else {
+          // On garde la valeur la plus récente en priorité
+          if (
+            v.indicateur_source_metadonnee &&
+            acc[cleUnicite].indicateur_source_metadonnee &&
+            v.indicateur_source_metadonnee.date_version >
+              acc[cleUnicite].indicateur_source_metadonnee.date_version
+          ) {
+            acc[cleUnicite] = v;
+          }
+        }
+        return acc;
+      }, initialAcc),
+    ) as IndicateurValeurAvecMetadonnesDefinition[];
+    return uniqueIndicateurValeurs;
   }
 
   groupeIndicateursValeursParIndicateur(

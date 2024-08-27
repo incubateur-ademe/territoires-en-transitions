@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import DatabaseService from '../../common/services/database.service';
 import {
@@ -6,6 +7,7 @@ import {
   IndicateurAvecValeursParSource,
   IndicateurDefinitionType,
   IndicateurSourceMetadonneeType,
+  IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur.models';
 import IndicateursService from './indicateurs.service';
@@ -457,6 +459,809 @@ describe('IndicateursService', () => {
 
       expect(indicateurValeursGroupees).toEqual(
         expectedIndicateurValeursGroupees,
+      );
+    });
+  });
+
+  describe('dedoublonnageIndicateurValeursParSource', () => {
+    it('Même collectivite, Même date, Même indicateur mais deux sources différentes > pas de dédoublonnage', async () => {
+      const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
+        {
+          indicateur_valeur: {
+            id: 17,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 447868,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+        {
+          indicateur_valeur: {
+            id: 875,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 2,
+            resultat: null,
+            resultat_commentaire: null,
+            objectif: 513790,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:57:28.686Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 2,
+            source_id: 'snbc',
+            date_version: DateTime.fromISO(
+              '2024-07-11T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: null,
+            diffuseur: null,
+            producteur: null,
+            methodologie: null,
+            limites: null,
+          },
+        },
+      ];
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource(
+          indicateurValeurs,
+        );
+
+      // Même date mais deux sources différentes, on ne doit pas dédoublonner
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        _.cloneDeep(indicateurValeurs);
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it('Même collectivite, Même source, Même date mais deux indicateurs différentes > pas de dédoublonnage', async () => {
+      const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
+        {
+          indicateur_valeur: {
+            id: 17,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 447868,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+        {
+          indicateur_valeur: {
+            id: 18,
+            collectivite_id: 4936,
+            indicateur_id: 9,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 471107,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 9,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.d',
+            titre: 'Emissions de gaz à effet de serre - tertiaire',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur tertiaire',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+      ];
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource(
+          indicateurValeurs,
+        );
+
+      // Même date mais deux indicateurs différents, on ne doit pas dédoublonner
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        _.cloneDeep(indicateurValeurs);
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it('Même collectivite, Même date, Même indicateur mais une source et une donnée utilisateur > pas de dédoublonnage', async () => {
+      const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
+        {
+          indicateur_valeur: {
+            id: 17,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 447868,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+        {
+          indicateur_valeur: {
+            id: 875,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: null,
+            resultat: null,
+            resultat_commentaire: null,
+            objectif: 513790,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:57:28.686Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: null,
+        },
+      ];
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource(
+          indicateurValeurs,
+        );
+
+      // Même date mais deux sources différentes, on ne doit pas dédoublonner
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        _.cloneDeep(indicateurValeurs);
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it('Même indicateur, Même source, Même date mais deux collectivités différentes > pas de dédoublonnage', async () => {
+      const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
+        {
+          indicateur_valeur: {
+            id: 17,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 447868,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+        {
+          indicateur_valeur: {
+            id: 875,
+            collectivite_id: 2012,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: null,
+            resultat_commentaire: null,
+            objectif: 513790,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:57:28.686Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+      ];
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource(
+          indicateurValeurs,
+        );
+
+      // Deux collectivités différentes, on ne doit pas dédoublonner
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        _.cloneDeep(indicateurValeurs);
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it('Même collectivite, Même indicateur, Même source mais deux dates différentes > pas de dédoublonnage', async () => {
+      const indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [
+        {
+          indicateur_valeur: {
+            id: 17,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2015-01-01',
+            metadonnee_id: 1,
+            resultat: 447868,
+            resultat_commentaire: null,
+            objectif: null,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:55:09.325Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+        {
+          indicateur_valeur: {
+            id: 875,
+            collectivite_id: 4936,
+            indicateur_id: 4,
+            date_valeur: '2014-01-01',
+            metadonnee_id: 1,
+            resultat: null,
+            resultat_commentaire: null,
+            objectif: 513790,
+            objectif_commentaire: null,
+            estimation: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:57:28.686Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_definition: {
+            id: 4,
+            groupement_id: null,
+            collectivite_id: null,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+            participation_score: false,
+            sans_valeur_utilisateur: false,
+            valeur_calcule: null,
+            modified_at: DateTime.fromISO(
+              '2024-08-27T11:54:51.791Z',
+            ).toJSDate(),
+            created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+            modified_by: null,
+            created_by: null,
+          },
+          indicateur_source_metadonnee: {
+            id: 1,
+            source_id: 'rare',
+            date_version: DateTime.fromISO(
+              '2024-07-18T00:00:00.000Z',
+            ).toJSDate(),
+            nom_donnees: '',
+            diffuseur: 'OREC',
+            producteur: '',
+            methodologie: 'Scope 1&2 (approche cadastrale)',
+            limites: '',
+          },
+        },
+      ];
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource(
+          indicateurValeurs,
+        );
+
+      // Même source mais deux dates différentes, on ne doit pas dédoublonner
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        _.cloneDeep(indicateurValeurs);
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it('Même source, même date et métadonnées différentes, on prend la plus récente', async () => {
+      const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
+        indicateur_valeur: {
+          id: 17,
+          collectivite_id: 4936,
+          indicateur_id: 4,
+          date_valeur: '2015-01-01',
+          metadonnee_id: 1,
+          resultat: 447868,
+          resultat_commentaire: null,
+          objectif: null,
+          objectif_commentaire: null,
+          estimation: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_definition: {
+          id: 4,
+          groupement_id: null,
+          collectivite_id: null,
+          identifiant_referentiel: 'cae_1.c',
+          titre: 'Emissions de gaz à effet de serre - résidentiel',
+          titre_long:
+            'Emissions de gaz à effet de serre du secteur résidentiel',
+          description: '',
+          unite: 'teq CO2',
+          borne_min: null,
+          borne_max: null,
+          participation_score: false,
+          sans_valeur_utilisateur: false,
+          valeur_calcule: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_source_metadonnee: {
+          id: 1,
+          source_id: 'rare',
+          date_version: DateTime.fromISO('2024-07-18T00:00:00.000Z').toJSDate(),
+          nom_donnees: '',
+          diffuseur: 'OREC',
+          producteur: '',
+          methodologie: 'Scope 1&2 (approche cadastrale)',
+          limites: '',
+        },
+      };
+      const indicateurValeur2: IndicateurValeurAvecMetadonnesDefinition = {
+        indicateur_valeur: {
+          id: 875,
+          collectivite_id: 4936,
+          indicateur_id: 4,
+          date_valeur: '2015-01-01',
+          metadonnee_id: 2,
+          resultat: null,
+          resultat_commentaire: null,
+          objectif: 513790,
+          objectif_commentaire: null,
+          estimation: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:57:28.686Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_definition: {
+          id: 4,
+          groupement_id: null,
+          collectivite_id: null,
+          identifiant_referentiel: 'cae_1.c',
+          titre: 'Emissions de gaz à effet de serre - résidentiel',
+          titre_long:
+            'Emissions de gaz à effet de serre du secteur résidentiel',
+          description: '',
+          unite: 'teq CO2',
+          borne_min: null,
+          borne_max: null,
+          participation_score: false,
+          sans_valeur_utilisateur: false,
+          valeur_calcule: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_source_metadonnee: {
+          id: 2,
+          source_id: 'rare',
+          date_version: DateTime.fromISO('2024-08-01T00:00:00.000Z').toJSDate(),
+          nom_donnees: '',
+          diffuseur: 'OREC',
+          producteur: '',
+          methodologie: 'Scope 1&2 (approche cadastrale)',
+          limites: '',
+        },
+      };
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource([
+          indicateurValeur1,
+          indicateurValeur2,
+        ]);
+
+      // On ne doit garder que la valeur la plus récente
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        [_.cloneDeep(indicateurValeur2)];
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+
+      // On inverse l'ordre des valeurs
+      const indicateurValeursDedoublonnees2 =
+        indicateurService.dedoublonnageIndicateurValeursParSource([
+          indicateurValeur2,
+          indicateurValeur1,
+        ]);
+
+      expect(indicateurValeursDedoublonnees2).toEqual(
+        indicateurValeursDedoublonneesAttendues,
+      );
+    });
+
+    it("Doublon parfait, on en conserve qu'un", async () => {
+      const indicateurValeur1: IndicateurValeurAvecMetadonnesDefinition = {
+        indicateur_valeur: {
+          id: 17,
+          collectivite_id: 4936,
+          indicateur_id: 4,
+          date_valeur: '2015-01-01',
+          metadonnee_id: 1,
+          resultat: 447868,
+          resultat_commentaire: null,
+          objectif: null,
+          objectif_commentaire: null,
+          estimation: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:55:09.325Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_definition: {
+          id: 4,
+          groupement_id: null,
+          collectivite_id: null,
+          identifiant_referentiel: 'cae_1.c',
+          titre: 'Emissions de gaz à effet de serre - résidentiel',
+          titre_long:
+            'Emissions de gaz à effet de serre du secteur résidentiel',
+          description: '',
+          unite: 'teq CO2',
+          borne_min: null,
+          borne_max: null,
+          participation_score: false,
+          sans_valeur_utilisateur: false,
+          valeur_calcule: null,
+          modified_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          created_at: DateTime.fromISO('2024-08-27T11:54:51.791Z').toJSDate(),
+          modified_by: null,
+          created_by: null,
+        },
+        indicateur_source_metadonnee: {
+          id: 1,
+          source_id: 'rare',
+          date_version: DateTime.fromISO('2024-07-18T00:00:00.000Z').toJSDate(),
+          nom_donnees: '',
+          diffuseur: 'OREC',
+          producteur: '',
+          methodologie: 'Scope 1&2 (approche cadastrale)',
+          limites: '',
+        },
+      };
+      const indicateurValeursDedoublonnees =
+        indicateurService.dedoublonnageIndicateurValeursParSource([
+          indicateurValeur1,
+          _.cloneDeep(indicateurValeur1),
+        ]);
+
+      // On ne doit garder que la valeur la plus récente
+      const indicateurValeursDedoublonneesAttendues: IndicateurValeurAvecMetadonnesDefinition[] =
+        [_.cloneDeep(indicateurValeur1)];
+
+      expect(indicateurValeursDedoublonnees).toEqual(
+        indicateurValeursDedoublonneesAttendues,
       );
     });
   });

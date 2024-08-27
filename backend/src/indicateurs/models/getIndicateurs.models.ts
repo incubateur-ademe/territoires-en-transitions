@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsInt,
   IsOptional,
@@ -10,6 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
+import optionalBooleanMapper from '../../common/services/optionalBooleanMapper';
 import { IndicateurAvecValeursParSource } from './indicateur.models';
 
 /**
@@ -50,7 +52,10 @@ export class GetIndicateursValeursRequest extends CollectiviteRequest {
   @Transform(({ value }) => (Array.isArray(value) ? value : value.split(',')))
   sources?: string[] | null;
 
-  //TODO: dedoublonnage?: boolean;
+  @IsBoolean()
+  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
+  @IsOptional()
+  ignore_dedoublonnage?: boolean;
 }
 
 export class GetIndicateursValeursResponse {
