@@ -88,7 +88,6 @@ const TousLesIndicateurs = () => {
               <MenuFiltresTousLesIndicateurs
                 filters={filters}
                 setFilters={newFilters => {
-                  // setFilters(newFilters);
                   handleSetFilters(newFilters);
                 }}
               />
