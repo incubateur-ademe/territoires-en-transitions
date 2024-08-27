@@ -21,6 +21,9 @@ export const LAYERS = {
   trajectoire: {color: '#1E98C6', label: 'SNBC territorialisée'},
 };
 
+// pour formater les chiffres
+const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
+
 // années de début/fin de la SNBC v2
 export const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;
@@ -43,7 +46,7 @@ export const COMMON_CHART_PROPS: Partial<LineProps> = {
     max: 'auto',
     stacked: true,
   },
-  yFormat: ' >-.2f',
+  yFormat: value => NumFormat.format(value as number),
   axisBottom: {
     format: '%Y',
     legendPosition: 'end',
@@ -51,6 +54,9 @@ export const COMMON_CHART_PROPS: Partial<LineProps> = {
     tickPadding: 15,
     tickRotation: -35,
     tickValues: ANNEE_JALON2 - ANNEE_REFERENCE,
+  },
+  axisLeft: {
+    format: value => NumFormat.format(value as number),
   },
   gridXValues: ANNEE_JALON2 - ANNEE_REFERENCE,
   enableArea: true,
