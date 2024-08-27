@@ -8,7 +8,7 @@ exports[`design-system/Badge CustomIcon smoke-test 1`] = `
     Badge
   </span>
   <div class="flex rounded-full cursor-pointer">
-    <span class="ri-alert-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-8">
+    <span class="ri-alert-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-8 text-primary-7">
     </span>
   </div>
 </div>
@@ -44,7 +44,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-8">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-8 text-primary-7">
         </span>
       </div>
     </div>
@@ -55,7 +55,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-grey-8">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-grey-8 text-primary-7">
         </span>
       </div>
     </div>
@@ -92,7 +92,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-primary-7">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-primary-7 text-primary-7">
         </span>
       </div>
     </div>
@@ -103,7 +103,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-primary-7">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-primary-7 text-primary-7">
         </span>
       </div>
     </div>
@@ -140,7 +140,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-success-1">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-success-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -151,7 +151,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-success-1">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-success-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -188,7 +188,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-warning-1">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-warning-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -199,7 +199,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-warning-1">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-warning-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -236,7 +236,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-new-1">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-new-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -247,7 +247,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-new-1">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-new-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -284,7 +284,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-error-1">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-error-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -295,7 +295,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-error-1">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-error-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -332,7 +332,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-info-1">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-info-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -343,7 +343,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-info-1">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-info-1 text-primary-7">
         </span>
       </div>
     </div>
@@ -380,7 +380,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6">
+        <span class="ri-close-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] text-grey-6 text-primary-7">
         </span>
       </div>
     </div>
@@ -391,7 +391,7 @@ exports[`design-system/Badge Grid smoke-test 1`] = `
         Badge
       </span>
       <div class="flex rounded-full cursor-pointer">
-        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-grey-6">
+        <span class="ri-close-circle-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] text-grey-6 text-primary-7">
         </span>
       </div>
     </div>

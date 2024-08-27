@@ -94,7 +94,7 @@ export const Badge = ({
           <Icon
             icon={icon}
             size={size === 'sm' ? 'xs' : 'sm'}
-            className={styles.icon}
+            className={classNames(styles.icon, {'text-primary-7': !!onClose})}
           />
         </div>
       )}
