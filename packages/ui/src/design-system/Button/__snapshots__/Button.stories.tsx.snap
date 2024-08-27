@@ -1,0 +1,430 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Button AnchorButtons smoke-test 1`] = `
+<div class="flex flex-wrap items-end gap-5">
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+  >
+    Internal link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6"
+  >
+    Internal link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-3.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-base py-3 px-6"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    </span>
+    Disabled link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-base py-3 px-6"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3 mb-0.5">
+    </span>
+    Disabled link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6 flex-row-reverse"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    External link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-3.5 flex-row-reverse"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-base py-3 px-6 flex-row-reverse"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-8 mb-0.5">
+    </span>
+    External link
+  </a>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+    External link
+  </a>
+</div>
+`;
+
+exports[`design-system/Button CustomStyles smoke-test 1`] = `
+<div class="flex items-end gap-5">
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6 !bg-success-3 !border-success-3 hover:!bg-success hover:!border-success">
+    Custom Class
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6"
+          style="font-style: italic; border-radius: 2rem;"
+  >
+    Custom Style
+  </button>
+</div>
+`;
+
+exports[`design-system/Button Default smoke-test 1`] = `
+<button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+  Button
+</button>
+`;
+
+exports[`design-system/Button Disabled smoke-test 1`] = `
+<button disabled
+        class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-base py-3 px-6"
+>
+  Disabled
+</button>
+`;
+
+exports[`design-system/Button Sizes smoke-test 1`] = `
+<div class="grid gap-5 items-end"
+     style="grid-template-columns: repeat(4, fit-content(0px));"
+>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-2">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-3.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-5">
+    <span class="ri-leaf-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+    XSmall
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    Small
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    Medium
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-2xl py-4 px-6">
+    XLarge
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-white group-hover:fill-white">
+    </span>
+    XSmall
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Small
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Medium
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-2xl py-4 px-6">
+    <span class="ri-leaf-line font-normal text-center h-6 w-6 text-[1.5rem] leading-[1.5rem] fill-white group-hover:fill-white">
+    </span>
+    XLarge
+  </button>
+</div>
+`;
+
+exports[`design-system/Button Variants smoke-test 1`] = `
+<div class="grid gap-5 items-end bg-grey-2 p-10"
+     style="grid-template-columns: repeat(6, fit-content(0px));"
+>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-2.5">
+    <div class="text-primary fill-primary bg-primary-3 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow absolute -top-2.5 -right-2.5">
+      <span class="font-extrabold leading-none">
+        4
+      </span>
+    </div>
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-secondary-1 hover:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-grey-1 hover:!bg-grey-2 border-grey-4 hover:!border-grey-4 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 p-2.5">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-grey-1 !bg-secondary-2 !border-secondary-2 p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-grey-1">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-grey-2 p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+    </span>
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 p-2.5"
+  >
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3 mb-1">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    Primary
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-secondary-1 hover:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 text-sm py-2.5 px-6">
+    Secondary
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    Outlined
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6">
+    White
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-grey-1 hover:!bg-grey-2 border-grey-4 hover:!border-grey-4 text-sm py-2.5 px-6">
+    Grey
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
+    Underlined
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-sm py-2.5 px-6"
+  >
+    Primary
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-grey-1 !bg-secondary-2 !border-secondary-2 text-sm py-2.5 px-6"
+  >
+    Secondary
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-sm py-2.5 px-6"
+  >
+    Outlined
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white text-sm py-2.5 px-6"
+  >
+    White
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-grey-2 text-sm py-2.5 px-6"
+  >
+    Grey
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6"
+  >
+    Underlined
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Primary
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-secondary-1 hover:!bg-secondary-2 border-secondary-1 hover:!border-secondary-2 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Secondary
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+    Outlined
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-white hover:!bg-primary-1 border-white hover:!border-primary-1 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+    White
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-grey-1 hover:!bg-grey-2 border-grey-4 hover:!border-grey-4 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+    Grey
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6">
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
+    </span>
+    Underlined
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-4 !border-primary-4 text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    </span>
+    Primary
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-grey-1 !bg-secondary-2 !border-secondary-2 text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-grey-1">
+    </span>
+    Secondary
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-3 !bg-primary-0 !border-primary-4 text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-3">
+    </span>
+    Outlined
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-white text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+    </span>
+    White
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-2 cursor-not-allowed rounded-lg border font-bold !text-primary-4 !bg-white !border-grey-2 text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-4">
+    </span>
+    Grey
+  </button>
+  <button disabled
+          class="relative w-fit flex items-center border-solid group gap-1 cursor-not-allowed border-b border-t-0 border-x-0 !p-px font-medium !text-primary-3 bg-transparent border-primary-3 text-sm py-2.5 px-6 flex-row-reverse"
+  >
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-3 mb-1">
+    </span>
+    Underlined
+  </button>
+</div>
+`;
+
+exports[`design-system/Button WithCustomSVGIcon smoke-test 1`] = `
+<button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+  <svg class="h-5 w-5 fill-white group-hover:fill-white"
+       width="18"
+       height="18"
+       viewbox="0 0 24 24"
+       fill="none"
+       xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M11.602 13.7615L13.014 15.1735L21.48 6.70747L22.894 8.12147L13.014 18.0015L6.65 11.6375L8.064 10.2235L10.189 12.3485L11.602 13.7605V13.7615ZM11.604 10.9335L16.556 5.98047L17.966 7.39047L13.014 12.3435L11.604 10.9335ZM8.777 16.5885L7.364 18.0015L1 11.6375L2.414 10.2235L3.827 11.6365L3.826 11.6375L8.777 16.5885V16.5885Z">
+    </path>
+  </svg>
+  SVG Icon
+</button>
+`;
+
+exports[`design-system/Button WithNotification smoke-test 1`] = `
+<div class="grid gap-5 items-end bg-grey-2 p-10"
+     style="grid-template-columns: repeat(6, fit-content(0px));"
+>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 p-2.5">
+    <div class="text-primary fill-primary bg-primary-3 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow absolute -top-2.5 -right-2.5">
+      <span class="font-extrabold leading-none">
+        4
+      </span>
+    </div>
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-sm py-2.5 px-6">
+    <div class="text-white fill-white bg-warning-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow absolute -top-2.5 -right-2.5">
+      <span class="ri-lock-fill font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem]">
+      </span>
+    </div>
+    Primary
+  </button>
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 p-2.5">
+    <div class="text-white fill-white bg-error-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow absolute -top-2.5 -right-2.5">
+      <span class="font-extrabold leading-none">
+        105
+      </span>
+    </div>
+    <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-primary-7 group-hover:fill-primary-8">
+    </span>
+  </button>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6"
+  >
+    <div class="text-white fill-white bg-info-1 h-6 min-w-[1.5rem] text-xs p-1.5 inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow absolute -top-2.5 -right-2.5 -top-5 -right-5">
+      <span class="font-extrabold leading-none">
+        2
+      </span>
+    </div>
+    <span class="ri-leaf-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
+    </span>
+    Underlined
+  </a>
+</div>
+`;
+
+exports[`design-system/Button WithRef smoke-test 1`] = `
+<div class="flex items-end gap-5">
+  <button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+    Button with ref
+  </button>
+  <a href="https://territoiresentransitions.fr"
+     class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6 flex-row-reverse"
+     target="_blank"
+     rel="noreferrer noopener"
+  >
+    <span class="ri-external-link-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+    </span>
+    Anchor with ref
+  </a>
+</div>
+`;
+
+exports[`design-system/Button WithRemixIcon smoke-test 1`] = `
+<button class="relative w-fit flex items-center border-solid group gap-2 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-base py-3 px-6">
+  <span class="ri-leaf-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] fill-white group-hover:fill-white">
+  </span>
+  Remix Icon
+</button>
+`;

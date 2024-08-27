@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Footer Default smoke-test 1`] = `
+<footer class="w-full border-t-2 border-t-primary-8">
+  <div class="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 py-8 flex max-md:flex-wrap justify-between md:gap-x-16 lg:gap-x-32 gap-y-6 md:flex-row">
+    <div class="flex h-28 gap-x-1">
+      <div class="h-full">
+        <i class="ri-leaf-line text-primary-9 !text-8xl">
+        </i>
+      </div>
+    </div>
+    <div>
+      <p class="text-sm leading-6 text-grey-9">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget maximus nisl, eget ullamcorper mauris. Nulla sagittis tempus leo nec elementum.
+      </p>
+      <ul class="!list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
+        <li class="pl-4 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-sm py-2.5 px-6 flex-row-reverse !text-primary-8 border-b-transparent hover:border-b-primary-8 hover:!border-b"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] fill-primary-8 mb-1">
+            </span>
+            territoiresentransitions.fr
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="w-full border-t border-t-primary-4">
+    <div class="w-full mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 py-6">
+      <ul class="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://territoiresentransitions.fr"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
+            </span>
+            Site
+          </a>
+        </li>
+        <li class="pl-2 first-of-type:pl-0 pb-0">
+          <a href="https://app.territoiresentransitions.fr"
+             class="bg-none after:hidden relative w-fit flex items-center border-solid group gap-1 cursor-pointer border-b border-t-0 border-x-0 !p-px font-medium hover:border-b-2 hover:!pb-0 text-primary-8 !bg-transparent border-primary-7 text-xs py-2 px-5 flex-row-reverse !text-grey-8 border-b-transparent hover:border-b-grey-8 hover:!border-b !font-normal"
+             target="_blank"
+             rel="noreferrer noopener"
+          >
+            <span class="ri-external-link-line font-normal text-center h-3.5 w-3.5 text-[0.875rem] leading-[0.875rem] fill-primary-8 mb-0.5">
+            </span>
+            Application
+          </a>
+        </li>
+      </ul>
+      <div class="text-xs leading-5 text-grey-8">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </div>
+    </div>
+  </div>
+</footer>
+`;

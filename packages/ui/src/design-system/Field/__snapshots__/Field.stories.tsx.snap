@@ -1,0 +1,193 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Field Default smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field DisabledWithHint smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8 text-grey-5">
+        Description de l'action
+      </div>
+      <span class="block mt-2 text-xs text-grey-7 text-grey-5">
+        Texte description additionnel
+      </span>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+             disabled
+      >
+    </div>
+    <div class="flex items-center text-grey-6">
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field WithError smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-error-1">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex items-center text-error-1">
+      <span class="ri-spam-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Message d'erreur
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field WithHint smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+      <span class="block mt-2 text-xs text-grey-7">
+        Texte description additionnel
+      </span>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-grey-4">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex items-center text-grey-7">
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field WithInfo smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-info-1">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex items-center text-info-1">
+      <span class="ri-information-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Message d’information
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field WithSuccess smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-success-1">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex items-center text-success-1">
+      <span class="ri-checkbox-circle-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Message de succès
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Field WithWarning smoke-test 1`] = `
+<div class="flex">
+  <div class="flex-grow flex flex-col gap-3">
+    <label for="un_nom"
+           class="ml-0 mb-0"
+    >
+      <div class="font-medium text-grey-8">
+        Description de l'action
+      </div>
+    </label>
+    <div class="inline-flex items-stretch border border-solid rounded-lg bg-grey-1 overflow-hidden focus-within:border-primary-5 border-warning-1">
+      <input type="text"
+             class="grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs text-md py-3"
+             id="un_nom"
+             placeholder="Placeholder"
+      >
+    </div>
+    <div class="flex items-center text-warning-1">
+      <span class="ri-alert-fill font-normal text-center h-4 w-4 text-[1rem] leading-[1rem] mr-1">
+      </span>
+      <span class="text-xs">
+        Message d'avertissement
+      </span>
+    </div>
+  </div>
+</div>
+`;
