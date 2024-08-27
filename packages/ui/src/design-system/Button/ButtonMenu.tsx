@@ -14,7 +14,6 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import {preset} from '@tailwind-preset';
 
 import {ButtonProps} from './types';
 import {Button} from './Button';
@@ -101,7 +100,6 @@ export const ButtonMenu = ({
                   position: strategy,
                   top: y,
                   left: x,
-                  zIndex: preset.theme.extend.zIndex.dropdown,
                   maxHeight: maxHeight - 16,
                 },
                 className:

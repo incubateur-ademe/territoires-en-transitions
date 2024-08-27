@@ -205,7 +205,7 @@ export const Modal = ({
                     </div>
                   )}
                   {render && (
-                    <div className="flex flex-col gap-8 z-10">
+                    <div className="flex flex-col gap-8">
                       {render?.({
                         close: handleOpenChange,
                         labelId,

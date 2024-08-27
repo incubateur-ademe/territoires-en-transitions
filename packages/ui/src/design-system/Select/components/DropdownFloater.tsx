@@ -140,7 +140,9 @@ export const DropdownFloater = ({
                     left: x,
                     // Applique uniquement le z-index quand le dropdown
                     // n'est pas contenu dans un autre floater (ex. modale)
-                    zIndex: parentNodeId ?? preset.theme.extend.zIndex.dropdown,
+                    zIndex: parentNodeId
+                      ? preset.theme.extend.zIndex.dropdown
+                      : 1,
                   },
                 })}
               >
