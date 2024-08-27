@@ -42,7 +42,7 @@ export const useResultatTrajectoire = ({
   indicateur: IndicateurTrajectoire;
   /** index du secteur sélectionné */
   secteurIdx: number;
-  /** coefficient pour normaliser les données objectifs/résultats */
+  /** coefficient pour normaliser les données */
   coef?: number;
 }) => {
   // données de la trajectoire
@@ -53,7 +53,7 @@ export const useResultatTrajectoire = ({
   const valeursTousSecteurs =
     trajectoire &&
     indicateur.secteurs &&
-    prepareDonneesParSecteur(indicateur.secteurs, trajectoire);
+    prepareDonneesParSecteur(indicateur.secteurs, trajectoire, coef);
 
   // secteur sélectionné
   const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
@@ -67,7 +67,7 @@ export const useResultatTrajectoire = ({
     trajectoire &&
     secteur &&
     'sousSecteurs' in secteur &&
-    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire);
+    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire, coef);
 
   // dataset du secteur sélectionné
   const valeursSecteur =
@@ -120,7 +120,9 @@ const prepareDonneesParSecteur = (
   /** (sous-)secteurs à inclure */
   secteurs: Readonly<Array<{nom: string; identifiant: string}>>,
   /** données de la trajectoire */
-  indicateurs: IndicateurAvecValeurs[]
+  indicateurs: IndicateurAvecValeurs[],
+  /** coefficient pour normaliser les données */
+  coef?: number
 ) => {
   if (!indicateurs?.length || !secteurs?.length) return undefined;
 
@@ -135,7 +137,7 @@ const prepareDonneesParSecteur = (
             label: s.nom,
             data: valeurs.map(v => ({
               x: new Date(v.date_valeur),
-              y: v.objectif,
+              y: v.objectif * (coef || 1),
             })),
           }
         : null;
