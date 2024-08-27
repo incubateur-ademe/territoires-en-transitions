@@ -34,6 +34,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "drizzle-orm": "^0.32.0",
+    "es-toolkit": "^1.16.0",
     "gaxios": "^6.7.0",
     "google-auth-library": "^9.11.0",
     "googleapis": "^140.0.1",

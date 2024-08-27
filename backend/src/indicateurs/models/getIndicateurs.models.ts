@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -6,9 +7,10 @@ import {
   IsOptional,
   IsString,
   Length,
+  ValidateNested,
 } from 'class-validator';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
-import { IndicateurAvecValeurs } from './indicateur.models';
+import { IndicateurAvecValeursParSource } from './indicateur.models';
 
 /**
  * - <b>collectiviteId</b> : identifiant de la collectivité
@@ -20,9 +22,11 @@ import { IndicateurAvecValeurs } from './indicateur.models';
  * - <b>cleanDoublon</b> : vrai pour enlever les doublons du trio indicateur, collectivite, année <i>(faux par défaut)</i>
  */
 export class GetIndicateursValeursRequest extends CollectiviteRequest {
+  @ApiProperty({ description: 'Identifiants du référentiel' })
   @IsString({ each: true })
   @IsOptional()
   @IsArray()
+  @Transform(({ value }) => (Array.isArray(value) ? value : value.split(',')))
   identifiants_referentiel?: string[];
 
   @IsInt()
@@ -44,11 +48,15 @@ export class GetIndicateursValeursRequest extends CollectiviteRequest {
   @IsArray()
   @IsOptional()
   @Transform(({ value }) => (Array.isArray(value) ? value : value.split(',')))
-  source_ids?: string[] | null;
+  sources?: string[] | null;
 
-  //TODO: clean_doublon?: boolean;
+  //TODO: dedoublonnage?: boolean;
 }
 
 export class GetIndicateursValeursResponse {
-  indicateurs: IndicateurAvecValeurs[];
+  @ApiProperty({ type: IndicateurAvecValeursParSource, isArray: true })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IndicateurAvecValeursParSource)
+  indicateurs: IndicateurAvecValeursParSource[];
 }

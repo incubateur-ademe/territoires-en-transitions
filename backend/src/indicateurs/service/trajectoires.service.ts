@@ -4,6 +4,7 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { isNil, partition } from 'es-toolkit';
 import { NextFunction, Response } from 'express';
 import { JSZipGeneratorOptions } from 'jszip';
 import * as _ from 'lodash';
@@ -85,38 +86,105 @@ export default class TrajectoiresService {
     ['cae_2.l_pcaet'], // I35
   ];
   private readonly SNBC_CONSOMMATIONS_CELLULES = 'Carto_en-GES!I29:I35';
+  private readonly CONSOMMATIONS_IDENTIFIANTS_PREFIX = 'cae_2.';
 
-  private readonly SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_CELLULES =
-    'TOUS SECTEURS!G268:AP279';
-  private readonly SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL =
-    [
-      'cae_1.c', // 268 Résidentiel
-      'cae_1.d', // 269 Tertiaire
-      'cae_1.i', // 270 Industrie
-      'cae_1.g', // 271 Agriculture
-      'cae_1.k', // 272 Transports
-      'cae_1.h', // 273 Déchets
-      'cae_1.j', // 274 Branche énergie
-      'cae_63.a', // 227 UTCATF
-      'cae_1.csc', // 276 CSC
-      'cae_1.aa', // 277 Total net
-      '', // 278
-      'cae_1.a', // 279 Total brut
-    ];
+  private readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
+    'TOUS SECTEURS!G221:AP297';
+  private readonly SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL = [
+    // Sous-secteur: Emissions GES résidentiel
+    'cae_1.ca', // 221 Chauffage / Maisons individuelles
+    'cae_1.cb', // 222 Chauffage / Logement collectif
+    'cae_1.cc', // 223 Autres usages
 
-  private readonly SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_CELLULES =
-    'TOUS SECTEURS!G290:AP297';
-  private readonly SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL =
-    [
-      'cae_2.k', // 290 Industrie
-      'cae_2.m', // 291 Transports
-      'cae_2.e', // 292 Résidentiel
-      'cae_2.f', // 293 Tertiaire
-      'cae_2.i', // 294 Agriculture
-      'cae_2.j', // 295 Déchets
-      'cae_2.l_pcaet', // 296 Branche énergie
-      'cae_2.a', // 297 Total
-    ];
+    // Sous-secteur: Emissions GES tertiaire
+    'cae_1.da', // 224 Chauffage (Tertiaire)
+    'cae_1.db', // 225 Autres usages (Tertiaire)
+
+    // Sous-secteur: Emissions GES industrie
+    'cae_1.ia', // 226 Métaux primaires
+    'cae_1.ib', // 227 Chimie
+    'cae_1.ic', // 228 Non-métalliques
+    'cae_1.id', // 229 Agro-industries
+    'cae_1.ie', // 230 Equipements
+    'cae_1.if', // 231 Papier-carton
+    'cae_1.ig', // 232 Autres industries
+
+    // Sous-secteur: Emissions GES agriculture
+    'cae_1.ga', // 233 Energie (Agriculture)
+    'cae_1.gb', // 234 Elevage
+    'cae_1.gc', // 235 Pratiques culturales
+
+    // Sous-secteur: Emissions GES transports
+    'cae_1.ea', // 236 Routier / mobilité locale
+    'cae_1.eb', // 237 Routier / autre
+    'cae_1.f', // 238 Autres (Transports)
+    '',
+    '',
+    // Sous-secteur: Emissions GES UTCATF
+    'cae_63.b', // 241 Forêts
+    'cae_63.e', // 242 Cultures
+    'cae_63.f', // 243 Prairies
+    'cae_63.g', // 244 Zones humides
+    'cae_63.h', // 245 Sols artificiels
+    'cae_63.i', // 246 Produits bois
+    '',
+    '',
+    '',
+    // Sous-secteur: Consommation énergie (Résidentiel)
+    'cae_2.ea', // 250 Chauffage / Maisons individuelles (Consommation énergie)
+    'cae_2.eb', // 251 Chauffage / Logement collectif (Consommation énergie)
+    'cae_2.ec', // 252 Autres usages (Consommation énergie)
+
+    // Sous-secteur: Consommation énergie (Tertiaire)
+    'cae_2.fa', // 253 Chauffage (Tertiaire, Consommation énergie)
+    'cae_2.fb', // 254 Autres usages (Tertiaire, Consommation énergie)
+
+    // Sous-secteur: Consommation énergie (Industrie)
+    'cae_2.ka', // 255 Métaux primaires (Industrie, Consommation énergie)
+    'cae_2.kb', // 256 Chimie (Industrie, Consommation énergie)
+    'cae_2.kc', // 257 Non-métalliques (Industrie, Consommation énergie)
+    'cae_2.kd', // 258 Agro-industries (Industrie, Consommation énergie)
+    'cae_2.ke', // 259 Equipements (Industrie, Consommation énergie)
+    'cae_2.kf', // 260 Papier-carton (Industrie, Consommation énergie)
+    'cae_2.kg', // 261 Autres industries (Industrie, Consommation énergie),
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    // Secteurs
+    'cae_1.c', // 268 Résidentiel
+    'cae_1.d', // 269 Tertiaire
+    'cae_1.i', // 270 Industrie
+    'cae_1.g', // 271 Agriculture
+    'cae_1.k', // 272 Transports
+    'cae_1.h', // 273 Déchets
+    'cae_1.j', // 274 Branche énergie
+    'cae_63.a', // 227 UTCATF
+    'cae_1.csc', // 276 CSC
+    'cae_1.aa', // 277 Total net
+    '', // 278
+    'cae_1.a', // 279 Total brut
+    '', // 280
+    '', // 281
+    '', // 282
+    '', // 283
+    '', // 284
+    '', // 285
+    '', // 286
+    '', // 287
+    '', // 288
+    '', // 289
+    'cae_2.k', // 290 Industrie
+    'cae_2.m', // 291 Transports
+    'cae_2.e', // 292 Résidentiel
+    'cae_2.f', // 293 Tertiaire
+    'cae_2.i', // 294 Agriculture
+    'cae_2.j', // 295 Déchets
+    'cae_2.l_pcaet', // 296 Branche énergie
+    'cae_2.a', // 297 Total
+  ];
 
   private xlsxModeleBuffer: Buffer | null = null;
   private xlsxVideBuffer: Buffer | null = null;
@@ -183,13 +251,18 @@ export default class TrajectoiresService {
         this.getIdentifiantXlsxCalcul(),
       );
 
-      this.logger.log(`Création du buffer sans données du fichier Xlsx`);
-      const nouveauBuffer = Buffer.from(this.xlsxModeleBuffer);
-      this.xlsxVideBuffer = await this.generationXlsxDonneesSubstituees(
-        nouveauBuffer,
-        { siren: null },
-        null,
-      );
+      if (this.xlsxModeleBuffer) {
+        this.logger.log(`Création du buffer sans données du fichier Xlsx`);
+        const nouveauBuffer = Buffer.from(this.xlsxModeleBuffer);
+        this.xlsxVideBuffer = await this.generationXlsxDonneesSubstituees(
+          nouveauBuffer,
+          { siren: null },
+          null,
+        );
+      } else {
+        // Null in test
+        this.logger.warn(`Le fichier Xlsx de calcul n'a pas été trouvé`);
+      }
     }
   }
 
@@ -243,24 +316,18 @@ export default class TrajectoiresService {
       emissionGesConsommationsSubstitionValeurs[cleSubstitution] = 0;
     });
     valeurIndicateurs?.emissions_ges.valeurs.forEach((valeur) => {
-      if (valeur.valeur === null) {
-        valeur.valeur = 0;
-      }
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiants_referentiel,
       );
       emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
-        valeur.valeur / 1000;
+        (valeur.valeur || 0) / 1000;
     });
     valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
-      if (valeur.valeur === null) {
-        valeur.valeur = 0;
-      }
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiants_referentiel,
       );
       emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
-        valeur.valeur;
+        valeur.valeur || 0;
     });
     template.substitute(
       emissionsGesConsommationsSheetName,
@@ -437,22 +504,27 @@ export default class TrajectoiresService {
         this.getIdentifiantDossierResultat(),
       );
       if (trajectoireCalculSheetId) {
-        const indicateurEmissionsDefinitions =
+        const indicateurDefinitions =
           await this.indicateursService.getReferentielIndicateurDefinitions(
-            this
-              .SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+            this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
           );
+        const [
+          indicateurConsommationDefinitions,
+          indicateurEmissionsDefinitions,
+        ] = partition(
+          indicateurDefinitions,
+          (definition) =>
+            definition.identifiant_referentiel?.startsWith(
+              this.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+            ) || false,
+        );
+
         const emissionGesTrajectoire =
           this.indicateursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurEmissionsDefinitions,
           );
 
-        const indicateurConsommationDefinitions =
-          await this.indicateursService.getReferentielIndicateurDefinitions(
-            this
-              .SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL,
-          );
         const consommationsTrajectoire =
           this.indicateursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
@@ -542,72 +614,60 @@ export default class TrajectoiresService {
     );
 
     const indicateurResultatDefinitions =
-      await this.indicateursService.getReferentielIndicateurDefinitions([
-        ...this
-          .SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
-        ...this.SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL,
-      ]);
-
-    const trajectoireCalculEmissionGesResultat =
-      await this.sheetService.getRawDataFromSheet(
-        trajectoireCalculSheetId,
-        this.SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_CELLULES,
+      await this.indicateursService.getReferentielIndicateurDefinitions(
+        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
+          (identifiant) => identifiant !== '',
+        ),
       );
 
-    const indicateurValeursEmissionGesResultat =
+    const trajectoireCalculResultat =
+      await this.sheetService.getRawDataFromSheet(
+        trajectoireCalculSheetId,
+        this.SNBC_TRAJECTOIRE_RESULTAT_CELLULES,
+      );
+
+    const indicateurValeursTrajectoireResultat =
       this.getIndicateurValeursACreer(
         request.collectivite_id,
         indicateurSourceMetadonnee.id,
-        trajectoireCalculEmissionGesResultat.data,
-        1000,
-        this.SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+        trajectoireCalculResultat.data,
+        this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
-        resultatVerification.donnees_entree.emissions_ges,
+        [
+          ...resultatVerification.donnees_entree.emissions_ges.valeurs,
+          ...resultatVerification.donnees_entree.consommations_finales.valeurs,
+        ],
       );
 
     this.logger.log(
-      `Ecriture des ${indicateurValeursEmissionGesResultat.length} valeurs des indicateurs correspondant aux emissions GES de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+      `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    const upsertedEmissionGesIndicateurValeurs =
+    const upsertedTrajectoireIndicateurValeurs =
       await this.indicateursService.upsertIndicateurValeurs(
-        indicateurValeursEmissionGesResultat,
+        indicateurValeursTrajectoireResultat,
       );
+
+    const [
+      indicateurResultatConsommationDefinitions,
+      indicateurResultatEmissionsDefinitions,
+    ] = partition(
+      indicateurResultatDefinitions,
+      (definition) =>
+        definition.identifiant_referentiel?.startsWith(
+          this.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+        ) || false,
+    );
 
     const emissionGesTrajectoire =
       this.indicateursService.groupeIndicateursValeursParIndicateur(
-        upsertedEmissionGesIndicateurValeurs || [],
-        indicateurResultatDefinitions,
-      );
-
-    const trajectoireCalculConsommationsResultat =
-      await this.sheetService.getRawDataFromSheet(
-        trajectoireCalculSheetId,
-        this.SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_CELLULES,
-      );
-
-    const indicateurValeursConsommationsResultat =
-      this.getIndicateurValeursACreer(
-        request.collectivite_id,
-        indicateurSourceMetadonnee.id,
-        trajectoireCalculConsommationsResultat.data,
-        1,
-        this.SNBC_TRAJECTOIRE_RESULTAT_CONSOMMATION_IDENTIFIANTS_REFERENTIEL,
-        indicateurResultatDefinitions,
-        resultatVerification.donnees_entree.consommations_finales,
-      );
-
-    this.logger.log(
-      `Ecriture des ${indicateurValeursConsommationsResultat.length} valeurs des indicateurs correspondant aux consommations finales de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
-    );
-    const upsertedConsommationsIndicateurValeurs =
-      await this.indicateursService.upsertIndicateurValeurs(
-        indicateurValeursConsommationsResultat,
+        upsertedTrajectoireIndicateurValeurs || [],
+        indicateurResultatEmissionsDefinitions,
       );
 
     const consommationsTrajectoire =
       this.indicateursService.groupeIndicateursValeursParIndicateur(
-        upsertedConsommationsIndicateurValeurs || [],
-        indicateurResultatDefinitions,
+        upsertedTrajectoireIndicateurValeurs || [],
+        indicateurResultatConsommationDefinitions,
       );
 
     const result: CalculTrajectoireResult = {
@@ -621,42 +681,77 @@ export default class TrajectoiresService {
     return result;
   }
 
+  getIdentifiantReferentielParent(
+    identifiantReferentiel: string,
+  ): string | null {
+    const identifiantReferentielSortieParts = identifiantReferentiel.split('.');
+    if (identifiantReferentielSortieParts.length <= 1) {
+      return null;
+    }
+    if (identifiantReferentielSortieParts[1].length > 1) {
+      return `${identifiantReferentielSortieParts[0]}.${identifiantReferentielSortieParts[1].slice(0, -1)}`;
+    } else {
+      return null;
+    }
+  }
+
   getIndicateurValeursACreer(
     collectiviteId: number,
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: any[][] | null,
-    facteur: number,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinitionType[],
-    donneesEntree: DonneesARemplirResult,
+    donneesEntree: DonneesARemplirValeur[],
   ): CreateIndicateurValeurType[] {
     const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
     donneesSpreadsheet?.forEach((ligne, ligneIndex) => {
-      const identifiantReferentiel = identifiantsReferentielAssocie[ligneIndex];
-      if (identifiantReferentiel) {
-        const valeurEntree = donneesEntree.valeurs.find((v) =>
-          v.identifiants_referentiel.includes(identifiantReferentiel),
-        );
+      const identifiantReferentielSortie =
+        identifiantsReferentielAssocie[ligneIndex];
+      if (identifiantReferentielSortie) {
+        let identifiantsReferentielEntree = [
+          this.getIdentifiantReferentielParent(identifiantReferentielSortie) ||
+            identifiantReferentielSortie,
+        ];
+        // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
+        if (identifiantReferentielSortie === 'cae_1.k') {
+          identifiantsReferentielEntree = ['cae_1.e', 'cae_1.f'];
+        } else if (identifiantReferentielSortie.startsWith('cae_63.')) {
+          identifiantsReferentielEntree = ['cae_63.a'];
+        }
         // TODO: exception pour les totaux?
-        if (
-          !valeurEntree ||
-          donneesEntree.identifiants_referentiel_manquants.includes(
-            identifiantReferentiel,
-          )
-        ) {
+        const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
+          (identifiant) => {
+            const donneeEntree = donneesEntree.find((v) =>
+              v.identifiants_referentiel.includes(identifiant),
+            );
+            if (!donneeEntree) {
+              return true;
+            }
+            return isNil(donneeEntree.valeur);
+          },
+        );
+
+        if (valeursEntreeManquantes?.length) {
           this.logger.log(
-            `Indicateur ${identifiantReferentiel} manquant en entrée, résultats ignorés`,
+            `Indicateur ${valeursEntreeManquantes.join(',')} manquant en entrée, résultats pour indicateur ${identifiantReferentielSortie} ignorés`,
           );
         } else {
           const indicateurResultatDefinition =
             indicateurResultatDefinitions.find(
               (definition) =>
-                definition.identifiant_referentiel === identifiantReferentiel,
+                definition.identifiant_referentiel ===
+                identifiantReferentielSortie,
             );
           if (indicateurResultatDefinition) {
             ligne.forEach((valeur, columnIndex) => {
               const floatValeur = parseFloat(valeur);
               if (!isNaN(floatValeur)) {
+                const emissionGes =
+                  !indicateurResultatDefinition.identifiant_referentiel?.startsWith(
+                    this.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+                  );
+                // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
+                const facteur = emissionGes ? 1000 : 1;
                 const indicateurValeur: CreateIndicateurValeurType = {
                   indicateur_id: indicateurResultatDefinition.id,
                   collectivite_id: collectiviteId,
@@ -667,12 +762,14 @@ export default class TrajectoiresService {
                 indicateurValeursResultat.push(indicateurValeur);
               } else {
                 this.logger.warn(
-                  `Valeur non numérique ${valeur} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${this.SNBC_TRAJECTOIRE_RESULTAT_EMISSIONS_GES_CELLULES}`,
+                  `Valeur non numérique ${valeur} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${this.SNBC_TRAJECTOIRE_RESULTAT_CELLULES}`,
                 );
               }
             });
           } else {
-            this.logger.warn(`Indicateur ${identifiantReferentiel} non trouvé`);
+            this.logger.warn(
+              `Indicateur ${identifiantReferentielSortie} non trouvé, résultats ignorés`,
+            );
           }
         }
       }
@@ -695,7 +792,7 @@ export default class TrajectoiresService {
         identifiants_referentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
-        source_ids: [this.RARE_SOURCE_ID],
+        sources: [this.RARE_SOURCE_ID],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -711,7 +808,7 @@ export default class TrajectoiresService {
         identifiants_referentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
-        source_ids: [this.RARE_SOURCE_ID],
+        sources: [this.RARE_SOURCE_ID],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -930,7 +1027,7 @@ export default class TrajectoiresService {
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
       collectivite_id: request.collectivite_id,
-      source_ids: [this.SNBC_SOURCE.id],
+      sources: [this.SNBC_SOURCE.id],
     });
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
