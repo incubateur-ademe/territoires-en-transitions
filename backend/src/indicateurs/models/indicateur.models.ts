@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
@@ -143,6 +144,27 @@ export class IndicateurValeurGroupee implements Partial<IndicateurValeurType> {
 }
 export class IndicateurAvecValeurs {
   definition: IndicateurDefinitionType;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IndicateurValeurGroupee)
+  valeurs: IndicateurValeurGroupee[];
+}
+
+export class IndicateurAvecValeursParSource {
+  definition: IndicateurDefinitionType;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => IndicateurValeursGroupeeParSource)
+  sources: Record<string, IndicateurValeursGroupeeParSource>;
+}
+
+export class IndicateurValeursGroupeeParSource {
+  source: string;
+
+  @IsArray()
+  metadonnees: IndicateurSourceMetadonneeType[];
 
   @IsArray()
   @ValidateNested({ each: true })

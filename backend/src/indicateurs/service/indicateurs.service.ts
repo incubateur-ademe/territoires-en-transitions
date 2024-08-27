@@ -12,6 +12,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import DatabaseService from '../../common/services/database.service';
 import {
@@ -21,10 +22,13 @@ import {
 import {
   CreateIndicateurValeurType,
   IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
   indicateurDefinitionTable,
   IndicateurDefinitionType,
   indicateurSourceMetadonneeTable,
+  IndicateurSourceMetadonneeType,
   IndicateurValeurGroupee,
+  IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
   IndicateurValeurType,
 } from '../models/indicateur.models';
@@ -37,6 +41,8 @@ export default class IndicateursService {
    * Quand la source_id est NULL, cela signifie que ce sont des donnees saisies par la collectivite
    */
   public readonly NULL_SOURCE_ID = 'collectivite';
+
+  public readonly UNKOWN_SOURCE_ID = 'unknown';
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -74,10 +80,10 @@ export default class IndicateursService {
     if (options.indicateur_id) {
       conditions.push(eq(indicateurValeurTable.id, options.indicateur_id));
     }
-    if (options.source_ids?.length) {
-      const nullSourceId = options.source_ids.includes(this.NULL_SOURCE_ID);
+    if (options.sources?.length) {
+      const nullSourceId = options.sources.includes(this.NULL_SOURCE_ID);
       if (nullSourceId) {
-        const autreSourceIds = options.source_ids.filter(
+        const autreSourceIds = options.sources.filter(
           (s) => s !== this.NULL_SOURCE_ID,
         );
         if (autreSourceIds.length) {
@@ -93,15 +99,12 @@ export default class IndicateursService {
         }
       } else {
         conditions.push(
-          inArray(
-            indicateurSourceMetadonneeTable.source_id,
-            options.source_ids,
-          ),
+          inArray(indicateurSourceMetadonneeTable.source_id, options.sources),
         );
       }
     }
 
-    const result = this.databaseService.db
+    const result = await this.databaseService.db
       .select()
       .from(indicateurValeurTable)
       .leftJoin(
@@ -117,14 +120,12 @@ export default class IndicateursService {
       )
       .where(and(...conditions));
 
-    const sql = result.toSQL();
-    console.log(JSON.stringify(sql));
-
     // Enlève les doublons quand il y a plusieurs valeurs pour un même indicateur, collectivité, année
     // Garde en priorité la valeur utilisateur, puis celle avec la version la plus récente
     /*if (options.source_id !== null && options.clean_doublon === true) {
       // TODO adapter le code de packages/api/indicateur/indicateur.fetch.ts/selectIndicateursValeurs()
     }*/
+    this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
     return result;
   }
 
@@ -135,14 +136,15 @@ export default class IndicateursService {
     const indicateurValeursSeules = indicateurValeurs.map(
       (v) => v.indicateur_valeur,
     );
-    const initialAcc: { [key: string]: IndicateurDefinitionType } = {};
+    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
+      {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurValeurs.reduce((acc, v) => {
         if (v.indicateur_definition?.id) {
           acc[v.indicateur_definition.id.toString()] = v.indicateur_definition;
         }
         return acc;
-      }, initialAcc),
+      }, initialDefinitionsAcc),
     ) as IndicateurDefinitionType[];
     uniqueIndicateurDefinitions.sort((a, b) => {
       if (!a.identifiant_referentiel && !b.identifiant_referentiel) {
@@ -157,12 +159,26 @@ export default class IndicateursService {
       return a.identifiant_referentiel.localeCompare(b.identifiant_referentiel);
     });
 
-    // TODO: groupe par indicateur et source
-    const indicateurValeurGroupees = this.groupeIndicateursValeursParIndicateur(
-      indicateurValeursSeules,
-      uniqueIndicateurDefinitions,
-    );
-    return { indicateurs: indicateurValeurGroupees };
+    const initialMetadonneesAcc: {
+      [key: string]: IndicateurSourceMetadonneeType;
+    } = {};
+    const uniqueIndicateurMetadonnees = Object.values(
+      indicateurValeurs.reduce((acc, v) => {
+        if (v.indicateur_source_metadonnee?.id) {
+          acc[v.indicateur_source_metadonnee.id.toString()] =
+            v.indicateur_source_metadonnee;
+        }
+        return acc;
+      }, initialMetadonneesAcc),
+    ) as IndicateurSourceMetadonneeType[];
+
+    const indicateurValeurGroupeesParSource =
+      this.groupeIndicateursValeursParIndicateurEtSource(
+        indicateurValeursSeules,
+        uniqueIndicateurDefinitions,
+        uniqueIndicateurMetadonnees,
+      );
+    return { indicateurs: indicateurValeurGroupeesParSource };
   }
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
@@ -184,12 +200,8 @@ export default class IndicateursService {
     indicateurValeurs: CreateIndicateurValeurType[],
   ) {
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
-    const indicateurValeursAvecMetadonnees = indicateurValeurs.filter(
-      (v) => v.metadonnee_id,
-    );
-    const indicateurValeursSansMetadonnees = indicateurValeurs.filter(
-      (v) => !v.metadonnee_id,
-    );
+    const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
+      partition(indicateurValeurs, (v) => Boolean(v.metadonnee_id));
 
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
@@ -284,7 +296,6 @@ export default class IndicateursService {
               resultat_commentaire: v.resultat_commentaire,
               objectif: v.objectif,
               objectif_commentaire: v.objectif_commentaire,
-              metadonnee_id: v.metadonnee_id, // TODO: to be removed
             };
             return _.omitBy(
               indicateurValeurGroupee,
@@ -303,5 +314,83 @@ export default class IndicateursService {
       },
     );
     return indicateurAvecValeurs.filter((i) => i.valeurs.length > 0);
+  }
+
+  groupeIndicateursValeursParIndicateurEtSource(
+    indicateurValeurs: IndicateurValeurType[],
+    indicateurDefinitions: IndicateurDefinitionType[],
+    indicateurMetadonnees: IndicateurSourceMetadonneeType[],
+  ): IndicateurAvecValeursParSource[] {
+    const indicateurAvecValeurs = indicateurDefinitions.map(
+      (indicateurDefinition) => {
+        const valeurs = indicateurValeurs
+          .filter((v) => v.indicateur_id === indicateurDefinition.id)
+          .map((v) => {
+            const indicateurValeurGroupee: IndicateurValeurGroupee = {
+              id: v.id,
+              date_valeur: v.date_valeur,
+              resultat: v.resultat,
+              resultat_commentaire: v.resultat_commentaire,
+              objectif: v.objectif,
+              objectif_commentaire: v.objectif_commentaire,
+              metadonnee_id: v.metadonnee_id,
+            };
+            return _.omitBy(
+              indicateurValeurGroupee,
+              _.isNil,
+            ) as IndicateurValeurGroupee;
+          });
+
+        const metadonneesUtilisees: Record<
+          string,
+          Record<string, IndicateurSourceMetadonneeType>
+        > = {};
+        const valeursParSource = groupBy(valeurs, (valeur) => {
+          if (!valeur.metadonnee_id) {
+            return this.NULL_SOURCE_ID;
+          }
+          const metadonnee = indicateurMetadonnees.find(
+            (m) => m.id === valeur.metadonnee_id,
+          );
+          if (!metadonnee) {
+            this.logger.warn(
+              `Metadonnée introuvable pour l'identifiant ${valeur.metadonnee_id}`,
+            );
+            return this.UNKOWN_SOURCE_ID;
+          } else {
+            if (!metadonneesUtilisees[metadonnee.source_id]) {
+              metadonneesUtilisees[metadonnee.source_id] = {};
+            }
+            if (!metadonneesUtilisees[metadonnee.source_id][metadonnee.id]) {
+              metadonneesUtilisees[metadonnee.source_id][metadonnee.id] =
+                metadonnee;
+            }
+            return metadonnee.source_id;
+          }
+        });
+        const sourceMap: Record<string, IndicateurValeursGroupeeParSource> = {};
+        for (const sourceId of Object.keys(valeursParSource)) {
+          // Trie les valeurs par date
+          valeursParSource[sourceId] = valeursParSource[sourceId].sort(
+            (a, b) => {
+              return a.date_valeur.localeCompare(b.date_valeur);
+            },
+          );
+          sourceMap[sourceId] = {
+            source: sourceId,
+            metadonnees: Object.values(metadonneesUtilisees[sourceId] || {}),
+            valeurs: valeursParSource[sourceId],
+          };
+        }
+        const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
+          definition: indicateurDefinition,
+          sources: sourceMap,
+        };
+        return IndicateurAvecValeursParSource;
+      },
+    );
+    return indicateurAvecValeurs.filter(
+      (i) => Object.keys(i.sources).length > 0,
+    );
   }
 }

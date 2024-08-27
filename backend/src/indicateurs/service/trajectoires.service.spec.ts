@@ -18,11 +18,14 @@ describe('TrajectoiresService', () => {
         // Pour l'instant on ne mocke pas ces services précisemment
         if (
           token === CollectivitesService ||
-          IndicateurSourcesService ||
-          IndicateursService ||
-          SheetService
+          token === IndicateurSourcesService ||
+          token === IndicateursService
         ) {
           return {};
+        } else if (token === SheetService) {
+          return {
+            getFileData: jest.fn().mockResolvedValue(null),
+          };
         }
       })
       .compile();
