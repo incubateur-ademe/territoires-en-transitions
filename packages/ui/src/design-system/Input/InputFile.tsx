@@ -51,6 +51,7 @@ export const InputFile = forwardRef(
           {...remainingProps}
         />
         <label
+          data-test="inputFileLabel"
           htmlFor="input-file"
           className={classNames(
             'w-fit m-0 border-solid cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8',
