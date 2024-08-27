@@ -91,6 +91,7 @@ describe('IndicateursService', () => {
         indicateur1,
         indicateur2,
         indicateur3,
+        indicateur1, // duplicate
       ];
 
       const indicateurValeurs: IndicateurValeurType[] = [
@@ -246,6 +247,7 @@ describe('IndicateursService', () => {
         indicateur1,
         indicateur2,
         indicateur3,
+        indicateur1, // duplicate
       ];
 
       const indicateurMetadonnees: IndicateurSourceMetadonneeType[] = [
