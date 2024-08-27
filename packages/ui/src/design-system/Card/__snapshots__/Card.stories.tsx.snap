@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Card CompleteCard smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
+  <div class="text-primary-8 text-sm font-bold">
+    <div class="flex justify-between">
+      <div>
+        Ceci est un titre
+      </div>
+      <div class="text-new-1">
+        Info
+      </div>
+    </div>
+  </div>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+  <div class="text-primary-8 text-sm font-bold mt-auto">
+    <div class="flex justify-between items-center gap-4">
+      <div data-test="Badge-undefined"
+           class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+      >
+        <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
+          Un badge
+        </span>
+      </div>
+      <div class="flex gap-4">
+        <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+          Annuler
+        </button>
+        <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Card Default smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition border-grey-3">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</div>
+`;
+
+exports[`design-system/Card Disabled smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition border-grey-3">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</div>
+`;
+
+exports[`design-system/Card WithExternalLink smoke-test 1`] = `
+<a href="#"
+   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
+   target="_blank"
+   rel="noreferrer noopener"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</a>
+`;
+
+exports[`design-system/Card WithFooter smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition border-grey-3">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+  <div class="text-primary-8 text-sm font-bold mt-auto">
+    <div class="flex justify-between items-center gap-4">
+      <div data-test="Badge-undefined"
+           class="bg-success-2 border-success-2 flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded !px-1.5 !py-0.5"
+      >
+        <span class="text-success-1 font-bold leading-4 text-left line-clamp-1 text-xs uppercase">
+          Un badge
+        </span>
+      </div>
+      <div class="flex gap-4">
+        <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-primary-7 hover:text-primary-8 bg-primary-0 hover:!bg-primary-1 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+          Annuler
+        </button>
+        <button class="relative w-fit flex items-center border-solid group gap-1 cursor-pointer rounded-lg border font-bold text-white hover:!text-white bg-primary-7 hover:!bg-primary-8 border-primary-7 hover:!border-primary-8 text-xs py-2 px-5">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Card WithHeader smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition border-grey-3">
+  <div class="text-primary-8 text-sm font-bold">
+    <div class="flex justify-between">
+      <div>
+        Ceci est un titre
+      </div>
+      <div class="text-new-1">
+        Info
+      </div>
+    </div>
+  </div>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</div>
+`;
+
+exports[`design-system/Card WithLink smoke-test 1`] = `
+<a href="#"
+   class="bg-none after:hidden p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3"
+>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</a>
+`;
+
+exports[`design-system/Card WithOnClick smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition hover:cursor-pointer hover:shadow-card hover:border-grey-4 border-grey-3">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</div>
+`;
+
+exports[`design-system/Card WithSelect smoke-test 1`] = `
+<div class="p-7 m-px border bg-white rounded-lg flex flex-col gap-4 text-primary-9 text-base font-bold active:!bg-white group transition hover:cursor-pointer hover:shadow-card !m-0 border-2 border-primary-7">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis varius metus sed aliquet. Cras pharetra lectus et est malesuada, sed viverra lectus interdum.
+</div>
+`;

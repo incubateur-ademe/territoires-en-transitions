@@ -21,7 +21,7 @@ import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
 import {getIndicateurRestant} from './utils';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/detail/transformeValeurs';
+import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -58,7 +58,10 @@ export type IndicateurCardProps = {
 };
 
 /** Carte qui permet d'afficher un graphique dans une liste */
-const IndicateurCard = (props: IndicateurCardProps) => {
+const IndicateurCard = ({
+  autoRefresh = false,
+  ...props
+}: IndicateurCardProps) => {
   /** La carte ne peut pas être à la fois un  */
   if (props.selectState?.checkbox && !!props.href) {
     throw new Error(
@@ -68,7 +71,8 @@ const IndicateurCard = (props: IndicateurCardProps) => {
 
   // lit les données nécessaires à l'affichage du graphe
   const {data: chartInfo, isLoading} = useIndicateurChartInfo(
-    props.definition.id
+    props.definition.id,
+    autoRefresh
   );
 
   // sépare les données objectifs/résultats
@@ -132,13 +136,17 @@ export const IndicateurCardBase = ({
 
   /** Nombre total d'indicateurs restant à compléter, qu'il y ait des enfants ou non */
   const indicateursACompleterRestant =
-    chartInfo && getIndicateurRestant(chartInfo);
+    (chartInfo && getIndicateurRestant(chartInfo)) ?? 0;
 
   /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
   const hasValeurOrObjectif =
     data.valeurs.filter(v => typeof v.valeur === 'number').length > 0;
 
   const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
+
+  const isACompleter = chartInfo?.sansValeur
+    ? indicateursACompleterRestant > 0
+    : !chartInfo?.rempli;
 
   return (
     <Card
@@ -177,10 +185,7 @@ export const IndicateurCardBase = ({
       ) : (
         <>
           <div className="flex items-center gap-6">
-            <BadgeACompleter
-              a_completer={indicateursACompleterRestant !== 0}
-              size="sm"
-            />
+            <BadgeACompleter a_completer={isACompleter} size="sm" />
             {selectState?.setSelected && (
               <Button
                 onClick={(
@@ -302,7 +307,7 @@ export const IndicateurCardBase = ({
                 {/* Nombre d'indicateurs */}
                 {isIndicateurParent && totalNbIndicateurs && (
                   <div>
-                    {totalNbIndicateurs - (indicateursACompleterRestant || 0)}/
+                    {totalNbIndicateurs - indicateursACompleterRestant}/
                     {totalNbIndicateurs} indicateur
                     {totalNbIndicateurs > 1 && 's'}
                   </div>
@@ -321,20 +326,14 @@ export const IndicateurCardBase = ({
             )}
           </>
         ) : (
-          !chartInfo.rempli &&
+          isACompleter &&
           !readonly &&
           href && (
             <>
               {/** Barre horizontale */}
               <div className="h-px bg-primary-3" />
               {/** Compléter indicateur bouton */}
-              <Button size="xs">
-                {indicateursACompleterRestant
-                  ? `${indicateursACompleterRestant} indicateur${
-                      indicateursACompleterRestant > 1 ? 's' : ''
-                    } restants à compléter`
-                  : 'Compléter l’indicateur'}
-              </Button>
+              <Button size="xs">Compléter l’indicateur</Button>
             </>
           )
         ))}

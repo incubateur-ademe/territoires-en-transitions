@@ -5,7 +5,7 @@ import {
 } from '../../../fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
-  Filtre as FiltreIndicateurs,
+  FetchFiltre as FiltreIndicateurs,
 } from '../../../indicateurs/domain/fetch_options.schema';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);

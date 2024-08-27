@@ -7,9 +7,10 @@ import {filtersToBadges} from './utils';
 type Props = {
   filtre: Filtre;
   className?: string;
+  resetFilters?: () => void;
 };
 
-const ModuleFiltreBadges = ({filtre, className}: Props) => {
+const ModuleFiltreBadges = ({filtre, className, resetFilters}: Props) => {
   const {data: filtreValues} = useFiltreValues({
     filtre,
   });
@@ -35,6 +36,18 @@ const ModuleFiltreBadges = ({filtre, className}: Props) => {
           trim={false}
         />
       ))}
+      {resetFilters && (
+        <button onClick={resetFilters}>
+          <Badge
+            icon="delete-bin-6-line"
+            iconPosition="left"
+            title="Supprimer tous les filtres"
+            state="default"
+            size="sm"
+            onClose={() => null}
+          />
+        </button>
+      )}
     </div>
   );
 };

@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Tooltip ActivatedByClick smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
+  Cliquer pour voir l'info bulle
+</div>
+`;
+
+exports[`design-system/Tooltip CustomContent smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-32">
+  Survoler pour voir l'info bulle
+</div>
+`;
+
+exports[`design-system/Tooltip Default smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
+  Survoler pour voir l'info bulle
+</div>
+`;
+
+exports[`design-system/Tooltip LongText smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-20">
+  Survoler pour voir l'info bulle
+</div>
+`;
+
+exports[`design-system/Tooltip LongTextWithFixedWidth smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-32">
+  Survoler pour voir l'info bulle
+</div>
+`;
+
+exports[`design-system/Tooltip Placement smoke-test 1`] = `
+<div class="flex items-center">
+  <div class="my-10 flex flex-col gap-2">
+    <div class="flex gap-2">
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        top-start
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        top
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        top-end
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        bottom-start
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        bottom
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        bottom-end
+      </div>
+    </div>
+  </div>
+  <div class="mx-20 flex flex-col gap-2">
+    <div class="flex gap-2">
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        left-start
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        right-start
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        left
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        right
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        left-end
+      </div>
+      <div class="bg-primary-1 py-2 px-3 w-32 text-center">
+        right-end
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Tooltip WithoutArrow smoke-test 1`] = `
+<div class="bg-primary-1 py-2 px-3 w-fit mt-10">
+  Survoler pour voir l'info bulle
+</div>
+`;

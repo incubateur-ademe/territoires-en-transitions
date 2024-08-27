@@ -1,16 +1,20 @@
-import {DBClient} from "../../typeUtils";
+import {DBClient} from '../../typeUtils';
 import {objectToCamel} from 'ts-case-convert';
-import {Valeur, ValeurComparaison, ValeurComparaisonLigne} from "../domain/valeur.schema";
-import {Action} from "../../referentiel/domain/action.schema";
-import {FicheResume} from "../../fiche_actions/domain/resume.schema";
 import {
-    IndicateurChartInfo,
-    IndicateurDefinition,
-    IndicateurDefinitionComplet,
-    IndicateurListItem
-} from "../domain/definition.schema";
-import {Personne} from "../../shared/domain/personne.schema";
-import {Groupement} from "../../collectivites/shared/domain/groupement.schema";
+  Valeur,
+  ValeurComparaison,
+  ValeurComparaisonLigne,
+} from '../domain/valeur.schema';
+import {Action} from '../../referentiel/domain/action.schema';
+import {FicheResume} from '../../fiche_actions/domain/resume.schema';
+import {
+  IndicateurChartInfo,
+  IndicateurDefinition,
+  IndicateurDefinitionComplet,
+  IndicateurListItem,
+} from '../domain/definition.schema';
+import {Personne} from '../../shared/domain/personne.schema';
+import {Groupement} from '../../collectivites/shared/domain/groupement.schema';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
@@ -18,6 +22,7 @@ import {
 import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
 import {Source, SourceMetadonnee} from '../domain';
 import {Tag, Thematique} from '../../shared/domain';
+import {Tables} from '../../database.types';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -133,12 +138,14 @@ export async function selectIndicateurCategoriesUtilisateur(
   indicateurId: number,
   collectiviteId: number
 ): Promise<number[]> {
-  const {data, error} = await dbClient
+  const {data} = await dbClient
     .from('indicateur_categorie_tag')
     .select('...categorie_tag!inner(id, collectivite_id)')
     .eq('indicateur_id', indicateurId)
-    .eq('categorie_tag.collectivite_id', collectiviteId);
-  return (data?.map((cat: any) => cat.id) as number[]) || [];
+    .eq('categorie_tag.collectivite_id', collectiviteId)
+    .returns<Array<Tables<'categorie_tag'>>>();
+
+  return (data?.map(cat => cat.id) as number[]) || [];
 }
 
 /**
@@ -153,7 +160,7 @@ export async function selectIndicateurPilotes(
   indicateurId: number,
   collectiviteId: number
 ): Promise<Personne[]> {
-  const {data, error} = await dbClient
+  const {data} = await dbClient
     .from('indicateur_pilote')
     .select(
       `id, collectivite_id, user_id, tag_id, tag:personne_tag(*), user:indicateur_pilote_user(*)`
@@ -229,7 +236,7 @@ export async function selectIndicateurThematiquesId(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<number[]> {
-  const {data, error} = await dbClient
+  const {data} = await dbClient
     .from('indicateur_thematique')
     .select(`thematique_id`)
     .eq('indicateur_id', indicateurId);
@@ -462,7 +469,7 @@ export async function selectIndicateurValeur(
     .select(`${COLONNES_VALEURS.join(',')}`)
     .eq('id', valeurId);
 
-  let toReturn = data ? dateEnAnnee(data, false) : null;
+  const toReturn = data ? dateEnAnnee(data, false) : null;
   return toReturn ? (objectToCamel(toReturn)[0] as Valeur) : null;
 }
 
@@ -566,7 +573,7 @@ export async function selectIndicateurComplet(
     .eq('pilotes.collectivite_id', collectiviteId)
     .eq('fiches.fiche_resume.collectivite_id', collectiviteId);
 
-  let toReturn = data
+  const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, true)
     : null;
   return toReturn
@@ -610,7 +617,7 @@ export async function selectIndicateurChartInfo(
     collectiviteId
   );
   const groupementIds = groupement.map(gp => gp.id);
-  let toReturn =
+  const toReturn =
     data
       ?.filter(
         (item: any) =>
@@ -842,7 +849,7 @@ async function transformeDefinition(
           };
 
     let type;
-    let programmes: any[] = [];
+    const programmes: any[] = [];
     let prioritaire = false;
     let categoriesUtilisateur = undefined;
     let valeurs = undefined;

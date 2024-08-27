@@ -1,6 +1,7 @@
 import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import ModalFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ModalFiltresToutesLesFichesAction';
-import FichesActionListe from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
+import {ButtonMenu} from '@tet/ui';
+import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import {makeCollectiviteToutesLesFichesUrl} from 'app/paths';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
@@ -44,15 +45,22 @@ const ToutesLesFichesAction = () => {
       </div>
       <FichesActionListe
         filtres={filters}
+        resetFilters={() => setFilters({})}
         sortSettings={{
           defaultSort: 'titre',
         }}
-        settingsModal={openState => (
-          <ModalFiltresToutesLesFichesAction
+        settings={openState => (
+          <ButtonMenu
             openState={openState}
-            filters={filters}
-            setFilters={filters => setFilters(filters)}
-          />
+            variant="outlined"
+            icon="equalizer-line"
+            size="sm"
+          >
+            <MenuFiltresToutesLesFichesAction
+              filters={filters}
+              setFilters={filters => setFilters(filters)}
+            />
+          </ButtonMenu>
         )}
       />
     </div>

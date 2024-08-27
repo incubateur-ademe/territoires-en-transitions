@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`design-system/Tag AvecBoutonFermer smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary pr-2">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+    <div class="flex ml-1 rounded-full cursor-pointer">
+      <span class="ri-close-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] m-auto">
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Tag CreeParUtilisateur smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-gray-900 bg-white border border-gray-300 pr-2">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+    <div class="flex ml-1 rounded-full cursor-pointer">
+      <span class="ri-close-line font-normal text-center h-5 w-5 text-[1.25rem] leading-[1.25rem] m-auto">
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`design-system/Tag Default smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+  </div>
+</div>
+`;
+
+exports[`design-system/Tag StylePersonnalise smoke-test 1`] = `
+<div class="flex">
+  <div class="flex items-center px-3 py-0.5 rounded-full text-white bg-primary !bg-error-1 font-bold">
+    <span class="py-0.5 text-sm">
+      Yolo
+    </span>
+  </div>
+</div>
+`;

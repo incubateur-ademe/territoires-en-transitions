@@ -1,5 +1,5 @@
 import {referentielToName} from 'app/labels';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
@@ -96,10 +96,7 @@ const FilledIndicateursCard = ({
       <KeyNumbers valuesList={indicateurs} />
       <ButtonWithLink
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={makeCollectiviteIndicateursUrl({
-          collectiviteId,
-          indicateurView: 'cles',
-        })}
+        href={makeCollectiviteTousLesIndicateursUrl({collectiviteId})}
         rounded
       >
         Compléter mes indicateurs
@@ -126,10 +123,7 @@ const EmptyIndicateursCard = ({
         </p>
         <ButtonWithLink
           onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-          href={makeCollectiviteIndicateursUrl({
-            collectiviteId,
-            indicateurView: 'cles',
-          })}
+          href={makeCollectiviteTousLesIndicateursUrl({collectiviteId})}
           rounded
         >
           Compléter mes indicateurs

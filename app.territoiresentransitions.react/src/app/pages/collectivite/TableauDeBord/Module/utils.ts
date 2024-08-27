@@ -2,6 +2,7 @@ import {FiltreValues} from '@tet/api/dist/src/collectivites/shared/domain/filtre
 import {Indicateurs} from '@tet/api';
 import {FiltreSpecifique as FiltreSpecifiqueFicheActions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {getCategorieLabel} from 'ui/dropdownLists/indicateur/utils';
 
 type FiltreKeys = FiltreValues &
   Indicateurs.domain.FiltreSpecifique &
@@ -41,6 +42,13 @@ export const filtersToBadges = (data: FiltreKeys) => {
           .join(', ')}`
       );
     }
+    if (key === 'categorieNoms') {
+      badgeValues.push(
+        `Catégorie : ${data[key]
+          ?.map(nom => getCategorieLabel(nom))
+          .join(', ')}`
+      );
+    }
     if (key === 'planActions') {
       badgeValues.push(
         `Plan d'action : ${data[key]
@@ -51,11 +59,23 @@ export const filtersToBadges = (data: FiltreKeys) => {
     if (key === 'estComplet') {
       badgeValues.push(`Complétion : ${data[key] ? 'Complet' : 'Incomplet'}`);
     }
+    if (key === 'participationScore') {
+      data[key] && badgeValues.push('Participe au score CAE');
+    }
+    if (key === 'estPerso') {
+      data[key] && badgeValues.push('Indicateur personnalisé');
+    }
+    if (key === 'estConfidentiel') {
+      data[key] && badgeValues.push('Indicateur privé');
+    }
     if (key === 'budgetPrevisionnel') {
       data[key] && badgeValues.push('Budget renseigné');
     }
     if (key === 'restreint') {
       data[key] && badgeValues.push('Confidentialité');
+    }
+    if (key === 'hasOpenData') {
+      data[key] && badgeValues.push('Données Open Data');
     }
     if (key === 'hasIndicateurLies') {
       data[key] && badgeValues.push('Indicateur(s) lié(s)');

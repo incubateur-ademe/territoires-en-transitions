@@ -1371,13 +1371,13 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
          sans_valeur_utilisateur, modified_at, created_at, description)
         select id as identifiant_referentiel, nom as titre, titre_long, unite, participation_score,
                sans_valeur as sans_valeur_utilisateur, modified_at, modified_at as created_at, description
-        from indicateur_def;
+        from indicateur_def on conflict do nothing;
 
         insert into public.indicateur_thematique (indicateur_id, thematique_id)
         select pid.id, t.id
         from (select id, unnest(thematiques) as thematique from indicateur_def) aid
         join public.indicateur_definition pid on aid.id = pid.identifiant_referentiel
-        join public.thematique t on t.md_id = aid.thematique;
+        join public.thematique t on t.md_id = aid.thematique on conflict do nothing;
 
         insert into public.indicateur_categorie_tag (categorie_tag_id, indicateur_id)
         select *
@@ -1387,7 +1387,7 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
              from (select id, unnest(programmes) as programme from indicateur_def) aid
              join public.indicateur_definition pid on aid.id = pid.identifiant_referentiel
              ) r
-        where r.categorie_tag_id is not null;
+        where r.categorie_tag_id is not null on conflict do nothing;
 
         insert into public.indicateur_categorie_tag (categorie_tag_id, indicateur_id)
         select *
@@ -1399,7 +1399,7 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
         from indicateur_def aid
         join public.indicateur_definition pid on aid.id = pid.identifiant_referentiel
         where aid.type is not null ) r
-        where r.categorie_tag_id is not null;
+        where r.categorie_tag_id is not null on conflict do nothing;
 
         insert into public.indicateur_categorie_tag (categorie_tag_id, indicateur_id)
         select *
@@ -1415,12 +1415,12 @@ Préciser si possible les moyennes nationale et/ou locale, le cas échéant cont
              join public.indicateur_definition pid on aid.id = pid.identifiant_referentiel
              where aid.selection = true
              ) r
-        where r.categorie_tag_id is not null;
+        where r.categorie_tag_id is not null on conflict do nothing;
 
         insert into public.indicateur_groupe (parent, enfant)
         select parent.id, enfant.id
         from indicateur_def aid
         join public.indicateur_definition enfant on aid.id = enfant.identifiant_referentiel
         join public.indicateur_definition parent on aid.parent = parent.identifiant_referentiel
-        where aid.parent is not null;
+        where aid.parent is not null on conflict do nothing;
     end $$;

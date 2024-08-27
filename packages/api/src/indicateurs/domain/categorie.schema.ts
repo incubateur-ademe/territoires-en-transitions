@@ -1,13 +1,22 @@
 import {z} from 'zod';
-import {tagSchema} from "../../shared/domain/tag.schema";
+
+// À voir comment on gère les autres catégories plus tard
+export const categorieProgrammeEnumSchema = z.enum([
+  'clef',
+  'cae',
+  'eci',
+  'crte',
+]);
+
+export type CategorieProgramme = z.infer<typeof categorieProgrammeEnumSchema>;
 
 /**
  * Schéma zod d'une catégorie d'indicateur (type et programmes)
  */
-export const categorieSchema =
-    tagSchema.omit({collectiviteId: true});
+export const categorieSchema = z.object({
+  id: z.number().optional(),
+  collectiviteId: z.number(),
+  nom: categorieProgrammeEnumSchema,
+});
 
-/**
- * Type TS d'une catégorie d'indicateur (type et programmes)
- */
 export type Categorie = z.input<typeof categorieSchema>;

@@ -14,12 +14,10 @@ type Props = {
 };
 
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
-  const [filters, setFilters] = useState<Indicateurs.Filters>({});
-
-  const [subset, setSubset] = useState<Indicateurs.Subset | null>(null);
+  const [filters, setFilters] = useState<Indicateurs.FetchFiltre>({});
 
   const {data: definitions, isLoading: isDefinitionsLoading} =
-    useFilteredIndicateurDefinitions(subset, filters);
+    useFilteredIndicateurDefinitions({filtre: filters});
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
@@ -46,11 +44,11 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         </Field>
         <Field title="Thématique" small>
           <ThematiquesDropdown
-            values={filters.thematique_ids}
+            values={filters.thematiqueIds}
             onChange={({thematiques}) =>
               setFilters({
                 ...filters,
-                thematique_ids:
+                thematiqueIds:
                   thematiques.length > 0
                     ? thematiques.map(t => t.id)
                     : undefined,
@@ -61,25 +59,33 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         </Field>
         <Checkbox
           label="Indicateur complété"
-          checked={filters.rempli ?? false}
+          checked={filters.estComplet ?? false}
           onChange={() =>
-            setFilters({...filters, rempli: !filters.rempli ? true : undefined})
+            setFilters({
+              ...filters,
+              estComplet: !filters.estComplet ? true : undefined,
+            })
           }
         />
         <Checkbox
           label="Indicateur privé"
-          checked={filters.confidentiel ?? false}
+          checked={filters.estConfidentiel ?? false}
           onChange={() =>
             setFilters({
               ...filters,
-              confidentiel: !filters.confidentiel ? true : undefined,
+              estConfidentiel: !filters.estConfidentiel ? true : undefined,
             })
           }
         />
         <Checkbox
           label="Indicateur personnalisé"
-          checked={subset === 'perso' ?? false}
-          onChange={() => setSubset(subset === 'perso' ? null : 'perso')}
+          checked={filters.estPerso}
+          onChange={event =>
+            setFilters({
+              ...filters,
+              estPerso: event.target.checked ?? undefined,
+            })
+          }
         />
       </div>
       <hr className="p-0 my-6 w-full h-px" />
