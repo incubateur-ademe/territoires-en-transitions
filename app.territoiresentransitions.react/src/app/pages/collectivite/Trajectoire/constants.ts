@@ -11,7 +11,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     nom: 'Émissions GES',
     titre: 'Comparaison des trajectoires d’émissions de GES',
     titreSecteur: "Détail de la trajectoire d'émisssions de GES",
-    unite: 'teq CO2',
+    unite: 'kteq CO2',
     identifiant: 'cae_1.a',
     coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
     secteurs: [
