@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { createZodDto } from '@anatine/zod-nestjs';
+import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
@@ -13,7 +14,10 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.models';
+extendZodWithOpenApi(z);
 
 export const indicateurSourceTable = pgTable('indicateur_source', {
   id: text('id').primaryKey(),
@@ -48,6 +52,12 @@ export type IndicateurSourceMetadonneeType = InferSelectModel<
 export type CreateIndicateurSourceMetadonneeType = InferInsertModel<
   typeof indicateurSourceMetadonneeTable
 >;
+export const indicateurSourceMetadonneeSchema = createSelectSchema(
+  indicateurSourceMetadonneeTable,
+);
+export const createIndicateurSourceMetadonneeSchema = createInsertSchema(
+  indicateurSourceMetadonneeTable,
+);
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
@@ -85,6 +95,12 @@ export type IndicateurDefinitionType = InferSelectModel<
 export type CreateIndicateurDefinitionType = InferInsertModel<
   typeof indicateurDefinitionTable
 >;
+export const indicateurDefinitionSchema = createSelectSchema(
+  indicateurDefinitionTable,
+);
+export const createIndicateurDefinitionSchema = createInsertSchema(
+  indicateurDefinitionTable,
+);
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),
@@ -126,22 +142,27 @@ export type IndicateurValeurType = InferSelectModel<
 export type CreateIndicateurValeurType = InferInsertModel<
   typeof indicateurValeurTable
 >;
+export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
+export const createIndicateurValeurSchema = createInsertSchema(
+  indicateurValeurTable,
+);
 
-export class IndicateurValeurGroupee implements Partial<IndicateurValeurType> {
-  id: number;
+export const indicateurValeurGroupeeSchema = extendApi(
+  indicateurValeurSchema.pick({
+    id: true,
+    date_valeur: true,
+    resultat: true,
+    resultat_commentaire: true,
+    objectif: true,
+    objectif_commentaire: true,
+    metadonnee_id: true,
+  }),
+);
 
-  date_valeur: string;
+export class IndicateurValeurGroupee extends createZodDto(
+  indicateurValeurGroupeeSchema,
+) {}
 
-  resultat?: number | null;
-
-  resultat_commentaire?: string | null;
-
-  objectif?: number | null;
-
-  objectif_commentaire?: string | null;
-
-  metadonnee_id?: number | null; // TODO: to be removed
-}
 export class IndicateurAvecValeurs {
   definition: IndicateurDefinitionType;
 
@@ -151,26 +172,34 @@ export class IndicateurAvecValeurs {
   valeurs: IndicateurValeurGroupee[];
 }
 
-export class IndicateurAvecValeursParSource {
-  definition: IndicateurDefinitionType;
+export const indicateurValeursGroupeeParSourceSchema = extendApi(
+  z
+    .object({
+      source: z.string(),
+      metadonnees: z.array(indicateurSourceMetadonneeSchema),
+      valeurs: z.array(indicateurValeurGroupeeSchema),
+    })
+    .openapi({
+      title: 'Indicateur valeurs pour une source donnée',
+    }),
+);
+export class IndicateurValeursGroupeeParSource extends createZodDto(
+  indicateurValeursGroupeeParSourceSchema,
+) {}
 
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => IndicateurValeursGroupeeParSource)
-  sources: Record<string, IndicateurValeursGroupeeParSource>;
-}
-
-export class IndicateurValeursGroupeeParSource {
-  source: string;
-
-  @IsArray()
-  metadonnees: IndicateurSourceMetadonneeType[];
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => IndicateurValeurGroupee)
-  valeurs: IndicateurValeurGroupee[];
-}
+export const indicateurAvecValeursParSourceSchema = extendApi(
+  z
+    .object({
+      definition: indicateurDefinitionSchema,
+      sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
+    })
+    .openapi({
+      title: 'Filtre de récupération des valeurs des indicateurs',
+    }),
+);
+export class IndicateurAvecValeursParSource extends createZodDto(
+  indicateurAvecValeursParSourceSchema,
+) {}
 
 export class IndicateurValeurAvecMetadonnesDefinition {
   indicateur_valeur: IndicateurValeurType;

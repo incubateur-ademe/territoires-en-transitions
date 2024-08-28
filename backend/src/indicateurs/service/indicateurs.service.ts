@@ -22,7 +22,7 @@ import {
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import {
-  GetIndicateursValeursRequest,
+  GetIndicateursValeursRequestClass,
   GetIndicateursValeursResponse,
 } from '../models/getIndicateurs.models';
 import {
@@ -60,7 +60,7 @@ export default class IndicateursService {
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
-  async getIndicateursValeurs(options: GetIndicateursValeursRequest) {
+  async getIndicateursValeurs(options: GetIndicateursValeursRequestClass) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
     );
@@ -149,7 +149,7 @@ export default class IndicateursService {
   }
 
   async getIndicateurValeursGroupees(
-    options: GetIndicateursValeursRequest,
+    options: GetIndicateursValeursRequestClass,
     tokenInfo: SupabaseJwtPayload,
   ): Promise<GetIndicateursValeursResponse> {
     await this.authService.verifieAccesAuxCollectivites(
@@ -400,6 +400,7 @@ export default class IndicateursService {
               resultat_commentaire: v.resultat_commentaire,
               objectif: v.objectif,
               objectif_commentaire: v.objectif_commentaire,
+              metadonnee_id: null,
             };
             return _.omitBy(
               indicateurValeurGroupee,
