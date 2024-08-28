@@ -20,6 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@anatine/zod-nestjs": "^2.0.9",
+    "@anatine/zod-openapi": "^2.2.6",
     "@kant2002/jszip": "^2.7.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
@@ -35,18 +37,20 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "drizzle-orm": "^0.32.0",
+    "drizzle-zod": "^0.5.1",
     "es-toolkit": "^1.16.0",
     "gaxios": "^6.7.0",
     "google-auth-library": "^9.11.0",
     "googleapis": "^140.0.1",
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
+    "openapi3-ts": "^4.4.0",
     "postgres": "^3.4.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "slugify": "^1.6.6",
     "xlsx-template": "^1.4.4",
-    "zod": "^3.23.8"
+    "zod": "^3.20.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

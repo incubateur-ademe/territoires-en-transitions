@@ -1,5 +1,6 @@
 // WARNING: Do this import first
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { patchNestjsSwagger, ZodValidationPipe } from '@anatine/zod-nestjs';
+import { Logger } from '@nestjs/common';
 import {
   BaseExceptionFilter,
   HttpAdapterHost,
@@ -26,11 +27,7 @@ async function bootstrap() {
   app.enableCors();
 
   // TODO: configure validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  app.useGlobalPipes(new ZodValidationPipe());
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
@@ -46,6 +43,7 @@ async function bootstrap() {
     .setTitle('Api Territoires en Transitions')
     .setVersion(process.env.GIT_COMMIT_SHORT_SHA || 'dev') //  TODO: application tag
     .build();
+  patchNestjsSwagger();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs/v1', app, document);
 

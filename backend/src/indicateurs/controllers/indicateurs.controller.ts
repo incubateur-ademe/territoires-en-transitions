@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import {
-  GetIndicateursValeursRequest,
+  GetIndicateursValeursRequestClass,
   GetIndicateursValeursResponse,
 } from '../models/getIndicateurs.models';
 import {
@@ -21,7 +21,7 @@ export class IndicateursController {
   @Get()
   @ApiResponse({ type: GetIndicateursValeursResponse })
   async getIndicateurValeurs(
-    @Query() request: GetIndicateursValeursRequest,
+    @Query() request: GetIndicateursValeursRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
   ): Promise<GetIndicateursValeursResponse> {
     return this.indicateurService.getIndicateurValeursGroupees(
@@ -31,6 +31,9 @@ export class IndicateursController {
   }
 
   @Post()
+  @ApiCreatedResponse({
+    type: UpsertIndicateursValeursRequest,
+  })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
