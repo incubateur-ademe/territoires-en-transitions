@@ -208,11 +208,24 @@ export default class IndicateursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: CreateIndicateurValeurType[],
-  ) {
+    userId?: string,
+  ): Promise<IndicateurValeurType[]> {
+    this.logger.log(
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${userId}`,
+    );
+    if (userId) {
+      // TODO: check
+
+      indicateurValeurs.forEach((v) => {
+        v.created_by = userId;
+        v.modified_by = userId;
+      });
+    }
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonnee_id));
 
+    const indicateurValeursResultat: IndicateurValeurType[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
         `Upsert des ${indicateurValeursAvecMetadonnees.length} valeurs avec métadonnées des indicateurs ${[
@@ -223,33 +236,40 @@ export default class IndicateursService {
           ',',
         )} pour les collectivités ${[...new Set(indicateurValeursAvecMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
       );
-      return this.databaseService.db
-        .insert(indicateurValeurTable)
-        .values(indicateurValeursAvecMetadonnees)
-        .onConflictDoUpdate({
-          target: [
-            indicateurValeurTable.indicateur_id,
-            indicateurValeurTable.collectivite_id,
-            indicateurValeurTable.date_valeur,
-            indicateurValeurTable.metadonnee_id,
-          ],
-          targetWhere: isNotNull(indicateurValeurTable.metadonnee_id),
-          set: {
-            resultat: sql.raw(
-              `excluded.${indicateurValeurTable.resultat.name}`,
-            ),
-            resultat_commentaire: sql.raw(
-              `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
-            ),
-            objectif: sql.raw(
-              `excluded.${indicateurValeurTable.objectif.name}`,
-            ),
-            objectif_commentaire: sql.raw(
-              `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
-            ),
-          },
-        })
-        .returning();
+      const indicateurValeursAvecMetadonneesResultat =
+        await this.databaseService.db
+          .insert(indicateurValeurTable)
+          .values(indicateurValeursAvecMetadonnees)
+          .onConflictDoUpdate({
+            target: [
+              indicateurValeurTable.indicateur_id,
+              indicateurValeurTable.collectivite_id,
+              indicateurValeurTable.date_valeur,
+              indicateurValeurTable.metadonnee_id,
+            ],
+            targetWhere: isNotNull(indicateurValeurTable.metadonnee_id),
+            set: {
+              resultat: sql.raw(
+                `excluded.${indicateurValeurTable.resultat.name}`,
+              ),
+              resultat_commentaire: sql.raw(
+                `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+              ),
+              objectif: sql.raw(
+                `excluded.${indicateurValeurTable.objectif.name}`,
+              ),
+              objectif_commentaire: sql.raw(
+                `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+              ),
+              modified_by: sql.raw(
+                `excluded.${indicateurValeurTable.modified_by.name}`,
+              ),
+            },
+          })
+          .returning();
+      indicateurValeursResultat.push(
+        ...indicateurValeursAvecMetadonneesResultat,
+      );
     }
 
     if (indicateurValeursSansMetadonnees.length) {
@@ -262,32 +282,41 @@ export default class IndicateursService {
           ',',
         )} pour les collectivités ${[...new Set(indicateurValeursSansMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
       );
-      await this.databaseService.db
-        .insert(indicateurValeurTable)
-        .values(indicateurValeursSansMetadonnees)
-        .onConflictDoUpdate({
-          target: [
-            indicateurValeurTable.indicateur_id,
-            indicateurValeurTable.collectivite_id,
-            indicateurValeurTable.date_valeur,
-          ],
-          targetWhere: isNull(indicateurValeurTable.metadonnee_id),
-          set: {
-            resultat: sql.raw(
-              `excluded.${indicateurValeurTable.resultat.name}`,
-            ),
-            resultat_commentaire: sql.raw(
-              `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
-            ),
-            objectif: sql.raw(
-              `excluded.${indicateurValeurTable.objectif.name}`,
-            ),
-            objectif_commentaire: sql.raw(
-              `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
-            ),
-          },
-        });
+      const indicateurValeursSansMetadonneesResultat =
+        await this.databaseService.db
+          .insert(indicateurValeurTable)
+          .values(indicateurValeursSansMetadonnees)
+          .onConflictDoUpdate({
+            target: [
+              indicateurValeurTable.indicateur_id,
+              indicateurValeurTable.collectivite_id,
+              indicateurValeurTable.date_valeur,
+            ],
+            targetWhere: isNull(indicateurValeurTable.metadonnee_id),
+            set: {
+              resultat: sql.raw(
+                `excluded.${indicateurValeurTable.resultat.name}`,
+              ),
+              resultat_commentaire: sql.raw(
+                `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+              ),
+              objectif: sql.raw(
+                `excluded.${indicateurValeurTable.objectif.name}`,
+              ),
+              objectif_commentaire: sql.raw(
+                `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+              ),
+              modified_by: sql.raw(
+                `excluded.${indicateurValeurTable.modified_by.name}`,
+              ),
+            },
+          })
+          .returning();
+      indicateurValeursResultat.push(
+        ...indicateurValeursSansMetadonneesResultat,
+      );
     }
+    return indicateurValeursResultat;
   }
 
   dedoublonnageIndicateurValeursParSource(
