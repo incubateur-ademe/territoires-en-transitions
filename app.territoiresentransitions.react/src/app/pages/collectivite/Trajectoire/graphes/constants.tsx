@@ -1,5 +1,6 @@
 import {LineProps} from '@nivo/line';
 import {theme} from 'ui/charts/chartsTheme';
+import {ANNEE_REFERENCE, ANNEE_JALON2} from '../constants';
 
 // couleurs et libellés pour les graphes
 export const COULEURS_SECTEUR = [
@@ -23,11 +24,6 @@ export const LAYERS = {
 
 // pour formater les chiffres
 const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
-
-// années de début/fin de la SNBC v2
-export const ANNEE_REFERENCE = 2015;
-//const ANNEE_JALON1 = 2030;
-export const ANNEE_JALON2 = 2050;
 
 // Propriétés communes aux graphes de Trajectoire
 export const COMMON_CHART_PROPS: Partial<LineProps> = {

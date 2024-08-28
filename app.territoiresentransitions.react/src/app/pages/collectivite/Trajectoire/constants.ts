@@ -1,3 +1,10 @@
+// années de début/fin de la SNBC v2
+export const ANNEE_REFERENCE = 2015;
+//const ANNEE_JALON1 = 2030;
+export const ANNEE_JALON2 = 2050;
+export const DATE_DEBUT = `${ANNEE_REFERENCE}-01-01`;
+export const DATE_FIN = `${ANNEE_JALON2}-01-01`;
+
 export const HELPDESK_URL =
   'https://aide.territoiresentransitions.fr/fr/article/la-trajectoire-snbc-territorialisee-bientot-disponible-sur-territoires-en-transitions-1g46muy/#3-comment-sera-t-elle-mise-a-votre-disposition';
 
