@@ -1,7 +1,12 @@
 import {useQuery} from 'react-query';
 import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {DATE_DEBUT, DATE_FIN, IndicateurTrajectoire} from './constants';
+import {
+  DATE_DEBUT,
+  DATE_FIN,
+  IndicateurTrajectoire,
+  SourceIndicateur,
+} from './constants';
 import {
   getKey,
   IndicateurAvecValeurs,
@@ -9,7 +14,6 @@ import {
 } from './useCalculTrajectoire';
 import {
   separeObjectifsEtResultats,
-  SourceIndicateur,
   useIndicateurValeurs,
 } from './useIndicateurValeurs';
 

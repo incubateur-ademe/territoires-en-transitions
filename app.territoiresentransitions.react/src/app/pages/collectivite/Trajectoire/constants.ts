@@ -11,6 +11,22 @@ export const HELPDESK_URL =
 // fichier dans le dossier `public`
 export const DOC_METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
 
+// sources utilisées
+export enum SourceIndicateur {
+  COLLECTIVITE = 'collectivite',
+  RARE = 'rare',
+  PCAET = 'pcaet',
+  CITEPA = 'citepa',
+  ALDO = 'aldo',
+}
+
+const NOMS_SOURCE: Record<string, string> = {
+  [SourceIndicateur.COLLECTIVITE]: 'Données de la collectivité',
+  [SourceIndicateur.RARE]: 'RARE-OREC',
+};
+
+export const getNomSource = (id: string) => NOMS_SOURCE[id] ? NOMS_SOURCE[id] : id.toUpperCase(); 
+
 // liste des indicateurs Trajectoire
 export const INDICATEURS_TRAJECTOIRE = [
   {
@@ -21,6 +37,11 @@ export const INDICATEURS_TRAJECTOIRE = [
     unite: 'kteq CO2',
     identifiant: 'cae_1.a',
     coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
+    sources: [
+      SourceIndicateur.CITEPA,
+      SourceIndicateur.RARE,
+      SourceIndicateur.COLLECTIVITE,
+    ],
     secteurs: [
       {
         nom: 'Résidentiel',
@@ -176,6 +197,11 @@ export const INDICATEURS_TRAJECTOIRE = [
     unite: 'GWh',
     identifiant: 'cae_2.a',
     coef: 1, // pas de normalisation
+    sources: [
+      SourceIndicateur.CITEPA,
+      SourceIndicateur.RARE,
+      SourceIndicateur.COLLECTIVITE,
+    ],
     secteurs: [
       {
         nom: 'Résidentiel',
@@ -312,7 +338,51 @@ export const METHODO_PAR_SECTEUR = {
   },
 };
 
+export const SEQUESTRATION_CARBONE = {
+  id: 'sequestration_carbone',
+  sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
+  secteurs: [
+    {
+      nom: 'Cultures',
+      identifiant: 'cae_63.e',
+    },
+    {
+      nom: 'Prairies',
+      identifiant: 'cae_63.f',
+    },
+    {
+      nom: 'Zones humides',
+      identifiant: 'cae_63.g',
+    },
+    {
+      nom: 'Vergers',
+      identifiant: 'cae_63.k',
+    },
+    {
+      nom: 'Vignes',
+      identifiant: 'cae_63.j',
+    },
+    {
+      nom: 'Sols artificiels',
+      identifiant: 'cae_63.h',
+    },
+    {
+      nom: 'Forêts',
+      identifiant: 'cae_63.b',
+    },
+    {
+      nom: 'Produits bois',
+      identifiant: 'cae_63.i',
+    },
+  ],
+} as const;
+
 // types dérivés de la liste des indicateurs Trajectoire
 export type IndicateurTrajectoire = (typeof INDICATEURS_TRAJECTOIRE)[number];
 export type IndicateurTrajectoireId = IndicateurTrajectoire['id'];
 export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
+
+// donne un indicateur trajectoire à partir de son id
+export const getIndicateurTrajectoire = (id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id) =>
+  id === SEQUESTRATION_CARBONE.id ? SEQUESTRATION_CARBONE : INDICATEURS_TRAJECTOIRE.find(t => t.id === id)!;
+

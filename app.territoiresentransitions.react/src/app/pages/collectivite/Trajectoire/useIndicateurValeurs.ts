@@ -40,12 +40,6 @@ type IndicateurValeurGroupee = {
   metadonnee_id?: number | null;
 };
 
-export enum SourceIndicateur {
-  COLLECTIVITE = 'collectivite',
-  RARE = 'rare',
-  PCAET = 'pcaet',
-}
-
 /** Charge toutes les valeurs associées à un indicateur id (ou à un ou plusieurs identifiants d'indicateurs prédéfinis) */
 export const useIndicateurValeurs = (params: GetIndicateurValeursRequest) => {
   const collectivite_id = useCollectiviteId();
