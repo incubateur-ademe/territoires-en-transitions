@@ -1,6 +1,7 @@
 import {SliceTooltip} from '@nivo/line';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {LineData} from 'ui/charts/Line/LineChart';
+import {LAYERS} from './constants';
 
 /** Génère un composant infobulle pour les graphes de trajectoire */
 export const genInfobulleParAnnee = ({
@@ -11,7 +12,7 @@ export const genInfobulleParAnnee = ({
   secteurs: LineData[];
 }) => {
   const InfobulleParAnnee: SliceTooltip = ({slice}) => {
-    const annee = slice.points[0].data.x;
+    const annee = (slice.points[0].data.x as Date).getFullYear();
     return (
       <div className="flex flex-col gap-1 bg-white p-4 font-normal text-primary-8 text-sm shadow-sm">
         {/** Année */}
@@ -38,11 +39,13 @@ export const genInfobulleParAnnee = ({
         {!!objectifsEtResultats?.length && (
           <div className="mt-2">
             {objectifsEtResultats.map(({id, data, color}) => {
-              const value = data?.find(o => o.x === annee);
+              const value = data?.find(
+                o => (o.x as Date).getFullYear() === annee
+              );
               return value ? (
                 <div className="flex items-center gap-3" key={id}>
                   {SolidLineSymbol(color!)}
-                  Objectif
+                  {LAYERS[id as keyof typeof LAYERS].label}
                   <strong>{value.y?.toString()}</strong>
                 </div>
               ) : null;
