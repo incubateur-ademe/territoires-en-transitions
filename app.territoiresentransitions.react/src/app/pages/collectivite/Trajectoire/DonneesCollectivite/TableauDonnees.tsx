@@ -1,10 +1,14 @@
 import {Table, THead, TBody, TRow, THeadCell, TCell, Input} from '@tet/ui';
-import {IndicateurTrajectoire} from '../constants';
+import {
+  IndicateurTrajectoire,
+  SEQUESTRATION_CARBONE,
+  SourceIndicateur,
+} from '../constants';
 import classNames from 'classnames';
 
 type TableauDonneesProps = {
   /** secteurs à afficher dans le tableau */
-  indicateur: IndicateurTrajectoire;
+  indicateur: IndicateurTrajectoire | typeof SEQUESTRATION_CARBONE;
   /** données sectorielles */
   valeursSecteurs: {
     identifiant: string;
@@ -52,7 +56,8 @@ export const TableauDonnees = ({
             <TRow key={secteur.identifiant}>
               <TCell variant="title">{secteur.nom}</TCell>
               {sources.map(source => {
-                const sourceCollectivite = source.id === 'collectivite';
+                const sourceCollectivite =
+                  source.id === SourceIndicateur.COLLECTIVITE;
                 const val = valeurs
                   ?.find(v => v.source === source.id)
                   ?.valeur?.toString();
