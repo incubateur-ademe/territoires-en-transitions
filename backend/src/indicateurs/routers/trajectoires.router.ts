@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
+import {
+  SupabaseJwtPayload,
+  SupabaseRole,
+} from '../../auth/models/auth.models';
 import { TrpcService } from '../../trpc/services/trpc.service';
 import TrajectoiresService from '../service/trajectoires.service';
 
@@ -19,7 +23,16 @@ export class TrajectoiresRouter {
         }),
       )
       .query(({ input }) => {
-        return this.trajectoiresService.calculeTrajectoireSnbc(input);
+        // TODO: token
+        const tokenInfo: SupabaseJwtPayload = {
+          session_id: '',
+          role: SupabaseRole.AUTHENTICATED,
+          is_anonymous: false,
+        };
+        return this.trajectoiresService.calculeTrajectoireSnbc(
+          input,
+          tokenInfo,
+        );
       }),
   });
 }
