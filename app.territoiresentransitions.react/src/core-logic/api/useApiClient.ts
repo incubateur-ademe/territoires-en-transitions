@@ -3,7 +3,13 @@ import {getFileNameFromResponse} from 'core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 
-type API_ARGS = {route: string; params?: Record<string, string | number>};
+type API_ARGS = {
+  route: string;
+  params?: Record<
+    string,
+    string | number | boolean | (string | number | boolean)[]
+  >;
+};
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
@@ -14,7 +20,10 @@ export const useApiClient = () => {
     const url = new URL(`${BASE_URL}${route}`);
     if (params) {
       Object.entries(params).forEach(([name, value]) =>
-        url.searchParams.set(name, value.toString())
+        url.searchParams.set(
+          name,
+          Array.isArray(value) ? value.join(',') : value.toString()
+        )
       );
     }
     return url;
