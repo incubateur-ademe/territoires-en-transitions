@@ -103,7 +103,7 @@ export const ButtonMenu = ({
                   maxHeight: maxHeight - 16,
                 },
                 className:
-                  'relative p-4 overflow-y-auto bg-white rounded-b-lg border border-grey-4 rounded-lg shadow-card',
+                  'relative overflow-y-auto bg-white rounded-b-lg border border-grey-4 rounded-lg shadow-card',
               })}
             >
               {children}

@@ -23,7 +23,7 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
   const referents = getReferentsValues(filters);
 
   return (
-    <div className="w-80 flex flex-col gap-8">
+    <div className="w-80 flex flex-col gap-8 p-4">
       <FormSection title="Nouveau filtre :" className="!grid-cols-1">
         <Field title="Personne pilote">
           <PersonnesDropdown

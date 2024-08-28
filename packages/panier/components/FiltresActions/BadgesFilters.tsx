@@ -141,7 +141,7 @@ export const BadgesFilters = ({
           }
         }
       >
-        <div className="flex flex-col gap-4 w-72">
+        <div className="flex flex-col gap-4 w-72 p-4">
           {filters.map(filter => (
             <Field key={filter.title} title={filter.title}>
               <SelectMultiple
