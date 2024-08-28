@@ -504,6 +504,8 @@ export default class TrajectoiresService {
         this.getIdentifiantDossierResultat(),
       );
       if (trajectoireCalculSheetId) {
+        const source =
+          resultatVerification.valeurs[0].objectif_commentaire || '';
         const indicateurDefinitions =
           await this.indicateursService.getReferentielIndicateurDefinitions(
             this.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
@@ -534,6 +536,7 @@ export default class TrajectoiresService {
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResult = {
           mode: mode,
+          source_donnees_entree: source,
           spreadsheet_id: trajectoireCalculSheetId,
           trajectoire: {
             emissions_ges: emissionGesTrajectoire,
@@ -637,6 +640,7 @@ export default class TrajectoiresService {
           ...resultatVerification.donnees_entree.emissions_ges.valeurs,
           ...resultatVerification.donnees_entree.consommations_finales.valeurs,
         ],
+        resultatVerification.donnees_entree.source,
       );
 
     this.logger.log(
@@ -672,6 +676,7 @@ export default class TrajectoiresService {
 
     const result: CalculTrajectoireResult = {
       mode: mode,
+      source_donnees_entree: resultatVerification.donnees_entree.source,
       spreadsheet_id: trajectoireCalculSheetId,
       trajectoire: {
         emissions_ges: emissionGesTrajectoire,
@@ -702,6 +707,7 @@ export default class TrajectoiresService {
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinitionType[],
     donneesEntree: DonneesARemplirValeur[],
+    sourceDonneesEntree: string,
   ): CreateIndicateurValeurType[] {
     const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
     donneesSpreadsheet?.forEach((ligne, ligneIndex) => {
@@ -758,6 +764,7 @@ export default class TrajectoiresService {
                   metadonnee_id: indicateurSourceMetadonneeId,
                   date_valeur: `${2015 + columnIndex}-01-01`,
                   objectif: floatValeur * facteur,
+                  objectif_commentaire: sourceDonneesEntree,
                 };
                 indicateurValeursResultat.push(indicateurValeur);
               } else {
@@ -784,15 +791,22 @@ export default class TrajectoiresService {
    */
   async getValeursPourCalculTrajectoire(
     collectiviteId: number,
+    forceDonneesCollectivite?: boolean,
   ): Promise<DonneesCalculTrajectoireARemplir> {
-    // Récupère les valeurs des indicateurs d'émission pour l'année 2015
+    // Récupère les valeurs des indicateurs d'émission pour l'année 2015 qui proviennent du rare ou de la collectivité
+    const source = forceDonneesCollectivite
+      ? this.indicateursService.NULL_SOURCE_ID
+      : this.RARE_SOURCE_ID;
+    this.logger.log(
+      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis la source ${source}`,
+    );
     const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
         collectivite_id: collectiviteId,
         identifiants_referentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
-        sources: [this.RARE_SOURCE_ID],
+        sources: [source],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -808,7 +822,7 @@ export default class TrajectoiresService {
         identifiants_referentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
-        sources: [this.RARE_SOURCE_ID],
+        sources: [source],
       });
 
     // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
@@ -817,6 +831,7 @@ export default class TrajectoiresService {
       indicateurValeursConsommationsFinales,
     );
     return {
+      source: source,
       emissions_ges: donneesEmissionsGes,
       consommations_finales: donneesConsommationsFinales,
     };
@@ -1029,16 +1044,31 @@ export default class TrajectoiresService {
       collectivite_id: request.collectivite_id,
       sources: [this.SNBC_SOURCE.id],
     });
+    let source_donnees_snbc_deja_calculees: string | null = null;
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
       if (!force_recuperation_donnees) {
         return response;
+      } else {
+        // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
+        // un peu un hack mais le plus simple aujourd'hui
+        source_donnees_snbc_deja_calculees =
+          valeurs[0].indicateur_valeur.objectif_commentaire || null;
       }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
+    // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag force_utilisation_donnees_collectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
-      await this.getValeursPourCalculTrajectoire(request.collectivite_id);
+      await this.getValeursPourCalculTrajectoire(
+        request.collectivite_id,
+        !isNil(request.force_utilisation_donnees_collectivite)
+          ? request.force_utilisation_donnees_collectivite
+          : source_donnees_snbc_deja_calculees ===
+              this.indicateursService.NULL_SOURCE_ID
+            ? true
+            : false,
+      );
 
     const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
       donneesCalculTrajectoireARemplir,
