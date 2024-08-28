@@ -1,13 +1,17 @@
 import {useQuery} from 'react-query';
 import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIndicateurReferentielValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import {IndicateurTrajectoire} from './constants';
+import {DATE_DEBUT, DATE_FIN, IndicateurTrajectoire} from './constants';
 import {
   getKey,
   IndicateurAvecValeurs,
   ResultatTrajectoire,
 } from './useCalculTrajectoire';
+import {
+  separeObjectifsEtResultats,
+  SourceIndicateur,
+  useIndicateurValeurs,
+} from './useIndicateurValeurs';
 
 /** Charge la trajectoire */
 const useTrajectoire = () => {
@@ -75,27 +79,50 @@ export const useResultatTrajectoire = ({
       ? valeursTousSecteurs.find(s => s?.id === identifiant)
       : null;
 
-  // charge les données objectifs/résultats
-  const {data: objectifsEtResults, isLoading: isLoadingObjectifsResultats} =
-    useIndicateurReferentielValeurs({
-      identifiant,
+  // charge les données objectifs/résultats de la collectivité et open data
+  const {data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats} =
+    useIndicateurValeurs({
+      identifiants_referentiel: [identifiant],
+      date_debut: DATE_DEBUT,
+      date_fin: DATE_FIN,
+      sources: [
+        SourceIndicateur.COLLECTIVITE,
+        SourceIndicateur.RARE,
+        SourceIndicateur.PCAET,
+      ],
     });
+
+  const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
+  const objectifsEtResultats = separeObjectifsEtResultats(
+    sources?.[SourceIndicateur.COLLECTIVITE]?.valeurs
+  );
+  const objectifsPCAET = separeObjectifsEtResultats(
+    sources?.[SourceIndicateur.PCAET]?.valeurs
+  )?.objectifs;
+  const resultatsRARE = separeObjectifsEtResultats(
+    sources?.[SourceIndicateur.RARE]?.valeurs
+  )?.resultats;
+
+  const objectifsCollectiviteOuPCAET =
+    objectifsEtResultats?.objectifs?.length ?? 0
+      ? objectifsEtResultats?.objectifs
+      : objectifsPCAET;
+  const resultatsCollectiviteOuRARE =
+    objectifsEtResultats?.resultats?.length ?? 0
+      ? objectifsEtResultats?.resultats
+      : resultatsRARE;
 
   // crée les datasets objectifs et résultats pour le graphique
   const objectifs =
-    objectifsEtResults
-      ?.filter(v => typeof v.objectif === 'number')
-      .map(v => ({
-        x: new Date(`${v.annee}-01-01`),
-        y: (v.objectif as number) * (coef || 1),
-      })) || [];
+    objectifsCollectiviteOuPCAET?.map(v => ({
+      x: new Date(v.date_valeur),
+      y: (v.objectif as number) * (coef || 1),
+    })) || [];
   const resultats =
-    objectifsEtResults
-      ?.filter(v => typeof v.resultat === 'number')
-      .map(v => ({
-        x: new Date(`${v.annee}-01-01`),
-        y: (v.resultat as number) * (coef || 1),
-      })) || [];
+    resultatsCollectiviteOuRARE?.map(v => ({
+      x: new Date(v.date_valeur),
+      y: (v.resultat as number) * (coef || 1),
+    })) || [];
 
   // détermine si les données sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =
