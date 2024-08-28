@@ -22,8 +22,12 @@ export class IndicateursController {
   @ApiResponse({ type: GetIndicateursValeursResponse })
   async getIndicateurValeurs(
     @Query() request: GetIndicateursValeursRequest,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload,
   ): Promise<GetIndicateursValeursResponse> {
-    return this.indicateurService.getIndicateurValeursGroupees(request);
+    return this.indicateurService.getIndicateurValeursGroupees(
+      request,
+      tokenInfo,
+    );
   }
 
   @Post()
@@ -34,7 +38,7 @@ export class IndicateursController {
     const upsertedValeurs =
       await this.indicateurService.upsertIndicateurValeurs(
         request.valeurs,
-        tokenInfo.sub,
+        tokenInfo,
       );
     return { valeurs: upsertedValeurs };
   }

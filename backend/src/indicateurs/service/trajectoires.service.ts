@@ -10,6 +10,8 @@ import { JSZipGeneratorOptions } from 'jszip';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import * as XlsxTemplate from 'xlsx-template';
+import { NiveauAcces, SupabaseJwtPayload } from '../../auth/models/auth.models';
+import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import CollectiviteRequest from '../../collectivites/models/collectivite.request';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -194,6 +196,7 @@ export default class TrajectoiresService {
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly indicateursService: IndicateursService,
     private readonly sheetService: SheetService,
+    private readonly authService: AuthService,
   ) {
     this.initXlsxBuffers();
   }
@@ -351,6 +354,7 @@ export default class TrajectoiresService {
 
   async downloadTrajectoireSnbc(
     request: CollectiviteRequest,
+    tokenInfo: SupabaseJwtPayload,
     res: Response,
     next: NextFunction,
   ) {
@@ -363,6 +367,7 @@ export default class TrajectoiresService {
 
       const resultatVerification = await this.verificationDonneesSnbc(
         request,
+        tokenInfo,
         undefined,
         true,
       );
@@ -420,6 +425,7 @@ export default class TrajectoiresService {
 
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequest,
+    tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
   ): Promise<CalculTrajectoireResult> {
     let mode: CalculTrajectoireResultatMode =
@@ -462,6 +468,7 @@ export default class TrajectoiresService {
 
     const resultatVerification = await this.verificationDonneesSnbc(
       request,
+      tokenInfo,
       epci,
       true,
     );
@@ -1014,9 +1021,17 @@ export default class TrajectoiresService {
    */
   async verificationDonneesSnbc(
     request: VerificationTrajectoireRequest,
+    tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
     force_recuperation_donnees = false,
   ): Promise<VerificationDonneesSNBCResult> {
+    // Vérification des droits
+    await this.authService.verifieAccesAuxCollectivites(
+      tokenInfo,
+      [request.collectivite_id],
+      NiveauAcces.EDITION,
+    );
+
     const response: VerificationDonneesSNBCResult = {
       status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
     };

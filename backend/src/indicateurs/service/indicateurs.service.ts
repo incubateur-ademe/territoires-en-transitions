@@ -14,6 +14,12 @@ import {
 } from 'drizzle-orm';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
+import {
+  NiveauAcces,
+  SupabaseJwtPayload,
+  SupabaseRole,
+} from '../../auth/models/auth.models';
+import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import {
   GetIndicateursValeursRequest,
@@ -45,7 +51,10 @@ export default class IndicateursService {
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly authService: AuthService,
+  ) {}
 
   /**
    * Récupère les valeurs d'indicateurs selon les options données
@@ -141,7 +150,14 @@ export default class IndicateursService {
 
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursRequest,
+    tokenInfo: SupabaseJwtPayload,
   ): Promise<GetIndicateursValeursResponse> {
+    await this.authService.verifieAccesAuxCollectivites(
+      tokenInfo,
+      [options.collectivite_id],
+      NiveauAcces.LECTURE,
+    );
+
     const indicateurValeurs = await this.getIndicateursValeurs(options);
     const indicateurValeursSeules = indicateurValeurs.map(
       (v) => v.indicateur_valeur,
@@ -208,19 +224,29 @@ export default class IndicateursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: CreateIndicateurValeurType[],
-    userId?: string,
+    tokenInfo?: SupabaseJwtPayload,
   ): Promise<IndicateurValeurType[]> {
-    this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${userId}`,
-    );
-    if (userId) {
-      // TODO: check
+    if (tokenInfo) {
+      const collectiviteIds = [
+        ...new Set(indicateurValeurs.map((v) => v.collectivite_id)),
+      ];
+      await this.authService.verifieAccesAuxCollectivites(
+        tokenInfo,
+        collectiviteIds,
+        NiveauAcces.EDITION,
+      );
 
-      indicateurValeurs.forEach((v) => {
-        v.created_by = userId;
-        v.modified_by = userId;
-      });
+      if (tokenInfo.role === SupabaseRole.AUTHENTICATED && tokenInfo.sub) {
+        indicateurValeurs.forEach((v) => {
+          v.created_by = tokenInfo.sub;
+          v.modified_by = tokenInfo.sub;
+        });
+      }
     }
+
+    this.logger.log(
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.sub} (role ${tokenInfo?.role})`,
+    );
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonnee_id));

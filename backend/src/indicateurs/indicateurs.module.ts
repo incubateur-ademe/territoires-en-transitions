@@ -9,9 +9,16 @@ import { TrajectoiresRouter } from './routers/trajectoires.router';
 import IndicateursService from './service/indicateurs.service';
 import IndicateurSourcesService from './service/indicateurSources.service';
 import TrajectoiresService from './service/trajectoires.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TrpcModule, CommonModule, CollectivitesModule, SheetModule],
+  imports: [
+    TrpcModule,
+    CommonModule,
+    AuthModule,
+    CollectivitesModule,
+    SheetModule,
+  ],
   providers: [
     IndicateurSourcesService,
     IndicateursService,
