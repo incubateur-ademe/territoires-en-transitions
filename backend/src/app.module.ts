@@ -6,6 +6,7 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcRouter } from './trpc.router';
 import { TrpcModule } from './trpc/trpc.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TrpcModule } from './trpc/trpc.module';
     SheetModule,
     CollectivitesModule,
     IndicateursModule,
+    AuthModule,
   ],
   controllers: [],
   exports: [TrpcRouter],
