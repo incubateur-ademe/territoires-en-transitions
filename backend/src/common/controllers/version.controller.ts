@@ -1,8 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
+import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 
 @Controller()
 export class VersionController {
-  //@PublicEndpoint()
+  @PublicEndpoint()
   @Get('version')
   async getVersion() {
     return {
