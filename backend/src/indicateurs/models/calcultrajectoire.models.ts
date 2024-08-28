@@ -45,6 +45,16 @@ export class VerificationTrajectoireRequest extends CollectiviteRequest {
   @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
   @IsOptional()
   force_recuperation_donnees?: boolean;
+
+  @ApiProperty({
+    required: false,
+    description:
+      "Force l'utilisation des données de la collectivité plutôt que celles du rare",
+  })
+  @IsBoolean()
+  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
+  @IsOptional()
+  force_utilisation_donnees_collectivite?: boolean;
 }
 
 export class CalculTrajectoireRequest extends CollectiviteRequest {
@@ -55,6 +65,16 @@ export class CalculTrajectoireRequest extends CollectiviteRequest {
   @IsEnum(CalculTrajectoireReset)
   @IsOptional()
   mode?: CalculTrajectoireReset;
+
+  @ApiProperty({
+    required: false,
+    description:
+      "Force l'utilisation des données de la collectivité plutôt que celles du rare",
+  })
+  @IsBoolean()
+  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
+  @IsOptional()
+  force_utilisation_donnees_collectivite?: boolean;
 }
 
 export class CalculTrajectoireResponseDonnees {
@@ -73,6 +93,9 @@ export class CalculTrajectoireResponseDonnees {
 export class CalculTrajectoireResponse {
   @IsEnum(CalculTrajectoireResultatMode)
   mode: CalculTrajectoireResultatMode;
+
+  @IsString()
+  source_donnees_entree: string;
 
   @ApiProperty({ description: 'Résultat du calcul de la trajectoire' })
   @ValidateNested()
@@ -98,6 +121,7 @@ export class DonneesARemplirResult {
 }
 
 export class DonneesCalculTrajectoireARemplir {
+  source: string;
   emissions_ges: DonneesARemplirResult;
   consommations_finales: DonneesARemplirResult;
 }
