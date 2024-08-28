@@ -34,3 +34,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Lancer le site avec Strapi en local
+
+Ouvrir [Strapi admin](http://localhost:1337/admin) en local, et créer une clé depuis Settings > API Tokens. Au premier lancement, il sera nécessaire de créer un compte, puis de compléter les données des pages / collections à tester.
+
+Valeurs à renseigner dans le fichier .env :
+
+- NEXT_PUBLIC_STRAPI_KEY (clé créée depuis le menu Settings)
+- NEXT_PUBLIC_STRAPI_URL=http://127.0.0.1:1337
