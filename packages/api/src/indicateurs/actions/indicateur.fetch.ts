@@ -548,18 +548,32 @@ export async function selectIndicateurReferentielDefinition(
 ): Promise<IndicateurDefinition | null> {
   if (identifiant === undefined) return null;
 
+  const data = await selectIndicateurReferentielDefinitions(
+    dbClient,
+    [identifiant],
+    collectiviteId
+  );
+  return data?.[0] || null;
+}
+
+// idem mais pour plusieurs identifiants référentiel
+export async function selectIndicateurReferentielDefinitions(
+  dbClient: DBClient,
+  identifiants: string[],
+  collectiviteId: number
+): Promise<IndicateurDefinition[] | null> {
+  if (!identifiants?.length) return null;
+
   const {data} = await dbClient
     .from('indicateur_definition')
     .select(COLONNES_DEFINITION.join(','))
-    .eq('identifiant_referentiel', identifiant)
+    .in('identifiant_referentiel', identifiants)
     .eq('plus.collectivite_id', collectiviteId)
     .eq('valeurs.collectivite_id', collectiviteId);
   const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, false)
     : null;
-  return toReturn
-    ? (objectToCamel(toReturn?.[0]) as IndicateurDefinition)
-    : null;
+  return toReturn ? (objectToCamel(toReturn) as IndicateurDefinition[]) : null;
 }
 
 /**
