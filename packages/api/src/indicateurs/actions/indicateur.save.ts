@@ -67,6 +67,27 @@ export async function updateIndicateurDefinition(
 }
 
 /**
+ * Rend un indicateur favori ou non pour une collectivité
+ * @param dbClient client supabase
+ * @param indicateurId id de l'indicateur à modifier
+ * @param collectiviteId id de la collectivité concernée
+ * @param isFavori vrai pour rendre favori, faux pour ne plus l'être
+ */
+export async function updateIndicateurFavoriCollectivite(
+  dbClient: DBClient,
+  indicateurId: number,
+  collectiviteId: number,
+  isFavori: boolean
+) {
+  // Modifier commentaire && confidentiel
+  await dbClient.from('indicateur_collectivite').upsert({
+    indicateur_id: indicateurId,
+    collectivite_id: collectiviteId,
+    favoris: isFavori,
+  });
+}
+
+/**
  * Ajoute un indicateur personnalisé
  * @param dbClient client supabase
  * @param indicateur indicateur à ajouter
@@ -122,7 +143,7 @@ export async function upsertIndicateurValeur(
   if (
     !indicateurValeur.resultat &&
     !indicateurValeur.objectif &&
-    !indicateurValeur.estimation  &&
+    !indicateurValeur.estimation &&
     (!indicateurValeur.resultatCommentaire ||
       indicateurValeur.resultatCommentaire === '') &&
     (!indicateurValeur.objectifCommentaire ||
