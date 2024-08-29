@@ -73,7 +73,7 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
         <Button
           icon={!isLoading ? 'arrow-right-line' : undefined}
           iconPosition="right"
-          disabled={!donneesCompletes || !isLoading}
+          disabled={!donneesCompletes || isLoading}
           onClick={() => {
             calcul();
             if (isSuccess) {
