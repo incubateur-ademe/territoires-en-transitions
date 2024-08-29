@@ -597,7 +597,7 @@ export async function selectIndicateurChartInfo(
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION_COURTE.join(',')}, groupement_id,` +
-        'plus:indicateur_collectivite(confidentiel, collectivite_id), ' +
+        'plus:indicateur_collectivite(confidentiel, favoris, collectivite_id), ' +
         'enfants:indicateur_enfants(' +
         'id, ' +
         'valeurs:indicateur_valeur(date_valeur, resultat, objectif, collectivite_id, metadonnee_id)' +
@@ -625,11 +625,15 @@ export async function selectIndicateurChartInfo(
           groupementIds.includes(item.groupement_id)
       )
       .map(item => {
-        // Récupère l'information de la confidentialité
+        // Récupère l'information de la confidentialité et favori de la collectivité
         const plusInfo =
           item.plus && item.plus[0]
             ? item.plus[0]
-            : {confidentiel: false, collectiviteId: collectiviteId};
+            : {
+                confidentiel: false,
+                favoris: false,
+                collectiviteId: collectiviteId,
+              };
 
         // Transforme les valeurs
         let valeursTransforme = dateEnAnnee(item.valeurs, true);
@@ -678,6 +682,7 @@ export async function selectIndicateurChartInfo(
           enfants: enfantsTransforme,
           plus: undefined,
           confidentiel: plusInfo.confidentiel, // Remonte l'info 'confidentiel'
+          favoriCollectivite: plusInfo.favoris, // Remonte l'info 'confidentiel'
           count: count, // Ajoute l'attribut 'count'
           total: total, // Ajoute l'attribut 'total'
           identifiant: undefined, // Enlève 'identifiant' pour correspondre au schéma
@@ -929,12 +934,15 @@ async function transformeDefinition(
       services,
       fiches,
       fiches_non_classees, // Ajoute le champ 'est_perso'
-      enfants: item?.enfants?.filter(
-          (e: any) => !e.groupement_id ||
-              groupement.filter(
-              (g: any) => g.id === e.groupement_id
-          )[0].collectivites?.includes(collectiviteId)
-      ).map((e: any) => e.id),
+      enfants: item?.enfants
+        ?.filter(
+          (e: any) =>
+            !e.groupement_id ||
+            groupement
+              .filter((g: any) => g.id === e.groupement_id)[0]
+              .collectivites?.includes(collectiviteId)
+        )
+        .map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
     };
   });

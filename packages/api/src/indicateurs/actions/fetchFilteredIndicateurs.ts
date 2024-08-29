@@ -14,7 +14,9 @@ const filtresOptions: {[key in keyof FetchFiltre]?: string} = {
   personnePiloteIds: 'indicateur_pilote!inner()',
   servicePiloteIds: 'indicateur_service_tag!inner(service_tag_id)',
   estConfidentiel:
-    'indicateur_collectivite(commentaire, confidentiel, collectivite_id)',
+    'indicateur_collectivite(commentaire, confidentiel, favoris, collectivite_id)',
+  estFavorisCollectivite:
+    'indicateur_collectivite(commentaire, confidentiel, favoris, collectivite_id)',
   fichesNonClassees:
     'fiche_action_indicateur!inner(fiche_id, fiche_action!inner(fiche_action_axe!inner(axe!inner())))',
   categorieNoms: 'categorie_tag!inner(id,nom,collectivite_id,groupement_id)',
@@ -149,11 +151,26 @@ export async function fetchFilteredIndicateurs(
   }
 
   // filtre les indicateurs confidentiels
-  if (filters.estConfidentiel !== undefined) {
-    if (filters.estConfidentiel) {
+  if (
+    filters.estConfidentiel !== undefined ||
+    filters.estFavorisCollectivite !== undefined
+  ) {
+    // /!\ on ne peut pas demander confidentiels et favoris à faux avec ce code
+    if (filters.estConfidentiel || filters.estFavorisCollectivite) {
       query.not('indicateur_collectivite', 'is', null);
       query.eq('indicateur_collectivite.collectivite_id', collectiviteId);
-      query.is('indicateur_collectivite.confidentiel', true);
+      if (filters.estConfidentiel !== undefined) {
+        query.is(
+          'indicateur_collectivite.confidentiel',
+          filters.estConfidentiel
+        );
+      }
+      if (filters.estFavorisCollectivite !== undefined) {
+        query.is(
+          'indicateur_collectivite.favoris',
+          filters.estFavorisCollectivite
+        );
+      }
     } else {
       query.or(`indicateur_id.is.null, collectivite_id.eq.${collectiviteId})`, {
         referencedTable: 'indicateur_collectivite',

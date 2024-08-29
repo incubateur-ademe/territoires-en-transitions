@@ -8,6 +8,7 @@ export const filtreSpecifiqueSchema = z.object({
   participationScore: z.boolean().optional(),
   estComplet: z.coerce.boolean().default(false).optional(),
   estConfidentiel: z.coerce.boolean().default(false).optional(),
+  estFavorisCollectivite: z.coerce.boolean().default(false).optional(),
   fichesNonClassees: z.coerce.boolean().default(false).optional(),
   text: z.string().optional(),
   estPerso: z.coerce.boolean().default(false).optional(),

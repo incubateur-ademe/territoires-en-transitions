@@ -1,46 +1,47 @@
 import {z} from 'zod';
-import {valeurSchema} from "./valeur.schema";
-import {tagSchema} from "../../shared/domain/tag.schema";
-import {actionSchema} from "../../referentiel/domain/action.schema";
-import {categorieSchema} from "./categorie.schema";
-import {thematiqueSchema} from "../../shared/domain/thematique.schema";
-import {resumeSchema} from "../../fiche_actions/domain/resume.schema";
-import {personneSchema} from "../../shared/domain/personne.schema";
+import {valeurSchema} from './valeur.schema';
+import {tagSchema} from '../../shared/domain/tag.schema';
+import {actionSchema} from '../../referentiel/domain/action.schema';
+import {categorieSchema} from './categorie.schema';
+import {thematiqueSchema} from '../../shared/domain/thematique.schema';
+import {resumeSchema} from '../../fiche_actions/domain/resume.schema';
+import {personneSchema} from '../../shared/domain/personne.schema';
 
 /**
  * Schéma zod à fusionner à une définition pour avoir les valeurs
  */
 const plusValeur = z.object({
-    valeurs : valeurSchema.array()
+  valeurs: valeurSchema.array(),
 });
 
 /**
  * Schéma zod à fusionner à une définition pour avoir les données annexes aux indicateurs
  */
 const plusDetailsCollectivite = z.object({
-    services : z.number().array(), // Lise d'id
-    pilotes : personneSchema.array(),
-    fiches : resumeSchema.array(),
-    fichesNonClassees : resumeSchema.array(),
-    categoriesUtilisateur : tagSchema.array()
+  services: z.number().array(), // Lise d'id
+  pilotes: personneSchema.array(),
+  fiches: resumeSchema.array(),
+  fichesNonClassees: resumeSchema.array(),
+  categoriesUtilisateur: tagSchema.array(),
 });
 
 /**
  * Schéma zod de la définition d'un indicateur à créer
  */
-export const indicateurDefinitionSchemaInsert = z.object ({
-    titre : z.string(),
-    collectiviteId : z.number(),
-    unite : z.string().optional(),
-    description : z.string().optional(),
-    thematiques : thematiqueSchema.array().optional()
+export const indicateurDefinitionSchemaInsert = z.object({
+  titre: z.string(),
+  collectiviteId: z.number(),
+  unite: z.string().optional(),
+  description: z.string().optional(),
+  thematiques: thematiqueSchema.array().optional(),
 });
 
 /**
  * Type TS de la définition d'un indicateur à créer
  */
-export type IndicateurDefinitionInsert = z.input<typeof indicateurDefinitionSchemaInsert>;
-
+export type IndicateurDefinitionInsert = z.input<
+  typeof indicateurDefinitionSchemaInsert
+>;
 
 /**
  * Schéma zod d'un élément d'une liste d'indicateurs
@@ -66,6 +67,7 @@ export const IndicateurChartInfoSchema = z.object({
   unite: z.string(),
   rempli: z.boolean(),
   confidentiel: z.boolean(),
+  favoriCollectivite: z.boolean(),
   participationScore: z.boolean(),
   sansValeur: z.boolean().nullable(),
   enfants: z
@@ -130,40 +132,43 @@ export type IndicateurDefinition = z.input<typeof definitionSchema>;
  * Schéma zod d'un indicateur avec toutes les informations annexes liées
  */
 export const definitionCompleteSchema = definitionSchema
-    .merge(plusValeur)
-    .merge(plusDetailsCollectivite);
+  .merge(plusValeur)
+  .merge(plusDetailsCollectivite);
 /**
  * Type TS d'un indicateur avec toutes les informations annexes liées
  */
-export type IndicateurDefinitionComplet = z.input<typeof definitionCompleteSchema>;
+export type IndicateurDefinitionComplet = z.input<
+  typeof definitionCompleteSchema
+>;
 
 /**
  * Schéma zod d'un indicateur personnalisé
  */
-export const definitionPersonaliseSchema = definitionSchema
-    .omit({
-        identifiant : true,
-        type : true,
-        programmes : true,
-        sansValeur: true,
-        participationScore: true,
-        enfants : true,
-        parents : true
-    });
+export const definitionPersonaliseSchema = definitionSchema.omit({
+  identifiant: true,
+  type: true,
+  programmes: true,
+  sansValeur: true,
+  participationScore: true,
+  enfants: true,
+  parents: true,
+});
 /**
  * Type TS d'un indicateur personnalisé
  */
-export type IndicateurDefinitionPersonalise = z.input<typeof definitionPersonaliseSchema>;
+export type IndicateurDefinitionPersonalise = z.input<
+  typeof definitionPersonaliseSchema
+>;
 
 /**
  * Schéma zod d'un indicateur prédéfini
  */
-export const definitionPredefiniSchema = definitionSchema
-    .omit({
-        collectiviteId : true
-    });
+export const definitionPredefiniSchema = definitionSchema.omit({
+  collectiviteId: true,
+});
 /**
  * Type TS d'un indicateur prédéfini
  */
-export type IndicateurDefinitionPredefini = z.input<typeof definitionPredefiniSchema>;
-
+export type IndicateurDefinitionPredefini = z.input<
+  typeof definitionPredefiniSchema
+>;
