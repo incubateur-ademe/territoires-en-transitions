@@ -59,6 +59,7 @@ const TousLesIndicateurs = () => {
           )}
         </div>
         <IndicateursListe
+          isEditable
           filtres={filters}
           resetFilters={() => setFilters({})}
           sortSettings={{defaultSort: 'estComplet'}}

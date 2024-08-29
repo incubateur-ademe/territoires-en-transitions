@@ -55,6 +55,8 @@ type Props = {
   resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
+  /** Rend les cartes indicateurs éditables */
+  isEditable?: boolean;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -65,6 +67,7 @@ const IndicateursListe = ({
   filtres,
   resetFilters,
   settings,
+  isEditable,
   maxNbOfCards = 9,
 }: Props) => {
   const tracker = useEventTracker('app/indicateurs/tous');
@@ -233,6 +236,7 @@ const IndicateursListe = ({
                 card={{external: true}}
                 hideChart={!displayGraphs}
                 autoRefresh
+                isEditable={isEditable}
               />
             ))}
           </div>
