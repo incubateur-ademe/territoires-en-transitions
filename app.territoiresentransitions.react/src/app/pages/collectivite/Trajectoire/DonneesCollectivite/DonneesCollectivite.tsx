@@ -18,7 +18,11 @@ export type DonneesCollectiviteProps = {
 export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
   const {donneesCompletes, donneesSectorisees} = useDonneesSectorisees();
   const {mutate: upsertValeur} = useUpsertValeurIndicateur();
-  const {mutate: calcul, isLoading, isSuccess} = useCalculTrajectoire();
+  const {
+    mutate: calcul,
+    isLoading,
+    isSuccess,
+  } = useCalculTrajectoire({nouveauCalcul: true});
 
   return (
     <div className="text-center">

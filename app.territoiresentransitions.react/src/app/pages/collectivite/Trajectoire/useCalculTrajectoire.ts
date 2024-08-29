@@ -31,7 +31,7 @@ export const getKey = (collectiviteId: number | null) => [
 ];
 
 /** Déclenche le calcul de la trajectoire */
-export const useCalculTrajectoire = () => {
+export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
   const queryClient = useQueryClient();
@@ -42,7 +42,15 @@ export const useCalculTrajectoire = () => {
       collectiviteId &&
       api.get<ResultatTrajectoire>({
         route: '/trajectoires/snbc',
-        params: {collectivite_id: collectiviteId},
+        params: {
+          collectivite_id: collectiviteId,
+          ...(args?.nouveauCalcul
+            ? {
+                mode: 'nouveau_spreadsheet',
+                force_utilisation_donnees_collectivite: true,
+              }
+            : {}),
+        },
       }),
     {
       retry: false,
