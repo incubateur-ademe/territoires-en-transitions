@@ -3,12 +3,17 @@ import {getFileNameFromResponse} from 'core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
 
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | {[x: string]: JSONValue}
+  | Array<JSONValue>;
+
 type API_ARGS = {
   route: string;
-  params?: Record<
-    string,
-    string | number | boolean | (string | number | boolean)[]
-  >;
+  params?: JSONValue;
 };
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
