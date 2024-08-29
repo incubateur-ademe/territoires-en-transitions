@@ -15,6 +15,11 @@ export type DonneesSectorisees = ReturnType<
   typeof useDonneesSectoriseesIndicateur
 >;
 
+type Source = {
+  id: string;
+  nom: string;
+};
+
 /** Charge les données
  *  sectorisées pour le dialogue "Lancer un calcul" */
 export const useDonneesSectorisees = () => {
@@ -49,10 +54,11 @@ const useDonneesSectoriseesIndicateur = (
   const indicateurTrajectoire = getIndicateurTrajectoire(id);
 
   const identifiants = indicateurTrajectoire.secteurs.map(s => s.identifiant);
+  const sourcesVoulues = indicateurTrajectoire.sources;
 
   const {data, ...rest} = useIndicateurValeurs({
     identifiants_referentiel: identifiants,
-    sources: indicateurTrajectoire.sources as unknown as string[],
+    sources: sourcesVoulues as unknown as string[],
     date_debut: DATE_DEBUT,
     date_fin: `${ANNEE_REFERENCE}-12-31`,
   });
@@ -60,15 +66,21 @@ const useDonneesSectoriseesIndicateur = (
   const indicateurs = data?.indicateurs ?? null;
 
   // sources distinctes disponibles
-  const sources = indicateurs
+  const sourcesDispo = indicateurs
     ? [...new Set(indicateurs.flatMap(i => Object.keys(i.sources)))].map(
         id => ({id, nom: getNomSource(id)})
       )
     : null;
+  const sources = sourcesDispo
+    ? (sourcesVoulues
+        .map(s => sourcesDispo.find(sd => sd.id === s))
+        .filter(s => !!s) as Source[])
+    : null;
 
-  // malhereusement l'API ne remonte pas les définitions pour lesquelles il n'y a pas de valeurs
+  // Malheureusement l'API ne remonte pas les définitions pour lesquelles il n'y a pas de valeurs
   // on ne peut alors pas insérer de nouvelles valeurs puisqu'on n'a pas les correspondances
-  // identifiant_referentiel => indicateur_id
+  // identifiant_referentiel => indicateur_id.
+  // On charge donc les définitions manquantes.
   // TODO : à changer côté backend et à supprimer ?
   const idDefinitionsManquantes = !rest.isLoading
     ? identifiants.filter(
