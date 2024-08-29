@@ -1,40 +1,24 @@
-import {Alert, Tab, Tabs} from '@tet/ui';
-import {getIndicateurTrajectoire} from '../constants';
+import {Alert, Button, ModalFooter, RenderProps, Tab, Tabs} from '@tet/ui';
 import {TableauDonnees} from './TableauDonnees';
 import {useDonneesSectorisees} from './useDonneesSectorisees';
+import {useUpsertValeurIndicateur} from './useUpsertValeurIndicateur';
+import {TABS} from './constants';
+import {DATE_DEBUT} from 'app/pages/collectivite/Trajectoire/constants';
+import {useCalculTrajectoire} from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-export type DonneesCollectiviteProps = {};
-
-const TABS = [
-  {
-    id: 'emissions_ges',
-    label: 'Données GES 2015 (ktCO2)',
-    description:
-      "Pour assurer la cohérence des calculs, n'entrer ici que les valeurs au format PCAET. Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant. Si disponibles, privilégiez les données RARE-OREC et utilisez les données CITEPA uniquement en complément.",
-  },
-  {
-    id: 'sequestration_carbone',
-    label: 'Séquestration carbone 2015 (ktCO2)',
-    description:
-      'Attention : en cas de séquestration, entrez des valeurs négatives. Pour ces données, nous recommandons d’utiliser les données issues d’ALDO. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
-  },
-  {
-    id: 'consommations_finales',
-    label: 'Consommation d’énergie 2015 (GWh)',
-    description:
-      'Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
-  },
-] as const;
-
-type TabInfo = (typeof TABS)[number];
+export type DonneesCollectiviteProps = {
+  modalProps: RenderProps;
+};
 
 /**
  * Affiche le contenu de la modale permettant de saisir les données de la
  * collectivité et de lancer un nouveau calcul
  */
-export const DonneesCollectivite = (props: DonneesCollectiviteProps) => {
-  //  const {valeurs} = props;
-  // TODO
+export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
+  const {donneesCompletes, donneesSectorisees} = useDonneesSectorisees();
+  const {mutate: upsertValeur} = useUpsertValeurIndicateur();
+  const {mutate: calcul, isLoading, isSuccess} = useCalculTrajectoire();
 
   return (
     <div className="text-center">
@@ -44,32 +28,70 @@ export const DonneesCollectivite = (props: DonneesCollectiviteProps) => {
         complétant les données ci-après. Les données à entrer sont les résultats
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
-      <Tabs defaultActiveTab={1} onChange={() => {}}>
-        {TABS.map(tab => (
-          <OngletDonnees key={tab.id} tab={tab} />
-        ))}
+      <Tabs defaultActiveTab={0} onChange={() => {}}>
+        {TABS.map(tab => {
+          const {data} = donneesSectorisees[tab.id];
+          const {
+            sources,
+            valeursSecteurs,
+            indicateurTrajectoire,
+            donneesCompletes,
+          } = data || {};
+          return (
+            <Tab
+              key={tab.id}
+              label={tab.label}
+              {...getTabProps(donneesCompletes)}
+            >
+              <Alert
+                className="text-left"
+                state="info"
+                description={tab.description}
+              />
+              {sources && valeursSecteurs && (
+                <TableauDonnees
+                  indicateur={indicateurTrajectoire}
+                  valeursSecteurs={valeursSecteurs}
+                  sources={sources}
+                  onChange={({indicateur_id, valeur}) => {
+                    upsertValeur({
+                      indicateur_id,
+                      date_valeur: DATE_DEBUT,
+                      resultat: valeur,
+                    });
+                  }}
+                />
+              )}
+            </Tab>
+          );
+        })}
       </Tabs>
+      <ModalFooter variant="right">
+        <Button variant="outlined" onClick={() => modalProps.close()}>
+          Annuler
+        </Button>
+        <Button
+          icon={!isLoading ? 'arrow-right-line' : undefined}
+          iconPosition="right"
+          disabled={!donneesCompletes || !isLoading}
+          onClick={() => {
+            calcul();
+            if (isSuccess) {
+              modalProps.close();
+            }
+          }}
+        >
+          {isLoading ? (
+            <>
+              Calcul en cours
+              <SpinnerLoader />
+            </>
+          ) : (
+            'Voir le résultat'
+          )}
+        </Button>
+      </ModalFooter>
     </div>
-  );
-};
-
-const OngletDonnees = ({tab}: {tab: TabInfo}) => {
-  const indicateur = getIndicateurTrajectoire(tab.id);
-  const {data} = useDonneesSectorisees(indicateur);
-  const {sources, valeursSecteurs} = data || {};
-
-  return (
-    <Tab label={tab.label} {...getTabProps(true)}>
-      <Alert className="text-left" state="info" description={tab.description} />
-      {sources && valeursSecteurs && (
-        <TableauDonnees
-          indicateur={indicateur}
-          valeursSecteurs={valeursSecteurs}
-          sources={sources}
-          onChange={args => console.log('TODO: save changes', args)}
-        />
-      )}
-    </Tab>
   );
 };
 
