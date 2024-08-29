@@ -1,4 +1,4 @@
-import {Alert, Button, Card} from '@tet/ui';
+import {Alert, Button, Card, Modal} from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
 import {useCalculTrajectoire} from './useCalculTrajectoire';
@@ -7,6 +7,7 @@ import {CommuneNonSupportee} from './CommuneNonSupportee';
 import {HELPDESK_URL} from './constants';
 import {ReactComponent as DbErrorPicto} from './db-error.svg';
 import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
+import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -61,11 +62,12 @@ const DonneesNonDispo = () => {
         ainsi visualiser facilement votre trajectoire SNBC territorialisée et la
         comparer aux objectifs fixés et résultats observés.
       </p>
-      <Alert
-        className="self-stretch"
-        title="Revenez dans quelques jours !"
-        description="Dans la prochaine version, vous pourrez compléter vos données et ainsi calculer votre trajectoire."
-      />
+      <Modal
+        size="xl"
+        render={props => <DonneesCollectivite modalProps={props} />}
+      >
+        <Button>Compléter mes données</Button>
+      </Modal>
     </Card>
   );
 };
@@ -77,7 +79,7 @@ const ErreurDeChargement = () => {
   return (
     <Alert
       state="error"
-      className="self-stretch"
+      className="self-stretch my-8"
       title="Erreur lors du chargement des données"
       description="Veuillez ré-essayer dans quelques instants. Si le problème persiste merci de contacter le support."
     />
