@@ -50,3 +50,24 @@ export const useIndicateurDefinitions = (
   );
   return data;
 };
+
+/** Charge la définition détaillée de plusieurs indicateurs référentiels */
+export const useIndicateurReferentielDefinitions = (
+  identifiantsReferentiel: string[]
+) => {
+  const collectiviteId = useCollectiviteId();
+
+  const {data} = useQuery(
+    ['indicateur_definitions', collectiviteId, identifiantsReferentiel],
+    async () => {
+      if (!collectiviteId || !identifiantsReferentiel?.length) return;
+      return Indicateurs.fetch.selectIndicateurReferentielDefinitions(
+        supabaseClient,
+        identifiantsReferentiel,
+        collectiviteId
+      );
+    },
+    DISABLE_AUTO_REFETCH
+  );
+  return data;
+};
