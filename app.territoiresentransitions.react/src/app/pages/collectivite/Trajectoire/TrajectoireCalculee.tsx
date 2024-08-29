@@ -1,4 +1,4 @@
-import {Button, ButtonGroup, Card, Tabs, Tab, Alert} from '@tet/ui';
+import {Button, ButtonGroup, Card, Tabs, Tab, Alert, Modal} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
@@ -11,6 +11,7 @@ import {AllerPlusLoin} from './AllerPlusLoin';
 import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
 import {DonneesPartiellementDisponibles} from './DonneesPartiellementDisponibles';
+import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
 
 const defaultParams = {indicateurIdx: ['0'], secteurIdx: ['0']};
 const nameToparams: Record<keyof typeof defaultParams, string> = {
@@ -58,7 +59,12 @@ export const TrajectoireCalculee = () => {
             En savoir plus
           </Button>
         </div>
-        <Button size="sm">Calculer une nouvelle trajectoire</Button>
+        <Modal
+          size="xl"
+          render={props => <DonneesCollectivite modalProps={props} />}
+        >
+          <Button size="sm">Calculer une nouvelle trajectoire</Button>
+        </Modal>
       </div>
 
       <hr />
