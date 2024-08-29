@@ -40,9 +40,6 @@ export async function fetchFilteredIndicateurs(
       if (part) parts.add(part);
     }
   }
-  if (filters.categorieNoms !== null && !filters.estPerso) {
-    parts.add('categorie_tag!inner(id,nom,collectivite_id,groupement_id)');
-  }
 
   // Partie nécessaire pour :
   // - (toujours) récupérer la présence de valeurs open-data associées
