@@ -46,7 +46,7 @@ export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
           collectivite_id: collectiviteId,
           ...(args?.nouveauCalcul
             ? {
-                mode: 'nouveau_spreadsheet',
+                mode: 'maj_spreadsheet_existant',
                 force_utilisation_donnees_collectivite: true,
               }
             : {}),
