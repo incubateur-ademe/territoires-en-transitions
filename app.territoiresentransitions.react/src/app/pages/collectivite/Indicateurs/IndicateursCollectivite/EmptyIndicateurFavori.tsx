@@ -1,13 +1,17 @@
 import {Button} from '@tet/ui';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 const EmptyIndicateurFavori = () => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id;
+
+  const isReadonly = collectivite?.readonly ?? false;
+
   const history = useHistory();
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
@@ -35,17 +39,21 @@ const EmptyIndicateurFavori = () => {
           >
             Explorer les indicateurs
           </Button>
-          <Button
-            variant="outlined"
-            onClick={() => setIsNewIndicateurOpen(true)}
-          >
-            Créer un indicateur
-          </Button>
-          {isNewIndicateurOpen && (
-            <ModaleCreerIndicateur
-              isOpen={isNewIndicateurOpen}
-              setIsOpen={setIsNewIndicateurOpen}
-            />
+          {!isReadonly && (
+            <>
+              <Button
+                variant="outlined"
+                onClick={() => setIsNewIndicateurOpen(true)}
+              >
+                Créer un indicateur
+              </Button>
+              {isNewIndicateurOpen && (
+                <ModaleCreerIndicateur
+                  isOpen={isNewIndicateurOpen}
+                  setIsOpen={setIsNewIndicateurOpen}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
