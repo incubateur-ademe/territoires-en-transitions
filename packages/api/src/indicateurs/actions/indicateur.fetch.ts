@@ -368,6 +368,23 @@ export async function selectIndicateurListItems(
 }
 
 /**
+ * Récupère la liste des id des indicateurs favoris de la collectivité
+ * @param dbClient
+ * @param collectiviteId
+ * @returns
+ */
+export async function selectIndicateursFavorisCollectiviteIds(
+  dbClient: DBClient,
+  collectiviteId: number
+) {
+  return await dbClient
+    .from('indicateur_collectivite')
+    .select(`indicateur_id`, {count: 'exact'})
+    .eq('collectivite_id', collectiviteId)
+    .eq('favoris', true);
+}
+
+/**
  * Récupère les valeurs d'un indicateur
  * @param dbClient client supabase
  * @param indicateurId identifiant de l'indicateur

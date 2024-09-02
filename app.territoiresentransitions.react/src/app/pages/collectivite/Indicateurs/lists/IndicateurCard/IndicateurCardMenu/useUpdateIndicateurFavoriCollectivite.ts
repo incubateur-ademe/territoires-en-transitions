@@ -28,6 +28,10 @@ export const useUpdateIndicateurFavoriCollectivite = (
           collectiviteId,
           indicateurId,
         ]);
+        queryClient.invalidateQueries([
+          'indicateurs_favoris_collectivite',
+          collectiviteId,
+        ]);
       },
     }
   );
