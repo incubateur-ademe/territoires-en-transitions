@@ -1,9 +1,10 @@
-import {Button, Card} from '@tet/ui';
+import {Button, Card, useEventTracker} from '@tet/ui';
 import {useDownloadFile} from 'utils/useDownloadFile';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {useTelechargementModele} from './useTelechargementModele';
 import {DOC_METHODO} from './constants';
 import {ReactComponent as DbErrorPicto} from './db-error.svg';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Affiche un message pour les communes.
@@ -14,6 +15,8 @@ export const CommuneNonSupportee = () => {
     useTelechargementModele();
   const {mutate: downloadFile, isLoading: isDownloadingFile} =
     useDownloadFile();
+  const trackEvent = useEventTracker('app/trajectoires/snbc');
+  const collectivite_id = useCollectiviteId()!;
 
   return (
     <Card className="flex items-center my-16">
@@ -48,7 +51,10 @@ export const CommuneNonSupportee = () => {
         </Button>
         <Button
           variant="outlined"
-          onClick={() => downloadFile(DOC_METHODO)}
+          onClick={() => {
+            trackEvent('cta_download', {collectivite_id, file: 'methodo'});
+            downloadFile(DOC_METHODO);
+          }}
           disabled={isDownloadingFile}
         >
           Télécharger la méthodologie (.pdf)

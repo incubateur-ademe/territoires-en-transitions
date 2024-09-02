@@ -190,6 +190,17 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /** Trajectoire SNBC territorialisée */
+  'app/trajectoires/snbc': {
+    properties: {collectivite_id: number; statut?: string};
+    onglets: 'emissions_ges' | 'consommations_finales';
+    events: {
+      cta_lancer_calcul: {source: 'open_data' | 'collectivite'};
+      cta_download: {file: 'modele' | 'donnees' | 'methodo'};
+      selection_secteur: {secteur: string};
+    };
+  };
+
   /* La page à la racine de https://auth.territoiresentransitions.fr */
   'auth/': NoProps;
 

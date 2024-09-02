@@ -3,6 +3,7 @@ import {Indicateurs} from '@tet/api';
 import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {getStatusKey} from './useStatutTrajectoire';
+import {useEventTracker} from '@tet/ui';
 
 export type ResultatTrajectoire = {
   trajectoire: {
@@ -35,12 +36,17 @@ export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
   const queryClient = useQueryClient();
+  const trackEvent = useEventTracker('app/trajectoires/snbc');
 
   return useMutation(
     getKey(collectiviteId),
-    async () =>
-      collectiviteId &&
-      api.get<ResultatTrajectoire>({
+    async () => {
+      if (!collectiviteId) return;
+      trackEvent('cta_lancer_calcul', {
+        collectivite_id: collectiviteId,
+        source: args?.nouveauCalcul ? 'collectivite' : 'open_data',
+      });
+      return api.get<ResultatTrajectoire>({
         route: '/trajectoires/snbc',
         params: {
           collectivite_id: collectiviteId,
@@ -51,7 +57,8 @@ export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
               }
             : {}),
         },
-      }),
+      });
+    },
     {
       retry: false,
       onSuccess: data => {

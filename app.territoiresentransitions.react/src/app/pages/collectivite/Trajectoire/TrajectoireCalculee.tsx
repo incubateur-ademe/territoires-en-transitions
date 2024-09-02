@@ -1,4 +1,14 @@
-import {Button, ButtonGroup, Card, Tabs, Tab, Alert, Modal} from '@tet/ui';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Tabs,
+  Tab,
+  Alert,
+  Modal,
+  useOngletTracker,
+  useEventTracker,
+} from '@tet/ui';
 import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
@@ -49,6 +59,9 @@ export const TrajectoireCalculee = () => {
     donneesSectoriellesIncompletes,
   } = useResultatTrajectoire({indicateur, secteurIdx, coef: indicateur.coef});
 
+  const trackTab = useOngletTracker('app/trajectoires/snbc');
+  const trackEvent = useEventTracker('app/trajectoires/snbc', indicateur.id);
+
   return (
     <div className="grow py-12">
       {/** En-tête */}
@@ -78,8 +91,13 @@ export const TrajectoireCalculee = () => {
           buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
             id,
             children: nom,
-            onClick: () =>
-              setParams({indicateurIdx: [String(idx)], secteurIdx: ['0']}),
+            onClick: () => {
+              trackTab(id, {collectivite_id: collectiviteId});
+              return setParams({
+                indicateurIdx: [String(idx)],
+                secteurIdx: ['0'],
+              });
+            },
           }))}
         />
         {
@@ -87,9 +105,13 @@ export const TrajectoireCalculee = () => {
           !!indicateur?.secteurs && (
             <Tabs
               defaultActiveTab={secteurIdx}
-              onChange={idx =>
-                setParams({...params, secteurIdx: [String(idx)]})
-              }
+              onChange={idx => {
+                trackEvent('selection_secteur', {
+                  collectivite_id: collectiviteId,
+                  secteur: indicateur?.secteurs[idx]?.identifiant,
+                });
+                return setParams({...params, secteurIdx: [String(idx)]});
+              }}
               size="sm"
             >
               {secteurs.map(({nom}) => (
