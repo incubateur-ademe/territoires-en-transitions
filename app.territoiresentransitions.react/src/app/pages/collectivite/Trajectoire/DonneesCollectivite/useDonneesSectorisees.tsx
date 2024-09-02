@@ -8,7 +8,7 @@ import {
   SourceIndicateur,
 } from '../constants';
 import {useIndicateurValeurs} from '../useIndicateurValeurs';
-import {TabId} from './constants';
+import {TabId, TABS} from './constants';
 
 export type DonneesSectorisees = ReturnType<
   typeof useDonneesSectoriseesIndicateur
@@ -52,7 +52,12 @@ const useDonneesSectoriseesIndicateur = (
 ) => {
   const indicateurTrajectoire = getIndicateurTrajectoire(id);
 
-  const identifiants = indicateurTrajectoire.secteurs.map(s => s.identifiant);
+  const onglet = TABS.find(t => t.id === id);
+  const secteurs =
+    onglet && 'secteurs' in onglet
+      ? onglet.secteurs
+      : indicateurTrajectoire.secteurs;
+  const identifiants = secteurs.map(s => s.identifiant);
   const sourcesVoulues = indicateurTrajectoire.sources;
 
   const {data, ...rest} = useIndicateurValeurs({
@@ -121,6 +126,7 @@ const useDonneesSectoriseesIndicateur = (
     data: {
       indicateurTrajectoire,
       indicateurs,
+      secteurs,
       sources,
       valeursSecteurs,
       donneesCompletes,
