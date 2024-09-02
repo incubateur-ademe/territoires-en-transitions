@@ -1656,6 +1656,27 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "<p>Somme des transports routiers et autres transports.</p>\n",
+      "id": "cae_2.m",
+      "identifiant": "2.m",
+      "nom": "Consommation \u00e9nerg\u00e9tique - transports",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique secteur transports",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_2.3.1"
       ],
@@ -3609,6 +3630,153 @@
       "source": null,
       "thematiques": [],
       "titre_long": "S\u00e9questration dans les autres sols",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.e",
+      "identifiant": "63.e",
+      "nom": "S\u00e9questration de CO2 dans les cultures",
+      "parent": "cae_63.c",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les cultures",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.f",
+      "identifiant": "63.f",
+      "nom": "S\u00e9questration de CO2 dans les prairies",
+      "parent": "cae_63.c",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les prairies",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.g",
+      "identifiant": "63.g",
+      "nom": "S\u00e9questration de CO2 dans les zones humides",
+      "parent": "cae_63.d",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les zones humides",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.h",
+      "identifiant": "63.h",
+      "nom": "S\u00e9questration de CO2 dans les sols artificiels",
+      "parent": "cae_63.d",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les sols artificiels",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.i",
+      "identifiant": "63.i",
+      "nom": "S\u00e9questration de CO2 dans les produits bois",
+      "parent": "cae_63.d",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les produits bois",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.j",
+      "identifiant": "63.j",
+      "nom": "S\u00e9questration de CO2 dans les vignes",
+      "parent": "cae_63.c",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les vignes",
+      "type": null,
+      "unite": "teq CO2",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_63.k",
+      "identifiant": "63.k",
+      "nom": "S\u00e9questration de CO2 dans les vergers",
+      "parent": "cae_63.d",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "pcaet"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "S\u00e9questration de CO2 dans les vergers",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
