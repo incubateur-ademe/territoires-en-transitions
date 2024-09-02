@@ -164,14 +164,35 @@ export default class IndicateursService {
     );
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
       {};
-    const uniqueIndicateurDefinitions = Object.values(
-      indicateurValeurs.reduce((acc, v) => {
-        if (v.indicateur_definition?.id) {
-          acc[v.indicateur_definition.id.toString()] = v.indicateur_definition;
+    let uniqueIndicateurDefinitions: IndicateurDefinitionType[];
+    if (!options.identifiants_referentiel?.length) {
+      uniqueIndicateurDefinitions = Object.values(
+        indicateurValeurs.reduce((acc, v) => {
+          if (v.indicateur_definition?.id) {
+            acc[v.indicateur_definition.id.toString()] =
+              v.indicateur_definition;
+          }
+          return acc;
+        }, initialDefinitionsAcc),
+      ) as IndicateurDefinitionType[];
+    } else {
+      uniqueIndicateurDefinitions =
+        await this.getReferentielIndicateurDefinitions(
+          options.identifiants_referentiel,
+        );
+      options.identifiants_referentiel.forEach((identifiant) => {
+        if (
+          !uniqueIndicateurDefinitions.find(
+            (d) => d.identifiant_referentiel === identifiant,
+          )
+        ) {
+          this.logger.warn(
+            `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`,
+          );
         }
-        return acc;
-      }, initialDefinitionsAcc),
-    ) as IndicateurDefinitionType[];
+      });
+    }
+
     uniqueIndicateurDefinitions.sort((a, b) => {
       if (!a.identifiant_referentiel && !b.identifiant_referentiel) {
         return 0;
@@ -203,6 +224,7 @@ export default class IndicateursService {
         indicateurValeursSeules,
         uniqueIndicateurDefinitions,
         uniqueIndicateurMetadonnees,
+        false,
       );
     return { indicateurs: indicateurValeurGroupeesParSource };
   }
@@ -211,7 +233,7 @@ export default class IndicateursService {
     this.logger.log(
       `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(',')}`,
     );
-    return this.databaseService.db
+    const definitions = await this.databaseService.db
       .select()
       .from(indicateurDefinitionTable)
       .where(
@@ -220,6 +242,8 @@ export default class IndicateursService {
           identifiantsReferentiel,
         ),
       );
+    this.logger.log(`${definitions.length} définitions trouvées`);
+    return definitions;
   }
 
   async upsertIndicateurValeurs(
@@ -425,6 +449,7 @@ export default class IndicateursService {
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
     indicateurMetadonnees: IndicateurSourceMetadonneeType[],
+    supprimeIndicateursSansValeurs = true,
   ): IndicateurAvecValeursParSource[] {
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
       {};
@@ -505,8 +530,13 @@ export default class IndicateursService {
         return IndicateurAvecValeursParSource;
       },
     );
-    return indicateurAvecValeurs.filter(
-      (i) => Object.keys(i.sources).length > 0,
-    );
+
+    if (supprimeIndicateursSansValeurs) {
+      return indicateurAvecValeurs.filter(
+        (i) => Object.keys(i.sources).length > 0,
+      );
+    } else {
+      return indicateurAvecValeurs;
+    }
   }
 }
