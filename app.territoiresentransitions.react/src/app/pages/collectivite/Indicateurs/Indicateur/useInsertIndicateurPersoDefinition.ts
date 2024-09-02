@@ -17,9 +17,11 @@ export const useInsertIndicateurPersoDefinition = (options?: {
     mutationFn: async ({
       definition,
       ficheId,
+      isFavoriCollectivite,
     }: {
       definition: TIndicateurPersoDefinitionWrite;
       ficheId?: number | null;
+      isFavoriCollectivite?: boolean;
     }) => {
       const indicateurId = await Indicateurs.save.insertIndicateurDefinition(
         supabaseClient,
@@ -34,6 +36,14 @@ export const useInsertIndicateurPersoDefinition = (options?: {
             indicateurId,
             collectiviteId,
             [ficheId]
+          );
+        }
+        if (isFavoriCollectivite) {
+          Indicateurs.save.updateIndicateurFavoriCollectivite(
+            supabaseClient,
+            indicateurId,
+            collectiviteId,
+            isFavoriCollectivite
           );
         }
       }
