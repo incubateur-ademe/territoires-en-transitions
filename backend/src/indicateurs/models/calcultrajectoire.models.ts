@@ -88,6 +88,8 @@ export class CalculTrajectoireResponseDonnees {
   @ValidateNested({ each: true })
   @Type(() => IndicateurAvecValeurs)
   consommations_finales: IndicateurAvecValeurs[];
+
+  sequestrations: IndicateurAvecValeurs[];
 }
 
 export class CalculTrajectoireResponse {
@@ -124,4 +126,5 @@ export class DonneesCalculTrajectoireARemplir {
   source: string;
   emissions_ges: DonneesARemplirResult;
   consommations_finales: DonneesARemplirResult;
+  sequestrations: DonneesARemplirResult;
 }
