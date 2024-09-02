@@ -18,8 +18,8 @@ import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/Indic
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
 import {OpenState} from '@tet/ui/dist/utils/types';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 
 type sortByOptionsType = {
   label: string;
@@ -72,7 +72,10 @@ const IndicateursListe = ({
 }: Props) => {
   const tracker = useEventTracker('app/indicateurs/tous');
 
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectivite_id;
+
+  const isReadonly = collectivite?.readonly ?? false;
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -237,6 +240,7 @@ const IndicateursListe = ({
                 hideChart={!displayGraphs}
                 autoRefresh
                 isEditable={isEditable}
+                readonly={isReadonly}
               />
             ))}
           </div>
