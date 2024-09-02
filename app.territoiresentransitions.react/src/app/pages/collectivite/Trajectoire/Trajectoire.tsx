@@ -1,4 +1,4 @@
-import {Alert, Button, Card, Modal} from '@tet/ui';
+import {Alert, Button, Card, Modal, TrackPageView} from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
 import {useCalculTrajectoire} from './useCalculTrajectoire';
@@ -8,12 +8,15 @@ import {HELPDESK_URL} from './constants';
 import {ReactComponent as DbErrorPicto} from './db-error.svg';
 import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
 import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
  */
-const TrajectoireContent = () => {
-  const {data, error, isLoading} = useStatutTrajectoire();
+const TrajectoireContent = (props: {
+  statut: ReturnType<typeof useStatutTrajectoire>;
+}) => {
+  const {data, error, isLoading} = props.statut;
   if (isLoading) {
     return (
       <div className="h-56 flex justify-center items-center">
@@ -139,12 +142,27 @@ const Presentation = () => {
 /**
  * Point d'entrée
  */
-const Trajectoire = () => (
-  <div className="bg-grey-2 -mb-8">
-    <div className="fr-container flex flex-col gap-16">
-      <TrajectoireContent />
+const Trajectoire = () => {
+  const statut = useStatutTrajectoire();
+  const {data, isLoading} = statut;
+  const collectivite_id = useCollectiviteId()!;
+
+  return (
+    <div className="bg-grey-2 -mb-8">
+      {!isLoading && (
+        <TrackPageView
+          pageName="app/trajectoires/snbc"
+          properties={{
+            collectivite_id,
+            statut: data && data.status ? data.status : 'error',
+          }}
+        />
+      )}
+      <div className="fr-container flex flex-col gap-16">
+        <TrajectoireContent statut={statut} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Trajectoire;
