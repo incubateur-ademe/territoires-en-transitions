@@ -1,12 +1,7 @@
 import classNames from 'classnames';
 import {useDebouncedCallback} from 'use-debounce';
 import {Table, THead, TBody, TRow, THeadCell, TCell, Input} from '@tet/ui';
-import {
-  getNomSource,
-  IndicateurTrajectoire,
-  SEQUESTRATION_CARBONE,
-  SourceIndicateur,
-} from '../constants';
+import {getNomSource, SourceIndicateur} from '../constants';
 
 type Source = {
   id: string;
@@ -19,9 +14,14 @@ type Valeur = {
   valeur: number | null;
 };
 
+export type Secteur = {
+  identifiant: string;
+  nom: string;
+};
+
 type TableauDonneesProps = {
   /** secteurs à afficher dans le tableau */
-  indicateur: IndicateurTrajectoire | typeof SEQUESTRATION_CARBONE;
+  secteurs: Secteur[];
   /** données sectorielles */
   valeursSecteurs: (
     | {
@@ -49,7 +49,7 @@ const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
  * collectivité. Ces dernières sont éditables.
  */
 export const TableauDonnees = (props: TableauDonneesProps) => {
-  const {indicateur, sources: sourcesDispo} = props;
+  const {secteurs, sources: sourcesDispo} = props;
   // pour toujours avoir la colonne "Données de la collectivité"
   // même si aucune donnée n'est encore disponible pour cette source
   const sources = sourcesDispo?.find(
@@ -82,7 +82,7 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
         </TRow>
       </THead>
       <TBody>
-        {indicateur.secteurs.map(secteur => {
+        {secteurs.map(secteur => {
           return (
             <TRow key={secteur.identifiant}>
               <TCell variant="title">{secteur.nom}</TCell>

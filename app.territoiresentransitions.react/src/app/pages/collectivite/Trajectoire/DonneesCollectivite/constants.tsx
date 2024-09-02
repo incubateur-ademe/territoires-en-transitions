@@ -4,6 +4,41 @@ export const TABS = [
     label: 'Données GES 2015 (ktCO2)',
     description:
       "Pour assurer la cohérence des calculs, n'entrer ici que les valeurs au format PCAET. Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant. Si disponibles, privilégiez les données RARE-OREC et utilisez les données CITEPA uniquement en complément.",
+    // pour cette trajectoire, les secteurs d'entrée sont différents des secteurs de sortie de la trajectoire définis dans `../constants.ts`
+    secteurs: [
+      {
+        nom: 'Résidentiel',
+        identifiant: 'cae_1.c',
+      },
+      {
+        nom: 'Tertiaire',
+        identifiant: 'cae_1.d',
+      },
+      {
+        nom: 'Industrie hors branche énergie',
+        identifiant: 'cae_1.i',
+      },
+      {
+        nom: 'Agriculture',
+        identifiant: 'cae_1.g',
+      },
+      {
+        nom: 'Transports routier',
+        identifiant: 'cae_1.e',
+      },
+      {
+        nom: 'Autres transports',
+        identifiant: 'cae_1.f',
+      },
+      {
+        nom: 'Déchets',
+        identifiant: 'cae_1.h',
+      },
+      {
+        nom: 'Branche énergie',
+        identifiant: 'cae_1.j',
+      },
+    ],
   },
   {
     id: 'sequestration_carbone',

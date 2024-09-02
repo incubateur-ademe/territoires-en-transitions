@@ -1,5 +1,5 @@
 import {Alert, Button, ModalFooter, RenderProps, Tab, Tabs} from '@tet/ui';
-import {TableauDonnees} from './TableauDonnees';
+import {Secteur, TableauDonnees} from './TableauDonnees';
 import {useDonneesSectorisees} from './useDonneesSectorisees';
 import {useUpsertValeurIndicateur} from './useUpsertValeurIndicateur';
 import {TABS} from './constants';
@@ -35,12 +35,8 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
       <Tabs defaultActiveTab={0} onChange={() => {}}>
         {TABS.map(tab => {
           const {data} = donneesSectorisees[tab.id];
-          const {
-            sources,
-            valeursSecteurs,
-            indicateurTrajectoire,
-            donneesCompletes,
-          } = data || {};
+          const {secteurs, sources, valeursSecteurs, donneesCompletes} =
+            data || {};
           return (
             <Tab
               key={tab.id}
@@ -54,8 +50,8 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
               />
               {sources && valeursSecteurs && (
                 <TableauDonnees
-                  indicateur={indicateurTrajectoire}
                   valeursSecteurs={valeursSecteurs}
+                  secteurs={secteurs as unknown as Secteur[]}
                   sources={sources}
                   onChange={({indicateur_id, valeur}) => {
                     upsertValeur({
