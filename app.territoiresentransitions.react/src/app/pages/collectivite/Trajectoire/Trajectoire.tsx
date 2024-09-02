@@ -98,21 +98,25 @@ const Presentation = () => {
   return (
     <div className="flex flex-row gap-14 py-12">
       <div className="w-3/5">
-        <h1>Je calcule ma trajectoire SNBC territorialisée</h1>
+        <h1>
+          Calculez votre trajectoire de transition écologique avec la méthode
+          développée par l’ADEME.
+        </h1>
         <p className="font-bold text-lg">
-          La trajectoire SNBC territorialisée n’est aucunement prescriptive.
-          <br />
-          C’est un outil d’aide à la décision, un point de repère pour :
+          C’est un excellent outil stratégique pour :
         </p>
         <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
           <li>
-            Définir vos objectifs ou les interroger lorsque ceux-ci sont définis
-            (par exemple à l’occasion d’un suivi annuel ou d’un bilan à
-            mi-parcours d’un PCAET)
+            Définir ou évaluer vos objectifs, par exemple lors d'un suivi annuel
+            ou d'un bilan à mi-parcours de PCAET
           </li>
-          <li>Quantifier les efforts à réaliser secteur par secteur</li>
-          <li>Identifier sa contribution à la SNBC</li>
+          <li>Quantifier les efforts nécessaires secteur par secteur</li>
+          <li>Identifier votre contribution à la SNBC</li>
         </ul>
+        <p className="text-lg mt-2">
+          Cette trajectoire n'est pas prescriptive, mais peut constituer un
+          repère pour guider votre stratégie, vos actions.
+        </p>
         <Button
           size="md"
           variant="underlined"
