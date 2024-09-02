@@ -9,7 +9,9 @@ import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { TrajectoiresRouter } from './routers/trajectoires.router';
 import IndicateursService from './services/indicateurs.service';
 import IndicateurSourcesService from './services/indicateurSources.service';
-import TrajectoiresService from './services/trajectoires.service';
+import TrajectoiresDataService from './services/trajectoires-data.service';
+import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
+import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
 
 @Module({
   imports: [
@@ -22,15 +24,12 @@ import TrajectoiresService from './services/trajectoires.service';
   providers: [
     IndicateurSourcesService,
     IndicateursService,
-    TrajectoiresService,
+    TrajectoiresDataService,
+    TrajectoiresSpreadsheetService,
+    TrajectoiresXlsxService,
     TrajectoiresRouter,
   ],
-  exports: [
-    IndicateurSourcesService,
-    IndicateursService,
-    TrajectoiresService,
-    TrajectoiresRouter,
-  ],
+  exports: [IndicateurSourcesService, IndicateursService, TrajectoiresRouter],
   controllers: [IndicateursController, TrajectoiresController],
 })
 export class IndicateursModule {}
