@@ -17,6 +17,9 @@ export const upsertIndicateursValeursRequestSchema = extendApi(
       title: 'Valeurs des indicateurs à insérer ou mettre à jour',
     }),
 );
+export type UpsertIndicateursValeursRequestType = z.infer<
+  typeof upsertIndicateursValeursRequestSchema
+>;
 export class UpsertIndicateursValeursRequest extends createZodDto(
   upsertIndicateursValeursRequestSchema,
 ) {}

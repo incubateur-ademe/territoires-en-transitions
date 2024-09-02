@@ -1,17 +1,40 @@
+import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
-import CollectiviteRequest from '../../collectivites/models/collectivite.request';
+import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
 import {
-  CalculTrajectoireRequest,
-  CalculTrajectoireResponse,
-  ModeleTrajectoireTelechargementRequest,
-  VerificationTrajectoireRequest,
+  calculTrajectoireRequestSchema,
+  calculTrajectoireResponseSchema,
+  modeleTrajectoireTelechargementRequestSchema,
+  verificationDonneesSNBCResponseSchema,
+  verificationTrajectoireRequestSchema,
 } from '../models/calcultrajectoire.models';
 import TrajectoiresService from '../service/trajectoires.service';
+
+/**
+ * Create a class-based DTO from the schema in order to be able to generate automatically the OpenAPI documentation and validate the request payload
+ */
+export class CalculTrajectoireResponseClass extends createZodDto(
+  calculTrajectoireResponseSchema,
+) {}
+export class CalculTrajectoireRequestClass extends createZodDto(
+  calculTrajectoireRequestSchema,
+) {}
+
+export class ModeleTrajectoireTelechargementRequestClass extends createZodDto(
+  modeleTrajectoireTelechargementRequestSchema,
+) {}
+
+export class VerificationTrajectoireRequestClass extends createZodDto(
+  verificationTrajectoireRequestSchema,
+) {}
+export class VerificationDonneesSNBCResponseClass extends createZodDto(
+  verificationDonneesSNBCResponseSchema,
+) {}
 
 @Controller('trajectoires')
 export class TrajectoiresController {
@@ -20,11 +43,11 @@ export class TrajectoiresController {
   constructor(private readonly trajectoiresService: TrajectoiresService) {}
 
   @Get('snbc')
-  @ApiResponse({ type: CalculTrajectoireResponse })
+  @ApiResponse({ type: CalculTrajectoireResponseClass })
   async calculeTrajectoireSnbc(
-    @Query() request: CalculTrajectoireRequest,
+    @Query() request: CalculTrajectoireRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
-  ): Promise<CalculTrajectoireResponse> {
+  ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
       `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
@@ -36,8 +59,12 @@ export class TrajectoiresController {
 
   @PublicEndpoint()
   @Get('snbc/modele')
+  @ApiOkResponse({
+    description:
+      'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC',
+  })
   downloadModeleSnbc(
-    @Query() request: ModeleTrajectoireTelechargementRequest,
+    @Query() request: ModeleTrajectoireTelechargementRequestClass,
     @Res() res: Response,
     @Next() next: NextFunction,
   ) {
@@ -46,8 +73,12 @@ export class TrajectoiresController {
   }
 
   @Get('snbc/telechargement')
+  @ApiOkResponse({
+    description:
+      'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC prérempli avec les données de la collectivité',
+  })
   downloadDataSnbc(
-    @Query() request: CollectiviteRequest,
+    @Query() request: CollectiviteRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
     @Res() res: Response,
     @Next() next: NextFunction,
@@ -64,10 +95,15 @@ export class TrajectoiresController {
   }
 
   @Get('snbc/verification')
+  @ApiOkResponse({
+    type: VerificationDonneesSNBCResponseClass,
+    description:
+      'Status pour savoir si le calcul de la trajectoire SNBC est possible et données qui seront utilisées',
+  })
   async verificationDonneesSnbc(
-    @Query() request: VerificationTrajectoireRequest,
+    @Query() request: VerificationTrajectoireRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
-  ) {
+  ): Promise<VerificationDonneesSNBCResponseClass> {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );

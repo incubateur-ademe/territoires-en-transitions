@@ -13,19 +13,21 @@ import * as XlsxTemplate from 'xlsx-template';
 import { NiveauAcces, SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/collectivite.models';
-import CollectiviteRequest from '../../collectivites/models/collectivite.request';
+import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
-  CalculTrajectoireRequest,
+  CalculTrajectoireRequestType,
   CalculTrajectoireReset,
-  CalculTrajectoireResult,
+  CalculTrajectoireResultType,
   CalculTrajectoireResultatMode,
-  DonneesARemplirResult,
-  DonneesARemplirValeur,
-  DonneesCalculTrajectoireARemplir,
-  ModeleTrajectoireTelechargementRequest,
-  VerificationTrajectoireRequest,
+  DonneesARemplirResultType,
+  DonneesARemplirValeurType,
+  DonneesCalculTrajectoireARemplirType,
+  ModeleTrajectoireTelechargementRequestType,
+  VerificationDonneesSNBCResult,
+  VerificationDonneesSNBCStatus,
+  VerificationTrajectoireRequestType,
 } from '../models/calcultrajectoire.models';
 import {
   CreateIndicateurSourceMetadonneeType,
@@ -35,10 +37,6 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur.models';
-import {
-  VerificationDonneesSNBCResult,
-  VerificationDonneesSNBCStatus,
-} from '../models/verificationDonneesTrajectoire.models';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 
@@ -233,7 +231,7 @@ export default class TrajectoiresService {
   }
 
   async downloadModeleTrajectoireSnbc(
-    request: ModeleTrajectoireTelechargementRequest,
+    request: ModeleTrajectoireTelechargementRequestType,
     res: Response,
     next: NextFunction,
   ) {
@@ -305,7 +303,7 @@ export default class TrajectoiresService {
     siren: {
       siren: number | null;
     },
-    valeurIndicateurs: DonneesCalculTrajectoireARemplir | null,
+    valeurIndicateurs: DonneesCalculTrajectoireARemplirType | null,
   ): Promise<Buffer> {
     // Utilisation de xlsx-template car:
     // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
@@ -382,7 +380,7 @@ export default class TrajectoiresService {
   }
 
   async downloadTrajectoireSnbc(
-    request: CollectiviteRequest,
+    request: CollectiviteRequestType,
     tokenInfo: SupabaseJwtPayload,
     res: Response,
     next: NextFunction,
@@ -453,10 +451,10 @@ export default class TrajectoiresService {
   }
 
   async calculeTrajectoireSnbc(
-    request: CalculTrajectoireRequest,
+    request: CalculTrajectoireRequestType,
     tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
-  ): Promise<CalculTrajectoireResult> {
+  ): Promise<CalculTrajectoireResultType> {
     let mode: CalculTrajectoireResultatMode =
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
 
@@ -587,7 +585,7 @@ export default class TrajectoiresService {
           );
 
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
-        const result: CalculTrajectoireResult = {
+        const result: CalculTrajectoireResultType = {
           mode: mode,
           source_donnees_entree: source,
           spreadsheet_id: trajectoireCalculSheetId,
@@ -757,7 +755,7 @@ export default class TrajectoiresService {
         indicateurResultatSequestrationDefinitions,
       );
 
-    const result: CalculTrajectoireResult = {
+    const result: CalculTrajectoireResultType = {
       mode: mode,
       source_donnees_entree: resultatVerification.donnees_entree.source,
       spreadsheet_id: trajectoireCalculSheetId,
@@ -790,7 +788,7 @@ export default class TrajectoiresService {
     donneesSpreadsheet: any[][] | null,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinitionType[],
-    donneesEntree: DonneesARemplirValeur[],
+    donneesEntree: DonneesARemplirValeurType[],
     sourceDonneesEntree: string,
   ): CreateIndicateurValeurType[] {
     const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
@@ -876,7 +874,7 @@ export default class TrajectoiresService {
   async getValeursPourCalculTrajectoire(
     collectiviteId: number,
     forceDonneesCollectivite?: boolean,
-  ): Promise<DonneesCalculTrajectoireARemplir> {
+  ): Promise<DonneesCalculTrajectoireARemplirType> {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
     const source = forceDonneesCollectivite
       ? this.indicateursService.NULL_SOURCE_ID
@@ -945,11 +943,11 @@ export default class TrajectoiresService {
   getValeursARemplirPourIdentifiants(
     identifiantsReferentiel: string[][],
     indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
-  ): DonneesARemplirResult {
-    const valeursARemplir: DonneesARemplirValeur[] = [];
+  ): DonneesARemplirResultType {
+    const valeursARemplir: DonneesARemplirValeurType[] = [];
     const identifiantsReferentielManquants: string[] = [];
     identifiantsReferentiel.forEach((identifiants, index) => {
-      const valeurARemplir: DonneesARemplirValeur = {
+      const valeurARemplir: DonneesARemplirValeurType = {
         identifiants_referentiel: identifiants,
         valeur: 0,
         date_min: null,
@@ -1094,7 +1092,7 @@ export default class TrajectoiresService {
   }
 
   verificationDonneesARemplirSuffisantes(
-    donnees: DonneesCalculTrajectoireARemplir,
+    donnees: DonneesCalculTrajectoireARemplirType,
   ): boolean {
     const { emissions_ges, consommations_finales } = donnees;
     const valeurEmissionGesValides = emissions_ges.valeurs.filter(
@@ -1114,7 +1112,7 @@ export default class TrajectoiresService {
    * @return le statut pour déterminer la page à afficher TODO format statut
    */
   async verificationDonneesSnbc(
-    request: VerificationTrajectoireRequest,
+    request: VerificationTrajectoireRequestType,
     tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
     force_recuperation_donnees = false,

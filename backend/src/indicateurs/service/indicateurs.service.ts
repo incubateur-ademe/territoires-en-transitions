@@ -27,8 +27,8 @@ import {
 } from '../models/getIndicateurs.models';
 import {
   CreateIndicateurValeurType,
-  IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
+  IndicateurAvecValeursType,
   indicateurDefinitionTable,
   IndicateurDefinitionType,
   indicateurSourceMetadonneeTable,
@@ -400,7 +400,7 @@ export default class IndicateursService {
   groupeIndicateursValeursParIndicateur(
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
-  ): IndicateurAvecValeurs[] {
+  ): IndicateurAvecValeursType[] {
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
       {};
     const uniqueIndicateurDefinitions = Object.values(
@@ -435,7 +435,7 @@ export default class IndicateursService {
         valeurs.sort((a, b) => {
           return a.date_valeur.localeCompare(b.date_valeur);
         });
-        const indicateurAvecValeurs: IndicateurAvecValeurs = {
+        const indicateurAvecValeurs: IndicateurAvecValeursType = {
           definition: indicateurDefinition,
           valeurs,
         };
