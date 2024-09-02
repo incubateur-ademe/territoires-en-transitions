@@ -25,10 +25,12 @@ const validation = Yup.object({
 /** Affiche la page de création d'un indicateur personnalisé  */
 const IndicateurPersoNouveau = ({
   fiche,
+  isFavoriCollectivite,
   onClose,
 }: {
   /** Fiche action à laquelle rattacher le nouvel indicateur */
   fiche?: FicheAction;
+  isFavoriCollectivite?: boolean;
   onClose?: () => void;
 }) => {
   const collectiviteId = useCollectiviteId()!;
@@ -54,7 +56,7 @@ const IndicateurPersoNouveau = ({
   });
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition, ficheId});
+    save({definition, ficheId, isFavoriCollectivite});
   };
 
   const [thematiques, setThematiques] = useState<TThematiqueRow[]>(

@@ -1,17 +1,16 @@
 import {Button} from '@tet/ui';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
-const EmptyIndicateurFavori = () => {
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id;
+type Props = {
+  collectiviteId: number;
+  isReadonly: boolean;
+};
 
-  const isReadonly = collectivite?.readonly ?? false;
-
+const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
   const history = useHistory();
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
