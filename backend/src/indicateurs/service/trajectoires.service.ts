@@ -67,6 +67,8 @@ export default class TrajectoiresService {
 
   private readonly SNBC_DATE_REFERENCE = '2015-01-01';
   private readonly SNBC_SIREN_CELLULE = 'Caract_territoire!F6';
+
+  private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!D6:D13';
   private readonly SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL = [
     ['cae_1.c'], // B6
     ['cae_1.d'], // B7
@@ -77,7 +79,8 @@ export default class TrajectoiresService {
     ['cae_1.h'], // B12
     ['cae_1.j'], // B13
   ];
-  private readonly SNBC_EMISSIONS_GES_CELLULES = 'Carto_en-GES!D6:D13';
+
+  private readonly SNBC_CONSOMMATIONS_CELLULES = 'Carto_en-GES!I29:I35';
   private readonly SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL = [
     ['cae_2.e'], // I29
     ['cae_2.f'], // I30
@@ -87,8 +90,20 @@ export default class TrajectoiresService {
     ['cae_2.j'], // I34
     ['cae_2.l_pcaet'], // I35
   ];
-  private readonly SNBC_CONSOMMATIONS_CELLULES = 'Carto_en-GES!I29:I35';
   private readonly CONSOMMATIONS_IDENTIFIANTS_PREFIX = 'cae_2.';
+
+  private readonly SNBC_SEQUESTRATION_CELLULES = 'Carto_en-GES!C15:C22';
+  private readonly SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL = [
+    ['cae_63.e'], // C15 Cultures
+    ['cae_63.f'], // C16 Prairies
+    ['cae_63.g'], // C17 Zones humides
+    ['cae_63.j'], // C18 Vergers
+    ['cae_63.k'], // C19 Vignes
+    ['cae_63.h'], // C20 Sols artificiels
+    ['cae_63.b'], // C21 Forêts
+    ['cae_63.i'], // C22 Produits bois
+  ];
+  private readonly SEQUESTRATION_IDENTIFIANTS_PREFIX = 'cae_63.';
 
   private readonly SNBC_TRAJECTOIRE_RESULTAT_CELLULES =
     'TOUS SECTEURS!G221:AP297';
@@ -122,7 +137,7 @@ export default class TrajectoiresService {
     'cae_1.f', // 238 Autres (Transports)
     '',
     '',
-    // Sous-secteur: Emissions GES UTCATF
+    // Sous-secteur: Sequestration UTCATF
     'cae_63.b', // 241 Forêts
     'cae_63.e', // 242 Cultures
     'cae_63.f', // 243 Prairies
@@ -306,35 +321,49 @@ export default class TrajectoiresService {
     template.substitute(sirenSheetName, siren);
 
     this.logger.log(`Substitution des valeurs des indicateurs`);
-    const emissionsGesConsommationsSheetName =
+    const emissionsGesSequestrationConsommationsSheetName =
       this.SNBC_EMISSIONS_GES_CELLULES.split('!')[0];
 
-    const emissionGesConsommationsSubstitionValeurs: any = {};
+    const emissionGesSequestrationConsommationsSubstitionValeurs: any = {};
     this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL.forEach((identifiants) => {
       const cleSubstitution = this.getXlsxCleSubstitution(identifiants);
-      emissionGesConsommationsSubstitionValeurs[cleSubstitution] = 0;
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
+        0;
+    });
+    this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL.forEach((identifiants) => {
+      const cleSubstitution = this.getXlsxCleSubstitution(identifiants);
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
+        0;
     });
     this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL.forEach((identifiants) => {
       const cleSubstitution = this.getXlsxCleSubstitution(identifiants);
-      emissionGesConsommationsSubstitionValeurs[cleSubstitution] = 0;
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
+        0;
     });
     valeurIndicateurs?.emissions_ges.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiants_referentiel,
       );
-      emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
+        (valeur.valeur || 0) / 1000;
+    });
+    valeurIndicateurs?.sequestrations.valeurs.forEach((valeur) => {
+      const cleSubstitution = this.getXlsxCleSubstitution(
+        valeur.identifiants_referentiel,
+      );
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         (valeur.valeur || 0) / 1000;
     });
     valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiants_referentiel,
       );
-      emissionGesConsommationsSubstitionValeurs[cleSubstitution] =
+      emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         valeur.valeur || 0;
     });
     template.substitute(
-      emissionsGesConsommationsSheetName,
-      emissionGesConsommationsSubstitionValeurs,
+      emissionsGesSequestrationConsommationsSheetName,
+      emissionGesSequestrationConsommationsSubstitionValeurs,
     );
 
     const zipOptions: JSZipGeneratorOptions = {
@@ -519,12 +548,23 @@ export default class TrajectoiresService {
           );
         const [
           indicateurConsommationDefinitions,
-          indicateurEmissionsDefinitions,
+          indicateurEmissionsSequestrationDefinitions,
         ] = partition(
           indicateurDefinitions,
           (definition) =>
             definition.identifiant_referentiel?.startsWith(
               this.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+            ) || false,
+        );
+
+        const [
+          indicateurSequestrationDefinitions,
+          indicateurEmissionsDefinitions,
+        ] = partition(
+          indicateurEmissionsSequestrationDefinitions,
+          (definition) =>
+            definition.identifiant_referentiel?.startsWith(
+              this.SEQUESTRATION_IDENTIFIANTS_PREFIX,
             ) || false,
         );
 
@@ -540,6 +580,12 @@ export default class TrajectoiresService {
             indicateurConsommationDefinitions,
           );
 
+        const sequestrationTrajectoire =
+          this.indicateursService.groupeIndicateursValeursParIndicateur(
+            resultatVerification.valeurs,
+            indicateurSequestrationDefinitions,
+          );
+
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResult = {
           mode: mode,
@@ -548,6 +594,7 @@ export default class TrajectoiresService {
           trajectoire: {
             emissions_ges: emissionGesTrajectoire,
             consommations_finales: consommationsTrajectoire,
+            sequestrations: sequestrationTrajectoire,
           },
         };
 
@@ -612,6 +659,18 @@ export default class TrajectoiresService {
       emissionGesSpreadsheetData,
     );
 
+    // Ecriture des informations de sequestration
+    // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
+    const sequestrationSpreadsheetData =
+      resultatVerification.donnees_entree.sequestrations.valeurs.map(
+        (valeur) => [(valeur.valeur || 0) / 1000],
+      );
+    await this.sheetService.overwriteRawDataToSheet(
+      trajectoireCalculSheetId,
+      this.SNBC_SEQUESTRATION_CELLULES,
+      sequestrationSpreadsheetData,
+    );
+
     // Ecriture des informations de consommation finales
     const consommationSpreadsheetData =
       resultatVerification.donnees_entree.consommations_finales.valeurs.map(
@@ -660,12 +719,23 @@ export default class TrajectoiresService {
 
     const [
       indicateurResultatConsommationDefinitions,
-      indicateurResultatEmissionsDefinitions,
+      indicateurResultatSequestrationEmissionsDefinitions,
     ] = partition(
       indicateurResultatDefinitions,
       (definition) =>
         definition.identifiant_referentiel?.startsWith(
           this.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+        ) || false,
+    );
+
+    const [
+      indicateurResultatSequestrationDefinitions,
+      indicateurResultatEmissionsDefinitions,
+    ] = partition(
+      indicateurResultatSequestrationEmissionsDefinitions,
+      (definition) =>
+        definition.identifiant_referentiel?.startsWith(
+          this.SEQUESTRATION_IDENTIFIANTS_PREFIX,
         ) || false,
     );
 
@@ -681,6 +751,12 @@ export default class TrajectoiresService {
         indicateurResultatConsommationDefinitions,
       );
 
+    const sequestrationTrajectoire =
+      this.indicateursService.groupeIndicateursValeursParIndicateur(
+        upsertedTrajectoireIndicateurValeurs || [],
+        indicateurResultatSequestrationDefinitions,
+      );
+
     const result: CalculTrajectoireResult = {
       mode: mode,
       source_donnees_entree: resultatVerification.donnees_entree.source,
@@ -688,6 +764,7 @@ export default class TrajectoiresService {
       trajectoire: {
         emissions_ges: emissionGesTrajectoire,
         consommations_finales: consommationsTrajectoire,
+        sequestrations: sequestrationTrajectoire,
       },
     };
     return result;
@@ -800,7 +877,7 @@ export default class TrajectoiresService {
     collectiviteId: number,
     forceDonneesCollectivite?: boolean,
   ): Promise<DonneesCalculTrajectoireARemplir> {
-    // Récupère les valeurs des indicateurs d'émission pour l'année 2015 qui proviennent du rare ou de la collectivité
+    // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
     const source = forceDonneesCollectivite
       ? this.indicateursService.NULL_SOURCE_ID
       : this.RARE_SOURCE_ID;
@@ -816,13 +893,13 @@ export default class TrajectoiresService {
         sources: [source],
       });
 
-    // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
       this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
       indicateurValeursEmissionsGes,
     );
 
-    // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015
+    // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursConsommationsFinales =
       await this.indicateursService.getIndicateursValeurs({
         collectivite_id: collectiviteId,
@@ -832,15 +909,32 @@ export default class TrajectoiresService {
         sources: [source],
       });
 
-    // Vérifie que toutes les données sont dispo et construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
       this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
       indicateurValeursConsommationsFinales,
+    );
+
+    // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
+    const indicateurValeursSequestration =
+      await this.indicateursService.getIndicateursValeurs({
+        collectivite_id: collectiviteId,
+        identifiants_referentiel: _.flatten(
+          this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+        ),
+        sources: [source],
+      });
+
+    // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    const donneesSequestration = this.getValeursARemplirPourIdentifiants(
+      this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+      indicateurValeursSequestration,
     );
     return {
       source: source,
       emissions_ges: donneesEmissionsGes,
       consommations_finales: donneesConsommationsFinales,
+      sequestrations: donneesSequestration,
     };
   }
 
