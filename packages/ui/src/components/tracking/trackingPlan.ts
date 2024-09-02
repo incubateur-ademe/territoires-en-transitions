@@ -56,6 +56,23 @@ type OpenDataSource = {
   type: 'resultat' | 'objectif';
 };
 
+type IndicateursFiltres = {
+  thematiqueIds?: OptionValue[];
+  actionId?: string;
+  planActionIds?: OptionValue[];
+  utilisateurPiloteIds?: OptionValue[];
+  personnePiloteIds?: OptionValue[];
+  servicePiloteIds?: OptionValue[];
+  categorieNoms?: OptionValue[];
+  participationScore?: boolean;
+  estComplet?: boolean;
+  estConfidentiel?: boolean;
+  fichesNonClassees?: boolean;
+  text?: string;
+  estPerso?: boolean;
+  hasOpenData?: boolean;
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
@@ -67,22 +84,19 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       toggle_graphique: {actif: boolean};
       filtres: {
-        filtreValues: {
-          thematiqueIds?: OptionValue[];
-          actionId?: string;
-          planActionIds?: OptionValue[];
-          utilisateurPiloteIds?: OptionValue[];
-          personnePiloteIds?: OptionValue[];
-          servicePiloteIds?: OptionValue[];
-          categorieNoms?: OptionValue[];
-          participationScore?: boolean;
-          estComplet?: boolean;
-          estConfidentiel?: boolean;
-          fichesNonClassees?: boolean;
-          text?: string;
-          estPerso?: boolean;
-          hasOpenData?: boolean;
-        };
+        filtreValues: IndicateursFiltres;
+      };
+    };
+  };
+
+  /** Page "Indicateurs de la collectivité" */
+  'app/indicateurs/collectivite': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      explorerIndicateursClick: {};
+      filtres: {
+        filtreValues: IndicateursFiltres;
       };
     };
   };
