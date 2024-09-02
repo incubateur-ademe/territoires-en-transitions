@@ -5,13 +5,13 @@ import {
   SupabaseRole,
 } from '../../auth/models/auth.models';
 import { TrpcService } from '../../trpc/services/trpc.service';
-import TrajectoiresService from '../services/trajectoires.service';
+import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 
 @Injectable()
 export class TrajectoiresRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly trajectoiresService: TrajectoiresService,
+    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
   ) {}
 
   router = this.trpc.router({
@@ -29,7 +29,7 @@ export class TrajectoiresRouter {
           role: SupabaseRole.AUTHENTICATED,
           is_anonymous: false,
         };
-        return this.trajectoiresService.calculeTrajectoireSnbc(
+        return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
           input,
           tokenInfo,
         );

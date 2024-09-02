@@ -5,14 +5,14 @@ import SheetService from '../../spreadsheets/services/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur.models';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
-import TrajectoiresService from './trajectoires.service';
+import TrajectoiresDataService from './trajectoires-data.service';
 
-describe('TrajectoiresService', () => {
-  let trajectoiresService: TrajectoiresService;
+describe('TrajectoiresDataService test', () => {
+  let trajectoiresDataService: TrajectoiresDataService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [TrajectoiresService],
+      providers: [TrajectoiresDataService],
     })
       .useMocker((token) => {
         // Pour l'instant on ne mocke pas ces services précisemment
@@ -30,7 +30,7 @@ describe('TrajectoiresService', () => {
       })
       .compile();
 
-    trajectoiresService = moduleRef.get(TrajectoiresService);
+    trajectoiresDataService = moduleRef.get(trajectoiresDataService);
   });
 
   describe('getInterpolationValeur', () => {
@@ -103,7 +103,7 @@ describe('TrajectoiresService', () => {
       ];
 
       const interpolationResultat =
-        trajectoiresService.getInterpolationValeur(indicateurValeurs);
+        trajectoiresDataService.getInterpolationValeur(indicateurValeurs);
       const interpolationResultatAttendu: {
         valeur: number | null;
         date_min: string | null;
@@ -170,7 +170,7 @@ describe('TrajectoiresService', () => {
       ];
 
       const interpolationResultat =
-        trajectoiresService.getInterpolationValeur(indicateurValeurs);
+        trajectoiresDataService.getInterpolationValeur(indicateurValeurs);
       const interpolationResultatAttendu: {
         valeur: number | null;
         date_min: string | null;

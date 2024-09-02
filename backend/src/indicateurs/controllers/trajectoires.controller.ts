@@ -13,7 +13,9 @@ import {
   verificationDonneesSNBCResponseSchema,
   verificationTrajectoireRequestSchema,
 } from '../models/calcultrajectoire.models';
-import TrajectoiresService from '../services/trajectoires.service';
+import TrajectoiresDataService from '../services/trajectoires-data.service';
+import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
+import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
 
 /**
  * Create a class-based DTO from the schema in order to be able to generate automatically the OpenAPI documentation and validate the request payload
@@ -40,7 +42,11 @@ export class VerificationDonneesSNBCResponseClass extends createZodDto(
 export class TrajectoiresController {
   private readonly logger = new Logger(TrajectoiresController.name);
 
-  constructor(private readonly trajectoiresService: TrajectoiresService) {}
+  constructor(
+    private readonly trajectoiresDataService: TrajectoiresDataService,
+    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
+    private readonly trajectoiresXlsxService: TrajectoiresXlsxService,
+  ) {}
 
   @Get('snbc')
   @ApiResponse({ type: CalculTrajectoireResponseClass })
@@ -53,7 +59,10 @@ export class TrajectoiresController {
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { spreadsheet_id, ...response } =
-      await this.trajectoiresService.calculeTrajectoireSnbc(request, tokenInfo);
+      await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+        request,
+        tokenInfo,
+      );
     return response;
   }
 
@@ -69,7 +78,11 @@ export class TrajectoiresController {
     @Next() next: NextFunction,
   ) {
     this.logger.log(`Téléchargement du modele de trajectoire SNBC`);
-    this.trajectoiresService.downloadModeleTrajectoireSnbc(request, res, next);
+    this.trajectoiresXlsxService.downloadModeleTrajectoireSnbc(
+      request,
+      res,
+      next,
+    );
   }
 
   @Get('snbc/telechargement')
@@ -86,7 +99,7 @@ export class TrajectoiresController {
     this.logger.log(
       `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
-    this.trajectoiresService.downloadTrajectoireSnbc(
+    this.trajectoiresXlsxService.downloadTrajectoireSnbc(
       request,
       tokenInfo,
       res,
@@ -109,7 +122,7 @@ export class TrajectoiresController {
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { epci, valeurs, ...response } =
-      await this.trajectoiresService.verificationDonneesSnbc(
+      await this.trajectoiresDataService.verificationDonneesSnbc(
         request,
         tokenInfo,
       );
