@@ -10,7 +10,7 @@ import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
 } from '../models/upsertIndicateurs.models';
-import IndicateursService from '../service/indicateurs.service';
+import IndicateursService from '../services/indicateurs.service';
 
 @Controller('indicateurs')
 export class IndicateursController {

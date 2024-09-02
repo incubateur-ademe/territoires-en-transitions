@@ -5,7 +5,7 @@ import {
   SupabaseRole,
 } from '../../auth/models/auth.models';
 import { TrpcService } from '../../trpc/services/trpc.service';
-import TrajectoiresService from '../service/trajectoires.service';
+import TrajectoiresService from '../services/trajectoires.service';
 
 @Injectable()
 export class TrajectoiresRouter {

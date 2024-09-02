@@ -13,7 +13,7 @@ import {
   verificationDonneesSNBCResponseSchema,
   verificationTrajectoireRequestSchema,
 } from '../models/calcultrajectoire.models';
-import TrajectoiresService from '../service/trajectoires.service';
+import TrajectoiresService from '../services/trajectoires.service';
 
 /**
  * Create a class-based DTO from the schema in order to be able to generate automatically the OpenAPI documentation and validate the request payload
