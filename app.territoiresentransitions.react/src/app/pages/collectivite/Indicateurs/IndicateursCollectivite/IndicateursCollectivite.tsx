@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
-import {Button, ButtonMenu} from '@tet/ui';
+import {Button, ButtonMenu, TrackPageView, useEventTracker} from '@tet/ui';
 import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
 import {useIndicateursFavorisCollectiviteIds} from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
@@ -13,6 +13,8 @@ import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheActi
 
 /** Page de listing de tous les indicateurs de la collectivité */
 const IndicateursCollectivite = () => {
+  const tracker = useEventTracker('app/indicateurs/collectivite');
+
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id;
 
@@ -31,53 +33,63 @@ const IndicateursCollectivite = () => {
   );
 
   return (
-    <div className="min-h-[44rem] flex flex-col gap-8">
-      <div className="flex items-end justify-between">
-        <h2 className="mb-0">Indicateurs de la collectivité</h2>
-        {!isReadonly && (
-          <>
-            <Button size="sm" onClick={() => setIsNewIndicateurOpen(true)}>
-              Créer un indicateur
-            </Button>
-            {isNewIndicateurOpen && (
-              <ModaleCreerIndicateur
-                isOpen={isNewIndicateurOpen}
-                setIsOpen={setIsNewIndicateurOpen}
-                isFavoriCollectivite
-              />
+    <>
+      <TrackPageView
+        pageName={'app/indicateurs/collectivite'}
+        properties={{collectivite_id: collectiviteId!}}
+      />
+      <div className="min-h-[44rem] flex flex-col gap-8">
+        <div className="flex items-end justify-between">
+          <h2 className="mb-0">Indicateurs de la collectivité</h2>
+          {!isReadonly && (
+            <>
+              <Button size="sm" onClick={() => setIsNewIndicateurOpen(true)}>
+                Créer un indicateur
+              </Button>
+              {isNewIndicateurOpen && (
+                <ModaleCreerIndicateur
+                  isOpen={isNewIndicateurOpen}
+                  setIsOpen={setIsNewIndicateurOpen}
+                  isFavoriCollectivite
+                />
+              )}
+            </>
+          )}
+        </div>
+        {data?.count === 0 ? (
+          <EmptyIndicateurFavori
+            collectiviteId={collectiviteId!}
+            isReadonly={isReadonly}
+          />
+        ) : (
+          <IndicateursListe
+            isEditable
+            filtres={{...filters, estFavorisCollectivite: true}}
+            resetFilters={() => setFilters({})}
+            sortSettings={{defaultSort: 'estComplet'}}
+            settings={openState => (
+              <ButtonMenu
+                openState={openState}
+                variant="outlined"
+                icon="equalizer-line"
+                size="sm"
+              >
+                <MenuFiltresTousLesIndicateurs
+                  filters={filters}
+                  setFilters={newFilters => {
+                    setFilters(newFilters);
+                    tracker('filtres', {
+                      collectivite_id: collectiviteId!,
+                      filtreValues: newFilters,
+                    });
+                  }}
+                />
+              </ButtonMenu>
             )}
-          </>
+          />
         )}
       </div>
-      {data?.count === 0 ? (
-        <EmptyIndicateurFavori
-          collectiviteId={collectiviteId!}
-          isReadonly={isReadonly}
-        />
-      ) : (
-        <IndicateursListe
-          isEditable
-          filtres={{...filters, estFavorisCollectivite: true}}
-          resetFilters={() => setFilters({})}
-          sortSettings={{defaultSort: 'estComplet'}}
-          settings={openState => (
-            <ButtonMenu
-              openState={openState}
-              variant="outlined"
-              icon="equalizer-line"
-              size="sm"
-            >
-              <MenuFiltresTousLesIndicateurs
-                filters={filters}
-                setFilters={newFilters => {
-                  setFilters(newFilters);
-                }}
-              />
-            </ButtonMenu>
-          )}
-        />
-      )}
-    </div>
+    </>
   );
 };
 

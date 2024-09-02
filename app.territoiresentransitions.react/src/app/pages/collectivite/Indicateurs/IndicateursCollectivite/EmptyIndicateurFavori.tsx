@@ -1,4 +1,4 @@
-import {Button} from '@tet/ui';
+import {Button, useEventTracker} from '@tet/ui';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
 import {useState} from 'react';
@@ -11,6 +11,8 @@ type Props = {
 };
 
 const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
+  const tracker = useEventTracker('app/indicateurs/collectivite');
+
   const history = useHistory();
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
@@ -28,13 +30,16 @@ const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
         </p>
         <div className="flex items-center gap-6 mt-6">
           <Button
-            onClick={() =>
+            onClick={() => {
+              tracker('explorerIndicateursClick', {
+                collectivite_id: collectiviteId!,
+              });
               history.push(
                 makeCollectiviteTousLesIndicateursUrl({
                   collectiviteId: collectiviteId!,
                 })
-              )
-            }
+              );
+            }}
           >
             Explorer les indicateurs
           </Button>
