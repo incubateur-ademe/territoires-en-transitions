@@ -1,4 +1,3 @@
-import {useIndicateurReferentielDefinitions} from 'app/pages/collectivite/Indicateurs/useIndicateurDefinition';
 import {
   ANNEE_REFERENCE,
   DATE_DEBUT,
@@ -77,29 +76,9 @@ const useDonneesSectoriseesIndicateur = (
         .filter(s => !!s) as Source[])
     : null;
 
-  // Malheureusement l'API ne remonte pas les définitions pour lesquelles il n'y a pas de valeurs
-  // on ne peut alors pas insérer de nouvelles valeurs puisqu'on n'a pas les correspondances
-  // identifiant_referentiel => indicateur_id.
-  // On charge donc les définitions manquantes.
-  // TODO : à changer côté backend et à supprimer ?
-  const idDefinitionsManquantes = !rest.isLoading
-    ? identifiants.filter(
-        identifiant =>
-          indicateurs?.findIndex(
-            ind => ind.definition.identifiant_referentiel === identifiant
-          ) === -1
-      )
-    : [];
-  // on charge donc les définitions manquantes
-  const definitions = useIndicateurReferentielDefinitions(
-    idDefinitionsManquantes
-  );
-
   // détermine si il existe une valeur saisie par la collectivité pour chaque indicateur
   const donneesCompletes =
-    // il n'y a pas de définitions manquantes
-    !idDefinitionsManquantes?.length &&
-    // et il y a des données
+    // il y a des données
     !!indicateurs?.length &&
     // la liste des identifiants filtrés est complète
     identifiants.filter(identifiant => {
@@ -121,8 +100,7 @@ const useDonneesSectoriseesIndicateur = (
     const ind = indicateurs?.find(
       i => i.definition.identifiant_referentiel === identifiant
     );
-    const def = definitions?.find(d => d.identifiant === identifiant);
-    const indicateur_id = ind?.definition.id ?? def?.id;
+    const indicateur_id = ind?.definition.id;
     return indicateur_id
       ? {
           indicateur_id,
