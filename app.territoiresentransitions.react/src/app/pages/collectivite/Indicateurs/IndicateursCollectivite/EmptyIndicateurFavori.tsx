@@ -22,7 +22,7 @@ const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
       <div className="min-h-[21rem] flex flex-col items-center gap-4 p-8 bg-white border border-primary-4 rounded-xl">
         <PictoDashboard />
         <h4 className="mb-0 text-primary-8">
-          Vous n'avez pas encore d'indicateur.
+          Vous n'avez pas encore d'indicateur
         </h4>
         <p className="m-0 text-primary-9">
           Ajoutez les depuis notre bibliothèque ou créez vos propres
@@ -55,6 +55,7 @@ const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
                 <ModaleCreerIndicateur
                   isOpen={isNewIndicateurOpen}
                   setIsOpen={setIsNewIndicateurOpen}
+                  isFavoriCollectivite
                 />
               )}
             </>
