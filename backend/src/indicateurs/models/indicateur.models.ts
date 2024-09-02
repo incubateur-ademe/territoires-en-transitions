@@ -1,7 +1,5 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
-import { Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -163,14 +161,23 @@ export class IndicateurValeurGroupee extends createZodDto(
   indicateurValeurGroupeeSchema,
 ) {}
 
-export class IndicateurAvecValeurs {
-  definition: IndicateurDefinitionType;
+export const indicateurAvecValeursSchema = extendApi(
+  z
+    .object({
+      definition: indicateurDefinitionSchema,
+      valeurs: z.array(indicateurValeurGroupeeSchema),
+    })
+    .openapi({
+      title: 'Indicateur définition et valeurs ordonnées par date',
+    }),
+);
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => IndicateurValeurGroupee)
-  valeurs: IndicateurValeurGroupee[];
-}
+export type IndicateurAvecValeursType = z.infer<
+  typeof indicateurAvecValeursSchema
+>;
+export class IndicateurAvecValeursClass extends createZodDto(
+  indicateurAvecValeursSchema,
+) {}
 
 export const indicateurValeursGroupeeParSourceSchema = extendApi(
   z
@@ -201,7 +208,7 @@ export class IndicateurAvecValeursParSource extends createZodDto(
   indicateurAvecValeursParSourceSchema,
 ) {}
 
-export class IndicateurValeurAvecMetadonnesDefinition {
+export interface IndicateurValeurAvecMetadonnesDefinition {
   indicateur_valeur: IndicateurValeurType;
 
   indicateur_definition: IndicateurDefinitionType | null;

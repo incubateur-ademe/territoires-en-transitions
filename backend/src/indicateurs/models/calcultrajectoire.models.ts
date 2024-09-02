@@ -1,16 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
+import { EpciType } from '../../collectivites/models/collectivite.models';
+import { collectiviteRequestSchema } from '../../collectivites/models/collectivite.request';
 import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import CollectiviteRequest from '../../collectivites/models/collectivite.request';
-import optionalBooleanMapper from '../../common/services/optionalBooleanMapper';
-import { IndicateurAvecValeurs } from './indicateur.models';
+  indicateurAvecValeursSchema,
+  IndicateurValeurType,
+} from './indicateur.models';
+extendZodWithOpenApi(z);
 
 export enum CalculTrajectoireReset {
   MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
@@ -23,108 +19,159 @@ export enum CalculTrajectoireResultatMode {
   MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
 }
 
-export class ModeleTrajectoireTelechargementRequest {
-  @ApiProperty({
-    required: false,
-    description:
-      'Récupère les données du fichier xlsx depuis le drive plutôt que le cache local',
-  })
-  @IsBoolean()
-  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
-  @IsOptional()
-  force_recuperation_xlsx?: boolean;
+export const modeleTrajectoireTelechargementRequestSchema = extendApi(
+  z.object({
+    force_recuperation_xlsx: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .openapi({
+        description:
+          'Récupère les données du fichier xlsx depuis le drive plutôt que le cache local',
+      }),
+  }),
+);
+export type ModeleTrajectoireTelechargementRequestType = z.infer<
+  typeof modeleTrajectoireTelechargementRequestSchema
+>;
+
+export const verificationTrajectoireRequestSchema = extendApi(
+  collectiviteRequestSchema.extend({
+    force_recuperation_donnees: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .openapi({
+        description:
+          'Récupère les données même si la trajectoire a déjà été calculée',
+      }),
+    force_utilisation_donnees_collectivite: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .openapi({
+        description:
+          "Force l'utilisation des données de la collectivité plutôt que celles du rare",
+      }),
+  }),
+);
+export type VerificationTrajectoireRequestType = z.infer<
+  typeof verificationTrajectoireRequestSchema
+>;
+
+export enum VerificationDonneesSNBCStatus {
+  COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
+  DEJA_CALCULE = 'deja_calcule',
+  PRET_A_CALCULER = 'pret_a_calculer',
+  DONNEES_MANQUANTES = 'donnees_manquantes',
 }
 
-export class VerificationTrajectoireRequest extends CollectiviteRequest {
-  @ApiProperty({
-    required: false,
-    description:
-      'Récupère les données même si la trajectoire a déjà été calculée',
-  })
-  @IsBoolean()
-  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
-  @IsOptional()
-  force_recuperation_donnees?: boolean;
+export const donneesARemplirValeurSchema = extendApi(
+  z.object({
+    identifiants_referentiel: z.array(z.string()),
+    valeur: z.number().nullable(),
+    date_min: z.string().nullable(),
+    date_max: z.string().nullable(),
+  }),
+);
+export type DonneesARemplirValeurType = z.infer<
+  typeof donneesARemplirValeurSchema
+>;
 
-  @ApiProperty({
-    required: false,
-    description:
-      "Force l'utilisation des données de la collectivité plutôt que celles du rare",
-  })
-  @IsBoolean()
-  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
-  @IsOptional()
-  force_utilisation_donnees_collectivite?: boolean;
+export const donneesARemplirResultSchema = extendApi(
+  z.object({
+    valeurs: z.array(donneesARemplirValeurSchema),
+    identifiants_referentiel_manquants: z.array(z.string()),
+  }),
+);
+export type DonneesARemplirResultType = z.infer<
+  typeof donneesARemplirResultSchema
+>;
+
+export const donneesCalculTrajectoireARemplirSchema = extendApi(
+  z.object({
+    source: z.string(),
+    emissions_ges: donneesARemplirResultSchema,
+    consommations_finales: donneesARemplirResultSchema,
+    sequestrations: donneesARemplirResultSchema,
+  }),
+);
+export type DonneesCalculTrajectoireARemplirType = z.infer<
+  typeof donneesCalculTrajectoireARemplirSchema
+>;
+
+export const verificationDonneesSNBCResponseSchema = extendApi(
+  z.object({
+    status: z.nativeEnum(VerificationDonneesSNBCStatus).openapi({
+      description:
+        'Status de la vérification des données pour le calcul de la trajectoire SNBC',
+    }),
+    donnees_entree: donneesCalculTrajectoireARemplirSchema.optional().openapi({
+      description:
+        'Données qui seront utilisées pour le calcul de la trajectoire SNBC.',
+    }),
+  }),
+);
+export type VerificationDonneesSNBCResponseType = z.infer<
+  typeof verificationDonneesSNBCResponseSchema
+>;
+
+export interface VerificationDonneesSNBCResult
+  extends VerificationDonneesSNBCResponseType {
+  epci?: EpciType;
+  valeurs?: IndicateurValeurType[];
 }
 
-export class CalculTrajectoireRequest extends CollectiviteRequest {
-  @ApiProperty({
-    required: false,
-    description: 'Mode pour forcer la recréation de la trajectoire',
-  })
-  @IsEnum(CalculTrajectoireReset)
-  @IsOptional()
-  mode?: CalculTrajectoireReset;
+export const calculTrajectoireRequestSchema = extendApi(
+  collectiviteRequestSchema.extend({
+    mode: z.nativeEnum(CalculTrajectoireReset).optional().openapi({
+      description: 'Mode pour forcer la recréation de la trajectoire',
+    }),
+    force_utilisation_donnees_collectivite: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .openapi({
+        description:
+          "Force l'utilisation des données de la collectivité plutôt que celles du rare",
+      }),
+  }),
+);
+export type CalculTrajectoireRequestType = z.infer<
+  typeof calculTrajectoireRequestSchema
+>;
 
-  @ApiProperty({
-    required: false,
-    description:
-      "Force l'utilisation des données de la collectivité plutôt que celles du rare",
-  })
-  @IsBoolean()
-  @Transform(({ value }) => optionalBooleanMapper.get(value)) // Useful for query param
-  @IsOptional()
-  force_utilisation_donnees_collectivite?: boolean;
-}
+export const calculTrajectoireResponseDonneesSchema = extendApi(
+  z
+    .object({
+      emissions_ges: z.array(indicateurAvecValeursSchema),
+      consommations_finales: z.array(indicateurAvecValeursSchema),
+      sequestrations: z.array(indicateurAvecValeursSchema),
+    })
+    .openapi({
+      title: 'Données de la trajectoire SNBC',
+    }),
+);
+export type CalculTrajectoireResponseDonneesType = z.infer<
+  typeof calculTrajectoireResponseDonneesSchema
+>;
 
-export class CalculTrajectoireResponseDonnees {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => IndicateurAvecValeurs)
-  emissions_ges: IndicateurAvecValeurs[];
+export const calculTrajectoireResponseSchema = extendApi(
+  z
+    .object({
+      mode: z.nativeEnum(CalculTrajectoireResultatMode),
+      source_donnees_entree: z.string(),
+      trajectoire: calculTrajectoireResponseDonneesSchema,
+    })
+    .openapi({
+      title: 'Réponse du calcul de la trajectoire SNBC',
+    }),
+);
+export type CalculTrajectoireResponseType = z.infer<
+  typeof calculTrajectoireResponseSchema
+>;
 
-  @ApiProperty()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => IndicateurAvecValeurs)
-  consommations_finales: IndicateurAvecValeurs[];
-
-  sequestrations: IndicateurAvecValeurs[];
-}
-
-export class CalculTrajectoireResponse {
-  @IsEnum(CalculTrajectoireResultatMode)
-  mode: CalculTrajectoireResultatMode;
-
-  @IsString()
-  source_donnees_entree: string;
-
-  @ApiProperty({ description: 'Résultat du calcul de la trajectoire' })
-  @ValidateNested()
-  @Type(() => CalculTrajectoireResponseDonnees)
-  trajectoire: CalculTrajectoireResponseDonnees;
-}
-
-export class CalculTrajectoireResult extends CalculTrajectoireResponse {
-  @IsString()
+export interface CalculTrajectoireResultType
+  extends CalculTrajectoireResponseType {
   spreadsheet_id: string;
-}
-
-export class DonneesARemplirValeur {
-  identifiants_referentiel: string[];
-  valeur: number | null;
-  date_min: string | null;
-  date_max: string | null;
-}
-
-export class DonneesARemplirResult {
-  valeurs: DonneesARemplirValeur[];
-  identifiants_referentiel_manquants: string[];
-}
-
-export class DonneesCalculTrajectoireARemplir {
-  source: string;
-  emissions_ges: DonneesARemplirResult;
-  consommations_finales: DonneesARemplirResult;
-  sequestrations: DonneesARemplirResult;
 }
