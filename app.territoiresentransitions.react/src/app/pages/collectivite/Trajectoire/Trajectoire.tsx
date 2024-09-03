@@ -25,6 +25,10 @@ const TrajectoireContent = (props: {
     );
   }
 
+  if (error?.statusCode === 401) {
+    return <ErreurDroits />;
+  }
+
   if (error || !data || !data.status) {
     return <ErreurDeChargement />;
   }
@@ -72,6 +76,20 @@ const DonneesNonDispo = () => {
         <Button>Compléter mes données</Button>
       </Modal>
     </Card>
+  );
+};
+
+/**
+ * Affiche un message quand l'utilisateur n'a pas les droits requis
+ */
+const ErreurDroits = () => {
+  return (
+    <Alert
+      state="error"
+      className="self-stretch my-8"
+      title="Droits insuffisants"
+      description="Vous n'avez pas les droits nécessaires pour accéder à cette page"
+    />
   );
 };
 

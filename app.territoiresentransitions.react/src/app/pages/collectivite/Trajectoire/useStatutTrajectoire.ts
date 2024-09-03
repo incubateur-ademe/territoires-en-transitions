@@ -1,5 +1,5 @@
 import {useQuery} from 'react-query';
-import {useApiClient} from 'core-logic/api/useApiClient';
+import {ApiError, useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 
 export enum StatutTrajectoire {
@@ -14,19 +14,24 @@ export const getStatusKey = (collectiviteId: number | null) => [
   collectiviteId,
 ];
 
+type ResponseType = {
+  status: StatutTrajectoire;
+};
+
 /** Donne le statut du calcul de trajectoire d'une collectivité */
 export const useStatutTrajectoire = () => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
-  return useQuery(
+  return useQuery<ResponseType | null, ApiError>(
     getStatusKey(collectiviteId),
     async () =>
-      collectiviteId &&
-      api.get<{status: StatutTrajectoire}>({
-        route: '/trajectoires/snbc/verification',
-        params: {collectivite_id: collectiviteId},
-      }),
+      collectiviteId
+        ? api.get<ResponseType>({
+            route: '/trajectoires/snbc/verification',
+            params: {collectivite_id: collectiviteId},
+          })
+        : null,
     {
       retry: false,
     }
