@@ -344,27 +344,27 @@ export const SEQUESTRATION_CARBONE = {
   secteurs: [
     {
       nom: 'Cultures',
-      identifiant: 'cae_63.e',
+      identifiant: 'cae_63.ca',
     },
     {
       nom: 'Prairies',
-      identifiant: 'cae_63.f',
+      identifiant: 'cae_63.cb',
     },
     {
       nom: 'Zones humides',
-      identifiant: 'cae_63.g',
+      identifiant: 'cae_63.da',
     },
     {
       nom: 'Vergers',
-      identifiant: 'cae_63.k',
+      identifiant: 'cae_63.cd',
     },
     {
       nom: 'Vignes',
-      identifiant: 'cae_63.j',
+      identifiant: 'cae_63.cc',
     },
     {
       nom: 'Sols artificiels',
-      identifiant: 'cae_63.h',
+      identifiant: 'cae_63.db',
     },
     {
       nom: 'Forêts',
@@ -372,7 +372,7 @@ export const SEQUESTRATION_CARBONE = {
     },
     {
       nom: 'Produits bois',
-      identifiant: 'cae_63.i',
+      identifiant: 'cae_63.e',
     },
   ],
 } as const;
