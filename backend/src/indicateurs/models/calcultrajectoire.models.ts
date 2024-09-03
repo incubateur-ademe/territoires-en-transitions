@@ -1,6 +1,6 @@
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { EpciType } from '../../collectivites/models/collectivite.models';
+import { epciSchema } from '../../collectivites/models/collectivite.models';
 import { collectiviteRequestSchema } from '../../collectivites/models/collectivite.request';
 import {
   indicateurAvecValeursSchema,
@@ -44,6 +44,13 @@ export const verificationTrajectoireRequestSchema = extendApi(
       .openapi({
         description:
           'Récupère les données même si la trajectoire a déjà été calculée',
+      }),
+    epci_info: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .openapi({
+        description: "Retourne les informations de l'EPCI",
       }),
     force_utilisation_donnees_collectivite: z
       .enum(['true', 'false'])
@@ -110,6 +117,20 @@ export const verificationDonneesSNBCResponseSchema = extendApi(
       description:
         'Données qui seront utilisées pour le calcul de la trajectoire SNBC.',
     }),
+    epci: epciSchema.optional().openapi({
+      description: "Informations de l'EPCI",
+    }),
+    source_donnees_entree: z.string().optional().openapi({
+      description:
+        'Source des données utilisées lorsque le calcul a déjà été fait',
+    }),
+    indentifiants_referentiel_manquants_donnees_entree: z
+      .array(z.string())
+      .optional()
+      .openapi({
+        description:
+          "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait",
+      }),
   }),
 );
 export type VerificationDonneesSNBCResponseType = z.infer<
@@ -118,9 +139,6 @@ export type VerificationDonneesSNBCResponseType = z.infer<
 
 export interface VerificationDonneesSNBCResult
   extends VerificationDonneesSNBCResponseType {
-  epci?: EpciType;
-  source_donnees_entree?: string;
-  indentifiants_referentiel_manquants?: string[];
   valeurs?: IndicateurValeurType[];
 }
 

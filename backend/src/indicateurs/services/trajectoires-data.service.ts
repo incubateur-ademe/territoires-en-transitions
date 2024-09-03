@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -21,6 +25,7 @@ import {
   IndicateurValeurType,
 } from '../models/indicateur.models';
 import IndicateursService from './indicateurs.service';
+import IndicateurSourcesService from './indicateurSources.service';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -193,6 +198,7 @@ export default class TrajectoiresDataService {
   constructor(
     private readonly collectivitesService: CollectivitesService,
     private readonly indicateursService: IndicateursService,
+    private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly authService: AuthService,
   ) {}
 
@@ -216,7 +222,6 @@ export default class TrajectoiresDataService {
   } | null {
     const match = commentaire.match(this.OBJECTIF_COMMENTAIRE_REGEXP);
     if (match) {
-      console.log(`Match trouvé : ${match}`);
       return {
         source: match[1],
         identifiants_referentiel_manquants: match[2]
@@ -524,7 +529,7 @@ export default class TrajectoiresDataService {
           premierCommentaire || '',
         );
       response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
-      response.indentifiants_referentiel_manquants =
+      response.indentifiants_referentiel_manquants_donnees_entree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
       if (!force_recuperation_donnees) {
@@ -566,5 +571,42 @@ export default class TrajectoiresDataService {
     // sinon, retourne 'données manquantes'
     response.status = VerificationDonneesSNBCStatus.DONNEES_MANQUANTES;
     return response;
+  }
+
+  async deleteTrajectoireSnbc(
+    collectiviteId: number,
+    snbcMetadonneesId?: number,
+    tokenInfo?: SupabaseJwtPayload,
+  ): Promise<void> {
+    if (!snbcMetadonneesId) {
+      const indicateurSourceMetadonnee =
+        await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
+          this.SNBC_SOURCE.id,
+          this.SNBC_SOURCE_METADONNEES.date_version,
+        );
+      if (indicateurSourceMetadonnee) {
+        snbcMetadonneesId = indicateurSourceMetadonnee.id;
+      }
+    }
+
+    if (!snbcMetadonneesId) {
+      throw new InternalServerErrorException(
+        `Impossible de trouver l'identifiant de la metadonnée SNBC`,
+      );
+    }
+
+    // Vérifie les droits de l'utilisateur
+    if (tokenInfo) {
+      await this.authService.verifieAccesAuxCollectivites(
+        tokenInfo,
+        [collectiviteId],
+        NiveauAcces.EDITION,
+      );
+    }
+
+    await this.indicateursService.deleteIndicateurValeurs({
+      collectivite_id: collectiviteId,
+      metadonnee_id: snbcMetadonneesId,
+    });
   }
 }

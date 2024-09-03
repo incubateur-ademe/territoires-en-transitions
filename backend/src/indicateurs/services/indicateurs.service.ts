@@ -39,6 +39,7 @@ import {
   IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
   IndicateurValeurType,
+  MinimalIndicateurDefinitionType,
 } from '../models/indicateur.models';
 
 @Injectable()
@@ -435,13 +436,28 @@ export default class IndicateursService {
   groupeIndicateursValeursParIndicateur(
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
+    commentairesNonInclus = false,
   ): IndicateurAvecValeursType[] {
-    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
-      {};
+    const initialDefinitionsAcc: {
+      [key: string]: MinimalIndicateurDefinitionType;
+    } = {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurDefinitions.reduce((acc, def) => {
         if (def?.id) {
-          acc[def.id.toString()] = def;
+          const minimaleIndicateurDefinition = _.pick<IndicateurDefinitionType>(
+            def,
+            [
+              'id',
+              'identifiant_referentiel',
+              'titre',
+              'titre_long',
+              'description',
+              'unite',
+              'borne_min',
+              'borne_max',
+            ],
+          ) as MinimalIndicateurDefinitionType;
+          acc[def.id.toString()] = minimaleIndicateurDefinition;
         }
         return acc;
       }, initialDefinitionsAcc),
@@ -456,11 +472,15 @@ export default class IndicateursService {
               id: v.id,
               date_valeur: v.date_valeur,
               resultat: v.resultat,
-              resultat_commentaire: v.resultat_commentaire,
               objectif: v.objectif,
-              objectif_commentaire: v.objectif_commentaire,
               metadonnee_id: null,
             };
+            if (!commentairesNonInclus) {
+              indicateurValeurGroupee.resultat_commentaire =
+                v.resultat_commentaire;
+              indicateurValeurGroupee.objectif_commentaire =
+                v.objectif_commentaire;
+            }
             return _.omitBy(
               indicateurValeurGroupee,
               _.isNil,

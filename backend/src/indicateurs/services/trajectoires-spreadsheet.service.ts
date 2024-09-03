@@ -50,16 +50,6 @@ export default class TrajectoiresSpreadsheetService {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
   }
 
-  async deleteTrajectoireSnbc(
-    collectiviteId: number,
-    snbcMetadonneesId: number,
-  ): Promise<void> {
-    await this.indicateursService.deleteIndicateurValeurs({
-      collectivite_id: collectiviteId,
-      metadonnee_id: snbcMetadonneesId,
-    });
-  }
-
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
     tokenInfo: SupabaseJwtPayload,
@@ -188,18 +178,21 @@ export default class TrajectoiresSpreadsheetService {
           this.indicateursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurEmissionsDefinitions,
+            true,
           );
 
         const consommationsTrajectoire =
           this.indicateursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurConsommationDefinitions,
+            true,
           );
 
         const sequestrationTrajectoire =
           this.indicateursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurSequestrationDefinitions,
+            true,
           );
 
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
@@ -208,7 +201,8 @@ export default class TrajectoiresSpreadsheetService {
           source_donnees_entree:
             resultatVerification.source_donnees_entree || '',
           indentifiants_referentiel_manquants_donnees_entree:
-            resultatVerification.indentifiants_referentiel_manquants || [],
+            resultatVerification.indentifiants_referentiel_manquants_donnees_entree ||
+            [],
           spreadsheet_id: trajectoireCalculSheetId,
           trajectoire: {
             emissions_ges: emissionGesTrajectoire,
@@ -226,7 +220,7 @@ export default class TrajectoiresSpreadsheetService {
         `Résultats de la trajectoire SNBC déjà calculés, recalcul des données (request mode: ${request.mode}) après suppression des données existantes`,
       );
       // Suppression des données existantes
-      await this.deleteTrajectoireSnbc(
+      await this.trajectoiresDataService.deleteTrajectoireSnbc(
         request.collectivite_id,
         indicateurSourceMetadonnee.id,
       );
@@ -376,18 +370,21 @@ export default class TrajectoiresSpreadsheetService {
       this.indicateursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatEmissionsDefinitions,
+        true,
       );
 
     const consommationsTrajectoire =
       this.indicateursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatConsommationDefinitions,
+        true,
       );
 
     const sequestrationTrajectoire =
       this.indicateursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatSequestrationDefinitions,
+        true,
       );
 
     const result: CalculTrajectoireResultType = {
