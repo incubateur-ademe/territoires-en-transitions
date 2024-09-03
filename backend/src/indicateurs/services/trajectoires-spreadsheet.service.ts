@@ -13,7 +13,7 @@ import {
   CalculTrajectoireReset,
   CalculTrajectoireResultType,
   CalculTrajectoireResultatMode,
-  DonneesARemplirValeurType,
+  DonneesCalculTrajectoireARemplirType,
   VerificationDonneesSNBCStatus,
 } from '../models/calcultrajectoire.models';
 import {
@@ -45,6 +45,16 @@ export default class TrajectoiresSpreadsheetService {
 
   getNomFichierTrajectoire(epci: EpciType) {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
+  }
+
+  async deleteTrajectoireSnbc(
+    collectiviteId: number,
+    snbcMetadonneesId: number,
+  ): Promise<void> {
+    await this.indicateursService.deleteIndicateurValeurs({
+      collectivite_id: collectiviteId,
+      metadonnee_id: snbcMetadonneesId,
+    });
   }
 
   async calculeTrajectoireSnbc(
@@ -136,8 +146,6 @@ export default class TrajectoiresSpreadsheetService {
         this.getIdentifiantDossierResultat(),
       );
       if (trajectoireCalculSheetId) {
-        const source =
-          resultatVerification.valeurs[0].objectif_commentaire || '';
         const indicateurDefinitions =
           await this.indicateursService.getReferentielIndicateurDefinitions(
             this.trajectoiresDataService
@@ -186,7 +194,10 @@ export default class TrajectoiresSpreadsheetService {
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResultType = {
           mode: mode,
-          source_donnees_entree: source,
+          source_donnees_entree:
+            resultatVerification.source_donnees_entree || '',
+          indentifiants_referentiel_manquants_donnees_entree:
+            resultatVerification.indentifiants_referentiel_manquants || [],
           spreadsheet_id: trajectoireCalculSheetId,
           trajectoire: {
             emissions_ges: emissionGesTrajectoire,
@@ -197,6 +208,17 @@ export default class TrajectoiresSpreadsheetService {
 
         return result;
       }
+    } else if (
+      resultatVerification.status === VerificationDonneesSNBCStatus.DEJA_CALCULE
+    ) {
+      this.logger.log(
+        `Résultats de la trajectoire SNBC déjà calculés, recalcul des données (request mode: ${request.mode}) après suppression des données existantes`,
+      );
+      // Suppression des données existantes
+      await this.deleteTrajectoireSnbc(
+        request.collectivite_id,
+        indicateurSourceMetadonnee.id,
+      );
     }
     epci = resultatVerification.epci;
 
@@ -300,11 +322,7 @@ export default class TrajectoiresSpreadsheetService {
         this.trajectoiresDataService
           .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
-        [
-          ...resultatVerification.donnees_entree.emissions_ges.valeurs,
-          ...resultatVerification.donnees_entree.consommations_finales.valeurs,
-        ],
-        resultatVerification.donnees_entree.source,
+        resultatVerification.donnees_entree,
       );
 
     this.logger.log(
@@ -358,6 +376,14 @@ export default class TrajectoiresSpreadsheetService {
     const result: CalculTrajectoireResultType = {
       mode: mode,
       source_donnees_entree: resultatVerification.donnees_entree.source,
+      indentifiants_referentiel_manquants_donnees_entree: [
+        ...resultatVerification.donnees_entree.emissions_ges
+          .identifiants_referentiel_manquants,
+        ...resultatVerification.donnees_entree.sequestrations
+          .identifiants_referentiel_manquants,
+        ...resultatVerification.donnees_entree.consommations_finales
+          .identifiants_referentiel_manquants,
+      ],
       spreadsheet_id: trajectoireCalculSheetId,
       trajectoire: {
         emissions_ges: emissionGesTrajectoire,
@@ -388,9 +414,18 @@ export default class TrajectoiresSpreadsheetService {
     donneesSpreadsheet: any[][] | null,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinitionType[],
-    donneesEntree: DonneesARemplirValeurType[],
-    sourceDonneesEntree: string,
+    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType,
   ): CreateIndicateurValeurType[] {
+    const donneesEntree = [
+      ...donneesCalculTrajectoire.emissions_ges.valeurs,
+      ...donneesCalculTrajectoire.consommations_finales.valeurs,
+      ...donneesCalculTrajectoire.sequestrations.valeurs,
+    ];
+    const objectifCommentaire =
+      this.trajectoiresDataService.getObjectifCommentaire(
+        donneesCalculTrajectoire,
+      );
+
     const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
     donneesSpreadsheet?.forEach((ligne, ligneIndex) => {
       const identifiantReferentielSortie =
@@ -447,7 +482,7 @@ export default class TrajectoiresSpreadsheetService {
                   metadonnee_id: indicateurSourceMetadonneeId,
                   date_valeur: `${2015 + columnIndex}-01-01`,
                   objectif: floatValeur * facteur,
-                  objectif_commentaire: sourceDonneesEntree,
+                  objectif_commentaire: objectifCommentaire,
                 };
                 indicateurValeursResultat.push(indicateurValeur);
               } else {

@@ -21,6 +21,7 @@ import {
 } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
+import { DeleteIndicateursValeursRequestType } from '../models/deleteIndicateurs.models';
 import {
   GetIndicateursValeursRequestType,
   GetIndicateursValeursResponseType,
@@ -56,15 +57,9 @@ export default class IndicateursService {
     private readonly authService: AuthService,
   ) {}
 
-  /**
-   * Récupère les valeurs d'indicateurs selon les options données
-   * @param options
-   */
-  async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
-    this.logger.log(
-      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
-    );
-
+  private getIndicateurValeursSqlConditions(
+    options: GetIndicateursValeursRequestType,
+  ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [
       eq(indicateurValeurTable.collectivite_id, options.collectivite_id),
     ];
@@ -113,6 +108,19 @@ export default class IndicateursService {
         );
       }
     }
+    return conditions;
+  }
+
+  /**
+   * Récupère les valeurs d'indicateurs selon les options données
+   * @param options
+   */
+  async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
+    this.logger.log(
+      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
+    );
+
+    const conditions = this.getIndicateurValeursSqlConditions(options);
 
     let result = await this.databaseService.db
       .select()
@@ -139,13 +147,40 @@ export default class IndicateursService {
         `${result.length} valeurs d'indicateurs après dédoublonnage`,
       );
     }
-    // Enlève les doublons quand il y a plusieurs valeurs pour un même indicateur, collectivité, année
-    // Garde en priorité la valeur utilisateur, puis celle avec la version la plus récente
-    /*if (options.source_id !== null && options.clean_doublon === true) {
-      // TODO adapter le code de packages/api/indicateur/indicateur.fetch.ts/selectIndicateursValeurs()
-    }*/
 
     return result;
+  }
+
+  async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
+    this.logger.log(
+      `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
+    );
+
+    const conditions: (SQLWrapper | SQL)[] = [
+      eq(indicateurValeurTable.collectivite_id, options.collectivite_id),
+    ];
+    if (options.indicateur_id) {
+      conditions.push(
+        eq(indicateurValeurTable.indicateur_id, options.indicateur_id),
+      );
+    }
+    if (options.metadonnee_id) {
+      conditions.push(
+        eq(indicateurValeurTable.metadonnee_id, options.metadonnee_id),
+      );
+    }
+
+    const deleteQuery = this.databaseService.db
+      .delete(indicateurValeurTable)
+      .where(and(...conditions));
+
+    const deletedIds = await deleteQuery.returning({
+      id: indicateurValeurTable.id,
+    });
+    this.logger.log(
+      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`,
+    );
+    return { indicateur_valeur_ids_supprimes: deletedIds };
   }
 
   async getIndicateurValeursGroupees(

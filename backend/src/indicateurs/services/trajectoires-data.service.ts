@@ -26,6 +26,13 @@ import IndicateursService from './indicateurs.service';
 export default class TrajectoiresDataService {
   private readonly logger = new Logger(TrajectoiresDataService.name);
 
+  private readonly OBJECTIF_COMMENTAIRE_SOURCE = 'Source:';
+  private readonly OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS =
+    'Indicateurs manquants:';
+
+  private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
+    String.raw`${this.OBJECTIF_COMMENTAIRE_SOURCE}\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`,
+  );
   public readonly RARE_SOURCE_ID = 'rare';
 
   public readonly SNBC_SOURCE: CreateIndicateurSourceType = {
@@ -188,6 +195,40 @@ export default class TrajectoiresDataService {
     private readonly indicateursService: IndicateursService,
     private readonly authService: AuthService,
   ) {}
+
+  getObjectifCommentaire(
+    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType,
+  ): string {
+    const identifiantsManquants = [
+      ...donneesCalculTrajectoire.emissions_ges
+        .identifiants_referentiel_manquants,
+      ...donneesCalculTrajectoire.consommations_finales
+        .identifiants_referentiel_manquants,
+      ...donneesCalculTrajectoire.sequestrations
+        .identifiants_referentiel_manquants,
+    ];
+
+    return `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source} - ${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS} ${identifiantsManquants.join(', ')}`;
+  }
+  extractSourceIdentifiantManquantsFromCommentaire(commentaire: string): {
+    source: string;
+    identifiants_referentiel_manquants: string[];
+  } | null {
+    const match = commentaire.match(this.OBJECTIF_COMMENTAIRE_REGEXP);
+    if (match) {
+      console.log(`Match trouvé : ${match}`);
+      return {
+        source: match[1],
+        identifiants_referentiel_manquants: match[2]
+          ? match[2]
+              .split(',')
+              .map((i) => i.trim())
+              .filter((i) => i)
+          : [],
+      };
+    }
+    return null;
+  }
 
   /**
    * Récupère les valeurs nécessaires pour calculer la trajectoire SNBC
@@ -477,6 +518,14 @@ export default class TrajectoiresDataService {
     let source_donnees_snbc_deja_calculees: string | null = null;
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
+      const premierCommentaire = response.valeurs[0].objectif_commentaire;
+      const sourceIdentifiantManquants =
+        this.extractSourceIdentifiantManquantsFromCommentaire(
+          premierCommentaire || '',
+        );
+      response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
+      response.indentifiants_referentiel_manquants =
+        sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
       if (!force_recuperation_donnees) {
         return response;
@@ -485,6 +534,9 @@ export default class TrajectoiresDataService {
         // un peu un hack mais le plus simple aujourd'hui
         source_donnees_snbc_deja_calculees =
           valeurs[0].indicateur_valeur.objectif_commentaire || null;
+        this.logger.log(
+          `Source des données SNBC déjà calculées : ${source_donnees_snbc_deja_calculees}`,
+        );
       }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
