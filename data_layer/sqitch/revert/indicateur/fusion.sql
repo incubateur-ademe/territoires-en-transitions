@@ -2,15 +2,15 @@
 
 BEGIN;
 
+drop trigger modified_by on indicateur_valeur;
 
--- Recrée le type indicateur_generique
-create type indicateur_generique as
-(
-    indicateur_id indicateur_id,
-    indicateur_personnalise_id integer,
-    nom text,
-    description text,
-    unite text
-);
+drop function public.optional_enforce_modified_by;
+
+create trigger modified_by
+    before insert or update
+    on indicateur_valeur
+    for each row
+execute procedure enforce_modified_by();
+
 
 COMMIT;
