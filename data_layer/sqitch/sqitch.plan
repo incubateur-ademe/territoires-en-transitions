@@ -705,3 +705,4 @@ stats/locales [stats/locales@v4.5.0] 2024-08-21T15:45:09Z ,,, <jacquelina@LanceL
 @v4.6.0 2024-08-22T13:38:05Z ,,, <jacquelina@LanceLibre> # Tag du plan sqitch v4.6.0 - Optimisation de requêtes stats
 
 taxonomie/thematique [taxonomie/thematique@v4.5.0] 2024-08-21T09:51:00Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la thematique Agriculture et alimentation
+indicateur/trajectoire 2024-09-03T14:57:42Z System Administrator <root@AirdeThibaut2.lan> # Création d'un groupement pour les nouveaux indicateurs de la trajectoire
