@@ -51,6 +51,25 @@ export const TABS = [
     label: 'Consommation d’énergie 2015 (GWh)',
     description:
       'Pour ces données, nous recommandons d’utiliser les données issues de votre observatoire. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
+    secteurs: [
+      {
+        nom: 'Résidentiel',
+        identifiant: 'cae_2.e',
+      },
+      {
+        nom: 'Tertiaire',
+        identifiant: 'cae_2.f',
+      },
+      {
+        nom: 'Industrie',
+        identifiant: 'cae_2.k',
+      },
+      {nom: 'Agriculture', identifiant: 'cae_2.i'},
+      {nom: 'Transports routiers', identifiant: 'cae_2.g'},
+      {nom: 'Autres transports', identifiant: 'cae_2.h'},
+      {nom: 'Déchets', identifiant: 'cae_2.j'},
+      {nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet'},
+    ],
   },
 ] as const;
 
