@@ -14,7 +14,7 @@ const splitLabel = (label: string) => {
   let newLabel = [];
   let currentLabel = label;
 
-  while (currentLabel.length > 0) {
+  while (currentLabel?.length > 0) {
     let newContent = currentLabel.slice(0, 5);
     const contentEnd = currentLabel.slice(5).split(' ')[0];
     newContent += contentEnd;
