@@ -715,3 +715,7 @@ indicateur/fix_json_upsert 2024-09-11T12:49:34Z System Administrator <root@MacBo
 
 indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v4.9.0] 2024-10-01T15:19:16Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
 @v4.12.3 2024-10-01T16:24:17Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
+
+panier_action_impact/action_impact [panier_action_impact/action_impact@v4.6.0] 2024-09-02T09:32:07Z ,,, <jacquelina@LanceLibre> # Ajoute les partenaires
+panier_action_impact/plan_action [panier_action_impact/plan_action@v4.6.0] 2024-09-02T08:56:57Z ,,, <jacquelina@LanceLibre> # Ajoute le lien panier-plan et complète la fonction plan_from_panier.
+automatisation/newsletters_pai 2024-09-02T14:17:56Z ,,, <jacquelina@LanceLibre> # Ajoute un trigger sur la création d'un plan provenant d un panier à impact pour appeller une fonction supabase qui enverra le createur du plan a Brevo

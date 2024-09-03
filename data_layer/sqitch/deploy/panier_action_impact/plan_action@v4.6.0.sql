@@ -2,7 +2,36 @@
 
 BEGIN;
 
-create or replace function
+create table fiche_action_effet_attendu
+(
+    fiche_id integer references fiche_action on delete cascade,
+    effet_attendu_id integer references effet_attendu,
+    primary key (fiche_id, effet_attendu_id)
+);
+comment on table fiche_action_effet_attendu is
+    'Lie une fiche action à un effet attendu. '
+        'Pas encore affiché en front';
+
+alter table fiche_action_effet_attendu
+    enable row level security;
+
+create table action_impact_fiche_action
+(
+    fiche_id         integer references fiche_action on delete cascade,
+    action_impact_id integer references action_impact,
+    primary key (fiche_id, action_impact_id)
+);
+comment on table action_impact_fiche_action is
+    'Lie une fiche action à l''action à impact dont elle découle. '
+        'Pas encore affiché en front';
+
+comment on column action_impact_fiche_action.fiche_id is 'La fiche crée.';
+comment on column action_impact_fiche_action.action_impact_id is 'L''action à l''origine de la fiche.';
+
+alter table action_impact_fiche_action
+    enable row level security;
+
+create function
     plan_from_panier(collectivite_id int, panier_id uuid)
     returns integer
     volatile
@@ -73,8 +102,8 @@ begin
     return new_plan_id;
 end;
 $$ language plpgsql;
-
--- Enlève le lien plan-panier
-alter table axe drop column panier_id;
+comment on function plan_from_panier(int, uuid) is
+    'Crée un plan d''action à partir d''un panier pour une collectivité. '
+        'Renvoie l''id du plan nouvellement créé.';
 
 COMMIT;

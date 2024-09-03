@@ -2,36 +2,12 @@
 
 BEGIN;
 
-create table fiche_action_effet_attendu
-(
-    fiche_id integer references fiche_action on delete cascade,
-    effet_attendu_id integer references effet_attendu,
-    primary key (fiche_id, effet_attendu_id)
-);
-comment on table fiche_action_effet_attendu is
-    'Lie une fiche action à un effet attendu. '
-        'Pas encore affiché en front';
+-- Ajoute le lien plan-panier
+alter table axe add column panier_id uuid references panier;
+comment on column axe.panier_id is 'Lien vers le panier à actions qui a créé le plan';
 
-alter table fiche_action_effet_attendu
-    enable row level security;
-
-create table action_impact_fiche_action
-(
-    fiche_id         integer references fiche_action on delete cascade,
-    action_impact_id integer references action_impact,
-    primary key (fiche_id, action_impact_id)
-);
-comment on table action_impact_fiche_action is
-    'Lie une fiche action à l''action à impact dont elle découle. '
-        'Pas encore affiché en front';
-
-comment on column action_impact_fiche_action.fiche_id is 'La fiche crée.';
-comment on column action_impact_fiche_action.action_impact_id is 'L''action à l''origine de la fiche.';
-
-alter table action_impact_fiche_action
-    enable row level security;
-
-create function
+-- Complète la fonction
+create or replace function
     plan_from_panier(collectivite_id int, panier_id uuid)
     returns integer
     volatile
@@ -51,6 +27,8 @@ begin
 
     -- on commence par créer un plan
     new_plan_id = upsert_axe('Plan d''action à impact', $1, null);
+    -- fait le lien entre le plan et le panier
+    update axe set panier_id = plan_from_panier.panier_id where id = new_plan_id;
 
     -- puis pour chaque action à impact du panier
     for selected_action_impact in
@@ -61,8 +39,15 @@ begin
         where p.id = $2
         loop
             -- on insère une fiche
-            insert into fiche_action (collectivite_id, titre, description)
-            select $1, selected_action_impact.titre, selected_action_impact.description || '\n' || selected_action_impact.description_complementaire
+            insert into fiche_action (collectivite_id, titre, description, financements)
+            select $1,
+                   selected_action_impact.titre,
+                   selected_action_impact.description || '\n' || selected_action_impact.description_complementaire,
+                   (select aifb.nom
+                    from action_impact_fourchette_budgetaire aifb
+                    join action_impact ai on aifb.niveau = ai.fourchette_budgetaire
+                    where ai.id = selected_action_impact.id
+                    limit 1)
             returning id into new_fiche_id;
 
             -- - on enregistre le lien entre la fiche et l'action à impact
@@ -96,14 +81,51 @@ begin
             select new_fiche_id, aiea.effet_attendu_id
             from action_impact_effet_attendu as aiea
             where aiea.action_impact_id = selected_action_impact.id;
+
+            -- - les actions
+            insert into fiche_action_action (fiche_id, action_id)
+            select new_fiche_id, aia.action_id
+            from action_impact_action aia
+            where aia.action_impact_id = selected_action_impact.id;
+
+            -- - les partenaires
+            perform private.ajouter_partenaire(
+                           new_fiche_id,
+                           (
+                           select pt.*::partenaire_tag
+                           from (
+                                select null as id,
+                                       pp.nom as nom,
+                                       plan_from_panier.collectivite_id as collectivite_id
+                                )
+                               pt limit 1
+                           )
+                   )
+            from action_impact_partenaire aip
+            join panier_partenaire pp on aip.partenaire_id = pp.id
+            where aip.action_impact_id = selected_action_impact.id;
+
+            -- - les liens
+            insert into annexe (collectivite_id, fichier_id, url, fiche_id, titre)
+            select plan_from_panier.collectivite_id, null, lien.url,new_fiche_id,  lien.label
+            from (
+            select
+                jsonb_array_elements(rex)->>'url' AS url,
+                jsonb_array_elements(rex)->>'label' AS label
+            from action_impact
+            where id = selected_action_impact.id
+            union
+            select
+                jsonb_array_elements(ressources_externes)->>'url' AS url,
+                jsonb_array_elements(ressources_externes)->>'label' AS label
+            from action_impact
+            where id = selected_action_impact.id) lien;
+
         end loop;
 
     perform set_config('response.status', '201', true);
     return new_plan_id;
 end;
 $$ language plpgsql;
-comment on function plan_from_panier(int, uuid) is
-    'Crée un plan d''action à partir d''un panier pour une collectivité. '
-        'Renvoie l''id du plan nouvellement créé.';
 
 COMMIT;
