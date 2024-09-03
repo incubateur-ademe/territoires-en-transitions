@@ -708,3 +708,4 @@ indicateur/indicateurs_gaz_effet_serre 2024-09-03T15:35:34Z Marc Rutkowski <marc
 @v4.7.0 2024-09-05T08:32:14Z Marc Rutkowski <marc@attractive-media.fr> # Tag du plan sqitch v4.7.0 - Réparation page Collectivité du site
 
 taxonomie/thematique [taxonomie/thematique@v4.5.0] 2024-08-21T09:51:00Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la thematique Agriculture et alimentation
+indicateur/trajectoire 2024-09-03T14:57:42Z System Administrator <root@AirdeThibaut2.lan> # Création d'un groupement pour les nouveaux indicateurs de la trajectoire
