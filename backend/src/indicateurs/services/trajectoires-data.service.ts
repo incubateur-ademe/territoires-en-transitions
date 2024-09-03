@@ -81,14 +81,14 @@ export default class TrajectoiresDataService {
 
   public readonly SNBC_SEQUESTRATION_CELLULES = 'Carto_en-GES!C15:C22';
   public readonly SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL = [
-    ['cae_63.e'], // C15 Cultures
-    ['cae_63.f'], // C16 Prairies
-    ['cae_63.g'], // C17 Zones humides
-    ['cae_63.j'], // C18 Vergers
-    ['cae_63.k'], // C19 Vignes
-    ['cae_63.h'], // C20 Sols artificiels
+    ['cae_63.ca'], // C15 Cultures
+    ['cae_63.cb'], // C16 Prairies
+    ['cae_63.da'], // C17 Zones humides
+    ['cae_63.cc'], // C18 Vergers
+    ['cae_63.cd'], // C19 Vignes
+    ['cae_63.db'], // C20 Sols artificiels
     ['cae_63.b'], // C21 Forêts
-    ['cae_63.i'], // C22 Produits bois
+    ['cae_63.e'], // C22 Produits bois
   ];
   public readonly SEQUESTRATION_IDENTIFIANTS_PREFIX = 'cae_63.';
 
@@ -126,11 +126,11 @@ export default class TrajectoiresDataService {
     '',
     // Sous-secteur: Sequestration UTCATF
     'cae_63.b', // 241 Forêts
-    'cae_63.e', // 242 Cultures
-    'cae_63.f', // 243 Prairies
-    'cae_63.g', // 244 Zones humides
-    'cae_63.h', // 245 Sols artificiels
-    'cae_63.i', // 246 Produits bois
+    'cae_63.ca', // 242 Cultures
+    'cae_63.cb', // 243 Prairies
+    'cae_63.da', // 244 Zones humides
+    'cae_63.db', // 245 Sols artificiels
+    'cae_63.e', // 246 Produits bois
     '',
     '',
     '',

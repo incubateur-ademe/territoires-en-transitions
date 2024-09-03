@@ -438,8 +438,6 @@ export default class TrajectoiresSpreadsheetService {
         // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
         if (identifiantReferentielSortie === 'cae_1.k') {
           identifiantsReferentielEntree = ['cae_1.e', 'cae_1.f'];
-        } else if (identifiantReferentielSortie.startsWith('cae_63.')) {
-          identifiantsReferentielEntree = ['cae_63.a'];
         }
         // TODO: exception pour les totaux?
         const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
