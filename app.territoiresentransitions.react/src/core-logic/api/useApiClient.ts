@@ -16,6 +16,23 @@ type API_ARGS = {
   params?: JSONValue;
 };
 
+type ResponseError = {
+  error: string;
+  message: string;
+  statusCode: number;
+};
+
+export class ApiError extends Error {
+  error: string;
+  statusCode: number;
+
+  constructor({error, message, statusCode}: ResponseError) {
+    super(message);
+    this.statusCode = statusCode;
+    this.error = error;
+  }
+}
+
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
   const authHeaders = useAuthHeaders();
@@ -44,7 +61,7 @@ export const useApiClient = () => {
     });
     const body = await response.json();
     if (!response.ok) {
-      throw new Error(`${body.message} (${response.status})`);
+      throw new ApiError(body);
     }
     return body as ResponseType;
   };
@@ -57,7 +74,8 @@ export const useApiClient = () => {
       },
     });
     if (!response.ok) {
-      throw new Error(`Download error (${response.status})`);
+      const body = await response.json();
+      throw new ApiError(body);
     }
     // récupère la réponse sous forme de blob
     const blob = await response.blob();
@@ -79,7 +97,7 @@ export const useApiClient = () => {
     });
     const body = await response.json();
     if (!response.ok) {
-      throw new Error(`${body.message} (${response.status})`);
+      throw new ApiError(body);
     }
     return body as ResponseType;
   };
