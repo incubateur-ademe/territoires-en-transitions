@@ -1,12 +1,7 @@
 import {useQuery} from 'react-query';
 import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  DATE_DEBUT,
-  DATE_FIN,
-  IndicateurTrajectoire,
-  SourceIndicateur,
-} from './constants';
+import {DATE_FIN, IndicateurTrajectoire, SourceIndicateur} from './constants';
 import {
   getKey,
   IndicateurAvecValeurs,
@@ -87,7 +82,6 @@ export const useResultatTrajectoire = ({
   const {data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats} =
     useIndicateurValeurs({
       identifiants_referentiel: [identifiant],
-      date_debut: DATE_DEBUT,
       date_fin: DATE_FIN,
       sources: [
         SourceIndicateur.COLLECTIVITE,
