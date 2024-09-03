@@ -8,6 +8,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 // TODO: create domain siren as varchar(9) check ( value ~ '^\d{9}$' );
 // TODO: create domain codegeo as varchar(5);
@@ -36,6 +37,8 @@ export const collectiviteTable = pgTable('collectivite', {
     .notNull(),
   access_restreint: boolean('access_restreint'),
 });
+export const collectiviteSchema = createSelectSchema(collectiviteTable);
+export const createCollectiviteSchema = createInsertSchema(collectiviteTable);
 export type CollectiviteType = InferSelectModel<typeof collectiviteTable>;
 export type CreateCollectiviteType = InferInsertModel<typeof collectiviteTable>;
 
@@ -48,6 +51,8 @@ export const epciTable = pgTable('epci', {
   siren: varchar('siren', { length: 9 }).unique().notNull(),
   nature: epciNatureEnum('nature').notNull(),
 });
+export const epciSchema = createSelectSchema(epciTable);
+export const createEpciSchema = createInsertSchema(epciTable);
 export type EpciType = InferSelectModel<typeof epciTable>;
 export type CreateEpciType = InferInsertModel<typeof epciTable>;
 

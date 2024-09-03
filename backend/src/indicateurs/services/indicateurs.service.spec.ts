@@ -154,7 +154,17 @@ describe('IndicateursService', () => {
         );
       const expectedIndicateurValeursGroupees: IndicateurAvecValeursType[] = [
         {
-          definition: indicateur1,
+          definition: {
+            id: 456,
+            identifiant_referentiel: 'cae_1.c',
+            titre: 'Emissions de gaz à effet de serre - résidentiel',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur résidentiel',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+          },
           valeurs: [
             {
               date_valeur: '2015-01-01',
@@ -169,7 +179,17 @@ describe('IndicateursService', () => {
           ],
         },
         {
-          definition: indicateur2,
+          definition: {
+            id: 457,
+            identifiant_referentiel: 'cae_1.d',
+            titre: 'Emissions de gaz à effet de serre - tertiaire',
+            titre_long:
+              'Emissions de gaz à effet de serre du secteur tertiaire',
+            description: '',
+            unite: 'teq CO2',
+            borne_min: null,
+            borne_max: null,
+          },
           valeurs: [
             {
               date_valeur: '2016-01-01',

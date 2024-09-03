@@ -99,6 +99,20 @@ export const indicateurDefinitionSchema = createSelectSchema(
 export const createIndicateurDefinitionSchema = createInsertSchema(
   indicateurDefinitionTable,
 );
+export const minimaleIndicateurDefinitionSchema =
+  indicateurDefinitionSchema.pick({
+    id: true,
+    identifiant_referentiel: true,
+    titre: true,
+    titre_long: true,
+    description: true,
+    unite: true,
+    borne_min: true,
+    borne_max: true,
+  });
+export type MinimalIndicateurDefinitionType = z.infer<
+  typeof minimaleIndicateurDefinitionSchema
+>;
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),
@@ -176,7 +190,7 @@ export class IndicateurValeurGroupee extends createZodDto(
 export const indicateurAvecValeursSchema = extendApi(
   z
     .object({
-      definition: indicateurDefinitionSchema,
+      definition: minimaleIndicateurDefinitionSchema,
       valeurs: z.array(indicateurValeurGroupeeSchema),
     })
     .openapi({

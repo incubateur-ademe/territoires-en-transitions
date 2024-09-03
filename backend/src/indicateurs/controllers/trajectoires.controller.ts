@@ -1,5 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Next,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
@@ -38,7 +46,7 @@ export class VerificationDonneesSNBCResponseClass extends createZodDto(
   verificationDonneesSNBCResponseSchema,
 ) {}
 
-@Controller('trajectoires')
+@Controller('trajectoires/snbc')
 export class TrajectoiresController {
   private readonly logger = new Logger(TrajectoiresController.name);
 
@@ -48,7 +56,7 @@ export class TrajectoiresController {
     private readonly trajectoiresXlsxService: TrajectoiresXlsxService,
   ) {}
 
-  @Get('snbc')
+  @Get('')
   @ApiResponse({ type: CalculTrajectoireResponseClass })
   async calculeTrajectoireSnbc(
     @Query() request: CalculTrajectoireRequestClass,
@@ -66,8 +74,23 @@ export class TrajectoiresController {
     return response;
   }
 
+  @Delete('')
+  async deleteTrajectoireSnbc(
+    @Query() request: CollectiviteRequestClass,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+  ): Promise<void> {
+    this.logger.log(
+      `Suppression de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+    );
+    await this.trajectoiresDataService.deleteTrajectoireSnbc(
+      request.collectivite_id,
+      undefined,
+      tokenInfo,
+    );
+  }
+
   @PublicEndpoint()
-  @Get('snbc/modele')
+  @Get('modele')
   @ApiOkResponse({
     description:
       'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC',
@@ -85,7 +108,7 @@ export class TrajectoiresController {
     );
   }
 
-  @Get('snbc/telechargement')
+  @Get('telechargement')
   @ApiOkResponse({
     description:
       'Téléchargement du fichier excel utilisé pour le calcul de la trajectoire SNBC prérempli avec les données de la collectivité',
@@ -107,7 +130,7 @@ export class TrajectoiresController {
     );
   }
 
-  @Get('snbc/verification')
+  @Get('verification')
   @ApiOkResponse({
     type: VerificationDonneesSNBCResponseClass,
     description:
@@ -121,11 +144,14 @@ export class TrajectoiresController {
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { epci, valeurs, ...response } =
+    const { valeurs, ...response } =
       await this.trajectoiresDataService.verificationDonneesSnbc(
         request,
         tokenInfo,
       );
+    if (!request.epci_info) {
+      delete response.epci;
+    }
     return response;
   }
 }
