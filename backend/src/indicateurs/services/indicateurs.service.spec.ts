@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import {
-  IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
+  IndicateurAvecValeursType,
   IndicateurDefinitionType,
   IndicateurSourceMetadonneeType,
   IndicateurValeurAvecMetadonnesDefinition,
@@ -20,7 +21,7 @@ describe('IndicateursService', () => {
       controllers: [IndicateursService],
     })
       .useMocker((token) => {
-        if (token === DatabaseService) {
+        if (token === DatabaseService || token === AuthService) {
           return {};
         }
       })
@@ -151,7 +152,7 @@ describe('IndicateursService', () => {
           indicateurValeurs,
           indicateurDefinitions,
         );
-      const expectedIndicateurValeursGroupees: IndicateurAvecValeurs[] = [
+      const expectedIndicateurValeursGroupees: IndicateurAvecValeursType[] = [
         {
           definition: indicateur1,
           valeurs: [

@@ -1,4 +1,3 @@
-import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { indicateurAvecValeursParSourceSchema } from './indicateur.models';
@@ -48,9 +47,9 @@ export const getIndicateursValeursRequestSchema = extendApi(
       title: 'Filtre de récupération des valeurs des indicateurs',
     }),
 );
-export class GetIndicateursValeursRequestClass extends createZodDto(
-  getIndicateursValeursRequestSchema,
-) {}
+export type GetIndicateursValeursRequestType = z.infer<
+  typeof getIndicateursValeursRequestSchema
+>;
 
 export const getIndicateursValeursResponseSchema = extendApi(
   z
@@ -62,6 +61,6 @@ export const getIndicateursValeursResponseSchema = extendApi(
     }),
 );
 
-export class GetIndicateursValeursResponse extends createZodDto(
-  getIndicateursValeursResponseSchema,
-) {}
+export type GetIndicateursValeursResponseType = z.infer<
+  typeof getIndicateursValeursResponseSchema
+>;
