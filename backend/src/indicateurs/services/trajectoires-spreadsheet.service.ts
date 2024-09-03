@@ -7,6 +7,7 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
+import GroupementsService from '../../collectivites/services/groupements.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   CalculTrajectoireRequestType,
@@ -27,12 +28,14 @@ import TrajectoiresDataService from './trajectoires-data.service';
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
   private readonly logger = new Logger(TrajectoiresSpreadsheetService.name);
+  private readonly TRAJECTOIRE_GROUPEMENT = 'trajectoire';
 
   constructor(
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly indicateursService: IndicateursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
+    private readonly groupementsService: GroupementsService,
   ) {}
 
   getIdentifiantSpreadsheetCalcul() {
@@ -98,6 +101,14 @@ export default class TrajectoiresSpreadsheetService {
     }
     this.logger.log(
       `La metadonnée pour la source ${this.trajectoiresDataService.SNBC_SOURCE.id} et la date ${this.trajectoiresDataService.SNBC_SOURCE_METADONNEES.date_version.toISOString()} existe avec l'identifiant ${indicateurSourceMetadonnee.id}`,
+    );
+
+    // Récupération du groupement auquel la collectivité devra être rattachée
+    const groupement = await this.groupementsService.getGroupementAvecNom(
+      this.TRAJECTOIRE_GROUPEMENT,
+    );
+    this.logger.log(
+      `Groupement pour la trajectoire trouvé avec l'id ${groupement.id}`,
     );
 
     const resultatVerification =
@@ -332,6 +343,12 @@ export default class TrajectoiresSpreadsheetService {
       await this.indicateursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
       );
+
+    // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement
+    await this.groupementsService.ajouteCollectiviteAuGroupement(
+      groupement.id,
+      request.collectivite_id,
+    );
 
     const [
       indicateurResultatConsommationDefinitions,
