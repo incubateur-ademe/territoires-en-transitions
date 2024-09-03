@@ -119,6 +119,8 @@ export type VerificationDonneesSNBCResponseType = z.infer<
 export interface VerificationDonneesSNBCResult
   extends VerificationDonneesSNBCResponseType {
   epci?: EpciType;
+  source_donnees_entree?: string;
+  indentifiants_referentiel_manquants?: string[];
   valeurs?: IndicateurValeurType[];
 }
 
@@ -161,6 +163,7 @@ export const calculTrajectoireResponseSchema = extendApi(
     .object({
       mode: z.nativeEnum(CalculTrajectoireResultatMode),
       source_donnees_entree: z.string(),
+      indentifiants_referentiel_manquants_donnees_entree: z.array(z.string()),
       trajectoire: calculTrajectoireResponseDonneesSchema,
     })
     .openapi({

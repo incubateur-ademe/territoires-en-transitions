@@ -186,4 +186,69 @@ describe('TrajectoiresDataService test', () => {
       expect(interpolationResultat).toEqual(interpolationResultatAttendu);
     });
   });
+
+  describe('extractSourceIdentifiantManquantsFromCommentaire', () => {
+    it('Extraction nominale avec un identifiant manquant', async () => {
+      const commentaire = 'Source: rare - Indicateurs manquants: cae_2.a';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        source: 'rare',
+        identifiants_referentiel_manquants: ['cae_2.a'],
+      });
+    });
+
+    it('Extraction nominale avec deux identifiant manquant', async () => {
+      const commentaire =
+        'Source: collectivite   - Indicateurs manquants: cae_2.a, cae_63.c';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        source: 'collectivite',
+        identifiants_referentiel_manquants: ['cae_2.a', 'cae_63.c'],
+      });
+    });
+
+    it('Extraction nominale sans identifiant manquant', async () => {
+      const commentaire = 'Source: collectivite   - Indicateurs manquants:  ';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        source: 'collectivite',
+        identifiants_referentiel_manquants: [],
+      });
+    });
+
+    it('Extraction nominale sans identifiant manquant (non spécifié)', async () => {
+      const commentaire = 'Source: collectivite';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        source: 'collectivite',
+        identifiants_referentiel_manquants: [],
+      });
+    });
+
+    it('Pas de maching', async () => {
+      const commentaire = 'Sourc: collectivite';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual(null);
+    });
+  });
 });
