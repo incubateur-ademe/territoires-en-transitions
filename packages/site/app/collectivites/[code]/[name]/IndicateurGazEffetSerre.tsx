@@ -22,13 +22,13 @@ const IndicateurGazEffetSerre = ({
   const lastYearData = data.filter(
     d =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.indicateur_id] !== 'Total',
+      secteurIdToLabel[d.identifiant] !== 'Total',
   );
 
   const lastYearTotal = data.find(
     d =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.indicateur_id] === 'Total',
+      secteurIdToLabel[d.identifiant] === 'Total',
   );
 
   if (lastYearData.length <= 1 && !lastYearTotal) return null;
@@ -37,7 +37,7 @@ const IndicateurGazEffetSerre = ({
     <IndicateurCard
       defaultData={defaultData}
       data={lastYearData.map(d => ({
-        id: secteurIdToLabel[d.indicateur_id],
+        id: secteurIdToLabel[d.identifiant],
         value: d.resultat ?? 0,
       }))}
       boxTitle={`${
@@ -46,12 +46,7 @@ const IndicateurGazEffetSerre = ({
           : ''
       }${defaultData.titre_encadre}`}
       graphTitle={`Répartition des émissions de gaz à effet de serre (hors puits) par secteur en ${lastYear}`}
-      source={
-        lastYearData.length
-          ? // FIXME: il faut changer la requête pour récupérer le libellé de la source à la place de l'id
-            lastYearData[0].metadonnee_id?.toString() ?? ''
-          : lastYearTotal?.metadonnee_id?.toString() ?? ''
-      }
+      source={lastYearData?.[0].source ?? ''}
       unit="t CO₂eq"
       unitSingular={true}
       decimals={0}

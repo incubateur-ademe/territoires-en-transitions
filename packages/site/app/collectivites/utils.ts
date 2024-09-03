@@ -3,9 +3,15 @@ import {supabase} from 'app/initSupabase';
 import {EtoilesLabel} from 'app/types';
 import {fetchCollection, fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
+import {secteurIdToLabel} from 'src/utils/labels';
 
 export type Labellisations = Tables<'labellisation'>;
-export type Indicateurs = Tables<'indicateur_valeur'>;
+export type Indicateurs = {
+  date_valeur: string;
+  resultat: number;
+  identifiant: string;
+  source?: string;
+};
 export type IndicateurArtificialisation =
   Tables<'indicateur_artificialisation'>;
 
