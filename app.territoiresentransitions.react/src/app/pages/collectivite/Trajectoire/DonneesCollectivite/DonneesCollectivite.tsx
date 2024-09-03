@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {Alert, Button, ModalFooter, RenderProps, Tab, Tabs} from '@tet/ui';
 import {Secteur, TableauDonnees} from './TableauDonnees';
 import {useDonneesSectorisees} from './useDonneesSectorisees';
@@ -23,6 +24,13 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
     isLoading,
     isSuccess,
   } = useCalculTrajectoire({nouveauCalcul: true});
+
+  // ferme le dialogue quand le nouveau calcul est terminé
+  useEffect(() => {
+    if (isSuccess) {
+      modalProps.close();
+    }
+  }, [isSuccess]);
 
   return (
     <div className="text-center">
@@ -74,12 +82,7 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
           icon={!isLoading ? 'arrow-right-line' : undefined}
           iconPosition="right"
           disabled={!donneesCompletes || isLoading}
-          onClick={() => {
-            calcul();
-            if (isSuccess) {
-              modalProps.close();
-            }
-          }}
+          onClick={async () => calcul()}
         >
           {isLoading ? (
             <>
