@@ -18,7 +18,7 @@ import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
 
 /**
- * Create a class-based DTO from the schema in order to be able to generate automatically the OpenAPI documentation and validate the request payload
+ * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 export class CalculTrajectoireResponseClass extends createZodDto(
   calculTrajectoireResponseSchema,

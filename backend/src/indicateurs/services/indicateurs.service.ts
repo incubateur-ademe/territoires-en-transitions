@@ -22,8 +22,8 @@ import {
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import {
-  GetIndicateursValeursRequestClass,
-  GetIndicateursValeursResponse,
+  GetIndicateursValeursRequestType,
+  GetIndicateursValeursResponseType,
 } from '../models/getIndicateurs.models';
 import {
   CreateIndicateurValeurType,
@@ -60,7 +60,7 @@ export default class IndicateursService {
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
-  async getIndicateursValeurs(options: GetIndicateursValeursRequestClass) {
+  async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
     this.logger.log(
       `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
     );
@@ -149,9 +149,9 @@ export default class IndicateursService {
   }
 
   async getIndicateurValeursGroupees(
-    options: GetIndicateursValeursRequestClass,
+    options: GetIndicateursValeursRequestType,
     tokenInfo: SupabaseJwtPayload,
-  ): Promise<GetIndicateursValeursResponse> {
+  ): Promise<GetIndicateursValeursResponseType> {
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
       [options.collectivite_id],

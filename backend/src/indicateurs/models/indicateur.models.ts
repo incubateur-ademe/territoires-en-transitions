@@ -146,16 +146,28 @@ export const createIndicateurValeurSchema = createInsertSchema(
 );
 
 export const indicateurValeurGroupeeSchema = extendApi(
-  indicateurValeurSchema.pick({
-    id: true,
-    date_valeur: true,
-    resultat: true,
-    resultat_commentaire: true,
-    objectif: true,
-    objectif_commentaire: true,
-    metadonnee_id: true,
-  }),
+  indicateurValeurSchema
+    .pick({
+      id: true,
+      date_valeur: true,
+      resultat: true,
+      resultat_commentaire: true,
+      objectif: true,
+      objectif_commentaire: true,
+      metadonnee_id: true,
+    })
+    .partial({
+      resultat: true,
+      resultat_commentaire: true,
+      objectif: true,
+      objectif_commentaire: true,
+      metadonnee_id: true,
+    }),
 );
+
+export type IndicateurValeurGroupeeType = z.infer<
+  typeof indicateurValeurGroupeeSchema
+>;
 
 export class IndicateurValeurGroupee extends createZodDto(
   indicateurValeurGroupeeSchema,

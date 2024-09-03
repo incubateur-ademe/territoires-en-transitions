@@ -21,10 +21,11 @@ export default class IndicateurSourcesService {
     this.logger.log(
       `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.source_id} et la date ${indicateurSourceMetadonneeType.date_version.toISOString()}`,
     );
-    const [model] = await this.databaseService.db
+    const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
-      .values(indicateurSourceMetadonneeType)
-      .returning();
+      .values(indicateurSourceMetadonneeType);
+
+    const [model] = await request.returning();
     return model;
   }
 

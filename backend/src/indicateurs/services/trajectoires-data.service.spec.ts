@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { DateTime } from 'luxon';
+import { AuthService } from '../../auth/services/auth.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur.models';
@@ -19,7 +20,8 @@ describe('TrajectoiresDataService test', () => {
         if (
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
-          token === IndicateursService
+          token === IndicateursService ||
+          token === AuthService
         ) {
           return {};
         } else if (token === SheetService) {
@@ -30,7 +32,7 @@ describe('TrajectoiresDataService test', () => {
       })
       .compile();
 
-    trajectoiresDataService = moduleRef.get(trajectoiresDataService);
+    trajectoiresDataService = moduleRef.get(TrajectoiresDataService);
   });
 
   describe('getInterpolationValeur', () => {
