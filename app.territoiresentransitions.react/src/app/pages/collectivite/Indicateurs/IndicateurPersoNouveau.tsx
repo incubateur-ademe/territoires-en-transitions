@@ -55,13 +55,17 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition, ficheId, isFavoriCollectivite});
-  };
-
   const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
     fiche?.thematiques ?? []
   );
+
+  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    save({
+      definition: {...definition, thematiques},
+      ficheId,
+      isFavoriCollectivite,
+    });
+  };
 
   return (
     <Formik<TIndicateurPersoDefinitionWrite>
