@@ -338,7 +338,7 @@ backend-deploy: ## Déploie le backend dans une app Koyeb existante
         --env ENV_NAME=$ENV_NAME \
         --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
         --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
-        --env DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
+        --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
         --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
         --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
         --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME \

@@ -41,7 +41,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Api Territoires en Transitions')
-    .setVersion(process.env.APPLICATION_VERSION || 'dev') //  TODO: application tag
+    .setVersion(process.env.APPLICATION_VERSION || 'dev')
     .build();
   patchNestjsSwagger();
   const document = SwaggerModule.createDocument(app, config);

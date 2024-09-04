@@ -2,6 +2,7 @@ import { Database } from '@library/database.types';
 import { DBClient } from '@library/typeUtils';
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import BackendConfigurationService from './backend-configuration.service';
 
 @Injectable()
 export default class SupabaseService {
@@ -9,16 +10,15 @@ export default class SupabaseService {
 
   public readonly client: DBClient;
 
-  constructor() {
-    if (!process.env.SUPABASE_URL) {
-      process.env.SUPABASE_URL = 'http://127.0.0.1:54321';
-    }
+  constructor(backendConfigurationService: BackendConfigurationService) {
+    const backendConfiguration =
+      backendConfigurationService.getBackendConfiguration();
     this.logger.log(
-      `Initializing supabase service with url: ${process.env.SUPABASE_URL}`,
+      `Initializing supabase service with url: ${backendConfiguration.SUPABASE_URL}`,
     );
     this.client = createClient<Database>(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY! || 'pwd', // TODO: Use env var
+      backendConfiguration.SUPABASE_URL,
+      backendConfiguration.SUPABASE_SERVICE_ROLE_KEY,
     );
   }
 }
