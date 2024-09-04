@@ -3,17 +3,21 @@ import classNames from 'classnames';
 
 import {Button} from '@tet/ui';
 import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
-import IndicateurCardMenu from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
+import IndicateurCardMenu, {
+  ChartDownloadSettings,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
 import IndicateurCardEdit from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
 
 type Props = {
   definition: TIndicateurListItem;
+  chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
 };
 
 const IndicateurCardOptions = ({
   definition,
   isFavoriCollectivite = false,
+  chartDownloadSettings,
 }: Props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,6 +49,7 @@ const IndicateurCardOptions = ({
       <IndicateurCardMenu
         indicateurId={definition.id}
         isFavoriCollectivite={isFavoriCollectivite}
+        chartDownloadSettings={chartDownloadSettings}
         openState={{
           isOpen: isMenuOpen,
           setIsOpen: () => setIsMenuOpen(!isMenuOpen),

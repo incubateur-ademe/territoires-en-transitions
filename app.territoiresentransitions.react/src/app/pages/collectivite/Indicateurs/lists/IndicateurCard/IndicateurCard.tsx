@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import classNames from 'classnames';
 
 import {Button, Card, CardProps, Checkbox, Tooltip} from '@tet/ui';
@@ -125,6 +126,8 @@ export const IndicateurCardBase = ({
   card,
   readonly,
 }: IndicateurCardBaseProps) => {
+  const [isDownloadChartOpen, setIsDownloadChartOpen] = useState(false);
+
   const showChart =
     (!hideChart && !hideChartWithoutValue) ||
     (hideChartWithoutValue && data.valeurs.length > 0);
@@ -167,6 +170,10 @@ export const IndicateurCardBase = ({
         <IndicateurCardOptions
           definition={definition}
           isFavoriCollectivite={chartInfo?.favoriCollectivite}
+          chartDownloadSettings={{
+            showTrigger: showChart && hasValeurOrObjectif,
+            openModal: () => setIsDownloadChartOpen(true),
+          }}
         />
       )}
       <Card
@@ -275,6 +282,14 @@ export const IndicateurCardBase = ({
                     gridXValues: 4,
                     gridYValues: 4,
                     ...chart?.chartConfig,
+                  }}
+                  chartInfos={{
+                    modal: {
+                      isOpen: isDownloadChartOpen,
+                      setIsOpen: setIsDownloadChartOpen,
+                    },
+                    fileName: definition.titre,
+                    title: definition.titre,
                   }}
                 />
                 {isNotLoadingNotFilled && !readonly && !!href && (
