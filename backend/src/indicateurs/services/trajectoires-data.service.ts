@@ -21,6 +21,7 @@ import {
 import {
   CreateIndicateurSourceMetadonneeType,
   CreateIndicateurSourceType,
+  IndicateurSourceMetadonneeType,
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur.models';
@@ -195,12 +196,43 @@ export default class TrajectoiresDataService {
     'cae_2.a', // 297 Total
   ];
 
+  private indicateurSourceMetadonnee: IndicateurSourceMetadonneeType | null =
+    null;
+
   constructor(
     private readonly collectivitesService: CollectivitesService,
     private readonly indicateursService: IndicateursService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly authService: AuthService,
   ) {}
+
+  async getTrajectoireIndicateursMetadonnees(): Promise<IndicateurSourceMetadonneeType> {
+    if (!this.indicateurSourceMetadonnee) {
+      // Création de la source métadonnée SNBC si elle n'existe pas
+      this.indicateurSourceMetadonnee =
+        await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
+          this.SNBC_SOURCE.id,
+          this.SNBC_SOURCE_METADONNEES.date_version,
+        );
+      if (!this.indicateurSourceMetadonnee) {
+        this.logger.log(
+          `Création de la metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()}`,
+        );
+        await this.indicateurSourcesService.upsertIndicateurSource(
+          this.SNBC_SOURCE,
+        );
+
+        this.indicateurSourceMetadonnee =
+          await this.indicateurSourcesService.createIndicateurSourceMetadonnee(
+            this.SNBC_SOURCE_METADONNEES,
+          );
+      }
+    }
+    this.logger.log(
+      `La metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()} existe avec l'identifiant ${this.indicateurSourceMetadonnee.id}`,
+    );
+    return this.indicateurSourceMetadonnee;
+  }
 
   getObjectifCommentaire(
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType,

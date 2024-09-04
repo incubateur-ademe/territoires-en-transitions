@@ -76,28 +76,8 @@ export default class TrajectoiresSpreadsheetService {
       );
     }
 
-    // Création de la source métadonnée SNBC si elle n'existe pas
-    let indicateurSourceMetadonnee =
-      await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
-        this.trajectoiresDataService.SNBC_SOURCE.id,
-        this.trajectoiresDataService.SNBC_SOURCE_METADONNEES.date_version,
-      );
-    if (!indicateurSourceMetadonnee) {
-      this.logger.log(
-        `Création de la metadonnée pour la source ${this.trajectoiresDataService.SNBC_SOURCE.id} et la date ${this.trajectoiresDataService.SNBC_SOURCE_METADONNEES.date_version.toISOString()}`,
-      );
-      await this.indicateurSourcesService.upsertIndicateurSource(
-        this.trajectoiresDataService.SNBC_SOURCE,
-      );
-
-      indicateurSourceMetadonnee =
-        await this.indicateurSourcesService.createIndicateurSourceMetadonnee(
-          this.trajectoiresDataService.SNBC_SOURCE_METADONNEES,
-        );
-    }
-    this.logger.log(
-      `La metadonnée pour la source ${this.trajectoiresDataService.SNBC_SOURCE.id} et la date ${this.trajectoiresDataService.SNBC_SOURCE_METADONNEES.date_version.toISOString()} existe avec l'identifiant ${indicateurSourceMetadonnee.id}`,
-    );
+    const indicateurSourceMetadonnee =
+      await this.trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
 
     // Récupération du groupement auquel la collectivité devra être rattachée
     const groupement = await this.groupementsService.getGroupementAvecNom(
