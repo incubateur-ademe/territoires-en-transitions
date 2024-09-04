@@ -10,8 +10,8 @@ import {
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {shasum256} from 'utils/shasum256';
 import {useAddFileToLib} from './useAddFileToLib';
-import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
 import {useCollectiviteBucketId} from './useCollectiviteBucketId';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
@@ -104,7 +104,7 @@ export const useUploader = (
 
   const collectivite_id = useCollectiviteId()!;
   const {addFileToLib} = useAddFileToLib();
-  const authHeaders = useAuthHeaders();
+  const {authHeaders} = useAuth();
   const bucket_id = useCollectiviteBucketId(collectivite_id);
 
   // appelée quand l'upload est terminé
