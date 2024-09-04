@@ -55,6 +55,7 @@ export async function fetchFilteredIndicateurs(
     .select(
       [
         'id',
+        'collectivite_id',
         'identifiant_referentiel',
         'titre',
         'groupement_id',
