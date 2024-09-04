@@ -12,7 +12,7 @@ import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from 'app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
-import {Alert, Button, Field, FormSectionGrid} from '@tet/ui';
+import {Alert, Button, Checkbox, Field, FormSectionGrid} from '@tet/ui';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -66,6 +66,13 @@ const IndicateurPersoNouveau = ({
       isFavoriCollectivite,
     });
   };
+  /**
+   * Peut recevoir un state initial qui rend la checkbox disabled si donné à la modale de création
+   * sinon garde un état local
+   */
+  const [favoriCollectivite, setFavoriCollectivite] = useState(
+    isFavoriCollectivite ?? false
+  );
 
   return (
     <Formik<TIndicateurPersoDefinitionWrite>
@@ -112,10 +119,18 @@ const IndicateurPersoNouveau = ({
               label="Description"
               className="col-span-2"
             />
+
+            <Checkbox
+              containerClassname="col-span-2"
+              label="ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
+              checked={favoriCollectivite}
+              onChange={() => setFavoriCollectivite(!favoriCollectivite)}
+              disabled={isFavoriCollectivite}
+            />
           </FormSectionGrid>
 
           {/* Boutons de validation / annulation */}
-          <div className="flex flex-row justify-end gap-4">
+          <div className="flex flex-row justify-end gap-4 mt-2">
             {onClose && (
               <Button variant="outlined" onClick={onClose}>
                 Annuler
