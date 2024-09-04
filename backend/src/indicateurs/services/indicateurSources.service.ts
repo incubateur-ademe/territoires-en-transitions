@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateIndicateurSourceMetadonneeType,
@@ -24,7 +24,29 @@ export default class IndicateurSourcesService {
     const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
       .values(indicateurSourceMetadonneeType)
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: [
+          indicateurSourceMetadonneeTable.source_id,
+          indicateurSourceMetadonneeTable.date_version,
+        ],
+        set: {
+          diffuseur: sql.raw(
+            `excluded.${indicateurSourceMetadonneeTable.diffuseur.name}`,
+          ),
+          methodologie: sql.raw(
+            `excluded.${indicateurSourceMetadonneeTable.methodologie.name}`,
+          ),
+          limites: sql.raw(
+            `excluded.${indicateurSourceMetadonneeTable.limites.name}`,
+          ),
+          producteur: sql.raw(
+            `excluded.${indicateurSourceMetadonneeTable.producteur.name}`,
+          ),
+          nom_donnees: sql.raw(
+            `excluded.${indicateurSourceMetadonneeTable.nom_donnees.name}`,
+          ),
+        },
+      });
 
     const [model] = await request.returning();
     return model;
