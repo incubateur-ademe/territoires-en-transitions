@@ -30,12 +30,12 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   collectivite_id: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),
-  created_at: timestamp('created_at', { withTimezone: true }).default(
-    sql.raw(`CURRENT_TIMESTAMP`),
-  ),
-  modified_at: timestamp('modified_at', { withTimezone: true })
+  created_at: timestamp('created_at', { withTimezone: true })
     .default(sql.raw(`CURRENT_TIMESTAMP`))
     .notNull(),
+  modified_at: timestamp('modified_at', { withTimezone: true }).default(
+    sql.raw(`CURRENT_TIMESTAMP`),
+  ),
   active: boolean('active').notNull(),
   niveau_acces: niveauAccessEnum('niveau_acces')
     .notNull()
