@@ -176,7 +176,7 @@ export default class TrajectoiresXlsxService {
         valeur.identifiants_referentiel,
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
-        (valeur.valeur || 0) / 1000;
+        ((valeur.valeur || 0) * -1) / 1000;
     });
     valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(

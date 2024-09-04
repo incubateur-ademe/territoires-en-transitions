@@ -246,7 +246,12 @@ export default class TrajectoiresDataService {
         .identifiants_referentiel_manquants,
     ];
 
-    return `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source} - ${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS} ${identifiantsManquants.join(', ')}`;
+    let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source}`;
+    if (identifiantsManquants.length) {
+      commentaitre += ` - ${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS} ${identifiantsManquants.join(', ')}`;
+    }
+
+    return commentaitre;
   }
   extractSourceIdentifiantManquantsFromCommentaire(commentaire: string): {
     source: string;
@@ -552,28 +557,24 @@ export default class TrajectoiresDataService {
       collectivite_id: request.collectivite_id,
       sources: [this.SNBC_SOURCE.id],
     });
-    let source_donnees_snbc_deja_calculees: string | null = null;
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
+      // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
+      // un peu un hack mais le plus simple aujourd'hui
       const premierCommentaire = response.valeurs[0].objectif_commentaire;
       const sourceIdentifiantManquants =
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || '',
         );
       response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
+      this.logger.log(
+        `Source des données SNBC déjà calculées : ${response.source_donnees_entree}`,
+      );
       response.indentifiants_referentiel_manquants_donnees_entree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
       if (!force_recuperation_donnees) {
         return response;
-      } else {
-        // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
-        // un peu un hack mais le plus simple aujourd'hui
-        source_donnees_snbc_deja_calculees =
-          valeurs[0].indicateur_valeur.objectif_commentaire || null;
-        this.logger.log(
-          `Source des données SNBC déjà calculées : ${source_donnees_snbc_deja_calculees}`,
-        );
       }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
@@ -583,7 +584,7 @@ export default class TrajectoiresDataService {
         request.collectivite_id,
         !isNil(request.force_utilisation_donnees_collectivite)
           ? request.force_utilisation_donnees_collectivite
-          : source_donnees_snbc_deja_calculees ===
+          : response.source_donnees_entree ===
               this.indicateursService.NULL_SOURCE_ID
             ? true
             : false,

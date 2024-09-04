@@ -271,9 +271,10 @@ export default class TrajectoiresSpreadsheetService {
 
     // Ecriture des informations de sequestration
     // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
+    // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais doivent être écrites avec le signe opposé
     const sequestrationSpreadsheetData =
       resultatVerification.donnees_entree.sequestrations.valeurs.map(
-        (valeur) => [(valeur.valeur || 0) / 1000],
+        (valeur) => [((valeur.valeur || 0) * -1) / 1000],
       );
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
