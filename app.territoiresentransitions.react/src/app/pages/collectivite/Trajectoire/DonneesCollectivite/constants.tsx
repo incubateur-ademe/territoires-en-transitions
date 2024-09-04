@@ -44,7 +44,7 @@ export const TABS = [
     id: 'sequestration_carbone',
     label: 'Séquestration carbone 2015 (ktCO2)',
     description:
-      'Attention : en cas de séquestration, entrez des valeurs négatives. Pour ces données, nous recommandons d’utiliser les données issues d’ALDO. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant.',
+      'Les données sont attendues au format ALDO : positives en cas de séquestration et négatives en cas d’émission. Pour vous faciliter ce travail, les données disponibles en open data sont affichées dans le tableau suivant, à ce format.',
   },
   {
     id: 'consommations_finales',
