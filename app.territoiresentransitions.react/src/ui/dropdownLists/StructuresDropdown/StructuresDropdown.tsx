@@ -1,6 +1,6 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TFicheActionStructureRow} from 'types/alias';
-import SelectWithUpdates from '../tags/SelectTags';
+import SelectTags from '../tags/SelectTags';
 import {useStructuresListe} from './useStructuresListe';
 
 type StructuresDropdownProps = Omit<
@@ -21,7 +21,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
   const {data, refetch} = useStructuresListe();
 
   return (
-    <SelectWithUpdates
+    <SelectTags
       {...props}
       placeholder={props.placeholder ?? 'Sélectionnez ou créez un pilote'}
       queryKey="structures"
