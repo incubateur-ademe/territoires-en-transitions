@@ -6,10 +6,12 @@ import { CommonModule } from './common/common.module';
 import configuration from './config/configuration';
 import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
+import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { ConfigurationModule } from './config/configuration.module';
 import { TrpcRouter } from './trpc.router';
+import { ReferentielsModule } from './referentiels/referentiels.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { TrpcRouter } from './trpc.router';
     IndicateursModule,
     AuthModule,
     FichesActionModule,
+    PersonnalisationsModule,
+    ReferentielsModule,
   ],
   providers: [TrpcRouter],
 })

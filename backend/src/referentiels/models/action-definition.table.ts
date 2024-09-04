@@ -8,9 +8,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { ActionType } from './action-type.enum';
+import { referentielList } from './referentiel.enum';
 
 // Todo: change it reference another table instead
-export const referentielEnum = pgEnum('referentiel', ['eci', 'cae']);
+export const referentielEnum = pgEnum('referentiel', referentielList);
 export const actionCategorieEnum = pgEnum('action_categorie', [
   'bases',
   'mise en œuvre',
@@ -18,14 +21,14 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.actionId
+  () => actionDefinitionTable.action_id
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  actionId: actionIdVarchar.primaryKey().notNull(),
+  action_id: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
@@ -33,8 +36,8 @@ export const actionDefinitionTable = pgTable('action_definition', {
   contexte: text('contexte').notNull(),
   exemples: text('exemples').notNull(),
   ressources: text('ressources').notNull(),
-  reductionPotentiel: text('reduction_potentiel').notNull(),
-  perimetreEvaluation: text('perimetre_evaluation').notNull(),
+  reduction_potentiel: text('reduction_potentiel').notNull(),
+  perimetre_evaluation: text('perimetre_evaluation').notNull(),
   preuve: text('preuve'),
   points: doublePrecision('points'),
   pourcentage: doublePrecision('pourcentage'),
@@ -51,14 +54,20 @@ export type CreateActionDefinitionType = InferInsertModel<
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
+export const actionDefinitionMinimalWithTypeLevel =
+  actionDefinitionSchema.extend({
+    level: z.number(),
+    action_type: z.nativeEnum(ActionType),
+  });
+
 export const createActionDefinitionSchema = createInsertSchema(
   actionDefinitionTable
 );
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
-  'actionId'
+  'action_id'
 > &
   Partial<ActionDefinitionType> & {
-    parentActionId: string | null;
+    parent_action_id: string | null;
   };
