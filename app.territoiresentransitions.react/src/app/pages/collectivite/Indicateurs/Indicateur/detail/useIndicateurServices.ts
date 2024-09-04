@@ -31,7 +31,7 @@ export const useUpsertIndicateurServices = (indicateurId: number) => {
   });
 };
 
-/** Charge les services pilotes d'un indicateur */
+/** Charge les id des services pilotes d'un indicateur */
 export const useIndicateurServices = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();
 
@@ -39,7 +39,7 @@ export const useIndicateurServices = (indicateurId: number) => {
     ['indicateur_services', collectiviteId, indicateurId],
     async () => {
       if (!collectiviteId) return;
-      return Indicateurs.fetch.selectIndicateurServices(
+      return Indicateurs.fetch.selectIndicateurServicesId(
         supabaseClient,
         indicateurId,
         collectiviteId

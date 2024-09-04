@@ -30,7 +30,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
 
   // charge les informations complémentaires associées à l'indicateur
   const {data: pilotes} = useIndicateurPilotes(definition.id);
-  const {data: services} = useIndicateurServices(definition.id);
+  const {data: serviceIds} = useIndicateurServices(definition.id);
   const {data: thematiques} = useIndicateurThematiques(definition.id);
 
   // fonctions de mise à jour des données
@@ -73,7 +73,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       {/** services pilotes */}
       <Field title="Direction ou service pilote">
         <ServicesPilotesDropdown
-          values={services?.map(s => s.id!)}
+          values={serviceIds}
           onChange={({services}) =>
             upsertIndicateurServicePilote(objectToCamel(services))
           }
