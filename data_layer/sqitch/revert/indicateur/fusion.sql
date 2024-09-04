@@ -2,8 +2,6 @@
 
 BEGIN;
 
-drop index unique_indicateur_source_metadonnee;
-
 drop trigger modified_by on indicateur_valeur;
 
 drop function public.optional_enforce_modified_by;
