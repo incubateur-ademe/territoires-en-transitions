@@ -2,6 +2,10 @@
 
 BEGIN;
 
+-- supprime les indicateurs créés manuellement par Juliette en preprod/prod et dont la reference a changé
+DELETE FROM indicateur_definition
+WHERE identifiant_referentiel in ('cae_63.f', 'cae_63.g', 'cae_63.h', 'cae_63.i', 'cae_63.j', 'cae_63.k');
+
 -- on créé un groupement pour les collectivités qui vont réaliser leurs trajectoires --> déjà créer en préprod et prod
 -- Pas d'unicité sur le nom pour l'instant donc on utilise cette query
 INSERT INTO groupement (nom)
