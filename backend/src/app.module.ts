@@ -6,6 +6,8 @@ import { CommonModule } from './common/common.module';
 import { validateBackendConfiguration } from './common/services/backend-configuration.service';
 import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
+import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
+import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcRouter } from './trpc.router';
 import { TrpcModule } from './trpc/trpc.module';
@@ -23,6 +25,8 @@ import { TrpcModule } from './trpc/trpc.module';
     IndicateursModule,
     AuthModule,
     FichesActionModule,
+    PersonnalisationsModule,
+    ReferentielsModule,
   ],
   controllers: [],
   exports: [TrpcRouter],

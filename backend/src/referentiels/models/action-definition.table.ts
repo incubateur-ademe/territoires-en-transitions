@@ -8,9 +8,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { ActionType } from './action-type.enum';
+import { referentielList } from './referentiel.enum';
 
 // Todo: change it reference another table instead
-export const referentielEnum = pgEnum('referentiel', ['eci', 'cae']);
+export const referentielEnum = pgEnum('referentiel', referentielList);
 export const actionCategorieEnum = pgEnum('action_categorie', [
   'bases',
   'mise en œuvre',
@@ -18,7 +21,7 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.action_id,
+  () => actionDefinitionTable.action_id
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
@@ -51,8 +54,14 @@ export type CreateActionDefinitionType = InferInsertModel<
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
+export const actionDefinitionMinimalWithTypeLevel =
+  actionDefinitionSchema.extend({
+    level: z.number(),
+    action_type: z.nativeEnum(ActionType),
+  });
+
 export const createActionDefinitionSchema = createInsertSchema(
-  actionDefinitionTable,
+  actionDefinitionTable
 );
 
 export type ActionDefinitionAvecParentType = Pick<
