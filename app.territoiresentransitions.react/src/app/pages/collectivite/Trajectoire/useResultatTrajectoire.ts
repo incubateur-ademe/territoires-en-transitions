@@ -122,10 +122,11 @@ export const useResultatTrajectoire = ({
       y: (v.resultat as number) * (coef || 1),
     })) || [];
 
-  // détermine si les données sont dispos pour tous les secteurs
+  // détermine si les données d'entrée sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =
-    !Array.isArray(valeursTousSecteurs) ||
-    valeursTousSecteurs.length < indicateur.secteurs.length;
+    (data &&
+      !!data?.indentifiants_referentiel_manquants_donnees_entree?.length) ||
+    false;
 
   return {
     identifiant,

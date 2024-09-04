@@ -6,6 +6,7 @@ import {getStatusKey} from './useStatutTrajectoire';
 import {useEventTracker} from '@tet/ui';
 
 export type ResultatTrajectoire = {
+  indentifiants_referentiel_manquants_donnees_entree: string[];
   trajectoire: {
     emissions_ges: IndicateurAvecValeurs[];
     consommations_finales: IndicateurAvecValeurs[];
