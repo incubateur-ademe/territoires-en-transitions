@@ -1,4 +1,4 @@
-import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
+import {useAuth} from 'core-logic/api/auth/AuthProvider';
 import {getFileNameFromResponse} from 'core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
@@ -35,7 +35,7 @@ export class ApiError extends Error {
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
-  const authHeaders = useAuthHeaders();
+  const {authHeaders} = useAuth();
 
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({route, params}: API_ARGS) => {
