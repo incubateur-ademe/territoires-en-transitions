@@ -371,6 +371,27 @@ export async function upsertPilotes(
   }
 }
 
+export async function updateIndicateurCard(
+  dbClient: DBClient,
+  indicateur: {
+    id: number;
+    estPerso: boolean;
+  },
+  collectiviteId: number,
+  pilotes: Personne[],
+  services: Tag[],
+  thematiques: Thematique[]
+) {
+  await upsertPilotes(dbClient, indicateur.id, collectiviteId, pilotes);
+  await upsertServices(dbClient, indicateur.id, collectiviteId, services);
+  await upsertThematiques(
+    dbClient,
+    indicateur.id,
+    indicateur.estPerso,
+    thematiques
+  );
+}
+
 /**
  * Modifie les fiches d'un indicateur
  * @param dbClient client supabase
