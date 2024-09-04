@@ -6,7 +6,7 @@ BEGIN;
 -- On doit supprimer et recréer ces fonctions car le type de la colonne va etre change
 drop function thematique(action_impact_state);
 drop function collectivite_thematique(public.collectivite);
-alter type old_indicateur_thematique add value 'agriculture_alimentation';
+alter type old_indicateur_thematique add value if not exists 'agriculture_alimentation';
 alter table thematique alter column md_id type varchar;
 
 insert into thematique (nom, md_id)
