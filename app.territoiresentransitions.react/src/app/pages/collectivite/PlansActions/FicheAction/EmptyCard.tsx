@@ -44,7 +44,7 @@ const EmptyCard = ({
       </h6>
 
       {/* Sous-Titre */}
-      {subTitle && (
+      {!!subTitle && (
         <p className="text-base text-primary-9 text-center mb-0">{subTitle}</p>
       )}
 
