@@ -23,7 +23,8 @@ export default class IndicateurSourcesService {
     );
     const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
-      .values(indicateurSourceMetadonneeType);
+      .values(indicateurSourceMetadonneeType)
+      .onConflictDoNothing();
 
     const [model] = await request.returning();
     return model;
