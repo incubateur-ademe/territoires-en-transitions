@@ -113,18 +113,18 @@ test('Test upsertThematiques', async () => {
       nom: 'test',
     },
   ];
-  await upsertThematiques(supabase, def!, them);
+  await upsertThematiques(supabase, def!.id, def!.estPerso, them);
   const data = await selectIndicateurThematiquesId(supabase, 123);
   expect(data).not.toBeNull();
   expect(data).toHaveLength(1);
   // Enlève thématique sur indicateur personnalisé
-  await upsertThematiques(supabase, def!, []);
+  await upsertThematiques(supabase, def!.id, def!.estPerso, []);
   const data2 = await selectIndicateurThematiquesId(supabase, 123);
   expect(data2).not.toBeNull();
   expect(data2).toHaveLength(0);
   // Ajout thématique sur indicateur prédéfini (pas possible)
   const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-  await upsertThematiques(supabase, def2!, them);
+  await upsertThematiques(supabase, def2!.id, def2!.estPerso, them);
   const data3 = await selectIndicateurThematiquesId(supabase, 1);
   expect(data3).not.toBeNull();
   expect(data3).toHaveLength(0);
@@ -150,30 +150,30 @@ test('Test upsertServices', async () => {
       collectiviteId: 1,
     },
   ];
-  await upsertServices(supabase, def!, 1, tags);
+  await upsertServices(supabase, def!.id, 1, tags);
   const data = await selectIndicateurServicesId(supabase, 123, 1);
   expect(data).not.toBeNull();
   expect(data).toHaveLength(1);
   // Ajout service existant sur indicateur personnalisé
   tags[0].id = data[0];
   tags.push({nom: '', collectiviteId: 1, id: 1});
-  await upsertServices(supabase, def!, 1, tags);
+  await upsertServices(supabase, def!.id, 1, tags);
   const data2 = await selectIndicateurServicesId(supabase, 123, 1);
   expect(data2).not.toBeNull();
   expect(data2).toHaveLength(2);
   // Enlève services sur indicateur personnalisé
-  await upsertServices(supabase, def!, 1, []);
+  await upsertServices(supabase, def!.id, 1, []);
   const data3 = await selectIndicateurServicesId(supabase, 123, 1);
   expect(data3).not.toBeNull();
   expect(data3).toHaveLength(0);
   // Ajout services sur indicateur prédéfini
   const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-  await upsertServices(supabase, def2!, 1, tags);
+  await upsertServices(supabase, def2!.id, 1, tags);
   const data4 = await selectIndicateurServicesId(supabase, 1, 1);
   expect(data4).not.toBeNull();
   expect(data4).toHaveLength(2);
   // Enlève services sur indicateur prédéfini
-  await upsertServices(supabase, def2!, 1, []);
+  await upsertServices(supabase, def2!.id, 1, []);
   const data5 = await selectIndicateurServicesId(supabase, 1, 1);
   expect(data5).not.toBeNull();
   expect(data5).toHaveLength(0);

@@ -1,17 +1,12 @@
 import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../../types';
 import {Indicateurs, SharedDomain} from '@tet/api';
 
 /** Met à jour les services pilotes d'un indicateur */
-export const useUpsertIndicateurServices = (
-  definition: TIndicateurDefinition
-) => {
+export const useUpsertIndicateurServices = (indicateurId: number) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
-
-  const {id: indicateurId} = definition;
 
   return useMutation({
     mutationKey: 'upsert_indicateur_services',
@@ -19,7 +14,7 @@ export const useUpsertIndicateurServices = (
       if (!collectiviteId) return;
       return Indicateurs.save.upsertServices(
         supabaseClient,
-        definition,
+        indicateurId,
         collectiviteId,
         services
       );

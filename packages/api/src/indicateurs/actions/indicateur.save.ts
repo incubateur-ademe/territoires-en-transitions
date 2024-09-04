@@ -186,22 +186,23 @@ export async function upsertIndicateurValeur(
  */
 export async function upsertThematiques(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateurId: number,
+  estPerso: boolean,
   thematiques: Thematique[]
 ) {
-  if (indicateur.estPerso) {
+  if (estPerso) {
     // Supprime les liens vers les thématiques qui ne sont plus concernés
     await dbClient
       .from('indicateur_thematique')
       .delete()
-      .eq('indicateur_id', indicateur.id)
+      .eq('indicateur_id', indicateurId)
       .not('thematique_id', 'in', `(${thematiques.map(t => t.id).join(',')})`);
 
     // Fait les nouveaux liens entre l'indicateur et les thématiques
     await dbClient.from('indicateur_thematique').upsert(
       thematiques.map(t => ({
         thematique_id: t.id,
-        indicateur_id: indicateur.id,
+        indicateur_id: indicateurId,
       })),
       {onConflict: 'indicateur_id,thematique_id'}
     );
@@ -217,7 +218,7 @@ export async function upsertThematiques(
  */
 export async function upsertServices(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateurId: number,
   collectiviteId: number,
   services: Tag[]
 ) {
@@ -236,19 +237,19 @@ export async function upsertServices(
   await dbClient
     .from('indicateur_service_tag')
     .delete()
-    .eq('indicateur_id', indicateur.id)
+    .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId)
     .not('service_tag_id', 'in', `(${tagIds.join(',')})`);
 
   // Ajoute les nouveaux tags
   const newTagsAdded: Tag[] = await insertTags(dbClient, 'service', newTags);
 
-  // Fait les nouveaux liens entre l'indicateur et les pilotes
+  // Fait les nouveaux liens entre l'indicateur et les services
   const toUpsert = tagIds
     .concat(newTagsAdded.map(t => t.id as number))
     .map(s => ({
       collectivite_id: collectiviteId,
-      indicateur_id: indicateur.id,
+      indicateur_id: indicateurId,
       service_tag_id: s,
     }));
 

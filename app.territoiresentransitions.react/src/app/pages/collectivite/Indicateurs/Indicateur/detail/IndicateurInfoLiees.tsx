@@ -37,10 +37,11 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
   const {mutate: upsertIndicateurPilote} = useUpsertIndicateurPilote(
     definition.id
   );
-  const {mutate: upsertIndicateurServicePilote} =
-    useUpsertIndicateurServices(definition);
+  const {mutate: upsertIndicateurServicePilote} = useUpsertIndicateurServices(
+    definition.id
+  );
   const {mutate: upsertIndicateurPersoThematique} =
-    useUpsertIndicateurThematiques(definition);
+    useUpsertIndicateurThematiques(definition.id, definition.estPerso);
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
