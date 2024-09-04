@@ -2,6 +2,11 @@
 
 BEGIN;
 
+-- creation de l'unicité basé sur la source et la date de version pour l'instant
+-- A voir si plus tard, on ajoute d'autres champs
+create unique index unique_indicateur_source_metadonnee
+    on public.indicateur_source_metadonnee (source_id, date_version);
+
 drop trigger modified_by on indicateur_valeur;
 
 create function optional_enforce_modified_by()
