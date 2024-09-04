@@ -228,6 +228,19 @@ describe('TrajectoiresDataService test', () => {
       });
     });
 
+    it('Extraction nominale sans identifiant manquant 2', async () => {
+      const commentaire = 'Source: collectivite - Indicateurs manquants: ';
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire,
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        source: 'collectivite',
+        identifiants_referentiel_manquants: [],
+      });
+    });
+
     it('Extraction nominale sans identifiant manquant (non spécifié)', async () => {
       const commentaire = 'Source: collectivite';
 
