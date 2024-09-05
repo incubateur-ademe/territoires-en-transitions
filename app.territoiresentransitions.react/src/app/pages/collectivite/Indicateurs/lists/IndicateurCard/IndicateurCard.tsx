@@ -10,7 +10,6 @@ import IndicateurChart, {
 } from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import {useIndicateurChartInfo} from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import {
-  Indicateur,
   TIndicateurChartInfo,
   TIndicateurListItem,
 } from 'app/pages/collectivite/Indicateurs/types';
@@ -38,7 +37,7 @@ export type IndicateurCardProps = {
      */
     checkbox?: boolean;
     selected: boolean;
-    setSelected: (indicateur: Indicateur) => void;
+    setSelected: (indicateur: TIndicateurListItem) => void;
   };
   /** Rend la carte comme un lien. Ne peux pas être utilisé avec la prop `selectState` */
   href?: string;
@@ -195,8 +194,7 @@ export const IndicateurCardBase = ({
                 titre: definition.titre,
                 estPerso: definition.estPerso,
                 identifiant: definition.identifiant || null,
-                description: chartInfo?.titreLong ?? '',
-                unite: chartInfo?.unite ?? '',
+                hasOpenData: definition.hasOpenData,
               })
             }
             label={chartInfo?.titre}
@@ -218,8 +216,7 @@ export const IndicateurCardBase = ({
                       titre: definition.titre,
                       estPerso: definition.estPerso,
                       identifiant: definition.identifiant || null,
-                      description: chartInfo?.titreLong ?? '',
-                      unite: chartInfo?.unite ?? '',
+                      hasOpenData: definition.hasOpenData,
                     });
                   }}
                   icon="link-unlink"

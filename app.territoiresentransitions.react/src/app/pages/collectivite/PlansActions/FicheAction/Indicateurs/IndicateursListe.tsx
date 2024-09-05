@@ -6,12 +6,12 @@ import {
 import {makeCollectiviteIndicateursUrl} from 'app/paths';
 import {FicheAction} from '../data/types';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
 
 type IndicateursListeProps = {
   isReadonly: boolean;
   fiche: FicheAction;
-  indicateurs: Indicateur[];
+  indicateurs: TIndicateurListItem[];
   updateFiche: (fiche: FicheAction) => void;
 };
 

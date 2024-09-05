@@ -5,12 +5,12 @@ import {Checkbox, Field, Input} from '@tet/ui';
 
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = {
-  selectedIndicateurs: Indicateur[] | null;
-  onSelect: (indicateurs: Indicateur[]) => void;
+  selectedIndicateurs: TIndicateurListItem[] | null;
+  onSelect: (indicateurs: TIndicateurListItem[]) => void;
 };
 
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
@@ -26,7 +26,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
     setSelectedIndicateursState(selectedIndicateurs);
   }, [selectedIndicateurs]);
 
-  const handleSelect = (indicateurs: Indicateur[]) => {
+  const handleSelect = (indicateurs: TIndicateurListItem[]) => {
     setSelectedIndicateursState(indicateurs);
     onSelect(indicateurs);
   };

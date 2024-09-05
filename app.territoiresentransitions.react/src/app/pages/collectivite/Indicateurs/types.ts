@@ -9,12 +9,6 @@ export type TIndicateurListItem = Indicateurs.domain.IndicateurListItem;
 /** Item détaillé pour la vignette graphique dans une liste d'indicateurs */
 export type TIndicateurChartInfo = Indicateurs.domain.IndicateurChartInfo;
 
-/** */
-export type Indicateur = Pick<
-  Indicateurs.domain.IndicateurDefinition,
-  'id' | 'titre' | 'description' | 'unite' | 'identifiant' | 'estPerso'
->;
-
 export type IndicateurInsert = Indicateurs.domain.IndicateurDefinitionInsert;
 
 export type TIndicateurPredefiniEnfant = TIndicateurPredefini & {

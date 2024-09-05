@@ -1,8 +1,5 @@
 import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import {
-  Indicateur,
-  TIndicateurListItem,
-} from 'app/pages/collectivite/Indicateurs/types';
+import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
 import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -12,8 +9,8 @@ import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/Indicat
 type Props = {
   definitions?: TIndicateurListItem[];
   isLoading?: boolean;
-  selectedIndicateurs: Indicateur[] | null;
-  onSelect: (indicateurs: Indicateur[]) => void;
+  selectedIndicateurs: TIndicateurListItem[] | null;
+  onSelect: (indicateurs: TIndicateurListItem[]) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
@@ -59,8 +56,8 @@ const SelectIndicateursGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: Indicateur[] | null;
-    onSelect: (indicateurs: Indicateur[]) => void;
+    selectedIndicateurs: TIndicateurListItem[] | null;
+    onSelect: (indicateurs: TIndicateurListItem[]) => void;
   }
 ) => {
   const {ref, entry} = useIntersectionObserver();
