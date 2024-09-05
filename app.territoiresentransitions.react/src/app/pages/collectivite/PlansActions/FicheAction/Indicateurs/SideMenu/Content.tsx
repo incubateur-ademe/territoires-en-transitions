@@ -33,7 +33,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
 
   return (
     <div className="p-4">
-      <div className=" relative flex flex-col gap-4 z-[1]">
+      <div className="relative flex flex-col gap-4">
         <Field title="Rechercher par nom ou description" small>
           <Input
             type="search"
@@ -55,6 +55,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
               })
             }
             small
+            dropdownZindex={900}
           />
         </Field>
         <Checkbox
