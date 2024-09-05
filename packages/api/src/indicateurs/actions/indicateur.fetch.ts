@@ -427,12 +427,12 @@ export async function selectIndicateurValeurs(
       // Tri les valeurs par an
       // Tri séparément les valeurs ayant des résultats, des objectifs, et des estimations
       const annee = new Date(val.date_valeur).getFullYear();
-      if (val.resultat || val.resultat_commentaire) {
+      if (typeof val.resultat === 'number' || val.resultat_commentaire) {
         if (!groupeParAnneeResultat.get(annee))
           groupeParAnneeResultat.set(annee, []);
         groupeParAnneeResultat.get(annee)!.push(val);
       }
-      if (val.objectif || val.objectif_commentaire) {
+      if (typeof val.objectif === 'number' || val.objectif_commentaire) {
         if (!groupeParAnneeObjectif.get(annee))
           groupeParAnneeObjectif.set(annee, []);
         groupeParAnneeObjectif.get(annee)!.push(val);
@@ -813,7 +813,7 @@ export async function getValeursComparaison(
       source: source,
     };
     // Ajout d'une ligne résultat
-    if (aAppliquer.resultat) {
+    if (typeof aAppliquer.resultat === 'number') {
       const ligne: ValeurComparaisonLigne = {
         ...ligneCommune,
         valeurAEcraser: aEcraser?.resultat ?? null,
@@ -828,7 +828,7 @@ export async function getValeursComparaison(
       lignesResultat.push(ligne);
     }
     // Ajout d'une ligne objectif
-    if (aAppliquer.objectif) {
+    if (typeof aAppliquer.objectif === 'number') {
       const ligne = {
         ...ligneCommune,
         valeurAEcraser: aEcraser?.objectif ?? null,
