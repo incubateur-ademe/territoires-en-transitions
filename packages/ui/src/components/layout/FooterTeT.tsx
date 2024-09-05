@@ -71,6 +71,10 @@ export const FooterTeT = ({
           href: `${SITE_BASE_URL}/cookies`,
         },
         {
+          label: 'Statistiques',
+          href: `${SITE_BASE_URL}/stats`,
+        },
+        {
           label: 'Code source',
           href: 'https://github.com/incubateur-ademe/territoires-en-transitions',
           external: true,
