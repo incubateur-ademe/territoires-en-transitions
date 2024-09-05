@@ -87,6 +87,16 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
             })
           }
         />
+        <Checkbox
+          label="Indicateur de la collectivité"
+          checked={filters.estFavorisCollectivite}
+          onChange={event =>
+            setFilters({
+              ...filters,
+              estFavorisCollectivite: event.target.checked ?? undefined,
+            })
+          }
+        />
       </div>
       <hr className="p-0 my-6 w-full h-px" />
       <div className="mb-4 font-bold">
