@@ -1,5 +1,6 @@
 'use client';
 
+import {usePathname} from 'next/navigation';
 import Image from 'next/image';
 import {MenuPrincipal} from './MenuPrincipal';
 import {Dispatch, SetStateAction, useEffect, useState} from 'react';
@@ -59,6 +60,9 @@ function Links() {
     );
   }, []);
 
+  const pathName = usePathname();
+  const isFAQ = pathName.startsWith('/faq');
+
   return (
     <ul className="fr-btns-group">
       <li>
@@ -69,6 +73,17 @@ function Links() {
       <li>
         <a href={authPaths?.login} className="fr-btn fr-icon-account-line">
           Se connecter
+        </a>
+      </li>
+      <li>
+        <a
+          href="/faq"
+          className={classNames('fr-btn', {
+            'fr-icon-question-line': !isFAQ,
+            'fr-icon-question-fill': isFAQ,
+          })}
+        >
+          Aide
         </a>
       </li>
     </ul>
