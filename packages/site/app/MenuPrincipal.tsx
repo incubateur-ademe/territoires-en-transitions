@@ -41,32 +41,25 @@ export function MenuPrincipal(props: MenuProps) {
         Accueil
       </MenuItem>
       <MenuItem href="/programme" {...props}>
-        Le programme Territoire Engagé
+        Programme
       </MenuItem>
       <MenuItem href="/outil-numerique" {...props}>
-        L'outil numérique
+        Outil numérique
       </MenuItem>
-      <MenuItem href="/faq" {...props}>
-        FAQ
+      <MenuItem
+        href="https://rencontres.territoiresentransitions.fr/"
+        {...props}
+      >
+        Rencontres
+      </MenuItem>
+      <MenuItem href="/programme#carte" {...props}>
+        Collectivités
       </MenuItem>
       <MenuItem href="/actus" {...props}>
         Actualités
       </MenuItem>
-      {/* <MenuItem href="/collectivites" {...props}>
-        Collectivités
-      </MenuItem> */}
-      <MenuItem href="/stats" {...props}>
-        Les chiffres
-      </MenuItem>
       <MenuItem href="/contact" {...props}>
         Contact
-      </MenuItem>
-      <MenuItem
-        href="https://rencontres.territoiresentransitions.fr/"
-        external
-        {...props}
-      >
-        Rencontres
       </MenuItem>
     </ul>
   );
