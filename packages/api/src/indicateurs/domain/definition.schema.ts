@@ -50,6 +50,7 @@ export const indicateurListItemSchema = z.object({
   id: z.number(),
   titre: z.string(),
   estPerso: z.boolean(),
+  hasOpenData: z.boolean(),
   identifiant: z.string().nullable(),
 });
 /**
