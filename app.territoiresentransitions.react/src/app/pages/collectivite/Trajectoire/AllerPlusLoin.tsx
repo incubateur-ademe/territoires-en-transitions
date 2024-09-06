@@ -12,7 +12,7 @@ export const AllerPlusLoin = () => {
     useDownloadFile();
 
   return (
-    <Card>
+    <Card dataTest="more">
       <h5>Aller plus loin</h5>
       <p className="text-sm font-normal mb-2">
         Téléchargez le fichier Excel de calcul pour comprendre le détail des
