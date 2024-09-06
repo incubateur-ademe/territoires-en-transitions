@@ -18,6 +18,9 @@ export default class DatabaseService implements OnApplicationShutdown {
         .SUPABASE_DATABASE_URL,
       {
         prepare: false,
+        connection: {
+          application_name: `Backend ${process.env.APPLICATION_VERSION}`,
+        },
       },
     );
 
