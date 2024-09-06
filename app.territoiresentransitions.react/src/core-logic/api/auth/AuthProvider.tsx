@@ -52,7 +52,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [authError, setAuthError] = useState<string | null>(null);
 
   // charge les données associées à l'utilisateur courant
-  const {data: dcp, isLoading: isLoadingDCP} = useDCP(user?.id);
+  const {data: dcp, isSuccess: dcpLoaded} = useDCP(user?.id);
   const {data: isSupport} = useIsSupport(user?.id);
   const userData = useMemo(
     () => (user && dcp ? {...user, ...dcp, isSupport} : null),
@@ -143,8 +143,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     authHeaders,
   };
 
-  // Redirige l'utilisateur vers la page d'authentification si nécessaire
-  const userInfoRequired = session && !isLoadingDCP && !dcp;
+  // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
+  const userInfoRequired = session && dcpLoaded && !dcp;
   if (userInfoRequired) {
     document.location.replace(`${signUpPath}&view=etape3`);
   }
