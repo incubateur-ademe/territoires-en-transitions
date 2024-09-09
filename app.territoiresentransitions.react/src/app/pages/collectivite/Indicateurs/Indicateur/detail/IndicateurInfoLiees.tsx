@@ -68,6 +68,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
             );
           }}
           disabled={isReadonly}
+          dropdownZindex={30}
         />
       </Field>
       {/** services pilotes */}
@@ -78,6 +79,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
             upsertIndicateurServicePilote(objectToCamel(services))
           }
           disabled={isReadonly}
+          dropdownZindex={30}
         />
       </Field>
       {/** Thématiques */}
