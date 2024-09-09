@@ -4,7 +4,10 @@ import {Secteur, TableauDonnees} from './TableauDonnees';
 import {useDonneesSectorisees} from './useDonneesSectorisees';
 import {useUpsertValeurIndicateur} from './useUpsertValeurIndicateur';
 import {TABS} from './constants';
-import {DATE_DEBUT} from 'app/pages/collectivite/Trajectoire/constants';
+import {
+  DATE_DEBUT,
+  INDICATEURS_TRAJECTOIRE,
+} from 'app/pages/collectivite/Trajectoire/constants';
 import {useCalculTrajectoire} from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
@@ -65,7 +68,7 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
                     upsertValeur({
                       indicateur_id,
                       date_valeur: DATE_DEBUT,
-                      resultat: valeur,
+                      resultat: normalizeValue(valeur, tab.id),
                     });
                   }}
                 />
@@ -114,4 +117,14 @@ const getTabProps = (donneesCompletes: boolean) => {
         title:
           'Formulaire incomplet : veuillez le compléter pour valider et lancer le calcul',
       } as const);
+};
+
+// normalise une valeur objectif/résultat
+const normalizeValue = (
+  value: number | null,
+  id: string
+) => {
+  if (value === null || value === undefined) return value;
+  const coef = INDICATEURS_TRAJECTOIRE?.find(ind => ind.id === id)?.coef ?? 1;
+  return value / coef;
 };

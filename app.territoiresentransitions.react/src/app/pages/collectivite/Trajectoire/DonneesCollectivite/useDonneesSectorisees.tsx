@@ -4,6 +4,7 @@ import {
   getIndicateurTrajectoire,
   getNomSource,
   SEQUESTRATION_CARBONE,
+  INDICATEURS_TRAJECTOIRE,
   IndicateurTrajectoireId,
   SourceIndicateur,
 } from '../constants';
@@ -113,7 +114,10 @@ const useDonneesSectoriseesIndicateur = (
           valeurs: ind
             ? Object.entries(ind.sources).map(([source, {valeurs}]) => ({
                 source,
-                valeur: valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
+                valeur: normalizeValue(
+                  valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
+                  id
+                ),
                 id: valeurs?.[0].id,
               }))
             : [],
@@ -132,4 +136,14 @@ const useDonneesSectoriseesIndicateur = (
       donneesCompletes,
     },
   };
+};
+
+// normalise une valeur objectif/résultat
+const normalizeValue = (
+  value: number | null,
+  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
+) => {
+  if (value === null) return null;
+  const coef = INDICATEURS_TRAJECTOIRE?.find(ind => ind.id === id)?.coef ?? 1;
+  return value * coef;
 };
