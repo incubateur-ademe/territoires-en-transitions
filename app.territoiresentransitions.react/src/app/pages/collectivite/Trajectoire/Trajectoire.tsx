@@ -88,7 +88,7 @@ const ErreurDroits = () => {
       state="error"
       className="self-stretch my-8"
       title="Droits insuffisants"
-      description="Vous n'avez pas les droits nécessaires pour accéder à cette page"
+      description="La trajectoire des autres collectivités n’est pas encore accessible en mode visite. Elle le sera très prochainement."
     />
   );
 };
