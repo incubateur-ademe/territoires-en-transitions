@@ -6,6 +6,7 @@ import {LineData} from 'ui/charts/Line/LineChart';
 import {AreaSymbol, SolidLineSymbol} from 'ui/charts/ChartLegend';
 import {genInfobulleParAnnee} from './InfobulleParAnnee';
 import {COMMON_CHART_PROPS, COULEURS_SECTEUR, LAYERS} from './constants';
+import {ANNEE_JALON2, ANNEE_REFERENCE} from '../constants';
 
 type LayerKey = keyof typeof LAYERS;
 
@@ -46,6 +47,8 @@ export const GrapheTousSecteurs = ({
     {id: 'resultats', data: resultats, color: LAYERS.resultats.color},
   ].filter(s => !!s?.data?.length);
 
+  const minDate = getMinDate(objectifs, resultats);
+
   return (
     <>
       <div className="flex justify-between">
@@ -70,6 +73,13 @@ export const GrapheTousSecteurs = ({
             ...COMMON_CHART_PROPS,
             axisLeftLegend: unite,
             data: secteursNonVides,
+            xScale: {
+              type: 'time',
+              precision: 'year',
+              format: '%Y',
+              min: minDate,
+              max: `${ANNEE_JALON2 + 1}`,
+            },
             legend: {
               isOpen: true,
               className: 'text-primary-8 font-medium',
@@ -128,3 +138,27 @@ export const GrapheTousSecteurs = ({
     </>
   );
 };
+
+/*
+* Les objectifs/résultats sont représentés sur un layer différent des données
+* sectorielles. On doit donc déterminer la date minimum pour l'axe des
+* abscisses, qui peut être antérieure à l'annéé de référence de la trajectoire.
+*/
+const getMinDate = (objectifs: Datum[], resultats: Datum[]) => {
+  const minTimestampObjectifsResultats = Math.min(
+    getMinTimestamp(objectifs),
+    getMinTimestamp(resultats)
+  );
+  const minDate =
+    minTimestampObjectifsResultats &&
+    minTimestampObjectifsResultats !== Infinity
+      ? new Date(minTimestampObjectifsResultats)
+      : new Date(`${ANNEE_REFERENCE}-01-01`);
+  return minDate;
+};
+
+const getMinTimestamp = (data: Datum[]) =>
+  data?.length
+    ? Math.min(...data.map(({x}) => (x as Date).getTime()))
+    : Infinity;
+    
