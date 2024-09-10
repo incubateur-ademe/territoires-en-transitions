@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { isNil, partition } from 'es-toolkit';
+import slugify from 'slugify';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
@@ -53,7 +54,10 @@ export default class TrajectoiresSpreadsheetService {
   }
 
   getNomFichierTrajectoire(epci: EpciType) {
-    return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
+    return slugify(`Trajectoire SNBC - ${epci.siren} - ${epci.nom}`, {
+      replacement: ' ',
+      remove: /[*+~.()'"!:@]/g,
+    });
   }
 
   async calculeTrajectoireSnbc(
