@@ -48,6 +48,7 @@ export const GrapheTousSecteurs = ({
   ].filter(s => !!s?.data?.length);
 
   const minDate = getMinDate(objectifs, resultats);
+  const maxY = getMaxY([objectifs, resultats], secteursNonVides);
 
   return (
     <>
@@ -79,6 +80,12 @@ export const GrapheTousSecteurs = ({
               format: '%Y',
               min: minDate,
               max: `${ANNEE_JALON2 + 1}`,
+            },
+            yScale: {
+              type: 'linear',
+              min: 0,
+              max: maxY,
+              stacked: true,
             },
             legend: {
               isOpen: true,
@@ -140,10 +147,10 @@ export const GrapheTousSecteurs = ({
 };
 
 /*
-* Les objectifs/résultats sont représentés sur un layer différent des données
-* sectorielles. On doit donc déterminer la date minimum pour l'axe des
-* abscisses, qui peut être antérieure à l'annéé de référence de la trajectoire.
-*/
+ * Les objectifs/résultats sont représentés sur un layer différent des données
+ * sectorielles. On doit donc déterminer la date minimum pour l'axe des
+ * abscisses, qui peut être antérieure à l'année de référence de la trajectoire.
+ */
 const getMinDate = (objectifs: Datum[], resultats: Datum[]) => {
   const minTimestampObjectifsResultats = Math.min(
     getMinTimestamp(objectifs),
@@ -161,4 +168,29 @@ const getMinTimestamp = (data: Datum[]) =>
   data?.length
     ? Math.min(...data.map(({x}) => (x as Date).getTime()))
     : Infinity;
-    
+
+// On détermine aussi la valeur maximum pour les ordonnées
+const getMaxY = (objectifsEtResultats: Datum[][], secteurs: LineData[]) => {
+  // somme des valeurs des secteurs superposés par année (à cause de l'option
+  // `yscale.stacked` du graphe)
+  const sommeSecteursParAnnee = new Map<number, number>();
+  secteurs.forEach(secteur => {
+    secteur.data.forEach(d => {
+      const annee = (d.x as Date).getFullYear();
+      sommeSecteursParAnnee.set(
+        annee,
+        (sommeSecteursParAnnee.get(annee) || 0) + (d.y as number)
+      );
+    });
+  });
+
+  // puis le max entre ses sommes et les valeurs max des objectifs/résultats
+  const max = Math.max(
+    ...objectifsEtResultats.map(d => getMaxValueY(d)),
+    ...sommeSecteursParAnnee.values()
+  );
+  return max === -Infinity ? 'auto' : max;
+};
+
+const getMaxValueY = (data: Datum[]) =>
+  data?.length ? Math.max(...data.map(({y}) => y as number)) : -Infinity;
