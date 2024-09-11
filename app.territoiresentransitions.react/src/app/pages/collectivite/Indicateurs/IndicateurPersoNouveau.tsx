@@ -59,13 +59,6 @@ const IndicateurPersoNouveau = ({
     fiche?.thematiques ?? []
   );
 
-  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({
-      definition: {...definition, thematiques},
-      ficheId,
-      isFavoriCollectivite,
-    });
-  };
   /**
    * Peut recevoir un state initial qui rend la checkbox disabled si donné à la modale de création
    * sinon garde un état local
@@ -73,6 +66,14 @@ const IndicateurPersoNouveau = ({
   const [favoriCollectivite, setFavoriCollectivite] = useState(
     isFavoriCollectivite ?? false
   );
+
+  const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    save({
+      definition: {...definition, thematiques},
+      ficheId,
+      isFavoriCollectivite: favoriCollectivite,
+    });
+  };
 
   return (
     <Formik<TIndicateurPersoDefinitionWrite>
