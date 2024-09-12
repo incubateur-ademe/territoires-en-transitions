@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
-import { thematiqueTable } from './thematique.table';
+import { thematiqueTable } from 'backend/src/taxonomie/models/thematique.table';
 
 export const ficheActionSousThematiqueTable = pgTable(
   'fiche_action_sous_thematique',

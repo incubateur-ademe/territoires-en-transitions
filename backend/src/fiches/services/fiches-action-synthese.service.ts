@@ -12,7 +12,6 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CountSyntheseType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
@@ -30,7 +29,7 @@ import {
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import { SupabaseJwtPayload } from 'backend/src/auth/models/auth.models';
 
 @Injectable()
 export default class FichesActionSyntheseService {
@@ -75,14 +74,14 @@ export default class FichesActionSyntheseService {
   getFicheActionPartenaireTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionPartenaireTagTable.fiche_id,
+        fiche_id: ficheActionPartenaireTagTable.ficheId,
         partenaire_tag_ids:
-          sql`array_agg(${ficheActionPartenaireTagTable.partenaire_tag_id})`.as(
+          sql`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
             this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_FIELD
           ),
       })
       .from(ficheActionPartenaireTagTable)
-      .groupBy(ficheActionPartenaireTagTable.fiche_id)
+      .groupBy(ficheActionPartenaireTagTable.ficheId)
       .as(this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_ALIAS);
   }
 
@@ -116,18 +115,18 @@ export default class FichesActionSyntheseService {
   getFicheActionPilotesQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionPiloteTable.fiche_id,
+        fiche_id: ficheActionPiloteTable.ficheId,
         pilote_user_ids:
-          sql`array_remove(array_agg(${ficheActionPiloteTable.user_id}), NULL)`.as(
+          sql`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
             'pilote_user_ids'
           ),
         pilote_tag_ids:
-          sql`array_remove(array_agg(${ficheActionPiloteTable.tag_id}), NULL)`.as(
+          sql`array_remove(array_agg(${ficheActionPiloteTable.tagId}), NULL)`.as(
             'pilote_tag_ids'
           ),
       })
       .from(ficheActionPiloteTable)
-      .groupBy(ficheActionPiloteTable.fiche_id)
+      .groupBy(ficheActionPiloteTable.ficheId)
       .as('ficheActionPilotes');
   }
 

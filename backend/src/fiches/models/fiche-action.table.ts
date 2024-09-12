@@ -1,3 +1,4 @@
+import { collectiviteTable } from 'backend/src/collectivites/models/collectivite.models';
 import { InferInsertModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -125,7 +126,9 @@ export const ficheActionTable = pgTable('fiche_action', {
   calendrier: varchar('calendrier', { length: 10000 }),
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),
   majTermine: boolean('maj_termine'),
-  collectiviteId: integer('collectivite_id').notNull(),
+  collectiviteId: integer('collectivite_id')
+    .notNull()
+    .references(() => collectiviteTable.id),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

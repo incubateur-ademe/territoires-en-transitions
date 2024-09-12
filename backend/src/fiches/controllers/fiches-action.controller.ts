@@ -2,7 +2,6 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
@@ -12,6 +11,7 @@ import {
   updateFicheActionRequestSchema,
   UpdateFicheActionRequestType,
 } from '../models/update-fiche-action.request';
+import { SupabaseJwtPayload } from 'backend/src/auth/models/auth.models';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
