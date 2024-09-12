@@ -18,14 +18,14 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.action_id,
+  () => actionDefinitionTable.actionId,
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  action_id: actionIdVarchar.primaryKey().notNull(),
+  actionId: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
@@ -33,8 +33,8 @@ export const actionDefinitionTable = pgTable('action_definition', {
   contexte: text('contexte').notNull(),
   exemples: text('exemples').notNull(),
   ressources: text('ressources').notNull(),
-  reduction_potentiel: text('reduction_potentiel').notNull(),
-  perimetre_evaluation: text('perimetre_evaluation').notNull(),
+  reductionPotentiel: text('reduction_potentiel').notNull(),
+  perimetreEvaluation: text('perimetre_evaluation').notNull(),
   preuve: text('preuve'),
   points: doublePrecision('points'),
   pourcentage: doublePrecision('pourcentage'),
@@ -57,8 +57,8 @@ export const createActionDefinitionSchema = createInsertSchema(
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
-  'action_id'
+  'actionId'
 > &
   Partial<ActionDefinitionType> & {
-    parent_action_id: string | null;
-  };
+  parentActionId: string | null;
+};
