@@ -35,7 +35,7 @@ describe('Route de lecture / ecriture des indicateurs', () => {
 
   it(`Lecture sans acces`, () => {
     return request(app.getHttpServer())
-      .get('/indicateurs?collectivite_id=3')
+      .get('/indicateurs?collectiviteId=3')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
@@ -49,17 +49,17 @@ describe('Route de lecture / ecriture des indicateurs', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectivite_id: 4936,
-          indicateur_id: 4,
-          date_valeur: '2015-01-01',
-          metadonnee_id: 1,
+          collectiviteId: 4936,
+          indicateurId: 4,
+          dateValeur: '2015-01-01',
+          metadonneeId: 1,
           resultat: 447868,
         },
         {
-          collectivite_id: 3895,
-          indicateur_id: 4,
-          date_valeur: '2015-01-01',
-          metadonnee_id: 1,
+          collectiviteId: 3895,
+          indicateurId: 4,
+          dateValeur: '2015-01-01',
+          metadonneeId: 1,
           resultat: 54086,
         },
       ],
