@@ -39,6 +39,10 @@ export const backendConfigurationSchema = z.object({
     description:
         "Clé pour la connexion à l'api de Directus"
   }),
+  BREVO_API_KEY: z.string().min(1).openapi({
+    description:
+        "Clé pour la connexion à l'api de Brevo"
+  }),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema
