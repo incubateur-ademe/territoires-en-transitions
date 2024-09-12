@@ -15,6 +15,7 @@ import {useIndicateurDefinition} from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import {useDeleteIndicateurPerso} from './useRemoveIndicateurPerso';
 import {Indicateurs} from '@tet/api';
+import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -52,8 +53,13 @@ const IndicateurPersonnaliseBase = ({
         isReadonly={isReadonly}
         onUpdate={value => handleUpdate('titre', value)}
       />
-      <div className="px-10 py-4">
-        <div className="flex flex-row justify-end fr-mb-2w">
+      <div className="px-10 py-6">
+        <div className="flex flex-row items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <BadgeACompleter a_completer={!rempli} />
+            <BadgeIndicateurPerso />
+          </div>
+
           {!isReadonly && (
             <ToolbarIconButton
               className="fr-mr-1w text-error-1"
@@ -72,7 +78,6 @@ const IndicateurPersonnaliseBase = ({
           fileName={definition.titre}
         />
 
-        <BadgeACompleter a_completer={!rempli} className="mt-10 mb-6" />
         <IndicateurValuesTabs definition={definition} />
         <div className="flex flex-col gap-8 mt-10">
           <Field title="Description et méthodologie de calcul">

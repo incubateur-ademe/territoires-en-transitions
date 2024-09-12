@@ -23,6 +23,7 @@ import {getIndicateurRestant} from './utils';
 import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
+import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -202,9 +203,8 @@ export const IndicateurCardBase = ({
           />
         ) : (
           <>
-            <div className="flex items-center gap-6">
-              <BadgeACompleter a_completer={isACompleter} size="sm" />
-              {selectState?.setSelected && (
+            {selectState?.setSelected && (
+              <div className="flex items-center gap-6">
                 <Button
                   onClick={(
                     evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -227,9 +227,15 @@ export const IndicateurCardBase = ({
                     'group-hover:flex': !readonly,
                   })}
                 />
-              )}
+              </div>
+            )}
+            <div className="max-w-full font-bold line-clamp-2">
+              {chartInfo?.titre}
             </div>
-            <div className="font-bold line-clamp-2">{chartInfo?.titre}</div>
+            <div className="flex items-center gap-2">
+              <BadgeACompleter a_completer={isACompleter} size="sm" />
+              {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
+            </div>
           </>
         )}
         {/** Graphique */}
