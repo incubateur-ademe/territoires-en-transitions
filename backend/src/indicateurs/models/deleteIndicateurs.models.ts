@@ -4,13 +4,13 @@ import { z } from 'zod';
 export const deleteIndicateursValeursRequestSchema = extendApi(
   z
     .object({
-      collectivite_id: z.coerce.number().int().openapi({
+      collectiviteId: z.coerce.number().int().openapi({
         description: 'Identifiant de la collectivité',
       }),
-      indicateur_id: z.coerce.number().int().optional().openapi({
+      indicateurId: z.coerce.number().int().optional().openapi({
         description: "Identifiant de l'indicateur",
       }),
-      metadonnee_id: z.coerce.number().int().optional().openapi({
+      metadonneeId: z.coerce.number().int().optional().openapi({
         description:
           'Identifiant de la métadonnée permettant de sélectionner une source',
       }),
@@ -26,7 +26,7 @@ export type DeleteIndicateursValeursRequestType = z.infer<
 export const deleteIndicateursValeursResponseSchema = extendApi(
   z
     .object({
-      indicateur_valeur_ids_supprimes: z.array(z.number().int()),
+      indicateurValeurIdsSupprimes: z.array(z.number().int()),
     })
     .openapi({
       title: 'Identifiant des valeurs supprimées',
