@@ -3,11 +3,13 @@ import { and, eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateIndicateurSourceMetadonneeType,
-  CreateIndicateurSourceType,
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
+} from '../models/indicateur-source-metadonnee.table';
+import {
+  CreateIndicateurSourceType,
   indicateurSourceTable,
-} from '../models/indicateur.models';
+} from '../models/indicateur-source.table';
 
 @Injectable()
 export default class IndicateurSourcesService {
@@ -19,7 +21,7 @@ export default class IndicateurSourcesService {
     indicateurSourceMetadonneeType: CreateIndicateurSourceMetadonneeType,
   ) {
     this.logger.log(
-      `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.source_id} et la date ${indicateurSourceMetadonneeType.date_version.toISOString()}`,
+      `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion.toISOString()}`,
     );
     const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
@@ -42,8 +44,8 @@ export default class IndicateurSourcesService {
       .from(indicateurSourceMetadonneeTable)
       .where(
         and(
-          eq(indicateurSourceMetadonneeTable.source_id, sourceId),
-          eq(indicateurSourceMetadonneeTable.date_version, dateVersion),
+          eq(indicateurSourceMetadonneeTable.sourceId, sourceId),
+          eq(indicateurSourceMetadonneeTable.dateVersion, dateVersion),
         ),
       )
       .limit(1);

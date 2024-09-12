@@ -2,7 +2,6 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import {
   getIndicateursValeursRequestSchema,
   getIndicateursValeursResponseSchema,
@@ -12,16 +11,17 @@ import {
   UpsertIndicateursValeursResponse,
 } from '../models/upsertIndicateurs.models';
 import IndicateursService from '../services/indicateurs.service';
+import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 class GetIndicateursValeursRequestClass extends createZodDto(
-  getIndicateursValeursRequestSchema
+  getIndicateursValeursRequestSchema,
 ) {}
 
 class GetIndicateursValeursResponseClass extends createZodDto(
-  getIndicateursValeursResponseSchema
+  getIndicateursValeursResponseSchema,
 ) {}
 
 @ApiTags('Indicateurs')
@@ -35,11 +35,11 @@ export class IndicateursController {
   @ApiResponse({ type: GetIndicateursValeursResponseClass })
   async getIndicateurValeurs(
     @Query() request: GetIndicateursValeursRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: SupabaseJwtPayload,
   ): Promise<GetIndicateursValeursResponseClass> {
     return this.indicateurService.getIndicateurValeursGroupees(
       request,
-      tokenInfo
+      tokenInfo,
     );
   }
 
@@ -49,12 +49,12 @@ export class IndicateursController {
   })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: SupabaseJwtPayload,
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs =
       await this.indicateurService.upsertIndicateurValeurs(
         request.valeurs,
-        tokenInfo
+        tokenInfo,
       );
     return { valeurs: upsertedValeurs };
   }
