@@ -35,6 +35,10 @@ export const backendConfigurationSchema = z.object({
     description:
       'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC',
   }),
+  DIRECTUS_API_KEY: z.string().min(1).openapi({
+    description:
+        "Clé pour la connexion à l'api de Directus"
+  }),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema
