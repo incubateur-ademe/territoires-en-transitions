@@ -5,19 +5,19 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionPiloteTable = pgTable(
   'fiche_action_pilote',
   {
-    fiche_id: integer('fiche_id').references(() => ficheActionTable.id),
-    tag_id: integer('tag_id').references(() => personneTagTable.id),
-    user_id: uuid('user_id'), // references dcp
+    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
+    tagId: integer('tag_id').references(() => personneTagTable.id),
+    userId: uuid('user_id'), // references dcp
   },
   (table) => {
     return {
-      one_user_per_fiche: uniqueIndex('one_user_per_fiche ').on(
-        table.fiche_id,
-        table.user_id,
+      oneUserPerFiche: uniqueIndex('one_user_per_fiche ').on(
+        table.ficheId,
+        table.userId,
       ),
-      one_tag_per_fiche: uniqueIndex('one_tag_per_fiche ').on(
-        table.fiche_id,
-        table.tag_id,
+      oneTagPerFiche: uniqueIndex('one_tag_per_fiche ').on(
+        table.ficheId,
+        table.tagId,
       ),
     };
   },
