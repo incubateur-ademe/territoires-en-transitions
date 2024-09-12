@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import _ from 'lodash';
 import {
-  Button,
   Field,
   FormSectionGrid,
   Modal,
@@ -11,17 +10,20 @@ import {
 import {FicheAction} from '../data/types';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import {getMaxLengthMessage} from '../utils';
+import {OpenState} from '@tet/ui/dist/utils/types';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 
 type ModaleIndicateursHeaderProps = {
   fiche: FicheAction;
   updateFiche: (fiche: FicheAction) => void;
+  openState: OpenState;
 };
 
 const ModaleIndicateursHeader = ({
   fiche,
   updateFiche,
+  openState,
 }: ModaleIndicateursHeaderProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
@@ -35,6 +37,7 @@ const ModaleIndicateursHeader = ({
     <Modal
       title="Indicateurs de suivi"
       size="lg"
+      openState={openState}
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Objectifs */}
@@ -90,14 +93,7 @@ const ModaleIndicateursHeader = ({
           }}
         />
       )}
-    >
-      <Button
-        title="Modifier les informations"
-        icon="edit-line"
-        size="xs"
-        variant="grey"
-      />
-    </Modal>
+    />
   );
 };
 

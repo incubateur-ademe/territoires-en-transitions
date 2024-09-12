@@ -25,13 +25,33 @@ const IndicateursHeader = ({
     isTextTruncated: isObjectifsTruncated,
   } = getTruncatedText(objectifs, 1000);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       {/* Titre et bouton d'édition */}
       <div className="flex justify-between">
         <h5 className="text-primary-8 mb-0">Indicateurs de suivi</h5>
         {!isReadonly && (
-          <ModaleIndicateursHeader fiche={fiche} updateFiche={updateFiche} />
+          <>
+            <Button
+              title="Modifier les informations"
+              icon="edit-line"
+              size="xs"
+              variant="grey"
+              onClick={() => setIsModalOpen(true)}
+            />
+            {isModalOpen && (
+              <ModaleIndicateursHeader
+                fiche={fiche}
+                updateFiche={updateFiche}
+                openState={{
+                  isOpen: isModalOpen,
+                  setIsOpen: setIsModalOpen,
+                }}
+              />
+            )}
+          </>
         )}
       </div>
 
