@@ -341,6 +341,7 @@ export const METHODO_PAR_SECTEUR = {
 export const SEQUESTRATION_CARBONE = {
   id: 'sequestration_carbone',
   sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
+  coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
   secteurs: [
     {
       nom: 'Cultures',

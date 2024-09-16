@@ -144,6 +144,9 @@ const normalizeValue = (
   id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
 ) => {
   if (value === null) return null;
-  const coef = INDICATEURS_TRAJECTOIRE?.find(ind => ind.id === id)?.coef ?? 1;
+  const coef =
+    [...INDICATEURS_TRAJECTOIRE, SEQUESTRATION_CARBONE]?.find(
+      ind => ind.id === id
+    )?.coef ?? 1;
   return value * coef;
 };
