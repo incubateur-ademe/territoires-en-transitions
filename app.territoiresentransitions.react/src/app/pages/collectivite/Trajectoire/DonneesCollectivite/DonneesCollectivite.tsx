@@ -7,6 +7,7 @@ import {TABS} from './constants';
 import {
   DATE_DEBUT,
   INDICATEURS_TRAJECTOIRE,
+  SEQUESTRATION_CARBONE,
 } from 'app/pages/collectivite/Trajectoire/constants';
 import {useCalculTrajectoire} from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
@@ -120,11 +121,11 @@ const getTabProps = (donneesCompletes: boolean) => {
 };
 
 // normalise une valeur objectif/résultat
-const normalizeValue = (
-  value: number | null,
-  id: string
-) => {
+const normalizeValue = (value: number | null, id: string) => {
   if (value === null || value === undefined) return value;
-  const coef = INDICATEURS_TRAJECTOIRE?.find(ind => ind.id === id)?.coef ?? 1;
+  const coef =
+    [...INDICATEURS_TRAJECTOIRE, SEQUESTRATION_CARBONE]?.find(
+      ind => ind.id === id
+    )?.coef ?? 1;
   return value / coef;
 };
