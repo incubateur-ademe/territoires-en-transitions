@@ -472,13 +472,22 @@ export default class TrajectoiresSpreadsheetService {
             ligne.forEach((valeur, columnIndex) => {
               const floatValeur = parseFloat(valeur);
               if (!isNaN(floatValeur)) {
-                const emissionGes =
+                const emissionGesOuSequestration =
                   !indicateurResultatDefinition.identifiant_referentiel?.startsWith(
                     this.trajectoiresDataService
                       .CONSOMMATIONS_IDENTIFIANTS_PREFIX,
                   );
+                const donneeSequestration =
+                  indicateurResultatDefinition.identifiant_referentiel?.startsWith(
+                    this.trajectoiresDataService
+                      .SEQUESTRATION_IDENTIFIANTS_PREFIX,
+                  );
                 // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
-                const facteur = emissionGes ? 1000 : 1;
+                let facteur = emissionGesOuSequestration ? 1000 : 1;
+                if (donneeSequestration) {
+                  // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
+                  facteur = -1 * facteur;
+                }
                 const indicateurValeur: CreateIndicateurValeurType = {
                   indicateur_id: indicateurResultatDefinition.id,
                   collectivite_id: collectiviteId,
