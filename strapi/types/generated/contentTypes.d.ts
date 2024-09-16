@@ -1256,6 +1256,19 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         maxLength: 50;
       }> &
       Attribute.DefaultTo<"Je contacte l'\u00E9quipe">;
+    trajectoire_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'Je calcule ma trajectoire SNBC territorialis\u00E9e'>;
+    trajectoire_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'La trajectoire SNBC territorialis\u00E9e n\u2019est aucunement prescriptive. C\u2019est un outil d\u2019aide \u00E0 la d\u00E9cision, un point de rep\u00E8re pour : - D\u00E9finir vos objectifs ou les interroger lorsque ceux-ci sont d\u00E9finis (par exemple \u00E0 l\u2019occasion d\u2019un suivi annuel ou d\u2019un bilan \u00E0 mi-parcours d\u2019un PCAET) - Quantifier les efforts \u00E0 r\u00E9aliser secteur par secteur - Identifier sa contribution \u00E0 la SNBC'>;
+    trajectoire_image: Attribute.Media;
+    trajectoire_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'En savoir plus'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
