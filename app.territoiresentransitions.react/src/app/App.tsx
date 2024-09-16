@@ -16,7 +16,13 @@ import {Toasters} from 'app/Toasters';
 import {ScrollToTopOnPageChange} from 'app/ScrollToTopOnPageChange';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 
-import {ancienRecherchesPath, profilPath, recherchesCollectivitesUrl, recherchesLandingPath} from 'app/paths';
+import {
+  ancienRecherchesPath,
+  finaliserMonInscriptionUrl,
+  profilPath,
+  recherchesCollectivitesUrl,
+  recherchesLandingPath,
+} from 'app/paths';
 import {CollectivitesEngageesPage} from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {ProfilPage} from './pages/Profil/ProfilPage';
 import Layout from 'app/Layout';
@@ -39,44 +45,46 @@ const trackingClient = createTrackingClient(ENV.posthog);
 export const App = () => {
   return (
     <TrackingProvider client={trackingClient}>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <Router>
-            <ScoreListenerProvider>
-              <Layout>
-                <E2E />
-                <ScrollToTopOnPageChange />
-                <Toasters />
-                <Redirector />
-                <VisitTracker />
-                <AccepterCGUModal />
-                <Switch>
-                  <Route exact path="/">
-                    <Home />
-                  </Route>
-                  <Route path={profilPath}>
-                    <ProfilPage />
-                  </Route>
-                  <Redirect
-                    exact
-                    from={ancienRecherchesPath}
-                    to={recherchesCollectivitesUrl}
-                  />
-                  <Route path={recherchesLandingPath}>
-                    <CollectivitesEngageesPage />
-                  </Route>
-                  <Route path={'/collectivite/:collectiviteId'}>
-                    <CollectiviteRoutes />
-                  </Route>
-                </Switch>
-              </Layout>
-            </ScoreListenerProvider>
-          </Router>
-        </ThemeProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ThemeProvider theme={theme}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Router>
+              <ScoreListenerProvider>
+                <Layout>
+                  <E2E />
+                  <ScrollToTopOnPageChange />
+                  <Toasters />
+                  <Redirector />
+                  <VisitTracker />
+                  <AccepterCGUModal />
+                  <Switch>
+                    <Route exact path="/">
+                      <Home />
+                    </Route>
+                    <Route path={profilPath}>
+                      <ProfilPage />
+                    </Route>
+                    <Redirect
+                      exact
+                      from={ancienRecherchesPath}
+                      to={recherchesCollectivitesUrl}
+                    />
+                    <Route
+                      path={[recherchesLandingPath, finaliserMonInscriptionUrl]}
+                    >
+                      <CollectivitesEngageesPage />
+                    </Route>
+                    <Route path={'/collectivite/:collectiviteId'}>
+                      <CollectiviteRoutes />
+                    </Route>
+                  </Switch>
+                </Layout>
+              </ScoreListenerProvider>
+            </Router>
+          </ThemeProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </TrackingProvider>
   );
 };

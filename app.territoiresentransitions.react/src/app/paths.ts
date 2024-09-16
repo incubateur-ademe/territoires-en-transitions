@@ -23,6 +23,7 @@ export const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'plans';
 export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
+export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const recherchesPlansUrl = `${recherchesPath}/plans`;
 
 export const ancienRecherchesPath = '/toutes_collectivites';

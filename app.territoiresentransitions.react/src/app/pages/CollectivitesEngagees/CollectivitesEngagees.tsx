@@ -1,85 +1,56 @@
-import {useMemo} from 'react';
-
-import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
-import Filters from './Filters/FiltersColonne';
-import CollectivitesView from './Views/CollectivitesView';
-import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
-
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useOwnedCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-
-import {CollectiviteEngagee} from '@tet/api';
+import {Route} from 'react-router-dom';
+import {Button, Card} from '@tet/ui';
+import {getRejoindreCollectivitePath} from '@tet/api';
+import {useSansCollectivite} from 'core-logic/hooks/useOwnedCollectivites';
+import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
+import {ReactComponent as PictoCarte} from './carte.svg';
 import {
-  initialFilters,
-  nameToShortNames,
-} from 'app/pages/CollectivitesEngagees/data/filters';
-import {Route, useParams} from 'react-router-dom';
-import {
-  RecherchesViewParam,
+  finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
-  recherchesPlansUrl,
 } from 'app/paths';
 
 const CollectivitesEngagees = () => {
-  const ownedCollectivites = useOwnedCollectivites();
-
-  const hasCollectivites = useMemo(
-    () => ownedCollectivites?.length !== 0,
-    [ownedCollectivites]
-  );
-
-  const auth = useAuth();
-
-  const {isConnected} = auth;
-
-  const viewParam: {recherchesId: RecherchesViewParam} = useParams();
-  const vue = viewParam.recherchesId;
-
-  /** Filters */
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    '',
-    initialFilters,
-    nameToShortNames
-  );
+  const sansCollectivite = useSansCollectivite();
 
   return (
-    <div className="bg-primary-1 -mb-8">
-      {!hasCollectivites && <AssocierCollectiviteBandeau />}
-      <div
-        data-test="ToutesLesCollectivites"
-        className="app fr-container py-16"
-      >
-        <div className="md:flex md:gap-6 xl:gap-12">
-          {/* Filters column */}
-          <Filters vue={vue} filters={filters} setFilters={setFilters} />
-          {/* Results column */}
-          <Route path={recherchesCollectivitesUrl}>
-            <CollectivitesView
-              initialFilters={initialFilters}
-              filters={filters}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={hasCollectivites && isConnected}
-            />
-            {/* {vue === 'collectivites' && (
-            )} */}
-          </Route>
-          <Route path={recherchesPlansUrl}>
-            <PlansView
-              initialFilters={initialFilters}
-              filters={{...filters, trierPar: ['nom']}}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={hasCollectivites && isConnected}
-            />
-            {/* {vue === 'plans' && (
-            )} */}
-          </Route>
-        </div>
-      </div>
-    </div>
+    <>
+      <Route path={finaliserMonInscriptionUrl}>
+        <FinaliserMonInscription />
+      </Route>
+      <Route path={recherchesCollectivitesUrl}>
+        <DecouvrirLesCollectivites sansCollectivite={sansCollectivite} />
+      </Route>
+    </>
   );
 };
+
+const FinaliserMonInscription = () => (
+  <div className="mx-auto my-8">
+    <Card className="items-center">
+      <PictoCarte />
+      <h2 className="text-primary-8">Merci pour votre inscription !</h2>
+      <p className="font-normal text-center leading-7">
+        Dernière étape pour accéder à l’ensemble des fonctionnalités de &nbsp;
+        <b>Territoires en Transitions</b> : rejoindre une collectivité.
+        <br />
+        Vous pouvez également découvrir les collectivités déjà inscrites sur la
+        plateforme.
+      </p>
+      <div className="flex flex-row gap-4">
+        <Button variant="outlined" href={recherchesCollectivitesUrl}>
+          Découvrir les collectivités
+        </Button>
+        <Button
+          href={getRejoindreCollectivitePath(
+            document.location.hostname,
+            document.location.origin
+          )}
+        >
+          Rejoindre une collectivité
+        </Button>
+      </div>
+    </Card>
+  </div>
+);
 
 export default CollectivitesEngagees;
