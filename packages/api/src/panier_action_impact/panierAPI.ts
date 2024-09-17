@@ -34,9 +34,9 @@ export class PanierAPI {
     this.supabase = supabase;
   }
 
-  async panierFromLanding(collectivite_id?: number): Promise<PanierBase> {
-    const { data, error } =
-      collectivite_id === undefined
+  async panierFromLanding(collectivite_id: number | null): Promise<PanierBase> {
+    const {data, error} =
+      collectivite_id === null
         ? await this.supabase.rpc('panier_from_landing')
         : await this.supabase.rpc('panier_from_landing', { collectivite_id });
 
