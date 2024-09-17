@@ -58,7 +58,11 @@ const CestParti = () => {
           )}
         </div>
       )}
-      <Button className="min-w-max h-12" onClick={onClick}>
+      <Button
+        className="min-w-max h-12"
+        disabled={!collectiviteId}
+        onClick={onClick}
+      >
         C&apos;est parti !
       </Button>
     </div>
