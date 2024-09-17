@@ -8,6 +8,7 @@ import {
   ResultatTrajectoire,
 } from './useCalculTrajectoire';
 import {
+  IndicateurValeurGroupee,
   separeObjectifsEtResultats,
   useIndicateurValeurs,
 } from './useIndicateurValeurs';
@@ -101,14 +102,14 @@ export const useResultatTrajectoire = ({
     sources?.[SourceIndicateur.RARE]?.valeurs
   )?.resultats;
 
-  const objectifsCollectiviteOuPCAET =
-    objectifsEtResultats?.objectifs?.length ?? 0
-      ? objectifsEtResultats?.objectifs
-      : objectifsPCAET;
-  const resultatsCollectiviteOuRARE =
-    objectifsEtResultats?.resultats?.length ?? 0
-      ? objectifsEtResultats?.resultats
-      : resultatsRARE;
+  const objectifsCollectiviteOuPCAET = selectDataset({
+    donneesCollectivites: objectifsEtResultats?.objectifs,
+    donneesSourceExterne: objectifsPCAET,
+  });
+  const resultatsCollectiviteOuRARE = selectDataset({
+    donneesCollectivites: objectifsEtResultats?.resultats,
+    donneesSourceExterne: resultatsRARE,
+  });
 
   // crée les datasets objectifs et résultats pour le graphique
   const objectifs =
@@ -169,4 +170,21 @@ const prepareDonneesParSecteur = (
         : null;
     })
     .filter(v => !!v);
+};
+
+/** Sélectionne le jeu de données le plus approprié pour l'affichage des objectifs/résultats */
+const selectDataset = ({
+  donneesCollectivites,
+  donneesSourceExterne,
+}: {
+  donneesCollectivites?: IndicateurValeurGroupee[];
+  donneesSourceExterne?: IndicateurValeurGroupee[];
+}) => {
+  if (!donneesSourceExterne?.length) {
+    return donneesCollectivites;
+  }
+  if ((donneesCollectivites?.length ?? 0) <= 1) {
+    return donneesSourceExterne;
+  }
+  return donneesCollectivites;
 };
