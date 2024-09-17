@@ -176,6 +176,22 @@ export const saveActionImpact = async (
 
     }
 
+    // Upsert banatic_competences
+    await supabaseClient.from("action_impact_banatic_competence").delete().eq('action_impact_id', action.id);
+    for(let competence of action.banatic_competences){
+        const query = await supabaseClient.from("action_impact_banatic_competence").insert({
+            'action_impact_id' : action.id,
+            'competence_code' : competence.banatic_competence_code
+        });
+        if(query?.error){
+            console.log(`Action ${action.id} - Sauvegarde de la compétence ${competence.banatic_competence_code} : échec`);
+            console.log(query.error.message);
+        }else{
+            console.log(`Action ${action.id} - Sauvegarde de la compétence ${competence.banatic_competence_code} : réussi`);
+        }
+
+    }
+
     // typologie pas importé
     // notes_travail pas importé
     // statut pas importé
@@ -184,7 +200,6 @@ export const saveActionImpact = async (
     // competences_communales pas importé
     // independamment_competences pas importé
     // banatic_competences_parents pas importé
-    // banatic_competences pas importé
     // indicateur_suivi pas importé
 
 }
