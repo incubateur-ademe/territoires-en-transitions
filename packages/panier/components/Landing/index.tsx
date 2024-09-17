@@ -3,6 +3,7 @@ import DashboardPicto from '@tet/panier/components/Picto/DashboardPicto';
 import Section from '@tet/panier/components/Section';
 import CestParti from './CestParti';
 import ReprendrePanier from './ReprendrePanier';
+import {CommentCaMarche} from './CommentCaMarche';
 
 const Landing = () => {
   return (
@@ -45,21 +46,7 @@ const Landing = () => {
           <DashboardPicto />
         </div>
         <div className="lg:w-1/2">
-          <h3>Comment ça marche ? </h3>
-          <ul className="list-decimal list-outside text-lg text-primary-10 font-bold pl-5">
-            <li className="mb-6">
-              Ajoutez à votre panier les actions impactantes et pertinentes pour
-              votre collectivité.
-            </li>
-            <li className="mb-6">
-              Retrouvez vos fiches actions directement sur votre compte
-              Territoires en Transitions.
-            </li>
-            <li className="mb-6">
-              A vous de jouer ! Vous pouvez modifiez les actions à volonté et
-              vous en servir comme base de travail et outil de dialogue.
-            </li>
-          </ul>
+          <CommentCaMarche />
         </div>
       </Section>
     </>
