@@ -4,11 +4,14 @@ BEGIN;
 
 -- Ajoute le lien plan-panier
 alter table axe add column panier_id uuid references panier;
-comment on column axe.panier_id is 'Lien vers le panier à actions qui a créé le plan';
+comment on column axe.panier_id is 'Lien vers le dernier panier à actions qui a créé/modifié le plan';
 
 -- Complète la fonction
 create or replace function
-    plan_from_panier(collectivite_id int, panier_id uuid)
+    plan_from_panier(
+    collectivite_id int,
+    panier_id uuid,
+    plan_id int default null::integer)
     returns integer
     volatile
     security definer
@@ -25,8 +28,12 @@ begin
         raise 'L''utilisateur n''a pas de droit en édition sur la collectivité.';
     end if;
 
-    -- on commence par créer un plan
-    new_plan_id = upsert_axe('Plan d''action à impact', $1, null);
+    if plan_from_panier.plan_id is null then
+        -- on commence par créer un plan
+        new_plan_id = upsert_axe('Plan d''action à impact', $1, null);
+    else
+        new_plan_id = plan_from_panier.plan_id;
+    end if;
     -- fait le lien entre le plan et le panier
     update axe set panier_id = plan_from_panier.panier_id where id = new_plan_id;
 

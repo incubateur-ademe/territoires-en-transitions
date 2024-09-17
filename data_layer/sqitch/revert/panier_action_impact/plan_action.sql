@@ -2,6 +2,8 @@
 
 BEGIN;
 
+drop function plan_from_panier;
+
 create or replace function
     plan_from_panier(collectivite_id int, panier_id uuid)
     returns integer
