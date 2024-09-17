@@ -15,7 +15,7 @@
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/tsconfig.storybook.json"
     ],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci-new.yml"]
   },
   "plugins": [
     {
@@ -42,7 +42,7 @@
     {
       "plugin": "@nx/jest/plugin",
       "options": {
-        "targetName": "test"
+        "targetName": "jest:test"
       }
     },
     {
@@ -66,7 +66,7 @@
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "build",
-        "testTargetName": "vite:test",
+        "testTargetName": "test",
         "serveTargetName": "serve",
         "previewTargetName": "preview",
         "serveStaticTargetName": "serve-static"
@@ -96,5 +96,7 @@
         "style": "tailwind"
       }
     }
-  }
+  },
+  "packageManager": "pnpm",
+  "nxCloudAccessToken": "MWM4NGI1MWUtOTVkMC00MDUzLTliMjgtNzg5MzkwZGQ4ODgwfHJlYWQtd3JpdGU="
 }
