@@ -39,6 +39,9 @@ export type TFicheActionServicePiloteInsert = TablesInsert<'service_tag'>;
 export type TFicheActionPersonnePiloteRow = Tables<'personne_tag'>;
 export type TFicheActionPersonnePiloteInsert = TablesInsert<'personne_tag'>;
 
+export type TFicheActionIndicateurInsert =
+  TablesInsert<'indicateur_definition'>;
+
 export type TPartenaireRow = Tables<'partenaire_tag'>;
 export type TPartenaireInsert = TablesInsert<'partenaire_tag'>;
 

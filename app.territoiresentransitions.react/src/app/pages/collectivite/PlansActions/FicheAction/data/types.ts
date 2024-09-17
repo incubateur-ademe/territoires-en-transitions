@@ -1,5 +1,4 @@
 import { FicheResume as FicheResumeZod } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
-import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 import {
   TActionInsert,
   TAxeInsert,
@@ -11,6 +10,7 @@ import {
   TFicheActionStructureRow,
   TFicheActionServicePiloteRow,
   TPartenaireRow,
+  TFicheActionIndicateurInsert,
 } from 'types/alias';
 import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
@@ -37,7 +37,7 @@ export type FicheAction = Omit<
   referents: Personne[] | null;
   axes: TAxeInsert[] | null;
   actions: TActionInsert[] | null;
-  indicateurs: TIndicateurListItem[] | null;
+  indicateurs: TFicheActionIndicateurInsert[] | null;
   services: TFicheActionServicePiloteRow[] | null;
   financeurs: Financeur[] | null;
   fiches_liees: FicheResume[] | null;

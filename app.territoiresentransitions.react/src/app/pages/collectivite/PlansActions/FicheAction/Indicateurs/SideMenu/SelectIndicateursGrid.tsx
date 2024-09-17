@@ -4,13 +4,12 @@ import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 
 type Props = {
   definitions?: TIndicateurListItem[];
   isLoading?: boolean;
   selectedIndicateurs: TIndicateurListItem[] | null;
-  onSelect: (indicateurs: TIndicateurListItem[]) => void;
+  onSelect: (indicateur: TIndicateurListItem) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
@@ -57,7 +56,7 @@ const SelectIndicateursGrid = (props: Props) => {
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
     selectedIndicateurs: TIndicateurListItem[] | null;
-    onSelect: (indicateurs: TIndicateurListItem[]) => void;
+    onSelect: (indicateur: TIndicateurListItem) => void;
   }
 ) => {
   const {ref, entry} = useIntersectionObserver();
@@ -74,10 +73,7 @@ const IndicateurChartContainer = (
           selectState={{
             checkbox: true,
             selected,
-            setSelected: indicateur =>
-              onSelect(
-                selectIndicateur({indicateur, selected, selectedIndicateurs})
-              ),
+            setSelected: onSelect,
           }}
           hideChartWithoutValue
         />

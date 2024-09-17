@@ -10,7 +10,7 @@ import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/Thematique
 
 type Props = {
   selectedIndicateurs: TIndicateurListItem[] | null;
-  onSelect: (indicateurs: TIndicateurListItem[]) => void;
+  onSelect: (indicateur: TIndicateurListItem) => void;
 };
 
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
@@ -25,11 +25,6 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
   useEffect(() => {
     setSelectedIndicateursState(selectedIndicateurs);
   }, [selectedIndicateurs]);
-
-  const handleSelect = (indicateurs: TIndicateurListItem[]) => {
-    setSelectedIndicateursState(indicateurs);
-    onSelect(indicateurs);
-  };
 
   return (
     <div className="p-4">
@@ -115,7 +110,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         definitions={definitions}
         isLoading={isDefinitionsLoading}
         selectedIndicateurs={selectedIndicateursState}
-        onSelect={handleSelect}
+        onSelect={onSelect}
       />
     </div>
   );
