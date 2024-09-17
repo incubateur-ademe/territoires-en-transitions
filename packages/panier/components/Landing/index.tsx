@@ -49,6 +49,21 @@ const Landing = () => {
           <CommentCaMarche />
         </div>
       </Section>
+      <Section
+        className="flex-col gap-y-4 gap-x-12 items-center text-center max-md:pt-12 md:py-24"
+        containerClassName="bg-white"
+      >
+        <CollectiviteEngageePicto />
+        <h3 className="mb-0">
+          Vous êtes une collectivité déjà engagée dans le programme Territoires
+          Engagés Transition Écologique ?
+        </h3>
+        <p className="font-bold text-primary-10">
+          Le panier d&apos;actions basé principalement sur les actions des
+          référentiels est conçu en priorité pour faciliter le passage à
+          l&apos;action aux collectivités qui ne sont pas encore engagées !{' '}
+        </p>
+      </Section>
     </>
   );
 };
