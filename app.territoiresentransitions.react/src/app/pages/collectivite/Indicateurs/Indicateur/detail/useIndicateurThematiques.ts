@@ -3,12 +3,13 @@ import {Indicateurs} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TThematiqueRow} from 'types/alias';
+import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
-export const useUpsertIndicateurThematiques = (
-  indicateurId: number,
-  estPerso: boolean
-) => {
+export const useUpsertIndicateurThematiques = ({
+  id: indicateurId,
+  estPerso,
+}: Pick<TIndicateurDefinition, 'id' | 'estPerso'>) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
 
