@@ -30,7 +30,7 @@ type IndicateurValeursGroupeeParSource = {
   valeurs: IndicateurValeurGroupee[];
 };
 
-type IndicateurValeurGroupee = {
+export type IndicateurValeurGroupee = {
   id: number;
   date_valeur: string;
   resultat?: number | null;
