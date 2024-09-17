@@ -22,6 +22,13 @@
               }
             ]
           }
+        ],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          // var { foo, ...rest } = data;
+          // 'foo' is ignored because it have a rest property sibling.
+          // https://eslint.org/docs/latest/rules/no-unused-vars#ignorerestsiblings
+          { "ignoreRestSiblings": true }
         ]
       }
     },
