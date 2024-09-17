@@ -52,6 +52,8 @@ export type IndicateurCardProps = {
   hideChartWithoutValue?: boolean;
   /** Affiche les options de modification au hover de la carte */
   isEditable?: boolean;
+  /** Permet d'ajouter des éléments dans le groupe de menus */
+  otherMenuActions?: (indicateur: TIndicateurListItem) => React.ReactNode[];
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
@@ -123,6 +125,7 @@ export const IndicateurCardBase = ({
   isEditable = false,
   hideChart = false,
   hideChartWithoutValue = false,
+  otherMenuActions,
   card,
   readonly,
 }: IndicateurCardBaseProps) => {
@@ -170,6 +173,7 @@ export const IndicateurCardBase = ({
         <IndicateurCardOptions
           definition={definition}
           isFavoriCollectivite={chartInfo?.favoriCollectivite}
+          otherMenuActions={otherMenuActions}
           chartDownloadSettings={{
             showTrigger: showChart && hasValeurOrObjectif,
             openModal: () => setIsDownloadChartOpen(true),
@@ -203,32 +207,6 @@ export const IndicateurCardBase = ({
           />
         ) : (
           <>
-            {selectState?.setSelected && (
-              <div className="flex items-center gap-6">
-                <Button
-                  onClick={(
-                    evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                  ) => {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                    selectState.setSelected({
-                      id: definition.id,
-                      titre: definition.titre,
-                      estPerso: definition.estPerso,
-                      identifiant: definition.identifiant || null,
-                      hasOpenData: definition.hasOpenData,
-                    });
-                  }}
-                  icon="link-unlink"
-                  title="Dissocier l'indicateur"
-                  size="xs"
-                  variant="grey"
-                  className={classNames('ml-auto hidden -my-2', {
-                    'group-hover:flex': !readonly,
-                  })}
-                />
-              </div>
-            )}
             <div className="max-w-full font-bold line-clamp-2">
               {chartInfo?.titre}
             </div>

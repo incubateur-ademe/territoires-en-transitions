@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {Fragment, useState} from 'react';
 import classNames from 'classnames';
 
 import {Button} from '@tet/ui';
@@ -12,12 +12,14 @@ type Props = {
   definition: TIndicateurListItem;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
+  otherMenuActions?: (indicateur: TIndicateurListItem) => React.ReactNode[];
 };
 
 const IndicateurCardOptions = ({
   definition,
   isFavoriCollectivite = false,
   chartDownloadSettings,
+  otherMenuActions,
 }: Props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,6 +30,10 @@ const IndicateurCardOptions = ({
         'invisible group-hover:visible': !isEditOpen && !isMenuOpen,
       })}
     >
+      {otherMenuActions &&
+        otherMenuActions(definition)?.map((action, i) => (
+          <Fragment key={i}>{action}</Fragment>
+        ))}
       <Button
         title="Modifier"
         icon="edit-line"

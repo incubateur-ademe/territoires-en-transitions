@@ -1,3 +1,5 @@
+import {Button} from '@tet/ui';
+
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {
   getIndicateurGroup,
@@ -23,6 +25,15 @@ const IndicateursListe = ({
 }: IndicateursListeProps) => {
   const collectiviteId = useCollectiviteId()!;
 
+  const handleUpdateFiche = (indicateur: TIndicateurListItem) => {
+    const newIndicateurs = selectIndicateur({
+      indicateur,
+      selected: true,
+      selectedIndicateurs: indicateurs,
+    });
+    updateFiche({...fiche, indicateurs: newIndicateurs});
+  };
+
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
       {indicateurs.map(indicateur => (
@@ -31,6 +42,7 @@ const IndicateursListe = ({
           readonly={isReadonly}
           definition={indicateur}
           autoRefresh
+          isEditable
           card={{external: true}}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
@@ -40,15 +52,17 @@ const IndicateursListe = ({
           })}
           selectState={{
             selected: true,
-            setSelected: indicateur => {
-              const newIndicateurs = selectIndicateur({
-                indicateur,
-                selected: true,
-                selectedIndicateurs: indicateurs,
-              });
-              updateFiche({...fiche, indicateurs: newIndicateurs});
-            },
+            setSelected: indicateur => handleUpdateFiche(indicateur),
           }}
+          otherMenuActions={indicateur => [
+            <Button
+              onClick={() => handleUpdateFiche(indicateur)}
+              icon="link-unlink"
+              title="Dissocier l'indicateur"
+              size="xs"
+              variant="grey"
+            />,
+          ]}
         />
       ))}
     </div>
