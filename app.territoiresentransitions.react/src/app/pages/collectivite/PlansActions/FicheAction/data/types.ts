@@ -57,4 +57,4 @@ export type Financeur = Omit<
 //   pilotes: Personne[] | null;
 // };
 
-export type FicheResume = FicheResumeZod;
+export type FicheResume = FicheResumeZod & {actionImpactId?: number};
