@@ -11,6 +11,7 @@ export * from './hooks/useCopyToClipboard';
 // dossier composants
 export * from './components/layout';
 export * from './components/tracking';
+export * from './components/InfoActionImpact';
 
 // dossier design-system
 export * from './design-system/Accordion';
