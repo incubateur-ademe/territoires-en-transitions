@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {CarteActionImpactProps} from './types';
-import {Badge, Button, Card} from '@tet/ui';
+import {Badge, Button, Card, Icon} from '@tet/ui';
 import NiveauBudget from './NiveauBudget';
 
 /**
@@ -21,9 +21,7 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className={classNames('box-content px-4 py-4 h-28', {
-        '!cursor-default': panier && !isSelected,
-      })}
+      className={classNames('box-content px-4 py-4 h-28 cursor-default')}
       isSelected={isSelected}
       footer={
         <div className="relative z-0">
@@ -37,13 +35,13 @@ export const CarteActionImpact = ({
           </div>
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 w-full absolute z-10 bottom-0 right-0 bg-white flex flex-col items-end gap-2">
             {panier ? (
               <Button size="xs" onClick={() => handleToggleSelect(false)}>
                 Retirer du panier
               </Button>
             ) : (
-              <>
+              <div className="flex flex-row gap-2 h-10">
                 <Button
                   variant="outlined"
                   size="xs"
@@ -68,8 +66,12 @@ export const CarteActionImpact = ({
                 <Button size="xs" onClick={() => handleToggleSelect(true)}>
                   Ajouter au panier
                 </Button>
-              </>
+              </div>
             )}
+            <span className="text-xs font-medium -mb-1">
+              <Icon icon="eye-line" size="xs" className="mr-1" />
+              Voir le détail de la fiche
+            </span>
           </div>
         </div>
       }

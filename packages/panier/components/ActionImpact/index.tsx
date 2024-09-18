@@ -17,7 +17,6 @@ export const ActionImpact = ({
   useEffect(() => setIsActionSelected(panier), [panier]);
 
   const handleToggleSelect = (value: boolean) => {
-    setIsActionSelected(value);
     onToggleSelected(value);
   };
 

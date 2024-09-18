@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import {CarteActionImpact} from '@tet/panier/components/ActionImpact/CarteActionImpact';
+import {ActionImpact} from '@tet/panier/components/ActionImpact';
 import BasketPicto from '@tet/panier/components/Picto/BasketPicto';
 import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
@@ -51,8 +51,9 @@ const PanierActions = ({
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
               {actionsListe.map(action => (
-                <CarteActionImpact
+                <ActionImpact
                   key={action.id}
+                  description={action.description}
                   titre={action.titre}
                   thematiques={action.thematiques}
                   budget={budgets.find(
