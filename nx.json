@@ -97,6 +97,5 @@
       }
     }
   },
-  "packageManager": "pnpm",
-  "nxCloudAccessToken": "MWM4NGI1MWUtOTVkMC00MDUzLTliMjgtNzg5MzkwZGQ4ODgwfHJlYWQtd3JpdGU="
+  "packageManager": "pnpm"
 }
