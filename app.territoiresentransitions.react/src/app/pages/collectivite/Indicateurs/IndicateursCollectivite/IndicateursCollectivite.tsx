@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
-import {Button, ButtonMenu, TrackPageView, useEventTracker} from '@tet/ui';
+import { useState } from 'react';
+import { FetchFiltre } from '@tet/api/indicateurs';
+import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@tet/ui';
 import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
-import {useIndicateursFavorisCollectiviteIds} from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
+import { useIndicateursFavorisCollectiviteIds } from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
-import {indicateursNameToParams} from 'app/pages/collectivite/Indicateurs/lists/utils';
+import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
-import {makeCollectiviteIndicateursCollectiviteUrl} from 'app/paths';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { makeCollectiviteIndicateursCollectiviteUrl } from 'app/paths';
+import { useSearchParams } from 'core-logic/hooks/query';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 
 /** Page de listing de tous les indicateurs de la collectivité */
@@ -22,7 +22,7 @@ const IndicateursCollectivite = () => {
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
-  const {data} = useIndicateursFavorisCollectiviteIds();
+  const { data } = useIndicateursFavorisCollectiviteIds();
 
   const [filters, setFilters] = useSearchParams<FetchFiltre>(
     makeCollectiviteIndicateursCollectiviteUrl({
@@ -36,7 +36,7 @@ const IndicateursCollectivite = () => {
     <>
       <TrackPageView
         pageName={'app/indicateurs/collectivite'}
-        properties={{collectivite_id: collectiviteId!}}
+        properties={{ collectivite_id: collectiviteId! }}
       />
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex items-end justify-between">
@@ -64,10 +64,10 @@ const IndicateursCollectivite = () => {
         ) : (
           <IndicateursListe
             isEditable
-            filtres={{...filters, estFavorisCollectivite: true}}
+            filtres={{ ...filters, estFavorisCollectivite: true }}
             resetFilters={() => setFilters({})}
-            sortSettings={{defaultSort: 'estComplet'}}
-            settings={openState => (
+            sortSettings={{ defaultSort: 'estComplet' }}
+            settings={(openState) => (
               <ButtonMenu
                 openState={openState}
                 variant="outlined"
@@ -76,7 +76,7 @@ const IndicateursCollectivite = () => {
               >
                 <MenuFiltresTousLesIndicateurs
                   filters={filters}
-                  setFilters={newFilters => {
+                  setFilters={(newFilters) => {
                     setFilters(newFilters);
                     tracker('filtres', {
                       collectivite_id: collectiviteId!,

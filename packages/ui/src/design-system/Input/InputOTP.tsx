@@ -1,4 +1,4 @@
-import { Ref, forwardRef } from 'react';
+import { Ref, forwardRef, ComponentType } from 'react';
 import { InputBase, InputBaseProps } from './InputBase';
 import {
   InputPattern,
@@ -34,7 +34,7 @@ export const InputOTP = forwardRef(
     return (
       <InputPattern
         className="w-32 text-lg text-center"
-        customInput={InputBase}
+        customInput={InputBase as ComponentType}
         getInputRef={ref}
         value={value}
         format={FORMAT}

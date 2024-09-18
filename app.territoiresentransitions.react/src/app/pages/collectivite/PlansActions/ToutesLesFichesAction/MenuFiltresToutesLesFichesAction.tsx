@@ -1,6 +1,6 @@
-import {Checkbox, Field, FormSection, FormSectionGrid} from '@tet/ui';
+import { Checkbox, Field, FormSection, FormSectionGrid } from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   getPilotesValues,
   getReferentsValues,
@@ -18,7 +18,7 @@ type Props = {
   setFilters: (filters: Filtre) => void;
 };
 
-const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
+const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
@@ -28,14 +28,14 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         <Field title="Personne pilote">
           <PersonnesDropdown
             values={pilotes}
-            onChange={({personnes}) => {
-              const {personnePiloteIds, utilisateurPiloteIds, ...rest} =
+            onChange={({ personnes }) => {
+              const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
                 filters;
-              const {personnePiloteIds: pIds, utilisateurPiloteIds: uIds} =
+              const { personnePiloteIds: pIds, utilisateurPiloteIds: uIds } =
                 splitPilotePersonnesAndUsers(personnes);
               setFilters({
                 ...rest,
-                ...(pIds.length > 0 ? {personnePiloteIds: pIds} : {}),
+                ...(pIds.length > 0 ? { personnePiloteIds: pIds } : {}),
                 ...(uIds.length > 0
                   ? {
                       utilisateurPiloteIds: uIds,
@@ -48,12 +48,12 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         <Field title="Direction ou service pilote">
           <ServicesPilotesDropdown
             values={filters.servicePiloteIds}
-            onChange={({services}) => {
-              const {servicePiloteIds, ...rest} = filters;
+            onChange={({ services }) => {
+              const { servicePiloteIds, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(services
-                  ? {servicePiloteIds: services.map(s => s.id)}
+                  ? { servicePiloteIds: services.map((s) => s.id) }
                   : {}),
               });
             }}
@@ -63,14 +63,16 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         <Field title="Élu·e référent·e">
           <PersonnesDropdown
             values={referents}
-            onChange={({personnes}) => {
-              const {personneReferenteIds, utilisateurReferentIds, ...rest} =
+            onChange={({ personnes }) => {
+              const { personneReferenteIds, utilisateurReferentIds, ...rest } =
                 filters;
-              const {personneReferenteIds: pIds, utilisateurReferentIds: uIds} =
-                splitReferentPersonnesAndUsers(personnes);
+              const {
+                personneReferenteIds: pIds,
+                utilisateurReferentIds: uIds,
+              } = splitReferentPersonnesAndUsers(personnes);
               setFilters({
                 ...rest,
-                ...(pIds.length > 0 ? {personneReferenteIds: pIds} : {}),
+                ...(pIds.length > 0 ? { personneReferenteIds: pIds } : {}),
                 ...(uIds.length > 0
                   ? {
                       utilisateurReferentIds: uIds,
@@ -85,11 +87,11 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
           <Field title="Statut de l'action">
             <StatutsFilterDropdown
               values={filters.statuts}
-              onChange={({statuts}) => {
-                const {statuts: st, ...rest} = filters;
+              onChange={({ statuts }) => {
+                const { statuts: st, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(statuts ? {statuts} : {}),
+                  ...(statuts ? { statuts } : {}),
                 });
               }}
             />
@@ -97,11 +99,11 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
           <Field title="Niveau de priorité">
             <PrioritesFilterDropdown
               values={filters.priorites}
-              onChange={({priorites}) => {
-                const {priorites: st, ...rest} = filters;
+              onChange={({ priorites }) => {
+                const { priorites: st, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(priorites ? {priorites} : {}),
+                  ...(priorites ? { priorites } : {}),
                 });
               }}
             />
@@ -110,12 +112,12 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         <Field title="Thématique">
           <ThematiquesDropdown
             values={filters.thematiqueIds}
-            onChange={({thematiques}) => {
-              const {thematiqueIds, ...rest} = filters;
+            onChange={({ thematiques }) => {
+              const { thematiqueIds, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(thematiques.length > 0
-                  ? {thematiqueIds: thematiques.map(t => t.id)}
+                  ? { thematiqueIds: thematiques.map((t) => t.id) }
                   : {}),
               });
             }}
@@ -124,12 +126,12 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         <Field title="Financeur">
           <FinanceursDropdown
             values={filters.financeurIds}
-            onChange={({financeurs}) => {
-              const {financeurIds, ...rest} = filters;
+            onChange={({ financeurs }) => {
+              const { financeurIds, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(financeurs
-                  ? {financeurIds: financeurs.map(f => f.id!)}
+                  ? { financeurIds: financeurs.map((f) => f.id!) }
                   : {}),
               });
             }}
@@ -141,10 +143,10 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         label="Budget prévisionnel total renseigné"
         checked={filters.budgetPrevisionnel}
         onChange={() => {
-          const {budgetPrevisionnel, ...rest} = filters;
+          const { budgetPrevisionnel, ...rest } = filters;
           setFilters({
             ...rest,
-            ...(!budgetPrevisionnel ? {budgetPrevisionnel: true} : {}),
+            ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
           });
         }}
       />
@@ -152,10 +154,10 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         label="Fiche action en mode privé"
         checked={filters.restreint}
         onChange={() => {
-          const {restreint, ...rest} = filters;
+          const { restreint, ...rest } = filters;
           setFilters({
             ...rest,
-            ...(!restreint ? {restreint: true} : {}),
+            ...(!restreint ? { restreint: true } : {}),
           });
         }}
       />
@@ -163,10 +165,10 @@ const MenuFiltresToutesLesFichesAction = ({filters, setFilters}: Props) => {
         label="Indicateur(s) lié(s)"
         checked={filters.hasIndicateurLies}
         onChange={() => {
-          const {hasIndicateurLies, ...rest} = filters;
+          const { hasIndicateurLies, ...rest } = filters;
           setFilters({
             ...rest,
-            ...(!hasIndicateurLies ? {hasIndicateurLies: true} : {}),
+            ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
           });
         }}
       />

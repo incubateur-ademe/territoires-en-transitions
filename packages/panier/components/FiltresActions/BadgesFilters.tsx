@@ -1,12 +1,11 @@
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
-import { Badge } from '@tet/ui';
-import { ButtonMenu } from '@tet/ui';
-import { Field } from '@tet/ui';
 import {
+  Badge,
+  ButtonMenu,
+  Field,
   OptionValue,
-  Select,
   SelectMultiple,
   SelectMultipleOnChangeArgs,
   SelectOption,
@@ -135,10 +134,11 @@ export const BadgesFilters = ({
         icon="equalizer-fill"
         className={btnMenuClassName}
         notification={
-          badgesList &&
-          badgesList.length > 0 && {
-            number: badgesList?.length,
-          }
+          badgesList && badgesList.length > 0
+            ? {
+                number: badgesList.length,
+              }
+            : {}
         }
       >
         <div className="flex flex-col gap-4 w-72 p-4">

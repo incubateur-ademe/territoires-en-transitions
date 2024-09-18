@@ -1,9 +1,9 @@
-import { Ref, forwardRef } from 'react';
 import classNames from 'classnames';
+import { Ref, forwardRef } from 'react';
 
 import { ButtonHTMLProps, isAnchor } from '@tet/ui/utils/types';
-import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import ButtonContent from './ButtonContent';
+import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonProps } from './types';
 
 /**
@@ -11,7 +11,10 @@ import { ButtonContentProps, ButtonProps } from './types';
  * */
 // On déstructure toutes les props rajoutées qui ne sont pas des props des tags HTML <button> ou <a>
 // Ce qui nous permet de ne donner que les props restantes natives au tag HTML
-export const Button = forwardRef(
+export const Button = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
+  ButtonProps
+>(
   (
     {
       children,
@@ -26,8 +29,8 @@ export const Button = forwardRef(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isOpen, // obligé de le déstructurer pour ne pas le passer au bouton (donnée par un élément floating-ui comme la modale)
       ...props
-    }: ButtonProps,
-    ref?: Ref<HTMLButtonElement | HTMLAnchorElement>
+    },
+    ref
   ) => {
     const isIconButton = !children;
 

@@ -1,4 +1,4 @@
-import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
+import { FetchFiltre } from '@tet/api/indicateurs';
 
 export const indicateursNameToParams: Record<keyof FetchFiltre, string> = {
   thematiqueIds: 't',

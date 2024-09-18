@@ -1,5 +1,6 @@
 import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import { ButtonMenu } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
@@ -49,12 +50,18 @@ const ToutesLesFichesAction = () => {
         sortSettings={{
           defaultSort: 'titre',
         }}
-        settingsModal={(openState) => (
-          <ModalFiltresToutesLesFichesAction
+        settings={(openState: OpenState) => (
+          <ButtonMenu
             openState={openState}
-            filters={filters}
-            setFilters={(filters) => setFilters(filters)}
-          />
+            variant="outlined"
+            icon="equalizer-line"
+            size="sm"
+          >
+            <MenuFiltresToutesLesFichesAction
+              filters={filters}
+              setFilters={(filters) => setFilters(filters)}
+            />
+          </ButtonMenu>
         )}
       />
     </div>

@@ -24,7 +24,7 @@ const meta: Meta<typeof Textarea> = {
         value={value}
         onChange={(evt: any) => {
           action('onChange')(evt.currentTarget);
-          action('ref.current.value')(ref.current?.value);
+          action('ref.current.value')((ref.current as any).value);
           setValue(evt.currentTarget.value);
         }}
       />

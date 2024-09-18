@@ -1,4 +1,4 @@
-import { Ref, forwardRef } from 'react';
+import { ComponentType, Ref, forwardRef } from 'react';
 import { PatternFormat, PatternFormatProps } from 'react-number-format';
 import { InputBase, InputBaseProps } from './InputBase';
 import { validateInputNumLength } from '@tet/ui/design-system/Input/validateInputNumLength';
@@ -28,7 +28,7 @@ export const InputTel = forwardRef(
       <PatternFormat
         type="tel"
         format="## ## ## ## ##"
-        customInput={InputBase}
+        customInput={InputBase as ComponentType}
         getInputRef={ref}
         value={value}
         {...remainingProps}

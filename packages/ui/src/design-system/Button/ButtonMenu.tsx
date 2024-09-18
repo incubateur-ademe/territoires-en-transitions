@@ -52,7 +52,7 @@ export const ButtonMenu = ({
     }
   };
 
-  const [maxHeight, setMaxHeight] = useState(null);
+  const [maxHeight, setMaxHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
 
@@ -80,7 +80,9 @@ export const ButtonMenu = ({
   ]);
 
   const hasScroll =
-    refs.floating.current?.scrollHeight > refs.floating.current?.clientHeight;
+    refs.floating.current?.scrollHeight !== undefined &&
+    refs.floating.current?.clientHeight !== undefined &&
+    refs.floating.current.scrollHeight > refs.floating.current.clientHeight;
 
   return (
     <>

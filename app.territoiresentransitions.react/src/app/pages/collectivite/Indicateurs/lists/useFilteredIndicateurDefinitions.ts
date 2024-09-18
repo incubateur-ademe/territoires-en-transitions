@@ -1,8 +1,8 @@
-import {Indicateurs} from '@tet/api';
-import {FetchOptions} from '@tet/api/dist/src/indicateurs/domain';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useQuery} from 'react-query';
+import { Indicateurs } from '@tet/api';
+import { FetchOptions } from '@tet/api/indicateurs/domain';
+import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 /**
  * Charge la liste d'indicateurs en fonction du filtre donné
@@ -22,7 +22,7 @@ export const useFilteredIndicateurDefinitions = (
     ['indicateur_definitions', collectivite_id, options],
     async () => {
       if (!collectivite_id) return [];
-      const {data, error} = await Indicateurs.fetchFilteredIndicateurs(
+      const { data, error } = await Indicateurs.fetchFilteredIndicateurs(
         supabaseClient,
         collectivite_id,
         options

@@ -69,7 +69,7 @@ export const DropdownFloater = ({
     }
   };
 
-  const [maxHeight, setMaxHeight] = useState(null);
+  const [maxHeight, setMaxHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
 

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Button, Input, ModalOpenState, Pagination, Select } from '@tet/ui';
+import { Button, Input, Pagination, Select } from '@tet/ui';
 import {
   FetchOptions,
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
 } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-
+import { OpenState } from '@tet/ui/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
@@ -51,9 +51,9 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   filtres: Filtre;
-  settingsModal: (openState: ModalOpenState) => React.ReactNode;
+  settings: (openState: OpenState) => React.ReactNode;
+  resetFilters?: () => void;
   maxNbOfCards?: number;
-  onSettingsClick?: () => void;
   sortSettings?: SortFicheActionSettings;
 };
 
@@ -63,9 +63,9 @@ const FichesActionListe = ({
     defaultSort: 'modified_at',
   },
   filtres,
-  settingsModal,
+  resetFilters,
+  settings,
   maxNbOfCards = 15,
-  onSettingsClick,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
@@ -121,6 +121,10 @@ const FichesActionListe = ({
     options: ficheResumesOptions,
   });
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isLoading]);
+
   const countTotal = data?.count || 0;
 
   return (
@@ -156,24 +160,11 @@ const FichesActionListe = ({
           placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
-        {/** Bouton d'édition des filtres du module + modale */}
-        <Button
-          variant="outlined"
-          icon="equalizer-line"
-          size="sm"
-          onClick={() => {
-            setIsSettingsOpen(true);
-            onSettingsClick?.();
-          }}
-        />
-        {isSettingsOpen &&
-          settingsModal({
-            isOpen: isSettingsOpen,
-            setIsOpen: setIsSettingsOpen,
-          })}
+        {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
+        {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués */}
-      <ModuleFiltreBadges filtre={filtres} />
+      <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
 
       {/** Chargement */}
       {isLoading ? (

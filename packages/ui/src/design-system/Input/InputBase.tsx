@@ -4,7 +4,7 @@ import { FieldState, stateToTextColor } from '@tet/ui/design-system/Field';
 import { Icon, IconValue } from '@tet/ui/design-system/Icon';
 import { preset } from '@tet/ui/tailwind-preset';
 import classNames from 'classnames';
-import { Ref, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 // variantes de taille
 export type InputSize = 'md' | 'sm';
@@ -28,10 +28,7 @@ const stateToBorderColor: Record<FieldState, string> = {
   warning: 'border-warning-1',
 };
 
-export type InputBaseProps = Omit<
-  React.ComponentPropsWithoutRef<'input'>,
-  'type'
-> & {
+export type InputBaseProps = React.ComponentPropsWithoutRef<'input'> & {
   /** Type de saisie */
   type?: InputType;
   /** Valeur courante du champ */
@@ -61,8 +58,8 @@ export type IconContent =
 /**
  * Composant de base pour les champs de saisie.
  */
-export const InputBase = forwardRef(
-  (props: InputBaseProps, ref: Ref<HTMLInputElement>) => {
+export const InputBase = forwardRef<HTMLInputElement, InputBaseProps>(
+  (props, ref) => {
     const {
       className,
       containerClassname,
