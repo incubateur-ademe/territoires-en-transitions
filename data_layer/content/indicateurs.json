@@ -13,6 +13,7 @@
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -57,7 +58,8 @@
       "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
-        "cae"
+        "cae",
+        "crte"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -668,7 +670,8 @@
       "participation_score": false,
       "programmes": [
         "cae",
-        "clef"
+        "clef",
+        "crte"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -1620,7 +1623,8 @@
       "parent": "cae_2.a",
       "participation_score": false,
       "programmes": [
-        "cae"
+        "cae",
+        "pcaet"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -2339,12 +2343,13 @@
       "description": "<p>Ces indicateurs estiment les \u00e9missions annuelles des six polluants atmosph\u00e9riques exig\u00e9s dans le contenu r\u00e9glementaire des PCAET (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial) : oxydes d\u2019azote (NOx), les particules PM 10 et PM 2,5 et les compos\u00e9s organiques volatils (COV), tels que d\u00e9finis au I de l\u2019article R. 221-1 du m\u00eame code, ainsi que le dioxyde de soufre (SO2) et l\u2019ammoniac (NH3).</p>\n<p>Les donn\u00e9es peuvent \u00eatre fournies notamment par les associations agr\u00e9\u00e9es pour la surveillance de la qualit\u00e9 de l'air (AASQA).</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n:</p>\n<p>Plan national de r\u00e9duction des \u00e9missions polluantes (d\u00e9cret n\u00b02017-949 du 10 mai 2017): r\u00e9duction des polluants par rapport aux \u00e9missions de 2005 :</p>\n<p>Nox (2020 = -50% /2025 = -60% / 2030 = -69%)</p>\n",
       "id": "cae_4.a",
       "identifiant": "4.a",
-      "nom": "Emissions annuelles de Nox",
+      "nom": "Emissions de Nox",
       "parent": "emission_polluants_atmo",
       "participation_score": false,
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -2423,6 +2428,7 @@
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -2449,6 +2455,7 @@
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -2475,6 +2482,7 @@
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -3067,7 +3075,8 @@
     },
     {
       "action_ids": [
-        "cae_5.2.2"
+        "cae_5.2.2",
+        "eci_3.2"
       ],
       "description": "<p>Part de contrat en nombre ou en montant (au choix) int\u00e9grant des clauses environnementales dans les sp\u00e9cifications techniques ou les crit\u00e8res d\u2019attribution (sur une ann\u00e9e civile).</p>\n<p>Voir la notion de la consid\u00e9ration environnementale au PNAAPD 2021-2025</p>\n<p><strong>Objectif:</strong>\n100% des march\u00e9s comportent une consid\u00e9ration environnementale.</p>\n",
       "id": "cae_51",
@@ -3076,7 +3085,8 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "cae"
+        "cae",
+        "eci"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3268,7 +3278,8 @@
       "parent": null,
       "participation_score": true,
       "programmes": [
-        "cae"
+        "cae",
+        "crte"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3284,9 +3295,10 @@
     },
     {
       "action_ids": [
-        "cae_1.2.3"
+        "cae_1.2.3",
+        "eci_2.1"
       ],
-      "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9chets et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>Pour la production par habitant, la production totale du territoire est rapport\u00e9e \u00e0 la population l\u00e9gale au sens de l\u2019INSEE.</p>\n<p>La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>\n<ul>\n<li>\n<p>Valeur limite : 573 kg/hab.an</p>\n</li>\n<li>\n<p>Valeur cible : 480 kg/hab.an</p>\n</li>\n</ul>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence: Feuille de route et loi anti-gaspillage pour une \u00e9conomie circulaire :</strong></p>\n<ul>\n<li>\n<p>R\u00e9duire de 15 % de quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits par habitant en 2030 par rapport \u00e0 2010;</p>\n</li>\n<li>\n<p>Augmenter le r\u00e9emploi et la r\u00e9utilisation en vue d\u2019atteindre l\u2019\u00e9quivalent de 5 % du tonnage des d\u00e9chets m\u00e9nagers en 2030;</p>\n</li>\n<li>\n<p>Augmenter la quantit\u00e9 de d\u00e9chets m\u00e9nagers et assimil\u00e9s faisant l'objet d'une pr\u00e9paration en vue de la r\u00e9utilisation ou d'un recyclage afin d\u2019atteindre 55 % en 2025, 60 % en 2030 et 65 % en 2035;</p>\n</li>\n<li>\n<p>R\u00e9duire le gaspillage alimentaire de 50% d\u2019ici 2025, par rapport \u00e0 2015, dans la distribution alimentaire et la restauration collective, et de 50 % d\u2019ici 2030, par rapport \u00e0 2015, dans la consommation, la production, la transformation et la restauration commerciale;</p>\n</li>\n<li>\n<p>R\u00e9duire de 30 % les d\u00e9chets non dangereux et non inertes mis en d\u00e9charge en 2020 par rapport \u00e0 2010; et de 50 % en 2025;</p>\n</li>\n<li>\n<p>R\u00e9duire les quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s mis en d\u00e9charge \u00e0 10 % des quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits en 2035.</p>\n</li>\n</ul>\n",
+      "description": "<p>Les d\u00e9chets m\u00e9nagers et assimil\u00e9s comprennent les ordures m\u00e9nag\u00e8res r\u00e9siduelles, les collectes s\u00e9lectives et les d\u00e9chets collect\u00e9s en d\u00e9ch\u00e8teries (y compris d\u00e9chets et gravats), soit la totalit\u00e9 des d\u00e9chets des m\u00e9nages et des non-m\u00e9nag\u00e9s pris en charge par le service public.</p>\n<p>Les d\u00e9chets produits par les services municipaux (d\u00e9chets de l\u2019assainissement collectif, d\u00e9chets de nettoyage des rues, de march\u00e9, \u2026) ne rel\u00e8vent pas de ce p\u00e9rim\u00e8tre.</p>\n<p>Le calcul ne consid\u00e8re que les services de collecte op\u00e9rationnels, c'est-\u00e0-dire ceux qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>Pour la production par habitant, la production totale du territoire est rapport\u00e9e \u00e0 la population l\u00e9gale au sens de l\u2019INSEE.</p>\n<p>La valeur limite est issue des chiffres-cl\u00e9s d\u00e9chets de l\u2019ADEME, \u00e9dition 2016, bas\u00e9 sur l\u2019enqu\u00eate Collecte 2013 et la valeur cible des 47 territoires pionniers en France.</p>\n<ul>\n<li>\n<p>Valeur limite TETE : 573 kg/hab.an</p>\n</li>\n<li>\n<p>Valeur cible TETE : 480 kg/hab.an</p>\n</li>\n</ul>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence: Feuille de route et loi anti-gaspillage pour une \u00e9conomie circulaire :</strong></p>\n<ul>\n<li>\n<p>R\u00e9duire de 15 % de quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits par habitant en 2030 par rapport \u00e0 2010;</p>\n</li>\n<li>\n<p>Augmenter le r\u00e9emploi et la r\u00e9utilisation en vue d\u2019atteindre l\u2019\u00e9quivalent de 5 % du tonnage des d\u00e9chets m\u00e9nagers en 2030;</p>\n</li>\n<li>\n<p>Augmenter la quantit\u00e9 de d\u00e9chets m\u00e9nagers et assimil\u00e9s faisant l'objet d'une pr\u00e9paration en vue de la r\u00e9utilisation ou d'un recyclage afin d\u2019atteindre 55 % en 2025, 60 % en 2030 et 65 % en 2035;</p>\n</li>\n<li>\n<p>R\u00e9duire le gaspillage alimentaire de 50% d\u2019ici 2025, par rapport \u00e0 2015, dans la distribution alimentaire et la restauration collective, et de 50 % d\u2019ici 2030, par rapport \u00e0 2015, dans la consommation, la production, la transformation et la restauration commerciale;</p>\n</li>\n<li>\n<p>R\u00e9duire de 30 % les d\u00e9chets non dangereux et non inertes mis en d\u00e9charge en 2020 par rapport \u00e0 2010; et de 50 % en 2025;</p>\n</li>\n<li>\n<p>R\u00e9duire les quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s mis en d\u00e9charge \u00e0 10 % des quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits en 2035.</p>\n</li>\n</ul>\n",
       "id": "cae_6.a",
       "identifiant": "6.a",
       "nom": "Production de d\u00e9chets (avec d\u00e9blais et gravats)",
@@ -3294,7 +3306,9 @@
       "participation_score": true,
       "programmes": [
         "cae",
-        "clef"
+        "clef",
+        "crte",
+        "eci"
       ],
       "sans_valeur": false,
       "selection": true,
@@ -3318,7 +3332,8 @@
       "parent": "cae_6.a",
       "participation_score": false,
       "programmes": [
-        "cae"
+        "cae",
+        "crte"
       ],
       "sans_valeur": false,
       "selection": false,
@@ -4017,77 +4032,11 @@
     },
     {
       "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\n\u00c9missions de gaz \u00e0 effet de serre totales sur le territoire</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nPour d\u00e9finir les \u00e9missions de GES, se r\u00e9f\u00e9rer \u00e0 l\u2019outil Bilan GES Territoire de l\u2019Ademe en privil\u00e9giant l\u2019approche globale :\n<a href=\"https://www.bilans-ges.ademe.fr/fr/accueil/contenu/index/page/Bilan%2BGES%2BTerritoires/siGras/0\">\nBilan GES\n</a>\nou une m\u00e9thode \u00e9quivalente.</p>\n<p><strong>Sources:</strong>\nObservatoires r\u00e9gionaux de l\u2019\u00e9nergie, du climat et de l\u2019air</p>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nLutte contre le changement climatique</p>\n<p><strong>Politique publique:</strong>\nLimitation du changement climatique</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire les \u00e9missions de gaz \u00e0 effet de serre (GES)</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Strat\u00e9gie Nationale Bas Carbone (SNBC) :</p>\n<ul>\n<li>\n<p>Valeur cible \u00e0 1,1 teqCO2/hab d\u2019ici 2050</p>\n</li>\n<li>\n<p>40 % \u00e9missions GES globales en 2030 / -75 % en 2050 (par rapport \u00e0 1990)</p>\n</li>\n<li>\n<p>35 % \u00e9missions GES du secteur industriel en 2030 / 80 % en 2050 (par rapport \u00e0 1990)</p>\n</li>\n<li>\n<p>50 % \u00e9missions GES du secteur agricole en 2050 (par rapport \u00e0 2015)</p>\n</li>\n<li>\n<p>0 GES li\u00e9es \u00e0 la production d\u2019\u00e9nergie en 2050</p>\n</li>\n<li>\n<p>0 GES li\u00e9es au secteur du b\u00e2timent en 2050 (100 % de b\u00e2timents neutres)</p>\n</li>\n</ul>\n<p><strong>Donn\u00e9es de r\u00e9f\u00e9rence:</strong>\nPr\u00e9ciser si possible les moyennes nationale et/ou locale, le cas \u00e9ch\u00e9ant contextualis\u00e9es (territoire urbain/rural/autre) pour permettre au territoire de mieux se situer. Voir le rapport 2020 du Haut Conseil pour le Climat (donn\u00e9es 2017), en particulier les pages 73 et suivantes :</p>\n<ul>\n<li>6,9 teqCO2/hab au niveau national</li>\n</ul>\n",
-      "id": "crte_1.1",
-      "identifiant": 1.1,
-      "nom": "\u00c9missions de gaz \u00e0 effet de serre",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "energie_et_climat"
-      ],
-      "titre_long": "Emissions de GES annuelles du territoire",
-      "type": null,
-      "unite": "teq CO2",
-      "valeur_indicateur": "cae_1.a"
-    },
-    {
-      "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\n\u00c9missions de gaz \u00e0 effet de serre totales sur le territoire rapport\u00e9es au nombre d\u2019habitant</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nPour d\u00e9finir les \u00e9missions de GES, se r\u00e9f\u00e9rer \u00e0 l\u2019outil Bilan GES Territoire de l\u2019Ademe en privil\u00e9giant l\u2019approche globale :\n<a href=\"https://www.bilans-ges.ademe.fr/fr/accueil/contenu/index/page/Bilan%2BGES%2BTerritoires/siGras/0\">\nBilan GES\n</a>\nou une m\u00e9thode \u00e9quivalente.</p>\n<p><strong>Sources:</strong>\nObservatoires r\u00e9gionaux de l\u2019\u00e9nergie, du climat et de l\u2019air</p>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nLutte contre le changement climatique</p>\n<p><strong>Politique publique:</strong>\nLimitation du changement climatique</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire les \u00e9missions de gaz \u00e0 effet de serre (GES)</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Strat\u00e9gie Nationale Bas Carbone (SNBC) :</p>\n<ul>\n<li>\n<p>Valeur cible \u00e0 1,1 teqCO2/hab d\u2019ici 2050</p>\n</li>\n<li>\n<p>40 % \u00e9missions GES globales en 2030 / -75 % en 2050 (par rapport \u00e0 1990)</p>\n</li>\n<li>\n<p>35 % \u00e9missions GES du secteur industriel en 2030 / 80 % en 2050 (par rapport \u00e0 1990)</p>\n</li>\n<li>\n<p>50% \u00e9missions GES du secteur agricole en 2050 (par rapport \u00e0 2015)</p>\n</li>\n<li>\n<p>0 GES li\u00e9es \u00e0 la production d\u2019\u00e9nergie en 2050</p>\n</li>\n<li>\n<p>0 GES li\u00e9es au secteur du b\u00e2timent en 2050 (100 % de b\u00e2timents neutres)</p>\n</li>\n</ul>\n<p><strong>Donn\u00e9es de r\u00e9f\u00e9rence:</strong>\nPr\u00e9ciser si possible les moyennes nationale et/ou locale, le cas \u00e9ch\u00e9ant contextualis\u00e9es (territoire urbain/rural/autre) pour permettre au territoire de mieux se situer. Voir le rapport 2020 du Haut Conseil pour le Climat (donn\u00e9es 2017), en particulier les pages 73 et suivantes :</p>\n<ul>\n<li>6,9 teqCO2/hab au niveau national</li>\n</ul>\n",
-      "id": "crte_1.2",
-      "identifiant": 1.2,
-      "nom": "Emissions de GES annuelles par habitant (TeqCO2 / an / hab)",
-      "parent": "crte_1.1",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "energie_et_climat"
-      ],
-      "titre_long": "Emissions de GES annuelles par habitant (TeqCO2 / an / hab)",
-      "type": null,
-      "unite": "teq CO2/hab",
-      "valeur_indicateur": "cae_1.b"
-    },
-    {
-      "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\nTonnage total de d\u00e9chets m\u00e9nagers et assimil\u00e9s (DMA), y compris gravats, collect\u00e9s annuellement sur le territoire, rapport\u00e9e au nombre d\u2019habitants.</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nLe r\u00e9sultat est obtenu par cumul des tonnages collect\u00e9s par les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul</p>\n<p>et celui des collectes op\u00e9rationnelles, c'est-\u00e0-dire les services de collecte qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>Pour la production par habitant, la production totale du territoire est rapport\u00e9e \u00e0 la population l\u00e9gale au sens de l\u2019INSEE.</p>\n<p><strong>Sources:</strong></p>\n<a href=\"https://www.sinoe.org/#access-evitement\">\nBase SINOE Ademe\n</a>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nEconomie circulaire, d\u00e9chets et pr\u00e9vention des risques technologiques</p>\n<p><strong>Politique publique:</strong>\nEconomie circulaire et circuits courts</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire la production de d\u00e9chets</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Feuille de route et loi anti-gaspillage pour une \u00e9conomie circulaire:</p>\n<ul>\n<li>\n<p>R\u00e9duire de 15 % de quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits par habitant en 2030 par rapport \u00e0 2010;</p>\n</li>\n<li>\n<p>Augmenter le r\u00e9emploi et la r\u00e9utilisation en vue d\u2019atteindre l\u2019\u00e9quivalent de 5 % du tonnage des d\u00e9chets m\u00e9nagers en 2030;</p>\n</li>\n<li>\n<p>Augmenter la quantit\u00e9 de d\u00e9chets m\u00e9nagers et assimil\u00e9s faisant l'objet d'une pr\u00e9paration en vue de la r\u00e9utilisation ou d'un recyclage afin d\u2019atteindre 55 % en 2025, 60 % en 2030 et 65 % en 2035;</p>\n</li>\n<li>\n<p>R\u00e9duire le gaspillage alimentaire de 50% d\u2019ici 2025, par rapport \u00e0 2015, dans la distribution alimentaire et la restauration collective, et de 50 % d\u2019ici 2030, par rapport \u00e0 2015, dans la consommation, la production, la transformation et la restauration commerciale;</p>\n</li>\n<li>\n<p>R\u00e9duire de 30 % les d\u00e9chets non dangereux et non inertes mis en d\u00e9charge en 2020 par rapport \u00e0 2010; et de 50 % en 2025;</p>\n</li>\n<li>\n<p>R\u00e9duire les quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s mis en d\u00e9charge \u00e0 10 % des quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits en 2035.</p>\n</li>\n</ul>\n<p><strong>Donn\u00e9es de r\u00e9f\u00e9rence:</strong>\nAu niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des d\u00e9chets par le service public en France - R\u00e9sultats 2017)</p>\n",
-      "id": "crte_10.1",
-      "identifiant": 10.1,
-      "nom": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s avec gravats",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "eci_dechets"
-      ],
-      "titre_long": "Quantit\u00e9 de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats) produits par an",
-      "type": null,
-      "unite": "kg/hab",
-      "valeur_indicateur": "cae_6.a"
-    },
-    {
-      "action_ids": [],
       "description": "<p><strong>D\u00e9finition:</strong>\nTonnage total de d\u00e9chets m\u00e9nagers et assimil\u00e9s (DMA), hors gravats, collect\u00e9s annuellement sur le territoire, rapport\u00e9e au nombre d\u2019habitants.</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nLe r\u00e9sultat est obtenu par cumul des tonnages collect\u00e9s par les d\u00e9ch\u00e8teries op\u00e9rationnelles, c'est-\u00e0-dire des d\u00e9ch\u00e8teries qui ont \u00e9t\u00e9 ouvertes au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul et celui des collectes op\u00e9rationnelles, c'est-\u00e0-dire les services de collecte qui ont fonctionn\u00e9 au moins une journ\u00e9e au cours de l'ann\u00e9e de r\u00e9f\u00e9rence du calcul.</p>\n<p>Pour la production par habitant, la production totale du territoire est rapport\u00e9e \u00e0 la population l\u00e9gale au sens de l\u2019INSEE.</p>\n<p><strong>Sources:</strong></p>\n<a href=\"https://www.sinoe.org/#access-evitement\">\nBase SINOE Ademe\n</a>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nEconomie circulaire, d\u00e9chets et pr\u00e9vention des risques technologiques</p>\n<p><strong>Politique publique:</strong>\nEconomie circulaire et circuits courts</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire la production de d\u00e9chets</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Feuille de route et loi anti-gaspillage pour une \u00e9conomie circulaire:</p>\n<ul>\n<li>\n<p>R\u00e9duire de 15 % de quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits par habitant en 2030 par rapport \u00e0 2010;</p>\n</li>\n<li>\n<p>Augmenter le r\u00e9emploi et la r\u00e9utilisation en vue d\u2019atteindre l\u2019\u00e9quivalent de 5 % du tonnage des d\u00e9chets m\u00e9nagers en 2030;</p>\n</li>\n<li>\n<p>Augmenter la quantit\u00e9 de d\u00e9chets m\u00e9nagers et assimil\u00e9s faisant l'objet d'une pr\u00e9paration en vue de la r\u00e9utilisation ou d'un recyclage afin d\u2019atteindre 55 % en 2025, 60 % en 2030 et 65 % en 2035;</p>\n</li>\n<li>\n<p>R\u00e9duire le gaspillage alimentaire de 50 % d\u2019ici 2025, par rapport \u00e0 2015, dans la distribution alimentaire et la restauration collective, et de 50 % d\u2019ici 2030, par rapport \u00e0 2015, dans la consommation, la production, la transformation et la restauration commerciale;</p>\n</li>\n<li>\n<p>R\u00e9duire de 30 % les d\u00e9chets non dangereux et non inertes mis en d\u00e9charge en 2020 par rapport \u00e0 2010; et de 50 % en 2025;</p>\n</li>\n<li>\n<p>R\u00e9duire les quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s mis en d\u00e9charge \u00e0 10 % des quantit\u00e9s de d\u00e9chets m\u00e9nagers et assimil\u00e9s produits en 2035.</p>\n</li>\n</ul>\n<p><strong>Donn\u00e9es de r\u00e9f\u00e9rence:</strong>\nAu niveau national, la production de DMA est de 581kg/hab en 2017. Hors gravats, la production de DMA est de 526kg/hab. (Source : Ademe, janvier 2021 : La collecte des d\u00e9chets par le service public en France - R\u00e9sultats 2017)</p>\n",
       "id": "crte_10.2",
       "identifiant": 10.2,
       "nom": "Collecte annuelle de d\u00e9chets m\u00e9nagers et assimil\u00e9s hors gravats",
-      "parent": "crte_10.1",
+      "parent": null,
       "participation_score": false,
       "programmes": [
         "crte"
@@ -4102,116 +4051,6 @@
       "type": null,
       "unite": "kg/hab",
       "valeur_indicateur": null
-    },
-    {
-      "action_ids": [],
-      "description": "",
-      "id": "crte_11.1-COVNM",
-      "identifiant": "11.1-COVNM",
-      "nom": "Emissions annuelles de COVNM du territoire (tonnes)",
-      "parent": "emission_polluants_atmo_crte",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions de Compos\u00e9s organiques volatils non m\u00e9thaniques",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": "cae_4.d"
-    },
-    {
-      "action_ids": [],
-      "description": "",
-      "id": "crte_11.1-NH3",
-      "identifiant": "11.1-NH3",
-      "nom": "Emissions annuelles de NH3 du territoire (tonnes)",
-      "parent": "emission_polluants_atmo_crte",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions d'Ammoniac",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": "cae_4.f"
-    },
-    {
-      "action_ids": [],
-      "description": "",
-      "id": "crte_11.1-NOx",
-      "identifiant": "11.1-NOx",
-      "nom": "Emissions annuelles de NOx du territoire (tonnes)",
-      "parent": "emission_polluants_atmo_crte",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions d'Oxyde d'azote",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": "cae_4.a"
-    },
-    {
-      "action_ids": [],
-      "description": "",
-      "id": "crte_11.1-PM",
-      "identifiant": "11.1-PM",
-      "nom": "Emissions annuelles de PM2,5 du territoire (tonnes)",
-      "parent": "emission_polluants_atmo_crte",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions de particules fines PM 2.5",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": "cae_4.c"
-    },
-    {
-      "action_ids": [],
-      "description": "",
-      "id": "crte_11.1-SO2",
-      "identifiant": "11.1-SO2",
-      "nom": "Emissions annuelles de SO2 du territoire (tonnes)",
-      "parent": "emission_polluants_atmo_crte",
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions de Dioxyde de soufre",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": "cae_4.e"
     },
     {
       "action_ids": [],
@@ -4234,28 +4073,6 @@
       "type": null,
       "unite": "km\u00b2",
       "valeur_indicateur": null
-    },
-    {
-      "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\nConsommation annuelle d\u2019espaces naturels, agricoles ou forestiers par des op\u00e9rations d\u2019am\u00e9nagement pouvant entra\u00eener une imperm\u00e9abilisation partielle ou totale, afin de les affecter notamment \u00e0 des fonctions urbaines ou de transport (habitat, activit\u00e9s, commerces, infrastructures, \u00e9quipements publics\u2026)</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nSomme des consommations annuelles d\u2019espaces NAF sur les communes du territoire</p>\n<p><strong>Sources:</strong></p>\n<a href=\"https://artificialisation.biodiversitetousvivants.fr/bases-donnees/les-fichiers-fonciers\">\nFichiers fonciers - donn\u00e9es fiscales retrait\u00e9es par le CEREMA\n</a>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nBiodiversit\u00e9, protection des espaces naturels, agricoles et forestiers</p>\n<p><strong>Politique publique:</strong>\nLutte contre l\u2019artificialisation des sols</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire le rythme d\u2019artificialisation des sols</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Plan national biodiversit\u00e9 : z\u00e9ro artificialisation nette</p>\n<p>Loi de finances pour 2021 : diviser par deux le rythme d\u2019artificialisation des sols d\u2019ici 2030</p>\n",
-      "id": "crte_13.1",
-      "identifiant": 13.1,
-      "nom": "Surface artificialis\u00e9e",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "urbanisme_et_amenagement"
-      ],
-      "titre_long": "Artificialisation des espaces naturels, agricoles, forestiers (ha)",
-      "type": null,
-      "unite": "ha",
-      "valeur_indicateur": "cae_11"
     },
     {
       "action_ids": [],
@@ -4369,10 +4186,10 @@
     },
     {
       "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\nPart des surfaces d\u2019exploitations agricoles certifi\u00e9e agriculture biologique (AB) ou en conversion dans le total des SAU du territoire</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nSomme des surfaces (en SAU) exploit\u00e9es selon le label agriculture biologique (certifi\u00e9e ou en conversion) rapport\u00e9e au total des SAU du territoire</p>\n<p><strong>Sources:</strong></p>\n<a href=\"https://www.agencebio.org/vos-outils/les-chiffres-cles/\">\nAgence bio\n</a>\n DRAAF/DDTM\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nLutte contre le changement climatique; Gestion de la ressource en eau; Biodiversit\u00e9</p>\n<p><strong>Politique publique:</strong>\nAgriculture et alimentation durable</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nD\u00e9veloppement de l\u2019agriculture biologique</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Strat\u00e9gie \u201cDe la Ferme \u00e0 la Fourchette\u201d (F2F) UE ; Plan ambition bio - Loi Egalim :</p>\n<ul>\n<li>15 % de SAU affect\u00e9e \u00e0 l\u2019agriculture biologique au 31/12/2022 ; 30 % en 2030</li>\n</ul>\n",
+      "description": "<p><strong>D\u00e9finition:</strong>\nSurfaces d\u2019exploitations agricoles certifi\u00e9e agriculture biologique (AB) ou en conversion.</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nSomme des surfaces (en SAU) exploit\u00e9es selon le label agriculture biologique (certifi\u00e9e ou en conversion)</p>\n",
       "id": "crte_4.2",
       "identifiant": 4.2,
-      "nom": "Surface agricole utile en agriculture biologique",
+      "nom": "Surface agricole utile en agriculture biologique (AB) ou en conversion",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -4385,10 +4202,10 @@
         "agriculture_alimentation",
         "urbanisme_et_amenagement"
       ],
-      "titre_long": "Part de la surface agricole utile en agriculture biologique",
+      "titre_long": "Surface agricole utile en agriculture biologique (AB) ou en conversion",
       "type": null,
-      "unite": "%",
-      "valeur_indicateur": "cae_59"
+      "unite": "ha",
+      "valeur_indicateur": null
     },
     {
       "action_ids": [],
@@ -4455,28 +4272,6 @@
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
-    },
-    {
-      "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\nIl s\u2019agit du ratio entre, d\u2019une part le volume consomm\u00e9 autoris\u00e9 augment\u00e9 des volumes vendus en gros \u00e0 d\u2019autres services publics d\u2019eau potable et, d\u2019autre part le volume produit augment\u00e9 des volumes achet\u00e9s en gros \u00e0 d\u2019autres services publics d\u2019eau potable.</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nRapport entre le volume d'eau introduit dans le r\u00e9seau de distribution et le volume d'eau consomm\u00e9, soit 100 - (Volume comptabilis\u00e9 domestique + Volume comptabilis\u00e9 non domestique (facultatif) + Volume consomm\u00e9 sans comptage (facultatif) + Volume de service (facultatif) + Volume vendu \u00e0 d'autres services d'eau potable (export\u00e9) ) /( Volume produit + Volume achet\u00e9 \u00e0 d'autres services d'eau potable (import\u00e9) ) x 100/</p>\n<a href=\"https://www.services.eaufrance.fr/docs/indicateurs/P104.3_fiche.pdf\">\nVoir fiche d\u00e9taill\u00e9e\n</a>\n<p><strong>Sources:</strong>\nObservatoire des donn\u00e9es sur les services publics d'eau et d'assainissement (SISPEA) \u2013 indicateur P 104.3</p>\n<p>Voir en lien avec les agences de l\u2019eau.</p>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nGestion de la ressource en eau</p>\n<p><strong>Politique publique:</strong>\nEau</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire les consommations d\u2019eau</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Le d\u00e9cret 2012-97 du 27 janvier 2012 issu de l\u2019engagement 111 du Grenelle de l\u2019Environnement d\u00e9finit un rendement seuil dont le calcul est adapt\u00e9 \u00e0 chaque situation.</p>\n<p><strong>Donn\u00e9es de r\u00e9f\u00e9rence:</strong></p>\n<a href=\"https://www.services.eaufrance.fr/docs/synthese/rapports/Rapport_Sispea_2017_VF.pdf\">\nVoir dernier rapport SISPEA\n</a>\n<p>Le volume de pertes en eau par fuite sur le r\u00e9seau (qui inclut la partie des branchements avant compteur) est de l'ordre de 20 % du volume introduit dans le r\u00e9seau de distribution (c\u2019est-\u00e0-dire la somme des volumes produits et volumes import\u00e9s).</p>\n",
-      "id": "crte_8.1",
-      "identifiant": 8.1,
-      "nom": "Fuite des r\u00e9seaux d\u2019eau",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "crte"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "eau_assainissement"
-      ],
-      "titre_long": "Taux de fuite des r\u00e9seaux d\u2019eau du territoire",
-      "type": null,
-      "unite": "%",
-      "valeur_indicateur": "eci_26"
     },
     {
       "action_ids": [],
@@ -4619,30 +4414,6 @@
       "type": null,
       "unite": "nombre",
       "valeur_indicateur": null
-    },
-    {
-      "action_ids": [
-        "eci_3.2"
-      ],
-      "description": "<p>% de contrat en nombre ou % de contrat en montant (au choix). Les contrat sur une ann\u00e9e civile sont pris en compte.</p>\n<p>Voir la notion de la concid\u00e9ration environnementale au PNAAPD 2021-2025 - objectif 100% des march\u00e9s comportent une consid\u00e9ration environnementale.</p>\n<p>La donn\u00e9e peut \u00eatre fournie par le service Achats ou Comptabilit\u00e9</p>\n",
-      "id": "eci_14",
-      "identifiant": 14,
-      "nom": "Achats publics avec consid\u00e9ration environnementale",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "eci"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "strategie_orga_interne"
-      ],
-      "titre_long": "Part de contrats d'achats publics comportant au moins une consid\u00e9ration environnementale",
-      "type": null,
-      "unite": "%",
-      "valeur_indicateur": "cae_51"
     },
     {
       "action_ids": [
@@ -4899,18 +4670,19 @@
     },
     {
       "action_ids": [],
-      "description": "<p>Volume d'eau consomm\u00e9e sur le territoire/ volume d'eau dirig\u00e9e vers le territoire</p>\n",
+      "description": "<p>Rapport entre le volume d'eau consomm\u00e9e sur le territoire et le volume d'eau dirig\u00e9e vers le territoire.</p>\n<p><strong>Modalit\u00e9s de calcul</strong>\n:</p>\n<p>Rapport entre le volume d'eau consomm\u00e9 et le volume d'eau introduit dans le r\u00e9seau de distribution, soit 100 - (Volume comptabilis\u00e9 domestique + Volume comptabilis\u00e9 non domestique (facultatif) + Volume consomm\u00e9 sans comptage (facultatif) + Volume de service (facultatif) + Volume vendu \u00e0 d'autres services d'eau potable (export\u00e9) ) /( Volume produit + Volume achet\u00e9 \u00e0 d'autres services d'eau potable (import\u00e9) ) x 100/</p>\n<p>&quot;&quot;https://www.services.eaufrance.fr/docs/indicateurs/P104.3_fiche.pdf&quot;&quot;</p>\n<p>Voir fiche d\u00e9taill\u00e9e</p>\n<p><strong>Sources</strong>\n:</p>\n<p>Observatoire des donn\u00e9es sur les services publics d'eau et d'assainissement (SISPEA) \u2013 indicateur P 104.3</p>\n<p>Voir en lien avec les agences de l\u2019eau.</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n:</p>\n<p>Le d\u00e9cret 2012-97 du 27 janvier 2012 issu de l\u2019engagement 111 du Grenelle de l\u2019Environnement d\u00e9finit un rendement seuil dont le calcul est adapt\u00e9 \u00e0 chaque situation.</p>\n<p>Donn\u00e9es de r\u00e9f\u00e9rence:</p>\n<p>&quot;&quot;https://www.services.eaufrance.fr/docs/synthese/rapports/Rapport_Sispea_2017_VF.pdf&quot;&quot;</p>\n<p>Voir dernier rapport SISPEA</p>\n<p>Le volume de pertes en eau par fuite sur le r\u00e9seau (qui inclut la partie des branchements avant compteur) est de l'ordre de 20 % du volume introduit dans le r\u00e9seau de distribution (c\u2019est-\u00e0-dire la somme des volumes produits et volumes import\u00e9s).</p>\n",
       "id": "eci_26",
       "identifiant": 26,
       "nom": "Perte en eau du r\u00e9seau (%)",
       "parent": null,
       "participation_score": false,
       "programmes": [
+        "crte",
         "eci"
       ],
       "sans_valeur": false,
       "selection": true,
-      "source": "<p>Gestionnaire du r\u00e9seau d'eau potable</p>\n",
+      "source": null,
       "thematiques": [
         "eau_assainissement"
       ],
@@ -5203,30 +4975,6 @@
     },
     {
       "action_ids": [
-        "eci_2.1"
-      ],
-      "description": "<p>Poids de DMA (avec d\u00e9blais et gravats) produits sur le territoire / Population du territoire</p>\n<p>La donn\u00e9e est disponible via SINOE (Ratio DMA avec gravats)</p>\n",
-      "id": "eci_5",
-      "identifiant": 5,
-      "nom": "Production de d\u00e9chets",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "eci"
-      ],
-      "sans_valeur": false,
-      "selection": false,
-      "source": null,
-      "thematiques": [
-        "eci_dechets"
-      ],
-      "titre_long": "Production de d\u00e9chets m\u00e9nagers et assimil\u00e9s (avec d\u00e9blais et gravats)",
-      "type": null,
-      "unite": "kg/habitant.an",
-      "valeur_indicateur": "cae_6.a"
-    },
-    {
-      "action_ids": [
         "eci_2.2"
       ],
       "description": "<p>Poids de d\u00e9chets soumis \u00e0 la collecte s\u00e9par\u00e9e (d'apr\u00e8s le r\u00e8glement de collecte) dans les OMR  et de la benne tout-venant des d\u00e9ch\u00e8teries / Poids des OMR et de la benne tout venant des d\u00e9ch\u00e8teries.</p>\n<p>M\u00e9thode d'\u00e9chantillonnage : https://www.sinoe.org/contrib/ademe/carademe/pages/guide_OMCS_echant1.php</p>\n",
@@ -5330,33 +5078,11 @@
       "parent": null,
       "participation_score": false,
       "programmes": [
-        "cae"
-      ],
-      "sans_valeur": true,
-      "selection": true,
-      "source": null,
-      "thematiques": [
-        "nature_environnement_air"
-      ],
-      "titre_long": "Quantit\u00e9 totale d'\u00e9missions de polluants atmosph\u00e9riques",
-      "type": null,
-      "unite": "tonnes",
-      "valeur_indicateur": null
-    },
-    {
-      "action_ids": [],
-      "description": "<p><strong>D\u00e9finition:</strong>\nSuivi annuel de la qualit\u00e9 de l\u2019air au regard des \u00e9missions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.</p>\n<p><strong>Modalit\u00e9s de calcul:</strong>\nCalcul \u00e0 effectuer selon la m\u00e9thode PCIT d\u00e9finie au niveau national.</p>\n<p><strong>Sources:</strong>\nobservatoires r\u00e9gionaux de l\u2019\u00e9nergie, du climat et de l\u2019air</p>\n<p><strong>P\u00e9riodicit\u00e9:</strong>\nAnnuelle</p>\n<p><strong>Objectif environnemental associ\u00e9:</strong>\nLutte contre les pollutions</p>\n<p><strong>Politique publique:</strong>\nPr\u00e9vention des risques et sant\u00e9 environnementale</p>\n<p><strong>Objectif strat\u00e9gique:</strong>\nR\u00e9duire les \u00e9missions de polluants atmosph\u00e9riques</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence</strong>\n: Plan national de r\u00e9duction des \u00e9missions polluantes (d\u00e9cret n\u00b02017-949 du 10 mai 2017): r\u00e9duction des polluants par rapport aux \u00e9missions de 2005</p>\n<ul>\n<li>\n<p>SO2 (objectifs : 2020 = -55% / 2025 = -66% / 2030 = -77%)</p>\n</li>\n<li>\n<p>Nox (2020 = -50% /2025 = -60% / 2030 = -69%)</p>\n</li>\n<li>\n<p>COVNM (2020 = -43% / 2025 = -47% /2030 = -52%)</p>\n</li>\n<li>\n<p>PM2,5 (2020 = -27% /2025 = -42% /2030 = -57%)</p>\n</li>\n<li>\n<p>NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)</p>\n</li>\n</ul>\n",
-      "id": "emission_polluants_atmo_crte",
-      "identifiant": null,
-      "nom": "\u00c9missions de polluants atmosph\u00e9riques",
-      "parent": null,
-      "participation_score": false,
-      "programmes": [
-        "clef",
+        "cae",
         "crte"
       ],
       "sans_valeur": true,
-      "selection": false,
+      "selection": true,
       "source": null,
       "thematiques": [
         "nature_environnement_air"
