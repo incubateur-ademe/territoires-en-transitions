@@ -2402,6 +2402,7 @@
       "programmes": [
         "cae",
         "clef",
+        "crte",
         "pcaet"
       ],
       "sans_valeur": false,
@@ -5079,6 +5080,7 @@
       "participation_score": false,
       "programmes": [
         "cae",
+        "clef",
         "crte"
       ],
       "sans_valeur": true,

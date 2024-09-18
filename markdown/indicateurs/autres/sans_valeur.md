@@ -43,6 +43,7 @@ selection: yes
 programmes:
   - cae
   - crte
+  - clef
 thematiques:
   - nature_environnement_air
 ```
