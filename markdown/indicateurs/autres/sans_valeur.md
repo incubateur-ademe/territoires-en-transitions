@@ -42,6 +42,7 @@ sans_valeur: yes
 selection: yes
 programmes:
   - cae
+  - crte
 thematiques:
   - nature_environnement_air
 ```
@@ -57,36 +58,6 @@ Plan national de réduction des émissions polluantes (décret n°2017-949 du 10
 - COV (2020 = -43% / 2025 = -47% /2030 = -52%)
 - PM2,5 (2020 = -27% /2025 = -42% /2030 = -57%)
 - NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)"
-
-# Émissions de polluants atmosphériques 
-```yaml
-id: emission_polluants_atmo_crte
-unite: tonnes
-
-titre_long: Quantité totale d'émissions de polluants atmosphériques
-sans_valeur: yes
-selection: no
-programmes:
-  - clef
-  - crte
-thematiques:
-  - nature_environnement_air
-```
-## Description
-**Définition:** Suivi annuel de la qualité de l’air au regard des émissions de polluants que sont les SO2, NOX, COVNM, PM2,5, et NH3.
-**Modalités de calcul:** Calcul à effectuer selon la méthode PCIT définie au niveau national.
-**Sources:** observatoires régionaux de l’énergie, du climat et de l’air
-**Périodicité:** Annuelle
-**Objectif environnemental associé:** Lutte contre les pollutions
-**Politique publique:** Prévention des risques et santé environnementale
-**Objectif stratégique:** Réduire les émissions de polluants atmosphériques
-**Objectif opérationnel national fixé par les documents de référence**: Plan national de réduction des émissions polluantes (décret n°2017-949 du 10 mai 2017): réduction des polluants par rapport aux émissions de 2005
-- SO2 (objectifs : 2020 = -55% / 2025 = -66% / 2030 = -77%)
-- Nox (2020 = -50% /2025 = -60% / 2030 = -69%)
-- COVNM (2020 = -43% / 2025 = -47% /2030 = -52%)
-- PM2,5 (2020 = -27% /2025 = -42% /2030 = -57%)
-- NH3 (2020 = -4% /2025 = -8% / 2030 = -13%)
-
 
 # Compacité des formes urbaines
 ```yaml
