@@ -56,7 +56,7 @@ export const GrapheSecteur = ({
             enableArea: false,
             yScale: {
               type: 'linear',
-              min: 0,
+              min: 'auto',
               max: 'auto',
               stacked: false,
             },
