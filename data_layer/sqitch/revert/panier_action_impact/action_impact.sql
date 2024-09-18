@@ -5,4 +5,6 @@ BEGIN;
 drop table action_impact_partenaire;
 drop table panier_partenaire;
 
+drop policy allow_read on action_impact_fiche_action;
+
 COMMIT;
