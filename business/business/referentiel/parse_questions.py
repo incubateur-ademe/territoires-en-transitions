@@ -6,16 +6,15 @@ from pathlib import Path
 from typing import List, Literal, Optional, Tuple
 
 import marshmallow_dataclass
+from marshmallow import ValidationError
+
 from business.utils.exceptions import MarkdownError
 from business.utils.find_duplicates import find_duplicates
 from business.utils.markdown_import.markdown_parser import (
-    build_markdown_parser,
-    MarkdownParserError,
-)
-from business.utils.models.questions import CollectiviteType, Question, Choix
+    MarkdownParserError, build_markdown_parser)
 from business.utils.markdown_import.markdown_utils import load_md
 from business.utils.models.actions import ActionId
-from marshmallow import ValidationError
+from business.utils.models.questions import Choix, CollectiviteType, Question
 
 
 @dataclass
@@ -63,6 +62,11 @@ def parse_markdown_questions_from_folder(
                 md_questions.append(md_question)  # type: ignore
             except (ValidationError, MarkdownParserError) as error:
                 errors.append(f"Dans le fichier {Path(md_file).name} {str(error)}")
+
+    md_questions.sort(key=lambda question: question.id)
+    for question in md_questions:
+        if question.actions is not None:
+            question.actions.sort()
     return md_questions, errors
 
 

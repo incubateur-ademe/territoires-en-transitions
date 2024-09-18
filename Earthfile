@@ -2,6 +2,7 @@ VERSION 0.7
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global BACKEND_DIR='./backend'
 ARG --global SITE_DIR='./packages/site'
 ARG --global AUTH_DIR='./packages/auth'
 ARG --global PANIER_DIR='./packages/panier'
@@ -18,6 +19,8 @@ ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
+# TODO changer le tag
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$APP_TAG 
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -28,6 +31,9 @@ ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 
 postgres:
     FROM postgres:15
@@ -269,11 +275,14 @@ node-fr: ## construit l'image de base pour les images utilisant node
 
 front-deps: ## construit l'image contenant les dépendances des modules front
     FROM +node-fr
+    # tsconfig global
+    COPY ./tsconfig.json ./
     # dépendances globales
     COPY ./package.json ./
     COPY ./package-lock.json ./
     # dépendances des modules
     COPY $APP_DIR/package.json ./$APP_DIR/
+    COPY $BACKEND_DIR/package.json ./$BACKEND_DIR/
     COPY $AUTH_DIR/package.json ./$AUTH_DIR/
     COPY $SITE_DIR/package.json ./$SITE_DIR/
     COPY $PANIER_DIR/package.json ./$PANIER_DIR/
@@ -286,6 +295,56 @@ front-deps: ## construit l'image contenant les dépendances des modules front
 front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+
+backend-pre-build:
+    # Build stage: todo: check if we use the same image as frontends
+    FROM +front-deps
+
+    COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
+    COPY --chown=node:node $API_DIR/. $API_DIR
+    RUN npm run build:backend && npm prune --omit=dev
+
+    SAVE ARTIFACT . /app
+
+backend-build:
+    # TODO: why not us an alpine node:lts-alpine ?
+    FROM +node-fr
+ 
+    ENV NODE_ENV production
+    ENV PORT 3000
+    ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
+    ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
+    ENV APPLICATION_VERSION=$APPLICATION_VERSION
+ 
+    COPY --chown=node:node +backend-pre-build/app/package*.json .
+    COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
+    COPY --chown=node:node +backend-pre-build/app/backend/package.json ./backend/package.json
+    COPY --chown=node:node +backend-pre-build/app/backend/node_modules ./backend/node_modules
+    COPY --chown=node:node +backend-pre-build/app/backend/dist ./backend/dist
+ 
+    EXPOSE ${PORT}
+ 
+    CMD ["node", "backend/dist/backend/src/main.js"]
+    SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
+
+backend-deploy: ## Déploie le backend dans une app Koyeb existante
+    ARG --required KOYEB_API_KEY
+    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+    ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-backend/backend \
+        --docker $BACKEND_IMG_NAME \
+        --env ENV_NAME=$ENV_NAME \
+        --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+        --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
+        --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
+        --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
+        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
+        --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME \
+        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
+        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+        --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
@@ -545,6 +604,8 @@ storybook-test-run: # lance les tests du module `ui`
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
+    USER root
+    RUN apk --update add jq
     COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
     ENTRYPOINT sh ./curl_test.sh
     SAVE IMAGE curl-test:latest

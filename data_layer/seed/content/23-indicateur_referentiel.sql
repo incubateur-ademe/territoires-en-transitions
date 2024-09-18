@@ -25,7 +25,7 @@ do $$
             parent indicateur_id,
             source text,
             type indicateur_referentiel_type,
-            thematiques old_indicateur_thematique[],
+            thematiques text[],
             programmes indicateur_programme[],
             sans_valeur boolean
         );

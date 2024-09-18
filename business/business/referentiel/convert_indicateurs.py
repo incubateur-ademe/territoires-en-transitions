@@ -6,11 +6,13 @@ from pathlib import Path
 from typing import Any, List, Literal, Optional, Tuple, Union
 
 import marshmallow_dataclass
-from business.utils.find_duplicates import find_duplicates
-from business.utils.markdown_import.markdown_parser import build_markdown_parser
-from business.utils.markdown_import.markdown_utils import load_md
 from marshmallow import ValidationError
+
 from business.utils.exceptions import MarkdownError
+from business.utils.find_duplicates import find_duplicates
+from business.utils.markdown_import.markdown_parser import \
+    build_markdown_parser
+from business.utils.markdown_import.markdown_utils import load_md
 
 Programme = Literal["eci", "cae", "crte", "pcaet", "clef"]
 Type = Literal["impact", "resultat"]
@@ -101,6 +103,18 @@ def parse_indicateurs(
                 md_indicateurs.append(md_indicateur)
             except ValidationError as error:
                 parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
+    
+    md_indicateurs.sort(key=lambda indicateur: indicateur.id)
+    for indicateur in md_indicateurs:
+        if indicateur.programmes is not None:
+            indicateur.programmes.sort()
+        if indicateur.climat_pratic_ids is not None:
+            indicateur.climat_pratic_ids.sort()
+        if indicateur.actions is not None:
+            indicateur.actions.sort()
+        if indicateur.thematiques is not None:
+            indicateur.thematiques.sort()
+
     return md_indicateurs, parsing_errors
 
 
@@ -110,7 +124,9 @@ def programmes(md: MarkdownIndicateur):
     prefix = md.id.split("_")[0]
     if prefix in ['cae', 'eci', 'crte']:
         programmes.append(prefix)
-    return list(set(programmes))
+    list_programmes = list(set(programmes))
+    list_programmes.sort()
+    return list_programmes
 
 
 def convert_indicateurs(path: str, json_filename: str):
