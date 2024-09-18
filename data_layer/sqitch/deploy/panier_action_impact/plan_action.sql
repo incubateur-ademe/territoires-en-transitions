@@ -6,6 +6,8 @@ BEGIN;
 alter table axe add column panier_id uuid references panier;
 comment on column axe.panier_id is 'Lien vers le dernier panier à actions qui a créé/modifié le plan';
 
+drop function plan_from_panier;
+
 -- Complète la fonction
 create or replace function
     plan_from_panier(
@@ -41,18 +43,32 @@ begin
     for selected_action_impact in
         select ai.*
         from panier p
-                 join action_impact_panier ap on ap.panier_id = p.id
-                 join action_impact ai on ap.action_id = ai.id
+        join action_impact_panier ap on ap.panier_id = p.id
+        join action_impact ai on ap.action_id = ai.id
         where p.id = $2
         loop
             -- on insère une fiche
-            insert into fiche_action (collectivite_id, titre, description, financements)
+            insert into fiche_action (collectivite_id, titre, description, financements, statut)
             select $1,
                    selected_action_impact.titre,
                    selected_action_impact.description || '\n' || selected_action_impact.description_complementaire,
                    (select aifb.nom
                     from action_impact_fourchette_budgetaire aifb
                     join action_impact ai on aifb.niveau = ai.fourchette_budgetaire
+                    where ai.id = selected_action_impact.id
+                    limit 1),
+                   (select
+                        case
+                            when ais.categorie_id is null
+                                     or ais.categorie_id not in ('en_cours', 'realise') then
+                                'À venir'::fiche_action_statuts
+                            else
+                                aic.nom::fiche_action_statuts
+                        end as statut
+                    from action_impact ai
+                    left join action_impact_statut ais
+                              on ai.id = ais.action_id and ais.panier_id = plan_from_panier.panier_id
+                    left join action_impact_categorie aic on ais.categorie_id = aic.id
                     where ai.id = selected_action_impact.id
                     limit 1)
             returning id into new_fiche_id;
@@ -97,17 +113,17 @@ begin
 
             -- - les partenaires
             perform private.ajouter_partenaire(
-                           new_fiche_id,
-                           (
-                           select pt.*::partenaire_tag
-                           from (
-                                select null as id,
-                                       pp.nom as nom,
-                                       plan_from_panier.collectivite_id as collectivite_id
-                                )
-                               pt limit 1
-                           )
-                   )
+                    new_fiche_id,
+                    (
+                    select pt.*::partenaire_tag
+                    from (
+                         select null as id,
+                                pp.nom as nom,
+                                plan_from_panier.collectivite_id as collectivite_id
+                         )
+                        pt limit 1
+                    )
+                    )
             from action_impact_partenaire aip
             join panier_partenaire pp on aip.partenaire_id = pp.id
             where aip.action_impact_id = selected_action_impact.id;
@@ -116,17 +132,17 @@ begin
             insert into annexe (collectivite_id, fichier_id, url, fiche_id, titre)
             select plan_from_panier.collectivite_id, null, lien.url,new_fiche_id,  lien.label
             from (
-            select
-                jsonb_array_elements(rex)->>'url' AS url,
-                jsonb_array_elements(rex)->>'label' AS label
-            from action_impact
-            where id = selected_action_impact.id
-            union
-            select
-                jsonb_array_elements(ressources_externes)->>'url' AS url,
-                jsonb_array_elements(ressources_externes)->>'label' AS label
-            from action_impact
-            where id = selected_action_impact.id) lien;
+                 select
+                     jsonb_array_elements(rex)->>'url' AS url,
+                     jsonb_array_elements(rex)->>'label' AS label
+                 from action_impact
+                 where id = selected_action_impact.id
+                 union
+                 select
+                     jsonb_array_elements(ressources_externes)->>'url' AS url,
+                     jsonb_array_elements(ressources_externes)->>'label' AS label
+                 from action_impact
+                 where id = selected_action_impact.id) lien;
 
         end loop;
 
