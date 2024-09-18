@@ -38,7 +38,7 @@ export const COMMON_CHART_PROPS: Partial<LineProps> = {
   },
   yScale: {
     type: 'linear',
-    min: 0,
+    min: 'auto',
     max: 'auto',
     stacked: true,
   },

@@ -83,7 +83,7 @@ export const GrapheTousSecteurs = ({
             },
             yScale: {
               type: 'linear',
-              min: 0,
+              min: 'auto',
               max: maxY,
               stacked: true,
             },
