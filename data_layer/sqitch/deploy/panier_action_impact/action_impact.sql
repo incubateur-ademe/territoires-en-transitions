@@ -15,4 +15,7 @@ create table action_impact_partenaire
     primary key (action_impact_id, partenaire_id)
 );
 
+create policy allow_read on action_impact_fiche_action
+    for select using (peut_lire_la_fiche(fiche_id));
+
 COMMIT;
