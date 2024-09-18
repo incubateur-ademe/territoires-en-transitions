@@ -1,5 +1,6 @@
 import { IconValue } from '@tet/ui/design-system/Icon';
 import { AnchorHTMLProps, ButtonHTMLProps } from '@tet/ui/utils/types';
+import { NotificationProps } from '../Notification';
 
 export type ButtonState = 'default' | 'disabled';
 
@@ -26,6 +27,8 @@ export type ButtonContentProps = {
   icon?: IconValue;
   /** Désactive les interractions avec le bouton */
   disabled?: boolean;
+  /** À donner pour afficher une notification */
+  notification?: NotificationProps;
 };
 
 type BaseButtonProps = {

@@ -197,120 +197,132 @@ test('Test selectIndicateurThematiques', async () => {
 });
 
 test('Test selectIndicateurFiches', async () => {
-    const data = await selectIndicateurFiches(supabase, 123, 1);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    expect(data[0].id).eq(1);
+  const data = await selectIndicateurFiches(supabase, 123, 1);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  expect(data[0].id).eq(1);
 });
 
 test('Test selectIndicateurActions', async () => {
-    const data = await selectIndicateurActions(supabase, 123);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    expect(data[0].id).eq('eci_4');
+  const data = await selectIndicateurActions(supabase, 123);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  expect(data[0].id).eq('eci_4');
 });
 
 test('Test selectIndicateurListItems', async () => {
-    // Récupère la liste des indicateurs prédéfinis et personnalisés
-    const data =
-        await selectIndicateurListItems(supabase, 1, true, true);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(124);
-    // Récupère la liste des indicateurs personnalisés
-    const perso =
-        await selectIndicateurListItems(supabase, 1, true, false);
-    expect(perso).not.toBeNull();
-    expect(perso).toHaveLength(1);
-    // Récupère la liste des indicateurs prédéfinis et privé
-    const predef =
-        await selectIndicateurListItems(supabase, 1, false, true);
-    expect(predef).not.toBeNull();
-    expect(predef).toHaveLength(123);
-    // Récupère la liste des indicateurs prédéfinis et non privé
-    const predef2 =
-        await selectIndicateurListItems(supabase, 2, false, true);
-    expect(predef2).not.toBeNull();
-    expect(predef2).toHaveLength(122);
+  // Récupère la liste des indicateurs prédéfinis et personnalisés
+  const data = await selectIndicateurListItems(supabase, 1, true, true);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(124);
+  // Récupère la liste des indicateurs personnalisés
+  const perso = await selectIndicateurListItems(supabase, 1, true, false);
+  expect(perso).not.toBeNull();
+  expect(perso).toHaveLength(1);
+  // Récupère la liste des indicateurs prédéfinis et privé
+  const predef = await selectIndicateurListItems(supabase, 1, false, true);
+  expect(predef).not.toBeNull();
+  expect(predef).toHaveLength(123);
+  // Récupère la liste des indicateurs prédéfinis et non privé
+  const predef2 = await selectIndicateurListItems(supabase, 2, false, true);
+  expect(predef2).not.toBeNull();
+  expect(predef2).toHaveLength(122);
 });
 
 test('Test selectIndicateurValeurs', async () => {
-    // Récupère les valeurs utilisateurs
-    const data = await selectIndicateurValeurs(supabase, 1, 1, null);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    // Récupère les valeurs citepa
-    const dataSource = await selectIndicateurValeurs(supabase, 1, 1, 'citepa');
-    expect(dataSource).not.toBeNull();
-    expect(dataSource).toHaveLength(1);
+  // Récupère les valeurs utilisateurs
+  const data = await selectIndicateurValeurs(supabase, 1, 1, null);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(1);
+  // Récupère les valeurs citepa
+  const dataSource = await selectIndicateurValeurs(supabase, 1, 1, 'citepa');
+  expect(dataSource).not.toBeNull();
+  expect(dataSource).toHaveLength(1);
 });
 
 test('Test selectIndicateurValeur', async () => {
-    const data = await selectIndicateurValeur(supabase, 1);
-    expect(data).not.toBeNull();
-    expect(data!.resultat).eq(20);
+  const data = await selectIndicateurValeur(supabase, 1);
+  expect(data).not.toBeNull();
+  expect(data!.resultat).eq(20);
 });
 
 test('Test selectIndicateurDefinition', async () => {
-    const data = await selectIndicateurDefinition(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data!.identifiant).eq('crte_4.1');
+  const data = await selectIndicateurDefinition(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data!.identifiant).eq('crte_4.1');
 });
 
 test('Test selectIndicateurComplet', async () => {
-    const data = await selectIndicateurComplet(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    expect(data!.identifiant).eq('crte_4.1');
-    expect(data!.pilotes).toHaveLength(1);
+  const data = await selectIndicateurComplet(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  expect(data!.identifiant).eq('crte_4.1');
+  expect(data!.pilotes).toHaveLength(1);
 });
 
 test('Test selectIndicateurChartInfo', async () => {
-    // Test retour indicateur
-    const data = await selectIndicateurChartInfo(supabase, 1, 1);
-    expect(data).not.toBeNull();
-    // Test retour indicateur composé cae_2.a non rempli
-    const data2 = await selectIndicateurChartInfo(supabase, 48, 1);
-    expect(data2).not.toBeNull();
-    expect(data2!.enfants).toHaveLength(5);
-    expect(data2!.enfants!.filter(e=> e.id=8)![0].rempli).toBe(true);
-    expect(data2!.valeurs).toHaveLength(0);
-    // Test retour indicateur composé cae_2.a non rempli car sans_valeur = false
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 64, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.2});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 94, date_valeur : '2021-01-01', collectivite_id : 1, resultat : 1.2});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 95, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.2});
-    await dbAdmin.from('indicateur_valeur').insert({
-        indicateur_id : 118, date_valeur : '2020-01-01', collectivite_id : 1, resultat : 1.2});
-    const data3 = await selectIndicateurChartInfo(supabase, 48, 1);
-    expect(data3).not.toBeNull();
-    expect(data3!.enfants).toHaveLength(5);
-    expect(data3!.valeurs).toHaveLength(0);
-    // Test retour indicateur composé cae_2.a non rempli car sans_valeur = true
-    await dbAdmin.from('indicateur_definition')
-        .update({sans_valeur_utilisateur : true}).eq('id', 48);
-    const data4 = await selectIndicateurChartInfo(supabase, 48, 1);
-    expect(data4).not.toBeNull();
-    expect(data4!.enfants).toHaveLength(5);
-    expect(data4!.valeurs).toHaveLength(1);
-    // Test retour indicateur cae_9 non rempli
-    await dbAdmin.from('indicateur_groupe').insert({parent : 114, enfant : 3});
-    const data5 = await selectIndicateurChartInfo(supabase, 114, 1);
-    expect(data5).not.toBeNull();
-    expect(data5!.enfants).toHaveLength(1);
-    expect(data5!.valeurs).toHaveLength(0);
-    // Test retour indicateur cae_9 rempli
-    await dbAdmin.from('indicateur_groupe').insert({parent : 114, enfant : 1});
-    const data6 = await selectIndicateurChartInfo(supabase, 114, 1);
-    expect(data6).not.toBeNull();
-    expect(data6!.enfants).toHaveLength(2);
-    expect(data6!.valeurs).toHaveLength(1);
+  // Test retour indicateur
+  const data = await selectIndicateurChartInfo(supabase, 1, 1);
+  expect(data).not.toBeNull();
+  // Test retour indicateur composé cae_2.a non rempli
+  const data2 = await selectIndicateurChartInfo(supabase, 48, 1);
+  expect(data2).not.toBeNull();
+  expect(data2!.enfants).toHaveLength(5);
+  expect(data2!.enfants!.filter(e => (e.id = 8))![0].rempli).toBe(true);
+  expect(data2!.valeurs).toHaveLength(0);
+  // Test retour indicateur composé cae_2.a non rempli car sans_valeur = false
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 64,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 94,
+    date_valeur: '2021-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 95,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 118,
+    date_valeur: '2020-01-01',
+    collectivite_id: 1,
+    resultat: 1.2,
+  });
+  const data3 = await selectIndicateurChartInfo(supabase, 48, 1);
+  expect(data3).not.toBeNull();
+  expect(data3!.enfants).toHaveLength(5);
+  expect(data3!.valeurs).toHaveLength(0);
+  // Test retour indicateur composé cae_2.a non rempli car sans_valeur = true
+  await dbAdmin
+    .from('indicateur_definition')
+    .update({sans_valeur_utilisateur: true})
+    .eq('id', 48);
+  const data4 = await selectIndicateurChartInfo(supabase, 48, 1);
+  expect(data4).not.toBeNull();
+  expect(data4!.enfants).toHaveLength(5);
+  expect(data4!.valeurs).toHaveLength(1);
+  // Test retour indicateur cae_9 non rempli
+  await dbAdmin.from('indicateur_groupe').insert({parent: 114, enfant: 3});
+  const data5 = await selectIndicateurChartInfo(supabase, 114, 1);
+  expect(data5).not.toBeNull();
+  expect(data5!.enfants).toHaveLength(1);
+  expect(data5!.valeurs).toHaveLength(0);
+  // Test retour indicateur cae_9 rempli
+  await dbAdmin.from('indicateur_groupe').insert({parent: 114, enfant: 1});
+  const data6 = await selectIndicateurChartInfo(supabase, 114, 1);
+  expect(data6).not.toBeNull();
+  expect(data6!.enfants).toHaveLength(2);
+  expect(data6!.valeurs).toHaveLength(1);
 });
 
 test('Test getValeursComparaison', async () => {
-    const data =
-        await getValeursComparaison(supabase, 1, 1, 'citepa');
-    expect(data).not.toBeNull();
-    expect(data!.resultats.lignes).toHaveLength(1);
+  const data = await getValeursComparaison(supabase, 1, 1, 'citepa');
+  expect(data).not.toBeNull();
+  expect(data!.resultats.lignes).toHaveLength(1);
 });
-

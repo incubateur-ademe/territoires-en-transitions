@@ -2,20 +2,32 @@
 
 BEGIN;
 
-select code_region,
+SELECT mois,
+       code_region,
        code_departement,
-       referentiel,
-       etoiles,
-       labellisations
-from stats.locales_labellisation_par_niveau
+       collectivites
+FROM stats.locales_evolution_collectivite_avec_indicateur_referentiel
 where false;
 
-select code_region,
+SELECT mois,
+       code_region,
        code_departement,
-       referentiel,
-       etoiles,
-       labellisations
-from stats_locales_labellisation_par_niveau
+       indicateurs
+FROM stats.locales_evolution_resultat_indicateur_referentiel
+where false;
+
+SELECT mois,
+       code_region,
+       code_departement,
+       collectivites
+FROM stats_locales_evolution_collectivite_avec_indicateur
+where false;
+
+SELECT mois,
+       code_region,
+       code_departement,
+       indicateurs
+FROM stats_locales_evolution_resultat_indicateur_referentiel
 where false;
 
 ROLLBACK;

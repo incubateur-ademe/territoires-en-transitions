@@ -5,7 +5,12 @@ import { fetchCollection, fetchSingle } from '@tet/site/src/strapi/strapi';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type Labellisations = Tables<'labellisation'>;
-export type Indicateurs = Tables<'indicateur_valeur'>;
+export type Indicateurs = {
+  date_valeur: string;
+  resultat: number;
+  identifiant: string;
+  source?: string;
+};
 export type IndicateurArtificialisation =
   Tables<'indicateur_artificialisation'>;
 

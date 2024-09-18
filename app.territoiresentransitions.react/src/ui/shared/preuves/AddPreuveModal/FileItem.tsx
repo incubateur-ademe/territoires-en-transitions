@@ -6,10 +6,9 @@ import {
   UploadStatusFailed,
 } from 'ui/shared/preuves/AddPreuveModal/types';
 import {useUploader} from 'ui/shared/preuves/AddPreuveModal/useUploader';
-import {ButtonClose} from 'ui/buttons/SmallIconButton';
 import {ProgressBar} from 'ui/shared/ProgressBar';
 import {formatFileSize} from 'utils/file';
-import {Alert} from '@tet/ui';
+import {Button} from '@tet/ui';
 
 export type TFileItem = {
   /** Fichier concerné */
@@ -47,14 +46,11 @@ const FileItemRunning = (props: TFileItemProps) => {
   }, [status]);
 
   return (
-    <div
-      data-test="file-running"
-      className="pl-2 pr-4 py-1 flex justify-between"
-    >
-      <div className="w-8/12 flex justify-between">
+    <div data-test="file-running" className="flex justify-between items-center">
+      <div className="w-8/12 flex items-center">
         <div
           data-test="name"
-          className="text-sm font-bold whitespace-nowrap text-ellipsis overflow-hidden"
+          className="text-sm text-grey-8 whitespace-nowrap text-ellipsis overflow-hidden"
         >
           {file.name}
         </div>
@@ -62,14 +58,9 @@ const FileItemRunning = (props: TFileItemProps) => {
           ({formatFileSize(file.size)})
         </div>
       </div>
-      <div className="w-3/12 flex items-center">
+      <div className="w-3/12 flex items-center gap-1">
         <ProgressBar className="w-80 h-3.5 inline-block" value={progress} />
-        <ButtonClose
-          onClick={e => {
-            e.preventDefault();
-            abort?.();
-          }}
-        />
+        <Button icon="close-line" variant="white" size="xs" onClick={abort} />
       </div>
     </div>
   );
@@ -78,11 +69,16 @@ const FileItemRunning = (props: TFileItemProps) => {
 const FileItemCompleted = (props: TFileItemProps) => {
   const {file} = props;
   return (
-    <div
-      data-test="file-completed"
-      className="px-2 py-1 text-sm text-bf500 w-full font-bold whitespace-nowrap text-ellipsis overflow-hidden"
-    >
-      {file.name}
+    <div data-test="file-completed" className="flex w-full">
+      <div
+        data-test="name"
+        className="text-sm text-grey-8 whitespace-nowrap text-ellipsis overflow-hidden"
+      >
+        {file.name}
+      </div>
+      <div data-test="size" className="text-sm min-w-max text-grey-6 pl-2">
+        ({formatFileSize(file.size)})
+      </div>
     </div>
   );
 };
@@ -104,13 +100,13 @@ const FileItemFailed = (props: TFileItemProps) => {
   return (
     <div
       data-test="file-failed"
-      className="py-1 mr-4 group flex flex-col hover:bg-grey925"
+      className="flex justify-between items-center group"
     >
-      <div className="px-2 pt-1 flex justify-between">
-        <div className="flex w-11/12">
+      <div className="flex flex-col w-11/12">
+        <div className="flex">
           <div
             data-test="name"
-            className="text-sm whitespace-nowrap text-ellipsis overflow-hidden"
+            className="text-sm text-grey-8 whitespace-nowrap text-ellipsis overflow-hidden"
           >
             {file.name}
           </div>
@@ -118,37 +114,32 @@ const FileItemFailed = (props: TFileItemProps) => {
             ({formatFileSize(file.size)})
           </div>
         </div>
-        <ButtonClose
-          className="invisible group-hover:visible"
-          onClick={() => onRemoveFailed?.(file.name)}
-        />
+        {status.code === UploadStatusCode.duplicated ? (
+          <div className="text-xs text-grey-6 italic">
+            Ce fichier sera ajouté directement via votre bibliothèque de
+            fichiers car il a déjà été téléversé
+            {file.name !== status.filename ? (
+              <>
+                {' '}
+                sous le nom <i>{status.filename}.</i>
+              </>
+            ) : (
+              '.'
+            )}
+          </div>
+        ) : (
+          <div data-test="error" className="text-xs text-error-1 italic">
+            &nbsp;{label}
+          </div>
+        )}
       </div>
-      {status.code === UploadStatusCode.duplicated ? (
-        <Alert
-          className="mt-4"
-          description={
-            <p>
-              Ce fichier sera ajouté directement via votre bibliothèque de
-              fichiers car il a déjà été téléversé
-              {file.name !== status.filename ? (
-                <>
-                  {' '}
-                  sous le nom <i>{status.filename}.</i>
-                </>
-              ) : (
-                '.'
-              )}
-            </p>
-          }
-        />
-      ) : (
-        <div
-          data-test="error"
-          className="px-2 py-2 fr-fi-alert-line fr-fi--sm text-error425 text-xs"
-        >
-          &nbsp;{label}
-        </div>
-      )}
+      <Button
+        icon="close-line"
+        size="xs"
+        variant="white"
+        className="invisible group-hover:visible w-fit h-fit"
+        onClick={() => onRemoveFailed?.(file.name)}
+      />
     </div>
   );
 };

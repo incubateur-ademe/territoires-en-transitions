@@ -1,6 +1,11 @@
 import { FieldState } from '@tet/ui/design-system/Field';
 import classNames from 'classnames';
-import { HTMLAttributes, Ref, forwardRef } from 'react';
+import {
+  DetailedHTMLProps,
+  Ref,
+  TextareaHTMLAttributes,
+  forwardRef,
+} from 'react';
 
 // Variantes de taille
 export type TextareaSize = 'md' | 'sm';
@@ -15,7 +20,10 @@ const stateToBorderColor: Record<FieldState, string> = {
   warning: 'border-warning-1',
 };
 
-export type TextareaProps = HTMLAttributes<HTMLTextAreaElement> & {
+export type TextareaProps = DetailedHTMLProps<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  HTMLTextAreaElement
+> & {
   /** Valeur courante du champ */
   value?: string;
   /** Taille d'affichage */

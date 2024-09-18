@@ -2,6 +2,7 @@ import { Icon, IconSize } from '@tet/ui/design-system/Icon';
 import { buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonSize, ButtonVariant } from './types';
 import classNames from 'classnames';
+import { Notification } from '../Notification';
 
 const getIconSize = (
   size: ButtonSize,
@@ -27,11 +28,22 @@ const ButtonContent = ({
   icon,
   children,
   disabled,
+  notification,
 }: ButtonContentProps) => {
   const buttonState = disabled ? 'disabled' : 'default';
 
   return (
     <>
+      {notification && (
+        <Notification
+          size="xs"
+          {...notification}
+          classname={classNames(
+            'absolute -top-2.5 -right-2.5',
+            notification.classname
+          )}
+        />
+      )}
       {!!icon && (
         <Icon
           icon={icon}

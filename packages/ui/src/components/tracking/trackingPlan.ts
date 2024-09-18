@@ -55,10 +55,51 @@ type OpenDataSource = {
   type: 'resultat' | 'objectif';
 };
 
+type IndicateursFiltres = {
+  thematiqueIds?: OptionValue[];
+  actionId?: string;
+  planActionIds?: OptionValue[];
+  utilisateurPiloteIds?: OptionValue[];
+  personnePiloteIds?: OptionValue[];
+  servicePiloteIds?: OptionValue[];
+  categorieNoms?: OptionValue[];
+  participationScore?: boolean;
+  estComplet?: boolean;
+  estConfidentiel?: boolean;
+  fichesNonClassees?: boolean;
+  text?: string;
+  estPerso?: boolean;
+  hasOpenData?: boolean;
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<never, Page> {
+  /** Page "Tous les indicateurs" */
+  'app/indicateurs/tous': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      toggle_graphique: {actif: boolean};
+      filtres: {
+        filtreValues: IndicateursFiltres;
+      };
+    };
+  };
+
+  /** Page "Indicateurs de la collectivité" */
+  'app/indicateurs/collectivite': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      explorerIndicateursClick: {};
+      filtres: {
+        filtreValues: IndicateursFiltres;
+      };
+    };
+  };
+
   /** Page indicateur perso */
   'app/indicateurs/perso': {
     properties: { collectivite_id: number };
@@ -133,6 +174,18 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       tdb_modifier_filtres_actions_modifiees: {};
       tdb_valider_filtres_actions_modifiees: {};
+    };
+  };
+
+  /** Page fiche action */
+  'app/fiche-action': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      validation_modale_modifier_fa: {};
+      validation_modale_acteurs_fa: {};
+      validation_modale_planning_fa: {};
+      cta_indicateur_perso_fa: {};
     };
   };
 

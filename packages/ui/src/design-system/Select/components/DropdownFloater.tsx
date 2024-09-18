@@ -16,6 +16,7 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import { preset } from '@tet/ui/tailwind-preset';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -25,6 +26,8 @@ type DropdownFloaterProps = {
   children: JSX.Element;
   /** Permet de définir et d'afficher le contenu du dropdown */
   render: (data: { close: () => void }) => React.ReactNode;
+  /** Permet de contrôler l'ouverture de la modale */
+  openState?: OpenState;
   /** Id du parent dans lequel doit être rendu le portal */
   parentId?: string;
   /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
@@ -43,6 +46,7 @@ type DropdownFloaterProps = {
 export const DropdownFloater = ({
   render,
   children,
+  openState,
   parentId,
   placement,
   containerWidthMatchButton = false,
@@ -53,14 +57,26 @@ export const DropdownFloater = ({
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [maxHeight, setMaxHeight] = useState(0);
+  const isControlled = !!openState;
+
+  const open = isControlled ? openState.isOpen : isOpen;
+
+  const handleOpenChange = () => {
+    if (isControlled) {
+      openState.setIsOpen(!openState.isOpen);
+    } else {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const [maxHeight, setMaxHeight] = useState(null);
 
   const nodeId = useFloatingNodeId();
 
   const { x, y, strategy, refs, context } = useFloating({
     nodeId,
-    open: disabled ? false : isOpen,
-    onOpenChange: disabled ? () => null : setIsOpen,
+    open: disabled ? false : open,
+    onOpenChange: disabled ? () => null : handleOpenChange,
     placement: placement ?? 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -102,12 +118,12 @@ export const DropdownFloater = ({
         children,
         getReferenceProps({
           ref: refs.setReference,
-          isOpen,
+          isOpen: open,
           ...children.props,
         })
       )}
       <FloatingNode id={nodeId}>
-        {isOpen && (
+        {open && (
           <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
             <FloatingFocusManager
               context={context}
@@ -124,7 +140,9 @@ export const DropdownFloater = ({
                     left: x,
                     // Applique uniquement le z-index quand le dropdown
                     // n'est pas contenu dans un autre floater (ex. modale)
-                    zIndex: parentNodeId ?? preset.theme.extend.zIndex.dropdown,
+                    zIndex: parentNodeId
+                      ? preset.theme.extend.zIndex.dropdown
+                      : 1,
                   },
                 })}
               >
@@ -136,7 +154,7 @@ export const DropdownFloater = ({
                   style={{ maxHeight: maxHeight - 16 }}
                 >
                   {render({
-                    close: () => setIsOpen(false),
+                    close: () => handleOpenChange(),
                   })}
                 </div>
               </div>

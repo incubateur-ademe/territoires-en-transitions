@@ -24,7 +24,7 @@ export const InputDate = forwardRef(
         icon={{
           buttonProps: {
             type: 'button',
-            icon: 'calendar-line',
+            icon: 'calendar-2-line',
             onClick: () => {
               (ref as MutableRefObject<HTMLInputElement>).current.showPicker();
             },

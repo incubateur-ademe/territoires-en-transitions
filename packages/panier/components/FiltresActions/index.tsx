@@ -8,12 +8,12 @@ import {
   ActionImpactThematique,
 } from '@tet/api';
 import {
-  BadgesFilters,
   OptionValue,
   SelectMultipleOnChangeArgs,
   useEventTracker,
 } from '@tet/ui';
 import { usePanierContext } from '@tet/panier/providers';
+import { BadgesFilters } from './BadgesFilters';
 
 type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
@@ -130,7 +130,6 @@ const FiltresActions = ({
       ]}
       className="my-4"
       btnMenuClassName="-mt-14"
-      notificationBtnClassName="-mt-14"
     />
   );
 };

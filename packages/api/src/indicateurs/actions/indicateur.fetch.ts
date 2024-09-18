@@ -1,27 +1,28 @@
-import { DBClient } from '../../typeUtils';
 import { objectToCamel } from 'ts-case-convert';
+import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
 import {
-  Valeur,
-  ValeurComparaison,
-  ValeurComparaisonLigne,
-} from '../domain/valeur.schema';
-import { Action } from '../../referentiel/domain/action.schema';
+  selectGroupementParCollectivite,
+  selectGroupements,
+} from '../../collectivites/shared/actions/groupement.fetch';
+import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
+import { Tables } from '../../database.types';
 import { FicheResume } from '../../fiche_actions/domain/resume.schema';
+import { Action } from '../../referentiel/domain/action.schema';
+import { Tag, Thematique } from '../../shared/domain';
+import { Personne } from '../../shared/domain/personne.schema';
+import { DBClient } from '../../typeUtils';
+import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,
   IndicateurDefinitionComplet,
   IndicateurListItem,
 } from '../domain/definition.schema';
-import { Personne } from '../../shared/domain/personne.schema';
-import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import {
-  selectGroupementParCollectivite,
-  selectGroupements,
-} from '../../collectivites/shared/actions/groupement.fetch';
-import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
-import { Source, SourceMetadonnee } from '../domain';
-import { Tag, Thematique } from '../../shared/domain';
+  Valeur,
+  ValeurComparaison,
+  ValeurComparaisonLigne,
+} from '../domain/valeur.schema';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -59,7 +60,7 @@ const COLONNES_DEFINITION = [
   'thematiques:indicateur_thematique(...thematique_id(*))',
   'categories:indicateur_categorie_tag(...categorie_tag(id,nom,collectivite_id,groupement_id, groupement(groupement_collectivite(*))))',
   'valeurs:indicateur_valeur(' + `${COLONNES_VALEURS.join(',')}` + ')',
-  'enfants:indicateur_enfants(id)',
+  'enfants:indicateur_enfants(id, groupement_id)',
   'parents:indicateur_parents(id)',
 ] as const;
 
@@ -137,12 +138,14 @@ export async function selectIndicateurCategoriesUtilisateur(
   indicateurId: number,
   collectiviteId: number
 ): Promise<number[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_categorie_tag')
     .select('...categorie_tag!inner(id, collectivite_id)')
     .eq('indicateur_id', indicateurId)
-    .eq('categorie_tag.collectivite_id', collectiviteId);
-  return (data?.map((cat: any) => cat.id) as number[]) || [];
+    .eq('categorie_tag.collectivite_id', collectiviteId)
+    .returns<Array<Tables<'categorie_tag'>>>();
+
+  return (data?.map((cat) => cat.id) as number[]) || [];
 }
 
 /**
@@ -157,7 +160,7 @@ export async function selectIndicateurPilotes(
   indicateurId: number,
   collectiviteId: number
 ): Promise<Personne[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_pilote')
     .select(
       `id, collectivite_id, user_id, tag_id, tag:personne_tag(*), user:indicateur_pilote_user(*)`
@@ -233,7 +236,7 @@ export async function selectIndicateurThematiquesId(
   dbClient: DBClient,
   indicateurId: number
 ): Promise<number[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_thematique')
     .select(`thematique_id`)
     .eq('indicateur_id', indicateurId);
@@ -362,6 +365,23 @@ export async function selectIndicateurListItems(
   });
 
   return toReturn as IndicateurListItem[];
+}
+
+/**
+ * Récupère la liste des id des indicateurs favoris de la collectivité
+ * @param dbClient
+ * @param collectiviteId
+ * @returns
+ */
+export async function selectIndicateursFavorisCollectiviteIds(
+  dbClient: DBClient,
+  collectiviteId: number
+) {
+  return await dbClient
+    .from('indicateur_collectivite')
+    .select(`indicateur_id`, { count: 'exact' })
+    .eq('collectivite_id', collectiviteId)
+    .eq('favoris', true);
 }
 
 /**
@@ -594,7 +614,7 @@ export async function selectIndicateurChartInfo(
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION_COURTE.join(',')}, groupement_id,` +
-        'plus:indicateur_collectivite(confidentiel, collectivite_id), ' +
+        'plus:indicateur_collectivite(confidentiel, favoris, collectivite_id), ' +
         'enfants:indicateur_enfants(' +
         'id, ' +
         'valeurs:indicateur_valeur(date_valeur, resultat, objectif, collectivite_id, metadonnee_id)' +
@@ -622,11 +642,15 @@ export async function selectIndicateurChartInfo(
           groupementIds.includes(item.groupement_id)
       )
       .map((item) => {
-        // Récupère l'information de la confidentialité
+        // Récupère l'information de la confidentialité et favori de la collectivité
         const plusInfo =
           item.plus && item.plus[0]
             ? item.plus[0]
-            : { confidentiel: false, collectiviteId: collectiviteId };
+            : {
+                confidentiel: false,
+                favoris: false,
+                collectiviteId: collectiviteId,
+              };
 
         // Transforme les valeurs
         let valeursTransforme = dateEnAnnee(item.valeurs, true);
@@ -675,6 +699,7 @@ export async function selectIndicateurChartInfo(
           enfants: enfantsTransforme,
           plus: undefined,
           confidentiel: plusInfo.confidentiel, // Remonte l'info 'confidentiel'
+          favoriCollectivite: plusInfo.favoris, // Remonte l'info 'confidentiel'
           count: count, // Ajoute l'attribut 'count'
           total: total, // Ajoute l'attribut 'total'
           identifiant: undefined, // Enlève 'identifiant' pour correspondre au schéma
@@ -926,7 +951,15 @@ async function transformeDefinition(
       services,
       fiches,
       fiches_non_classees, // Ajoute le champ 'est_perso'
-      enfants: item?.enfants?.map((e: any) => e.id),
+      enfants: item?.enfants
+        ?.filter(
+          (e: any) =>
+            !e.groupement_id ||
+            groupement
+              .filter((g: any) => g.id === e.groupement_id)[0]
+              .collectivites?.includes(collectiviteId)
+        )
+        .map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
     };
   });

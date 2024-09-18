@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { cloneElement, RefObject, useState } from 'react';
 
 import { preset } from '@tet/ui/tailwind-preset';
+import { OpenState } from '@tet/ui/utils/types';
 import { Button } from '../Button';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -41,13 +42,6 @@ export type RenderProps = {
   ref: RefObject<HTMLElement>;
 };
 
-export type ModalOpenState = {
-  /** état d'ouverture de la modale */
-  isOpen: boolean;
-  /* accompagne "isOpen" afin de pouvoir fermer la modale */
-  setIsOpen: (opened: boolean) => void;
-};
-
 /** Types des props du composant générique Modal */
 export type ModalProps = {
   /** Fonction de rendu du contenu de la modale */
@@ -65,7 +59,7 @@ export type ModalProps = {
   /** Titre et description centrés par défaut */
   textAlign?: 'left' | 'center' | 'right';
   /** Permet de contrôler l'ouverture de la modale */
-  openState?: ModalOpenState;
+  openState?: OpenState;
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
   /** max-width prédéfinies dans le DSFR, valeur par défaut "md" */
@@ -182,7 +176,7 @@ export const Modal = ({
                       icon="close-line"
                       variant="grey"
                       size="xs"
-                      className="absolute max-md:top-4 top-8 max-md:right-4 right-8"
+                      className="!absolute max-md:top-4 top-8 max-md:right-4 right-8"
                     />
                   )}
                   {(title || subTitle || description) && (
@@ -210,12 +204,16 @@ export const Modal = ({
                       )}
                     </div>
                   )}
-                  {render?.({
-                    close: handleOpenChange,
-                    labelId,
-                    descriptionId,
-                    ref: refs.floating,
-                  })}
+                  {render && (
+                    <div className="flex flex-col gap-8">
+                      {render?.({
+                        close: handleOpenChange,
+                        labelId,
+                        descriptionId,
+                        ref: refs.floating,
+                      })}
+                    </div>
+                  )}
                   {renderFooter?.({
                     close: handleOpenChange,
                   })}

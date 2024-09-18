@@ -1,10 +1,10 @@
-import { HTMLInputTypeAttribute, Ref, forwardRef } from 'react';
-import classNames from 'classnames';
-import { Icon, IconValue } from '@tet/ui/design-system/Icon';
-import { DefaultButtonProps } from '@tet/ui/design-system/Button/types';
 import { Button } from '@tet/ui/design-system/Button';
+import { DefaultButtonProps } from '@tet/ui/design-system/Button/types';
 import { FieldState, stateToTextColor } from '@tet/ui/design-system/Field';
+import { Icon, IconValue } from '@tet/ui/design-system/Icon';
 import { preset } from '@tet/ui/tailwind-preset';
+import classNames from 'classnames';
+import { Ref, forwardRef } from 'react';
 
 // variantes de taille
 export type InputSize = 'md' | 'sm';
@@ -16,7 +16,7 @@ export type InputType =
   | 'date'
   | 'search'
   | 'tel'
-  | HTMLInputTypeAttribute;
+  | 'file';
 
 // couleur des bordures en fonction du `state`
 const stateToBorderColor: Record<FieldState, string> = {
@@ -48,7 +48,7 @@ export type InputBaseProps = Omit<
   containerClassname?: string;
 };
 
-type IconContent =
+export type IconContent =
   // affiche un composant `Icon`
   | { value?: IconValue }
   // affiche un texte
@@ -89,7 +89,7 @@ export const InputBase = forwardRef(
           type={type}
           ref={ref}
           className={classNames(
-            'grow text-grey-8 px-4 outline-none',
+            'grow text-grey-8 px-4 outline-none placeholder:text-grey-6 placeholder:text-xs',
             {
               'text-sm py-2': displaySize === 'sm',
               'text-md py-3': displaySize === 'md',

@@ -26,20 +26,25 @@ export const Variantes: Story = {
   render: () => (
     <div
       className="grid gap-5 items-center bg-grey-2 p-10"
-      style={{gridTemplateColumns: 'repeat(5,fit-content(0))'}}
+      style={{gridTemplateColumns: 'repeat(9,fit-content(0))'}}
     >
-      {['md', 'sm', 'xs'].map(size => (
-        <div key={size} className="flex flex-col gap-5">
-          {['default', 'warning', 'info', 'error'].map(variant => (
-            <Notification
-              number={10}
-              icon="lock-fill"
-              variant={variant as NotificationVariant}
-              size={size as NotificationSize}
-            />
-          ))}
-        </div>
-      ))}
+      {['md', 'sm', 'xs'].map(size =>
+        [
+          {number: 102, icon: 'lock-fill'},
+          {number: 1},
+          {icon: 'lock-fill'},
+        ].map(config => (
+          <div key={size} className="flex flex-col gap-5">
+            {['default', 'warning', 'info', 'error'].map(variant => (
+              <Notification
+                {...config}
+                variant={variant as NotificationVariant}
+                size={size as NotificationSize}
+              />
+            ))}
+          </div>
+        ))
+      )}
     </div>
   ),
 };

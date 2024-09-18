@@ -1,8 +1,6 @@
 import classNames from 'classnames';
-import {Field, FieldAttributes, FieldProps} from 'formik';
-
-import FormField from 'ui/shared/form/FormField';
-import Textarea from '../Textarea';
+import {Field, Input, Textarea} from '@tet/ui';
+import {Field as FormikField, FieldAttributes, FieldProps} from 'formik';
 
 /**
  * Prevents enter key submitting the form.
@@ -19,8 +17,8 @@ type FormikInputProps = {
   label: string;
   disabled?: boolean;
   maxLength?: number;
-  /** Only to use for textarea */
-  minHeight?: string;
+  className?: string;
+  inputClassName?: string;
 };
 
 type FormFieldProps = FieldAttributes<FormikInputProps>;
@@ -32,7 +30,7 @@ type FormFieldProps = FieldAttributes<FormikInputProps>;
  * Pour cela, il faut déconstruire Formik pour récupérer handleBlur et le donner à l'input.
  */
 const FormikInput = (props: FormFieldProps) => (
-  <Field {...props} component={InputField} />
+  <FormikField {...props} component={InputField} />
 );
 
 export default FormikInput;
@@ -46,31 +44,33 @@ const InputField = ({field, form, ...props}: FormikInputProps & FieldProps) => {
   const inputType = props.type ?? 'text';
 
   return (
-    <FormField
-      label={props.label}
+    <Field
+      title={props.label}
       hint={props.hint}
       htmlFor={field.name}
-      errorMessage={isError ? errorMessage : undefined}
+      message={isError ? errorMessage : undefined}
+      state={isError ? 'error' : 'default'}
+      className={props.className}
     >
       {inputType === 'text' && (
-        <input
+        <Input
           {...field}
           {...props}
           id={field.name}
           type={inputType}
-          className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
           onKeyDown={preventSubmit}
+          state={isError ? 'error' : 'default'}
         />
       )}
       {inputType === 'password' && (
-        <input
+        <Input
           {...field}
           {...props}
           id={field.name}
           type={inputType}
-          className={classNames('fr-input', {'fr-input--error': isError})}
           maxLength={props.maxLength}
+          state={isError ? 'error' : 'default'}
         />
       )}
       {inputType === 'area' && (
@@ -78,14 +78,10 @@ const InputField = ({field, form, ...props}: FormikInputProps & FieldProps) => {
           {...field}
           {...props}
           id={field.name}
-          className={classNames('fr-input !outline-none', {
-            'fr-input--error': isError,
-          })}
-          onInputChange={() => null}
-          maxLength={props.maxLength}
-          minHeight={props.minHeight ?? '4rem'}
+          state={isError ? 'error' : 'default'}
+          className={classNames('min-h-[4rem]', props.inputClassName)}
         />
       )}
-    </FormField>
+    </Field>
   );
 };

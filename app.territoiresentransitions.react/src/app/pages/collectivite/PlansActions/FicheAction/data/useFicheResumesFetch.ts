@@ -9,7 +9,8 @@ type Props = {
   options?: FetchOptions;
 };
 
-export const useFicheResumesFetch = ({ options }: Props) => {
+export const useFicheResumesFetch = (props?: Props) => {
+  const { options } = props || {};
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
@@ -19,14 +20,10 @@ export const useFicheResumesFetch = ({ options }: Props) => {
         throw new Error('Aucune collectivité associée');
       }
 
-      if (!options) {
-        return null;
-      }
-
       return await ficheResumesFetch({
         dbClient: supabaseClient,
         collectiviteId,
-        options,
+        options: options ?? { filtre: {} },
       });
     }
   );

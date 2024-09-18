@@ -2,7 +2,7 @@ import {
   ModuleFicheActionsSelect,
   Slug,
 } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
-import { TrackPageView, useEventTracker } from '@tet/ui';
+import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import { TDBViewParam } from 'app/paths';
 import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
@@ -15,7 +15,7 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
 import FichesActionListe, {
   SortFicheActionSettings,
-} from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/FichesActionListe';
+} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 
 type Props = {
   view: TDBViewParam;
@@ -45,34 +45,40 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
       <FichesActionListe
         filtres={module.options.filtre}
         sortSettings={sortSettings}
-        onSettingsClick={() => {
-          trackEvent(
-            (slug === 'actions-dont-je-suis-pilote'
-              ? 'tdb_modifier_filtres_actions_pilotes'
-              : 'tdb_modifier_filtres_actions_modifiees') as never,
-            { collectivite_id: collectiviteId } as never
-          );
-        }}
-        settingsModal={(openState) => {
-          if (module.slug === 'actions-dont-je-suis-pilote') {
-            return (
-              <ModalActionsDontJeSuisLePilote
-                openState={openState}
-                module={module as ModuleFicheActionsSelect}
-                keysToInvalidate={[getQueryKey(slug)]}
-              />
-            );
-          }
-          if (module.slug === 'actions-recemment-modifiees') {
-            return (
-              <ModalActionsRecemmentModifiees
-                openState={openState}
-                module={module as ModuleFicheActionsSelect}
-                keysToInvalidate={[getQueryKey(slug)]}
-              />
-            );
-          }
-        }}
+        settings={(openState) => (
+          <>
+            <Button
+              variant="outlined"
+              icon="equalizer-line"
+              size="sm"
+              onClick={() => {
+                openState.setIsOpen(true);
+                trackEvent(
+                  (slug === 'actions-dont-je-suis-pilote'
+                    ? 'tdb_modifier_filtres_actions_pilotes'
+                    : 'tdb_modifier_filtres_actions_modifiees') as never,
+                  { collectivite_id: collectiviteId } as never
+                );
+              }}
+            />
+            {module.slug === 'actions-dont-je-suis-pilote' &&
+              openState.isOpen && (
+                <ModalActionsDontJeSuisLePilote
+                  openState={openState}
+                  module={module as ModuleFicheActionsSelect}
+                  keysToInvalidate={[getQueryKey(slug)]}
+                />
+              )}
+            {module.slug === 'actions-recemment-modifiees' &&
+              openState.isOpen && (
+                <ModalActionsRecemmentModifiees
+                  openState={openState}
+                  module={module as ModuleFicheActionsSelect}
+                  keysToInvalidate={[getQueryKey(slug)]}
+                />
+              )}
+          </>
+        )}
       />
     </ModulePage>
   );

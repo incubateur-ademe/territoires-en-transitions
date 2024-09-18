@@ -26,7 +26,7 @@ import {FichesActionLiees} from './FichesActionLiees';
 import {useScoreRealise} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 import {useCycleLabellisation} from '../ParcoursLabellisation/useCycleLabellisation';
 import {useFilteredIndicateurDefinitions} from '../Indicateurs/lists/useFilteredIndicateurDefinitions';
-import IndicateurChartsGrid from '../Indicateurs/lists/IndicateurChartsGrid';
+import IndicateurChartsGrid from './IndicateurChartsGrid';
 import {Alert} from '@tet/ui';
 
 // index des onglets de la page Action
@@ -48,10 +48,11 @@ const Action = ({action}: {action: ActionDefinitionSummary}) => {
   const preuvesCount = useActionPreuvesCount(action);
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
-  const {data: indicateursLies} = useFilteredIndicateurDefinitions(
-    referentielId,
-    {action_id: action.id}
-  );
+  const {data: indicateursLies} = useFilteredIndicateurDefinitions({
+    filtre: {
+      actionId: action.id,
+    },
+  });
 
   const actionScores = useScoreRealise(action);
 

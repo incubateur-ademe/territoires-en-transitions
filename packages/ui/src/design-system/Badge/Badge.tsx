@@ -18,7 +18,7 @@ type Props = {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
-  title: string;
+  title: React.ReactNode;
   /** État */
   state?: BadgeState;
   /** Taille du badge */
@@ -94,7 +94,7 @@ export const Badge = ({
           <Icon
             icon={icon}
             size={size === 'sm' ? 'xs' : 'sm'}
-            className={styles.icon}
+            className={classNames(styles.icon, {'text-primary-7': !!onClose})}
           />
         </div>
       )}

@@ -1,26 +1,24 @@
 import { useState } from 'react';
 
+import { Indicateurs } from '@tet/api';
 import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
 import { ModuleIndicateursSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
-import { Indicateurs } from '@tet/api';
 import {
   Field,
   FormSection,
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  Select,
-  SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { splitPilotePersonnesAndUsers } from 'ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
@@ -37,23 +35,22 @@ const ModalIndicateursSuiviPlan = ({
     throw new Error('Aucune collectivité associée');
   }
 
-  const plansActions = usePlansActionsListe(collectiviteId);
   const queryClient = useQueryClient();
 
-  const [filtreState, setFiltreState] = useState<Indicateurs.domain.Filtre>(
-    module.options.filtre
-  );
+  const [filtreState, setFiltreState] = useState<
+    Indicateurs.domain.FetchFiltre | undefined
+  >(module.options.filtre);
 
   const trackEvent = useEventTracker(
     'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans'
   );
 
-  const getPilotesValues = (filtreState: Indicateurs.domain.Filtre) => {
+  const getPilotesValues = (filtreState?: Indicateurs.domain.FetchFiltre) => {
     const pilotes = [];
-    if (filtreState.utilisateurPiloteIds) {
+    if (filtreState?.utilisateurPiloteIds) {
       pilotes.push(...filtreState.utilisateurPiloteIds);
     }
-    if (filtreState.personnePiloteIds) {
+    if (filtreState?.personnePiloteIds) {
       pilotes.push(...filtreState.personnePiloteIds.map(String));
     }
     return pilotes;
@@ -64,83 +61,66 @@ const ModalIndicateursSuiviPlan = ({
   return (
     <Modal
       openState={openState}
+      title={module.titre}
       render={() => (
-        <>
-          <h3 className="mb-4 text-center text-2xl">{module.titre}</h3>
-          <FormSection title="Filtrer sur :" className="!grid-cols-1">
-            <Field title="Nom du plan :">
-              <SelectMultiple
-                values={filtreState.planActionIds}
-                options={
-                  plansActions?.plans.map((p) => ({
-                    label: generateTitle(p.nom),
-                    value: p.id,
-                  })) ?? []
-                }
-                onChange={({ values, selectedValue }) =>
-                  ((filtreState.planActionIds?.length === 1 &&
-                    selectedValue !== filtreState.planActionIds[0]) ||
-                    (filtreState.planActionIds &&
-                      filtreState.planActionIds.length > 1)) &&
-                  setFiltreState({
-                    ...filtreState,
-                    planActionIds: values as number[],
-                  })
-                }
-              />
-            </Field>
-            <Field title="Pilote de l'indicateur :">
-              <PersonnesDropdown
-                values={pilotes.length ? pilotes : undefined}
-                onChange={({ personnes }) =>
-                  setFiltreState({
-                    ...filtreState,
-                    ...splitPilotePersonnesAndUsers(personnes),
-                  })
-                }
-              />
-            </Field>
-            <Field title="Thématique de l'indicateur :">
-              <ThematiquesDropdown
-                values={filtreState.thematiqueIds}
-                onChange={({ thematiques }) =>
-                  setFiltreState({
-                    ...filtreState,
-                    thematiqueIds: thematiques.map((t) => t.id),
-                  })
-                }
-              />
-            </Field>
-            <Field title="Complétion indicateur :">
-              <Select
-                values={
-                  filtreState.estComplet === undefined
-                    ? undefined
-                    : filtreState.estComplet
-                    ? 'rempli'
-                    : 'incomplet'
-                }
-                options={[
-                  {
-                    label: 'Complet',
-                    value: 'rempli',
-                  },
-                  {
-                    label: 'Incomplet',
-                    value: 'incomplet',
-                  },
-                ]}
-                onChange={(value) =>
-                  setFiltreState({
-                    ...filtreState,
-                    estComplet:
-                      value === undefined ? undefined : value === 'rempli',
-                  })
-                }
-              />
-            </Field>
-          </FormSection>
-        </>
+        <FormSection title="Filtrer sur :" className="!grid-cols-1">
+          <Field title="Nom du plan :">
+            <PlansActionDropdown
+              type="multiple"
+              values={filtreState?.planActionIds}
+              onChange={({ plans, selectedPlan }) =>
+                ((filtreState?.planActionIds?.length === 1 &&
+                  selectedPlan !== filtreState?.planActionIds[0]) ||
+                  (filtreState?.planActionIds &&
+                    filtreState?.planActionIds.length > 1)) &&
+                setFiltreState({
+                  ...filtreState,
+                  planActionIds: plans as number[],
+                })
+              }
+            />
+          </Field>
+          <Field title="Pilote de l'indicateur :">
+            <PersonnesDropdown
+              values={pilotes.length ? pilotes : undefined}
+              onChange={({ personnes }) =>
+                setFiltreState({
+                  ...filtreState,
+                  ...splitPilotePersonnesAndUsers(personnes),
+                })
+              }
+            />
+          </Field>
+          <Field title="Thématique de l'indicateur :">
+            <ThematiquesDropdown
+              values={filtreState?.thematiqueIds}
+              onChange={({ thematiques }) =>
+                setFiltreState({
+                  ...filtreState,
+                  thematiqueIds: thematiques.map((t) => t.id),
+                })
+              }
+            />
+          </Field>
+          <Field title="Complétion indicateur :">
+            <IndicateurCompletsDropdown
+              values={
+                filtreState?.estComplet === undefined
+                  ? undefined
+                  : filtreState?.estComplet
+                  ? 'rempli'
+                  : 'incomplet'
+              }
+              onChange={(value) =>
+                setFiltreState({
+                  ...filtreState,
+                  estComplet:
+                    value === undefined ? undefined : value === 'rempli',
+                })
+              }
+            />
+          </Field>
+        </FormSection>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel

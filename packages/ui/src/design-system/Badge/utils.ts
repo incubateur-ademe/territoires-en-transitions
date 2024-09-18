@@ -19,7 +19,7 @@ export const badgeClassnames: Record<
     text: 'text-grey-8',
     background: 'bg-grey-1',
     border: 'border-grey-5',
-    icon: 'text-primary-7',
+    icon: 'text-grey-8',
   },
   standard: {
     text: 'text-primary-7',

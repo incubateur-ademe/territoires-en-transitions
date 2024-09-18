@@ -41,6 +41,7 @@ climat_pratic_ids:
   - agri_alim
 thematiques:
   - urbanisme_et_amenagement
+  - agriculture_alimentation
 ```
 ## Description
 

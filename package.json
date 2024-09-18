@@ -157,6 +157,7 @@
     "dev:panier": "nx run-many -t dev -p @tet/panier @tet/auth",
     "build:app": "nx build @tet/app",
     "build:auth": "nx build @tet/auth",
+    "build:backend": "nx build @tet/backend",
     "build:site": "nx build @tet/site",
     "build:panier": "nx build @tet/panier",
     "test:app": "nx test @tet/app",

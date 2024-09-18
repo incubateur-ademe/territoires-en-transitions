@@ -1,29 +1,13 @@
 import {Meta, StoryObj} from '@storybook/react';
 
 import {ButtonMenu} from './ButtonMenu';
+import {useState} from 'react';
 
 const meta: Meta<typeof ButtonMenu> = {
   component: ButtonMenu,
-  argTypes: {
-    notificationVariant: {
-      control: {type: 'select'},
-    },
-    variant: {
-      control: {type: 'select'},
-    },
-    size: {
-      control: {type: 'select'},
-    },
-    icon: {
-      control: {type: 'text'},
-    },
-    iconPosition: {
-      control: {type: 'select'},
-    },
-  },
+  argTypes: {},
   args: {
     icon: 'equalizer-fill',
-    notificationValue: 2,
     children: (
       <div className="!w-44 text-sm">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium,
@@ -41,8 +25,27 @@ type Story = StoryObj<typeof ButtonMenu>;
 export const Default: Story = {
   render: args => {
     return (
+      <div className="flex gap-24 justify-between mb-52">
+        <ButtonMenu {...args} menuPlacement="bottom-start" />
+        <ButtonMenu {...args} notification={{number: 2}} />
+      </div>
+    );
+  },
+};
+
+export const Controlled: Story = {
+  render: args => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
       <div className="mb-52">
-        <ButtonMenu {...args} />
+        <ButtonMenu
+          {...args}
+          menuPlacement="bottom-start"
+          openState={{
+            isOpen,
+            setIsOpen,
+          }}
+        />
       </div>
     );
   },

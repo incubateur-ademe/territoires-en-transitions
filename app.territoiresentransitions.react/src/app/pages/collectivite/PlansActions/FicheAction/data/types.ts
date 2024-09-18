@@ -4,13 +4,13 @@ import {
   TActionInsert,
   TAxeInsert,
   TFicheAction,
-  TFicheActionServicePiloteInsert,
-  TFicheActionStructureInsert,
-  TFinanceurMontant,
   TFinanceurTagInsert,
-  TPartenaireInsert,
-  TSousThematiqueInsert,
+  TFinanceurMontant,
   TThematiqueRow,
+  TSousThematiqueRow,
+  TFicheActionStructureRow,
+  TFicheActionServicePiloteRow,
+  TPartenaireRow,
 } from 'types/alias';
 import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
@@ -30,16 +30,16 @@ export type FicheAction = Omit<
   | 'fiches_liees'
 > & {
   thematiques: TThematiqueRow[] | null;
-  sous_thematiques: TSousThematiqueInsert[] | null;
-  partenaires: TPartenaireInsert[] | null;
-  structures: TFicheActionStructureInsert[] | null;
+  sous_thematiques: TSousThematiqueRow[] | null;
+  partenaires: TPartenaireRow[] | null;
+  structures: TFicheActionStructureRow[] | null;
   pilotes: Personne[] | null;
   referents: Personne[] | null;
   axes: TAxeInsert[] | null;
   actions: TActionInsert[] | null;
   indicateurs: Indicateur[] | null;
-  services: TFicheActionServicePiloteInsert[] | null;
-  financeurs: Financeur[];
+  services: TFicheActionServicePiloteRow[] | null;
+  financeurs: Financeur[] | null;
   fiches_liees: FicheResume[] | null;
 };
 

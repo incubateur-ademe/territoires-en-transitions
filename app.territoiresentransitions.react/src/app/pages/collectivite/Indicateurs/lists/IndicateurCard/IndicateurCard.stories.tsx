@@ -10,7 +10,7 @@ const meta: Meta<typeof IndicateurCardBase> = {
     className: 'max-w-[28rem]',
     definition: {
       id: 1,
-      nom: 'Indicateur 1',
+      titre: 'Indicateur 1',
     },
     isLoading: false,
     data: {
@@ -31,8 +31,8 @@ export const Lien: Story = {
     },
     chartInfo: {
       confidentiel: true,
-      nom: 'Indicateur 1',
-      participation_score: true,
+      titre: 'Indicateur 1',
+      participationScore: true,
       rempli: true,
       count: 5,
       total: 5,
@@ -46,39 +46,105 @@ export const Loading: Story = {
   },
 };
 
-export const Incomplet: Story = {
+export const Imcomplet: Story = {
   args: {
     chartInfo: {
-      confidentiel: false,
-      nom: 'Achats publics avec considération environnementale',
-      participation_score: true,
+      titre: 'Achats publics avec considération environnementale',
       rempli: false,
     },
   },
 };
 
-export const CompletSansValeur: Story = {
+export const ParentIncompletEnfantsComplets: Story = {
   args: {
     chartInfo: {
       confidentiel: false,
-      nom: 'Achats publics avec considération environnementale',
+      titre: 'Achats publics avec considération environnementale',
+      rempli: false,
+      enfants: [{rempli: true}, {rempli: true}, {rempli: true}],
+    },
+  },
+};
+
+export const ParentCompletEnfantsIncomplets: Story = {
+  args: {
+    data: {
+      valeurs: fakeIndicateurValeurs,
+    },
+    chartInfo: {
+      titre: 'Achats publics avec considération environnementale',
+      participationScore: true,
+      rempli: true,
+      enfants: [{rempli: true}, {rempli: true}, {rempli: false}],
+    },
+  },
+};
+
+export const ParentSansValeurIncomplet: Story = {
+  args: {
+    chartInfo: {
+      confidentiel: false,
+      titre: 'Achats publics avec considération environnementale',
+      enfants: [{rempli: true}, {rempli: false}],
+      participationScore: true,
+      rempli: false,
+      sansValeur: true,
+    },
+  },
+};
+
+export const ParentSansValeurComplet: Story = {
+  args: {
+    chartInfo: {
+      confidentiel: false,
+      titre: 'Achats publics avec considération environnementale',
       enfants: [{rempli: true}, {rempli: true}],
-      participation_score: true,
+      participationScore: true,
       rempli: false,
-      sans_valeur: true,
+      sansValeur: true,
     },
   },
 };
 
-export const SansGraphVide: Story = {
+export const ParentSansValeurSansGraphIncomplet: Story = {
   args: {
     href: '#',
-    hideChartWithoutValue: true,
+    hideChart: true,
     chartInfo: {
-      nom: 'Achats publics avec considération environnementale',
-      participation_score: true,
-      count: 3,
-      total: 5,
+      confidentiel: false,
+      titre: 'Achats publics avec considération environnementale',
+      enfants: [{rempli: true}, {rempli: false}],
+      participationScore: true,
+      rempli: false,
+      sansValeur: true,
+    },
+  },
+};
+
+export const ParentSansValeurSansGraphComplet: Story = {
+  args: {
+    href: '#',
+    hideChart: true,
+    chartInfo: {
+      confidentiel: false,
+      titre: 'Achats publics avec considération environnementale',
+      enfants: [{rempli: true}, {rempli: true}],
+      participationScore: true,
+      rempli: false,
+      sansValeur: true,
+    },
+  },
+};
+
+export const SansGraphIncomplet: Story = {
+  args: {
+    href: '#',
+    hideChart: true,
+    chartInfo: {
+      titre: 'Achats publics avec considération environnementale',
+      enfants: [{rempli: true}, {rempli: false}],
+      participationScore: true,
+      sansValeur: true,
     },
   },
 };
@@ -90,8 +156,8 @@ export const Selectionnable: Story = {
     },
     chartInfo: {
       confidentiel: true,
-      nom: 'Indicateur 1',
-      participation_score: false,
+      titre: 'Indicateur 1',
+      participationScore: false,
       rempli: true,
       count: 5,
       total: 5,
@@ -107,8 +173,8 @@ export const SelectionnableSansGraphVide: Story = {
     },
     chartInfo: {
       confidentiel: true,
-      nom: 'Indicateur 1',
-      participation_score: false,
+      titre: 'Indicateur 1',
+      participationScore: false,
       rempli: false,
       count: 5,
       total: 5,
@@ -136,8 +202,8 @@ export const ReadOnly: Story = {
   args: {
     readonly: true,
     chartInfo: {
-      nom: 'Achats publics avec considération environnementale',
-      participation_score: true,
+      titre: 'Achats publics avec considération environnementale',
+      participationScore: true,
       count: 3,
       total: 5,
     },

@@ -5,7 +5,7 @@ export type NotificationVariant = 'default' | 'warning' | 'info' | 'error';
 
 export type NotificationSize = 'xs' | 'sm' | 'md';
 
-type Props = {
+export type NotificationProps = {
   /** Variante de couleur */
   variant?: NotificationVariant;
   /** Variante de taille */
@@ -26,9 +26,9 @@ const variantToClassname: Record<NotificationVariant, string> = {
 };
 
 const sizeToClassname: Record<NotificationSize, string> = {
-  md: 'text-base',
-  sm: 'text-sm',
-  xs: 'text-xs',
+  md: 'h-8 min-w-[2rem] text-base p-2',
+  sm: 'h-7 min-w-[1.75rem] text-sm p-1.5',
+  xs: 'h-6 min-w-[1.5rem] text-xs p-1.5',
 };
 
 /**
@@ -40,18 +40,24 @@ export const Notification = ({
   icon,
   number,
   classname,
-}: Props) => {
+}: NotificationProps) => {
   return (
     <div
       className={classNames(
         variantToClassname[variant],
         sizeToClassname[size],
-        'inline-flex items-center gap-1 p-2 rounded-full border-2 border-grey-1 shadow',
+        'inline-flex items-center justify-center gap-1 rounded-full border-2 border-grey-1 shadow',
         classname
       )}
     >
       {number !== undefined && (
-        <span className="font-extrabold leading-none">{number}</span>
+        <span
+          className={classNames('font-extrabold leading-none', {
+            'pt-0.5': !!icon,
+          })}
+        >
+          {number}
+        </span>
       )}
       {icon && <Icon icon={icon} size={size} />}
     </div>

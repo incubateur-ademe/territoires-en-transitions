@@ -348,9 +348,10 @@ const SelectButton = forwardRef(
                     }
                   )}
                 >
-                  {placeholder ?? multiple
-                    ? 'Sélectionner une ou plusieurs options'
-                    : 'Sélectionner une option'}
+                  {placeholder ??
+                    (multiple
+                      ? 'Sélectionner une ou plusieurs options'
+                      : 'Sélectionner une option')}
                 </span>
               )
             )}
@@ -367,7 +368,7 @@ const SelectButton = forwardRef(
                   data-test={`${dataTest}-input`}
                   type="text"
                   className={classNames(
-                    'w-full text-sm outline-0 placeholder:text-grey-6',
+                    'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
                     {
                       'py-1': values,
                       'text-xs': small,

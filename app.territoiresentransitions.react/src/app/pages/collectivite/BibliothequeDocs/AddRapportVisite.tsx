@@ -1,5 +1,6 @@
 import {Dispatch, SetStateAction, useState} from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
+import {Modal} from '@tet/ui';
+
 import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
 import {useAddRapportVisite} from './useAddRapportVisite';
 
@@ -25,21 +26,13 @@ export const AddRapportVisite = () => {
   return (
     <Modal
       size="lg"
-      externalOpen={opened}
-      setExternalOpen={onSetOpened}
-      render={() => {
-        return (
-          <>
-            <h4>Ajouter un rapport de visite annuelle</h4>
-            {!date ? (
-              <SelectDate setDate={setDate} />
-            ) : (
-              <AddPreuveModal
-                onClose={() => onSetOpened(false)}
-                handlers={handlers}
-              />
-            )}
-          </>
+      openState={{isOpen: opened, setIsOpen: onSetOpened}}
+      title="Ajouter un rapport de visite annuelle"
+      render={({close}) => {
+        return !date ? (
+          <SelectDate setDate={setDate} />
+        ) : (
+          <AddPreuveModal onClose={close} handlers={handlers} />
         );
       }}
     >

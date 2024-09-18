@@ -1,4 +1,4 @@
-import Modal, {RenderProps} from 'ui/shared/floating-ui/Modal';
+import {Modal, RenderProps} from '@tet/ui';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {AddRapportButton} from './AddRapportButton';
 import {useRapportsAudit} from './useAudit';
