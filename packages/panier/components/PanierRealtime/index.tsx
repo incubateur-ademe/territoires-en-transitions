@@ -17,6 +17,7 @@ import {
   usePanierContext,
   useUserContext,
 } from '@tet/panier/providers';
+import {PartagerLeLien} from './PartagerLeLien';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -134,6 +135,8 @@ const PanierRealtime = ({
         budgets={budgets}
         onToggleSelected={handleToggleSelected}
       />
+
+      <PartagerLeLien />
     </div>
   );
 };
