@@ -124,7 +124,9 @@ const FicheActionCard = ({
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
-          (ficheAction.niveau_priorite || ficheAction.statut) && (
+          (ficheAction.niveau_priorite ||
+            ficheAction.statut ||
+            ficheAction.actionImpactId) && (
             <div className="flex items-center gap-3">
               {ficheAction.niveau_priorite && (
                 <BadgePriorite
@@ -134,6 +136,16 @@ const FicheActionCard = ({
               )}
               {ficheAction.statut && (
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
+              )}
+              {ficheAction.actionImpactId && (
+                <Tooltip label="Action issue du panier d'action">
+                  <Button
+                    variant="outlined"
+                    size="xs"
+                    className="bg-primary-2 text-center border-none !p-1"
+                    icon="shopping-basket-2-line"
+                  />
+                </Tooltip>
               )}
             </div>
           )
