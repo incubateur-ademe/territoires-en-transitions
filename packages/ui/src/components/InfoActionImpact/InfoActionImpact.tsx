@@ -8,7 +8,6 @@ import {Badge} from 'design-system/Badge';
 import {Button} from 'design-system/Button';
 import {Divider} from 'design-system/Divider';
 import {InfoTooltip} from 'design-system/Tooltip';
-import {ReactNode} from 'react';
 
 const URL_AIDES_TERRITOIRES = 'https://aides-territoires.beta.gouv.fr';
 
@@ -61,7 +60,7 @@ export const InfoActionImpact = ({
   return (
     <div className={className}>
       {/* Badges thématiques */}
-      {!!thematiques.length && (
+      {!!thematiques?.length && (
         <div className="flex gap-4 flex-wrap mb-6">
           {thematiques.map(theme => (
             <Badge
