@@ -163,23 +163,23 @@ export const INDICATEURS_TRAJECTOIRE = [
           },
           {
             nom: 'Cultures',
-            identifiant: 'cae_63.e',
+            identifiant: 'cae_63.ca',
           },
           {
             nom: 'Prairies',
-            identifiant: 'cae_63.f',
+            identifiant: 'cae_63.cb',
           },
           {
             nom: 'Zones humides',
-            identifiant: 'cae_63.g',
+            identifiant: 'cae_63.da',
           },
           {
             nom: 'Sols artificiels',
-            identifiant: 'cae_63.h',
+            identifiant: 'cae_63.db',
           },
           {
             nom: 'Produits bois',
-            identifiant: 'cae_63.i',
+            identifiant: 'cae_63.e',
           },
         ],
       },
