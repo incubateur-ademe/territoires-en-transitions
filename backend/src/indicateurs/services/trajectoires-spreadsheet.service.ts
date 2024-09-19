@@ -450,7 +450,13 @@ export default class TrajectoiresSpreadsheetService {
       return null;
     }
     if (identifiantReferentielSortieParts[1].length > 1) {
-      return `${identifiantReferentielSortieParts[0]}.${identifiantReferentielSortieParts[1].slice(0, -1)}`;
+      const partieApresPoint = identifiantReferentielSortieParts[1];
+      const partieApresPointParts = partieApresPoint.split('_');
+      if (partieApresPointParts[0].length > 1) {
+        return `${identifiantReferentielSortieParts[0]}.${partieApresPointParts[0].slice(0, -1)}`;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
@@ -494,10 +500,13 @@ export default class TrajectoiresSpreadsheetService {
         // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
         if (identifiantReferentielSortie === 'cae_1.k') {
           identifiantsReferentielEntree = ['cae_1.e', 'cae_1.f'];
+          // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
+        } else if (identifiantReferentielSortie === 'cae_2.m') {
+          identifiantsReferentielEntree = ['cae_2.g', 'cae_2.h'];
           // Exception, pour cae_1.csc, pas de données d'entrée associée
         } else if (identifiantReferentielSortie === 'cae_1.csc') {
           identifiantsReferentielEntree = [];
-          // Exception pour le total de séquestraion, nécessite toutes les composantes
+          // Exception pour les totaux
         } else if (identifiantReferentielSortie === 'cae_63.a') {
           identifiantsReferentielEntree = _.flatten(
             this.trajectoiresDataService
@@ -524,9 +533,18 @@ export default class TrajectoiresSpreadsheetService {
                 .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
             ),
           ];
+          // Exception pour les sequestrations, on ne prend pas le parent
+        } else if (
+          identifiantReferentielSortie.startsWith(
+            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+          )
+        ) {
+          identifiantsReferentielEntree = [identifiantReferentielSortie];
         }
+        this.logger.log(
+          `Identifiant referentiel entrée pour ${identifiantReferentielSortie}: ${identifiantsReferentielEntree.join(', ')}`,
+        );
 
-        // TODO: exception pour les totaux?
         const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
           (identifiant) => {
             const donneeEntree = donneesEntree.find((v) =>

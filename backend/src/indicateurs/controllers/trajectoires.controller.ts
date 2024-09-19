@@ -8,7 +8,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
@@ -46,6 +46,7 @@ export class VerificationDonneesSNBCResponseClass extends createZodDto(
   verificationDonneesSNBCResponseSchema,
 ) {}
 
+@ApiTags('Trajectoires')
 @Controller('trajectoires/snbc')
 export class TrajectoiresController {
   private readonly logger = new Logger(TrajectoiresController.name);
