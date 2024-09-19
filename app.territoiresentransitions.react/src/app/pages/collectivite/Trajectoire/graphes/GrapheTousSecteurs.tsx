@@ -40,18 +40,7 @@ export const GrapheTousSecteurs = ({
       ...s,
       color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
     }))
-    .filter(s => !!s.data?.length)
-    // tri pour avoir en 1er les jeux de données contenant des valeurs négatives
-    // sinon c'est impossible d'empiler/de représenter graphiquement une valeur
-    // négative sur une valeur positive
-    .sort((a, b) => {
-      const aContientValeursNegatives = a.data.find(v => (v.y as number) < 0);
-      const bContientValeursNegatives = b.data.find(v => (v.y as number) < 0);
-      if (aContientValeursNegatives && bContientValeursNegatives) return 0;
-      if (aContientValeursNegatives) return -1;
-      if (bContientValeursNegatives) return 1;
-      return 0;
-    });
+    .filter(s => !!s.data?.length);
 
   const objectifsEtResultats = [
     {id: 'objectifs', data: objectifs, color: LAYERS.objectifs.color},
@@ -60,7 +49,6 @@ export const GrapheTousSecteurs = ({
 
   const minDate = getMinDate(objectifs, resultats);
   const maxY = getMaxY([objectifs, resultats], secteursNonVides);
-  const minY = getMinY(secteursNonVides);
 
   return (
     <>
@@ -96,7 +84,7 @@ export const GrapheTousSecteurs = ({
             },
             yScale: {
               type: 'linear',
-              min: minY,
+              min: 'auto',
               max: maxY,
               stacked: true,
             },
@@ -207,11 +195,3 @@ const getMaxY = (objectifsEtResultats: Datum[][], secteurs: LineData[]) => {
 
 const getMaxValueY = (data: Datum[]) =>
   data?.length ? Math.max(...data.map(({y}) => y as number)) : -Infinity;
-
-// détermine aussi la valeur minimum de l'échelle Y pour tenir compte des valeurs négatives
-const getMinY = (secteurs: LineData[]) => {
-  const min = Math.min(
-    ...secteurs.flatMap(s => s.data.map(v => v.y as number))
-  );
-  return min >= 0 ? 'auto' : min;
-};
