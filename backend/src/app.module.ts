@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { CommonModule } from './common/common.module';
 import { validateBackendConfiguration } from './common/services/backend-configuration.service';
+import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcRouter } from './trpc.router';
@@ -21,6 +22,7 @@ import { TrpcModule } from './trpc/trpc.module';
     CollectivitesModule,
     IndicateursModule,
     AuthModule,
+    FichesActionModule,
   ],
   controllers: [],
   exports: [TrpcRouter],
