@@ -1,6 +1,6 @@
-import {Ref, forwardRef} from 'react';
-import {PatternFormat, PatternFormatProps} from 'react-number-format';
-import {InputBase, InputBaseProps} from './InputBase';
+import { ComponentType, Ref, forwardRef } from 'react';
+import { PatternFormat, PatternFormatProps } from 'react-number-format';
+import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputPatternProps = Omit<PatternFormatProps, 'type' | 'value'> & {
   value?: InputBaseProps['value'];
@@ -14,12 +14,12 @@ export type InputPatternProps = Omit<PatternFormatProps, 'type' | 'value'> & {
  */
 export const InputPattern = forwardRef(
   (
-    {value, ...remainingProps}: InputPatternProps,
+    { value, ...remainingProps }: InputPatternProps,
     ref?: Ref<HTMLInputElement>
   ) => {
     return (
       <PatternFormat
-        customInput={InputBase}
+        customInput={InputBase as ComponentType}
         getInputRef={ref}
         value={value}
         {...remainingProps}

@@ -1,25 +1,24 @@
-import ChartWithLegend from '@components/charts/ChartWithLegend';
-import {supabase} from 'app/initSupabase';
+import { supabase } from '@tet/site/app/initSupabase';
+import BarChart from '@tet/site/components/charts/BarChart';
+import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
 import useSWR from 'swr';
-import {fromMonth} from './shared';
-import {addLocalFilters} from './utils';
-import BarChart from '@components/charts/BarChart';
+import { fromMonth } from './shared';
 
 const useEvolutionCollectivitesLabellisees = (
   codeRegion: string,
-  codeDepartement: string,
+  codeDepartement: string
 ) => {
   return useSWR(
     `stats_evolution_nombre_labellisations-${codeRegion}-${codeDepartement}`,
     async () => {
-      let select = supabase
+      const select = supabase
         .from('stats_evolution_nombre_labellisations')
         .select()
         .gte('mois', fromMonth);
 
       //   select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error(error.message);
@@ -29,8 +28,8 @@ const useEvolutionCollectivitesLabellisees = (
       }
 
       return data
-        .filter(d => d.mois !== null)
-        .map(d => ({
+        .filter((d) => d.mois !== null)
+        .map((d) => ({
           mois: d.mois,
           '1 étoile': d.etoile_1 ?? 0,
           '2 étoiles': d.etoile_2 ?? 0,
@@ -38,7 +37,7 @@ const useEvolutionCollectivitesLabellisees = (
           '4 étoiles': d.etoile_4 ?? 0,
           '5 étoiles': d.etoile_5 ?? 0,
         }));
-    },
+    }
   );
 };
 
@@ -51,13 +50,13 @@ const EvolutionCollectivitesLabellisees = ({
   region = '',
   department = '',
 }: EvolutionCollectivitesLabelliseesProps) => {
-  const {data} = useEvolutionCollectivitesLabellisees(region, department);
+  const { data } = useEvolutionCollectivitesLabellisees(region, department);
 
   if (!data) return null;
 
   return (
     <ChartWithLegend
-      graph={colors => (
+      graph={(colors) => (
         <BarChart
           data={
             data as {

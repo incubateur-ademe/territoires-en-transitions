@@ -1,26 +1,26 @@
 'use server';
 
-import {Metadata, ResolvingMetadata} from 'next';
+import { Metadata, ResolvingMetadata } from 'next';
 import classNames from 'classnames';
 import {
   fetchCollectivite,
   getStrapiData,
   getStrapiDefaultData,
 } from '../../utils';
-import Section from '@components/sections/Section';
+import Section from '@tet/site/components/sections/Section';
 import CollectiviteHeader from './CollectiviteHeader';
-import LabellisationLogo from '@components/labellisation/LabellisationLogo';
+import LabellisationLogo from '@tet/site/components/labellisation/LabellisationLogo';
 import ContenuCollectivite from './ContenuCollectivite';
 import IndicateursCollectivite from './IndicateursCollectivite';
-import {natureCollectiviteToLabel} from 'src/utils/labels';
+import { natureCollectiviteToLabel } from '@tet/site/src/utils/labels';
 import AccesCompte from './AccesCompte';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
-import {notFound} from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata(
-  {params}: {params: {code: string}},
-  parent: ResolvingMetadata,
+  { params }: { params: { code: string } },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const collectiviteData = await fetchCollectivite(params.code);
@@ -55,7 +55,7 @@ export async function generateMetadata(
   });
 }
 
-const DetailCollectivite = async ({params}: {params: {code: string}}) => {
+const DetailCollectivite = async ({ params }: { params: { code: string } }) => {
   const collectiviteData = await fetchCollectivite(params.code);
   const strapiData = await getStrapiData(params.code);
   const strapiDefaultData = await getStrapiDefaultData();
@@ -92,7 +92,7 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
       <div
         className={classNames(
           'col-span-full md:col-span-4 lg:col-span-3 lg:row-span-2 md:max-lg:order-last flex flex-col md:gap-10 xl:gap-12',
-          {'lg:order-last': !collectiviteData.collectivite.labellisee},
+          { 'lg:order-last': !collectiviteData.collectivite.labellisee }
         )}
       >
         {collectiviteData.collectivite.labellisee && (
@@ -108,13 +108,13 @@ const DetailCollectivite = async ({params}: {params: {code: string}}) => {
             <HistoriqueLabellisation
               referentiel="cae"
               historique={collectiviteData.collectivite.labellisations.filter(
-                label => label.referentiel === 'cae' && label.annee !== null,
+                (label) => label.referentiel === 'cae' && label.annee !== null
               )}
             />
             <HistoriqueLabellisation
               referentiel="eci"
               historique={collectiviteData.collectivite.labellisations.filter(
-                label => label.referentiel === 'eci' && label.annee !== null,
+                (label) => label.referentiel === 'eci' && label.annee !== null
               )}
             />
           </>

@@ -1,8 +1,8 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
-import {ModuleIndicateursSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@tet/api';
+import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
+import { ModuleIndicateursSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
 import {
   Field,
   FormSection,
@@ -11,13 +11,13 @@ import {
   ModalProps,
   useEventTracker,
 } from '@tet/ui';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QueryKey, useQueryClient} from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { QueryKey, useQueryClient } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import {splitPilotePersonnesAndUsers} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import { splitPilotePersonnesAndUsers } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 
 type Props = ModalProps & {
@@ -68,7 +68,7 @@ const ModalIndicateursSuiviPlan = ({
             <PlansActionDropdown
               type="multiple"
               values={filtreState?.planActionIds}
-              onChange={({plans, selectedPlan}) =>
+              onChange={({ plans, selectedPlan }) =>
                 ((filtreState?.planActionIds?.length === 1 &&
                   selectedPlan !== filtreState?.planActionIds[0]) ||
                   (filtreState?.planActionIds &&
@@ -83,7 +83,7 @@ const ModalIndicateursSuiviPlan = ({
           <Field title="Pilote de l'indicateur :">
             <PersonnesDropdown
               values={pilotes.length ? pilotes : undefined}
-              onChange={({personnes}) =>
+              onChange={({ personnes }) =>
                 setFiltreState({
                   ...filtreState,
                   ...splitPilotePersonnesAndUsers(personnes),
@@ -94,10 +94,10 @@ const ModalIndicateursSuiviPlan = ({
           <Field title="Thématique de l'indicateur :">
             <ThematiquesDropdown
               values={filtreState?.thematiqueIds}
-              onChange={({thematiques}) =>
+              onChange={({ thematiques }) =>
                 setFiltreState({
                   ...filtreState,
-                  thematiqueIds: thematiques.map(t => t.id),
+                  thematiqueIds: thematiques.map((t) => t.id),
                 })
               }
             />
@@ -111,7 +111,7 @@ const ModalIndicateursSuiviPlan = ({
                   ? 'rempli'
                   : 'incomplet'
               }
-              onChange={value =>
+              onChange={(value) =>
                 setFiltreState({
                   ...filtreState,
                   estComplet:
@@ -122,7 +122,7 @@ const ModalIndicateursSuiviPlan = ({
           </Field>
         </FormSection>
       )}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => close(),
@@ -143,7 +143,7 @@ const ModalIndicateursSuiviPlan = ({
                 },
               });
 
-              keysToInvalidate?.forEach(key =>
+              keysToInvalidate?.forEach((key) =>
                 queryClient.invalidateQueries(key)
               );
 

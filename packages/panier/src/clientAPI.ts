@@ -1,5 +1,5 @@
 import {ActionImpactAPI, PanierAPI} from '@tet/api';
-import {createClient} from 'src/supabase/client';
+import {createClient} from '@tet/panier/src/supabase/client';
 
 export const supabase = createClient()
 

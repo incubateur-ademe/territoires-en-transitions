@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -13,13 +13,13 @@ import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurC
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import {Indicateurs} from '@tet/api';
-import {getIndicateurGroup} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { Indicateurs } from '@tet/api';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {OpenState} from '@tet/ui/dist/utils/types';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { OpenState } from '@tet/ui/utils/types';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type sortByOptionsType = {
   label: string;
@@ -81,7 +81,7 @@ const IndicateursListe = ({
 
   /** Tri sélectionné */
   const [sort, setSort] = useState(
-    sortByOptions.find(o => o.value === sortSettings.defaultSort)!
+    sortByOptions.find((o) => o.value === sortSettings.defaultSort)!
   );
 
   /** Récupère les différentes options de tri à partir des paramètres ou par défault */
@@ -90,10 +90,10 @@ const IndicateursListe = ({
 
     if (optionsDisplayed) {
       return sortByOptions
-        .filter(o => optionsDisplayed.includes(o.value))
-        .map(o => ({label: o.label, value: o.value}));
+        .filter((o) => optionsDisplayed.includes(o.value))
+        .map((o) => ({ label: o.label, value: o.value }));
     } else {
-      return sortByOptions.map(o => ({label: o.label, value: o.value}));
+      return sortByOptions.map((o) => ({ label: o.label, value: o.value }));
     }
   };
 
@@ -109,7 +109,7 @@ const IndicateursListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const {data, isLoading} = useFilteredIndicateurDefinitions(
+  const { data, isLoading } = useFilteredIndicateurDefinitions(
     {
       filtre: {
         ...filtres,
@@ -150,11 +150,11 @@ const IndicateursListe = ({
         <div className="w-64">
           <Select
             options={sortOptions}
-            onChange={value =>
-              value && setSort(sortByOptions.find(o => o.value === value)!)
+            onChange={(value) =>
+              value && setSort(sortByOptions.find((o) => o.value === value)!)
             }
             values={sort.value}
-            customItem={v => <span className="text-grey-8">{v.label}</span>}
+            customItem={(v) => <span className="text-grey-8">{v.label}</span>}
             disabled={sortOptions.length === 1}
             small
           />
@@ -184,15 +184,15 @@ const IndicateursListe = ({
         {/** Champ de recherche */}
         <Input
           type="search"
-          onChange={e => setSearch(e.target.value)}
-          onSearch={v => setDebouncedSearch(v)}
+          onChange={(e) => setSearch(e.target.value)}
+          onSearch={(v) => setDebouncedSearch(v)}
           value={search}
           containerClassname="ml-auto w-full md:w-96"
           placeholder="Rechercher par nom ou description"
           displaySize="sm"
         />
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
-        {settings({isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen})}
+        {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués */}
       {filtres && (
@@ -225,7 +225,7 @@ const IndicateursListe = ({
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
-            {currentDefs?.map(definition => (
+            {currentDefs?.map((definition) => (
               <IndicateurCard
                 key={definition.id}
                 definition={definition}
@@ -236,7 +236,7 @@ const IndicateursListe = ({
                   identifiantReferentiel: definition.identifiant,
                 })}
                 className="hover:!bg-white"
-                card={{external: true}}
+                card={{ external: true }}
                 hideChart={!displayGraphs}
                 autoRefresh
                 isEditable={isEditable}
@@ -250,7 +250,7 @@ const IndicateursListe = ({
               selectedPage={currentPage}
               nbOfElements={countTotal}
               maxElementsPerPage={maxNbOfCards}
-              onChange={page => setCurrentPage(page)}
+              onChange={(page) => setCurrentPage(page)}
             />
           </div>
         </div>

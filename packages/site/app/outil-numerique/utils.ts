@@ -1,5 +1,5 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
   const data = await fetchSingle('page-outils-numerique', [
@@ -48,9 +48,9 @@ export const getStrapiData = async () => {
         outilData.avantages as unknown as {
           id: number;
           legende: string;
-          image: {data: StrapiItem};
+          image: { data: StrapiItem };
         }[]
-      ).map(av => ({
+      ).map((av) => ({
         ...av,
         image: av.image.data,
       })),
@@ -63,7 +63,7 @@ export const getStrapiData = async () => {
       },
       temoignages: (
         (outilData.temoignages_liste.data as unknown as StrapiItem[]) ?? []
-      ).map(t => ({
+      ).map((t) => ({
         id: t.id,
         auteur: t.attributes.temoignage?.auteur as unknown as string,
         role: t.attributes.temoignage?.role as unknown as string,

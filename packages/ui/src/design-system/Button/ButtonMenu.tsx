@@ -1,5 +1,5 @@
-import {cloneElement, useState} from 'react';
-import {flushSync} from 'react-dom';
+import { cloneElement, useState } from 'react';
+import { flushSync } from 'react-dom';
 import {
   autoUpdate,
   FloatingNode,
@@ -15,9 +15,9 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 
-import {ButtonProps} from './types';
-import {Button} from './Button';
-import {OpenState} from '../../utils/types';
+import { ButtonProps } from './types';
+import { Button } from './Button';
+import { OpenState } from '../../utils/types';
 
 type Props = {
   /** Le contenu du menu */
@@ -52,11 +52,11 @@ export const ButtonMenu = ({
     }
   };
 
-  const [maxHeight, setMaxHeight] = useState(null);
+  const [maxHeight, setMaxHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
 
-  const {refs, context, x, y, strategy} = useFloating({
+  const { refs, context, x, y, strategy } = useFloating({
     nodeId,
     open: isOpen,
     onOpenChange: handleOpenChange,
@@ -66,7 +66,7 @@ export const ButtonMenu = ({
       offset(8),
       shift(),
       size({
-        apply({availableHeight}) {
+        apply({ availableHeight }) {
           // https://floating-ui.com/docs/size
           flushSync(() => setMaxHeight(availableHeight));
         },
@@ -74,13 +74,15 @@ export const ButtonMenu = ({
     ],
   });
 
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
     useDismiss(context),
   ]);
 
   const hasScroll =
-    refs.floating.current?.scrollHeight > refs.floating.current?.clientHeight;
+    refs.floating.current?.scrollHeight !== undefined &&
+    refs.floating.current?.clientHeight !== undefined &&
+    refs.floating.current.scrollHeight > refs.floating.current.clientHeight;
 
   return (
     <>

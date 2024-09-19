@@ -1,7 +1,6 @@
 'use client';
 
-import {FooterTeT} from '@tet/ui';
-import {SITE_BASE_URL} from 'src/utils/constants';
+import { FooterTeT, SITE_BASE_URL } from '@tet/ui';
 
 const Footer = () => {
   return (

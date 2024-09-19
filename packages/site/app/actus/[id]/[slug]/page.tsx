@@ -1,25 +1,25 @@
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import Section from '@components/sections/Section';
-import {getLocalDateString} from 'src/utils/getLocalDateString';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import Section from '@tet/site/components/sections/Section';
+import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
 import ParagrapheArticle from './ParagrapheArticle';
 import InfoArticle from './InfoArticle';
-import {GallerieArticleData, ImageArticleData} from '../../../types';
-import {getData, getMetaData} from './utils';
+import { GallerieArticleData, ImageArticleData } from '../../../types';
+import { getData, getMetaData } from './utils';
 import GallerieArticle from './GallerieArticle';
-import EmbededVideo from '@components/video/EmbededVideo';
-import {ParagrapheCustomArticleData} from 'app/types';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
-import {notFound} from 'next/navigation';
+import EmbededVideo from '@tet/site/components/video/EmbededVideo';
+import { ParagrapheCustomArticleData } from '@tet/site/app/types';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata(
-  {params}: {params: {id: string}},
-  parent: ResolvingMetadata,
+  { params }: { params: { id: string } },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const data = await getMetaData(parseInt(params.id));
   const metadata = (await parent) as Metadata;
 
-  let newMetaData = getUpdatedMetadata(metadata, {
+  const newMetaData = getUpdatedMetadata(metadata, {
     title: data.title ?? 'Actualités',
     networkTitle: data.title,
     description: data.description,
@@ -37,7 +37,7 @@ export async function generateMetadata(
   };
 }
 
-const Article = async ({params}: {params: {id: string}}) => {
+const Article = async ({ params }: { params: { id: string } }) => {
   const id = parseInt(params.id);
   const data = await getData(id);
 

@@ -1,6 +1,6 @@
-import BigBasketPicto from '@components/Picto/BigBasketPicto';
-import DashboardPicto from '@components/Picto/DashboardPicto';
-import Section from '@components/Section';
+import BigBasketPicto from '@tet/panier/components/Picto/BigBasketPicto';
+import DashboardPicto from '@tet/panier/components/Picto/DashboardPicto';
+import Section from '@tet/panier/components/Section';
 import CestParti from './CestParti';
 import ReprendrePanier from './ReprendrePanier';
 

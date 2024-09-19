@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {Icon, IconValue} from '../Icon';
+import { Icon, IconValue } from '../Icon';
 
 export type NotificationVariant = 'default' | 'warning' | 'info' | 'error';
 
@@ -59,7 +59,7 @@ export const Notification = ({
           {number}
         </span>
       )}
-      <Icon icon={icon} size={size} />
+      {icon && <Icon icon={icon} size={size} />}
     </div>
   );
 };

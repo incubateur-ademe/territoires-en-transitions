@@ -1,16 +1,16 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {ficheResumesFetch} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/data_access/fiche_resumes.fetch';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FetchOptions} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { ficheResumesFetch } from '@tet/api/fiche_actions/fiche_resumes.list/data_access/fiche_resumes.fetch';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { FetchOptions } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 
 type Props = {
   options?: FetchOptions;
 };
 
 export const useFicheResumesFetch = (props?: Props) => {
-  const {options} = props || {};
+  const { options } = props || {};
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
@@ -23,7 +23,7 @@ export const useFicheResumesFetch = (props?: Props) => {
       return await ficheResumesFetch({
         dbClient: supabaseClient,
         collectiviteId,
-        options: options ?? {filtre: {}},
+        options: options ?? { filtre: {} },
       });
     }
   );

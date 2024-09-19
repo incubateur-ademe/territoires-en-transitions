@@ -1,4 +1,4 @@
-const {preset} = require('@tet/ui');
+const { preset } = require('../packages/ui/src/tailwind-preset');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

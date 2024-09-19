@@ -15,12 +15,12 @@ ARG --global REG_USER='territoiresentransitions'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
 # tags appliqués aux images docker générées
 ARG --global ENV_NAME="dev"
-ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
+ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 # TODO changer le tag
-ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$APP_TAG 
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$APP_TAG
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -266,30 +266,33 @@ node-fr: ## construit l'image de base pour les images utilisant node
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
-    FROM --platform=$PLATFORM node:20
+    FROM --platform=$PLATFORM node:20-slim
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
+
+    ENV PNPM_HOME="/pnpm"
+    ENV PATH="$PNPM_HOME:$PATH"
+    RUN corepack enable
+
     USER node:node
-    WORKDIR "/app"
-    SAVE IMAGE node-fr:latest
+    WORKDIR /app
+    # SAVE IMAGE node-fr:latest
 
 front-deps: ## construit l'image contenant les dépendances des modules front
     FROM +node-fr
     # tsconfig global
     COPY ./tsconfig.json ./
     # dépendances globales
-    COPY ./package.json ./
-    COPY ./package-lock.json ./
-    # dépendances des modules
-    COPY $APP_DIR/package.json ./$APP_DIR/
-    COPY $BACKEND_DIR/package.json ./$BACKEND_DIR/
-    COPY $AUTH_DIR/package.json ./$AUTH_DIR/
-    COPY $SITE_DIR/package.json ./$SITE_DIR/
-    COPY $PANIER_DIR/package.json ./$PANIER_DIR/
-    COPY $UI_DIR/package.json ./$UI_DIR/
-    COPY $API_DIR/package.json ./$API_DIR/
-    # installe les dépendances
-    RUN npm ci
+    COPY package.json ./
+    COPY pnpm-lock.yaml ./
+
+    RUN pnpm install
+
+    COPY *.json ./
+    COPY nx.json ./
+    COPY jest.* ./
+    COPY vitest.* ./
+
     SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
 
 front-deps-builder:
@@ -309,21 +312,21 @@ backend-pre-build:
 backend-build:
     # TODO: why not us an alpine node:lts-alpine ?
     FROM +node-fr
- 
+
     ENV NODE_ENV production
     ENV PORT 3000
     ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
     ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
     ENV APPLICATION_VERSION=$APPLICATION_VERSION
- 
+
     COPY --chown=node:node +backend-pre-build/app/package*.json .
     COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
     COPY --chown=node:node +backend-pre-build/app/backend/package.json ./backend/package.json
     COPY --chown=node:node +backend-pre-build/app/backend/node_modules ./backend/node_modules
     COPY --chown=node:node +backend-pre-build/app/backend/dist ./backend/dist
- 
+
     EXPOSE ${PORT}
- 
+
     CMD ["node", "backend/dist/backend/src/main.js"]
     SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
 
@@ -368,7 +371,7 @@ app-build: ## construit l'image de l'app
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
     COPY $API_DIR/. $API_DIR
-    RUN npm run build:app
+    RUN pnpm run build:app
     EXPOSE 3000
     WORKDIR $APP_DIR
     CMD ["dumb-init", "node", "server.js"]
@@ -398,10 +401,10 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
-    RUN npm run build -w @tet/api
-    RUN npm run build -w @tet/ui
+    COPY ./vitest.workspace.ts ./
+
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/app
+    CMD pnpm run test:app
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
@@ -422,7 +425,7 @@ package-api-test-build: ## construit une image pour exécuter les tests d'intég
     # copie les sources du module à tester
     COPY $API_DIR $API_DIR
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/api
+    CMD pnpm run test:api
     SAVE IMAGE package-api-test:latest
 
 package-api-test: ## lance les tests d'intégration de l'api
@@ -462,7 +465,7 @@ panier-build: ## construit l'image du panier
     COPY $PANIER_DIR $PANIER_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:panier
+    RUN pnpm run build:panier
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/panier/"]
     SAVE IMAGE --cache-from=$PANIER_IMG_NAME --push $PANIER_IMG_NAME
 
@@ -501,7 +504,7 @@ site-build: ## construit l'image du site
     COPY $SITE_DIR $SITE_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:site
+    RUN pnpm run build:site
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
     SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
 
@@ -534,7 +537,7 @@ auth-build: ## construit l'image du module d'authentification
     COPY $AUTH_DIR $AUTH_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:auth
+    RUN pnpm run build:auth
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/auth/"]
     SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
 
@@ -552,7 +555,7 @@ storybook-build: ## construit l'image du storybook du module `ui`
     ARG PORT=6007
     FROM +front-deps
     COPY $UI_DIR/. $UI_DIR
-    RUN npm run build-storybook -w @tet/ui
+    RUN npx nx build-storybook @tet/ui
     EXPOSE $PORT
     #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
     WORKDIR $UI_DIR
@@ -570,39 +573,39 @@ storybook-run: ## construit et lance l'image du storybook du module `ui` en loca
         --publish 6007:6007 \
         $STORYBOOK_IMG_NAME
 
-storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
-    ARG PORT=6007
-    # pour avoir playwright déjà pré-installé
-    FROM mcr.microsoft.com/playwright:v1.40.0-jammy
-    # installe les outils de build nécessaire à l'installation de certains packages npm
-    RUN apt update
-    RUN apt install -y build-essential
-    # répertoire de travail
-    RUN mkdir storybook
-    WORKDIR storybook
-    # installe les deps
-    COPY ./package.json ./
-    COPY ./package-lock.json ./
-    COPY $UI_DIR/package.json $UI_DIR/
-    RUN npm i
-    # réinstalle swc pour avoir le bon bindings natif
-    RUN npm i -D @swc/cli @swc/core
-    # installe le navigateur utilisé pour les tests
-    RUN npx playwright install --with-deps chromium
-    # copie les sources
-    COPY $UI_DIR $UI_DIR
-    # commande utilisée pour exécuter les tests
-    CMD npm run test -w @tet/ui -- --no-index-json
-    SAVE IMAGE storybook-test:latest
+# storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
+#     ARG PORT=6007
+#     # pour avoir playwright déjà pré-installé
+#     FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+#     # installe les outils de build nécessaire à l'installation de certains packages npm
+#     RUN apt update
+#     RUN apt install -y build-essential
+#     # répertoire de travail
+#     RUN mkdir storybook
+#     WORKDIR storybook
+#     # installe les deps
+#     COPY ./package.json ./
+#     COPY ./package-lock.json ./
+#     COPY $UI_DIR/package.json $UI_DIR/
+#     RUN npm i
+#     # réinstalle swc pour avoir le bon bindings natif
+#     RUN npm i -D @swc/cli @swc/core
+#     # installe le navigateur utilisé pour les tests
+#     RUN npx playwright install --with-deps chromium
+#     # copie les sources
+#     COPY $UI_DIR $UI_DIR
+#     # commande utilisée pour exécuter les tests
+#     CMD npx nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
+#     SAVE IMAGE storybook-test:latest
 
-storybook-test-run: # lance les tests du module `ui`
-    ARG network=host
-    LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
-    RUN docker run --rm \
-        --name storybook_test \
-        --network $network \
-        storybook-test:latest
+# storybook-test-run: # lance les tests du module `ui`
+#     ARG network=host
+#     LOCALLY
+#     DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
+#     RUN docker run --rm \
+#         --name storybook_test \
+#         --network $network \
+#         storybook-test:latest
 
 curl-test-build:
     FROM curlimages/curl:8.1.0

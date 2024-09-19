@@ -6,15 +6,15 @@ import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
 import Compte from './Compte';
 import Ressources from './Ressources';
-import NoResult from '@components/info/NoResult';
-import {getStrapiData} from './utils';
+import NoResult from '@tet/site/components/info/NoResult';
+import { getStrapiData } from './utils';
 import Carte from './Carte';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 
 export async function generateMetadata(
-  params: {params: {}},
-  parent: ResolvingMetadata,
+  params: { params: unknown },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

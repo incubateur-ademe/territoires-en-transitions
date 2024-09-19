@@ -1,8 +1,8 @@
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../tests/auth';
-import {supabase} from '../../tests/supabase';
-import {testReset} from '../../tests/testReset';
-import {selectSources} from './source.fetch';
+import { beforeAll, expect, test } from 'vitest';
+import { signIn, signOut } from '../../tests/auth';
+import { supabase } from '../../tests/supabase';
+import { testReset } from '../../tests/testReset';
+import { selectSources } from './source.fetch';
 
 beforeAll(async () => {
   await signIn('yolododo');
@@ -15,6 +15,6 @@ beforeAll(async () => {
 
 test('Test selectSources', async () => {
   const data = await selectSources(supabase);
-  expect(data!).not.toBeNull();
-  expect(data!).toHaveLength(4);
+  expect(data).not.toBeNull();
+  expect(data).toHaveLength(4);
 });

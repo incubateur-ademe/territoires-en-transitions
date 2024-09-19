@@ -1,7 +1,7 @@
 'use client';
 
-import PanierRealtime from '@components/PanierRealtime';
-import Section from '@components/Section';
+import PanierRealtime from '@tet/panier/components/PanierRealtime';
+import Section from '@tet/panier/components/Section';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,

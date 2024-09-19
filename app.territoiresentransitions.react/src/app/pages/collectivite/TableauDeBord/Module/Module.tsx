@@ -1,9 +1,9 @@
-import {Filtre} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Button, useEventTracker} from '@tet/ui';
+import { Filtre } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Button, useEventTracker } from '@tet/ui';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import classNames from 'classnames';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import React, {useState} from 'react';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import React, { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 type ModalState = {
@@ -78,7 +78,7 @@ const Module = ({
         <Button size="sm" onClick={() => setIsModalOpen(true)}>
           Modifier le filtre
         </Button>
-        {editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
+        {editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
       </ModuleContainer>
     );
   }
@@ -102,7 +102,7 @@ const Module = ({
             }}
           />
           {isModalOpen &&
-            editModal({isOpen: isModalOpen, setIsOpen: setIsModalOpen})}
+            editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
         </>
       </div>
       {/** Filtres du module */}

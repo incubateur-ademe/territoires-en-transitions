@@ -1,7 +1,7 @@
-import {monComptePath} from 'app/paths';
-import {ProfilRoutes} from './ProfileRoutes';
-import SideNav, {SideNavLinks} from 'ui/shared/SideNav';
-import {getRejoindreCollectivitePath} from '@tet/api';
+import { monComptePath } from 'app/paths';
+import { ProfilRoutes } from './ProfileRoutes';
+import SideNav, { SideNavLinks } from 'ui/shared/SideNav';
+import { getRejoindreCollectivitePath } from '@tet/api';
 
 const Profil = () => {
   const links: SideNavLinks = [

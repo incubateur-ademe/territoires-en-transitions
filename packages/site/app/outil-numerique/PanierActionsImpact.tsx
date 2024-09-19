@@ -1,10 +1,10 @@
 'use client';
 
-import {Button} from '@tet/ui';
-import Section from '@components/sections/Section';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import Markdown from '@components/markdown/Markdown';
+import { Button } from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import Markdown from '@tet/site/components/markdown/Markdown';
 import './styles.css';
 
 type PanierActionsImpactProps = {

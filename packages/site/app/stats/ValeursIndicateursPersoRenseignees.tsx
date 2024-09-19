@@ -1,15 +1,15 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {colors, formatInteger, fromMonth} from './shared';
-import {ChartTitle} from './headings';
-import {addLocalFilters} from './utils';
-import LineChart from '@components/charts/LineChart';
+import { supabase } from '../initSupabase';
+import { colors, formatInteger, fromMonth } from './shared';
+import { ChartTitle } from './headings';
+import { addLocalFilters } from './utils';
+import LineChart from '@tet/site/components/charts/LineChart';
 
 function useValeursIndicateursPersoRenseignees(
   codeRegion: string,
-  codeDepartement: string,
+  codeDepartement: string
 ) {
   return useSWR(
     `stats_locales_evolution_resultat_indicateur_personnalise-${codeRegion}-${codeDepartement}`,
@@ -21,11 +21,11 @@ function useValeursIndicateursPersoRenseignees(
 
       select = addLocalFilters(select, codeDepartement, codeRegion);
 
-      const {data, error} = await select;
+      const { data, error } = await select;
 
       if (error) {
         throw new Error(
-          'stats_locales_evolution_resultat_indicateur_personnalise',
+          'stats_locales_evolution_resultat_indicateur_personnalise'
         );
       }
       if (!data || !data.length) {
@@ -34,11 +34,11 @@ function useValeursIndicateursPersoRenseignees(
       return [
         {
           id: 'Valeurs renseignées',
-          data: data.map(d => ({x: d.mois, y: d.indicateurs})),
+          data: data.map((d) => ({ x: d.mois, y: d.indicateurs })),
           last: data[data.length - 1].indicateurs,
         },
       ];
-    },
+    }
   );
 }
 
@@ -51,7 +51,7 @@ export default function ValeursIndicateursPersoRenseignees({
   region = '',
   department = '',
 }: ValeursIndicateursPersoRenseigneesProps) {
-  const {data} = useValeursIndicateursPersoRenseignees(region, department);
+  const { data } = useValeursIndicateursPersoRenseignees(region, department);
 
   if (!data) return null;
 

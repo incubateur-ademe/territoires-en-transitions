@@ -1,0 +1,40 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "strict": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "target": "es2021",
+    "module": "esnext",
+    "lib": ["es2021", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tet/api": ["./packages/api/src/index.ts"],
+      "@tet/api/*": ["./packages/api/src/*"],
+      "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
+      "@tet/auth/*": ["./packages/auth/*"],
+      "@tet/panier/*": ["./packages/panier/*"],
+      "@tet/site/*": ["./packages/site/*"],
+      "@tet/ui": ["./packages/ui/src/index.ts"],
+      "@tet/ui/*": ["./packages/ui/src/*"],
+      "app/*": ["./app.territoiresentransitions.react/src/app/*"],
+      "core-logic/*": ["./app.territoiresentransitions.react/src/core-logic/*"],
+      "environmentVariables": [
+        "./app.territoiresentransitions.react/src/environmentVariables"
+      ],
+      "types/*": ["./app.territoiresentransitions.react/src/types/*"],
+      "ui": ["./app.territoiresentransitions.react/src/ui/*"],
+      "ui/*": ["./app.territoiresentransitions.react/src/ui/*"],
+      "utils/*": ["./app.territoiresentransitions.react/src/utils/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

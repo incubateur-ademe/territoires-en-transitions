@@ -1,6 +1,6 @@
-import Markdown from '@components/markdown/Markdown';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {ParagrapheCustomArticleData} from 'app/types';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { ParagrapheCustomArticleData } from '@tet/site/app/types';
 import classNames from 'classnames';
 
 type ParagrapheArticleProps = {
@@ -8,7 +8,7 @@ type ParagrapheArticleProps = {
 };
 
 const ParagrapheArticle = ({
-  paragraphe: {titre, texte, image, alignementImage, legendeVisible},
+  paragraphe: { titre, texte, image, alignementImage, legendeVisible },
 }: ParagrapheArticleProps) => {
   return (
     <div className="flex flex-col w-full">
@@ -40,7 +40,7 @@ const ParagrapheArticle = ({
                   {
                     'float-left md:mr-6': alignementImage === 'Gauche',
                     'float-right md:ml-6': alignementImage === 'Droite',
-                  },
+                  }
                 )}
                 displayCaption={legendeVisible}
               />

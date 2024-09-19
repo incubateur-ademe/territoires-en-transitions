@@ -1,10 +1,10 @@
-import InfoSection from '@components/sections/InfoSection';
+import InfoSection from '@tet/site/components/sections/InfoSection';
 
 type CompteProps = {
   description: string;
 };
 
-const Compte = ({description}: CompteProps) => {
+const Compte = ({ description }: CompteProps) => {
   return (
     <InfoSection
       content={description}

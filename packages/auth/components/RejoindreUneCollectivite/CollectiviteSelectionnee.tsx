@@ -1,4 +1,4 @@
-import {CollectiviteInfo} from '@components/RejoindreUneCollectivite/type';
+import {CollectiviteInfo} from '@tet/auth/components/RejoindreUneCollectivite/type';
 import {Alert, Button, Icon, useCopyToClipboard} from '@tet/ui';
 
 type Props = {

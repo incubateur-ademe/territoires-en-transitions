@@ -1,10 +1,10 @@
 import {NextRequest} from 'next/server';
 import {z} from 'zod';
-import {sendEmail} from 'src/utils/sendEmail';
+import {sendEmail} from '@tet/auth/src/utils/sendEmail';
 import {
   authError,
   getDbUserFromRequest,
-} from 'src/supabase/getDbUserFromRequest';
+} from '@tet/auth/src/supabase/getDbUserFromRequest';
 
 // schéma des données attendues
 const invitationSchema = z.object({

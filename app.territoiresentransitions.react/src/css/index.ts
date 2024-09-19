@@ -1,14 +1,14 @@
 // feuille de styles globale fourni par le module partagé
-import '@tet/ui/dist/global.css';
+import '@tet/ui/global.css';
 
 // jeux d'icônes supplémentaires
-import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-editor/icons-editor.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-editor/icons-editor.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.min.css';
 
 // patches
-import 'css/app.css';
+import './app.css';

@@ -1,14 +1,14 @@
-import {action} from '@storybook/addon-actions';
+import { action } from '@storybook/addon-actions';
 
-import {Membres, MembresProps} from './Membres';
+import { Membres, MembresProps } from './Membres';
 
-import {fakeUserData} from '../../../../fixtures/userData';
+import { fakeUserData } from '../../../../fixtures/userData';
 import {
   fakeCurrentCollectiviteAdmin,
   fakeCurrentCollectiviteLecture,
 } from '../../../../fixtures/currentCollectivite';
-import {fakeMembres} from './components/fakeData';
-import {TUpdateMembre} from './types';
+import { fakeMembres } from './components/fakeData';
+import { TUpdateMembre } from './types';
 
 export default {
   component: Membres,
@@ -20,9 +20,9 @@ const handlers = {
 };
 
 const EnTantQueLecteurArgs: MembresProps = {
-  addUser: async _request => null,
+  addUser: async () => null,
   addUserResponse: {},
-  currentUser: {...fakeUserData, id: '3'},
+  currentUser: { ...fakeUserData, id: '3' },
   membres: fakeMembres,
   isLoading: false,
   collectivite: fakeCurrentCollectiviteLecture,
@@ -34,8 +34,8 @@ export const EnTantQueLecteur = {
 };
 
 const EnTantQuAdminQuiInviteUnNouvelUtilisateurArgs: MembresProps = {
-  addUser: async _request => undefined,
-  addUserResponse: {added: false, invitationUrl: 'invitationId'},
+  addUser: async (_request) => undefined,
+  addUserResponse: { added: false, invitationUrl: 'invitationId' },
   currentUser: fakeUserData,
   membres: fakeMembres,
   isLoading: false,
@@ -48,8 +48,7 @@ export const EnTantQuAdminQuiInviteUnNouvelUtilisateur = {
 };
 
 const EnTantQuAdminQuiInviteUnUtilisateurExistantArgs: MembresProps = {
-  addUser: async _request => undefined,
-  addUserResponse: {added: true},
+  addUserResponse: { added: true },
   currentUser: fakeUserData,
   membres: fakeMembres,
   isLoading: false,
@@ -62,7 +61,6 @@ export const EnTantQuAdminQuiInviteUnUtilisateurExistant = {
 };
 
 const EnTantQuAdminQuiInviteUnUtilisateurDejaMembreArgs: MembresProps = {
-  addUser: async _ => undefined,
   addUserResponse: {
     added: false,
     error: 'Cet utilisateur est déjà membre de la collectivité',

@@ -1,7 +1,7 @@
-import {ButtonMenu} from '@tet/ui';
-import {OpenState} from '@tet/ui/dist/utils/types';
-import {useUpdateIndicateurFavoriCollectivite} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { ButtonMenu } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
+import { useUpdateIndicateurFavoriCollectivite } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 const buttonClassNames = 'p-3 text-sm';
 
@@ -17,7 +17,7 @@ const IndicateurCardMenu = ({
   indicateurId,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
-  const {mutate: toggleFavori} = useUpdateIndicateurFavoriCollectivite(
+  const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
     collectiviteId!,
     indicateurId
   );

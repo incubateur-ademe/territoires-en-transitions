@@ -1,6 +1,6 @@
 import './global.css';
-import PHProvider from 'providers/posthog';
-import Header from '@components/Layout/Header';
+import PHProvider from '@tet/auth/providers/posthog';
+import Header from '@tet/auth/components/Layout/Header';
 
 export const metadata = {
   title: 'Territoires en Transitions',

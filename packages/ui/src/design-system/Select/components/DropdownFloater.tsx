@@ -1,31 +1,31 @@
-import {cloneElement, useState} from 'react';
-import {flushSync} from 'react-dom';
 import {
-  useFloating,
-  offset,
-  useInteractions,
-  useDismiss,
-  shift,
-  useClick,
+  FloatingFocusManager,
+  FloatingNode,
+  FloatingPortal,
+  OffsetOptions,
   Placement,
   autoUpdate,
+  offset,
+  shift,
   size,
-  OffsetOptions,
-  FloatingPortal,
-  FloatingFocusManager,
-  useFloatingParentNodeId,
+  useClick,
+  useDismiss,
+  useFloating,
   useFloatingNodeId,
-  FloatingNode,
+  useFloatingParentNodeId,
+  useInteractions,
 } from '@floating-ui/react';
+import { preset } from '@tet/ui/tailwind-preset';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
-import {preset} from '@tailwind-preset';
-import {OpenState} from 'utils/types';
+import { cloneElement, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */
   children: JSX.Element;
   /** Permet de définir et d'afficher le contenu du dropdown */
-  render: (data: {close: () => void}) => React.ReactNode;
+  render: (data: { close: () => void }) => React.ReactNode;
   /** Permet de contrôler l'ouverture de la modale */
   openState?: OpenState;
   /** Id du parent dans lequel doit être rendu le portal */
@@ -69,11 +69,11 @@ export const DropdownFloater = ({
     }
   };
 
-  const [maxHeight, setMaxHeight] = useState(null);
+  const [maxHeight, setMaxHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
 
-  const {x, y, strategy, refs, context} = useFloating({
+  const { x, y, strategy, refs, context } = useFloating({
     nodeId,
     open: disabled ? false : open,
     onOpenChange: disabled ? () => null : handleOpenChange,
@@ -83,7 +83,7 @@ export const DropdownFloater = ({
       offset(offsetValue),
       shift(),
       size({
-        apply({rects, elements, availableHeight}) {
+        apply({ rects, elements, availableHeight }) {
           // https://floating-ui.com/docs/size
           flushSync(() => setMaxHeight(availableHeight));
           Object.assign(elements.floating.style, {
@@ -103,7 +103,7 @@ export const DropdownFloater = ({
 
   const dismiss = useDismiss(context);
 
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     click,
     dismiss,
   ]);
@@ -151,7 +151,7 @@ export const DropdownFloater = ({
                     'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
                     containerClassName
                   )}
-                  style={{maxHeight: maxHeight - 16}}
+                  style={{ maxHeight: maxHeight - 16 }}
                 >
                   {render({
                     close: () => handleOpenChange(),
@@ -174,7 +174,7 @@ type Props = {
 };
 
 /** Permet de rendre le dropdown dans un portal ou non si un parent existe déjà */
-const FloaterContent = ({children, parentId, parentNodeId}: Props) => {
+const FloaterContent = ({ children, parentId, parentNodeId }: Props) => {
   if (parentNodeId) {
     return children;
   } else {

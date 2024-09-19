@@ -1,18 +1,18 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {useEffect, useState} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import { supabase } from '../initSupabase';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Select from '../../components/inputs/Select';
-import {Button} from '@tet/ui';
+import { Button } from '@tet/ui';
 
 /**
  * Toutes les régions.
  */
 function useRegion() {
   return useSWR('region', async () => {
-    const {data, error} = await supabase.from('region').select();
+    const { data, error } = await supabase.from('region').select();
     if (error) {
       throw new Error(error.message);
     }
@@ -29,7 +29,7 @@ function useDepartment(regionCode: string) {
   return useSWR(`departement-${regionCode}`, async () => {
     let select = supabase.from('departement').select();
     if (regionCode) select = select.eq('region_code', regionCode);
-    const {data, error} = await select;
+    const { data, error } = await select;
     if (error) {
       throw new Error(error.message);
     }
@@ -49,7 +49,7 @@ type RegionAndDeptFiltersProps = {
   onChange: (value: string | null) => void;
 };
 
-const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
+const RegionAndDeptFilters = ({ onChange }: RegionAndDeptFiltersProps) => {
   const router = useRouter();
   const pathName = usePathname() ?? '';
 
@@ -62,13 +62,13 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
 
   const changeDepartmentName = () => {
     const newDepartment = departments?.find(
-      dept => dept.code === selectedDepartment,
+      (dept) => dept.code === selectedDepartment
     );
     onChange(newDepartment?.libelle ?? null);
   };
 
   const changeRegionName = () => {
-    const newRegion = regions?.find(region => region.code === selectedRegion);
+    const newRegion = regions?.find((region) => region.code === selectedRegion);
     onChange(newRegion?.libelle ?? null);
   };
 
@@ -103,11 +103,11 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
     // selectedDepartment est modifié
-    if (!!selectedDepartment) {
+    if (selectedDepartment) {
       changeDepartmentName();
       router.push(`/stats/departement/${selectedDepartment}`);
     } else {
-      if (!!selectedRegion) {
+      if (selectedRegion) {
         changeRegionName();
         router.push(`/stats/region/${selectedRegion}`);
       } else router.push(`/stats/`);
@@ -118,7 +118,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
   useEffect(() => {
     // Redirige vers la nouvelle page stats quand
     // selectedRegion est modifié
-    if (!!selectedRegion) {
+    if (selectedRegion) {
       changeRegionName();
       router.push(`/stats/region/${selectedRegion}`);
     } else router.push(`/stats/`);
@@ -132,7 +132,7 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
       {selectedDepartment || selectedRegion ? (
         <p className="paragraphe-22">
           Cette page présente les statistiques de déploiement et d’usage{' '}
-          {!!selectedDepartment ? 'départementales' : 'régionales'} de la
+          {selectedDepartment ? 'départementales' : 'régionales'} de la
           plateforme Territoires en Transitions.
         </p>
       ) : (
@@ -158,13 +158,13 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
           name="region"
           label="Région"
           emptyOptionLabel="Toutes les régions"
-          // @ts-ignore
-          options={regions.map(region => ({
+          // @ts-expect-error erreur non gérée
+          options={regions.map((region) => ({
             value: region.code,
             name: region.libelle,
           }))}
           value={selectedRegion}
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           onChange={setSelectedRegion}
         />
 
@@ -172,13 +172,13 @@ const RegionAndDeptFilters = ({onChange}: RegionAndDeptFiltersProps) => {
           name="department"
           label="Département"
           emptyOptionLabel="Tous les départements"
-          // @ts-ignore
-          options={departments.map(department => ({
+          // @ts-expect-error erreur non gérée
+          options={departments.map((department) => ({
             value: department.code,
             name: department.libelle,
           }))}
           value={selectedDepartment}
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           onChange={setSelectedDepartment}
         />
 

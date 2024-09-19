@@ -36,7 +36,7 @@ const REFERENTIELS = [
  * Affiche le formulaire permettant de rejoindre une collectivité
  */
 export const RejoindreUneCollectivite = (
-  props: RejoindreUneCollectiviteProps,
+  props: RejoindreUneCollectiviteProps
 ) => {
   const {
     collectivites,
@@ -72,7 +72,7 @@ export const RejoindreUneCollectivite = (
           e.preventDefault();
           if (isValid) {
             onSubmit({...formState, collectiviteId});
-            // @ts-expect-error
+            // @ts-expect-error en attendant de gérer le 2ème argument optionnel
             eventTracker('cta_submit', {});
           }
         }}

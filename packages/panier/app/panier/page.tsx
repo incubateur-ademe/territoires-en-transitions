@@ -1,5 +1,5 @@
-import {redirect} from 'next/navigation';
+import { redirect } from 'next/navigation';
 
-const PagePanier = () => redirect('/landing');
-
-export default PagePanier;
+export default function PagePanier() {
+  redirect('/landing');
+}

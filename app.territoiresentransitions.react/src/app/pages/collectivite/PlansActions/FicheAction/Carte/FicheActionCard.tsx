@@ -1,16 +1,16 @@
-import {useState} from 'react';
-import {QueryKey} from 'react-query';
-import {useHistory} from 'react-router-dom';
+import { useState } from 'react';
+import { QueryKey } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
-import {Button, Card, Notification, Tooltip} from '@tet/ui';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {FicheResume} from '../data/types';
-import {generateTitle} from '../data/utils';
+import { Button, Card, Notification, Tooltip } from '@tet/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { FicheResume } from '../data/types';
+import { generateTitle } from '../data/utils';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import ModifierFicheModale from './ModifierFicheModale';
 import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
-import {getModifiedSince} from '../utils';
+import { getModifiedSince } from '../utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 
 type FicheActionCardProps = {
@@ -46,7 +46,7 @@ const FicheActionCard = ({
   const carteId = `fiche-${ficheAction.id}`;
 
   const isNotClickable =
-    collectivite?.niveau_acces === null && ficheAction.restreint;
+    collectivite?.niveau_acces === null && !!ficheAction.restreint;
 
   return (
     <div className="relative group h-full">

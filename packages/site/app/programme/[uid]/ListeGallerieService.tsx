@@ -1,15 +1,15 @@
-import MasonryGallery from '@components/galleries/MasonryGallery';
-import {Liste} from './types';
-import Markdown from '@components/markdown/Markdown';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import ReactIcon from '@components/react-icons/ReactIcon';
+import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
+import { Liste } from './types';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
 
-const ListeGallerieService = ({liste}: {liste: Liste}) => {
+const ListeGallerieService = ({ liste }: { liste: Liste }) => {
   return (
     liste.length > 0 && (
       <MasonryGallery
         maxCols={2}
-        data={liste.map(l => (
+        data={liste.map((l) => (
           <div key={l.id}>
             <div key={l.id} className="rounded-2xl p-8 border border-primary-4">
               <div>

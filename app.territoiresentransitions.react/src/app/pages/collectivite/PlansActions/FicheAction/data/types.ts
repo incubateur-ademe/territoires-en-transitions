@@ -1,5 +1,5 @@
-import {FicheResume as FicheResumeZod} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import { FicheResume as FicheResumeZod } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
+import { Indicateur } from 'app/pages/collectivite/Indicateurs/types';
 import {
   TActionInsert,
   TAxeInsert,
@@ -12,7 +12,7 @@ import {
   TFicheActionServicePiloteRow,
   TPartenaireRow,
 } from 'types/alias';
-import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 export type FicheAction = Omit<
   TFicheAction,

@@ -1,9 +1,9 @@
-import ThreePicsMosaic from '@components/galleries/ThreePicsMosaic';
-import Markdown from '@components/markdown/Markdown';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import ThreePicsMosaic from '@tet/site/components/galleries/ThreePicsMosaic';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {ParagrapheData} from './types';
+import { ParagrapheData } from './types';
 
 const ParagrapheService = ({
   tailleParagraphe,

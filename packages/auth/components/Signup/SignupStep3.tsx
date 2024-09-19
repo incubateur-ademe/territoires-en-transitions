@@ -54,7 +54,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
 
   const onSubmitForm = handleSubmit(data => {
     onSubmit({...(data as SignupDataStep3), email});
-    // @ts-expect-error
+    // @ts-expect-error en attendant de gérer le 2ème argument optionnel
     eventTracker('cta_submit', {});
   });
 
@@ -96,7 +96,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
         <Checkbox
           data-test="accept-cgu"
           className="font-medium"
-          label="J’accepte le cadre d’utilisation de la plateforme *"
+          label="J'accepte le cadre d'utilisation de la plateforme *"
           message={
             <>
               <Button variant="underlined" size="sm" href={URL_CGU}>
@@ -104,7 +104,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
               </Button>
               <span className="text-sm mx-2">|</span>
               <Button variant="underlined" size="sm" href={URL_DCP}>
-                la politique de protection des données de l'ADEME
+                {"la politique de protection des données de l'ADEME"}
               </Button>
             </>
           }

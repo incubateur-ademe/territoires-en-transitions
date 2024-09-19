@@ -1,7 +1,7 @@
-import {Ref, forwardRef} from 'react';
+import { Ref, forwardRef } from 'react';
 import classNames from 'classnames';
-import {InputBaseProps} from './InputBase';
-import {FieldState} from '@design-system/Field';
+import { InputBaseProps } from './InputBase';
+import { FieldState } from '../Field';
 
 const stateToBorderColor: Record<FieldState, string> = {
   default: 'border-grey-4',
@@ -29,7 +29,8 @@ export const InputFile = forwardRef(
     }: InputFileProps,
     ref?: Ref<HTMLInputElement>
   ) => {
-    const borderColor = stateToBorderColor[state] || stateToBorderColor.info;
+    const borderColor =
+      state !== undefined ? stateToBorderColor[state] : stateToBorderColor.info;
 
     return (
       <div

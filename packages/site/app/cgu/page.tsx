@@ -1,7 +1,7 @@
 'use server';
 
-import Section from '@components/sections/Section';
-import {Metadata} from 'next';
+import Section from '@tet/site/components/sections/Section';
+import { Metadata } from 'next';
 import CGU from './cgu.mdx';
 
 export async function generateMetadata(): Promise<Metadata> {

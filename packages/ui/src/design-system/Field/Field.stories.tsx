@@ -1,12 +1,12 @@
-import {Meta, StoryObj} from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import {Field} from './Field';
-import {Input} from '@design-system/Input';
+import { Field } from './Field';
+import { Input } from '@tet/ui/design-system/Input';
 
 const meta: Meta<typeof Field> = {
   component: Field,
-  decorators: [story => <div className="flex">{story()}</div>],
-  render: args => (
+  decorators: [(story) => <div className="flex">{story()}</div>],
+  render: (args) => (
     <Field {...args} htmlFor="un_nom">
       <Input
         type="text"
@@ -24,7 +24,7 @@ export default meta;
 type Story = StoryObj<typeof Field>;
 
 export const Default: Story = {
-  args: {title: "Description de l'action"},
+  args: { title: "Description de l'action" },
 };
 
 export const DisabledWithHint: Story = {

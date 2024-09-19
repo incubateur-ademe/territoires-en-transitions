@@ -1,6 +1,6 @@
-import {Controller, SubmitHandler, useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Field,
   Input,
@@ -11,16 +11,16 @@ import {
 
 // validation du formulaire
 const validationSchema = z.object({
-  email: z.string().email({message: 'Un email valide est requis'}),
+  email: z.string().email({ message: 'Un email valide est requis' }),
   niveau: z.enum(['lecture', 'edition', 'admin']),
 });
 type FormData = z.infer<typeof validationSchema>;
 
 // options pour la liste déroulante "Niveau d'accès"
-const AdminOption = {value: 'admin', label: 'Admin'};
+const AdminOption = { value: 'admin', label: 'Admin' };
 const EditionOptions = [
-  {value: 'edition', label: 'Édition'},
-  {value: 'lecture', label: 'Lecture'},
+  { value: 'edition', label: 'Édition' },
+  { value: 'lecture', label: 'Lecture' },
 ];
 
 export type Props = {
@@ -36,10 +36,10 @@ export type Props = {
  * Affiche le panneau de création d'une invitation à rejoindre une collectivité
  */
 export const Invite = (props: Props) => {
-  const {niveauAcces, onSubmit, onCancel} = props;
+  const { niveauAcces, onSubmit, onCancel } = props;
   const {
     control,
-    formState: {isValid, isLoading},
+    formState: { isValid, isLoading },
     handleSubmit,
     register,
   } = useForm<FormData>({
@@ -64,7 +64,7 @@ export const Invite = (props: Props) => {
         <Controller
           name="niveau"
           control={control}
-          render={({field: {value, onChange}}) => (
+          render={({ field: { value, onChange } }) => (
             <Select
               dataTest="niveau"
               options={options}
@@ -81,7 +81,7 @@ export const Invite = (props: Props) => {
           type: 'submit',
           disabled: !isValid || isLoading,
         }}
-        btnCancelProps={{onClick: onCancel}}
+        btnCancelProps={{ onClick: onCancel }}
       />
     </form>
   );

@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 type OptionValue = number | string;
 
-interface EventProperties
-  extends Record<
-    string,
-    string | number | null | boolean | OptionValue[] | undefined
-  > {}
+type EventProperties = Record<
+  string,
+  string | number | null | boolean | OptionValue[] | undefined
+>;
 
-interface Events extends Record<string, EventProperties> {}
+type Events = Record<string, EventProperties>;
 
 interface Page {
   properties: EventProperties;
@@ -42,13 +41,13 @@ type NoProps = {
 type PageWithSubmitButton = {
   properties: undefined;
   onglets: never;
-  events: {cta_submit: {}};
+  events: { cta_submit: {} };
 };
 /** et le tracking des écrans avec les onglets avec/sans mdp */
 type AuthPageAvecOnglets = {
   properties: undefined;
   onglets: 'sans_mdp' | 'avec_mdp';
-  events: {cta_submit: {}};
+  events: { cta_submit: {} };
 };
 
 type OpenDataSource = {
@@ -103,42 +102,42 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page indicateur perso */
   'app/indicateurs/perso': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
-      indicateur_suppression: {indicateur_id: number};
+      indicateur_suppression: { indicateur_id: number };
     };
   };
 
   /** Page indicateur prédéfini */
   'app/indicateurs/predefini': {
-    properties: {collectivite_id: number; indicateur_id: string};
+    properties: { collectivite_id: number; indicateur_id: string };
     onglets: never;
     events: {
       /** Consultation des données open data par fournisseur */
       view_open_data: OpenDataSource;
       /** Applique une source open data aux résultats ou objectifs */
-      apply_open_data: OpenDataSource & {overwrite: boolean};
+      apply_open_data: OpenDataSource & { overwrite: boolean };
     };
   };
 
   /** Modale qui affiche les données open-data en conflits avec les données déjà saisies */
   'app/indicateurs/predefini/conflits': {
-    properties: {collectivite_id: number; indicateur_id: string};
+    properties: { collectivite_id: number; indicateur_id: string };
     onglets: never;
     events: never;
   };
 
   /** Page tableau de bord de la collectivité */
   'app/tdb/collectivite': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: never;
   };
 
   /** Page tableau de bord personnel */
   'app/tdb/personnel': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       // clic sur le bouton "éditer" de chaque module
@@ -150,7 +149,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "indicateurs de suivi de mes plans" */
   'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       tdb_modifier_filtres_indicateurs: {};
@@ -160,7 +159,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB “actions dont je suis le pilote" */
   'app/tdb/personnel/actions-dont-je-suis-pilote': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       tdb_modifier_filtres_actions_pilotes: {};
@@ -170,7 +169,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "actions récemment modifiées" */
   'app/tdb/personnel/actions-recemment-modifiees': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       tdb_modifier_filtres_actions_modifiees: {};

@@ -1,6 +1,6 @@
 'use client';
 
-import {Panier} from '@tet/api';
+import { Panier } from '@tet/api';
 import {
   Dispatch,
   SetStateAction,
@@ -16,7 +16,7 @@ type PanierContextType = {
 
 const contextDefaultValue: PanierContextType = {
   panier: null,
-  setPanier: (panier: SetStateAction<Panier | null>) => {},
+  setPanier: (panier: SetStateAction<Panier | null>) => undefined,
 };
 
 /**
@@ -31,11 +31,11 @@ export const usePanierContext = () => {
 /**
  * Provider pour le contexte du panier
  */
-export const PanierProvider = ({children}: {children: React.ReactNode}) => {
+export const PanierProvider = ({ children }: { children: React.ReactNode }) => {
   const [panier, setPanier] = useState(contextDefaultValue.panier);
 
   return (
-    <PanierContext.Provider value={{panier, setPanier}}>
+    <PanierContext.Provider value={{ panier, setPanier }}>
       {children}
     </PanierContext.Provider>
   );

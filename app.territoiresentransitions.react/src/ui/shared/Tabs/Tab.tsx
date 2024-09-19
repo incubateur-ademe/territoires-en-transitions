@@ -28,7 +28,7 @@ const Tab = ({
     id={`fr-tabpanel-${index}`}
     className={classNames(
       'fr-tabs__panel border',
-      {'fr-tabs__panel--selected': activeTab === index},
+      { 'fr-tabs__panel--selected': activeTab === index },
       className
     )}
     role="tabpanel"
@@ -39,10 +39,5 @@ const Tab = ({
     {index === activeTab ? children : null}
   </div>
 );
-
-Tab.defaultProps = {
-  className: '',
-  icon: '',
-};
 
 export default Tab;

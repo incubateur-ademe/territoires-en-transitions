@@ -1,8 +1,8 @@
-import Section from '@components/sections/Section';
-import {ListeData} from './types';
+import Section from '@tet/site/components/sections/Section';
+import { ListeData } from './types';
 import classNames from 'classnames';
-import Markdown from '@components/markdown/Markdown';
-import ThumbnailsList from '@components/galleries/ThumbnailsList';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import ThumbnailsList from '@tet/site/components/galleries/ThumbnailsList';
 import ListeVerticaleService from './ListeVerticaleService';
 import ListeGrilleService from './ListeGrilleService';
 import ListeGallerieService from './ListeGallerieService';
@@ -26,7 +26,7 @@ const ListeService = ({
           dispositionCartes === 'Grille' || dispositionCartes === 'Vignettes',
         '!py-24': dispositionCartes === 'Vignettes',
       })}
-      className={classNames({'!gap-12': dispositionCartes === 'Verticale'})}
+      className={classNames({ '!gap-12': dispositionCartes === 'Verticale' })}
     >
       <div className="flex flex-col gap-4">
         <Titre
@@ -76,7 +76,7 @@ const ListeService = ({
       {/* Liste de vignettes alignées horizontalement */}
       {dispositionCartes === 'Vignettes' && (
         <ThumbnailsList
-          thumbnails={liste.slice(0, 4).map(l => ({...l, legend: l.texte}))}
+          thumbnails={liste.slice(0, 4).map((l) => ({ ...l, legend: l.texte }))}
         />
       )}
     </Section>

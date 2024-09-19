@@ -1,0 +1,9 @@
+{
+  "name": "@tet/api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/api/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project @tet/api --web",
+  "targets": {}
+}

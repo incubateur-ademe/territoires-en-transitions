@@ -1,5 +1,5 @@
-import {MailSendMessage} from '@components/Login/MailSendMessage';
-import {useFormState} from '@components/Login/useFormState';
+import {MailSendMessage} from '@tet/auth/components/Login/MailSendMessage';
+import {useFormState} from '@tet/auth/components/Login/useFormState';
 import {SignupProps} from './type';
 import {SignupStep1} from './SignupStep1';
 import {SignupStep2} from './SignupStep2';

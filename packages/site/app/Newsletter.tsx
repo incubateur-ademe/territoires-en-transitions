@@ -1,8 +1,7 @@
 'use client';
 
-/* eslint-disable react/no-unescaped-entities */
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 
 type NewsletterProps = {
@@ -11,13 +10,13 @@ type NewsletterProps = {
   className?: string;
 };
 
-const Newsletter = ({titre, description, className}: NewsletterProps) => {
+const Newsletter = ({ titre, description, className }: NewsletterProps) => {
   return (
     <Section className={classNames('gap-0', className)}>
       <h2 className="mb-3">{titre}</h2>
       <p>{description}</p>
       <Button href="https://cloud.contact.ademe.fr/inscription-tete" external>
-        S'inscrire
+        {"S'inscrire"}
       </Button>
     </Section>
   );

@@ -11,8 +11,19 @@ export type ScriptLikeProps = {
 /**
  * Renvoi les vars d'env. pour le tracking depuis un module next js
  */
-export const getNextConsentEnvId = () => {
+export const getNextConsentEnvId = (): string => {
   const id = process.env.NEXT_PUBLIC_AXEPTIO_ID;
+
+  const is_dev = process.env.NODE_ENV === 'development';
+  if (!id) {
+    if (is_dev) {
+      console.warn(
+        `L'acceptation des cookies n'est pas configurée, la variable d'env Axeptio est manquante.`
+      );
+    }
+    throw `La variable NEXT_PUBLIC_AXEPTIO_ID n'est pas définie`;
+  }
+
   return id;
 };
 
@@ -32,22 +43,9 @@ export function Consent({
   script: (props: ScriptLikeProps) => JSX.Element;
   consentId: string;
 }) {
-  const client_id = consentId;
-  const is_dev = process.env.NODE_ENV === 'development';
-  if (!client_id) {
-    if (is_dev) {
-      console.warn(
-        `L'acceptation des cookies n'est pas configurée, la variable d'env Axeptio est manquante.`
-      );
-      return null;
-    } else {
-      throw `La variable NEXT_PUBLIC_AXEPTIO_ID n'est pas définie`;
-    }
-  }
-
   if (typeof window !== 'undefined') {
     // @ts-expect-error typage dynamique
-    window.axeptioSettings = {clientId: client_id};
+    window.axeptioSettings = { clientId: consentId };
   }
 
   return (

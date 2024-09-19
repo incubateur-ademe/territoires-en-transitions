@@ -1,6 +1,6 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {Footer} from './Footer';
-import {APP_BASE_URL, SITE_BASE_URL} from 'utils/constants';
+import { Meta, StoryObj } from '@storybook/react';
+import { Footer } from './Footer';
+import { APP_BASE_URL, SITE_BASE_URL } from '@tet/ui/utils/constants';
 
 const meta: Meta<typeof Footer> = {
   component: Footer,

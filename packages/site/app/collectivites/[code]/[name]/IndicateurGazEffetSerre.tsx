@@ -1,8 +1,8 @@
-import {Indicateurs} from 'app/collectivites/utils';
-import {getFormattedNumber} from 'src/utils/getFormattedNumber';
-import {secteurIdToLabel} from 'src/utils/labels';
+import { Indicateurs } from '@tet/site/app/collectivites/utils';
+import { IndicateurDefaultData } from './IndicateursCollectivite';
+import { secteurIdToLabel } from '@tet/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
-import {IndicateurDefaultData} from './IndicateursCollectivite';
+import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
 
 const getYear = (dateIso: string) => new Date(dateIso).getFullYear();
 
@@ -17,18 +17,18 @@ const IndicateurGazEffetSerre = ({
 }: IndicateurGazEffetSerreProps) => {
   if (!defaultData || !data || data.length === 0) return null;
 
-  const lastYear = Math.max(...data.map(d => getYear(d.date_valeur)));
+  const lastYear = Math.max(...data.map((d) => getYear(d.date_valeur)));
 
   const lastYearData = data.filter(
-    d =>
+    (d) =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.identifiant] !== 'Total',
+      secteurIdToLabel[d.identifiant] !== 'Total'
   );
 
   const lastYearTotal = data.find(
-    d =>
+    (d) =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.identifiant] === 'Total',
+      secteurIdToLabel[d.identifiant] === 'Total'
   );
 
   if (lastYearData.length <= 1 && !lastYearTotal) return null;
@@ -36,7 +36,7 @@ const IndicateurGazEffetSerre = ({
   return (
     <IndicateurCard
       defaultData={defaultData}
-      data={lastYearData.map(d => ({
+      data={lastYearData.map((d) => ({
         id: secteurIdToLabel[d.identifiant],
         value: d.resultat ?? 0,
       }))}

@@ -1,5 +1,5 @@
-import {ModifiedSince} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {Statut} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
+import { ModifiedSince } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Statut } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,
@@ -31,7 +31,7 @@ export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsA
       value: 'Développement des énergies renouvelables',
       label: 'Développement des énergies renouvelables',
     },
-    {value: 'Efficacité énergétique', label: 'Efficacité énergétique'},
+    { value: 'Efficacité énergétique', label: 'Efficacité énergétique' },
     {
       value: 'Préservation de la biodiversité',
       label: 'Préservation de la biodiversité',
@@ -40,7 +40,7 @@ export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsA
       value: 'Réduction des consommations énergétiques',
       label: 'Réduction des consommations énergétiques',
     },
-    {value: 'Réduction des déchets', label: 'Réduction des déchets'},
+    { value: 'Réduction des déchets', label: 'Réduction des déchets' },
     {
       value: 'Réduction des polluants atmosphériques',
       label: 'Réduction des polluants atmosphériques',
@@ -49,7 +49,7 @@ export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsA
       value: 'Réduction des émissions de gaz à effet de serre',
       label: 'Réduction des émissions de gaz à effet de serre',
     },
-    {value: 'Sobriété énergétique', label: 'Sobriété énergétique'},
+    { value: 'Sobriété énergétique', label: 'Sobriété énergétique' },
   ];
 
 export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
@@ -100,25 +100,25 @@ export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
 ];
 
 export const ficheActionStatutOptions: Options<Statut> = [
-  {value: 'À venir', label: 'À venir'},
-  {value: 'En cours', label: 'En cours'},
-  {value: 'Réalisé', label: 'Réalisé'},
-  {value: 'En pause', label: 'En pause'},
-  {value: 'Abandonné', label: 'Abandonné'},
+  { value: 'À venir', label: 'À venir' },
+  { value: 'En cours', label: 'En cours' },
+  { value: 'Réalisé', label: 'Réalisé' },
+  { value: 'En pause', label: 'En pause' },
+  { value: 'Abandonné', label: 'Abandonné' },
 ];
 
 export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =
   [
-    {value: 'Élevé', label: 'Élevé'},
-    {value: 'Moyen', label: 'Moyen'},
-    {value: 'Bas', label: 'Bas'},
+    { value: 'Élevé', label: 'Élevé' },
+    { value: 'Moyen', label: 'Moyen' },
+    { value: 'Bas', label: 'Bas' },
   ];
 
 export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
-  {value: 'last-15-days', label: 'les 15 derniers jours'},
-  {value: 'last-30-days', label: 'les 30 derniers jours'},
-  {value: 'last-60-days', label: 'les 60 derniers jours'},
-  {value: 'last-90-days', label: 'les 90 derniers jours'},
+  { value: 'last-15-days', label: 'les 15 derniers jours' },
+  { value: 'last-30-days', label: 'les 30 derniers jours' },
+  { value: 'last-60-days', label: 'les 60 derniers jours' },
+  { value: 'last-90-days', label: 'les 90 derniers jours' },
 ];
 
 export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
@@ -126,8 +126,8 @@ export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
     value: 'Action en amélioration continue',
     label: 'Action en amélioration continue',
   },
-  {value: 'Sans échéance', label: 'Sans échéance'},
-  {value: 'Échéance dépassée', label: 'Échéance dépassée'},
+  { value: 'Sans échéance', label: 'Sans échéance' },
+  { value: 'Échéance dépassée', label: 'Échéance dépassée' },
   {
     value: 'Échéance dans moins de trois mois',
     label: 'Échéance dans moins de trois mois',
@@ -136,5 +136,5 @@ export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
     value: 'Échéance entre trois mois et 1 an',
     label: 'Échéance entre trois mois et 1 an',
   },
-  {value: 'Échéance dans plus d’un an', label: 'Échéance dans plus d’un an'},
+  { value: 'Échéance dans plus d’un an', label: 'Échéance dans plus d’un an' },
 ];

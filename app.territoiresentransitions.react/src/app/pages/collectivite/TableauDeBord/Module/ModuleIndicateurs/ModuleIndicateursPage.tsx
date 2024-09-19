@@ -1,17 +1,17 @@
-import {Button, TrackPageView, useEventTracker} from '@tet/ui';
+import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import {
   ModuleIndicateursSelect,
   Slug,
-} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+} from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
   useModuleFetch,
 } from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
-import {TDBViewParam} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { TDBViewParam } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
 
 type Props = {
@@ -19,10 +19,10 @@ type Props = {
   slug: Slug;
 };
 
-const ModuleIndicateursPage = ({view, slug}: Props) => {
+const ModuleIndicateursPage = ({ view, slug }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const {data: module, isLoading: isModuleLoading} = useModuleFetch(slug);
+  const { data: module, isLoading: isModuleLoading } = useModuleFetch(slug);
 
   const filtre = module?.options.filtre;
 
@@ -38,11 +38,11 @@ const ModuleIndicateursPage = ({view, slug}: Props) => {
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
         pageName={`app/tdb/personnel/${slug}`}
-        properties={{collectivite_id: collectiviteId!}}
+        properties={{ collectivite_id: collectiviteId! }}
       />
       <IndicateursListe
         filtres={filtre}
-        settings={openState => (
+        settings={(openState) => (
           <>
             <Button
               variant="outlined"

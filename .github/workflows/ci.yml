@@ -25,9 +25,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -49,9 +49,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -69,9 +69,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -90,9 +90,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -111,9 +111,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -122,25 +122,31 @@ jobs:
         run: earthly --use-inline-cache --save-inline-cache --push +auth-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
   build-storybook-dev:
-    needs: prepare-front-deps
+    # needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      matrix:
+        node-version: ['20.x']
 
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npx nx build-storybook @tet/ui
+      # - uses: earthly/actions-setup@v1
+      #   with:
+      #     version: 0.8.1
 
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+      # - name: Login into registry
+      #   run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
-      - name: Build and push storybook image
-        run: earthly --use-inline-cache --save-inline-cache --push +storybook-build
+      # - name: Build and push storybook image
+      #   run: earthly --use-inline-cache --save-inline-cache --push +storybook-build
 
   build-db:
     environment: dev
@@ -152,9 +158,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -164,11 +170,11 @@ jobs:
 
       - name: Prepare faster
         run: >
-          earthly --use-inline-cache +prepare-faster 
+          earthly --use-inline-cache +prepare-faster
           --stop=no --push=yes
-          --DB_URL=${{ secrets.DB_URL }} 
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
   test-api:
@@ -185,9 +191,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -197,11 +203,11 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -238,9 +244,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -250,11 +256,11 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -287,9 +293,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -319,9 +325,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -331,11 +337,11 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Reset de postgrest
@@ -368,9 +374,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -396,9 +402,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -408,11 +414,11 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=no --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test curl
@@ -442,9 +448,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -454,11 +460,11 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=no --app=no --eco=no --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} 
+          --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
       - name: Test Deploy
@@ -492,9 +498,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.0
+          version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -511,10 +517,10 @@ jobs:
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev 
-          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD 
-          --DB_URL=${{ secrets.DB_URL }} 
-          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} 
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
 

@@ -1,7 +1,7 @@
-import TestimonialCard from '@components/cards/TestimonialCard';
-import CardsSection from '@components/sections/CardsSection';
-import SlideshowOld from '@components/slideshow/SlideshowOld';
-import {Temoignage} from './types';
+import TestimonialCard from '@tet/site/components/cards/TestimonialCard';
+import CardsSection from '@tet/site/components/sections/CardsSection';
+import SlideshowOld from '@tet/site/components/slideshow/SlideshowOld';
+import { Temoignage } from './types';
 
 type TemoignagesProps = {
   titre: string;
@@ -9,7 +9,7 @@ type TemoignagesProps = {
   contenu: Temoignage[];
 };
 
-const Temoignages = ({titre, description, contenu}: TemoignagesProps) => {
+const Temoignages = ({ titre, description, contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
     <CardsSection
       title={titre}
@@ -18,7 +18,7 @@ const Temoignages = ({titre, description, contenu}: TemoignagesProps) => {
         <SlideshowOld
           className="my-6 xl:mx-auto xl:w-5/6"
           autoSlide
-          slides={contenu.map(t => (
+          slides={contenu.map((t) => (
             <TestimonialCard
               key={t.id}
               content={t.contenu}

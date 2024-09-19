@@ -1,13 +1,12 @@
 'use client';
 
-/* eslint-disable react/no-unescaped-entities */
-import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
-import {Button} from '@tet/ui';
-import CalendarPicto from 'public/pictogrammes/CalendarPicto';
-import CommunityPicto from 'public/pictogrammes/CommunityPicto';
-import InformationPicto from 'public/pictogrammes/InformationPicto';
-import PictoWithBackground from 'public/pictogrammes/PictoWithBackground';
+import { Button } from '@tet/ui';
+import CardsSection from '../components/sections/CardsSection';
+import CardsWrapper from '../components/cards/CardsWrapper';
+import PictoWithBackground from '../public/pictogrammes/PictoWithBackground';
+import InformationPicto from '../public/pictogrammes/InformationPicto';
+import CommunityPicto from '../public/pictogrammes/CommunityPicto';
+import CalendarPicto from '../public/pictogrammes/CalendarPicto';
 
 type InformationsProps = {
   titre: string;
@@ -15,7 +14,7 @@ type InformationsProps = {
   className?: string;
 };
 
-const Informations = ({titre, description, className}: InformationsProps) => {
+const Informations = ({ titre, description, className }: InformationsProps) => {
   return (
     <CardsSection
       title={titre}
@@ -40,7 +39,7 @@ const Informations = ({titre, description, className}: InformationsProps) => {
               variant="outlined"
               className="w-full justify-center"
             >
-              Contacter l'équipe
+              {"Contacter l'équipe"}
             </Button>
           </div>
           <div className="flex flex-col items-center gap-8">

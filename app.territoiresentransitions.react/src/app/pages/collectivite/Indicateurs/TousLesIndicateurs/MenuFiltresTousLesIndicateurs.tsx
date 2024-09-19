@@ -1,4 +1,4 @@
-import {Checkbox, Field, FormSection} from '@tet/ui';
+import { Checkbox, Field, FormSection } from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
@@ -9,25 +9,25 @@ import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/Thematique
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import IndicateurCategoriesDropdown from 'ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
-import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
+import { FetchFiltre } from '@tet/api/indicateurs';
 
 type Props = {
   filters: FetchFiltre;
   setFilters: (filters: FetchFiltre) => void;
 };
 
-const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
+const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
   return (
     <div className="w-80 flex flex-col gap-8 p-4">
       <FormSection title="Pilotage :" className="!grid-cols-1">
         <Field title="Plan d'action">
           <PlansActionDropdown
             values={filters.planActionIds}
-            onChange={({plans}) => {
-              const {planActionIds, ...rest} = filters;
+            onChange={({ plans }) => {
+              const { planActionIds, ...rest } = filters;
               setFilters({
                 ...rest,
-                ...(plans ? {planActionIds: plans} : {}),
+                ...(plans ? { planActionIds: plans } : {}),
               });
             }}
           />
@@ -35,14 +35,14 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
         <Field title="Personne pilote">
           <PersonnesDropdown
             values={getPilotesValues(filters)}
-            onChange={({personnes}) => {
-              const {personnePiloteIds, utilisateurPiloteIds, ...rest} =
+            onChange={({ personnes }) => {
+              const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
                 filters;
-              const {personnePiloteIds: pIds, utilisateurPiloteIds: uIds} =
+              const { personnePiloteIds: pIds, utilisateurPiloteIds: uIds } =
                 splitPilotePersonnesAndUsers(personnes);
               setFilters({
                 ...rest,
-                ...(pIds.length > 0 ? {personnePiloteIds: pIds} : {}),
+                ...(pIds.length > 0 ? { personnePiloteIds: pIds } : {}),
                 ...(uIds.length > 0
                   ? {
                       utilisateurPiloteIds: uIds,
@@ -55,12 +55,12 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
         <Field title="Direction ou service pilote">
           <ServicesPilotesDropdown
             values={filters.servicePiloteIds}
-            onChange={({services}) => {
-              const {servicePiloteIds, ...rest} = filters;
+            onChange={({ services }) => {
+              const { servicePiloteIds, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(services
-                  ? {servicePiloteIds: services.map(s => s.id)}
+                  ? { servicePiloteIds: services.map((s) => s.id) }
                   : {}),
               });
             }}
@@ -69,12 +69,12 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
         <Field title="Thématique">
           <ThematiquesDropdown
             values={filters.thematiqueIds}
-            onChange={({thematiques}) => {
-              const {thematiqueIds, ...rest} = filters;
+            onChange={({ thematiques }) => {
+              const { thematiqueIds, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(thematiques.length > 0
-                  ? {thematiqueIds: thematiques.map(t => t.id)}
+                  ? { thematiqueIds: thematiques.map((t) => t.id) }
                   : {}),
               });
             }}
@@ -86,11 +86,13 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
         <Field title="Catégorie">
           <IndicateurCategoriesDropdown
             values={filters.categorieNoms}
-            onChange={({categories}) => {
-              const {categorieNoms, ...rest} = filters;
+            onChange={({ categories }) => {
+              const { categorieNoms, ...rest } = filters;
               setFilters({
                 ...rest,
-                ...(categories?.length > 0 ? {categorieNoms: categories} : {}),
+                ...(categories?.length > 0
+                  ? { categorieNoms: categories }
+                  : {}),
               });
             }}
           />
@@ -104,8 +106,8 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
                 ? 'rempli'
                 : 'incomplet'
             }
-            onChange={value => {
-              const {estComplet, ...rest} = filters;
+            onChange={(value) => {
+              const { estComplet, ...rest } = filters;
               setFilters({
                 ...rest,
                 ...(value
@@ -121,10 +123,10 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
           label="Participe au score Climat Air Énergie"
           checked={filters.participationScore}
           onChange={() => {
-            const {participationScore, ...rest} = filters;
+            const { participationScore, ...rest } = filters;
             setFilters({
               ...rest,
-              ...(!participationScore ? {participationScore: true} : {}),
+              ...(!participationScore ? { participationScore: true } : {}),
             });
           }}
         />
@@ -133,10 +135,10 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
           label="Données Open Data"
           checked={filters.hasOpenData}
           onChange={() => {
-            const {hasOpenData, ...rest} = filters;
+            const { hasOpenData, ...rest } = filters;
             setFilters({
               ...rest,
-              ...(!hasOpenData ? {hasOpenData: true} : {}),
+              ...(!hasOpenData ? { hasOpenData: true } : {}),
             });
           }}
         />
@@ -144,10 +146,10 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
           label="Indicateur privé"
           checked={filters.estConfidentiel}
           onChange={() => {
-            const {estConfidentiel, ...rest} = filters;
+            const { estConfidentiel, ...rest } = filters;
             setFilters({
               ...rest,
-              ...(!estConfidentiel ? {estConfidentiel: true} : {}),
+              ...(!estConfidentiel ? { estConfidentiel: true } : {}),
             });
           }}
         />
@@ -155,10 +157,10 @@ const MenuFiltresTousLesIndicateurs = ({filters, setFilters}: Props) => {
           label="Indicateur personnalisé"
           checked={filters.estPerso}
           onChange={() => {
-            const {estPerso, ...rest} = filters;
+            const { estPerso, ...rest } = filters;
             setFilters({
               ...rest,
-              ...(!estPerso ? {estPerso: true} : {}),
+              ...(!estPerso ? { estPerso: true } : {}),
             });
           }}
         />

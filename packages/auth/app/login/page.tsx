@@ -1,10 +1,9 @@
 // modale floating-ui ne pouvant s'afficher que côté client...
 'use client';
 
-import {useSearchParams} from 'next/navigation';
-import {LoginModal} from '@components/Login/LoginModal';
-import {useRedirectTo} from '@components/Login/useRedirectTo';
-import {useLoginState} from './useLoginState';
+import { LoginModal } from '@tet/auth/components/Login';
+import { useRedirectTo } from '@tet/auth/components/Login/useRedirectTo';
+import { useLoginState } from './useLoginState';
 
 /**
  * Affiche la page d'authentification
@@ -13,22 +12,27 @@ import {useLoginState} from './useLoginState';
  * `redirect_to`, l'utilisateur est redirigé sur la page voulue, et à défaut sur
  * l'app.
  */
-const LoginPage = () => {
-  // détermine l'url vers laquelle rediriger après un login réussi
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect_to') || '/';
-  const defaultView = searchParams.get('view');
+const LoginPage = ({
+  searchParams: { view = null, email = null, otp = null, redirect_to = '/' },
+}: {
+  searchParams: {
+    view: string | null;
+    email: string | null;
+    otp: string | null;
+    redirect_to: string;
+  };
+}) => {
+  // redirige immédiatement si l'utilisateur est déjà connecté
+  useRedirectTo(redirect_to);
+
   const defaultValues = {
-    email: searchParams.get('email'),
-    otp: searchParams.get('otp'),
+    email,
+    otp,
   };
 
-  // redirige immédiatement si l'utilisateur est déjà connecté
-  useRedirectTo(redirectTo);
-
   const state = useLoginState({
-    redirectTo,
-    defaultView,
+    redirectTo: redirect_to,
+    defaultView: view,
     defaultValues,
   });
 

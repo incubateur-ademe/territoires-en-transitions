@@ -1,6 +1,6 @@
-import {QueryKey} from 'react-query';
-import {ButtonVariant, Modal, ModalFooterOKCancel} from '@tet/ui';
-import {useDeleteFicheAction} from '../data/useDeleteFicheAction';
+import { QueryKey } from 'react-query';
+import { ButtonVariant, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { useDeleteFicheAction } from '../data/useDeleteFicheAction';
 import DeleteButton from '../DeleteButton';
 
 type ModaleSuppressionProps = {
@@ -9,7 +9,7 @@ type ModaleSuppressionProps = {
   isInMultipleAxes: boolean;
   axeId?: number | null;
   keysToInvalidate?: QueryKey[];
-  buttonVariant?: ButtonVariant;
+  buttonVariant?: 'white' | 'grey';
 };
 
 /**
@@ -23,7 +23,7 @@ const ModaleSuppression = ({
   keysToInvalidate,
   buttonVariant,
 }: ModaleSuppressionProps) => {
-  const {mutate: deleteFiche} = useDeleteFicheAction({
+  const { mutate: deleteFiche } = useDeleteFicheAction({
     ficheId: ficheId!,
     axeId: axeId ?? null,
     keysToInvalidate: keysToInvalidate,
@@ -33,7 +33,7 @@ const ModaleSuppression = ({
     <Modal
       title="Supprimer la fiche"
       subTitle={title || 'Fiche sans titre'}
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
           {isInMultipleAxes ? (
@@ -54,9 +54,9 @@ const ModaleSuppression = ({
         </div>
       )}
       // Boutons pour valider / annuler la suppression
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               deleteFiche();

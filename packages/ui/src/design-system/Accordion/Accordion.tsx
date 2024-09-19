@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {Icon, IconValue} from '@design-system/Icon';
+import { Icon, IconValue } from '@tet/ui/design-system/Icon';
 
 type AccordionType = {
   id?: string;
@@ -49,7 +49,7 @@ export const AccordionControlled = ({
         tabIndex={0}
         aria-controls={id}
         aria-expanded={expanded}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.code === 'Space') {
             e.preventDefault();
             setExpanded(!expanded);
@@ -110,7 +110,7 @@ export const AccordionControlled = ({
 export const Accordion = ({
   initialState,
   ...props
-}: AccordionType & {initialState?: boolean}) => {
+}: AccordionType & { initialState?: boolean }) => {
   const [expanded, setExpanded] = useState(initialState || false);
 
   return (

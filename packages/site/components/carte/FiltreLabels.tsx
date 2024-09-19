@@ -1,14 +1,17 @@
 'use client';
 
-import RadioAsButton from '@components/dstet/buttons/RadioAsButton';
-import {FiltresLabels} from './CarteCollectivites';
+import RadioAsButton from '@tet/site/components/dstet/buttons/RadioAsButton';
+import { FiltresLabels } from './CarteCollectivites';
 
 type FiltreLabelsProps = {
   selectedFilter: FiltresLabels;
   onChangeFilter: (filter: FiltresLabels) => void;
 };
 
-const FiltreLabels = ({selectedFilter, onChangeFilter}: FiltreLabelsProps) => {
+const FiltreLabels = ({
+  selectedFilter,
+  onChangeFilter,
+}: FiltreLabelsProps) => {
   return (
     <div className="flex flex-col gap-4 w-[280px]">
       <RadioAsButton

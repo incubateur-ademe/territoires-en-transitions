@@ -1,0 +1,15 @@
+{
+  "name": "@tet/panier",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/panier",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["@tet/ui"],
+  "targets": {
+    "dev": {
+      "options": {
+        "port": 3002
+      }
+    }
+  }
+}

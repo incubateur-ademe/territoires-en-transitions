@@ -1,4 +1,3 @@
-import {cloneElement, useState} from 'react';
 import {
   FloatingFocusManager,
   FloatingNode,
@@ -13,10 +12,11 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+import { cloneElement, RefObject, useState } from 'react';
 
-import {preset} from '@tailwind-preset';
-import {Button} from '../Button';
-import {OpenState} from '../../utils/types';
+import { preset } from '@tet/ui/tailwind-preset';
+import { OpenState } from '@tet/ui/utils/types';
+import { Button } from '../Button';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -39,7 +39,7 @@ export type RenderProps = {
   /** l'id à la description pour l'accessibilité */
   descriptionId: string;
   /** Référence du container de la modale */
-  ref: React.MutableRefObject<HTMLElement>;
+  ref: RefObject<HTMLElement>;
 };
 
 /** Types des props du composant générique Modal */
@@ -113,7 +113,7 @@ export const Modal = ({
 
   const nodeId = useFloatingNodeId();
 
-  const {refs, context} = useFloating({
+  const { refs, context } = useFloating({
     nodeId,
     open: isOpen,
     onOpenChange: handleOpenChange,
@@ -123,10 +123,10 @@ export const Modal = ({
   const labelId = `${id}-label`;
   const descriptionId = `${id}-description`;
 
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
     useRole(context),
-    useDismiss(context, {enabled: !disableDismiss}),
+    useDismiss(context, { enabled: !disableDismiss }),
   ]);
 
   return (
@@ -134,7 +134,7 @@ export const Modal = ({
       {children &&
         cloneElement(
           children,
-          getReferenceProps({ref: refs.setReference, ...children.props})
+          getReferenceProps({ ref: refs.setReference, ...children.props })
         )}
       <FloatingNode id={nodeId}>
         {isOpen && (

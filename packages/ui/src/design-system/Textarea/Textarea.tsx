@@ -1,4 +1,4 @@
-import {FieldState} from '@design-system/Field';
+import { FieldState } from '@tet/ui/design-system/Field';
 import classNames from 'classnames';
 import {
   DetailedHTMLProps,

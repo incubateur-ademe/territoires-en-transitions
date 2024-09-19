@@ -1,12 +1,11 @@
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
-import {Badge} from '@tet/ui';
-import {ButtonMenu} from '@tet/ui';
-import {Field} from '@tet/ui';
 import {
+  Badge,
+  ButtonMenu,
+  Field,
   OptionValue,
-  Select,
   SelectMultiple,
   SelectMultipleOnChangeArgs,
   SelectOption,
@@ -53,16 +52,16 @@ export const BadgesFilters = ({
     const selectedValue = badge.value;
 
     const values: OptionValue[] | undefined = badge.filter.values?.filter(
-      v => v !== badge.value,
+      (v) => v !== badge.value
     );
 
-    badge.filter.onChange({selectedValue, values});
+    badge.filter.onChange({ selectedValue, values });
   };
 
   /** Supprime tous les filtres sélectionnés */
   const handleClearFilters = () => {
-    badgesList?.forEach(badge => {
-      badge.filter.onChange({selectedValue: badge.value, values: undefined});
+    badgesList?.forEach((badge) => {
+      badge.filter.onChange({ selectedValue: badge.value, values: undefined });
     });
   };
 
@@ -70,12 +69,12 @@ export const BadgesFilters = ({
   useEffect(() => {
     const newList: BadgeType[] = [];
 
-    filters.forEach(filter => {
+    filters.forEach((filter) => {
       if (filter.values !== undefined) {
         const options = getFlatOptions(filter.options);
 
-        filter.values.forEach(value => {
-          const option = options.find(opt => opt.value === value);
+        filter.values.forEach((value) => {
+          const option = options.find((opt) => opt.value === value);
 
           option &&
             newList.push({
@@ -98,7 +97,7 @@ export const BadgesFilters = ({
       <div className="flex gap-2 flex-wrap">
         {/* Liste des badges correspondant aux filtres sélectionnés */}
         {!!badgesList &&
-          badgesList.map(badge => (
+          badgesList.map((badge) => (
             <Badge
               key={`${badge.label}-${badge.value}`}
               title={`${badge.filter.tag ? `${badge.filter.tag} : ` : ''}${
@@ -123,7 +122,7 @@ export const BadgesFilters = ({
               state="grey"
               uppercase={false}
               light
-              onClose={() => {}}
+              onClose={() => undefined}
             />
           </div>
         )}
@@ -135,14 +134,15 @@ export const BadgesFilters = ({
         icon="equalizer-fill"
         className={btnMenuClassName}
         notification={
-          badgesList &&
-          badgesList.length > 0 && {
-            number: badgesList?.length,
-          }
+          badgesList && badgesList.length > 0
+            ? {
+                number: badgesList.length,
+              }
+            : {}
         }
       >
         <div className="flex flex-col gap-4 w-72 p-4">
-          {filters.map(filter => (
+          {filters.map((filter) => (
             <Field key={filter.title} title={filter.title}>
               <SelectMultiple
                 options={filter.options}

@@ -1,7 +1,7 @@
-import {Button} from '@design-system/Button';
+import { Button } from '@tet/ui/design-system/Button';
 import classNames from 'classnames';
 
-export type LinkObject = {label: string; href: string; external?: boolean};
+export type LinkObject = { label: string; href: string; external?: boolean };
 
 type FooterProps = {
   id?: string;
@@ -59,7 +59,7 @@ export const Footer = ({
           {/* Liste de liens */}
           {!!contentLinks && (
             <ul className="!list-none flex flex-wrap gap-4 divide-x divide-grey-4 mb-0">
-              {contentLinks.map(link => (
+              {contentLinks.map((link) => (
                 <li key={link.label} className="pl-4 first-of-type:pl-0 pb-0">
                   <Button
                     variant="underlined"
@@ -84,7 +84,7 @@ export const Footer = ({
             {/* Liste de liens */}
             {!!bottomLinks && (
               <ul className="!list-none flex flex-wrap gap-2 divide-x divide-grey-4">
-                {bottomLinks.map(link => (
+                {bottomLinks.map((link) => (
                   <li key={link.label} className="pl-2 first-of-type:pl-0 pb-0">
                     <Button
                       variant="underlined"

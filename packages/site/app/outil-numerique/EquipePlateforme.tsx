@@ -1,7 +1,7 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { Button } from '@tet/ui';
 
 type EquipePlateformeProps = {
   titre: string;
