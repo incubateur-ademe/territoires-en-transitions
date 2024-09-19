@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { isNil, partition } from 'es-toolkit';
+import * as _ from 'lodash';
 import slugify from 'slugify';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
@@ -200,6 +201,7 @@ export default class TrajectoiresSpreadsheetService {
             sequestrations: sequestrationTrajectoire,
           },
         };
+        this.inverseSigneSequestrations(result);
 
         return result;
       }
@@ -396,7 +398,48 @@ export default class TrajectoiresSpreadsheetService {
         sequestrations: sequestrationTrajectoire,
       },
     };
+
+    this.inverseSigneSequestrations(result);
     return result;
+  }
+
+  inverseSigneSequestrations(result: CalculTrajectoireResultType) {
+    // Il y a le cae_1.csc qui est une exception
+    result.trajectoire.emissions_ges.forEach((emissionGes) => {
+      if (
+        this.signeInversionSequestration(
+          emissionGes.definition.identifiant_referentiel,
+        )
+      ) {
+        emissionGes.valeurs.forEach((valeur) => {
+          if (valeur.objectif) {
+            valeur.objectif = -1 * valeur.objectif;
+          }
+          if (valeur.resultat) {
+            // Normalement pas nécessaire car uniquement résultat
+            valeur.resultat = -1 * valeur.resultat;
+          }
+        });
+      }
+    });
+    // Normalement, fait pour tous les indicateurs de séquestration mais on réutilise signeInversionSequestration au cas où la logique change
+    result.trajectoire.sequestrations.forEach((sequestration) => {
+      if (
+        this.signeInversionSequestration(
+          sequestration.definition.identifiant_referentiel,
+        )
+      ) {
+        sequestration.valeurs.forEach((valeur) => {
+          if (valeur.objectif) {
+            valeur.objectif = -1 * valeur.objectif;
+          }
+          if (valeur.resultat) {
+            // Normalement pas nécessaire car uniquement résultat
+            valeur.resultat = -1 * valeur.resultat;
+          }
+        });
+      }
+    });
   }
 
   getIdentifiantReferentielParent(
@@ -407,10 +450,24 @@ export default class TrajectoiresSpreadsheetService {
       return null;
     }
     if (identifiantReferentielSortieParts[1].length > 1) {
-      return `${identifiantReferentielSortieParts[0]}.${identifiantReferentielSortieParts[1].slice(0, -1)}`;
+      const partieApresPoint = identifiantReferentielSortieParts[1];
+      const partieApresPointParts = partieApresPoint.split('_');
+      if (partieApresPointParts[0].length > 1) {
+        return `${identifiantReferentielSortieParts[0]}.${partieApresPointParts[0].slice(0, -1)}`;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
+  }
+
+  signeInversionSequestration(identifiantReferentiel?: string | null): boolean {
+    return (
+      identifiantReferentiel?.startsWith(
+        this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+      ) || identifiantReferentiel === 'cae_1.csc'
+    );
   }
 
   getIndicateurValeursACreer(
@@ -443,8 +500,51 @@ export default class TrajectoiresSpreadsheetService {
         // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
         if (identifiantReferentielSortie === 'cae_1.k') {
           identifiantsReferentielEntree = ['cae_1.e', 'cae_1.f'];
+          // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
+        } else if (identifiantReferentielSortie === 'cae_2.m') {
+          identifiantsReferentielEntree = ['cae_2.g', 'cae_2.h'];
+          // Exception, pour cae_1.csc, pas de données d'entrée associée
+        } else if (identifiantReferentielSortie === 'cae_1.csc') {
+          identifiantsReferentielEntree = [];
+          // Exception pour les totaux
+        } else if (identifiantReferentielSortie === 'cae_63.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_2.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_1.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_1.aa') {
+          identifiantsReferentielEntree = [
+            ..._.flatten(
+              this.trajectoiresDataService
+                .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+            ),
+            ..._.flatten(
+              this.trajectoiresDataService
+                .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+            ),
+          ];
+          // Exception pour les sequestrations, on ne prend pas le parent
+        } else if (
+          identifiantReferentielSortie.startsWith(
+            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+          )
+        ) {
+          identifiantsReferentielEntree = [identifiantReferentielSortie];
         }
-        // TODO: exception pour les totaux?
+        this.logger.log(
+          `Identifiant referentiel entrée pour ${identifiantReferentielSortie}: ${identifiantsReferentielEntree.join(', ')}`,
+        );
+
         const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
           (identifiant) => {
             const donneeEntree = donneesEntree.find((v) =>
@@ -477,14 +577,14 @@ export default class TrajectoiresSpreadsheetService {
                     this.trajectoiresDataService
                       .CONSOMMATIONS_IDENTIFIANTS_PREFIX,
                   );
-                const donneeSequestration =
-                  indicateurResultatDefinition.identifiant_referentiel?.startsWith(
-                    this.trajectoiresDataService
-                      .SEQUESTRATION_IDENTIFIANTS_PREFIX,
-                  );
+
                 // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
                 let facteur = emissionGesOuSequestration ? 1000 : 1;
-                if (donneeSequestration) {
+                const signeInversionSequestration =
+                  this.signeInversionSequestration(
+                    indicateurResultatDefinition.identifiant_referentiel,
+                  );
+                if (signeInversionSequestration) {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1 * facteur;
                 }

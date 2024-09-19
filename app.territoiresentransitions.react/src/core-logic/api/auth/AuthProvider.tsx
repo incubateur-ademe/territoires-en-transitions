@@ -8,11 +8,16 @@ import {
 } from 'react';
 import { User, SignInWithPasswordCredentials } from '@supabase/supabase-js';
 import { useQuery } from 'react-query';
-import { clearAuthTokens, getRootDomain, setAuthTokens } from '@tet/api';
+import {
+  clearAuthTokens,
+  getRootDomain,
+  restoreSessionFromAuthTokens,
+  setAuthTokens,
+} from '@tet/api';
 import { supabaseClient } from '../supabase';
-import { useCurrentSession } from './useCurrentSession';
 import { signUpPath } from 'app/paths';
 import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import { ENV } from 'environmentVariables';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -20,6 +25,7 @@ export type TAuthContext = {
   disconnect: () => Promise<boolean>;
   user: UserData | null;
   authError: string | null;
+  authHeaders: { authorization: string; apikey: string } | null;
   isConnected: boolean;
 };
 export type UserData = User & DCP & { isSupport: boolean | undefined };
@@ -37,18 +43,16 @@ export const useAuth = () => useContext(AuthContext) as TAuthContext;
 
 // le fournisseur de contexte
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // restaure une éventuelle session précédente
-  const session = useCurrentSession();
-  const [user, setUser] = useState<User | null>(session?.user ?? null);
-  useEffect(() => {
-    setUser(session?.user || null);
-  }, [session?.user]);
+  // récupère la session courante
+  const currentSession = useCurrentSession();
+  const [session, setSession] = useState(currentSession);
+  const user = session?.user;
 
   // pour stocker la dernière erreur d'authentification
   const [authError, setAuthError] = useState<string | null>(null);
 
   // charge les données associées à l'utilisateur courant
-  const { data: dcp, isLoading: isLoadingDCP } = useDCP(user?.id);
+  const { data: dcp, isSuccess: dcpLoaded } = useDCP(user?.id);
   const { data: isSupport } = useIsSupport(user?.id);
   const userData = useMemo(
     () => (user && dcp ? { ...user, ...dcp, isSupport } : null),
@@ -61,9 +65,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange(async (event, updatedSession) => {
-      setUser(updatedSession?.user ?? null);
+      setSession(updatedSession);
       if (updatedSession?.user) {
         setAuthError(null);
+      }
+      if (event === 'SIGNED_OUT' && document.location.pathname !== '/') {
+        // redirige sur la home si l'utilisateur a été déconnecté
+        document.location.href = '/';
       }
     });
 
@@ -120,10 +128,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // les données exposées par le fournisseur de contexte
   const isConnected = Boolean(user);
-  const value = { connect, disconnect, user: userData, authError, isConnected };
+  const authHeaders = session?.access_token
+    ? {
+        authorization: `Bearer ${session.access_token}`,
+        apikey: `${ENV.supabase_anon_key}`,
+      }
+    : null;
+  const value = {
+    connect,
+    disconnect,
+    user: userData,
+    authError,
+    isConnected,
+    authHeaders,
+  };
 
-  // Redirige l'utilisateur vers la page d'authentification si nécessaire
-  const userInfoRequired = session && !isLoadingDCP && !dcp;
+  // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
+  const userInfoRequired = session && dcpLoaded && !dcp;
   if (userInfoRequired) {
     document.location.replace(`${signUpPath}&view=etape3`);
   }
@@ -178,3 +199,29 @@ const useIsSupport = (user_id?: string) =>
     const { data } = await supabaseClient.rpc('est_support');
     return data || false;
   });
+
+const useCurrentSession = () => {
+  const { data, error } = useQuery(['session'], async () => {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (data?.session) {
+      return data.session;
+    }
+    if (error) throw error;
+
+    // restaure une éventuelle session précédente
+    const ret = await restoreSessionFromAuthTokens(supabaseClient);
+    if (ret) {
+      const { data, error } = ret;
+      if (data?.session) {
+        return data.session;
+      }
+      if (error) throw error;
+    }
+  });
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data;
+};

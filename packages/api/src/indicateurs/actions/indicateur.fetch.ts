@@ -427,12 +427,12 @@ export async function selectIndicateurValeurs(
       // Tri les valeurs par an
       // Tri séparément les valeurs ayant des résultats, des objectifs, et des estimations
       const annee = new Date(val.date_valeur).getFullYear();
-      if (val.resultat || val.resultat_commentaire) {
+      if (typeof val.resultat === 'number' || val.resultat_commentaire) {
         if (!groupeParAnneeResultat.get(annee))
           groupeParAnneeResultat.set(annee, []);
         groupeParAnneeResultat.get(annee)!.push(val);
       }
-      if (val.objectif || val.objectif_commentaire) {
+      if (typeof val.objectif === 'number' || val.objectif_commentaire) {
         if (!groupeParAnneeObjectif.get(annee))
           groupeParAnneeObjectif.set(annee, []);
         groupeParAnneeObjectif.get(annee)!.push(val);
@@ -548,18 +548,32 @@ export async function selectIndicateurReferentielDefinition(
 ): Promise<IndicateurDefinition | null> {
   if (identifiant === undefined) return null;
 
+  const data = await selectIndicateurReferentielDefinitions(
+    dbClient,
+    [identifiant],
+    collectiviteId
+  );
+  return data?.[0] || null;
+}
+
+// idem mais pour plusieurs identifiants référentiel
+export async function selectIndicateurReferentielDefinitions(
+  dbClient: DBClient,
+  identifiants: string[],
+  collectiviteId: number
+): Promise<IndicateurDefinition[] | null> {
+  if (!identifiants?.length) return null;
+
   const { data } = await dbClient
     .from('indicateur_definition')
     .select(COLONNES_DEFINITION.join(','))
-    .eq('identifiant_referentiel', identifiant)
+    .in('identifiant_referentiel', identifiants)
     .eq('plus.collectivite_id', collectiviteId)
     .eq('valeurs.collectivite_id', collectiviteId);
   const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, false)
     : null;
-  return toReturn
-    ? (objectToCamel(toReturn?.[0]) as IndicateurDefinition)
-    : null;
+  return toReturn ? (objectToCamel(toReturn) as IndicateurDefinition[]) : null;
 }
 
 /**
@@ -799,7 +813,7 @@ export async function getValeursComparaison(
       source: source,
     };
     // Ajout d'une ligne résultat
-    if (aAppliquer.resultat) {
+    if (typeof aAppliquer.resultat === 'number') {
       const ligne: ValeurComparaisonLigne = {
         ...ligneCommune,
         valeurAEcraser: aEcraser?.resultat ?? null,
@@ -814,7 +828,7 @@ export async function getValeursComparaison(
       lignesResultat.push(ligne);
     }
     // Ajout d'une ligne objectif
-    if (aAppliquer.objectif) {
+    if (typeof aAppliquer.objectif === 'number') {
       const ligne = {
         ...ligneCommune,
         valeurAEcraser: aEcraser?.objectif ?? null,
