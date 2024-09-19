@@ -8,8 +8,9 @@ export const getStrapiData = async () => {
     ['populate[2]', 'couverture'],
     ['populate[3]', 'avantages.image'],
     ['populate[4]', 'panier_image'],
-    ['populate[5]', 'temoignages_liste.temoignage'],
-    ['populate[6]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[5]', 'trajectoire_image'],
+    ['populate[6]', 'temoignages_liste.temoignage'],
+    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   if (data) {

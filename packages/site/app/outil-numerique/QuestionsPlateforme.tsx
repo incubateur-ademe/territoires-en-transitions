@@ -18,7 +18,7 @@ const QuestionsPlateforme = ({
   cta_contact,
 }: QuestionsPlateformeProps) => {
   return (
-    <Section containerClassName="bg-primary-7">
+    <Section containerClassName="bg-primary-7 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <h2 className="text-center text-white mb-1">{titre}</h2>
 
       {!!description && (
@@ -28,7 +28,7 @@ const QuestionsPlateforme = ({
         />
       )}
 
-      <div className="mx-auto flex max-lg:flex-col gap-8 justify-center items-center">
+      <div className="mx-auto flex max-lg:flex-col max-lg:gap-4 lg:gap-8 justify-center items-center max-lg:mt-2 lg:mt-6">
         <Button href="/faq?onglet=outil-numerique" variant="outlined">
           {cta_faq}
         </Button>
