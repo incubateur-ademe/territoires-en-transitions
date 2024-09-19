@@ -87,22 +87,28 @@
       "maxLength": 50,
       "default": "Ça m'intéresse"
     },
-    "fonctionnalites_titre": {
+    "trajectoire_titre": {
       "type": "string",
       "required": true,
       "maxLength": 255,
-      "default": "Organisez le travail et atteignez vos objectifs !"
+      "default": "Je calcule ma trajectoire SNBC territorialisée"
     },
-    "fonctionnalites_contenu": {
+    "trajectoire_description": {
       "type": "richtext",
       "required": true,
-      "default": "Accélérez votre diagnostic grâce aux actions à impact Centralisez vos données et pilotez vos plans d’actions Bénéficiez d’une aide précieuse dans la collecte de données grâce à l’Open Data Collaborez avec vos collègues pour le suivi des actions et la mise à jour des indicateurs Evaluez la progression et l'impact de vos actions via vos tableaux de bord"
+      "default": "La trajectoire SNBC territorialisée n’est aucunement prescriptive. C’est un outil d’aide à la décision, un point de repère pour : - Définir vos objectifs ou les interroger lorsque ceux-ci sont définis (par exemple à l’occasion d’un suivi annuel ou d’un bilan à mi-parcours d’un PCAET) - Quantifier les efforts à réaliser secteur par secteur - Identifier sa contribution à la SNBC"
     },
-    "fonctionnalites_image": {
+    "trajectoire_image": {
       "type": "media",
       "multiple": false,
-      "required": true,
+      "required": false,
       "allowedTypes": ["images"]
+    },
+    "trajectoire_cta": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "En savoir plus"
     },
     "temoignages_liste": {
       "type": "relation",
@@ -123,12 +129,6 @@
       "type": "text",
       "default": "C’est avec cette envie de faire avancer les choses que le projet Territoires en Transitions est né. Nicolas Vallée, intrapreneur et salarié de l’ADEME, a toujours aimé faire bouger les lignes. C’est donc dans cette optique qu’il s’est entouré des meilleurs (évidemment) pour atteindre un objectif : changer le monde. Enfin, déjà changer le quotidien des collectivités pour leur permettre de réussir leur transition écologique."
     },
-    "equipe_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-titre",
-      "min": 1
-    },
     "equipe_cta": {
       "type": "string",
       "required": true,
@@ -140,12 +140,6 @@
       "required": true,
       "maxLength": 255,
       "default": "Vous avez une question ?"
-    },
-    "questions_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.paragraphe",
-      "min": 1
     },
     "questions_description": {
       "type": "richtext",
@@ -163,28 +157,6 @@
       "required": true,
       "maxLength": 50,
       "default": "Je contacte l'équipe"
-    },
-    "trajectoire_titre": {
-      "type": "string",
-      "required": true,
-      "default": "Je calcule ma trajectoire SNBC territorialisée"
-    },
-    "trajectoire_description": {
-      "type": "richtext",
-      "required": true,
-      "default": "La trajectoire SNBC territorialisée n’est aucunement prescriptive. C’est un outil d’aide à la décision, un point de repère pour : - Définir vos objectifs ou les interroger lorsque ceux-ci sont définis (par exemple à l’occasion d’un suivi annuel ou d’un bilan à mi-parcours d’un PCAET) - Quantifier les efforts à réaliser secteur par secteur - Identifier sa contribution à la SNBC"
-    },
-    "trajectoire_image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": ["images"]
-    },
-    "trajectoire_cta": {
-      "type": "string",
-      "required": true,
-      "maxLength": 50,
-      "default": "En savoir plus"
     }
   }
 }

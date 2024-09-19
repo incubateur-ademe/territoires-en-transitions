@@ -1194,16 +1194,22 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         maxLength: 50;
       }> &
       Attribute.DefaultTo<"\u00C7a m'int\u00E9resse">;
-    fonctionnalites_titre: Attribute.String &
+    trajectoire_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }> &
-      Attribute.DefaultTo<'Organisez le travail et atteignez vos objectifs !'>;
-    fonctionnalites_contenu: Attribute.RichText &
+      Attribute.DefaultTo<'Je calcule ma trajectoire SNBC territorialis\u00E9e'>;
+    trajectoire_description: Attribute.RichText &
       Attribute.Required &
-      Attribute.DefaultTo<"Acc\u00E9l\u00E9rez votre diagnostic gr\u00E2ce aux actions \u00E0 impact Centralisez vos donn\u00E9es et pilotez vos plans d\u2019actions B\u00E9n\u00E9ficiez d\u2019une aide pr\u00E9cieuse dans la collecte de donn\u00E9es gr\u00E2ce \u00E0 l\u2019Open Data Collaborez avec vos coll\u00E8gues pour le suivi des actions et la mise \u00E0 jour des indicateurs Evaluez la progression et l'impact de vos actions via vos tableaux de bord">;
-    fonctionnalites_image: Attribute.Media & Attribute.Required;
+      Attribute.DefaultTo<'La trajectoire SNBC territorialis\u00E9e n\u2019est aucunement prescriptive. C\u2019est un outil d\u2019aide \u00E0 la d\u00E9cision, un point de rep\u00E8re pour : - D\u00E9finir vos objectifs ou les interroger lorsque ceux-ci sont d\u00E9finis (par exemple \u00E0 l\u2019occasion d\u2019un suivi annuel ou d\u2019un bilan \u00E0 mi-parcours d\u2019un PCAET) - Quantifier les efforts \u00E0 r\u00E9aliser secteur par secteur - Identifier sa contribution \u00E0 la SNBC'>;
+    trajectoire_image: Attribute.Media;
+    trajectoire_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'En savoir plus'>;
     temoignages_liste: Attribute.Relation<
       'api::page-outils-numerique.page-outils-numerique',
       'oneToMany',
@@ -1219,10 +1225,6 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       Attribute.DefaultTo<"\u201CDans un environnement qui change, il n'y a pas de plus grand risque que de rester immobile.\u201D">;
     equipe_description: Attribute.Text &
       Attribute.DefaultTo<'C\u2019est avec cette envie de faire avancer les choses que le projet Territoires en Transitions est n\u00E9. Nicolas Vall\u00E9e, intrapreneur et salari\u00E9 de l\u2019ADEME, a toujours aim\u00E9 faire bouger les lignes. C\u2019est donc dans cette optique qu\u2019il s\u2019est entour\u00E9 des meilleurs (\u00E9videmment) pour atteindre un objectif : changer le monde. Enfin, d\u00E9j\u00E0 changer le quotidien des collectivit\u00E9s pour leur permettre de r\u00E9ussir leur transition \u00E9cologique.'>;
-    equipe_liste: Attribute.Component<'shared.vignette-avec-titre', true> &
-      Attribute.SetMinMax<{
-        min: 1;
-      }>;
     equipe_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1235,10 +1237,6 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'Vous avez une question ?'>;
-    questions_liste: Attribute.Component<'shared.paragraphe', true> &
-      Attribute.SetMinMax<{
-        min: 1;
-      }>;
     questions_description: Attribute.RichText &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
@@ -1256,19 +1254,6 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
         maxLength: 50;
       }> &
       Attribute.DefaultTo<"Je contacte l'\u00E9quipe">;
-    trajectoire_titre: Attribute.String &
-      Attribute.Required &
-      Attribute.DefaultTo<'Je calcule ma trajectoire SNBC territorialis\u00E9e'>;
-    trajectoire_description: Attribute.RichText &
-      Attribute.Required &
-      Attribute.DefaultTo<'La trajectoire SNBC territorialis\u00E9e n\u2019est aucunement prescriptive. C\u2019est un outil d\u2019aide \u00E0 la d\u00E9cision, un point de rep\u00E8re pour : - D\u00E9finir vos objectifs ou les interroger lorsque ceux-ci sont d\u00E9finis (par exemple \u00E0 l\u2019occasion d\u2019un suivi annuel ou d\u2019un bilan \u00E0 mi-parcours d\u2019un PCAET) - Quantifier les efforts \u00E0 r\u00E9aliser secteur par secteur - Identifier sa contribution \u00E0 la SNBC'>;
-    trajectoire_image: Attribute.Media;
-    trajectoire_cta: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }> &
-      Attribute.DefaultTo<'En savoir plus'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
