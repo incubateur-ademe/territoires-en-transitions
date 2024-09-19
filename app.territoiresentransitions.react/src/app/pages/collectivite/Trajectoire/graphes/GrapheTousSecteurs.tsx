@@ -73,6 +73,7 @@ export const GrapheTousSecteurs = ({
           chart: {
             ...COMMON_CHART_PROPS,
             axisLeftLegend: unite,
+            margin: {top: 5, right: 5, bottom: 55, left: 70},
             data: secteursNonVides,
             xScale: {
               type: 'time',
