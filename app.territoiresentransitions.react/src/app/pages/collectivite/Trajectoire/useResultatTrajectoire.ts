@@ -21,11 +21,12 @@ const useTrajectoire = () => {
   return useQuery(
     getKey(collectiviteId),
     async () =>
-      collectiviteId &&
-      api.get<ResultatTrajectoire>({
-        route: '/trajectoires/snbc',
-        params: {collectivite_id: collectiviteId},
-      }),
+      collectiviteId
+        ? api.get<ResultatTrajectoire>({
+            route: '/trajectoires/snbc',
+            params: {collectivite_id: collectiviteId},
+          })
+        : null,
     {
       retry: false,
       refetchOnMount: false,
@@ -51,7 +52,8 @@ export const useResultatTrajectoire = ({
 }) => {
   // données de la trajectoire
   const {data, isLoading: isLoadingTrajectoire} = useTrajectoire();
-  const trajectoire = data && data.trajectoire?.[indicateur.id];
+  const trajectoire =
+    data?.trajectoire && Object.values(data.trajectoire).flat();
 
   // crée les datasets par secteur pour le graphique
   const valeursTousSecteurs =
