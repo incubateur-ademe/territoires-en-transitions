@@ -1,8 +1,8 @@
--- Revert tet:collectivite/competence from pg
+-- Deploy tet:collectivite/competence to pg
 
 BEGIN;
 
-drop table collectivite_banatic_competence;
-drop table banatic_competence;
+drop trigger after_insert_add_competence on epci;
+drop function ajoute_competences_banatic;
 
 COMMIT;
