@@ -33,7 +33,7 @@ export const PartagerLeLien = () => {
   }, [copied]);
 
   return opened ? (
-    <Card className="fixed bottom-4 left-4 shadow-md w-96 z-10">
+    <Card className="fixed bottom-0 rounded-b-none -mb-1 left-4 shadow-md w-96 z-10">
       <div
         onClick={() => setOpened(false)}
         className="ml-auto cursor-pointer h-fit w-fit"
@@ -65,8 +65,15 @@ export const PartagerLeLien = () => {
       </Button>
     </Card>
   ) : (
-    <div className="fixed bottom-4 left-4">
-      <Button icon="share-line" size="sm" onClick={() => setOpened(true)} />
+    <div className="fixed bottom-0 left-4">
+      <Button
+        className="rounded-b-none -mb-1"
+        icon="user-add-line"
+        size="sm"
+        onClick={() => setOpened(true)}
+      >
+        Inviter des membres
+      </Button>
     </div>
   );
 };
