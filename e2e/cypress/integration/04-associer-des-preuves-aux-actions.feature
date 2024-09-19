@@ -27,7 +27,7 @@ Fonctionnalité: Associer des preuves aux actions
     Quand tous les transferts sont terminés
     Alors la liste des fichiers transférés contient les entrées suivantes :
       | Fichier        | Etat      | Taille | Message |
-      | bien nommé.doc | completed |        |         |
+      | bien nommé.doc | completed | 18 o   |         |
     Et le bouton "Ajouter" du "formulaire Fichier" est activé
 
     Quand je clique sur le bouton "Ajouter" du "formulaire Fichier"

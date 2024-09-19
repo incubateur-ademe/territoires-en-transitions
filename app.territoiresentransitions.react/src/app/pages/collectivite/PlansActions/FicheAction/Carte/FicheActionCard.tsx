@@ -49,7 +49,7 @@ const FicheActionCard = ({
     collectivite?.niveau_acces === null && ficheAction.restreint;
 
   return (
-    <div className="relative group h-full">
+    <div data-test="ActionCarte" className="relative group h-full">
       {/* Menu d'édition et de suppression */}
       {!collectivite?.readonly && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
@@ -111,7 +111,7 @@ const FicheActionCard = ({
 
       {/* Carte */}
       <Card
-        data-test="ActionCarte"
+        dataTest="ActionCarteContent"
         id={carteId}
         className={classNames(
           'h-full px-4 py-[1.125rem] !gap-3 !text-grey-8 !shadow-none transition',
@@ -169,7 +169,7 @@ const FicheActionCard = ({
         <span title="Emplacements" className="text-sm font-medium">
           {!!ficheAction.plans && ficheAction.plans.length > 0 ? (
             <>
-              {generateTitle(ficheAction.plans[0].nom)}
+              {generateTitle(ficheAction.plans[0]?.nom)}
               {ficheAction.plans.length > 1 && (
                 <Tooltip
                   openingDelay={250}

@@ -39,6 +39,7 @@ const FicheActionRestreint = ({
         </span>
         {!isReadonly && (
           <Button
+            data-test="BoutonFicheConfidentialite"
             title="Modifier la restriction d'accès"
             icon="edit-line"
             size="xs"

@@ -6,7 +6,7 @@ When(
   function (elem, fileName, fileContent) {
     const parent = resolveSelector(this, elem);
     cy.get(parent.selector)
-      .find('input[type=file]')
+      .find('label[data-test=inputFileLabel]')
       .selectFile({
         contents: Cypress.Buffer.from(fileContent),
         fileName,
@@ -20,7 +20,7 @@ When(
   function (elem, fileName, fileSize) {
     const parent = resolveSelector(this, elem);
     cy.get(parent.selector)
-      .find('input[type=file]')
+      .find('label[data-test=inputFileLabel]')
       .selectFile({
         contents: Cypress.Buffer.alloc(parseInt(fileSize) * 1024 * 1024),
         fileName,

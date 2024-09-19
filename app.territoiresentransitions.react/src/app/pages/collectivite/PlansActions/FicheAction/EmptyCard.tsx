@@ -2,6 +2,7 @@ import {Button, IconValue} from '@tet/ui';
 import classNames from 'classnames';
 
 type EmptyCardProps = {
+  buttonDataTest?: string;
   picto: (className: string) => React.ReactNode;
   title: string;
   subTitle?: string;
@@ -20,6 +21,7 @@ type EmptyCardProps = {
 };
 
 const EmptyCard = ({
+  buttonDataTest,
   picto,
   title,
   subTitle,
@@ -53,6 +55,7 @@ const EmptyCard = ({
         <div className="flex justify-center items-center gap-4 mt-3">
           {secondaryAction && (
             <Button
+              data-test={`Secondary${buttonDataTest}`}
               size="xs"
               variant="outlined"
               icon={secondaryAction.icon}
@@ -61,7 +64,12 @@ const EmptyCard = ({
               {secondaryAction.label}
             </Button>
           )}
-          <Button size="xs" icon={action.icon} onClick={action.onClick}>
+          <Button
+            data-test={buttonDataTest}
+            size="xs"
+            icon={action.icon}
+            onClick={action.onClick}
+          >
             {action.label}
           </Button>
         </div>

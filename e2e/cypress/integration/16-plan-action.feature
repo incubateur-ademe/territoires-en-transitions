@@ -9,18 +9,21 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique sur le bouton "Créer une fiche action"
     Alors le "Fiche action" est visible
     # modifier le titre en "Fiche test"
-    Quand je saisi la valeur "Fiche test" dans le champ "header input"
+    Quand je clique sur le texte "Titre de la fiche"
+    Et que je saisi la valeur "Fiche test" dans le champ "header input"
     Et que je clique en dehors de la boîte de dialogue
-    Alors le "header input" contient "Fiche test"
+    Alors le "Titre de la fiche" contient "Fiche test"
     # créer un tag personne pilote "Michel Sapasse"
-    Quand j'ouvre la section "acteurs"
-    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
+    Quand j'ouvre la modale "Acteurs"
+    Et que je sélectionne "Harry Cot" dans la liste déroulante "personnes-pilotes"
+    Et que je valide le formulaire
     # ajouter un statut "En cours"
-    Et que j'ouvre la section "modalites"
+    Et que j'ouvre la modale "Planning"
     Et que je sélectionne "En cours" dans la liste déroulante "Statut"
+    Et que je valide le formulaire
     # naviguer vers fiche non classées' et vérifier la présence de la fiche créée
     Quand je suis sur la page "Fiches non classees" de la collectivité "1"
-    Alors la carte de la fiche créée est présente et affiche le titre "Fiche test", le pilote "Michel Sapasse" et le statut "En cours"
+    Alors la carte de la fiche créée est présente et affiche le titre "Fiche test", le pilote "Harry Cot" et le statut "En cours"
     # supprimer la fiche créée
     Quand je navigue vers la fiche "Fiche test"
     Et que je supprime la fiche
@@ -42,18 +45,20 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # naviguer vers cette fiche
     Et que je navigue vers la fiche "Fiche test"
     # ouvrir la modale "Ranger la fiche"
-    Et que j'ouvre la modale ranger la fiche
+    Et que j'ouvre la modale "RangerFiche"
     Alors le "Modale ranger fiche action" est visible
     # enlever la fiche du plan d'action
     # le plan doit apparaitre dans "Sélectionner un nouvel emplacement"
     Quand j'enlève la fiche du plan
+    Et que je clique sur l'onglet Nouvel emplacement
     Alors le plan "Plan test" est visible dans le tableau nouvel emplacement
     # fermer la modale
     # le fil d'ariane de la fiche doit contenir "Fiches non classées"
     Quand je clique en dehors de la boîte de dialogue
     Alors le fil d'ariane de la fiche contient "Fiches non classées"
     # ranger la fiche dans Axe 1: les tests passent du plan "Plan test"
-    Quand Et que j'ouvre la modale ranger la fiche
+    Quand j'ouvre la modale "RangerFiche"
+    Et que je clique sur l'onglet Nouvel emplacement
     Et que je clique sur l'axe "Plan test" du tableau nouvel emplacement
     Et que je clique sur l'axe "Axe 1: les tests passent" du tableau nouvel emplacement
     Et que je valide cet emplacement
@@ -78,8 +83,10 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # naviguer vers cette fiche
     Et que je navigue vers la fiche "Fiche test 2"
     # changer la confidentialité
+    Et que j'ouvre la modale "FicheConfidentialite"
     Et que je toggle la confidentialité de la fiche
     # revenir sur le plan d'action
+    Et que je suis sur la page "Plans action" de la collectivité "1"
     Et que je navigue vers le plan "Plan test"
     # la fiche doit etre confidentielle
     Alors la carte "Fiche test 2" est privée
@@ -172,20 +179,25 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je navigue vers la fiche "Fiche test"
 
     # créer un tag personne pilote "Michel Sapasse"
-    Quand j'ouvre la section "acteurs"
-    Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
+    Quand j'ouvre la modale "Acteurs"
+    Et que je sélectionne "Harry Cot" dans la liste déroulante "personnes-pilotes"
+    Et que je valide le formulaire
 
     # ajouter un statut "En cours"
-    Et que j'ouvre la section "modalites"
+    Et que j'ouvre la modale "Planning"
     Et que je sélectionne "En cours" dans la liste déroulante "Statut"
+    Et que je valide le formulaire
 
+    # revenir sur le plan d'action
+    Et que je suis sur la page "Plans action" de la collectivité "1"
+    Et que je navigue vers le plan "Plan test"
     Quand je navigue vers "Axe 1: les tests passent"
     Quand j'ouvre les filtres
     Et que je filtre les fiches par "Yolo Dodo" du filtre "personne-pilote"
     Alors aucune fiche n'est présente
 
-    Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
-    Alors la fiche contenant "Michel Sapasse" est visible
+    Quand je filtre les fiches par "Harry Cot" du filtre "personne-pilote"
+    Alors la fiche contenant "Harry Cot" est visible
 
   Scénario: Visiter la page des graphiques de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"

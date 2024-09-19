@@ -42,6 +42,7 @@ const CheminsFiche = ({titre, collectiviteId, axes}: CheminsFicheProps) => {
         />
       ) : (
         <Breadcrumbs
+          dataTest="FicheFilAriane"
           items={[
             {
               label: 'Fiches non classées',

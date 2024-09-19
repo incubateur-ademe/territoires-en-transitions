@@ -57,6 +57,7 @@ const FicheActionActeurs = ({
         >
           {!isReadonly && (
             <Button
+              data-test="BoutonActeurs"
               title="Modifier les acteurs"
               icon="edit-line"
               size="xs"
@@ -124,6 +125,7 @@ const FicheActionActeurs = ({
             onClick: () => setIsModalOpen(true),
           }}
           className={className}
+          buttonDataTest="BoutonActeurs"
         />
       )}
 

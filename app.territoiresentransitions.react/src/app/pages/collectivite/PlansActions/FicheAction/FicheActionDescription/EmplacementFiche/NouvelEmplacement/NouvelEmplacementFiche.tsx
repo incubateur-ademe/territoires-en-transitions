@@ -92,7 +92,10 @@ const NouvelEmplacementFiche = ({
 
       {/* Arborescence des plans d'action disponibles */}
       {plans && plans.length > 0 ? (
-        <div className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
+        <div
+          data-test="TableauNouvelEmplacement"
+          className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3"
+        >
           <ColonneTableauEmplacement
             axesList={plans.map(plan => plan.plan)}
             selectedAxesIds={selectedAxes.map(axe => axe.axe.id)}
