@@ -31,7 +31,7 @@ const ValiderPanierButton = () => {
           });
         }}
       >
-        Valider la création
+        Créer un plan d’action
       </Button>
       <Modal
         size="lg"
