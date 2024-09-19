@@ -71,8 +71,9 @@ const ListeActions = ({
       {...tabsList.map(tab => {
         const actionsFiltrees = actionsListe.filter(
           a =>
-            (!a.statut && a.statut === tab.status) ||
-            (a.statut && a.statut.categorie_id === tab.status),
+            ((!a.statut && a.statut === tab.status) ||
+              (a.statut && a.statut.categorie_id === tab.status)) &&
+            (tab.status || !a.isinpanier),
         );
 
         return (
