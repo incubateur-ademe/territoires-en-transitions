@@ -201,6 +201,7 @@ export default class TrajectoiresSpreadsheetService {
             sequestrations: sequestrationTrajectoire,
           },
         };
+        this.inverseSigneSequestrations(result);
 
         return result;
       }
@@ -397,7 +398,48 @@ export default class TrajectoiresSpreadsheetService {
         sequestrations: sequestrationTrajectoire,
       },
     };
+
+    this.inverseSigneSequestrations(result);
     return result;
+  }
+
+  inverseSigneSequestrations(result: CalculTrajectoireResultType) {
+    // Il y a le cae_1.csc qui est une exception
+    result.trajectoire.emissions_ges.forEach((emissionGes) => {
+      if (
+        this.signeInversionSequestration(
+          emissionGes.definition.identifiant_referentiel,
+        )
+      ) {
+        emissionGes.valeurs.forEach((valeur) => {
+          if (valeur.objectif) {
+            valeur.objectif = -1 * valeur.objectif;
+          }
+          if (valeur.resultat) {
+            // Normalement pas nécessaire car uniquement résultat
+            valeur.resultat = -1 * valeur.resultat;
+          }
+        });
+      }
+    });
+    // Normalement, fait pour tous les indicateurs de séquestration mais on réutilise signeInversionSequestration au cas où la logique change
+    result.trajectoire.sequestrations.forEach((sequestration) => {
+      if (
+        this.signeInversionSequestration(
+          sequestration.definition.identifiant_referentiel,
+        )
+      ) {
+        sequestration.valeurs.forEach((valeur) => {
+          if (valeur.objectif) {
+            valeur.objectif = -1 * valeur.objectif;
+          }
+          if (valeur.resultat) {
+            // Normalement pas nécessaire car uniquement résultat
+            valeur.resultat = -1 * valeur.resultat;
+          }
+        });
+      }
+    });
   }
 
   getIdentifiantReferentielParent(
@@ -412,6 +454,14 @@ export default class TrajectoiresSpreadsheetService {
     } else {
       return null;
     }
+  }
+
+  signeInversionSequestration(identifiantReferentiel?: string | null): boolean {
+    return (
+      identifiantReferentiel?.startsWith(
+        this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+      ) || identifiantReferentiel === 'cae_1.csc'
+    );
   }
 
   getIndicateurValeursACreer(
@@ -509,16 +559,14 @@ export default class TrajectoiresSpreadsheetService {
                     this.trajectoiresDataService
                       .CONSOMMATIONS_IDENTIFIANTS_PREFIX,
                   );
-                const donneeSequestration =
-                  indicateurResultatDefinition.identifiant_referentiel?.startsWith(
-                    this.trajectoiresDataService
-                      .SEQUESTRATION_IDENTIFIANTS_PREFIX,
-                  ) ||
-                  indicateurResultatDefinition.identifiant_referentiel ===
-                    'cae_1.csc';
+
                 // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
                 let facteur = emissionGesOuSequestration ? 1000 : 1;
-                if (donneeSequestration) {
+                const signeInversionSequestration =
+                  this.signeInversionSequestration(
+                    indicateurResultatDefinition.identifiant_referentiel,
+                  );
+                if (signeInversionSequestration) {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1 * facteur;
                 }
