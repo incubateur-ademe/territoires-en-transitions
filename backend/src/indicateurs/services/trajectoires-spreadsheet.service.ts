@@ -5,6 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { isNil, partition } from 'es-toolkit';
+import * as _ from 'lodash';
 import slugify from 'slugify';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
@@ -443,7 +444,38 @@ export default class TrajectoiresSpreadsheetService {
         // Exception pour les transports: dépend de deux indicateurs Transport routier et Autres transports
         if (identifiantReferentielSortie === 'cae_1.k') {
           identifiantsReferentielEntree = ['cae_1.e', 'cae_1.f'];
+          // Exception, pour cae_1.csc, pas de données d'entrée associée
+        } else if (identifiantReferentielSortie === 'cae_1.csc') {
+          identifiantsReferentielEntree = [];
+          // Exception pour le total de séquestraion, nécessite toutes les composantes
+        } else if (identifiantReferentielSortie === 'cae_63.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_2.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_1.a') {
+          identifiantsReferentielEntree = _.flatten(
+            this.trajectoiresDataService
+              .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+          );
+        } else if (identifiantReferentielSortie === 'cae_1.aa') {
+          identifiantsReferentielEntree = [
+            ..._.flatten(
+              this.trajectoiresDataService
+                .SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
+            ),
+            ..._.flatten(
+              this.trajectoiresDataService
+                .SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
+            ),
+          ];
         }
+
         // TODO: exception pour les totaux?
         const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
           (identifiant) => {
@@ -481,7 +513,9 @@ export default class TrajectoiresSpreadsheetService {
                   indicateurResultatDefinition.identifiant_referentiel?.startsWith(
                     this.trajectoiresDataService
                       .SEQUESTRATION_IDENTIFIANTS_PREFIX,
-                  );
+                  ) ||
+                  indicateurResultatDefinition.identifiant_referentiel ===
+                    'cae_1.csc';
                 // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
                 let facteur = emissionGesOuSequestration ? 1000 : 1;
                 if (donneeSequestration) {

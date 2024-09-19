@@ -507,7 +507,7 @@ export default class TrajectoiresDataService {
     const valeurConsommationFinalesValides =
       consommations_finales.valeurs.filter((v) => v.valeur !== null).length;
     return (
-      valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 5
+      valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 3
     );
   }
 
