@@ -6,9 +6,9 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { NiveauAcces, SupabaseJwtPayload } from '../../auth/models/auth.models';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
-import { EpciType } from '../../collectivites/models/collectivite.models';
+import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import {
   DonneesARemplirResultType,
@@ -18,15 +18,18 @@ import {
   VerificationDonneesSNBCStatus,
   VerificationTrajectoireRequestType,
 } from '../models/calcultrajectoire.models';
-import {
-  CreateIndicateurSourceMetadonneeType,
-  CreateIndicateurSourceType,
-  IndicateurSourceMetadonneeType,
-  IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurType,
-} from '../models/indicateur.models';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
+import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
+import {
+  CreateIndicateurSourceMetadonneeType,
+  IndicateurSourceMetadonneeType,
+} from '../models/indicateur-source-metadonnee.table';
+import {
+  IndicateurValeurAvecMetadonnesDefinition,
+  IndicateurValeurType,
+} from '../models/indicateur-valeur.table';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -37,7 +40,7 @@ export default class TrajectoiresDataService {
     'Indicateurs manquants:';
 
   private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
-    String.raw`${this.OBJECTIF_COMMENTAIRE_SOURCE}\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
+    String.raw`${this.OBJECTIF_COMMENTAIRE_SOURCE}\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`,
   );
   public readonly RARE_SOURCE_ID = 'rare';
 
@@ -49,11 +52,11 @@ export default class TrajectoiresDataService {
   };
   public readonly SNBC_SOURCE_METADONNEES: CreateIndicateurSourceMetadonneeType =
     {
-      source_id: this.SNBC_SOURCE.id,
-      date_version: DateTime.fromISO('2024-07-11T00:00:00', {
+      sourceId: this.SNBC_SOURCE.id,
+      dateVersion: DateTime.fromISO('2024-07-11T00:00:00', {
         zone: 'utc',
       }).toJSDate(),
-      nom_donnees: 'SNBC',
+      nomDonnees: 'SNBC',
       diffuseur: 'ADEME',
       producteur: 'ADEME',
       // methodologie: '',
@@ -205,7 +208,7 @@ export default class TrajectoiresDataService {
     private readonly collectivitesService: CollectivitesService,
     private readonly indicateursService: IndicateursService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) {}
 
   async getTrajectoireIndicateursMetadonnees(): Promise<IndicateurSourceMetadonneeType> {
@@ -214,36 +217,30 @@ export default class TrajectoiresDataService {
       this.indicateurSourceMetadonnee =
         await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
           this.SNBC_SOURCE.id,
-          this.SNBC_SOURCE_METADONNEES.date_version
+          this.SNBC_SOURCE_METADONNEES.dateVersion,
         );
       if (!this.indicateurSourceMetadonnee) {
         this.logger.log(
-          `Création de la metadonnée pour la source ${
-            this.SNBC_SOURCE.id
-          } et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()}`
+          `Création de la metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion.toISOString()}`,
         );
         await this.indicateurSourcesService.upsertIndicateurSource(
-          this.SNBC_SOURCE
+          this.SNBC_SOURCE,
         );
 
         this.indicateurSourceMetadonnee =
           await this.indicateurSourcesService.createIndicateurSourceMetadonnee(
-            this.SNBC_SOURCE_METADONNEES
+            this.SNBC_SOURCE_METADONNEES,
           );
       }
     }
     this.logger.log(
-      `La metadonnée pour la source ${
-        this.SNBC_SOURCE.id
-      } et la date ${this.SNBC_SOURCE_METADONNEES.date_version.toISOString()} existe avec l'identifiant ${
-        this.indicateurSourceMetadonnee.id
-      }`
+      `La metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion.toISOString()} existe avec l'identifiant ${this.indicateurSourceMetadonnee.id}`,
     );
     return this.indicateurSourceMetadonnee;
   }
 
   getObjectifCommentaire(
-    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
+    donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType,
   ): string {
     const identifiantsManquants = [
       ...donneesCalculTrajectoire.emissions_ges
@@ -256,9 +253,7 @@ export default class TrajectoiresDataService {
 
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source}`;
     if (identifiantsManquants.length) {
-      commentaitre += ` - ${
-        this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS
-      } ${identifiantsManquants.join(', ')}`;
+      commentaitre += ` - ${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS} ${identifiantsManquants.join(', ')}`;
     }
 
     return commentaitre;
@@ -289,20 +284,20 @@ export default class TrajectoiresDataService {
    */
   async getValeursPourCalculTrajectoire(
     collectiviteId: number,
-    forceDonneesCollectivite?: boolean
+    forceDonneesCollectivite?: boolean,
   ): Promise<DonneesCalculTrajectoireARemplirType> {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
     const source = forceDonneesCollectivite
       ? this.indicateursService.NULL_SOURCE_ID
       : this.RARE_SOURCE_ID;
     this.logger.log(
-      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis la source ${source}`
+      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis la source ${source}`,
     );
     const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
-        collectivite_id: collectiviteId,
-        identifiants_referentiel: _.flatten(
-          this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
+        collectiviteId: collectiviteId,
+        identifiantsReferentiel: _.flatten(
+          this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
         ),
         sources: [source],
       });
@@ -310,15 +305,15 @@ export default class TrajectoiresDataService {
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
       this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursEmissionsGes
+      indicateurValeursEmissionsGes,
     );
 
     // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursConsommationsFinales =
       await this.indicateursService.getIndicateursValeurs({
-        collectivite_id: collectiviteId,
-        identifiants_referentiel: _.flatten(
-          this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
+        collectiviteId: collectiviteId,
+        identifiantsReferentiel: _.flatten(
+          this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
         ),
         sources: [source],
       });
@@ -326,15 +321,15 @@ export default class TrajectoiresDataService {
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
       this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursConsommationsFinales
+      indicateurValeursConsommationsFinales,
     );
 
     // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursSequestration =
       await this.indicateursService.getIndicateursValeurs({
-        collectivite_id: collectiviteId,
-        identifiants_referentiel: _.flatten(
-          this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
+        collectiviteId: collectiviteId,
+        identifiantsReferentiel: _.flatten(
+          this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
         ),
         sources: [source],
       });
@@ -342,7 +337,7 @@ export default class TrajectoiresDataService {
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesSequestration = this.getValeursARemplirPourIdentifiants(
       this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursSequestration
+      indicateurValeursSequestration,
     );
     return {
       source: source,
@@ -358,7 +353,7 @@ export default class TrajectoiresDataService {
    */
   getValeursARemplirPourIdentifiants(
     identifiantsReferentiel: string[][],
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
   ): DonneesARemplirResultType {
     const valeursARemplir: DonneesARemplirValeurType[] = [];
     const identifiantsReferentielManquants: string[] = [];
@@ -373,17 +368,17 @@ export default class TrajectoiresDataService {
       identifiants.forEach((identifiant) => {
         const identifiantIndicateurValeurs = indicateurValeurs.filter(
           (indicateurValeur) =>
-            indicateurValeur.indicateur_definition?.identifiant_referentiel ===
+            indicateurValeur.indicateur_definition?.identifiantReferentiel ===
               identifiant &&
             indicateurValeur.indicateur_valeur.resultat !== null &&
-            indicateurValeur.indicateur_valeur.resultat !== undefined
+            indicateurValeur.indicateur_valeur.resultat !== undefined,
         );
 
         const identifiantIndicateurValeur2015 =
           identifiantIndicateurValeurs.find(
             (indicateurValeur) =>
-              indicateurValeur.indicateur_valeur.date_valeur ===
-              this.SNBC_DATE_REFERENCE
+              indicateurValeur.indicateur_valeur.dateValeur ===
+              this.SNBC_DATE_REFERENCE,
           );
         if (
           identifiantIndicateurValeur2015 &&
@@ -397,24 +392,24 @@ export default class TrajectoiresDataService {
               identifiantIndicateurValeur2015.indicateur_valeur.resultat;
             if (
               !valeurARemplir.date_max ||
-              identifiantIndicateurValeur2015.indicateur_valeur.date_valeur >
+              identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
                 valeurARemplir.date_max
             ) {
               valeurARemplir.date_max =
-                identifiantIndicateurValeur2015.indicateur_valeur.date_valeur;
+                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
             if (
               !valeurARemplir.date_min ||
-              identifiantIndicateurValeur2015.indicateur_valeur.date_valeur <
+              identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
                 valeurARemplir.date_min
             ) {
               valeurARemplir.date_min =
-                identifiantIndicateurValeur2015.indicateur_valeur.date_valeur;
+                identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
           }
         } else {
           const interpolationResultat = this.getInterpolationValeur(
-            identifiantIndicateurValeurs.map((v) => v.indicateur_valeur)
+            identifiantIndicateurValeurs.map((v) => v.indicateur_valeur),
           );
 
           if (!interpolationResultat.valeur) {
@@ -462,18 +457,18 @@ export default class TrajectoiresDataService {
 
     indicateurValeurs.forEach((indicateurValeur) => {
       if (
-        indicateurValeur.date_valeur < this.SNBC_DATE_REFERENCE &&
+        indicateurValeur.dateValeur < this.SNBC_DATE_REFERENCE &&
         (!dateAvant2015 ||
-          (dateAvant2015 && indicateurValeur.date_valeur > dateAvant2015))
+          (dateAvant2015 && indicateurValeur.dateValeur > dateAvant2015))
       ) {
-        dateAvant2015 = indicateurValeur.date_valeur;
+        dateAvant2015 = indicateurValeur.dateValeur;
         valeurAvant2015 = indicateurValeur.resultat;
       } else if (
-        indicateurValeur.date_valeur > this.SNBC_DATE_REFERENCE &&
+        indicateurValeur.dateValeur > this.SNBC_DATE_REFERENCE &&
         (!dateApres2015 ||
-          (dateApres2015 && indicateurValeur.date_valeur < dateApres2015))
+          (dateApres2015 && indicateurValeur.dateValeur < dateApres2015))
       ) {
-        dateApres2015 = indicateurValeur.date_valeur;
+        dateApres2015 = indicateurValeur.dateValeur;
         valeurApres2015 = indicateurValeur.resultat;
       }
     });
@@ -508,11 +503,11 @@ export default class TrajectoiresDataService {
   }
 
   verificationDonneesARemplirSuffisantes(
-    donnees: DonneesCalculTrajectoireARemplirType
+    donnees: DonneesCalculTrajectoireARemplirType,
   ): boolean {
     const { emissions_ges, consommations_finales } = donnees;
     const valeurEmissionGesValides = emissions_ges.valeurs.filter(
-      (v) => v.valeur !== null
+      (v) => v.valeur !== null,
     ).length;
     const valeurConsommationFinalesValides =
       consommations_finales.valeurs.filter((v) => v.valeur !== null).length;
@@ -531,13 +526,13 @@ export default class TrajectoiresDataService {
     request: VerificationTrajectoireRequestType,
     tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
-    force_recuperation_donnees = false
+    forceRecuperationDonnees = false,
   ): Promise<VerificationDonneesSNBCResult> {
     // Vérification des droits
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
       [request.collectivite_id],
-      NiveauAcces.EDITION
+      NiveauAcces.EDITION,
     );
 
     const response: VerificationDonneesSNBCResult = {
@@ -545,13 +540,13 @@ export default class TrajectoiresDataService {
     };
 
     if (request.force_recuperation_donnees) {
-      force_recuperation_donnees = true;
+      forceRecuperationDonnees = true;
     }
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :
       const collectivite = await this.collectivitesService.getCollectivite(
-        request.collectivite_id
+        request.collectivite_id,
       );
       if (collectivite.commune || !collectivite.epci) {
         response.status = VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE;
@@ -574,44 +569,44 @@ export default class TrajectoiresDataService {
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
-      collectivite_id: request.collectivite_id,
+      collectiviteId: request.collectivite_id,
       sources: [this.SNBC_SOURCE.id],
     });
     if (valeurs.length > 0) {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
       // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
       // un peu un hack mais le plus simple aujourd'hui
-      const premierCommentaire = response.valeurs[0].objectif_commentaire;
+      const premierCommentaire = response.valeurs[0].objectifCommentaire;
       const sourceIdentifiantManquants =
         this.extractSourceIdentifiantManquantsFromCommentaire(
-          premierCommentaire || ''
+          premierCommentaire || '',
         );
       response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
       this.logger.log(
-        `Source des données SNBC déjà calculées : ${response.source_donnees_entree}`
+        `Source des données SNBC déjà calculées : ${response.source_donnees_entree}`,
       );
       response.indentifiants_referentiel_manquants_donnees_entree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
-      if (!force_recuperation_donnees) {
+      if (!forceRecuperationDonnees) {
         return response;
       }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
-    // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag force_utilisation_donnees_collectivite, on utilise la meme source
+    // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
       await this.getValeursPourCalculTrajectoire(
         request.collectivite_id,
         !isNil(request.force_utilisation_donnees_collectivite)
           ? request.force_utilisation_donnees_collectivite
           : response.source_donnees_entree ===
-            this.indicateursService.NULL_SOURCE_ID
-          ? true
-          : false
+              this.indicateursService.NULL_SOURCE_ID
+            ? true
+            : false,
       );
 
     const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
-      donneesCalculTrajectoireARemplir
+      donneesCalculTrajectoireARemplir,
     );
     response.donnees_entree = donneesCalculTrajectoireARemplir;
     // si oui, retourne 'pret a calculer'
@@ -629,13 +624,13 @@ export default class TrajectoiresDataService {
   async deleteTrajectoireSnbc(
     collectiviteId: number,
     snbcMetadonneesId?: number,
-    tokenInfo?: SupabaseJwtPayload
+    tokenInfo?: SupabaseJwtPayload,
   ): Promise<void> {
     if (!snbcMetadonneesId) {
       const indicateurSourceMetadonnee =
         await this.indicateurSourcesService.getIndicateurSourceMetadonnee(
           this.SNBC_SOURCE.id,
-          this.SNBC_SOURCE_METADONNEES.date_version
+          this.SNBC_SOURCE_METADONNEES.dateVersion,
         );
       if (indicateurSourceMetadonnee) {
         snbcMetadonneesId = indicateurSourceMetadonnee.id;
@@ -644,7 +639,7 @@ export default class TrajectoiresDataService {
 
     if (!snbcMetadonneesId) {
       throw new InternalServerErrorException(
-        `Impossible de trouver l'identifiant de la metadonnée SNBC`
+        `Impossible de trouver l'identifiant de la metadonnée SNBC`,
       );
     }
 
@@ -653,13 +648,13 @@ export default class TrajectoiresDataService {
       await this.authService.verifieAccesAuxCollectivites(
         tokenInfo,
         [collectiviteId],
-        NiveauAcces.EDITION
+        NiveauAcces.EDITION,
       );
     }
 
     await this.indicateursService.deleteIndicateurValeurs({
-      collectivite_id: collectiviteId,
-      metadonnee_id: snbcMetadonneesId,
+      collectiviteId: collectiviteId,
+      metadonneeId: snbcMetadonneesId,
     });
   }
 }
