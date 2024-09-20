@@ -1,14 +1,14 @@
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {getFileNameFromResponse} from 'core-logic/api/getFilenameFromResponse';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { getFileNameFromResponse } from 'core-logic/api/getFilenameFromResponse';
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/api/v1`;
+const BASE_URL = `${process.env.NX_PUBLIC_BACKEND_URL}/api/v1`;
 
 type JSONValue =
   | string
   | number
   | boolean
   | null
-  | {[x: string]: JSONValue}
+  | { [x: string]: JSONValue }
   | Array<JSONValue>;
 
 type API_ARGS = {
@@ -26,7 +26,7 @@ export class ApiError extends Error {
   error: string;
   statusCode: number;
 
-  constructor({error, message, statusCode}: ResponseError) {
+  constructor({ error, message, statusCode }: ResponseError) {
     super(message);
     this.statusCode = statusCode;
     this.error = error;
@@ -35,10 +35,10 @@ export class ApiError extends Error {
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
-  const {authHeaders} = useAuth();
+  const { authHeaders } = useAuth();
 
   // construit l'url pour la route et les paramètres donnés
-  const makeUrl = ({route, params}: API_ARGS) => {
+  const makeUrl = ({ route, params }: API_ARGS) => {
     const url = new URL(`${BASE_URL}${route}`);
     if (params) {
       Object.entries(params).forEach(([name, value]) =>
@@ -82,12 +82,12 @@ export const useApiClient = () => {
 
     // essaye d'extraire le nom de fichier des en-têtes
     const filename = getFileNameFromResponse(response);
-    return {blob, filename};
+    return { blob, filename };
   };
 
   // fait un appel POST
-  const post = async <ResponseType>({route, params}: API_ARGS) => {
-    const response = await fetch(makeUrl({route}), {
+  const post = async <ResponseType>({ route, params }: API_ARGS) => {
+    const response = await fetch(makeUrl({ route }), {
       method: 'POST',
       body: JSON.stringify(params),
       headers: {

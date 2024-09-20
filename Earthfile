@@ -359,13 +359,13 @@ app-build: ## construit l'image de l'app
     ARG POSTHOG_KEY
     ARG BACKEND_URL
     FROM +front-deps
-    ENV REACT_APP_SUPABASE_URL=$API_URL
-    ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV REACT_APP_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV REACT_APP_SENTRY_DSN=$SENTRY_DSN
-    ENV REACT_APP_POSTHOG_HOST=$POSTHOG_HOST
-    ENV REACT_APP_POSTHOG_KEY=$POSTHOG_KEY
-    ENV REACT_APP_BACKEND_URL=$BACKEND_URL
+    ENV NX_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NX_PUBLIC_SUPABASE_KEY=$ANON_KEY
+    ENV NX_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+    ENV NX_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+    ENV NX_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+    ENV NX_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
+    ENV NX_PUBLIC_BACKEND_URL=$BACKEND_URL
     LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
@@ -394,8 +394,8 @@ app-run: ## construit et lance l'image de l'app en local
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
-    ENV REACT_APP_SUPABASE_URL
-    ENV REACT_APP_SUPABASE_KEY
+    ENV NX_PUBLIC_SUPABASE_URL
+    ENV NX_PUBLIC_SUPABASE_KEY
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
@@ -413,8 +413,8 @@ app-test: ## lance les tests unitaires de l'app
     RUN docker run --rm \
         --name app-test_tet \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
-        --env REACT_APP_SUPABASE_URL='http://fake' \
-        --env REACT_APP_SUPABASE_KEY='fake' \
+        --env NX_PUBLIC_SUPABASE_URL='http://fake' \
+        --env NX_PUBLIC_SUPABASE_KEY='fake' \
         app-test:latest
 
 package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
@@ -555,11 +555,11 @@ storybook-build: ## construit l'image du storybook du module `ui`
     ARG PORT=6007
     FROM +front-deps
     COPY $UI_DIR/. $UI_DIR
-    RUN npx nx build-storybook @tet/ui
+    RUN pnpx nx build-storybook @tet/ui
     EXPOSE $PORT
     #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
     WORKDIR $UI_DIR
-    CMD ["npx", "serve", "-p", "6007", "./storybook-static"]
+    CMD ["pnpx", "serve", "-p", "6007", "./storybook-static"]
     SAVE IMAGE --cache-from=$STORYBOOK_IMG_NAME --push $STORYBOOK_IMG_NAME
 
 storybook-run: ## construit et lance l'image du storybook du module `ui` en local
@@ -693,7 +693,7 @@ gen-types: ## génère le typage à partir de la base de données
     IF [ "$CI" = "true" ]
         RUN supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     ELSE
-        RUN npx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
+        RUN pnpx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     END
     RUN cp $API_DIR/src/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp $API_DIR/src/database.types.ts ./supabase/functions/_shared/database.types.ts
@@ -705,9 +705,9 @@ setup-env:
         RUN supabase start
         RUN supabase status -o env > .arg
     ELSE
-        RUN npm install
-        RUN npx supabase start
-        RUN npx supabase status -o env > .arg
+        RUN pnpm install
+        RUN pnpx supabase start
+        RUN pnpx supabase status -o env > .arg
     END
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
@@ -753,7 +753,7 @@ dev:
             RUN docker stop supabase_studio_tet
             RUN docker stop supabase_pg_meta_tet
         ELSE
-            RUN npx supabase start
+            RUN pnpx supabase start
         END
 
         IF [ "$eco" = "yes" ]
@@ -824,7 +824,7 @@ stop:
     IF [ "$CI" = "true" ]
         RUN supabase stop
     ELSE
-        RUN npx supabase stop
+        RUN pnpx supabase stop
     END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
     RUN earthly +clear-state
