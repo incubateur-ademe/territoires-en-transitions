@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CommonModule } from '../common/common.module';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './services/auth.service';
+import { CollectivitesModule } from '../collectivites/collectivites.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AuthService } from './services/auth.service';
       secret: process.env.SUPABASE_JWT_SECRET,
     }),
     CommonModule,
+    CollectivitesModule,
   ],
   providers: [
     {
