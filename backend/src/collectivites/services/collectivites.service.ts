@@ -1,11 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
-import {
-  collectiviteTable,
-  communeTable,
-  epciTable,
-} from '../models/collectivite.models';
+import { collectiviteTable } from '../models/collectivite.table';
+import { epciTable } from '../models/epci.table';
+import { communeTable } from '../models/commune.table';
 
 @Injectable()
 export default class CollectivitesService {
@@ -24,9 +22,9 @@ export default class CollectivitesService {
       .from(collectiviteTable)
       .leftJoin(
         communeTable,
-        eq(communeTable.collectivite_id, collectiviteTable.id),
+        eq(communeTable.collectiviteId, collectiviteTable.id),
       )
-      .leftJoin(epciTable, eq(epciTable.collectivite_id, collectiviteTable.id))
+      .leftJoin(epciTable, eq(epciTable.collectiviteId, collectiviteTable.id))
       .where(eq(collectiviteTable.id, collectiviteId));
     if (!collectiviteByIdResult?.length) {
       throw new NotFoundException(
@@ -47,7 +45,7 @@ export default class CollectivitesService {
     const epciByIdResult = await this.databaseService.db
       .select()
       .from(epciTable)
-      .where(eq(epciTable.collectivite_id, collectiviteId));
+      .where(eq(epciTable.collectiviteId, collectiviteId));
     if (!epciByIdResult?.length) {
       throw new NotFoundException(
         `EPCI avec l'identifiant de collectivite ${collectiviteId} introuvable`,
