@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CommonModule } from '../common/common.module';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './services/auth.service';
+import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { ConfigurationModule } from '../config/configuration.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { ConfigurationModule } from '../config/configuration.module';
     }),
     ConfigurationModule,
     CommonModule,
+    CollectivitesModule,
   ],
   providers: [
     {
