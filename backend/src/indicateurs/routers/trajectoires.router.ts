@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   SupabaseJwtPayload,
   SupabaseRole,
-} from '../../auth/models/auth.models';
+} from '../../auth/models/supabase-jwt.models';
 import { TrpcService } from '../../trpc/services/trpc.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 
@@ -18,7 +18,7 @@ export class TrajectoiresRouter {
     snbc: this.trpc.procedure
       .input(
         z.object({
-          collectivite_id: z.number(),
+          collectiviteId: z.number(),
           conserve_fichier_temporaire: z.boolean().optional(),
         }),
       )
