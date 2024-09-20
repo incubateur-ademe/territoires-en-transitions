@@ -12,6 +12,7 @@ type BeneficesProps = {
 const Benefices = ({titre, description, contenu}: BeneficesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
+      containerClassName="bg-primary-0 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
       title={titre}
       description={description}
       cardsList={

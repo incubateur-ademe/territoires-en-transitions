@@ -4,13 +4,13 @@ import Services from './Services';
 import Benefices from './Benefices';
 import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
-import Compte from './Compte';
-import Ressources from './Ressources';
 import NoResult from '@components/info/NoResult';
 import {getStrapiData} from './utils';
-import Carte from './Carte';
 import {Metadata, ResolvingMetadata} from 'next';
 import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import Contact from './Contact';
+import Compte from './Compte';
+import CollectivitesEngagees from './CollectivitesEngagees';
 
 export async function generateMetadata(
   params: {params: {}},
@@ -36,21 +36,17 @@ const Programme = async () => {
         titre={data.titre}
         description={data.description}
         couvertureURL={data.couvertureURL}
-        objectifs={data.objectifs}
       />
-
-      <Services
-        titre={data.services.titre}
-        description={data.services.description}
-        contenu={data.services.contenu}
-      />
-
-      <Compte description={data.compte.description} />
 
       <Benefices
         titre={data.benefices.titre}
         description={data.benefices.description}
         contenu={data.benefices.contenu}
+      />
+
+      <Contact
+        description="Vous souhaitez en savoir plus sur le programme Territoire Engagé Transition Écologique"
+        cta="Contactez-nous"
       />
 
       <Etapes
@@ -59,9 +55,18 @@ const Programme = async () => {
         contenu={data.etapes.contenu}
       />
 
-      <Carte />
+      <Services titre={data.services.titre} contenu={data.services.contenu} />
 
-      <Ressources description={data.ressources.description} />
+      <CollectivitesEngagees />
+
+      <Compte
+        titre="Créer un compte gratuitement sur notre service numérique"
+        description={data.compte.description}
+        cta="Créer un compte"
+        image={
+          data.services.contenu ? data.services.contenu[0].image : undefined
+        }
+      />
     </>
   ) : (
     <NoResult />

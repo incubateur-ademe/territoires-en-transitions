@@ -52,7 +52,7 @@ export function MenuPrincipal(props: MenuProps) {
       >
         Rencontres
       </MenuItem>
-      <MenuItem href="/programme#carte" {...props}>
+      <MenuItem href="/collectivites" {...props}>
         Collectivités
       </MenuItem>
       <MenuItem href="/actus" {...props}>

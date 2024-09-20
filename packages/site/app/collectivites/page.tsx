@@ -1,7 +1,7 @@
 'use server';
 
 import {Metadata} from 'next';
-import {notFound} from 'next/navigation';
+import Carte from './Carte';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -9,6 +9,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const Collectivite = () => notFound();
+const Collectivite = () => <Carte />;
 
 export default Collectivite;

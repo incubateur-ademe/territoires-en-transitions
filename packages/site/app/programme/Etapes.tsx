@@ -15,8 +15,8 @@ type EtapesProps = {
 const Etapes = ({titre, description, contenu}: EtapesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
-      containerClassName="bg-primary-1"
-      title={titre}
+      containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
+      subtitle={titre}
       description={description}
       cardsList={
         <CardsWrapper cols={4}>
@@ -31,8 +31,8 @@ const Etapes = ({titre, description, contenu}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <Button href="/contact" className="mt-6">
-        Contactez-nous
+      <Button href="/contact" className="mt-3 lg:mt-6 mx-auto">
+        Démarrer maintenant
       </Button>
     </CardsSection>
   ) : null;

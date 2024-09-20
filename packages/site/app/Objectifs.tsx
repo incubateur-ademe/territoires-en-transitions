@@ -1,7 +1,7 @@
 import CardsWrapper from '@components/cards/CardsWrapper';
 import CardsSection from '@components/sections/CardsSection';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Content} from './types';
+import {Content} from './programme/types';
 import Card from '@components/cards/Card';
 
 type ObjectifsProps = {

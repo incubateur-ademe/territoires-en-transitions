@@ -1,0 +1,12 @@
+.markdown_compte ul {
+  list-style-position: outside;
+  @apply pl-5;
+}
+
+.markdown_compte li:not(:last-of-type) {
+  @apply pb-4;
+}
+
+.markdown_compte {
+  @apply text-primary-9 text-base font-bold leading-5;
+}

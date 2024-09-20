@@ -41,7 +41,7 @@ const Card = ({
   return (
     <div
       className={classNames(
-        'bg-white p-6 xl:p-8 border border-primary-4 rounded-lg',
+        'bg-white p-4 md:p-6 xl:p-8 border border-primary-4 rounded-lg',
         {
           'grid grid-cols-1 md:grid-cols-3 gap-6 xl:gap-8':
             !!image && imagePosition === 'left',
@@ -62,9 +62,9 @@ const Card = ({
               {step}
             </div>
           )}
-          {!!title && <h4>{title}</h4>}
+          {!!title && <h4 className="text-primary-8 mb-3">{title}</h4>}
           {!!subtitle && (
-            <p className="text-primary-8 text-[17px] leading-[24px] font-bold mb-3">
+            <p className="text-primary-9 text-[17px] leading-[24px] font-bold mb-3">
               {subtitle}
             </p>
           )}
