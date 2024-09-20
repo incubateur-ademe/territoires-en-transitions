@@ -30,6 +30,94 @@
     "VideoURL": {
       "type": "string"
     },
+    "benefices_titre": {
+      "type": "string",
+      "default": "Les bénéfices",
+      "required": true,
+      "maxLength": 255
+    },
+    "benefices_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre"
+    },
+    "contact_description": {
+      "type": "string",
+      "required": true,
+      "default": "Vous souhaitez en savoir plus sur le programme Territoire Engagé Transition Écologique",
+      "maxLength": 255
+    },
+    "contact_cta": {
+      "type": "string",
+      "default": "Contactez-nous",
+      "required": true,
+      "maxLength": 50
+    },
+    "etapes_titre": {
+      "type": "string",
+      "default": "Les étapes ",
+      "required": true,
+      "maxLength": 255
+    },
+    "etapes_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-titre"
+    },
+    "etapes_cta": {
+      "type": "string",
+      "default": "Démarrer maintenant",
+      "required": true,
+      "maxLength": 50
+    },
+    "services_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Composez votre offre avec des services sur-mesure"
+    },
+    "services_liste_rel": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::service.service"
+    },
+    "collectivites_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "De nombreuses collectivités déjà engagées"
+    },
+    "collectivites_cta": {
+      "type": "string",
+      "default": "Explorer les collectivités",
+      "required": true,
+      "maxLength": 50
+    },
+    "compte_titre": {
+      "type": "string",
+      "default": "Créer un compte gratuitement sur notre service numérique",
+      "required": true,
+      "maxLength": 255
+    },
+    "compte_description": {
+      "type": "richtext",
+      "default": "- Centralisez vos données et pilotez vos plans d’actions - Evaluez l'impact de vos actions via vos tableaux de bord - Mesurez votre progression grâce aux indicateurs - Réalisez votre état des lieux Climat-Air-Énergie et Économie Circulaire - Collaborez avec vos collègues pour le suivi des actions",
+      "required": true
+    },
+    "compte_cta": {
+      "type": "string",
+      "default": "Créer un compte",
+      "required": true,
+      "maxLength": 50
+    },
+    "compte_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
     "Objectifs": {
       "type": "component",
       "repeatable": false,
@@ -47,11 +135,6 @@
       "component": "bloc.description",
       "required": true
     },
-    "services_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-titre"
-    },
     "Compte": {
       "displayName": "Compte",
       "type": "component",
@@ -59,27 +142,11 @@
       "component": "bloc.compte",
       "required": true
     },
-    "Benefices": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "benefices_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-titre"
-    },
     "Etapes": {
       "type": "component",
       "repeatable": false,
       "component": "bloc.description",
       "required": true
-    },
-    "etapes_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-titre"
     },
     "Ressources": {
       "displayName": "Ressources",
@@ -88,10 +155,11 @@
       "component": "bloc.ressources",
       "required": true
     },
-    "services_liste_rel": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::service.service"
+    "Benefices": {
+      "type": "component",
+      "repeatable": false,
+      "component": "bloc.description",
+      "required": true
     }
   }
 }

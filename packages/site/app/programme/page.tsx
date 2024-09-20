@@ -38,35 +38,17 @@ const Programme = async () => {
         couvertureURL={data.couvertureURL}
       />
 
-      <Benefices
-        titre={data.benefices.titre}
-        description={data.benefices.description}
-        contenu={data.benefices.contenu}
-      />
+      <Benefices {...data.benefices} />
 
-      <Contact
-        description="Vous souhaitez en savoir plus sur le programme Territoire Engagé Transition Écologique"
-        cta="Contactez-nous"
-      />
+      <Contact {...data.contact} />
 
-      <Etapes
-        titre={data.etapes.titre}
-        description={data.etapes.description}
-        contenu={data.etapes.contenu}
-      />
+      <Etapes {...data.etapes} />
 
-      <Services titre={data.services.titre} contenu={data.services.contenu} />
+      <Services {...data.services} />
 
-      <CollectivitesEngagees />
+      <CollectivitesEngagees {...data.collectivites} />
 
-      <Compte
-        titre="Créer un compte gratuitement sur notre service numérique"
-        description={data.compte.description}
-        cta="Créer un compte"
-        image={
-          data.services.contenu ? data.services.contenu[0].image : undefined
-        }
-      />
+      <Compte {...data.compte} />
     </>
   ) : (
     <NoResult />

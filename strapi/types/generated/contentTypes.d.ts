@@ -1294,21 +1294,84 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     Description: Attribute.Text &
       Attribute.DefaultTo<"L'outil op\u00E9rationnel de planification \u00E9cologique qui met \u00E0 votre disposition une ing\u00E9nierie territoriale et un accompagnement personnalis\u00E9.">;
     VideoURL: Attribute.String;
-    Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
-    objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
-    Services: Attribute.Component<'bloc.description'> & Attribute.Required;
-    services_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
-    Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
-    Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
+    benefices_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Les b\u00E9n\u00E9fices'>;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
-    Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
+    contact_description: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Vous souhaitez en savoir plus sur le programme Territoire Engag\u00E9 Transition \u00C9cologique'>;
+    contact_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Contactez-nous'>;
+    etapes_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Les \u00E9tapes '>;
     etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
-    Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
+    etapes_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'D\u00E9marrer maintenant'>;
+    services_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Composez votre offre avec des services sur-mesure'>;
     services_liste_rel: Attribute.Relation<
       'api::page-programme.page-programme',
       'oneToMany',
       'api::service.service'
     >;
+    collectivites_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'De nombreuses collectivit\u00E9s d\u00E9j\u00E0 engag\u00E9es'>;
+    collectivites_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Explorer les collectivit\u00E9s'>;
+    compte_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Cr\u00E9er un compte gratuitement sur notre service num\u00E9rique'>;
+    compte_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<"- Centralisez vos donn\u00E9es et pilotez vos plans d\u2019actions - Evaluez l'impact de vos actions via vos tableaux de bord - Mesurez votre progression gr\u00E2ce aux indicateurs - R\u00E9alisez votre \u00E9tat des lieux Climat-Air-\u00C9nergie et \u00C9conomie Circulaire - Collaborez avec vos coll\u00E8gues pour le suivi des actions">;
+    compte_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Cr\u00E9er un compte'>;
+    compte_image: Attribute.Media;
+    Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
+    objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
+    Services: Attribute.Component<'bloc.description'> & Attribute.Required;
+    Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
+    Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
+    Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
+    Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
