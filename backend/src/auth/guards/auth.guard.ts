@@ -11,7 +11,7 @@ import { Request } from 'express';
 import BackendConfigurationService from '../../config/configuration.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
 import { PublicEndpoint } from '../decorators/public-endpoint.decorator';
-import { SupabaseJwtPayload } from '../models/auth.models';
+import { SupabaseJwtPayload } from '../models/supabase-jwt.models';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
