@@ -7,8 +7,8 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { SupabaseJwtPayload } from '../../auth/models/auth.models';
-import { EpciType } from '../../collectivites/models/collectivite.models';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { EpciType } from '../../collectivites/models/epci.table';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import { BackendConfigurationType } from '../../config/configuration.model';
 import ConfigurationService from '../../config/configuration.service';
@@ -21,10 +21,8 @@ import {
   DonneesCalculTrajectoireARemplirType,
   VerificationDonneesSNBCStatus,
 } from '../models/calcultrajectoire.models';
-import {
-  CreateIndicateurValeurType,
-  IndicateurDefinitionType,
-} from '../models/indicateur.models';
+import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
+import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
@@ -131,8 +129,8 @@ export default class TrajectoiresSpreadsheetService {
         ] = partition(
           indicateurDefinitions,
           (definition) =>
-            definition.identifiant_referentiel?.startsWith(
-              this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
+            definition.identifiantReferentiel?.startsWith(
+              this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
             ) || false
         );
 
@@ -142,8 +140,8 @@ export default class TrajectoiresSpreadsheetService {
         ] = partition(
           indicateurEmissionsSequestrationDefinitions,
           (definition) =>
-            definition.identifiant_referentiel?.startsWith(
-              this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+            definition.identifiantReferentiel?.startsWith(
+              this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
             ) || false
         );
 
@@ -341,8 +339,8 @@ export default class TrajectoiresSpreadsheetService {
     ] = partition(
       indicateurResultatDefinitions,
       (definition) =>
-        definition.identifiant_referentiel?.startsWith(
-          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
+        definition.identifiantReferentiel?.startsWith(
+          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
         ) || false
     );
 
@@ -352,8 +350,8 @@ export default class TrajectoiresSpreadsheetService {
     ] = partition(
       indicateurResultatSequestrationEmissionsDefinitions,
       (definition) =>
-        definition.identifiant_referentiel?.startsWith(
-          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+        definition.identifiantReferentiel?.startsWith(
+          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
         ) || false
     );
 
@@ -406,7 +404,7 @@ export default class TrajectoiresSpreadsheetService {
     result.trajectoire.emissions_ges.forEach((emissionGes) => {
       if (
         this.signeInversionSequestration(
-          emissionGes.definition.identifiant_referentiel
+          emissionGes.definition.identifiantReferentiel
         )
       ) {
         emissionGes.valeurs.forEach((valeur) => {
@@ -424,7 +422,7 @@ export default class TrajectoiresSpreadsheetService {
     result.trajectoire.sequestrations.forEach((sequestration) => {
       if (
         this.signeInversionSequestration(
-          sequestration.definition.identifiant_referentiel
+          sequestration.definition.identifiantReferentiel
         )
       ) {
         sequestration.valeurs.forEach((valeur) => {
@@ -569,7 +567,7 @@ export default class TrajectoiresSpreadsheetService {
           const indicateurResultatDefinition =
             indicateurResultatDefinitions.find(
               (definition) =>
-                definition.identifiant_referentiel ===
+                definition.identifiantReferentiel ===
                 identifiantReferentielSortie
             );
           if (indicateurResultatDefinition) {
@@ -577,7 +575,7 @@ export default class TrajectoiresSpreadsheetService {
               const floatValeur = parseFloat(valeur);
               if (!isNaN(floatValeur)) {
                 const emissionGesOuSequestration =
-                  !indicateurResultatDefinition.identifiant_referentiel?.startsWith(
+                  !indicateurResultatDefinition.identifiantReferentiel?.startsWith(
                     this.trajectoiresDataService
                       .CONSOMMATIONS_IDENTIFIANTS_PREFIX
                   );
@@ -586,19 +584,19 @@ export default class TrajectoiresSpreadsheetService {
                 let facteur = emissionGesOuSequestration ? 1000 : 1;
                 const signeInversionSequestration =
                   this.signeInversionSequestration(
-                    indicateurResultatDefinition.identifiant_referentiel
+                    indicateurResultatDefinition.identifiantReferentiel
                   );
                 if (signeInversionSequestration) {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1 * facteur;
                 }
                 const indicateurValeur: CreateIndicateurValeurType = {
-                  indicateur_id: indicateurResultatDefinition.id,
-                  collectivite_id: collectiviteId,
-                  metadonnee_id: indicateurSourceMetadonneeId,
-                  date_valeur: `${2015 + columnIndex}-01-01`,
+                  indicateurId: indicateurResultatDefinition.id,
+                  collectiviteId: collectiviteId,
+                  metadonneeId: indicateurSourceMetadonneeId,
+                  dateValeur: `${2015 + columnIndex}-01-01`,
                   objectif: floatValeur * facteur,
-                  objectif_commentaire: objectifCommentaire,
+                  objectifCommentaire: objectifCommentaire,
                 };
                 indicateurValeursResultat.push(indicateurValeur);
               } else {
