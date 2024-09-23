@@ -2,6 +2,7 @@ import type {
   DatasetComponentOption,
   LineSeriesOption,
   EChartsOption,
+  LegendComponentOption,
 } from 'echarts';
 import {preset} from '@tet/ui';
 
@@ -40,9 +41,13 @@ export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     lineStyle: {width: 0},
   }));
 
+const estLignePointillee = ({id}: {id?: string | number}) =>
+  id === 'objectifs' || id === 'trajectoire';
+
 // génère le paramétrage de séries de données sous forme de lignes
 export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
   dataset.map(ds => ({
+    id: ds.id,
     datasetId: ds.id,
     name: ds.name,
     color: ds.color,
@@ -50,11 +55,31 @@ export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     smooth: true,
     emphasis: {focus: 'series'},
     symbol: ds.id === 'trajectoire' ? 'none' : 'circle',
-    lineStyle:
-      ds.id === 'objectifs' || ds.id === 'trajectoire'
-        ? {type: 'dashed', width: 2}
-        : {width: 2},
+    lineStyle: estLignePointillee(ds) ? {type: 'dashed', width: 2} : {width: 2},
   }));
+
+// génère le paramétrage des données de la légende à partir des paramètres des lignes
+export const makeLegendData = (
+  series: LineSeriesOption[]
+): LegendComponentOption['data'] =>
+  // @ts-expect-error
+  series.map(serie =>
+    serie.stack
+      ? serie.name
+      : {
+          name: serie.name,
+          icon: 'line',
+          itemStyle: Object.assign(
+            {
+              borderColor: serie.color,
+              borderWidth: 2,
+            },
+            estLignePointillee(serie)
+              ? {borderDashOffset: 1, borderType: 'dashed'}
+              : {borderType: 'solid'}
+          ),
+        }
+  );
 
 // génère le paramétrage du graphe
 export const makeOption = ({
@@ -87,6 +112,10 @@ export const makeOption = ({
       fontSize: 14,
       lineHeight: 20,
     },
+    data:
+      option?.series && Array.isArray(option?.series)
+        ? makeLegendData(option.series as LineSeriesOption[])
+        : undefined,
   },
   xAxis: {
     type: 'time',
