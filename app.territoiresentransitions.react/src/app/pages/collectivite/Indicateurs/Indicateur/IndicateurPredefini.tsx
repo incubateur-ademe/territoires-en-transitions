@@ -1,19 +1,20 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import {HeaderIndicateur} from './detail/HeaderIndicateur';
-import {IndicateurCompose} from './detail/IndicateurCompose';
-import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
-import {TIndicateurDefinition} from '../types';
-import {useIndicateurDefinition} from './useIndicateurDefinition';
-import {Badge, Field, TrackPageView} from '@tet/ui';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIndicateurImportSources} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
-import {ImportSourcesSelector} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
+import { HeaderIndicateur } from './detail/HeaderIndicateur';
+import { IndicateurCompose } from './detail/IndicateurCompose';
+import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';
+import { TIndicateurDefinition } from '../types';
+import { useIndicateurDefinition } from './useIndicateurDefinition';
+import { Badge, Field, TrackPageView } from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useIndicateurImportSources } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
+import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {referentielToName} from 'app/labels';
-import {IndicateurValuesTabs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
-import {IndicateurInfoLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
-import {FichesActionLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import TextareaControlled from 'ui/shared/form/TextareaControlled';
+import { referentielToName } from 'app/labels';
+import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
+import { IndicateurInfoLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
+import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
@@ -22,17 +23,18 @@ export const IndicateurPredefiniBase = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
+  const { description } = definition;
+
   const collectivite_id = useCollectiviteId()!;
 
-  const {sources, currentSource, setCurrentSource} = useIndicateurImportSources(
-    definition.id
-  );
+  const { sources, currentSource, setCurrentSource } =
+    useIndicateurImportSources(definition.id);
 
   return (
     <>
       <TrackPageView
         pageName="app/indicateurs/predefini"
-        properties={{collectivite_id, indicateur_id: definition.identifiant!}}
+        properties={{ collectivite_id, indicateur_id: definition.identifiant! }}
       />
       <HeaderIndicateur title={definition.titre} />
       <div className="px-10 py-4">
@@ -75,6 +77,29 @@ export const IndicateurPredefiniBase = ({
               definition={definition}
               importSource={currentSource}
             />
+
+            <div className="flex flex-col gap-8 mt-10">
+              <Field title="Description et méthodologie de calcul">
+                <TextareaControlled
+                  data-test="desc"
+                  className="fr-input fr-mt-1w !outline-none"
+                  initialValue={description}
+                  readOnly={isReadonly}
+                  onBlur={(e) => handleUpdate('description', e.target.value)}
+                />
+              </Field>
+              <IndicateurInfoLiees definition={definition} />
+              <FichesActionLiees definition={definition} />
+              <Field title="Unité">
+                <InputControlled
+                  className="fr-input fr-mt-1w !outline-none"
+                  initialValue={unite}
+                  readOnly={isReadonly}
+                  onBlur={(e) => handleUpdate('unite', e.target.value)}
+                />
+              </Field>
+            </div>
+
             <div className="flex flex-col gap-8 mt-10">
               <IndicateurInfoLiees definition={definition} />
               {
@@ -88,7 +113,7 @@ export const IndicateurPredefiniBase = ({
                     }
                   >
                     <ActionsLieesListe
-                      actionsIds={(definition.actions ?? []).map(a => a.id)}
+                      actionsIds={(definition.actions ?? []).map((a) => a.id)}
                     />
                   </Field>
                 ) : null
