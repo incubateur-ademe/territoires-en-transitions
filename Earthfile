@@ -301,11 +301,12 @@ front-deps-builder:
 
 backend-pre-build:
     # Build stage: todo: check if we use the same image as frontends
-    FROM +front-deps
+    FROM +node-fr
 
     COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
-    COPY --chown=node:node $API_DIR/. $API_DIR
-    RUN npm run build:backend && npm prune --omit=dev
+    WORKDIR /app/$BACKEND_DIR
+    RUN npm install
+    RUN npm run build && npm prune --omit=dev
 
     SAVE ARTIFACT . /app
 
@@ -321,13 +322,11 @@ backend-build:
 
     COPY --chown=node:node +backend-pre-build/app/package*.json .
     COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
-    COPY --chown=node:node +backend-pre-build/app/backend/package.json ./backend/package.json
-    COPY --chown=node:node +backend-pre-build/app/backend/node_modules ./backend/node_modules
-    COPY --chown=node:node +backend-pre-build/app/backend/dist ./backend/dist
+    COPY --chown=node:node +backend-pre-build/app/dist ./dist
 
     EXPOSE ${PORT}
 
-    CMD ["node", "backend/dist/backend/src/main.js"]
+    CMD ["node", "dist/main.js"]
     SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
 
 backend-deploy: ## Déploie le backend dans une app Koyeb existante

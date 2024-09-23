@@ -5,7 +5,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
-import { JSZipGeneratorOptions } from 'jszip';
 import * as XlsxTemplate from 'xlsx-template';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
@@ -190,7 +189,8 @@ export default class TrajectoiresXlsxService {
       emissionGesSequestrationConsommationsSubstitionValeurs,
     );
 
-    const zipOptions: JSZipGeneratorOptions = {
+    // TODO: type it
+    const zipOptions: any = {
       type: 'nodebuffer',
       compression: 'DEFLATE',
       compressionOptions: {
