@@ -12,6 +12,7 @@ import {
   separeObjectifsEtResultats,
   useIndicateurValeurs,
 } from './useIndicateurValeurs';
+import {COULEURS_SECTEUR, LAYERS} from './graphes/constants';
 
 /** Charge la trajectoire */
 const useTrajectoire = () => {
@@ -68,18 +69,18 @@ export const useResultatTrajectoire = ({
   // les objectifs/résultats saisis par la collectivité
   const identifiant = secteur ? secteur.identifiant : indicateur.identifiant;
 
+  // dataset du secteur sélectionné
+  const valeursSecteur =
+    valeursTousSecteurs && secteurIdx > 0
+      ? valeursTousSecteurs.find(s => s?.id === identifiant)
+      : null;
+
   // crée les datasets par sous-secteur si un secteur est sélectionné
   const valeursSousSecteurs =
     trajectoire &&
     secteur &&
     'sousSecteurs' in secteur &&
     prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire, coef);
-
-  // dataset du secteur sélectionné
-  const valeursSecteur =
-    valeursTousSecteurs && secteurIdx > 0
-      ? valeursTousSecteurs.find(s => s?.id === identifiant)
-      : null;
 
   // charge les données objectifs/résultats de la collectivité et open data
   const {data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats} =
@@ -93,6 +94,7 @@ export const useResultatTrajectoire = ({
       ],
     });
 
+  // sépare les valeurs objectif & résultat
   const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
   const objectifsEtResultats = separeObjectifsEtResultats(
     sources?.[SourceIndicateur.COLLECTIVITE]?.valeurs
@@ -104,6 +106,7 @@ export const useResultatTrajectoire = ({
     sources?.[SourceIndicateur.RARE]?.valeurs
   )?.resultats;
 
+  // sélectionne le jeu de données approprié
   const objectifsCollectiviteOuPCAET = selectDataset({
     donneesCollectivites: objectifsEtResultats?.objectifs,
     donneesSourceExterne: objectifsPCAET,
@@ -114,16 +117,26 @@ export const useResultatTrajectoire = ({
   });
 
   // crée les datasets objectifs et résultats pour le graphique
-  const objectifs =
-    objectifsCollectiviteOuPCAET?.map(v => ({
-      x: new Date(v.date_valeur),
-      y: (v.objectif as number) * (coef || 1),
-    })) || [];
-  const resultats =
-    resultatsCollectiviteOuRARE?.map(v => ({
-      x: new Date(v.date_valeur),
-      y: (v.resultat as number) * (coef || 1),
-    })) || [];
+  const objectifs = {
+    id: 'objectifs',
+    name: LAYERS.objectifs.label,
+    color: LAYERS.objectifs.color,
+    source:
+      objectifsCollectiviteOuPCAET?.map(v => ({
+        x: v.date_valeur,
+        y: (v.objectif as number) * (coef || 1),
+      })) || [],
+  };
+  const resultats = {
+    id: 'resultats',
+    name: LAYERS.resultats.label,
+    color: LAYERS.resultats.color,
+    source:
+      resultatsCollectiviteOuRARE?.map(v => ({
+        x: v.date_valeur,
+        y: (v.resultat as number) * (coef || 1),
+      })) || [],
+  };
 
   // détermine si les données d'entrée sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =
@@ -156,18 +169,20 @@ const prepareDonneesParSecteur = (
   if (!indicateurs?.length || !secteurs?.length) return undefined;
 
   return secteurs
-    .map(s => {
+    .map((s, i) => {
       const valeurs = indicateurs.find(
         t => t.definition.identifiant_referentiel === s.identifiant
       )?.valeurs;
       return valeurs
         ? {
             id: s.identifiant,
-            label: s.nom,
-            data: valeurs.map(v => ({
-              x: new Date(v.date_valeur),
+            name: s.nom,
+            source: valeurs.map(v => ({
+              x: v.date_valeur,
               y: v.objectif * (coef || 1),
             })),
+            dimensions: ['x', 'y'],
+            color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
           }
         : null;
     })
