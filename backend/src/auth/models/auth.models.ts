@@ -8,7 +8,7 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import * as jwt from 'jsonwebtoken';
+import { default as jwt } from 'jsonwebtoken';
 import { collectiviteTable } from '../../collectivites/models/collectivite.models';
 
 export enum NiveauAcces {
@@ -34,7 +34,7 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
     .default(sql.raw(`CURRENT_TIMESTAMP`))
     .notNull(),
   modified_at: timestamp('modified_at', { withTimezone: true }).default(
-    sql.raw(`CURRENT_TIMESTAMP`),
+    sql.raw(`CURRENT_TIMESTAMP`)
   ),
   active: boolean('active').notNull(),
   niveau_acces: niveauAccessEnum('niveau_acces')
@@ -54,6 +54,7 @@ export enum SupabaseRole {
   SERVICE_ROLE = 'service_role',
   ANON = 'anon', // Anonymous
 }
+
 export interface SupabaseJwtPayload extends jwt.JwtPayload {
   email?: string;
   phone?: string;

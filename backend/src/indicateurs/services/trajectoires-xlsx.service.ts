@@ -5,7 +5,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
-import * as XlsxTemplate from 'xlsx-template';
+import { default as XlsxTemplate } from 'xlsx-template';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
@@ -30,7 +30,7 @@ export default class TrajectoiresXlsxService {
   constructor(
     backendConfigurationService: BackendConfigurationService,
     private readonly sheetService: SheetService,
-    private readonly trajectoiresDataService: TrajectoiresDataService,
+    private readonly trajectoiresDataService: TrajectoiresDataService
   ) {
     this.backendConfiguration =
       backendConfigurationService.getBackendConfiguration();
@@ -48,18 +48,18 @@ export default class TrajectoiresXlsxService {
   async downloadModeleTrajectoireSnbc(
     request: ModeleTrajectoireTelechargementRequestType,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     try {
       if (!this.getIdentifiantXlsxCalcul()) {
         throw new InternalServerErrorException(
-          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant",
+          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant"
         );
       }
 
       await this.initXlsxBuffers(request.force_recuperation_xlsx);
       const nomFichier = await this.sheetService.getFileName(
-        this.getIdentifiantXlsxCalcul(),
+        this.getIdentifiantXlsxCalcul()
       );
 
       // Set the output file name.
@@ -76,10 +76,10 @@ export default class TrajectoiresXlsxService {
   async initXlsxBuffers(forceRecuperation?: boolean) {
     if (!this.xlsxModeleBuffer || forceRecuperation) {
       this.logger.log(
-        `Récupération des données du fichier Xlsx de calcul ${this.getIdentifiantXlsxCalcul()} (force: ${forceRecuperation})`,
+        `Récupération des données du fichier Xlsx de calcul ${this.getIdentifiantXlsxCalcul()} (force: ${forceRecuperation})`
       );
       this.xlsxModeleBuffer = await this.sheetService.getFileData(
-        this.getIdentifiantXlsxCalcul(),
+        this.getIdentifiantXlsxCalcul()
       );
 
       if (this.xlsxModeleBuffer) {
@@ -88,7 +88,7 @@ export default class TrajectoiresXlsxService {
         this.xlsxVideBuffer = await this.generationXlsxDonneesSubstituees(
           nouveauBuffer,
           { siren: null },
-          null,
+          null
         );
       } else {
         // Null in test
@@ -103,7 +103,7 @@ export default class TrajectoiresXlsxService {
       await this.initXlsxBuffers();
     } else {
       this.logger.log(
-        `Utilisation du buffer du fichier Xlsx de calcul déjà chargé`,
+        `Utilisation du buffer du fichier Xlsx de calcul déjà chargé`
       );
     }
     return Buffer.from(this.xlsxModeleBuffer!);
@@ -118,7 +118,7 @@ export default class TrajectoiresXlsxService {
     siren: {
       siren: number | null;
     },
-    valeurIndicateurs: DonneesCalculTrajectoireARemplirType | null,
+    valeurIndicateurs: DonneesCalculTrajectoireARemplirType | null
   ): Promise<Buffer> {
     // Utilisation de xlsx-template car:
     // https://github.com/SheetJS/sheetjs/issues/347: sheetjs does not keep style
@@ -145,7 +145,7 @@ export default class TrajectoiresXlsxService {
         emissionGesSequestrationConsommationsSubstitionValeurs[
           cleSubstitution
         ] = 0;
-      },
+      }
     );
     this.trajectoiresDataService.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL.forEach(
       (identifiants) => {
@@ -153,7 +153,7 @@ export default class TrajectoiresXlsxService {
         emissionGesSequestrationConsommationsSubstitionValeurs[
           cleSubstitution
         ] = 0;
-      },
+      }
     );
     this.trajectoiresDataService.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL.forEach(
       (identifiants) => {
@@ -161,32 +161,32 @@ export default class TrajectoiresXlsxService {
         emissionGesSequestrationConsommationsSubstitionValeurs[
           cleSubstitution
         ] = 0;
-      },
+      }
     );
     valeurIndicateurs?.emissions_ges.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel,
+        valeur.identifiants_referentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         (valeur.valeur || 0) / 1000;
     });
     valeurIndicateurs?.sequestrations.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel,
+        valeur.identifiants_referentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         ((valeur.valeur || 0) * -1) / 1000;
     });
     valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel,
+        valeur.identifiants_referentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         valeur.valeur || 0;
     });
     template.substitute(
       emissionsGesSequestrationConsommationsSheetName,
-      emissionGesSequestrationConsommationsSubstitionValeurs,
+      emissionGesSequestrationConsommationsSubstitionValeurs
     );
 
     // TODO: type it
@@ -209,12 +209,12 @@ export default class TrajectoiresXlsxService {
     request: CollectiviteRequestType,
     tokenInfo: SupabaseJwtPayload,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) {
     try {
       if (!this.getIdentifiantXlsxCalcul()) {
         throw new InternalServerErrorException(
-          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant",
+          "L'identifiant du Xlsx pour le calcul des trajectoires SNBC est manquant"
         );
       }
 
@@ -223,7 +223,7 @@ export default class TrajectoiresXlsxService {
           request,
           tokenInfo,
           undefined,
-          true,
+          true
         );
 
       if (
@@ -232,7 +232,7 @@ export default class TrajectoiresXlsxService {
         !resultatVerification.epci
       ) {
         throw new UnprocessableEntityException(
-          `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`,
+          `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
         );
       } else if (
         resultatVerification.status ===
@@ -246,14 +246,16 @@ export default class TrajectoiresXlsxService {
             .identifiants_referentiel_manquants || []),
         ];
         throw new UnprocessableEntityException(
-          `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(', ')}, impossible de calculer la trajectoire SNBC.`,
+          `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(
+            ', '
+          )}, impossible de calculer la trajectoire SNBC.`
         );
       }
       const epci = resultatVerification.epci;
       const nomFichier = this.getNomFichierTrajectoire(epci);
 
       this.logger.log(
-        `Récupération des données du fichier ${this.getIdentifiantXlsxCalcul()}`,
+        `Récupération des données du fichier ${this.getIdentifiantXlsxCalcul()}`
       );
       const xlsxBuffer = await this.getXlsxModeleBuffer();
 
@@ -264,7 +266,7 @@ export default class TrajectoiresXlsxService {
       const generatedData = await this.generationXlsxDonneesSubstituees(
         xlsxBuffer,
         sirenData,
-        resultatVerification.donnees_entree,
+        resultatVerification.donnees_entree
       );
 
       this.logger.log(`Renvoi du fichier Xlsx généré`);

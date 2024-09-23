@@ -5,7 +5,6 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
     "lib": ["es2021", "dom", "dom.iterable"]
   },
   "files": [],
