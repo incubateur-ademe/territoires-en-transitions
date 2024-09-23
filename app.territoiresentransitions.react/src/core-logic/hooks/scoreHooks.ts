@@ -1,12 +1,15 @@
-import {clientScoresReadEndpoint} from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useQuery} from 'react-query';
-import {ActionScore} from 'types/ClientScore';
-import {Referentiel} from 'types/litterals';
-import {referentielId} from 'utils/actions';
-import {useScoreListener} from './useScoreListener';
+import { clientScoresReadEndpoint } from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { ActionScore } from 'types/ClientScore';
+import { Referentiel } from 'types/litterals';
+import { referentielId } from 'utils/actions';
+import { useScoreListener } from './useScoreListener';
 
-export type ReferentielsActionScores = {eci: ActionScore[]; cae: ActionScore[]};
+export type ReferentielsActionScores = {
+  eci: ActionScore[];
+  cae: ActionScore[];
+};
 
 export const getScoreQueryKey = (
   collectiviteId: number | null,
@@ -41,22 +44,22 @@ const useReferentielScores = (referentiel: Referentiel) => {
     // on ne refetch pas trop systématiquement car il peut y avoir beaucoup
     // d'instances de ce hook et que l'update est fait lors de la réception des
     // notifications `client_scores_update`
-    {refetchOnMount: false}
+    { refetchOnMount: false }
   );
 };
 
 // donne accès aux scores de chaque référentiel
 export const useScores = (): ReferentielsActionScores => {
-  const {data: cae} = useReferentielScores('cae');
-  const {data: eci} = useReferentielScores('eci');
+  const { data: cae } = useReferentielScores('cae');
+  const { data: eci } = useReferentielScores('eci');
 
-  return {cae: cae || [], eci: eci || []} || {cae: [], eci: []};
+  return { cae: cae || [], eci: eci || [] };
 };
 
 export const useActionScore = (actionId: string): ActionScore | null => {
   const scores = useScores();
   const score = scores[referentielId(actionId)].find(
-    score => score.action_id === actionId
+    (score) => score.action_id === actionId
   );
-  return score ? {...score} : null;
+  return score ? { ...score } : null;
 };
