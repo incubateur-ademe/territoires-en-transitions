@@ -1,44 +1,65 @@
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
+'use client';
+
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {AccompagnementContent} from './types';
+import Section from '@components/sections/Section';
+import Markdown from '@components/markdown/Markdown';
+import {Button} from '@tet/ui';
+import {StrapiItem} from 'src/strapi/StrapiItem';
 
 type AccompagnementProps = {
   titre: string;
   description?: string;
-  contenu: AccompagnementContent[];
+  contenu: {
+    titre: string;
+    description: string;
+    image: StrapiItem;
+    button: {titre: string; href: string};
+  }[];
 };
 
 const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
   return (
-    <CardsSection
-      title={titre}
-      description={description}
-      containerClassName="bg-primary-1"
-      cardsList={
-        <CardsWrapper cols={2}>
-          {contenu.map((c, index) => (
-            <Card
-              key={index}
-              className="border-none"
-              title={c.titre}
-              description={c.description}
-              button={{title: c.button.titre, href: c.button.href}}
-              image={
-                <StrapiImage
-                  data={c.image}
-                  className="max-h-[200px]"
-                  containerClassName="w-full h-full flex justify-center items-start"
-                  displayCaption={false}
+    <Section
+      containerClassName="max-md:!py-6 md:!pt-14"
+      className="!max-w-[1200px]"
+    >
+      <h1 className="text-center text-primary-10 text-3xl mb-0">{titre}</h1>
+      <p className="text-center text-primary-10 text-xl">{description}</p>
+      <div className="flex flex-col gap-10">
+        {contenu.map((c, index) => (
+          <div
+            key={index}
+            className="p-4 md:p-8 rounded-lg border-2 !border-primary-2 !bg-primary-0 flex max-md:flex-col gap-6 xl:gap-8"
+          >
+            {!!c.image && (
+              <StrapiImage
+                data={c.image}
+                className="max-h-[200px] w-full"
+                containerClassName="w-28 min-w-[112px]"
+                displayCaption={false}
+              />
+            )}
+
+            <div className="h-full flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
+                {!!c.titre && (
+                  <h4 className="text-primary-10 text-xl mb-0">{c.titre}</h4>
+                )}
+
+                <Markdown
+                  texte={c.description}
+                  className="paragraphe-16 no-margin colored_bold markdown_style"
                 />
-              }
-              imagePosition="left"
-            />
-          ))}
-        </CardsWrapper>
-      }
-    />
+              </div>
+
+              <Button href={c.button.href} size="xs">
+                {c.button.titre}
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 };
 

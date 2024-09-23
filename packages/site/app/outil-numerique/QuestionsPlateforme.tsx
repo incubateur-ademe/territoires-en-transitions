@@ -24,7 +24,7 @@ const QuestionsPlateforme = ({
       {!!description && (
         <Markdown
           texte={description}
-          className="text-white text-center lg:max-w-2xl mx-auto questions"
+          className="text-white text-center lg:max-w-2xl no-margin-b mx-auto large_text font-bold"
         />
       )}
 

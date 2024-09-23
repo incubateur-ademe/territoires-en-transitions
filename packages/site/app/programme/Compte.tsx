@@ -7,7 +7,6 @@ import {Button} from '@tet/ui';
 import Arrow from 'app/outil-numerique/Arrow';
 import {useEvolutionTotalActivation} from 'app/stats/EvolutionTotalActivationParType';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import './styles.css';
 
 type CompteProps = {
   titre: string;
@@ -33,7 +32,10 @@ const Compte = ({titre, description, cta, image}: CompteProps) => {
         )}
         <div>
           <h2 className="text-primary-8">{titre}</h2>
-          <Markdown texte={description} className="markdown_compte" />
+          <Markdown
+            texte={description}
+            className="markdown_style font-bold text-primary-9 leading-5"
+          />
           <Button
             href="https://auth.territoiresentransitions.fr/signup"
             className="mt-8 max-lg:mx-auto"

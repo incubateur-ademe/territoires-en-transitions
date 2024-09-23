@@ -6,19 +6,17 @@ import Card from '@components/cards/Card';
 
 type ObjectifsProps = {
   titre: string;
-  description?: string;
   contenu: Content[] | null;
 };
 
-const Objectifs = ({titre, description, contenu}: ObjectifsProps) => {
+const Objectifs = ({titre, contenu}: ObjectifsProps) => {
   return contenu && contenu.length ? (
     <CardsSection
       title={titre}
       textClassname="text-center"
-      className="px-0"
-      description={description}
+      containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
       cardsList={
-        <CardsWrapper cols={5} className="gap-8">
+        <CardsWrapper cols={5} className="gap-8 mt-3">
           {contenu.map((c, index) => (
             <Card
               key={index}

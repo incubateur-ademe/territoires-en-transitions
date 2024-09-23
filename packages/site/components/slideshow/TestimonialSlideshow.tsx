@@ -16,6 +16,7 @@ type TestimonialSlideshowProps = {
   autoSlideDelay?: number;
   displayTitle?: boolean;
   titleColor?: string;
+  backgroundColor?: string;
   dotsColor?: 'default' | 'orange';
   displayButtons?: boolean;
   buttonsVariant?: ButtonVariant;
@@ -26,17 +27,19 @@ const TestimonialSlideshow = ({
   contenu,
   displayTitle = true,
   titleColor = 'orange-1',
+  backgroundColor = 'bg-grey-1',
   className,
   ...otherProps
 }: TestimonialSlideshowProps) => {
   return (
     <Slideshow
-      className={classNames('p-8 bg-grey-1', className)}
+      className={classNames('p-8', backgroundColor, className)}
       slides={contenu.map(t => (
         <div
           key={t.id}
           className={classNames(
-            'flex max-lg:flex-col justify-start items-start bg-grey-1',
+            'flex max-lg:flex-col justify-start items-start',
+            backgroundColor,
             {'gap-8': t.portrait},
           )}
         >

@@ -56,7 +56,10 @@ function Links() {
   >>(null);
   useEffect(() => {
     setAuthPaths(
-      getAuthPaths(document.location.hostname, getAppBaseUrl(document.location.hostname)),
+      getAuthPaths(
+        document.location.hostname,
+        getAppBaseUrl(document.location.hostname),
+      ),
     );
   }, []);
 

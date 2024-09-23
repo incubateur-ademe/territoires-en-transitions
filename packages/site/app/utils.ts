@@ -1,6 +1,5 @@
 import {fetchSingle} from 'src/strapi/strapi';
 import {StrapiItem} from 'src/strapi/StrapiItem';
-import {AccueilData} from './types';
 
 export const getMetaData = async () => {
   const data = await fetchSingle('page-accueil', [
@@ -36,7 +35,7 @@ export const getMetaData = async () => {
     : null;
 };
 
-export const getData = async (): Promise<AccueilData | null> => {
+export const getData = async () => {
   // Fetch du contenu de la page d'accueil
   const data = await fetchSingle('page-accueil', [
     ['populate[0]', 'Titre'],
@@ -57,7 +56,7 @@ export const getData = async (): Promise<AccueilData | null> => {
     .data as unknown as StrapiItem[];
 
   // Formattage de la data
-  const formattedData: AccueilData | null = data
+  const formattedData = data
     ? {
         titre: data.attributes.Titre as unknown as string,
         couverture:
@@ -85,8 +84,8 @@ export const getData = async (): Promise<AccueilData | null> => {
               image: data.attributes.Accompagnement.Compte.Image
                 .data as unknown as StrapiItem,
               button: {
-                titre: 'Accéder à la plateforme',
-                href: 'https://auth.territoiresentransitions.fr/signup',
+                titre: 'Découvrir l’outil numérique',
+                href: '/outil-numerique',
               },
             },
           ],
@@ -100,12 +99,12 @@ export const getData = async (): Promise<AccueilData | null> => {
                 contenu: temoignages.map(d => ({
                   id: d.id,
                   auteur: d.attributes.temoignage?.auteur as unknown as string,
-                  description:
+                  role:
                     (d.attributes.temoignage?.role as unknown as string) ??
                     undefined,
-                  contenu: d.attributes.temoignage
+                  temoignage: d.attributes.temoignage
                     ?.temoignage as unknown as string,
-                  image:
+                  portrait:
                     (d.attributes.temoignage?.portrait
                       .data as unknown as StrapiItem) ?? undefined,
                 })),

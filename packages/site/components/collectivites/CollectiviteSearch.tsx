@@ -4,7 +4,7 @@ import AutocompleteInputSelect from '@components/select/AutocompleteInputSelect'
 import {useRouter} from 'next/navigation';
 import {Dispatch, SetStateAction, useState} from 'react';
 import {convertNameToSlug} from 'src/utils/convertNameToSlug';
-import {useFilteredCollectivites} from './useFilteredCollectivites';
+import {useFilteredCollectivites} from '../../app/useFilteredCollectivites';
 
 type CollectiviteSearchProps = {
   filteredCollectivites: {value: string; label: string}[];

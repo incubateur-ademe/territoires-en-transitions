@@ -1,5 +1,5 @@
 import './global.css';
-import AppHeader from './AppHeader';
+import AppHeader from '../components/layout/AppHeader';
 import {Metadata, Viewport} from 'next';
 import {getMetaData} from './utils';
 import Footer from '@components/layout/Footer';

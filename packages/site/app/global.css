@@ -76,13 +76,44 @@ ol {
 }
 
 /* classes utilisées sur les textes générés par remark */
+
 .no-margin,
 .no-margin > * {
   margin: 0;
+}
+
+.no-margin-b,
+.no-margin-b > * {
+  @apply mb-0;
 }
 
 .small-text,
 .small-text > * {
   font-size: 15px !important;
   line-height: 20.8px !important;
+}
+
+.large_text * {
+  @apply text-2xl;
+}
+
+.markdown_style p {
+  @apply mb-4;
+}
+
+.markdown_style ul {
+  list-style-position: outside;
+  @apply pl-5;
+}
+
+.markdown_style li:not(:last-of-type) {
+  @apply pb-4;
+}
+
+.colored_marker li::marker {
+  @apply text-primary-6;
+}
+
+.colored_bold strong {
+  @apply text-primary-8;
 }

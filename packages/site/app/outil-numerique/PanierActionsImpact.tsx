@@ -5,7 +5,6 @@ import Section from '@components/sections/Section';
 import {StrapiItem} from 'src/strapi/StrapiItem';
 import {StrapiImage} from '@components/strapiImage/StrapiImage';
 import Markdown from '@components/markdown/Markdown';
-import './styles.css';
 
 type PanierActionsImpactProps = {
   titre: string;
@@ -36,7 +35,7 @@ const PanierActionsImpact = ({
         <h2 className="text-primary-8 max-lg:text-center">{titre}</h2>
         <Markdown
           texte={description}
-          className="paragraphe-primary-10 paragraphe-18 markdown_style"
+          className="paragraphe-primary-10 paragraphe-18 markdown_style colored_marker"
         />
         <Button href="/contact?panier=true" className="mt-6 max-lg:mx-auto">
           {cta}
