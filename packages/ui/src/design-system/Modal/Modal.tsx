@@ -22,7 +22,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const sizeToClass: Record<ModalSize, string> = {
   sm: 'max-w-sm',
-  md: 'max-w-xl',
+  md: 'max-w-[40rem]',
   lg: 'max-w-4xl',
   xl: 'max-w-[1200px]',
 };

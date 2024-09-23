@@ -12,7 +12,6 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  Select,
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
@@ -26,8 +25,8 @@ import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import { ficheActionModifiedSinceOptions } from 'ui/dropdownLists/listesStatiques';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -100,9 +99,8 @@ const ModalActionsRecemmentModifiees = ({
             />
           </Field>
           <Field title="Période de modification">
-            <Select
+            <PeriodeDropdown
               values={filtreState.modifiedSince}
-              options={ficheActionModifiedSinceOptions}
               onChange={(value) =>
                 value &&
                 setFiltreState({
