@@ -90,8 +90,8 @@ export default class TrajectoiresDataService {
     ['cae_63.ca'], // C15 Cultures
     ['cae_63.cb'], // C16 Prairies
     ['cae_63.da'], // C17 Zones humides
-    ['cae_63.cc'], // C18 Vergers
-    ['cae_63.cd'], // C19 Vignes
+    ['cae_63.cd'], // C18 Vergers
+    ['cae_63.cc'], // C19 Vignes
     ['cae_63.db'], // C20 Sols artificiels
     ['cae_63.b'], // C21 Forêts
     ['cae_63.e'], // C22 Produits bois
