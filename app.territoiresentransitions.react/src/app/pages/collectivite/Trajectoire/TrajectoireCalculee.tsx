@@ -9,7 +9,6 @@ import {
   useOngletTracker,
   useEventTracker,
 } from '@tet/ui';
-import {LineData} from 'ui/charts/Line/LineChart';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useSearchParams} from 'core-logic/hooks/query';
 import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
@@ -22,6 +21,7 @@ import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
 import {Methodologie} from './Methodologie';
 import {DonneesPartiellementDisponibles} from './DonneesPartiellementDisponibles';
 import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
+import {Dataset} from './graphes/utils';
 
 const defaultParams = {indicateurIdx: ['0'], secteurIdx: ['0']};
 const nameToparams: Record<keyof typeof defaultParams, string> = {
@@ -140,7 +140,7 @@ export const TrajectoireCalculee = () => {
                 <GrapheTousSecteurs
                   unite={indicateur.unite}
                   titre={indicateur.titre}
-                  secteurs={valeursTousSecteurs as LineData[]}
+                  secteurs={valeursTousSecteurs as Dataset[]}
                   objectifs={objectifs}
                   resultats={resultats}
                 />
@@ -149,12 +149,12 @@ export const TrajectoireCalculee = () => {
           }
           {
             /** Graphique du secteur sélectionné */
-            !!(secteur && valeursSecteur && valeursSecteur.data.length) && (
+            !!(secteur && valeursSecteur && valeursSecteur.source.length) && (
               <Card className="h-fit">
                 <GrapheSecteur
                   unite={indicateur.unite}
                   titre={`${indicateur.titre}, secteur ${secteur.nom}`}
-                  secteur={valeursSecteur.data}
+                  secteur={valeursSecteur}
                   objectifs={objectifs}
                   resultats={resultats}
                 />
@@ -172,7 +172,7 @@ export const TrajectoireCalculee = () => {
                 <GrapheSousSecteurs
                   unite={indicateur.unite}
                   titre={`${indicateur.titreSecteur}, secteur ${secteur.nom}`}
-                  sousSecteurs={valeursSousSecteurs as LineData[]}
+                  sousSecteurs={valeursSousSecteurs as Dataset[]}
                 />
               </Card>
             )
@@ -192,7 +192,8 @@ export const TrajectoireCalculee = () => {
         {/** Colonne de droite */}
         <div className="w-2/6 flex flex-col gap-8">
           {!isLoadingObjectifsResultats &&
-            (objectifs.length === 0 || resultats.length === 0) && (
+            (objectifs.source.length === 0 ||
+              resultats.source.length === 0) && (
               <ComparezLaTrajectoire
                 collectiviteId={collectiviteId}
                 identifiantReferentiel={identifiant}
