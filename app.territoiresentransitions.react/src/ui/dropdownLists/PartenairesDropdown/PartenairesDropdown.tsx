@@ -1,6 +1,6 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TPartenaireRow} from 'types/alias';
-import SelectWithUpdates from '../tags/SelectTags';
+import SelectTags from '../tags/SelectTags';
 import {usePartenairesListe} from './usePartenairesListe';
 
 type PartenairesDropdownProps = Omit<
@@ -21,7 +21,7 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
   const {data, refetch} = usePartenairesListe();
 
   return (
-    <SelectWithUpdates
+    <SelectTags
       {...props}
       placeholder={props.placeholder ?? 'Sélectionnez ou créez un partenaire'}
       queryKey="partenaires"
