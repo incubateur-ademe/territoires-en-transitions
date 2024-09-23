@@ -191,7 +191,15 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Trajectoire SNBC territorialisée */
   'app/trajectoires/snbc': {
-    properties: {collectivite_id: number; statut?: string};
+    properties: {
+      collectivite_id: number;
+      statut?:
+        | 'commune_non_supportee'
+        | 'deja_calcule'
+        | 'pret_a_calculer'
+        | 'donnees_manquantes'
+        | 'error';
+    };
     onglets: 'emissions_ges' | 'consommations_finales';
     events: {
       cta_lancer_calcul: {source: 'open_data' | 'collectivite'};
