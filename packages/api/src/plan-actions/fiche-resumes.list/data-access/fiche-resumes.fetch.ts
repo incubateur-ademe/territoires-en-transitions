@@ -38,12 +38,7 @@ export async function ficheResumesFetch({
   options,
 }: Props) {
   const collectiviteId = z.number().parse(unsafeCollectiviteId);
-  const {
-    filtre: filtre,
-    sort,
-    page,
-    limit,
-  } = fetchOptionsSchema.parse(options);
+  const { filtre, sort, page, limit } = fetchOptionsSchema.parse(options);
 
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
@@ -100,13 +95,13 @@ export async function ficheResumesFetch({
     .eq('collectivite_id', collectiviteId);
 
   // Par défaut tri par ordre alphabétique
-  const constantSort: SortFichesAction = {
+  const defaultSort: SortFichesAction = {
     field: 'titre',
     direction: 'desc',
   };
 
   // S'il l'utilisateur a spécifié un tri, on le met en premier
-  const finalSort = sort ? [...sort, constantSort] : [constantSort];
+  const finalSort = sort ? [...sort, defaultSort] : [defaultSort];
 
   finalSort.forEach((sort) => {
     query.order(sort.field, { ascending: sort.direction === 'asc' });
