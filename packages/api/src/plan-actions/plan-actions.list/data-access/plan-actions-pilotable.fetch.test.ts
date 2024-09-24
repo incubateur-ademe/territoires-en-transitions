@@ -1,7 +1,7 @@
-import {beforeEach, expect, test} from 'vitest';
-import {supabase} from '../../../tests/supabase';
-import {signIn, signOut} from '../../../tests/auth';
-import {planActionsPilotableFetch} from './plan_actions_pilotable.fetch';
+import { beforeEach, expect, test } from 'vitest';
+import { supabase } from '../../../tests/supabase';
+import { signIn, signOut } from '../../../tests/auth';
+import { planActionsPilotableFetch } from './plan-actions-pilotable.fetch';
 
 const params = {
   dbClient: supabase,

@@ -1,4 +1,4 @@
-import {DBClient, Tables} from '../../../typeUtils';
+import { DBClient, Tables } from '@tet/api/typeUtils';
 
 type TAxeRow = Tables<'axe'>;
 
@@ -20,12 +20,12 @@ export const planActionsFetch = async ({
     .select()
     .eq('collectivite_id', collectiviteId)
     .is('parent', null)
-    .order('created_at', {ascending: true});
+    .order('created_at', { ascending: true });
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }
 
-  return {plans: (data as TAxeRow[]) || []};
+  return { plans: (data as TAxeRow[]) || [] };
 };

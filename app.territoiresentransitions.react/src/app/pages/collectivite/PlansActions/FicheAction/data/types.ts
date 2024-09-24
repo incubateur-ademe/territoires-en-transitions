@@ -1,4 +1,4 @@
-import { FicheResume as FicheResumeZod } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
+import { FicheResume as FicheResumeZod } from '@tet/api/plan-actions/fiche-resumes.list';
 import { Indicateur } from 'app/pages/collectivite/Indicateurs/types';
 import {
   TActionInsert,

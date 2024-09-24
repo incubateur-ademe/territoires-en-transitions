@@ -3,7 +3,7 @@ import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 import {
   ModuleIndicateursSelect,
   Slug,
-} from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {

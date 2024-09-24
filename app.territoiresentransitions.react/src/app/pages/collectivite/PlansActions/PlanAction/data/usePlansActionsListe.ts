@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { planActionsFetch } from '@tet/api/fiche_actions/plan_actions.list/data_access/plan_actions.fetch';
+import { planActionsFetch } from '@tet/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
 import { supabaseClient } from 'core-logic/api/supabase';
 
 /** Récupère uniquement les axes racines des plans d'action.

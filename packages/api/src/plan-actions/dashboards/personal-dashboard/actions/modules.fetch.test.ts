@@ -1,10 +1,10 @@
-import {beforeEach, expect, test} from 'vitest';
-import {signIn, signOut} from '../../../tests/auth';
-import {supabase} from '../../../tests/supabase';
-import {defaultSlugsSchema} from '../domain/module.schema';
-import {modulesFetch} from './modules.fetch';
-import {modulesSave} from './modules.save';
-import {moduleNew, resetTableauDeBordModules} from './modules.test-fixture';
+import { beforeEach, expect, test } from 'vitest';
+import { defaultSlugsSchema } from '../domain/module.schema';
+import { modulesFetch } from './modules.fetch';
+import { modulesSave } from './modules.save';
+import { moduleNew, resetTableauDeBordModules } from './modules.test-fixture';
+import { signIn, signOut } from '@tet/api/tests/auth';
+import { supabase } from '@tet/api/tests/supabase';
 
 const params = {
   dbClient: supabase,
@@ -24,7 +24,7 @@ beforeEach(async () => {
 });
 
 test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregistré", async () => {
-  const {data} = await modulesFetch(params);
+  const { data } = await modulesFetch(params);
 
   expect(data).toHaveLength(3);
 
@@ -55,11 +55,11 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
     module,
   });
 
-  const {data} = await modulesFetch(params);
+  const { data } = await modulesFetch(params);
 
-  expect([{foo: 'bar', hello: 1}, {baz: 1}]).toMatchObject([
-    {foo: 'bar'},
-    {baz: 1},
+  expect([{ foo: 'bar', hello: 1 }, { baz: 1 }]).toMatchObject([
+    { foo: 'bar' },
+    { baz: 1 },
   ]);
 
   expect(data).toHaveLength(3);
@@ -87,7 +87,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
     module,
   });
 
-  const {data} = await modulesFetch(params);
+  const { data } = await modulesFetch(params);
   expect(data).toHaveLength(numberOfModulesByDefault + 1);
 
   // Se connecte avec un autre utilisateur de la collectivité, autorisé en lecture
@@ -95,7 +95,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   await signIn('yaladada');
 
   // RLS: Vérifie que le module est accessible
-  const {data: authorizedData} = await supabase
+  const { data: authorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
     .eq('id', module.id);
@@ -107,7 +107,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   await signIn('yulududu');
 
   // RLS: Vérifie que le module n'est pas accessible
-  const {data: unauthorizedData} = await supabase
+  const { data: unauthorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
     .eq('id', module.id);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
-import { ModuleFicheActionsSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { modulesSave } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
+import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   Field,
   FormSection,
@@ -18,7 +18,7 @@ import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { Filtre as FiltreFichesAction } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Filtre as FiltreFichesAction } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';

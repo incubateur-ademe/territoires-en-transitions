@@ -1,12 +1,12 @@
 import { objectToCamel } from 'ts-case-convert';
-import { DBClient } from '../../../typeUtils';
 import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
   Slug,
   getDefaultModule,
 } from '../domain/module.schema';
-import { planActionsFetch } from '../../../fiche_actions/plan_actions.list/data_access/plan_actions.fetch';
+import { DBClient } from '@tet/api/typeUtils';
+import { planActionsFetch } from '@tet/api/plan-actions/plan-actions.list/data-access';
 
 export type ReturnType<S extends Slug> =
   S extends 'indicateurs-de-suivi-de-mes-plans'

@@ -1,7 +1,7 @@
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../../tests/auth';
-import {supabase} from '../../../tests/supabase';
-import {ficheResumesFetch} from './fiche_resumes.fetch';
+import { beforeAll, expect, test } from 'vitest';
+import { signIn, signOut } from '../../../tests/auth';
+import { supabase } from '../../../tests/supabase';
+import { ficheResumesFetch } from './fiche-resumes.fetch';
 
 const params = {
   dbClient: supabase,
@@ -17,9 +17,9 @@ beforeAll(async () => {
 });
 
 test('Fetch sans filtre', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
-    options: {filtre: {}},
+    options: { filtre: {} },
   });
 
   if (!data) {
@@ -28,9 +28,9 @@ test('Fetch sans filtre', async () => {
 });
 
 test('Fetch avec filtre sur une personne', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
-    options: {filtre: {personnePiloteIds: [1]}},
+    options: { filtre: { personnePiloteIds: [1] } },
   });
 
   if (!data) {
@@ -39,7 +39,7 @@ test('Fetch avec filtre sur une personne', async () => {
 
   for (const fiche of data) {
     expect(fiche).toMatchObject({
-      pilotes: expect.arrayContaining([{tag_id: 1, nom: 'Lou Piote'}]),
+      pilotes: expect.arrayContaining([{ tag_id: 1, nom: 'Lou Piote' }]),
     });
   }
 });
@@ -47,10 +47,10 @@ test('Fetch avec filtre sur une personne', async () => {
 test('Fetch avec filtre sur un utilisateur', async () => {
   const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
 
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
     options: {
-      filtre: {utilisateurPiloteIds: [yoloDodoUuid]},
+      filtre: { utilisateurPiloteIds: [yoloDodoUuid] },
     },
   });
 
@@ -74,10 +74,10 @@ test('Fetch avec filtre sur un utilisateur', async () => {
 test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
   const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
 
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
     options: {
-      filtre: {utilisateurPiloteIds: [yoloDodoUuid], personnePiloteIds: [1]},
+      filtre: { utilisateurPiloteIds: [yoloDodoUuid], personnePiloteIds: [1] },
     },
   });
 
@@ -93,9 +93,9 @@ test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être
 });
 
 test('Fetch avec filtre sur un service', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
-    options: {filtre: {servicePiloteIds: [2]}},
+    options: { filtre: { servicePiloteIds: [2] } },
   });
 
   if (!data) {
@@ -105,14 +105,14 @@ test('Fetch avec filtre sur un service', async () => {
   for (const fiche of data) {
     expect(fiche).toMatchObject({
       services: expect.arrayContaining([
-        {id: 2, nom: 'Ultra service', collectivite_id: 1},
+        { id: 2, nom: 'Ultra service', collectivite_id: 1 },
       ]),
     });
   }
 });
 
 test('Fetch avec filtre sur un plan', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
     options: {
       filtre: {
@@ -135,18 +135,18 @@ test('Fetch avec filtre sur un plan', async () => {
 });
 
 test('Fetch avec filtre sur un statut', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
-    options: {filtre: {statuts: ['En cours']}},
+    options: { filtre: { statuts: ['En cours'] } },
   });
 
   expect(data).toMatchObject({});
 });
 
 test('Fetch avec filtre sur la date de modification', async () => {
-  const {data} = await ficheResumesFetch({
+  const { data } = await ficheResumesFetch({
     ...params,
-    options: {filtre: {modifiedSince: 'last-15-days'}},
+    options: { filtre: { modifiedSince: 'last-15-days' } },
   });
 
   expect(data).toMatchObject({});
