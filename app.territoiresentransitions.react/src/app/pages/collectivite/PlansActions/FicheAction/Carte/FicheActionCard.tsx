@@ -167,7 +167,7 @@ const FicheActionCard = ({
 
         {/* Plans d'action dans lesquels sont la fiche */}
         <span title="Emplacements" className="text-sm font-medium">
-          {!!ficheAction.plans && ficheAction.plans.length > 0 ? (
+          {!!ficheAction.plans && !!ficheAction.plans?.[0] ? (
             <>
               {generateTitle(ficheAction.plans[0].nom)}
               {ficheAction.plans.length > 1 && (
