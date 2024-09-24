@@ -1,60 +1,33 @@
 'use server';
 
+import NoResult from '@components/info/NoResult';
 import Temoignages from './Temoignages';
 import Accompagnement from './Accompagnement';
 import AccueilBanner from './AccueilBanner';
 import Newsletter from './Newsletter';
-import {getData} from './utils';
-import NoResult from '@components/info/NoResult';
 import DemandeContact from './DemandeContact';
 import Communaute from './Communaute';
 import Objectifs from './Objectifs';
+import {getData} from './utils';
 
 const Accueil = async () => {
   const data = await getData();
 
   return data ? (
     <>
-      <AccueilBanner
-        couverture={data.couverture}
-        couvertureMobile={data.couverture}
-      />
+      <AccueilBanner {...data.banner} />
 
-      <Accompagnement
-        titre={data.accompagnement.titre}
-        description={data.accompagnement.description}
-        contenu={data.accompagnement.contenu}
-      />
+      <Accompagnement {...data.accompagnement} />
 
-      <Objectifs
-        titre="Pourquoi engager votre collectivité ?"
-        contenu={[
-          {id: 1, description: 'test'},
-          {id: 2, description: 'test'},
-          {id: 3, description: 'test'},
-          {id: 4, description: 'test'},
-          {id: 5, description: 'test'},
-        ]}
-      />
+      <Objectifs {...data.objectifs} />
 
-      <Communaute titre="Rejoignez une communauté de collectivités engagées" />
+      <Communaute {...data.collectivites} />
 
-      <DemandeContact
-        description="Vous souhaitez agir mais n'êtes pas sûr de ce qu'il vous faut ?"
-        cta="Je souhaite être recontacté"
-      />
+      <DemandeContact {...data.contact} />
 
-      {data.temoignages && (
-        <Temoignages
-          titre={data.temoignages.titre}
-          contenu={data.temoignages.contenu}
-        />
-      )}
+      {data.temoignages && <Temoignages {...data.temoignages} />}
 
-      <Newsletter
-        titre={data.newsletter.titre}
-        description={data.newsletter.description}
-      />
+      <Newsletter {...data.newsletter} />
     </>
   ) : (
     <NoResult />

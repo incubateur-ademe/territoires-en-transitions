@@ -25,7 +25,7 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
     >
       <h1 className="text-center text-primary-10 text-3xl mb-0">{titre}</h1>
       <p className="text-center text-primary-10 text-xl">{description}</p>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col max-md:gap-4 gap-10">
         {contenu.map((c, index) => (
           <div
             key={index}
@@ -48,7 +48,7 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
 
                 <Markdown
                   texte={c.description}
-                  className="paragraphe-16 no-margin colored_bold markdown_style"
+                  className="paragraphe-16 no-margin colored_bold markdown_style leading-5"
                 />
               </div>
 

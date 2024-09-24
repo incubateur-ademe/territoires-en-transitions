@@ -936,6 +936,98 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
   };
   attributes: {
     seo: Attribute.Component<'shared.seo'>;
+    couverture_desktop: Attribute.Media & Attribute.Required;
+    couverture_mobile: Attribute.Media;
+    accueil_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Une offre compl\u00E8te pour un seul objectif : votre transition \u00E9cologique'>;
+    accueil_description: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Votre territoire est unique. Avancez \u00E9tape par \u00E9tape dans la transition \u00E9cologique selon vos comp\u00E9tences et vos moyens.'>;
+    programme: Attribute.Component<'shared.vignette-avec-cta'> &
+      Attribute.Required;
+    plateforme: Attribute.Component<'shared.vignette-avec-cta'> &
+      Attribute.Required;
+    objectifs_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Pourquoi engager votre collectivit\u00E9 ?'>;
+    objectifs_liste: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    > &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 5;
+        max: 5;
+      }>;
+    collectivites_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Rejoignez une communaut\u00E9 de collectivit\u00E9s engag\u00E9es'>;
+    collectivites_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Explorer les collectivit\u00E9s'>;
+    contact_description: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<"Vous souhaitez agir mais n'\u00EAtes pas s\u00FBr de ce qu'il vous faut ?">;
+    contact_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Je souhaite \u00EAtre recontact\u00E9'>;
+    temoignages_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Rejoignez une communaut\u00E9 de collectivit\u00E9s engag\u00E9es'>;
+    temoignages_liste: Attribute.Relation<
+      'api::page-accueil.page-accueil',
+      'oneToMany',
+      'api::temoignage.temoignage'
+    >;
+    newsletter_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Suivez les actualit\u00E9s du programme Territoire Engag\u00E9 Transition \u00C9cologique'>;
+    newsletter_description: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Infolettre trimestrielle - 1 email par mois maximum.'>;
+    linkedin_btn: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Voir la page Linkedin'>;
+    newsletter_btn: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<"S'inscrire">;
     Titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -946,11 +1038,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
     Accompagnement: Attribute.Component<'bloc.accompagnement'> &
       Attribute.Required;
     Temoignages: Attribute.Component<'bloc.description'> & Attribute.Required;
-    temoignages_liste: Attribute.Relation<
-      'api::page-accueil.page-accueil',
-      'oneToMany',
-      'api::temoignage.temoignage'
-    >;
     Informations: Attribute.Component<'bloc.description'> & Attribute.Required;
     Newsletter: Attribute.Component<'bloc.description'> & Attribute.Required;
     createdAt: Attribute.DateTime;

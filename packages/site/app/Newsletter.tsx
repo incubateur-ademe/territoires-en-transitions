@@ -1,22 +1,23 @@
 'use client';
 
-/* eslint-disable react/no-unescaped-entities */
-import Section from '@components/sections/Section';
 import {Button} from '@tet/ui';
-import classNames from 'classnames';
+import Section from '@components/sections/Section';
 
 type NewsletterProps = {
   titre: string;
   description?: string;
-  className?: string;
+  ctaLinkedin: string;
+  ctaNewsletter: string;
 };
 
-const Newsletter = ({titre, description, className}: NewsletterProps) => {
+const Newsletter = ({
+  titre,
+  description,
+  ctaLinkedin,
+  ctaNewsletter,
+}: NewsletterProps) => {
   return (
-    <Section
-      className={classNames('gap-0', className)}
-      containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
-    >
+    <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <h2 className="text-center mb-0">{titre}</h2>
       <p className="text-center text-grey-9 text-lg font-bold mb-0">
         {description}
@@ -27,10 +28,10 @@ const Newsletter = ({titre, description, className}: NewsletterProps) => {
           variant="outlined"
           external
         >
-          Voir la page Linkedin
+          {ctaLinkedin}
         </Button>
         <Button href="https://cloud.contact.ademe.fr/inscription-tete" external>
-          S'inscrire
+          {ctaNewsletter}
         </Button>
       </div>
     </Section>

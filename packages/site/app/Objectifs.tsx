@@ -16,7 +16,7 @@ const Objectifs = ({titre, contenu}: ObjectifsProps) => {
       textClassname="text-center"
       containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
       cardsList={
-        <CardsWrapper cols={5} className="gap-8 mt-3">
+        <CardsWrapper cols={5} className="max-md:gap-4 gap-8 mt-3">
           {contenu.map((c, index) => (
             <Card
               key={index}

@@ -106,7 +106,7 @@ ol {
   @apply pl-5;
 }
 
-.markdown_style li:not(:last-of-type) {
+.markdown_style li {
   @apply pb-4;
 }
 

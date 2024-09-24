@@ -24,7 +24,7 @@ const AccueilBanner = ({couverture, couvertureMobile}: AccueilBannerProps) => {
     return () => window.removeEventListener('resize', setWidth);
   }, []);
 
-  return windowWidth < mdBreakpoint ? (
+  return windowWidth < mdBreakpoint && couvertureMobile !== null ? (
     <StrapiImage
       data={couvertureMobile}
       className="w-full"
