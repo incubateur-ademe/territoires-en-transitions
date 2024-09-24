@@ -2,93 +2,83 @@ import { beforeEach, expect, test } from 'vitest';
 import { defaultSlugsSchema } from '../domain/module.schema';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
-import { moduleNew, resetTableauDeBordModules } from './modules.fixture.test';
 import { signIn, signOut } from '@tet/api/tests/auth';
 import { supabase } from '@tet/api/tests/supabase';
+import { moduleNew, resetTableauDeBordModules } from './modules.fixture.test';
 
 const params = {
   dbClient: supabase,
   collectiviteId: 1,
-  userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+  // userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = 3;
+const numberOfModulesByDefault = 2;
 
 beforeEach(async () => {
+  await resetTableauDeBordModules(params);
   await signIn('yolododo');
 
   return async () => {
-    await resetTableauDeBordModules(params);
     await signOut();
   };
 });
 
-test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregistré", async () => {
+test("Renvoie les 2 modules par défaut si aucun n'a été précédemment enregistré", async () => {
   const { data } = await modulesFetch(params);
 
-  expect(data).toHaveLength(3);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   expect(data?.[0]).toMatchObject({
-    titre: /indicateurs/i,
-    type: 'indicateur.list',
+    titre: /plans d'action/i,
+    type: 'plan-action.list',
     options: expect.any(Object),
   });
 
   expect(data?.[1]).toMatchObject({
     titre: /actions/i,
-    type: 'fiche_action.list',
+    type: 'fiche-action.count-by-status',
     options: expect.objectContaining({
       filtre: expect.any(Object),
     }),
   });
 });
 
-test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
-  const defaultSlug = defaultSlugsSchema.enum['actions-dont-je-suis-pilote'];
-  const module = {
+test("Renvoie un module enregistré et l'autre par défaut", async () => {
+  const defaultSlug = defaultSlugsSchema.enum['suivi-plan-actions'];
+
+  const myModule = {
     ...moduleNew,
     slug: defaultSlug,
   };
 
   await modulesSave({
     ...params,
-    module,
+    module: myModule,
   });
 
   const { data } = await modulesFetch(params);
 
-  expect([{ foo: 'bar', hello: 1 }, { baz: 1 }]).toMatchObject([
-    { foo: 'bar' },
-    { baz: 1 },
-  ]);
-
-  expect(data).toHaveLength(3);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   expect(data).toMatchObject([
-    module,
+    myModule,
     {
-      titre: expect.stringMatching(/indicateurs/i),
-      type: 'indicateur.list',
-      options: expect.any(Object),
-    },
-    {
-      titre: expect.stringMatching(/actions/i),
-      type: 'fiche_action.list',
+      type: 'fiche-action.count-by-status',
       slug: expect.not.stringMatching(defaultSlug),
     },
   ]);
 });
 
 test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
-  const module = moduleNew;
+  const myModule = moduleNew;
 
   await modulesSave({
     ...params,
-    module,
+    module: myModule,
   });
 
   const { data } = await modulesFetch(params);
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   // Se connecte avec un autre utilisateur de la collectivité, autorisé en lecture
   await signOut();
@@ -98,7 +88,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   const { data: authorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
-    .eq('id', module.id);
+    .eq('id', myModule.id);
 
   expect(authorizedData).toHaveLength(1);
 
@@ -110,7 +100,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   const { data: unauthorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
-    .eq('id', module.id);
+    .eq('id', myModule.id);
 
   expect(unauthorizedData).toHaveLength(0);
 });

@@ -5,7 +5,7 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 /** Charges les différents modules du tableau de bord personnel */
-export const useModulesFetch = () => {
+export const usePersonalModulesFetch = () => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
 
@@ -33,4 +33,4 @@ export const useModulesFetch = () => {
 };
 
 export const getQueryKey = (collectiviteId?: number | null, userId?: string) =>
-  ['collectivite_tableau_de_bord_modules', collectiviteId, userId] as const;
+  ['personal-dashboard-modules', collectiviteId, userId] as const;

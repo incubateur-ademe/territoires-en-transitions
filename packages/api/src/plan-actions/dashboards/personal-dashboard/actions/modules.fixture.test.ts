@@ -1,6 +1,6 @@
-import {expect} from 'vitest';
-import {dbAdmin} from '../../../tests/supabase';
-import {ModuleInsert} from '../domain/module.schema';
+import { expect } from 'vitest';
+import { ModuleInsert } from '../domain/module.schema';
+import { dbAdmin } from '@tet/api/tests/supabase';
 
 export const moduleNew: ModuleInsert = {
   id: crypto.randomUUID(),
@@ -18,15 +18,18 @@ export const moduleNew: ModuleInsert = {
 
 export async function resetTableauDeBordModules(params: {
   collectiviteId: number;
-  userId: string;
 }) {
   // Supprime les modules existants
   await dbAdmin
     .from('tableau_de_bord_module')
     .delete()
     .eq('collectivite_id', params.collectiviteId)
-    .eq('user_id', params.userId);
+    .not('user_id', 'is', null);
 
-  const {data} = await dbAdmin.from('tableau_de_bord_module').select('*');
+  const { data } = await dbAdmin
+    .from('tableau_de_bord_module')
+    .select('*')
+    .not('user_id', 'is', null);
+
   expect(data).toHaveLength(0);
 }

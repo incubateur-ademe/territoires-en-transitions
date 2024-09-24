@@ -8,7 +8,7 @@ import { QueryKey, useQuery } from 'react-query';
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
  */
-export const useModuleFetch = (slug: Slug) => {
+export const usePersonalModuleFetch = (slug: Slug) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
 
@@ -31,6 +31,6 @@ export const useModuleFetch = (slug: Slug) => {
 };
 
 export const getQueryKey = (slug?: Slug): QueryKey => [
-  'collectivite_tableau_de_bord_module_page',
+  'personal-dashboard-module',
   slug,
 ];

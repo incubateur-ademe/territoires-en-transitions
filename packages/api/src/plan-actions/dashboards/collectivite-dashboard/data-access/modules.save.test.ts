@@ -8,10 +8,9 @@ import { signIn, signOut } from '@tet/api/tests/auth';
 const params = {
   dbClient: supabase,
   collectiviteId: 1,
-  userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
-const numberOfModulesByDefault = 3;
+const numberOfModulesByDefault = 2;
 
 beforeEach(async () => {
   await signIn('yolododo');
