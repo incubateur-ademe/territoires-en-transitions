@@ -197,7 +197,6 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je filtre les fiches par "Michel Sapasse" du filtre "personne-pilote"
     Alors la fiche contenant "Michel Sapasse" est visible
 
-@focus
   Scénario: Visiter la page des graphiques de synthèse et filter les fiches
     Etant donné que je suis connecté en tant que "yolo"
     Et que je suis sur la page "Synthèse plans action" de la collectivité "1"
