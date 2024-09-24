@@ -111,7 +111,7 @@ const FicheActionCard = ({
 
       {/* Carte */}
       <Card
-        data-test="ActionCarte"
+        dataTest="FicheActionCarte"
         id={carteId}
         className={classNames(
           'h-full px-4 py-[1.125rem] !gap-3 !text-grey-8 !shadow-none transition',

@@ -26,31 +26,37 @@ When(
 When(
   /la carte de la fiche créée est présente et affiche le titre "([^"]*)", le pilote "([^"]*)" et le statut "([^"]*)"/,
   (titre, pilote, statut) => {
-    cy.get('[data-test=ActionCarte]').contains(titre).should('be.visible');
-    cy.get('[data-test=ActionCarte]').contains(pilote).should('be.visible');
-    cy.get('[data-test=ActionCarte]').contains(statut).should('be.visible');
+    cy.get('[data-test=FicheActionCarte]').contains(titre).should('be.visible');
+    cy.get('[data-test=FicheActionCarte]')
+      .contains(pilote)
+      .should('be.visible');
+    cy.get('[data-test=FicheActionCarte]')
+      .contains(statut)
+      .should('be.visible');
   }
 );
 
 When(/je supprime la fiche/, () => {
   cy.get('[data-test=SupprimerFicheBouton]').click();
-  cy.contains('Confirmer').click();
+  cy.contains('Valider').click();
 });
 
 When(/je toggle la confidentialité de la fiche/, () => {
   cy.get('[data-test=FicheToggleConfidentialite]').click();
+  cy.get('button[type=submit]').click();
 });
 
 When(/la carte "([^"]*)" est privée/, titre => {
   cy.get('[data-test=FicheCartePrivee]')
-    .parents('[data-test=ActionCarte]')
+    .siblings('[data-test=FicheActionCarte]')
     .contains(titre)
     .should('be.visible');
 });
 
 When(/je ne peux pas cliquer sur la carte "([^"]*)"/, titre => {
-  cy.get('[data-test=ActionCarte]')
+  cy.get('[data-test=FicheActionCarte]')
     .contains(titre)
+    .parents('[data-test=FicheActionCarte]')
     .should('have.css', 'pointer-events', 'none');
 });
 
@@ -70,15 +76,15 @@ When(/je rends privées toutes les fiches d'un plan/, () => {
 
 When(/je supprime une fiche "([^"]*)" dans l'arborescence/, titre => {
   cy.get('[data-test=SupprimerFicheBouton]').first().click({force: true});
-  cy.contains('Confirmer').click();
+  cy.contains('Valider').click();
 });
 
 When(/la fiche "([^"]*)" n'est plus présente/, titre => {
   cy.contains(titre).should('not.exist');
 });
 
-When(/je navigue vers "([^"]*)" du fil d'ariane de la fiche/, axe => {
-  cy.get('[data-test=FicheFilAriane]').contains(axe).click();
+When("je navigue vers {string} du fil d'ariane de la fiche", axe => {
+  cy.get('[data-test=fiche-header]').contains(axe).click();
 });
 
 /** PLAN D'ACTION */
@@ -145,7 +151,7 @@ When(/je nomme la carte "([^"]*)"/, titre => {
 });
 
 When(/je navigue vers la fiche "([^"]*)"/, titre => {
-  cy.get('[data-test=ActionCarte]').contains(titre).click();
+  cy.get('[data-test=FicheActionCarte]').contains(titre).click();
   cy.get('[data-test=FicheAction]').contains(titre).should('be.visible');
 });
 
@@ -156,7 +162,7 @@ When(/j'ajoute une fiche à la page axe/, () => {
     .click();
 });
 
-When(/je navigue vers le plan "([^"]*)"/, titre => {
+When('je navigue vers le plan {string}', titre => {
   cy.get('[data-test=SideNavigation]').contains(titre).click();
 });
 
@@ -189,26 +195,32 @@ When(/j'enlève la fiche du plan/, () => {
 When(
   /le plan "([^"]*)" est visible dans le tableau nouvel emplacement/,
   plan => {
-    cy.get('[data-test=TableauAxe]').contains(plan).should('be.visible');
+    cy.get('[data-test=RangerFicheModale] #tab-1').click();
+    cy.get('[data-test=RangerFicheModale] #tabpanel-1')
+      .contains(plan)
+      .should('be.visible');
   }
 );
 
 When(/le fil d'ariane de la fiche contient "([^"]*)"/, chemin => {
-  cy.get('[data-test=FicheFilAriane]').contains(chemin).should('exist');
+  cy.get('[data-test=fiche-header]').contains(chemin).should('exist');
 });
 
 When(/je clique sur l'axe "([^"]*)" du tableau nouvel emplacement/, axe => {
-  cy.get('[data-test=TableauAxe]').contains(axe).click();
+  cy.get('[data-test=RangerFicheModale] #tab-1').click();
+  cy.get('[data-test=RangerFicheModale] #tabpanel-1').contains(axe).click();
 });
 
 When(/je valide cet emplacement/, () => {
-  cy.contains('Valider cet emplacement').click();
+  cy.contains('Valider ce nouvel emplacement').click();
 });
 
 When(
   /l'axe "([^"]*)" est visible dans les emplacements sélectionnés pour cette fiche/,
   axe => {
-    cy.get('[data-test=PlanChemin]').contains(axe).should('be.visible');
+    cy.get('[data-test=RangerFicheModale] #tabpanel-0')
+      .contains(axe)
+      .should('be.visible');
   }
 );
 
@@ -226,7 +238,7 @@ When(/j'ouvre "([^"]*)" dans la navigation latérale/, (section, axe) => {
     });
 });
 
-When(/je navigue vers "([^"]*)"/, axe => {
+When('je navigue vers {string}', axe => {
   cy.get('[data-test=SideNav-section-liens]').contains(axe).click();
 });
 
@@ -250,7 +262,7 @@ When(/aucune fiche n'est présente/, () => {
 });
 
 When(/la fiche contenant "([^"]*)" est visible/, value => {
-  cy.get('[data-test=ActionCarte]').contains(value).should('be.visible');
+  cy.get('[data-test=FicheActionCarte]').contains(value).should('be.visible');
 });
 
 /** SYNTHESE */

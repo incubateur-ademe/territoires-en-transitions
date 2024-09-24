@@ -51,6 +51,7 @@ const FicheActionPlanning = ({
     <>
       {!isEmpty ? (
         <div
+          data-test="planning"
           className={classNames(
             'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col items-center justify-center gap-5 text-center relative',
             className
@@ -159,6 +160,7 @@ const FicheActionPlanning = ({
         </div>
       ) : (
         <EmptyCard
+          dataTest="empty-planning"
           picto={className => (
             <>
               <EmptyCalendarPicto className={className} />
@@ -178,6 +180,7 @@ const FicheActionPlanning = ({
           }${!niveauPriorite ? ' | Niveau de priorité' : ''}`}
           isReadonly={isReadonly}
           action={{
+            dataTest: 'modalites',
             label: 'Ajouter le planning prévisionnel',
             onClick: () => setIsModalOpen(true),
           }}
