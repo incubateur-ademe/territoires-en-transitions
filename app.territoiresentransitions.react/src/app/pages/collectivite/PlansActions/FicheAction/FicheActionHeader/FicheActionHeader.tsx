@@ -15,7 +15,7 @@ const FicheActionHeader = (props: FicheActionHeaderProps) => {
   const {titre, collectiviteId, axes} = props;
 
   return (
-    <div className="w-full mb-4">
+    <div className="w-full mb-4" data-test="fiche-header">
       {/* Titre éditable de la fiche action */}
       <TitreFiche {...props} />
 

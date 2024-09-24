@@ -96,9 +96,9 @@ When('je me reconnecte en tant que visiteur', function () {
   createCollectivite('une autre collectivité', 'autre_collectivite');
   cy.get('@autre_collectivite').then(function (autre_collectivite) {
     const {collectivite_id} = autre_collectivite;
-    addRandomUser(collectivite_id, 'edition', 'visiteur');
-    loginAs.call(this, '@visiteur');
+    return addRandomUser(collectivite_id, 'edition', 'visiteur');
   });
+  loginAs.call(this, '@visiteur');
 });
 
 When("l'audit est commencé", commencerAudit);

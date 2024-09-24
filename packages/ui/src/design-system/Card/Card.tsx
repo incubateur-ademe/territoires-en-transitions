@@ -60,6 +60,7 @@ export const Card = ({
       // default
       'border-grey-3': !isSelected,
       '!m-0 border-2 border-primary-7': isSelected,
+      'pointer-events-none': disabled,
     },
     className
   );
