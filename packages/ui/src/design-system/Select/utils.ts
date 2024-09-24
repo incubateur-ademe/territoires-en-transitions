@@ -42,7 +42,7 @@ export const getFlatOptions = (selectOptions: SelectOption[]): Option[] =>
 
 /** Extrait le label d'une option dans une liste d'options */
 export const getOptionLabel = (optionValue: OptionValue, options: Option[]) =>
-  options.find((v: Option) => v.value.toString() === optionValue.toString())
+  options.find((v: Option) => v.value?.toString() === optionValue.toString())
     ?.label;
 
 /** Tri de façon naturelle (1, 2, 11, 40, 'a', 'b') une liste d'options par ordre alpha-numérique */
