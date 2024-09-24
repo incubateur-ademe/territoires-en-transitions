@@ -1477,6 +1477,147 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
   };
 }
 
+export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
+  collectionName: 'page_trajectoires';
+  info: {
+    singularName: 'page-trajectoire';
+    pluralName: 'page-trajectoires';
+    displayName: '3.1. Trajectoires';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Territorialisation de la SNBC pour votre collectivit\u00E9'>;
+    couverture: Attribute.Media & Attribute.Required;
+    cta_connexion: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Je me connecte pour en profiter'>;
+    bloc1_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Une m\u00E9thode de r\u00E9f\u00E9rence'>;
+    bloc1_texte: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'La m\u00E9thodogie permettant de calculer votre trajectoire SNBC territorialis\u00E9e a \u00E9t\u00E9 d\u00E9velopp\u00E9e pour l\u2019ADEME par Solagro et l\u2019Institut Negawatt. Fruit d\u2019un travail de 18 mois avec la contribution de 13 collectivit\u00E9s pilotes volontaires, elle a permis de construire une m\u00E9thode de r\u00E9f\u00E9rence pour aider les territoires \u00E0 d\u00E9finir et \u00E0 interroger leur trajectoire bas-carbone.'>;
+    bloc1_image: Attribute.Media;
+    bloc2_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Un outil d\u2019aide \u00E0 la d\u00E9cision : pas un engagement contractuel'>;
+    bloc2_texte: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'La trajectoire SNBC territorialis\u00E9e n\u2019est aucunement prescriptive. C\u2019est un outil d\u2019aide \u00E0 la d\u00E9cision, un point de rep\u00E8re pour : - D\u00E9finir vos objectifs ou les interroger lorsque ceux-ci sont d\u00E9finis (par exemple \u00E0 l\u2019occasion d\u2019un suivi annuel ou d\u2019un bilan \u00E0 mi-parcours d\u2019un PCAET) - Quantifier les efforts \u00E0 r\u00E9aliser secteur par secteur - Identifier sa contribution \u00E0 la SNBC'>;
+    bloc2_image: Attribute.Media;
+    methode_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<"La m\u00E9thode s'appuie, pour chaque secteur, sur des pivots de territorialisation qui d\u00E9terminent la contribution du territoire \u00E0 la SNBC.">;
+    methode_description1: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'Exemple - pour le secteur r\u00E9sidentiel, les pivots de territorialisation sont :'>;
+    methode_exemples: Attribute.Component<'shared.vignette', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 2;
+      }>;
+    methode_exemples_detail: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Les consommations de chauffage sont par ailleurs modul\u00E9es par d\u00E9partement en int\u00E9grant une variable de rigueur climatique.'>;
+    methode_description2: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'\uD83D\uDC49 Ce principe est repris pour chaque secteur et permet ainsi de d\u00E9finir des trajectoires territorialis\u00E9es : adapt\u00E9es aux sp\u00E9cificit\u00E9s de chaque territoire.'>;
+    methode_alerte: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Cette m\u00E9thodologie est destin\u00E9e \u00E0 toute maille de l\u2019EPCI \u00E0 la r\u00E9gion. Son principe et ses calculs restent valables pour la maille communale mais certaines donn\u00E9es n\u00E9cessaires au calcul ne sont pas disponibles \u00E0 cette \u00E9chelle.'>;
+    methode_image: Attribute.Media;
+    webinaire_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Webinaire de pr\u00E9sentation'>;
+    webinaire_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'D\u00E9couvrez comment la trajectoire SNBC territorialis\u00E9e peut vous aider \u00E0 valider vos objectifs. Inscrivez-vous \u00E0 nos webinaires pour une pr\u00E9sentation d\u00E9taill\u00E9e, des d\u00E9monstrations en direct et des sessions de questions-r\u00E9ponses avec nos experts'>;
+    webinaire_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Je m\u2019inscris'>;
+    webinaire_url: Attribute.String;
+    calcul_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'2 modes de calcul disponibles, adapt\u00E9 \u00E0 votre besoin'>;
+    calcul_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'\uD83D\uDC49 La trajectoire SNBC territorialis\u00E9e est disponible sous deux formes, en fonction de votre besoin et de votre temps disponible'>;
+    calcul_liste: Attribute.Component<'shared.vignette-avec-markdown', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 2;
+      }>;
+    temoignages_liste: Attribute.Relation<
+      'api::page-trajectoire.page-trajectoire',
+      'oneToOne',
+      'api::temoignage.temoignage'
+    >;
+    documentation_titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }> &
+      Attribute.DefaultTo<'Documentation et mod\u00E8le de calcul'>;
+    documentation_description: Attribute.RichText &
+      Attribute.Required &
+      Attribute.DefaultTo<'Retrouvez ici les principaux documents de l\u2019\u00E9tude pilot\u00E9e par l\u2019ADEME pour d\u00E9finir cette trajectoire SNBC territorialis\u00E9e'>;
+    documentation_liste: Attribute.Component<'shared.vignette-avec-cta', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 2;
+      }>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::page-trajectoire.page-trajectoire',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::page-trajectoire.page-trajectoire',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiServiceService extends Schema.CollectionType {
   collectionName: 'services';
   info: {
@@ -1578,6 +1719,7 @@ declare module '@strapi/types' {
       'api::page-contact.page-contact': ApiPageContactPageContact;
       'api::page-outils-numerique.page-outils-numerique': ApiPageOutilsNumeriquePageOutilsNumerique;
       'api::page-programme.page-programme': ApiPageProgrammePageProgramme;
+      'api::page-trajectoire.page-trajectoire': ApiPageTrajectoirePageTrajectoire;
       'api::service.service': ApiServiceService;
       'api::temoignage.temoignage': ApiTemoignageTemoignage;
     }
