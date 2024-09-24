@@ -21,7 +21,7 @@ When(
   /visite le sous-axe "([^"]*)" du référentiel "([^"]*)" de la collectivité "(\d+)"/,
   (action, referentiel, collectiviteId) => {
     cy.visit(
-      `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}`
+      `/collectivite/${collectiviteId}/action/${referentiel}/${referentiel}_${action}/`
     );
     cy.get(`[data-test="Action-${action}"]`).should('be.visible');
   }
