@@ -41,12 +41,19 @@ const TousLesIndicateurs = () => {
         pageName={'app/indicateurs/tous'}
         properties={{ collectivite_id: collectivite?.collectivite_id! }}
       />
-      <div className="min-h-[44rem] flex flex-col gap-8">
+      <div
+        className="min-h-[44rem] flex flex-col gap-8"
+        data-test="tous-les-indicateurs"
+      >
         <div className="flex items-end">
           <h2 className="mb-0 mr-auto">Tous les indicateurs</h2>
           {!isReadonly && (
             <>
-              <Button size="sm" onClick={() => setIsNewIndicateurOpen(true)}>
+              <Button
+                data-test="create-perso"
+                size="sm"
+                onClick={() => setIsNewIndicateurOpen(true)}
+              >
                 Créer un indicateur
               </Button>
               {isNewIndicateurOpen && (
