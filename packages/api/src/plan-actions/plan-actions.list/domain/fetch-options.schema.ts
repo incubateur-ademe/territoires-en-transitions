@@ -13,7 +13,7 @@ export const fetchFilterSchema = filtreRessourceLieesSchema.pick({
 
 export type FetchFilter = z.infer<typeof fetchFilterSchema>;
 
-const sortValues = ['titre'] as const;
+const sortValues = ['nom', 'created_at'] as const;
 
 export type SortFichesActionValue = (typeof sortValues)[number];
 
@@ -25,7 +25,7 @@ const fetchSortSchema = z.object({
 export type FetchSort = z.infer<typeof fetchSortSchema>;
 
 export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
-  filtre: fetchFilterSchema,
+  filtre: fetchFilterSchema.optional(),
 });
 
 export type FetchOptions = z.input<typeof fetchOptionsSchema>;
