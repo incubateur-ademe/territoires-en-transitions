@@ -16,6 +16,9 @@ import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicat
 import { IndicateurInfoLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
 import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useUpdateIndicateurPersoDefinition } from './useUpdateIndicateurPersoDefinition';
+import InputControlled from 'ui/shared/form/InputControlled';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -23,12 +26,27 @@ export const IndicateurPredefiniBase = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
-  const { description } = definition;
+  const { description, unite } = definition;
+  const { mutate: updateDefinition } = useUpdateIndicateurPersoDefinition();
+  const collectivite = useCurrentCollectivite();
+  const isReadonly = !collectivite || collectivite?.readonly;
 
   const collectivite_id = useCollectiviteId()!;
 
   const { sources, currentSource, setCurrentSource } =
     useIndicateurImportSources(definition.id);
+
+  // génère les fonctions d'enregistrement des modifications
+  const handleUpdate = (
+    name: 'description' | 'unite' | 'titre',
+    value: string
+  ) => {
+    const collectivite_id = collectivite?.collectivite_id;
+    const nouveau = value?.trim();
+    if (collectivite_id && nouveau !== definition[name]) {
+      updateDefinition({ ...definition, [name]: nouveau });
+    }
+  };
 
   return (
     <>
