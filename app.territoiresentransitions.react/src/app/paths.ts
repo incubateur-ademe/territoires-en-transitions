@@ -12,7 +12,7 @@ export const resetPwdPath = authPaths.resetPwd;
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
 export const invitationMailParam = 'email';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}/`;
 
 export const profilPath = '/profil';
 export const monComptePath = `${profilPath}/mon-compte`;
