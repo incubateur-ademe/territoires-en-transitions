@@ -39,7 +39,7 @@ export const CollectivitePages = {
     selector: '[data-test=labellisation-eci]',
   },
   'Action ECI': {
-    route: 'action/eci/eci_3.1',
+    route: 'action/eci/eci_3.1/',
     selector: '[data-test^=Action]',
   },
   'Synthèse plans action': {
