@@ -15,7 +15,7 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
 import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import { getQueryKey } from 'app/pages/collectivite/TableauDeBord/Module/useModulesFetch';
+import { getQueryKey } from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
@@ -57,7 +57,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsDontJeSuisLePilote
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
+              keysToInvalidate={[getQueryKey(module.slug)]}
             />
           );
         }
@@ -66,7 +66,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsRecemmentModifiees
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
+              keysToInvalidate={[getQueryKey(module.slug)]}
             />
           );
         }

@@ -8,8 +8,8 @@ import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/Indicateu
 import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
-  useModuleFetch,
-} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+  usePersonalModuleFetch,
+} from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
@@ -22,7 +22,8 @@ type Props = {
 const ModuleIndicateursPage = ({ view, slug }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: module, isLoading: isModuleLoading } = useModuleFetch(slug);
+  const { data: module, isLoading: isModuleLoading } =
+    usePersonalModuleFetch(slug);
 
   const filtre = module?.options.filtre;
 

@@ -1,11 +1,11 @@
 import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModuleIndicateurs from './Module/ModuleIndicateurs/ModuleIndicateurs';
-import {useModulesFetch} from './Module/useModulesFetch';
+import { usePersonalModulesFetch } from './Module/usePersonalModulesFetch';
 
 /** Vue personnelle du tableau de bord plans d'action */
 const Personnel = () => {
-  const {data: modules, isLoading} = useModulesFetch();
+  const { data: modules, isLoading } = usePersonalModulesFetch();
 
   if (isLoading) {
     return (
@@ -29,7 +29,7 @@ const Personnel = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      {modules.map(module => {
+      {modules.map((module) => {
         if (module.type === 'indicateur.list') {
           return (
             <ModuleIndicateurs

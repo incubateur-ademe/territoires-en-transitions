@@ -3,8 +3,8 @@ import { DBClient } from '@tet/api/typeUtils';
 import {
   ModuleInsert,
   moduleCommonSchemaInsert,
-  moduleFichesSchema,
-  moduleIndicateursSchema,
+  moduleFicheActionCountByStatusSchema,
+  modulePlanActionListSchema,
 } from '../domain/module.schema';
 import { TablesInsert } from '@tet/api/database.types';
 
@@ -41,16 +41,16 @@ export async function modulesSave({ dbClient, module: unsafeModule }: Props) {
 function parseModule(module: ModuleInsert) {
   const commonPart = moduleCommonSchemaInsert.parse(module);
 
-  if (module.type === 'fiche_action.list') {
+  if (module.type === 'plan-action.list') {
     return {
-      ...moduleFichesSchema.parse(module),
+      ...modulePlanActionListSchema.parse(module),
       ...commonPart,
     };
   }
 
-  if (module.type === 'indicateur.list') {
+  if (module.type === 'fiche-action.count-by-status') {
     return {
-      ...moduleIndicateursSchema.parse(module),
+      ...moduleFicheActionCountByStatusSchema.parse(module),
       ...commonPart,
     };
   }
