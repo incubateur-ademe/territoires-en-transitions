@@ -127,10 +127,7 @@ export const TrajectoireCalculee = () => {
           {
             /** Avertissement "Données partiellement disponibles" */
             !secteur && donneesSectoriellesIncompletes && (
-              <DonneesPartiellementDisponibles
-                collectiviteId={collectiviteId}
-                identifiantReferentiel={identifiant}
-              />
+              <DonneesPartiellementDisponibles />
             )
           }
           {
@@ -180,8 +177,7 @@ export const TrajectoireCalculee = () => {
           {
             /** Données non disponibles pour le secteur sélectionné */
             secteur && !valeursSecteur && (
-              <Alert
-                state="warning"
+              <DonneesPartiellementDisponibles
                 title="Données non disponibles"
                 description="Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles."
               />
