@@ -1,10 +1,10 @@
-import {z} from 'zod';
+import { z } from 'zod';
 import {
   niveauPrioritesSchema,
   statutsSchema,
-} from '../fiche_resumes.list/domain/enum.schema';
-import {axeSchema} from './axe.schema';
-import {ObjectToSnake} from 'ts-case-convert/lib/caseConvert';
+} from '../fiche-resumes.list/domain/enum.schema';
+import { axeSchema } from './axe.schema';
+import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
 
 /**
  * Schéma zod d'un résumé d'une fiche action

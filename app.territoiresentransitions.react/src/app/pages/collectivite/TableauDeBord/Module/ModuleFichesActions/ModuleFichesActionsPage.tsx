@@ -1,7 +1,7 @@
 import {
   ModuleFicheActionsSelect,
   Slug,
-} from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import { TDBViewParam } from 'app/paths';

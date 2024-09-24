@@ -1,4 +1,4 @@
-import {DBClient} from '../../../typeUtils';
+import { DBClient } from '@tet/api/typeUtils';
 
 export const dcpFetch = async ({
   dbClient,
@@ -7,10 +7,10 @@ export const dcpFetch = async ({
   dbClient: DBClient;
   user_id: string;
 }) => {
-  const {data} = await dbClient
+  const { data } = await dbClient
     .from('dcp')
     .select('user_id,nom,prenom,telephone,cgu_acceptees_le')
-    .match({user_id});
+    .match({ user_id });
 
   return data?.length ? data[0] : null;
 };

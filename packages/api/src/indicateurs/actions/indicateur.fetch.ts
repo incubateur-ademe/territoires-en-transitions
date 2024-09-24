@@ -6,7 +6,7 @@ import {
 } from '../../collectivites/shared/actions/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
-import { FicheResume } from '../../fiche_actions/domain/resume.schema';
+import { FicheResume } from '../../plan-actions/domain/resume.schema';
 import { Action } from '../../referentiel/domain/action.schema';
 import { Tag, Thematique } from '../../shared/domain';
 import { Personne } from '../../shared/domain/personne.schema';

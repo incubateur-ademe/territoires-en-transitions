@@ -1,4 +1,4 @@
-import { Filtre } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Filtre } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Button, useEventTracker } from '@tet/ui';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
 import classNames from 'classnames';

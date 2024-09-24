@@ -1,7 +1,7 @@
-import {signIn, signOut} from '../../tests/auth';
-import {dbAdmin, supabase} from '../../tests/supabase';
-import {beforeAll, expect, test} from 'vitest';
-import {testReset} from '../../tests/testReset';
+import { signIn, signOut } from '../../tests/auth';
+import { dbAdmin, supabase } from '../../tests/supabase';
+import { beforeAll, expect, test } from 'vitest';
+import { testReset } from '../../tests/testReset';
 import {
   insertIndicateurDefinition,
   updateIndicateurDefinition,
@@ -25,13 +25,13 @@ import {
   selectIndicateurValeur,
   selectIndicateurValeurs,
 } from './indicateur.fetch';
-import {IndicateurDefinitionInsert} from '../domain/definition.schema';
-import {Valeur} from '../domain/valeur.schema';
-import {Thematique} from '../../shared/domain/thematique.schema';
-import {FicheResume} from '../../fiche_actions/domain/resume.schema';
-import {Personne} from '../../shared/domain/personne.schema';
-import {Action} from '../../referentiel/domain/action.schema';
-import {Tag} from '../../shared/domain/tag.schema';
+import { IndicateurDefinitionInsert } from '../domain/definition.schema';
+import { Valeur } from '../domain/valeur.schema';
+import { Thematique } from '../../shared/domain/thematique.schema';
+import { FicheResume } from '../../plan-actions/domain/resume.schema';
+import { Personne } from '../../shared/domain/personne.schema';
+import { Action } from '../../referentiel/domain/action.schema';
+import { Tag } from '../../shared/domain/tag.schema';
 
 beforeAll(async () => {
   await signIn('yolododo');
@@ -68,7 +68,7 @@ test('Test insertIndicateurDefinition', async () => {
   const def: IndicateurDefinitionInsert = {
     titre: 'test',
     collectiviteId: 1,
-    thematiques: [{id: 1, nom: ''}],
+    thematiques: [{ id: 1, nom: '' }],
   };
 
   const newId = await insertIndicateurDefinition(supabase, def);
@@ -134,7 +134,7 @@ test('Test upsertServices', async () => {
   // Données
   const serv = await dbAdmin
     .from('service_tag')
-    .insert({nom: 'serv2', collectivite_id: 2})
+    .insert({ nom: 'serv2', collectivite_id: 2 })
     .select();
   await dbAdmin.from('indicateur_service_tag').insert({
     indicateur_id: 1,
@@ -156,7 +156,7 @@ test('Test upsertServices', async () => {
   expect(data).toHaveLength(1);
   // Ajout service existant sur indicateur personnalisé
   tags[0].id = data[0];
-  tags.push({nom: '', collectiviteId: 1, id: 1});
+  tags.push({ nom: '', collectiviteId: 1, id: 1 });
   await upsertServices(supabase, def!, 1, tags);
   const data2 = await selectIndicateurServicesId(supabase, 123, 1);
   expect(data2).not.toBeNull();
@@ -187,16 +187,16 @@ test('Test upsertCategoriesUtilisateur', async () => {
   // Données
   const categorie = await dbAdmin
     .from('categorie_tag')
-    .insert({nom: 'testCat', collectivite_id: 1})
+    .insert({ nom: 'testCat', collectivite_id: 1 })
     .select();
   const catId = categorie!.data![0].id;
   const categorie2 = await dbAdmin
     .from('categorie_tag')
-    .insert({nom: 'cat2', collectivite_id: 2})
+    .insert({ nom: 'cat2', collectivite_id: 2 })
     .select();
   await dbAdmin
     .from('indicateur_categorie_tag')
-    .insert({indicateur_id: 1, categorie_tag_id: categorie2!.data![0].id});
+    .insert({ indicateur_id: 1, categorie_tag_id: categorie2!.data![0].id });
 
   // Ajout catégorie inexistant sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
@@ -212,7 +212,7 @@ test('Test upsertCategoriesUtilisateur', async () => {
   expect(data).toHaveLength(1);
   // Ajout catégorie existant sur indicateur personnalisé
   tags[0].id = data[0];
-  tags.push({nom: '', collectiviteId: 1, id: catId});
+  tags.push({ nom: '', collectiviteId: 1, id: catId });
   await upsertCategoriesUtilisateur(supabase, def!, 1, tags);
   const data2 = await selectIndicateurCategoriesUtilisateur(supabase, 123, 1);
   expect(data2).not.toBeNull();
@@ -243,11 +243,11 @@ test('Test upsertPilotes', async () => {
   // Données
   const pil = await dbAdmin
     .from('personne_tag')
-    .insert({nom: 'pil2', collectivite_id: 2})
+    .insert({ nom: 'pil2', collectivite_id: 2 })
     .select();
   await dbAdmin
     .from('indicateur_pilote')
-    .insert({indicateur_id: 1, tag_id: pil!.data![0].id, collectivite_id: 2});
+    .insert({ indicateur_id: 1, tag_id: pil!.data![0].id, collectivite_id: 2 });
 
   // Ajout pilote inexistant sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
@@ -269,7 +269,7 @@ test('Test upsertPilotes', async () => {
   expect(data).not.toHaveLength(0);
   // Ajout pilote existant sur indicateur personnalisé
   tags[0] = data[0];
-  tags.push({tagId: 1, collectiviteId: 1});
+  tags.push({ tagId: 1, collectiviteId: 1 });
   tags.push({
     userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
     collectiviteId: 1,
@@ -309,11 +309,11 @@ test('Test upsertPilotes', async () => {
 test('Test upsertFiches', async () => {
   const fiche = await dbAdmin
     .from('fiche_action')
-    .insert({titre: 'test2', collectivite_id: 2})
+    .insert({ titre: 'test2', collectivite_id: 2 })
     .select();
   await dbAdmin
     .from('fiche_action_indicateur')
-    .insert({fiche_id: fiche!.data![0].id, indicateur_id: 1});
+    .insert({ fiche_id: fiche!.data![0].id, indicateur_id: 1 });
 
   // Ajoute fiche sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
@@ -337,7 +337,7 @@ test('Test upsertFiches', async () => {
     supabase,
     def!.id,
     1,
-    fr.map(f => f.id)
+    fr.map((f) => f.id)
   );
   const data = await selectIndicateurFiches(supabase, 123, 1);
   expect(data).not.toBeNull();
@@ -353,7 +353,7 @@ test('Test upsertFiches', async () => {
     supabase,
     def2!.id,
     1,
-    fr?.map(f => f.id)
+    fr?.map((f) => f.id)
   );
   const data4 = await selectIndicateurFiches(supabase, 1, 1);
   expect(data4).not.toBeNull();
@@ -461,7 +461,7 @@ test('Test upsertValeursUtilisateurAvecSource', async () => {
   expect(d2).toHaveLength(2);
 
   // Test que le résultat a bien été appliqué
-  const idNewValeur = d2.filter(d => d.id !== val.data![0].id)![0].id;
+  const idNewValeur = d2.filter((d) => d.id !== val.data![0].id)![0].id;
   await dbAdmin.from('indicateur_valeur').delete().eq('id', idNewValeur!);
   const d3bis = await selectIndicateurValeurs(supabase, 1, 1, null);
   expect(d3bis).toHaveLength(1);

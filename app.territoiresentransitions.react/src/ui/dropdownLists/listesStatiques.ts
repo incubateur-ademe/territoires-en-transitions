@@ -1,5 +1,5 @@
-import { ModifiedSince } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import { Statut } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
+import { Statut } from '@tet/api/plan-actions/fiche-resumes.list/domain/fiche-resumes.schema';
+import { ModifiedSince } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,

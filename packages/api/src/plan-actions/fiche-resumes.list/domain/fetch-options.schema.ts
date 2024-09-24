@@ -1,8 +1,8 @@
-import {z} from 'zod';
-import {getQueryOptionsSchema} from '../../../shared/domain/query_options.schema';
+import { z } from 'zod';
+import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 
-import {filtreRessourceLieesSchema} from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
-import {niveauPrioriteSchema, statutSchema} from './fiche_resumes.schema';
+import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
+import { niveauPrioriteSchema, statutSchema } from './fiche-resumes.schema';
 
 export const modifiedSinceSchema = z.enum([
   'last-90-days',

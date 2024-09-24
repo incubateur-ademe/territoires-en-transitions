@@ -1,8 +1,8 @@
-import {DBClient} from '../../../typeUtils';
+import { DBClient } from '@tet/api/typeUtils';
 
 type FetchedData = {
   id: number;
-  axe: {plan: number}[];
+  axe: { plan: number }[];
 };
 
 type Props = {
@@ -20,7 +20,7 @@ export const planActionsPilotableFetch = async ({
 }: Props) => {
   // récupère les ID de fiches et les ID de plan auxquels elles sont associées
   // et pour lesquelles le titre est renseigné.
-  const {error, data} = await dbClient
+  const { error, data } = await dbClient
     .from('fiche_action')
     .select('id,axe:fiche_action_axe!inner(...axe!inner(plan))')
     .eq('collectivite_id', collectiviteId)
@@ -35,8 +35,8 @@ export const planActionsPilotableFetch = async ({
 
   // groupe les fiches par plan
   const parPlan = new Map<number, Set<number>>();
-  data?.forEach(fiche => {
-    fiche.axe.forEach(axe => {
+  data?.forEach((fiche) => {
+    fiche.axe.forEach((axe) => {
       parPlan.set(
         axe.plan,
         (parPlan.get(axe.plan) || new Set<number>()).add(fiche.id)

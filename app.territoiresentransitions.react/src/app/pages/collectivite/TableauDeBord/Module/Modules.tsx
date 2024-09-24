@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { defaultSlugsSchema } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { defaultSlugsSchema } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateursPage';
 import { TDBViewParam } from 'app/paths';

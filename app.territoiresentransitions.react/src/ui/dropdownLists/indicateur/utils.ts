@@ -1,10 +1,10 @@
-import {Indicateurs} from '@tet/api';
+// import {Indicateurs} from '@tet/api';
+import { CategorieProgramme } from '@tet/api/indicateurs';
+import { categorieProgrammeEnumSchema } from '@tet/api/indicateurs/domain';
 
-const categorieEnum = Indicateurs.domain.categorieProgrammeEnumSchema.enum;
+const categorieEnum = categorieProgrammeEnumSchema.enum;
 
-export function getCategorieLabel(
-  categorieNom: Indicateurs.domain.CategorieProgramme
-) {
+export function getCategorieLabel(categorieNom: CategorieProgramme) {
   switch (categorieNom) {
     case categorieEnum.cae:
       return 'Référentiel ADEME CAE';

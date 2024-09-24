@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
-import { ModuleFicheActionsSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { modulesSave } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
+import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   Filtre as FiltreFichesAction,
   ModifiedSince,
-} from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+} from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   Field,
   FormSection,

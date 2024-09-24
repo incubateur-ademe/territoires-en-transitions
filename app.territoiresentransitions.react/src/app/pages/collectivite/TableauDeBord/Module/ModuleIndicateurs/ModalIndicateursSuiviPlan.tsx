@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { Indicateurs } from '@tet/api';
-import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
-import { ModuleIndicateursSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { modulesSave } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
+import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   Field,
   FormSection,

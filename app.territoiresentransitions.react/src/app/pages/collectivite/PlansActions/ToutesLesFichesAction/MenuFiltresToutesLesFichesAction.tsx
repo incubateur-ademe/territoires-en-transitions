@@ -1,6 +1,6 @@
 import { Checkbox, Field, FormSection, FormSectionGrid } from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   getPilotesValues,
   getReferentsValues,

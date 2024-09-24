@@ -1,12 +1,12 @@
-import {z} from 'zod';
+import { z } from 'zod';
 import {
   fetchOptionsSchema as fichesFetchOptionsSchema,
   Filtre as FiltreFicheActions,
-} from '../../../fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+} from '@tet/api/plan-actions/fiche-resumes.list';
 import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
   FetchFiltre as FiltreIndicateurs,
-} from '../../../indicateurs/domain/fetch_options.schema';
+} from '@tet/api/indicateurs/domain/fetch_options.schema';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
 
@@ -85,7 +85,7 @@ type Props = {
  */
 export async function getDefaultModule(
   slug: string,
-  {userId, collectiviteId, getPlanActionIds}: Props
+  { userId, collectiviteId, getPlanActionIds }: Props
 ) {
   const now = new Date().toISOString();
 

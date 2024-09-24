@@ -1,5 +1,5 @@
-import { moduleFetch } from '@tet/api/collectivites/tableau_de_bord.show/actions/module.fetch';
-import { Slug } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { moduleFetch } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
+import { Slug } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';

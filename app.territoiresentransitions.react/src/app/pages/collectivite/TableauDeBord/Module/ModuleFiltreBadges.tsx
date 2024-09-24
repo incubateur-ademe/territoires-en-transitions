@@ -1,4 +1,4 @@
-import { Filtre } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Filtre } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { useFiltreValues } from './useFiltreValues';

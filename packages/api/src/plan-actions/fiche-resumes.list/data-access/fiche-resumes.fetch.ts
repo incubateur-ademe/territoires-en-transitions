@@ -1,12 +1,12 @@
-import {z} from 'zod';
-import {DBClient} from '../../../typeUtils';
+import { z } from 'zod';
+import { DBClient } from '@tet/api/typeUtils';
 import {
   SortFichesAction,
   FetchOptions,
   Filtre as FiltreFicheActions,
   fetchOptionsSchema,
-} from '../domain/fetch_options.schema';
-import {FicheResume} from '../domain/fiche_resumes.schema';
+} from '../domain/fetch-options.schema';
+import { FicheResume } from '../domain/fiche-resumes.schema';
 
 type Output = Array<FicheResume>;
 
@@ -38,7 +38,12 @@ export async function ficheResumesFetch({
   options,
 }: Props) {
   const collectiviteId = z.number().parse(unsafeCollectiviteId);
-  const {filtre: filtre, sort, page, limit} = fetchOptionsSchema.parse(options);
+  const {
+    filtre: filtre,
+    sort,
+    page,
+    limit,
+  } = fetchOptionsSchema.parse(options);
 
   // 1. Ajoute les tables liées correspondant aux filtres
   // 👇
@@ -103,8 +108,8 @@ export async function ficheResumesFetch({
   // S'il l'utilisateur a spécifié un tri, on le met en premier
   const finalSort = sort ? [...sort, constantSort] : [constantSort];
 
-  finalSort.forEach(sort => {
-    query.order(sort.field, {ascending: sort.direction === 'asc'});
+  finalSort.forEach((sort) => {
+    query.order(sort.field, { ascending: sort.direction === 'asc' });
   });
 
   // 3. Ajoute les clauses correspondant aux filtres
@@ -199,11 +204,11 @@ export async function ficheResumesFetch({
     );
   }
 
-  const {data, error, count} = await query.returns<Output>();
+  const { data, error, count } = await query.returns<Output>();
 
   if (error) {
     console.error(error);
-    return {error};
+    return { error };
   }
 
   const nextPage = (count ?? 0) > page * limit ? page + 1 : null;
@@ -211,12 +216,12 @@ export async function ficheResumesFetch({
 
   // 4. Transforme les données pour les adapter au format attendu
 
-  const fiches = data.map(fiche => ({
+  const fiches = data.map((fiche) => ({
     ...fiche,
     plan_id: fiche.plans?.[0]?.plan,
     pilotes:
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (fiche.pilotes as any[])?.flatMap(({personne_tag, utilisateur}) => {
+      (fiche.pilotes as any[])?.flatMap(({ personne_tag, utilisateur }) => {
         if (personne_tag) {
           return personne_tag;
         }
@@ -232,7 +237,7 @@ export async function ficheResumesFetch({
       }) ?? null,
   }));
 
-  return {data: fiches, count, nextPage, nbOfPages};
+  return { data: fiches, count, nextPage, nbOfPages };
 }
 
 function getDateSince(value: NonNullable<FiltreFicheActions['modifiedSince']>) {
