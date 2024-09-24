@@ -1,5 +1,4 @@
 const archiver = require('archiver');
-const fetch = require('node-fetch');
 
 console.log(`zip origin override: ${process.env.ZIP_ORIGIN_OVERRIDE}`);
 

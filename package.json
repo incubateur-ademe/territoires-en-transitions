@@ -48,7 +48,6 @@
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lodash": "^4.17.21",
     "next": "^14.2.3",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.14",
     "posthog-js": "^1.131.3",
     "react": "18.3.1",
