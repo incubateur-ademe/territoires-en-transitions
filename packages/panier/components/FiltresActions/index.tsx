@@ -19,12 +19,14 @@ type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  sansFiltreCompetences: boolean;
 };
 
 const FiltresActions = ({
   budgets,
   temps,
   thematiques,
+  sansFiltreCompetences,
 }: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -39,6 +41,9 @@ const FiltresActions = ({
     OptionValue[] | undefined
   >();
   const [tempsValues, setTempsValues] = useState<OptionValue[] | undefined>();
+  const [sansFiltreCompetencesValue, setSansFiltreCompetencesValue] = useState(
+    sansFiltreCompetences,
+  );
 
   useEffect(() => {
     // Permet de conserver les filtres lors d'un changement d'onglet
@@ -54,12 +59,13 @@ const FiltresActions = ({
     const tempsParams = searchParams
       .get('m')
       ?.split(',')
-      .map((val) => parseInt(val));
-    // const competencesParams = searchParams.get('c');
+      .map(val => parseInt(val));
+    const competencesParams = searchParams.get('c');
 
     if (thematiquesParams) setThematiquesValues(thematiquesParams);
     if (budgetsParams) setBudgetsValues(budgetsParams);
     if (tempsParams) setTempsValues(tempsParams);
+    setSansFiltreCompetencesValue(competencesParams === 'true');
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -77,6 +83,9 @@ const FiltresActions = ({
     if (!!tempsValues && tempsValues?.length > 0) {
       paramsArray.push(`m=${tempsValues.join(',')}`);
     }
+    if (sansFiltreCompetencesValue) {
+      paramsArray.push('c=true');
+    }
 
     const href =
       paramsArray.length > 0
@@ -90,13 +99,19 @@ const FiltresActions = ({
         thematique_ids: thematiquesValues,
         niveau_budget_ids: budgetsValues,
         niveau_temps_ids: tempsValues,
+        match_competences: sansFiltreCompetencesValue,
       });
       router.push(href, { scroll: false });
     };
 
     trackThenNavigate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [thematiquesValues?.length, budgetsValues?.length, tempsValues?.length]);
+  }, [
+    thematiquesValues?.length,
+    budgetsValues?.length,
+    tempsValues?.length,
+    sansFiltreCompetencesValue,
+  ]);
 
   return (
     <BadgesFilters
@@ -126,6 +141,15 @@ const FiltresActions = ({
           onChange: (args) =>
             setTempsValues((args as SelectMultipleOnChangeArgs).values),
           multiple: true,
+        },
+        {
+          type: 'checkbox',
+          title: 'Élargir au-delà des compétences territoriales',
+          tooltip:
+            'Certaines actions ne sont pas directement rattachées à un domaine de compétence administrative. Néanmoins, votre collectivité peut s’en emparer en fonction de ses moyens afin de mener sa politique locale de transition (par exemple : coopérer avec les autres échelons territoriaux compétents, modifier et adapter le contenu de l’action en accord avec ses compétences et les spécificités de votre territoire, etc…)',
+          value: sansFiltreCompetencesValue,
+          onChange: () =>
+            setSansFiltreCompetencesValue(!sansFiltreCompetencesValue),
         },
       ]}
       className="my-4"
