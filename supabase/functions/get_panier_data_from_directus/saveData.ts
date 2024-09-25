@@ -65,6 +65,8 @@ export const saveActionImpact = async (
         ressources_externes: action.ressources_externes,
         rex: action.rex,
         subventions_mobilisables: action.subventions_mobilisables,
+        independamment_competences : action.independamment_competences || false,
+        competences_communales : action.competences_communales || false
     }
     const {error} = await supabaseClient.from("action_impact").upsert(actionToSave);
     if (error) {
