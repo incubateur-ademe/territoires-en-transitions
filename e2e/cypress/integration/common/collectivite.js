@@ -69,6 +69,7 @@ When("je suis connecté en tant qu'auditeur de la collectivité", function () {
 });
 When("je me reconnecte en tant qu'auditeur de la collectivité", function () {
   logout();
+  cy.visit('/');
   waitForApp();
   addAuditeur.call(this);
   loginAs.call(this, '@auditeur');
@@ -92,6 +93,7 @@ function setAuditeur(demande_id, user_id) {
 
 When('je me reconnecte en tant que visiteur', function () {
   logout();
+  cy.visit('/');
   waitForApp();
   createCollectivite('une autre collectivité', 'autre_collectivite');
   cy.get('@autre_collectivite').then(function (autre_collectivite) {
