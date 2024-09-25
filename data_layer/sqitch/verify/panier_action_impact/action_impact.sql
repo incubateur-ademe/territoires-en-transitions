@@ -6,6 +6,10 @@ select id, nom
 from panier_partenaire
 where false;
 
+select id, nom
+from action_impact_typologie
+where false;
+
 select action_impact_id, partenaire_id
 from action_impact_partenaire
 where false;
@@ -24,7 +28,8 @@ select id,
        ressources_externes,
        rex,
        competences_communales,
-       independamment_competences
+       independamment_competences,
+       typologie_id
 from action_impact
 where false;
 

@@ -11,6 +11,7 @@ drop table action_impact_state;
 
 alter table action_impact drop column competences_communales;
 alter table action_impact drop column independamment_competences;
+alter table action_impact drop column typologie_id;
 
 create table action_impact_state
 (
@@ -81,6 +82,8 @@ FROM (thematique t
 WHERE (ait.action_impact_id = ($1).action.id);
 END;
 comment on function thematique(action_impact_state) is 'La relation entre le state d''une action et ses thématiques.';
+
+drop table action_impact_typologie;
 
 drop table action_impact_partenaire;
 drop table panier_partenaire;

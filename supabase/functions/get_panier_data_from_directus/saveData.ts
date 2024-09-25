@@ -5,8 +5,8 @@ import {
     getIndicateurPredefiniFromBD,
     getPartenairesFromDirectus,
     getSousThematiquesFromBD,
-    getSousThematiquesFromDirectus
-} from "./fetchData.ts";
+    getSousThematiquesFromDirectus, getTypologiesFromDirectus
+} from './fetchData.ts';
 
 /**
  * Upsert les partenaires en BDD
@@ -19,6 +19,19 @@ export const savePartenaires = async (supabaseClient: TSupabaseClient) : Promise
         throw new Error(error.message);
     }
     console.log('Sauvegarde des partenaires réussi');
+}
+
+/**
+ * Upsert les typologies en BDD
+ * @param supabaseClient
+ */
+export const saveTypologies = async (supabaseClient: TSupabaseClient) : Promise<void> => {
+    const typologies = await getTypologiesFromDirectus();
+    const {error} = await supabaseClient.from("action_impact_typologie").upsert(typologies);
+    if (error) {
+        throw new Error(error.message);
+    }
+    console.log('Sauvegarde des typologies réussi');
 }
 
 /**
@@ -66,7 +79,8 @@ export const saveActionImpact = async (
         rex: action.rex,
         subventions_mobilisables: action.subventions_mobilisables,
         independamment_competences : action.independamment_competences || false,
-        competences_communales : action.competences_communales || false
+        competences_communales : action.competences_communales || false,
+        typologie_id : action.typologie.id
     }
     const {error} = await supabaseClient.from("action_impact").upsert(actionToSave);
     if (error) {

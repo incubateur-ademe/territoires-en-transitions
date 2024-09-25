@@ -1,4 +1,4 @@
-import {ActionImpact, Partenaire, SousThematique} from "./types.ts";
+import { ActionImpact, Partenaire, SousThematique, Typologie } from './types.ts';
 import {TSupabaseClient} from "../_shared/getSupabaseClient.ts";
 import {Database, TablesInsert} from "../_shared/database.types.ts";
 
@@ -56,6 +56,14 @@ export const getSousThematiquesFromDirectus = async() : Promise<SousThematique[]
  */
 export const getPartenairesFromDirectus = async() : Promise<Partenaire[]> => {
     return (await getFromDirectus('action_impact_partenaire'))?.data as Partenaire[];
+}
+
+/**
+ * Récupère les typologies provenant de directus
+ * @return les partenaires
+ */
+export const getTypologiesFromDirectus = async() : Promise<Typologie[]> => {
+    return (await getFromDirectus('action_impact_typologie'))?.data as Typologie[];
 }
 
 /**
