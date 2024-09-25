@@ -109,7 +109,9 @@ export class PanierAPI {
     panier_id: string,
     thematique_ids: number[],
     niveau_budget_ids: number[],
-    niveau_temps_ids: number[]
+    niveau_temps_ids: number[],
+    /** indique que les actions à impact ne sont pas filtrées sur les compétences de la collectivité */
+    sansFiltreCompetences: boolean
   ): Promise<Panier | null> {
     const builder = this.supabase
       .from('panier')
@@ -155,9 +157,50 @@ export class PanierAPI {
       );
     }
 
-    const { data, error } = await builder.single<Panier>();
+    if (!sansFiltreCompetences) {
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.matches_competences',
+        'is.true'
+      );
+    }
+
+    const {data, error} = await builder.single<Panier>();
     if (error) throw error;
-    return data;
+    return sansFiltreCompetences ? data : this.filterActionsCommune(data);
+  }
+
+  async fetchCollectiviteTypes(collectivite_id: number) {
+    const {data, error} = await this.supabase
+      .from('collectivite_identite')
+      .select('type')
+      .eq('id', collectivite_id);
+    if (error) throw error;
+    const collectivite = data?.[0];
+    return collectivite?.type || null;
+  }
+
+  // filtre a posteriori les actions pour les communes
+  async filterActionsCommune(panier: Panier) {
+    const collectiviteId = panier.collectivite_id || panier.collectivite_preset;
+    if (!collectiviteId) return panier;
+
+    // type et compétences de la collectivité
+    const collectiviteTypes = await this.fetchCollectiviteTypes(collectiviteId);
+
+    // pour les communes : filtre sur les flags “independamment_competences” et/ou “competences_communales”
+    if (collectiviteTypes?.includes('commune')) {
+      return {
+        ...panier,
+        states: panier.states.filter(
+          state =>
+            state.action.independamment_competences ||
+            state.action.competences_communales
+        ),
+      };
+    }
+
+    return panier;
   }
 
   /**
