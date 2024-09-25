@@ -30,13 +30,13 @@ const IndicateurPersonnaliseBase = ({
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
-    name: 'description' | 'unite' | 'titre',
+    name: 'description' | 'commentaire' | 'unite' | 'titre',
     value: string
   ) => {
     const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
-      updateDefinition({...definition, [name]: nouveau});
+      updateDefinition({...definition, [name]: nouveau, ['commentaire']: nouveau});
     }
   };
 
