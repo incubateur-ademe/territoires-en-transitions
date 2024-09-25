@@ -45,6 +45,9 @@ export enum FicheActionStatutsEnumType {
   REALISE = 'Réalisé',
   EN_PAUSE = 'En pause',
   ABANDONNE = 'Abandonné',
+  BLOQUE = 'Bloqué',
+  EN_RETARD = 'En retard',
+  A_DISCUTER = 'A discuter',
 }
 
 export const ficheActionStatutsEnum = pgEnum('fiche_action_statuts', [
