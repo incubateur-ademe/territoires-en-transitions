@@ -48,7 +48,7 @@ const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
 
                 <Markdown
                   texte={c.description}
-                  className="paragraphe-16 no-margin colored_bold markdown_style leading-5"
+                  className="paragraphe-16 colored_bold markdown_style leading-5"
                 />
               </div>
 

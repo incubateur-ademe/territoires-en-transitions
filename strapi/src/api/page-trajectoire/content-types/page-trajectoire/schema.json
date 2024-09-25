@@ -144,7 +144,7 @@
     },
     "temoignages_liste": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::temoignage.temoignage"
     },
     "documentation_titre": {
@@ -158,12 +158,15 @@
       "default": "Retrouvez ici les principaux documents de l’étude pilotée par l’ADEME pour définir cette trajectoire SNBC territorialisée",
       "required": true
     },
-    "documentation_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-cta",
+    "documentation_excel": {
+      "type": "text",
       "required": true,
-      "min": 2
+      "default": "Modèle de calcul de la trajectoire SNBC territorialisée. Le fichier a été conçu pour être autoporteur. Nous vous recommandons de vous approprier le fichier et la méthode en débutant par les onglets “Introduction” et “Notice”."
+    },
+    "documentation_pdf": {
+      "type": "text",
+      "required": true,
+      "default": "Document détaillant la méthodologie appliquée pour territorialiser la SNBC. Il présente les étapes clés, les outils et les approches utilisés pour adapter les objectifs nationaux aux territoires."
     }
   }
 }

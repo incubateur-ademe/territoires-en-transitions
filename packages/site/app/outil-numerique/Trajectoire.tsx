@@ -25,8 +25,10 @@ const Trajectoire = ({titre, description, cta, image}: TrajectoireProps) => {
           texte={description}
           className="paragraphe-primary-10 paragraphe-18 markdown_style colored_marker"
         />
-        {/** TODO: ajouter l'url vers l'app */}
-        <Button href="/trajectoire" className="mt-6 max-lg:mx-auto">
+        <Button
+          href="/outil-numerique/trajectoire"
+          className="mt-6 max-lg:mx-auto"
+        >
           {cta}
         </Button>
       </div>

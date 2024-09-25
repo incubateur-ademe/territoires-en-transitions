@@ -1583,7 +1583,7 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
       }>;
     temoignages_liste: Attribute.Relation<
       'api::page-trajectoire.page-trajectoire',
-      'oneToOne',
+      'oneToMany',
       'api::temoignage.temoignage'
     >;
     documentation_titre: Attribute.String &
@@ -1595,11 +1595,12 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
     documentation_description: Attribute.RichText &
       Attribute.Required &
       Attribute.DefaultTo<'Retrouvez ici les principaux documents de l\u2019\u00E9tude pilot\u00E9e par l\u2019ADEME pour d\u00E9finir cette trajectoire SNBC territorialis\u00E9e'>;
-    documentation_liste: Attribute.Component<'shared.vignette-avec-cta', true> &
+    documentation_excel: Attribute.Text &
       Attribute.Required &
-      Attribute.SetMinMax<{
-        min: 2;
-      }>;
+      Attribute.DefaultTo<'Mod\u00E8le de calcul de la trajectoire SNBC territorialis\u00E9e. Le fichier a \u00E9t\u00E9 con\u00E7u pour \u00EAtre autoporteur. Nous vous recommandons de vous approprier le fichier et la m\u00E9thode en d\u00E9butant par les onglets \u201CIntroduction\u201D et \u201CNotice\u201D.'>;
+    documentation_pdf: Attribute.Text &
+      Attribute.Required &
+      Attribute.DefaultTo<'Document d\u00E9taillant la m\u00E9thodologie appliqu\u00E9e pour territorialiser la SNBC. Il pr\u00E9sente les \u00E9tapes cl\u00E9s, les outils et les approches utilis\u00E9s pour adapter les objectifs nationaux aux territoires.'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

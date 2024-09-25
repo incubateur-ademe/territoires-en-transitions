@@ -71,8 +71,7 @@ const Card = ({
           <Markdown
             texte={description}
             className={classNames(
-              'paragraphe-16',
-              {'no-margin': !button},
+              'paragraphe-16 markdown_style',
               textClassName,
             )}
           />
