@@ -61,12 +61,6 @@ function login(userName) {
   cy.get('[data-test=connectedMenu]').should('be.visible');
 }
 
-When('je me reconnecte en tant que {string}', function (userName) {
-  logout();
-  waitForApp();
-  login(userName);
-});
-
 When(
   "je suis connecté en tant qu'utilisateur de la collectivité {int} n'ayant pas encore accepté les CGU",
   function (collectivite_id) {
