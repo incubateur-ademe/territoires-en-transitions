@@ -31,6 +31,7 @@ type ListeActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  sansFiltreCompetences: boolean;
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
   onChangeTab: (tab: PanierOngletName) => void;
@@ -41,6 +42,7 @@ const ListeActions = ({
   budgets,
   temps,
   thematiques,
+  sansFiltreCompetences,
   onToggleSelected,
   onUpdateStatus,
   onChangeTab,
@@ -78,7 +80,9 @@ const ListeActions = ({
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
-            <FiltresActions {...{budgets, temps, thematiques}} />
+            <FiltresActions
+              {...{budgets, temps, thematiques, sansFiltreCompetences}}
+            />
 
             {!tab.status &&
             !actionsFiltrees.length &&
