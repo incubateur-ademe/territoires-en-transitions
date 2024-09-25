@@ -6,7 +6,7 @@ import {
 import classNames from 'classnames';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {ReactComponent as DocumentAddPicto} from './document-add.svg';
 import {ReactComponent as DocumentDownloadPicto} from './document-download.svg';
 import {ReactComponent as ShoppingBasket} from './shopping-basket.svg';
