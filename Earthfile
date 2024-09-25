@@ -1,4 +1,5 @@
-VERSION 0.7
+VERSION 0.8
+
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
@@ -31,9 +32,7 @@ ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
-ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
-ARG --global APPLICATION_VERSION=$(git describe --tags --always)
+
 
 postgres:
     FROM postgres:15
@@ -261,7 +260,8 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
 
-node-fr: ## construit l'image de base pour les images utilisant node
+# construit l'image de base pour les images utilisant node
+node-fr:
     ARG TARGETPLATFORM
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
@@ -274,79 +274,32 @@ node-fr: ## construit l'image de base pour les images utilisant node
     ENV PATH="$PNPM_HOME:$PATH"
     RUN corepack enable
 
-    USER node:node
     WORKDIR /app
-    # SAVE IMAGE node-fr:latest
 
-front-deps: ## construit l'image contenant les dépendances des modules front
+# construit l'image contenant les dépendances des modules front
+front-deps:
     FROM +node-fr
-    # tsconfig global
-    COPY ./tsconfig.json ./
-    # dépendances globales
-    COPY package.json ./
-    COPY pnpm-lock.yaml ./
 
-    RUN pnpm install
+    COPY package.json pnpm-lock.yaml ./
+    RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
-    COPY nx.json ./
     COPY jest.* ./
     COPY vitest.* ./
 
-    SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
+    # Only copy libraries
+    COPY $API_DIR $API_DIR
+    COPY $UI_DIR $UI_DIR
 
 front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
-backend-pre-build:
-    # Build stage: todo: check if we use the same image as frontends
-    FROM +node-fr
-
-    COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
-    WORKDIR /app/$BACKEND_DIR
-    RUN npm install
-    RUN npm run build && npm prune --omit=dev
-
-    SAVE ARTIFACT . /app
-
 backend-build:
-    # TODO: why not us an alpine node:lts-alpine ?
-    FROM +node-fr
+  BUILD --pass-args ./backend+build
 
-    ENV NODE_ENV production
-    ENV PORT 3000
-    ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
-    ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
-    ENV APPLICATION_VERSION=$APPLICATION_VERSION
-
-    COPY --chown=node:node +backend-pre-build/app/package*.json .
-    COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
-    COPY --chown=node:node +backend-pre-build/app/dist ./dist
-
-    EXPOSE ${PORT}
-
-    CMD ["node", "dist/main.js"]
-    SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
-
-backend-deploy: ## Déploie le backend dans une app Koyeb existante
-    ARG --required KOYEB_API_KEY
-    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
-    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
-    ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-backend/backend \
-        --docker $BACKEND_IMG_NAME \
-        --env ENV_NAME=$ENV_NAME \
-        --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-        --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
-        --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
-        --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
-        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
-        --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME \
-        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
-        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
-        --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+backend-docker:
+  BUILD --pass-args ./backend+docker
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
@@ -792,7 +745,7 @@ dev:
     RUN earthly +refresh-views --DB_URL=$DB_URL
 
 BUILD_IF_NO_IMG:
-    COMMAND
+    FUNCTION
     ARG --required IMG_NAME
     ARG --required IMG_TAG
     ARG --required BUILD_TARGET

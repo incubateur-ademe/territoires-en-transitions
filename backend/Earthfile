@@ -1,0 +1,60 @@
+VERSION 0.8
+
+LOCALLY
+ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
+
+build:
+  FROM ../+front-deps
+
+  COPY . ./backend
+  # COPY ../packages/api ./packages/api
+  # COPY --chown=node:node root+$BACKEND_DIR ./
+  # COPY --chown=node:node ../packages/api/. $API_DIR
+
+  RUN pnpm build:backend
+  RUN pnpm prune --prod # Remove packages from devDependencies
+
+
+  SAVE ARTIFACT dist /dist AS LOCAL dist
+  SAVE ARTIFACT node_modules /node_modules AS LOCAL node_modules
+
+docker:
+  FROM ../+node-fr
+
+  ARG DOCKER_IMAGE=$BACKEND_IMG_NAME
+
+  ENV NODE_ENV production
+  ENV PORT 3000
+  ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
+  ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
+  ENV APPLICATION_VERSION=$APPLICATION_VERSION
+
+  EXPOSE ${PORT}
+
+  # COPY --chown=node:node +backend-pre-build/app/package*.json .
+  COPY +build/dist ./dist
+  COPY +build/node_modules ./node_modules
+
+  CMD ["node", "dist/backend/main.js"]
+  SAVE IMAGE --push $DOCKER_IMAGE
+
+deploy: ## Déploie le backend dans une app Koyeb existante
+    ARG --required KOYEB_API_KEY
+    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+    ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+    FROM +koyeb
+    RUN ./koyeb services update $ENV_NAME-backend/backend \
+        --docker $BACKEND_IMG_NAME \
+        --env ENV_NAME=$ENV_NAME \
+        --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+        --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
+        --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
+        --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
+        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
+        --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME \
+        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
+        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+        --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID

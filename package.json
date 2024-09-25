@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique pour faciliter et accélérer la mise en œuvre des actions de transition écologique dans les collectivités territoriales.",
+  "packageManager": "pnpm@9.11.0",
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.9",
     "@anatine/zod-openapi": "^2.2.6",
@@ -44,6 +45,7 @@
     "@zxcvbn-ts/language-common": "^3.0.4",
     "@zxcvbn-ts/language-fr": "^3.0.2",
     "archiver": "^7.0.1",
+    "async-retry": "^1.3.3",
     "axios": "^1.6.0",
     "classnames": "^2.3.1",
     "date-fns": "^2.16.1",
@@ -165,7 +167,6 @@
     "@typescript-eslint/parser": "^7.18.0",
     "@vitest/coverage-v8": "^1.0.4",
     "@vitest/ui": "^1.3.1",
-    "async-retry": "^1.3.3",
     "autoprefixer": "^10.4.20",
     "babel-jest": "^29.4.1",
     "css-loader": "^7.1.2",
