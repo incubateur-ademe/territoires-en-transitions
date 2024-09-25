@@ -26,13 +26,14 @@ jobs:
       - uses: earthly/actions-setup@v1
         with:
           github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
         run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Build and push backend image
         run: >
           earthly
-          --ci --push
+          --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
           +backend-docker
           --ENV_NAME=${{ github.event.inputs.target }}
@@ -49,12 +50,13 @@ jobs:
       - uses: earthly/actions-setup@v1
         with:
           github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
         run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
       - name: Deploy app on Koyeb
         run: >
           earthly
-          --ci
+          --use-inline-cache --save-inline-cache
           +backend-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
