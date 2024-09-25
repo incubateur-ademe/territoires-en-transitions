@@ -301,6 +301,9 @@ backend-build:
 backend-docker:
   BUILD --pass-args ./backend+docker
 
+backend-deploy:
+  BUILD --pass-args ./backend+deploy
+
 app-build: ## construit l'image de l'app
     ARG PLATFORM
     ARG --required ANON_KEY
