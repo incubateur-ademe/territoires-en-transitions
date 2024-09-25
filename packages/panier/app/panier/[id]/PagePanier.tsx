@@ -15,9 +15,10 @@ type PagePanierProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  sansFiltreCompetences: boolean;
 };
 
-const PagePanier = ({panier, budgets, temps, thematiques}: PagePanierProps) => {
+const PagePanier = (props: PagePanierProps) => {
   return (
     <>
       <ControlledAlert
@@ -26,7 +27,7 @@ const PagePanier = ({panier, budgets, temps, thematiques}: PagePanierProps) => {
       />
 
       <Section>
-        <PanierRealtime {...{panier, budgets, temps, thematiques}} />
+        <PanierRealtime {...props} />
       </Section>
     </>
   );

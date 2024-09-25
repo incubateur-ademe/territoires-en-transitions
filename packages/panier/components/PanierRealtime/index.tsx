@@ -24,6 +24,7 @@ type PanierRealtimeProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  sansFiltreCompetences: boolean;
 };
 
 /**
@@ -40,6 +41,7 @@ const PanierRealtime = ({
   budgets,
   temps,
   thematiques,
+  sansFiltreCompetences,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
 
@@ -126,7 +128,7 @@ const PanierRealtime = ({
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
-          {...{ budgets, temps, thematiques }}
+          {...{budgets, temps, thematiques, sansFiltreCompetences}}
         />
       </div>
 

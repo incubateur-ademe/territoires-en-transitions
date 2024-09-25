@@ -12,7 +12,7 @@ import { TrackPageView } from '@tet/ui';
  *  - t pour les ids des thématiques ex : 1 ou 1,2
  *  - b pour les ids des fourchettes budgétaires ex : 1 ou 1,2
  *  - m pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
- *  - c pour utiliser les competences ex : true ou false (true par défaut)
+ *  - c pour ne pas restreindre aux compétences territoriales ex : true ou false (false par défaut)
  *
  *  Ainsi que le contrôle de la modale de "Création de plan d’action”
  *  - Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
@@ -28,13 +28,14 @@ async function Page({
   const thematique_ids = extractIdsFromParam(searchParams['t'] as string);
   const budget_ids = extractIdsFromParam(searchParams['b'] as string);
   const temps_ids = extractIdsFromParam(searchParams['m'] as string);
-  // const match_competences = searchParams['c'] !== 'false';
+  const sansFiltreCompetences = searchParams['c'] === 'true';
 
   const panier = await fetchPanier(
     panierId,
     thematique_ids,
     budget_ids,
-    temps_ids
+    temps_ids,
+    sansFiltreCompetences,
   );
 
   if (!panier) return notFound();
@@ -52,7 +53,9 @@ async function Page({
           panier_id: panier.id,
         }}
       />
-      <PagePanier {...{ panier, budgets, temps, thematiques }} />
+      <PagePanier
+        {...{panier, budgets, temps, thematiques, sansFiltreCompetences}}
+      />
     </>
   );
 }
