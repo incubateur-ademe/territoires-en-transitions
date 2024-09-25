@@ -3206,11 +3206,13 @@ export type Database = {
       action_impact: {
         Row: {
           action_continue: boolean
+          competences_communales: boolean
           description: string
           description_complementaire: string
           fourchette_budgetaire: number
           id: number
           impact_tier: number
+          independamment_competences: boolean
           nb_collectivite_en_cours: number
           nb_collectivite_realise: number
           ressources_externes: Json | null
@@ -3218,14 +3220,17 @@ export type Database = {
           subventions_mobilisables: Json | null
           temps_de_mise_en_oeuvre: number
           titre: string
+          typologie_id: number | null
         }
         Insert: {
           action_continue?: boolean
+          competences_communales?: boolean
           description: string
           description_complementaire?: string
           fourchette_budgetaire?: number
           id?: number
           impact_tier?: number
+          independamment_competences?: boolean
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
           ressources_externes?: Json | null
@@ -3233,14 +3238,17 @@ export type Database = {
           subventions_mobilisables?: Json | null
           temps_de_mise_en_oeuvre?: number
           titre: string
+          typologie_id?: number | null
         }
         Update: {
           action_continue?: boolean
+          competences_communales?: boolean
           description?: string
           description_complementaire?: string
           fourchette_budgetaire?: number
           id?: number
           impact_tier?: number
+          independamment_competences?: boolean
           nb_collectivite_en_cours?: number
           nb_collectivite_realise?: number
           ressources_externes?: Json | null
@@ -3248,6 +3256,7 @@ export type Database = {
           subventions_mobilisables?: Json | null
           temps_de_mise_en_oeuvre?: number
           titre?: string
+          typologie_id?: number | null
         }
         Relationships: [
           {
@@ -3270,6 +3279,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "action_impact_temps_de_mise_en_oeuvre"
             referencedColumns: ["niveau"]
+          },
+          {
+            foreignKeyName: "action_impact_typologie_id_fkey"
+            columns: ["typologie_id"]
+            isOneToOne: false
+            referencedRelation: "action_impact_typologie"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -3570,6 +3586,36 @@ export type Database = {
           },
         ]
       }
+      action_impact_partenaire: {
+        Row: {
+          action_impact_id: number
+          partenaire_id: number
+        }
+        Insert: {
+          action_impact_id: number
+          partenaire_id: number
+        }
+        Update: {
+          action_impact_id?: number
+          partenaire_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_impact_partenaire_action_impact_id_fkey"
+            columns: ["action_impact_id"]
+            isOneToOne: false
+            referencedRelation: "action_impact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_impact_partenaire_partenaire_id_fkey"
+            columns: ["partenaire_id"]
+            isOneToOne: false
+            referencedRelation: "panier_partenaire"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       action_impact_sous_thematique: {
         Row: {
           action_impact_id: number
@@ -3724,6 +3770,21 @@ export type Database = {
         }
         Update: {
           niveau?: number
+          nom?: string
+        }
+        Relationships: []
+      }
+      action_impact_typologie: {
+        Row: {
+          id: number
+          nom: string
+        }
+        Insert: {
+          id?: number
+          nom: string
+        }
+        Update: {
+          id?: number
           nom?: string
         }
         Relationships: []
@@ -4293,6 +4354,7 @@ export type Database = {
           modified_at: string
           modified_by: string | null
           nom: string | null
+          panier_id: string | null
           parent: number | null
           plan: number | null
           type: number | null
@@ -4307,6 +4369,7 @@ export type Database = {
           modified_at?: string
           modified_by?: string | null
           nom?: string | null
+          panier_id?: string | null
           parent?: number | null
           plan?: number | null
           type?: number | null
@@ -4318,6 +4381,7 @@ export type Database = {
           modified_at?: string
           modified_by?: string | null
           nom?: string | null
+          panier_id?: string | null
           parent?: number | null
           plan?: number | null
           type?: number | null
@@ -4678,6 +4742,13 @@ export type Database = {
             columns: ["modified_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "axe_panier_id_fkey"
+            columns: ["panier_id"]
+            isOneToOne: false
+            referencedRelation: "panier"
             referencedColumns: ["id"]
           },
           {
@@ -15222,6 +15293,21 @@ export type Database = {
           },
         ]
       }
+      panier_partenaire: {
+        Row: {
+          id: number
+          nom: string | null
+        }
+        Insert: {
+          id?: number
+          nom?: string | null
+        }
+        Update: {
+          id?: number
+          nom?: string | null
+        }
+        Relationships: []
+      }
       partenaire_tag: {
         Row: {
           collectivite_id: number
@@ -21673,21 +21759,17 @@ export type Database = {
       thematique: {
         Row: {
           id: number
-          md_id: Database["public"]["Enums"]["old_indicateur_thematique"] | null
+          md_id: string | null
           nom: string
         }
         Insert: {
           id?: number
-          md_id?:
-            | Database["public"]["Enums"]["old_indicateur_thematique"]
-            | null
+          md_id?: string | null
           nom: string
         }
         Update: {
           id?: number
-          md_id?:
-            | Database["public"]["Enums"]["old_indicateur_thematique"]
-            | null
+          md_id?: string | null
           nom?: string
         }
         Relationships: []
@@ -25020,6 +25102,7 @@ export type Database = {
           fiches_mod_3mois: number | null
           fiches_mod_6mois: number | null
           fiches_non_vides: number | null
+          fiches_pai: number | null
           fiches_pilotables: number | null
           fiches_pilotage: number | null
           indicateur_prive: number | null
@@ -25031,9 +25114,9 @@ export type Database = {
           pa_date_creation: string | null
           pa_non_vides: number | null
           pa_pilotables: number | null
-          pa_view_1mois: number | null
-          pa_view_3mois: number | null
+          pa_view_2mois: number | null
           pa_view_6mois: number | null
+          pai: number | null
           plans: number | null
           pourcentage_fa_pilotable_privee: number | null
           pourcentage_fa_privee: number | null
@@ -25041,7 +25124,7 @@ export type Database = {
           premier_rattachement: string | null
           resultats_indicateurs: number | null
           resultats_indicateurs_perso: number | null
-          type_pa: string[] | null
+          type_pa_non_vides: string | null
         }
         Relationships: []
       }
@@ -29565,7 +29648,7 @@ export type Database = {
         }
         Returns: {
           id: number
-          md_id: Database["public"]["Enums"]["old_indicateur_thematique"] | null
+          md_id: string | null
           nom: string
         }[]
       }
@@ -29897,6 +29980,7 @@ export type Database = {
           modified_at: string
           modified_by: string | null
           nom: string | null
+          panier_id: string | null
           parent: number | null
           plan: number | null
           type: number | null
@@ -30825,7 +30909,7 @@ export type Database = {
         Args: {
           "": unknown
         }
-        Returns: Database["public"]["Tables"]["indicateur_valeur"]["Row"][][]
+        Returns: Json
       }
       interpolate:
         | {
@@ -31412,6 +31496,7 @@ export type Database = {
         Args: {
           collectivite_id: number
           panier_id: string
+          plan_id?: number
         }
         Returns: number
       }
@@ -31426,6 +31511,7 @@ export type Database = {
           modified_at: string
           modified_by: string | null
           nom: string | null
+          panier_id: string | null
           parent: number | null
           plan: number | null
           type: number | null
@@ -31470,6 +31556,10 @@ export type Database = {
           referentiel: Database["public"]["Enums"]["referentiel"] | null
           type: Database["public"]["Enums"]["action_type"] | null
         }[]
+      }
+      refresh_stats_locales: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       remove_compression_policy: {
         Args: {
@@ -31847,7 +31937,7 @@ export type Database = {
         }
         Returns: {
           id: number
-          md_id: Database["public"]["Enums"]["old_indicateur_thematique"] | null
+          md_id: string | null
           nom: string
         }[]
       }
@@ -32323,6 +32413,7 @@ export type Database = {
         | "strategie_orga_interne"
         | "activites_economiques"
         | "solidarite_lien_social"
+        | "agriculture_alimentation"
       preuve_type:
         | "complementaire"
         | "reglementaire"
