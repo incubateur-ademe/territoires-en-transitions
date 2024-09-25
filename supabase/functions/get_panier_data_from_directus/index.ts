@@ -1,5 +1,5 @@
 import {corsHeaders} from "../_shared/cors.ts";
-import {saveActionsImpact, savePartenaires} from "./saveData.ts";
+import { saveActionsImpact, savePartenaires, saveTypologies } from './saveData.ts';
 import {getSupabaseClientWithServiceRole} from "../_shared/getSupabaseClient.ts";
 
 Deno.serve(async (req) => {
@@ -18,6 +18,8 @@ Deno.serve(async (req) => {
 
   // MàJ des partenaires
   await savePartenaires(supabaseClient);
+  // MàJ des typologies
+  await saveTypologies(supabaseClient);
   // MàJ des actions à impact
   await saveActionsImpact(supabaseClient);
 
