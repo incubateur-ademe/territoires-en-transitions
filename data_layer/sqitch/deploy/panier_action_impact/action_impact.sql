@@ -15,6 +15,12 @@ create table action_impact_partenaire
     primary key (action_impact_id, partenaire_id)
 );
 
+create table action_impact_typologie
+(
+    id serial primary key,
+    nom text not null
+);
+
 create policy allow_read on action_impact_fiche_action
     for select using (peut_lire_la_fiche(fiche_id));
 
@@ -27,6 +33,7 @@ drop table action_impact_state;
 
 alter table action_impact add column competences_communales boolean default false not null;
 alter table action_impact add column independamment_competences boolean default false not null;
+alter table action_impact add column typologie_id integer references action_impact_typologie;
 
 create table action_impact_state
 (
