@@ -302,6 +302,10 @@ backend-docker:
   BUILD --pass-args ./backend+docker
 
 backend-deploy:
+  ARG --required KOYEB_API_KEY
+  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./backend+deploy
 
 app-build: ## construit l'image de l'app
