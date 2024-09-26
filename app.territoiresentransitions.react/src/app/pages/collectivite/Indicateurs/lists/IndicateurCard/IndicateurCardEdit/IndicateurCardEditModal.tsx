@@ -1,9 +1,9 @@
 import {SharedDomain} from '@tet/api';
 import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
-import {OpenState} from '@tet/ui/dist/utils/types';
 import {useUpdateIndicateurCard} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
 import {useEffect, useState} from 'react';
 import {objectToCamel} from 'ts-case-convert';
+import { OpenState } from '@tet/ui/utils/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';

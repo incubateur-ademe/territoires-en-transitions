@@ -88,7 +88,7 @@ export const Badge = ({
           className="flex rounded-full cursor-pointer"
           onClick={evt => {
             evt.stopPropagation();
-            onClose();
+            onClose?.();
           }}
         >
           <Icon

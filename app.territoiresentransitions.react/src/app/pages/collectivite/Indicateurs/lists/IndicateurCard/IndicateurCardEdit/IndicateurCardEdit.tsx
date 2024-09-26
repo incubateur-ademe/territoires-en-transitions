@@ -1,7 +1,7 @@
-import {OpenState} from '@tet/ui/dist/utils/types';
 import {useIndicateurPilotes} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurPilotes';
 import {useIndicateurServices} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurServices';
 import {useIndicateurThematiques} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurThematiques';
+import { OpenState } from '@tet/ui/utils/types';
 import IndicateurCardEditModal from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEditModal';
 import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
 
