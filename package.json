@@ -201,7 +201,8 @@
   },
   "scripts": {
     "dev": "nx run-many -t dev -p @tet/app @tet/auth @tet/panier @tet/site",
-    "dev:app": "nx run-many -t dev -p @tet/app @tet/auth",
+    "dev:app": "nx run-many -t dev -p @tet/app @tet/auth @tet/backend",
+    "dev:backend": "nx dev @tet/backend",
     "dev:site": "nx dev @tet/site",
     "dev:auth": "nx dev @tet/auth",
     "dev:panier": "nx run-many -t dev -p @tet/panier @tet/auth",
