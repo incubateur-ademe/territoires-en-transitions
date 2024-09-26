@@ -16,8 +16,16 @@ type Props = {
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
   const [filters, setFilters] = useState<Indicateurs.FetchFiltre>({});
 
-  const {data: definitions, isLoading: isDefinitionsLoading} =
-    useFilteredIndicateurDefinitions({filtre: filters});
+  /** Texte de recherche pour l'input */
+  const [search, setSearch] = useState<string>();
+
+  /** Texte de recherche avec debounced pour l'appel */
+  const [debouncedSearch, setDebouncedSearch] = useState<string>();
+
+  const { data: definitions, isLoading: isDefinitionsLoading } =
+    useFilteredIndicateurDefinitions({
+      filtre: { ...filters, text: debouncedSearch },
+    });
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
@@ -32,7 +40,9 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         <Field title="Rechercher par nom ou description" small>
           <Input
             type="search"
-            onSearch={text => setFilters({...filters, text})}
+            onSearch={(v) => setDebouncedSearch(v)}
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
             placeholder="Rechercher"
             displaySize="sm"
           />
