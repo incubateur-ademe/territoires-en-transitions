@@ -142,7 +142,6 @@ comment on function thematique(action_impact_state) is 'La relation entre le sta
 
 create function action_definition(action_impact_state) returns SETOF action_definition
     stable
-    rows 1
     language sql
     security definer
 BEGIN ATOMIC
