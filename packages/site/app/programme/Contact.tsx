@@ -16,7 +16,7 @@ const Contact = ({description, cta}: ContactProps) => {
     >
       <h2 className="text-white text-center max-w-3xl mb-0">{description}</h2>
       <Button
-        href="/contact"
+        href="/contact?objet=programme"
         variant="secondary"
         className="!bg-[#FFE8BD] !border-[#FFE8BD] !text-primary-7 hover:!text-primary-8"
       >

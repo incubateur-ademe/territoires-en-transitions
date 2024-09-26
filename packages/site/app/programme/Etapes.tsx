@@ -30,7 +30,7 @@ const Etapes = ({titre, contenu, cta}: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <Button href="/contact" className="mt-3 lg:mt-6 mx-auto">
+      <Button href="/contact?objet=programme" className="mt-3 lg:mt-6 mx-auto">
         {cta}
       </Button>
     </CardsSection>
