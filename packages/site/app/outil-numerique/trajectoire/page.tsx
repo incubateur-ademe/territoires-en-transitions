@@ -9,6 +9,23 @@ import Webinaire from './Webinaire';
 import Calcul from './Calcul';
 import Documentation from './Documentation';
 import TemoignagesTrajectoire from './TemoignagesTrajectoire';
+import {Metadata, ResolvingMetadata} from 'next';
+import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+
+export async function generateMetadata(
+  {params}: {params: {}},
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const metadata = (await parent) as Metadata;
+  const strapiData = await getStrapiData();
+
+  return getUpdatedMetadata(metadata, {
+    title: strapiData?.seo.metaTitle ?? 'Trajectoire SNBC',
+    networkTitle: strapiData?.seo.metaTitle,
+    description: strapiData?.seo.metaDescription ?? strapiData?.header.titre,
+    image: strapiData?.seo.metaImage,
+  });
+}
 
 const PageTrajectoire = async () => {
   const data = await getStrapiData();

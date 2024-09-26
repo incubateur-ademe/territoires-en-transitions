@@ -1489,6 +1489,7 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
+    seo: Attribute.Component<'shared.seo'>;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
