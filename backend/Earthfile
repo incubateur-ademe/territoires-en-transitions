@@ -45,7 +45,7 @@ deploy: ## Déploie le backend dans une app Koyeb existante
   ARG --required TRAJECTOIRE_SNBC_SHEET_ID
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
-  FROM ../+koyeb
+  FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
   RUN ./koyeb services update $ENV_NAME-backend/backend \
     --docker $BACKEND_IMG_NAME \
     --env ENV_NAME=$ENV_NAME \
