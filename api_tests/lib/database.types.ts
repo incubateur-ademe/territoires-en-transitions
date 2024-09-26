@@ -3650,9 +3650,11 @@ export type Database = {
         Row: {
           action: Database["public"]["Tables"]["action_impact"]["Row"] | null
           isinpanier: boolean | null
+          panier: Database["public"]["Tables"]["panier"]["Row"] | null
           statut:
             | Database["public"]["Tables"]["action_impact_statut"]["Row"]
             | null
+          action_definition: unknown | null
           action_impact_fourchette_budgetaire: unknown | null
           action_impact_temps_de_mise_en_oeuvre: unknown | null
           matches_competences: boolean | null
@@ -3661,6 +3663,7 @@ export type Database = {
         Insert: {
           action?: Database["public"]["Tables"]["action_impact"]["Row"] | null
           isinpanier?: boolean | null
+          panier?: Database["public"]["Tables"]["panier"]["Row"] | null
           statut?:
             | Database["public"]["Tables"]["action_impact_statut"]["Row"]
             | null
@@ -3668,6 +3671,7 @@ export type Database = {
         Update: {
           action?: Database["public"]["Tables"]["action_impact"]["Row"] | null
           isinpanier?: boolean | null
+          panier?: Database["public"]["Tables"]["panier"]["Row"] | null
           statut?:
             | Database["public"]["Tables"]["action_impact_statut"]["Row"]
             | null
@@ -29214,6 +29218,28 @@ export type Database = {
         }
         Returns: Record<string, unknown>
       }
+      action_definition: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          action_id: string
+          categorie: Database["public"]["Enums"]["action_categorie"] | null
+          contexte: string
+          description: string
+          exemples: string
+          identifiant: string
+          modified_at: string
+          nom: string
+          perimetre_evaluation: string
+          points: number | null
+          pourcentage: number | null
+          preuve: string | null
+          reduction_potentiel: string
+          referentiel: Database["public"]["Enums"]["referentiel"]
+          ressources: string
+        }[]
+      }
       action_down_to_tache: {
         Args: {
           referentiel: Database["public"]["Enums"]["referentiel"]
@@ -29267,6 +29293,7 @@ export type Database = {
         Returns: {
           action: Database["public"]["Tables"]["action_impact"]["Row"] | null
           isinpanier: boolean | null
+          panier: Database["public"]["Tables"]["panier"]["Row"] | null
           statut:
             | Database["public"]["Tables"]["action_impact_statut"]["Row"]
             | null
