@@ -92,7 +92,7 @@ export const getStrapiData = async () => {
                   attributes: {
                     uid: string;
                     titre: string;
-                    description: string;
+                    description_markdown: string;
                     image: {data: StrapiItem};
                     sous_page: boolean | undefined;
                   };
@@ -101,7 +101,7 @@ export const getStrapiData = async () => {
                 id: serv.id,
                 uid: serv.attributes.uid,
                 titre: serv.attributes.titre,
-                description: serv.attributes.description,
+                description: serv.attributes.description_markdown,
                 image: serv.attributes.image.data,
                 sousPage: serv.attributes.sous_page ?? false,
               }))

@@ -1636,6 +1636,11 @@ export interface ApiServiceService extends Schema.CollectionType {
     uid: Attribute.UID<'api::service.service', 'titre'> & Attribute.Required;
     titre: Attribute.String & Attribute.Required;
     description: Attribute.String & Attribute.Required;
+    description_markdown: Attribute.RichText &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 1500;
+      }>;
     image: Attribute.Media & Attribute.Required;
     sous_page: Attribute.Boolean & Attribute.DefaultTo<false>;
     contenu: Attribute.DynamicZone<
