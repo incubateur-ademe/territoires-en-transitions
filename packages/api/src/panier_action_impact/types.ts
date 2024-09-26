@@ -35,7 +35,9 @@ export type ActionImpact = Omit<
 /* Le resumé d'une action à impact, utilisé pour les cartes  */
 export type ActionImpactSnippet =
   // todo: Omit<ActionImpact, 'description' | 'ressources_externes'>
-  ActionImpact & {thematiques: ActionImpactThematique[]};
+  ActionImpact & {
+    thematiques: ActionImpactThematique[];
+  };
 
 /* Une action à impact avec des informations complémentaires, utilisé par la modale */
 export type ActionImpactDetails = ActionImpact & {
@@ -45,12 +47,21 @@ export type ActionImpactDetails = ActionImpact & {
 export type ActionImpactStatut =
   Database['public']['Tables']['action_impact_statut']['Row'];
 
+export type ActionReferentiel = {
+  identifiant: string;
+  referentiel: string;
+  nom: string;
+};
+
 export type ActionImpactState = {
   action: ActionImpact;
   isinpanier: boolean;
   statut: ActionImpactStatut | null;
   thematiques: ActionImpactThematique[];
+  actions_liees: ActionReferentiel[] | null;
+  matches_competences: boolean;
 };
+
 
 export type PanierBase = Database['public']['Tables']['panier']['Row'];
 
