@@ -69,12 +69,26 @@ function Links() {
   return (
     <ul className="fr-btns-group">
       <li>
-        <a href={authPaths?.signUp} className="fr-btn fr-icon-add-circle-line">
+        <a
+          href={authPaths?.signUp}
+          target="_blank"
+          rel="noopener noreferrer"
+          // after:!w-0 after:!m-0 permettent de masquer l'icône
+          // external ajoutée par le dsfr
+          className="fr-btn fr-icon-add-circle-line after:!w-0 after:!m-0"
+        >
           Créer un compte
         </a>
       </li>
       <li>
-        <a href={authPaths?.login} className="fr-btn fr-icon-account-line">
+        <a
+          href={authPaths?.login}
+          target="_blank"
+          rel="noopener noreferrer"
+          // after:!w-0 after:!m-0 permettent de masquer l'icône
+          // external ajoutée par le dsfr
+          className="fr-btn fr-icon-account-line after:!w-0 after:!m-0"
+        >
           Se connecter
         </a>
       </li>
@@ -86,7 +100,7 @@ function Links() {
             'fr-icon-question-fill': isFAQ,
           })}
         >
-          Aide
+          FAQ
         </a>
       </li>
     </ul>
