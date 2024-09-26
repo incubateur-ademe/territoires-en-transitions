@@ -86,6 +86,7 @@ comment on function action_impact_temps_de_mise_en_oeuvre(action_impact_state) i
 create function matches_competences(action_impact_state) returns boolean
     stable
     language sql
+    security definer
 BEGIN ATOMIC
 with collectivite_panier as (
                             SELECT coalesce(($1).panier.collectivite_id, ($1).panier.collectivite_preset) as collectivite_id
