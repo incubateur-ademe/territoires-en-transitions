@@ -6,8 +6,14 @@ import {
   ModalFooter,
   ModalFooterSection,
   InfoActionImpact,
+  Card,
 } from '@tet/ui';
 import Markdown from '@tet/panier/components/Markdown';
+
+const referentielToName: Record<string, string> = {
+  cae: 'Climat Air Énergie',
+  eci: 'Économie Circulaire',
+};
 
 /**
  * Modale action à impact du panier d'actions
@@ -15,6 +21,7 @@ import Markdown from '@tet/panier/components/Markdown';
 export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
   const {
     children,
+    actionsLiees,
     titre,
     description,
     statut,
@@ -30,15 +37,40 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
       textAlign="left"
       render={() => {
         return (
-          <InfoActionImpact
-            action={{...props}}
-            descriptionMarkdown={
-              <Markdown
-                content={description}
-                className="paragraphe-18 mb-8 [&_ul]:list-disc [&_ul]:pl-8"
-              />
-            }
-          />
+          <>
+            <InfoActionImpact
+              action={{...props}}
+              descriptionMarkdown={
+                <Markdown
+                  content={description}
+                  className="paragraphe-18 mb-8 [&_ul]:list-disc [&_ul]:pl-8"
+                />
+              }
+            />
+            {!!actionsLiees?.length && (
+              <div className="mt-4">
+                <h6 className="text-primary-10 text-base font-bold">
+                  Actions des référentiels liés :
+                </h6>
+                <div className={'grid lg:grid-cols-2 xl:grid-cols-3 gap-3'}>
+                  {actionsLiees.map(({identifiant, nom, referentiel}) => (
+                    <Card
+                      key={identifiant}
+                      className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 !shadow-none"
+                    >
+                      <span className="text-grey-8 text-sm font-medium">
+                        Référentiel {referentielToName[referentiel]}
+                      </span>
+
+                      <span className="text-base font-bold text-primary-9">
+                        {identifiant} {nom}
+                      </span>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         );
       }}
       renderFooter={({close}) => (

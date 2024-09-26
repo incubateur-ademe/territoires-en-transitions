@@ -13,7 +13,8 @@ export const panierSelect =
   '*,' +
   'thematiques:thematique(*),' +
   'fourchette_budgetaire:action_impact_fourchette_budgetaire(*),' +
-  'temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*)' +
+  'temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),' +
+  'actions_liees:action_definition(identifiant,referentiel,nom)' +
   ')' +
   ')';
 

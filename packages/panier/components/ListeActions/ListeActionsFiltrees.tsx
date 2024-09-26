@@ -25,6 +25,7 @@ const ListeActionsFiltrees = ({
       {actionsListe.map(action => (
         <ActionImpact
           key={action.action.id}
+          actionsLiees={action.actions_liees}
           titre={action.action.titre}
           thematiques={action.thematiques}
           budget={budgets.find(
