@@ -36,6 +36,12 @@ const IndicateurPersonnaliseBase = ({
     const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
+      /**
+       * TEMPORARY: updating hardcoded commentaire prop, in order to link the description input
+       * to the `commentaire` column in `indicateur_collectivite` 
+       * -> step 2 of expand and contract pattern (
+       * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern)
+       */
       updateDefinition({...definition, [name]: nouveau, ['commentaire']: nouveau});
     }
   };
