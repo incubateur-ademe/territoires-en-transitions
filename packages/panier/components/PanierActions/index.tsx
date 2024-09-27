@@ -5,7 +5,8 @@ import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
 import {ActionImpactFourchetteBudgetaire, ActionImpactSnippet} from '@tet/api';
 import {Alert} from '@tet/ui';
-import React from 'react';
+import {AjouterActionsRealiseesOuEnCours} from './AjouterActionsRealiseesOuEnCours';
+import {useAjouterActionsRealiseesOuEnCoursState} from './useAjouterActionsRealiseesOuEnCoursState';
 
 type PanierActionsProps = {
   actionsListe: ActionImpactSnippet[];
@@ -18,20 +19,34 @@ const PanierActions = ({
   budgets,
   onToggleSelected,
 }: PanierActionsProps) => {
+  const ajouterActionsRealiseesOuEnCours =
+    useAjouterActionsRealiseesOuEnCoursState();
+  const {nbEnCours, nbRealisees} = ajouterActionsRealiseesOuEnCours;
+
   return (
     <div className="lg:h-screen lg:w-2/5 xl:w-1/3 bg-white border-[0.5px] border-primary-3 sticky top-0">
       {actionsListe.length === 0 ? (
-        <div className="h-full relative">
+        <div className="h-full flex flex-col items-center">
           <Alert
             title="Comment ajouter des actions ?"
             description={`Pour ajouter des actions à votre panier, veuillez cliquer sur le bouton "Ajouter" qui s'affiche au survol de chacune des vignettes d'action.`}
-            className="lg:absolute"
           />
-          <div className="h-full flex flex-col items-center justify-center max-lg:py-4">
-            <EmptyBasketPicto />
-            <span className="text-primary-8 text-lg font-bold text-center">
-              Votre panier d'actions est vide !
-            </span>
+          <div className="w-full relative p-4">
+            <AjouterActionsRealiseesOuEnCours
+              className="mt-4"
+              state={ajouterActionsRealiseesOuEnCours}
+            />
+            {nbEnCours + nbRealisees > 0 && (
+              <ValiderPanierButton disabled={true} />
+            )}
+          </div>
+          <div className="flex items-center h-full">
+            <div className="flex flex-col items-center max-lg:py-4">
+              <EmptyBasketPicto />
+              <span className="text-primary-8 text-lg font-bold text-center">
+                Votre panier d'actions est vide !
+              </span>
+            </div>
           </div>
         </div>
       ) : (
@@ -45,6 +60,11 @@ const PanierActions = ({
                 {actionsListe.length} action{actionsListe.length > 1 ? 's' : ''}{' '}
                 dans mon panier
               </div>
+              <AjouterActionsRealiseesOuEnCours
+                className="justify-self-start mt-4"
+                state={ajouterActionsRealiseesOuEnCours}
+              />
+
               <ValiderPanierButton />
               <div className="h-12 bg-gradient-to-b from-white via-white" />
             </div>
