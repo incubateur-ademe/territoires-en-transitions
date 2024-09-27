@@ -1,8 +1,8 @@
 'use client';
 
-import {Button, Modal, useEventTracker} from '@tet/ui';
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
+import {Button, Modal, useEventTracker} from '@tet/ui';
 import ValiderPanierModale from './ValiderPanierModale';
 import {usePanierContext} from '@tet/panier/providers';
 
@@ -12,7 +12,7 @@ import {usePanierContext} from '@tet/panier/providers';
  * Contrôle la modale de "Création de plan d’action”
  * Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
  */
-const ValiderPanierButton = () => {
+const ValiderPanierButton = ({disabled}: {disabled?: boolean}) => {
   const searchParams = useSearchParams();
   const initiallyOpen = searchParams.get('modale') === 'creation';
   const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
@@ -23,6 +23,7 @@ const ValiderPanierButton = () => {
     <>
       <Button
         className="w-full justify-center mt-auto"
+        disabled={disabled}
         onClick={() => {
           setCreateModalOpen(true);
           tracker('cta_valider_creation_panier_click', {
