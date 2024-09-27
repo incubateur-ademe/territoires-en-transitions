@@ -1,29 +1,29 @@
-import {Meta, StoryObj} from '@storybook/react';
-import {Breadcrumbs} from './Breadcrumbs';
-import {useState} from 'react';
-import {Button} from '@design-system/Button';
+import { Meta, StoryObj } from '@storybook/react';
+import { Breadcrumbs } from './Breadcrumbs';
+import { useState } from 'react';
+import { Button } from '@tet/ui/design-system/Button';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   args: {
     items: [
-      {label: 'Plan Vélo 2020 - 2024'},
+      { label: 'Plan Vélo 2020 - 2024' },
       {
         label:
           '0.0 Etudions un scénario de rupture pour atteindre la neutralité carbone en 2050',
       },
-      {label: 'Etudions un scénario de rupture pour la période 2030-2050'},
+      { label: 'Etudions un scénario de rupture pour la période 2030-2050' },
     ],
   },
 };
 
 const buttons = [
-  {label: 'Plan Vélo 2020 - 2024'},
+  { label: 'Plan Vélo 2020 - 2024' },
   {
     label:
       '0.0 Etudions un scénario de rupture pour atteindre la neutralité carbone en 2050',
   },
-  {label: 'Etudions un scénario de rupture pour la période 2030-2050'},
+  { label: 'Etudions un scénario de rupture pour la période 2030-2050' },
 ];
 
 export default meta;
@@ -38,7 +38,7 @@ export const Default: Story = {
         <Breadcrumbs
           items={currentButtons}
           onClick={(index: number) =>
-            setCurrentButtons(prevState => prevState.slice(0, index + 1))
+            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
           }
         />
 
@@ -59,28 +59,28 @@ export const Sizes: Story = {
           size="xs"
           items={currentButtons}
           onClick={(index: number) =>
-            setCurrentButtons(prevState => prevState.slice(0, index + 1))
+            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="sm"
           items={currentButtons}
           onClick={(index: number) =>
-            setCurrentButtons(prevState => prevState.slice(0, index + 1))
+            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="md"
           items={currentButtons}
           onClick={(index: number) =>
-            setCurrentButtons(prevState => prevState.slice(0, index + 1))
+            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
           }
         />
         <Breadcrumbs
           size="xl"
           items={currentButtons}
           onClick={(index: number) =>
-            setCurrentButtons(prevState => prevState.slice(0, index + 1))
+            setCurrentButtons((prevState) => prevState.slice(0, index + 1))
           }
         />
 

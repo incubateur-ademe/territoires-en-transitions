@@ -57,8 +57,8 @@ const ChartModal = (props: ChartProps) => {
             <LineChart
               {...line.chart}
               legend={{
-                ...line.chart.legend,
                 ...legendBase,
+                ...line.chart.legend,
               }}
               {...line.modalChart}
             />

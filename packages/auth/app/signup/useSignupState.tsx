@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {supabase} from 'src/clientAPI';
+import {supabase} from '@tet/auth/src/clientAPI';
 import {getRootDomain, setAuthTokens} from '@tet/api';
-import {useGetPasswordStrength} from '@components/PasswordStrengthMeter/useGetPasswordStrength';
+import {useGetPasswordStrength} from '@tet/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
   SignupDataStep1,
@@ -10,8 +10,8 @@ import {
   SignupDataStep3,
   SignupView,
   isValidSignupView,
-} from '@components/Signup';
-import {ResendFunction} from '@components/VerifyOTP';
+} from '@tet/auth/components/Signup';
+import {ResendFunction} from '@tet/auth/components/VerifyOTP';
 
 /**
  * Gère l'appel à la fonction de signup et la redirection
@@ -33,7 +33,7 @@ export const useSignupState = ({
   const getPasswordStrength = useGetPasswordStrength();
 
   const [view, setView] = useState<SignupView>(
-    isValidSignupView(defaultView) ? (defaultView as SignupView) : 'etape1',
+    isValidSignupView(defaultView) ? (defaultView as SignupView) : 'etape1'
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +69,7 @@ export const useSignupState = ({
         setError(
           error.message === 'User already registered'
             ? 'Utilisateur déjà enregistré'
-            : `Le compte n'a pas pu être créé`,
+            : `Le compte n'a pas pu être créé`
         );
         return;
       }

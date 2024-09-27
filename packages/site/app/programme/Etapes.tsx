@@ -1,10 +1,10 @@
 'use client';
 
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
-import {Content} from './types';
-import {Button} from '@tet/ui';
+import Card from '@tet/site/components/cards/Card';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import CardsSection from '@tet/site/components/sections/CardsSection';
+import { Content } from './types';
+import { Button } from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
@@ -12,7 +12,7 @@ type EtapesProps = {
   cta: string;
 };
 
-const Etapes = ({titre, contenu, cta}: EtapesProps) => {
+const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
   return contenu && contenu.length ? (
     <CardsSection
       containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"

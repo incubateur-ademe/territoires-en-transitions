@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import {Badge} from '@tet/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
-import {getLocalDateString} from 'src/utils/getLocalDateString';
-import Markdown from '@components/markdown/Markdown';
+import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 type BlogCardProps = {
   title: string;
@@ -63,7 +63,7 @@ const BlogCard = ({
             <Markdown
               texte={description.replaceAll(
                 'href',
-                'target="_blank" rel="noreferrer noopener" href',
+                'target="_blank" rel="noreferrer noopener" href'
               )}
               className="fr-card__desc text-primary-10 paragraphe-16"
             />
@@ -78,7 +78,7 @@ const BlogCard = ({
       <div
         className={classNames(
           'fr-card__header overflow-hidden rounded-t-lg border-[#e5e7eb]',
-          {'border-b': !backgroundColor},
+          { 'border-b': !backgroundColor }
         )}
       >
         <div className="fr-card__img duration-700">

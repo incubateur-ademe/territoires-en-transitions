@@ -1,22 +1,22 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { Button } from '@tet/ui';
 import {
   useCollectivitesEngagees,
   useTerritoiresCOT,
   useTerritoiresLabellises,
-} from 'app/stats/NombreCollectivitesEngagees';
+} from '@tet/site/app/stats/NombreCollectivitesEngagees';
 
 type CollectivitesEngageesProps = {
   titre: string;
   cta: string;
 };
 
-const CollectivitesEngagees = ({titre, cta}: CollectivitesEngageesProps) => {
-  const {data: cot} = useTerritoiresCOT('', '');
-  const {data: labellises} = useTerritoiresLabellises('', '');
-  const {data: engages} = useCollectivitesEngagees('', '');
+const CollectivitesEngagees = ({ titre, cta }: CollectivitesEngageesProps) => {
+  const { data: cot } = useTerritoiresCOT('', '');
+  const { data: labellises } = useTerritoiresLabellises('', '');
+  const { data: engages } = useCollectivitesEngagees('', '');
 
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">

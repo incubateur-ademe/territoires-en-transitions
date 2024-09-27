@@ -1,4 +1,4 @@
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export type Content = {
   id: number;

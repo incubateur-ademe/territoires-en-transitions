@@ -3,10 +3,10 @@ import {Meta, StoryObj} from '@storybook/react';
 
 import {Button} from '@tet/ui';
 
-import Chart from './Chart.tsx';
-import {fakeComplexeDonutData, fakeSimpleDonutData} from './Donut/fixtures.tsx';
-import {additionalInfos, fakeChartInfos} from './fixtures.tsx';
-import {fakeManyXLineData} from './Line/fixtures.tsx';
+import Chart from './Chart';
+import {fakeComplexeDonutData, fakeSimpleDonutData} from './Donut/fixtures';
+import {additionalInfos, fakeChartInfos} from './fixtures';
+import {fakeManyXLineData} from './Line/fixtures';
 
 const meta: Meta<typeof Chart> = {
   component: Chart,

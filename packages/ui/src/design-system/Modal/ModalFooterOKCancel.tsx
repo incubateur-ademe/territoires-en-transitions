@@ -1,6 +1,6 @@
-import {Button} from '@design-system/Button';
-import {ButtonProps} from '../Button/types';
-import {ModalFooter, ModalFooterProps} from './ModalFooter';
+import { Button } from '@tet/ui/design-system/Button';
+import { ButtonProps } from '../Button/types';
+import { ModalFooter, ModalFooterProps } from './ModalFooter';
 
 type ModalFooterOKCancelProps = Omit<
   ModalFooterProps,
@@ -16,9 +16,9 @@ type ModalFooterOKCancelProps = Omit<
  * Variante de `ModalFooter` pour le cas courant "Annuler/Valider"
  */
 export const ModalFooterOKCancel = (props: ModalFooterOKCancelProps) => {
-  const {btnOKProps, btnCancelProps, ...remainingProps} = props;
-  const {children: ok, ...btnOKRemainingProps} = btnOKProps;
-  const {children: cancel, ...btnCancelRemainingProps} = btnCancelProps || {};
+  const { btnOKProps, btnCancelProps, ...remainingProps } = props;
+  const { children: ok, ...btnOKRemainingProps } = btnOKProps;
+  const { children: cancel, ...btnCancelRemainingProps } = btnCancelProps || {};
 
   return (
     <ModalFooter variant="right" {...remainingProps}>

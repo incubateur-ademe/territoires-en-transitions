@@ -1,15 +1,15 @@
 'use client';
 
-import {useActiveUsers} from 'app/stats/ActiveUsers';
-import {useEvolutionTotalActivation} from 'app/stats/EvolutionTotalActivationParType';
+import { useActiveUsers } from '../stats/ActiveUsers';
+import { useEvolutionTotalActivation } from '../stats/EvolutionTotalActivationParType';
 
 const ChiffresClefs = () => {
-  const {data: evolutionActivation} = useEvolutionTotalActivation('', '');
+  const { data: evolutionActivation } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = evolutionActivation
     ? evolutionActivation.courant.total
     : undefined;
 
-  const {data: activeUsers} = useActiveUsers('', '');
+  const { data: activeUsers } = useActiveUsers('', '');
   const totalUtilisateurs = activeUsers
     ? activeUsers.courant.total_utilisateurs
     : undefined;

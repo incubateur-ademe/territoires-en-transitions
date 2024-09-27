@@ -1,4 +1,4 @@
-import {ActionImpact} from '@components/ActionImpact';
+import {ActionImpact} from '@tet/panier/components/ActionImpact';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactState,

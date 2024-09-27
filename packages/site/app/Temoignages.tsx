@@ -1,6 +1,6 @@
-import Section from '@components/sections/Section';
-import TestimonialSlideshow from '@components/slideshow/TestimonialSlideshow';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type TemoignagesProps = {
   titre: string;
@@ -13,7 +13,7 @@ type TemoignagesProps = {
   }[];
 };
 
-const Temoignages = ({titre, contenu}: TemoignagesProps) => {
+const Temoignages = ({ titre, contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
     <Section>
       {/* <h2 className="text-center max-md:mb-2">{titre}</h2> */}

@@ -32,6 +32,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   return (
     <div
       className="w-full flex justify-between items-start mb-2 group cursor-text"
+      data-test="TitreFiche"
       onClick={() => !isReadonly && !isEditing && handleChangeMode()}
     >
       {/* Titre de la fiche action */}

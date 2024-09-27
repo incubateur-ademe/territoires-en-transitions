@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import _ from 'lodash';
 import {
   Field,
@@ -7,10 +7,10 @@ import {
   ModalFooterOKCancel,
   Textarea,
 } from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '../data/types';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import {getMaxLengthMessage} from '../utils';
-import {OpenState} from '@tet/ui/dist/utils/types';
+import { getMaxLengthMessage } from '../utils';
+import { OpenState } from '@tet/ui/utils/types';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 
@@ -38,7 +38,7 @@ const ModaleIndicateursHeader = ({
       title="Indicateurs de suivi"
       size="lg"
       openState={openState}
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Objectifs */}
           <Field
@@ -58,8 +58,8 @@ const ModaleIndicateursHeader = ({
               className="min-h-[100px]"
               value={editedFiche.objectifs ?? ''}
               maxLength={OBJECTIFS_MAX_LENGTH}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   objectifs: (evt.target as HTMLTextAreaElement).value,
                 }))
@@ -71,8 +71,8 @@ const ModaleIndicateursHeader = ({
           <Field title="Effets attendus" className="col-span-2">
             <EffetsAttendusDropdown
               values={editedFiche.resultats_attendus ?? []}
-              onChange={({effets}) =>
-                setEditedFiche(prevState => ({
+              onChange={({ effets }) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   resultats_attendus: effets,
                 }))
@@ -82,9 +82,9 @@ const ModaleIndicateursHeader = ({
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

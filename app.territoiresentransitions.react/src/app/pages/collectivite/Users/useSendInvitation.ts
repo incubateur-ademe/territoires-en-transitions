@@ -2,8 +2,7 @@ import {useMutation} from 'react-query';
 import {makeCollectiviteAccueilUrl, makeInvitationLandingPath} from 'app/paths';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import {getAuthBaseUrl} from '@tet/api';
-import {UserData} from 'core-logic/api/auth/AuthProvider';
-import {useAuthHeaders} from 'core-logic/api/auth/useCurrentSession';
+import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
 
 export type SendInvitationArgs = {
   email: string;
@@ -18,7 +17,7 @@ export const useSendInvitation = (
   user: UserData
 ) => {
   const {nom: nomCollectivite} = collectivite;
-  const authHeaders = useAuthHeaders();
+  const {authHeaders} = useAuth();
 
   return useMutation(
     async ({invitationId, email: rawEmail}: SendInvitationArgs) => {

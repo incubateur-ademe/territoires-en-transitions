@@ -1,10 +1,10 @@
-import Markdown from '@components/markdown/Markdown';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 type InfoArticleProps = {
   texte: string;
 };
 
-const InfoArticle = ({texte}: InfoArticleProps) => (
+const InfoArticle = ({ texte }: InfoArticleProps) => (
   <Markdown texte={texte} className="fr-callout w-full bg-[#f5f5fe] my-8" />
 );
 

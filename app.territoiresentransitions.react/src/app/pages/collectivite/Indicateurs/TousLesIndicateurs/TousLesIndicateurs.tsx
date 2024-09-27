@@ -1,13 +1,13 @@
-import {useState} from 'react';
-import {FetchFiltre} from '@tet/api/dist/src/indicateurs';
-import {Button, ButtonMenu, TrackPageView, useEventTracker} from '@tet/ui';
+import { useState } from 'react';
+import { FetchFiltre } from '@tet/api/indicateurs';
+import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@tet/ui';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
-import {indicateursNameToParams} from 'app/pages/collectivite/Indicateurs/lists/utils';
+import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
+import { useSearchParams } from 'core-logic/hooks/query';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const TousLesIndicateurs = () => {
@@ -39,14 +39,21 @@ const TousLesIndicateurs = () => {
     <>
       <TrackPageView
         pageName={'app/indicateurs/tous'}
-        properties={{collectivite_id: collectivite?.collectivite_id!}}
+        properties={{ collectivite_id: collectivite?.collectivite_id! }}
       />
-      <div className="min-h-[44rem] flex flex-col gap-8">
+      <div
+        className="min-h-[44rem] flex flex-col gap-8"
+        data-test="tous-les-indicateurs"
+      >
         <div className="flex items-end">
           <h2 className="mb-0 mr-auto">Tous les indicateurs</h2>
           {!isReadonly && (
             <>
-              <Button size="sm" onClick={() => setIsNewIndicateurOpen(true)}>
+              <Button
+                data-test="create-perso"
+                size="sm"
+                onClick={() => setIsNewIndicateurOpen(true)}
+              >
                 Créer un indicateur
               </Button>
               {isNewIndicateurOpen && (
@@ -62,8 +69,8 @@ const TousLesIndicateurs = () => {
           isEditable
           filtres={filters}
           resetFilters={() => setFilters({})}
-          sortSettings={{defaultSort: 'estComplet'}}
-          settings={openState => (
+          sortSettings={{ defaultSort: 'estComplet' }}
+          settings={(openState) => (
             <ButtonMenu
               openState={openState}
               variant="outlined"
@@ -72,7 +79,7 @@ const TousLesIndicateurs = () => {
             >
               <MenuFiltresTousLesIndicateurs
                 filters={filters}
-                setFilters={newFilters => {
+                setFilters={(newFilters) => {
                   handleSetFilters(newFilters);
                 }}
               />

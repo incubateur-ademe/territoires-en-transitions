@@ -1,11 +1,11 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {useEvolutionTotalActivation} from 'app/stats/EvolutionTotalActivationParType';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { useEvolutionTotalActivation } from '@tet/site/app/stats/EvolutionTotalActivationParType';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import Arrow from './Arrow';
-import {Button} from '@tet/ui';
+import { Button } from '@tet/ui';
 
 type HeaderPlateformeProps = {
   titre: string;
@@ -26,7 +26,7 @@ const HeaderPlateforme = ({
   url_demo,
   couverture,
 }: HeaderPlateformeProps) => {
-  const {data} = useEvolutionTotalActivation('', '');
+  const { data } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = data ? data.courant.total : undefined;
 
   return (
@@ -66,7 +66,7 @@ const HeaderPlateforme = ({
         data={couverture}
         className="max-h-[560px] w-full object-cover object-top"
         containerClassName="max-h-[560px] min-w-[350px] md:w-4/5 w-fit mx-auto mt-8 rounded-t-[30px] overflow-hidden border-t border-l border-r border-primary-4"
-        containerStyle={{boxShadow: '0px 4px 50px 0px #0000000D'}}
+        containerStyle={{ boxShadow: '0px 4px 50px 0px #0000000D' }}
         displayCaption={false}
       />
     </Section>

@@ -8,8 +8,14 @@ export const LocalSelectors = {
   'Fiche action': {
     selector: '[data-test=FicheAction]',
   },
-  'header input': {
-    selector: '[data-test=HeaderTitleInput]',
+  'titre de la fiche': {
+    selector: '[data-test=TitreFiche] h1',
+  },
+  titre: {
+    selector: '[data-test=TitreFiche] input',
+  },
+  'éditer le titre': {
+    selector: '[data-test=TitreFiche] button',
   },
   "Ajouter un plan d'action": {
     selector: '[data-test=AjouterPlanAction]',
@@ -34,5 +40,23 @@ export const LocalSelectors = {
   },
   'Modale ranger fiche action': {
     selector: '[data-test=RangerFicheModale]',
+  },
+  'Ajouter les acteurs': {
+    selector: '[data-test=acteurs]',
+  },
+  'Ajouter le planning': {
+    selector: '[data-test=modalites]',
+  },
+  Valider: {
+    selector: 'button[type=submit]',
+  },
+  'Personne pilote': {
+    selector: '[data-test=personnes-pilotes]',
+  },
+  'Planning non renseigné': {
+    selector: '[data-test=empty-planning]',
+  },
+  "Modifier la restriction d'accès": {
+    selector: '[data-test=acces-fiche]',
   },
 };

@@ -1,8 +1,8 @@
 'use client';
 
-import Markdown from '@components/markdown/Markdown';
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { Button } from '@tet/ui';
 
 type WebinaireProps = {
   titre: string;
@@ -11,7 +11,7 @@ type WebinaireProps = {
   url: string;
 };
 
-const Webinaire = ({titre, description, cta, url}: WebinaireProps) => {
+const Webinaire = ({ titre, description, cta, url }: WebinaireProps) => {
   if (url === null) return null;
 
   return (

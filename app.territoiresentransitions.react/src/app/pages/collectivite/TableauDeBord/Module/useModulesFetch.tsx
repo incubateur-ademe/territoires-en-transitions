@@ -1,8 +1,8 @@
-import {modulesFetch} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.fetch';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useQuery} from 'react-query';
+import { modulesFetch } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.fetch';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 /** Charges les différents modules du tableau de bord personnel */
 export const useModulesFetch = () => {
@@ -18,7 +18,7 @@ export const useModulesFetch = () => {
       throw new Error('Aucun utilisateur connecté');
     }
 
-    const {data, error} = await modulesFetch({
+    const { data, error } = await modulesFetch({
       dbClient: supabaseClient,
       collectiviteId,
       userId: userId,

@@ -1,14 +1,14 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import {Button} from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { Button } from '@tet/ui';
 
 type ContactProps = {
   description: string;
   cta: string;
 };
 
-const Contact = ({description, cta}: ContactProps) => {
+const Contact = ({ description, cta }: ContactProps) => {
   return (
     <Section
       className="items-center justify-center !gap-8"

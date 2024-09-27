@@ -1,5 +1,5 @@
-import {Filtre} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { Filtre } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string
@@ -13,7 +13,7 @@ export const getPersonneStringId = (personne: Personne): string =>
 export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
   const personnePiloteIds: number[] = [];
   const utilisateurPiloteIds: string[] = [];
-  personnes.forEach(p => {
+  personnes.forEach((p) => {
     if (p.tag_id) {
       personnePiloteIds.push(p.tag_id);
     }
@@ -21,7 +21,7 @@ export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
       utilisateurPiloteIds.push(p.user_id);
     }
   });
-  return {personnePiloteIds, utilisateurPiloteIds};
+  return { personnePiloteIds, utilisateurPiloteIds };
 };
 
 /** Renvoie les valeurs de tous les pilotes d'après les filtres des fiches action résumées */
@@ -53,7 +53,7 @@ export const splitReferentPersonnesAndUsers = (personnes: Personne[]) => {
   const personneReferenteIds: number[] = [];
   const utilisateurReferentIds: string[] = [];
 
-  personnes.forEach(p => {
+  personnes.forEach((p) => {
     if (p.tag_id) {
       personneReferenteIds.push(p.tag_id);
     }
@@ -61,5 +61,5 @@ export const splitReferentPersonnesAndUsers = (personnes: Personne[]) => {
       utilisateurReferentIds.push(p.user_id);
     }
   });
-  return {personneReferenteIds, utilisateurReferentIds};
+  return { personneReferenteIds, utilisateurReferentIds };
 };

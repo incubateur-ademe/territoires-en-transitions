@@ -67,6 +67,7 @@ const FicheActionActeurs = ({
           )}
           <div className="flex flex-col gap-3">
             <ListeActeurs
+              dataTest="personnes-pilotes"
               titre="Personne pilote"
               liste={pilotes?.map(pilote => pilote.nom!)}
               picto={className => <PersonnePilotePicto className={className} />}
@@ -120,6 +121,7 @@ const FicheActionActeurs = ({
           subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles"
           isReadonly={isReadonly}
           action={{
+            dataTest: 'acteurs',
             label: 'Ajouter les acteurs',
             onClick: () => setIsModalOpen(true),
           }}

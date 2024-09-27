@@ -1,5 +1,5 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getMetaData = async () => {
   const data = await fetchSingle('page-accueil', [
@@ -58,9 +58,9 @@ export const getData = async () => {
     ? {
         banner: {
           couverture: accueilData.couverture_desktop
-            .data as unknown as StrapiItem,
+            ?.data as unknown as StrapiItem,
           couvertureMobile: accueilData.couverture_mobile
-            .data as unknown as StrapiItem,
+            ?.data as unknown as StrapiItem,
         },
         accompagnement: {
           titre: accueilData.accueil_titre as unknown as string,
@@ -94,9 +94,9 @@ export const getData = async () => {
                   accueilData.objectifs_liste as unknown as {
                     id: number;
                     legende: string;
-                    image: {data: StrapiItem};
+                    image: { data: StrapiItem };
                   }[]
-                ).map(obj => ({
+                ).map((obj) => ({
                   id: obj.id,
                   description: obj.legende,
                   image: obj.image.data,
@@ -115,7 +115,7 @@ export const getData = async () => {
           temoignages && temoignages.length > 0
             ? {
                 titre: accueilData.temoignages_titre as unknown as string,
-                contenu: temoignages.map(d => ({
+                contenu: temoignages.map((d) => ({
                   id: d.id,
                   auteur: d.attributes.temoignage?.auteur as unknown as string,
                   role:

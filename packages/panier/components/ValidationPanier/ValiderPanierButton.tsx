@@ -4,7 +4,7 @@ import {Button, Modal, useEventTracker} from '@tet/ui';
 import {useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import ValiderPanierModale from './ValiderPanierModale';
-import {usePanierContext} from 'providers';
+import {usePanierContext} from '@tet/panier/providers';
 
 /**
  * Le bouton “Valider la création” du panier d'action

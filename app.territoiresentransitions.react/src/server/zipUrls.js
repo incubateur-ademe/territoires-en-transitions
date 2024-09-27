@@ -1,5 +1,4 @@
 const archiver = require('archiver');
-const fetch = require('node-fetch');
 
 console.log(`zip origin override: ${process.env.ZIP_ORIGIN_OVERRIDE}`);
 
@@ -14,7 +13,7 @@ const zipUrls = async (req, res) => {
      * réseau docker */
     const origin = new URL(process.env.ZIP_ORIGIN_OVERRIDE).origin;
     console.log(`files url redirected to: ${origin}`);
-    signedUrls = req.body?.signedUrls?.map(({url, ...other}) => ({
+    signedUrls = req.body?.signedUrls?.map(({ url, ...other }) => ({
       url: url.replace(new URL(url).origin, origin),
       ...other,
     }));
@@ -36,7 +35,7 @@ const zipUrls = async (req, res) => {
     console.log('archive finalized');
   });
   // -> quand il y a une erreur
-  archive.on('error', err => {
+  archive.on('error', (err) => {
     console.error(err);
   });
   // -> à chaque fichier ajouté
@@ -79,11 +78,11 @@ const zipUrls = async (req, res) => {
 const getFetchAndAppend =
   (archive, signal) =>
   // ...un fichier à partir de son url
-  async ({filename, url}) => {
+  async ({ filename, url }) => {
     try {
-      const response = await fetch(url, {signal});
-      const buffer = await response.buffer();
-      return archive.append(buffer, {name: filename});
+      const response = await fetch(url, { signal });
+      const arrayBuffer = await response.arrayBuffer();
+      return archive.append(Buffer.from(arrayBuffer), { name: filename });
     } catch (err) {
       // on attrape les erreurs mais on ne les affiche dans la console que si
       // c'est autre chose qu'un arrêt volontaire des téléchargements
@@ -94,9 +93,9 @@ const getFetchAndAppend =
   };
 
 // vérifie qu'une URL est autorisée à être téléchargée
-const isValidURL = ({url}) => {
+const isValidURL = ({ url }) => {
   const urlObj = new URL(url);
-  return urlObj.origin === process.env.REACT_APP_SUPABASE_URL;
+  return urlObj.origin === process.env.NX_PUBLIC_SUPABASE_URL;
 };
 
 module.exports = zipUrls;

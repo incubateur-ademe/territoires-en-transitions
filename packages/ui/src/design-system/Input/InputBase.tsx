@@ -1,10 +1,10 @@
-import {Ref, forwardRef} from 'react';
+import { Button } from '@tet/ui/design-system/Button';
+import { DefaultButtonProps } from '@tet/ui/design-system/Button/types';
+import { FieldState, stateToTextColor } from '@tet/ui/design-system/Field';
+import { Icon, IconValue } from '@tet/ui/design-system/Icon';
+import { preset } from '@tet/ui/tailwind-preset';
 import classNames from 'classnames';
-import {Icon, IconValue} from '@design-system/Icon';
-import {DefaultButtonProps} from '@design-system/Button/types';
-import {Button} from '@design-system/Button';
-import {FieldState, stateToTextColor} from '@design-system/Field';
-import {preset} from '@tailwind-preset';
+import { forwardRef } from 'react';
 
 // variantes de taille
 export type InputSize = 'md' | 'sm';
@@ -28,10 +28,7 @@ const stateToBorderColor: Record<FieldState, string> = {
   warning: 'border-warning-1',
 };
 
-export type InputBaseProps = Omit<
-  React.ComponentPropsWithoutRef<'input'>,
-  'type'
-> & {
+export type InputBaseProps = React.ComponentPropsWithoutRef<'input'> & {
   /** Type de saisie */
   type?: InputType;
   /** Valeur courante du champ */
@@ -50,17 +47,19 @@ export type InputBaseProps = Omit<
 
 export type IconContent =
   // affiche un composant `Icon`
-  | {value?: IconValue}
+  | { value?: IconValue }
   // affiche un texte
-  | {text?: string}
+  | { text?: string }
   // affiche un composant `Button`
-  | {buttonProps?: Omit<DefaultButtonProps, 'variant' | 'size' | 'className'>};
+  | {
+      buttonProps?: Omit<DefaultButtonProps, 'variant' | 'size' | 'className'>;
+    };
 
 /**
  * Composant de base pour les champs de saisie.
  */
-export const InputBase = forwardRef(
-  (props: InputBaseProps, ref?: Ref<HTMLInputElement>) => {
+export const InputBase = forwardRef<HTMLInputElement, InputBaseProps>(
+  (props, ref) => {
     const {
       className,
       containerClassname,
@@ -71,7 +70,9 @@ export const InputBase = forwardRef(
       ...remainingProps
     } = props;
 
-    const borderColor = stateToBorderColor[state] || stateToBorderColor.default;
+    const borderColor = state
+      ? stateToBorderColor[state]
+      : stateToBorderColor.default;
 
     return (
       <div
@@ -117,14 +118,16 @@ const InputIconContent = ({
 
   const iconColor = disabled
     ? 'text-grey-6'
-    : stateToTextColor[state] || 'text-primary';
+    : state
+    ? stateToTextColor[state]
+    : 'text-primary';
 
   /** icône */
   if ('value' in icon) {
     return (
       <Icon
         className={classNames('self-center min-w-[3rem]', iconColor)}
-        icon={icon.value}
+        icon={icon.value as IconValue}
         size={size}
       />
     );
@@ -154,7 +157,12 @@ const InputIconContent = ({
         className={classNames('rounded-none border-none')}
         // change la couleur de l'icône du bouton pour refléter le `state`
         // TODO: enlever les !important de `Button` pour pouvoir styler le bouton par le className
-        style={{color: preset.theme.extend.colors[state]?.['1']}}
+        style={{
+          color:
+            state && state !== 'default' && state !== 'disabled'
+              ? preset.theme.extend.colors[state]['1']
+              : undefined,
+        }}
         {...icon.buttonProps}
       />
     );

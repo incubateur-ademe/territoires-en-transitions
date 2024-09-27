@@ -1,22 +1,27 @@
 'use client';
 
-import {useSearchParams} from 'next/navigation';
-import {RejoindreUneCollectiviteModal} from '@components/RejoindreUneCollectivite';
-import {useRejoindreUneCollectivite} from 'app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
-import {useEffect} from 'react';
-import {getAuthPaths, restoreSessionFromAuthTokens} from '@tet/api';
-import {supabase} from 'src/clientAPI';
+import { getAuthPaths, restoreSessionFromAuthTokens } from '@tet/api';
+import { useRejoindreUneCollectivite } from '@tet/auth/app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
+import { RejoindreUneCollectiviteModal } from '@tet/auth/components/RejoindreUneCollectivite';
+import { supabase } from '@tet/auth/src/clientAPI';
+import { useEffect } from 'react';
 
 /**
  * Affiche la page "rejoindre une collectivité"
  *
  * Après le rattachement à la collectivité (ou l'annulation), l'utilisateur est redirigé sur la page associée à l'url contenu dans le param. `redirect_to`
  */
-const RejoindreUneCollectivitePage = () => {
-  // détermine l'url vers laquelle rediriger
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect_to') || '/';
-  const state = useRejoindreUneCollectivite({redirectTo});
+const RejoindreUneCollectivitePage = ({
+  searchParams: { view = null, email = null, otp = null, redirect_to = '/' },
+}: {
+  searchParams: {
+    view: string | null;
+    email: string | null;
+    otp: string | null;
+    redirect_to: string;
+  };
+}) => {
+  const state = useRejoindreUneCollectivite({ redirectTo: redirect_to });
 
   // redirige sur la page de login si l'utilisateur n'est pas  connecté
   useEffect(() => {
@@ -24,12 +29,12 @@ const RejoindreUneCollectivitePage = () => {
       const ret = await restoreSessionFromAuthTokens(supabase);
       if (!ret?.data.session) {
         document.location.replace(
-          getAuthPaths(document.location.hostname, redirectTo).login,
+          getAuthPaths(document.location.hostname, redirect_to).login
         );
       }
     };
     restore();
-  }, [redirectTo]);
+  }, [redirect_to]);
 
   // initialement charge les 10 premières collectivités
   useEffect(() => {

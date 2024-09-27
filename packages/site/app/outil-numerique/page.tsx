@@ -1,20 +1,20 @@
 'use server';
 
-import NoResult from '@components/info/NoResult';
+import NoResult from '@tet/site/components/info/NoResult';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';
 import HeaderPlateforme from './HeaderPlateforme';
 import QuestionsPlateforme from './QuestionsPlateforme';
 import TemoignagesPlateforme from './TemoignagesPlateforme';
-import {getStrapiData} from './utils';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { getStrapiData } from './utils';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import PanierActionsImpact from './PanierActionsImpact';
-import Trajectoire from 'app/outil-numerique/Trajectoire';
+import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
 
 export async function generateMetadata(
-  {params}: {params: {}},
-  parent: ResolvingMetadata,
+  { params }: { params: unknown },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

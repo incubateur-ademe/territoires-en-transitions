@@ -1,49 +1,38 @@
-import {assert} from 'chai';
-import {testReset} from '../tests/testReset';
-import {supabase} from '../tests/supabase';
-import {Panier} from './types';
-import {panierSelect} from './panierAPI';
+import { beforeAll, describe, it, expect } from 'vitest';
+import { supabase } from '../tests/supabase';
+import { testReset } from '../tests/testReset';
+import { panierSelect } from './panierAPI';
+import { Panier } from './types';
 
 describe('Création de panier', async () => {
-  before(async () => {
+  beforeAll(async () => {
     await testReset();
   });
 
   it('La fonction `panier_from_landing` devrait renvoyer un nouveau panier.', async () => {
-    const {error, data} = await supabase.rpc('panier_from_landing');
-    assert.isNull(
-      error,
-      `Créer un nouveau panier ne devrait pas renvoyer d'erreur`
-    );
-    assert.exists(data, `Créer un panier devrait renvoyer un nouveau panier.`);
-    assert.exists(data?.id, 'Le nouveau panier devrait avoir un id');
+    const { error, data } = await supabase.rpc('panier_from_landing');
+
+    expect(error).toBeNull();
+    expect(data).toBeDefined();
+    expect(data?.id).toBeDefined();
   });
 
   it('La fonction `panier_from_landing` devrait un nouveau panier ou un panier récent.', async () => {
     const demandeInitiale = await supabase.rpc('panier_from_landing', {
       collectivite_id: 1,
     });
-    assert.isNull(
-      demandeInitiale.error,
-      `Créer un nouveau panier ne devrait pas renvoyer d'erreur`
-    );
-    assert.exists(
-      demandeInitiale.data,
-      `Créer un panier devrait renvoyer un nouveau panier.`
-    );
-    assert.exists(
-      demandeInitiale.data?.id,
-      'Le nouveau panier devrait avoir un id'
-    );
+
+    expect(demandeInitiale.error).toBeNull();
+    expect(demandeInitiale.data).toBeDefined();
+    expect(demandeInitiale.data?.id).toBeDefined();
 
     const demandeSuivante = await supabase.rpc('panier_from_landing', {
       collectivite_id: 1,
     });
-    assert.equal(
-      demandeSuivante.data?.id,
-      demandeInitiale.data?.id,
-      'La demande de panier suivant la création devrait renvoyer un panier avec le même id.'
-    );
+
+    // La demande de panier suivant la création devrait renvoyer un panier avec le même id.
+    expect(demandeSuivante.data?.id).toBeDefined();
+    expect(demandeSuivante.data?.id).toEqual(demandeInitiale.data?.id);
   });
 });
 
@@ -56,14 +45,9 @@ describe('État du panier', async () => {
       .select()
       .eq('id', panierId)
       .single();
-    assert.isNull(
-      selectPanier.error,
-      `Sélectionner nouveau panier ne devrait pas renvoyer d'erreur`
-    );
-    assert.exists(
-      demandePanier.data,
-      `Sélectionner un panier devrait renvoyer un panier.`
-    );
+
+    expect(selectPanier.error).toBeNull();
+    expect(selectPanier.data).toBeDefined();
   });
 
   it('On devrait pouvoir ajouter une action puis la retrouver dans le panier', async () => {
@@ -74,10 +58,8 @@ describe('État du panier', async () => {
       action_id: actionId,
       panier_id: panierId,
     });
-    assert.isNull(
-      ajoutAction.error,
-      `Ajouter une action au panier ne devrait pas renvoyer d'erreur`
-    );
+
+    expect(ajoutAction.error).toBeNull();
 
     const selectPanierContenu = await supabase
       .from('panier')
@@ -85,19 +67,9 @@ describe('État du panier', async () => {
       .eq('id', panierId)
       .single<Panier>();
 
-    assert.isNull(
-      selectPanierContenu.error,
-      `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`
-    );
-    assert.exists(
-      selectPanierContenu.data,
-      `Sélectionner un panier devrait renvoyer un panier.`
-    );
-    assert.equal(
-      selectPanierContenu.data?.contenu.length,
-      1,
-      `Le panier devrait contenir une action.`
-    );
+    expect(selectPanierContenu.error).toBeNull();
+    expect(selectPanierContenu.data).toBeDefined();
+    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
   });
 });
 describe('État des actions', async () => {
@@ -109,10 +81,8 @@ describe('État des actions', async () => {
       action_id: actionId,
       panier_id: panierId,
     });
-    assert.isNull(
-      ajoutAction.error,
-      `Ajouter une action au panier ne devrait pas renvoyer d'erreur`
-    );
+
+    expect(ajoutAction.error).toBeNull();
 
     const selectPanierContenu = await supabase
       .from('panier')
@@ -120,26 +90,16 @@ describe('État des actions', async () => {
       .eq('id', panierId)
       .single<Panier>();
 
-    assert.isNull(
-      selectPanierContenu.error,
-      `Sélectionner un panier avec son contenu ne devrait pas renvoyer d'erreur`
-    );
-    assert.exists(
-      selectPanierContenu.data,
-      `Sélectionner un panier devrait renvoyer un panier.`
-    );
-    assert.equal(
-      selectPanierContenu.data?.contenu.length,
-      1,
-      `Le panier devrait contenir une action.`
-    );
+    expect(selectPanierContenu.error).toBeNull();
+    expect(selectPanierContenu.data).toBeDefined();
+    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
 
-    const {error} = await supabase
+    const { error } = await supabase
       .from('panier')
       .select('*, states:action_impact_state(*)')
       .eq('id', panierId);
 
-    assert.isNull(error);
+    expect(error).toBeNull();
   });
 });
 

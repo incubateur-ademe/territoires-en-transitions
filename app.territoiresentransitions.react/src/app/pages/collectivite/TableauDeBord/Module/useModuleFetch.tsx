@@ -1,9 +1,9 @@
-import {moduleFetch} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/module.fetch';
-import {Slug} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QueryKey, useQuery} from 'react-query';
+import { moduleFetch } from '@tet/api/collectivites/tableau_de_bord.show/actions/module.fetch';
+import { Slug } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { QueryKey, useQuery } from 'react-query';
 
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.

@@ -1,8 +1,8 @@
 'use client';
 
 import classNames from 'classnames';
-import Markdown from '@components/markdown/Markdown';
-import {Button, ButtonVariant} from '@tet/ui';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import { Button, ButtonVariant } from '@tet/ui';
 
 type CardProps = {
   title?: string;
@@ -47,7 +47,7 @@ const Card = ({
             !!image && imagePosition === 'left',
           'flex flex-col gap-6 xl:gap-8': !!image && imagePosition === 'top',
         },
-        className,
+        className
       )}
     >
       {!!image && <div>{image}</div>}
@@ -72,7 +72,7 @@ const Card = ({
             texte={description}
             className={classNames(
               'paragraphe-16 markdown_style',
-              textClassName,
+              textClassName
             )}
           />
         </div>

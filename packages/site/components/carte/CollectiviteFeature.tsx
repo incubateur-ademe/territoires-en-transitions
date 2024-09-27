@@ -1,13 +1,13 @@
 'use client';
 
-import {FeatureGroup, GeoJSON, Tooltip} from 'react-leaflet';
-import {GeoJsonObject} from 'geojson';
-import {Views, Json} from '@tet/api';
-import {PathOptions} from 'leaflet';
-import {useRouter} from 'next/navigation';
-import {convertNameToSlug} from 'src/utils/convertNameToSlug';
+import { FeatureGroup, GeoJSON, Tooltip } from 'react-leaflet';
+import { GeoJsonObject } from 'geojson';
+import { Views, Json } from '@tet/api';
+import { PathOptions } from 'leaflet';
+import { useRouter } from 'next/navigation';
+import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 
-type labellisation_w_geojson = Views<'site_labellisation'> & {geojson?: Json};
+type labellisation_w_geojson = Views<'site_labellisation'> & { geojson?: Json };
 
 type CollectiviteFeatureProps = {
   collectivite: labellisation_w_geojson;
@@ -46,7 +46,7 @@ const CollectiviteFeature = ({
             router.push(
               `/collectivites/${
                 collectivite.code_siren_insee
-              }/${convertNameToSlug(collectivite.nom ?? '')}`,
+              }/${convertNameToSlug(collectivite.nom ?? '')}`
             );
           },
         }}

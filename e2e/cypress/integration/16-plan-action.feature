@@ -9,15 +9,20 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Quand je clique sur le bouton "Créer une fiche action"
     Alors le "Fiche action" est visible
     # modifier le titre en "Fiche test"
-    Quand je saisi la valeur "Fiche test" dans le champ "header input"
+    Quand je clique sur le bouton invisible "éditer le titre"
+    Et que je saisi la valeur "Fiche test" dans le champ "titre"
     Et que je clique en dehors de la boîte de dialogue
-    Alors le "header input" contient "Fiche test"
+    Alors le "titre de la fiche" contient "Fiche test"
     # créer un tag personne pilote "Michel Sapasse"
-    Quand j'ouvre la section "acteurs"
+    Quand je clique sur le bouton "Ajouter les acteurs"
     Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
+    Et que je clique sur le bouton "Valider"
+    Alors "Personne pilote" contient "Michel Sapasse"
     # ajouter un statut "En cours"
-    Et que j'ouvre la section "modalites"
-    Et que je sélectionne "En cours" dans la liste déroulante "Statut"
+    Quand je clique sur le bouton "Ajouter le planning"
+    Et que je sélectionne "En cours" dans la liste déroulante "statuts"
+    Et que je clique sur le bouton "Valider"
+    Alors "Planning non renseigné" contient "En cours"
     # naviguer vers fiche non classées' et vérifier la présence de la fiche créée
     Quand je suis sur la page "Fiches non classees" de la collectivité "1"
     Alors la carte de la fiche créée est présente et affiche le titre "Fiche test", le pilote "Michel Sapasse" et le statut "En cours"
@@ -78,9 +83,10 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     # naviguer vers cette fiche
     Et que je navigue vers la fiche "Fiche test 2"
     # changer la confidentialité
+    Et que je clique sur le bouton "Modifier la restriction d'accès"
     Et que je toggle la confidentialité de la fiche
     # revenir sur le plan d'action
-    Et que je navigue vers le plan "Plan test"
+    Et que je navigue vers "Plan test" du fil d'ariane de la fiche
     # la fiche doit etre confidentielle
     Alors la carte "Fiche test 2" est privée
     # rendre toutes les fiches publiques
@@ -96,9 +102,9 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je navigue vers le plan "Plan test"
     # les fiches doivent etre privées
     Alors la carte "Fiche test 1" est privée
-    Alors la carte "Fiche test 2" est privée
+    Et la carte "Fiche test 2" est privée
     # les fiches ne sont pas clickable
-    Alors je ne peux pas cliquer sur la carte "Fiche test 1"
+    Et je ne peux pas cliquer sur la carte "Fiche test 1"
 
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
@@ -172,15 +178,19 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je navigue vers la fiche "Fiche test"
 
     # créer un tag personne pilote "Michel Sapasse"
-    Quand j'ouvre la section "acteurs"
+    Quand je clique sur le bouton "Ajouter les acteurs"
     Et que je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes-pilotes"
+    Et que je clique sur le bouton "Valider"
+    Alors "Personne pilote" contient "Michel Sapasse"
 
     # ajouter un statut "En cours"
-    Et que j'ouvre la section "modalites"
-    Et que je sélectionne "En cours" dans la liste déroulante "Statut"
+    Quand je clique sur le bouton "Ajouter le planning"
+    Et que je sélectionne "En cours" dans la liste déroulante "statuts"
+    Et que je clique sur le bouton "Valider"
+    Alors "Planning non renseigné" contient "En cours"
 
-    Quand je navigue vers "Axe 1: les tests passent"
-    Quand j'ouvre les filtres
+    Quand je navigue vers "Axe 1: les tests passent" du fil d'ariane de la fiche
+    Et que j'ouvre les filtres
     Et que je filtre les fiches par "Yolo Dodo" du filtre "personne-pilote"
     Alors aucune fiche n'est présente
 
@@ -198,13 +208,13 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors "6" fiches action s'affichent
 
     Quand je filtre par "Sans pilote"
-    Alors "2" fiches action s'affichent
+    Alors "6" fiches action s'affichent
 
     Quand je filtre par "Harry Cot"
-    Alors "2" fiches action s'affichent
+    Alors "0" fiches action s'affichent
 
     Quand je filtre les fiches par "Sans élu·e référent·e" du filtre "personne-referentes"
-    Alors "1" fiches action s'affichent
+    Alors "0" fiches action s'affichent
 
     Quand je clique sur le bouton "Désactiver tous les filtres"
     Alors un message demandant à l'utilisateur de sélectionner un filtre s'affiche

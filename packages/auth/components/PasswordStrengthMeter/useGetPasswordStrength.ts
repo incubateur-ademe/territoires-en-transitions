@@ -50,7 +50,7 @@ const getPasswordStrength = (
   /** mot de passe */
   password: string,
   /** autres valeurs à éviter dans le mdp */
-  otherValues: string[],
+  otherValues: string[]
 ) => {
   if (!password) return null;
   // pour éviter les mdp trop faciles à deviner les autres valeurs du formulaire

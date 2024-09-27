@@ -1,6 +1,6 @@
-import {IconValue} from '@design-system/Icon';
-import {NotificationProps} from '@design-system/Notification';
-import {AnchorHTMLProps, ButtonHTMLProps} from 'utils/types';
+import { IconValue } from '@tet/ui/design-system/Icon';
+import { AnchorHTMLProps, ButtonHTMLProps } from '@tet/ui/utils/types';
+import { NotificationProps } from '../Notification';
 
 export type ButtonState = 'default' | 'disabled';
 

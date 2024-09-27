@@ -1,7 +1,7 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import CarteAvecFiltres from '@components/carte/CarteAvecFiltres';
+import Section from '@tet/site/components/sections/Section';
+import CarteAvecFiltres from '@tet/site/components/carte/CarteAvecFiltres';
 
 const Carte = () => {
   return (

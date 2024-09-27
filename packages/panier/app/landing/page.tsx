@@ -1,8 +1,8 @@
-import Landing from '@components/Landing';
-import TrackPageView from '@components/TrackPageView/index';
+import Landing from '@tet/panier/components/Landing';
+import { TrackPageView } from '@tet/ui';
 import React from 'react';
 
-export default async function Page() {
+export default function Page() {
   return (
     <>
       <TrackPageView pageName="panier/landing" />

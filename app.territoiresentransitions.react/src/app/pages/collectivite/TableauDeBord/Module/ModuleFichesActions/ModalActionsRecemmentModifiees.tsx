@@ -1,11 +1,11 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {modulesSave} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/actions/modules.save';
-import {ModuleFicheActionsSelect} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
+import { modulesSave } from '@tet/api/collectivites/tableau_de_bord.show/actions/modules.save';
+import { ModuleFicheActionsSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
 import {
   Filtre as FiltreFichesAction,
   ModifiedSince,
-} from '@tet/api/dist/src/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+} from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 import {
   Field,
   FormSection,
@@ -16,17 +16,17 @@ import {
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import {generateTitle} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {QueryKey, useQueryClient} from 'react-query';
+import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { QueryKey, useQueryClient } from 'react-query';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import {ficheActionModifiedSinceOptions} from 'ui/dropdownLists/listesStatiques';
+import { ficheActionModifiedSinceOptions } from 'ui/dropdownLists/listesStatiques';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 
 type Props = ModalProps & {
@@ -64,12 +64,12 @@ const ModalActionsRecemmentModifiees = ({
             <SelectMultiple
               values={filtreState.planActionIds}
               options={
-                plansActions?.plans.map(p => ({
+                plansActions?.plans.map((p) => ({
                   label: generateTitle(p.nom),
                   value: p.id,
                 })) ?? []
               }
-              onChange={({values}) =>
+              onChange={({ values }) =>
                 setFiltreState({
                   ...filtreState,
                   planActionIds: values as number[],
@@ -80,7 +80,7 @@ const ModalActionsRecemmentModifiees = ({
           <Field title="Personne pilote">
             <PersonnesDropdown
               values={pilotes}
-              onChange={({personnes}) => {
+              onChange={({ personnes }) => {
                 setFiltreState({
                   ...filtreState,
                   ...splitPilotePersonnesAndUsers(personnes),
@@ -91,7 +91,7 @@ const ModalActionsRecemmentModifiees = ({
           <Field title="Statut">
             <StatutsFilterDropdown
               values={filtreState.statuts}
-              onChange={({statuts}) =>
+              onChange={({ statuts }) =>
                 setFiltreState({
                   ...filtreState,
                   statuts,
@@ -103,7 +103,7 @@ const ModalActionsRecemmentModifiees = ({
             <Select
               values={filtreState.modifiedSince}
               options={ficheActionModifiedSinceOptions}
-              onChange={value =>
+              onChange={(value) =>
                 value &&
                 setFiltreState({
                   ...filtreState,
@@ -114,7 +114,7 @@ const ModalActionsRecemmentModifiees = ({
           </Field>
         </FormSection>
       )}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => close(),
@@ -135,7 +135,7 @@ const ModalActionsRecemmentModifiees = ({
                 },
               });
 
-              keysToInvalidate?.forEach(key =>
+              keysToInvalidate?.forEach((key) =>
                 queryClient.invalidateQueries(key)
               );
 

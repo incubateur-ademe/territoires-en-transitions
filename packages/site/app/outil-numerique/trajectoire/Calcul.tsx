@@ -1,11 +1,11 @@
 'use client';
 
 import classNames from 'classnames';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Markdown from '@components/markdown/Markdown';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type CalculProps = {
   titre: string;
@@ -29,7 +29,7 @@ const Calcul = ({
     <Section
       containerClassName={classNames(
         'max-md:!py-6 md:max-lg:!py-12 lg:!py-20',
-        backgroundColor,
+        backgroundColor
       )}
       className="gap-9"
     >
@@ -39,11 +39,11 @@ const Calcul = ({
         className="text-center paragraphe-22 paragraphe-primary-9 markdown_style"
       />
       <CardsWrapper cols={2} className="max-w-5xl mx-auto">
-        {liste.map(elt => (
+        {liste.map((elt) => (
           <div
             key={elt.id}
             className="bg-white p-4 md:p-6 xl:p-8 rounded-lg flex flex-col gap-4"
-            style={{boxShadow: '0px 4px 20px 0px #F0F0FE'}}
+            style={{ boxShadow: '0px 4px 20px 0px #F0F0FE' }}
           >
             {!!elt.image && (
               <StrapiImage

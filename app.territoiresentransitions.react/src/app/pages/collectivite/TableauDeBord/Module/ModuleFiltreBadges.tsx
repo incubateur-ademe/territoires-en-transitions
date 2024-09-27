@@ -1,8 +1,8 @@
-import {Filtre} from '@tet/api/dist/src/collectivites/tableau_de_bord.show/domain/module.schema';
-import {Badge} from '@tet/ui';
+import { Filtre } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
-import {useFiltreValues} from './useFiltreValues';
-import {filtersToBadges} from './utils';
+import { useFiltreValues } from './useFiltreValues';
+import { filtersToBadges } from './utils';
 
 type Props = {
   filtre: Filtre;
@@ -10,8 +10,8 @@ type Props = {
   resetFilters?: () => void;
 };
 
-const ModuleFiltreBadges = ({filtre, className, resetFilters}: Props) => {
-  const {data: filtreValues} = useFiltreValues({
+const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
+  const { data: filtreValues } = useFiltreValues({
     filtre,
   });
 
@@ -19,7 +19,7 @@ const ModuleFiltreBadges = ({filtre, className, resetFilters}: Props) => {
     return null;
   }
 
-  const selectedFilters = filtersToBadges({...filtreValues, ...filtre});
+  const selectedFilters = filtersToBadges({ ...filtreValues, ...filtre });
 
   if (selectedFilters.length === 0) {
     return null;
@@ -27,7 +27,7 @@ const ModuleFiltreBadges = ({filtre, className, resetFilters}: Props) => {
 
   return (
     <div className={classNames('flex flex-wrap gap-4', className)}>
-      {selectedFilters.map(filter => (
+      {selectedFilters.map((filter) => (
         <Badge
           key={filter}
           title={filter}

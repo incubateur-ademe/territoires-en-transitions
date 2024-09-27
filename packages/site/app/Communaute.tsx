@@ -1,22 +1,22 @@
 'use client';
 
-import Section from '@components/sections/Section';
+import Section from '@tet/site/components/sections/Section';
 import {
   useCollectivitesEngagees,
   useTerritoiresLabellises,
-} from 'app/stats/NombreCollectivitesEngagees';
-import {useActiveUsers} from './stats/ActiveUsers';
-import {Button} from '@tet/ui';
+} from '@tet/site/app/stats/NombreCollectivitesEngagees';
+import { useActiveUsers } from './stats/ActiveUsers';
+import { Button } from '@tet/ui';
 
 type CommunauteProps = {
   titre: string;
   cta: string;
 };
 
-const Communaute = ({titre, cta}: CommunauteProps) => {
-  const {data: labellises} = useTerritoiresLabellises('', '');
-  const {data: engages} = useCollectivitesEngagees('', '');
-  const {data: utilisateurs} = useActiveUsers('', '');
+const Communaute = ({ titre, cta }: CommunauteProps) => {
+  const { data: labellises } = useTerritoiresLabellises('', '');
+  const { data: engages } = useCollectivitesEngagees('', '');
+  const { data: utilisateurs } = useActiveUsers('', '');
   const utilisateursActifs = utilisateurs
     ? utilisateurs.courant.total_utilisateurs
     : undefined;

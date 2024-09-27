@@ -1,7 +1,7 @@
 'use client';
 
-import Section from '@components/sections/Section';
-import {useState} from 'react';
+import Section from '@tet/site/components/sections/Section';
+import { useState } from 'react';
 import RegionAndDeptFilters from './RegionAndDeptFilters';
 
 /**
@@ -10,7 +10,7 @@ import RegionAndDeptFilters from './RegionAndDeptFilters';
  * @param children - Composant enfant à inclure dans le layout
  */
 
-const StatsLayout = ({children}: {children: React.ReactNode}) => {
+const StatsLayout = ({ children }: { children: React.ReactNode }) => {
   const [title, setTitle] = useState<string | null>(null);
 
   return (

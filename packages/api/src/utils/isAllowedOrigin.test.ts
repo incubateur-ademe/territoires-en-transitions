@@ -1,53 +1,47 @@
-import {isAllowedOrigin} from './isAllowedOrigin';
-import {assert} from 'chai';
+import { describe, it, expect } from 'vitest';
+import { isAllowedOrigin } from './isAllowedOrigin';
 
 describe('isAllowedOrigin', () => {
   it('renvoi true en mode autre que "production"', () => {
-    assert.equal(
-      isAllowedOrigin(
-        'http://localhost:3000/collectivite/1/users',
-        'development'
-      ),
-      true
+    const isAllowed = isAllowedOrigin(
+      'http://localhost:3000/collectivite/1/users',
+      'development'
     );
+
+    expect(isAllowed).toBe(true);
   });
 
   it('renvoi true pour le domaine par défaut', () => {
-    assert.equal(
-      isAllowedOrigin(
-        'https://app.territoiresentransitions.fr/collectivite/1/users',
-        'production'
-      ),
-      true
+    const isAllowed = isAllowedOrigin(
+      'https://app.territoiresentransitions.fr/collectivite/1/users',
+      'production'
     );
+    expect(isAllowed).toBe(true);
   });
 
   it('renvoi false pour un domaine non valide', () => {
-    assert.equal(
-      isAllowedOrigin('https://app.tet.fr/collectivite/1/users', 'production'),
-      false
-    );
+    expect(
+      isAllowedOrigin('https://app.tet.fr/collectivite/1/users', 'production')
+    ).toBe(false);
   });
 
   it('renvoi true pour un domaine correspondant au pattern donné', () => {
-    assert.equal(
+    expect(
       isAllowedOrigin(
         'https://test-app-branch-tet.koyeb.app/collectivite/1/users',
         'production',
         'https://test-app-*-tet.koyeb.app'
-      ),
-      true
-    );
+      )
+    ).toBe(true);
   });
 
   it('renvoi false pour un domaine ne correspondant pas au pattern donné', () => {
-    assert.equal(
+    expect(
       isAllowedOrigin(
         'https://non-reconnu-tet.koyeb.app/collectivite/1/users',
         'production',
         'https://test-app-*-tet.koyeb.app'
-      ),
-      false
-    );
+      )
+    ).toBe(false);
   });
 });

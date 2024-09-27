@@ -1,4 +1,4 @@
-import {Button} from '@design-system/Button';
+import { Button } from '@tet/ui/design-system/Button';
 
 type PaginationPageButtonProps = {
   pageNumber?: number;

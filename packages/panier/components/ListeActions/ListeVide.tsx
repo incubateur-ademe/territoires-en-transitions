@@ -1,6 +1,6 @@
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import SearchPicto from '@components/Picto/SearchPicto';
-import SuccessPicto from '@components/Picto/SuccessPicto';
+import SearchPicto from '@tet/panier/components/Picto/SearchPicto';
+import SuccessPicto from '@tet/panier/components/Picto/SuccessPicto';
 
 type ListeVideProps = {
   success?: boolean;

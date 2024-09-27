@@ -1,9 +1,9 @@
 'use client';
 
 import useSWR from 'swr';
-import {supabase} from '../initSupabase';
-import {ChartHead} from './headings';
-import {formatInteger} from './shared';
+import { supabase } from '../initSupabase';
+import { ChartHead } from './headings';
+import { formatInteger } from './shared';
 
 // Nombre de collectivités engagées dans le programme (COT ou labellisée 1ère étoile dans un des deux référentiels)
 export function useCollectivitesEngagees(
@@ -13,31 +13,31 @@ export function useCollectivitesEngagees(
   return useSWR(
     `territoires_engages-${codeRegion}-${codeDepartement}`,
     async () => {
-      let select = supabase
+      const select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'exact'});
+        .select(undefined, { head: true, count: 'exact' });
 
       if (codeDepartement) {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_departement.eq.${codeDepartement})`,
         );
       } else if (codeRegion) {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`,
         );
       } else {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true))`,
         );
       }
 
-      const {count, error} = await select;
+      const { count, error } = await select;
 
       if (error) {
         throw new Error('territoires_engages');
@@ -54,31 +54,31 @@ export function useTerritoiresLabellises(
   return useSWR(
     `territoires_labellises-${codeRegion}-${codeDepartement}`,
     async () => {
-      let select = supabase
+      const select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'exact'});
+        .select(undefined, { head: true, count: 'exact' });
 
       if (codeDepartement) {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_departement.eq.${codeDepartement})`,
         );
       } else if (codeRegion) {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`,
         );
       } else {
-        // @ts-ignore
+        // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
           `(or(etoiles_eci.gte.1, etoiles_cae.gte.1))`,
         );
       }
 
-      const {count, error} = await select;
+      const { count, error } = await select;
 
       if (error) {
         throw new Error('territoires_labellises');
@@ -94,7 +94,7 @@ export function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
     async () => {
       let select = supabase
         .from('stats_locales_engagement_collectivite')
-        .select(undefined, {head: true, count: 'exact'})
+        .select(undefined, { head: true, count: 'exact' })
         .eq('cot', true);
 
       if (codeDepartement) {
@@ -103,7 +103,7 @@ export function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
         select = select.eq('code_region', codeRegion);
       }
 
-      const {count, error} = await select;
+      const { count, error } = await select;
 
       if (error) {
         throw new Error('territoires_cot');
@@ -122,9 +122,9 @@ export default function NombreCollectivitesEngagees({
   region = '',
   department = '',
 }: NombreCollectivitesEngageesProps) {
-  const {data: cot} = useTerritoiresCOT(region, department);
-  const {data: labellises} = useTerritoiresLabellises(region, department);
-  const {data: engages} = useCollectivitesEngagees(region, department);
+  const { data: cot } = useTerritoiresCOT(region, department);
+  const { data: labellises } = useTerritoiresLabellises(region, department);
+  const { data: engages } = useCollectivitesEngagees(region, department);
 
   return (
     <ChartHead>

@@ -64,4 +64,25 @@ const ChartLegend = ({
   );
 };
 
+/** Représente une ligne pointillée pour la légende du graphe (peut être passé à
+ * la props "symbole") */
+export const DashedLineSymbol = (backgroundColor: string) => (
+  <div className="flex gap-1 w-5">
+    <div className="h-1 grow" style={{backgroundColor}} />
+    <div className="h-1 grow" style={{backgroundColor}} />
+  </div>
+);
+
+/** Représente une ligne continue pour la légende du graphe (peut être passé à
+ * la props "symbole") */
+export const SolidLineSymbol = (backgroundColor: string) => (
+  <div className="w-5 h-1" style={{backgroundColor}} />
+);
+
+/** Représente une surface pour la légende du graphe (peut être passé à
+ * la props "symbole") */
+export const AreaSymbol = (backgroundColor: string) => (
+  <div className="w-3.5 h-2.5 rounded-sm" style={{backgroundColor}} />
+);
+
 export default ChartLegend;

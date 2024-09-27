@@ -1,19 +1,19 @@
 'use server';
 
-import Section from '@components/sections/Section';
+import Section from '@tet/site/components/sections/Section';
 import Fonctionnement from './Fonctionnement';
 import Principes from './Principes';
 import ChiffresClefs from './ChiffresClefs';
 import BudgetConsomme from './BudgetConsomme';
 import PerformanceBudget from './PerformanceBudget';
-import {getStrapiData} from './utils';
-import NoResult from '@components/info/NoResult';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { getStrapiData } from './utils';
+import NoResult from '@tet/site/components/info/NoResult';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 
 export async function generateMetadata(
-  {params}: {params: {}},
-  parent: ResolvingMetadata,
+  { params }: { params: unknown },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

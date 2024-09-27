@@ -1,5 +1,7 @@
+'use client';
+
 // exporte les presets tailwind
-export {preset} from './tailwind-preset';
+export { preset } from './tailwind-preset';
 
 /* composants exportés */
 
@@ -31,6 +33,7 @@ export * from './design-system/Pagination';
 export * from './design-system/Select';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
+export * from './design-system/Table';
 export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
 

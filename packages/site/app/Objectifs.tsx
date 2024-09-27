@@ -1,15 +1,15 @@
-import CardsWrapper from '@components/cards/CardsWrapper';
-import CardsSection from '@components/sections/CardsSection';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Content} from './programme/types';
-import Card from '@components/cards/Card';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import CardsSection from '@tet/site/components/sections/CardsSection';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import Card from '@tet/site/components/cards/Card';
+import { Content } from './programme/types';
 
 type ObjectifsProps = {
   titre: string;
   contenu: Content[] | null;
 };
 
-const Objectifs = ({titre, contenu}: ObjectifsProps) => {
+const Objectifs = ({ titre, contenu }: ObjectifsProps) => {
   return contenu && contenu.length ? (
     <CardsSection
       title={titre}

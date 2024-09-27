@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import {CarteActionImpact} from '@components/ActionImpact/CarteActionImpact';
-import BasketPicto from '@components/Picto/BasketPicto';
-import EmptyBasketPicto from '@components/Picto/EmptyBasketPicto';
-import ValiderPanierButton from '@components/ValidationPanier/ValiderPanierButton';
+import {CarteActionImpact} from '@tet/panier/components/ActionImpact/CarteActionImpact';
+import BasketPicto from '@tet/panier/components/Picto/BasketPicto';
+import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
+import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
 import {ActionImpactFourchetteBudgetaire, ActionImpactSnippet} from '@tet/api';
 import {Alert} from '@tet/ui';
 import React from 'react';

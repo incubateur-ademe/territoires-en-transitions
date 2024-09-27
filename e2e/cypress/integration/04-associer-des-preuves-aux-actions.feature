@@ -27,7 +27,7 @@ Fonctionnalité: Associer des preuves aux actions
     Quand tous les transferts sont terminés
     Alors la liste des fichiers transférés contient les entrées suivantes :
       | Fichier        | Etat      | Taille | Message |
-      | bien nommé.doc | completed |        |         |
+      | bien nommé.doc | completed | 18 o   |         |
     Et le bouton "Ajouter" du "formulaire Fichier" est activé
 
     Quand je clique sur le bouton "Ajouter" du "formulaire Fichier"
@@ -324,9 +324,10 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre     | Commentaire |
       | mon.doc   |             |
       | Exemple 2 | ex2         |
-    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
-      | nom     | contenu     |
-      | mon.doc | mon contenu |
+# étapes commentées en attendant de remplacer la route /zip par un endpoint dans le nouveau backend
+#    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
+#      | nom     | contenu     |
+#      | mon.doc | mon contenu |
 
     # puis une preuve réglementaire et on refait les vérifications
     Quand je clique sur le 2ème bouton "Ajouter une preuve réglementaire" à l'action "cae_2.3.1"
@@ -343,7 +344,8 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre     | Commentaire |
       | mon.doc   |             |
       | Exemple 2 | ex2         |
-    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
-      | nom       | contenu       |
-      | mon.doc   | mon contenu   |
-      | autre.doc | autre contenu |
+# étapes commentées en attendant de remplacer la route /zip par un endpoint dans le nouveau backend
+#    Et je peux télécharger toutes les preuves sous la forme d'un fichier nommé "cae_2.3.1_Arbent.zip" et contenant les fichiers suivants :
+#      | nom       | contenu       |
+#      | mon.doc   | mon contenu   |
+#      | autre.doc | autre contenu |

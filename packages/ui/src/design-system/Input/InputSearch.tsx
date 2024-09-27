@@ -1,7 +1,13 @@
 import classNames from 'classnames';
-import {Ref, forwardRef, useImperativeHandle, useRef} from 'react';
-import {useDebouncedCallback} from 'use-debounce';
-import {InputBase, InputBaseProps} from './InputBase';
+import {
+  ForwardedRef,
+  MutableRefObject,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
   /** Fait apparaître un picto "chargement" à la place du picto "recherche" */
@@ -27,15 +33,18 @@ export const InputSearch = forwardRef(
       onSearch,
       ...remainingProps
     }: InputSearchProps,
-    ref?: Ref<HTMLInputElement>
+    ref: ForwardedRef<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
-    useImperativeHandle(ref, () => inputRef.current);
+    useImperativeHandle(
+      ref,
+      () => (inputRef as MutableRefObject<HTMLInputElement>).current
+    );
 
     const disabled = !(remainingProps.value || inputRef.current?.value);
 
     /** Debounce les appels à `onSearch` */
-    const handleDebouncedInputChange = useDebouncedCallback(v => {
+    const handleDebouncedInputChange = useDebouncedCallback((v) => {
       onSearch(v);
     }, debounce);
 
@@ -47,7 +56,7 @@ export const InputSearch = forwardRef(
         )}
         type="search"
         ref={inputRef}
-        onChange={e => {
+        onChange={(e) => {
           onChange?.(e);
           handleDebouncedInputChange(e.target.value);
         }}
@@ -55,7 +64,10 @@ export const InputSearch = forwardRef(
           buttonProps: {
             disabled,
             icon: isLoading ? 'loader-4-line animate-spin' : 'search-line',
-            onClick: () => handleDebouncedInputChange(inputRef.current.value),
+            onClick: () =>
+              handleDebouncedInputChange(
+                (inputRef as MutableRefObject<HTMLInputElement>).current.value
+              ),
             title: 'Rechercher',
           },
         }}

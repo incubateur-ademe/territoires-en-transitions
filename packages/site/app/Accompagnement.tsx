@@ -1,10 +1,10 @@
 'use client';
 
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import Section from '@components/sections/Section';
-import Markdown from '@components/markdown/Markdown';
-import {Button} from '@tet/ui';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { Button } from '@tet/ui';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import Section from '@tet/site/components/sections/Section';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 type AccompagnementProps = {
   titre: string;
@@ -13,11 +13,15 @@ type AccompagnementProps = {
     titre: string;
     description: string;
     image: StrapiItem;
-    button: {titre: string; href: string};
+    button: { titre: string; href: string };
   }[];
 };
 
-const Accompagnement = ({titre, description, contenu}: AccompagnementProps) => {
+const Accompagnement = ({
+  titre,
+  description,
+  contenu,
+}: AccompagnementProps) => {
   return (
     <Section
       containerClassName="max-md:!py-6 md:!pt-14"

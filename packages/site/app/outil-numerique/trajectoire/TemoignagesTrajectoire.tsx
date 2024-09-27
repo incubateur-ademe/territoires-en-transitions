@@ -1,6 +1,6 @@
-import Section from '@components/sections/Section';
-import TestimonialSlideshow from '@components/slideshow/TestimonialSlideshow';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import Section from '@tet/site/components/sections/Section';
+import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type TemoignagesTrajectoireProps = {
   temoignages: {
@@ -12,7 +12,9 @@ type TemoignagesTrajectoireProps = {
   }[];
 };
 
-const TemoignagesTrajectoire = ({temoignages}: TemoignagesTrajectoireProps) => {
+const TemoignagesTrajectoire = ({
+  temoignages,
+}: TemoignagesTrajectoireProps) => {
   return (
     <Section containerClassName="bg-primary-7 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <TestimonialSlideshow

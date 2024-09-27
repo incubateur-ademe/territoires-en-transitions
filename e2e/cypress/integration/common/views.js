@@ -39,7 +39,7 @@ export const CollectivitePages = {
     selector: '[data-test=labellisation-eci]',
   },
   'Action ECI': {
-    route: 'action/eci/eci_3.1',
+    route: 'action/eci/eci_3.1/',
     selector: '[data-test^=Action]',
   },
   'Synthèse plans action': {
@@ -54,12 +54,8 @@ export const CollectivitePages = {
     route: 'plans/fiches',
     selector: '[data-test=FichesNonClassees]',
   },
-  'Indicateurs CAE': {
-    route: 'indicateurs/cae',
-    selector: '[data-test=ind-v-cae]',
-  },
-  'Indicateurs personnalisés': {
-    route: 'indicateurs/perso',
-    selector: '[data-test=ind-v-perso]',
+  'Tous les indicateurs': {
+    route: 'indicateurs/tous-les-indicateurs',
+    selector: '[data-test=tous-les-indicateurs]',
   },
 };

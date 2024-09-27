@@ -1,5 +1,5 @@
 import {ZxcvbnResult} from '@zxcvbn-ts/core';
-import {ResendFunction, VerifyOTPData} from '@components/VerifyOTP';
+import {ResendFunction, VerifyOTPData} from '@tet/auth/components/VerifyOTP';
 import {FormState} from './useFormState';
 
 const ValidLoginView = [
@@ -43,7 +43,7 @@ export type LoginProps = {
   /** Pour contrôler la robustesse des mots de passe */
   getPasswordStrength: (
     password: string,
-    otherValues: string[],
+    otherValues: string[]
   ) => ZxcvbnResult | null;
 };
 

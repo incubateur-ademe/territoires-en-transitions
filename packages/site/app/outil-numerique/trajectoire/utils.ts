@@ -1,5 +1,5 @@
-import {fetchSingle} from 'src/strapi/strapi';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { fetchSingle } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
   const data = await fetchSingle('page-trajectoire', [
@@ -65,9 +65,9 @@ export const getStrapiData = async () => {
           trajectoiresData.methode_exemples as unknown as {
             id: number;
             legende: string;
-            image: {data: StrapiItem};
+            image: { data: StrapiItem };
           }[]
-        ).map(ex => ({
+        ).map((ex) => ({
           id: ex.id,
           legende: ex.legende,
           image: ex.image ? ex.image.data : undefined,
@@ -94,9 +94,9 @@ export const getStrapiData = async () => {
             id: number;
             titre: string;
             legende: string;
-            image: {data: StrapiItem};
+            image: { data: StrapiItem };
           }[]
-        ).map(c => ({
+        ).map((c) => ({
           id: c.id,
           titre: c.titre,
           legende: c.legende,
@@ -106,7 +106,7 @@ export const getStrapiData = async () => {
       temoignages: (
         (trajectoiresData.temoignages_liste?.data as unknown as StrapiItem[]) ??
         []
-      ).map(t => ({
+      ).map((t) => ({
         id: t.id,
         auteur: t.attributes.temoignage?.auteur as unknown as string,
         role: t.attributes.temoignage?.role as unknown as string,

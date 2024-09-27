@@ -1,9 +1,9 @@
 'use client';
 
-import {FeatureGroup, GeoJSON} from 'react-leaflet';
-import {GeoJsonObject} from 'geojson';
-import {Views, Json} from '@tet/api';
-import {PathOptions} from 'leaflet';
+import { FeatureGroup, GeoJSON } from 'react-leaflet';
+import { Views, Json } from '@tet/api';
+import { PathOptions } from 'leaflet';
+import { GeoJsonObject } from 'geojson';
 
 type region_w_geojson = Views<'site_region'> & {
   geojson?: Json;
@@ -13,7 +13,7 @@ type RegionFeatureProps = {
   region: region_w_geojson;
 };
 
-const RegionFeature = ({region}: RegionFeatureProps) => {
+const RegionFeature = ({ region }: RegionFeatureProps) => {
   const geojson = region.geojson as unknown as GeoJsonObject;
   const style: PathOptions = {
     fillOpacity: 1,

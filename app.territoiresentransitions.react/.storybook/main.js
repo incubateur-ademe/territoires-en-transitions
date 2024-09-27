@@ -1,3 +1,5 @@
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 /**
  * Configuration générale du storybook
  */
@@ -30,13 +32,19 @@ module.exports = {
   },
 
   // chargement des mocks pour le bon fonctionnement des stories dans le storybook
-  // ATTENTION : il faut aussi charger les mocks dans setupTests pour qu'ils
-  // soient accessibles lors du snapshot testing (storyshots)
-  webpackFinal: async config => {
+  webpackFinal: async (config) => {
     config.resolve.alias['core-logic/hooks/useCurrentCollectivite'] =
       require.resolve(
         '../src/core-logic/hooks/__mocks__/useCurrentCollectivite.ts'
       );
+
+    config.resolve.plugins = config.resolve.plugins || [];
+    config.resolve.plugins.push(
+      new TsconfigPathsPlugin({
+        configFile: path.resolve(__dirname, '../tsconfig.json'),
+      })
+    );
+
     return config;
   },
 
@@ -44,6 +52,7 @@ module.exports = {
     autodocs: true,
   },
   core: {
+    builder: 'webpack5',
     disableTelemetry: true,
   },
 };

@@ -1,8 +1,8 @@
 import {getAppBaseUrl, restoreSessionFromAuthTokens} from '@tet/api';
-import {dcpFetch} from '@tet/api/dist/src/utilisateurs/shared/data_access/dcp.fetch';
-import {RedirectType, redirect, useRouter} from 'next/navigation';
+import {dcpFetch} from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import {supabase} from '@tet/auth/src/clientAPI';
+import {useRouter} from 'next/navigation';
 import {useEffect} from 'react';
-import {supabase} from 'src/clientAPI';
 
 // redirige sur l'url donnée si la session de l'utilisateur peut être restaurée depuis les cookies
 export const useRedirectTo = (redirectTo: string) => {

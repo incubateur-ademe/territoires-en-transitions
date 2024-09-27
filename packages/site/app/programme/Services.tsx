@@ -1,8 +1,8 @@
-import BlogCard from '@components/cards/BlogCard';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import BlogCard from '@tet/site/components/cards/BlogCard';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type ServicesProps = {
   titre: string;
@@ -18,7 +18,7 @@ type ServicesProps = {
     | null;
 };
 
-const Services = ({titre, contenu}: ServicesProps) => {
+const Services = ({ titre, contenu }: ServicesProps) => {
   return contenu && contenu.length ? (
     <Section
       className="items-center"
@@ -27,7 +27,7 @@ const Services = ({titre, contenu}: ServicesProps) => {
       <h3 className="text-center mb-4">{titre}</h3>
       <CardsWrapper cols={3}>
         {contenu.length > 0 &&
-          contenu.map(c => (
+          contenu.map((c) => (
             <BlogCard
               key={c.id}
               title={c.titre}

@@ -1,15 +1,18 @@
 'use client';
 
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 type AccueilBannerProps = {
   couverture: StrapiItem;
   couvertureMobile: StrapiItem;
 };
 
-const AccueilBanner = ({couverture, couvertureMobile}: AccueilBannerProps) => {
+const AccueilBanner = ({
+  couverture,
+  couvertureMobile,
+}: AccueilBannerProps) => {
   const mdBreakpoint = 768; // 768px = breakpoint sm dans tailwind
   const [windowWidth, setWindowWidth] = useState<number>(mdBreakpoint);
 

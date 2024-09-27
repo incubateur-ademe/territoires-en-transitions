@@ -1,7 +1,9 @@
-VERSION 0.7
+VERSION 0.8
+
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
+ARG --global BACKEND_DIR='./backend'
 ARG --global SITE_DIR='./packages/site'
 ARG --global AUTH_DIR='./packages/auth'
 ARG --global PANIER_DIR='./packages/panier'
@@ -14,10 +16,17 @@ ARG --global REG_USER='territoiresentransitions'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
 # tags appliqués aux images docker générées
 ARG --global ENV_NAME="dev"
-ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./package-lock.json | head -c 7 ; echo)
+ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c 7 ; echo)
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
+
+# ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+# ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
+
+# TODO changer le tag
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$EARTHLY_GIT_SHORT_HASH
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -28,6 +37,7 @@ ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
 
 postgres:
     FROM postgres:15
@@ -255,37 +265,53 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
 
-node-fr: ## construit l'image de base pour les images utilisant node
+# construit l'image de base pour les images utilisant node
+node-fr:
     ARG TARGETPLATFORM
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
-    FROM --platform=$PLATFORM node:20
+    FROM --platform=$PLATFORM node:20-slim
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
-    USER node:node
-    WORKDIR "/app"
-    SAVE IMAGE node-fr:latest
 
-front-deps: ## construit l'image contenant les dépendances des modules front
+    ENV PNPM_HOME="/pnpm"
+    ENV PATH="$PNPM_HOME:$PATH"
+    RUN corepack enable
+
+    WORKDIR /app
+
+# construit l'image contenant les dépendances des modules front
+front-deps:
     FROM +node-fr
-    # dépendances globales
-    COPY ./package.json ./
-    COPY ./package-lock.json ./
-    # dépendances des modules
-    COPY $APP_DIR/package.json ./$APP_DIR/
-    COPY $AUTH_DIR/package.json ./$AUTH_DIR/
-    COPY $SITE_DIR/package.json ./$SITE_DIR/
-    COPY $PANIER_DIR/package.json ./$PANIER_DIR/
-    COPY $UI_DIR/package.json ./$UI_DIR/
-    COPY $API_DIR/package.json ./$API_DIR/
-    # installe les dépendances
-    RUN npm ci
-    SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
+
+    COPY package.json pnpm-lock.yaml ./
+    RUN pnpm install --frozen-lockfile
+
+    COPY *.json ./
+    COPY jest.* ./
+    COPY vitest.* ./
+
+    # Only copy libraries
+    COPY $API_DIR $API_DIR
+    COPY $UI_DIR $UI_DIR
 
 front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+
+backend-build:
+  BUILD --pass-args ./backend+build
+
+backend-docker:
+  BUILD --pass-args ./backend+docker
+
+backend-deploy:
+  ARG --required KOYEB_API_KEY
+  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+  BUILD --pass-args ./backend+deploy
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
@@ -295,19 +321,21 @@ app-build: ## construit l'image de l'app
     ARG SENTRY_DSN
     ARG POSTHOG_HOST
     ARG POSTHOG_KEY
+    ARG BACKEND_URL
     FROM +front-deps
-    ENV REACT_APP_SUPABASE_URL=$API_URL
-    ENV REACT_APP_SUPABASE_KEY=$ANON_KEY
-    ENV REACT_APP_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV REACT_APP_SENTRY_DSN=$SENTRY_DSN
-    ENV REACT_APP_POSTHOG_HOST=$POSTHOG_HOST
-    ENV REACT_APP_POSTHOG_KEY=$POSTHOG_KEY
+    ENV NX_PUBLIC_SUPABASE_URL=$API_URL
+    ENV NX_PUBLIC_SUPABASE_KEY=$ANON_KEY
+    ENV NX_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+    ENV NX_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+    ENV NX_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+    ENV NX_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
+    ENV NX_PUBLIC_BACKEND_URL=$BACKEND_URL
     LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
     COPY $API_DIR/. $API_DIR
-    RUN npm run build:app
+    RUN pnpm run build:app
     EXPOSE 3000
     WORKDIR $APP_DIR
     CMD ["dumb-init", "node", "server.js"]
@@ -330,17 +358,17 @@ app-run: ## construit et lance l'image de l'app en local
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
-    ENV REACT_APP_SUPABASE_URL
-    ENV REACT_APP_SUPABASE_KEY
+    ENV NX_PUBLIC_SUPABASE_URL
+    ENV NX_PUBLIC_SUPABASE_KEY
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
-    RUN npm run build -w @tet/api
-    RUN npm run build -w @tet/ui
+    COPY ./vitest.workspace.ts ./
+
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/app
+    CMD pnpm run test:app
     SAVE IMAGE app-test:latest
 
 app-test: ## lance les tests unitaires de l'app
@@ -349,8 +377,8 @@ app-test: ## lance les tests unitaires de l'app
     RUN docker run --rm \
         --name app-test_tet \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
-        --env REACT_APP_SUPABASE_URL='http://fake' \
-        --env REACT_APP_SUPABASE_KEY='fake' \
+        --env NX_PUBLIC_SUPABASE_URL='http://fake' \
+        --env NX_PUBLIC_SUPABASE_KEY='fake' \
         app-test:latest
 
 package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
@@ -361,7 +389,7 @@ package-api-test-build: ## construit une image pour exécuter les tests d'intég
     # copie les sources du module à tester
     COPY $API_DIR $API_DIR
     # la commande utilisée pour lancer les tests
-    CMD npm run test -w @tet/api
+    CMD pnpm run test:api
     SAVE IMAGE package-api-test:latest
 
 package-api-test: ## lance les tests d'intégration de l'api
@@ -401,7 +429,7 @@ panier-build: ## construit l'image du panier
     COPY $PANIER_DIR $PANIER_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:panier
+    RUN pnpm run build:panier
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/panier/"]
     SAVE IMAGE --cache-from=$PANIER_IMG_NAME --push $PANIER_IMG_NAME
 
@@ -440,7 +468,7 @@ site-build: ## construit l'image du site
     COPY $SITE_DIR $SITE_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:site
+    RUN pnpm run build:site
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
     SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
 
@@ -473,7 +501,7 @@ auth-build: ## construit l'image du module d'authentification
     COPY $AUTH_DIR $AUTH_DIR
     COPY $UI_DIR $UI_DIR
     COPY $API_DIR $API_DIR
-    RUN npm run build:auth
+    RUN pnpm run build:auth
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/auth/"]
     SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
 
@@ -491,11 +519,11 @@ storybook-build: ## construit l'image du storybook du module `ui`
     ARG PORT=6007
     FROM +front-deps
     COPY $UI_DIR/. $UI_DIR
-    RUN npm run build-storybook -w @tet/ui
+    RUN pnpx nx build-storybook @tet/ui
     EXPOSE $PORT
     #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
     WORKDIR $UI_DIR
-    CMD ["npx", "serve", "-p", "6007", "./storybook-static"]
+    CMD ["pnpx", "serve", "-p", "6007", "./storybook-static"]
     SAVE IMAGE --cache-from=$STORYBOOK_IMG_NAME --push $STORYBOOK_IMG_NAME
 
 storybook-run: ## construit et lance l'image du storybook du module `ui` en local
@@ -509,42 +537,44 @@ storybook-run: ## construit et lance l'image du storybook du module `ui` en loca
         --publish 6007:6007 \
         $STORYBOOK_IMG_NAME
 
-storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
-    ARG PORT=6007
-    # pour avoir playwright déjà pré-installé
-    FROM mcr.microsoft.com/playwright:v1.40.0-jammy
-    # installe les outils de build nécessaire à l'installation de certains packages npm
-    RUN apt update
-    RUN apt install -y build-essential
-    # répertoire de travail
-    RUN mkdir storybook
-    WORKDIR storybook
-    # installe les deps
-    COPY ./package.json ./
-    COPY ./package-lock.json ./
-    COPY $UI_DIR/package.json $UI_DIR/
-    RUN npm i
-    # réinstalle swc pour avoir le bon bindings natif
-    RUN npm i -D @swc/cli @swc/core
-    # installe le navigateur utilisé pour les tests
-    RUN npx playwright install --with-deps chromium
-    # copie les sources
-    COPY $UI_DIR $UI_DIR
-    # commande utilisée pour exécuter les tests
-    CMD npm run test -w @tet/ui -- --no-index-json
-    SAVE IMAGE storybook-test:latest
+# storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
+#     ARG PORT=6007
+#     # pour avoir playwright déjà pré-installé
+#     FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+#     # installe les outils de build nécessaire à l'installation de certains packages npm
+#     RUN apt update
+#     RUN apt install -y build-essential
+#     # répertoire de travail
+#     RUN mkdir storybook
+#     WORKDIR storybook
+#     # installe les deps
+#     COPY ./package.json ./
+#     COPY ./package-lock.json ./
+#     COPY $UI_DIR/package.json $UI_DIR/
+#     RUN npm i
+#     # réinstalle swc pour avoir le bon bindings natif
+#     RUN npm i -D @swc/cli @swc/core
+#     # installe le navigateur utilisé pour les tests
+#     RUN npx playwright install --with-deps chromium
+#     # copie les sources
+#     COPY $UI_DIR $UI_DIR
+#     # commande utilisée pour exécuter les tests
+#     CMD npx nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
+#     SAVE IMAGE storybook-test:latest
 
-storybook-test-run: # lance les tests du module `ui`
-    ARG network=host
-    LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
-    RUN docker run --rm \
-        --name storybook_test \
-        --network $network \
-        storybook-test:latest
+# storybook-test-run: # lance les tests du module `ui`
+#     ARG network=host
+#     LOCALLY
+#     DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
+#     RUN docker run --rm \
+#         --name storybook_test \
+#         --network $network \
+#         storybook-test:latest
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
+    USER root
+    RUN apk --update add jq
     COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
     ENTRYPOINT sh ./curl_test.sh
     SAVE IMAGE curl-test:latest
@@ -627,7 +657,7 @@ gen-types: ## génère le typage à partir de la base de données
     IF [ "$CI" = "true" ]
         RUN supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     ELSE
-        RUN npx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
+        RUN pnpx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     END
     RUN cp $API_DIR/src/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp $API_DIR/src/database.types.ts ./supabase/functions/_shared/database.types.ts
@@ -639,9 +669,9 @@ setup-env:
         RUN supabase start
         RUN supabase status -o env > .arg
     ELSE
-        RUN npm install
-        RUN npx supabase start
-        RUN npx supabase status -o env > .arg
+        RUN pnpm install
+        RUN pnpx supabase start
+        RUN pnpx supabase status -o env > .arg
     END
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
@@ -687,7 +717,7 @@ dev:
             RUN docker stop supabase_studio_tet
             RUN docker stop supabase_pg_meta_tet
         ELSE
-            RUN npx supabase start
+            RUN pnpx supabase start
         END
 
         IF [ "$eco" = "yes" ]
@@ -727,7 +757,7 @@ dev:
     RUN earthly +refresh-views --DB_URL=$DB_URL
 
 BUILD_IF_NO_IMG:
-    COMMAND
+    FUNCTION
     ARG --required IMG_NAME
     ARG --required IMG_TAG
     ARG --required BUILD_TARGET
@@ -758,7 +788,7 @@ stop:
     IF [ "$CI" = "true" ]
         RUN supabase stop
     ELSE
-        RUN npx supabase stop
+        RUN pnpx supabase stop
     END
     RUN docker ps --filter name=_tet --filter status=running -aq | xargs docker stop | xargs docker rm || exit 0
     RUN earthly +clear-state

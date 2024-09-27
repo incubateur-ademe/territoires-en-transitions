@@ -1,4 +1,4 @@
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 // Types associés aux pages actualités et collectivités
 
@@ -105,32 +105,32 @@ export type ActionsCaeFetchedData = {
   __component: string;
   PlanificationTerritoriale: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
   PatrimoineCollectivite: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
   ApprovisionnementEnergie: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
   Mobilite: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
   OrganisationInterne: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
   CommunicationCooperation: {
     Texte: string;
-    Image: {data: StrapiItem};
+    Image: { data: StrapiItem };
     LegendeVisible: boolean;
   };
 };
@@ -139,7 +139,7 @@ export type ParagrapheFetchedData = {
   __component: string;
   Titre: string;
   Texte: string;
-  Image: {data: StrapiItem};
+  Image: { data: StrapiItem };
   LegendeVisible: boolean;
 };
 
@@ -149,13 +149,13 @@ export type ParagrapheCustomFetchedData = ParagrapheFetchedData & {
 
 export type ImageFetchedData = {
   __component: string;
-  Image: {data: StrapiItem};
+  Image: { data: StrapiItem };
   LegendeVisible: boolean;
 };
 
 export type GallerieFetchedData = {
   __component: string;
-  Gallerie: {data: StrapiItem[]};
+  Gallerie: { data: StrapiItem[] };
   NombreColonnes: number;
   Legende: string;
   LegendeVisible: boolean;

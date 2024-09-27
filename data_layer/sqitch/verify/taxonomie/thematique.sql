@@ -2,8 +2,6 @@
 
 BEGIN;
 
-select id, thematique_id, sous_thematique
-from sous_thematique
-where false;
+SELECT 1/COUNT(*) FROM thematique WHERE md_id = 'agriculture_alimentation';
 
 ROLLBACK;

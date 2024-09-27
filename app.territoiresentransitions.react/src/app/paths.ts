@@ -12,7 +12,7 @@ export const resetPwdPath = authPaths.resetPwd;
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';
 export const invitationMailParam = 'email';
-export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}`;
+export const invitationLandingPath = `${invitationPath}/:${invitationIdParam}/:${invitationMailParam}/`;
 
 export const profilPath = '/profil';
 export const monComptePath = `${profilPath}/mon-compte`;
@@ -69,6 +69,7 @@ export const collectiviteTousLesIndicateursPath = `${collectiviteIndicateursBase
 export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateursBasePath}/collectivite`;
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
 export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
+export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
@@ -190,6 +191,17 @@ export const makeCollectiviteIndicateursUrl = ({
         .replace(`:${collectiviteParam}`, collectiviteId.toString())
         .replace(`:${indicateurViewParam}`, indicateurView || '')
         .replace(`:${indicateurIdParam}`, indicateurId?.toString() || '');
+
+export const makeCollectiviteTrajectoirelUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteTrajectoirePath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
 
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());

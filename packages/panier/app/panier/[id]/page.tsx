@@ -1,15 +1,8 @@
-'use server';
-
-import React from 'react';
-import {notFound} from 'next/navigation';
-import dynamic from 'next/dynamic';
-import {extractIdsFromParam} from 'src/utils/extractIdsFromParam';
-import {fetchNiveaux, fetchPanier, fetchThematiques} from './utils';
+import { extractIdsFromParam } from '@tet/panier/src/utils/extractIdsFromParam';
+import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
-
-const TrackPageView = dynamic(() => import('components/TrackPageView'), {
-  ssr: false,
-});
+import { fetchNiveaux, fetchPanier, fetchThematiques } from './utils';
+import { TrackPageView } from '@tet/ui';
 
 /**
  * La page d'un panier d'action
@@ -28,8 +21,8 @@ async function Page({
   params,
   searchParams,
 }: {
-  params: {id: string};
-  searchParams: {[key: string]: string | string[] | undefined};
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const panierId = params.id;
   const thematique_ids = extractIdsFromParam(searchParams['t'] as string);
@@ -41,7 +34,7 @@ async function Page({
     panierId,
     thematique_ids,
     budget_ids,
-    temps_ids,
+    temps_ids
   );
 
   if (!panier) return notFound();
@@ -54,17 +47,12 @@ async function Page({
     <>
       <TrackPageView
         pageName="panier/panier"
-        // @ts-ignore : l'import dynamique du composant semble générer une
-        // erreur de typage erronée sur la ligne suivante (en important
-        // directement le composant depuis @tet/ui l'erreur disparait, mais on
-        // ne peut pas le faire car le wrapping avec la directive `'use client'`
-        // est nécessaire)
         properties={{
           collectivite_preset: panier.collectivite_preset,
           panier_id: panier.id,
         }}
       />
-      <PagePanier {...{panier, budgets, temps, thematiques}} />
+      <PagePanier {...{ panier, budgets, temps, thematiques }} />
     </>
   );
 }

@@ -2,19 +2,17 @@ import os
 from dataclasses import dataclass
 from glob import glob
 from pathlib import Path
-from typing import List, Literal, Tuple, Dict
+from typing import Dict, List, Literal, Tuple
 
 import marshmallow_dataclass
-from business.utils.find_duplicates import find_duplicates
-from business.utils.markdown_import.markdown_parser import (
-    build_markdown_parser,
-    MarkdownParserError,
-)
-from business.utils.markdown_import.markdown_utils import load_md
-from business.utils.models.actions import ActionId
 from marshmallow import ValidationError
 
-from business.utils.models.regles import RegleType, ActionRegles, Regle
+from business.utils.find_duplicates import find_duplicates
+from business.utils.markdown_import.markdown_parser import (
+    MarkdownParserError, build_markdown_parser)
+from business.utils.markdown_import.markdown_utils import load_md
+from business.utils.models.actions import ActionId
+from business.utils.models.regles import ActionRegles, Regle, RegleType
 
 # Literals
 # ---------
@@ -113,6 +111,8 @@ def convert_regles_from_markdown_folder(folder_path: str):
 
     # Vérifie que les règles de personnalisations sont correctes
     _check_personnalisations_consistency(personnalisations)
+
+    personnalisations.sort(key=lambda personnalisation: personnalisation.action_id)
 
     return personnalisations
 

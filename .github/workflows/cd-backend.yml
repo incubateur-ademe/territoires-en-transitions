@@ -23,23 +23,43 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Build and push front deps image
-        run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
-          +front-deps-builder
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Build and push backend image
         run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
-          +backend-build
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
+          +backend-docker
           --ENV_NAME=${{ github.event.inputs.target }}
+
+  deploy-backend:
+    name: Déploie le backend
+    needs: build-backend
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
+      - name: Login into registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+      - name: Deploy app on Koyeb
+        run: >
+          earthly
+          --use-inline-cache --save-inline-cache
+          +backend-deploy
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}

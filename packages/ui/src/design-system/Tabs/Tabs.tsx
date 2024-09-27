@@ -78,7 +78,7 @@ export const Tabs = ({
                 <button
                   className={classNames(
                     // styles communs
-                    'px-3 py-1 font-bold w-max',
+                    'flex items-center px-3 py-1 font-bold w-max',
                     // variante au survol
                     'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
                     {
@@ -97,16 +97,33 @@ export const Tabs = ({
                   role="tab"
                   id={`tab-${index}`}
                   aria-selected={isActive ? 'true' : 'false'}
+                  title={element.props.title}
                   onClick={() => handleChange(index)}
                 >
-                  {element.props.icon && (
-                    <Icon
-                      icon={element.props.icon}
-                      size={size}
-                      className="mr-1"
-                    />
-                  )}
+                  {element.props.icon &&
+                    (!element.props.iconPosition ||
+                      element.props.iconPosition === 'left') && (
+                      <Icon
+                        icon={element.props.icon}
+                        size={size}
+                        className={classNames(
+                          'mr-1',
+                          element.props.iconClassName
+                        )}
+                      />
+                    )}
                   {element.props.label}
+                  {element.props.icon &&
+                    element.props.iconPosition === 'right' && (
+                      <Icon
+                        icon={element.props.icon}
+                        size={size}
+                        className={classNames(
+                          'ml-1',
+                          element.props.iconClassName
+                        )}
+                      />
+                    )}
                 </button>
               </li>
             );

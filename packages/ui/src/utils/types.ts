@@ -7,7 +7,10 @@ import {
 /** Propriétés HTML d'une div */
 export type DivHTMLProps = HTMLAttributes<HTMLDivElement>;
 /** Propriétés HTML d'un bouton */
-export type ButtonHTMLProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export type ButtonHTMLProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  [key: `data-${string}`]: unknown;
+};
+
 /** Propriétés HTML d'un lien */
 export type AnchorHTMLProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 

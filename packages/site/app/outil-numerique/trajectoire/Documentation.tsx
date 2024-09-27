@@ -1,9 +1,9 @@
 'use client';
 
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Markdown from '@components/markdown/Markdown';
-import Section from '@components/sections/Section';
-import {Button, Icon} from '@tet/ui';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { Button, Icon } from '@tet/ui';
 
 type DocumentationProps = {
   titre: string;

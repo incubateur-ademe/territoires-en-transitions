@@ -1,17 +1,17 @@
 'use client';
 
-import Card from '@components/cards/Card';
-import CardsWrapper from '@components/cards/CardsWrapper';
-import Markdown from '@components/markdown/Markdown';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
+import Card from '@tet/site/components/cards/Card';
+import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
+import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type MethodeProps = {
   titre: string;
   description1: string;
-  exemples: {id: number; legende: string; image?: StrapiItem}[];
+  exemples: { id: number; legende: string; image?: StrapiItem }[];
   detailExemples: string;
   description2: string;
   alerte: string;
@@ -59,7 +59,7 @@ const Methode = ({
           'max-w-4xl md:grid-cols-3': colNumbers === 3,
         })}
       >
-        {exemples.map(exemple => (
+        {exemples.map((exemple) => (
           <Card
             className="!gap-0"
             key={exemple.id}

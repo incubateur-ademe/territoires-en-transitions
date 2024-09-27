@@ -1,9 +1,8 @@
+import { Icon, IconSize } from '@tet/ui/design-system/Icon';
+import { buttonThemeClassnames } from './theme';
+import { ButtonContentProps, ButtonSize, ButtonVariant } from './types';
 import classNames from 'classnames';
-
-import {Notification} from '../Notification';
-import {Icon, IconSize} from '@design-system/Icon';
-import {buttonThemeClassnames} from './theme';
-import {ButtonContentProps, ButtonSize, ButtonVariant} from './types';
+import { Notification } from '../Notification';
 
 const getIconSize = (
   size: ButtonSize,

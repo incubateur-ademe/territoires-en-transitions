@@ -34,6 +34,7 @@ const ModaleAcces = ({
       render={({descriptionId}) => (
         <FormSectionGrid formSectionId={descriptionId}>
           <Checkbox
+            data-test="FicheToggleConfidentialite"
             variant="switch"
             label="Fiche action en mode privé"
             message="Si le mode privé est activé, la fiche action n'est plus

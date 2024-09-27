@@ -1,5 +1,8 @@
-import {ITEM_ALL, itemAllOption} from '@design-system/Select/SelectFilter';
-import {naturalSort} from '../../utils/naturalSort';
+import {
+  ITEM_ALL,
+  itemAllOption,
+} from '@tet/ui/design-system/Select/SelectFilter';
+import { naturalSort } from '../../utils/naturalSort';
 
 /**
  * Types partagés entre tous les composants selects
@@ -9,7 +12,7 @@ import {naturalSort} from '../../utils/naturalSort';
 /** Type du champ valeur d'une option */
 export type OptionValue = number | string;
 /** Type de base d'une option générique */
-export type Option = {value: OptionValue; label: string; disabled?: boolean};
+export type Option = { value: OptionValue; label: string; disabled?: boolean };
 /** Type d'une liste d'options dans un sélecteur */
 export type OptionSection = {
   title: string;
@@ -39,7 +42,7 @@ export const getFlatOptions = (selectOptions: SelectOption[]): Option[] =>
 
 /** Extrait le label d'une option dans une liste d'options */
 export const getOptionLabel = (optionValue: OptionValue, options: Option[]) =>
-  options.find((v: Option) => v.value?.toString() === optionValue?.toString())
+  options.find((v: Option) => v.value?.toString() === optionValue.toString())
     ?.label;
 
 /** Tri de façon naturelle (1, 2, 11, 40, 'a', 'b') une liste d'options par ordre alpha-numérique */
@@ -50,7 +53,7 @@ export const sortOptionByAlphabet = (
   const optionArray: Option[] = [];
   const sectionArray: OptionSection[] = [];
 
-  options.forEach(option => {
+  options.forEach((option) => {
     if (isSingleOption(option)) {
       option.value !== ITEM_ALL && optionArray.push(option);
     } else {
@@ -64,7 +67,7 @@ export const sortOptionByAlphabet = (
   );
 
   // sort sections
-  sectionArray.forEach(section => {
+  sectionArray.forEach((section) => {
     section.options.sort((a, b) =>
       naturalSort(a.label.toUpperCase(), b.label.toUpperCase())
     );
@@ -73,7 +76,7 @@ export const sortOptionByAlphabet = (
   const sortedOptions = [...optionArray, ...sectionArray];
 
   /** Remet l'option de désélection au début de la liste si présente */
-  if (getFlatOptions(options).some(o => o.value === ITEM_ALL)) {
+  if (getFlatOptions(options).some((o) => o.value === ITEM_ALL)) {
     return [itemAllOption, ...sortedOptions];
   }
 
@@ -99,7 +102,7 @@ export const filterOptions = (
     }
 
     if (isOptionSection(currentOption)) {
-      const filteredOptions = currentOption.options.filter(option =>
+      const filteredOptions = currentOption.options.filter((option) =>
         option.label.toLowerCase().includes(filterValue.toLowerCase())
       );
       if (filteredOptions.length > 0) {

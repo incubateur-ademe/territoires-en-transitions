@@ -1,9 +1,9 @@
 'use client';
 
-import {Button} from '@tet/ui';
-import Section from '@components/sections/Section';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { Button } from '@tet/ui';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type HeaderTrajectoireProps = {
   titre: string;

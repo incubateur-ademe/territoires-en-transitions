@@ -1,7 +1,7 @@
 'use server';
 
-import NoResult from '@components/info/NoResult';
-import {getStrapiData} from './utils';
+import NoResult from '@tet/site/components/info/NoResult';
+import { getStrapiData } from './utils';
 import HeaderTrajectoire from './HeaderTrajectoire';
 import PresentationTrajectoire from './PresentationTrajectoire';
 import Methode from './Methode';
@@ -9,12 +9,12 @@ import Webinaire from './Webinaire';
 import Calcul from './Calcul';
 import Documentation from './Documentation';
 import TemoignagesTrajectoire from './TemoignagesTrajectoire';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 
 export async function generateMetadata(
-  {params}: {params: {}},
-  parent: ResolvingMetadata,
+  { params }: { params: {} },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

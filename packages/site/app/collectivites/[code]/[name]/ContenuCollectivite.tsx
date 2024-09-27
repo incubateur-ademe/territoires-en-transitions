@@ -1,7 +1,7 @@
-import TestimonialSlideshow from '@components/slideshow/TestimonialSlideshow';
-import EmbededVideo from '@components/video/EmbededVideo';
+import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
+import EmbededVideo from '@tet/site/components/video/EmbededVideo';
 import classNames from 'classnames';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import ActionCollectivite from './ActionCollectivite';
 
 type ContenuCollectiviteProps = {
@@ -25,7 +25,7 @@ type ContenuCollectiviteProps = {
 };
 
 const ContenuCollectivite = ({
-  contenu: {video, video_en_haut, temoignages, actions},
+  contenu: { video, video_en_haut, temoignages, actions },
 }: ContenuCollectiviteProps) => {
   return (
     <div className="col-span-full md:col-span-7 lg:col-span-8 flex flex-col gap-10 xl:gap-12">
@@ -46,7 +46,7 @@ const ContenuCollectivite = ({
         />
       )}
       {actions.length > 0 &&
-        actions.map(action => (
+        actions.map((action) => (
           <ActionCollectivite key={action.id} action={action} />
         ))}
     </div>

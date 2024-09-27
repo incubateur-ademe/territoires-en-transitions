@@ -1,11 +1,11 @@
 'use client';
 
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import {Badge, Icon} from '@tet/ui';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
+import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {getFormattedNumber} from 'src/utils/getFormattedNumber';
 
 type CollectiviteHeaderProps = {
   collectivite: {
@@ -99,7 +99,7 @@ const CollectiviteHeader = ({
               {
                 'pb-0.5 hover:p-0 hover:border-b-2 flex items-end gap-2 w-fit':
                   !!annuaireUrl,
-              },
+              }
             )}
           >
             {!annuaireUrl ? (
@@ -143,7 +143,9 @@ const CollectiviteHeader = ({
           </p>
 
           {/* Badges avec nombre d'habitants et type de collectivité */}
-          <div className={classNames('flex gap-2 flex-wrap', {'mb-6': !!url})}>
+          <div
+            className={classNames('flex gap-2 flex-wrap', { 'mb-6': !!url })}
+          >
             {!!population_totale && (
               <Badge
                 title={`${getFormattedNumber(population_totale)} habitants`}
@@ -170,7 +172,7 @@ const CollectiviteHeader = ({
         {logo && (
           <div
             className="absolute md:static right-8 top-0 -translate-y-3/4 md:translate-y-0 h-fit max-w-[250px]"
-            style={{boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)'}}
+            style={{ boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.3)' }}
           >
             <StrapiImage
               data={logo}

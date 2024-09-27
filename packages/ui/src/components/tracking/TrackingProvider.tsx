@@ -1,7 +1,7 @@
-import posthog, {PostHog} from 'posthog-js';
-import {PostHogProvider} from 'posthog-js/react';
+import posthog, { PostHog } from 'posthog-js';
+import { PostHogProvider } from 'posthog-js/react';
 import React from 'react';
-import {getConsent} from './Consent';
+import { getConsent } from './Consent';
 
 /**
  * Renvoi les vars d'env. pour le tracking depuis un module next js
@@ -11,7 +11,7 @@ export const getNextTrackingEnv = () => {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   const env = process.env.NODE_ENV;
 
-  return {host, key, env};
+  return { host, key, env };
 };
 
 /**
@@ -27,7 +27,7 @@ export const createTrackingClient = ({
   env?: string;
 }) => {
   if (typeof window === 'undefined') {
-    return;
+    return posthog;
   }
 
   const is_dev = env === 'development';
@@ -36,7 +36,7 @@ export const createTrackingClient = ({
     console.warn(
       `Le tracking PostHog n'est pas configuré, les variables d'env sont absentes.`
     );
-    return;
+    return posthog;
   }
 
   // en mode dev, on envoie les données à PostHog, sinon on passe par le `rewrites` de `next.config.mjs`
@@ -48,7 +48,7 @@ export const createTrackingClient = ({
     persistence: getConsent() ? 'cookie' : 'memory',
     capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
 
-    loaded: posthog => {
+    loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
   });

@@ -7,11 +7,16 @@ When(
     const parent = resolveSelector(this, elem);
     cy.get(parent.selector)
       .find('input[type=file]')
-      .selectFile({
-        contents: Cypress.Buffer.from(fileContent),
-        fileName,
-        lastModified: Date.now(),
-      });
+      .selectFile(
+        [
+          {
+            contents: Cypress.Buffer.from(fileContent),
+            fileName,
+            lastModified: Date.now(),
+          },
+        ],
+        {force: true}
+      );
   }
 );
 
@@ -21,11 +26,16 @@ When(
     const parent = resolveSelector(this, elem);
     cy.get(parent.selector)
       .find('input[type=file]')
-      .selectFile({
-        contents: Cypress.Buffer.alloc(parseInt(fileSize) * 1024 * 1024),
-        fileName,
-        lastModified: Date.now(),
-      });
+      .selectFile(
+        [
+          {
+            contents: Cypress.Buffer.alloc(parseInt(fileSize) * 1024 * 1024),
+            fileName,
+            lastModified: Date.now(),
+          },
+        ],
+        {force: true}
+      );
   }
 );
 

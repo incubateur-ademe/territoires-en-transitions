@@ -1,6 +1,6 @@
 'use server';
 
-import NoResult from '@components/info/NoResult';
+import NoResult from '@tet/site/components/info/NoResult';
 import Temoignages from './Temoignages';
 import Accompagnement from './Accompagnement';
 import AccueilBanner from './AccueilBanner';
@@ -8,7 +8,7 @@ import Newsletter from './Newsletter';
 import DemandeContact from './DemandeContact';
 import Communaute from './Communaute';
 import Objectifs from './Objectifs';
-import {getData} from './utils';
+import { getData } from './utils';
 
 const Accueil = async () => {
   const data = await getData();

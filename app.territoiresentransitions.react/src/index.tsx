@@ -1,9 +1,10 @@
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import * as Sentry from '@sentry/react';
-import {App} from 'app/App';
-import {ENV} from 'environmentVariables';
-import 'css';
+import { App } from './app/App';
+import { ENV } from './environmentVariables';
 import React from 'react';
+
+import './css';
 
 // traçage des perf. et erreurs
 if (ENV.sentry_dsn) {

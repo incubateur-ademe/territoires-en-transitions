@@ -1,8 +1,12 @@
 import {Theme} from '@nivo/core';
+import {preset} from '@tet/ui';
+
+const colorTheme = preset.theme.extend.colors;
 
 export const theme: Theme = {
   fontFamily: '"Marianne", arial, sans-serif',
   fontSize: 12,
+  textColor: colorTheme.primary[9],
   axis: {
     legend: {
       text: {
@@ -10,10 +14,16 @@ export const theme: Theme = {
         fontSize: 14,
       },
     },
+    ticks: {
+      text: {
+        fontWeight: 'bolder',
+      },
+    },
   },
   legends: {
     text: {
       fontSize: 12,
+      fontWeight: 'bolder',
     },
   },
   tooltip: {

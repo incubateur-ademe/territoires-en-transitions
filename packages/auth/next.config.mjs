@@ -1,5 +1,15 @@
-/** @type {import('next').NextConfig} */
+import {composePlugins, withNx} from '@nx/next';
+
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
 const nextConfig = {
+  nx: {
+    // Set this to true if you would like to use SVGR
+    // See: https://github.com/gregberge/svgr
+    svgr: false,
+  },
+
   // active le mode strict pour détecter les problèmes en dev
   reactStrictMode: true,
   // active la minification
@@ -35,11 +45,16 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/ingest/:path*",
-        destination: "https://eu.posthog.com/:path*",
+        source: '/ingest/:path*',
+        destination: 'https://eu.posthog.com/:path*',
       },
     ];
   },
 };
 
-export default nextConfig;
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+];
+
+export default composePlugins(...plugins)(nextConfig);

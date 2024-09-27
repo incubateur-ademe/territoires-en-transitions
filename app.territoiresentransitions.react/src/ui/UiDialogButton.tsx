@@ -14,16 +14,15 @@ interface UiDialogButtonProps {
   'data-test'?: string;
 }
 
-const defaultProps = {
-  useFrBtn: true,
-};
-
-export const UiDialogButton = (props: UiDialogButtonProps) => (
-  <div onClick={event => event.stopPropagation()}>
+export const UiDialogButton = ({
+  useFrBtn = true,
+  ...props
+}: UiDialogButtonProps) => (
+  <div onClick={(event) => event.stopPropagation()}>
     <button
       data-test={`btn-${props['data-test']}`}
-      className={classNames({'fr-btn': props.useFrBtn}, props.buttonClasses)}
-      onClick={e => {
+      className={classNames({ 'fr-btn': useFrBtn }, props.buttonClasses)}
+      onClick={(e) => {
         e.preventDefault();
         props.setOpened(true);
       }}
@@ -48,5 +47,3 @@ export const UiDialogButton = (props: UiDialogButtonProps) => (
     </Dialog>
   </div>
 );
-
-UiDialogButton.defaultProps = defaultProps;

@@ -1,9 +1,9 @@
-import MasonryGallery from '@components/galleries/MasonryGallery';
+import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
 import {
   IndicateurArtificialisation,
   Indicateurs,
-} from 'app/collectivites/utils';
-import {StrapiItem} from 'src/strapi/StrapiItem';
+} from '@tet/site/app/collectivites/utils';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
 import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
 
@@ -35,7 +35,7 @@ const IndicateursCollectivite = ({
     <MasonryGallery
       className="col-span-full md:col-span-7 lg:col-span-8"
       maxCols={2}
-      breakpoints={{md: 768, lg: 1024}}
+      breakpoints={{ md: 768, lg: 1024 }}
       gap="gap-0 md:gap-10 xl:gap-12"
       data={[
         <IndicateurArtificialisationSols

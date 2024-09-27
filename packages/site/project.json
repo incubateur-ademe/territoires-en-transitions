@@ -1,0 +1,15 @@
+{
+  "name": "@tet/site",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/site",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["@tet/ui"],
+  "targets": {
+    "dev": {
+      "options": {
+        "port": 3001
+      }
+    }
+  }
+}

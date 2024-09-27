@@ -9,8 +9,8 @@ import {
   TrackPageView,
   useEventTracker,
 } from '@tet/ui';
-import {MailSendMessage} from '@components/Login/MailSendMessage';
-import {ResendMessage} from '@components/ResendMessage';
+import {MailSendMessage} from '@tet/auth/components/Login/MailSendMessage';
+import {ResendMessage} from '@tet/auth/components/ResendMessage';
 
 export type VerifyOTPData = {
   email: string;
@@ -78,7 +78,7 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
     const otp = validateOTP(data.otp);
     if (otp && defaultValues.email) {
       onSubmit?.({email: defaultValues.email, otp});
-      // @ts-expect-error
+      // @ts-expect-error on veut pas gérer l'erreur
       eventTracker('cta_submit', {});
     }
   });

@@ -197,6 +197,9 @@ When(
 When(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
 });
+When(/^je clique sur le bouton invisible "([^"]*)"$/, function (btnName) {
+  cy.get(resolveSelector(this, btnName).selector).click({force: true});
+});
 When(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
   // le bouton radio natif est masqué par la version stylé alors on clique sur le libellé qui le suit immédiatement
   cy.get(resolveSelector(this, btnName).selector + '+label').click();
@@ -369,7 +372,8 @@ When(
       '{selectall}{backspace}' + tag
     );
     cy.get(`[data-test=${selecteur}-creer-tag]`).click();
-    clickOutside();
-    cy.get(`[data-test=${selecteur}]`).contains(tag).should('be.visible');
+    cy.get(`[data-test=${selecteur}-options]`)
+      .contains(tag)
+      .should('be.visible');
   }
 );

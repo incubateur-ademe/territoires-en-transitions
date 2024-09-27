@@ -1,10 +1,11 @@
 type ListeActeursProps = {
+  dataTest?: string;
   titre: string;
   liste: string[] | undefined;
   picto: (className: string) => React.ReactNode;
 };
 
-const ListeActeurs = ({titre, liste, picto}: ListeActeursProps) => {
+const ListeActeurs = ({titre, liste, picto, dataTest}: ListeActeursProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-3">
@@ -16,7 +17,7 @@ const ListeActeurs = ({titre, liste, picto}: ListeActeursProps) => {
 
       <div className="flex items-center gap-3">
         <div className="w-11 shrink-0" />
-        <ul className="list-disc list-inside text-sm mb-0">
+        <ul className="list-disc list-inside text-sm mb-0" data-test={dataTest}>
           {liste && liste.length ? (
             liste.map((elt, index) => (
               <li key={`${elt}-${index}`} className="text-primary-10">

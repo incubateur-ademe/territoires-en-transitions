@@ -1,7 +1,7 @@
-import {Button} from '@design-system/Button';
-import {ButtonProps} from '@design-system/Button/types';
+import { Button } from '@tet/ui/design-system/Button';
+import { ButtonProps } from '@tet/ui/design-system/Button/types';
 import classNames from 'classnames';
-import {Dispatch, ReactElement, SetStateAction} from 'react';
+import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 type HeaderMenuProps = {
   /** Menu accès rapide */
@@ -28,7 +28,7 @@ const HeaderMenu = ({
       <div
         className={classNames(
           'mx-auto px-4 lg:px-6 xl:max-w-7xl 2xl:max-w-8xl xl:px-2 text-sm',
-          {'py-3 h-full': openedMenu}
+          { 'py-3 h-full': openedMenu }
         )}
       >
         {/* Bouton de fermeture du menu mobile */}

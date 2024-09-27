@@ -1,11 +1,11 @@
 'use client';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {StrapiItem} from 'src/strapi/StrapiItem';
-import {StrapiImage} from '@components/strapiImage/StrapiImage';
-import Markdown from '@components/markdown/Markdown';
-import {Button} from '@tet/ui';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { Button } from '@tet/ui';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 const splitContent = (content: string, limit: number) => {
   let newContent = content.slice(0, limit);
@@ -23,7 +23,7 @@ type ActionCollectiviteProps = {
 };
 
 const ActionCollectivite = ({
-  action: {titre, contenu: contenuInitial, image},
+  action: { titre, contenu: contenuInitial, image },
 }: ActionCollectiviteProps) => {
   const [contenuOpen, setContenuOpen] = useState(false);
   const limitContent = 700;
@@ -31,7 +31,7 @@ const ActionCollectivite = ({
   // enlève les sauts de ligne en trop et les lignes vides
   const contenu = contenuInitial
     .split('\n')
-    .map(s => s.trim())
+    .map((s) => s.trim())
     .filter(Boolean)
     .join('\n');
 
@@ -75,7 +75,7 @@ const ActionCollectivite = ({
 
         {estTronque && (
           <Button
-            onClick={() => setContenuOpen(prevState => !prevState)}
+            onClick={() => setContenuOpen((prevState) => !prevState)}
             variant="underlined"
           >
             {contenuOpen ? 'Lire moins' : 'Lire plus'}

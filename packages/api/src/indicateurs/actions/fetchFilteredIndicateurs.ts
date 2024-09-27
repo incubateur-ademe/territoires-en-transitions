@@ -123,8 +123,7 @@ export async function fetchFilteredIndicateurs(
   // une recherche par id ou si un des filtres complémentaires est actif)
   const filtrerParParent =
     !filtresOptions.estPerso &&
-    filters.categorieNoms?.length &&
-    !filters.categorieNoms.find(nom => nom === 'crte') &&
+    !filters.categorieNoms?.find(nom => nom === 'crte') &&
     !searchById &&
     !Object.values(filtrerPar).includes(true);
 

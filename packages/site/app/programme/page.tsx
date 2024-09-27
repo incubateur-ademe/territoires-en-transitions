@@ -4,17 +4,17 @@ import Services from './Services';
 import Benefices from './Benefices';
 import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
-import NoResult from '@components/info/NoResult';
-import {getStrapiData} from './utils';
-import {Metadata, ResolvingMetadata} from 'next';
-import {getUpdatedMetadata} from 'src/utils/getUpdatedMetadata';
+import NoResult from '@tet/site/components/info/NoResult';
+import { getStrapiData } from './utils';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import Contact from './Contact';
 import Compte from './Compte';
 import CollectivitesEngagees from './CollectivitesEngagees';
 
 export async function generateMetadata(
-  params: {params: {}},
-  parent: ResolvingMetadata,
+  params: { params: unknown },
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
   const strapiData = await getStrapiData();

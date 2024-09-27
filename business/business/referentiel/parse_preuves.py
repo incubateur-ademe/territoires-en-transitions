@@ -1,16 +1,16 @@
-from dataclasses import asdict, dataclass
-from glob import glob
 import json
 import os
+from dataclasses import asdict, dataclass
+from glob import glob
 from pathlib import Path
 from typing import List, Tuple
-
 
 import marshmallow_dataclass
 from marshmallow import ValidationError
 
 from business.utils.find_duplicates import find_duplicates
-from business.utils.markdown_import.markdown_parser import build_markdown_parser
+from business.utils.markdown_import.markdown_parser import \
+    build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 
 
@@ -63,6 +63,8 @@ def convert_preuves_markdown_folder_to_json(folder_path: str, json_filename: str
         file_preuves, file_errors = parse_preuves_from_markdown(md_file)
         preuves += file_preuves
         errors += file_errors
+    
+    preuves.sort(key=lambda preuve: preuve["id"])
 
     # Raise if any errors
     if errors:

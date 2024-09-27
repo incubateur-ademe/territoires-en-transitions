@@ -1,15 +1,15 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Referentiel} from 'types/litterals';
-import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
-import {PostgrestResponse} from '@supabase/supabase-js';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Database} from '@tet/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { Referentiel } from 'types/litterals';
+import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import { PostgrestResponse } from '@supabase/supabase-js';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { Database } from '@tet/api';
 
 type RPC_KEY = keyof Database['public']['Functions'];
 
 class RpcCache {
   cache: Record<string, PostgrestResponse<unknown>> = {};
-  promises: Record<string, PostgrestFilterBuilder<any, any, unknown>> = {};
+  promises: Record<string, unknown> = {};
   clearCache() {
     this.cache = {};
   }
@@ -45,7 +45,7 @@ const rpcCache = new RpcCache();
 export const referentielDownToAction = async (
   referentiel: Referentiel
 ): Promise<ActionDefinitionSummary[]> => {
-  const {data, error} = await rpcCache.rpc('referentiel_down_to_action', {
+  const { data, error } = await rpcCache.rpc('referentiel_down_to_action', {
     referentiel,
   });
 
@@ -63,7 +63,7 @@ export const actionDownToTache = async (
   referentiel: Referentiel,
   identifiant: string
 ): Promise<ActionDefinitionSummary[]> => {
-  const {data, error} = await rpcCache.rpc('action_down_to_tache', {
+  const { data, error } = await rpcCache.rpc('action_down_to_tache', {
     referentiel: referentiel,
     identifiant: identifiant,
   });
@@ -89,13 +89,13 @@ export interface ActionPreuve {
  * Returns action preuve text
  */
 export const actionPreuve = async (id: string): Promise<ActionPreuve> => {
-  const {data, error} = await rpcCache.rpc('action_preuve', {
+  const { data, error } = await rpcCache.rpc('action_preuve', {
     id: id,
   });
 
   if (error) {
     console.error('actionPreuve rpc error ', error);
-    return {id: id, preuve: ''};
+    return { id: id, preuve: '' };
   }
   return data as Object as ActionPreuve;
 };

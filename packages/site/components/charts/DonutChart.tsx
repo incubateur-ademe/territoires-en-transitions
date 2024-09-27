@@ -2,16 +2,16 @@
 
 'use client';
 
-import {PieTooltipProps, ResponsivePie} from '@nivo/pie';
-import {animated} from '@react-spring/web';
-import {getFormattedNumber} from 'src/utils/getFormattedNumber';
-import {defaultColors, theme as localTheme} from './chartsTheme';
+import { PieTooltipProps, ResponsivePie } from '@nivo/pie';
+import { animated } from '@react-spring/web';
+import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
+import { defaultColors, theme as localTheme } from './chartsTheme';
 
 /**
  * Découpe le label pour l'affichage sur plusieurs lignes
  */
 const splitLabel = (label: string) => {
-  let newLabel = [];
+  const newLabel = [];
   let currentLabel = label;
 
   while (currentLabel?.length > 0) {
@@ -29,7 +29,7 @@ const splitLabel = (label: string) => {
  * Conversion d'une valeur en %
  */
 const getPercentage = (value: number, data: number[]) => {
-  let percentage = value / data.reduce((sum, curVal) => sum + curVal, 0);
+  const percentage = value / data.reduce((sum, curVal) => sum + curVal, 0);
   if (percentage < 0.01) {
     return Math.round(percentage * 10000) / 100;
   } else {
@@ -42,7 +42,7 @@ const getPercentage = (value: number, data: number[]) => {
  */
 const getAbsolute = (value: number, decimals: number) => {
   return getFormattedNumber(
-    Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals),
+    Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals)
   );
 };
 
@@ -50,7 +50,7 @@ const getAbsolute = (value: number, decimals: number) => {
  * Construction de la tooltip
  */
 const getTooltip = (
-  {datum: {id, value, color}}: PieTooltipProps<{}>,
+  { datum: { id, value, color } }: PieTooltipProps<unknown>,
   data: {
     id: string;
     value: number;
@@ -59,7 +59,7 @@ const getTooltip = (
   unit: string,
   unitSingular: boolean,
   decimals: number,
-  onlyDisplayPercentageValue: boolean,
+  onlyDisplayPercentageValue: boolean
 ) => {
   return (
     <div
@@ -82,13 +82,13 @@ const getTooltip = (
           marginRight: '7px',
         }}
       />
-      <span style={{paddingBottom: '3px'}}>
+      <span style={{ paddingBottom: '3px' }}>
         {id} :{' '}
         <strong>
           {onlyDisplayPercentageValue
             ? `${getPercentage(
                 value,
-                data.map(d => d.value),
+                data.map((d) => d.value)
               )} %`
             : `${
                 value < 1
@@ -98,7 +98,7 @@ const getTooltip = (
           ${unit}${!!unit && value > 1 && !unitSingular ? 's' : ''}
           (${getPercentage(
             value,
-            data.map(d => d.value),
+            data.map((d) => d.value)
           )} %)`}
         </strong>
       </span>
@@ -116,7 +116,7 @@ export type DonutChartProps = {
   unit?: string;
   unitSingular?: boolean;
   decimals?: number;
-  customMargin?: {top: number; right: number; bottom: number; left: number};
+  customMargin?: { top: number; right: number; bottom: number; left: number };
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
   onlyDisplayPercentageValue?: boolean;
@@ -153,7 +153,7 @@ const DonutChart = ({
   arcLinkLabelsSkipAngle = 40,
   arcLinkLabelsThickness = 1,
 }: DonutChartProps) => {
-  let localData = data.map((d, index) => ({
+  const localData = data.map((d, index) => ({
     ...d,
     color: d.color
       ? d.color
@@ -166,8 +166,8 @@ const DonutChart = ({
     <ResponsivePie
       data={localData}
       theme={localTheme}
-      colors={{datum: 'data.color'}}
-      margin={customMargin ?? {top: 40, right: 40, bottom: 40, left: 40}}
+      colors={{ datum: 'data.color' }}
+      margin={customMargin ?? { top: 40, right: 40, bottom: 40, left: 40 }}
       startAngle={startAngle}
       endAngle={invertedDisplay ? -360 + startAngle : 360 + startAngle}
       innerRadius={0.6}
@@ -183,8 +183,8 @@ const DonutChart = ({
       arcLinkLabelsOffset={5}
       arcLinkLabelsTextOffset={5}
       arcLinkLabelsTextColor="#2A2A62"
-      arcLinkLabelsColor={{from: 'color'}}
-      arcLinkLabelComponent={datum => {
+      arcLinkLabelsColor={{ from: 'color' }}
+      arcLinkLabelComponent={(datum) => {
         const splitedLabel = splitLabel(datum.label);
         return (
           <animated.g opacity={datum.style.opacity}>
@@ -247,13 +247,13 @@ const DonutChart = ({
                 {displayPercentageValue || onlyDisplayPercentageValue
                   ? `${getPercentage(
                       datum.datum.value,
-                      localData.map(d => d.value),
+                      localData.map((d) => d.value)
                     )} %`
                   : `${
                       datum.datum.value < 1
                         ? getAbsolute(
                             datum.datum.value,
-                            decimals < 2 ? 2 : decimals,
+                            decimals < 2 ? 2 : decimals
                           )
                         : getAbsolute(datum.datum.value, decimals)
                     } ${unit}
@@ -265,21 +265,21 @@ const DonutChart = ({
       }}
       enableArcLabels={false}
       animate={true}
-      tooltip={datum =>
+      tooltip={(datum) =>
         getTooltip(
           datum,
           localData,
           unit,
           unitSingular,
           decimals,
-          onlyDisplayPercentageValue,
+          onlyDisplayPercentageValue
         )
       }
-      valueFormat={value =>
+      valueFormat={(value) =>
         displayPercentageValue || onlyDisplayPercentageValue
           ? `${getPercentage(
               value,
-              localData.map(d => d.value),
+              localData.map((d) => d.value)
             )} %`
           : `${
               value < 1
