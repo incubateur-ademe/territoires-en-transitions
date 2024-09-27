@@ -172,6 +172,23 @@ export class PanierAPI {
   }
 
   /**
+   * Renvoi l'id du panier d'une collectivité et le nombre d'actions de celui-ci
+   */
+  async getCollectivitePanierInfo(collectivite_id: number) {
+    const {data, error} = await this.supabase
+      .from('panier')
+      .select('id,actions:action_impact_state(isinpanier)')
+      .or(
+        `collectivite_id.eq.${collectivite_id},collectivite_preset.eq.${collectivite_id}`
+      )
+      .is('action_impact_state.isinpanier', true);
+    if (error) throw error;
+    return data?.[0]
+      ? {panierId: data[0].id, count: data[0].actions?.length ?? 0}
+      : null;
+  }
+
+  /**
    * Crée un plan d'action pour la collectivité à partir d'un panier
    *
    * Renvoi l'id du plan d'action créé.
