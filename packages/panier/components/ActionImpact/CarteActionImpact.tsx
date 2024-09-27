@@ -42,30 +42,33 @@ export const CarteActionImpact = ({
               </Button>
             ) : (
               <div className="flex flex-row gap-2 h-10">
-                <Button
-                  variant="outlined"
-                  size="xs"
-                  className={classNames({
-                    '!bg-primary-2': statut === 'en_cours',
-                  })}
-                  onClick={() => onUpdateStatus?.('en_cours')}
-                >
-                  En cours
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="xs"
-                  className={classNames({
-                    '!bg-primary-2': statut === 'realise',
-                  })}
-                  onClick={() => onUpdateStatus?.('realise')}
-                >
-                  Réalisée
-                </Button>
+                {statut === 'en_cours' || statut === 'realise' ? (
+                  <Button size="xs" onClick={() => onUpdateStatus?.(statut)}>
+                    Retirer des actions{' '}
+                    {statut === 'realise' ? 'réalisées' : 'en cours'}
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      size="xs"
+                      onClick={() => onUpdateStatus?.('en_cours')}
+                    >
+                      En cours
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="xs"
+                      onClick={() => onUpdateStatus?.('realise')}
+                    >
+                      Réalisée
+                    </Button>
 
-                <Button size="xs" onClick={() => handleToggleSelect(true)}>
-                  Ajouter au panier
-                </Button>
+                    <Button size="xs" onClick={() => handleToggleSelect(true)}>
+                      Ajouter au panier
+                    </Button>
+                  </>
+                )}
               </div>
             )}
             <span className="text-xs font-medium -mb-1">
