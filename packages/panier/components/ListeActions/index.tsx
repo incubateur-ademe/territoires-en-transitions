@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import {useSearchParams} from 'next/navigation';
 import {
   ActionImpactFourchetteBudgetaire,
@@ -5,7 +6,14 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
-import {PanierOngletName, Tab, Tabs} from '@tet/ui';
+import {
+  Alert,
+  Button,
+  PanierOngletName,
+  SITE_BASE_URL,
+  Tab,
+  Tabs,
+} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import FiltresActions from '@tet/panier/components/FiltresActions';
@@ -92,12 +100,55 @@ const ListeActions = ({
               !actionsFiltrees.length ? (
               <ListeVide />
             ) : (
-              <ListeActionsFiltrees
-                actionsListe={actionsFiltrees}
-                onUpdateStatus={onUpdateStatus}
-                onToggleSelected={onToggleSelected}
-                {...{budgets, temps}}
-              />
+              <>
+                {(tab.status === 'en_cours' || tab.status === 'realise') && (
+                  <Alert
+                    className="mb-6"
+                    title="Souhaitez-vous ajouter ces actions à votre panier ?"
+                    footer={
+                      tab.status === 'realise' ? (
+                        <div className="inline">
+                          Valorisez ces actions "réalisées" sur l'&nbsp;
+                          <Button
+                            className="inline-flex mr-1"
+                            variant="underlined"
+                            href={`${SITE_BASE_URL}/outil-numerique`}
+                            external
+                          >
+                            outil numérique
+                          </Button>
+                          aux côtés des actions en cours et à venir pour
+                          constituer et piloter un plan d'action sur l'outil
+                          numérique. Il vous suffit de cocher la case "Ajouter
+                          les actions classées comme “réalisées” au niveau du
+                          panier à droite.
+                        </div>
+                      ) : (
+                        <div className="inline">
+                          Pour retrouver ces actions "en cours" sur l'&nbsp;
+                          <Button
+                            className="inline-flex mr-1"
+                            variant="underlined"
+                            href={`${SITE_BASE_URL}/outil-numerique`}
+                            external
+                          >
+                            outil numérique
+                          </Button>
+                          et les piloter, il vous suffit de cocher la case
+                          "Ajouter les actions classées comme “en cours” au
+                          niveau du panier à droite.
+                        </div>
+                      )
+                    }
+                  />
+                )}
+                <ListeActionsFiltrees
+                  actionsListe={actionsFiltrees}
+                  onUpdateStatus={onUpdateStatus}
+                  onToggleSelected={onToggleSelected}
+                  {...{budgets, temps}}
+                />
+              </>
             )}
           </Tab>
         );
