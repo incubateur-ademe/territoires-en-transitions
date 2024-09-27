@@ -20,10 +20,13 @@ ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
-ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+
+# ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+# ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 
 # TODO changer le tag
-ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$GIT_COMMIT_SHORT_SHA
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$EARTHLY_GIT_SHORT_HASH
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
