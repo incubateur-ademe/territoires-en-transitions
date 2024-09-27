@@ -20,38 +20,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Build and push front deps image
-        run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
-          +front-deps-builder
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Build and push site image
         run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
           +site-build
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }} 
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }} 
+          --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
 
       - name: Deploy site on Koyeb
         run: >
-          earthly 
-          --use-inline-cache 
+          earthly
+          --use-inline-cache
           +site-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
