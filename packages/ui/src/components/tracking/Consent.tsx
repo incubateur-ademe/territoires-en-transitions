@@ -20,6 +20,7 @@ export const getNextConsentEnvId = (): string => {
       console.warn(
         `L'acceptation des cookies n'est pas configurée, la variable d'env Axeptio est manquante.`
       );
+      return '';
     }
     throw `La variable NEXT_PUBLIC_AXEPTIO_ID n'est pas définie`;
   }
