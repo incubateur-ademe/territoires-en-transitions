@@ -1,32 +1,52 @@
-import { DBClient, Tables } from '@tet/api/typeUtils';
+import { DBClient } from '@tet/api/typeUtils';
+import { objectToCamel } from 'ts-case-convert';
+import { Axe } from '../../domain';
 import {
   FetchOptions,
   fetchOptionsSchema,
   FetchSort,
 } from '../domain/fetch-options.schema';
+import { PlanActionType } from '../../domain/plan-action-type.schema';
 
-type TAxeRow = Tables<'axe'>;
+type FetchedPlanAction = Axe & {
+  type: PlanActionType | null;
+  axes: Axe[];
+};
 
 type TFetchedData = {
-  plans: TAxeRow[];
+  plans: FetchedPlanAction[];
 };
+
+type WithSelect = 'type' | 'axes';
 
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
   options?: FetchOptions;
+  withSelect?: WithSelect[];
 };
 
 export const planActionsFetch = async ({
   dbClient,
   collectiviteId,
   options = {},
+  withSelect = [],
 }: Props): Promise<TFetchedData> => {
   const { filtre, sort } = fetchOptionsSchema.parse(options);
 
+  const parts = new Set<string>();
+
+  for (const select of withSelect) {
+    if (select === 'type') {
+      parts.add('type:plan_action_type(*)');
+    } else if (select === 'axes') {
+      parts.add('axes:axe_enfant(*)');
+    }
+  }
+
   const query = dbClient
     .from('axe')
-    .select()
+    .select(['*', ...parts].join(','))
     .eq('collectivite_id', collectiviteId)
     .is('parent', null);
 
@@ -43,7 +63,14 @@ export const planActionsFetch = async ({
     throw new Error(error.message);
   }
 
-  return { plans: (data as TAxeRow[]) || [] };
+  const result = objectToCamel(data) as unknown as FetchedPlanAction[];
+
+  return {
+    plans: result.map((plan) => ({
+      ...plan,
+      type: plan.type?.id ? plan.type : null,
+    })),
+  };
 };
 
 function getFinalSort(sort?: Array<FetchSort>) {
