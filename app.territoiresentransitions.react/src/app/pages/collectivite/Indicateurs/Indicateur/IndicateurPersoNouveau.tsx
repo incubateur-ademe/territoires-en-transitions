@@ -39,7 +39,6 @@ const IndicateurPersoNouveau = ({
     titre: '',
     description: '',
     unite: '',
-    commentaire: '',
   };
 
   const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
@@ -59,8 +58,17 @@ const IndicateurPersoNouveau = ({
     },
   });
 
+  /**
+   * TEMPORARY: updating hardcoded commentaire prop, in order to link the description input
+   * to the `commentaire` column in `indicateur_collectivite` 
+   * -> step 2 of expand and contract pattern (
+   * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
+   * Next step: remove hardcoded commentaire prop and change 
+   * <FormikInput type="area" name="description" label="Description" /> to
+   * <FormikInput type="area" name="commentaire" label="Commentaire" />
+   */
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition: {...definition, thematiques}, ficheId: fiche?.id});
+    save({definition: {...definition, ['commentaire']: definition.description, thematiques}, ficheId: fiche?.id});
   };
 
   return (
