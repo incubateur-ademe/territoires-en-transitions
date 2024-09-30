@@ -17,8 +17,7 @@ import { IndicateurInfoLiees } from 'app/pages/collectivite/Indicateurs/Indicate
 import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useUpdateIndicateurPersoDefinition } from './useUpdateIndicateurPersoDefinition';
-import InputControlled from 'ui/shared/form/InputControlled';
+import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -26,8 +25,8 @@ export const IndicateurPredefiniBase = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
-  const { description, unite } = definition;
-  const { mutate: updateDefinition } = useUpdateIndicateurPersoDefinition();
+  const { commentaire } = definition;
+  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
 
@@ -38,7 +37,7 @@ export const IndicateurPredefiniBase = ({
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
-    name: 'description' | 'unite' | 'titre',
+    name: 'commentaire',
     value: string
   ) => {
     const collectivite_id = collectivite?.collectivite_id;
@@ -101,19 +100,9 @@ export const IndicateurPredefiniBase = ({
                 <TextareaControlled
                   data-test="desc"
                   className="fr-input fr-mt-1w !outline-none"
-                  initialValue={description}
+                  initialValue={commentaire}
                   readOnly={isReadonly}
-                  onBlur={(e) => handleUpdate('description', e.target.value)}
-                />
-              </Field>
-              <IndicateurInfoLiees definition={definition} />
-              <FichesActionLiees definition={definition} />
-              <Field title="Unité">
-                <InputControlled
-                  className="fr-input fr-mt-1w !outline-none"
-                  initialValue={unite}
-                  readOnly={isReadonly}
-                  onBlur={(e) => handleUpdate('unite', e.target.value)}
+                  onBlur={(e) => handleUpdate('commentaire', e.target.value)}
                 />
               </Field>
             </div>
