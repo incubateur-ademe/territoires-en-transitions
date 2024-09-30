@@ -101,10 +101,13 @@ export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
 
 export const ficheActionStatutOptions: Options<Statut> = [
   { value: 'À venir', label: 'À venir' },
+  { value: 'A discuter', label: 'À discuter' },
   { value: 'En cours', label: 'En cours' },
   { value: 'Réalisé', label: 'Réalisé' },
+  { value: 'En retard', label: 'En retard' },
   { value: 'En pause', label: 'En pause' },
   { value: 'Abandonné', label: 'Abandonné' },
+  { value: 'Bloqué', label: 'Bloqué' },
 ];
 
 export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =

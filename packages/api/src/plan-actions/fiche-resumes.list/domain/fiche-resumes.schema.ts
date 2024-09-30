@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 // Enums
 
@@ -8,6 +8,9 @@ export const statutSchema = z.enum([
   'Réalisé',
   'En pause',
   'Abandonné',
+  'Bloqué',
+  'En retard',
+  'A discuter',
 ]);
 
 export type Statut = z.infer<typeof statutSchema>;
