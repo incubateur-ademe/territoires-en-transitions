@@ -24,7 +24,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
       | Elément         | Condition | Valeur |
       | Personne pilote | contient  |        |
       | Service pilote  | contient  |        |
-      | Description     | absent    |        |
+      | Description     | contient  |        |
       | Thématique      | absent    |        |
 
     Quand je crée un tag "Michel Sapasse" avec le sélecteur de tag "personnes"
@@ -33,7 +33,7 @@ Fonctionnalité: Visualiser et éditer les indicateurs
       | Elément         | Condition | Valeur         |
       | Personne pilote | contient  | Michel Sapasse |
       | Service pilote  | contient  | Un service     |
-      | Description     | absent    |                |
+      | Description     | contient  |                |
       | Thématique      | absent    |                |
 
     Quand j'ajoute le résultat 123 pour l'année 2000
