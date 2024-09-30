@@ -30,7 +30,7 @@ export const saveData = async (
 		if (ficheToSave.titre != null) {
 			const {error, data} = await supabaseClient
 				.from('fiches_action')
-				.upsert(ficheToSave);
+				.insert(ficheToSave);
 			if (error) {
 				throw new Error(error.message);
 			}
