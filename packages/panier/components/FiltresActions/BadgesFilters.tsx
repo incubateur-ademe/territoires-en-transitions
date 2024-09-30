@@ -122,7 +122,6 @@ export const BadgesFilters = ({
               state="grey"
               uppercase={false}
               light
-              onClose={() => undefined}
             />
           </div>
         )}

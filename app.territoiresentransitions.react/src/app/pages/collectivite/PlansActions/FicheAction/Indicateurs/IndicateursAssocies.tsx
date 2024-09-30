@@ -4,11 +4,21 @@ import {FicheAction} from '../data/types';
 import Content from './SideMenu/Content';
 import EmptyCard from '../EmptyCard';
 import DatavizPicto from './DatavizPicto';
-import IndicateursListe from './IndicateursListe';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
 import LoadingCard from '../LoadingCard';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
+import {
+  getIndicateurGroup,
+  selectIndicateur,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import {
+  factoryIndicateurInsertToIndicateurListItem,
+  factoryIndicateurListItemToIndicateurInsert,
+} from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/utils';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
@@ -23,18 +33,37 @@ const IndicateursAssocies = ({
   fiche,
   updateFiche,
 }: IndicateursAssociesProps) => {
+  const collectiviteId = useCollectiviteId()!;
+
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const tracker = useEventTracker('app/fiche-action');
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id || null;
 
   if (isFicheLoading) return <LoadingCard />;
 
-  const {indicateurs} = fiche;
+  const selectedIndicateurs =
+    fiche.indicateurs?.map(i =>
+      factoryIndicateurInsertToIndicateurListItem(i)
+    ) ?? [];
 
-  const isEmpty = indicateurs === null || indicateurs.length === 0;
+  const isEmpty = selectedIndicateurs.length === 0;
+
+  const updateIndicateurs = (indicateur: TIndicateurListItem) => {
+    const selected =
+      selectedIndicateurs?.some(i => i.id === indicateur.id) ?? false;
+    const newIndicateurs = selectIndicateur({
+      indicateur,
+      selected,
+      selectedIndicateurs,
+    });
+    updateFiche({
+      ...fiche,
+      indicateurs: newIndicateurs.map(i =>
+        factoryIndicateurListItemToIndicateurInsert(i)
+      ),
+    });
+  };
 
   return (
     <>
@@ -102,9 +131,39 @@ const IndicateursAssocies = ({
           </div>
 
           {/* Liste des indicateurs */}
-          <IndicateursListe
-            {...{isReadonly, fiche, indicateurs, updateFiche}}
-          />
+          {/* <IndicateursListe {...{isReadonly, fiche, updateIndicateurs}} /> */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
+            {selectedIndicateurs.map(indicateur => (
+              <IndicateurCard
+                key={`${indicateur.id}-${indicateur.titre}`}
+                readonly={isReadonly}
+                definition={indicateur}
+                autoRefresh
+                isEditable
+                card={{external: true}}
+                href={makeCollectiviteIndicateursUrl({
+                  collectiviteId,
+                  indicateurView: getIndicateurGroup(indicateur.identifiant),
+                  indicateurId: indicateur.id,
+                  identifiantReferentiel: indicateur.identifiant,
+                })}
+                selectState={{
+                  // Dissocier
+                  selected: true,
+                  setSelected: i => updateIndicateurs(i),
+                }}
+                otherMenuActions={indicateur => [
+                  <Button
+                    onClick={() => updateIndicateurs(indicateur)} // Ajouter
+                    icon="link-unlink"
+                    title="Dissocier l'indicateur"
+                    size="xs"
+                    variant="grey"
+                  />,
+                ]}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -115,8 +174,8 @@ const IndicateursAssocies = ({
         setIsOpen={setIsPanelOpen}
       >
         <Content
-          selectedIndicateurs={indicateurs}
-          onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
+          selectedIndicateurs={selectedIndicateurs}
+          onSelect={indicateur => updateIndicateurs(indicateur)}
         />
       </SideMenu>
 

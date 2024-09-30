@@ -35,7 +35,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
           'right-0': isOpen,
         }
       )}
-      style={isOpen ? {boxShadow: '-5px 0px 10px 1px #ddd'} : {}}
+      style={isOpen ? {boxShadow: '-1px 0px 12px 1px #ddd'} : {}}
     >
       {/* Titre + bouton de fermeture */}
       <div className="p-4 flex justify-between items-center bg-white border-b border-b-grey-3 shadow-sm z-[801] top-0">
