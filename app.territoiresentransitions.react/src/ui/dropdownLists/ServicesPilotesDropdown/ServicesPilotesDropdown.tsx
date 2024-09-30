@@ -1,6 +1,6 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TFicheActionServicePiloteRow} from 'types/alias';
-import SelectWithUpdates from '../tags/SelectTags';
+import SelectTags from '../tags/SelectTags';
 import {useServicesPilotesListe} from './useServicesPilotesListe';
 
 type ServicesPilotesDropdownProps = Omit<
@@ -22,7 +22,7 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
   const {data, refetch} = useServicesPilotesListe();
 
   return (
-    <SelectWithUpdates
+    <SelectTags
       {...props}
       dataTest={props.dataTest ?? 'ServicePilote'}
       queryKey="services_pilotes"

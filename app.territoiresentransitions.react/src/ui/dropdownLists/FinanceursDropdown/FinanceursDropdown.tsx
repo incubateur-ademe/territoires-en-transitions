@@ -1,7 +1,7 @@
 import {SelectMultipleProps} from '@tet/ui';
 import {TFinanceurTagInsert} from 'types/alias';
 import {useFinanceursListe} from './useFinanceursListe';
-import SelectWithUpdates from '../tags/SelectTags';
+import SelectTags from '../tags/SelectTags';
 
 type FinanceursDropdownProps = Omit<
   SelectMultipleProps,
@@ -22,7 +22,7 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
   const {data, refetch} = useFinanceursListe();
 
   return (
-    <SelectWithUpdates
+    <SelectTags
       {...props}
       queryKey="financeurs"
       tagTableName="financeur_tag"

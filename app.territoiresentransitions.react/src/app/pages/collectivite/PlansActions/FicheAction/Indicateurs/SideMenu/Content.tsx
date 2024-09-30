@@ -5,19 +5,27 @@ import {Checkbox, Field, Input} from '@tet/ui';
 
 import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = {
-  selectedIndicateurs: Indicateur[] | null;
-  onSelect: (indicateurs: Indicateur[]) => void;
+  selectedIndicateurs: TIndicateurListItem[] | null;
+  onSelect: (indicateur: TIndicateurListItem) => void;
 };
 
 const Content = ({selectedIndicateurs, onSelect}: Props) => {
   const [filters, setFilters] = useState<Indicateurs.FetchFiltre>({});
 
-  const {data: definitions, isLoading: isDefinitionsLoading} =
-    useFilteredIndicateurDefinitions({filtre: filters});
+  /** Texte de recherche pour l'input */
+  const [search, setSearch] = useState<string>();
+
+  /** Texte de recherche avec debounced pour l'appel */
+  const [debouncedSearch, setDebouncedSearch] = useState<string>();
+
+  const { data: definitions, isLoading: isDefinitionsLoading } =
+    useFilteredIndicateurDefinitions({
+      filtre: { ...filters, text: debouncedSearch },
+    });
 
   const [selectedIndicateursState, setSelectedIndicateursState] =
     useState(selectedIndicateurs);
@@ -26,18 +34,15 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
     setSelectedIndicateursState(selectedIndicateurs);
   }, [selectedIndicateurs]);
 
-  const handleSelect = (indicateurs: Indicateur[]) => {
-    setSelectedIndicateursState(indicateurs);
-    onSelect(indicateurs);
-  };
-
   return (
     <div className="p-4">
-      <div className=" relative flex flex-col gap-4 z-[1]">
+      <div className="relative flex flex-col gap-4">
         <Field title="Rechercher par nom ou description" small>
           <Input
             type="search"
-            onSearch={text => setFilters({...filters, text})}
+            onSearch={(v) => setDebouncedSearch(v)}
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
             placeholder="Rechercher"
             displaySize="sm"
           />
@@ -55,6 +60,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
               })
             }
             small
+            dropdownZindex={900}
           />
         </Field>
         <Checkbox
@@ -87,6 +93,16 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
             })
           }
         />
+        <Checkbox
+          label="Indicateur de la collectivité"
+          checked={filters.estFavorisCollectivite}
+          onChange={event =>
+            setFilters({
+              ...filters,
+              estFavorisCollectivite: event.target.checked ?? undefined,
+            })
+          }
+        />
       </div>
       <hr className="p-0 my-6 w-full h-px" />
       <div className="mb-4 font-bold">
@@ -104,7 +120,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         definitions={definitions}
         isLoading={isDefinitionsLoading}
         selectedIndicateurs={selectedIndicateursState}
-        onSelect={handleSelect}
+        onSelect={onSelect}
       />
     </div>
   );

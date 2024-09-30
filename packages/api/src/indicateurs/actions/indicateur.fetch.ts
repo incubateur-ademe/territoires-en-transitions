@@ -1,5 +1,4 @@
 import { objectToCamel } from 'ts-case-convert';
-import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
@@ -8,7 +7,7 @@ import { Groupement } from '../../collectivites/shared/domain/groupement.schema'
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../fiche_actions/domain/resume.schema';
 import { Action } from '../../referentiel/domain/action.schema';
-import { Tag, Thematique } from '../../shared/domain';
+import { Thematique } from '../../shared/domain';
 import { Personne } from '../../shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
 import { Source, SourceMetadonnee } from '../domain';
@@ -205,28 +204,6 @@ export async function selectIndicateurServicesId(
 }
 
 /**
- * Récupère les identifiants des tags services d'un indicateur et d'une collectivité
- * @param dbClient client supabase
- * @param indicateurId identifiant de l'indicateur
- * @param collectiviteId identifiant de la collectivité
- * @return liste de tags services
- */
-export async function selectIndicateurServices(
-  dbClient: DBClient,
-  indicateurId: number,
-  collectiviteId: number
-): Promise<Tag[]> {
-  const { data } = await dbClient
-    .from('indicateur_service_tag')
-    .select('...service_tag!inner(*)')
-    .eq('indicateur_id', indicateurId)
-    .eq('collectivite_id', collectiviteId)
-    .returns<ObjectToSnake<Tag>[]>();
-
-  return data ? (objectToCamel(data) as Tag[]) : [];
-}
-
-/**
  * Récupère les identifiants des thématiques d'un indicateur
  * @param dbClient client supabase
  * @param indicateurId identifiant de l'indicateur
@@ -275,7 +252,7 @@ export async function selectIndicateurFiches(
   indicateurId: number,
   collectiviteId: number
 ): Promise<FicheResume[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('fiche_action_indicateur')
     .select(`...fiche_resume!inner(*)`)
     .eq('indicateur_id', indicateurId)
@@ -332,7 +309,7 @@ export async function selectIndicateurListItems(
     // Tous les indicateurs personnalisés
     query.eq('collectivite_id', collectiviteId);
   }
-  const { data, error } = await query;
+  const { data } = await query;
   // Filtre les indicateurs privés
   let dataFilter = data ? data : [];
   if (predefini) {
@@ -481,7 +458,7 @@ export async function selectIndicateurValeur(
   dbClient: DBClient,
   valeurId: number
 ): Promise<Valeur | null> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_valeur')
     .select(`${COLONNES_VALEURS.join(',')}`)
     .eq('id', valeurId);
@@ -588,7 +565,7 @@ export async function selectIndicateurComplet(
   indicateurId: number,
   collectiviteId: number
 ): Promise<IndicateurDefinitionComplet | null> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION.join(',')}, ` +
@@ -624,7 +601,7 @@ export async function selectIndicateurChartInfo(
   indicateurId: number,
   collectiviteId: number
 ): Promise<IndicateurChartInfo | null> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_definition')
     .select(
       `${COLONNES_DEFINITION_COURTE.join(',')}, groupement_id,` +

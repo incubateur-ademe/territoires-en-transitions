@@ -33,6 +33,7 @@ export const Checkbox = forwardRef(
       labelClassname,
       variant = 'checkbox',
       id,
+      checked,
       ...remainingProps
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
@@ -45,6 +46,7 @@ export const Checkbox = forwardRef(
           id={inputId}
           type="checkbox"
           ref={ref}
+          checked={checked ?? false}
           className={classNames(
             // styles communs
             '!appearance-none shrink-0 checked:before:icon-check-line checked:bg-primary checked:disabled:bg-primary-5',

@@ -1,6 +1,6 @@
 import {
-  Indicateur,
   TIndicateurChartInfo,
+  TIndicateurListItem,
 } from 'app/pages/collectivite/Indicateurs/types';
 import {IndicateurViewParamOption} from 'app/paths';
 
@@ -40,10 +40,10 @@ export const selectIndicateur = ({
   selected,
   selectedIndicateurs,
 }: {
-  indicateur: Indicateur;
+  indicateur: TIndicateurListItem;
   selected: boolean;
-  selectedIndicateurs?: Indicateur[] | null;
-}): Indicateur[] => {
+  selectedIndicateurs?: TIndicateurListItem[] | null;
+}): TIndicateurListItem[] => {
   if (selected) {
     return selectedIndicateurs?.filter(i => i.id !== indicateur.id) ?? [];
   } else {

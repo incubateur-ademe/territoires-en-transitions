@@ -61,6 +61,8 @@ export type SelectProps = {
   placement?: Placement;
   /** Pour que la largeur des options ne dépasse pas la largeur du bouton d'ouverture */
   containerWidthMatchButton?: boolean;
+  /** z-index custom pour le dropdown */
+  dropdownZindex?: number;
   /** Affiche une version plus petite du sélecteur */
   small?: boolean;
 };
@@ -98,6 +100,7 @@ export const SelectBase = (props: SelectProps) => {
     isBadgeItem = false,
     parentId,
     containerWidthMatchButton = true,
+    dropdownZindex,
     disabled = false,
     small = false,
   } = props;
@@ -158,6 +161,7 @@ export const SelectBase = (props: SelectProps) => {
       placement={placement}
       offsetValue={0}
       containerWidthMatchButton={containerWidthMatchButton}
+      dropdownZindex={dropdownZindex}
       disabled={disabled}
       render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>

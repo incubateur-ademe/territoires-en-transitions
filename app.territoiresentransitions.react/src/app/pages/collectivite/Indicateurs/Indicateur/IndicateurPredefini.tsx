@@ -45,6 +45,16 @@ export const IndicateurPredefiniBase = ({
         ) : (
           /** ou juste le détail si il n'y a pas d'enfants */
           <>
+            <div className="flex items-center mb-8 gap-4">
+              <BadgeACompleter a_completer={!definition.rempli} />
+              {definition.participationScore && (
+                <Badge
+                  title={`Participe au score ${referentielToName.cae}`}
+                  uppercase={false}
+                  state="grey"
+                />
+              )}
+            </div>
             {!!sources?.length && (
               <ImportSourcesSelector
                 definition={definition}
@@ -61,16 +71,6 @@ export const IndicateurPredefiniBase = ({
               fileName={definition.titre}
             />
 
-            <div className="flex items-center mt-10 mb-6 gap-4">
-              <BadgeACompleter a_completer={!definition.rempli} />
-              {definition.participationScore && (
-                <Badge
-                  title={`Participe au score ${referentielToName.cae}`}
-                  uppercase={false}
-                  state="grey"
-                />
-              )}
-            </div>
             <IndicateurValuesTabs
               definition={definition}
               importSource={currentSource}

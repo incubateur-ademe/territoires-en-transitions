@@ -38,6 +38,8 @@ type DropdownFloaterProps = {
   offsetValue?: OffsetOptions;
   /** ClassName pour le container avec fond blanc  */
   containerClassName?: string;
+  /** z-index custom pour le dropdown */
+  dropdownZindex?: number;
   'data-test'?: string;
   disabled?: boolean;
 };
@@ -53,6 +55,7 @@ export const DropdownFloater = ({
   offsetValue = 4,
   disabled,
   containerClassName,
+  dropdownZindex,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -140,7 +143,9 @@ export const DropdownFloater = ({
                     left: x,
                     // Applique uniquement le z-index quand le dropdown
                     // n'est pas contenu dans un autre floater (ex. modale)
-                    zIndex: parentNodeId
+                    zIndex: dropdownZindex
+                      ? dropdownZindex
+                      : parentNodeId
                       ? preset.theme.extend.zIndex.dropdown
                       : 1,
                   },
