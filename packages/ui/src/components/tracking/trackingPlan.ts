@@ -28,7 +28,11 @@ export type PageProperties<N extends PageName> =
 /**
  * Liste des onglets de la page panier
  */
-export type PanierOngletName = 'selection' | 'réalisées' | 'en cours';
+export type PanierOngletName =
+  | 'selection'
+  | 'réalisées'
+  | 'en cours'
+  | 'importees';
 
 /** Pour le tracking de page sans données additionnelles */
 type NoProps = {
