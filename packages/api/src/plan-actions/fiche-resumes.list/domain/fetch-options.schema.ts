@@ -39,6 +39,7 @@ export const filtreSchema = filtreRessourceLieesSchema
     utilisateurPiloteIds: true,
     personnePiloteIds: true,
     utilisateurReferentIds: true,
+    partenaireIds: true,
     personneReferenteIds: true,
     structurePiloteIds: true,
     servicePiloteIds: true,

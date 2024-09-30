@@ -20,11 +20,13 @@ const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   utilisateurReferentIds: 'ur',
+  partenaireIds: 'pt',
   personneReferenteIds: 'pr',
   structurePiloteIds: 'sp',
   servicePiloteIds: 'sv',
   thematiqueIds: 't',
   financeurIds: 'f',
+  cibles: 'c',
   page: 'p',
   sort: 'sort',
 };
