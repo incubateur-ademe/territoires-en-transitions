@@ -26,31 +26,25 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
+      - uses: earthly/actions-setup@v1
         with:
-          version: v0.7.20
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Build and push front deps image
-        run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
-          +front-deps-builder
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Build and push app image
         run: >
-          earthly 
-          --use-inline-cache --save-inline-cache --push 
-          --platform=linux/amd64 
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
           +app-build
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }} 
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   deploy-app:
     name: Déploie l'app
@@ -62,19 +56,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Deploy app on Koyeb
         run: >
-          earthly 
-          --use-inline-cache 
+          earthly
+          --use-inline-cache --save-inline-cache
           +app-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
@@ -89,19 +81,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions/setup-earthly@v1
-        with:
-          version: v0.7.20
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Deploy test app on Koyeb
         run: >
-          earthly 
-          --use-inline-cache 
+          earthly
+          --use-inline-cache --save-inline-cache
           +app-deploy-test
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
