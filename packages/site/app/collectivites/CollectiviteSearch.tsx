@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
-import AutocompleteInputSelect from '@tet/site/components/select/AutocompleteInputSelect';
+import { Select } from '@tet/ui';
 import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
-import { useFilteredCollectivites } from '../../app/useFilteredCollectivites';
+import { useFilteredCollectivites } from '../useFilteredCollectivites';
 
 type CollectiviteSearchProps = {
   filteredCollectivites: { value: string; label: string }[];
@@ -20,24 +20,18 @@ const CollectiviteSearch = ({
   const router = useRouter();
 
   return (
-    <div className="mb-6">
-      <AutocompleteInputSelect
-        dsfrButton
-        containerWidthMatchButton
-        buttonClassName="!shadow-none !border-b-2 !border-[#000091]"
-        values={[]}
+    <div className="mx-auto w-96">
+      <Select
+        placeholder="Rechercher une collectivité"
+        debounce={500}
         options={filteredCollectivites}
-        onSelect={(values) => {
-          const name =
-            filteredCollectivites.find((c) => c.value === values[0])?.label ??
-            '';
-          router.push(`/collectivites/${values[0]}/${convertNameToSlug(name)}`);
-        }}
-        onInputChange={(value) => setSearch(value)}
-        placeholderText="Rechercher un EPCI, un syndicat, une commune, un PETR, un EPT"
         isLoading={isCollectivitesLoading}
-        debounce
-        externalOptionsFiltering
+        onChange={(value) => {
+          const name =
+            filteredCollectivites.find((c) => c.value === value)?.label ?? '';
+          router.push(`/collectivites/${value}/${convertNameToSlug(name)}`);
+        }}
+        onSearch={(value) => setSearch(value)}
       />
     </div>
   );
