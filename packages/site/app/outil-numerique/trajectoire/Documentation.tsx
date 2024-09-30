@@ -5,6 +5,9 @@ import Markdown from '@tet/site/components/markdown/Markdown';
 import Section from '@tet/site/components/sections/Section';
 import { Button, Icon } from '@tet/ui';
 
+const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference-VF.pdf';
+const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
+
 type DocumentationProps = {
   titre: string;
   description: string;
@@ -36,9 +39,14 @@ const Documentation = ({
           </div>
           <div>
             <p className="text-base text-primary-10 mb-4">{descriptionExcel}</p>
-            {/* <Button variant="outlined" size="xs">
+            <Button
+              variant="outlined"
+              size="xs"
+              href={`/outil-numerique/trajectoire/${XLSX_FILENAME}`}
+              download={XLSX_FILENAME}
+            >
               Télécharger le fichier Excel
-            </Button> */}
+            </Button>
           </div>
         </div>
 
@@ -49,9 +57,14 @@ const Documentation = ({
           </div>
           <div>
             <p className="text-base text-primary-10 mb-4">{descriptionPdf}</p>
-            {/* <Button variant="outlined" size="xs">
+            <Button
+              variant="outlined"
+              size="xs"
+              href={`/outil-numerique/trajectoire/${PDF_FILENAME}`}
+              download={PDF_FILENAME}
+            >
               Télécharger le PDF
-            </Button> */}
+            </Button>
           </div>
         </div>
       </CardsWrapper>
