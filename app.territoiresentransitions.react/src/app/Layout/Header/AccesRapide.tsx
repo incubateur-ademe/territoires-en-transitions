@@ -3,6 +3,7 @@ import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import MenuUtilisateur from './MenuUtilisateur';
 import {HeaderPropsWithModalState} from './types';
 import {AccesPanierAction} from './AccesPanierAction';
+import {Button} from '@tet/ui';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
@@ -26,24 +27,30 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
       ) : (
         <>
           <li>
-            <a
+            <Button
               data-test="signup"
+              className="text-primary-9"
+              variant="white"
+              size="sm"
+              icon="add-circle-line"
               href={signUpPath}
-              className="fr-btn fr-icon-add-circle-line"
               onClick={() => setModalOpened(false)}
             >
               Créer un compte
-            </a>
+            </Button>
           </li>
           <li>
-            <a
+            <Button
               data-test="signin"
+              className="text-primary-9"
+              variant="white"
+              size="sm"
+              icon="user-line"
               href={signInPath}
-              className="fr-btn fr-icon-account-line"
               onClick={() => setModalOpened(false)}
             >
               Se connecter
-            </a>
+            </Button>
           </li>
         </>
       )}
@@ -66,12 +73,15 @@ const Aide = () => {
   };
 
   return (
-    <button
+    <Button
       data-test="help"
-      className="fr-btn fr-fi-question-line"
+      className="text-primary-9"
+      variant="white"
+      size="sm"
+      icon="question-line"
       onClick={onClick}
     >
       Aide
-    </button>
+    </Button>
   );
 };
