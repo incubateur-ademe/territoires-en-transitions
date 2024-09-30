@@ -122,6 +122,20 @@ export async function insertIndicateurDefinition(
     );
   }
 
+  if (
+    data &&
+    data.length > 0 &&
+    indicateur.description != null
+  ) {
+    await dbClient
+    .from('indicateur_collectivite')
+    .insert({
+      indicateur_id: data[0].id,
+      collectivite_id: indicateur.collectiviteId,
+      commentaire: indicateur.description,
+    })
+  }
+
   if (error) {
     throw error;
   }
