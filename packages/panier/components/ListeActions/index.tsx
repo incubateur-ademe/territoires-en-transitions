@@ -71,6 +71,15 @@ const ListeActions = ({
     },
   ];
 
+  const actionsDejaImportees = actionsListe.filter(state => state.dejaImportee);
+  if (actionsDejaImportees.length) {
+    tabsList.push({
+      label: 'Fiches déjà importées',
+      shortName: 'importees',
+      status: 'importees',
+    });
+  }
+
   return (
     <Tabs
       onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
@@ -79,12 +88,15 @@ const ListeActions = ({
       tabsListClassName="!justify-start mb-0"
     >
       {...tabsList.map(tab => {
-        const actionsFiltrees = actionsListe.filter(
-          a =>
-            ((!a.statut && a.statut === tab.status) ||
-              (a.statut && a.statut.categorie_id === tab.status)) &&
-            (tab.status || !a.isinpanier),
-        );
+        const actionsFiltrees =
+          tab.shortName === 'importees'
+            ? actionsDejaImportees
+            : actionsListe.filter(
+                a =>
+                  ((!a.statut && a.statut === tab.status) ||
+                    (a.statut && a.statut.categorie_id === tab.status)) &&
+                  (tab.status || !a.isinpanier),
+              );
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
@@ -142,6 +154,14 @@ const ListeActions = ({
                     }
                   />
                 )}
+                {tab.shortName === 'importees' && (
+                  <Alert
+                    className="mb-4"
+                    state="info"
+                    title="Ces fiches action ont déjà été ajoutées à votre plan d’action sur l’outil numérique territoires en transitions, retrouvez les dans votre onglet connecté Plans d’action"
+                  />
+                )}
+
                 <ListeActionsFiltrees
                   actionsListe={actionsFiltrees}
                   onUpdateStatus={onUpdateStatus}
