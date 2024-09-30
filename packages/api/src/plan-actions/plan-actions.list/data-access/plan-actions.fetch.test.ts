@@ -1,8 +1,8 @@
 import { signIn, signOut } from '@tet/api/tests/auth';
-import { supabase } from '@tet/api/tests/supabase';
+import { dbAdmin, supabase } from '@tet/api/tests/supabase';
 import { planActionsFetch } from './plan-actions.fetch';
 import { FetchOptions } from '../domain/fetch-options.schema';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 const params = {
   dbClient: supabase,
@@ -71,5 +71,52 @@ test('Fetch avec sort par ordre alphabétique décroissant', async () => {
 
   titles.forEach((title, index) => {
     expect(sortedTitles[index]).toEqual(title);
+  });
+});
+
+describe('Fetch avec select', () => {
+  const PLAN_ID = 1;
+
+  beforeAll(async () => {
+    // Set type for plans d'action
+    await dbAdmin.from('axe').update({ type: 1 }).eq('plan', PLAN_ID);
+  });
+
+  afterAll(async () => {
+    // Reset type for plans d'action
+    await dbAdmin.from('axe').update({ type: null }).eq('plan', PLAN_ID);
+  });
+
+  test("Fetch avec l'objet type de plan", async () => {
+    const { plans } = await planActionsFetch({
+      ...params,
+      withSelect: ['type'],
+    });
+
+    for (const plan of plans) {
+      if (plan.plan === PLAN_ID) {
+        expect(plan.type).toMatchObject({
+          id: expect.any(Number),
+          type: expect.any(String),
+          detail: expect.any(String),
+          categorie: expect.any(String),
+        });
+      } else {
+        expect(plan.type).toBe(null);
+      }
+    }
+  });
+
+  test('Fetch avec les objets sous-axes', async () => {
+    const { plans } = await planActionsFetch({
+      ...params,
+      withSelect: ['axes'],
+    });
+
+    console.log(plans);
+
+    for (const plan of plans) {
+      expect(plan.axes).toEqual(expect.any(Array));
+    }
   });
 });
