@@ -153,5 +153,7 @@ WHERE (aia.action_impact_id = ($1).action.id);
 END;
 comment on function action_definition(action_impact_state) is 'La relation entre le state d''une action et ses actions du référentiel.';
 
+alter table action_impact_thematique add column ordre integer not null default 1;
+
 
 COMMIT;
