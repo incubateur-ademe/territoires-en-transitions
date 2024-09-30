@@ -3736,14 +3736,17 @@ export type Database = {
       action_impact_thematique: {
         Row: {
           action_impact_id: number
+          ordre: number
           thematique_id: number
         }
         Insert: {
           action_impact_id: number
+          ordre?: number
           thematique_id: number
         }
         Update: {
           action_impact_id?: number
+          ordre?: number
           thematique_id?: number
         }
         Relationships: [
@@ -25613,9 +25616,7 @@ export type Database = {
           referents: Database["public"]["CompositeTypes"]["personne"][] | null
           ressources: string | null
           restreint: boolean | null
-          resultats_attendus:
-            | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
-            | null
+          resultats_attendus: string[] | null
           services: Database["public"]["Tables"]["service_tag"]["Row"][] | null
           sous_thematiques:
             | Database["public"]["Tables"]["sous_thematique"]["Row"][]
