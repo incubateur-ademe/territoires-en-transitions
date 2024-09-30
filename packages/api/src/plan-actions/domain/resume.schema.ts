@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import {
-  niveauPrioritesSchema,
-  statutsSchema,
-} from '../fiche-resumes.list/domain/enum.schema';
 import { axeSchema } from './axe.schema';
 import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
+import {
+  niveauPrioriteSchema,
+  statutSchema,
+} from '@tet/api/plan-actions/fiche-resumes.list';
 
 /**
  * Schéma zod d'un résumé d'une fiche action
@@ -15,7 +15,7 @@ export const resumeSchema = z.object({
   dateFinProvisoire: z.string().date(),
   id: z.number(),
   modifiedAt: z.string().date(),
-  niveauPriorite: niveauPrioritesSchema,
+  niveauPriorite: niveauPrioriteSchema,
   pilotes: z
     .object({
       nom: z.string().nullable(),
@@ -26,7 +26,7 @@ export const resumeSchema = z.object({
     .array(),
   plans: axeSchema.array(),
   restreint: z.boolean(),
-  statut: statutsSchema,
+  statut: statutSchema,
   titre: z.string(),
 
   services: z
