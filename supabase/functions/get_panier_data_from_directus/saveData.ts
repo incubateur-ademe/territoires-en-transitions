@@ -90,11 +90,14 @@ export const saveActionImpact = async (
 
     // Upsert action_impact_thematique
     await supabaseClient.from("action_impact_thematique").delete().eq('action_impact_id', action.id);
+    let ordre = 1;
     for (let thematique of action.thematiques){
         const query = await supabaseClient.from("action_impact_thematique").insert({
             'action_impact_id' : action.id,
-            'thematique_id' : thematique.thematique_id
+            'thematique_id' : thematique.thematique_id,
+            'ordre' : ordre
         });
+        ordre ++;
 
         if(query?.error){
             console.log(`Action ${action.id} - Sauvegarde de la thématique ${thematique.thematique_id} : échec`);

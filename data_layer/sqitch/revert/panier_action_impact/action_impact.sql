@@ -2,6 +2,8 @@
 
 BEGIN;
 
+alter table action_impact_thematique drop column ordre;
+
 drop function action_definition(action_impact_state);
 drop function thematique(action_impact_state);
 drop function matches_competences(action_impact_state);

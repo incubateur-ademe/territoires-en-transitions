@@ -33,4 +33,8 @@ select id,
 from action_impact
 where false;
 
+select action_impact_id, thematique_id, ordre
+from action_impact_thematique
+where false;
+
 ROLLBACK;
