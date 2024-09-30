@@ -59,8 +59,7 @@ export const getStrapiData = async () => {
       },
       methode: {
         titre: trajectoiresData.methode_titre as unknown as string,
-        description1:
-          trajectoiresData.methode_description1 as unknown as string,
+        description: trajectoiresData.methode_description as unknown as string,
         exemples: (
           trajectoiresData.methode_exemples as unknown as {
             id: number;
@@ -72,11 +71,6 @@ export const getStrapiData = async () => {
           legende: ex.legende,
           image: ex.image ? ex.image.data : undefined,
         })),
-        detailExemples:
-          trajectoiresData.methode_exemples_detail as unknown as string,
-        description2:
-          trajectoiresData.methode_description2 as unknown as string,
-        alerte: trajectoiresData.methode_alerte as unknown as string,
         image: trajectoiresData.methode_image.data as unknown as StrapiItem,
       },
       webinaire: {
@@ -119,6 +113,7 @@ export const getStrapiData = async () => {
         titre: trajectoiresData.documentation_titre as unknown as string,
         description:
           trajectoiresData.documentation_description as unknown as string,
+        info: trajectoiresData.documentation_info as unknown as string,
         descriptionExcel:
           trajectoiresData.documentation_excel as unknown as string,
         descriptionPdf: trajectoiresData.documentation_pdf as unknown as string,

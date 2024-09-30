@@ -1529,7 +1529,7 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<"La m\u00E9thode s'appuie, pour chaque secteur, sur des pivots de territorialisation qui d\u00E9terminent la contribution du territoire \u00E0 la SNBC.">;
-    methode_description1: Attribute.RichText &
+    methode_description: Attribute.RichText &
       Attribute.Required &
       Attribute.DefaultTo<'Exemple - pour le secteur r\u00E9sidentiel, les pivots de territorialisation sont :'>;
     methode_exemples: Attribute.Component<'shared.vignette', true> &
@@ -1537,20 +1537,6 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
       Attribute.SetMinMax<{
         min: 2;
       }>;
-    methode_exemples_detail: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }> &
-      Attribute.DefaultTo<'Les consommations de chauffage sont par ailleurs modul\u00E9es par d\u00E9partement en int\u00E9grant une variable de rigueur climatique.'>;
-    methode_description2: Attribute.RichText &
-      Attribute.Required &
-      Attribute.DefaultTo<'\uD83D\uDC49 Ce principe est repris pour chaque secteur et permet ainsi de d\u00E9finir des trajectoires territorialis\u00E9es : adapt\u00E9es aux sp\u00E9cificit\u00E9s de chaque territoire.'>;
-    methode_alerte: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }> &
-      Attribute.DefaultTo<'Cette m\u00E9thodologie est destin\u00E9e \u00E0 toute maille de l\u2019EPCI \u00E0 la r\u00E9gion. Son principe et ses calculs restent valables pour la maille communale mais certaines donn\u00E9es n\u00E9cessaires au calcul ne sont pas disponibles \u00E0 cette \u00E9chelle.'>;
     methode_image: Attribute.Media;
     webinaire_titre: Attribute.String &
       Attribute.Required &
@@ -1596,6 +1582,8 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
     documentation_description: Attribute.RichText &
       Attribute.Required &
       Attribute.DefaultTo<'Retrouvez ici les principaux documents de l\u2019\u00E9tude pilot\u00E9e par l\u2019ADEME pour d\u00E9finir cette trajectoire SNBC territorialis\u00E9e'>;
+    documentation_info: Attribute.RichText &
+      Attribute.DefaultTo<'Nous vous recommandons d\u2019utiliser la plateforme depuis le compte de votre collectivit\u00E9 pour gagner du temps. Le mode int\u00E9gr\u00E9 \u00E0 la plateforme vous permettra d\u2019acc\u00E9der \u00E0 une visualisation plus confortable. L\u2019Excel t\u00E9l\u00E9charg\u00E9 depuis votre espace vous permettra de disposer du mod\u00E8le de calcul avec vos donn\u00E9es renseign\u00E9es'>;
     documentation_excel: Attribute.Text &
       Attribute.Required &
       Attribute.DefaultTo<'Mod\u00E8le de calcul de la trajectoire SNBC territorialis\u00E9e. Le fichier a \u00E9t\u00E9 con\u00E7u pour \u00EAtre autoporteur. Nous vous recommandons de vous approprier le fichier et la m\u00E9thode en d\u00E9butant par les onglets \u201CIntroduction\u201D et \u201CNotice\u201D.'>;

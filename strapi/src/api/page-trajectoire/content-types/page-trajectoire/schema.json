@@ -75,7 +75,7 @@
       "required": true,
       "maxLength": 255
     },
-    "methode_description1": {
+    "methode_description": {
       "type": "richtext",
       "default": "Exemple - pour le secteur résidentiel, les pivots de territorialisation sont :",
       "required": true
@@ -86,22 +86,6 @@
       "component": "shared.vignette",
       "required": true,
       "min": 2
-    },
-    "methode_exemples_detail": {
-      "type": "string",
-      "maxLength": 255,
-      "default": "Les consommations de chauffage sont par ailleurs modulées par département en intégrant une variable de rigueur climatique."
-    },
-    "methode_description2": {
-      "type": "richtext",
-      "default": "👉 Ce principe est repris pour chaque secteur et permet ainsi de définir des trajectoires territorialisées : adaptées aux spécificités de chaque territoire.",
-      "required": true
-    },
-    "methode_alerte": {
-      "type": "string",
-      "default": "Cette méthodologie est destinée à toute maille de l’EPCI à la région. Son principe et ses calculs restent valables pour la maille communale mais certaines données nécessaires au calcul ne sont pas disponibles à cette échelle.",
-      "required": true,
-      "maxLength": 255
     },
     "methode_image": {
       "type": "media",
@@ -162,6 +146,10 @@
       "type": "richtext",
       "default": "Retrouvez ici les principaux documents de l’étude pilotée par l’ADEME pour définir cette trajectoire SNBC territorialisée",
       "required": true
+    },
+    "documentation_info": {
+      "type": "richtext",
+      "default": "Nous vous recommandons d’utiliser la plateforme depuis le compte de votre collectivité pour gagner du temps. Le mode intégré à la plateforme vous permettra d’accéder à une visualisation plus confortable. L’Excel téléchargé depuis votre espace vous permettra de disposer du modèle de calcul avec vos données renseignées"
     },
     "documentation_excel": {
       "type": "text",

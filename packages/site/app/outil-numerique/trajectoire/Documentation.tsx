@@ -3,7 +3,7 @@
 import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
 import Markdown from '@tet/site/components/markdown/Markdown';
 import Section from '@tet/site/components/sections/Section';
-import { Button, Icon } from '@tet/ui';
+import { Alert, Button, Icon } from '@tet/ui';
 
 const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference-VF.pdf';
 const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
@@ -11,6 +11,7 @@ const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
 type DocumentationProps = {
   titre: string;
   description: string;
+  info: string;
   descriptionExcel: string;
   descriptionPdf: string;
 };
@@ -18,6 +19,7 @@ type DocumentationProps = {
 const Documentation = ({
   titre,
   description,
+  info,
   descriptionExcel,
   descriptionPdf,
 }: DocumentationProps) => {
@@ -31,6 +33,7 @@ const Documentation = ({
         texte={description}
         className="text-center paragraphe-22 paragraphe-primary-9 markdown_style"
       />
+      <Alert description={<Markdown texte={info} />} />
       <CardsWrapper cols={2}>
         {/* Excel */}
         <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex gap-5">

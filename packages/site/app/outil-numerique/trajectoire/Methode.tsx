@@ -10,23 +10,12 @@ import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type MethodeProps = {
   titre: string;
-  description1: string;
+  description: string;
   exemples: { id: number; legende: string; image?: StrapiItem }[];
-  detailExemples: string;
-  description2: string;
-  alerte: string;
   image: StrapiItem;
 };
 
-const Methode = ({
-  titre,
-  description1,
-  exemples,
-  detailExemples,
-  description2,
-  alerte,
-  image,
-}: MethodeProps) => {
+const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
   let colNumbers = 3;
 
   if (exemples.length === 2) {
@@ -46,9 +35,17 @@ const Methode = ({
       {/* Titre */}
       <h2 className="text-center text-primary-10 mb-0">{titre}</h2>
 
+      {/* Illustration */}
+      <StrapiImage
+        data={image}
+        className="max-h-[500px]"
+        containerClassName="mx-auto h-fit mt-8"
+        displayCaption={false}
+      />
+
       {/* Exemple */}
       <Markdown
-        texte={description1}
+        texte={description}
         className="paragraphe-primary-9 paragraphe-22 text-center markdown_style font-medium"
       />
 
@@ -77,30 +74,6 @@ const Methode = ({
           />
         ))}
       </CardsWrapper>
-
-      <Markdown
-        texte={detailExemples}
-        className="paragraphe-primary-9 paragraphe-16 text-center italic"
-      />
-
-      <div className="w-full max-w-lg h-[2px] bg-primary-4 mx-auto" />
-
-      {/* Info complémentaires */}
-      <Markdown
-        texte={description2}
-        className="paragraphe-primary-9 paragraphe-22 text-center markdown_style font-medium"
-      />
-
-      <div className="bg-[#FFE8BD] rounded-md p-6 text-center text-primary-9 text-lg font-bold">
-        {alerte}
-      </div>
-
-      <StrapiImage
-        data={image}
-        className="max-h-[500px]"
-        containerClassName="mx-auto h-fit mt-8"
-        displayCaption={false}
-      />
     </Section>
   );
 };
