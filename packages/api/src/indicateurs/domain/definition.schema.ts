@@ -33,6 +33,7 @@ export const indicateurDefinitionSchemaInsert = z.object({
   collectiviteId: z.number(),
   unite: z.string().optional(),
   description: z.string().optional(),
+  commentaire: z.string().optional(),
   thematiques: thematiqueSchema.array().optional(),
 });
 
