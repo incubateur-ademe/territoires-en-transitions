@@ -27,31 +27,27 @@ const Personnel = () => {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-10">
-      {modules.map((module) => {
-        if (module.type === 'indicateur.list') {
-          return (
-            <ModuleIndicateurs
-              key={module.slug}
-              view={'personnel'}
-              module={module}
-            />
-          );
-        }
-        if (module.type === 'fiche_action.list') {
-          return (
-            <ModuleFichesActions
-              key={module.slug}
-              view={'personnel'}
-              module={module}
-            />
-          );
-        }
-        return null;
-      })}
-    </div>
-  );
+  return modules.map((module) => {
+    if (module.type === 'indicateur.list') {
+      return (
+        <ModuleIndicateurs
+          key={module.slug}
+          view={'personnel'}
+          module={module}
+        />
+      );
+    }
+    if (module.type === 'fiche_action.list') {
+      return (
+        <ModuleFichesActions
+          key={module.slug}
+          view={'personnel'}
+          module={module}
+        />
+      );
+    }
+    return null;
+  });
 };
 
 export default Personnel;

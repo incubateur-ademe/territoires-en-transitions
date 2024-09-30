@@ -23,6 +23,7 @@ const View = ({ view, title, description, children }: Props) => {
       <h2 className="mb-4">{title}</h2>
       <p className="mb-12 text-lg text-grey-8">{description}</p>
       {/** Contenu principal */}
+      <div className="grid grid-cols-12 gap-10">{children}</div>
     </div>
   );
 };

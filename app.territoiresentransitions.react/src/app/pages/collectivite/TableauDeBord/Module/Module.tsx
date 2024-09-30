@@ -32,6 +32,9 @@ type Props = {
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
   children: React.ReactNode;
+  /** Classe donnée au container afin d'appliquer par exemple
+   *  le nombre de colonne à remplir dans la grille */
+  className?: string;
   /** Des boutons optionnels dans un fragment qui s'affichent au pied du module */
   footerButtons?: React.ReactNode;
 };
@@ -46,6 +49,7 @@ const Module = ({
   isLoading,
   isEmpty,
   children,
+  className,
   footerButtons,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +59,7 @@ const Module = ({
 
   if (isLoading) {
     return (
-      <ModuleContainer>
+      <ModuleContainer className={className}>
         <div className="m-auto">
           <SpinnerLoader className="w-8 h-8" />
         </div>
@@ -65,7 +69,12 @@ const Module = ({
 
   if (isEmpty) {
     return (
-      <ModuleContainer className="!gap-0 items-center text-center !bg-primary-0">
+      <ModuleContainer
+        className={classNames(
+          '!gap-0 items-center text-center !bg-primary-0',
+          className
+        )}
+      >
         <div className="mb-4">{symbole}</div>
         <h4 className="mb-2 text-primary-8">{title}</h4>
         <p className="m-0 font-bold text-primary-9">

@@ -10,7 +10,7 @@ const TdbVide = () => {
   const history = useHistory();
 
   return (
-    <div className="flex flex-col items-center p-12 text-center bg-primary-0 border border-primary-4 rounded-xl">
+    <div className="col-span-full flex flex-col items-center p-12 text-center bg-primary-0 border border-primary-4 rounded-xl">
       <PictoDashboard />
       <h3 className="mb-4 text-primary-8">
         Vous n'avez pas encore créé de plan d'action !
