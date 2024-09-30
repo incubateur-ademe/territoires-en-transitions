@@ -168,7 +168,7 @@ export class PanierAPI {
 
     const {data, error} = await builder.single<Panier>();
     if (error) throw error;
-    return data;
+    return this.ajouteActionsDejaImportees(data);
   }
 
   /**
@@ -186,6 +186,38 @@ export class PanierAPI {
     return data?.[0]
       ? {panierId: data[0].id, count: data[0].actions?.length ?? 0}
       : null;
+  }
+
+  /**
+   * Ajoute aux items du tableau `states` un nouveau flag `dejaImportee`
+   * si une action à impact est liée à une fiche action de la collectivité.
+   */
+  async ajouteActionsDejaImportees(panier: Panier) {
+    const collectiviteId =
+      panier?.collectivite_id ?? panier?.collectivite_preset;
+    if (!collectiviteId) {
+      return panier;
+    }
+
+    const {data, error} = await this.supabase
+      .from('fiche_action')
+      .select('action_impact_fiche_action!inner(action_impact_id)')
+      .eq('collectivite_id', collectiviteId);
+    if (error) throw error;
+    const actionsDejaImportees = data?.flatMap(row =>
+      row.action_impact_fiche_action.map(action => action.action_impact_id)
+    );
+    if (!actionsDejaImportees?.length) {
+      return panier;
+    }
+
+    return {
+      ...panier,
+      states: panier.states?.map(state => ({
+        ...state,
+        dejaImportee: actionsDejaImportees.includes(state.action.id),
+      })),
+    };
   }
 
   /**
