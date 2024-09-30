@@ -2,7 +2,11 @@ import { z } from 'zod';
 import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
-import { niveauPrioriteSchema, statutSchema } from './fiche-resumes.schema';
+import {
+  cibleSchema,
+  niveauPrioriteSchema,
+  statutSchema,
+} from './fiche-resumes.schema';
 
 export const modifiedSinceSchema = z.enum([
   'last-90-days',
@@ -16,6 +20,7 @@ export type ModifiedSince = z.infer<typeof modifiedSinceSchema>;
 export const filtreSpecifiqueSchema = z.object({
   statuts: statutSchema.array().optional(),
   priorites: niveauPrioriteSchema.array().optional(),
+  cibles: cibleSchema.array().optional(),
   modifiedSince: modifiedSinceSchema.optional(),
   texteNomOuDescription: z.string().optional(),
   budgetPrevisionnel: z.coerce.boolean().default(false).optional(),

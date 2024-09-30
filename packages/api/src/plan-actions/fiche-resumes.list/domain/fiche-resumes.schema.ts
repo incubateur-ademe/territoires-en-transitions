@@ -19,6 +19,22 @@ export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
 
 export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
 
+export const cibleSchema = z.enum([
+  'Grand public et associations',
+  'Public Scolaire',
+  'Autres collectivités du territoire',
+  'Acteurs économiques',
+  'Acteurs économiques du secteur primaire',
+  'Acteurs économiques du secteur secondaire',
+  'Acteurs économiques du secteur tertiaire',
+  'Partenaires',
+  'Collectivité elle-même',
+  'Elus locaux',
+  'Agents',
+]);
+
+export type Cible = z.infer<typeof cibleSchema>;
+
 // Fiche Résumé
 
 export const ficheResumeSchema = z.object({

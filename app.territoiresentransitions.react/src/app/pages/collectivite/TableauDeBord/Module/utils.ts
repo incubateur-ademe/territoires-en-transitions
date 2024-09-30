@@ -22,83 +22,70 @@ export const filtersToBadges = (data: FiltreKeys) => {
     if (key === 'utilisateurPilotes') {
       const users = data[key]?.map((user) => `${user.prenom} ${user.nom}`);
       users && pilotes.push(...users);
-    }
-    if (key === 'personnePilotes') {
+    } else if (key === 'personnePilotes') {
       const personnes = data[key]?.map((tag) => tag.nom);
       personnes && pilotes.push(...personnes);
-    }
-    if (key === 'utilisateurReferents') {
+    } else if (key === 'utilisateurReferents') {
       const users = data[key]?.map((user) => `${user.prenom} ${user.nom}`);
       users && referents.push(...users);
-    }
-    if (key === 'personneReferentes') {
+    } else if (key === 'personneReferentes') {
       const personnes = data[key]?.map((tag) => tag.nom);
       personnes && referents.push(...personnes);
-    }
-    if (key === 'thematiques') {
+    } else if (key === 'thematiques') {
       badgeValues.push(
         `Thématique : ${data[key]
           ?.map((thematique) => thematique.nom)
           .join(', ')}`
       );
-    }
-    if (key === 'categorieNoms') {
+    } else if (key === 'categorieNoms') {
       badgeValues.push(
         `Catégorie : ${data[key]
           ?.map((nom) => getCategorieLabel(nom))
           .join(', ')}`
       );
-    }
-    if (key === 'planActions') {
+    } else if (key === 'planActions') {
       badgeValues.push(
         `Plan d'action : ${data[key]
           ?.map((plan) => generateTitle(plan.nom))
           .join(', ')}`
       );
-    }
-    if (key === 'estComplet') {
+    } else if (key === 'estComplet') {
       badgeValues.push(`Complétion : ${data[key] ? 'Complet' : 'Incomplet'}`);
-    }
-    if (key === 'participationScore') {
+    } else if (key === 'participationScore') {
       data[key] && badgeValues.push('Participe au score CAE');
-    }
-    if (key === 'estPerso') {
+    } else if (key === 'estPerso') {
       data[key] && badgeValues.push('Indicateur personnalisé');
-    }
-    if (key === 'estConfidentiel') {
+    } else if (key === 'estConfidentiel') {
       data[key] && badgeValues.push('Indicateur privé');
-    }
-    if (key === 'budgetPrevisionnel') {
+    } else if (key === 'budgetPrevisionnel') {
       data[key] && badgeValues.push('Budget renseigné');
-    }
-    if (key === 'restreint') {
+    } else if (key === 'restreint') {
       data[key] && badgeValues.push('Confidentialité');
-    }
-    if (key === 'hasOpenData') {
+    } else if (key === 'hasOpenData') {
       data[key] && badgeValues.push('Données Open Data');
-    }
-    if (key === 'hasIndicateurLies') {
+    } else if (key === 'hasIndicateurLies') {
       data[key] && badgeValues.push('Indicateur(s) lié(s)');
-    }
-    if (key === 'priorites') {
+    } else if (key === 'priorites') {
       badgeValues.push(`Priorité : ${data[key]?.join(', ')}`);
-    }
-    if (key === 'statuts') {
+    } else if (key === 'statuts') {
       badgeValues.push(`Statut : ${data[key]?.join(', ')}`);
-    }
-    if (key === 'servicePilotes') {
+    } else if (key === 'servicePilotes') {
       badgeValues.push(
         `Direction ou service pilote : ${data[key]
           ?.map((service) => service.nom)
           .join(', ')}`
       );
-    }
-    if (key === 'financeurs') {
+    } else if (key === 'financeurs') {
       badgeValues.push(
         `Financeur : ${data[key]?.map((i) => i.nom).join(', ')}`
       );
-    }
-    if (key === 'modifiedSince') {
+    } else if (key === 'partenaires') {
+      badgeValues.push(
+        `Partenaire : ${data[key]?.map((i) => i.nom).join(', ')}`
+      );
+    } else if (key === 'cibles') {
+      badgeValues.push(`Cible : ${data[key]?.join(', ')}`);
+    } else if (key === 'modifiedSince') {
       badgeValues.push(
         `Sur les ${data[key]?.match(/\d+/)?.[0]} derniers jours`
       );
