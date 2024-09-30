@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 
-import {Icon, IconValue} from '../Icon';
+import { Icon, IconValue } from '../Icon';
 
-import {badgeClassnames} from './utils';
+import { badgeClassnames } from './utils';
 
 export type BadgeState =
   | 'default'
@@ -12,7 +12,8 @@ export type BadgeState =
   | 'new'
   | 'error'
   | 'info'
-  | 'grey';
+  | 'grey'
+  | 'custom';
 
 type Props = {
   /** Id pour les tests e2e */
@@ -86,7 +87,7 @@ export const Badge = ({
       {onClose && !disabled && (
         <div
           className="flex rounded-full cursor-pointer"
-          onClick={evt => {
+          onClick={(evt) => {
             evt.stopPropagation();
             onClose();
           }}
@@ -94,7 +95,7 @@ export const Badge = ({
           <Icon
             icon={icon}
             size={size === 'sm' ? 'xs' : 'sm'}
-            className={classNames(styles.icon, {'text-primary-7': !!onClose})}
+            className={classNames(styles.icon, { 'text-primary-7': !!onClose })}
           />
         </div>
       )}
