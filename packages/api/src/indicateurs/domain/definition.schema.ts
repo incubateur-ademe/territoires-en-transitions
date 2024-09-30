@@ -1,11 +1,11 @@
-import {z} from 'zod';
-import {valeurSchema} from './valeur.schema';
-import {tagSchema} from '../../shared/domain/tag.schema';
-import {actionSchema} from '../../referentiel/domain/action.schema';
-import {categorieSchema} from './categorie.schema';
-import {thematiqueSchema} from '../../shared/domain/thematique.schema';
-import {resumeSchema} from '../../fiche_actions/domain/resume.schema';
-import {personneSchema} from '../../shared/domain/personne.schema';
+import { z } from 'zod';
+import { valeurSchema } from './valeur.schema';
+import { tagSchema } from '../../shared/domain/tag.schema';
+import { actionSchema } from '../../referentiel/domain/action.schema';
+import { categorieSchema } from './categorie.schema';
+import { thematiqueSchema } from '../../shared/domain/thematique.schema';
+import { resumeSchema } from '../../plan-actions/domain/resume.schema';
+import { personneSchema } from '../../shared/domain/personne.schema';
 
 /**
  * Schéma zod à fusionner à une définition pour avoir les valeurs

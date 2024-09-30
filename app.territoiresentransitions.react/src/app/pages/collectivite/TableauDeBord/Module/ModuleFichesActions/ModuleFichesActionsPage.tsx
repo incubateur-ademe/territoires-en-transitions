@@ -1,7 +1,7 @@
 import {
   ModuleFicheActionsSelect,
   Slug,
-} from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import { TDBViewParam } from 'app/paths';
@@ -9,8 +9,8 @@ import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord
 import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import {
   getQueryKey,
-  useModuleFetch,
-} from 'app/pages/collectivite/TableauDeBord/Module/useModuleFetch';
+  usePersonalModuleFetch,
+} from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import ModulePage from '../ModulePage';
 import FichesActionListe, {
@@ -27,7 +27,8 @@ type Props = {
 const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: dataModule, isLoading: isModuleLoading } = useModuleFetch(slug);
+  const { data: dataModule, isLoading: isModuleLoading } =
+    usePersonalModuleFetch(slug);
   const module = dataModule as ModuleFicheActionsSelect;
 
   const trackEvent = useEventTracker(`app/tdb/personnel/${slug}`);

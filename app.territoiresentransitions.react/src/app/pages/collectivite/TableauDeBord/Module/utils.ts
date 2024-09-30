@@ -1,6 +1,6 @@
 import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 import { Indicateurs } from '@tet/api';
-import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
 

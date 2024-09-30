@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Button } from '@tet/ui';
 
-import { ModuleIndicateursSelect } from '@tet/api/collectivites/tableau_de_bord.show/domain/module.schema';
+import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -17,7 +17,7 @@ import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import Module from '../Module';
-import { getQueryKey } from '../useModulesFetch';
+import { getQueryKey } from '../usePersonalModulesFetch';
 
 type Props = {
   view: TDBViewParam;

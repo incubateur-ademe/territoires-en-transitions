@@ -1,5 +1,5 @@
-import {objectToCamel} from 'ts-case-convert';
-import {DBClient} from '../../../typeUtils';
+import { objectToCamel } from 'ts-case-convert';
+import { DBClient } from '@tet/api/typeUtils';
 
 import {
   FiltreRessourceLiees,
@@ -20,7 +20,7 @@ export async function filtreValuesFetch({
   dbClient,
   collectiviteId,
   filtre: unsafeFiltre,
-}: Input): Promise<{data: FiltreValues}> {
+}: Input): Promise<{ data: FiltreValues }> {
   const filtre = filtreRessourceLieesSchema.parse(unsafeFiltre);
 
   try {
@@ -70,7 +70,7 @@ export async function filtreValuesFetch({
     }
 
     if (relatedTables.size === 0) {
-      return {data: {}};
+      return { data: {} };
     }
 
     // 2. Crée la requête avec les tables liées
@@ -124,7 +124,7 @@ export async function filtreValuesFetch({
       query.in('financeur_tag.id', filtre.financeurIds);
     }
 
-    const {data: rawData, error} = await query.single();
+    const { data: rawData, error } = await query.single();
 
     if (error) {
       throw error;
@@ -132,7 +132,7 @@ export async function filtreValuesFetch({
 
     const data = objectToCamel(rawData) as FiltreValues;
 
-    return {data};
+    return { data };
   } catch (error) {
     console.error(error);
     throw error;
