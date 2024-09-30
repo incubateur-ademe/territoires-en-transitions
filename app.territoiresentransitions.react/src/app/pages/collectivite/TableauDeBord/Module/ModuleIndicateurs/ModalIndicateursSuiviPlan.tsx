@@ -111,13 +111,15 @@ const ModalIndicateursSuiviPlan = ({
                   ? 'rempli'
                   : 'incomplet'
               }
-              onChange={(value) =>
+              onChange={(value) => {
                 setFiltreState({
                   ...filtreState,
                   estComplet:
-                    value === undefined ? undefined : value === 'rempli',
-                })
-              }
+                    value === undefined || value.length === 0
+                      ? undefined
+                      : value === 'rempli',
+                });
+              }}
             />
           </Field>
         </FormSection>
