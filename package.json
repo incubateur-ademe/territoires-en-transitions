@@ -11,7 +11,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@floating-ui/react": "^0.26.20",
-    "@gouvfr/dsfr": "^1.12.1",
+    "@gouvfr/dsfr": "1.10.2",
     "@hookform/resolvers": "^3.3.4",
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^3.0.1",
@@ -200,8 +200,9 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "dev": "nx run-many -t dev -p @tet/app @tet/auth @tet/panier @tet/site",
-    "dev:app": "nx run-many -t dev -p @tet/app @tet/auth",
+    "dev": "nx run-many --parallel 4 -t dev -p @tet/app @tet/auth @tet/panier @tet/site",
+    "dev:app": "nx run-many -t dev -p @tet/app @tet/auth @tet/backend",
+    "dev:backend": "nx dev @tet/backend",
     "dev:site": "nx dev @tet/site",
     "dev:auth": "nx dev @tet/auth",
     "dev:panier": "nx run-many -t dev -p @tet/panier @tet/auth",
