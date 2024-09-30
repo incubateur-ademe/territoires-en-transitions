@@ -2,6 +2,7 @@ import {signInPath, signUpPath} from 'app/paths';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 import MenuUtilisateur from './MenuUtilisateur';
 import {HeaderPropsWithModalState} from './types';
+import {AccesPanierAction} from './AccesPanierAction';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
@@ -10,6 +11,11 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
 
   return (
     <ul className="fr-btns-group">
+      {isConnected && user && (
+        <li>
+          <AccesPanierAction />
+        </li>
+      )}
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>
