@@ -5,7 +5,7 @@ import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
-import {useUpdateIndicateurPersoDefinition} from './useUpdateIndicateurPersoDefinition';
+import {useUpdateIndicateurDefinition} from './useUpdateIndicateurDefinition';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
@@ -24,7 +24,7 @@ const IndicateurPersonnaliseBase = ({
   definition: Indicateurs.domain.IndicateurDefinition;
 }) => {
   const {description, unite, titre, rempli} = definition;
-  const {mutate: updateDefinition} = useUpdateIndicateurPersoDefinition();
+  const {mutate: updateDefinition} = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
 
@@ -40,7 +40,9 @@ const IndicateurPersonnaliseBase = ({
        * TEMPORARY: updating hardcoded commentaire prop, in order to link the description input
        * to the `commentaire` column in `indicateur_collectivite` 
        * -> step 2 of expand and contract pattern (
-       * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern)
+       * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
+       * Next step: remove hardcoded commentaire prop and change 
+       * handleUpdate('description', e.target.value) to handleUpdate('commentaire', e.target.value).
        */
       updateDefinition({...definition, [name]: nouveau, ['commentaire']: nouveau});
     }
