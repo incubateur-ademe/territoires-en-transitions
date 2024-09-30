@@ -188,20 +188,49 @@ export const indicateurs = async (indicateurs : any, memoire : TMemoire) : Promi
 }
 
 /**
- * Nettoie des résultats
+ * Nettoie des résultats (ou effets attendus)
  * @param resultats chaîne de caractère contenant N résultats
- * @return tableau de résultats nettoyés
+ * @param memoire données utiles au nettoyage du fichier
+ * @return tableau de effets attendus nettoyés
  */
-export const resultats= async (resultats : string) : Promise<Enums<"fiche_action_resultats_attendus">[]> => {
+export const resultats= async (resultats : string, memoire : TMemoire) : Promise<string[]> => {
     const toReturn = [];
     if(resultats){
-        const fuse = new Fuse(ficheActionResultatsAttendus);
+        const fuseResultat = new Fuse(ficheActionResultatsAttendus);
+        const fuseEffet = new Fuse(Array.from(memoire.effets.keys()));
         const tab :string[] = String(resultats).split(regexSplit);
+        // Transition entre l'enum résultat attendu et la table effet attendu
         for(let element of tab){
             if(element && !element.match(regexSplit)) {
-                const res = fuse.search(element)?.[0]?.item;
-                if (res) {
-                    toReturn.push(res);
+                // On récupère le résultat et l'effet le plus proche
+                const resResultat = fuseResultat.search(element)?.[0]?.item;
+                const resEffet = fuseEffet.search(element)?.[0]?.item;
+                let effetToAdd : string | null = null;
+                if (resEffet) {
+                    // On priorise l'effet s'il existe
+                    effetToAdd = resEffet;
+                }else if(resResultat) {
+                    // Si, c'est le résultat qui est retourné, on essaie de trouver une correspondance en effet
+                    const resEffet2 = fuseEffet.search(resResultat)?.[0]?.item;
+                    if(resEffet2){
+                        effetToAdd = resEffet2;
+                    }else{
+                        // Si l'effet n'est toujours pas trouvé, on gère au cas par cas les changements de nom évident
+                        switch (resResultat) {
+                            case "Amélioration de la qualité de vie" :
+                                effetToAdd = "Amélioration du cadre de vie";
+                            break;
+                            case "Efficacité énergétique" :
+                                effetToAdd = "Réduction des consommations énergétiques"
+                            break;
+                            case "Sobriété énergétique" :
+                                effetToAdd = "Sobriété"
+                            break;
+                        }
+                    }
+                }
+                if(effetToAdd){
+                    toReturn.push(effetToAdd);
                 }
             }
         }
