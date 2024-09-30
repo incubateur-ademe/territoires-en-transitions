@@ -60,6 +60,7 @@ export type ActionImpactState = {
   thematiques: ActionImpactThematique[];
   actions_liees: ActionReferentiel[] | null;
   matches_competences: boolean;
+  dejaImportee?: boolean;
 };
 
 
