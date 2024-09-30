@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 export const filtreRessourceLieesSchema = z.object({
   planActionIds: z.coerce.number().array().optional(),
@@ -12,6 +12,7 @@ export const filtreRessourceLieesSchema = z.object({
 
   thematiqueIds: z.coerce.number().array().optional(),
   financeurIds: z.coerce.number().array().optional(),
+  partenaireIds: z.coerce.number().array().optional(),
 });
 
 export type FiltreRessourceLiees = z.infer<typeof filtreRessourceLieesSchema>;
@@ -87,6 +88,14 @@ export const filtreValuesSchema = z.object({
     .optional(),
 
   financeurs: z
+    .object({
+      id: z.number(),
+      nom: z.string(),
+    })
+    .array()
+    .optional(),
+
+  partenaires: z
     .object({
       id: z.number(),
       nom: z.string(),

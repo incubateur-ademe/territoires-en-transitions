@@ -1,7 +1,7 @@
 import {
-  fetchOptionsSchema as fichesFetchOptionsSchema,
-  Filtre as FiltreFicheActions,
-} from '@tet/api/plan-actions/fiche-resumes.list';
+  Filtre as FiltreFichesSynthese,
+  filtreSchema,
+} from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import {
   FetchFilter as FetchFilterPlanActions,
   fetchOptionsSchema as planActionsFetchOptionsSchema,
@@ -45,7 +45,9 @@ export type ModulePlanActionListSelect = z.input<
 
 export const moduleFicheActionCountByStatusSchema = z.object({
   type: z.literal(moduleTypeSchema.enum['fiche-action.count-by-status']),
-  options: fichesFetchOptionsSchema,
+  options: z.object({
+    filtre: filtreSchema,
+  }),
 });
 
 export const moduleFicheActionCountByStatusSelectSchema =
@@ -75,7 +77,7 @@ export const defaultSlugsSchema = z.enum([
 
 export type Slug = z.infer<typeof defaultSlugsSchema>;
 
-export type Filter = FetchFilterPlanActions | FiltreFicheActions;
+export type Filter = FetchFilterPlanActions | FiltreFichesSynthese;
 
 type Props = {
   collectiviteId: number;
@@ -114,7 +116,7 @@ export async function getDefaultModule(
     return {
       id: crypto.randomUUID(),
       collectiviteId,
-      titre: 'Actions récemment modifiées',
+      titre: "Suivi de l'avancement des actions",
       type: 'fiche-action.count-by-status',
       slug,
       options: {
@@ -122,7 +124,6 @@ export async function getDefaultModule(
           // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
           planActionIds,
         },
-        page: 1,
       },
       createdAt: now,
       modifiedAt: now,

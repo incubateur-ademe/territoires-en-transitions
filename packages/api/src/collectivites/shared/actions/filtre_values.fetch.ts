@@ -69,6 +69,10 @@ export async function filtreValuesFetch({
       relatedTables.add('financeurs:financeur_tag!inner(*)');
     }
 
+    if (filtre.partenaireIds?.length) {
+      relatedTables.add('partenaires:partenaire_tag!inner(*)');
+    }
+
     if (relatedTables.size === 0) {
       return { data: {} };
     }
@@ -122,6 +126,10 @@ export async function filtreValuesFetch({
 
     if (filtre.financeurIds?.length) {
       query.in('financeur_tag.id', filtre.financeurIds);
+    }
+
+    if (filtre.partenaireIds?.length) {
+      query.in('partenaire_tag.id', filtre.partenaireIds);
     }
 
     const { data: rawData, error } = await query.single();
