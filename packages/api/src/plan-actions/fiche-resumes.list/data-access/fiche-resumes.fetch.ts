@@ -18,8 +18,11 @@ const ficheActionColumns = [
   'modified_at',
   'date_fin_provisoire',
   'niveau_priorite',
+  'cibles',
   'restreint',
   'amelioration_continue',
+  'date_debut',
+  'date_fin_provisoire',
   'budget_previsionnel',
 ];
 
@@ -77,6 +80,10 @@ export async function ficheResumesFetch({
 
   if (filtre.financeurIds?.length) {
     relatedTables.add('fiche_action_financeur_tag!inner(*)');
+  }
+
+  if (filtre.partenaireIds?.length) {
+    relatedTables.add('fiche_action_partenaire_tag!inner(*)');
   }
 
   if (filtre.hasIndicateurLies) {
@@ -169,6 +176,18 @@ export async function ficheResumesFetch({
     );
   }
 
+  if (filtre.partenaireIds?.length) {
+    query.in(
+      'fiche_action_partenaire_tag.partenaire_tag_id',
+      filtre.partenaireIds
+    );
+  }
+
+  if (filtre.cibles?.length) {
+    // query.in('cibles', filtre.cibles);
+    query.containedBy('cibles', filtre.cibles);
+  }
+
   if (filtre.hasIndicateurLies) {
     query.not('fiche_action_indicateur', 'is', null);
   }
@@ -187,6 +206,18 @@ export async function ficheResumesFetch({
 
   if (filtre.priorites?.length) {
     query.in('niveau_priorite', filtre.priorites);
+  }
+
+  if (filtre.dateDebut) {
+    query.gte('date_debut', filtre.dateDebut);
+  }
+
+  if (filtre.dateFin) {
+    query.lte('date_fin_provisoire', filtre.dateFin);
+  }
+
+  if (filtre.ameliorationContinue) {
+    query.is('amelioration_continue', true);
   }
 
   if (filtre.modifiedSince) {

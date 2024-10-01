@@ -1,12 +1,17 @@
 import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 import { Indicateurs } from '@tet/api';
 import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { FiltreSpecifique as FiltreSpecifiqueFichesSynthse } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
+import { ModuleDisplay } from 'app/pages/collectivite/TableauDeBord/Module/Module';
+import { SyntheticEvent } from 'react';
+import { DefaultButtonProps } from '@tet/ui';
 
 type FiltreKeys = FiltreValues &
   Indicateurs.domain.FiltreSpecifique &
-  FiltreSpecifiqueFicheActions;
+  FiltreSpecifiqueFicheActions &
+  FiltreSpecifiqueFichesSynthse;
 
 /** Converti les filtres sélectionnés en tableau de string
  * afin d'afficher les Badges correspondants aux filtres */
@@ -65,6 +70,8 @@ export const filtersToBadges = (data: FiltreKeys) => {
       data[key] && badgeValues.push('Données Open Data');
     } else if (key === 'hasIndicateurLies') {
       data[key] && badgeValues.push('Indicateur(s) lié(s)');
+    } else if (key === 'ameliorationContinue') {
+      data[key] && badgeValues.push('Se répète tous les ans');
     } else if (key === 'priorites') {
       badgeValues.push(`Priorité : ${data[key]?.join(', ')}`);
     } else if (key === 'statuts') {
@@ -83,8 +90,16 @@ export const filtersToBadges = (data: FiltreKeys) => {
       badgeValues.push(
         `Partenaire : ${data[key]?.map((i) => i.nom).join(', ')}`
       );
+    } else if (key === 'structurePilotes') {
+      badgeValues.push(
+        `Structure : ${data[key]?.map((i) => i.nom).join(', ')}`
+      );
     } else if (key === 'cibles') {
       badgeValues.push(`Cible : ${data[key]?.join(', ')}`);
+    } else if (key === 'dateDebut') {
+      badgeValues.push(`Date de début : ${data[key]}`);
+    } else if (key === 'dateFin') {
+      badgeValues.push(`Date de fin prévisionnelle : ${data[key]}`);
     } else if (key === 'modifiedSince') {
       badgeValues.push(
         `Sur les ${data[key]?.match(/\d+/)?.[0]} derniers jours`

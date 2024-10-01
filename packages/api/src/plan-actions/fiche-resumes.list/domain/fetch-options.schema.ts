@@ -26,6 +26,9 @@ export const filtreSpecifiqueSchema = z.object({
   budgetPrevisionnel: z.coerce.boolean().default(false).optional(),
   restreint: z.coerce.boolean().default(false).optional(),
   hasIndicateurLies: z.coerce.boolean().default(false).optional(),
+  dateDebut: z.string().optional(),
+  dateFin: z.string().optional(),
+  ameliorationContinue: z.coerce.boolean().default(false).optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;

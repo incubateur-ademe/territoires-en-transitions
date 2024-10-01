@@ -7,8 +7,37 @@ import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useSearchParams } from 'core-logic/hooks/query';
 
+/** Paramètres d'URL possibles pour les filtres de fiches action */
+export type FicheActionParam =
+  | 's'
+  | 'prio'
+  | 'ms'
+  | 'text'
+  | 'bp'
+  | 'r'
+  | 'il'
+  | 'pa'
+  | 'up'
+  | 'pp'
+  | 'ur'
+  | 'pt'
+  | 'pr'
+  | 'sp'
+  | 'sv'
+  | 't'
+  | 'f'
+  | 'c'
+  | 'dd'
+  | 'df'
+  | 'ac'
+  | 'p'
+  | 'sort';
+
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
-const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
+export const nameToparams: Record<
+  keyof Filtre | 'sort' | 'page',
+  FicheActionParam
+> = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
@@ -27,6 +56,9 @@ const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
   thematiqueIds: 't',
   financeurIds: 'f',
   cibles: 'c',
+  dateDebut: 'dd',
+  dateFin: 'df',
+  ameliorationContinue: 'ac',
   page: 'p',
   sort: 'sort',
 };
@@ -35,11 +67,13 @@ const nameToparams: Record<keyof Filtre | 'sort' | 'page', string> = {
 const ToutesLesFichesAction = () => {
   const collectiviteId = useCollectiviteId();
 
-  const [filters, setFilters] = useSearchParams<Filtre>(
+  const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({ collectiviteId: collectiviteId! }),
     {},
     nameToparams
   );
+
+  const filters = convertParamsToFilters(filterParams);
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
@@ -48,7 +82,7 @@ const ToutesLesFichesAction = () => {
       </div>
       <FichesActionListe
         filtres={filters}
-        resetFilters={() => setFilters({})}
+        resetFilters={() => setFilterParams({})}
         sortSettings={{
           defaultSort: 'titre',
         }}
@@ -61,7 +95,7 @@ const ToutesLesFichesAction = () => {
           >
             <MenuFiltresToutesLesFichesAction
               filters={filters}
-              setFilters={(filters) => setFilters(filters)}
+              setFilters={(filters) => setFilterParams(filters)}
             />
           </ButtonMenu>
         )}
@@ -71,3 +105,17 @@ const ToutesLesFichesAction = () => {
 };
 
 export default ToutesLesFichesAction;
+
+/** Converti les paramètres d'URL en filtres */
+const convertParamsToFilters = (paramFilters: Filtre) => {
+  if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
+    paramFilters.modifiedSince = paramFilters.modifiedSince[0];
+  }
+  if (paramFilters.dateDebut && Array.isArray(paramFilters.dateDebut)) {
+    paramFilters.dateDebut = paramFilters.dateDebut[0];
+  }
+  if (paramFilters.dateFin && Array.isArray(paramFilters.dateFin)) {
+    paramFilters.dateFin = paramFilters.dateFin[0];
+  }
+  return paramFilters;
+};

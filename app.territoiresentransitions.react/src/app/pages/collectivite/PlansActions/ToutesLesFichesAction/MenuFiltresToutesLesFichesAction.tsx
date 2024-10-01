@@ -1,4 +1,6 @@
-import { Checkbox, Field, FormSection, FormSectionGrid } from '@tet/ui';
+import { useRef } from 'react';
+
+import { Checkbox, Field, FormSection, FormSectionGrid, Input } from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
@@ -12,6 +14,11 @@ import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/Thematique
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
+import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
+import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
 
 type Props = {
   filters: Filtre;
@@ -22,9 +29,52 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
+  const dateDebutRef = useRef<HTMLInputElement>(null);
+  const dateFinRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className="w-96 flex flex-col gap-8 p-4">
       <FormSection title="Nouveau filtre :" className="!grid-cols-1">
+        <Field title="Plans d'action">
+          <PlansActionDropdown
+            values={filters.planActionIds}
+            onChange={({ plans }) => {
+              const { planActionIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(plans ? { planActionIds: plans } : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Direction ou service pilote">
+          <ServicesPilotesDropdown
+            values={filters.servicePiloteIds}
+            onChange={({ services }) => {
+              const { servicePiloteIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(services
+                  ? { servicePiloteIds: services.map((s) => s.id) }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Structure pilote">
+          <StructuresDropdown
+            values={filters.structurePiloteIds}
+            onChange={({ structures }) => {
+              const { structurePiloteIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(structures
+                  ? { structurePiloteIds: structures.map((s) => s.id) }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
         <Field title="Personne pilote">
           <PersonnesDropdown
             values={pilotes}
@@ -40,20 +90,6 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ? {
                       utilisateurPiloteIds: uIds,
                     }
-                  : {}),
-              });
-            }}
-          />
-        </Field>
-        <Field title="Direction ou service pilote">
-          <ServicesPilotesDropdown
-            values={filters.servicePiloteIds}
-            onChange={({ services }) => {
-              const { servicePiloteIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(services
-                  ? { servicePiloteIds: services.map((s) => s.id) }
                   : {}),
               });
             }}
@@ -100,7 +136,7 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             <PrioritesFilterDropdown
               values={filters.priorites}
               onChange={({ priorites }) => {
-                const { priorites: st, ...rest } = filters;
+                const { priorites: prio, ...rest } = filters;
                 setFilters({
                   ...rest,
                   ...(priorites ? { priorites } : {}),
@@ -109,6 +145,18 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             />
           </Field>
         </FormSectionGrid>
+        <Field title="Période">
+          <PeriodeDropdown
+            values={filters.modifiedSince}
+            onChange={(modifiedSince) => {
+              const { modifiedSince: ms, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(modifiedSince ? { modifiedSince } : {}),
+              });
+            }}
+          />
+        </Field>
         <Field title="Thématique">
           <ThematiquesDropdown
             values={filters.thematiqueIds}
@@ -137,6 +185,70 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             }}
           />
         </Field>
+        <Field title="Partenaires">
+          <PartenairesDropdown
+            values={filters.partenaireIds}
+            onChange={({ partenaires }) => {
+              const { partenaireIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(partenaires
+                  ? { partenaireIds: partenaires.map((p) => p.id) }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Cibles">
+          <CiblesDropdown
+            values={filters.cibles}
+            onChange={({ cibles: newCibles }) => {
+              const { cibles, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="De :">
+          <Input
+            type="date"
+            placeholder="Choisir une date de démarrage"
+            ref={dateDebutRef}
+            value={
+              filters.dateDebut
+                ? new Date(filters.dateDebut).toISOString().slice(0, 10)
+                : ''
+            }
+            onChange={(evt) => {
+              const { dateDebut, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(evt.target.value ? { dateDebut: evt.target.value } : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="À :">
+          <Input
+            type="date"
+            placeholder="Choisir une date de fin"
+            ref={dateFinRef}
+            value={
+              filters.dateFin
+                ? new Date(filters.dateFin).toISOString().slice(0, 10)
+                : ''
+            }
+            onChange={(evt) => {
+              const { dateFin, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(evt.target.value ? { dateFin: evt.target.value } : {}),
+              });
+            }}
+          />
+        </Field>
       </FormSection>
 
       <Checkbox
@@ -158,6 +270,17 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
           setFilters({
             ...rest,
             ...(!restreint ? { restreint: true } : {}),
+          });
+        }}
+      />
+      <Checkbox
+        label="L'action se répète tous les ans"
+        checked={filters.ameliorationContinue}
+        onChange={() => {
+          const { ameliorationContinue, ...rest } = filters;
+          setFilters({
+            ...rest,
+            ...(!ameliorationContinue ? { ameliorationContinue: true } : {}),
           });
         }}
       />
