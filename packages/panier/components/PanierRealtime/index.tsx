@@ -138,7 +138,7 @@ const PanierRealtime = ({
         onToggleSelected={handleToggleSelected}
       />
 
-      <PartagerLeLien />
+      <PartagerLeLien panier={panier} />
     </div>
   );
 };
