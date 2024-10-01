@@ -21,6 +21,10 @@ La plateforme numérique a pour objectifs de faciliter et d'accélérer la mise 
 - De prioriser les actions ayant le plus d'impact
 - De partager la progression des réalisations et des retours d'expériences entre collectivités
 
+## Documentation
+
+La documentation technique du projet utilise le format Architecture Decision Record (ADR), basé sur le template par défaut du CLI [`adr-tools`](https://github.com/npryce/adr-tools).
+
 ## Organisation du dépôt
 
 Ce dépôt Git contient :
