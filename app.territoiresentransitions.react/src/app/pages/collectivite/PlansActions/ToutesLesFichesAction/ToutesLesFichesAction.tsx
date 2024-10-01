@@ -1,11 +1,13 @@
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { ButtonMenu } from '@tet/ui';
+import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useUpsertFicheAction';
+import { Button, ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useSearchParams } from 'core-logic/hooks/query';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
 export type FicheActionParam =
@@ -65,10 +67,16 @@ export const nameToparams: Record<
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+
+  const isReadonly = collectivite?.readonly ?? false;
+
+  const { mutate: createFicheAction } = useCreateFicheAction();
 
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
-    makeCollectiviteToutesLesFichesUrl({ collectiviteId: collectiviteId! }),
+    makeCollectiviteToutesLesFichesUrl({
+      collectiviteId: collectivite?.collectivite_id!,
+    }),
     {},
     nameToparams
   );
@@ -77,8 +85,13 @@ const ToutesLesFichesAction = () => {
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
-      <div>
-        <h2 className="mb-0">Toutes les actions</h2>
+      <div className="flex items-end">
+        <h2 className="mb-0 mr-auto">Toutes les actions</h2>
+        {!isReadonly && (
+          <Button size="sm" onClick={() => createFicheAction()}>
+            Créer une fiche d’action
+          </Button>
+        )}
       </div>
       <FichesActionListe
         filtres={filters}
