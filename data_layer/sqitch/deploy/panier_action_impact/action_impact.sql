@@ -155,5 +155,18 @@ comment on function action_definition(action_impact_state) is 'La relation entre
 
 alter table action_impact_thematique add column ordre integer not null default 1;
 
+create function action_impact_thematique(action_impact_state) returns SETOF action_impact_thematique
+    stable
+    language sql
+BEGIN ATOMIC
+SELECT a.action_impact_id,
+       a.thematique_id,
+       a.ordre
+FROM action_impact_thematique a
+WHERE a.action_impact_id = ($1).action.id;
+END;
+comment on function action_impact_thematique(action_impact_state) is 'La relation entre le state d''une action et son lien vers la thématique pour récupérer l''ordre.';
+
+
 
 COMMIT;
