@@ -8,6 +8,7 @@ INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, a
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', (select collectivite_id from epci where siren = '200043495' limit 1), 'edition', TRUE); -- Pays du Laon
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', (select collectivite_id from epci where siren = '246700488' limit 1), 'edition', TRUE); -- Strastbourg
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', (select collectivite_id from epci where siren = '200072015' limit 1), 'lecture', TRUE); -- Rhone agglo
+INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', (select collectivite_id from epci where siren = '200071751' limit 1), 'edition', TRUE); -- CA du Bassin de Bourg-en-Bresse
 INSERT INTO private_collectivite_membre (user_id, collectivite_id, fonction, details_fonction, champ_intervention) VALUES ('17440546-f389-4d4f-bfdb-b0c94a1bd0f9', 1, 'referent', 'Référent YOLO de cette collectivité', '{"eci", "cae"}');
 UPDATE utilisateur_verifie SET verifie = true where user_id =  '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
 
