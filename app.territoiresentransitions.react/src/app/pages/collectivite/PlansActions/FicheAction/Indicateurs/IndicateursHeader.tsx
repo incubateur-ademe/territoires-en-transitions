@@ -91,7 +91,12 @@ const IndicateursHeader = ({
         </span>
         {resultats && resultats.length ? (
           resultats.map(res => (
-            <Badge key={res} title={res} state="standard" uppercase={false} />
+            <Badge
+              key={res.id}
+              title={res.nom}
+              state="standard"
+              uppercase={false}
+            />
           ))
         ) : (
           <span className="text-sm text-grey-7 leading-7">Non renseignés</span>

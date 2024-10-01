@@ -4,7 +4,6 @@ import {
   TFicheActionCibles,
   TFicheActionEcheances,
   TFicheActionNiveauxPriorite,
-  TFicheActionResultatsAttendus,
 } from 'types/alias';
 
 type Options<T extends string> = {
@@ -12,45 +11,6 @@ type Options<T extends string> = {
   label: T | string;
   disabled?: boolean;
 }[];
-
-export const ficheActionResultatsAttendusOptions: Options<TFicheActionResultatsAttendus> =
-  [
-    {
-      value: 'Adaptation au changement climatique',
-      label: 'Adaptation au changement climatique',
-    },
-    {
-      value: 'Allongement de la durée d’usage',
-      label: 'Allongement de la durée d’usage',
-    },
-    {
-      value: 'Amélioration de la qualité de vie',
-      label: 'Amélioration de la qualité de vie',
-    },
-    {
-      value: 'Développement des énergies renouvelables',
-      label: 'Développement des énergies renouvelables',
-    },
-    { value: 'Efficacité énergétique', label: 'Efficacité énergétique' },
-    {
-      value: 'Préservation de la biodiversité',
-      label: 'Préservation de la biodiversité',
-    },
-    {
-      value: 'Réduction des consommations énergétiques',
-      label: 'Réduction des consommations énergétiques',
-    },
-    { value: 'Réduction des déchets', label: 'Réduction des déchets' },
-    {
-      value: 'Réduction des polluants atmosphériques',
-      label: 'Réduction des polluants atmosphériques',
-    },
-    {
-      value: 'Réduction des émissions de gaz à effet de serre',
-      label: 'Réduction des émissions de gaz à effet de serre',
-    },
-    { value: 'Sobriété énergétique', label: 'Sobriété énergétique' },
-  ];
 
 export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
   {
