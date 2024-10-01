@@ -23,11 +23,12 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
     return null;
   }
 
-  const {titre, description} = action;
+  const {titre, description, typologie} = action;
   return (
     <Modal
       size="lg"
       title={titre}
+      subTitle={typologie?.nom}
       textAlign="left"
       openState={{
         isOpen,
