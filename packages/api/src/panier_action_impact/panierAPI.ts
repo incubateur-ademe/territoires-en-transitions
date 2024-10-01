@@ -9,6 +9,7 @@ import { MesCollectivite, Panier, PanierBase } from './types';
 export const panierSelect = `*,states:action_impact_state(
     *, matches_competences,
     thematiques:action_impact_thematique(...thematique(id,nom)),
+    typologie:action_impact_typologie(*),
     fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
     temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
     actions_liees:action_definition(identifiant,referentiel,nom)
