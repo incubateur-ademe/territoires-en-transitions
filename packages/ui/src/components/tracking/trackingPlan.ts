@@ -297,6 +297,8 @@ export interface TrackingPlan extends Record<never, Page> {
         action_id: number;
         category_id: string | null;
       };
+      /** Bouton "copier le lien du panier" */
+      copier_panier_URL: {};
       /* Le bouton "valider la création" affiché dans le panier */
       cta_valider_creation_panier_click: {};
       /* Le bouton "créer le plan d'action" affiché dans la modale */

@@ -1,17 +1,19 @@
 'use client';
 import {useEffect, useState} from 'react';
-import {Card, Button, Icon, useCopyToClipboard} from '@tet/ui';
+import {Card, Button, Icon, useCopyToClipboard, useEventTracker} from '@tet/ui';
+import {Panier} from '@tet/api';
 import Membres from '@components/Picto/Membres';
 
 /**
  * Affiche l'encadré invitant au partage du lien vers le panier
  */
-export const PartagerLeLien = () => {
+export const PartagerLeLien = ({panier}: {panier: Panier}) => {
   const [opened, setOpened] = useState(true);
   const [copied, setCopied] = useState(false);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   const {copy} = useCopyToClipboard();
+  const tracker = useEventTracker('panier/panier');
 
   // TODO: remplacer ça par le composant Toast de l'app et du site
   // (à mutualiser dans le package ui)
@@ -59,6 +61,10 @@ export const PartagerLeLien = () => {
         onClick={() => {
           copy(document.location.href);
           setCopied(true);
+          tracker('copier_panier_URL', {
+            collectivite_preset: panier.collectivite_preset,
+            panier_id: panier.id,
+          });
         }}
       >
         Copier le lien du panier
