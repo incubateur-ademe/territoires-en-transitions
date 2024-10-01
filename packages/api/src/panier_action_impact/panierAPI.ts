@@ -4,19 +4,15 @@ import { MesCollectivite, Panier, PanierBase } from './types';
 
 /**
  * On sélectionne toutes les colonnes du panier : *
- * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
+ * puis les `action_impact` par la relation `action_impact_state` que l'on renomme `states`
  */
-export const panierSelect =
-  '*,' +
-  'contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),' +
-  'states:action_impact_state(' +
-  '*,' +
-  'thematiques:thematique(*),' +
-  'fourchette_budgetaire:action_impact_fourchette_budgetaire(*),' +
-  'temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),' +
-  'actions_liees:action_definition(identifiant,referentiel,nom)' +
-  ')' +
-  ')';
+export const panierSelect = `*,states:action_impact_state(
+    *,
+    thematiques:thematique(*),
+    fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
+    temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
+    actions_liees:action_definition(identifiant,referentiel,nom)
+)`;
 
 type RealtimePayload<T> = {
   type: string;
