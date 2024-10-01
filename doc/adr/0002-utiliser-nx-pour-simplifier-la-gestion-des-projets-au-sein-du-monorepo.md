@@ -35,9 +35,9 @@ Les problèmes aujourd'hui :
 
 ## Consequences
 
-1.  Un unique `package.json`
+1.  Un unique `package.json` (et un unique `node_modules`) à la racine du projet
 
-    Toutes les dépendances des différentes apps et libs sont rassemblées dans le même `package.json` à la racine du projet. Il existe désormais une unique version de dépendances commune à tous les projets.
+    Toutes les dépendances des différentes apps et libs sont rassemblées dans le même `package.json`. Il existe désormais une unique version de dépendances commune à tous les projets.
 
     → Fini les conflits de versions entre apps et libs
 
