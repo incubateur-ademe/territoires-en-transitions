@@ -119,32 +119,30 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
           />
         </Field>
 
-        <FormSectionGrid>
-          <Field title="Statut de l'action">
-            <StatutsFilterDropdown
-              values={filters.statuts}
-              onChange={({ statuts }) => {
-                const { statuts: st, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(statuts ? { statuts } : {}),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Niveau de priorité">
-            <PrioritesFilterDropdown
-              values={filters.priorites}
-              onChange={({ priorites }) => {
-                const { priorites: prio, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(priorites ? { priorites } : {}),
-                });
-              }}
-            />
-          </Field>
-        </FormSectionGrid>
+        <Field title="Statut de l'action">
+          <StatutsFilterDropdown
+            values={filters.statuts}
+            onChange={({ statuts }) => {
+              const { statuts: st, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(statuts ? { statuts } : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Niveau de priorité">
+          <PrioritesFilterDropdown
+            values={filters.priorites}
+            onChange={({ priorites }) => {
+              const { priorites: prio, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(priorites ? { priorites } : {}),
+              });
+            }}
+          />
+        </Field>
         <Field title="Période">
           <PeriodeDropdown
             values={filters.modifiedSince}
