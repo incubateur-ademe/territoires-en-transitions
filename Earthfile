@@ -936,7 +936,7 @@ app-deploy: ## Déploie le front dans une app Koyeb existante
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9-]//g' | head -c 23 | tr '[:upper:]' '[:lower:]')
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 23 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
