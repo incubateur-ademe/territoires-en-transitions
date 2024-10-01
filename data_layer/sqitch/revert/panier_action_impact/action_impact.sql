@@ -2,6 +2,7 @@
 
 BEGIN;
 
+drop function action_impact_typologie(action_impact_state);
 drop function action_impact_thematique(action_impact_state);
 alter table action_impact_thematique drop column ordre;
 

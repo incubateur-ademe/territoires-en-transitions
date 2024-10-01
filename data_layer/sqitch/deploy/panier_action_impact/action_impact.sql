@@ -168,6 +168,18 @@ ORDER BY a.ordre;
 END;
 comment on function action_impact_thematique(action_impact_state) is 'La relation entre le state d''une action et son lien vers la thématique pour récupérer l''ordre.';
 
+create function action_impact_typologie(action_impact_state) returns SETOF action_impact_typologie
+    stable
+    rows 1
+    language sql
+BEGIN ATOMIC
+SELECT a.id,
+       a.nom
+FROM action_impact_typologie a
+WHERE (a.id = ($1).action.typologie_id);
+END;
+comment on function action_impact_typologie(action_impact_state) is 'La relation entre le state d''une action et sa typologie.';
+
 
 
 COMMIT;
