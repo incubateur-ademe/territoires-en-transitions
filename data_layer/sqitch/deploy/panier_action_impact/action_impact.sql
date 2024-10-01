@@ -163,7 +163,8 @@ SELECT a.action_impact_id,
        a.thematique_id,
        a.ordre
 FROM action_impact_thematique a
-WHERE a.action_impact_id = ($1).action.id;
+WHERE a.action_impact_id = ($1).action.id
+ORDER BY a.ordre;
 END;
 comment on function action_impact_thematique(action_impact_state) is 'La relation entre le state d''une action et son lien vers la thématique pour récupérer l''ordre.';
 
