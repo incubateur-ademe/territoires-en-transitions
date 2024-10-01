@@ -272,27 +272,38 @@ node-fr:
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
     FROM --platform=$PLATFORM node:20-slim
+
+    # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
-    RUN corepack enable
+    RUN corepack enable pnpm
 
     WORKDIR /app
 
-# construit l'image contenant les dépendances des modules front
-front-deps:
+prod-deps:
     FROM +node-fr
 
-    COPY package.json pnpm-lock.yaml ./
+    # See https://pnpm.io/cli/fetch
+    COPY pnpm-lock.yaml ./
+    RUN pnpm fetch --prod
+
+    COPY package.json ./
+    RUN pnpm install -r --offline --prod
+
+# construit l'image contenant les dépendances des modules front
+front-deps:
+    FROM +prod-deps
+
     RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
     COPY jest.* ./
     COPY vitest.* ./
 
-    # Only copy libraries
+    # Copy only shared libraries
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
 
