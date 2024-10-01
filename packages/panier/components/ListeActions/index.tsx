@@ -91,12 +91,9 @@ const ListeActions = ({
         const actionsFiltrees =
           tab.shortName === 'importees'
             ? actionsDejaImportees
-            : actionsListe.filter(
-                a =>
-                  ((!a.statut && a.statut === tab.status) ||
-                    (a.statut && a.statut.categorie_id === tab.status)) &&
-                  (tab.status || !a.isinpanier),
-              );
+            : tab.shortName === 'selection'
+            ? filtreSelection({actionsListe, sansFiltreCompetences})
+            : actionsListe.filter(a => a.statut?.categorie_id === tab.status);
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
@@ -176,5 +173,25 @@ const ListeActions = ({
     </Tabs>
   );
 };
+
+const filtreSelection = ({
+  actionsListe,
+  sansFiltreCompetences,
+}: {
+  actionsListe: ActionImpactState[];
+  sansFiltreCompetences: boolean;
+}) => {
+  // toutes les actions sauf celles qui ont un statut (en
+  // cours/réalisée), celles qui sont déjà dans le panier ou déjà
+  // importées dans un plan
+  const subset = actionsListe.filter(
+    a => a.statut === null && !a.isinpanier && !a.dejaImportee,
+  );
+
+  return sansFiltreCompetences
+    ? subset
+    : subset.filter(a => a.matches_competences);
+};
+
 
 export default ListeActions;
