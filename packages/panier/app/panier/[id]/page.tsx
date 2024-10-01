@@ -35,7 +35,6 @@ async function Page({
     thematique_ids,
     budget_ids,
     temps_ids,
-    sansFiltreCompetences,
   );
 
   if (!panier) return notFound();

@@ -23,7 +23,6 @@ export const fetchPanier = async (
   thematique_ids: number[],
   budget_ids: number[],
   temps_ids: number[],
-  sansFiltreCompetences: boolean,
 ): Promise<Panier | null> => {
   const supabase = createClient(cookies());
   const api = new PanierAPI(supabase);
@@ -33,7 +32,6 @@ export const fetchPanier = async (
     thematique_ids,
     budget_ids,
     temps_ids,
-    sansFiltreCompetences,
   );
 
   return panier;

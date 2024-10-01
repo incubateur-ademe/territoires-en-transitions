@@ -7,7 +7,7 @@ import { MesCollectivite, Panier, PanierBase } from './types';
  * puis les `action_impact` par la relation `action_impact_state` que l'on renomme `states`
  */
 export const panierSelect = `*,states:action_impact_state(
-    *,
+    *, matches_competences,
     thematiques:thematique(*),
     fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
     temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
@@ -106,9 +106,7 @@ export class PanierAPI {
     panier_id: string,
     thematique_ids: number[],
     niveau_budget_ids: number[],
-    niveau_temps_ids: number[],
-    /** indique que les actions à impact ne sont pas filtrées sur les compétences de la collectivité */
-    sansFiltreCompetences: boolean
+    niveau_temps_ids: number[]
   ): Promise<Panier | null> {
     const builder = this.supabase
       .from('panier')
@@ -151,14 +149,6 @@ export class PanierAPI {
       builder.url.searchParams.append(
         'action_impact_state.temps_de_mise_en_oeuvre',
         'not.is.null'
-      );
-    }
-
-    if (!sansFiltreCompetences) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.matches_competences',
-        'is.true'
       );
     }
 
