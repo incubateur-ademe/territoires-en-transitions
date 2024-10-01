@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import {Icon, Notification} from '@tet/ui';
 import {FicheAction} from './data/types';
 import {useFicheActionImpactId} from './data/useFicheActionImpactId';
-import {ModaleActionImpact} from 'app/pages/collectivite/PlansActions/FicheAction/FicheActionImpact/ModaleActionImpact';
+import {ModaleActionImpact} from './FicheActionImpact/ModaleActionImpact';
 
 type FicheActionImpactProps = {
   fiche: FicheAction;
