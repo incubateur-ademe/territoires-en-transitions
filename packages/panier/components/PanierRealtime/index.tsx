@@ -6,6 +6,7 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
   Panier,
 } from '@tet/api';
 import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
@@ -24,6 +25,7 @@ type PanierRealtimeProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  typologies: ActionImpactTypologie[];
   sansFiltreCompetences: boolean;
 };
 
@@ -41,6 +43,7 @@ const PanierRealtime = ({
   budgets,
   temps,
   thematiques,
+  typologies,
   sansFiltreCompetences,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
@@ -128,7 +131,7 @@ const PanierRealtime = ({
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
-          {...{budgets, temps, thematiques, sansFiltreCompetences}}
+          {...{budgets, temps, thematiques, typologies, sansFiltreCompetences}}
         />
       </div>
 

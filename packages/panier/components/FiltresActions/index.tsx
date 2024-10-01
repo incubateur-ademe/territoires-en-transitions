@@ -6,6 +6,7 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
 } from '@tet/api';
 import {
   OptionValue,
@@ -19,6 +20,7 @@ type FiltresActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  typologies: ActionImpactTypologie[];
   sansFiltreCompetences: boolean;
 };
 
@@ -26,6 +28,7 @@ const FiltresActions = ({
   budgets,
   temps,
   thematiques,
+  typologies,
   sansFiltreCompetences,
 }: FiltresActionsProps) => {
   const router = useRouter();
@@ -35,6 +38,9 @@ const FiltresActions = ({
   const { panier } = usePanierContext();
 
   const [thematiquesValues, setThematiquesValues] = useState<
+    OptionValue[] | undefined
+  >();
+  const [typologiesValues, setTypologiesValues] = useState<
     OptionValue[] | undefined
   >();
   const [budgetsValues, setBudgetsValues] = useState<
@@ -51,7 +57,11 @@ const FiltresActions = ({
     const thematiquesParams = searchParams
       .get('t')
       ?.split(',')
-      .map((val) => parseInt(val));
+      .map(val => parseInt(val));
+    const typologiesParams = searchParams
+      .get('ty')
+      ?.split(',')
+      .map(val => parseInt(val));
     const budgetsParams = searchParams
       .get('b')
       ?.split(',')
@@ -63,6 +73,7 @@ const FiltresActions = ({
     const competencesParams = searchParams.get('c');
 
     if (thematiquesParams) setThematiquesValues(thematiquesParams);
+    if (typologiesParams) setTypologiesValues(typologiesParams);
     if (budgetsParams) setBudgetsValues(budgetsParams);
     if (tempsParams) setTempsValues(tempsParams);
     setSansFiltreCompetencesValue(competencesParams === 'true');
@@ -76,6 +87,9 @@ const FiltresActions = ({
 
     if (!!thematiquesValues && thematiquesValues?.length > 0) {
       paramsArray.push(`t=${thematiquesValues.join(',')}`);
+    }
+    if (!!typologiesValues && typologiesValues?.length > 0) {
+      paramsArray.push(`ty=${typologiesValues.join(',')}`);
     }
     if (!!budgetsValues && budgetsValues?.length > 0) {
       paramsArray.push(`b=${budgetsValues.join(',')}`);
@@ -97,6 +111,7 @@ const FiltresActions = ({
         collectivite_preset: panier?.collectivite_preset ?? null,
         panier_id: panier?.id ?? '',
         thematique_ids: thematiquesValues,
+        typologies_ids: typologiesValues,
         niveau_budget_ids: budgetsValues,
         niveau_temps_ids: tempsValues,
         match_competences: !sansFiltreCompetencesValue,
@@ -108,6 +123,7 @@ const FiltresActions = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     thematiquesValues?.length,
+    typologiesValues?.length,
     budgetsValues?.length,
     tempsValues?.length,
     sansFiltreCompetencesValue,
@@ -122,6 +138,13 @@ const FiltresActions = ({
           values: thematiquesValues,
           onChange: (args) =>
             setThematiquesValues((args as SelectMultipleOnChangeArgs).values),
+          multiple: true,
+        },
+        {
+          title: 'Typologies',
+          options: typologies.map(t => ({value: t.id, label: t.nom})),
+          values: typologiesValues,
+          onChange: ({values}) => setTypologiesValues(values),
           multiple: true,
         },
         {

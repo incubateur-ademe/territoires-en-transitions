@@ -6,6 +6,7 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
   Panier,
 } from '@tet/api';
 import {ControlledAlert} from '@tet/ui';
@@ -15,6 +16,7 @@ type PagePanierProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  typologies: ActionImpactTypologie[];
   sansFiltreCompetences: boolean;
 };
 
