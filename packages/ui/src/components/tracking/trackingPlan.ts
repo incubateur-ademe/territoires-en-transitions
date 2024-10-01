@@ -194,6 +194,17 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /** Page "créer un plan" */
+  'app/creer-plan': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      cta_creer: {};
+      cta_importer: {};
+      cta_commencer_pai: {};
+    };
+  };
+
   /** Trajectoire SNBC territorialisée */
   'app/trajectoires/snbc': {
     properties: {

@@ -10,7 +10,7 @@ import {useHistory} from 'react-router-dom';
 import {ReactComponent as DocumentAddPicto} from './document-add.svg';
 import {ReactComponent as DocumentDownloadPicto} from './document-download.svg';
 import {ReactComponent as ShoppingBasket} from './shopping-basket.svg';
-import {Button} from '@tet/ui';
+import {Button, TrackingPlan, useEventTracker} from '@tet/ui';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
@@ -34,6 +34,7 @@ const Selection = () => {
               url={makeCollectivitePlansActionsCreerUrl({
                 collectiviteId: collectivite_id!,
               })}
+              trackingId="cta_creer"
             />
             <SelectFlowButton
               dataTest="ImporterPlan"
@@ -43,6 +44,7 @@ const Selection = () => {
               url={makeCollectivitePlansActionsImporterUrl({
                 collectiviteId: collectivite_id!,
               })}
+              trackingId="cta_importer"
             />
             <SelectFlowButton
               dataTest="InitierPlan"
@@ -52,6 +54,7 @@ const Selection = () => {
               url={makeCollectivitePanierUrl({
                 collectiviteId: collectivite_id!,
               })}
+              trackingId="cta_commencer_pai"
             />
           </div>
           <Button
@@ -79,6 +82,7 @@ type SelectFlowButtonProps = {
   title: string;
   subTitle: string;
   isPrimary?: boolean;
+  trackingId: keyof TrackingPlan['app/creer-plan']['events'];
 };
 
 const SelectFlowButton = ({
@@ -88,33 +92,42 @@ const SelectFlowButton = ({
   title,
   subTitle,
   isPrimary = false,
-}: SelectFlowButtonProps) => (
-  <div
-    className={classNames(
-      'grow bg-white border border-gray-200 rounded-lg hover:bg-primary-0',
-      {'!bg-primary hover:!bg-primary-6': isPrimary}
-    )}
-  >
-    <a
-      data-test={dataTest}
-      className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
-      href={url}
+  trackingId,
+}: SelectFlowButtonProps) => {
+  const trackEvent = useEventTracker('app/creer-plan');
+  const collectivite_id = useCollectiviteId()!;
+
+  return (
+    <div
+      className={classNames(
+        'grow bg-white border border-gray-200 rounded-lg hover:bg-primary-0',
+        {'!bg-primary hover:!bg-primary-6': isPrimary}
+      )}
     >
-      {icon}
-      <div
-        className={classNames('m-1 font-bold text-primary-8', {
-          '!text-primary-0': isPrimary,
-        })}
+      <a
+        data-test={dataTest}
+        className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
+        href={url}
+        onClick={() => {
+          trackEvent(trackingId, {collectivite_id});
+        }}
       >
-        {title}
-      </div>
-      <div
-        className={classNames('text-grey-7 text-xs', {
-          '!text-grey-1': isPrimary,
-        })}
-      >
-        {subTitle}
-      </div>
-    </a>
-  </div>
-);
+        {icon}
+        <div
+          className={classNames('m-1 font-bold text-primary-8', {
+            '!text-primary-0': isPrimary,
+          })}
+        >
+          {title}
+        </div>
+        <div
+          className={classNames('text-grey-7 text-xs', {
+            '!text-grey-1': isPrimary,
+          })}
+        >
+          {subTitle}
+        </div>
+      </a>
+    </div>
+  );
+};
