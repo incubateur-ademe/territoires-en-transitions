@@ -86,10 +86,10 @@ describe('Calcul de trajectoire SNBC', () => {
     const verifcationReponseAttendue: VerificationDonneesSNBCResponseType = {
       status: VerificationDonneesSNBCStatus.DONNEES_MANQUANTES,
       epci: {
-        id: 19,
-        collectiviteId: 3829,
-        nom: 'CA du Pays de Laon',
-        siren: '200043495',
+        id: 2,
+        collectiviteId: 3812,
+        nom: 'CA du Bassin de Bourg-en-Bresse',
+        siren: '200071751',
         nature: 'CA',
       },
       donnees_entree: {
@@ -98,68 +98,77 @@ describe('Calcul de trajectoire SNBC', () => {
           valeurs: [
             {
               identifiants_referentiel: ['cae_1.c'],
-              valeur: 56729,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.d'],
-              valeur: 41448,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.i'],
-              valeur: 19760,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.g'],
-              valeur: 28860,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.e'],
-              valeur: 102045,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.f'],
-              valeur: 1039,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.h'],
-              valeur: 3371,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_1.j'],
-              valeur: 807,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
           ],
-          identifiants_referentiel_manquants: [],
+          identifiants_referentiel_manquants: [
+            'cae_1.c',
+            'cae_1.d',
+            'cae_1.i',
+            'cae_1.g',
+            'cae_1.e',
+            'cae_1.f',
+            'cae_1.h',
+            'cae_1.j',
+          ],
         },
         consommations_finales: {
           valeurs: [
             {
               identifiants_referentiel: ['cae_2.e'],
-              valeur: 334.7,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_2.f'],
-              valeur: 247.25,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_2.k'],
@@ -169,15 +178,15 @@ describe('Calcul de trajectoire SNBC', () => {
             },
             {
               identifiants_referentiel: ['cae_2.i'],
-              valeur: 24.77,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_2.g', 'cae_2.h'],
-              valeur: 406.57,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              valeur: null,
+              date_min: null,
+              date_max: null,
             },
             {
               identifiants_referentiel: ['cae_2.j'],
@@ -193,7 +202,12 @@ describe('Calcul de trajectoire SNBC', () => {
             },
           ],
           identifiants_referentiel_manquants: [
+            'cae_2.e',
+            'cae_2.f',
             'cae_2.k',
+            'cae_2.i',
+            'cae_2.g',
+            'cae_2.h',
             'cae_2.j',
             'cae_2.l_pcaet',
           ],
@@ -219,13 +233,13 @@ describe('Calcul de trajectoire SNBC', () => {
               date_max: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cc'],
+              identifiants_referentiel: ['cae_63.cd'],
               valeur: null,
               date_min: null,
               date_max: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cd'],
+              identifiants_referentiel: ['cae_63.cc'],
               valeur: null,
               date_min: null,
               date_max: null,
@@ -253,8 +267,8 @@ describe('Calcul de trajectoire SNBC', () => {
             'cae_63.ca',
             'cae_63.cb',
             'cae_63.da',
-            'cae_63.cc',
             'cae_63.cd',
+            'cae_63.cc',
             'cae_63.db',
             'cae_63.b',
             'cae_63.e',
@@ -264,7 +278,7 @@ describe('Calcul de trajectoire SNBC', () => {
     };
     return request(app.getHttpServer())
       .get(
-        '/trajectoires/snbc/verification?collectivite_id=3829&epci_info=true'
+        '/trajectoires/snbc/verification?collectivite_id=3812&epci_info=true'
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(200)
@@ -273,16 +287,16 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Calcul avec donnees manquantes`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=3829')
+      .get('/trajectoires/snbc?collectivite_id=3812')
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(422)
       .expect({
         message:
-          "Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_2.k, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.",
+          "Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_1.c, cae_1.d, cae_1.i, cae_1.g, cae_1.e, cae_1.f, cae_1.h, cae_1.j, cae_2.e, cae_2.f, cae_2.k, cae_2.i, cae_2.g, cae_2.h, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.",
         error: 'Unprocessable Entity',
         statusCode: 422,
       });
-  });
+  }, 10000);
 
   it(`Calcul sans droit suffisant (uniquement lecture)`, () => {
     return request(app.getHttpServer())
