@@ -8,6 +8,9 @@ export type ActionImpactThematique = Omit<
   'md_id'
 >;
 
+export type ActionImpactTypologie =
+  Database['public']['Tables']['action_impact_typologie']['Row'];
+
 export type Niveau = {niveau: number; nom: string};
 
 export type ActionImpactFourchetteBudgetaire =
@@ -51,6 +54,7 @@ export type ActionImpactState = {
   isinpanier: boolean;
   statut: ActionImpactStatut | null;
   thematiques: ActionImpactThematique[];
+  typologie: ActionImpactTypologie;
   actions_liees: ActionReferentiel[] | null;
   matches_competences: boolean;
   dejaImportee?: boolean;
