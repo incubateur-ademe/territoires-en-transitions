@@ -1,6 +1,6 @@
 export const CommentCaMarche = () => (
   <>
-    <h3>Comment ça marche ? </h3>
+    <h3 className="text-primary-8">Comment ça marche ? </h3>
     <ul className="list-decimal list-outside text-lg text-primary-10 font-bold pl-5">
       <li>Explorez les actions disponibles</li>
       <p className="font-normal">

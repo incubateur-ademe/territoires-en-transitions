@@ -15,8 +15,9 @@ const Landing = () => {
       >
         <div className="lg:w-2/3">
           <h1>
-            Faites vivre la transition écologique sur votre territoire.{' '}
-            <span className="text-primary">la transition écologique</span>
+            Faites vivre{' '}
+            <span className="text-primary">la transition écologique</span> sur
+            votre territoire.
           </h1>
           <p>
             Avec le panier d’action à impact, constituez une base d’actions
@@ -47,7 +48,7 @@ const Landing = () => {
         containerClassName="bg-white"
       >
         <CollectiviteEngageePicto />
-        <h3 className="mb-0">
+        <h3 className="mb-0 max-w-4xl text-primary-8">
           Vous êtes une collectivité déjà engagée dans le programme Territoires
           Engagés Transition Écologique ?
         </h3>
