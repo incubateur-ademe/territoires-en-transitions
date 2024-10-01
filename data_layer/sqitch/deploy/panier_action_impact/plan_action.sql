@@ -60,7 +60,7 @@ begin
                    (select
                         case
                             when ais.categorie_id is null
-                                     or ais.categorie_id not in ('en_cours', 'realise') then
+                                or ais.categorie_id not in ('en_cours', 'realise') then
                                 'À venir'::fiche_action_statuts
                             else
                                 aic.nom::fiche_action_statuts
@@ -145,6 +145,16 @@ begin
                  where id = selected_action_impact.id) lien;
 
         end loop;
+    -- Enlève les actions ajoutées du panier
+    delete from action_impact_panier
+    where action_impact_panier.panier_id = plan_from_panier.panier_id
+      and action_impact_panier.action_id in (
+                                            select distinct aifa.action_impact_id
+                                            from axe a
+                                            join fiche_action_axe faa on a.id = faa.axe_id
+                                            join action_impact_fiche_action aifa on aifa.fiche_id = faa.fiche_id
+                                            where a.id = new_plan_id
+                                            );
 
     perform set_config('response.status', '201', true);
     return new_plan_id;
