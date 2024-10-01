@@ -13,12 +13,12 @@ const Carte = () => {
           </h2>
 
           <p className="text-center text-grey-8 text-2xl mb-2">
-            Parcourez notre carte interactive et découvrez les collectivités.
+            Parcourez notre carte interactive et découvrez les collectivités
           </p>
 
           <p className="text-center text-info-1 italic text-sm mb-0">
-            Seules les collectivités labellisées disposent d’une page
-            personnalisée.
+            Cliquez sur les collectivités labellisées pour découvrir leur page
+            personnalisée
           </p>
         </div>
 

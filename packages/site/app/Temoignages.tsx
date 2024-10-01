@@ -16,7 +16,7 @@ type TemoignagesProps = {
 const Temoignages = ({ titre, contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
     <Section>
-      {/* <h2 className="text-center max-md:mb-2">{titre}</h2> */}
+      {!!titre.trim() && <h2 className="text-center max-md:mb-2">{titre}</h2>}
       <TestimonialSlideshow
         contenu={contenu}
         className="rounded-md md:w-3/4 mx-auto md:border border-primary-3"

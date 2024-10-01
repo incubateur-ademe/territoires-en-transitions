@@ -1,18 +1,18 @@
 'use client';
 
-import {usePathname} from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import {MenuPrincipal} from './MenuPrincipal';
-import {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import { MenuPrincipal } from './MenuPrincipal';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import classNames from 'classnames';
-import {getAuthPaths, getAppBaseUrl} from '@tet/api';
+import { getAuthPaths, getAppBaseUrl } from '@tet/api';
 
 export type MenuProps = {
   menuOpened: boolean;
   setMenuOpened: Dispatch<SetStateAction<boolean>>;
 };
 
-function Brand({menuOpened, setMenuOpened}: MenuProps) {
+function Brand({ menuOpened, setMenuOpened }: MenuProps) {
   return (
     <div className="fr-header__brand-top">
       <div className="fr-header__logo">
@@ -23,7 +23,7 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
         </p>
       </div>
       <div className="fr-header__operator">
-        <div className="fr-grid-row" style={{minWidth: 160 + 'px'}}>
+        <div className="fr-grid-row" style={{ minWidth: 160 + 'px' }}>
           <Image src="/ademe.jpg" alt="ADEME" width="70" height="80" />
           <Image
             src="/territoire-engage.jpg"
@@ -41,7 +41,7 @@ function Brand({menuOpened, setMenuOpened}: MenuProps) {
           id="button-861"
           title="Menu"
           className="fr-btn--menu fr-btn"
-          onClick={() => setMenuOpened(prevState => !prevState)}
+          onClick={() => setMenuOpened((prevState) => !prevState)}
         >
           Menu
         </button>
@@ -58,8 +58,8 @@ function Links() {
     setAuthPaths(
       getAuthPaths(
         document.location.hostname,
-        getAppBaseUrl(document.location.hostname),
-      ),
+        getAppBaseUrl(document.location.hostname)
+      )
     );
   }, []);
 
@@ -68,6 +68,17 @@ function Links() {
 
   return (
     <ul className="fr-btns-group">
+      <li>
+        <a
+          href="/faq"
+          className={classNames('fr-btn', {
+            'fr-icon-question-line': !isFAQ,
+            'fr-icon-question-fill': isFAQ,
+          })}
+        >
+          FAQ
+        </a>
+      </li>
       <li>
         <a
           href={authPaths?.signUp}
@@ -90,17 +101,6 @@ function Links() {
           className="fr-btn fr-icon-account-line after:!w-0 after:!m-0"
         >
           Se connecter
-        </a>
-      </li>
-      <li>
-        <a
-          href="/faq"
-          className={classNames('fr-btn', {
-            'fr-icon-question-line': !isFAQ,
-            'fr-icon-question-fill': isFAQ,
-          })}
-        >
-          FAQ
         </a>
       </li>
     </ul>
@@ -141,7 +141,7 @@ function Body(props: MenuProps) {
   );
 }
 
-function Menu({menuOpened, setMenuOpened}: MenuProps) {
+function Menu({ menuOpened, setMenuOpened }: MenuProps) {
   return (
     <div
       id="modal-header__menu"
@@ -168,7 +168,7 @@ function Menu({menuOpened, setMenuOpened}: MenuProps) {
           aria-label="Menu principal"
           className="fr-nav"
         >
-          <MenuPrincipal {...{menuOpened, setMenuOpened}} />
+          <MenuPrincipal {...{ menuOpened, setMenuOpened }} />
         </nav>
       </div>
     </div>
@@ -180,8 +180,8 @@ const AppHeader = () => {
 
   return (
     <header role="banner" id="header-navigation" className="fr-header">
-      <Body {...{menuOpened, setMenuOpened}} />
-      <Menu {...{menuOpened, setMenuOpened}} />
+      <Body {...{ menuOpened, setMenuOpened }} />
+      <Menu {...{ menuOpened, setMenuOpened }} />
     </header>
   );
 };

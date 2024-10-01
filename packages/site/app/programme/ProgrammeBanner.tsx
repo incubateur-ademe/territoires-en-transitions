@@ -17,7 +17,7 @@ const ProgrammeBanner = ({
     <Section>
       <h1 className="text-center text-primary-8">{titre}</h1>
       {!!description && (
-        <p className="text-[1.375rem] text-grey-8 text-center">{description}</p>
+        <p className="text-2xl text-grey-8 text-center">{description}</p>
       )}
       {!!couvertureURL && (
         <EmbededVideo
