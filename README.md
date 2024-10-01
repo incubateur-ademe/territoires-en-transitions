@@ -16,7 +16,7 @@ Une majorité des collectivités rencontrent des difficultés à mettre en place
 
 La plateforme numérique a pour objectifs de faciliter et d'accélérer la mise en oeuvre des actions ayant le plus d'impact pour la réussite de la transition écologique au sein d'une interface permettant :
 
-- D'accéder aux référentiels d'actions de transition écologique (Climat-Air-Énergie (aussi connu comme la labellisation Cit'ergie) et Économie Circulaire) et de personnaliser leur utilisation
+- D'accéder aux référentiels d'actions de transition écologique CAE (Climat-Air-Énergie, aussi connu comme la labellisation Cit'ergie) et ECI (Économie Circulaire) et de personnaliser leur utilisation
 - De gérer et suivre ses actions et indicateurs de transition écologique
 - De prioriser les actions ayant le plus d'impact
 - De partager la progression des réalisations et des retours d'expériences entre collectivités
