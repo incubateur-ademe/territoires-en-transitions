@@ -3657,6 +3657,7 @@ export type Database = {
           action_definition: unknown | null
           action_impact_fourchette_budgetaire: unknown | null
           action_impact_temps_de_mise_en_oeuvre: unknown | null
+          action_impact_thematique: unknown | null
           matches_competences: boolean | null
           thematique: unknown | null
         }
@@ -25616,7 +25617,9 @@ export type Database = {
           referents: Database["public"]["CompositeTypes"]["personne"][] | null
           ressources: string | null
           restreint: boolean | null
-          resultats_attendus: string[] | null
+          resultats_attendus:
+            | Database["public"]["Tables"]["effet_attendu"]["Row"][]
+            | null
           services: Database["public"]["Tables"]["service_tag"]["Row"][] | null
           sous_thematiques:
             | Database["public"]["Tables"]["sous_thematique"]["Row"][]
@@ -29307,6 +29310,16 @@ export type Database = {
         Returns: {
           niveau: number
           nom: string
+        }[]
+      }
+      action_impact_thematique: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          action_impact_id: number
+          ordre: number
+          thematique_id: number
         }[]
       }
       action_perimetre_evaluation: {
