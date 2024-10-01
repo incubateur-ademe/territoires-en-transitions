@@ -2,6 +2,7 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
   ActionReferentiel,
 } from '@tet/api';
 
@@ -15,6 +16,8 @@ export type ActionImpactProps = {
   titre: string;
   /** Thématiques de l'action à impact */
   thematiques: ActionImpactThematique[];
+  /** Typologie */
+  typologie: ActionImpactTypologie | null;
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
   budget?: ActionImpactFourchetteBudgetaire;
   /** Description de l'action à impact */
@@ -50,6 +53,7 @@ export type CarteActionImpactProps = Pick<
   ActionImpactProps,
   | 'titre'
   | 'thematiques'
+  | 'typologie'
   | 'budget'
   | 'statut'
   | 'panier'

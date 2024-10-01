@@ -28,6 +28,7 @@ const ListeActionsFiltrees = ({
           actionsLiees={action.actions_liees}
           titre={action.action.titre}
           thematiques={action.thematiques}
+          typologie={action.typologie}
           budget={budgets.find(
             b => b.niveau === action.action.fourchette_budgetaire
           )}

@@ -23,6 +23,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
     children,
     actionsLiees,
     titre,
+    typologie,
     description,
     statut,
     panier,
@@ -34,6 +35,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
     <Modal
       size="lg"
       title={titre}
+      subTitle={typologie?.nom}
       textAlign="left"
       render={() => {
         return (

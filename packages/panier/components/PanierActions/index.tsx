@@ -70,10 +70,11 @@ const PanierActions = ({
             </div>
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
-              {actionsListe.map(({action, thematiques}) => (
+              {actionsListe.map(({action, thematiques, typologie}) => (
                 <ActionImpact
                   key={action.id}
                   description={action.description}
+                  typologie={typologie}
                   titre={action.titre}
                   thematiques={thematiques}
                   budget={budgets.find(
