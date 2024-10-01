@@ -190,6 +190,7 @@ export interface TrackingPlan extends Record<never, Page> {
       validation_modale_acteurs_fa: {};
       validation_modale_planning_fa: {};
       cta_indicateur_perso_fa: {};
+      cta_fa_fai: {};
     };
   };
 

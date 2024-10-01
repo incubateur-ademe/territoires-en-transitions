@@ -1,4 +1,6 @@
-import {Modal, InfoActionImpact} from '@tet/ui';
+import {useState} from 'react';
+import {Modal, InfoActionImpact, useEventTracker} from '@tet/ui';
+import {useCollectiviteId} from 'core-logic/hooks/params';
 import {useActionImpact} from './useActionImpact';
 import Markdown from 'ui/Markdown';
 
@@ -13,6 +15,9 @@ type ModaleActionImpactProps = {
 export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
   const {actionImpactId, children} = props;
   const {data: action} = useActionImpact(actionImpactId);
+  const [isOpen, setIsOpen] = useState(false);
+  const trackEvent = useEventTracker('app/fiche-action');
+  const collectivite_id = useCollectiviteId()!;
 
   if (!action) {
     return null;
@@ -24,6 +29,15 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
       size="lg"
       title={titre}
       textAlign="left"
+      openState={{
+        isOpen,
+        setIsOpen: opened => {
+          if (opened) {
+            trackEvent('cta_fa_fai', {collectivite_id});
+          }
+          setIsOpen(opened);
+        },
+      }}
       render={() => {
         return (
           <InfoActionImpact
