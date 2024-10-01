@@ -712,7 +712,6 @@ indicateur/trajectoire 2024-09-03T14:57:42Z System Administrator <root@AirdeThib
 indicateur/fusion [indicateur/fusion@v4.6.0] 2024-09-03T15:37:11Z System Administrator <root@AirdeThibaut2.lan> # modified_by trigger est optionnel
 indicateur/fix_json_upsert 2024-09-11T12:49:34Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Fix insertion de la parentalité entre indicateurs après la refonte des indicateurs
 @v4.9.0 2024-09-18T07:54:50Z System Administrator <root@AirdeThibaut2.lan> # Adaptations pour le calcul de trajectoire
-
 indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v4.9.0] 2024-10-01T15:19:16Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
 @v4.12.3 2024-10-01T16:24:17Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
 
