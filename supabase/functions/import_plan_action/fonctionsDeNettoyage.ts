@@ -193,7 +193,7 @@ export const indicateurs = async (indicateurs : any, memoire : TMemoire) : Promi
  * @param memoire données utiles au nettoyage du fichier
  * @return tableau de effets attendus nettoyés
  */
-export const resultats= async (resultats : string, memoire : TMemoire) : Promise<string[]> => {
+export const resultats= async (resultats : string, memoire : TMemoire) : Promise<Database["public"]["Tables"]["effet_attendu"]["Insert"][]> => {
     const toReturn = [];
     if(resultats){
         const fuseResultat = new Fuse(ficheActionResultatsAttendus);
@@ -229,8 +229,8 @@ export const resultats= async (resultats : string, memoire : TMemoire) : Promise
                         }
                     }
                 }
-                if(effetToAdd){
-                    toReturn.push(effetToAdd);
+                if(effetToAdd && memoire.effets.get(effetToAdd)){
+                    toReturn.push(memoire.effets.get(effetToAdd));
                 }
             }
         }
