@@ -1,6 +1,7 @@
 import {
   ActionImpactCategorie,
   ActionImpactThematique,
+  ActionImpactTypologie,
   Niveau,
   Panier,
   PanierAPI,
@@ -18,21 +19,29 @@ const getInit = {
   },
 };
 
-export const fetchPanier = async (
-  panierId: string,
-  thematique_ids: number[],
-  budget_ids: number[],
-  temps_ids: number[],
-): Promise<Panier | null> => {
+export const fetchPanier = async ({
+  panierId,
+  thematique_ids,
+  typologie_ids,
+  budget_ids,
+  temps_ids,
+}: {
+  panierId: string;
+  thematique_ids: number[];
+  typologie_ids: number[];
+  budget_ids: number[];
+  temps_ids: number[];
+}): Promise<Panier | null> => {
   const supabase = createClient(cookies());
   const api = new PanierAPI(supabase);
 
-  const panier: Panier | null = await api.fetchPanier(
+  const panier: Panier | null = await api.fetchPanier({
     panierId,
     thematique_ids,
+    typologie_ids,
     budget_ids,
     temps_ids,
-  );
+  });
 
   return panier;
 };
@@ -49,6 +58,14 @@ export const fetchThematiques = async (): Promise<ActionImpactThematique[]> => {
   const response = await fetch(
     `${apiUrl}/rest/v1/thematique?select=id,nom`,
     getInit
+  );
+  return await response.json();
+};
+
+export const fetchTypologies = async (): Promise<ActionImpactTypologie[]> => {
+  const response = await fetch(
+    `${apiUrl}/rest/v1/action_impact_typologie?select=id,nom`,
+    getInit,
   );
   return await response.json();
 };

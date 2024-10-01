@@ -5,6 +5,7 @@ import {
   ActionImpactState,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
 } from '@tet/api';
 import {
   Alert,
@@ -39,6 +40,7 @@ type ListeActionsProps = {
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   thematiques: ActionImpactThematique[];
+  typologies: ActionImpactTypologie[];
   sansFiltreCompetences: boolean;
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
@@ -50,6 +52,7 @@ const ListeActions = ({
   budgets,
   temps,
   thematiques,
+  typologies,
   sansFiltreCompetences,
   onToggleSelected,
   onUpdateStatus,
@@ -98,7 +101,13 @@ const ListeActions = ({
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
             <FiltresActions
-              {...{budgets, temps, thematiques, sansFiltreCompetences}}
+              {...{
+                budgets,
+                temps,
+                thematiques,
+                typologies,
+                sansFiltreCompetences,
+              }}
             />
 
             {!tab.status &&

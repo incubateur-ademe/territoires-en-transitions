@@ -103,16 +103,23 @@ export class PanierAPI {
     }
   }
 
-  async fetchPanier(
-    panier_id: string,
-    thematique_ids: number[],
-    niveau_budget_ids: number[],
-    niveau_temps_ids: number[]
-  ): Promise<Panier | null> {
+  async fetchPanier({
+    panierId,
+    thematique_ids,
+    typologie_ids,
+    niveau_budget_ids,
+    niveau_temps_ids,
+  }: {
+    panierId: string;
+    thematique_ids: number[];
+    typologie_ids: number[];
+    niveau_budget_ids: number[];
+    niveau_temps_ids: number[];
+  }): Promise<Panier | null> {
     const builder = this.supabase
       .from('panier')
       .select(panierSelect)
-      .eq('id', panier_id);
+      .eq('id', panierId);
 
     if (thematique_ids && thematique_ids.length > 0) {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
@@ -123,6 +130,19 @@ export class PanierAPI {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(
         'action_impact_state.thematiques',
+        'not.is.null'
+      );
+    }
+
+    if (typologie_ids && typologie_ids.length > 0) {
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.typologie.id',
+        `in.(${typologie_ids.join(',')})`
+      );
+      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
+      builder.url.searchParams.append(
+        'action_impact_state.typologie',
         'not.is.null'
       );
     }
