@@ -330,11 +330,16 @@ app-build: ## construit l'image de l'app
     ENV NX_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
     ENV NX_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
     ENV NX_PUBLIC_BACKEND_URL=$BACKEND_URL
+    ENV GIT_COMMIT_SHORT_SHA=$EARTHLY_GIT_SHORT_HASH
+    ENV GIT_COMMIT_TIMESTAMP=$EARTHLY_GIT_COMMIT_TIMESTAMP
     LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
     COPY $API_DIR/. $API_DIR
+    RUN export CI_PIPELINE_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S%z)
+    RUN export CI_COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%S%z -d @$GIT_COMMIT_TIMESTAMP)
+    RUN echo "{\"service_name\":\"app\", \"version\":\"$GIT_COMMIT_SHORT_SHA\",\"build_time\":\"$CI_PIPELINE_TIMESTAMP\",\"commit_time\":\"$GIT_COMMIT_TIMESTAMP\",\"commit\":\"$GIT_COMMIT_SHORT_SHA\"}" > $APP_DIR/public/version.json
     RUN pnpm run build:app
     EXPOSE 3000
     WORKDIR $APP_DIR
