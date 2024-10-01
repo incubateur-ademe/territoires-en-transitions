@@ -99,7 +99,7 @@ const FiltresActions = ({
         thematique_ids: thematiquesValues,
         niveau_budget_ids: budgetsValues,
         niveau_temps_ids: tempsValues,
-        match_competences: sansFiltreCompetencesValue,
+        match_competences: !sansFiltreCompetencesValue,
       });
       router.push(href, { scroll: false });
     };
