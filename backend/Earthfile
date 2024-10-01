@@ -4,19 +4,13 @@ build:
   FROM ../+front-deps
 
   COPY . ./backend
-  # COPY ../packages/api ./packages/api
-  # COPY --chown=node:node root+$BACKEND_DIR ./
-  # COPY --chown=node:node ../packages/api/. $API_DIR
 
   RUN pnpm build:backend
-  RUN pnpm prune --prod # Remove packages from devDependencies
 
-
-  SAVE ARTIFACT dist /dist AS LOCAL dist
-  SAVE ARTIFACT node_modules /node_modules AS LOCAL node_modules
+  SAVE ARTIFACT dist /dist AS LOCAL earthly-build/dist
 
 docker:
-  FROM ../+node-fr
+  FROM ../+prod-deps
 
   ARG DOCKER_IMAGE=$BACKEND_IMG_NAME
 
@@ -28,9 +22,7 @@ docker:
 
   EXPOSE ${PORT}
 
-  # COPY --chown=node:node +backend-pre-build/app/package*.json .
   COPY +build/dist ./dist
-  COPY +build/node_modules ./node_modules
 
   CMD ["node", "dist/backend/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
