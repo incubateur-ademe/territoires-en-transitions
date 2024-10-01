@@ -1,23 +1,34 @@
 # Territoires en Transition
 
-Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique pour faciliter et accélérer la mise en œuvre des actions de transition écologique dans les collectivités territoriales.
+Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/).
 
-L'interface a pour objectifs de permettre aux utilisateurs :
+L'objectif : Aider les collectivités à prioriser la mise en œuvre des actions les plus impactantes pour réussir la transition écologique.
 
-- d'accéder aux référentiels d'actions de transition écologique
-  (Climat-Air-Énergie et Économie Circulaire) et de personnaliser leur utilisation,
-- de gérer et suivre ses actions et indicateurs de transition écologique,
-- de prioriser les actions ayant le plus d'impact,
-- de partager la progression des réalisations et des retours d'expériences entre collectivités.
+## Description du service
 
-### Organisation du dépôt
+### Une transition écologique lente et complexe
+
+Les collectivités ont un rôle central à jouer dans la transition écologique. Elles possèdent les compétences et l'influence sur de nombreuses activités déterminantes pour la réussite de la transition écologique.
+
+Une majorité des collectivités rencontrent des difficultés à mettre en place des actions à la hauteur des enjeux sur leur territoire. Au-delà des différents blocages politiques, organisationnels et financiers, ces difficultés sont directement liées à la complexité et transversalité des sujets de la transition écologique qui, pourtant, dans leur mise en oeuvre, ne sont portés que par quelques personnes au sein de la collectivité.
+
+### Faciliter et accélérer la mise en oeuvre des actions de transition écologique
+
+La plateforme numérique a pour objectifs de faciliter et d'accélérer la mise en oeuvre des actions ayant le plus d'impact pour la réussite de la transition écologique au sein d'une interface permettant :
+
+- D'accéder aux référentiels d'actions de transition écologique (Climat-Air-Énergie (aussi connu comme la labellisation Cit'ergie) et Économie Circulaire) et de personnaliser leur utilisation
+- De gérer et suivre ses actions et indicateurs de transition écologique
+- De prioriser les actions ayant le plus d'impact
+- De partager la progression des réalisations et des retours d'expériences entre collectivités
+
+## Organisation du dépôt
 
 Ce dépôt Git contient :
 
 - 3 services :
-    - le ["data-layer"](./data_layer)
-    - le ["business"](./business)
-    - le [client](./app.territoiresentransitions.react)
+  - le ["data-layer"](./data_layer)
+  - le ["business"](./business)
+  - le [client](./app.territoiresentransitions.react)
 - les données des référentiels en [markdown](./markdown)
 - le [code du site statique](./packages/site)
 - les [composants partagés](./packages/ui) entre le client et le site
@@ -51,7 +62,7 @@ base afin d'être
 ### Les données utilisateurs
 
 Les utilisateurs saisissent pour le compte de leur collectivité des données qui sont stockées dans le `data layer` qui vérifie leurs droits en écriture grace aux
-[row security policies](https://www.postgresql.˚org/docs/current/ddl-rowsecurity.html)
+[row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 
 ### Les données d'évaluation
 
@@ -68,15 +79,15 @@ Chacun de ses éléments a un périmètre définit :
 
 - le `client` permet aux utilisateurs de se servir du produit et ne communique qu'avec le `data layer`
 - le `data layer` se charge des données et de l'authentification.
-    - Il permet au `client` de stocker les données de façon sécurisé et lui fournit les moyens via une API REST de lire
-      les données simplement en lui fournissant des endpoints adaptés.
-    - Il permet au `business` de stocker les données métier et d'accéder aux données utilisateurs
-    - Dans le processus d'évaluation, il permet au `business` de réagir aux changements des données utilisateur et au
-      `client` de réagir aux changements des évaluations.
-    - Enfin, il garantit la cohérence des données.
+  - Il permet au `client` de stocker les données de façon sécurisé et lui fournit les moyens via une API REST de lire
+    les données simplement en lui fournissant des endpoints adaptés.
+  - Il permet au `business` de stocker les données métier et d'accéder aux données utilisateurs
+  - Dans le processus d'évaluation, il permet au `business` de réagir aux changements des données utilisateur et au
+    `client` de réagir aux changements des évaluations.
+  - Enfin, il garantit la cohérence des données.
 - le `business` se charge des parties métier et ne communique qu'avec le `data layer`
-    - il lit les contenus markdown et les enregistre dans le `data layer`
-    - il évalue les données utilisateur et les enregistre dans le `data layer`
+  - il lit les contenus markdown et les enregistre dans le `data layer`
+  - il évalue les données utilisateur et les enregistre dans le `data layer`
 
 ## Stack
 
@@ -84,9 +95,10 @@ Chacun de ses éléments a un périmètre définit :
 
 - Le `data layer` utilise [Supabase](https://github.com/supabase/), une solution qui intègre tous
   les [services](https://supabase.com/docs/architecture) dont nous avons besoin en open source dont :
-    - [gotrue](https://github.com/netlify/gotrue) pour l'authentification OAuth2
-    - [PostgreSQL](https://www.postgresql.org/) la base qui nous apporte le typage et la consistence des données.
-    - [PostgREST](https://postgrest.org/en/stable/) qui transforme la base de donnée en une API RESTful.
+
+  - [gotrue](https://github.com/netlify/gotrue) pour l'authentification OAuth2
+  - [PostgreSQL](https://www.postgresql.org/) la base qui nous apporte le typage et la consistence des données.
+  - [PostgREST](https://postgrest.org/en/stable/) qui transforme la base de donnée en une API RESTful.
 
 - le `business` est développé en Python 🐍.
 
@@ -97,7 +109,6 @@ Chacun de ses éléments a un périmètre définit :
 - Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
 - [Earthly](https://earthly.dev/get-earthly) qui permet de lancer le projet et la CI en local comme en remote.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
-
 
 ### Set up
 
