@@ -37,11 +37,7 @@ SELECT fa.modified_at,
        fa.description,
        fa.piliers_eci,
        fa.objectifs,
-       (select array_agg(ea.nom)
-        from fiche_action_effet_attendu faea
-        join effet_attendu ea on faea.effet_attendu_id = ea.id
-        where faea.fiche_id = fa.id
-        ) as resultats_attendus,
+       eff.resultats_attendus,
        fa.cibles,
        fa.ressources,
        fa.financements,
@@ -184,7 +180,14 @@ LEFT JOIN (
           FROM private.fiche_resume fr
           JOIN fiches_liees_par_fiche falpf ON falpf.fiche_liee_id = fr.id
           GROUP BY falpf.fiche_id
-          ) fic ON fic.fiche_id = fa.id;
+          ) fic ON fic.fiche_id = fa.id
+LEFT JOIN (
+          SELECT faea.fiche_id,
+                 array_agg(ea.*) AS resultats_attendus
+          FROM effet_attendu ea
+          JOIN fiche_action_effet_attendu faea ON ea.id = faea.effet_attendu_id
+          GROUP BY faea.fiche_id
+          ) eff ON eff.fiche_id = fa.id;
 
 create or replace function upsert_fiche_action() returns trigger
     security definer
@@ -205,7 +208,7 @@ declare
     service         service_tag;
     financeur       financeur_montant;
     fiche_liee      fiche_resume;
-    effet_attendu   text;
+    effet_attendu   effet_attendu;
 begin
     id_fiche = new.id;
     if not have_edition_acces(new.collectivite_id) and not is_service_role() then
@@ -380,16 +383,13 @@ begin
             end loop;
     end if;
 
-    -- Effets attendus (Temporairement, via le nom pour éviter de changer le front)
+    -- Effets attendus
     delete from fiche_action_effet_attendu where fiche_id= id_fiche;
     if new.resultats_attendus is not null then
-        foreach effet_attendu in array new.resultats_attendus::text[]
+        foreach effet_attendu in array new.resultats_attendus::effet_attendu[]
             loop
                 insert into fiche_action_effet_attendu (fiche_id, effet_attendu_id)
-                select id_fiche, ea.id
-                from effet_attendu ea
-                where trim(ea.nom) = trim(effet_attendu)
-                on conflict do nothing;
+                values (id_fiche, effet_attendu.id);
             end loop;
     end if;
 
