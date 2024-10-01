@@ -1,4 +1,4 @@
-# 3. Utiliser Nx pour simplifier la gestion des projets au sein du monorepo
+# 2. Utiliser Nx pour simplifier la gestion des projets au sein du monorepo
 
 Date: 2024-10-01
 
