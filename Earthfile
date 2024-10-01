@@ -936,7 +936,9 @@ app-deploy: ## Déploie le front dans une app Koyeb existante
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 22 | tr '[:upper:]' '[:lower:]')
+    ## limite des noms dans Koyeb : 23 caractères. Comme on prefixe avec test-app-, 
+    ## on garde 14 caractères max dans le nom de la branche.
+    ARG name=$(git rev-parse --abbrev-ref HEAD | s/[^a-zA-Z1-9-]//g' | sed 's/-/_/g' | head -c 14 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
