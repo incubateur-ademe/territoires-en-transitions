@@ -66,8 +66,7 @@ export type TFicheActionCibles = Enums<'fiche_action_cibles'>;
 export type TFicheActionNiveauxPriorite =
   Enums<'fiche_action_niveaux_priorite'>;
 export type TFicheActionPiliersECI = Enums<'fiche_action_piliers_eci'>;
-export type TFicheActionResultatsAttendus =
-  Enums<'fiche_action_resultats_attendus'>;
+export type TFicheActionResultatsAttendus = Tables<'effet_attendu'>;
 export type TFicheActionStatuts = Enums<'fiche_action_statuts'>;
 export type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
