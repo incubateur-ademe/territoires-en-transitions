@@ -10,6 +10,7 @@ import NiveauBudget from './NiveauBudget';
 export const CarteActionImpact = ({
   titre,
   thematiques,
+  typologie,
   budget,
   panier,
   isSelected,
@@ -25,6 +26,9 @@ export const CarteActionImpact = ({
       isSelected={isSelected}
       footer={
         <div className="relative z-0">
+          {!!typologie && (
+            <p className="mb-2 text-sm text-grey-7">{typologie.nom}</p>
+          )}
           <div className="flex justify-end items-center gap-2 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
             {/* Badge thématique */}
             {!!thematiques.length && (
