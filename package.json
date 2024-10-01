@@ -23,6 +23,7 @@
     "@nestjs/platform-express": "^10.4.4",
     "@nestjs/swagger": "^7.4.2",
     "@next/mdx": "^13.5.6",
+    "@next/third-parties": "^14.2.13",
     "@nivo/axes": "^0.81.0",
     "@nivo/bar": "^0.81.0",
     "@nivo/core": "^0.81.0",
