@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP
@@ -25,11 +25,11 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.axept.io *.posthog.com;  
+    script-src ${scriptSrc} *.axept.io *.posthog.com *.googletagmanager.com *.adform.net;  
     style-src ${styleSrc};
-    img-src 'self' blob: data: ytimg.com ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
+    img-src 'self' blob: data: ytimg.com px.ads.linkedin.com server.adform.net ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
       'strapiapp',
-      'media.strapiapp',
+      'media.strapiapp'
     )};
     font-src 'self';
     object-src 'none';
@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com;
+    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net;
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;
@@ -57,14 +57,14 @@ export function middleware(request: NextRequest) {
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   // ajoute les en-têtes à la réponse
-  const response = NextResponse.next({request: {headers: requestHeaders}});
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   return response;
@@ -85,8 +85,8 @@ export const config = {
     {
       source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
       missing: [
-        {type: 'header', key: 'next-router-prefetch'},
-        {type: 'header', key: 'purpose', value: 'prefetch'},
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
       ],
     },
   ],
