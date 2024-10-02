@@ -137,6 +137,19 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
             (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
           `}
         </Script>
+
+        {/* crisp widget */}
+        <Script id="crisp" type="text/javascript">{`
+          window.$crisp = [];
+          window.CRISP_WEBSITE_ID = '%NEXT_PUBLIC_CRISP_WEBSITE_ID%';
+          (function () {
+            d = document;
+            s = d.createElement('script');
+            s.src = 'https://client.crisp.chat/l.js';
+            s.async = 1;
+            d.getElementsByTagName('head')[0].appendChild(s);
+          })();
+        `}</Script>
       </html>
     </PHProvider>
   );
