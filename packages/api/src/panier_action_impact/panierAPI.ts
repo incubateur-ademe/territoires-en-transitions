@@ -124,7 +124,7 @@ export class PanierAPI {
     if (thematique_ids && thematique_ids.length > 0) {
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
       builder.url.searchParams.append(
-        'action_impact_state.thematiques.id',
+        'action_impact_state.thematiques.thematique_id',
         `in.(${thematique_ids.join(',')})`
       );
       // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
