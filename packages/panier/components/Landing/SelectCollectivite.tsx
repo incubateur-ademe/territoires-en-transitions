@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import {Select} from '@tet/ui';
-import {useFilteredCollectivites} from '@components/Landing/useFilteredCollectivites';
+import { useFilteredCollectivites } from './useFilteredCollectivites';
 
 /**
  *  Permet de rechercher et sélectionner une collectivité
