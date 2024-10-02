@@ -30,7 +30,7 @@ const PanierActions = ({
     actionsParStatut[section.statut].length
       ? {...section, actions: actionsParStatut[section.statut]}
       : null,
-  ).filter(section => section !== null);
+  );
 
   return (
     <div className="lg:h-screen lg:w-2/5 xl:w-1/3 bg-white border-[0.5px] border-primary-3 sticky top-0">
@@ -79,33 +79,39 @@ const PanierActions = ({
             </div>
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
-              {sections.map(({statut, nom, nomPluriel, actions}) => (
-                <>
-                  <p
-                    key={statut}
-                    className="font-bold uppercase text-primary-10 text-center mb-0"
-                  >
-                    {actions.length} {actions.length > 1 ? nomPluriel : nom}
-                  </p>
-                  {actions.map(({action, thematiques, typologie}) => (
-                    <ActionImpact
-                      key={action.id}
-                      description={action.description}
-                      typologie={typologie}
-                      titre={action.titre}
-                      thematiques={thematiques}
-                      budget={budgets.find(
-                        b => b.niveau === action.fourchette_budgetaire,
-                      )}
-                      panier={true}
-                      isSelected={false}
-                      onToggleSelected={() =>
-                        onToggleSelected(action.id, false)
-                      }
-                    />
-                  ))}
-                </>
-              ))}
+              {sections.map(section => {
+                if (!section) {
+                  return;
+                }
+                const {statut, nom, nomPluriel, actions} = section;
+                return (
+                  <>
+                    <p
+                      key={statut}
+                      className="font-bold uppercase text-primary-10 text-center mb-0"
+                    >
+                      {actions.length} {actions.length > 1 ? nomPluriel : nom}
+                    </p>
+                    {actions.map(({action, thematiques, typologie}) => (
+                      <ActionImpact
+                        key={action.id}
+                        description={action.description}
+                        typologie={typologie}
+                        titre={action.titre}
+                        thematiques={thematiques}
+                        budget={budgets.find(
+                          b => b.niveau === action.fourchette_budgetaire,
+                        )}
+                        panier={true}
+                        isSelected={false}
+                        onToggleSelected={() =>
+                          onToggleSelected(action.id, false)
+                        }
+                      />
+                    ))}
+                  </>
+                );
+              })}
             </div>
           </div>
         </div>
