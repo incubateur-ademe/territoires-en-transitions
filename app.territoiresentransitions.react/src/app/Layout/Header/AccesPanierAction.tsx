@@ -15,22 +15,25 @@ export const AccesPanierAction = () => {
   const collectiviteId = useCollectiviteId();
   const {data} = useNbActionsDansPanier(collectiviteId);
   const {panierId, count} = data || {};
+  const url = panierId
+    ? `${ENV.panier_url}/panier/${panierId}`
+    : collectiviteId
+    ? `${ENV.panier_url}/landing/collectivite/${collectiviteId}`
+    : `${ENV.panier_url}/landing`;
 
   return (
-    panierId && (
-      <Button
-        variant="white"
-        className={classNames('text-primary-9', {'mr-2': !!count})}
-        size="sm"
-        icon="shopping-basket-2-line"
-        notification={count ? {number: count, variant: 'info'} : undefined}
-        onClick={() => {
-          window.open(`${ENV.panier_url}/panier/${panierId}`, '_blank');
-        }}
-      >
-        Panier d'action
-      </Button>
-    )
+    <Button
+      variant="white"
+      className={classNames('text-primary-9', { 'mr-2': !!count })}
+      size="sm"
+      icon="shopping-basket-2-line"
+      notification={count ? { number: count, variant: 'info' } : undefined}
+      onClick={() => {
+        window.open(url, '_blank');
+      }}
+    >
+      Panier d'action
+    </Button>
   );
 };
 
