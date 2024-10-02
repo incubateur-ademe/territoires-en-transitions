@@ -1,4 +1,4 @@
-name: Déploiement à la demande du site
+name: Déploiement du site
 run-name: Déploiement du site sur ${{ github.event.inputs.target }}
 
 on:
@@ -32,7 +32,7 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
-          +site-build
+          +site-docker
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
           --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }}
