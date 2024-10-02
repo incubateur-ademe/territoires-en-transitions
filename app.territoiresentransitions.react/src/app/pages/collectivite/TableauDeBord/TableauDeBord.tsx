@@ -18,7 +18,7 @@ import TdbVide from './TdbVide';
 const TableauDeBord = () => {
   const collectivite_id = useCollectiviteId();
 
-  const plansActions = usePlansActionsListe(collectivite_id!);
+  const { data: plansActions } = usePlansActionsListe(collectivite_id!);
 
   const isEmpty = plansActions?.plans.length === 0;
 

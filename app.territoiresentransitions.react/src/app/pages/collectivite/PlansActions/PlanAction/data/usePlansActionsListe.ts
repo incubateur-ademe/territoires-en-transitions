@@ -7,12 +7,10 @@ import { supabaseClient } from 'core-logic/api/supabase';
  * Ce hook ne donne pas les enfants de ces axes.
  */
 export const usePlansActionsListe = (collectiviteId: number) => {
-  const { data } = useQuery(['plans_actions', collectiviteId], () =>
+  return useQuery(['plans_actions', collectiviteId], () =>
     planActionsFetch({
       dbClient: supabaseClient,
       collectiviteId,
     })
   );
-
-  return data;
 };

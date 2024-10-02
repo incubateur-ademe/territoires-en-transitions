@@ -36,8 +36,8 @@ const FiltersPlanAction = ({
   getInitialPlan,
   onChangePlan,
 }: FiltersPlanActionProps): JSX.Element => {
-  const plansActions = usePlansActionsListe(collectiviteId);
   const {data: fichesNonClassees} = useFichesNonClasseesListe(collectiviteId);
+  const { data: plansActions } = usePlansActionsListe(collectiviteId);
 
   // Construction de la liste de filtres par plan d'action
   const filters = [

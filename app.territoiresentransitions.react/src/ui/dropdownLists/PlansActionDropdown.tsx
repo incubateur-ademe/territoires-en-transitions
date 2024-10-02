@@ -22,7 +22,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 
 const PlansActionDropdown = ({type = 'filter', ...props}: Props) => {
   const collectivite_id = useCollectiviteId();
-  const data = usePlansActionsListe(collectivite_id!);
+  const { data } = usePlansActionsListe(collectivite_id!);
 
   const plans = data?.plans;
 
