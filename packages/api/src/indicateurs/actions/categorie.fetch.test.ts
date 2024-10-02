@@ -15,5 +15,5 @@ beforeAll(async () => {
 
 test('Test selectCategories', async () => {
   const def = await selectCategories(supabase, 1);
-  expect(def!).toHaveLength(8);
+  expect(def!).toHaveLength(16);
 });
