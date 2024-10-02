@@ -1,6 +1,6 @@
-import {makeSearchString} from '@tet/api';
-import {supabase} from 'src/clientAPI';
+import { makeSearchString } from '@tet/api';
 import useSWR from 'swr';
+import { supabase } from '../../src/clientAPI';
 
 /** Donne la liste des collectivités dont le nom inclus la chaîne recherchée */
 export const useFilteredCollectivites = (search: string, limit = 10) => {
@@ -17,7 +17,7 @@ export const useFilteredCollectivites = (search: string, limit = 10) => {
       query.or(processedSearch);
     }
 
-    const {error, data} = await query;
+    const { error, data } = await query;
 
     if (error) {
       throw new Error(key);
