@@ -26,9 +26,9 @@ import {
 import { panierAPI } from '@tet/panier/src/clientAPI';
 
 const ValiderPanierModale = () => {
-  const { panier } = usePanierContext();
-  const { user } = useUserContext();
-  const contenu = panier?.contenu ?? [];
+  const {panier} = usePanierContext();
+  const {user} = useUserContext();
+  const contenu = panier?.states?.filter(s => s.isinpanier) ?? [];
 
   const steps = [
     "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
