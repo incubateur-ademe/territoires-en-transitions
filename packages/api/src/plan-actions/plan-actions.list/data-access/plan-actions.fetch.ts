@@ -17,7 +17,7 @@ type TFetchedData = {
   plans: FetchedPlanAction[];
 };
 
-type WithSelect = 'type' | 'axes';
+export type WithSelect = 'type' | 'axes';
 
 type Props = {
   dbClient: DBClient;

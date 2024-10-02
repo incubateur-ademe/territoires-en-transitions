@@ -38,7 +38,7 @@ const ModalActionsDontJeSuisLePilote = ({
   const queryClient = useQueryClient();
   const userId = useAuth().user?.id;
 
-  const { data: plansActions } = usePlansActionsListe(collectiviteId!);
+  const { data: plansActions } = usePlansActionsListe({});
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre

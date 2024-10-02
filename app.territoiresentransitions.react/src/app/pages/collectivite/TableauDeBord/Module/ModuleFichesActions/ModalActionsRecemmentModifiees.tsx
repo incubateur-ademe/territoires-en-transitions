@@ -41,7 +41,7 @@ const ModalActionsRecemmentModifiees = ({
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
 
-  const { data: plansActions } = usePlansActionsListe(collectiviteId!);
+  const { data: plansActions } = usePlansActionsListe({});
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre

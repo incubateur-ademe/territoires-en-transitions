@@ -40,7 +40,7 @@ type EmptyPlansActionCardProps = {
 const PlansActionCard = ({
   collectiviteId,
 }: PlanActionCardProps): JSX.Element => {
-  const { data: plansActions } = usePlansActionsListe(collectiviteId);
+  const { data: plansActions } = usePlansActionsListe({});
 
   return plansActions?.plans?.length ? (
     <FilledPlansActionCard
