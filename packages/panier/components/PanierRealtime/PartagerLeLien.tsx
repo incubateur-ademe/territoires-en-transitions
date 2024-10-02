@@ -2,7 +2,7 @@
 import {useEffect, useState} from 'react';
 import {Card, Button, Icon, useCopyToClipboard, useEventTracker} from '@tet/ui';
 import {Panier} from '@tet/api';
-import Membres from '@components/Picto/Membres';
+import Membres from '../Picto/Membres';
 
 /**
  * Affiche l'encadré invitant au partage du lien vers le panier

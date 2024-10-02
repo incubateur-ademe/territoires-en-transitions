@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
 import {
+  Badge,
   ButtonMenu,
   Checkbox,
   Field,

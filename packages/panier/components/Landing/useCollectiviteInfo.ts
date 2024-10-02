@@ -1,5 +1,4 @@
-import {makeSearchString} from '@tet/api';
-import {supabase} from 'src/clientAPI';
+import { supabase } from '../../src/clientAPI';
 import useSWR from 'swr';
 
 /** Donne des infos sur une collectivité */
@@ -8,7 +7,7 @@ export const useCollectiviteInfo = (collectiviteId: number | null) => {
   return useSWR(key, async () => {
     if (!collectiviteId) return null;
 
-    const {error, data} = await supabase
+    const { error, data } = await supabase
       .from('site_labellisation')
       .select('collectivite_id, nom, engagee')
       .eq('collectivite_id', collectiviteId);

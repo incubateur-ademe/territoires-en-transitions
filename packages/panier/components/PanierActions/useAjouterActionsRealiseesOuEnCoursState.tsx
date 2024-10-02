@@ -1,6 +1,6 @@
 import {Panier} from '@tet/api';
 import {useState, useEffect} from 'react';
-import {panierAPI} from 'src/clientAPI';
+import { panierAPI } from '../../src/clientAPI';
 import {usePanierContext} from '../../providers';
 
 /**
