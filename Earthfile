@@ -341,10 +341,6 @@ front-deps:
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
 
-front-deps-builder:
-    LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-
 backend-build:
   BUILD --pass-args ./backend+build
 
