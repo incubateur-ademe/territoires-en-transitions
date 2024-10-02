@@ -20,7 +20,7 @@ Les problèmes aujourd'hui :
 
 3. Hétérogénité des outils et des configs utilisés dans les différents projets
 
-   Des configs Typescript et ESLint différentes suivants les projets car chaque fichier de conf est dupliqué. On réinvente la roue pour configurer tel ou tel outil dans tel projet, sans faire monter en qualité l'ensemble des projets qui utilisent cet outil.
+   Des configs Typescript et ESLint différentes suivant les projets car chaque fichier de conf est dupliqué. On réinvente la roue pour configurer tel ou tel outil dans tel projet, sans faire monter en qualité l'ensemble des projets qui utilisent cet outil.
 
 ## Decision
 
@@ -39,7 +39,7 @@ Les problèmes aujourd'hui :
 
     Toutes les dépendances des différentes apps et libs sont rassemblées dans le même `package.json`. Il existe désormais une unique version de dépendances commune à tous les projets.
 
-    → Fini les conflits de versions entre apps et libs
+    → Terminé les conflits de versions entre apps et libs !
 
     Voir :
 

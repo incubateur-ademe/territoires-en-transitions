@@ -17,3 +17,5 @@ We will use Architecture Decision Records, as [described by Michael Nygard](http
 ## Consequences
 
 See Michael Nygard's article, linked above. For a lightweight ADR toolset, see Nat Pryce's [adr-tools](https://github.com/npryce/adr-tools).
+
+Dans l'écosystème Beta / ADEME, voir aussi l'exemple d'utilisation des ADRs de [Aldo](https://github.com/incubateur-ademe/aldo/tree/main/doc/adr).
