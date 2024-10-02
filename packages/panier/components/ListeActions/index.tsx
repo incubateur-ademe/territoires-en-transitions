@@ -20,19 +20,20 @@ import ListeVide from './ListeVide';
 import FiltresActions from '@tet/panier/components/FiltresActions';
 
 const getTabLabel = (
-  tab: {label: string; status: string | null},
-  actionsNb: number,
+  tab: { label: string; labelOne?: string; status: string | null },
+  actionsNb: number
 ) => {
-  if (tab.status !== null) {
-    if (actionsNb > 1 || tab.status === 'en_cours') {
-      return `${actionsNb} ${tab.label.toLowerCase()}`;
-    } else {
-      return `${actionsNb} ${tab.label
-        .slice(0, tab.label.length - 1)
-        .toLowerCase()}`;
-    }
+  if (actionsNb === 1 && tab.labelOne) {
+    return `1 ${tab.labelOne.toLowerCase()}`;
   }
-  return tab.label;
+
+  if (actionsNb > 1 || tab.status === 'en_cours') {
+    return `${actionsNb} ${tab.label.toLowerCase()}`;
+  } else {
+    return `${actionsNb} ${tab.label
+      .slice(0, tab.label.length - 1)
+      .toLowerCase()}`;
+  }
 };
 
 type ListeActionsProps = {
@@ -62,11 +63,16 @@ const ListeActions = ({
 
   const tabsList: {
     label: string;
+    labelOne?: string;
     shortName: PanierOngletName;
     status: string | null;
   }[] = [
-    {label: 'Sélection', shortName: 'selection', status: null},
-    {label: 'Réalisées', shortName: 'réalisées', status: 'realise'},
+    {
+      label: 'Propositions',
+      shortName: 'selection',
+      status: null,
+    },
+    { label: 'Réalisées', shortName: 'réalisées', status: 'realise' },
     {
       label: 'En cours de réalisation',
       shortName: 'en cours',
@@ -74,10 +80,13 @@ const ListeActions = ({
     },
   ];
 
-  const actionsDejaImportees = actionsListe.filter(state => state.dejaImportee);
+  const actionsDejaImportees = actionsListe.filter(
+    (state) => state.dejaImportee
+  );
   if (actionsDejaImportees.length) {
     tabsList.push({
       label: 'Fiches déjà importées',
+      labelOne: 'Fiche déjà importée',
       shortName: 'importees',
       status: 'importees',
     });
@@ -85,18 +94,18 @@ const ListeActions = ({
 
   return (
     <Tabs
-      onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
+      onChange={(activeTab) => onChangeTab(tabsList[activeTab].shortName)}
       className="grow flex flex-col"
       tabPanelClassName="grow flex flex-col"
       tabsListClassName="!justify-start mb-0"
     >
-      {...tabsList.map(tab => {
+      {...tabsList.map((tab) => {
         const actionsFiltrees =
           tab.shortName === 'importees'
             ? actionsDejaImportees
             : tab.shortName === 'selection'
-            ? filtreSelection({actionsListe, sansFiltreCompetences})
-            : actionsListe.filter(a => a.statut?.categorie_id === tab.status);
+            ? filtreSelection({ actionsListe, sansFiltreCompetences })
+            : actionsListe.filter((a) => a.statut?.categorie_id === tab.status);
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
@@ -172,7 +181,7 @@ const ListeActions = ({
                   actionsListe={actionsFiltrees}
                   onUpdateStatus={onUpdateStatus}
                   onToggleSelected={onToggleSelected}
-                  {...{budgets, temps}}
+                  {...{ budgets, temps }}
                 />
               </>
             )}
