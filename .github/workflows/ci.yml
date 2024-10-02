@@ -70,12 +70,14 @@ jobs:
       - name: Build and push app image
         run: earthly --use-inline-cache --save-inline-cache --push +app-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
+  build-setup:
+    uses: ./.github/workflows/shared-build-setup.yml
+    secrets: inherit
+
   build-auth-dev:
     runs-on: ubuntu-latest
-
+    needs: build-setup
     steps:
-      - uses: ./.github/workflows/shared-build-setup.yml
-
       - name: Build and push auth. image
         run: earthly --use-inline-cache --save-inline-cache --push +auth-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 

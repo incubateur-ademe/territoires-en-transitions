@@ -5,6 +5,7 @@ on: workflow_call
 jobs:
   shared-build-setup:
     runs-on: ubuntu-latest
+    environment: dev
 
     steps:
       - uses: actions/checkout@v4
