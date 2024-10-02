@@ -370,6 +370,7 @@ app-build: ## construit l'image de l'app
     ARG POSTHOG_HOST
     ARG POSTHOG_KEY
     ARG BACKEND_URL
+    ARG PANIER_URL
     FROM +front-deps
     ENV NX_PUBLIC_SUPABASE_URL=$API_URL
     ENV NX_PUBLIC_SUPABASE_KEY=$ANON_KEY
@@ -378,6 +379,7 @@ app-build: ## construit l'image de l'app
     ENV NX_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
     ENV NX_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
     ENV NX_PUBLIC_BACKEND_URL=$BACKEND_URL
+    ENV NX_PUBLIC_PANIER_URL=$PANIER_URL
     LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
     # copie les sources des modules à construire
     COPY $APP_DIR/. $APP_DIR/
