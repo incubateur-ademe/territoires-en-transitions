@@ -1,4 +1,9 @@
-import React from 'react';
+declare global {
+  interface Window {
+    axeptioSettings: { clientId: string };
+    _axcb: { push: (callback: (sdk: unknown) => void) => void };
+  }
+}
 
 /**
  * Une partie des props du composant Script de Next.
@@ -45,18 +50,16 @@ export function Consent({
   consentId: string;
 }) {
   if (typeof window !== 'undefined') {
-    // @ts-expect-error typage dynamique
     window.axeptioSettings = { clientId: consentId };
   }
 
   return (
     <>
       {script({
-        src: 'https://static.axept.io/sdk.js',
+        src: 'https://static.axept.io/sdk-slim.js',
         onLoad: () => {
-          // @ts-expect-error typage dynamique
-          window._axcb.push(function (sdk: unknown) {
-            // @ts-expect-error typage dynamique
+          window._axcb.push((sdk) => {
+            // @ts-expect-error type unknown
             sdk.on('consent:saved', function () {
               onConsentSave();
             });
