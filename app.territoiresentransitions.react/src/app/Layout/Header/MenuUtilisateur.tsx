@@ -65,7 +65,7 @@ const MenuUtilisateurBtn = forwardRef(
       isUserPath: boolean;
       user: UserData;
     },
-    ref?: Ref<HTMLDivElement>
+    ref?: Ref<HTMLButtonElement>
   ) => (
     <Button
       ref={ref}
@@ -79,7 +79,7 @@ const MenuUtilisateurBtn = forwardRef(
       icon={`${user.isSupport ? 'customer-service' : 'account-circle'}-${
         isUserPath ? 'fill' : 'line'
       }`}
-      style={{maxWidth: '15rem'}}
+      style={{ maxWidth: '15rem' }}
       aria-expanded={isOpen}
     >
       <span className="line-clamp-1">{user.prenom}</span>
