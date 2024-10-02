@@ -2,6 +2,11 @@
 
 BEGIN;
 
+-- Ajout Efficacité énergétique dans la liste des effets attendus
+insert into effet_attendu (id, nom, notice)
+values (25, 'Efficacité énergétique', null)
+on conflict do nothing;
+
 -- Ajout données résultats attendus dans effets attendus
 insert into fiche_action_effet_attendu
 select f.id, ea.id
@@ -15,8 +20,6 @@ left join effet_attendu ea on case
                                       trim(ea.nom) = 'Allongement de la durée d''usage'
                                   when f.resultat = 'Amélioration de la qualité de vie' then
                                       trim(ea.nom) = 'Amélioration du cadre de vie'
-                                  when f.resultat = 'Efficacité énergétique' then
-                                      trim(ea.nom) = 'Réduction des consommations énergétiques' -- TODO attente vérification
                                   when f.resultat = 'Sobriété énergétique' then
                                       trim(ea.nom) = 'Sobriété'
                                   else

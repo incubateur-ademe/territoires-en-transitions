@@ -128,7 +128,7 @@ export const date = async (sheet: any, celluleCoordonnes: any) => {
   // ou à défaut essaye d'interpréter la valeur formattée
   return await nettoieDate(sheet[celluleCoordonnes].w);
 };
-  
+
 
 /**
  * Nettoie des thématiques
@@ -219,9 +219,6 @@ export const resultats= async (resultats : string, memoire : TMemoire) : Promise
                         switch (resResultat) {
                             case "Amélioration de la qualité de vie" :
                                 effetToAdd = "Amélioration du cadre de vie";
-                            break;
-                            case "Efficacité énergétique" :
-                                effetToAdd = "Réduction des consommations énergétiques"
                             break;
                             case "Sobriété énergétique" :
                                 effetToAdd = "Sobriété"
