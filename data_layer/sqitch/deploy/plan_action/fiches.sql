@@ -21,7 +21,8 @@ left join effet_attendu ea on case
                                       trim(ea.nom) = 'Sobriété'
                                   else
                                       trim(resultat::text) ilike trim(ea.nom)
-                              end;
+                              end
+on conflict do nothing;
 
 drop function plan_action_export;
 
