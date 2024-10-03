@@ -141,7 +141,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
         {/* crisp widget */}
         <Script id="crisp" type="text/javascript">{`
           window.$crisp = [];
-          window.CRISP_WEBSITE_ID = '%NEXT_PUBLIC_CRISP_WEBSITE_ID%';
+          window.CRISP_WEBSITE_ID = '${process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID}';
           (function () {
             d = document;
             s = d.createElement('script');
