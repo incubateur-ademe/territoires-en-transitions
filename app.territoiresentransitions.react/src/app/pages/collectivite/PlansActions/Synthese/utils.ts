@@ -1,23 +1,13 @@
-import {FiltersKeys} from '../FicheAction/data/filters';
-import {TPlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
-import {DonutData} from 'ui/charts/Donut/DonutChart';
-import {preset} from '@tet/ui';
+import { FiltersKeys } from '../FicheAction/data/filters';
+import { TPlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
+import { DonutData } from 'ui/charts/Donut/DonutChart';
+import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
 
 const statutsGraphTitre = "Répartition par statut d'avancement";
 const pilotesGraphTitre = 'Répartition par personne pilote';
 const referentsGraphTitre = 'Répartition par élu·e référent·e';
 const prioritesGraphTitre = 'Répartition par niveau de priorité';
 const echeanceGraphTitre = 'Répartition par échéance';
-
-export const statutToColor: Record<string, string> = {
-  'À venir': preset.theme.extend.colors.primary[6],
-  'En cours': preset.theme.extend.colors.info[3],
-  Réalisé: preset.theme.extend.colors.success[3],
-  'En pause': preset.theme.extend.colors.warning[3],
-  Abandonné: preset.theme.extend.colors.grey[5],
-  NC: '#E5E5E5',
-  'Sans statut': '#E5E5E5',
-};
 
 /**
  * VUE DE SYNTHESE
@@ -79,7 +69,7 @@ export const generateSyntheseVue = (
  * GRAPHIQUES
  */
 
-type GraphData = {id: string; value: number; color?: any}[];
+type GraphData = { id: string; value: number; color?: any }[];
 
 export const getGraphData = (
   graphId: FiltersKeys,
@@ -88,7 +78,7 @@ export const getGraphData = (
   switch (graphId) {
     case 'statuts':
       return (
-        data[graphId].map(st => ({
+        data[graphId].map((st) => ({
           ...st,
           id: st.id !== 'NC' ? st.id : 'Sans statut',
           color: statutToColor[st.id],
@@ -96,28 +86,28 @@ export const getGraphData = (
       );
     case 'pilotes':
       return (
-        data[graphId].map(p => ({
+        data[graphId].map((p) => ({
           ...p,
           id: p.id !== 'NC' ? p.id : 'Sans pilote',
         })) || []
       );
     case 'referents':
       return (
-        data[graphId].map(r => ({
+        data[graphId].map((r) => ({
           ...r,
           id: r.id !== 'NC' ? r.id : 'Sans élu·e référent·e',
         })) || []
       );
     case 'priorites':
       return (
-        data[graphId].map(prio => ({
+        data[graphId].map((prio) => ({
           ...prio,
           id: prio.id !== 'NC' ? prio.id : 'Non priorisé',
         })) || []
       );
     case 'echeance':
       return (
-        data['echeances'].map(echeance => ({
+        data['echeances'].map((echeance) => ({
           ...echeance,
           id:
             echeance.id !== 'Date de fin non renseignée'

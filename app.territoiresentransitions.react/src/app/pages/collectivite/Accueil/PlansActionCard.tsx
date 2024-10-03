@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
 import { Axe } from '@tet/api/plan-actions/domain';
-import { statutToColor } from 'app/pages/collectivite/PlansActions/Synthese/utils';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -19,6 +18,7 @@ import { usePlansActionsListe } from '../PlansActions/PlanAction/data/usePlansAc
 import { usePlanActionTableauDeBord } from '../PlansActions/Synthese/data/usePlanActionTableauDeBord';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
+import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
 
 type PlanActionCardProps = {
   collectiviteId: number;
