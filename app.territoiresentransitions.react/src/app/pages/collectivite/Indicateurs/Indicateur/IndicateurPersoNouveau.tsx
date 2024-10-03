@@ -1,15 +1,15 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from './useInsertIndicateurPersoDefinition';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import classNames from 'classnames';
-import {FicheAction} from '../../PlansActions/FicheAction/data/types';
-import {Form, Formik} from 'formik';
+import { FicheAction } from '../../PlansActions/FicheAction/data/types';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import {TThematiqueRow} from 'types/alias';
-import {useState} from 'react';
+import { TThematiqueRow } from 'types/alias';
+import { useState } from 'react';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import FormField from 'ui/shared/form/FormField';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -45,8 +45,8 @@ const IndicateurPersoNouveau = ({
     fiche?.thematiques ?? []
   );
 
-  const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
-    onSuccess: indicateurId => {
+  const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
+    onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
         collectiviteId,
@@ -58,17 +58,14 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  /**
-   * TEMPORARY: updating hardcoded commentaire prop, in order to link the description input
-   * to the `commentaire` column in `indicateur_collectivite` 
-   * -> step 2 of expand and contract pattern (
-   * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
-   * Next step: remove hardcoded commentaire prop and change 
-   * <FormikInput type="area" name="description" label="Description" /> to
-   * <FormikInput type="area" name="commentaire" label="Commentaire" />
-   */
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition: {...definition, ['commentaire']: definition.description, thematiques}, ficheId: fiche?.id});
+    save({
+      definition: {
+        ...definition,
+        thematiques,
+      },
+      ficheId: fiche?.id,
+    });
   };
 
   return (
@@ -83,7 +80,7 @@ const IndicateurPersoNouveau = ({
         validationSchema={validation}
         onSubmit={onSave}
       >
-        {({isValid}) => (
+        {({ isValid }) => (
           <Form>
             <div className="bg-grey975 fr-py-7w fr-px-10w">
               <p>
@@ -97,8 +94,8 @@ const IndicateurPersoNouveau = ({
               <FormikInput type="area" name="description" label="Description" />
               <FormField className="fr-mt-4w" label="Thématique">
                 <ThematiquesDropdown
-                  values={thematiques?.map(t => t.id)}
-                  onChange={({thematiques}) => setThematiques(thematiques)}
+                  values={thematiques?.map((t) => t.id)}
+                  onChange={({ thematiques }) => setThematiques(thematiques)}
                 />
               </FormField>
             </div>
