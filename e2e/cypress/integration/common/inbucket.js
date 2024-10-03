@@ -13,17 +13,19 @@ const mailbox = name =>
   cy.request(`${INBUCKET_API}/mailbox/${name}`).then(handleResponse);
 const message = (name, id) =>
   cy.request(`${INBUCKET_API}/mailbox/${name}/${id}`).then(handleResponse);
-const getLastMessage = name =>
-  mailbox(name)
-    .then(inbox => inbox[inbox.length - 1].id)
-    .then(messageId => message(name, messageId));
+const getLastMessage = (name) => {
+  cy.wait(2000);
+  return mailbox(name)
+    .then((inbox) => inbox[inbox.length - 1].id)
+    .then((messageId) => message(name, messageId));
+};
 
 When('la mailbox de {string} est vidée', nom => {
   purgeMailbox(nom);
 });
 
 When('la mailbox de {string} contient {int} message(s)', (name, count) => {
-  cy.wait(500);
+  cy.wait(2000);
   mailbox(name).then(inbox => cy.wrap(inbox.length).should('eq', count));
 });
 
