@@ -29,7 +29,7 @@ type Props = {
 export const planActionsFetch = async ({
   dbClient,
   collectiviteId,
-  options = {},
+  options = { filtre: {} },
   withSelect = [],
 }: Props): Promise<TFetchedData> => {
   const { filtre, sort } = fetchOptionsSchema.parse(options);
