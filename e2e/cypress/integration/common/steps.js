@@ -345,8 +345,11 @@ When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
     .should('have.attr', 'aria-selected', 'true')
 );
 
-When('le badge {string} est visible', text => {
-  cy.get('[data-test=Badge-a-completer]').contains(text).should('be.visible');
+When('le badge {string} est visible', (text) => {
+  cy.get('[data-test=Badge-a-completer]')
+    .contains(text)
+    .scrollIntoView()
+    .should('be.visible');
 });
 When('le badge {string} est absent', text => {
   cy.get('[data-test=Badge-a-completer]').contains(text).should('not.exist');
