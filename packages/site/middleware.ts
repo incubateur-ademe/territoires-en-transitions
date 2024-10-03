@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
     process.env.NODE_ENV === 'production'
-      ? `'self' 'nonce-${nonce}' 'strict-dynamic';`
+      ? `'self' 'nonce-${nonce}' 'strict-dynamic'`
       : `'self' 'unsafe-eval' 'unsafe-inline'`;
 
   // on autorise les styles `unsafe-inline` à cause notamment d'un problème avec le commposant next/image

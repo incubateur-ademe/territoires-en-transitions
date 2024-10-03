@@ -33,7 +33,7 @@ const ContactForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const isContactPanier = searchParams.get('panier') === 'true' ? true : false;
+  const objet = searchParams.get('objet');
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -75,7 +75,7 @@ const ContactForm = () => {
     if (data) {
       setStatus('success');
       setFormData(initFormData);
-      if (isContactPanier) {
+      if (objet !== null) {
         router.push('/contact');
       }
     } else if (error) {
@@ -88,8 +88,12 @@ const ContactForm = () => {
   };
 
   useEffect(() => {
-    if (isContactPanier) {
-      const stringToFind = "Informations sur le panier d'actions à impact";
+    if (objet === 'panier' || objet === 'programme') {
+      const stringToFind =
+        objet === 'panier'
+          ? "Informations sur le panier d'actions à impact"
+          : 'Informations sur le programme Territoire Engagé Transition Écologique';
+
       const optionGroup = options.find((opt) =>
         opt.options.some((o) => o.label === stringToFind)
       );
@@ -103,7 +107,9 @@ const ContactForm = () => {
           categorie: optionGroup.group,
           objet: option,
           message:
-            'Bonjour, le panier d’actions à impact m’intéresse. Pourriez vous me recontacter ?',
+            objet === 'panier'
+              ? 'Bonjour, le panier d’actions à impact m’intéresse. Pourriez vous me recontacter ?'
+              : 'Bonjour, le programme Territoire Engagé Transition Écologique m’intéresse. Pourriez vous me recontacter ?',
         }));
       }
     }
@@ -124,7 +130,7 @@ const ContactForm = () => {
             required
             onChange={handleChangeSelect}
             value={formData.objet.value}
-            disabled={isContactPanier}
+            disabled={objet !== null}
           >
             <option value="" disabled hidden>
               Selectionnez une option
@@ -197,7 +203,6 @@ const ContactForm = () => {
             required
             onChange={handleChange}
             value={formData.message}
-            disabled={isContactPanier}
           />
         </div>
 

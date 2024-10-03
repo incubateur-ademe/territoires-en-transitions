@@ -76,13 +76,52 @@ ol {
 }
 
 /* classes utilisées sur les textes générés par remark */
-.no-margin,
-.no-margin > * {
-  margin: 0;
-}
 
 .small-text,
 .small-text > * {
   font-size: 15px !important;
   line-height: 20.8px !important;
+}
+
+.markdown_style p {
+  @apply mb-4;
+}
+
+.markdown_style ul {
+  list-style-position: outside;
+  @apply pl-5;
+  @apply mb-4;
+}
+
+.markdown_style li:not(:last-of-type) {
+  @apply pb-4;
+}
+
+.markdown_style li:last-of-type {
+  @apply pb-0;
+}
+
+.markdown_style > *:last-child {
+  @apply mb-0;
+}
+
+.markdown_style.font-medium > * {
+  font-weight: 500;
+}
+
+.markdown_style.text-2xl > * {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.markdown_style.text-white > * {
+  color: white;
+}
+
+.colored_marker li::marker {
+  @apply text-primary-6;
+}
+
+.colored_bold strong {
+  @apply text-primary-8;
 }

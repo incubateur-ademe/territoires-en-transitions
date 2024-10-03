@@ -126,7 +126,7 @@ const DetailCollectivite = async ({ params }: { params: { code: string } }) => {
               'Vous êtes membre de cette collectivité ?'
             }
             cta={strapiDefaultData?.connexion?.cta ?? 'Se connecter'}
-            href="https://auth.territoiresentransitions.fr/signin"
+            href="https://auth.territoiresentransitions.fr/login"
           />
         ) : (
           <AccesCompte

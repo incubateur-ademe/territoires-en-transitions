@@ -14,8 +14,10 @@ type TestimonialSlideshowProps = {
   }[];
   autoSlide?: boolean;
   autoSlideDelay?: number;
+  title?: string;
   displayTitle?: boolean;
   titleColor?: string;
+  backgroundColor?: string;
   dotsColor?: 'default' | 'orange';
   displayButtons?: boolean;
   buttonsVariant?: ButtonVariant;
@@ -24,19 +26,22 @@ type TestimonialSlideshowProps = {
 
 const TestimonialSlideshow = ({
   contenu,
+  title = 'Ils ont dit...',
   displayTitle = true,
   titleColor = 'orange-1',
+  backgroundColor = 'bg-grey-1',
   className,
   ...otherProps
 }: TestimonialSlideshowProps) => {
   return (
     <Slideshow
-      className={classNames('p-8 bg-grey-1', className)}
+      className={classNames('p-8', backgroundColor, className)}
       slides={contenu.map((t) => (
         <div
           key={t.id}
           className={classNames(
-            'flex max-lg:flex-col justify-start items-start bg-grey-1',
+            'flex max-lg:flex-col justify-start items-start',
+            backgroundColor,
             { 'gap-8': t.portrait }
           )}
         >
@@ -51,7 +56,7 @@ const TestimonialSlideshow = ({
           )}
           <div>
             {displayTitle && (
-              <h3 className={`text-${titleColor} mb-2`}>Ils ont dit...</h3>
+              <h3 className={`text-${titleColor} mb-2`}>{title}</h3>
             )}
             <p className="paragraphe-18 mb-0">« {t.temoignage} »</p>
             <p className="text-primary-10 text-[18px] font-bold mt-6 mb-0">

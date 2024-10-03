@@ -2,10 +2,18 @@ import {useEffect} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {useId} from '@floating-ui/react';
 import classNames from 'classnames';
-import {HeaderPropsWithModalState, TNavDropdown, TNavItem} from './types';
+import {
+  HeaderPropsWithModalState,
+  TNavDropdown,
+  TNavItem,
+  TNavItemsList,
+} from './types';
 import {makeNavItems, makeSecondaryNavItems} from './makeNavItems';
 import {SelectCollectivite} from './SelectCollectivite';
-import {recherchesCollectivitesUrl} from 'app/paths';
+import {
+  finaliserMonInscriptionUrl,
+  recherchesCollectivitesUrl,
+} from 'app/paths';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -34,13 +42,13 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
     return () => document.body.removeEventListener('mousedown', onClickOutside);
   }, []);
 
-  if (!currentCollectivite) {
-    return null;
+  let items = [] as TNavItemsList;
+  let secondaryItems = [] as TNavItemsList;
+  if (currentCollectivite) {
+    // récupère la liste des items à afficher dans le menu
+    items = makeNavItems(currentCollectivite, auth.user);
+    secondaryItems = makeSecondaryNavItems(currentCollectivite, auth.user);
   }
-
-  // récupère la liste des items à afficher dans le menu
-  const items = makeNavItems(currentCollectivite, auth.user);
-  const secondaryItems = makeSecondaryNavItems(currentCollectivite, auth.user);
 
   return (
     <nav
@@ -59,15 +67,26 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
           )
         )}
         {auth.isConnected && (
-          <NavItem
-            key="collectivites"
-            item={{
-              label: 'Collectivités',
-              to: recherchesCollectivitesUrl,
-              urlPrefix: ['/recherches/'],
-            }}
-            {...props}
-          />
+          <>
+            {!ownedCollectivites?.length && (
+              <NavItem
+                item={{
+                  label: 'Finaliser mon inscription',
+                  to: finaliserMonInscriptionUrl,
+                }}
+                {...props}
+              />
+            )}
+            <NavItem
+              key="collectivites"
+              item={{
+                label: 'Collectivités',
+                to: recherchesCollectivitesUrl,
+                urlPrefix: ['/recherches/'],
+              }}
+              {...props}
+            />
+          </>
         )}
       </ul>
       <ul className="fr-nav__list">

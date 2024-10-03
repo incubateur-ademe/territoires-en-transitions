@@ -1,12 +1,12 @@
-import './global.css';
-import AppHeader from './AppHeader';
-import { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import { GoogleTagManager } from '@next/third-parties/google';
-import { getMetaData } from './utils';
+import AppHeader from '@tet/site/components/layout/AppHeader';
 import Footer from '@tet/site/components/layout/Footer';
 import { PHProvider } from '@tet/site/providers/posthog';
+import { Metadata, Viewport } from 'next';
+import Script from 'next/script';
+import './global.css';
 import TrackPage from './TrackPage';
+import { getMetaData } from './utils';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
               divider: encodeURIComponent('|'),
               pagename: encodeURIComponent('2024-09-territoiresentransitions.fr-PageArrivee-LP')
             });
-            (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();            
+            (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
           `}
         </Script>
       </html>

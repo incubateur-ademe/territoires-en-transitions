@@ -3,7 +3,8 @@ import Section from './Section';
 
 type CardsSectionProps = {
   id?: string;
-  title: string;
+  title?: string;
+  subtitle?: string;
   textClassname?: string;
   description?: string;
   cardsList: React.ReactNode;
@@ -15,6 +16,7 @@ type CardsSectionProps = {
 const CardsSection = ({
   id,
   title,
+  subtitle,
   textClassname,
   description,
   cardsList,
@@ -27,7 +29,19 @@ const CardsSection = ({
     containerClassName={classNames(containerClassName)}
     className={classNames(className)}
   >
-    <h2 className={textClassname}>{title}</h2>
+    {!!title && (
+      <h2
+        className={classNames(
+          'text-primary-8 text-center max-md:mb-2',
+          textClassname,
+        )}
+      >
+        {title}
+      </h2>
+    )}
+    {!!subtitle && (
+      <h3 className="text-primary-9 text-center mb-4">{subtitle}</h3>
+    )}
     {!!description && (
       <p className={classNames('text-xl', textClassname)}>{description}</p>
     )}
