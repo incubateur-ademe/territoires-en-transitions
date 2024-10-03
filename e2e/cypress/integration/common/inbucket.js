@@ -19,20 +19,25 @@ const getLastMessage = (name) => {
     .then((inbox) => inbox[inbox.length - 1].id)
     .then((messageId) => message(name, messageId));
 };
+const getOTPFromMessage = (message) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(message.body.html, 'text/html');
+  return doc.getElementById('otp').textContent;
+};
 
-When('la mailbox de {string} est vidée', nom => {
+When('la mailbox de {string} est vidée', (nom) => {
   purgeMailbox(nom);
 });
 
 When('la mailbox de {string} contient {int} message(s)', (name, count) => {
   cy.wait(2000);
-  mailbox(name).then(inbox => cy.wrap(inbox.length).should('eq', count));
+  mailbox(name).then((inbox) => cy.wrap(inbox.length).should('eq', count));
 });
 
 When(
   'le dernier message dans la mailbox de {string} contient le texte {string}',
   (name, text) => {
-    getLastMessage(name).then(message =>
+    getLastMessage(name).then((message) =>
       cy.wrap(message.body.text).should('include', text)
     );
   }
@@ -40,8 +45,8 @@ When(
 
 When(
   'je visite le lien contenu dans le dernier message de la mailbox de {string}',
-  name => {
-    getLastMessage(name).then(message => {
+  (name) => {
+    getLastMessage(name).then((message) => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(message.body.html, 'text/html');
       const a = doc.getElementsByTagName('a').item(0);
@@ -54,11 +59,8 @@ When(
 When(
   'je saisi le code OTP du dernier message de la mailbox de {string}',
   function (name, elem) {
-    const self = this;
-    getLastMessage(name).then(message => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(message.body.html, 'text/html');
-      const otp = doc.getElementById('otp').textContent;
+    getLastMessage(name).then((message) => {
+      const otp = getOTPFromMessage(message);
       cy.get('[name=otp]').type(otp);
     });
   }
@@ -67,11 +69,8 @@ When(
 When(
   'le champ de saisie du code est pré-rempli avec celui reçu dans la mailbox de {string}',
   function (name, elem) {
-    const self = this;
-    getLastMessage(name).then(message => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(message.body.html, 'text/html');
-      const otp = doc.getElementById('otp').textContent;
+    getLastMessage(name).then((message) => {
+      const otp = getOTPFromMessage(message);
       // la valeur affichée dans le champ est formatée avec des espaces entre chaque chiffre
       const formatted = otp.split('').join(' ');
       cy.get('[name=otp]').should('have.value', formatted);
