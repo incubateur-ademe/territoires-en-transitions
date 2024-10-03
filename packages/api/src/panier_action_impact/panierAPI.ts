@@ -7,7 +7,7 @@ import { MesCollectivite, Panier, PanierBase } from './types';
  * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
 export const panierSelect = `*,
-  contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),
+  contenu:action_impact!action_impact_panier(*,thematiques:thematique(*),typologie:action_impact_typologie(*)),
   states:action_impact_state(
     *, matches_competences,
     thematiques:action_impact_thematique(...thematique(id,nom)),
