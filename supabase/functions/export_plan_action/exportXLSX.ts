@@ -79,7 +79,7 @@ const exportPlan = (
       worksheet.getCell(data_cols.description + ligne_courante).value =
         fiche.description;
       worksheet.getCell(data_cols.thematiques + ligne_courante).value =
-        fiche.thematiques?.map(({ thematique }) => thematique).join(',');
+        joinNames(fiche.thematiques);
       worksheet.getCell(data_cols.sous_thematiques + ligne_courante).value =
         fiche.sous_thematiques
           ?.map(({ sous_thematique }) => sous_thematique)
@@ -89,7 +89,7 @@ const exportPlan = (
       worksheet.getCell(data_cols.objectifs + ligne_courante).value =
         fiche.objectifs;
       worksheet.getCell(data_cols.indicateurs + ligne_courante).value =
-        joinNames(fiche.indicateurs);
+        joinTitres(fiche.indicateurs);
       worksheet.getCell(data_cols.resultats_attendus + ligne_courante).value =
         fiche.resultats_attendus?.join(', ');
 
@@ -173,3 +173,6 @@ const exportPlan = (
 
 const joinNames = (items: Array<{ nom: string }> | null) =>
   items?.map(({ nom }) => nom).join(', ');
+
+const joinTitres = (items: Array<{ titre: string }> | null) =>
+  items?.map(({ titre }) => titre).join(', ');

@@ -124,7 +124,7 @@ export const exportFiche = (
     Heading2('Description de l’action'),
     NormalText(fiche.description),
     Heading2('Thématique'),
-    ...BulletsList(fiche.thematiques, 'thematique'),
+    ...BulletsList(fiche.thematiques),
     Heading2('Sous-thématique'),
     ...BulletsList(fiche.sous_thematiques, 'sous_thematique'),
 
@@ -132,7 +132,7 @@ export const exportFiche = (
     Heading2('Objectifs'),
     NormalText(fiche.objectifs),
     Heading2('Indicateurs liés'),
-    ...BulletsList(fiche.indicateurs),
+    ...BulletsList(fiche.indicateurs, 'titre'),
     Heading2('Résultats attendus'),
     ...Bullets(fiche.resultats_attendus),
 
