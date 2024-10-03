@@ -1,3 +1,14 @@
+import { SignInWithPasswordCredentials, User } from '@supabase/supabase-js';
+import {
+  clearAuthTokens,
+  getRootDomain,
+  restoreSessionFromAuthTokens,
+  setAuthTokens,
+} from '@tet/api';
+import { Enums } from '@tet/api/database.types';
+import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import { signUpPath } from 'app/paths';
+import { ENV } from 'environmentVariables';
 import {
   createContext,
   ReactNode,
@@ -6,18 +17,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { User, SignInWithPasswordCredentials } from '@supabase/supabase-js';
 import { useQuery } from 'react-query';
-import {
-  clearAuthTokens,
-  getRootDomain,
-  restoreSessionFromAuthTokens,
-  setAuthTokens,
-} from '@tet/api';
 import { supabaseClient } from '../supabase';
-import { signUpPath } from 'app/paths';
-import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
-import { ENV } from 'environmentVariables';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -28,7 +29,13 @@ export type TAuthContext = {
   authHeaders: { authorization: string; apikey: string } | null;
   isConnected: boolean;
 };
-export type UserData = User & DCP & { isSupport: boolean | undefined };
+
+type Membre = {
+  fonction?: Enums<'membre_fonction'> | null;
+  est_referent?: boolean | null;
+};
+
+export type UserData = User & DCP & Membre & { isSupport: boolean | undefined };
 export type DCP = {
   nom?: string;
   prenom?: string;
@@ -54,8 +61,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // charge les données associées à l'utilisateur courant
   const { data: dcp, isSuccess: dcpLoaded } = useDCP(user?.id);
   const { data: isSupport } = useIsSupport(user?.id);
+  const { data: membre } = useMembre(user?.id);
   const userData = useMemo(
-    () => (user && dcp ? { ...user, ...dcp, isSupport } : null),
+    () => (user && dcp ? { ...user, ...dcp, ...membre, isSupport } : null),
     [user, dcp]
   );
 
@@ -198,6 +206,20 @@ const useIsSupport = (user_id?: string) =>
     if (!user_id) return false;
     const { data } = await supabaseClient.rpc('est_support');
     return data || false;
+  });
+
+const useMembre = (userId?: string) =>
+  useQuery(['user_membre', userId], async () => {
+    if (!userId) {
+      return false;
+    }
+    const { data } = await supabaseClient
+      .from('private_collectivite_membre')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    return data;
   });
 
 const useCurrentSession = () => {
