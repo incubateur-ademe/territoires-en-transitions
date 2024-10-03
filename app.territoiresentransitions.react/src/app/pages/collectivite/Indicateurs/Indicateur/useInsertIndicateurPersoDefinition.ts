@@ -50,8 +50,8 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       return {indicateurId};
     },
     meta: {
-      success: "L'indicateur personnalisé est enregistré",
-      error: "L'indicateur personnalisé n'a pas été enregistré",
+      success: "L'indicateur est enregistré",
+      error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({indicateurId}, {definition: {collectiviteId}}) => {
       queryClient.invalidateQueries([
