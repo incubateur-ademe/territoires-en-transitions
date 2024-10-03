@@ -345,6 +345,7 @@ app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG network=supabase_network_tet
+    ARG STATIC_DIR=/app/dist/apps/app-front
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
     DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
@@ -354,6 +355,7 @@ app-run: ## construit et lance l'image de l'app en local
         --network $network \
         --publish 3000:3000 \
         --env ZIP_ORIGIN_OVERRIDE=$kong_url \
+        --env STATIC_DIR=$STATIC_DIR \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
@@ -934,7 +936,12 @@ app-deploy: ## Déploie le front dans une app Koyeb existante
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g' | head -c 12)
+    ## limite des noms dans Koyeb : 23 caractères. Comme on prefixe avec test-app-, 
+    ## on garde 14 caractères max dans le nom de la branche.
+    ## En octobre 2024, Koyeb applique cette règle sur les noms des apps déployées :
+    ## ^[a-z0-9]+([.-][a-z0-9]+)*$ and from 3 to 23 chars
+    ## (info récupérée auprès du service support)
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9-]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
@@ -943,7 +950,9 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
-         --type web --port 3000:http --route /:3000 --env PORT=3000
+         --type web --port 3000:http --route /:3000 --env PORT=3000 \
+         --env STATIC_DIR=/app/dist/apps/app-front \
+         --regions par
     END
 
 app-destroy-test: ## Supprime l'app de test

@@ -17,18 +17,22 @@ const IndicateurGazEffetSerre = ({
 }: IndicateurGazEffetSerreProps) => {
   if (!defaultData || !data || data.length === 0) return null;
 
+  // Récupère les données de l'année la plus récente associées à la source CITEPA
   const lastYear = Math.max(...data.map((d) => getYear(d.date_valeur)));
 
   const lastYearData = data.filter(
     (d) =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.identifiant] !== 'Total'
+      secteurIdToLabel[d.identifiant] !== 'Total' &&
+      d.source === 'CITEPA'
   );
 
+  // Récupère le total associé à cette année et à la source CITEPA
   const lastYearTotal = data.find(
     (d) =>
       getYear(d.date_valeur) === lastYear &&
-      secteurIdToLabel[d.identifiant] === 'Total'
+      secteurIdToLabel[d.identifiant] === 'Total' &&
+      d.source === 'CITEPA'
   );
 
   if (lastYearData.length <= 1 && !lastYearTotal) return null;

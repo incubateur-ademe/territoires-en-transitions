@@ -1,10 +1,12 @@
-import './global.css';
-import { Metadata, Viewport } from 'next';
+import { GoogleTagManager } from '@next/third-parties/google';
 import AppHeader from '@tet/site/components/layout/AppHeader';
 import Footer from '@tet/site/components/layout/Footer';
 import { PHProvider } from '@tet/site/providers/posthog';
-import { getMetaData } from './utils';
+import { Metadata, Viewport } from 'next';
+import Script from 'next/script';
+import './global.css';
 import TrackPage from './TrackPage';
+import { getMetaData } from './utils';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -80,7 +82,61 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           </div>
           <Footer />
           <TrackPage />
+
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: 'none' }}
+              alt=""
+              src="https://px.ads.linkedin.com/collect/?pid=1701996&fmt=gif"
+            />
+          </noscript>
+
+          <noscript>
+            <p style={{ margin: '0', padding: '0', border: '0' }}>
+              <img
+                src="https://server.adform.net/Serving/TrackPoint/?pm=2867378&ADFPageName=2024-09-territoiresentransitions.fr-PageArrivee-LP&ADFdivider=|"
+                width="1"
+                height="1"
+                alt=""
+              />
+            </p>
+          </noscript>
         </body>
+
+        <GoogleTagManager gtmId="DC-2967404" />
+
+        <Script id="linkedin" type="text/javascript">
+          {`
+            _linkedin_partner_id = "1701996";
+            window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+            window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+            </script><script type="text/javascript">
+            (function(l) {
+            if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+            window.lintrk.q=[]}
+            var s = document.getElementsByTagName("script")[0];
+            var b = document.createElement("script");
+            b.type = "text/javascript";b.async = true;
+            b.src = "
+            https://snap.licdn.com/li.lms-analytics/insight.min.js";
+            s.parentNode.insertBefore(b, s);})(window.lintrk);
+          `}
+        </Script>
+
+        <Script id="adform" type="text/javascript">
+          {`
+            window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+            window._adftrack.push({
+              HttpHost: 'server.adform.net',
+              pm: 2867378,
+              divider: encodeURIComponent('|'),
+              pagename: encodeURIComponent('2024-09-territoiresentransitions.fr-PageArrivee-LP')
+            });
+            (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+          `}
+        </Script>
       </html>
     </PHProvider>
   );

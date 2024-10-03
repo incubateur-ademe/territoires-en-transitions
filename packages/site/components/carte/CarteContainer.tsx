@@ -13,7 +13,6 @@ import './style.css';
  */
 function Debugger() {
   const map = useMap();
-  // @ts-expect-error erreur non gérée
   window['map'] = map;
   return null;
 }

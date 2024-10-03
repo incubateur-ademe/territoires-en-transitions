@@ -62,7 +62,7 @@ Fonctionnalité: Utiliser la bibliothèque de documents de la collectivité
       | Titre       | Commentaire | Lecture seule |
       | mon-doc.pdf |             |               |
 
-    Quand je me reconnecte en tant que "yala"
+    Quand je me reconnecte en tant que visiteur
     Et que je suis sur la page "Labellisation CAE" de la collectivité "1"
     Alors le bouton "Ajouter un document de labellisation" est absent
     Et la liste des documents de la page Labellisation contient les lignes suivantes :
