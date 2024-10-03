@@ -1,12 +1,9 @@
-import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 import { Indicateurs } from '@tet/api';
-import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 import { FiltreSpecifique as FiltreSpecifiqueFichesSynthse } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
+import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
-import { ModuleDisplay } from 'app/pages/collectivite/TableauDeBord/Module/Module';
-import { SyntheticEvent } from 'react';
-import { DefaultButtonProps } from '@tet/ui';
 
 type FiltreKeys = FiltreValues &
   Indicateurs.domain.FiltreSpecifique &
