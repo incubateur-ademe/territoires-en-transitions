@@ -3,13 +3,13 @@ import {ActionImpact} from '@tet/panier/components/ActionImpact';
 import BasketPicto from '@tet/panier/components/Picto/BasketPicto';
 import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
-import {ActionImpactFourchetteBudgetaire, ActionImpactState} from '@tet/api';
+import {ActionImpactFourchetteBudgetaire, ActionImpactSnippet} from '@tet/api';
 import {Alert} from '@tet/ui';
 import {AjouterActionsRealiseesOuEnCours} from './AjouterActionsRealiseesOuEnCours';
 import {useAjouterActionsRealiseesOuEnCoursState} from './useAjouterActionsRealiseesOuEnCoursState';
 
 type PanierActionsProps = {
-  actionsListe: ActionImpactState[];
+  actionsListe: ActionImpactSnippet[];
   budgets: ActionImpactFourchetteBudgetaire[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
@@ -79,39 +79,21 @@ const PanierActions = ({
             </div>
 
             <div className="grid md:max-lg:grid-cols-2 gap-4">
-              {sections.map(section => {
-                if (!section) {
-                  return;
-                }
-                const {statut, nom, nomPluriel, actions} = section;
-                return (
-                  <>
-                    <p
-                      key={statut}
-                      className="font-bold uppercase text-primary-10 text-center mb-0"
-                    >
-                      {actions.length} {actions.length > 1 ? nomPluriel : nom}
-                    </p>
-                    {actions.map(({action, thematiques, typologie}) => (
-                      <ActionImpact
-                        key={action.id}
-                        description={action.description}
-                        typologie={typologie}
-                        titre={action.titre}
-                        thematiques={thematiques}
-                        budget={budgets.find(
-                          b => b.niveau === action.fourchette_budgetaire,
-                        )}
-                        panier={true}
-                        isSelected={false}
-                        onToggleSelected={() =>
-                          onToggleSelected(action.id, false)
-                        }
-                      />
-                    ))}
-                  </>
-                );
-              })}
+              {actionsListe.map(action => (
+                <ActionImpact
+                  key={action.id}
+                  description={action.description}
+                  titre={action.titre}
+                  thematiques={action.thematiques}
+                  typologie={action.typologie}
+                  budget={budgets.find(
+                    b => b.niveau === action.fourchette_budgetaire,
+                  )}
+                  panier={true}
+                  isSelected={false}
+                  onToggleSelected={() => onToggleSelected(action.id, false)}
+                />
+              ))}
             </div>
           </div>
         </div>
