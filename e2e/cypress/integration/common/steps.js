@@ -365,10 +365,12 @@ When(/le texte "([^"]*)" est absent/, texte => {
 When(
   /je crée un tag "([^"]*)" avec le sélecteur de tag "([^"]*)"/,
   (tag, selecteur) => {
+    // on utilise `force: true` parce que le `input` du `Select` est à l'intérieur d'un `button`
     cy.get(`[data-test=${selecteur}-input]`).type(
-      '{selectall}{backspace}' + tag
+      '{selectall}{backspace}' + tag,
+      { force: true }
     );
-    cy.get(`[data-test=${selecteur}-creer-tag]`).click();
+    cy.get(`[data-test=${selecteur}-creer-tag]`).click({ force: true });
     cy.get(`[data-test=${selecteur}-options]`)
       .contains(tag)
       .should('be.visible');
