@@ -147,8 +147,8 @@ const ListeActions = ({
                           aux côtés des actions en cours et à venir pour
                           constituer et piloter un plan d'action sur l'outil
                           numérique. Il vous suffit de cocher la case "Ajouter
-                          les actions classées comme “réalisées” au niveau du
-                          panier à droite.
+                          les actions classées “réalisées” au niveau du panier à
+                          droite.
                         </div>
                       ) : (
                         <div className="inline">
@@ -162,8 +162,8 @@ const ListeActions = ({
                             outil numérique
                           </Button>
                           et les piloter, il vous suffit de cocher la case
-                          "Ajouter les actions classées comme “en cours” au
-                          niveau du panier à droite.
+                          "Ajouter les actions classées “en cours” au niveau du
+                          panier à droite.
                         </div>
                       )
                     }
