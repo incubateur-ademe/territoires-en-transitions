@@ -4,9 +4,11 @@ import { MesCollectivite, Panier, PanierBase } from './types';
 
 /**
  * On sélectionne toutes les colonnes du panier : *
- * puis les `action_impact` par la relation `action_impact_state` que l'on renomme `states`
+ * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
  */
-export const panierSelect = `*,states:action_impact_state(
+export const panierSelect = `*,
+  contenu:action_impact!action_impact_panier(*,thematiques:thematique(*)),
+  states:action_impact_state(
     *, matches_competences,
     thematiques:action_impact_thematique(...thematique(id,nom)),
     typologie:action_impact_typologie(*),

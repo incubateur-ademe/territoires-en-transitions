@@ -136,7 +136,7 @@ const PanierRealtime = ({
       </div>
 
       <PanierActions
-        actionsListe={panier.states.filter(({isinpanier}) => isinpanier)}
+        actionsListe={panier.contenu}
         budgets={budgets}
         onToggleSelected={handleToggleSelected}
       />

@@ -35,6 +35,13 @@ export type ActionImpact = Omit<
   subventions_mobilisables: Link[];
 };
 
+/* Le resumé d'une action à impact, utilisé pour les cartes  */
+export type ActionImpactSnippet =
+  // todo: Omit<ActionImpact, 'description' | 'ressources_externes'>
+  ActionImpact & {
+    thematiques: ActionImpactThematique[];
+  };
+
 /* Une action à impact avec des informations complémentaires, utilisé par la modale */
 export type ActionImpactDetails = ActionImpact & {
   thematiques: ActionImpactThematique[];
@@ -66,6 +73,8 @@ export type PanierBase = Database['public']['Tables']['panier']['Row'];
 export type Panier =
   /* Le panier en tant que tel */
   PanierBase & {
+    /* Liste des actions ajoutée au panier */
+    contenu: ActionImpactSnippet[];
     /* Liste de toutes les actions avec leurs states. */
     states: ActionImpactState[];
   };
