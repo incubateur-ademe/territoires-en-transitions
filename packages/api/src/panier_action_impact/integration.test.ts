@@ -69,7 +69,7 @@ describe('État du panier', async () => {
 
     expect(selectPanierContenu.error).toBeNull();
     expect(selectPanierContenu.data).toBeDefined();
-    expect(selectPanierContenu.data?.states.filter(s => s.isinpanier)).toEqual(1);
+    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
   });
 });
 describe('État des actions', async () => {
@@ -92,7 +92,7 @@ describe('État des actions', async () => {
 
     expect(selectPanierContenu.error).toBeNull();
     expect(selectPanierContenu.data).toBeDefined();
-    expect(selectPanierContenu.data?.states.filter(s => s.isinpanier)).toEqual(1);
+    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
 
     const { error } = await supabase
       .from('panier')
