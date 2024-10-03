@@ -16,19 +16,21 @@ const statusToState: Record<Statut, BadgeState> = {
 type Props = {
   className?: string;
   statut: Statut;
+  /** Valeur à mettre devant le statut */
+  count?: number;
   // Rend une version plus petite du composant
   size?: 'sm' | 'md';
 };
 
 /** Badge représentant le statut d'une fiche action */
-const BadgeStatut = ({ className, statut, size }: Props) => {
+const BadgeStatut = ({ className, statut, size, count }: Props) => {
   return (
     <Badge
       dataTest="FicheActionBadgeStatut"
       className={classNames(className, {
         'bg-[#F9F3FE] border-[#F9F3FE] text-[#9351CF]': statut === 'A discuter',
       })}
-      title={statut}
+      title={`${count ? count : ''} ${statut}`}
       state={statusToState[statut]}
       size={size}
     />
