@@ -1,0 +1,19 @@
+name: Shared build setup
+
+on: workflow_call
+
+jobs:
+  shared-build-setup:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
+
+      - name: Login into Docker registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"

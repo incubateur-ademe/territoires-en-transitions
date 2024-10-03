@@ -14,6 +14,10 @@ const nextConfig = {
     svgr: false,
   },
 
+  // Useful for self-hosting in a Docker container
+  // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
+  output: 'standalone',
+
   // active le mode strict pour détecter le problèmes en dev
   reactStrictMode: true,
   // active la minification
