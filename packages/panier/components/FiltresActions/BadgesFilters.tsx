@@ -172,7 +172,7 @@ export const BadgesFilters = ({
             ? {
                 number: badgesList.length,
               }
-            : {}
+            : undefined
         }
       >
         <div className="flex flex-col gap-4 w-72 p-4">
