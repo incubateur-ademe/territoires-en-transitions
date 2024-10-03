@@ -13,10 +13,10 @@ const useLandingPathname = () => {
       setLandingPathname(pathname);
     } else if (collectiviteId) {
       setLandingPathname(`/landing/collectivite/${collectiviteId}`);
-    } else if (panier?.id && panier.states.length > 0) {
+    } else if (panier?.id && panier.contenu.length > 0) {
       setLandingPathname(`/landing/panier/${panier.id}`);
     }
-  }, [pathname, collectiviteId, panier?.id, panier?.states.length]);
+  }, [pathname, collectiviteId, panier?.id, panier?.contenu.length]);
 
   return landingPathname;
 };
