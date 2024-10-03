@@ -94,6 +94,7 @@ const IndicateurPersonnaliseBase = ({
               className="fr-input fr-mt-1w !outline-none"
               initialValue={description}
               readOnly={isReadonly}
+              disabled={isReadonly}
               onBlur={e => handleUpdate('description', e.target.value)}
             />
           </Field>

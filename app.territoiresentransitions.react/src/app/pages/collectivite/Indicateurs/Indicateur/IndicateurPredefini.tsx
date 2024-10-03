@@ -102,6 +102,7 @@ export const IndicateurPredefiniBase = ({
                   className="fr-input fr-mt-1w !outline-none"
                   initialValue={commentaire}
                   readOnly={isReadonly}
+                  disabled={isReadonly}
                   onBlur={(e) => handleUpdate('commentaire', e.target.value)}
                 />
               </Field>
