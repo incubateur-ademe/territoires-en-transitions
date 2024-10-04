@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const filtreRessourceLieesSchema = z.object({
   planActionIds: z.coerce.number().array().optional(),
+  referentielActionIds: z.string().array().optional(),
+  linkedFicheActionIds: z.number().array().optional(),
 
   utilisateurPiloteIds: z.string().array().optional(),
   personnePiloteIds: z.coerce.number().array().optional(),

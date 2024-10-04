@@ -1,14 +1,14 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {isBefore, startOfToday} from 'date-fns';
-import {Button, Divider, Icon} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { isBefore, startOfToday } from 'date-fns';
+import { Button, Divider, Icon } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import ModalePlanning from './ModalePlanning';
-import {getTextFormattedDate, getTruncatedText} from '../utils';
+import { getTextFormattedDate, getTruncatedText } from '../utils';
 import EmptyCard from '../EmptyCard';
 
 type FicheActionPlanningProps = {
@@ -28,11 +28,11 @@ const FicheActionPlanning = ({
   const [isFullJustification, setIsFullJustification] = useState(false);
 
   const {
-    amelioration_continue: ameliorationContinue,
+    ameliorationContinue,
     calendrier: justificationCalendrier,
-    date_debut: dateDebut,
-    date_fin_provisoire: dateFinPrevisionnelle,
-    niveau_priorite: niveauPriorite,
+    dateDebut,
+    dateFinProvisoire: dateFinPrevisionnelle,
+    niveauPriorite,
     statut,
   } = fiche;
 
@@ -45,7 +45,7 @@ const FicheActionPlanning = ({
   const {
     truncatedText: truncatedJustification,
     isTextTruncated: isJustificationTruncated,
-  } = getTruncatedText(justificationCalendrier, 300);
+  } = getTruncatedText(justificationCalendrier ?? '', 300);
 
   return (
     <>
@@ -83,7 +83,7 @@ const FicheActionPlanning = ({
               })}
             >
               {!!dateDebut
-                ? getTextFormattedDate({date: dateDebut})
+                ? getTextFormattedDate({ date: dateDebut })
                 : 'Non renseignée'}
             </p>
           </div>
@@ -102,7 +102,7 @@ const FicheActionPlanning = ({
                 })}
               >
                 {!!dateFinPrevisionnelle
-                  ? getTextFormattedDate({date: dateFinPrevisionnelle})
+                  ? getTextFormattedDate({ date: dateFinPrevisionnelle })
                   : 'Non renseignée'}
               </p>
             </div>
@@ -149,7 +149,7 @@ const FicheActionPlanning = ({
                   size="xs"
                   className="ml-auto"
                   onClick={() =>
-                    setIsFullJustification(prevState => !prevState)
+                    setIsFullJustification((prevState) => !prevState)
                   }
                 >
                   {isFullJustification ? 'Voir moins' : 'Voir plus'}
@@ -161,7 +161,7 @@ const FicheActionPlanning = ({
       ) : (
         <EmptyCard
           dataTest="empty-planning"
-          picto={className => (
+          picto={(className) => (
             <>
               <EmptyCalendarPicto className={className} />
               {(!!statut || !!niveauPriorite) && (

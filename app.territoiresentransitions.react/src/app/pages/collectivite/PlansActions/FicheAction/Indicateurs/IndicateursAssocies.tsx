@@ -1,6 +1,6 @@
-import {useState} from 'react';
-import {Button, Divider, useEventTracker} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { useState } from 'react';
+import { Button, Divider, useEventTracker } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import Content from './SideMenu/Content';
 import EmptyCard from '../EmptyCard';
 import DatavizPicto from './DatavizPicto';
@@ -8,7 +8,7 @@ import IndicateursListe from './IndicateursListe';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
 import LoadingCard from '../LoadingCard';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
@@ -32,22 +32,22 @@ const IndicateursAssocies = ({
 
   if (isFicheLoading) return <LoadingCard />;
 
-  const {indicateurs} = fiche;
+  const { indicateurs } = fiche;
 
-  const isEmpty = indicateurs === null || indicateurs.length === 0;
+  const isEmpty = indicateurs === null || indicateurs?.length === 0;
 
   return (
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <DatavizPicto className={className} />}
+          picto={(className) => <DatavizPicto className={className} />}
           title="Aucun indicateur associé !"
           subTitle="Observez votre progression grâce aux indicateurs"
           isReadonly={isReadonly}
           action={{
             label: 'Associer des indicateurs',
             icon: 'link',
-            onClick: () => setIsPanelOpen(prevState => !prevState),
+            onClick: () => setIsPanelOpen((prevState) => !prevState),
           }}
           secondaryAction={{
             label: 'Créer un indicateur',
@@ -92,7 +92,7 @@ const IndicateursAssocies = ({
                   <Button
                     size="xs"
                     icon="link"
-                    onClick={() => setIsPanelOpen(prevState => !prevState)}
+                    onClick={() => setIsPanelOpen((prevState) => !prevState)}
                   >
                     Associer des indicateurs
                   </Button>
@@ -103,7 +103,12 @@ const IndicateursAssocies = ({
 
           {/* Liste des indicateurs */}
           <IndicateursListe
-            {...{isReadonly, fiche, indicateurs, updateFiche}}
+            {...{
+              isReadonly,
+              fiche,
+              indicateurs: indicateurs ?? [],
+              updateFiche,
+            }}
           />
         </div>
       )}
@@ -115,8 +120,8 @@ const IndicateursAssocies = ({
         setIsOpen={setIsPanelOpen}
       >
         <Content
-          selectedIndicateurs={indicateurs}
-          onSelect={indicateurs => updateFiche({...fiche, indicateurs})}
+          selectedIndicateurs={indicateurs ?? []}
+          onSelect={(indicateurs) => updateFiche({ ...fiche, indicateurs })}
         />
       </SideMenu>
 

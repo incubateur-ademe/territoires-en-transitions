@@ -1,29 +1,7 @@
 import { z } from 'zod';
-import { valeurSchema } from './valeur.schema';
-import { tagSchema } from '../../shared/domain/tag.schema';
 import { actionSchema } from '../../referentiel/domain/action.schema';
-import { categorieSchema } from './categorie.schema';
 import { thematiqueSchema } from '../../shared/domain/thematique.schema';
-import { resumeSchema } from '../../plan-actions/domain/resume.schema';
-import { personneSchema } from '../../shared/domain/personne.schema';
-
-/**
- * Schéma zod à fusionner à une définition pour avoir les valeurs
- */
-const plusValeur = z.object({
-  valeurs: valeurSchema.array(),
-});
-
-/**
- * Schéma zod à fusionner à une définition pour avoir les données annexes aux indicateurs
- */
-const plusDetailsCollectivite = z.object({
-  services: z.number().array(), // Lise d'id
-  pilotes: personneSchema.array(),
-  fiches: resumeSchema.array(),
-  fichesNonClassees: resumeSchema.array(),
-  categoriesUtilisateur: tagSchema.array(),
-});
+import { categorieSchema } from './categorie.schema';
 
 /**
  * Schéma zod de la définition d'un indicateur à créer
@@ -129,19 +107,6 @@ export const definitionSchema = z.object({
 export type IndicateurDefinition = z.input<typeof definitionSchema>;
 
 /**
- * Schéma zod d'un indicateur avec toutes les informations annexes liées
- */
-export const definitionCompleteSchema = definitionSchema
-  .merge(plusValeur)
-  .merge(plusDetailsCollectivite);
-/**
- * Type TS d'un indicateur avec toutes les informations annexes liées
- */
-export type IndicateurDefinitionComplet = z.input<
-  typeof definitionCompleteSchema
->;
-
-/**
  * Schéma zod d'un indicateur personnalisé
  */
 export const definitionPersonaliseSchema = definitionSchema.omit({
@@ -172,3 +137,14 @@ export const definitionPredefiniSchema = definitionSchema.omit({
 export type IndicateurDefinitionPredefini = z.input<
   typeof definitionPredefiniSchema
 >;
+
+export const indicateurSmallSchema = definitionSchema.pick({
+  id: true,
+  titre: true,
+  description: true,
+  unite: true,
+  identifiant: true,
+  estPerso: true,
+});
+
+export type IndicateurSmall = z.infer<typeof indicateurSmallSchema>;

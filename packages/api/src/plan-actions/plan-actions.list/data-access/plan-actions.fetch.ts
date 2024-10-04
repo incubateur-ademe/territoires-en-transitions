@@ -6,18 +6,17 @@ import {
   fetchOptionsSchema,
   FetchSort,
 } from '../domain/fetch-options.schema';
-import { PlanActionType } from '../../domain/plan-action-type.schema';
 
 type FetchedPlanAction = Axe & {
-  type: PlanActionType | null;
-  axes: Axe[];
+  axes?: Axe[];
 };
 
 type TFetchedData = {
   plans: FetchedPlanAction[];
+  count: number;
 };
 
-export type WithSelect = 'type' | 'axes';
+export type WithSelect = 'axes';
 
 type Props = {
   dbClient: DBClient;
@@ -35,11 +34,10 @@ export const planActionsFetch = async ({
   const { filtre, sort } = fetchOptionsSchema.parse(options);
 
   const parts = new Set<string>();
+  parts.add('type:plan_action_type(*)');
 
   for (const select of withSelect) {
-    if (select === 'type') {
-      parts.add('type:plan_action_type(*)');
-    } else if (select === 'axes') {
+    if (select === 'axes') {
       parts.add('axes:axe_enfant(*)');
     }
   }
@@ -58,7 +56,7 @@ export const planActionsFetch = async ({
     query.order(sort.field, { ascending: sort.direction === 'asc' });
   });
 
-  const { error, data } = await query;
+  const { error, data, count } = await query;
   if (error) {
     throw new Error(error.message);
   }
@@ -70,6 +68,7 @@ export const planActionsFetch = async ({
       ...plan,
       type: plan.type?.id ? plan.type : null,
     })),
+    count: count ?? 0,
   };
 };
 

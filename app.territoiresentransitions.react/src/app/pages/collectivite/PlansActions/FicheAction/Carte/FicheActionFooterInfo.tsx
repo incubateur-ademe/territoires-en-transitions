@@ -1,14 +1,14 @@
-import {Fragment} from 'react';
-import {getTextFormattedDate} from '../utils';
+import { Personne } from '@tet/api/shared/domain';
+import { Icon, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
-import {Icon, Tooltip} from '@tet/ui';
-import {Personne} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
-import {isBefore, startOfToday} from 'date-fns';
+import { isBefore, startOfToday } from 'date-fns';
+import { Fragment } from 'react';
+import { getTextFormattedDate } from '../utils';
 
 type FicheActionFooterInfoProps = {
-  pilotes: Personne[] | null;
-  dateDeFin: string | null;
-  ameliorationContinue: boolean | null;
+  pilotes: Personne[] | null | undefined;
+  dateDeFin: string | null | undefined;
+  ameliorationContinue: boolean | null | undefined;
 };
 
 const FicheActionFooterInfo = ({
@@ -55,7 +55,7 @@ const FicheActionFooterInfo = ({
           {hasPilotes && <div className="w-[1px] h-4 bg-grey-5" />}
           <span
             title="Échéance"
-            className={classNames({'text-error-1': isLate})}
+            className={classNames({ 'text-error-1': isLate })}
           >
             <Icon icon="calendar-line" size="sm" className="mr-1" />
             {getTextFormattedDate({

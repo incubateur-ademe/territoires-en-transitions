@@ -1,5 +1,5 @@
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { NiveauPriorite } from '@tet/api/plan-actions/fiche-resumes.list/domain/fiche-resumes.schema';
+import { NiveauPriorite } from '@tet/api/plan-actions';
 import { ficheActionNiveauPrioriteOptions } from 'ui/dropdownLists/listesStatiques';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 

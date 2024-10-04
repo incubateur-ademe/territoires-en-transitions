@@ -1,28 +1,24 @@
-import {Button, Field, Input} from '@tet/ui';
-import {Financeur} from '../data/types';
+import { Financeur } from '@tet/api/plan-actions';
+import { Button, Field, Input } from '@tet/ui';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 
 type FinanceursInputProps = {
-  financeurs: Financeur[] | null;
+  financeurs: Financeur[] | null | undefined;
   onUpdate: (financeurs: Financeur[]) => void;
 };
 
-const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
+const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
   return (
     <>
       {/* Liste des financeurs */}
       {(financeurs ?? []).map((financeur, index) => (
         <div
-          key={`${financeur.financeur_tag.nom}-${index}`}
+          key={`${financeur.nom}-${index}`}
           className="col-span-2 grid grid-cols-7 gap-4"
         >
           <Field title={`Financeur ${index + 1}`} className="col-span-3">
             <FinanceursDropdown
-              values={
-                financeur.financeur_tag.id
-                  ? [financeur.financeur_tag.id]
-                  : undefined
-              }
+              values={financeur.id ? [financeur.id] : undefined}
               disabled={true}
               onChange={() => {}}
             />
@@ -32,18 +28,18 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
               <Input
                 containerClassname="w-full"
                 type="number"
-                icon={{text: 'TTC'}}
-                value={financeur.montant_ttc?.toString() ?? ''}
+                icon={{ text: 'TTC' }}
+                value={financeur.montantTtc?.toString() ?? ''}
                 placeholder="Ajouter un montant"
-                onValueChange={values =>
+                onValueChange={(values) =>
                   onUpdate(
-                    (financeurs ?? []).map(f =>
-                      f.financeur_tag.id === financeur.financeur_tag.id
+                    (financeurs ?? []).map((f) =>
+                      f.id === financeur.id
                         ? {
                             ...f,
-                            montant_ttc: values.value
+                            montantTtc: values.value
                               ? Number(values.value)
-                              : undefined,
+                              : null,
                           }
                         : f
                     )
@@ -55,9 +51,7 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
                 variant="grey"
                 onClick={() =>
                   onUpdate(
-                    (financeurs ?? []).filter(
-                      f => f.financeur_tag.id !== financeur.financeur_tag.id
-                    )
+                    (financeurs ?? []).filter((f) => f.id !== financeur.id)
                   )
                 }
               />
@@ -73,15 +67,10 @@ const FinanceursInput = ({financeurs, onUpdate}: FinanceursInputProps) => {
             key={(financeurs ?? []).length}
             placeholder="Rechercher par mots-clés ou créer un tag"
             values={undefined}
-            disabledOptionsIds={(financeurs ?? []).map(
-              f => f.financeur_tag.id!
-            )}
-            onChange={({selectedFinanceur}) =>
+            disabledOptionsIds={(financeurs ?? []).map((f) => f.id!)}
+            onChange={({ selectedFinanceur }) =>
               selectedFinanceur &&
-              onUpdate([
-                ...(financeurs ?? []),
-                {financeur_tag: selectedFinanceur},
-              ])
+              onUpdate([...(financeurs ?? []), selectedFinanceur])
             }
           />
         </Field>

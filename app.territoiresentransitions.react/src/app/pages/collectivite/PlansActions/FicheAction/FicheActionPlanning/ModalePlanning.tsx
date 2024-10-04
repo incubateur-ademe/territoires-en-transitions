@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import {
   Checkbox,
@@ -10,11 +10,11 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import {FicheAction} from '../data/types';
-import {getIsoFormattedDate} from '../utils';
+import { FicheAction } from '@tet/api/plan-actions';
+import { getIsoFormattedDate } from '../utils';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModalePlanningProps = {
   isOpen: boolean;
@@ -49,10 +49,10 @@ const ModalePlanning = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Planning prévisionnel"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Date de début */}
           <Field
@@ -69,27 +69,27 @@ const ModalePlanning = ({
               type="date"
               state={isDateDebutError ? 'error' : 'default'}
               max={
-                editedFiche.date_fin_provisoire !== null
-                  ? getIsoFormattedDate(editedFiche.date_fin_provisoire)
+                editedFiche.dateFinProvisoire
+                  ? getIsoFormattedDate(editedFiche.dateFinProvisoire)
                   : undefined
               }
               value={
-                editedFiche.date_debut
-                  ? getIsoFormattedDate(editedFiche.date_debut)
+                editedFiche.dateDebut
+                  ? getIsoFormattedDate(editedFiche.dateDebut)
                   : ''
               }
-              onChange={evt => {
+              onChange={(evt) => {
                 if (
-                  editedFiche.date_fin_provisoire !== null &&
+                  editedFiche.dateFinProvisoire &&
                   new Date(evt.target.value) >
-                    new Date(editedFiche.date_fin_provisoire)
+                    new Date(editedFiche.dateFinProvisoire)
                 ) {
                   setIsDateDebutError(true);
                 } else setIsDateDebutError(false);
 
-                setEditedFiche(prevState => ({
+                setEditedFiche((prevState) => ({
                   ...prevState,
-                  date_debut:
+                  dateDebut:
                     evt.target.value.length !== 0 ? evt.target.value : null,
                 }));
               }}
@@ -100,16 +100,16 @@ const ModalePlanning = ({
             <Checkbox
               label="L'action se répète tous les ans"
               message="Sans date de fin prévisionnelle"
-              checked={editedFiche.amelioration_continue ?? false}
-              onChange={evt => {
+              checked={editedFiche.ameliorationContinue ?? false}
+              onChange={(evt) => {
                 const isChecked = evt.target.checked;
                 const dateFin = isChecked
                   ? null
-                  : editedFiche.date_fin_provisoire;
-                setEditedFiche(prevState => ({
+                  : editedFiche.dateFinProvisoire;
+                setEditedFiche((prevState) => ({
                   ...prevState,
-                  amelioration_continue: isChecked,
-                  date_fin_provisoire: dateFin,
+                  ameliorationContinue: isChecked,
+                  dateFinProvisoire: dateFin,
                 }));
               }}
             />
@@ -130,32 +130,32 @@ const ModalePlanning = ({
               type="date"
               state={isDateFinError ? 'error' : 'default'}
               min={
-                editedFiche.date_debut !== null
-                  ? getIsoFormattedDate(editedFiche.date_debut)
+                editedFiche.dateDebut !== null
+                  ? getIsoFormattedDate(editedFiche.dateDebut ?? '')
                   : undefined
               }
               title={
-                editedFiche.amelioration_continue
+                editedFiche.ameliorationContinue
                   ? "Ce champ ne peut pas être modifié si l'action se répète tous les ans"
                   : undefined
               }
-              disabled={editedFiche.amelioration_continue ?? false}
+              disabled={editedFiche.ameliorationContinue ?? false}
               value={
-                editedFiche.date_fin_provisoire
-                  ? getIsoFormattedDate(editedFiche.date_fin_provisoire)
+                editedFiche.dateFinProvisoire
+                  ? getIsoFormattedDate(editedFiche.dateFinProvisoire)
                   : ''
               }
-              onChange={evt => {
+              onChange={(evt) => {
                 if (
-                  editedFiche.date_debut !== null &&
-                  new Date(evt.target.value) < new Date(editedFiche.date_debut)
+                  editedFiche.dateDebut &&
+                  new Date(evt.target.value) < new Date(editedFiche.dateDebut)
                 ) {
                   setIsDateFinError(true);
                 } else setIsDateFinError(false);
 
-                setEditedFiche(prevState => ({
+                setEditedFiche((prevState) => ({
                   ...prevState,
-                  date_fin_provisoire:
+                  dateFinProvisoire:
                     evt.target.value.length !== 0 ? evt.target.value : null,
                 }));
               }}
@@ -166,8 +166,8 @@ const ModalePlanning = ({
           <Field title="Statut" className="max-md:col-span-2">
             <StatutsSelectDropdown
               values={editedFiche.statut}
-              onChange={statut =>
-                setEditedFiche(prevState => ({
+              onChange={(statut) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   statut,
                 }))
@@ -178,11 +178,11 @@ const ModalePlanning = ({
           {/* Niveau de priorité */}
           <Field title="Niveau de priorité" className="max-md:col-span-2">
             <PrioritesSelectDropdown
-              values={editedFiche.niveau_priorite}
-              onChange={priorite =>
-                setEditedFiche(prevState => ({
+              values={editedFiche.niveauPriorite}
+              onChange={(priorite) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
-                  niveau_priorite: priorite,
+                  niveauPriorite: priorite,
                 }))
               }
             />
@@ -197,8 +197,8 @@ const ModalePlanning = ({
             <Textarea
               className="min-h-[50px]"
               value={editedFiche.calendrier ?? ''}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   calendrier: (evt.target as HTMLTextAreaElement).value,
                 }))
@@ -208,9 +208,9 @@ const ModalePlanning = ({
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             disabled: isDateDebutError || isDateFinError,
             onClick: () => {

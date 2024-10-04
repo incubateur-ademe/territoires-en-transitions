@@ -1,18 +1,19 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from './useInsertIndicateurPersoDefinition';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import classNames from 'classnames';
-import {FicheAction} from '../../PlansActions/FicheAction/data/types';
-import {Form, Formik} from 'formik';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import {TThematiqueRow} from 'types/alias';
-import {useState} from 'react';
+import { TThematiqueRow } from 'types/alias';
+import { useState } from 'react';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import FormField from 'ui/shared/form/FormField';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Thematique } from '@tet/api/shared/domain';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -42,12 +43,12 @@ const IndicateurPersoNouveau = ({
     commentaire: '',
   };
 
-  const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
+  const [thematiques, setThematiques] = useState<Thematique[]>(
     fiche?.thematiques ?? []
   );
 
-  const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
-    onSuccess: indicateurId => {
+  const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
+    onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
         collectiviteId,
@@ -60,7 +61,7 @@ const IndicateurPersoNouveau = ({
   });
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
-    save({definition: {...definition, thematiques}, ficheId: fiche?.id});
+    save({ definition: { ...definition, thematiques }, ficheId: fiche?.id });
   };
 
   return (
@@ -75,7 +76,7 @@ const IndicateurPersoNouveau = ({
         validationSchema={validation}
         onSubmit={onSave}
       >
-        {({isValid}) => (
+        {({ isValid }) => (
           <Form>
             <div className="bg-grey975 fr-py-7w fr-px-10w">
               <p>
@@ -89,8 +90,8 @@ const IndicateurPersoNouveau = ({
               <FormikInput type="area" name="description" label="Description" />
               <FormField className="fr-mt-4w" label="Thématique">
                 <ThematiquesDropdown
-                  values={thematiques?.map(t => t.id)}
-                  onChange={({thematiques}) => setThematiques(thematiques)}
+                  values={thematiques?.map((t) => t.id)}
+                  onChange={({ thematiques }) => setThematiques(thematiques)}
                 />
               </FormField>
             </div>

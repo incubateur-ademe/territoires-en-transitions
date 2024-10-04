@@ -1,4 +1,4 @@
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import Documents from './Documents/Documents';
 import NotesComplementaires from './Notes/NotesComplementaires';
 
@@ -17,9 +17,9 @@ const NotesEtDocumentsTab = ({
     <div className="flex flex-col gap-6">
       <NotesComplementaires
         isReadonly={isReadonly}
-        notes={fiche.notes_complementaires}
-        updateNotes={notes =>
-          updateFiche({...fiche, notes_complementaires: notes})
+        notes={fiche.notesComplementaires ?? null}
+        updateNotes={(notes) =>
+          updateFiche({ ...fiche, notesComplementaires: notes })
         }
       />
       <Documents isReadonly={isReadonly} ficheId={fiche.id!} />

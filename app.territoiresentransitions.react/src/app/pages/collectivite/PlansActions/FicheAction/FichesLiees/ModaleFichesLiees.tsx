@@ -1,57 +1,53 @@
-import {useEffect, useState} from 'react';
-import _ from 'lodash';
-import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { useEffect, useState } from 'react';
 import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 
 type ModaleFichesLieesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
+  currentFicheId: number;
+  linkedFicheIds: number[];
+  updateLinkedFicheIds: (ficheIds: number[]) => void;
 };
 
 const ModaleFichesLiees = ({
   isOpen,
   setIsOpen,
-  fiche,
-  updateFiche,
+  currentFicheId,
+  linkedFicheIds,
+  updateLinkedFicheIds,
 }: ModaleFichesLieesProps) => {
-  const [editedFiche, setEditedFiche] = useState(fiche);
+  const [linkedFicheIdsState, setLinkedFicheIdsState] =
+    useState<number[]>(linkedFicheIds);
 
   useEffect(() => {
-    if (isOpen) setEditedFiche(fiche);
-  }, [isOpen]);
+    setLinkedFicheIdsState(linkedFicheIds);
+  }, [linkedFicheIds]);
 
   const handleSave = () => {
-    if (!_.isEqual(fiche, editedFiche)) {
-      updateFiche(editedFiche);
-    }
+    updateLinkedFicheIds(linkedFicheIdsState);
   };
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Lier une fiche action"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Fiches des plans liées">
           <FichesActionsDropdown
-            ficheCouranteId={fiche.id}
-            values={editedFiche.fiches_liees?.map(f => f.id.toString())}
-            onChange={({fiches}) =>
-              setEditedFiche(prevState => ({
-                ...prevState,
-                fiches_liees: fiches,
-              }))
+            ficheCouranteId={currentFicheId}
+            values={linkedFicheIdsState.map((id) => id.toString())}
+            onChange={({ fiches }) =>
+              setLinkedFicheIdsState(fiches.map((f) => f.id))
             }
           />
         </Field>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

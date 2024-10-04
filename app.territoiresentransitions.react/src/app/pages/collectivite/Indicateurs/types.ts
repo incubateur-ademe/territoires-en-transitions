@@ -1,4 +1,5 @@
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@tet/api';
+import { IndicateurSmall } from '@tet/api/indicateurs/domain';
 
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';
@@ -10,10 +11,7 @@ export type TIndicateurListItem = Indicateurs.domain.IndicateurListItem;
 export type TIndicateurChartInfo = Indicateurs.domain.IndicateurChartInfo;
 
 /** */
-export type Indicateur = Pick<
-  Indicateurs.domain.IndicateurDefinition,
-  'id' | 'titre' | 'description' | 'unite' | 'identifiant' | 'estPerso'
->;
+export type Indicateur = IndicateurSmall;
 
 export type IndicateurInsert = Indicateurs.domain.IndicateurDefinitionInsert;
 
@@ -28,7 +26,3 @@ export type TIndicateurPersonnalise =
   Indicateurs.domain.IndicateurDefinitionPersonalise;
 
 export type TIndicateurDefinition = Indicateurs.domain.IndicateurDefinition;
-/*
-  | TIndicateurPredefini
-  | TIndicateurPersonnalise;
-*/

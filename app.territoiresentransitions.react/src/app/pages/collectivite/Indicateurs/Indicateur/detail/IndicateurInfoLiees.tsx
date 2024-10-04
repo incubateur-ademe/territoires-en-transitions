@@ -1,5 +1,10 @@
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {TIndicateurDefinition} from '../../types';
+import { Field } from '@tet/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { objectToCamel } from 'ts-case-convert';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { TIndicateurDefinition } from '../../types';
 import {
   useIndicateurPilotes,
   useUpsertIndicateurPilote,
@@ -12,11 +17,6 @@ import {
   useIndicateurThematiques,
   useUpsertIndicateurThematiques,
 } from './useIndicateurThematiques';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import {Field} from '@tet/ui';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {objectToCamel} from 'ts-case-convert';
 
 export type TIndicateurInfoLieesProps = {
   definition: TIndicateurDefinition;
@@ -26,20 +26,20 @@ export type TIndicateurInfoLieesProps = {
  * Affiche les informations complémentaires (pilotes, etc.) associées à un indicateur
  */
 export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
-  const {definition} = props;
+  const { definition } = props;
 
   // charge les informations complémentaires associées à l'indicateur
-  const {data: pilotes} = useIndicateurPilotes(definition.id);
-  const {data: services} = useIndicateurServices(definition.id);
-  const {data: thematiques} = useIndicateurThematiques(definition.id);
+  const { data: pilotes } = useIndicateurPilotes(definition.id);
+  const { data: services } = useIndicateurServices(definition.id);
+  const { data: thematiques } = useIndicateurThematiques(definition.id);
 
   // fonctions de mise à jour des données
-  const {mutate: upsertIndicateurPilote} = useUpsertIndicateurPilote(
+  const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
     definition.id
   );
-  const {mutate: upsertIndicateurServicePilote} =
+  const { mutate: upsertIndicateurServicePilote } =
     useUpsertIndicateurServices(definition);
-  const {mutate: upsertIndicateurPersoThematique} =
+  const { mutate: upsertIndicateurPersoThematique } =
     useUpsertIndicateurThematiques(definition);
 
   const collectivite = useCurrentCollectivite();
@@ -48,8 +48,8 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
 
   // extrait les userId et les tagId
   const pilotesValues = pilotes
-    ?.map(p => p.userId || p.tagId?.toString())
-    .filter(id => !!id) as string[];
+    ?.map((p) => p.userId || p.tagId?.toString())
+    .filter((id) => !!id) as string[];
 
   return (
     <>
@@ -57,12 +57,12 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       <Field title="Personne pilote">
         <PersonnesDropdown
           values={pilotes?.length ? pilotesValues : undefined}
-          onChange={({personnes}) => {
+          onChange={({ personnes }) => {
             upsertIndicateurPilote(
-              personnes.map(personne => ({
+              personnes.map((personne) => ({
                 collectiviteId: collectivite.collectivite_id,
-                tagId: personne.tag_id,
-                userId: personne.user_id,
+                tagId: personne.tagId,
+                userId: personne.userId,
               }))
             );
           }}
@@ -72,8 +72,8 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
       {/** services pilotes */}
       <Field title="Direction ou service pilote">
         <ServicesPilotesDropdown
-          values={services?.map(s => s.id!)}
-          onChange={({services}) =>
+          values={services?.map((s) => s.id!)}
+          onChange={({ services }) =>
             upsertIndicateurServicePilote(objectToCamel(services))
           }
           disabled={isReadonly}
@@ -84,7 +84,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
         <Field title="Thématique">
           <ThematiquesDropdown
             values={thematiques}
-            onChange={({thematiques}) =>
+            onChange={({ thematiques }) =>
               upsertIndicateurPersoThematique(thematiques)
             }
             disabled={isReadonly}

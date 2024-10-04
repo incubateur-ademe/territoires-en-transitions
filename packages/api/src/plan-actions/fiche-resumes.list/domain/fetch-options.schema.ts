@@ -1,12 +1,7 @@
 import { z } from 'zod';
 import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
-
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
-import {
-  cibleSchema,
-  niveauPrioriteSchema,
-  statutSchema,
-} from './fiche-resumes.schema';
+import { cibleSchema, niveauPrioriteSchema, statutSchema } from '../../domain';
 
 export const modifiedSinceSchema = z.enum([
   'last-90-days',
@@ -39,6 +34,8 @@ export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
 export const filtreSchema = filtreRessourceLieesSchema
   .pick({
     planActionIds: true,
+    referentielActionIds: true,
+    linkedFicheActionIds: true,
     utilisateurPiloteIds: true,
     personnePiloteIds: true,
     utilisateurReferentIds: true,

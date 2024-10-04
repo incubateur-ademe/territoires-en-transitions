@@ -1,9 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-
-import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheAction} from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TAxeInsert} from 'types/alias';
+import { useMutation, useQueryClient } from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { TAxeInsert } from 'types/alias';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type Args = {
   fiche_id: number;
@@ -18,7 +17,7 @@ export const useAddFicheToAxe = () => {
   const collectivite_id = useCollectiviteId();
 
   return useMutation(
-    async ({axe, fiche_id}: Args) => {
+    async ({ axe, fiche_id }: Args) => {
       await supabaseClient.rpc('ajouter_fiche_action_dans_un_axe', {
         axe_id: axe.id,
         fiche_id,
@@ -26,14 +25,14 @@ export const useAddFicheToAxe = () => {
     },
     {
       mutationKey: 'add_fiche_to_axe',
-      onMutate: async args => {
+      onMutate: async (args) => {
         const ficheActionKey = ['fiche_action', args.fiche_id.toString()];
         // Cancel any outgoing refetches
         // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries({queryKey: ficheActionKey});
+        await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
         // Snapshot the previous value
-        const previousAction: {fiche: FicheAction} | undefined =
+        const previousAction: { fiche: FicheAction } | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         // Optimistically update to the new value
@@ -55,10 +54,10 @@ export const useAddFicheToAxe = () => {
         });
 
         // Return a context object with the snapshotted value
-        return {previousAction};
+        return { previousAction };
       },
       onSettled: (data, err, args, context) => {
-        const {fiche_id} = args;
+        const { fiche_id } = args;
 
         if (err) {
           queryClient.setQueryData(

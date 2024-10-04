@@ -1,19 +1,17 @@
-import {useEffect, useState} from 'react';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import {Button} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { useEffect, useState } from 'react';
 import ListeActeurs from './ListeActeurs';
 import ModaleActeurs from './ModaleActeurs';
 import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
 import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
 import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
-// import CollaborateurPicto from './PictosActeurs/CollaborateurPicto';
-import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
+import EmptyCard from '../EmptyCard';
+import CiblePicto from './PictosActeurs/CiblePicto';
 import EluPicto from './PictosActeurs/EluPicto';
 import PartenairePicto from './PictosActeurs/PartenairePicto';
-import CiblePicto from './PictosActeurs/CiblePicto';
-import EmptyCard from '../EmptyCard';
-// import CitoyenPicto from './PictosActeurs/CitoyenPicto';
+import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
@@ -32,7 +30,8 @@ const FicheActionActeurs = ({
 }: FicheActionActeursProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {pilotes, services, structures, referents, partenaires, cibles} = fiche;
+  const { pilotes, services, structures, referents, partenaires, cibles } =
+    fiche;
 
   const isEmpty =
     !pilotes &&
@@ -69,8 +68,10 @@ const FicheActionActeurs = ({
             <ListeActeurs
               dataTest="personnes-pilotes"
               titre="Personne pilote"
-              liste={pilotes?.map(pilote => pilote.nom!)}
-              picto={className => <PersonnePilotePicto className={className} />}
+              liste={pilotes?.map((pilote) => pilote.nom!)}
+              picto={(className) => (
+                <PersonnePilotePicto className={className} />
+              )}
             />
             {/* <ListeActeurs
               titre="Collaborateurs"
@@ -79,13 +80,15 @@ const FicheActionActeurs = ({
             /> */}
             <ListeActeurs
               titre="Direction ou service pilote"
-              liste={services?.map(service => service.nom!)}
-              picto={className => <ServicePilotePicto className={className} />}
+              liste={services?.map((service) => service.nom!)}
+              picto={(className) => (
+                <ServicePilotePicto className={className} />
+              )}
             />
             <ListeActeurs
               titre="Structure pilote"
-              liste={structures?.map(structure => structure.nom!)}
-              picto={className => (
+              liste={structures?.map((structure) => structure.nom!)}
+              picto={(className) => (
                 <StructurePilotePicto className={className} />
               )}
             />
@@ -94,18 +97,18 @@ const FicheActionActeurs = ({
           <div className="flex flex-col gap-3">
             <ListeActeurs
               titre="Élu·e référent·e"
-              liste={referents?.map(referent => referent.nom!)}
-              picto={className => <EluPicto className={className} />}
+              liste={referents?.map((referent) => referent.nom!)}
+              picto={(className) => <EluPicto className={className} />}
             />
             <ListeActeurs
               titre="Partenaires"
-              liste={partenaires?.map(partenaire => partenaire.nom!)}
-              picto={className => <PartenairePicto className={className} />}
+              liste={partenaires?.map((partenaire) => partenaire.nom!)}
+              picto={(className) => <PartenairePicto className={className} />}
             />
             <ListeActeurs
               titre="Cibles"
-              liste={cibles?.map(cible => cible)}
-              picto={className => <CiblePicto className={className} />}
+              liste={cibles?.map((cible) => cible)}
+              picto={(className) => <CiblePicto className={className} />}
             />
             {/* <ListeActeurs
               titre="Participation citoyenne"
@@ -116,7 +119,7 @@ const FicheActionActeurs = ({
         </div>
       ) : (
         <EmptyCard
-          picto={className => <EmptyActeursPicto className={className} />}
+          picto={(className) => <EmptyActeursPicto className={className} />}
           title="Aucun acteur du projet n'est renseigné !"
           subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles"
           isReadonly={isReadonly}

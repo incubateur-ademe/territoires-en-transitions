@@ -1,32 +1,32 @@
-import {useState} from 'react';
-import {useHistory, useParams} from 'react-router-dom';
-import {Breadcrumbs, Button} from '@tet/ui';
-import {makeCollectiviteFichesNonClasseesUrl} from 'app/paths';
-import {TAxeInsert} from 'types/alias';
+import { Axe } from '@tet/api/plan-actions';
+import { Breadcrumbs, Button } from '@tet/ui';
+import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
+import { useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import CheminFiche from './CheminFiche';
 
 type CheminsFicheProps = {
   titre: string | null;
   collectiviteId: number;
-  axes: TAxeInsert[] | null;
+  axes: Axe[] | null;
 };
 
-const CheminsFiche = ({titre, collectiviteId, axes}: CheminsFicheProps) => {
+const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
   const history = useHistory();
 
   // Plan actuellement consulté
-  const {planUid} = useParams<{planUid: string}>();
+  const { planUid } = useParams<{ planUid: string }>();
 
   // Si plusieurs emplacements, on récupère l'axe qui correpond
   // au plan actuellement consulté
   const axeId = !!axes
     ? axes.length === 1
       ? axes[0].id
-      : axes.find(a => a.plan === parseInt(planUid))?.id
+      : axes.find((a) => a.plan === parseInt(planUid))?.id
     : null;
 
   // Autres axes qui contiennent la fiche
-  const otherAxes = (axes ?? []).filter(axe => axe.id !== axeId);
+  const otherAxes = (axes ?? []).filter((axe) => axe.id !== axeId);
 
   // Ouverture / fermeture de la liste des autres axes
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +67,7 @@ const CheminsFiche = ({titre, collectiviteId, axes}: CheminsFicheProps) => {
             size="sm"
             icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'}
             iconPosition="right"
-            onClick={() => setIsOpen(prevState => !prevState)}
+            onClick={() => setIsOpen((prevState) => !prevState)}
           >
             Autre{otherAxes.length > 1 ? 's' : ''} emplacement
             {otherAxes.length > 1 ? 's' : ''} pour cette fiche
@@ -76,7 +76,7 @@ const CheminsFiche = ({titre, collectiviteId, axes}: CheminsFicheProps) => {
           {isOpen && (
             <div>
               {otherAxes.map(
-                axe =>
+                (axe) =>
                   axe.id && (
                     <CheminFiche
                       titre={titre ?? 'Sans titre'}

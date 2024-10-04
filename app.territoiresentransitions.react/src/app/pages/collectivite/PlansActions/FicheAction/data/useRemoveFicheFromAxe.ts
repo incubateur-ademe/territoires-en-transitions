@@ -1,7 +1,6 @@
-import {useMutation, useQueryClient} from 'react-query';
-
-import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheAction} from './types';
+import { useMutation, useQueryClient } from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type Args = {
   axe_id: number;
@@ -12,7 +11,7 @@ export const useRemoveFicheFromAxe = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({axe_id, fiche_id}: Args) => {
+    async ({ axe_id, fiche_id }: Args) => {
       await supabaseClient.rpc('enlever_fiche_action_d_un_axe', {
         axe_id,
         fiche_id,
@@ -20,12 +19,12 @@ export const useRemoveFicheFromAxe = () => {
     },
     {
       mutationKey: 'remove_fiche_from_axe',
-      onMutate: async args => {
+      onMutate: async (args) => {
         const ficheActionKey = ['fiche_action', args.fiche_id.toString()];
 
-        await queryClient.cancelQueries({queryKey: ficheActionKey});
+        await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
-        const previousAction: {fiche: FicheAction} | undefined =
+        const previousAction: { fiche: FicheAction } | undefined =
           queryClient.getQueryData(ficheActionKey);
 
         queryClient.setQueryData(ficheActionKey, (old: any) => {
@@ -39,7 +38,7 @@ export const useRemoveFicheFromAxe = () => {
           };
         });
 
-        return {previousAction};
+        return { previousAction };
       },
       onSettled: (data, err, args, context) => {
         if (err) {
@@ -49,7 +48,7 @@ export const useRemoveFicheFromAxe = () => {
           );
         }
 
-        const {fiche_id} = args;
+        const { fiche_id } = args;
         queryClient.invalidateQueries(['fiche_action', fiche_id.toString()]);
       },
     }

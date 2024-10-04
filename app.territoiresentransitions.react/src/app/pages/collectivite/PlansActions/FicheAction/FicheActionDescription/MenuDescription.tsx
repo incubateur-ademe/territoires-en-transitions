@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import ModaleDescription from './ModaleDescription';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 import ModaleSuppression from './ModaleSuppression';
@@ -17,7 +17,7 @@ const MenuDescription = ({
   className,
   updateFiche,
 }: MenuDescriptionProps) => {
-  const {id: ficheId, titre, axes} = fiche;
+  const { id: ficheId, titre, axes } = fiche;
 
   return !isReadonly ? (
     <div className={classNames('flex gap-4', className)}>

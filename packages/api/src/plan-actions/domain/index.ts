@@ -1,2 +1,2 @@
 export * from './axe.schema';
-export * from './resume.schema';
+export * from './fiche-action.schema';

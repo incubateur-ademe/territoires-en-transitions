@@ -1,18 +1,18 @@
-import {SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {TFicheActionResultatsAttendus} from 'types/alias';
-import {ficheActionResultatsAttendusOptions} from '../../listesStatiques';
+import { ResultatsAttendus } from '@tet/api/plan-actions';
+import { SelectFilter, SelectMultipleProps } from '@tet/ui';
+import { ficheActionResultatsAttendusOptions } from '../../listesStatiques';
 
 type EffetsAttendusDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
-  values?: TFicheActionResultatsAttendus[];
+  values?: ResultatsAttendus[];
   onChange: ({
     effets,
     selectedEffet,
   }: {
-    effets: TFicheActionResultatsAttendus[];
-    selectedEffet: TFicheActionResultatsAttendus;
+    effets: ResultatsAttendus[];
+    selectedEffet: ResultatsAttendus;
   }) => void;
 };
 
@@ -22,10 +22,10 @@ const EffetsAttendusDropdown = (props: EffetsAttendusDropdownProps) => {
       {...props}
       isSearcheable
       options={ficheActionResultatsAttendusOptions}
-      onChange={({values, selectedValue}) =>
+      onChange={({ values, selectedValue }) =>
         props.onChange({
-          effets: values as TFicheActionResultatsAttendus[],
-          selectedEffet: selectedValue as TFicheActionResultatsAttendus,
+          effets: values as ResultatsAttendus[],
+          selectedEffet: selectedValue as ResultatsAttendus,
         })
       }
     />

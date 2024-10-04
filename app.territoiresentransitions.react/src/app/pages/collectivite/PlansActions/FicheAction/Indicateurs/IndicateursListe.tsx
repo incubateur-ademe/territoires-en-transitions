@@ -3,10 +3,10 @@ import {
   getIndicateurGroup,
   selectIndicateur,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {FicheAction} from '../data/types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateur} from 'app/pages/collectivite/Indicateurs/types';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { FicheAction } from '@tet/api/plan-actions';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Indicateur } from 'app/pages/collectivite/Indicateurs/types';
 
 type IndicateursListeProps = {
   isReadonly: boolean;
@@ -25,13 +25,13 @@ const IndicateursListe = ({
 
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
-      {indicateurs.map(indicateur => (
+      {indicateurs.map((indicateur) => (
         <IndicateurCard
           key={`${indicateur.id}-${indicateur.titre}`}
           readonly={isReadonly}
           definition={indicateur}
           autoRefresh
-          card={{external: true}}
+          card={{ external: true }}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
             indicateurView: getIndicateurGroup(indicateur.identifiant),
@@ -40,13 +40,13 @@ const IndicateursListe = ({
           })}
           selectState={{
             selected: true,
-            setSelected: indicateur => {
+            setSelected: (indicateur) => {
               const newIndicateurs = selectIndicateur({
                 indicateur,
                 selected: true,
                 selectedIndicateurs: indicateurs,
               });
-              updateFiche({...fiche, indicateurs: newIndicateurs});
+              updateFiche({ ...fiche, indicateurs: newIndicateurs });
             },
           }}
         />

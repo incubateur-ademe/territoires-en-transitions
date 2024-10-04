@@ -6,7 +6,7 @@ import {
 } from '../../collectivites/shared/actions/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
-import { FicheResume } from '../../plan-actions/domain/resume.schema';
+import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
 import { Tag, Thematique } from '../../shared/domain';
 import { Personne } from '../../shared/domain/personne.schema';
@@ -15,7 +15,6 @@ import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,
-  IndicateurDefinitionComplet,
   IndicateurListItem,
 } from '../domain/definition.schema';
 import {
@@ -23,6 +22,7 @@ import {
   ValeurComparaison,
   ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
+import { IndicateurDefinitionComplet } from '../domain/indicateur-definition-extended.schema';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';

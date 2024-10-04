@@ -1,9 +1,9 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {Badge, Button} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Badge, Button } from '@tet/ui';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
-import {getTruncatedText} from '../utils';
+import { getTruncatedText } from '../utils';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;
@@ -18,12 +18,12 @@ const IndicateursHeader = ({
 }: IndicateursHeaderProps) => {
   const [isFullObjectifs, setIsFullObjectifs] = useState(false);
 
-  const {objectifs, resultats_attendus: resultats} = fiche;
+  const { objectifs, resultatsAttendus: resultats } = fiche;
 
   const {
     truncatedText: truncatedObjectifs,
     isTextTruncated: isObjectifsTruncated,
-  } = getTruncatedText(objectifs, 1000);
+  } = getTruncatedText(objectifs ?? '', 1000);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -77,7 +77,7 @@ const IndicateursHeader = ({
             variant="underlined"
             size="xs"
             className="ml-auto"
-            onClick={() => setIsFullObjectifs(prevState => !prevState)}
+            onClick={() => setIsFullObjectifs((prevState) => !prevState)}
           >
             {isFullObjectifs ? 'Voir moins' : 'Voir plus'}
           </Button>
@@ -90,7 +90,7 @@ const IndicateursHeader = ({
           Effets attendus :
         </span>
         {resultats && resultats.length ? (
-          resultats.map(res => (
+          resultats.map((res) => (
             <Badge key={res} title={res} state="standard" uppercase={false} />
           ))
         ) : (

@@ -1,44 +1,59 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {useHistory} from 'react-router-dom';
-
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheAction, FicheResume} from './types';
-import {makeCollectiviteFicheNonClasseeUrl} from 'app/paths';
-import {ficheActionToResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import {
+  FicheAction,
+  FicheActionInsert,
+  ficheActionSchema,
+  FicheResume,
+} from '@tet/api/plan-actions';
+import { ficheActionToResume } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
+import { useHistory } from 'react-router-dom';
+import { objectToCamel, objectToSnake } from 'ts-case-convert';
 
 /** Upsert une fiche action pour une collectivité */
 const upsertFicheAction = async (fiche: FicheAction) => {
+  const ficheToUpdateThroughPGView = ficheActionSchema
+    .omit({
+      planId: true,
+      plans: true,
+      modifiedAt: true,
+      createdAt: true,
+      referents: true,
+    })
+    .parse(fiche);
+
   let query = supabaseClient
     .from('fiches_action')
-    .insert(fiche as any)
+    .insert(objectToSnake(ficheToUpdateThroughPGView) as any)
     .select();
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return objectToCamel(data);
 };
 
 export const useCreateFicheAction = () => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
   return useMutation(
     () =>
       upsertFicheAction({
-        collectivite_id: collectivite_id!,
+        collectiviteId: collectiviteId!,
       } as never),
     {
-      meta: {disableToast: true},
-      onSuccess: data => {
+      meta: { disableToast: true },
+      onSuccess: (data) => {
         queryClient.invalidateQueries(['axe_fiches', null]);
         const url = makeCollectiviteFicheNonClasseeUrl({
-          collectiviteId: collectivite_id!,
+          collectiviteId: collectiviteId!,
           ficheUid: data[0].id!.toString(),
         });
         history.push(url);
@@ -52,14 +67,14 @@ export const useCreateFicheAction = () => {
  */
 export const useEditFicheAction = () => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
   return useMutation(upsertFicheAction, {
     mutationKey: 'edit_fiche',
-    onMutate: async fiche => {
+    onMutate: async (fiche) => {
       const ficheActionKey = ['fiche_action', fiche.id?.toString()];
 
-      await queryClient.cancelQueries({queryKey: ficheActionKey});
+      await queryClient.cancelQueries({ queryKey: ficheActionKey });
 
       // const previousData = [
       //   [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
@@ -67,7 +82,7 @@ export const useEditFicheAction = () => {
       // ];
 
       const previousData =
-        fiche.axes?.map(axeId => {
+        fiche.axes?.map((axeId) => {
           const key = ['axe_fiches', axeId || null];
           return [key, queryClient.getQueryData(key)];
         }) || [];
@@ -79,7 +94,7 @@ export const useEditFicheAction = () => {
 
       queryClient.setQueryData(
         ficheActionKey,
-        (old?: {fiche: FicheAction}) => ({
+        (old?: { fiche: FicheAction }) => ({
           fiche: {
             ...old?.fiche,
             ...fiche,
@@ -87,12 +102,12 @@ export const useEditFicheAction = () => {
         })
       );
 
-      fiche.axes?.forEach(axeId => {
+      fiche.axes?.forEach((axeId) => {
         queryClient.setQueryData(
           ['axe_fiches', axeId || null],
           (old: FicheResume[] | undefined): FicheResume[] => {
             return (
-              old?.map(f =>
+              old?.map((f) =>
                 f.id !== fiche.id ? f : ficheActionToResume(fiche)
               ) || []
             );
@@ -109,18 +124,18 @@ export const useEditFicheAction = () => {
         );
       }
       queryClient.invalidateQueries(['fiche_action', fiche.id?.toString()]);
-      fiche.axes?.forEach(axe =>
+      fiche.axes?.forEach((axe) =>
         queryClient.invalidateQueries(['axe_fiches', axe.id])
       );
       // fiches non classées
       queryClient.invalidateQueries(['axe_fiches', null]);
-      queryClient.invalidateQueries(['structures', collectivite_id]);
-      queryClient.invalidateQueries(['partenaires', collectivite_id]);
-      queryClient.invalidateQueries(['personnes_pilotes', collectivite_id]);
-      queryClient.invalidateQueries(['personnes', collectivite_id]);
-      queryClient.invalidateQueries(['services_pilotes', collectivite_id]);
-      queryClient.invalidateQueries(['personnes_referentes', collectivite_id]);
-      queryClient.invalidateQueries(['financeurs', collectivite_id]);
+      queryClient.invalidateQueries(['structures', collectiviteId]);
+      queryClient.invalidateQueries(['partenaires', collectiviteId]);
+      queryClient.invalidateQueries(['personnes_pilotes', collectiviteId]);
+      queryClient.invalidateQueries(['personnes', collectiviteId]);
+      queryClient.invalidateQueries(['services_pilotes', collectiviteId]);
+      queryClient.invalidateQueries(['personnes_referentes', collectiviteId]);
+      queryClient.invalidateQueries(['financeurs', collectiviteId]);
     },
   });
 };

@@ -206,11 +206,11 @@ const FichesActionListe = ({
                   ],
                 ]}
                 link={
-                  fiche.plan_id
+                  fiche.planId
                     ? makeCollectivitePlanActionFicheUrl({
                         collectiviteId: collectiviteId!,
                         ficheUid: fiche.id.toString(),
-                        planActionUid: fiche.plan_id.toString(),
+                        planActionUid: fiche.planId.toString(),
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
                         collectiviteId: collectiviteId!,

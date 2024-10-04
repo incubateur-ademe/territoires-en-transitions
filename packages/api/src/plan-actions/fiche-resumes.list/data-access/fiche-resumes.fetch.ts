@@ -6,9 +6,8 @@ import {
   Filtre as FiltreFicheActions,
   fetchOptionsSchema,
 } from '../domain/fetch-options.schema';
-import { FicheResume } from '../domain/fiche-resumes.schema';
-
-type Output = Array<FicheResume>;
+import { FicheResume } from '../../domain';
+import { objectToCamel } from 'ts-case-convert';
 
 const ficheActionColumns = [
   'id',
@@ -29,7 +28,7 @@ const ficheActionColumns = [
 type Props = {
   dbClient: DBClient;
   collectiviteId: number;
-  options: FetchOptions;
+  options?: FetchOptions;
 };
 
 /**
@@ -38,7 +37,7 @@ type Props = {
 export async function ficheResumesFetch({
   dbClient,
   collectiviteId: unsafeCollectiviteId,
-  options,
+  options = { filtre: {} },
 }: Props) {
   const collectiviteId = z.number().parse(unsafeCollectiviteId);
   const { filtre, sort, page, limit } = fetchOptionsSchema.parse(options);
@@ -58,6 +57,19 @@ export async function ficheResumesFetch({
 
   // Toujours récupérer le plan lié à la fiche
   relatedTables.add('plans:fiche_action_plan(*)');
+
+  if (filtre.referentielActionIds?.length) {
+    relatedTables.add('fiche_action_action!inner()');
+  }
+
+  if (filtre.linkedFicheActionIds?.length) {
+    relatedTables.add(
+      'fiche_action_lien_1:fiche_action_lien!fiche_action_lien_fiche_une_fkey()'
+    );
+    relatedTables.add(
+      'fiche_action_lien_2:fiche_action_lien!fiche_action_lien_fiche_deux_fkey()'
+    );
+  }
 
   if (
     filtre.personneReferenteIds?.length ||
@@ -120,6 +132,17 @@ export async function ficheResumesFetch({
   if (filtre.planActionIds?.length) {
     query.not('plans', 'is', null);
     query.in('plans.plan', filtre.planActionIds);
+  }
+
+  if (filtre.referentielActionIds?.length) {
+    query.in('fiche_action_action.action_id', filtre.referentielActionIds);
+  }
+
+  if (filtre.linkedFicheActionIds?.length) {
+    query.or(
+      `not.and(fiche_action_lien_1.is.null, fiche_action_lien_2.is.null)`
+    );
+    query.not('id', 'in', `(${filtre.linkedFicheActionIds})`);
   }
 
   if (filtre.utilisateurPiloteIds?.length && filtre.personnePiloteIds?.length) {
@@ -230,7 +253,7 @@ export async function ficheResumesFetch({
     );
   }
 
-  const { data, error, count } = await query.returns<Output>();
+  const { data, error, count } = await query.returns<any[]>();
 
   if (error) {
     console.error(error);
@@ -246,7 +269,6 @@ export async function ficheResumesFetch({
     ...fiche,
     plan_id: fiche.plans?.[0]?.plan,
     pilotes:
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (fiche.pilotes as any[])?.flatMap(({ personne_tag, utilisateur }) => {
         if (personne_tag) {
           return personne_tag;
@@ -263,7 +285,12 @@ export async function ficheResumesFetch({
       }) ?? null,
   }));
 
-  return { data: fiches, count, nextPage, nbOfPages };
+  return {
+    data: objectToCamel(fiches) as FicheResume[],
+    count,
+    nextPage,
+    nbOfPages,
+  };
 }
 
 function getDateSince(value: NonNullable<FiltreFicheActions['modifiedSince']>) {

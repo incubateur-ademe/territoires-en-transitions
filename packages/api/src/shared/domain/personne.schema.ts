@@ -1,13 +1,14 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 /**
  * Schéma zod d'une personne avec id du tag ou de l'utilisateur
  */
 export const personneSchema = z.object({
-  nom: z.string().nullable().optional(),
+  nom: z.string().nullish(),
   collectiviteId: z.number(),
-  tagId: z.number().nullable().optional(),
-  userId: z.string().nullable().optional(),
+  tagId: z.number().nullable(),
+  userId: z.string().nullable(),
+  // TODO remove this field ?
   idTablePassage: z.number().nullable().optional(),
 });
 

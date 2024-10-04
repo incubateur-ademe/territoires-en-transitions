@@ -1,8 +1,8 @@
-import { Statut } from '@tet/api/plan-actions/fiche-resumes.list';
+import { Statut as PlanActionStatut } from '@tet/api/plan-actions/domain';
 import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 
-const statusToState: Record<Statut, BadgeState> = {
+const statusToState: Record<PlanActionStatut, BadgeState> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -15,9 +15,8 @@ const statusToState: Record<Statut, BadgeState> = {
 
 type Props = {
   className?: string;
-  statut: Statut;
-  /** Valeur à mettre devant le statut */
   count?: number;
+  statut: PlanActionStatut;
   // Rend une version plus petite du composant
   size?: 'sm' | 'md';
 };

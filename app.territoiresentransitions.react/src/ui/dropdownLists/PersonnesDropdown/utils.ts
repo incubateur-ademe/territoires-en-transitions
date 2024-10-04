@@ -1,5 +1,5 @@
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { Personne } from '@tet/api/shared/domain';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string
@@ -7,18 +7,18 @@ import { Personne } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
  * @returns id as string
  */
 export const getPersonneStringId = (personne: Personne): string =>
-  personne.tag_id ? personne.tag_id.toString() : personne.user_id!;
+  personne.tagId ? personne.tagId.toString() : personne.userId!;
 
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
 export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
   const personnePiloteIds: number[] = [];
   const utilisateurPiloteIds: string[] = [];
   personnes.forEach((p) => {
-    if (p.tag_id) {
-      personnePiloteIds.push(p.tag_id);
+    if (p.tagId) {
+      personnePiloteIds.push(p.tagId);
     }
-    if (p.user_id) {
-      utilisateurPiloteIds.push(p.user_id);
+    if (p.userId) {
+      utilisateurPiloteIds.push(p.userId);
     }
   });
   return { personnePiloteIds, utilisateurPiloteIds };
@@ -54,11 +54,11 @@ export const splitReferentPersonnesAndUsers = (personnes: Personne[]) => {
   const utilisateurReferentIds: string[] = [];
 
   personnes.forEach((p) => {
-    if (p.tag_id) {
-      personneReferenteIds.push(p.tag_id);
+    if (p.tagId) {
+      personneReferenteIds.push(p.tagId);
     }
-    if (p.user_id) {
-      utilisateurReferentIds.push(p.user_id);
+    if (p.userId) {
+      utilisateurReferentIds.push(p.userId);
     }
   });
   return { personneReferenteIds, utilisateurReferentIds };

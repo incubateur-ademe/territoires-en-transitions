@@ -1,8 +1,8 @@
-import {Button, Modal, Tab, Tabs} from '@tet/ui';
-import {FicheAction} from '../../data/types';
+import { Button, Modal, Tab, Tabs } from '@tet/ui';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
-import {useState} from 'react';
+import { useState } from 'react';
+import { FicheAction } from '@tet/api/plan-actions';
 
 /**
  * Bouton + modale pour le déplacement de la fiche action
@@ -11,7 +11,7 @@ type ModaleEmplacementProps = {
   fiche: FicheAction;
 };
 
-const ModaleEmplacement = ({fiche}: ModaleEmplacementProps) => {
+const ModaleEmplacement = ({ fiche }: ModaleEmplacementProps) => {
   const nbEmplacements = fiche.axes?.length ?? 0;
   const [activeTab, setActiveTab] = useState(nbEmplacements > 0 ? 0 : 1);
 
@@ -21,7 +21,7 @@ const ModaleEmplacement = ({fiche}: ModaleEmplacementProps) => {
       title="Ranger la fiche dans un ou plusieurs plans d’action"
       size="xl"
       onClose={() => setActiveTab(0)}
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <div id={descriptionId}>
           <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
             <Tab label="Emplacement actuel">

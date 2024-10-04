@@ -1,18 +1,19 @@
-import {useHistory} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {FicheAction} from '../PlansActions/FicheAction/data/types';
-import {Form, Formik} from 'formik';
+import { useHistory } from 'react-router-dom';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import {TThematiqueRow} from 'types/alias';
-import {useState} from 'react';
+import { TThematiqueRow } from 'types/alias';
+import { useState } from 'react';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from 'app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
-import {Alert, Button, Field, FormSectionGrid} from '@tet/ui';
+import { Alert, Button, Field, FormSectionGrid } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Thematique } from '@tet/api/shared/domain';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -38,8 +39,8 @@ const IndicateurPersoNouveau = ({
   const history = useHistory();
   const ficheId = fiche?.id;
 
-  const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
-    onSuccess: indicateurId => {
+  const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
+    onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
         collectiviteId,
@@ -55,13 +56,13 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
+  const [thematiques, setThematiques] = useState<Thematique[]>(
     fiche?.thematiques ?? []
   );
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
     save({
-      definition: {...definition, thematiques},
+      definition: { ...definition, thematiques },
       ficheId,
       isFavoriCollectivite,
     });
@@ -79,7 +80,7 @@ const IndicateurPersoNouveau = ({
       validationSchema={validation}
       onSubmit={onSave}
     >
-      {({isValid}) => (
+      {({ isValid }) => (
         <Form className="flex flex-col gap-8">
           {/* Message d'information sur les indicateurs personnalisés */}
           <Alert
@@ -101,8 +102,8 @@ const IndicateurPersoNouveau = ({
 
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
-                values={thematiques?.map(t => t.id)}
-                onChange={({thematiques}) => setThematiques(thematiques)}
+                values={thematiques?.map((t) => t.id)}
+                onChange={({ thematiques }) => setThematiques(thematiques)}
               />
             </Field>
 

@@ -1,22 +1,21 @@
-import {DBClient} from '../../typeUtils';
-import {Valeur, valeurSchema} from '../domain/valeur.schema';
+import { objectToSnake } from 'ts-case-convert';
+import { Action } from '../../referentiel/domain/action.schema';
+import { selectTags } from '../../shared/actions/tag.fetch';
+import { insertTags } from '../../shared/actions/tag.save';
+import { Personne } from '../../shared/domain/personne.schema';
+import { Tag, TagInsert } from '../../shared/domain/tag.schema';
+import { Thematique } from '../../shared/domain/thematique.schema';
+import { DBClient, TablesInsert } from '../../typeUtils';
 import {
   IndicateurDefinition,
   IndicateurDefinitionInsert,
   indicateurDefinitionSchemaInsert,
 } from '../domain/definition.schema';
-import {TablesInsert} from '../../typeUtils';
-import {objectToSnake} from 'ts-case-convert';
-import {Personne} from '../../shared/domain/personne.schema';
-import {insertTags} from '../../shared/actions/tag.save';
-import {Tag} from '../../shared/domain/tag.schema';
-import {Thematique} from '../../shared/domain/thematique.schema';
-import {Action} from '../../referentiel/domain/action.schema';
+import { Valeur, valeurSchema } from '../domain/valeur.schema';
 import {
   IndicateurImportSource,
   getValeursComparaison,
 } from './indicateur.fetch';
-import {selectTags} from '../../shared/actions/tag.fetch';
 
 export type upsertValeursUtilisateurAvecSourceParametres = {
   dbClient: DBClient;
@@ -98,7 +97,7 @@ export async function insertIndicateurDefinition(
   indicateur: IndicateurDefinitionInsert
 ): Promise<number | null> {
   indicateurDefinitionSchemaInsert.parse(indicateur); // Vérifie le type
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_definition')
     .insert({
       collectivite_id: indicateur.collectiviteId,
@@ -115,7 +114,7 @@ export async function insertIndicateurDefinition(
     indicateur.thematiques.length > 0
   ) {
     await dbClient.from('indicateur_thematique').insert(
-      indicateur.thematiques.map(t => ({
+      indicateur.thematiques.map((t) => ({
         indicateur_id: data[0].id,
         thematique_id: t.id,
       }))
@@ -158,14 +157,14 @@ export async function upsertIndicateurValeur(
     return null;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {annee, ...rest} = indicateurValeur;
+  const { annee, ...rest } = indicateurValeur;
   const toUpsert = {
     ...rest,
     dateValeur: new Date(indicateurValeur.annee, 0, 1).toLocaleDateString(),
     source: undefined,
     metadonneeId: rest.source?.id || null,
   };
-  const {data, error} = await dbClient
+  const { data, error } = await dbClient
     .from('indicateur_valeur')
     .upsert(objectToSnake(toUpsert) as TablesInsert<'indicateur_valeur'>)
     .select('id')
@@ -195,15 +194,19 @@ export async function upsertThematiques(
       .from('indicateur_thematique')
       .delete()
       .eq('indicateur_id', indicateur.id)
-      .not('thematique_id', 'in', `(${thematiques.map(t => t.id).join(',')})`);
+      .not(
+        'thematique_id',
+        'in',
+        `(${thematiques.map((t) => t.id).join(',')})`
+      );
 
     // Fait les nouveaux liens entre l'indicateur et les thématiques
     await dbClient.from('indicateur_thematique').upsert(
-      thematiques.map(t => ({
+      thematiques.map((t) => ({
         thematique_id: t.id,
         indicateur_id: indicateur.id,
       })),
-      {onConflict: 'indicateur_id,thematique_id'}
+      { onConflict: 'indicateur_id,thematique_id' }
     );
   }
 }
@@ -224,7 +227,7 @@ export async function upsertServices(
   const tagIds: number[] = [];
   const newTags: Tag[] = [];
 
-  services.forEach(s => {
+  services.forEach((s) => {
     if (s.id) {
       tagIds.push(s.id as number);
     } else if (s.nom) {
@@ -245,8 +248,8 @@ export async function upsertServices(
 
   // Fait les nouveaux liens entre l'indicateur et les pilotes
   const toUpsert = tagIds
-    .concat(newTagsAdded.map(t => t.id as number))
-    .map(s => ({
+    .concat(newTagsAdded.map((t) => t.id as number))
+    .map((s) => ({
       collectivite_id: collectiviteId,
       indicateur_id: indicateur.id,
       service_tag_id: s,
@@ -278,7 +281,7 @@ export async function upsertCategoriesUtilisateur(
     'categorie'
   );
 
-  categories.forEach(s => {
+  categories.forEach((s) => {
     if (s.id) {
       tagIds.push(s.id as number);
     } else if (s.nom && s.collectiviteId === collectiviteId) {
@@ -294,7 +297,7 @@ export async function upsertCategoriesUtilisateur(
     // Ne supprime que les catégories de la collectivité
     .in(
       'categorie_tag_id',
-      categoriesCollectivite.map(c => c.id)
+      categoriesCollectivite.map((c) => c.id)
     )
     .not('categorie_tag_id', 'in', `(${tagIds.join(',')})`);
 
@@ -303,8 +306,8 @@ export async function upsertCategoriesUtilisateur(
 
   // Fait les nouveaux liens entre l'indicateur et les pilotes
   const toUpsert = tagIds
-    .concat(newTagsAdded.map(t => t.id as number))
-    .map(s => ({indicateur_id: indicateur.id, categorie_tag_id: s}));
+    .concat(newTagsAdded.map((t) => t.id as number))
+    .map((s) => ({ indicateur_id: indicateur.id, categorie_tag_id: s }));
 
   await dbClient.from('indicateur_categorie_tag').upsert(toUpsert, {
     onConflict: 'indicateur_id, categorie_tag_id',
@@ -327,8 +330,8 @@ export async function upsertPilotes(
   const passageIds: number[] = [];
   const userIds: string[] = [];
   const tagIds: number[] = [];
-  const newTags: Tag[] = [];
-  pilotes.forEach(p => {
+  const newTags: TagInsert[] = [];
+  pilotes.forEach((p) => {
     if (p.idTablePassage) {
       passageIds.push(p.idTablePassage);
     } else if (p.tagId) {
@@ -336,7 +339,7 @@ export async function upsertPilotes(
     } else if (p.userId) {
       userIds.push(p.userId as string);
     } else if (p.nom) {
-      newTags.push({collectiviteId: collectiviteId, nom: p.nom as string});
+      newTags.push({ collectiviteId, nom: p.nom as string });
     }
   });
   // Supprime les liens vers les pilotes qui ne sont plus concernés
@@ -352,21 +355,23 @@ export async function upsertPilotes(
 
   // Fait les nouveaux liens entre l'indicateur et les pilotes
   const toUpsert = [
-    ...userIds.map(p => ({user_id: p, tag_id: null})),
+    ...userIds.map((p) => ({ userId: p, tagId: null })),
     ...tagIds
-      .concat(newTagsAdded.map(t => t.id as number))
-      .map(p => ({user_id: null, tag_id: p})),
-  ].map(p => ({
+      .concat(newTagsAdded.map((t) => t.id))
+      .map((p) => ({ userId: null, tagId: p })),
+  ].map((p) => ({
     ...p,
-    collectivite_id: collectiviteId,
-    indicateur_id: indicateurId,
+    collectiviteId,
+    indicateurId,
   }));
 
   // Sauvegarde les nouveaux pilotes
   if (toUpsert.length > 0) {
-    await dbClient.from('indicateur_pilote').upsert(toUpsert, {
-      onConflict: 'indicateur_id, collectivite_id, user_id, tag_id',
-    });
+    await dbClient
+      .from('indicateur_pilote')
+      .upsert(objectToSnake(toUpsert) as any, {
+        onConflict: 'indicateur_id, collectivite_id, user_id, tag_id',
+      });
   }
 }
 
@@ -387,7 +392,7 @@ export async function upsertFiches(
     .from('fiche_action')
     .select('id')
     .eq('collectivite_id', collectiviteId);
-  const fichesCol: number[] = requestCol.data?.map(r => r.id) || [];
+  const fichesCol: number[] = requestCol.data?.map((r) => r.id) || [];
   if (fichesCol.length > 0) {
     // Supprime les liens vers les fiches qui ne sont plus concernés
     await dbClient
@@ -400,8 +405,8 @@ export async function upsertFiches(
 
   // Fait les nouveaux liens entre l'indicateur et les fiches
   await dbClient.from('fiche_action_indicateur').upsert(
-    fiches.map(fiche_id => ({fiche_id, indicateur_id: indicateurId})),
-    {onConflict: 'indicateur_id,fiche_id'}
+    fiches.map((fiche_id) => ({ fiche_id, indicateur_id: indicateurId })),
+    { onConflict: 'indicateur_id,fiche_id' }
   );
 }
 
@@ -422,12 +427,12 @@ export async function upsertActions(
       .from('indicateur_action')
       .delete()
       .eq('indicateur_id', indicateur.id)
-      .not('action_id', 'in', `(${actions.map(a => a.id).join(',')})`);
+      .not('action_id', 'in', `(${actions.map((a) => a.id).join(',')})`);
 
     // Fait les nouveaux liens entre l'indicateur et les fiches
     await dbClient.from('indicateur_action').upsert(
-      actions.map(a => ({action_id: a.id, indicateur_id: indicateur.id})),
-      {onConflict: 'indicateur_id,action_id'}
+      actions.map((a) => ({ action_id: a.id, indicateur_id: indicateur.id })),
+      { onConflict: 'indicateur_id,action_id' }
     );
   }
 }
@@ -463,7 +468,7 @@ export async function upsertValeursUtilisateurAvecSource(
         new Date(args.source.dateVersion)?.getFullYear(),
       args.source.methodologie,
     ]
-      .filter(s => !!s)
+      .filter((s) => !!s)
       .join(', ');
     if (args.appliquerResultat) {
       for (const ligne of valeurs.resultats.lignes) {
@@ -506,7 +511,7 @@ export async function upsertValeursUtilisateurAvecSource(
 
     // TODO faire un upsert de plusieurs valeurs en une fois
     await Promise.all(
-      [...valeursToUpsert.values()].map(v =>
+      [...valeursToUpsert.values()].map((v) =>
         upsertIndicateurValeur(args.dbClient, v)
       )
     );

@@ -5,7 +5,6 @@ import { OpenState } from '@tet/ui/utils/types';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useSearchParams } from 'core-logic/hooks/query';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
@@ -19,6 +18,7 @@ export type FicheActionParam =
   | 'r'
   | 'il'
   | 'pa'
+  | 'ra'
   | 'up'
   | 'pp'
   | 'ur'
@@ -33,6 +33,7 @@ export type FicheActionParam =
   | 'df'
   | 'ac'
   | 'p'
+  | 'lfa'
   | 'sort';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
@@ -48,6 +49,8 @@ export const nameToparams: Record<
   restreint: 'r',
   hasIndicateurLies: 'il',
   planActionIds: 'pa',
+  referentielActionIds: 'ra',
+  linkedFicheActionIds: 'lfa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   utilisateurReferentIds: 'ur',

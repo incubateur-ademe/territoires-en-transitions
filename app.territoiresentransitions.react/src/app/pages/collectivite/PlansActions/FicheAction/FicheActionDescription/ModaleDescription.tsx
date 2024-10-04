@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import _ from 'lodash';
 import {
   Button,
@@ -10,12 +10,13 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import {TSousThematiqueRow, TThematiqueRow} from 'types/alias';
-import {FicheAction} from '../data/types';
+import { TSousThematiqueRow, TThematiqueRow } from 'types/alias';
+import { FicheAction } from '@tet/api/plan-actions';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {getMaxLengthMessage} from '../utils';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { getMaxLengthMessage } from '../utils';
+import { SousThematique, Thematique } from '@tet/api/shared/domain';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;
@@ -28,7 +29,7 @@ type ModaleDescriptionProps = {
   updateFiche: (fiche: FicheAction) => void;
 };
 
-const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
+const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   const tracker = useEventTracker('app/fiche-action');
@@ -49,15 +50,15 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
     <Modal
       title="Modifier la fiche"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Nom de la fiche action */}
           <Field title="Nom de la fiche action" className="col-span-2">
             <Input
               type="text"
               value={editedFiche.titre ?? ''}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   titre: evt.target.value,
                 }))
@@ -68,9 +69,9 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
           {/* Dropdown thématiques */}
           <Field title="Thématique" className="col-span-2">
             <ThematiquesDropdown
-              values={editedFiche.thematiques?.map(t => t.id)}
-              onChange={({thematiques}) =>
-                setEditedFiche(prevState => ({
+              values={editedFiche.thematiques?.map((t) => t.id)}
+              onChange={({ thematiques }) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   thematiques: thematiques,
                 }))
@@ -82,13 +83,11 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
           <Field title="Sous-thématique" className="col-span-2">
             <SousThematiquesDropdown
               thematiques={(editedFiche.thematiques ?? []).map(
-                (t: TThematiqueRow) => t.id
+                (t: Thematique) => t.id
               )}
-              sousThematiques={
-                editedFiche.sous_thematiques as TSousThematiqueRow[]
-              }
-              onChange={({sousThematiques}) =>
-                setEditedFiche(prevState => ({
+              sousThematiques={editedFiche.sousThematiques}
+              onChange={({ sousThematiques }) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   sous_thematiques: sousThematiques,
                 }))
@@ -114,8 +113,8 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
               className="min-h-[100px]"
               value={editedFiche.description ?? ''}
               maxLength={DESCRIPTION_MAX_LENGTH}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   description: (evt.target as HTMLTextAreaElement).value,
                 }))
@@ -141,8 +140,8 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
               className="min-h-[100px]"
               value={editedFiche.ressources ?? ''}
               maxLength={MOYENS_MAX_LENGTH}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   ressources: (evt.target as HTMLTextAreaElement).value,
                 }))
@@ -152,9 +151,9 @@ const ModaleDescription = ({fiche, updateFiche}: ModaleDescriptionProps) => {
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               collectiviteId &&

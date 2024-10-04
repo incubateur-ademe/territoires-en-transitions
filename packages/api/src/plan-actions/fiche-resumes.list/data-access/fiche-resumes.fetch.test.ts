@@ -88,7 +88,7 @@ test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être
   expect(data.length).toBeGreaterThan(0);
 
   for (const fiche of data) {
-    expect(fiche.pilotes.length).toBeGreaterThan(0);
+    expect(fiche.pilotes?.length).toBeGreaterThan(0);
   }
 });
 
@@ -132,6 +132,74 @@ test('Fetch avec filtre sur un plan', async () => {
     parent: null,
     collectivite_id: 1,
   });
+});
+
+test('Fetch avec filtre sur une action du referentiel associée', async () => {
+  // Test avec une action associée à plusieurs fiches
+  const { data: fichesWithAction } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        referentielActionIds: ['eci_2.1'],
+      },
+    },
+  });
+
+  if (!fichesWithAction) {
+    expect.fail();
+  }
+
+  expect(fichesWithAction.length).toBeGreaterThan(1);
+
+  // Test avec une action associée à aucune fiche
+  const { data: noFichesFound } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        referentielActionIds: ['eci_2.2'],
+      },
+    },
+  });
+
+  if (!noFichesFound) {
+    expect.fail();
+  }
+
+  expect(noFichesFound).toHaveLength(0);
+});
+
+test('Fetch avec filtre sur une fiche liée', async () => {
+  // Test avec une fiche associée à aucune autre fiche
+  const { data: noFichesFound } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        linkedFicheActionIds: [5],
+      },
+    },
+  });
+
+  if (!noFichesFound) {
+    expect.fail();
+  }
+
+  expect(noFichesFound).toHaveLength(0);
+
+  // Test avec une action associée à plusieurs fiches
+  const { data: fichesWithAction } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        linkedFicheActionIds: [10],
+      },
+    },
+  });
+
+  if (!fichesWithAction) {
+    expect.fail();
+  }
+
+  expect(fichesWithAction.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur un statut', async () => {
