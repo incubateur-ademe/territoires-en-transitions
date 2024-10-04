@@ -1,14 +1,19 @@
 import { Filtre } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Button, useEventTracker } from '@tet/ui';
+import { Button, ButtonGroup, useEventTracker } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
+import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/Module/utils';
 import classNames from 'classnames';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import React, { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-type ModalState = {
-  isOpen: boolean;
-  setIsOpen: (opened: boolean) => void;
+export type ModuleDisplay = 'circular' | 'row';
+
+export type ModuleDisplaySettings = {
+  display: ModuleDisplay;
+  setDisplay: (display: ModuleDisplay) => void;
+  options?: ModuleDisplay[];
 };
 
 type Props = {
@@ -21,7 +26,7 @@ type Props = {
   /** Fonction d'affichage de la modale avec les filtres du modules,
    * à afficher au clique des boutons d'édition.
    * Récupère le state d'ouverture en argument */
-  editModal: (modalState: ModalState) => React.ReactNode;
+  editModal?: (modalState: OpenState) => React.ReactNode;
   /** État de loading générique */
   isLoading: boolean;
   /** État vide générique */
@@ -37,6 +42,8 @@ type Props = {
   className?: string;
   /** Des boutons optionnels dans un fragment qui s'affichent au pied du module */
   footerButtons?: React.ReactNode;
+  /** Paramétrage de l'affichage des données */
+  displaySettings?: ModuleDisplaySettings;
 };
 
 /** Composant générique d'un module du tableau de bord plans d'action */
@@ -51,6 +58,7 @@ const Module = ({
   children,
   className,
   footerButtons,
+  displaySettings,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const collectivite_id = useCollectiviteId()!;
@@ -119,9 +127,23 @@ const Module = ({
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}
-      {footerButtons && (
-        <div className="mt-auto ml-auto flex items-center gap-4">
-          {footerButtons}
+      {(footerButtons || displaySettings) && (
+        <div className="mt-auto flex items-center justify-between">
+          {displaySettings && (
+            <ButtonGroup
+              activeButtonId={displaySettings.display}
+              variant="neutral"
+              size="xs"
+              buttons={getDisplayButtons({
+                onClick: (display) => displaySettings.setDisplay(display),
+              })}
+            />
+          )}
+          {footerButtons && (
+            <div className="ml-auto flex items-center gap-4">
+              {footerButtons}
+            </div>
+          )}
         </div>
       )}
     </ModuleContainer>

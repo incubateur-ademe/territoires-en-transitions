@@ -2,6 +2,8 @@ import { Indicateurs } from '@tet/api';
 import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
 import { FiltreSpecifique as FiltreSpecifiqueFichesSynthse } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/Module/Module';
+import { DefaultButtonProps } from '@tet/ui';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
 
@@ -113,4 +115,37 @@ export const filtersToBadges = (data: FiltreKeys) => {
   }
 
   return badgeValues;
+};
+
+type DisplayOption = Omit<DefaultButtonProps, 'id'> & {
+  id: ModuleDisplay;
+};
+
+/** Associe les options demandées aux props des boutons de ButtonGroup */
+export const getDisplayButtons = ({
+  moduleOptions,
+  onClick,
+  texts,
+}: {
+  moduleOptions?: DisplayOption[];
+  onClick: (display: ModuleDisplay) => void;
+  texts?: Partial<Record<ModuleDisplay, string | undefined>>;
+}) => {
+  const displayOptions: DisplayOption[] = [
+    {
+      id: 'circular',
+      icon: 'pie-chart-2-line',
+      onClick: () => onClick('circular'),
+      children: texts?.circular,
+    },
+    {
+      id: 'row',
+      icon: 'layout-grid-line',
+      onClick: () => onClick('row'),
+      children: texts?.row,
+    },
+  ];
+  return moduleOptions
+    ? displayOptions.filter((o) => moduleOptions.some((opt) => opt.id === o.id))
+    : displayOptions;
 };
