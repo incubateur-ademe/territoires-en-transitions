@@ -5,14 +5,14 @@ import {
   Slug,
 } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
-import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
   usePersonalModuleFetch,
-} from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
+} from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import ModulePage from '../ModulePage';
+import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 
 type Props = {
   view: TDBViewParam;

@@ -3,18 +3,18 @@ import { useState } from 'react';
 import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import { TDBViewParam } from 'app/paths';
-import ModulePage from '../ModulePage';
 import PlansActionListe from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/PlansActionListe';
-import ModalSuiviPlansAction from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleSuiviPlansAction/ModalSuiviPlansAction';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/Module/Module';
+import ModalSuiviPlansAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModalSuiviPlansAction';
+import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import {
   getQueryKey,
   useCollectiviteModuleFetch,
-} from '@tet/app/pages/collectivite/TableauDeBord/Module/useColectiviteModuleFetch';
+} from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/useColectiviteModuleFetch';
 import {
   ModulePlanActionListSelect,
   Slug,
 } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
 
 type Props = {
   view: TDBViewParam;

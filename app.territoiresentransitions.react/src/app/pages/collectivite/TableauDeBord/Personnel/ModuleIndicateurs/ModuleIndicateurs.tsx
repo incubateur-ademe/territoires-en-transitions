@@ -6,7 +6,6 @@ import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/person
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import ModalIndicateursSuiviPlan from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   TDBViewParam,
   makeCollectiviteIndicateursUrl,
@@ -16,8 +15,9 @@ import {
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
-import Module from '../Module';
-import { getQueryKey } from '../usePersonalModulesFetch';
+import { getQueryKey } from '../../Personnel/usePersonalModulesFetch';
+import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 
 type Props = {
   view: TDBViewParam;

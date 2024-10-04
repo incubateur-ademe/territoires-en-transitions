@@ -1,8 +1,8 @@
 import { Axe } from '@tet/api/plan-actions/domain';
 import { generateTitle } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import Statuts from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/Module/Module';
-import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleAvancementFichesAction/useFichesActionStatuts';
+import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { Card } from '@tet/ui';
 import { useHistory } from 'react-router-dom';
 

@@ -8,18 +8,18 @@ import {
   defaultSlugsSchema as colectiviteSlug,
   Slug as CollectiviteSlug,
 } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
-import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
-import ModuleIndicateursPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateursPage';
 import { TDBViewParam } from 'app/paths';
 import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import ModuleSuiviPlansActionPage from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
+import ModuleSuiviPlansActionPage from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
+import ModuleFichesActionsPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActionsPage';
+import ModuleIndicateursPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action
  * Dans un premier temps, nous allons définir les modules dans le front.
  * On utilise le slug (url param) du module pour afficher la bonne page.
  * */
-const Modules = () => {
+const ModulePageRoutes = () => {
   const {
     tdbModule: slug,
     tdbView,
@@ -66,4 +66,4 @@ const Modules = () => {
   return <div>Ce module n'existe pas</div>;
 };
 
-export default Modules;
+export default ModulePageRoutes;

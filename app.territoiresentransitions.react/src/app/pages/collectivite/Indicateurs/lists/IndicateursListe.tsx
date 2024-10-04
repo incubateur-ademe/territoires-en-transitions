@@ -16,7 +16,7 @@ import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { Indicateurs } from '@tet/api';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { OpenState } from '@tet/ui/utils/types';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';

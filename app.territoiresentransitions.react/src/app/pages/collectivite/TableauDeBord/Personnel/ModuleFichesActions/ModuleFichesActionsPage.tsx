@@ -5,17 +5,17 @@ import {
 import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
 import { TDBViewParam } from 'app/paths';
-import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import {
   getQueryKey,
   usePersonalModuleFetch,
-} from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
+} from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import ModulePage from '../ModulePage';
 import FichesActionListe, {
   SortFicheActionSettings,
 } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
 type Props = {
   view: TDBViewParam;

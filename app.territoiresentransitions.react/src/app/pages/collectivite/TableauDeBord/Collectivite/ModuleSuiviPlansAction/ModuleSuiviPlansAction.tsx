@@ -7,14 +7,14 @@ import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/
 import { Button, useEventTracker } from '@tet/ui';
 import Module, {
   ModuleDisplay,
-} from 'app/pages/collectivite/TableauDeBord/Module/Module';
+} from 'app/pages/collectivite/TableauDeBord/components/Module';
 import {
   makeCollectivitePlanActionUrl,
   makeTableauBordModuleUrl,
   TDBViewParam,
 } from 'app/paths';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
-import ModalSuiviPlansAction from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleSuiviPlansAction/ModalSuiviPlansAction';
+import ModalSuiviPlansAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModalSuiviPlansAction';
 
 type Props = {
   view: TDBViewParam;

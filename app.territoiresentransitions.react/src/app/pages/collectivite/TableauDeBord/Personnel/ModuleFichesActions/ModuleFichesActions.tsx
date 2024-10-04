@@ -13,11 +13,11 @@ import {
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
-import Module from '../Module';
-import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Module/usePersonalModulesFetch';
+import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
 type Props = {
   view: TDBViewParam;

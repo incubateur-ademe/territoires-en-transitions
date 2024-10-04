@@ -1,14 +1,14 @@
 import { ModuleFicheActionCountByStatusSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleAvancementFichesAction/useFichesActionStatuts';
-import { makeFichesActionUrlWithParams } from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleAvancementFichesAction/utils';
-import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Module/useCollectiviteModulesFetch';
+import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
+import { makeFichesActionUrlWithParams } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/utils';
+import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
 import { useEventTracker } from '@tet/ui';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import Module, {
   ModuleDisplay,
-} from 'app/pages/collectivite/TableauDeBord/Module/Module';
-import ModalAvancementFichesAction from 'app/pages/collectivite/TableauDeBord/Module/ModuleAvancementFichesAction/ModalAvancementFichesAction';
+} from 'app/pages/collectivite/TableauDeBord/components/Module';
+import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';

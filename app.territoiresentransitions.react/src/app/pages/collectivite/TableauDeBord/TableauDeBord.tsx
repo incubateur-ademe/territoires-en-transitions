@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 
 import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
+import ModulePageRoutes from '@tet/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
 import {
   collectiviteTDBBasePath,
   collectiviteTDBCollectivitePath,
@@ -10,10 +10,10 @@ import {
   makeTableauBordUrl,
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import Personnel from './Personnel';
-import View from './View';
-import TdbVide from './TdbVide';
-import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite';
+import Personnel from './Personnel/Personnel';
+import View from './components/View';
+import TdbVide from './components/TdbVide';
+import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
@@ -58,7 +58,7 @@ const TableauDeBord = () => {
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>
-          <Modules />
+          <ModulePageRoutes />
         </Route>
       </div>
     </div>

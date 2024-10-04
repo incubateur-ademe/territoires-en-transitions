@@ -1,7 +1,7 @@
-import ModuleFichesActions from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActions';
+import ModuleIndicateurs from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateurs';
+import ModuleFichesActions from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActions';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import ModuleIndicateurs from './Module/ModuleIndicateurs/ModuleIndicateurs';
-import { usePersonalModulesFetch } from './Module/usePersonalModulesFetch';
+import { usePersonalModulesFetch } from './usePersonalModulesFetch';
 
 /** Vue personnelle du tableau de bord plans d'action */
 const Personnel = () => {
