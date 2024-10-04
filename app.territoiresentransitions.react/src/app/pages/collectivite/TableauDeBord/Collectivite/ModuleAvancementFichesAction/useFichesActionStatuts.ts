@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { useApiClient } from 'core-logic/api/useApiClient';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Statut } from '@tet/api/plan-actions/fiche-resumes.list';
+import { Statut } from '@tet/api/plan-actions';
 
 export type GetFichesActionStatutsParams = {
   cibles?: string;

@@ -1,5 +1,5 @@
+import { Statut } from '@tet/api/plan-actions';
 import { Filtre } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
-import { Statut } from '@tet/api/plan-actions/fiche-resumes.list';
 import { FicheActionParam } from '@tet/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@tet/app/paths';
 

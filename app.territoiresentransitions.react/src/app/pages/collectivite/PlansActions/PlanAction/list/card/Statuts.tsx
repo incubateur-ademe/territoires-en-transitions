@@ -1,4 +1,4 @@
-import { Statut } from '@tet/api/plan-actions/fiche-resumes.list';
+import { Statut } from '@tet/api/plan-actions';
 import { Tooltip } from '@tet/ui';
 import BadgeStatut from '@tet/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
