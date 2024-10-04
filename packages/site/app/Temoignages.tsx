@@ -15,11 +15,11 @@ type TemoignagesProps = {
 
 const Temoignages = ({ titre, contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
-    <Section>
+    <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
       {!!titre.trim() && <h2 className="text-center max-md:mb-2">{titre}</h2>}
       <TestimonialSlideshow
         contenu={contenu}
-        className="rounded-md md:w-3/4 mx-auto md:border border-primary-3"
+        className="rounded-md max-md:p-2 md:w-3/4 max-w-full mx-auto md:border border-primary-3"
         dotsColor="orange"
         backgroundColor="bg-white md:bg-primary-0"
         displayButtons={false}

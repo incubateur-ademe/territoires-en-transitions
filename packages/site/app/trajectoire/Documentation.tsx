@@ -36,7 +36,7 @@ const Documentation = ({
       <Alert description={<Markdown texte={info} />} />
       <CardsWrapper cols={2}>
         {/* Excel */}
-        <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex gap-5">
+        <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex max-md:flex-col gap-5">
           <div className="shrink-0 w-12 h-12 bg-primary-3 rounded-md flex justify-center items-center">
             <Icon icon="table-line" size="xl" className="text-primary-9" />
           </div>
@@ -54,7 +54,7 @@ const Documentation = ({
         </div>
 
         {/* PDF */}
-        <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex gap-5">
+        <div className="p-4 md:p-6 border border-gray-3 bg-primary-0 rounded-lg flex max-md:flex-col gap-5">
           <div className="shrink-0 w-12 h-12 bg-primary-3 rounded-md flex justify-center items-center">
             <Icon icon="file-2-line" size="xl" className="text-primary-9" />
           </div>
