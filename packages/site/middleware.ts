@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
     default-src 'self';
     script-src ${scriptSrc} *.axept.io *.posthog.com client.crisp.chat *.googletagmanager.com *.adform.net;
     style-src ${styleSrc} client.crisp.chat;
-    img-src 'self' blob: data: ytimg.com px.ads.linkedin.com server.adform.net https://image.crisp.chat https://client.crisp.chat ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
+    img-src 'self' blob: data: ytimg.com px.ads.linkedin.com server.adform.net https://axeptio.imgix.net https://favicons.axept.io https://image.crisp.chat https://client.crisp.chat ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
       'strapiapp',
       'media.strapiapp'
     )};
