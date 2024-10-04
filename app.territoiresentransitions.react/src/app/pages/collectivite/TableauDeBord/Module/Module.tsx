@@ -1,4 +1,5 @@
-import { Filtre } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Filtre as FiltrePersonnel } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Filter as FiltreCollectivite } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { Button, ButtonGroup, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
@@ -32,7 +33,7 @@ type Props = {
   /** État vide générique */
   isEmpty: boolean;
   /** Filtre du module */
-  filtre?: Filtre;
+  filtre?: FiltrePersonnel | FiltreCollectivite;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */

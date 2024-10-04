@@ -1,11 +1,12 @@
-import { Filtre } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Filtre as FiltrePersonnel } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Filter as FiltreCollectivite } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { useFiltreValues } from './useFiltreValues';
 import { filtersToBadges } from './utils';
 
 type Props = {
-  filtre: Filtre;
+  filtre: FiltrePersonnel | FiltreCollectivite;
   className?: string;
   resetFilters?: () => void;
 };
@@ -26,7 +27,7 @@ const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
   }
 
   return (
-    <div className={classNames('flex flex-wrap gap-4', className)}>
+    <div className={classNames('flex flex-wrap gap-x-4 gap-y-2', className)}>
       {selectedFilters.map((filter) => (
         <Badge
           key={filter}

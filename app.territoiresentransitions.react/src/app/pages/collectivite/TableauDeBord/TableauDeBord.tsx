@@ -1,6 +1,6 @@
-import {Redirect, Route} from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
 import {
   collectiviteTDBBasePath,
@@ -9,10 +9,11 @@ import {
   collectiviteTDBPersonnelPath,
   makeTableauBordUrl,
 } from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import Personnel from './Personnel';
 import View from './View';
 import TdbVide from './TdbVide';
+import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
@@ -51,8 +52,9 @@ const TableauDeBord = () => {
             view={'collectivite'}
             title="Le tableau de bord collaboratif de ma collectivité."
             description="Ce tableau de bord est destiné à l'ensemble des personnes de ma collectivité et peut être modifié par les administrateurs."
-            children={undefined}
-          />
+          >
+            {isEmpty ? <TdbVide /> : <Collectivite />}
+          </View>
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>

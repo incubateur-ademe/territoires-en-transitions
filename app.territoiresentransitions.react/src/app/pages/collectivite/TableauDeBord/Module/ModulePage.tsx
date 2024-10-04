@@ -1,9 +1,9 @@
-import {useHistory, useParams} from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
-import {Breadcrumbs} from '@tet/ui';
+import { Breadcrumbs } from '@tet/ui';
 
-import {TDBViewParam, makeTableauBordUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { TDBViewParam, makeTableauBordUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type Props = {
   title: string;
@@ -15,16 +15,11 @@ type Props = {
 };
 
 /** Composant générique de la page d'un module du tableau de bord plans d'action */
-const ModulePage = ({view, title, children}: Props) => {
+const ModulePage = ({ view, title, children }: Props) => {
   const collectiviteId = useCollectiviteId();
   const history = useHistory();
 
-  const {tdbModule: slug}: {tdbModule: string} = useParams();
-
-  /**
-   * TODO:
-   * - [ ] Implémenter les éléments communs aux différentes pages des modules
-   */
+  const { tdbModule: slug }: { tdbModule: string } = useParams();
 
   return (
     <div
@@ -46,7 +41,7 @@ const ModulePage = ({view, title, children}: Props) => {
                   })
                 ),
             },
-            {label: title},
+            { label: title },
           ]}
         />
       </div>
