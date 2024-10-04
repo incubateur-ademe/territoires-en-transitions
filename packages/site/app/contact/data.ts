@@ -1,6 +1,6 @@
 export const options = [
   {
-    group:
+    title:
       'Questions relatives au programme Territoire Engagé Transition Écologique',
     options: [
       {
@@ -23,7 +23,7 @@ export const options = [
     ],
   },
   {
-    group: 'Questions relatives à la plateforme Territoires en transitions',
+    title: 'Questions relatives à la plateforme Territoires en transitions',
     options: [
       {
         value: 5,
@@ -44,7 +44,7 @@ export const options = [
     ],
   },
   {
-    group: 'Aucun de ces sujets ?',
+    title: 'Aucun de ces sujets ?',
     options: [
       {
         value: 9,
