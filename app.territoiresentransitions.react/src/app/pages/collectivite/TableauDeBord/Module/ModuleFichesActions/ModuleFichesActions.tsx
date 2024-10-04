@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
@@ -15,7 +15,7 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import Module from '../Module';
 import ModalActionsDontJeSuisLePilote from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import { getQueryKey } from 'app/pages/collectivite/TableauDeBord/Module/usePersonalModuleFetch';
+import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Module/usePersonalModulesFetch';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import ModalActionsRecemmentModifiees from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModalActionsRecemmentModifiees';
 
@@ -29,12 +29,14 @@ const SLUG_TO_TRACKING_ID = {
   'actions-recemment-modifiees': 'actions_modifiees',
 } as const;
 
-/** Module pour les différents modules liés aux fiches action
- * dans la page tableau de bord plans d'action */
+/** Module pour afficher des fiches action
+ ** dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({ view, module }: Props) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
   const history = useHistory();
+
+  const trackEvent = useEventTracker('app/tdb/personnel');
 
   const { data, isLoading } = useFicheResumesFetch({
     options: module.options,
@@ -48,8 +50,15 @@ const ModuleFichesActions = ({ view, module }: Props) => {
       title={module.titre}
       filtre={module.options.filtre}
       symbole={<PictoExpert />}
-      trackingId={
-        SLUG_TO_TRACKING_ID[module.slug as keyof typeof SLUG_TO_TRACKING_ID]
+      onSettingsClick={() =>
+        trackEvent(
+          `tdb_modifier_filtres_${
+            SLUG_TO_TRACKING_ID[module.slug as keyof typeof SLUG_TO_TRACKING_ID]
+          }`,
+          {
+            collectivite_id: module.collectiviteId,
+          }
+        )
       }
       editModal={(openState) => {
         if (module.slug === 'actions-dont-je-suis-pilote') {

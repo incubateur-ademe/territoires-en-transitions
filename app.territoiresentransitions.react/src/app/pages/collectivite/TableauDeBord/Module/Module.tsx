@@ -22,8 +22,6 @@ type Props = {
   title: string;
   /** Symbole du module (picto svg) */
   symbole?: React.ReactNode;
-  /** ID de tracking */
-  trackingId: 'indicateurs' | 'actions_pilotes' | 'actions_modifiees';
   /** Fonction d'affichage de la modale avec les filtres du modules,
    * à afficher au clique des boutons d'édition.
    * Récupère le state d'ouverture en argument */
@@ -45,6 +43,8 @@ type Props = {
   footerButtons?: React.ReactNode;
   /** Paramétrage de l'affichage des données */
   displaySettings?: ModuleDisplaySettings;
+  /** Permet par exemple de donner une fonction de tracking */
+  onSettingsClick?: () => void;
 };
 
 /** Composant générique d'un module du tableau de bord plans d'action */
@@ -52,7 +52,6 @@ const Module = ({
   title,
   filtre,
   symbole,
-  trackingId,
   editModal,
   isLoading,
   isEmpty,
@@ -60,11 +59,9 @@ const Module = ({
   className,
   footerButtons,
   displaySettings,
+  onSettingsClick,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const collectivite_id = useCollectiviteId()!;
-
-  const trackEvent = useEventTracker('app/tdb/personnel');
 
   if (isLoading) {
     return (
@@ -86,41 +83,53 @@ const Module = ({
       >
         <div className="mb-4">{symbole}</div>
         <h4 className="mb-2 text-primary-8">{title}</h4>
-        <p className="m-0 font-bold text-primary-9">
-          Aucun résultat pour ce filtre !
-        </p>
-        <ModuleFiltreBadges
-          className="my-6 justify-center"
-          filtre={filtre ?? {}}
-        />
-        <Button size="sm" onClick={() => setIsModalOpen(true)}>
-          Modifier le filtre
-        </Button>
-        {editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
+        <div className="flex flex-col items-center gap-6">
+          <p className="mb-0 font-bold text-primary-9">
+            Aucun résultat pour ce filtre !
+          </p>
+          <ModuleFiltreBadges
+            className="justify-center"
+            filtre={filtre ?? {}}
+          />
+          {editModal && (
+            <Button
+              size="sm"
+              onClick={() => {
+                setIsModalOpen(true);
+                onSettingsClick?.();
+              }}
+            >
+              Modifier le filtre
+            </Button>
+          )}
+        </div>
+        {editModal?.({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
       </ModuleContainer>
     );
   }
 
   return (
-    <ModuleContainer className="!border-grey-3">
+    <ModuleContainer className={classNames('!border-grey-3', className)}>
       <div className="flex items-start gap-20">
         <h6 className="mb-0">{title}</h6>
         <>
           {/** Bouton d'édition des filtres du module + modale */}
-          <Button
-            variant="grey"
-            icon="edit-line"
-            size="xs"
-            className="ml-auto"
-            onClick={() => {
-              trackEvent(`tdb_modifier_filtres_${trackingId}`, {
-                collectivite_id,
-              });
-              setIsModalOpen(true);
-            }}
-          />
-          {isModalOpen &&
-            editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
+          {editModal && (
+            <>
+              <Button
+                variant="grey"
+                icon="edit-line"
+                size="xs"
+                className="ml-auto"
+                onClick={() => {
+                  setIsModalOpen(true);
+                  onSettingsClick?.();
+                }}
+              />
+              {isModalOpen &&
+                editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
+            </>
+          )}
         </>
       </div>
       {/** Filtres du module */}
@@ -162,7 +171,7 @@ const ModuleContainer = ({
 }) => (
   <div
     className={classNames(
-      'min-h-[21rem] flex flex-col gap-4 p-8 bg-white border border-primary-4 rounded-xl',
+      'col-span-full min-h-[21rem] flex flex-col gap-4 p-8 bg-white border border-primary-4 rounded-xl',
       className
     )}
   >

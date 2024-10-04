@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -29,6 +29,8 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
   const userId = useAuth().user?.id;
   const history = useHistory();
 
+  const trackEvent = useEventTracker('app/tdb/personnel');
+
   const { data, isLoading } = useFilteredIndicateurDefinitions(
     module.options,
     false
@@ -39,7 +41,6 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
       title={module.titre}
       filtre={module.options.filtre}
       symbole={<PictoIndicateurVide className="w-16 h-16" />}
-      trackingId="indicateurs"
       editModal={(openState) => (
         <ModalIndicateursSuiviPlan
           openState={openState}
@@ -47,6 +48,11 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
           keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
         />
       )}
+      onSettingsClick={() =>
+        trackEvent('tdb_modifier_filtres_indicateurs', {
+          collectivite_id: module.collectiviteId,
+        })
+      }
       isLoading={isLoading}
       isEmpty={!data || data.length === 0}
       footerButtons={
