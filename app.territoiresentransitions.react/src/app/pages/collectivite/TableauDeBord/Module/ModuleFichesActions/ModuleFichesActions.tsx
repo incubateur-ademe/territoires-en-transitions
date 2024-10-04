@@ -57,7 +57,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsDontJeSuisLePilote
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(module.slug)]}
+              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
             />
           );
         }
@@ -66,7 +66,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             <ModalActionsRecemmentModifiees
               openState={openState}
               module={module}
-              keysToInvalidate={[getQueryKey(module.slug)]}
+              keysToInvalidate={[getQueryKey(collectiviteId, userId)]}
             />
           );
         }
