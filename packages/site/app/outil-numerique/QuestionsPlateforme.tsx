@@ -2,7 +2,7 @@
 
 import Markdown from '@tet/site/components/markdown/Markdown';
 import Section from '@tet/site/components/sections/Section';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 type QuestionsPlateformeProps = {
   titre: string;
@@ -17,6 +17,8 @@ const QuestionsPlateforme = ({
   cta_faq,
   cta_contact,
 }: QuestionsPlateformeProps) => {
+  const tracker = useEventTracker('site/outil-numerique');
+
   return (
     <Section containerClassName="bg-primary-7 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <h2 className="text-center text-white mb-1">{titre}</h2>
@@ -34,6 +36,7 @@ const QuestionsPlateforme = ({
         </Button>
         <Button
           href="/contact"
+          onClick={() => tracker('contact_plateforme', {})}
           variant="outlined"
           className="!bg-[#FFE8BD] hover:!bg-[#FFE4A8]"
         >

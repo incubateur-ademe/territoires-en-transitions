@@ -8,6 +8,7 @@ import ContactForm from './ContactForm';
 import { Metadata, ResolvingMetadata } from 'next';
 import { getStrapiData } from './utils';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { TrackPageView } from '@tet/ui';
 
 export async function generateMetadata(
   params: { params: unknown },
@@ -27,37 +28,43 @@ export async function generateMetadata(
 const Contact = async () => {
   const data = await getStrapiData();
 
-  return data ? (
-    <Section>
-      <h1>{data.titre ?? "Contacter l'équipe"}</h1>
+  return (
+    <>
+      <TrackPageView pageName={'site/contact'} properties={{}} />
 
-      {!!data.description && <p className="text-xl">{data.description}</p>}
+      {data ? (
+        <Section>
+          <h1>{data.titre ?? "Contacter l'équipe"}</h1>
 
-      <div className="p-4 md:p-14 lg:px-28 bg-gray-100 mb-6">
-        <p className="text-sm">Tous les champs sont obligatoires</p>
-        <ContactForm />
-      </div>
-      {!!data.telephone && (
-        <div>
-          <p className="font-bold flex gap-2 mb-0">
-            <PhoneIcon />
-            Tél. : {data.telephone}
-          </p>
-          <p className="text-[#666]">{data.horaires}</p>
-        </div>
+          {!!data.description && <p className="text-xl">{data.description}</p>}
+
+          <div className="p-4 md:p-14 lg:px-28 bg-gray-100 mb-6">
+            <p className="text-sm">Tous les champs sont obligatoires</p>
+            <ContactForm />
+          </div>
+          {!!data.telephone && (
+            <div>
+              <p className="font-bold flex gap-2 mb-0">
+                <PhoneIcon />
+                Tél. : {data.telephone}
+              </p>
+              <p className="text-[#666]">{data.horaires}</p>
+            </div>
+          )}
+
+          {!!data.couverture && (
+            <StrapiImage
+              data={data.couverture}
+              className="w-full"
+              containerClassName="w-full my-6"
+              displayCaption={data.legendeVisible}
+            />
+          )}
+        </Section>
+      ) : (
+        <NoResult />
       )}
-
-      {!!data.couverture && (
-        <StrapiImage
-          data={data.couverture}
-          className="w-full"
-          containerClassName="w-full my-6"
-          displayCaption={data.legendeVisible}
-        />
-      )}
-    </Section>
-  ) : (
-    <NoResult />
+    </>
   );
 };
 

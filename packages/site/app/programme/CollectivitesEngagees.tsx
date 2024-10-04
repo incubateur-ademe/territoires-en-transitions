@@ -1,7 +1,7 @@
 'use client';
 
 import Section from '@tet/site/components/sections/Section';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import {
   useCollectivitesEngagees,
   useTerritoiresCOT,
@@ -17,6 +17,7 @@ const CollectivitesEngagees = ({ titre, cta }: CollectivitesEngageesProps) => {
   const { data: cot } = useTerritoiresCOT('', '');
   const { data: labellises } = useTerritoiresLabellises('', '');
   const { data: engages } = useCollectivitesEngagees('', '');
+  const tracker = useEventTracker('site/programme');
 
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
@@ -52,7 +53,11 @@ const CollectivitesEngagees = ({ titre, cta }: CollectivitesEngageesProps) => {
         </div>
       </div>
 
-      <Button className="mx-auto max-md:mt-3 mt-6" href="/collectivites">
+      <Button
+        className="mx-auto max-md:mt-3 mt-6"
+        href="/collectivites"
+        onClick={() => tracker('voir_collectivites', {})}
+      >
         {cta}
       </Button>
     </Section>

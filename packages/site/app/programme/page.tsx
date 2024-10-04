@@ -11,6 +11,7 @@ import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import Contact from './Contact';
 import Compte from './Compte';
 import CollectivitesEngagees from './CollectivitesEngagees';
+import { TrackPageView } from '@tet/ui';
 
 export async function generateMetadata(
   params: { params: unknown },
@@ -30,28 +31,34 @@ export async function generateMetadata(
 const Programme = async () => {
   const data = await getStrapiData();
 
-  return data ? (
+  return (
     <>
-      <ProgrammeBanner
-        titre={data.titre}
-        description={data.description}
-        couvertureURL={data.couvertureURL}
-      />
+      <TrackPageView pageName={'site/programme'} properties={{}} />
 
-      <Benefices {...data.benefices} />
+      {data ? (
+        <>
+          <ProgrammeBanner
+            titre={data.titre}
+            description={data.description}
+            couvertureURL={data.couvertureURL}
+          />
 
-      <Contact {...data.contact} />
+          <Benefices {...data.benefices} />
 
-      <Etapes {...data.etapes} />
+          <Contact {...data.contact} />
 
-      <Services {...data.services} />
+          <Etapes {...data.etapes} />
 
-      <CollectivitesEngagees {...data.collectivites} />
+          <Services {...data.services} />
 
-      <Compte {...data.compte} />
+          <CollectivitesEngagees {...data.collectivites} />
+
+          <Compte {...data.compte} />
+        </>
+      ) : (
+        <NoResult />
+      )}
     </>
-  ) : (
-    <NoResult />
   );
 };
 

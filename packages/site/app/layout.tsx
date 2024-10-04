@@ -5,7 +5,6 @@ import { PHProvider } from '@tet/site/providers/posthog';
 import { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './global.css';
-import TrackPage from './TrackPage';
 import { getMetaData } from './utils';
 
 export const viewport: Viewport = {
@@ -81,7 +80,6 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
             <div className="grow flex flex-col">{children}</div>
           </div>
           <Footer />
-          <TrackPage />
 
           <noscript>
             <img

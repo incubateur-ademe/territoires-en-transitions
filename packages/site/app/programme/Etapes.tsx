@@ -4,7 +4,7 @@ import Card from '@tet/site/components/cards/Card';
 import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
 import CardsSection from '@tet/site/components/sections/CardsSection';
 import { Content } from './types';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 type EtapesProps = {
   titre: string;
@@ -13,6 +13,8 @@ type EtapesProps = {
 };
 
 const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
+  const tracker = useEventTracker('site/programme');
+
   return contenu && contenu.length ? (
     <CardsSection
       containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
@@ -30,7 +32,11 @@ const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
         </CardsWrapper>
       }
     >
-      <Button href="/contact?objet=programme" className="mt-3 lg:mt-6 mx-auto">
+      <Button
+        href="/contact?objet=programme"
+        onClick={() => tracker('demarrer_programme', {})}
+        className="mt-3 lg:mt-6 mx-auto"
+      >
         {cta}
       </Button>
     </CardsSection>
