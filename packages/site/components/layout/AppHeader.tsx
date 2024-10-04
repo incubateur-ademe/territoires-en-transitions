@@ -15,14 +15,14 @@ export type MenuProps = {
 function Brand({ menuOpened, setMenuOpened }: MenuProps) {
   return (
     <div className="fr-header__brand-top">
-      <div className="fr-header__logo">
+      <div className="fr-header__logo md:max-xl:p-2 md:max-xl:!mr-0">
         <p className="fr-logo">
           République
           <br />
           Française
         </p>
       </div>
-      <div className="fr-header__operator">
+      <div className="fr-header__operator md:max-xl:p-2 md:max-xl:!mr-0">
         <div className="fr-grid-row" style={{ minWidth: 160 + 'px' }}>
           <Image src="/ademe.jpg" alt="ADEME" width="70" height="80" />
           <Image
@@ -114,7 +114,7 @@ function Body(props: MenuProps) {
         <div className="fr-header__body-row">
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
-            <div className="fr-header__service max-md:text-center">
+            <div className="fr-header__service max-md:text-center md:max-xl:p-2">
               <a
                 href="/"
                 aria-current="page"
@@ -130,7 +130,7 @@ function Body(props: MenuProps) {
               </a>
             </div>
           </div>
-          <div className="fr-header__tools">
+          <div className="fr-header__tools md:max-xl:pr-0 md:max-xl:pl-1">
             <div className="fr-header__tools-links">
               <Links />
             </div>

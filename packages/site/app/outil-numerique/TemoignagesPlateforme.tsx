@@ -20,7 +20,7 @@ const TemoignagesPlateforme = ({ temoignages }: TemoignagesPlateformeProps) => {
     >
       <TestimonialSlideshow
         contenu={temoignages}
-        className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 w-3/4 mx-auto"
+        className="rounded-[10px] max-md:border-x-[3px] max-md:border-orange-1 md:w-3/4 max-w-full mx-auto"
         dotsColor="orange"
         displayButtons={false}
         autoSlideDelay={12000}

@@ -20,7 +20,7 @@ const CollectiviteSearch = ({
   const router = useRouter();
 
   return (
-    <div className="mx-auto w-96">
+    <div className="mx-auto w-96 max-w-full">
       <Select
         placeholder="Rechercher une collectivité"
         debounce={500}

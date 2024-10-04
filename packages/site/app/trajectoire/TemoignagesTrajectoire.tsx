@@ -19,7 +19,7 @@ const TemoignagesTrajectoire = ({
     <Section containerClassName="bg-primary-7 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <TestimonialSlideshow
         contenu={temoignages}
-        className="rounded-[10px] md:w-3/4 mx-auto"
+        className="rounded-[10px] md:w-3/4 max-w-full mx-auto"
         dotsColor="orange"
         title="Témoignages de collectivités"
         displayButtons={false}
