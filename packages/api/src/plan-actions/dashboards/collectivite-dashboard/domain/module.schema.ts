@@ -98,7 +98,7 @@ export async function getDefaultModule(
     return {
       id: crypto.randomUUID(),
       collectiviteId,
-      titre: "Avancée des plans d'action de la collectivité",
+      titre: 'Suivi des plans d’action',
       type: 'plan-action.list',
       slug,
       options: {

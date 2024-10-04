@@ -1,10 +1,18 @@
 import { useParams } from 'react-router-dom';
 
-import { defaultSlugsSchema } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import {
+  defaultSlugsSchema as personalSlug,
+  Slug as PersonalSlug,
+} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import {
+  defaultSlugsSchema as colectiviteSlug,
+  Slug as CollectiviteSlug,
+} from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import ModuleFichesActionsPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from 'app/pages/collectivite/TableauDeBord/Module/ModuleIndicateurs/ModuleIndicateursPage';
 import { TDBViewParam } from 'app/paths';
 import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import ModuleSuiviPlansActionPage from '@tet/app/pages/collectivite/TableauDeBord/Module/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action
@@ -15,21 +23,22 @@ const Modules = () => {
   const {
     tdbModule: slug,
     tdbView,
-  }: { tdbModule: string; tdbView: TDBViewParam } = useParams();
+  }: { tdbModule: PersonalSlug | CollectiviteSlug; tdbView: TDBViewParam } =
+    useParams();
 
   if (
-    slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote'] ||
-    slug === defaultSlugsSchema.enum['actions-recemment-modifiees']
+    slug === personalSlug.enum['actions-dont-je-suis-pilote'] ||
+    slug === personalSlug.enum['actions-recemment-modifiees']
   ) {
     const getSortSettings = (
       slug: string
     ): SortFicheActionSettings | undefined => {
-      if (slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote']) {
+      if (slug === personalSlug.enum['actions-dont-je-suis-pilote']) {
         return {
           defaultSort: 'titre',
         };
       }
-      if (slug === defaultSlugsSchema.enum['actions-recemment-modifiees']) {
+      if (slug === personalSlug.enum['actions-recemment-modifiees']) {
         return {
           defaultSort: 'modified_at',
           sortOptionsDisplayed: ['modified_at'],
@@ -46,9 +55,14 @@ const Modules = () => {
     );
   }
 
-  if (slug === defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']) {
+  if (slug === personalSlug.enum['indicateurs-de-suivi-de-mes-plans']) {
     return <ModuleIndicateursPage view={tdbView} slug={slug} />;
   }
+
+  if (slug === colectiviteSlug.enum['suivi-plan-actions']) {
+    return <ModuleSuiviPlansActionPage view={tdbView} slug={slug} />;
+  }
+
   return <div>Ce module n'existe pas</div>;
 };
 
