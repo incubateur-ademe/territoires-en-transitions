@@ -1,9 +1,9 @@
-import {z} from "zod";
+import { z } from 'zod';
 
 /**
  * Schéma zod d'un axe d'un plan d'action avec les liens vers les autres objets sous forme d'id
  */
-export const axeSchema = z.object({
+export const baseAxeSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   nom: z.string().nullable().optional(),
@@ -13,6 +13,10 @@ export const axeSchema = z.object({
   createdAt: z.string().date().optional(),
   modifiedAt: z.string().date().optional(),
   modifiedBy: z.string().nullable(),
+});
+
+export const axeSchema = baseAxeSchema.extend({
+  axes: z.array(baseAxeSchema).optional(),
 });
 
 /**
