@@ -25,12 +25,27 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.axept.io *.posthog.com client.crisp.chat *.googletagmanager.com *.adform.net;
+    script-src ${scriptSrc} 
+      *.axept.io 
+      *.posthog.com 
+      client.crisp.chat 
+      *.googletagmanager.com 
+      *.adform.net 
+      https://snap.licdn.com;
     style-src ${styleSrc} client.crisp.chat;
-    img-src 'self' blob: data: ytimg.com px.ads.linkedin.com server.adform.net https://axeptio.imgix.net https://favicons.axept.io https://image.crisp.chat https://client.crisp.chat ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
-      'strapiapp',
-      'media.strapiapp'
-    )};
+    img-src 'self' blob: data: 
+      ytimg.com 
+      px.ads.linkedin.com 
+      server.adform.net 
+      https://axeptio.imgix.net 
+      https://favicons.axept.io
+      https://image.crisp.chat 
+      https://client.crisp.chat 
+      https://px4.ads.linkedin.com 
+      ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
+        'strapiapp',
+        'media.strapiapp'
+      )};
     font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
@@ -41,7 +56,8 @@ export function middleware(request: NextRequest) {
       *.axept.io
       client.crisp.chat
       wss://client.relay.crisp.chat
-      wss://stream.relay.crisp.chat;
+      wss://stream.relay.crisp.chat
+      https://px.ads.linkedin.com;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
