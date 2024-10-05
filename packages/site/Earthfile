@@ -86,6 +86,6 @@ docker:
 
 deploy:
   ARG --required KOYEB_API_KEY
-  FROM +koyeb
+  FROM ../../+koyeb
   RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
 
