@@ -265,7 +265,10 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
 node-alpine:
-  FROM node:20-alpine
+  # Pinning the docker image version to node:20.15.1-alpine
+  # because of existing memory leaks from using the fetch() API in node 20.16.0
+  # https://www.reddit.com/r/node/comments/1ejzn64/sudden_inexplicable_memory_leak_on_new_builds/
+  FROM node:20.15.1-alpine
 
   # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
   RUN apk add --no-cache libc6-compat
