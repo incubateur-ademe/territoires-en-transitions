@@ -37,7 +37,10 @@ const PanierActionsImpact = ({
           texte={description}
           className="paragraphe-primary-10 paragraphe-18 markdown_style colored_marker"
         />
-        <Button href="/contact?objet=panier" className="mt-6 max-lg:mx-auto">
+        <Button
+          href={`${process.env.NEXT_PUBLIC_PANIER_URL}/landing`}
+          className="mt-6 max-lg:mx-auto"
+        >
           {cta}
         </Button>
       </div>
