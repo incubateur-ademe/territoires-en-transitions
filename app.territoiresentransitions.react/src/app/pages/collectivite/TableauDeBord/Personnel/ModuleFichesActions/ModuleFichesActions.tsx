@@ -18,6 +18,7 @@ import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import { SortFichesAction } from '@tet/api/plan-actions/fiche-resumes.list';
 
 type Props = {
   view: TDBViewParam;
@@ -38,8 +39,18 @@ const ModuleFichesActions = ({ view, module }: Props) => {
 
   const trackEvent = useEventTracker('app/tdb/personnel');
 
+  const getSort = (): SortFichesAction[] => {
+    if (module.slug === 'actions-dont-je-suis-pilote') {
+      return [{ field: 'titre', direction: 'asc' }];
+    }
+    return [{ field: 'modified_at', direction: 'desc' }];
+  };
+
   const { data, isLoading } = useFicheResumesFetch({
-    options: module.options,
+    options: {
+      ...module.options,
+      sort: getSort(),
+    },
   });
 
   const fiches = data?.data || [];
