@@ -6,7 +6,7 @@ export type ActionImpactCategorie =
 export type ActionImpactThematique = Omit<
   Database['public']['Tables']['thematique']['Row'],
   'md_id'
->;
+> & { ordre: number };
 
 export type ActionImpactTypologie =
   Database['public']['Tables']['action_impact_typologie']['Row'];
