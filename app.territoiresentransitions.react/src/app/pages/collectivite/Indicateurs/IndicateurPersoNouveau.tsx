@@ -69,7 +69,6 @@ const IndicateurPersoNouveau = ({
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
     definition = TEMPORARY_copyDescriptionToCommentaire(definition);
-    console.log(definition);
     save({
       definition: {...definition, thematiques},
       ficheId,
