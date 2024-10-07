@@ -35,7 +35,7 @@ const Header = () => {
               key="nom"
               href={`${getAppBaseUrl(
                 document.location.hostname
-              )}/collectivite/${collectiviteInfo.collectivite_id}`}
+              )}/collectivite/${collectiviteInfo.collectivite_id}/accueil`}
             >
               {collectiviteInfo?.nom}
             </Button>
