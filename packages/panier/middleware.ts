@@ -27,16 +27,19 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.axept.io *.posthog.com;
-    style-src ${styleSrc};
-    img-src 'self' blob: data: axeptio.imgix.net;
-    font-src 'self';
+    script-src ${scriptSrc} *.axept.io *.posthog.com client.crisp.chat;
+    style-src ${styleSrc} client.crisp.chat;
+    img-src 'self' blob: data: axeptio.imgix.net image.crisp.chat client.crisp.chat;
+    font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
       ws://${request.nextUrl.host}
       ws://127.0.0.1:54321
+      client.crisp.chat
+      wss://client.relay.crisp.chat
+      wss://stream.relay.crisp.chat
       *.posthog.com
       *.axept.io;
     base-uri 'self';
