@@ -183,7 +183,7 @@ export class PanierAPI {
         return false;
       }
 
-      if (thematique_ids?.length && action.thematiques?.length) {
+      if (thematique_ids?.length) {
         const thematiques = action.thematiques.map((t) => t.id);
         if (!thematique_ids.find((id) => thematiques.includes(id))) {
           return false;
@@ -226,7 +226,7 @@ export class PanierAPI {
       .from('action_impact')
       .select(
         `*,
-          thematiques:action_impact_thematique(...thematique(id,nom)),
+          thematiques:action_impact_thematique(...thematique(id,nom),ordre),
           typologie:action_impact_typologie(*),
           fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
           temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
@@ -236,7 +236,10 @@ export class PanierAPI {
       .returns<ActionImpactDetails[]>();
 
     if (error) throw error;
-    return data;
+    return data?.map((action) => ({
+      ...action,
+      thematiques: action?.thematiques?.sort((a, b) => a.ordre - b.ordre),
+    }));
   }
 
   /**
