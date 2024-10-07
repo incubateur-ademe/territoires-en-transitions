@@ -19,6 +19,7 @@ const ficheActionColumns = [
   'date_fin_provisoire',
   'budget_previsionnel',
   'resultats_attendus',
+  'notes_complementaires',
   'objectifs',
   'ressources',
   'financements',
