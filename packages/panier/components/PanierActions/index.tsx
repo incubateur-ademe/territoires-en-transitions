@@ -10,21 +10,21 @@ import {
 } from '@tet/api';
 import { Alert } from '@tet/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
-import { useAjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
+import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 
 type PanierActionsProps = {
   panier: Panier;
   budgets: ActionImpactFourchetteBudgetaire[];
+  ajouterActionsRealiseesOuEnCours: AjouterActionsRealiseesOuEnCoursState;
   onToggleSelected: (actionId: number, selected: boolean) => void;
 };
 
 const PanierActions = ({
   panier,
   budgets,
+  ajouterActionsRealiseesOuEnCours,
   onToggleSelected,
 }: PanierActionsProps) => {
-  const ajouterActionsRealiseesOuEnCours =
-    useAjouterActionsRealiseesOuEnCoursState();
   const { nbEnCours, nbRealisees } = ajouterActionsRealiseesOuEnCours;
 
   // ventile les actions en sections par statut

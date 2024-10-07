@@ -14,6 +14,7 @@ import {
 } from '@tet/panier/providers';
 import {PartagerLeLien} from './PartagerLeLien';
 import { ContenuListesFiltre } from '../FiltresActions/types';
+import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
 
 type PanierRealtimeProps = {
   panier: Panier;
@@ -36,6 +37,8 @@ const PanierRealtime = ({
   typologies,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
+  const ajouterActionsRealiseesOuEnCours =
+    useAjouterActionsRealiseesOuEnCoursState();
 
   const router = useRouter();
   const { setCollectiviteId } = useCollectiviteContext();
@@ -86,12 +89,38 @@ const PanierRealtime = ({
     statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
+
+    // ajoute/enlève l'action du panier si la case à cocher "Ajouter les
+    // actions classées <statut>" est activée
+    const inpanier = panier.inpanier.find((a) => a.id === actionId);
+    if (!inpanier) {
+      if (
+        (statusId === 'en_cours' &&
+          ajouterActionsRealiseesOuEnCours.ajoutEnCours) ||
+        (statusId === 'realise' &&
+          ajouterActionsRealiseesOuEnCours.ajoutRealisees)
+      ) {
+        await panierAPI.addActionToPanier(actionId, panier.id);
+      }
+    }
+    if (inpanier && inpanier.statut !== statusId) {
+      if (
+        (inpanier.statut === 'en_cours' &&
+          ajouterActionsRealiseesOuEnCours.ajoutEnCours) ||
+        (inpanier.statut === 'realise' &&
+          ajouterActionsRealiseesOuEnCours.ajoutRealisees)
+      ) {
+        await panierAPI.removeActionFromPanier(actionId, panier.id);
+      }
+    }
+
     await tracker('statut', {
       collectivite_preset: panier.collectivite_preset,
       panier_id: panier.id,
       action_id: actionId,
       category_id: statusId,
     });
+
     router.refresh();
   };
 
@@ -132,6 +161,7 @@ const PanierRealtime = ({
       <PanierActions
         panier={panier}
         budgets={budgets}
+        ajouterActionsRealiseesOuEnCours={ajouterActionsRealiseesOuEnCours}
         onToggleSelected={handleToggleSelected}
       />
 
