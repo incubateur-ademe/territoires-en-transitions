@@ -25,19 +25,15 @@ async function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const panierId = params.id;
-  const thematique_ids = extractIdsFromParam(searchParams['t'] as string);
-  const typologie_ids = extractIdsFromParam(searchParams['ty'] as string);
-  const budget_ids = extractIdsFromParam(searchParams['b'] as string);
-  const temps_ids = extractIdsFromParam(searchParams['m'] as string);
-  const sansFiltreCompetences = searchParams['c'] === 'true';
 
-  const panier = await fetchPanier({
-    panierId,
-    thematique_ids,
-    typologie_ids,
-    budget_ids,
-    temps_ids,
-  });
+  const filtre = {
+    thematique_ids: extractIdsFromParam(searchParams['t'] as string),
+    typologie_ids: extractIdsFromParam(searchParams['ty'] as string),
+    niveau_budget_ids: extractIdsFromParam(searchParams['b'] as string),
+    niveau_temps_ids: extractIdsFromParam(searchParams['m'] as string),
+    matches_competences: searchParams['c'] !== 'true',
+  };
+  const panier = await fetchPanier({ panierId, filtre });
 
   if (!panier) return notFound();
 
@@ -62,7 +58,6 @@ async function Page({
           temps,
           thematiques,
           typologies,
-          sansFiltreCompetences,
         }}
       />
     </>

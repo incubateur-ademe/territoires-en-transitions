@@ -1,25 +1,16 @@
 import {useQuery} from 'react-query';
 import {supabaseClient} from 'core-logic/api/supabase';
-import {
-  ActionImpact,
-  ActionImpactThematique,
-  ActionImpactTypologie,
-} from '@tet/api';
-
-type ActionImpactDetail = ActionImpact & {
-  thematiques: ActionImpactThematique[];
-  typologie: ActionImpactTypologie | null;
-};
+import { ActionImpactDetails } from '@tet/api';
 
 /**
  * Charge le détail d'une action à impact
  */
 export const useActionImpact = (actionImpactId: number) =>
   useQuery(['action_impact', actionImpactId], async () => {
-    const {data, error} = await supabaseClient
+    const { data, error } = await supabaseClient
       .from('action_impact')
       .select(
-        `titre, 
+        `titre,
         typologie:action_impact_typologie(*),
         thematiques:action_impact_thematique(...thematique(id,nom)),
         budget:action_impact_fourchette_budgetaire(*),
@@ -30,7 +21,7 @@ export const useActionImpact = (actionImpactId: number) =>
       `
       )
       .eq('id', actionImpactId)
-      .returns<ActionImpactDetail[]>();
+      .returns<ActionImpactDetails[]>();
 
     if (error) throw new Error(error.message);
 

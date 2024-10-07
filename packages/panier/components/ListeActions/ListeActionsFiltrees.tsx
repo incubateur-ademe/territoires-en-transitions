@@ -1,12 +1,12 @@
 import {ActionImpact} from '@tet/panier/components/ActionImpact';
 import {
   ActionImpactFourchetteBudgetaire,
-  ActionImpactState,
+  ActionImpactFull,
   ActionImpactTempsMiseEnOeuvre,
 } from '@tet/api';
 
 type ListeActionsFiltreesProps = {
-  actionsListe: ActionImpactState[];
+  actionsListe: ActionImpactFull[];
   budgets: ActionImpactFourchetteBudgetaire[];
   temps: ActionImpactTempsMiseEnOeuvre[];
   onToggleSelected: (actionId: number, selected: boolean) => void;
@@ -22,40 +22,31 @@ const ListeActionsFiltrees = ({
 }: ListeActionsFiltreesProps) => {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
-      {actionsListe.map(action => (
+      {actionsListe.map((action) => (
         <ActionImpact
-          key={action.action.id}
+          key={action.id}
           actionsLiees={action.actions_liees}
-          titre={action.action.titre}
+          titre={action.titre}
           thematiques={action.thematiques}
           typologie={action.typologie}
           budget={budgets.find(
-            b => b.niveau === action.action.fourchette_budgetaire
+            (b) => b.niveau === action.fourchette_budgetaire?.niveau
           )}
-          description={`${action.action.description}\n\n${action.action.description_complementaire}`}
+          description={`${action.description}\n\n${action.description_complementaire}`}
           miseEnOeuvre={temps.find(
-            t => t.niveau === action.action.temps_de_mise_en_oeuvre
+            (t) => t.niveau === action.temps_de_mise_en_oeuvre?.niveau
           )}
-          ressources={action.action.ressources_externes ?? []}
-          rex={action.action.rex ?? []}
-          subventions={action.action.subventions_mobilisables ?? []}
-          statut={
-            action.statut?.categorie_id as
-              | 'non_pertinent'
-              | 'en_cours'
-              | 'realise'
-              | null
-          }
-          panier={action.isinpanier}
+          ressources={action.ressources_externes ?? []}
+          rex={action.rex ?? []}
+          subventions={action.subventions_mobilisables ?? []}
+          statut={action.statut}
+          panier={action.isinpanier ?? false}
           isSelected={action.isinpanier}
           onToggleSelected={() =>
-            onToggleSelected(action.action.id, !action.isinpanier)
+            onToggleSelected(action.id, !action.isinpanier)
           }
-          onUpdateStatus={statut =>
-            onUpdateStatus(
-              action.action.id,
-              action.statut?.categorie_id === statut ? null : statut
-            )
+          onUpdateStatus={(statut) =>
+            onUpdateStatus(action.id, action.statut === statut ? null : statut)
           }
         />
       ))}
