@@ -1,12 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import {useSearchParams} from 'next/navigation';
-import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactState,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-  ActionImpactTypologie,
-} from '@tet/api';
+import { Panier } from '@tet/api';
 import {
   Alert,
   Button,
@@ -18,6 +12,7 @@ import {
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import FiltresActions from '@tet/panier/components/FiltresActions';
+import { ContenuListesFiltre } from '../FiltresActions/types';
 
 const getTabLabel = (
   tab: { label: string; labelOne?: string; status: string | null },
@@ -37,24 +32,18 @@ const getTabLabel = (
 };
 
 type ListeActionsProps = {
-  actionsListe: ActionImpactState[];
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
-  typologies: ActionImpactTypologie[];
-  sansFiltreCompetences: boolean;
+  panier: Panier;
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
   onChangeTab: (tab: PanierOngletName) => void;
-};
+} & ContenuListesFiltre;
 
 const ListeActions = ({
-  actionsListe,
+  panier,
   budgets,
   temps,
   thematiques,
   typologies,
-  sansFiltreCompetences,
   onToggleSelected,
   onUpdateStatus,
   onChangeTab,
@@ -65,12 +54,12 @@ const ListeActions = ({
     label: string;
     labelOne?: string;
     shortName: PanierOngletName;
-    status: string | null;
+    status: 'realise' | 'en_cours' | 'selection' | 'importees';
   }[] = [
     {
       label: 'Propositions',
       shortName: 'selection',
-      status: null,
+      status: 'selection',
     },
     { label: 'Réalisées', shortName: 'réalisées', status: 'realise' },
     {
@@ -80,9 +69,7 @@ const ListeActions = ({
     },
   ];
 
-  const actionsDejaImportees = actionsListe.filter(
-    (state) => state.dejaImportee
-  );
+  const actionsDejaImportees = panier.importees;
   if (actionsDejaImportees.length) {
     tabsList.push({
       label: 'Fiches déjà importées',
@@ -100,12 +87,7 @@ const ListeActions = ({
       tabsListClassName="!justify-start mb-0"
     >
       {...tabsList.map((tab) => {
-        const actionsFiltrees =
-          tab.shortName === 'importees'
-            ? actionsDejaImportees
-            : tab.shortName === 'selection'
-            ? filtreSelection({ actionsListe, sansFiltreCompetences })
-            : actionsListe.filter((a) => a.statut?.categorie_id === tab.status);
+        const actionsFiltrees = panier[tab.status];
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
@@ -115,7 +97,6 @@ const ListeActions = ({
                 temps,
                 thematiques,
                 typologies,
-                sansFiltreCompetences,
               }}
             />
 
@@ -191,25 +172,5 @@ const ListeActions = ({
     </Tabs>
   );
 };
-
-const filtreSelection = ({
-  actionsListe,
-  sansFiltreCompetences,
-}: {
-  actionsListe: ActionImpactState[];
-  sansFiltreCompetences: boolean;
-}) => {
-  // toutes les actions sauf celles qui ont un statut (en
-  // cours/réalisée), celles qui sont déjà dans le panier ou déjà
-  // importées dans un plan
-  const subset = actionsListe.filter(
-    a => a.statut === null && !a.isinpanier && !a.dejaImportee,
-  );
-
-  return sansFiltreCompetences
-    ? subset
-    : subset.filter(a => a.matches_competences);
-};
-
 
 export default ListeActions;

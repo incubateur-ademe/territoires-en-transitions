@@ -1,5 +1,6 @@
 import {
   ActionImpactFourchetteBudgetaire,
+  ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
   ActionImpactTypologie,
@@ -31,7 +32,7 @@ export type ActionImpactProps = {
   /** Lien vers les subventions mobilisables */
   subventions?: LinkType[] | null;
   /** Statut de l'action */
-  statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
+  statut?: ActionImpactStatut;
   /** Actions des référentiels liées */
   actionsLiees?: ActionReferentiel[] | null;
   /** Indique si l'action est mise dans le panier */

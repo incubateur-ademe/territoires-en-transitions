@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-  ActionImpactTypologie,
-  Panier,
-} from '@tet/api';
+import { Panier } from '@tet/api';
 import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
 import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
 import ListeActions from '@tet/panier/components/ListeActions';
@@ -19,15 +13,11 @@ import {
   useUserContext,
 } from '@tet/panier/providers';
 import {PartagerLeLien} from './PartagerLeLien';
+import { ContenuListesFiltre } from '../FiltresActions/types';
 
 type PanierRealtimeProps = {
   panier: Panier;
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
-  typologies: ActionImpactTypologie[];
-  sansFiltreCompetences: boolean;
-};
+} & ContenuListesFiltre;
 
 /**
  * La partie client du Panier d'Action à Impact
@@ -44,7 +34,6 @@ const PanierRealtime = ({
   temps,
   thematiques,
   typologies,
-  sansFiltreCompetences,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
 
@@ -127,16 +116,21 @@ const PanierRealtime = ({
           }
         </p>
         <ListeActions
-          actionsListe={panier.states}
+          panier={panier}
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
-          {...{budgets, temps, thematiques, typologies, sansFiltreCompetences}}
+          {...{
+            budgets,
+            temps,
+            thematiques,
+            typologies,
+          }}
         />
       </div>
 
       <PanierActions
-        actionsListe={panier.contenu}
+        panier={panier}
         budgets={budgets}
         onToggleSelected={handleToggleSelected}
       />
