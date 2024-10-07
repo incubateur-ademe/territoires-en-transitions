@@ -3,33 +3,21 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-  ActionImpactTypologie,
-} from '@tet/api';
-import {
   OptionValue,
   SelectMultipleOnChangeArgs,
   useEventTracker,
 } from '@tet/ui';
 import { usePanierContext } from '@tet/panier/providers';
 import { BadgesFilters } from './BadgesFilters';
+import { ContenuListesFiltre } from './types';
 
-type FiltresActionsProps = {
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
-  typologies: ActionImpactTypologie[];
-  sansFiltreCompetences: boolean;
-};
+type FiltresActionsProps = ContenuListesFiltre;
 
 const FiltresActions = ({
   budgets,
   temps,
   thematiques,
   typologies,
-  sansFiltreCompetences,
 }: FiltresActionsProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -47,9 +35,8 @@ const FiltresActions = ({
     OptionValue[] | undefined
   >();
   const [tempsValues, setTempsValues] = useState<OptionValue[] | undefined>();
-  const [sansFiltreCompetencesValue, setSansFiltreCompetencesValue] = useState(
-    sansFiltreCompetences,
-  );
+  const [sansFiltreCompetencesValue, setSansFiltreCompetencesValue] =
+    useState(false);
 
   useEffect(() => {
     // Permet de conserver les filtres lors d'un changement d'onglet
@@ -57,11 +44,11 @@ const FiltresActions = ({
     const thematiquesParams = searchParams
       .get('t')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     const typologiesParams = searchParams
       .get('ty')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     const budgetsParams = searchParams
       .get('b')
       ?.split(',')
@@ -69,7 +56,7 @@ const FiltresActions = ({
     const tempsParams = searchParams
       .get('m')
       ?.split(',')
-      .map(val => parseInt(val));
+      .map((val) => parseInt(val));
     const competencesParams = searchParams.get('c');
 
     if (thematiquesParams) setThematiquesValues(thematiquesParams);
@@ -142,9 +129,9 @@ const FiltresActions = ({
         },
         {
           title: 'Typologies',
-          options: typologies.map(t => ({value: t.id, label: t.nom})),
+          options: typologies.map((t) => ({ value: t.id, label: t.nom })),
           values: typologiesValues,
-          onChange: ({values}) => setTypologiesValues(values),
+          onChange: ({ values }) => setTypologiesValues(values),
           multiple: true,
         },
         {
