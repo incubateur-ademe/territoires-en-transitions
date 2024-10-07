@@ -69,13 +69,13 @@ export type Financeur = z.infer<typeof financeurSchema>;
 export const ficheActionSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
-  modifiedAt: z.string().date().nullish(),
-  createdAt: z.string().date().nullish(),
+  modifiedAt: z.string().datetime().nullish(),
+  createdAt: z.string().datetime().nullish(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
   statut: statutSchema.nullish(),
   ameliorationContinue: z.boolean().nullish(),
-  dateFinProvisoire: z.string().date().nullish(),
+  dateFinProvisoire: z.string().datetime({ offset: true }).nullish(),
   niveauPriorite: niveauPrioriteSchema.nullish(),
   cibles: cibleSchema.array().nullish(),
   restreint: z.boolean().nullish(),
@@ -110,7 +110,7 @@ export type FicheAction = z.infer<typeof ficheActionSchema>;
 
 export const ficheActionInsertSchema = ficheActionSchema.extend({
   id: z.number().optional(),
-  modifiedAt: z.string().date().optional(),
+  modifiedAt: z.string().datetime().optional(),
   titre: z.string().nullable(),
   pilotes: personneSchema.array().optional(),
   plans: axeSchema.pick({ id: true, collectiviteId: true }).array().nullish(),
