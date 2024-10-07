@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
     process.env.NODE_ENV === 'production'
-      ? `'self' 'nonce-${nonce}' 'strict-dynamic';`
+      ? `'self' 'nonce-${nonce}' 'strict-dynamic'`
       : `'self' 'unsafe-eval' 'unsafe-inline'`;
 
   // on autorise les styles `unsafe-inline` à cause notamment d'un problème avec le commposant next/image
@@ -25,20 +25,39 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} *.axept.io *.posthog.com *.googletagmanager.com *.adform.net;  
-    style-src ${styleSrc};
-    img-src 'self' blob: data: ytimg.com px.ads.linkedin.com server.adform.net ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
-      'strapiapp',
-      'media.strapiapp'
-    )};
-    font-src 'self';
+    script-src ${scriptSrc} 
+      *.axept.io 
+      *.posthog.com 
+      client.crisp.chat 
+      *.googletagmanager.com 
+      *.adform.net 
+      https://snap.licdn.com;
+    style-src ${styleSrc} client.crisp.chat;
+    img-src 'self' blob: data: 
+      ytimg.com 
+      px.ads.linkedin.com 
+      server.adform.net 
+      https://axeptio.imgix.net 
+      https://favicons.axept.io
+      https://image.crisp.chat 
+      https://client.crisp.chat 
+      https://px4.ads.linkedin.com 
+      ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
+        'strapiapp',
+        'media.strapiapp'
+      )};
+    font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!} 
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_STRAPI_URL!}
       ws://${request.nextUrl.host}
       *.posthog.com
-      *.axept.io;
+      *.axept.io
+      client.crisp.chat
+      wss://client.relay.crisp.chat
+      wss://stream.relay.crisp.chat
+      https://px.ads.linkedin.com;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';

@@ -6,7 +6,10 @@ import { ChartHead } from './headings';
 import { formatInteger } from './shared';
 
 // Nombre de collectivités engagées dans le programme (COT ou labellisée 1ère étoile dans un des deux référentiels)
-function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
+export function useCollectivitesEngagees(
+  codeRegion: string,
+  codeDepartement: string,
+) {
   return useSWR(
     `territoires_engages-${codeRegion}-${codeDepartement}`,
     async () => {
@@ -18,19 +21,19 @@ function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_departement.eq.${codeDepartement})`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_departement.eq.${codeDepartement})`,
         );
       } else if (codeRegion) {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true),code_region.eq.${codeRegion})`,
         );
       } else {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true))`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1, cot.eq.true))`,
         );
       }
 
@@ -40,11 +43,14 @@ function useCollectivitesEngagees(codeRegion: string, codeDepartement: string) {
         throw new Error('territoires_engages');
       }
       return count || 0;
-    }
+    },
   );
 }
 
-function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
+export function useTerritoiresLabellises(
+  codeRegion: string,
+  codeDepartement: string,
+) {
   return useSWR(
     `territoires_labellises-${codeRegion}-${codeDepartement}`,
     async () => {
@@ -56,19 +62,19 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_departement.eq.${codeDepartement})`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_departement.eq.${codeDepartement})`,
         );
       } else if (codeRegion) {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1),code_region.eq.${codeRegion})`,
         );
       } else {
         // @ts-expect-error erreur non gérée
         select.url.searchParams.append(
           'and',
-          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1))`
+          `(or(etoiles_eci.gte.1, etoiles_cae.gte.1))`,
         );
       }
 
@@ -78,11 +84,11 @@ function useTerritoiresLabellises(codeRegion: string, codeDepartement: string) {
         throw new Error('territoires_labellises');
       }
       return count || 0;
-    }
+    },
   );
 }
 
-function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
+export function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
   return useSWR(
     `territoires_cot-${codeRegion}-${codeDepartement}`,
     async () => {
@@ -103,7 +109,7 @@ function useTerritoiresCOT(codeRegion: string, codeDepartement: string) {
         throw new Error('territoires_cot');
       }
       return count || 0;
-    }
+    },
   );
 }
 

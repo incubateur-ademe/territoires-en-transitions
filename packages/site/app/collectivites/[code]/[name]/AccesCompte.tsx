@@ -14,7 +14,9 @@ const AccesCompte = ({description, cta, href}: AccesCompteProps) => {
       <p className="text-center text-primary-8 font-bold text-[18px] leading-[28px]">
         {description}
       </p>
-      <Button href={href}>{cta}</Button>
+      <Button href={href} external>
+        {cta}
+      </Button>
     </div>
   );
 };

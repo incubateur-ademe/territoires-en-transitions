@@ -1,46 +1,33 @@
 'use server';
 
+import NoResult from '@tet/site/components/info/NoResult';
 import Temoignages from './Temoignages';
 import Accompagnement from './Accompagnement';
-import Informations from './Informations';
 import AccueilBanner from './AccueilBanner';
 import Newsletter from './Newsletter';
+import DemandeContact from './DemandeContact';
+import Communaute from './Communaute';
+import Objectifs from './Objectifs';
 import { getData } from './utils';
-import NoResult from '@tet/site/components/info/NoResult';
-import { AccueilData } from './types';
 
 const Accueil = async () => {
-  const data: AccueilData | null = await getData();
+  const data = await getData();
 
   return data ? (
     <>
-      <AccueilBanner titre={data.titre} couverture={data.couverture} />
+      <AccueilBanner {...data.banner} />
 
-      <Accompagnement
-        titre={data.accompagnement.titre}
-        description={data.accompagnement.description}
-        contenu={data.accompagnement.contenu}
-      />
+      <Accompagnement {...data.accompagnement} />
 
-      {data.temoignages && (
-        <Temoignages
-          titre={data.temoignages.titre}
-          description={data.temoignages.description}
-          contenu={data.temoignages.contenu}
-        />
-      )}
+      <Objectifs {...data.objectifs} />
 
-      <Informations
-        titre={data.informations.titre}
-        description={data.informations.description}
-        className={data.temoignages ? 'bg-primary-1' : '#fff'}
-      />
+      <Communaute {...data.collectivites} />
 
-      <Newsletter
-        titre={data.newsletter.titre}
-        description={data.newsletter.description}
-        className={data.temoignages ? '#fff' : 'bg-primary-1'}
-      />
+      <DemandeContact {...data.contact} />
+
+      {data.temoignages && <Temoignages {...data.temoignages} />}
+
+      <Newsletter {...data.newsletter} />
     </>
   ) : (
     <NoResult />

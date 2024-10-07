@@ -17,6 +17,115 @@
       "repeatable": false,
       "component": "shared.seo"
     },
+    "couverture_desktop": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "couverture_mobile": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "accueil_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Une offre complète pour un seul objectif : votre transition écologique"
+    },
+    "accueil_description": {
+      "type": "string",
+      "default": "Votre territoire est unique. Avancez étape par étape dans la transition écologique selon vos compétences et vos moyens.",
+      "required": true,
+      "maxLength": 255
+    },
+    "programme": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.vignette-avec-cta",
+      "required": true
+    },
+    "plateforme": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.vignette-avec-cta",
+      "required": true
+    },
+    "objectifs_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Pourquoi engager votre collectivité ?"
+    },
+    "objectifs_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown",
+      "required": true,
+      "max": 5,
+      "min": 5
+    },
+    "collectivites_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Rejoignez une communauté de collectivités engagées"
+    },
+    "collectivites_cta": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "Explorer les collectivités"
+    },
+    "contact_description": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Vous souhaitez agir mais n'êtes pas sûr de ce qu'il vous faut ?"
+    },
+    "contact_cta": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "Je souhaite être recontacté"
+    },
+    "temoignages_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Rejoignez une communauté de collectivités engagées"
+    },
+    "temoignages_liste": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::temoignage.temoignage"
+    },
+    "newsletter_titre": {
+      "type": "string",
+      "default": "Suivez les actualités du programme Territoire Engagé Transition Écologique",
+      "required": true,
+      "maxLength": 255
+    },
+    "newsletter_description": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Infolettre trimestrielle - 1 email par mois maximum."
+    },
+    "linkedin_btn": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "default": "Voir la page Linkedin"
+    },
+    "newsletter_btn": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "S'inscrire"
+    },
     "Titre": {
       "type": "string",
       "required": true,
@@ -27,9 +136,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "Accompagnement": {
       "type": "component",
@@ -42,11 +149,6 @@
       "repeatable": false,
       "component": "bloc.description",
       "required": true
-    },
-    "temoignages_liste": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::temoignage.temoignage"
     },
     "Informations": {
       "type": "component",

@@ -17,7 +17,7 @@ const EquipePlateforme = ({
   cta,
 }: EquipePlateformeProps) => {
   return (
-    <Section>
+    <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <h2 className="text-primary-8 md:text-center mb-1">{titre}</h2>
       {!!citation && (
         <h4 className="text-primary-7 md:text-center text-[24px] leading-[32px] mb-1">
@@ -36,7 +36,7 @@ const EquipePlateforme = ({
         variant="outlined"
         iconPosition="left"
         external
-        className="!mx-auto"
+        className="!mx-auto max-lg:mt-2 lg:mt-6"
       >
         {cta}
       </Button>

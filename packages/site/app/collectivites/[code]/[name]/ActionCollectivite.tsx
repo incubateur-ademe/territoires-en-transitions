@@ -23,10 +23,27 @@ type ActionCollectiviteProps = {
 };
 
 const ActionCollectivite = ({
-  action: { titre, contenu, image },
+  action: { titre, contenu: contenuInitial, image },
 }: ActionCollectiviteProps) => {
   const [contenuOpen, setContenuOpen] = useState(false);
   const limitContent = 700;
+
+  // enlève les sauts de ligne en trop et les lignes vides
+  const contenu = contenuInitial
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join('\n');
+
+  // crée une version tronquée du contenu (affichée avec le bouton "Lire plus")
+  const pourraitEtreTronque = contenu.length > limitContent;
+  const contenuTronque = pourraitEtreTronque
+    ? splitContent(contenu, limitContent)
+    : contenu;
+
+  // détermine si le contenu est effectivement tronqué
+  // (les boutons Lire moins/Lire plus doivent être affichés)
+  const estTronque = contenu !== contenuTronque;
 
   return (
     <div className="rounded-[10px] bg-white overflow-hidden">
@@ -47,20 +64,16 @@ const ActionCollectivite = ({
 
       <div
         className={classNames('py-10 px-8 lg:p-8', {
-          '-mb-6': contenu.length <= limitContent,
+          '-mb-6': !estTronque,
         })}
       >
         <h3>{titre}</h3>
         <Markdown
-          texte={
-            contenu.length <= limitContent || contenuOpen
-              ? contenu
-              : `${splitContent(contenu, limitContent)}...`
-          }
+          texte={estTronque && !contenuOpen ? `${contenuTronque}...` : contenu}
           className="paragraphe-16"
         />
 
-        {contenu.length > limitContent && (
+        {estTronque && (
           <Button
             onClick={() => setContenuOpen((prevState) => !prevState)}
             variant="underlined"

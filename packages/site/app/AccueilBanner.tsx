@@ -1,46 +1,46 @@
-import classNames from 'classnames';
-import Section from '@tet/site/components/sections/Section';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import CollectiviteSearch from './CollectiviteSearch';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 type AccueilBannerProps = {
-  titre: string;
-  couverture?: StrapiItem;
+  couverture: StrapiItem;
+  couvertureMobile: StrapiItem;
 };
 
-const AccueilBanner = ({ titre, couverture }: AccueilBannerProps) => {
-  return (
-    <Section
-      className={classNames('flex-col', {
-        'lg:flex-col': !couverture,
-        'lg:flex-row': !!couverture,
-      })}
-    >
-      <div
-        className={classNames('mb-8 lg:mb-0 mr-0', {
-          'lg:mr-10 xl:mr-20': !!couverture,
-        })}
-      >
-        <h1 className="text-[2.5rem]">{titre}</h1>
-        <p>Quelles sont les prochaines étapes pour ma collectivité ?</p>
-        <CollectiviteSearch />
-        <a
-          href="/programme#carte"
-          className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
-        >
-          Voir la carte de toutes les collectivités
-        </a>
-      </div>
-      {!!couverture && (
-        <StrapiImage
-          data={couverture}
-          className="w-full mx-auto"
-          containerClassName="w-full lg:w-3/5 xl:w-2/5 min-w-[350px]"
-          displayCaption={false}
-        />
-      )}
-    </Section>
+const AccueilBanner = ({
+  couverture,
+  couvertureMobile,
+}: AccueilBannerProps) => {
+  const mdBreakpoint = 768; // 768px = breakpoint sm dans tailwind
+  const [windowWidth, setWindowWidth] = useState<number>(mdBreakpoint);
+
+  useEffect(() => {
+    const setWidth = () => setWindowWidth(window.innerWidth);
+
+    // Initialisation de windowWith au chargement de la page
+    setWidth();
+
+    // Détecte le changement de taille de la fenêtre
+    window.addEventListener('resize', setWidth);
+    return () => window.removeEventListener('resize', setWidth);
+  }, []);
+
+  return windowWidth < mdBreakpoint && couvertureMobile !== null ? (
+    <StrapiImage
+      data={couvertureMobile}
+      className="w-full"
+      containerClassName="w-full"
+      displayCaption={false}
+    />
+  ) : (
+    <StrapiImage
+      data={couverture}
+      className="w-full max-h-[700px] object-scale-down"
+      containerClassName="w-full xl:max-w-[1460px] mx-auto"
+      displayCaption={false}
+    />
   );
 };
 

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
+import Markdown from '@tet/site/components/markdown/Markdown';
 
 type BlogCardProps = {
   title: string;
@@ -33,12 +34,9 @@ const BlogCard = ({
 }: BlogCardProps) => {
   return (
     <div
-      className={classNames(
-        'fr-card fr-card--no-border border rounded-[20px]',
-        {
-          'fr-enlarge-link': !!href,
-        }
-      )}
+      className={classNames('fr-card fr-card--no-border border rounded-lg', {
+        'fr-enlarge-link': !!href,
+      })}
       style={{
         backgroundColor: backgroundColor ? backgroundColor : '#fff',
         borderColor: backgroundColor ? backgroundColor : '#ddd',
@@ -62,9 +60,13 @@ const BlogCard = ({
             )}
           </h5>
           {!!description && (
-            <p className="fr-card__desc text-primary-10 leading-[30px]">
-              {description}
-            </p>
+            <Markdown
+              texte={description.replaceAll(
+                'href',
+                'target="_blank" rel="noreferrer noopener" href'
+              )}
+              className="fr-card__desc text-primary-10 paragraphe-16"
+            />
           )}
           <div className="fr-card__start">
             {date && (

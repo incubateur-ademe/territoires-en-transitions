@@ -1,0 +1,165 @@
+{
+  "kind": "singleType",
+  "collectionName": "page_trajectoires",
+  "info": {
+    "singularName": "page-trajectoire",
+    "pluralName": "page-trajectoires",
+    "displayName": "3.1. Trajectoires",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    },
+    "titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Territorialisation de la SNBC pour votre collectivité"
+    },
+    "couverture": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "cta_connexion": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50,
+      "default": "Je me connecte pour en profiter"
+    },
+    "bloc1_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Une méthode de référence"
+    },
+    "bloc1_texte": {
+      "type": "richtext",
+      "default": "La méthodogie permettant de calculer votre trajectoire SNBC territorialisée a été développée pour l’ADEME par Solagro et l’Institut Negawatt. Fruit d’un travail de 18 mois avec la contribution de 13 collectivités pilotes volontaires, elle a permis de construire une méthode de référence pour aider les territoires à définir et à interroger leur trajectoire bas-carbone.",
+      "required": true
+    },
+    "bloc1_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "bloc2_titre": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255,
+      "default": "Un outil d’aide à la décision : pas un engagement contractuel"
+    },
+    "bloc2_texte": {
+      "type": "richtext",
+      "default": "La trajectoire SNBC territorialisée n’est aucunement prescriptive. C’est un outil d’aide à la décision, un point de repère pour : - Définir vos objectifs ou les interroger lorsque ceux-ci sont définis (par exemple à l’occasion d’un suivi annuel ou d’un bilan à mi-parcours d’un PCAET) - Quantifier les efforts à réaliser secteur par secteur - Identifier sa contribution à la SNBC",
+      "required": true
+    },
+    "bloc2_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "methode_titre": {
+      "type": "string",
+      "default": "La méthode s'appuie, pour chaque secteur, sur des pivots de territorialisation qui déterminent la contribution du territoire à la SNBC.",
+      "required": true,
+      "maxLength": 255
+    },
+    "methode_description": {
+      "type": "richtext",
+      "default": "Exemple - pour le secteur résidentiel, les pivots de territorialisation sont :",
+      "required": true
+    },
+    "methode_exemples": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette",
+      "required": true,
+      "min": 2
+    },
+    "methode_image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "webinaire_titre": {
+      "type": "string",
+      "default": "Webinaire de présentation",
+      "required": true,
+      "maxLength": 255
+    },
+    "webinaire_description": {
+      "type": "richtext",
+      "default": "Découvrez comment la trajectoire SNBC territorialisée peut vous aider à valider vos objectifs. Inscrivez-vous à nos webinaires pour une présentation détaillée, des démonstrations en direct et des sessions de questions-réponses avec nos experts",
+      "required": true
+    },
+    "webinaire_cta": {
+      "type": "string",
+      "default": "Je m’inscris",
+      "required": true,
+      "maxLength": 50
+    },
+    "webinaire_url": {
+      "type": "string"
+    },
+    "calcul_titre": {
+      "type": "string",
+      "default": "2 modes de calcul disponibles, adapté à votre besoin",
+      "required": true,
+      "maxLength": 255
+    },
+    "calcul_description": {
+      "type": "richtext",
+      "default": "👉 La trajectoire SNBC territorialisée est disponible sous deux formes, en fonction de votre besoin et de votre temps disponible",
+      "required": true
+    },
+    "calcul_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown",
+      "required": true,
+      "min": 2
+    },
+    "temoignages_liste": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::temoignage.temoignage"
+    },
+    "documentation_titre": {
+      "type": "string",
+      "default": "Documentation et modèle de calcul",
+      "required": true,
+      "maxLength": 255
+    },
+    "documentation_description": {
+      "type": "richtext",
+      "default": "Retrouvez ici les principaux documents de l’étude pilotée par l’ADEME pour définir cette trajectoire SNBC territorialisée",
+      "required": true
+    },
+    "documentation_info": {
+      "type": "richtext",
+      "default": "Nous vous recommandons d’utiliser la plateforme depuis le compte de votre collectivité pour gagner du temps. Le mode intégré à la plateforme vous permettra d’accéder à une visualisation plus confortable. L’Excel téléchargé depuis votre espace vous permettra de disposer du modèle de calcul avec vos données renseignées"
+    },
+    "documentation_excel": {
+      "type": "text",
+      "required": true,
+      "default": "Modèle de calcul de la trajectoire SNBC territorialisée. Le fichier a été conçu pour être autoporteur. Nous vous recommandons de vous approprier le fichier et la méthode en débutant par les onglets “Introduction” et “Notice”."
+    },
+    "documentation_pdf": {
+      "type": "text",
+      "required": true,
+      "default": "Document détaillant la méthodologie appliquée pour territorialiser la SNBC. Il présente les étapes clés, les outils et les approches utilisés pour adapter les objectifs nationaux aux territoires."
+    }
+  }
+}
