@@ -2,6 +2,7 @@ import './global.css';
 import Footer from '@tet/panier/components/Layout/Footer';
 import Header from '@tet/panier/components/Layout/Header';
 import { StoreProvider } from '../providers';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -45,6 +46,18 @@ export default function RootLayout({
           <Footer />
         </body>
       </StoreProvider>
+      {/* crisp widget */}
+      <Script id="crisp" type="text/javascript">{`
+          window.$crisp = [];
+          window.CRISP_WEBSITE_ID = '${process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID}';
+          (function () {
+            d = document;
+            s = d.createElement('script');
+            s.src = 'https://client.crisp.chat/l.js';
+            s.async = 1;
+            d.getElementsByTagName('head')[0].appendChild(s);
+          })();
+        `}</Script>
     </html>
   );
 }
