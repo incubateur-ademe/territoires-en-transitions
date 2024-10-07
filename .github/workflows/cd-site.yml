@@ -38,6 +38,7 @@ jobs:
           --STRAPI_KEY=${{ secrets.STRAPI_KEY }} --STRAPI_URL=${{ secrets.STRAPI_URL }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
 
       - name: Deploy site on Koyeb
