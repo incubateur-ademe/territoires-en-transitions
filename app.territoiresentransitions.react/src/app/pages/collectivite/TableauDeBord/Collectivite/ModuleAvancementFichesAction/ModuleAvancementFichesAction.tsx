@@ -41,7 +41,6 @@ const ModuleAvancementFichesAction = ({ view, module }: Props) => {
         pilote_user_ids: filtres.utilisateurPiloteIds?.join(','),
         service_tag_ids: filtres.servicePiloteIds?.join(','),
         plan_ids: filtres.planActionIds?.join(','),
-        modified_since: filtres.modifiedSince,
         // Enlève les entrées avec valeur undefined
       }).filter(([_, value]) => value !== undefined && value.length > 0)
     )

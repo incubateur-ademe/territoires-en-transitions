@@ -16,15 +16,10 @@ import {
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
-import {
-  ModuleDisplay,
-  ModuleDisplaySettings,
-} from 'app/pages/collectivite/TableauDeBord/components/Module';
+import { ModuleDisplaySettings } from 'app/pages/collectivite/TableauDeBord/components/Module';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
 import { ModuleFicheActionCountByStatusSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { Filtre } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { TFicheActionCibles } from 'types/alias';
@@ -44,10 +39,6 @@ const ModalAvancementFichesAction = ({
   keysToInvalidate,
 }: Props) => {
   const queryClient = useQueryClient();
-
-  const [display, setDisplay] = useState<ModuleDisplay>(
-    displaySettings.display
-  );
 
   const [filtreState, setFiltreState] = useState<Filtre>(module.options.filtre);
 
@@ -117,35 +108,6 @@ const ModalAvancementFichesAction = ({
                 }
               />
             </Field>
-            <Field
-              title="Période :"
-              hint="Période sur laquelle les statuts des actions ont été modifiés"
-            >
-              <PeriodeDropdown
-                values={filtreState.modifiedSince}
-                onChange={(modifiedSince) =>
-                  setFiltreState({
-                    ...filtreState,
-                    modifiedSince:
-                      modifiedSince.length > 0 ? modifiedSince : undefined,
-                  })
-                }
-              />
-            </Field>
-          </FormSection>
-          <FormSection title="Affichage" className="!grid-cols-1">
-            <ButtonGroup
-              activeButtonId={display}
-              buttons={getDisplayButtons({
-                onClick: (display) => setDisplay(display),
-                texts: {
-                  circular: 'Diagramme circulaire',
-                  row: 'Vignettes',
-                },
-              })}
-              size="sm"
-              fillContainer
-            />
           </FormSection>
         </>
       )}
@@ -165,9 +127,6 @@ const ModalAvancementFichesAction = ({
                   },
                 },
               });
-
-              displaySettings.display !== display &&
-                displaySettings.setDisplay(display);
 
               keysToInvalidate?.forEach((key) =>
                 queryClient.invalidateQueries(key)

@@ -1,6 +1,4 @@
-import { useRef } from 'react';
-
-import { Checkbox, Field, FormSection, FormSectionGrid, Input } from '@tet/ui';
+import { Checkbox, Field, FormSection } from '@tet/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
@@ -18,7 +16,6 @@ import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
 
 type Props = {
   filters: Filtre;
@@ -28,9 +25,6 @@ type Props = {
 const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
-
-  const dateDebutRef = useRef<HTMLInputElement>(null);
-  const dateFinRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="w-96 flex flex-col gap-8 p-4">
@@ -143,18 +137,6 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             }}
           />
         </Field>
-        <Field title="Période">
-          <PeriodeDropdown
-            values={filters.modifiedSince}
-            onChange={(modifiedSince) => {
-              const { modifiedSince: ms, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(modifiedSince ? { modifiedSince } : {}),
-              });
-            }}
-          />
-        </Field>
         <Field title="Thématique">
           <ThematiquesDropdown
             values={filters.thematiqueIds}
@@ -205,44 +187,6 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
               setFilters({
                 ...rest,
                 ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
-              });
-            }}
-          />
-        </Field>
-        <Field title="De :">
-          <Input
-            type="date"
-            placeholder="Choisir une date de démarrage"
-            ref={dateDebutRef}
-            value={
-              filters.dateDebut
-                ? new Date(filters.dateDebut).toISOString().slice(0, 10)
-                : ''
-            }
-            onChange={(evt) => {
-              const { dateDebut, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(evt.target.value ? { dateDebut: evt.target.value } : {}),
-              });
-            }}
-          />
-        </Field>
-        <Field title="À :">
-          <Input
-            type="date"
-            placeholder="Choisir une date de fin"
-            ref={dateFinRef}
-            value={
-              filters.dateFin
-                ? new Date(filters.dateFin).toISOString().slice(0, 10)
-                : ''
-            }
-            onChange={(evt) => {
-              const { dateFin, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(evt.target.value ? { dateFin: evt.target.value } : {}),
               });
             }}
           />

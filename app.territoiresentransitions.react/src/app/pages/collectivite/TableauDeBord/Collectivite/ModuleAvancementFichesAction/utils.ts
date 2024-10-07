@@ -28,16 +28,12 @@ export const makeFichesActionUrlWithParams = (
       if (filterKey === 'servicePiloteIds') return 'sv';
       if (filterKey === 'partenaireIds') return 'pt';
       if (filterKey === 'cibles') return 'c';
-      if (filterKey === 'modifiedSince') return 'ms';
     };
 
     const paramKey = getKey(filterKey);
 
     if (value !== undefined && !!paramKey) {
-      if (
-        (isArray && value.length > 0) ||
-        (typeof value === 'string' && value.length > 0)
-      ) {
+      if (isArray && value.length > 0) {
         searchParams.append(paramKey, isArray ? value.join(',') : value);
       } else {
         searchParams.append(paramKey, value.toString());
