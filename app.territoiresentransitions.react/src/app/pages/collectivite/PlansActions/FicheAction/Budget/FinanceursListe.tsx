@@ -8,9 +8,9 @@ type FinanceursListeProps = {
 
 const FinanceursListe = ({ financeurs }: FinanceursListeProps) => {
   return (financeurs ?? []).map((f, index) => (
-    <div key={`${f.nom}-${index}`} className="flex">
+    <div key={`${f.financeurTag.nom}-${index}`} className="flex">
       <Badge
-        title={f.nom}
+        title={f.financeurTag.nom}
         state="standard"
         uppercase={false}
         className="!rounded-r-none"

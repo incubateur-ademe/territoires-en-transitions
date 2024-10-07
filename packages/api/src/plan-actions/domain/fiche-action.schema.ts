@@ -60,7 +60,8 @@ export const resultatsAttendus = z.enum([
 
 export type ResultatsAttendus = z.infer<typeof resultatsAttendus>;
 
-export const financeurSchema = tagSchema.extend({
+export const financeurSchema = z.object({
+  financeurTag: tagSchema,
   montantTtc: z.number().nullish(),
 });
 
