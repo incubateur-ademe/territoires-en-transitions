@@ -43,22 +43,3 @@ export const useFichesActionLiees = (actionId: string) => {
     data: fichesDedoublonnees ?? [],
   };
 };
-
-// charge les fiches action liées à une action (et ses sous-actions)
-// const fetch = async (collectivite_id: number, action_id: string) => {
-//   const { data } = await supabaseClient
-//     .from('fiche_action_action')
-//     .select('fiche_resume(*)')
-//     .eq('fiche_resume.collectivite_id', collectivite_id)
-//     .like('action_id', `${action_id}%`);
-
-//   return (
-//     data
-//       // extrait les fiches
-//       ?.map(({ fiche_resume }) => fiche_resume as FicheResume)
-//       // filtre les fiches non valides
-//       .filter((fiche) => Boolean(fiche))
-//       // dédoublonne les fiches liées à plusieurs sous-actions de la même action
-//       ?.filter((fiche, i, a) => a.findIndex((v) => v.id === fiche.id) === i)
-//   );
-// };
