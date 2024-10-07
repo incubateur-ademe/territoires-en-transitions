@@ -155,7 +155,7 @@ const ModifierFicheModale = ({
                           )
                       )
                       .map((pilote) => ({
-                        fiche_id: fiche.id!,
+                        ficheId: fiche.id!,
                         userId: pilote.userId,
                         tagId: pilote.tagId,
                       })) ?? [];
@@ -173,7 +173,7 @@ const ModifierFicheModale = ({
                           )
                       )
                       .map((pilote) => ({
-                        fiche_id: fiche.id!,
+                        ficheId: fiche.id!,
                         userId: pilote.userId,
                         tagId: pilote.tagId,
                       })) ?? [];
