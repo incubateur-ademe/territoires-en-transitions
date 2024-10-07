@@ -74,7 +74,7 @@ const ModaleIndicateursHeader = ({
               onChange={({ effets }) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  resultats_attendus: effets,
+                  resultatsAttendus: effets,
                 }))
               }
             />
