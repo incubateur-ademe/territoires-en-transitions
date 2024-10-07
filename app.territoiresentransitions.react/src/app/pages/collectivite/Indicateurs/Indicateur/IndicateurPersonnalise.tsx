@@ -56,8 +56,8 @@ const IndicateurPersonnaliseBase = ({
     const trimmedValue = value.trim();
     updateDefinition({
       ...definition,
-      ['description']: trimmedValue,
-      ['commentaire']: trimmedValue,
+      description: trimmedValue,
+      commentaire: trimmedValue,
     });
   };
 
