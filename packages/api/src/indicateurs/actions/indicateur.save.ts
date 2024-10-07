@@ -122,8 +122,12 @@ export async function insertIndicateurDefinition(
     );
   }
 
-  if (data && data.length > 0 && indicateur.description != null) {
-    TEMPORARY_insertCommentaire(dbClient, data, indicateur);
+  if (data && data.length > 0 && indicateur.commentaire != null) {
+    await dbClient.from('indicateur_collectivite').insert({
+      indicateur_id: data[0].id,
+      collectivite_id: indicateur.collectiviteId,
+      commentaire: indicateur.commentaire,
+    });
   }
 
   if (error) {
@@ -132,27 +136,6 @@ export async function insertIndicateurDefinition(
 
   return data ? data[0].id : null;
 }
-
-/**
- * Temporary: we're writing commentaire value from indicateur.description
- * -> step 2 of expand and contract pattern (
- * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
- *
- * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
- */
-const TEMPORARY_insertCommentaire = async (
-  dbClient: DBClient,
-  data: {
-    id: number;
-  }[],
-  indicateur: IndicateurDefinitionInsert
-) => {
-  await dbClient.from('indicateur_collectivite').insert({
-    indicateur_id: data[0].id,
-    collectivite_id: indicateur.collectiviteId,
-    commentaire: indicateur.commentaire,
-  });
-};
 
 /**
  * Upsert la valeur utilisateur d'un indicateur, supprime la valeur si aucun champ rempli
