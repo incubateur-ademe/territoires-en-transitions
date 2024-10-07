@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import {
   Checkbox,
@@ -47,6 +47,9 @@ const ModalePlanning = ({
     }
   };
 
+  const dateDebutRef = useRef<HTMLInputElement>(null);
+  const dateFinRef = useRef<HTMLInputElement>(null);
+
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
@@ -66,6 +69,7 @@ const ModalePlanning = ({
             }
           >
             <Input
+              ref={dateDebutRef}
               type="date"
               state={isDateDebutError ? 'error' : 'default'}
               max={
@@ -127,6 +131,7 @@ const ModalePlanning = ({
             }
           >
             <Input
+              ref={dateFinRef}
               type="date"
               state={isDateFinError ? 'error' : 'default'}
               min={

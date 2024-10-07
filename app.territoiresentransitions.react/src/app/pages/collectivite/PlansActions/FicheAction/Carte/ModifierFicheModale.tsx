@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { QueryKey } from 'react-query';
 
 import {
@@ -50,6 +50,8 @@ const ModifierFicheModale = ({
     useFicheActionRemoveTagPilote(keysToInvalidate);
 
   const [fiche, setFiche] = useState(initialFiche);
+
+  const refDatefin = useRef<HTMLInputElement>(null);
 
   return (
     <Modal
@@ -109,6 +111,7 @@ const ModifierFicheModale = ({
               </Field>
               <Field title="Date de fin prévisionnelle">
                 <Input
+                  ref={refDatefin}
                   type="date"
                   value={
                     fiche.dateFinProvisoire
