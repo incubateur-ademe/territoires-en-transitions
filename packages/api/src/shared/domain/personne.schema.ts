@@ -5,7 +5,7 @@ import { z } from 'zod';
  */
 export const personneSchema = z.object({
   nom: z.string().nullish(),
-  collectiviteId: z.number(),
+  collectiviteId: z.number().nullable(),
   tagId: z.number().nullable(),
   userId: z.string().nullable(),
   // TODO remove this field ?

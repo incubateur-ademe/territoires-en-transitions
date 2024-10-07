@@ -20,19 +20,19 @@ const upsertFicheAction = async (fiche: FicheAction) => {
       plans: true,
       modifiedAt: true,
       createdAt: true,
-      referents: true,
     })
     .parse(fiche);
 
   let query = supabaseClient
     .from('fiches_action')
     .insert(objectToSnake(ficheToUpdateThroughPGView) as any)
-    .select();
+    .select()
+    .single();
 
   const { error, data } = await query;
 
   if (error) {
-    throw new Error(error.message);
+    throw error;
   }
 
   return objectToCamel(data);
@@ -54,7 +54,7 @@ export const useCreateFicheAction = () => {
         queryClient.invalidateQueries(['axe_fiches', null]);
         const url = makeCollectiviteFicheNonClasseeUrl({
           collectiviteId: collectiviteId!,
-          ficheUid: data[0].id!.toString(),
+          ficheUid: data.id!.toString(),
         });
         history.push(url);
       },

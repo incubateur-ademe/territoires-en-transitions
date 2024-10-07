@@ -75,7 +75,11 @@ export const ficheActionSchema = z.object({
   description: z.string().nullish(),
   statut: statutSchema.nullish(),
   ameliorationContinue: z.boolean().nullish(),
-  dateFinProvisoire: z.string().datetime({ offset: true }).nullish(),
+  dateFinProvisoire: z
+    .string()
+    .date()
+    .or(z.string().datetime({ offset: true }))
+    .nullish(),
   niveauPriorite: niveauPrioriteSchema.nullish(),
   cibles: cibleSchema.array().nullish(),
   restreint: z.boolean().nullish(),
@@ -85,7 +89,11 @@ export const ficheActionSchema = z.object({
   calendrier: z.string().nullish(),
   ressources: z.string().nullish(),
   notesComplementaires: z.string().nullish(),
-  dateDebut: z.string().datetime().nullish(),
+  dateDebut: z
+    .string()
+    .date()
+    .or(z.string().datetime({ offset: true }))
+    .nullish(),
   financements: z.string().nullish(),
 
   // Champ calculé
