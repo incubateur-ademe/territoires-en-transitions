@@ -158,8 +158,9 @@ export const RejoindreUneCollectivite = (
               <Checkbox
                 containerClassname="md:col-span-2"
                 label="Je suis référent.e dans le programme Territoire Engagé Transition Ecologique"
-                onChange={e =>
-                  setFormState(previous => ({
+                checked={est_referent}
+                onChange={(e) =>
+                  setFormState((previous) => ({
                     ...previous,
                     est_referent: e.target.checked,
                   }))
