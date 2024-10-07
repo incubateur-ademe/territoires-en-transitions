@@ -41,6 +41,7 @@ ALTER TABLE fiche_action_financeur_tag ADD PRIMARY KEY (fiche_id, financeur_tag_
 
 -- Step 3: keep the id column but remove its default value and sequence:
 ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id DROP NOT NULL;
 DROP SEQUENCE IF EXISTS fiche_action_financeur_tag_id_seq;
 
 COMMIT;

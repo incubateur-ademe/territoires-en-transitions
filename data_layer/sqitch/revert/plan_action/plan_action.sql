@@ -12,6 +12,7 @@ CREATE SEQUENCE fiche_action_financeur_tag_id_seq OWNED BY fiche_action_financeu
 
 -- Step 3: Set the default value for the id column
 ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id SET DEFAULT nextval('fiche_action_financeur_tag_id_seq');
+ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id SET NOT NULL;
 
 -- Step 4: Recreate the primary key on the id column
 ALTER TABLE fiche_action_financeur_tag ADD CONSTRAINT fiche_action_financeur_tag_pkey PRIMARY KEY (id);
