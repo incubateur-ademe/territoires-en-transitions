@@ -68,11 +68,44 @@ const IndicateurPersoNouveau = ({
   );
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    definition = TEMPORARY_copyDescriptionToCommentaire(definition);
+    console.log(definition);
     save({
       definition: {...definition, thematiques},
       ficheId,
       isFavoriCollectivite: favoriCollectivite,
     });
+  };
+
+  /**
+   * Temporary: we're taking commentaire value from definition.description
+   * -> step 2 of expand and contract pattern (
+   * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
+   *
+   * Next step: change             
+   * 
+   * <FormikInput
+        type="area"
+        name="description"
+        label="Description"
+        className="col-span-2"
+      /> to
+      <FormikInput
+        type="area"
+        name="commentaire"
+        label="Commentaire"
+        className="col-span-2"
+      />
+   * 
+   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
+   */
+  const TEMPORARY_copyDescriptionToCommentaire = (
+    definition: TIndicateurPersoDefinitionWrite
+  ): TIndicateurPersoDefinitionWrite => {
+    return {
+      ...definition,
+      commentaire: definition.description
+    };
   };
 
   return (
