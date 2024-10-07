@@ -1,8 +1,7 @@
 import { beforeAll, describe, it, expect } from 'vitest';
 import { supabase } from '../tests/supabase';
 import { testReset } from '../tests/testReset';
-import { panierSelect } from './panierAPI';
-import { Panier } from './types';
+import { PanierAPI } from './panierAPI';
 
 describe('Création de panier', async () => {
   beforeAll(async () => {
@@ -49,28 +48,6 @@ describe('État du panier', async () => {
     expect(selectPanier.error).toBeNull();
     expect(selectPanier.data).toBeDefined();
   });
-
-  it('On devrait pouvoir ajouter une action puis la retrouver dans le panier', async () => {
-    const demandePanier = await supabase.rpc('panier_from_landing');
-    const panierId = demandePanier.data?.id as string;
-    const actionId = 1;
-    const ajoutAction = await supabase.from('action_impact_panier').insert({
-      action_id: actionId,
-      panier_id: panierId,
-    });
-
-    expect(ajoutAction.error).toBeNull();
-
-    const selectPanierContenu = await supabase
-      .from('panier')
-      .select(panierSelect)
-      .eq('id', panierId)
-      .single<Panier>();
-
-    expect(selectPanierContenu.error).toBeNull();
-    expect(selectPanierContenu.data).toBeDefined();
-    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
-  });
 });
 describe('État des actions', async () => {
   it('On devrait pouvoir ajouter une action puis la retrouver dans le panier', async () => {
@@ -84,22 +61,11 @@ describe('État des actions', async () => {
 
     expect(ajoutAction.error).toBeNull();
 
-    const selectPanierContenu = await supabase
-      .from('panier')
-      .select(panierSelect)
-      .eq('id', panierId)
-      .single<Panier>();
+    const api = new PanierAPI(supabase);
+    const selectPanierContenu = await api.fetchPanier({ panierId, filtre: {} });
 
-    expect(selectPanierContenu.error).toBeNull();
-    expect(selectPanierContenu.data).toBeDefined();
-    expect(selectPanierContenu.data?.contenu.length).toEqual(1);
-
-    const { error } = await supabase
-      .from('panier')
-      .select('*, states:action_impact_state(*)')
-      .eq('id', panierId);
-
-    expect(error).toBeNull();
+    expect(selectPanierContenu).toBeDefined();
+    expect(selectPanierContenu?.inpanier.length).toEqual(1);
   });
 });
 
