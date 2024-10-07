@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import {useState} from 'react';
+import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
+import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
-import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
-import { HeaderIndicateur } from './detail/HeaderIndicateur';
-import { IndicateurValuesTabs } from './detail/IndicateurValuesTabs';
-import { FichesActionLiees } from './FichesActionLiees';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { IndicateurInfoLiees } from './detail/IndicateurInfoLiees';
-import { useIndicateurDefinition } from './useIndicateurDefinition';
+import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
+import {useUpdateIndicateurDefinition} from './useUpdateIndicateurDefinition';
+import {HeaderIndicateur} from './detail/HeaderIndicateur';
+import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
+import {FichesActionLiees} from './FichesActionLiees';
+import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import {IndicateurInfoLiees} from './detail/IndicateurInfoLiees';
+import {useIndicateurDefinition} from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import { useDeleteIndicateurPerso } from './useRemoveIndicateurPerso';
-import { Indicateurs } from '@tet/api';
+import {useDeleteIndicateurPerso} from './useRemoveIndicateurPerso';
+import {Indicateurs} from '@tet/api';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 
 /** Affiche le détail d'un indicateur personnalisé */
@@ -23,8 +23,8 @@ const IndicateurPersonnaliseBase = ({
 }: {
   definition: Indicateurs.domain.IndicateurDefinition;
 }) => {
-  const { description, unite, titre, rempli } = definition;
-  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
+  const {description, unite, titre, rempli} = definition;
+  const {mutate: updateDefinition} = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
 
@@ -36,14 +36,14 @@ const IndicateurPersonnaliseBase = ({
     const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
-      updateDefinition({ ...definition, [name]: nouveau });
+      updateDefinition({...definition, [name]: nouveau});
     }
   };
 
   /**
    * TEMPORARY: currently, description input feeds two columns:
    * `description` column in `indicateur_definition`
-   * `commentaire` column in `indicateur_collectivite` (via the harcoded ['commentaire'] prop).
+   * `commentaire` column in `indicateur_collectivite` (via the hardcoded ['commentaire'] prop).
    * This is step 2 of expand and contract pattern
    * (https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
    *
@@ -62,7 +62,7 @@ const IndicateurPersonnaliseBase = ({
   };
 
   const [showConfirm, setShowConfirm] = useState(false);
-  const { mutate: deleteIndicateurPerso } = useDeleteIndicateurPerso(
+  const {mutate: deleteIndicateurPerso} = useDeleteIndicateurPerso(
     collectivite?.collectivite_id as number,
     definition.id
   );
@@ -126,10 +126,10 @@ const IndicateurPersonnaliseBase = ({
       </div>
       {showConfirm && (
         <Modal
-          openState={{ isOpen: showConfirm, setIsOpen: setShowConfirm }}
+          openState={{isOpen: showConfirm, setIsOpen: setShowConfirm}}
           title={`Suppression indicateur "${definition.titre}"`}
           description="Êtes-vous sûr de vouloir supprimer cet indicateur personnalisé ? Vous perdrez définitivement les données associées à cet indicateur."
-          renderFooter={({ close }) => (
+          renderFooter={({close}) => (
             <ModalFooterOKCancel
               btnCancelProps={{
                 onClick: () => close(),

@@ -39,7 +39,7 @@ const IndicateurPersoNouveau = ({
   const ficheId = fiche?.id;
 
   const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
-    onSuccess: indicateurId => {
+    onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
         collectiviteId,
@@ -103,7 +103,7 @@ const IndicateurPersoNouveau = ({
   ): TIndicateurPersoDefinitionWrite => {
     return {
       ...definition,
-      commentaire: definition.description
+      commentaire: definition.description,
     };
   };
 
@@ -141,7 +141,7 @@ const IndicateurPersoNouveau = ({
 
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
-                values={thematiques?.map(t => t.id)}
+                values={thematiques?.map((t) => t.id)}
                 onChange={({thematiques}) => setThematiques(thematiques)}
               />
             </Field>
