@@ -1,7 +1,6 @@
-import {ActionImpactState} from '@tet/api';
-import {Checkbox} from '@tet/ui';
+import { Checkbox } from '@tet/ui';
 import classNames from 'classnames';
-import {AjouterActionsRealiseesOuEnCoursState} from './useAjouterActionsRealiseesOuEnCoursState';
+import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 
 /**
  * Affiche les cases à cocher permettant d'ajouter/enlever la sélection

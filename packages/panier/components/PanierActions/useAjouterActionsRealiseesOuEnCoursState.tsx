@@ -48,25 +48,23 @@ const useToggleAjoutActions = (
   const panierId = panier?.id;
 
   // le sous-ensemble
-  const actions = panier?.states.filter(
-    state => state.statut?.categorie_id === subset,
-  );
+  const actions = panier?.[subset];
 
   // nombre d'items total et dans le panier
   const count = actions?.length ?? 0;
   const countInPanier =
-    actions?.filter(action => action.isinpanier).length ?? 0;
+    actions?.filter((action) => action.isinpanier).length ?? 0;
 
   // ajoute/enlève les actions du panier
   const toggleAjout = () => {
     if (!actions?.length || !panierId) return;
     if (ajout) {
-      actions.forEach(state =>
-        panierAPI.removeActionFromPanier(state.action.id, panierId),
+      actions.forEach((action) =>
+        panierAPI.removeActionFromPanier(action.id, panierId)
       );
     } else {
-      actions.forEach(state =>
-        panierAPI.addActionToPanier(state.action.id, panierId),
+      actions.forEach((action) =>
+        panierAPI.addActionToPanier(action.id, panierId)
       );
     }
     setAjout(!ajout);

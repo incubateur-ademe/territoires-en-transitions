@@ -1,5 +1,6 @@
 import {
   ActionImpactFourchetteBudgetaire,
+  ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@tet/api';
@@ -33,7 +34,7 @@ export type ActionImpactDetail = {
   /** Lien vers les subventions mobilisables */
   subventions?: LinkType[] | null;
   /** Statut de l'action */
-  statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
+  statut?: ActionImpactStatut;
 };
 
 type InfoActionImpactProps = {

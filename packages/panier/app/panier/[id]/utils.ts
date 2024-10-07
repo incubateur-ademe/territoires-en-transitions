@@ -2,6 +2,7 @@ import {
   ActionImpactCategorie,
   ActionImpactThematique,
   ActionImpactTypologie,
+  FiltreAction,
   Niveau,
   Panier,
   PanierAPI,
@@ -9,38 +10,29 @@ import {
 import { cookies } from 'next/headers';
 import { createClient } from '@tet/panier/src/supabase/server';
 
-const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const getInit = {
   method: 'GET',
   headers: {
     Authorization: `Bearer ${apiKey}`,
-    apiKey: apiKey,
+    apiKey: apiKey ?? '',
   },
 };
 
 export const fetchPanier = async ({
   panierId,
-  thematique_ids,
-  typologie_ids,
-  budget_ids,
-  temps_ids,
+  filtre,
 }: {
   panierId: string;
-  thematique_ids: number[];
-  typologie_ids: number[];
-  budget_ids: number[];
-  temps_ids: number[];
+  filtre: FiltreAction;
 }): Promise<Panier | null> => {
   const supabase = createClient(cookies());
   const api = new PanierAPI(supabase);
 
   const panier: Panier | null = await api.fetchPanier({
     panierId,
-    thematique_ids,
-    typologie_ids,
-    niveau_budget_ids: budget_ids,
-    niveau_temps_ids: temps_ids,
+    filtre,
   });
 
   return panier;
