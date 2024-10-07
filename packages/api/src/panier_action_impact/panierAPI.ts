@@ -1,21 +1,14 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '../database.types';
-import { MesCollectivite, Panier, PanierBase } from './types';
-
-/**
- * On sélectionne toutes les colonnes du panier : *
- * puis les `action_impact` par la relation `action_impact_panier` que l'on renomme `contenuPanier`
- */
-export const panierSelect = `*,
-  contenu:action_impact!action_impact_panier(*,thematiques:thematique(*),typologie:action_impact_typologie(*)),
-  states:action_impact_state(
-    *, matches_competences,
-    thematiques:action_impact_thematique(...thematique(id,nom)),
-    typologie:action_impact_typologie(*),
-    fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
-    temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
-    actions_liees:action_definition(identifiant,referentiel,nom)
-)`;
+import {
+  ActionImpactDetails,
+  ActionImpactFull,
+  ActionImpactStatut,
+  FiltreAction,
+  MesCollectivite,
+  Panier,
+  PanierBase,
+} from './types';
 
 type RealtimePayload<T> = {
   type: string;
@@ -35,7 +28,7 @@ export class PanierAPI {
   }
 
   async panierFromLanding(collectivite_id: number | null): Promise<PanierBase> {
-    const {data, error} =
+    const { data, error } =
       collectivite_id === null
         ? await this.supabase.rpc('panier_from_landing')
         : await this.supabase.rpc('panier_from_landing', { collectivite_id });
@@ -92,8 +85,8 @@ export class PanierAPI {
   ): Promise<void> {
     if (category_id) {
       await this.supabase.from('action_impact_statut').upsert({
-        action_id: action_id,
-        panier_id: panier_id,
+        action_id,
+        panier_id,
         categorie_id: category_id,
       });
     } else {
@@ -107,84 +100,150 @@ export class PanierAPI {
 
   async fetchPanier({
     panierId,
-    thematique_ids,
-    typologie_ids,
-    niveau_budget_ids,
-    niveau_temps_ids,
+    filtre,
   }: {
     panierId: string;
-    thematique_ids: number[];
-    typologie_ids: number[];
-    niveau_budget_ids: number[];
-    niveau_temps_ids: number[];
+    filtre: FiltreAction;
   }): Promise<Panier | null> {
-    const builder = this.supabase
+    const { data, error } = await this.supabase
       .from('panier')
-      .select(panierSelect)
-      .eq('id', panierId);
-
-    if (thematique_ids && thematique_ids.length > 0) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.thematiques.thematique_id',
-        `in.(${thematique_ids.join(',')})`
-      );
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.thematiques',
-        'not.is.null'
-      );
-    }
-
-    if (typologie_ids && typologie_ids.length > 0) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.typologie.id',
-        `in.(${typologie_ids.join(',')})`
-      );
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.typologie',
-        'not.is.null'
-      );
-    }
-
-    if (niveau_budget_ids && niveau_budget_ids.length > 0) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.fourchette_budgetaire.niveau',
-        `in.(${niveau_budget_ids.join(',')})`
-      );
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.fourchette_budgetaire',
-        'not.is.null'
-      );
-    }
-
-    if (niveau_temps_ids && niveau_temps_ids.length > 0) {
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.temps_de_mise_en_oeuvre.niveau',
-        `in.(${niveau_temps_ids.join(',')})`
-      );
-      // @ts-expect-error Le client Supabase ne permet pas de filtrer à ce niveau
-      builder.url.searchParams.append(
-        'action_impact_state.temps_de_mise_en_oeuvre',
-        'not.is.null'
-      );
-    }
-
-    const {data, error} = await builder.single<Panier>();
+      .select(
+        `*,
+        etatActions:action_impact_state!inner(
+          id: action->>id,
+          statut: statut->>categorie_id,
+          isinpanier,
+          matches_competences
+        )`
+      )
+      .eq('id', panierId)
+      .single();
     if (error) throw error;
-    return this.ajouteActionsDejaImportees(data);
+
+    // charge toutes les actions par id
+    const actionsDetail = await this.getActionsImpact();
+
+    // charge les ID des actions déjà importées
+    const actionsDejaImportees = await this.getActionsDejaImportees(
+      data?.collectivite_id ?? data?.collectivite_preset
+    );
+
+    // ajoute les flags d'état à chaque action
+    const actions = actionsDetail?.map((action) => {
+      const etat = data?.etatActions?.find(
+        // la relation calculée caste en string le champ `action_impact_state(action->>id)`
+        // il faut donc caster aussi pour la faire la comparaison
+        (etat) => etat.id === String(action.id)
+      );
+      const { statut, isinpanier, matches_competences } = etat || {};
+      return {
+        ...action,
+        statut: statut as ActionImpactStatut,
+        isinpanier: isinpanier ?? false,
+        matches_competences: matches_competences ?? false,
+        dejaImportee: actionsDejaImportees?.includes(action.id),
+      };
+    });
+
+    return {
+      ...data,
+      //      actions,
+      selection: this.applyFilters(filtre, actions),
+      realise: actions.filter((action) => action.statut === 'realise'),
+      en_cours: actions.filter((action) => action.statut === 'en_cours'),
+      importees: actions.filter((action) => action.dejaImportee),
+      inpanier: actions.filter((action) => action.isinpanier),
+    };
+  }
+
+  /**
+   * Applique les options de filtrage
+   */
+  applyFilters(filtre: FiltreAction, actions: ActionImpactFull[]) {
+    if (!filtre) return actions;
+    const {
+      thematique_ids,
+      typologie_ids,
+      niveau_budget_ids,
+      niveau_temps_ids,
+      matches_competences,
+    } = filtre;
+
+    return actions?.filter((action) => {
+      if (
+        action.dejaImportee ||
+        action.isinpanier ||
+        action.statut === 'en_cours' ||
+        action.statut === 'realise'
+      ) {
+        return false;
+      }
+
+      if (matches_competences && action.matches_competences === false) {
+        return false;
+      }
+
+      if (thematique_ids?.length && action.thematiques?.length) {
+        const thematiques = action.thematiques.map((t) => t.id);
+        if (!thematique_ids.find((id) => thematiques.includes(id))) {
+          return false;
+        }
+      }
+
+      if (
+        typologie_ids?.length &&
+        action.typologie_id &&
+        !typologie_ids.includes(action.typologie_id)
+      ) {
+        return false;
+      }
+
+      if (
+        niveau_budget_ids?.length &&
+        action.fourchette_budgetaire &&
+        !niveau_budget_ids.includes(action.fourchette_budgetaire.niveau)
+      ) {
+        return false;
+      }
+
+      if (
+        niveau_temps_ids?.length &&
+        action.temps_de_mise_en_oeuvre &&
+        !niveau_temps_ids.includes(action.temps_de_mise_en_oeuvre.niveau)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * Renvoi le détail de toutes les actions à impact
+   */
+  async getActionsImpact() {
+    const { data, error } = await this.supabase
+      .from('action_impact')
+      .select(
+        `*,
+          thematiques:action_impact_thematique(...thematique(id,nom)),
+          typologie:action_impact_typologie(*),
+          fourchette_budgetaire:action_impact_fourchette_budgetaire(*),
+          temps_de_mise_en_oeuvre:action_impact_temps_de_mise_en_oeuvre(*),
+          actions_liees:action_definition(identifiant,referentiel,nom)
+      `
+      )
+      .returns<ActionImpactDetails[]>();
+
+    if (error) throw error;
+    return data;
   }
 
   /**
    * Renvoi l'id du panier d'une collectivité et le nombre d'actions de celui-ci
    */
   async getCollectivitePanierInfo(collectivite_id: number) {
-    const {data, error} = await this.supabase
+    const { data, error } = await this.supabase
       .from('panier')
       .select('id,actions:action_impact_state(isinpanier)')
       .or(
@@ -193,40 +252,26 @@ export class PanierAPI {
       .is('action_impact_state.isinpanier', true);
     if (error) throw error;
     return data?.[0]
-      ? {panierId: data[0].id, count: data[0].actions?.length ?? 0}
+      ? { panierId: data[0].id, count: data[0].actions?.length ?? 0 }
       : null;
   }
 
   /**
-   * Ajoute aux items du tableau `states` un nouveau flag `dejaImportee`
-   * si une action à impact est liée à une fiche action de la collectivité.
+   * Charge la liste des actions déjà importées (faisant partie d'un plan)
    */
-  async ajouteActionsDejaImportees(panier: Panier) {
-    const collectiviteId =
-      panier?.collectivite_id ?? panier?.collectivite_preset;
+  async getActionsDejaImportees(collectiviteId: number | null) {
     if (!collectiviteId) {
-      return panier;
+      return [];
     }
 
-    const {data, error} = await this.supabase
+    const { data, error } = await this.supabase
       .from('fiche_action')
       .select('action_impact_fiche_action!inner(action_impact_id)')
       .eq('collectivite_id', collectiviteId);
     if (error) throw error;
-    const actionsDejaImportees = data?.flatMap(row =>
-      row.action_impact_fiche_action.map(action => action.action_impact_id)
+    return data?.flatMap((row) =>
+      row.action_impact_fiche_action.map((action) => action.action_impact_id)
     );
-    if (!actionsDejaImportees?.length) {
-      return panier;
-    }
-
-    return {
-      ...panier,
-      states: panier.states?.map(state => ({
-        ...state,
-        dejaImportee: actionsDejaImportees.includes(state.action.id),
-      })),
-    };
   }
 
   /**
