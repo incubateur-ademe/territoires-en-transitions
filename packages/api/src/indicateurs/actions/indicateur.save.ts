@@ -137,7 +137,8 @@ export async function insertIndicateurDefinition(
  * Temporary: we're writing commentaire value from indicateur.description
  * -> step 2 of expand and contract pattern (
  * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
- * Next step: read it from indicateur.commentaire.
+ *
+ * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
  */
 const TEMPORARY_insertCommentaire = async (
   dbClient: DBClient,
@@ -149,7 +150,7 @@ const TEMPORARY_insertCommentaire = async (
   await dbClient.from('indicateur_collectivite').insert({
     indicateur_id: data[0].id,
     collectivite_id: indicateur.collectiviteId,
-    commentaire: indicateur.description,
+    commentaire: indicateur.commentaire,
   });
 };
 

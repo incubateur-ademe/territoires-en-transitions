@@ -49,6 +49,8 @@ const IndicateurPersonnaliseBase = ({
    *
    * Next step: remove this function and change
    * handleUpdate('description', e.target.value) to handleUpdate('commentaire', e.target.value).
+   *
+   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
    */
   const TEMPORARY_handleDescriptionUpdate = (value: string) => {
     const trimmedValue = value.trim();
