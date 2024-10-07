@@ -8,6 +8,9 @@ import { FetchFiltre } from '../domain';
 
 type TableName = keyof Database['public']['Tables'];
 
+/**
+ * TO DO: update or delete comments
+ */
 const FIXTURE = {
   indicateur_action: [
     {
@@ -107,16 +110,20 @@ beforeAll(async () => {
   };
 });
 
-test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
+/***
+ * TO DO: move from this file
+ * Make confidentiel: true more expressive?
+ */
+test('Confidentialité - Devrait pouvoir voir des résultats insérés en confidentiel', async () => {
   await supabase.from('indicateur_valeur').upsert([
     {
-      indicateur_id: 38, //'eci_8',
+      indicateur_id: 60, //'eci_8',
       collectivite_id: 1,
       date_valeur: new Date(2023, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 999,
     },
     {
-      indicateur_id: 38, //'eci_8',
+      indicateur_id: 60, //'eci_8',
       collectivite_id: 1,
       date_valeur: new Date(2024, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 666,
@@ -136,7 +143,30 @@ test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
   expect(data).toHaveLength(2);
 });
 
+/**
+ * TO DO: put in a beforeAll in a specific describe confidentialité
+ * Remove comments
+ */
 test("Confidentialité - Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n'ai pas de droits", async () => {
+  await supabase.from('indicateur_valeur').upsert([
+    {
+      indicateur_id: 60, //'eci_8',
+      collectivite_id: 1,
+      date_valeur: new Date(2023, 0, 1).toLocaleDateString('sv-SE'),
+      resultat: 999,
+    },
+    {
+      indicateur_id: 60, //'eci_8',
+      collectivite_id: 1,
+      date_valeur: new Date(2024, 0, 1).toLocaleDateString('sv-SE'),
+      resultat: 666,
+    },
+  ]);
+
+  await supabase
+    .from('indicateur_collectivite')
+    .upsert([{ indicateur_id: 60, collectivite_id: 1, confidentiel: true }]); // 'cae_8'
+
   await signOut();
   await signIn('yulududu');
   const { data } = await supabase
