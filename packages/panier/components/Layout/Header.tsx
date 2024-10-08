@@ -5,6 +5,7 @@ import { Button, HeaderTeT, SITE_BASE_URL } from '@tet/ui';
 import { getAppBaseUrl } from '@tet/api';
 import { useCollectiviteInfo } from '@tet/panier/components/Landing/useCollectiviteInfo';
 import { usePanierContext } from '@tet/panier/providers';
+import classNames from 'classnames';
 
 const Header = () => {
   const landingPathname = useLandingPathname();
@@ -33,11 +34,19 @@ const Header = () => {
             <Button
               {...props}
               key="nom"
-              href={`${getAppBaseUrl(
-                document.location.hostname
-              )}/collectivite/${collectiviteInfo.collectivite_id}/accueil`}
+              className={classNames({
+                'hover:!bg-white hover:!border-white hover:!text-primary !cursor-default':
+                  !collectiviteInfo.isOwnCollectivite,
+              })}
+              href={
+                collectiviteInfo.isOwnCollectivite
+                  ? `${getAppBaseUrl(
+                      document.location.hostname
+                    )}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
+                  : undefined
+              }
             >
-              {collectiviteInfo?.nom}
+              {collectiviteInfo.nom}
             </Button>
           );
         }
