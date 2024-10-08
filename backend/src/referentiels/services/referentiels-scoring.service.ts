@@ -61,7 +61,7 @@ export default class ReferentielsScoringService {
         niveauAccesMinimum
       );
     }
-    await this.referentielsService.checkReferentielExists(referentielId);
+    await this.referentielsService.getReferentielDefinition(referentielId);
 
     return this.collectivitesService.getCollectiviteAvecType(collectiviteId);
   }

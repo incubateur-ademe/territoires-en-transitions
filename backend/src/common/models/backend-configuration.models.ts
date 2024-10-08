@@ -35,6 +35,10 @@ export const backendConfigurationSchema = z.object({
     description:
       'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC',
   }),
+  REFERENTIEL_TE_SHEET_ID: z.string().min(1).openapi({
+    description:
+      "Identifiant de la feuille de calcul Google Sheets pour l'import du nouveau référentiel",
+  }),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema

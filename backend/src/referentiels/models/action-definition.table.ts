@@ -10,6 +10,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { ActionType } from './action-type.enum';
+import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielList } from './referentiel.enum';
 
 // Todo: change it reference another table instead
@@ -30,6 +31,9 @@ export const actionDefinitionTable = pgTable('action_definition', {
     .notNull(),
   action_id: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
+  referentiel_id: varchar('referentiel_id', { length: 30 })
+    .notNull()
+    .references(() => referentielDefinitionTable.id),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
   description: text('description').notNull(),
@@ -63,6 +67,22 @@ export const actionDefinitionMinimalWithTypeLevel =
 export const createActionDefinitionSchema = createInsertSchema(
   actionDefinitionTable
 );
+export const importActionDefinitionSchema =
+  createActionDefinitionSchema.partial({
+    action_id: true,
+    description: true,
+    nom: true,
+    contexte: true,
+    exemples: true,
+    ressources: true,
+    referentiel: true,
+    referentiel_id: true,
+    reduction_potentiel: true,
+    perimetre_evaluation: true,
+  });
+export type ImportActionDefinitionType = z.infer<
+  typeof importActionDefinitionSchema
+>;
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
