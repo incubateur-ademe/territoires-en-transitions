@@ -9,6 +9,7 @@ const AssocierCollectiviteBandeau = () => {
       title="Pour accéder à plus de détails sur chacune des collectivités
       engagées dans le programme, vous devez être membre d’au moins une
       collectivité."
+      className="border-b border-b-info-3"
       footer={
         <Button
           data-test="btn-AssocierCollectivite"

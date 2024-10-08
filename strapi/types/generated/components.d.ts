@@ -408,6 +408,26 @@ export interface SharedTemoignage extends Schema.Component {
   };
 }
 
+export interface SharedVignetteAvecCta extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_ctas';
+  info: {
+    displayName: 'vignette_avec_cta';
+  };
+  attributes: {
+    titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    legende: Attribute.RichText & Attribute.Required;
+    image: Attribute.Media & Attribute.Required;
+    cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+  };
+}
+
 export interface SharedVignetteAvecMarkdown extends Schema.Component {
   collectionName: 'components_shared_vignette_avec_markdowns';
   info: {
@@ -487,6 +507,7 @@ declare module '@strapi/types' {
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
       'shared.temoignage': SharedTemoignage;
+      'shared.vignette-avec-cta': SharedVignetteAvecCta;
       'shared.vignette-avec-markdown': SharedVignetteAvecMarkdown;
       'shared.vignette-avec-titre': SharedVignetteAvecTitre;
       'shared.vignette': SharedVignette;

@@ -25,6 +25,20 @@ export const useOwnedCollectivites = () => {
   return data || null;
 };
 
+/** Indique si l'utilisateur courant n'est pas associé à au moins une collectivité */
+export const useSansCollectivite = () => {
+  const {user, isConnected} = useAuth();
+  const {data: sansCollectivite} = useQuery(['sans_collectivite', user?.id], async () => {
+    if (!isConnected) return null;
+
+    const {count} = await supabaseClient
+      .from('mes_collectivites')
+      .select(undefined, {head: true, count: 'exact'});
+    return count === null ? null : count === 0;
+  });
+  return sansCollectivite ?? true;
+};
+
 // une variante qui renvoi aussi les plans d'actions pilotables de la 1ère collectivité
 export const useMesCollectivitesEtPlans = () => {
   const { user, isConnected } = useAuth();

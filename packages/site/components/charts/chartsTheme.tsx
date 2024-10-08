@@ -1,4 +1,4 @@
-import {Theme} from '@nivo/core';
+import { Theme } from '@nivo/core';
 
 export const theme: Theme = {
   fontFamily: '"Marianne", arial, sans-serif',
@@ -50,4 +50,21 @@ export const statsColors = [
   '#FF732C',
   '#FFB7AE',
   '#34BAB5',
+];
+
+export const defaultVarColors = [
+  '#FEF1D8',
+  '#F7B1C2',
+  '#A4E7C7',
+  '#D8EEFE',
+  '#B8D6F7',
+  '#FFD0BB',
+  '#FBE7B5',
+  '#E4CDEE',
+  '#C6C3E3',
+  '#F0DFD8',
+  '#ECF2BA',
+  '#ACD9D9',
+  '#CB94B9',
+  '#D9D9D9',
 ];

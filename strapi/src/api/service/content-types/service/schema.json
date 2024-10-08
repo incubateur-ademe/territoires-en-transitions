@@ -30,6 +30,11 @@
       "type": "string",
       "required": true
     },
+    "description_markdown": {
+      "type": "richtext",
+      "required": true,
+      "maxLength": 1500
+    },
     "image": {
       "type": "media",
       "multiple": false,

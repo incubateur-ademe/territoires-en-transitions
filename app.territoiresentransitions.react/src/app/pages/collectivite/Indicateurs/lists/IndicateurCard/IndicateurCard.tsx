@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useState } from 'react';
 
 import {
   Button,
@@ -19,6 +20,7 @@ import IndicateurChart, {
 } from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import { useIndicateurChartInfo } from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import { prepareData } from 'app/pages/collectivite/Indicateurs/chart/utils';
+import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import {
@@ -56,6 +58,8 @@ export type IndicateurCardProps = {
   hideChartWithoutValue?: boolean;
   /** Affiche les options de modification au hover de la carte */
   isEditable?: boolean;
+  /** Permet d'ajouter des éléments dans le groupe de menus */
+  otherMenuActions?: (indicateur: IndicateurListItem) => React.ReactNode[];
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
@@ -127,9 +131,12 @@ export const IndicateurCardBase = ({
   isEditable = false,
   hideChart = false,
   hideChartWithoutValue = false,
+  otherMenuActions,
   card,
   readonly,
 }: IndicateurCardBaseProps) => {
+  const [isDownloadChartOpen, setIsDownloadChartOpen] = useState(false);
+
   const showChart =
     (!hideChart && !hideChartWithoutValue) ||
     (hideChartWithoutValue && data.valeurs.length > 0);
@@ -172,6 +179,11 @@ export const IndicateurCardBase = ({
         <IndicateurCardOptions
           definition={definition}
           isFavoriCollectivite={chartInfo?.favoriCollectivite}
+          otherMenuActions={otherMenuActions}
+          chartDownloadSettings={{
+            showTrigger: showChart && hasValeurOrObjectif,
+            openModal: () => setIsDownloadChartOpen(true),
+          }}
         />
       )}
       <Card
@@ -197,6 +209,7 @@ export const IndicateurCardBase = ({
                 identifiant: definition.identifiant || null,
                 // description: chartInfo?.titreLong ?? '',
                 // unite: chartInfo?.unite ?? '',
+                hasOpenData: definition.hasOpenData,
               })
             }
             label={chartInfo?.titre}
@@ -204,35 +217,13 @@ export const IndicateurCardBase = ({
           />
         ) : (
           <>
-            <div className="flex items-center gap-6">
-              <BadgeACompleter a_completer={isACompleter} size="sm" />
-              {selectState?.setSelected && (
-                <Button
-                  onClick={(
-                    evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                  ) => {
-                    evt.preventDefault();
-                    evt.stopPropagation();
-                    selectState.setSelected({
-                      id: definition.id,
-                      titre: definition.titre,
-                      estPerso: definition.estPerso,
-                      identifiant: definition.identifiant || null,
-                      // description: chartInfo?.titreLong ?? '',
-                      // unite: chartInfo?.unite ?? '',
-                    });
-                  }}
-                  icon="link-unlink"
-                  title="Dissocier l'indicateur"
-                  size="xs"
-                  variant="grey"
-                  className={classNames('ml-auto hidden -my-2', {
-                    'group-hover:flex': !readonly,
-                  })}
-                />
-              )}
+            <div className="max-w-full font-bold line-clamp-2">
+              {chartInfo?.titre}
             </div>
-            <div className="font-bold line-clamp-2">{chartInfo?.titre}</div>
+            <div className="flex items-center gap-2">
+              <BadgeACompleter a_completer={isACompleter} size="sm" />
+              {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
+            </div>
           </>
         )}
         {/** Graphique */}
@@ -282,6 +273,14 @@ export const IndicateurCardBase = ({
                     gridXValues: 4,
                     gridYValues: 4,
                     ...chart?.chartConfig,
+                  }}
+                  chartInfos={{
+                    modal: {
+                      isOpen: isDownloadChartOpen,
+                      setIsOpen: setIsDownloadChartOpen,
+                    },
+                    fileName: definition.titre,
+                    title: definition.titre,
                   }}
                 />
                 {isNotLoadingNotFilled && !readonly && !!href && (

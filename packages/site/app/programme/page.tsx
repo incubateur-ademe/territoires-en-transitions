@@ -4,13 +4,13 @@ import Services from './Services';
 import Benefices from './Benefices';
 import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
-import Compte from './Compte';
-import Ressources from './Ressources';
 import NoResult from '@tet/site/components/info/NoResult';
 import { getStrapiData } from './utils';
-import Carte from './Carte';
 import { Metadata, ResolvingMetadata } from 'next';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import Contact from './Contact';
+import Compte from './Compte';
+import CollectivitesEngagees from './CollectivitesEngagees';
 
 export async function generateMetadata(
   params: { params: unknown },
@@ -36,32 +36,19 @@ const Programme = async () => {
         titre={data.titre}
         description={data.description}
         couvertureURL={data.couvertureURL}
-        objectifs={data.objectifs}
       />
 
-      <Services
-        titre={data.services.titre}
-        description={data.services.description}
-        contenu={data.services.contenu}
-      />
+      <Benefices {...data.benefices} />
 
-      <Compte description={data.compte.description} />
+      <Contact {...data.contact} />
 
-      <Benefices
-        titre={data.benefices.titre}
-        description={data.benefices.description}
-        contenu={data.benefices.contenu}
-      />
+      <Etapes {...data.etapes} />
 
-      <Etapes
-        titre={data.etapes.titre}
-        description={data.etapes.description}
-        contenu={data.etapes.contenu}
-      />
+      <Services {...data.services} />
 
-      <Carte />
+      <CollectivitesEngagees {...data.collectivites} />
 
-      <Ressources description={data.ressources.description} />
+      <Compte {...data.compte} />
     </>
   ) : (
     <NoResult />

@@ -45,7 +45,6 @@ const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
             title="Supprimer tous les filtres"
             state="default"
             size="sm"
-            onClose={() => null}
           />
         </button>
       )}

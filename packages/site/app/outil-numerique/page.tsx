@@ -10,6 +10,7 @@ import { getStrapiData } from './utils';
 import { Metadata, ResolvingMetadata } from 'next';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import PanierActionsImpact from './PanierActionsImpact';
+import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
 
 export async function generateMetadata(
   { params }: { params: unknown },
@@ -36,6 +37,8 @@ const OutilNumerique = async () => {
       <AvantagesPlateforme avantages={strapiData.avantages} />
 
       <PanierActionsImpact {...strapiData.panier} />
+
+      <Trajectoire {...strapiData.trajectoire} />
 
       {strapiData.temoignages.length > 0 && (
         <TemoignagesPlateforme temoignages={strapiData.temoignages} />

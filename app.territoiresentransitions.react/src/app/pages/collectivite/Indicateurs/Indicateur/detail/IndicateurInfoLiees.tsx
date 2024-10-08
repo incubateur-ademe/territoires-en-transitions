@@ -30,17 +30,21 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
 
   // charge les informations complémentaires associées à l'indicateur
   const { data: pilotes } = useIndicateurPilotes(definition.id);
-  const { data: services } = useIndicateurServices(definition.id);
+  const { data: serviceIds } = useIndicateurServices(definition.id);
   const { data: thematiques } = useIndicateurThematiques(definition.id);
 
   // fonctions de mise à jour des données
   const { mutate: upsertIndicateurPilote } = useUpsertIndicateurPilote(
     definition.id
   );
-  const { mutate: upsertIndicateurServicePilote } =
-    useUpsertIndicateurServices(definition);
+  const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
+    definition.id
+  );
   const { mutate: upsertIndicateurPersoThematique } =
-    useUpsertIndicateurThematiques(definition);
+    useUpsertIndicateurThematiques({
+      id: definition.id,
+      estPerso: definition.estPerso,
+    });
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
@@ -67,16 +71,18 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
             );
           }}
           disabled={isReadonly}
+          dropdownZindex={30}
         />
       </Field>
       {/** services pilotes */}
       <Field title="Direction ou service pilote">
         <ServicesPilotesDropdown
-          values={services?.map((s) => s.id!)}
+          values={serviceIds}
           onChange={({ services }) =>
             upsertIndicateurServicePilote(objectToCamel(services))
           }
           disabled={isReadonly}
+          dropdownZindex={30}
         />
       </Field>
       {/** Thématiques */}

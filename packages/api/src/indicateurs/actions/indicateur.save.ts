@@ -1,3 +1,4 @@
+import { isNil } from 'es-toolkit/predicate';
 import { objectToSnake } from 'ts-case-convert';
 import { Action } from '../../referentiel/domain/action.schema';
 import { selectTags } from '../../shared/actions/tag.fetch';
@@ -140,9 +141,9 @@ export async function upsertIndicateurValeur(
 ): Promise<number | null> {
   valeurSchema.parse(indicateurValeur); // Vérifie le type
   if (
-    !indicateurValeur.resultat &&
-    !indicateurValeur.objectif &&
-    !indicateurValeur.estimation &&
+    isNil(indicateurValeur.resultat) &&
+    isNil(indicateurValeur.objectif) &&
+    isNil(indicateurValeur.estimation) &&
     (!indicateurValeur.resultatCommentaire ||
       indicateurValeur.resultatCommentaire === '') &&
     (!indicateurValeur.objectifCommentaire ||
@@ -185,15 +186,16 @@ export async function upsertIndicateurValeur(
  */
 export async function upsertThematiques(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateurId: number,
+  estPerso: boolean,
   thematiques: Thematique[]
 ) {
-  if (indicateur.estPerso) {
+  if (estPerso) {
     // Supprime les liens vers les thématiques qui ne sont plus concernés
     await dbClient
       .from('indicateur_thematique')
       .delete()
-      .eq('indicateur_id', indicateur.id)
+      .eq('indicateur_id', indicateurId)
       .not(
         'thematique_id',
         'in',
@@ -204,7 +206,7 @@ export async function upsertThematiques(
     await dbClient.from('indicateur_thematique').upsert(
       thematiques.map((t) => ({
         thematique_id: t.id,
-        indicateur_id: indicateur.id,
+        indicateur_id: indicateurId,
       })),
       { onConflict: 'indicateur_id,thematique_id' }
     );
@@ -220,7 +222,7 @@ export async function upsertThematiques(
  */
 export async function upsertServices(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateurId: number,
   collectiviteId: number,
   services: TagInsert[]
 ) {
@@ -239,19 +241,19 @@ export async function upsertServices(
   await dbClient
     .from('indicateur_service_tag')
     .delete()
-    .eq('indicateur_id', indicateur.id)
+    .eq('indicateur_id', indicateurId)
     .eq('collectivite_id', collectiviteId)
     .not('service_tag_id', 'in', `(${tagIds.join(',')})`);
 
   // Ajoute les nouveaux tags
   const newTagsAdded: Tag[] = await insertTags(dbClient, 'service', newTags);
 
-  // Fait les nouveaux liens entre l'indicateur et les pilotes
+  // Fait les nouveaux liens entre l'indicateur et les services
   const toUpsert = tagIds
     .concat(newTagsAdded.map((t) => t.id as number))
     .map((s) => ({
       collectivite_id: collectiviteId,
-      indicateur_id: indicateur.id,
+      indicateur_id: indicateurId,
       service_tag_id: s,
     }));
 
@@ -373,6 +375,27 @@ export async function upsertPilotes(
         onConflict: 'indicateur_id, collectivite_id, user_id, tag_id',
       });
   }
+}
+
+export async function updateIndicateurCard(
+  dbClient: DBClient,
+  indicateur: {
+    id: number;
+    estPerso: boolean;
+  },
+  collectiviteId: number,
+  pilotes: Personne[],
+  services: Tag[],
+  thematiques: Thematique[]
+) {
+  await upsertPilotes(dbClient, indicateur.id, collectiviteId, pilotes);
+  await upsertServices(dbClient, indicateur.id, collectiviteId, services);
+  await upsertThematiques(
+    dbClient,
+    indicateur.id,
+    indicateur.estPerso,
+    thematiques
+  );
 }
 
 /**

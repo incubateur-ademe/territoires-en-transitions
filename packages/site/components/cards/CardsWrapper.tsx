@@ -10,7 +10,7 @@ const CardsWrapper = ({children, cols, className}: CardsWrapperProps) => {
   return (
     <div
       className={classNames(
-        'grid gap-12 grid-cols-1 md:grid-cols-2',
+        'grid gap-4 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2',
         {
           'lg:grid-cols-3': cols === 3,
           'lg:grid-cols-4': cols === 4,

@@ -36,7 +36,7 @@ export const buttonThemeClassnames: Record<
   },
   secondary: {
     default: {
-      text: 'text-white hover:!text-white',
+      text: 'text-white hover:text-white',
       background: 'bg-secondary-1 hover:!bg-secondary-2',
       border: 'border-secondary-1 hover:!border-secondary-2',
       icon: 'fill-white group-hover:fill-white',

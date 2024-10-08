@@ -1,4 +1,5 @@
-VERSION 0.7
+VERSION 0.8
+
 LOCALLY
 # chemins vers les modules front
 ARG --global APP_DIR='./app.territoiresentransitions.react'
@@ -19,8 +20,13 @@ ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
+
+# ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
+# ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+ARG --global APPLICATION_VERSION=$(git describe --tags --always)
+
 # TODO changer le tag
-ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$APP_TAG
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$EARTHLY_GIT_SHORT_HASH
 ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
 ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
@@ -31,9 +37,7 @@ ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
 ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
-ARG --global GIT_COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
-ARG --global APPLICATION_VERSION=$(git describe --tags --always)
+
 
 postgres:
     FROM postgres:15
@@ -260,93 +264,102 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL ./data_layer/content
     SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
+node-alpine:
+  # Pinning the docker image version to node:20.15.1-alpine
+  # because of existing memory leaks from using the fetch() API in node 20.16.0
+  # https://www.reddit.com/r/node/comments/1ejzn64/sudden_inexplicable_memory_leak_on_new_builds/
+  FROM node:20.15.1-alpine
 
-node-fr: ## construit l'image de base pour les images utilisant node
+  # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+  RUN apk add --no-cache libc6-compat
+  WORKDIR /app
+
+node-alpine-with-prod-deps:
+  FROM +node-alpine
+
+  COPY pnpm-lock.yaml ./
+
+  ENV PNPM_HOME="/pnpm"
+  ENV PATH="$PNPM_HOME:$PATH"
+  RUN corepack enable pnpm
+
+  RUN pnpm fetch --prod
+
+  COPY package.json ./
+  RUN pnpm install -r --offline --prod
+
+node-alpine-with-all-deps:
+  FROM +node-alpine-with-prod-deps
+
+  RUN pnpm install --frozen-lockfile
+
+  COPY *.json ./
+  COPY jest.* ./
+  COPY vitest.* ./
+
+  # Copy shared libraries
+  COPY $API_DIR $API_DIR
+  COPY $UI_DIR $UI_DIR
+
+
+# construit l'image de base pour les images utilisant node
+node-fr:
     ARG TARGETPLATFORM
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
     FROM --platform=$PLATFORM node:20-slim
+
+    # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
-    RUN corepack enable
+    RUN corepack enable pnpm
 
-    USER node:node
     WORKDIR /app
-    # SAVE IMAGE node-fr:latest
 
-front-deps: ## construit l'image contenant les dépendances des modules front
+prod-deps:
     FROM +node-fr
-    # tsconfig global
-    COPY ./tsconfig.json ./
-    # dépendances globales
-    COPY package.json ./
-    COPY pnpm-lock.yaml ./
 
-    RUN pnpm install
+    # See https://pnpm.io/cli/fetch
+    COPY pnpm-lock.yaml ./
+    RUN pnpm fetch --prod
+
+    COPY package.json ./
+    RUN pnpm install -r --offline --prod
+
+# construit l'image contenant les dépendances des modules front
+front-deps:
+    FROM +prod-deps
+
+    RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
-    COPY nx.json ./
     COPY jest.* ./
     COPY vitest.* ./
 
-    SAVE IMAGE --cache-from=$FRONT_DEPS_IMG_NAME --push $FRONT_DEPS_IMG_NAME
+    # Copy only shared libraries
+    COPY $API_DIR $API_DIR
+    COPY $UI_DIR $UI_DIR
 
 front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
-backend-pre-build:
-    # Build stage: todo: check if we use the same image as frontends
-    FROM +node-fr
-
-    COPY --chown=node:node $BACKEND_DIR/. $BACKEND_DIR/
-    WORKDIR /app/$BACKEND_DIR
-    RUN npm install
-    RUN npm run build && npm prune --omit=dev
-
-    SAVE ARTIFACT . /app
-
 backend-build:
-    # TODO: why not us an alpine node:lts-alpine ?
-    FROM +node-fr
+  BUILD --pass-args ./backend+build
 
-    ENV NODE_ENV production
-    ENV PORT 3000
-    ENV GIT_COMMIT_SHORT_SHA=$GIT_COMMIT_SHORT_SHA
-    ENV GIT_COMMIT_TIMESTAMP=$GIT_COMMIT_TIMESTAMP
-    ENV APPLICATION_VERSION=$APPLICATION_VERSION
+backend-docker:
+  BUILD --pass-args ./backend+docker
 
-    COPY --chown=node:node +backend-pre-build/app/package*.json .
-    COPY --chown=node:node +backend-pre-build/app/node_modules ./node_modules
-    COPY --chown=node:node +backend-pre-build/app/dist ./dist
-
-    EXPOSE ${PORT}
-
-    CMD ["node", "dist/main.js"]
-    SAVE IMAGE --cache-from=$BACKEND_IMG_NAME --push $BACKEND_IMG_NAME
-
-backend-deploy: ## Déploie le backend dans une app Koyeb existante
-    ARG --required KOYEB_API_KEY
-    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
-    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
-    ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-backend/backend \
-        --docker $BACKEND_IMG_NAME \
-        --env ENV_NAME=$ENV_NAME \
-        --env DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-        --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY \
-        --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
-        --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME \
-        --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
-        --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME \
-        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
-        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
-        --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+backend-deploy:
+  ARG --required KOYEB_API_KEY
+  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+  BUILD --pass-args ./backend+deploy
 
 app-build: ## construit l'image de l'app
     ARG PLATFORM
@@ -380,6 +393,7 @@ app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG network=supabase_network_tet
+    ARG STATIC_DIR=/app/dist/apps/app-front
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
     DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
@@ -389,6 +403,7 @@ app-run: ## construit et lance l'image de l'app en local
         --network $network \
         --publish 3000:3000 \
         --env ZIP_ORIGIN_OVERRIDE=$kong_url \
+        --env STATIC_DIR=$STATIC_DIR \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
@@ -477,35 +492,16 @@ panier-run: ## construit et lance l'image du panier en local
         --publish 3001:80 \
         $PANIER_IMG_NAME
 
-site-build: ## construit l'image du site
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG --required STRAPI_KEY
-    ARG --required STRAPI_URL
-    ARG POSTHOG_HOST
-    ARG POSTHOG_KEY
-    ARG AXEPTIO_ID
-    ARG vars
-    FROM +front-deps
-    ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
-    ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
-    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
-    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
-    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
-    ENV NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID
-    ENV NEXT_TELEMETRY_DISABLED=1
-    ENV PUBLIC_PATH="/app/packages/site/public"
-    ENV PORT=80
-    EXPOSE $PORT
-    # copie les sources des modules à construire
-    COPY $SITE_DIR $SITE_DIR
-    COPY $UI_DIR $UI_DIR
-    COPY $API_DIR $API_DIR
-    RUN pnpm run build:site
-    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
-    SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
+
+
+site-docker:
+  BUILD --pass-args ./packages/site+docker
+
+site-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/site+deploy
+
+
 
 site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
@@ -792,7 +788,7 @@ dev:
     RUN earthly +refresh-views --DB_URL=$DB_URL
 
 BUILD_IF_NO_IMG:
-    COMMAND
+    FUNCTION
     ARG --required IMG_NAME
     ARG --required IMG_TAG
     ARG --required BUILD_TARGET
@@ -946,11 +942,6 @@ koyeb:
     COPY +koyeb-bin/koyeb ./
     RUN echo "token: $KOYEB_API_KEY" > ~/.koyeb.yaml
 
-site-deploy:
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
-
 auth-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
@@ -969,7 +960,12 @@ app-deploy: ## Déploie le front dans une app Koyeb existante
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g' | head -c 12)
+    # Limite des noms dans Koyeb : 23 caractères.
+    # Comme on prefixe avec `test-app-`, on garde 14 caractères max dans le nom de la branche.
+    # En octobre 2024, Koyeb applique cette règle sur les noms des apps déployées :
+    # ^[a-z0-9]+([.-][a-z0-9]+)*$ and from 3 to 23 chars
+    # (info récupérée auprès du service support)
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
@@ -978,13 +974,15 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
-         --type web --port 3000:http --route /:3000 --env PORT=3000
+         --type web --port 3000:http --route /:3000 --env PORT=3000 \
+         --env STATIC_DIR=/app/dist/apps/app-front \
+         --regions par
     END
 
 app-destroy-test: ## Supprime l'app de test
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z]//g' | head -c 12)
+    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     RUN ./koyeb apps list  # Le IF suivant ne fonctionne pas sans lister avant.
     IF [ "./koyeb apps list | grep test-app-$name" ]

@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_shared_vignette_avec_ctas",
+  "info": {
+    "displayName": "vignette_avec_cta"
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "maxLength": 255,
+      "required": false
+    },
+    "legende": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    },
+    "cta": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true
+    }
+  }
+}

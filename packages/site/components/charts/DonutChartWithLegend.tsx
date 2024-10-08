@@ -1,4 +1,4 @@
-import { defaultColors } from './chartsTheme';
+import { defaultVarColors } from './chartsTheme';
 import DonutChart from './DonutChart';
 
 type DonutChartWithLegendProps = {
@@ -25,7 +25,9 @@ const DonutChartWithLegend = ({
     .filter((d) => d.value !== 0)
     .map((d, index) => ({
       ...d,
-      color: d.color ? d.color : defaultColors[index % defaultColors.length],
+      color: d.color
+        ? d.color
+        : defaultVarColors[index % defaultVarColors.length],
     }));
 
   return (

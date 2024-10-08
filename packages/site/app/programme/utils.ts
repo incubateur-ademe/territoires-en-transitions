@@ -6,18 +6,10 @@ export const getStrapiData = async () => {
   const data = await fetchSingle('page-programme', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'Objectifs'],
-    ['populate[3]', 'objectifs_liste'],
-    ['populate[4]', 'objectifs_liste.image'],
-    ['populate[5]', 'Services'],
-    ['populate[6]', 'services_liste_rel'],
-    ['populate[7]', 'services_liste_rel.image'],
-    ['populate[8]', 'Compte'],
-    ['populate[9]', 'Benefices'],
-    ['populate[10]', 'benefices_liste'],
-    ['populate[11]', 'Etapes'],
-    ['populate[12]', 'etapes_liste'],
-    ['populate[13]', 'Ressources'],
+    ['populate[2]', 'benefices_liste'],
+    ['populate[3]', 'etapes_liste'],
+    ['populate[4]', 'services_liste_rel.image'],
+    ['populate[5]', 'compte_image'],
   ]);
 
   // Formattage de la data
@@ -49,58 +41,8 @@ export const getStrapiData = async () => {
       description:
         (programmeData.Description as unknown as string) ?? undefined,
       couvertureURL: (programmeData.VideoURL as unknown as string) ?? undefined,
-      objectifs: {
-        titre: programmeData.Objectifs.Titre as unknown as string,
-        description: programmeData.Objectifs.Description as unknown as string,
-        contenu:
-          !!programmeData.objectifs_liste &&
-          programmeData.objectifs_liste.length
-            ? (
-                programmeData.objectifs_liste as unknown as {
-                  id: number;
-                  legende: string;
-                  image: { data: StrapiItem };
-                }[]
-              ).map((obj) => ({
-                id: obj.id,
-                description: obj.legende,
-                image: obj.image.data,
-              }))
-            : null,
-      },
-      services: {
-        titre: programmeData.Services.Titre as unknown as string,
-        description: programmeData.Services.Description as unknown as string,
-        contenu:
-          !!programmeData.services_liste_rel.data &&
-          programmeData.services_liste_rel.data.length
-            ? (
-                programmeData.services_liste_rel.data as unknown as {
-                  id: number;
-                  attributes: {
-                    uid: string;
-                    titre: string;
-                    description: string;
-                    image: { data: StrapiItem };
-                    sous_page: boolean | undefined;
-                  };
-                }[]
-              ).map((serv) => ({
-                id: serv.id,
-                uid: serv.attributes.uid,
-                titre: serv.attributes.titre,
-                description: serv.attributes.description,
-                image: serv.attributes.image.data,
-                sousPage: serv.attributes.sous_page ?? false,
-              }))
-            : null,
-      },
-      compte: {
-        description: programmeData.Compte.Description as unknown as string,
-      },
       benefices: {
-        titre: programmeData.Benefices.Titre as unknown as string,
-        description: programmeData.Benefices.Description as unknown as string,
+        titre: programmeData.benefices_titre as unknown as string,
         contenu:
           !!programmeData.benefices_liste &&
           programmeData.benefices_liste.length
@@ -117,9 +59,13 @@ export const getStrapiData = async () => {
               }))
             : null,
       },
+      contact: {
+        description: programmeData.contact_description as unknown as string,
+        cta: programmeData.contact_cta as unknown as string,
+      },
       etapes: {
-        titre: programmeData.Etapes.Titre as unknown as string,
-        description: programmeData.Etapes.Description as unknown as string,
+        titre: programmeData.etapes_titre as unknown as string,
+        cta: programmeData.etapes_cta as unknown as string,
         contenu:
           !!programmeData.etapes_liste && programmeData.etapes_liste.length
             ? (
@@ -135,8 +81,43 @@ export const getStrapiData = async () => {
               }))
             : null,
       },
-      ressources: {
-        description: programmeData.Ressources.Description as unknown as string,
+      services: {
+        titre: programmeData.services_titre as unknown as string,
+        contenu:
+          !!programmeData.services_liste_rel.data &&
+          programmeData.services_liste_rel.data.length
+            ? (
+                programmeData.services_liste_rel.data as unknown as {
+                  id: number;
+                  attributes: {
+                    uid: string;
+                    titre: string;
+                    description_markdown: string;
+                    image: { data: StrapiItem };
+                    sous_page: boolean | undefined;
+                  };
+                }[]
+              ).map((serv) => ({
+                id: serv.id,
+                uid: serv.attributes.uid,
+                titre: serv.attributes.titre,
+                description: serv.attributes.description_markdown,
+                image: serv.attributes.image.data,
+                sousPage: serv.attributes.sous_page ?? false,
+              }))
+            : null,
+      },
+      collectivites: {
+        titre: programmeData.collectivites_titre as unknown as string,
+        cta: programmeData.collectivites_cta as unknown as string,
+      },
+      compte: {
+        titre: programmeData.compte_titre as unknown as string,
+        description: programmeData.compte_description as unknown as string,
+        image:
+          (programmeData.compte_image?.data as unknown as StrapiItem) ??
+          undefined,
+        cta: programmeData.compte_cta as unknown as string,
       },
     };
   } else return null;

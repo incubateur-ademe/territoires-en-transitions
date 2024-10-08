@@ -37,6 +37,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
           onChange={({ fiches: nouvellesFiches }) =>
             updateFichesActionLiees(nouvellesFiches.map((f) => f.id))
           }
+          dropdownZindex={30}
         />
       </Field>
 

@@ -1,35 +1,32 @@
-import TestimonialCard from '@tet/site/components/cards/TestimonialCard';
-import CardsSection from '@tet/site/components/sections/CardsSection';
-import SlideshowOld from '@tet/site/components/slideshow/SlideshowOld';
-import { Temoignage } from './types';
+import Section from '@tet/site/components/sections/Section';
+import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type TemoignagesProps = {
   titre: string;
-  description?: string;
-  contenu: Temoignage[];
+  contenu: {
+    id: number;
+    auteur: string;
+    role: string;
+    temoignage: string;
+    portrait?: StrapiItem;
+  }[];
 };
 
-const Temoignages = ({ titre, description, contenu }: TemoignagesProps) => {
+const Temoignages = ({ titre, contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
-    <CardsSection
-      title={titre}
-      description={description}
-      cardsList={
-        <SlideshowOld
-          className="my-6 xl:mx-auto xl:w-5/6"
-          autoSlide
-          slides={contenu.map((t) => (
-            <TestimonialCard
-              key={t.id}
-              content={t.contenu}
-              author={t.auteur}
-              role={t.description}
-              image={t.image}
-            />
-          ))}
-        />
-      }
-    />
+    <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
+      {!!titre.trim() && <h2 className="text-center max-md:mb-2">{titre}</h2>}
+      <TestimonialSlideshow
+        contenu={contenu}
+        className="rounded-md max-md:p-2 md:w-3/4 max-w-full mx-auto md:border border-primary-3"
+        dotsColor="orange"
+        backgroundColor="bg-white md:bg-primary-0"
+        displayButtons={false}
+        autoSlideDelay={12000}
+        autoSlide
+      />
+    </Section>
   ) : null;
 };
 

@@ -14,6 +14,8 @@ from (
             JOIN indicateur_source src on src.id = ism.source_id
         WHERE iri.collectivite_id = ($1).collectivite_id
             AND iri.metadonnee_id is not null
+            AND iri.resultat is not null
+            AND src.id in ('rare', 'citepa')
             AND id.identifiant_referentiel::text = ANY (
                 ARRAY [
                 'cae_1.g'::character varying,

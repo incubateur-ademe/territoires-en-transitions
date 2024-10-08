@@ -15,7 +15,7 @@ export type BadgeState =
   | 'grey'
   | 'custom';
 
-type Props = {
+export type BadgeProps = {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
@@ -48,7 +48,7 @@ export const Badge = ({
   onClose,
   state = 'default',
   size = 'md',
-  icon = 'close-circle-fill',
+  icon,
   iconPosition = 'right',
   light = false,
   disabled,
@@ -56,7 +56,7 @@ export const Badge = ({
   trim = true,
   uppercase = true,
   dataTest,
-}: Props) => {
+}: BadgeProps) => {
   const styles = badgeClassnames[state];
 
   return (
@@ -79,21 +79,21 @@ export const Badge = ({
           'line-clamp-1': trim,
           'text-xs': size === 'sm',
           'mt-0.5 text-sm': size === 'md',
-          uppercase: uppercase,
+          uppercase,
         })}
       >
         {title}
       </span>
-      {onClose && !disabled && (
+      {(onClose || icon) && !disabled && (
         <div
           className="flex rounded-full cursor-pointer"
           onClick={(evt) => {
             evt.stopPropagation();
-            onClose();
+            onClose?.();
           }}
         >
           <Icon
-            icon={icon}
+            icon={icon ?? 'close-circle-fill'}
             size={size === 'sm' ? 'xs' : 'sm'}
             className={classNames(styles.icon, { 'text-primary-7': !!onClose })}
           />

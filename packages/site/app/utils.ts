@@ -1,18 +1,18 @@
 import { fetchSingle } from '@tet/site/src/strapi/strapi';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { AccueilData } from './types';
 
 export const getMetaData = async () => {
   const data = await fetchSingle('page-accueil', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'Couverture'],
+    ['populate[2]', 'couverture_desktop'],
   ]);
 
   const metaImage =
     (data?.attributes?.seo?.metaImage?.data as unknown as StrapiItem)
       ?.attributes ??
-    (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes ??
+    (data?.attributes.couverture_desktop.data as unknown as StrapiItem)
+      ?.attributes ??
     undefined;
 
   return data
@@ -36,90 +36,104 @@ export const getMetaData = async () => {
     : null;
 };
 
-export const getData = async (): Promise<AccueilData | null> => {
+export const getData = async () => {
   // Fetch du contenu de la page d'accueil
   const data = await fetchSingle('page-accueil', [
-    ['populate[0]', 'Titre'],
-    ['populate[1]', 'Couverture'],
-    ['populate[2]', 'Accompagnement'],
-    ['populate[3]', 'Accompagnement.Programme'],
-    ['populate[4]', 'Accompagnement.Programme.Image'],
-    ['populate[5]', 'Accompagnement.Compte'],
-    ['populate[6]', 'Accompagnement.Compte.Image'],
-    ['populate[7]', 'Temoignages'],
-    ['populate[8]', 'Informations'],
-    ['populate[9]', 'Newsletter'],
-    ['populate[10]', 'temoignages_liste.temoignage'],
-    ['populate[11]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[1]', 'couverture_desktop'],
+    ['populate[2]', 'couverture_mobile'],
+    ['populate[3]', 'programme.image'],
+    ['populate[4]', 'plateforme.image'],
+    ['populate[5]', 'objectifs_liste.image'],
+    ['populate[6]', 'temoignages_liste.temoignage'],
+    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
   ]);
+
+  const accueilData = data.attributes;
 
   const temoignages = data?.attributes.temoignages_liste
     .data as unknown as StrapiItem[];
 
   // Formattage de la data
-  const formattedData: AccueilData | null = data
+  const formattedData = data
     ? {
-        titre: data.attributes.Titre as unknown as string,
-        couverture:
-          (data.attributes.Couverture.data as unknown as StrapiItem) ??
-          undefined,
+        banner: {
+          couverture: accueilData.couverture_desktop
+            ?.data as unknown as StrapiItem,
+          couvertureMobile: accueilData.couverture_mobile
+            ?.data as unknown as StrapiItem,
+        },
         accompagnement: {
-          titre: data.attributes.Accompagnement.Titre as unknown as string,
-          description: data.attributes.Accompagnement
-            .Description as unknown as string,
+          titre: accueilData.accueil_titre as unknown as string,
+          description: accueilData.accueil_description as unknown as string,
           contenu: [
             {
-              titre: data.attributes.Accompagnement.Programme
-                .Titre as unknown as string,
-              description: data.attributes.Accompagnement.Programme
-                .Description as unknown as string,
-              image: data.attributes.Accompagnement.Programme.Image
-                .data as unknown as StrapiItem,
-              button: { titre: 'Découvrir le programme', href: '/programme' },
+              titre: accueilData.programme.titre as unknown as string,
+              description: accueilData.programme.legende as unknown as string,
+              image: accueilData.programme.image.data as unknown as StrapiItem,
+              button: {
+                titre: accueilData.programme.cta as unknown as string,
+                href: '/programme',
+              },
             },
             {
-              titre: data.attributes.Accompagnement.Compte
-                .Titre as unknown as string,
-              description: data.attributes.Accompagnement.Compte
-                .Description as unknown as string,
-              image: data.attributes.Accompagnement.Compte.Image
-                .data as unknown as StrapiItem,
+              titre: accueilData.plateforme.titre as unknown as string,
+              description: accueilData.plateforme.legende as unknown as string,
+              image: accueilData.plateforme.image.data as unknown as StrapiItem,
               button: {
-                titre: 'Accéder à la plateforme',
-                href: 'https://auth.territoiresentransitions.fr/signup',
+                titre: accueilData.plateforme.cta as unknown as string,
+                href: '/outil-numerique',
               },
             },
           ],
         },
+        objectifs: {
+          titre: accueilData.objectifs_titre as unknown as string,
+          contenu:
+            !!accueilData.objectifs_liste && accueilData.objectifs_liste.length
+              ? (
+                  accueilData.objectifs_liste as unknown as {
+                    id: number;
+                    legende: string;
+                    image: { data: StrapiItem };
+                  }[]
+                ).map((obj) => ({
+                  id: obj.id,
+                  description: obj.legende,
+                  image: obj.image.data,
+                }))
+              : null,
+        },
+        collectivites: {
+          titre: accueilData.collectivites_titre as unknown as string,
+          cta: accueilData.collectivites_cta as unknown as string,
+        },
+        contact: {
+          description: accueilData.contact_description as unknown as string,
+          cta: accueilData.contact_cta as unknown as string,
+        },
         temoignages:
           temoignages && temoignages.length > 0
             ? {
-                titre: data.attributes.Temoignages.Titre as unknown as string,
-                description: data.attributes.Temoignages
-                  .Description as unknown as string,
+                titre: accueilData.temoignages_titre as unknown as string,
                 contenu: temoignages.map((d) => ({
                   id: d.id,
                   auteur: d.attributes.temoignage?.auteur as unknown as string,
-                  description:
+                  role:
                     (d.attributes.temoignage?.role as unknown as string) ??
                     undefined,
-                  contenu: d.attributes.temoignage
+                  temoignage: d.attributes.temoignage
                     ?.temoignage as unknown as string,
-                  image:
+                  portrait:
                     (d.attributes.temoignage?.portrait
                       .data as unknown as StrapiItem) ?? undefined,
                 })),
               }
             : null,
-        informations: {
-          titre: data.attributes.Informations.Titre as unknown as string,
-          description: data.attributes.Informations
-            .Description as unknown as string,
-        },
         newsletter: {
-          titre: data.attributes.Newsletter.Titre as unknown as string,
-          description: data.attributes.Newsletter
-            .Description as unknown as string,
+          titre: accueilData.newsletter_titre as unknown as string,
+          description: accueilData.newsletter_description as unknown as string,
+          ctaLinkedin: accueilData.linkedin_btn as unknown as string,
+          ctaNewsletter: accueilData.newsletter_btn as unknown as string,
         },
       }
     : null;

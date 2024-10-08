@@ -3,12 +3,13 @@ import {Indicateurs} from '@tet/api';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {TThematiqueRow} from 'types/alias';
-import {TIndicateurDefinition} from '../../types';
+import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
-export const useUpsertIndicateurThematiques = (
-  definition: TIndicateurDefinition
-) => {
+export const useUpsertIndicateurThematiques = ({
+  id: indicateurId,
+  estPerso,
+}: Pick<TIndicateurDefinition, 'id' | 'estPerso'>) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
 
@@ -17,7 +18,8 @@ export const useUpsertIndicateurThematiques = (
     mutationFn: async (thematiques: TThematiqueRow[]) => {
       return Indicateurs.save.upsertThematiques(
         supabaseClient,
-        definition,
+        indicateurId,
+        estPerso,
         thematiques
       );
     },
@@ -26,7 +28,7 @@ export const useUpsertIndicateurThematiques = (
       queryClient.invalidateQueries([
         'indicateur_thematiques',
         collectivite_id,
-        definition.id,
+        indicateurId,
       ]);
     },
   });

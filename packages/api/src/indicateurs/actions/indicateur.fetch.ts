@@ -1,5 +1,4 @@
 import { objectToCamel } from 'ts-case-convert';
-import { ObjectToSnake } from 'ts-case-convert/lib/caseConvert';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
@@ -8,21 +7,19 @@ import { Groupement } from '../../collectivites/shared/domain/groupement.schema'
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
-import { Tag, Thematique } from '../../shared/domain';
+import { Thematique } from '../../shared/domain';
 import { Personne } from '../../shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
 import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,
-  IndicateurListItem,
 } from '../domain/definition.schema';
 import {
   Valeur,
   ValeurComparaison,
   ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
-import { IndicateurDefinitionComplet } from '../domain/indicateur-definition-extended.schema';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -205,28 +202,6 @@ export async function selectIndicateurServicesId(
 }
 
 /**
- * Récupère les identifiants des tags services d'un indicateur et d'une collectivité
- * @param dbClient client supabase
- * @param indicateurId identifiant de l'indicateur
- * @param collectiviteId identifiant de la collectivité
- * @return liste de tags services
- */
-export async function selectIndicateurServices(
-  dbClient: DBClient,
-  indicateurId: number,
-  collectiviteId: number
-): Promise<Tag[]> {
-  const { data } = await dbClient
-    .from('indicateur_service_tag')
-    .select('...service_tag!inner(*)')
-    .eq('indicateur_id', indicateurId)
-    .eq('collectivite_id', collectiviteId)
-    .returns<ObjectToSnake<Tag>[]>();
-
-  return data ? (objectToCamel(data) as Tag[]) : [];
-}
-
-/**
  * Récupère les identifiants des thématiques d'un indicateur
  * @param dbClient client supabase
  * @param indicateurId identifiant de l'indicateur
@@ -275,7 +250,7 @@ export async function selectIndicateurFiches(
   indicateurId: number,
   collectiviteId: number
 ): Promise<FicheResume[]> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('fiche_action_indicateur')
     .select(`...fiche_resume!inner(*)`)
     .eq('indicateur_id', indicateurId)
@@ -417,7 +392,7 @@ export async function selectIndicateurValeur(
   dbClient: DBClient,
   valeurId: number
 ): Promise<Valeur | null> {
-  const { data, error } = await dbClient
+  const { data } = await dbClient
     .from('indicateur_valeur')
     .select(`${COLONNES_VALEURS.join(',')}`)
     .eq('id', valeurId);

@@ -81,8 +81,8 @@ const getFetchAndAppend =
   async ({ filename, url }) => {
     try {
       const response = await fetch(url, { signal });
-      const buffer = await response.buffer();
-      return archive.append(buffer, { name: filename });
+      const arrayBuffer = await response.arrayBuffer();
+      return archive.append(Buffer.from(arrayBuffer), { name: filename });
     } catch (err) {
       // on attrape les erreurs mais on ne les affiche dans la console que si
       // c'est autre chose qu'un arrêt volontaire des téléchargements
