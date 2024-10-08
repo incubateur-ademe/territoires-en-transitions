@@ -9,6 +9,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as Sentry from '@sentry/nestjs';
 import { AppModule } from './app.module';
+import DatabaseService from './common/services/database.service';
 import { initApplicationCredentials } from './common/services/gcloud.helper';
 import './common/services/sentry.service';
 import { SENTRY_DSN } from './common/services/sentry.service';
@@ -23,6 +24,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
+
+  const databaseService = app.get(DatabaseService);
+  await databaseService.initializeDatabase();
 
   app.enableCors();
 
