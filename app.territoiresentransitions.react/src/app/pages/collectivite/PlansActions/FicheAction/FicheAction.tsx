@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { TrackPageView } from '@tet/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useFicheAction } from './data/useFicheAction';
-import { useEditFicheAction } from './data/useUpsertFicheAction';
+import { useUpdateFicheAction } from './data/useUpdateFicheAction';
 import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
@@ -20,7 +20,7 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
   const collectiviteId = useCollectiviteId()!;
   const { data, refetch, isLoading } = useFicheAction(ficheUid);
   const { mutate: updateFiche, isLoading: isEditLoading } =
-    useEditFicheAction();
+    useUpdateFicheAction();
 
   if (!data) {
     return null;
