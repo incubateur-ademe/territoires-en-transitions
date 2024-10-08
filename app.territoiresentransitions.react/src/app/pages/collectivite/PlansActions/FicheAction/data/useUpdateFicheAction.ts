@@ -1,9 +1,4 @@
-import {
-  FicheAction,
-  ficheActionSchema,
-  FicheResume,
-} from '@tet/api/plan-actions';
-import { ficheActionToResume } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { FicheAction, ficheActionSchema } from '@tet/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
@@ -45,60 +40,9 @@ export const useUpdateFicheAction = () => {
 
   return useMutation(upsertFicheAction, {
     mutationKey: 'edit_fiche',
-    onMutate: async (fiche) => {
-      const ficheActionKey = ['fiche_action', fiche.id?.toString()];
-
-      await queryClient.cancelQueries({ queryKey: ficheActionKey });
-
-      // const previousData = [
-      //   [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
-      //   [ficheActionKey, queryClient.getQueryData(ficheActionKey)],
-      // ];
-
-      const previousData =
-        fiche.axes?.map((axeId) => {
-          const key = ['axe_fiches', axeId || null];
-          return [key, queryClient.getQueryData(key)];
-        }) || [];
-
-      previousData.push([
-        ficheActionKey,
-        queryClient.getQueryData(ficheActionKey),
-      ]);
-
-      queryClient.setQueryData(
-        ficheActionKey,
-        (old?: { fiche: FicheAction }) => ({
-          fiche: {
-            ...old?.fiche,
-            ...fiche,
-          },
-        })
-      );
-
-      fiche.axes?.forEach((axeId) => {
-        queryClient.setQueryData(
-          ['axe_fiches', axeId || null],
-          (old: FicheResume[] | undefined): FicheResume[] => {
-            return (
-              old?.map((f) =>
-                f.id !== fiche.id ? f : ficheActionToResume(fiche)
-              ) || []
-            );
-          }
-        );
-      });
-
-      return previousData;
-    },
-    onSettled: (data, err, fiche, previousData) => {
-      if (err) {
-        previousData?.forEach(([key, data]) =>
-          queryClient.setQueryData(key as string[], data)
-        );
-      }
-      queryClient.invalidateQueries(['fiche_action', fiche.id?.toString()]);
-      fiche.axes?.forEach((axe) =>
+    onSuccess: ({ id, axes }) => {
+      queryClient.invalidateQueries(['fiche_action', id?.toString()]);
+      axes?.forEach((axe) =>
         queryClient.invalidateQueries(['axe_fiches', axe.id])
       );
       // fiches non classées

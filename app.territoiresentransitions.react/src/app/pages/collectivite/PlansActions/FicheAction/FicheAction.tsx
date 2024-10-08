@@ -17,8 +17,11 @@ type FicheActionProps = {
 
 const FicheAction = ({ isReadonly }: FicheActionProps) => {
   const { ficheUid } = useParams<{ ficheUid: string }>();
+
   const collectiviteId = useCollectiviteId()!;
+
   const { data, refetch, isLoading } = useFicheAction(ficheUid);
+
   const { mutate: updateFiche, isLoading: isEditLoading } =
     useUpdateFicheAction();
 
