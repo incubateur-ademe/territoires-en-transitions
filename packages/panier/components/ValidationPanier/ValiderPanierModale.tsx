@@ -170,8 +170,13 @@ const ModeConnecteRattache = ({
   const router = useRouter();
   const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
 
+  // vérifie que l'id est bien présent dans la liste
+  const found =
+    savedCollectiviteId &&
+    !!collectivites?.find((c) => c.collectivite_id === savedCollectiviteId);
+
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    savedCollectiviteId ? savedCollectiviteId : collectivites[0].collectivite_id
+    found ? savedCollectiviteId : collectivites[0].collectivite_id
   );
 
   const handleOnClick = async () => {
