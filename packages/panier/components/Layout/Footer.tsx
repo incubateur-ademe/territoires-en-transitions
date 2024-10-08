@@ -1,22 +1,9 @@
 'use client';
 
-import { FooterTeT, SITE_BASE_URL } from '@tet/ui';
+import { FooterTeT } from '@tet/ui';
 
 const Footer = () => {
-  return (
-    <FooterTeT
-      customLinks={[
-        {
-          label: 'Statistiques',
-          href: `${SITE_BASE_URL}/stats`,
-        },
-        {
-          label: 'Budget',
-          href: `${SITE_BASE_URL}/budget`,
-        },
-      ]}
-    />
-  );
+  return <FooterTeT />;
 };
 
 export default Footer;
