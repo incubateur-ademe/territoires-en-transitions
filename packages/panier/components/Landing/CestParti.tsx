@@ -50,30 +50,28 @@ const CestParti = () => {
   return (
     <>
       <div className="flex flex-row gap-4 w-full">
-        {(!collectiviteId || (nonRattache && !nonConnecte)) && (
-          <div className="w-full">
-            <SelectCollectivite
-              collectiviteId={collectiviteId}
-              onSelectCollectivite={setCollectiviteId}
-            />
-            {!collectiviteInfo?.active && collectiviteInfo?.engagee && (
-              <div className="flex flex-row mt-4 gap-2">
-                <Icon icon="alert-fill text-warning-1" />
-                <p className="text-sm">
-                  <span className="text-warning-1">
-                    Vous êtes membre d&apos;une collectivité déjà engagée dans
-                    le programme Territoire Engagé Transition Écologique ?
-                  </span>
-                  <br />
-                  Le panier d&apos;actions basé principalement sur les actions
-                  des référentiels est conçu en priorité pour faciliter le
-                  passage à l&apos;action aux collectivités qui ne sont pas
-                  encore engagées !
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="w-full">
+          <SelectCollectivite
+            collectiviteId={collectiviteId}
+            onSelectCollectivite={setCollectiviteId}
+          />
+          {!collectiviteInfo?.active && collectiviteInfo?.engagee && (
+            <div className="flex flex-row mt-4 gap-2">
+              <Icon icon="alert-fill text-warning-1" />
+              <p className="text-sm">
+                <span className="text-warning-1">
+                  Vous êtes membre d&apos;une collectivité déjà engagée dans le
+                  programme Territoire Engagé Transition Écologique ?
+                </span>
+                <br />
+                Le panier d&apos;actions basé principalement sur les actions des
+                référentiels est conçu en priorité pour faciliter le passage à
+                l&apos;action aux collectivités qui ne sont pas encore engagées
+                !
+              </p>
+            </div>
+          )}
+        </div>
       </div>
       {nonRattache && (
         <>
