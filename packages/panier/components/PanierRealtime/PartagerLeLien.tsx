@@ -8,7 +8,7 @@ import Membres from '../Picto/Membres';
  * Affiche l'encadré invitant au partage du lien vers le panier
  */
 export const PartagerLeLien = ({panier}: {panier: Panier}) => {
-  const [opened, setOpened] = useState(true);
+  const [opened, setOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
