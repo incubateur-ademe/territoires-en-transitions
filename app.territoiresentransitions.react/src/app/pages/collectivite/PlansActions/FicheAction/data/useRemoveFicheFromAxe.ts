@@ -30,10 +30,8 @@ export const useRemoveFicheFromAxe = () => {
         queryClient.setQueryData(ficheActionKey, (old: any) => {
           return {
             fiche: {
-              ...old.fiche,
-              axes: old.fiche.axes!.filter(
-                (axe: any) => axe.id !== args.axe_id
-              ),
+              ...old,
+              axes: old.axes!.filter((axe: any) => axe.id !== args.axe_id),
             },
           };
         });

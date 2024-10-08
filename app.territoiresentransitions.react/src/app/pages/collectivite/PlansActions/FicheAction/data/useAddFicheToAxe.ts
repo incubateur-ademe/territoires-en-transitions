@@ -45,10 +45,8 @@ export const useAddFicheToAxe = () => {
 
           return {
             fiche: {
-              ...old.fiche,
-              axes: old.fiche.axes
-                ? [...old.fiche.axes, formatedNewAxe]
-                : [formatedNewAxe],
+              ...old,
+              axes: old.axes ? [...old.axes, formatedNewAxe] : [formatedNewAxe],
             },
           };
         });

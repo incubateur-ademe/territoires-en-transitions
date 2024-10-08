@@ -74,10 +74,10 @@ const NouvelEmplacementFiche = ({
 
   // Sauvegarde du plan sélectionné
   const handleSave = () => {
-    const axe = selectedAxes[selectedAxes.length - 1];
+    const { axe } = selectedAxes[selectedAxes.length - 1];
 
     addFicheToAxe({
-      axe: { id: axe.axe.id, nom: axe.axe.nom },
+      axe: { id: axe.id, nom: axe.nom },
       fiche_id: fiche.id!,
     });
 
