@@ -1,4 +1,4 @@
-import { indicateurSmallSchema } from '@tet/api/indicateurs/domain';
+import { indicateurListItemSchema } from '@tet/api/indicateurs/domain';
 import { actionSchema } from '@tet/api/referentiel/domain/action.schema';
 import {
   personneSchema,
@@ -112,7 +112,7 @@ export const ficheActionSchema = z.object({
   axes: axeSchema.array().nullish(),
   actions: actionSchema.array().nullish(),
   financeurs: financeurSchema.array().nullish(),
-  indicateurs: indicateurSmallSchema.array().nullish(),
+  indicateurs: indicateurListItemSchema.array().nullish(),
 });
 
 export type FicheAction = z.infer<typeof ficheActionSchema>;

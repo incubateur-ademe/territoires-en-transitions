@@ -20,6 +20,7 @@ const upsertFicheAction = async (fiche: FicheAction) => {
       plans: true,
       modifiedAt: true,
       createdAt: true,
+      axes: true,
     })
     .parse(fiche);
 

@@ -1,6 +1,7 @@
 import { objectToCamel } from 'ts-case-convert';
 import { DBClient } from '../../../typeUtils';
 import { FicheAction } from '../../domain';
+import { fetchFilteredIndicateurs } from '@tet/api/indicateurs';
 
 const ficheActionColumns = [
   // 'id',
@@ -77,11 +78,22 @@ export async function ficheActionFetch({ dbClient, ficheActionId }: Props) {
 
   const rawFicheAction = objectToCamel(data) as unknown as FicheAction;
 
+  const indicateurs = await fetchFilteredIndicateurs(
+    dbClient,
+    rawFicheAction.collectiviteId,
+    {
+      filtre: {
+        ficheActionIds: [rawFicheAction.id],
+      },
+    }
+  );
+
   // Transforme les données pour les adapter au format attendu
   // 👇
   const ficheAction = {
     ...rawFicheAction,
     planId: rawFicheAction.plans?.[0]?.plan,
+    indicateurs: indicateurs.data,
   };
 
   return ficheAction as FicheAction;

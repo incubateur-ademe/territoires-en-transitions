@@ -1,24 +1,21 @@
-import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import {
-  Indicateur,
-  TIndicateurListItem,
-} from 'app/pages/collectivite/Indicateurs/types';
+import { IndicateurListItem } from '@tet/api/indicateurs/domain';
 import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { selectIndicateur } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {selectIndicateur} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useIntersectionObserver } from 'utils/useIntersectionObserver';
 
 type Props = {
-  definitions?: TIndicateurListItem[];
+  definitions?: IndicateurListItem[];
   isLoading?: boolean;
-  selectedIndicateurs: Indicateur[] | null;
-  onSelect: (indicateurs: Indicateur[]) => void;
+  selectedIndicateurs: IndicateurListItem[] | null;
+  onSelect: (indicateurs: IndicateurListItem[]) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
 const SelectIndicateursGrid = (props: Props) => {
-  const {definitions, isLoading, selectedIndicateurs, onSelect} = props;
+  const { definitions, isLoading, selectedIndicateurs, onSelect } = props;
 
   return (
     <>
@@ -35,7 +32,7 @@ const SelectIndicateursGrid = (props: Props) => {
           </div>
           {/** Grid */}
           <div className="flex flex-col gap-6">
-            {definitions.map(definition => (
+            {definitions.map((definition) => (
               <IndicateurChartContainer
                 key={definition.id}
                 definition={definition}
@@ -59,15 +56,15 @@ const SelectIndicateursGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: Indicateur[] | null;
-    onSelect: (indicateurs: Indicateur[]) => void;
+    selectedIndicateurs: IndicateurListItem[] | null;
+    onSelect: (indicateurs: IndicateurListItem[]) => void;
   }
 ) => {
-  const {ref, entry} = useIntersectionObserver();
-  const {definition, selectedIndicateurs, onSelect} = props;
+  const { ref, entry } = useIntersectionObserver();
+  const { definition, selectedIndicateurs, onSelect } = props;
 
   const selected =
-    selectedIndicateurs?.some(i => i.id === definition.id) ?? false;
+    selectedIndicateurs?.some((i) => i.id === definition.id) ?? false;
 
   return (
     <div ref={ref} className="min-h-[5rem]">
@@ -77,9 +74,9 @@ const IndicateurChartContainer = (
           selectState={{
             checkbox: true,
             selected,
-            setSelected: indicateur =>
+            setSelected: (indicateur) =>
               onSelect(
-                selectIndicateur({indicateur, selected, selectedIndicateurs})
+                selectIndicateur({ indicateur, selected, selectedIndicateurs })
               ),
           }}
           hideChartWithoutValue

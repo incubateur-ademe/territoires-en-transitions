@@ -1,17 +1,17 @@
+import { IndicateurListItem } from '@tet/api/indicateurs/domain';
+import { FicheAction } from '@tet/api/plan-actions';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {
   getIndicateurGroup,
   selectIndicateur,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { FicheAction } from '@tet/api/plan-actions';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Indicateur } from 'app/pages/collectivite/Indicateurs/types';
 
 type IndicateursListeProps = {
   isReadonly: boolean;
   fiche: FicheAction;
-  indicateurs: Indicateur[];
+  indicateurs: IndicateurListItem[];
   updateFiche: (fiche: FicheAction) => void;
 };
 

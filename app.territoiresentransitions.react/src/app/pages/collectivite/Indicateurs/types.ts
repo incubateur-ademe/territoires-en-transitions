@@ -1,5 +1,4 @@
 import { Indicateurs } from '@tet/api';
-import { IndicateurSmall } from '@tet/api/indicateurs/domain';
 
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';
@@ -9,9 +8,6 @@ export type TIndicateurListItem = Indicateurs.domain.IndicateurListItem;
 
 /** Item détaillé pour la vignette graphique dans une liste d'indicateurs */
 export type TIndicateurChartInfo = Indicateurs.domain.IndicateurChartInfo;
-
-/** */
-export type Indicateur = IndicateurSmall;
 
 export type IndicateurInsert = Indicateurs.domain.IndicateurDefinitionInsert;
 

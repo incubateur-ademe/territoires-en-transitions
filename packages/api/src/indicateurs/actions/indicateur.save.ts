@@ -222,10 +222,10 @@ export async function upsertServices(
   dbClient: DBClient,
   indicateur: IndicateurDefinition,
   collectiviteId: number,
-  services: Tag[]
+  services: TagInsert[]
 ) {
   const tagIds: number[] = [];
-  const newTags: Tag[] = [];
+  const newTags: TagInsert[] = [];
 
   services.forEach((s) => {
     if (s.id) {
@@ -271,10 +271,10 @@ export async function upsertCategoriesUtilisateur(
   dbClient: DBClient,
   indicateur: IndicateurDefinition,
   collectiviteId: number,
-  categories: Tag[]
+  categories: TagInsert[]
 ) {
   const tagIds: number[] = [];
-  const newTags: Tag[] = [];
+  const newTags: TagInsert[] = [];
   const categoriesCollectivite = await selectTags(
     dbClient,
     collectiviteId,

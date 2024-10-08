@@ -1,7 +1,25 @@
+import { beforeAll, expect, test } from 'vitest';
+import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
+import { Action } from '../../referentiel/domain/action.schema';
+import { Personne } from '../../shared/domain/personne.schema';
+import { TagInsert } from '../../shared/domain/tag.schema';
+import { Thematique } from '../../shared/domain/thematique.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
-import { beforeAll, expect, test } from 'vitest';
 import { testReset } from '../../tests/testReset';
+import { IndicateurDefinitionInsert } from '../domain/definition.schema';
+import { Valeur } from '../domain/valeur.schema';
+import {
+  selectIndicateurActions,
+  selectIndicateurCategoriesUtilisateur,
+  selectIndicateurDefinition,
+  selectIndicateurFiches,
+  selectIndicateurPilotes,
+  selectIndicateurServicesId,
+  selectIndicateurThematiquesId,
+  selectIndicateurValeur,
+  selectIndicateurValeurs,
+} from './indicateur.fetch';
 import {
   insertIndicateurDefinition,
   updateIndicateurDefinition,
@@ -14,24 +32,6 @@ import {
   upsertThematiques,
   upsertValeursUtilisateurAvecSource,
 } from './indicateur.save';
-import {
-  selectIndicateurActions,
-  selectIndicateurCategoriesUtilisateur,
-  selectIndicateurDefinition,
-  selectIndicateurFiches,
-  selectIndicateurPilotes,
-  selectIndicateurServicesId,
-  selectIndicateurThematiquesId,
-  selectIndicateurValeur,
-  selectIndicateurValeurs,
-} from './indicateur.fetch';
-import { IndicateurDefinitionInsert } from '../domain/definition.schema';
-import { Valeur } from '../domain/valeur.schema';
-import { Thematique } from '../../shared/domain/thematique.schema';
-import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
-import { Personne } from '../../shared/domain/personne.schema';
-import { Action } from '../../referentiel/domain/action.schema';
-import { Tag } from '../../shared/domain/tag.schema';
 
 beforeAll(async () => {
   await signIn('yolododo');
@@ -74,7 +74,7 @@ test('Test insertIndicateurDefinition', async () => {
   const newId = await insertIndicateurDefinition(supabase, def);
   const data = await selectIndicateurDefinition(supabase, newId!, 1);
   expect(data).not.toBeNull();
-  expect(data?.thematiques[0].id).eq(1);
+  expect(data?.thematiques?.[0].id).eq(1);
 });
 
 test('Test upsertIndicateurValeur', async () => {
@@ -144,7 +144,7 @@ test('Test upsertServices', async () => {
 
   // Ajout service inexistant sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
-  const tags: Tag[] = [
+  const tags: TagInsert[] = [
     {
       nom: 'test',
       collectiviteId: 1,
@@ -200,7 +200,7 @@ test('Test upsertCategoriesUtilisateur', async () => {
 
   // Ajout catégorie inexistant sur indicateur personnalisé
   const def = await selectIndicateurDefinition(supabase, 123, 1);
-  const tags: Tag[] = [
+  const tags: TagInsert[] = [
     {
       nom: 'test',
       collectiviteId: 1,

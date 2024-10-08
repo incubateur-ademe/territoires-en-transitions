@@ -1,7 +1,7 @@
-import {z} from 'zod';
-import {filtreRessourceLieesSchema} from '../../collectivites/shared/domain/filtre_ressource_liees.schema';
-import {getQueryOptionsSchema} from '../../shared/domain/query_options.schema';
-import {categorieSchema} from './categorie.schema';
+import { z } from 'zod';
+import { filtreRessourceLieesSchema } from '../../collectivites/shared/domain/filtre_ressource_liees.schema';
+import { getQueryOptionsSchema } from '../../shared/domain/query_options.schema';
+import { categorieSchema } from './categorie.schema';
 
 export const filtreSpecifiqueSchema = z.object({
   actionId: z.string().optional(),
@@ -28,6 +28,7 @@ export const filtreSchema = filtreRessourceLieesSchema
     utilisateurPiloteIds: true,
     personnePiloteIds: true,
     servicePiloteIds: true,
+    ficheActionIds: true,
   })
   .merge(filtreSpecifiqueSchema);
 
