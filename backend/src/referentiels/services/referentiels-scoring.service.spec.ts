@@ -8,7 +8,9 @@ import { GetPersonnalisationReponsesResponseType } from '../../personnalisations
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
+import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
@@ -43,6 +45,223 @@ describe('ReferentielsScoringService', () => {
 
     referentielsScoringService = moduleRef.get(ReferentielsScoringService);
     personnalisationService = moduleRef.get(PersonnalisationsService);
+  });
+
+  describe('updateFromOrigineActions', () => {
+    it('Standard test without change in total points in new referentiel', async () => {
+      // 3 pts + 4 pts * 0.5 = 5 pts in total
+      const referectielActionWithScore: ReferentielActionWithScoreType = {
+        action_id: 'te_1.3.1.3',
+        nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
+        points: 5,
+        pourcentage: 21.760391198044008,
+        actions_enfant: [],
+        level: 4,
+        action_type: ActionType.SOUS_ACTION,
+        actions_origine: [
+          {
+            referentiel_id: 'cae',
+            action_id: 'cae_1.3.1.3',
+            ponderation: 1,
+            nom: 'Mettre la politique d’urbanisme et les objectifs de développement en cohérence avec la politique climat-air-énergie',
+            score: {
+              action_id: 'cae_1.3.1.3',
+              point_referentiel: 3,
+              point_potentiel: 3,
+              point_potentiel_perso: null,
+              point_fait: 2,
+              point_pas_fait: 0,
+              point_non_renseigne: 1,
+              point_programme: 0,
+              concerne: true,
+              completed_taches_count: 0,
+              total_taches_count: 6,
+              fait_taches_avancement: 0,
+              programme_taches_avancement: 0,
+              pas_fait_taches_avancement: 0,
+              pas_concerne_taches_avancement: 0,
+              desactive: false,
+              renseigne: false,
+            },
+          },
+          {
+            referentiel_id: 'cae',
+            action_id: 'cae_6.3.1.3.2',
+            ponderation: 0.5,
+            nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
+            score: {
+              action_id: 'cae_6.3.1.3.2',
+              point_referentiel: 4,
+              point_potentiel: 4,
+              point_potentiel_perso: null,
+              point_fait: 3,
+              point_pas_fait: 0,
+              point_non_renseigne: 1,
+              point_programme: 0,
+              concerne: true,
+              completed_taches_count: 0,
+              total_taches_count: 6,
+              fait_taches_avancement: 0,
+              programme_taches_avancement: 0,
+              pas_fait_taches_avancement: 0,
+              pas_concerne_taches_avancement: 0,
+              desactive: false,
+              renseigne: false,
+            },
+          },
+        ],
+        referentiels_origine: [],
+        score: {
+          action_id: 'te_1.3.1.3',
+          point_referentiel: 5,
+          point_potentiel: null,
+          point_potentiel_perso: null,
+          point_fait: null,
+          point_pas_fait: null,
+          point_non_renseigne: null,
+          point_programme: null,
+          concerne: true,
+          completed_taches_count: null,
+          total_taches_count: 1,
+          fait_taches_avancement: null,
+          programme_taches_avancement: null,
+          pas_fait_taches_avancement: null,
+          pas_concerne_taches_avancement: null,
+          desactive: false,
+          renseigne: true,
+        },
+      };
+      referentielsScoringService.updateFromOrigineActions(
+        referectielActionWithScore
+      );
+      expect(referectielActionWithScore.score).toEqual({
+        action_id: 'te_1.3.1.3',
+        completed_taches_count: null,
+        concerne: true,
+        desactive: false,
+        fait_taches_avancement: null,
+        pas_concerne_taches_avancement: null,
+        pas_fait_taches_avancement: null,
+        point_fait: 3.5,
+        point_non_renseigne: 1.5,
+        point_pas_fait: 0,
+        point_potentiel: null,
+        point_potentiel_perso: null,
+        point_programme: 0,
+        point_referentiel: 5,
+        programme_taches_avancement: null,
+        renseigne: true,
+        total_taches_count: 1,
+      });
+    });
+
+    it('Standard test with change in total points in new referentiel', async () => {
+      // 3 pts + 4 pts * 0.5 = 5 pts in total but we have 4 pts in the new referentiel
+
+      const referectielActionWithScore: ReferentielActionWithScoreType = {
+        action_id: 'te_1.3.1.3',
+        nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
+        points: 4,
+        pourcentage: 21.760391198044008,
+        actions_enfant: [],
+        level: 4,
+        action_type: ActionType.SOUS_ACTION,
+        actions_origine: [
+          {
+            referentiel_id: 'cae',
+            action_id: 'cae_1.3.1.3',
+            ponderation: 1,
+            nom: 'Mettre la politique d’urbanisme et les objectifs de développement en cohérence avec la politique climat-air-énergie',
+            score: {
+              action_id: 'cae_1.3.1.3',
+              point_referentiel: 3,
+              point_potentiel: 3,
+              point_potentiel_perso: null,
+              point_fait: 2,
+              point_pas_fait: 0,
+              point_non_renseigne: 1,
+              point_programme: 0,
+              concerne: true,
+              completed_taches_count: 0,
+              total_taches_count: 6,
+              fait_taches_avancement: 0,
+              programme_taches_avancement: 0,
+              pas_fait_taches_avancement: 0,
+              pas_concerne_taches_avancement: 0,
+              desactive: false,
+              renseigne: false,
+            },
+          },
+          {
+            referentiel_id: 'cae',
+            action_id: 'cae_6.3.1.3.2',
+            ponderation: 0.5,
+            nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
+            score: {
+              action_id: 'cae_6.3.1.3.2',
+              point_referentiel: 4,
+              point_potentiel: 4,
+              point_potentiel_perso: null,
+              point_fait: 3,
+              point_pas_fait: 0,
+              point_non_renseigne: 1,
+              point_programme: 0,
+              concerne: true,
+              completed_taches_count: 0,
+              total_taches_count: 6,
+              fait_taches_avancement: 0,
+              programme_taches_avancement: 0,
+              pas_fait_taches_avancement: 0,
+              pas_concerne_taches_avancement: 0,
+              desactive: false,
+              renseigne: false,
+            },
+          },
+        ],
+        referentiels_origine: [],
+        score: {
+          action_id: 'te_1.3.1.3',
+          point_referentiel: 4,
+          point_potentiel: null,
+          point_potentiel_perso: null,
+          point_fait: null,
+          point_pas_fait: null,
+          point_non_renseigne: null,
+          point_programme: null,
+          concerne: true,
+          completed_taches_count: null,
+          total_taches_count: 1,
+          fait_taches_avancement: null,
+          programme_taches_avancement: null,
+          pas_fait_taches_avancement: null,
+          pas_concerne_taches_avancement: null,
+          desactive: false,
+          renseigne: true,
+        },
+      };
+      referentielsScoringService.updateFromOrigineActions(
+        referectielActionWithScore
+      );
+      expect(referectielActionWithScore.score).toEqual({
+        action_id: 'te_1.3.1.3',
+        completed_taches_count: null,
+        concerne: true,
+        desactive: false,
+        fait_taches_avancement: null,
+        pas_concerne_taches_avancement: null,
+        pas_fait_taches_avancement: null,
+        point_fait: 2.8,
+        point_non_renseigne: 1.2,
+        point_pas_fait: 0,
+        point_potentiel: null,
+        point_potentiel_perso: null,
+        point_programme: 0,
+        point_referentiel: 4,
+        programme_taches_avancement: null,
+        renseigne: true,
+        total_taches_count: 1,
+      });
+    });
   });
 
   describe('computeScoreMap', () => {
