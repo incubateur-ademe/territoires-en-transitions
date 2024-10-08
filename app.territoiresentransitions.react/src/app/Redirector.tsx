@@ -1,24 +1,25 @@
 import {getAuthPaths} from '@tet/api';
 import {
+  finaliserMonInscriptionUrl,
   homePath,
   makeCollectiviteAccueilUrl,
   makeTableauBordLandingUrl,
 } from 'app/paths';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
   acceptAgentInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
-import {useMesCollectivitesEtPlans} from 'core-logic/hooks/useOwnedCollectivites';
-import {useEffect} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
+import { useMesCollectivitesEtPlans } from 'core-logic/hooks/useOwnedCollectivites';
+import { useEffect } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 export const Redirector = () => {
   const history = useHistory();
-  const {pathname} = useLocation();
-  const {isConnected} = useAuth();
-  const {invitationId, invitationEmail, consume} = useInvitationState();
-  const {data: userInfo} = useMesCollectivitesEtPlans();
+  const { pathname } = useLocation();
+  const { isConnected } = useAuth();
+  const { invitationId, invitationEmail, consume } = useInvitationState();
+  const { data: userInfo } = useMesCollectivitesEtPlans();
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
   // Quand l'utilisateur connecté
@@ -35,12 +36,12 @@ export const Redirector = () => {
 
       if (collectiviteId) {
         if (auMoinsUnPlanActionsPilotable) {
-          history.push(makeTableauBordLandingUrl({collectiviteId}));
+          history.push(makeTableauBordLandingUrl({ collectiviteId }));
         } else {
-          history.push(makeCollectiviteAccueilUrl({collectiviteId}));
+          history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
         }
       } else {
-        history.push(homePath);
+        history.push(finaliserMonInscriptionUrl);
       }
     }
   }, [isLandingConnected, userInfo]);
