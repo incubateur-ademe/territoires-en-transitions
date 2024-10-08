@@ -13,8 +13,10 @@ type Props = {
   withSelect?: WithSelect[];
 };
 
-/** Récupère uniquement les axes racines des plans d'action.
- * Ce hook ne donne pas les enfants de ces axes.
+/**
+ * Récupère uniquement les axes racines des plans d'action.
+ *
+ * Pour ajouter les axes enfants il faut donner `withSelect: ['axes']` en paramètre.
  */
 export const usePlansActionsListe = ({ options, withSelect }: Props) => {
   const collectiviteId = useCollectiviteId();
