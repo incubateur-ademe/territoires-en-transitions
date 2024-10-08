@@ -35,7 +35,7 @@ export const PartagerLeLien = ({panier}: {panier: Panier}) => {
   }, [copied]);
 
   return opened ? (
-    <Card className="fixed bottom-0 rounded-b-none -mb-1 left-4 shadow-md w-96 z-10">
+    <Card className="fixed bottom-0 rounded-b-none -mb-1 left-20 shadow-md w-96 z-10">
       <div
         onClick={() => setOpened(false)}
         className="ml-auto cursor-pointer h-fit w-fit"
@@ -71,7 +71,7 @@ export const PartagerLeLien = ({panier}: {panier: Panier}) => {
       </Button>
     </Card>
   ) : (
-    <div className="fixed bottom-0 left-4">
+    <div className="fixed bottom-0 left-20">
       <Button
         className="rounded-b-none -mb-1"
         icon="user-add-line"
