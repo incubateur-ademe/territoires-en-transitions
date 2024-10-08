@@ -25,7 +25,7 @@ const CollectivitesEngagees = () => {
 };
 
 const FinaliserMonInscription = () => (
-  <div className="mx-auto my-8">
+  <div className="mx-auto my-8" data-test="FinaliserInscription">
     <Card className="items-center">
       <PictoCarte />
       <h2 className="text-primary-8">Merci pour votre inscription !</h2>

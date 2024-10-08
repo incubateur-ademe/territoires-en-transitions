@@ -60,7 +60,8 @@ Fonctionnalité: Créer un compte
       | home                             | absent    |
       | formulaire de connexion          | absent    |
       | formulaire de création de compte | absent    |
-      | toutes les collectivités         | visible   |
+      | toutes les collectivités         | absent    |
+      | finaliser mon inscription        | visible   |
       | footer                           | présent   |
 
   Scénario: Ne pas pouvoir créer un compte avec un email qui existe déjà
@@ -131,7 +132,8 @@ Fonctionnalité: Créer un compte
       | home                             | absent    |
       | formulaire de connexion          | absent    |
       | formulaire de création de compte | absent    |
-      | toutes les collectivités         | visible   |
+      | toutes les collectivités         | absent    |
+      | finaliser mon inscription        | visible   |
       | footer                           | présent   |
 
   Scénario: Tenter de créer un compte sans mot de passe avec un email qui existe déjà revient à se connecter
