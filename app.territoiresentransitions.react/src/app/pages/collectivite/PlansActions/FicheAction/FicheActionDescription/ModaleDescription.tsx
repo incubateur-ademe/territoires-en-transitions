@@ -86,12 +86,12 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
                 (t: Thematique) => t.id
               )}
               sousThematiques={editedFiche.sousThematiques}
-              onChange={({ sousThematiques }) =>
+              onChange={({ sousThematiques }) => {
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  sous_thematiques: sousThematiques,
-                }))
-              }
+                  sousThematiques,
+                }));
+              }}
             />
           </Field>
 
