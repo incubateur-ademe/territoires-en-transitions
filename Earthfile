@@ -264,6 +264,43 @@ business-parse:
     SAVE ARTIFACT /content AS LOCAL ./data_layer/content
     SAVE ARTIFACT /content AS LOCAL $BUSINESS_DIR/tests/data/dl_content
 
+node-alpine:
+  # Pinning the docker image version to node:20.15.1-alpine
+  # because of existing memory leaks from using the fetch() API in node 20.16.0
+  # https://www.reddit.com/r/node/comments/1ejzn64/sudden_inexplicable_memory_leak_on_new_builds/
+  FROM node:20.15.1-alpine
+
+  # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+  RUN apk add --no-cache libc6-compat
+  WORKDIR /app
+
+node-alpine-with-prod-deps:
+  FROM +node-alpine
+
+  COPY pnpm-lock.yaml ./
+
+  ENV PNPM_HOME="/pnpm"
+  ENV PATH="$PNPM_HOME:$PATH"
+  RUN corepack enable pnpm
+
+  RUN pnpm fetch --prod
+
+  COPY package.json ./
+  RUN pnpm install -r --offline --prod
+
+node-alpine-with-all-deps:
+  FROM +node-alpine-with-prod-deps
+
+  RUN pnpm install --frozen-lockfile
+
+  COPY *.json ./
+  COPY jest.* ./
+  COPY vitest.* ./
+
+  # Copy shared libraries
+  COPY $API_DIR $API_DIR
+  COPY $UI_DIR $UI_DIR
+
 
 # construit l'image de base pour les images utilisant node
 node-fr:
@@ -272,27 +309,38 @@ node-fr:
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
     FROM --platform=$PLATFORM node:20-slim
+
+    # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
-    RUN corepack enable
+    RUN corepack enable pnpm
 
     WORKDIR /app
 
-# construit l'image contenant les dépendances des modules front
-front-deps:
+prod-deps:
     FROM +node-fr
 
-    COPY package.json pnpm-lock.yaml ./
+    # See https://pnpm.io/cli/fetch
+    COPY pnpm-lock.yaml ./
+    RUN pnpm fetch --prod
+
+    COPY package.json ./
+    RUN pnpm install -r --offline --prod
+
+# construit l'image contenant les dépendances des modules front
+front-deps:
+    FROM +prod-deps
+
     RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
     COPY jest.* ./
     COPY vitest.* ./
 
-    # Only copy libraries
+    # Copy only shared libraries
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
 
@@ -444,37 +492,16 @@ panier-run: ## construit et lance l'image du panier en local
         --publish 3001:80 \
         $PANIER_IMG_NAME
 
-site-build: ## construit l'image du site
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG --required STRAPI_KEY
-    ARG --required STRAPI_URL
-    ARG POSTHOG_HOST
-    ARG POSTHOG_KEY
-    ARG AXEPTIO_ID
-    ARG CRISP_WEBSITE_ID
-    ARG vars
-    FROM +front-deps
-    ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
-    ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL
-    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
-    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
-    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
-    ENV NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID
-    ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV NEXT_TELEMETRY_DISABLED=1
-    ENV PUBLIC_PATH="/app/packages/site/public"
-    ENV PORT=80
-    EXPOSE $PORT
-    # copie les sources des modules à construire
-    COPY $SITE_DIR $SITE_DIR
-    COPY $UI_DIR $UI_DIR
-    COPY $API_DIR $API_DIR
-    RUN pnpm run build:site
-    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/site/"]
-    SAVE IMAGE --cache-from=$SITE_IMG_NAME --push $SITE_IMG_NAME
+
+
+site-docker:
+  BUILD --pass-args ./packages/site+docker
+
+site-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/site+deploy
+
+
 
 site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
@@ -914,11 +941,6 @@ koyeb:
     FROM alpine
     COPY +koyeb-bin/koyeb ./
     RUN echo "token: $KOYEB_API_KEY" > ~/.koyeb.yaml
-
-site-deploy:
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-site/front --docker $SITE_IMG_NAME
 
 auth-deploy:
     ARG --required KOYEB_API_KEY
