@@ -459,44 +459,21 @@ package-api-test: ## lance les tests d'intégration de l'api
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
 
-panier-build: ## construit l'image du panier
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG POSTHOG_HOST
-    ARG POSTHOG_KEY
-    ARG AXEPTIO_ID
-    ARG CRISP_WEBSITE_ID
-    ARG vars
-    FROM +front-deps
-    ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
-    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
-    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
-    ENV NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID
-    ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV NEXT_TELEMETRY_DISABLED=1
-    ENV PUBLIC_PATH="/app/packages/panier/public"
-    ENV PORT=80
-    EXPOSE $PORT
-    # copie les sources des modules à construire
-    COPY $PANIER_DIR $PANIER_DIR
-    COPY $UI_DIR $UI_DIR
-    COPY $API_DIR $API_DIR
-    RUN pnpm run build:panier
-    CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/panier/"]
-    SAVE IMAGE --cache-from=$PANIER_IMG_NAME --push $PANIER_IMG_NAME
+panier-docker: ## construit l'image du panier
+  BUILD --pass-args ./packages/panier+docker
 
-panier-run: ## construit et lance l'image du panier en local
+panier-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/panier+deploy
+
+panier-run: ## lance l'image du panier en local
     ARG network=supabase_network_tet
     LOCALLY
     RUN docker run -d --rm \
         --name panier_tet \
         --network $network \
-        --publish 3001:80 \
+        --publish 3002:3000 \
         $PANIER_IMG_NAME
-
-
 
 site-docker:
   BUILD --pass-args ./packages/site+docker
@@ -948,11 +925,6 @@ auth-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
-
-panier-deploy:
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-panier/front --docker $PANIER_IMG_NAME
 
 app-deploy: ## Déploie le front dans une app Koyeb existante
     ARG --required KOYEB_API_KEY
