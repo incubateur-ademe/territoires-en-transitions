@@ -35,13 +35,18 @@ ALTER TABLE fiche_action_financeur_tag DROP CONSTRAINT fiche_action_financeur_ta
 -- Step 2: Add the new composite primary key
 ALTER TABLE fiche_action_financeur_tag ADD PRIMARY KEY (fiche_id, financeur_tag_id);
 
--- Step 3 (Optional): Drop the id column if it's no longer needed
--- Be cautious with this step, as it will permanently remove the column
--- ALTER TABLE fiche_action_financeur_tag DROP COLUMN id;
 
--- Step 3: keep the id column but remove its default value and sequence:
-ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id DROP NOT NULL;
-DROP SEQUENCE IF EXISTS fiche_action_financeur_tag_id_seq;
+-- Change la foreign key de `fiche_action_referent` pour pointer sur `public.dcp` au lieu de `auth.users`.
+-- Cela permet à PostgREST de requêter la ressource `dcp` liée.
+
+ALTER TABLE fiche_action_referent
+DROP CONSTRAINT IF EXISTS fiche_action_referent_user_id_fkey;
+
+ALTER TABLE fiche_action_referent
+ADD CONSTRAINT fiche_action_referent_user_id_fkey
+FOREIGN KEY (user_id)
+REFERENCES dcp(user_id);
+
+
 
 COMMIT;

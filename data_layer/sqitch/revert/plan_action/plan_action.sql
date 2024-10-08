@@ -2,24 +2,24 @@
 
 BEGIN;
 
+-- Revert foreign key of `fiche_action_referent`
+
+ALTER TABLE fiche_action_referent
+DROP CONSTRAINT IF EXISTS fiche_action_referent_user_id_fkey;
+
+ALTER TABLE fiche_action_referent
+ADD CONSTRAINT fiche_action_referent_user_id_fkey
+FOREIGN KEY (user_id)
+REFERENCES auth.users(id);
+
+
+
 -- Revert primary key of `fiche_action_financeur_tag`
 -- Step 1: Remove the composite primary key
 ALTER TABLE fiche_action_financeur_tag DROP CONSTRAINT fiche_action_financeur_tag_pkey;
 
--- Step 2: Recreate the sequence for the id column
--- (Skip this step if you didn't drop the sequence earlier)
-CREATE SEQUENCE fiche_action_financeur_tag_id_seq OWNED BY fiche_action_financeur_tag.id;
-
--- Step 3: Set the default value for the id column
-ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id SET DEFAULT nextval('fiche_action_financeur_tag_id_seq');
-ALTER TABLE fiche_action_financeur_tag ALTER COLUMN id SET NOT NULL;
-
--- Step 4: Recreate the primary key on the id column
+-- Step 2: Recreate the primary key on the id column
 ALTER TABLE fiche_action_financeur_tag ADD CONSTRAINT fiche_action_financeur_tag_pkey PRIMARY KEY (id);
-
--- Step 5: If you dropped the id column (which was optional in the original script),
--- you'd need to recreate it. However, this would require more complex handling to
--- regenerate the ids, which is not included here.
 
 
 
