@@ -32,9 +32,7 @@ type SortSettings<T> = {
   sortOptionsDisplayed?: T[];
 };
 
-export type SortIndicateurSettings = SortSettings<
-  keyof Indicateurs.FetchFiltre
->;
+type SortIndicateurSettings = SortSettings<keyof Indicateurs.FetchFiltre>;
 
 const sortByOptions: sortByOptionsType[] = [
   {

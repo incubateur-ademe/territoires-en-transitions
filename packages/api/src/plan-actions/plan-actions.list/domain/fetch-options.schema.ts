@@ -15,7 +15,7 @@ export type FetchFilter = z.infer<typeof fetchFilterSchema>;
 
 const sortValues = ['nom', 'created_at'] as const;
 
-export type SortFichesActionValue = (typeof sortValues)[number];
+export type SortPlansActionValue = (typeof sortValues)[number];
 
 const fetchSortSchema = z.object({
   field: z.enum(sortValues),

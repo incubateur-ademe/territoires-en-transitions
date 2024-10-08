@@ -19,7 +19,7 @@ type Props = {
 export const usePlansActionsListe = ({ options, withSelect }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  return useQuery(['plans_actions', collectiviteId!], () =>
+  return useQuery(['plans_actions', collectiviteId!, options, withSelect], () =>
     planActionsFetch({
       dbClient,
       collectiviteId: collectiviteId!,

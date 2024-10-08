@@ -74,7 +74,7 @@ export const planActionsFetch = async ({
 
 function getFinalSort(sort?: Array<FetchSort>) {
   const defaultSort: FetchSort = {
-    field: 'created_at',
+    field: 'nom',
     direction: 'asc',
   };
 

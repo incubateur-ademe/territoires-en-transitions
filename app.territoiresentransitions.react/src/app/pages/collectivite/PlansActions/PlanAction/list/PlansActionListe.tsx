@@ -4,12 +4,44 @@ import { Button, ButtonGroup, Pagination, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
-import { FetchFilter } from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+import {
+  FetchFilter,
+  FetchSort,
+  SortPlansActionValue,
+} from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@tet/app/paths';
+
+type sortByOptionsType = {
+  label: string;
+  value: SortPlansActionValue;
+  direction: 'asc' | 'desc';
+};
+
+type SortSettings<T> = {
+  /** Tri par défaut */
+  defaultSort: T;
+  /** Options à afficher dans le sélecteur de tri */
+  sortOptionsDisplayed?: T[];
+};
+
+type SortIndicateurSettings = SortSettings<SortPlansActionValue>;
+
+const sortByOptions: sortByOptionsType[] = [
+  {
+    label: 'Ordre alphabétique',
+    value: 'nom',
+    direction: 'asc',
+  },
+  {
+    label: 'Date de création',
+    value: 'created_at',
+    direction: 'desc',
+  },
+];
 
 type Props = {
   filtres: FetchFilter;
@@ -17,6 +49,7 @@ type Props = {
   resetFilters?: () => void;
   /** Nombre de plans à afficher sur une page */
   maxNbOfCards?: number;
+  sortSettings?: SortIndicateurSettings;
   displaySettings?: {
     display: ModuleDisplay;
     setDisplay: (display: ModuleDisplay) => void;
@@ -29,15 +62,35 @@ const PlansActionListe = ({
   resetFilters,
   settings,
   maxNbOfCards = 9,
+  sortSettings = {
+    defaultSort: 'nom',
+  },
   displaySettings,
 }: Props) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  /** Tri sélectionné */
+  const [sort, setSort] = useState<SortPlansActionValue>(
+    sortSettings.defaultSort
+  );
 
   /** Page courante */
   const [currentPage, setCurrentPage] = useState(1);
 
   /** Récupère les plans d'action */
-  const { data, isLoading } = usePlansActionsListe({});
+  const { data, isLoading } = usePlansActionsListe({
+    withSelect: ['axes'],
+    options: {
+      filtre: {},
+      sort: [
+        {
+          field: sort,
+          direction:
+            sortByOptions.find((o) => o.value === sort)?.direction || 'asc',
+        },
+      ],
+    },
+  });
 
   useEffect(() => {
     setCurrentPage(1);
@@ -51,10 +104,9 @@ const PlansActionListe = ({
         {/** Tri */}
         <div className="w-64">
           <Select
-            options={[{ label: 'Date de modification', value: 'modified_at' }]}
-            onChange={() => null}
-            values={'modified_at'}
-            disabled={true}
+            options={sortByOptions}
+            onChange={(value) => setSort(value as SortPlansActionValue)}
+            values={sort}
             customItem={(v) => <span className="text-grey-8">{v.label}</span>}
             small
           />
