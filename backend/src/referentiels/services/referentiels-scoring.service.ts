@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
+import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import {SupabaseJwtPayload} from '../../auth/models/supabase-jwt.models'; 
 import { AuthService } from '../../auth/services/auth.service';
@@ -14,6 +15,7 @@ import { roundTo } from '../../common/services/number.helper';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import { ActionPointScoreType } from '../models/action-point-score.dto';
 import { ActionScoreType } from '../models/action-score.dto';
 import {
   actionStatutTable,
@@ -24,8 +26,10 @@ import { clientScoresTable } from '../models/client-scores.table';
 import { GetActionScoresResponseType } from '../models/get-action-scores.response';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
+import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
-import { ReferentielActionAvecScoreType } from '../models/referentiel-action-avec-score.dto';
+import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
+import { ReferentielActionOrigineWithScoreType } from '../models/referentiel-action-origine-with-score.dto';
 import { ReferentielActionType } from '../models/referentiel-action.dto';
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsService from './referentiels.service';
@@ -62,15 +66,18 @@ export default class ReferentielsScoringService {
         niveauAccesMinimum
       );
     }
-    await this.referentielsService.checkReferentielExists(referentielId);
+    await this.referentielsService.getReferentielDefinition(referentielId);
 
     return this.collectivitesService.getCollectiviteAvecType(collectiviteId);
   }
 
   buildReferentielAvecScore(
-    referentiel: ReferentielActionType
-  ): ReferentielActionAvecScoreType {
-    const referentielAvecScore: ReferentielActionAvecScoreType = {
+    referentiel: ReferentielActionType,
+    fillOrigineActionMap?: {
+      [origineActionId: string]: ReferentielActionOrigineWithScoreType;
+    }
+  ): ReferentielActionWithScoreType {
+    const referentielAvecScore: ReferentielActionWithScoreType = {
       ...referentiel,
       score: {
         action_id: referentiel.action_id!,
@@ -93,13 +100,45 @@ export default class ReferentielsScoringService {
         desactive: false,
         renseigne: true,
       },
+      actions_origine: [],
       actions_enfant: [],
+      scores_tag: {}
     };
+    if (!referentiel.actions_origine) {
+      delete referentielAvecScore.actions_origine;
+    }
     referentiel.actions_enfant.forEach((actionEnfant) => {
-      const actionEnfantAvecScore =
-        this.buildReferentielAvecScore(actionEnfant);
-      referentielAvecScore.actions_enfant.push(actionEnfantAvecScore);
+      // Examples are not included in the score
+      if (actionEnfant.action_type !== ActionType.EXEMPLE) {
+        const actionEnfantAvecScore = this.buildReferentielAvecScore(
+          actionEnfant,
+          fillOrigineActionMap
+        );
+        referentielAvecScore.actions_enfant.push(actionEnfantAvecScore);
+      }
     });
+
+    if (referentiel.actions_origine) {
+      referentielAvecScore.actions_origine = referentiel.actions_origine.map(
+        (actionOrigine) => {
+          // TODO: only for level sous-action?
+          // WARNING: an action origin can be used several times be sure to not overwrite it in the map
+          const actionOrigineWithScore: ReferentielActionOrigineWithScoreType =
+            (fillOrigineActionMap &&
+              fillOrigineActionMap[actionOrigine.action_id]) || {
+              ...actionOrigine,
+              score: null,
+            };
+          if (fillOrigineActionMap) {
+            fillOrigineActionMap[actionOrigine.action_id] =
+              actionOrigineWithScore;
+          }
+
+          return actionOrigineWithScore;
+        }
+      );
+    }
+
     const totalTachesCount = referentielAvecScore.actions_enfant.length
       ? referentielAvecScore.actions_enfant.reduce(
           (acc, enfant) => acc + (enfant.score.total_taches_count || 1),
@@ -112,7 +151,7 @@ export default class ReferentielsScoringService {
   }
 
   appliquePersonnalisationPotentielPerso(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     personnalisationConsequences: GetPersonnalitionConsequencesResponseType,
     potentielPerso?: number
   ) {
@@ -164,7 +203,7 @@ export default class ReferentielsScoringService {
   }
 
   appliquePersonnalisationDesactivation(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     personnalisationConsequences: GetPersonnalitionConsequencesResponseType,
     parentDesactivation?: boolean
   ) {
@@ -190,7 +229,7 @@ export default class ReferentielsScoringService {
   }
 
   appliqueActionStatutNonConcerneEtRemonteAuxParents(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     actionStatuts: GetActionStatutsResponseType,
     parentConcerne: boolean = true
   ) {
@@ -230,7 +269,7 @@ export default class ReferentielsScoringService {
   }
 
   redistribuePotentielActionsDesactiveesNonConcernees(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     actionLevel: number
   ) {
     // Appelle recursif sur les enfants pour commencer par le bas de l'arbre
@@ -249,7 +288,7 @@ export default class ReferentielsScoringService {
       // Autrement dit, que pour un parent au moins de type action
       if (referentielActionAvecScore.level >= actionLevel) {
         // On ne redistribue qu'aux actions concernées et qui n'ont pas un potentiel à 0'
-        const enfantsConcernes: ReferentielActionAvecScoreType[] = [];
+        const enfantsConcernes: ReferentielActionWithScoreType[] = [];
         referentielActionAvecScore.actions_enfant.forEach((enfant) => {
           if (enfant.score.concerne) {
             if (enfant.score.point_potentiel) {
@@ -307,7 +346,7 @@ export default class ReferentielsScoringService {
   }
 
   appliqueRedistributionPotentiel(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     redistributionFactor: number
   ) {
     referentielActionAvecScore.score.point_potentiel =
@@ -318,7 +357,7 @@ export default class ReferentielsScoringService {
   }
 
   appliqueActionAvancementEtRemonteAuxParents(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     actionStatuts: GetActionStatutsResponseType
   ) {
     referentielActionAvecScore.actions_enfant.forEach((actionEnfant) => {
@@ -351,6 +390,7 @@ export default class ReferentielsScoringService {
     } else {
       const actionStatut = actionStatuts[referentielActionAvecScore.action_id!];
       if (actionStatut && actionStatut.avancement_detaille?.length === 3) {
+        referentielActionAvecScore.score.a_statut = true;
         const pointsPotentiel =
           referentielActionAvecScore.score.point_potentiel ||
           referentielActionAvecScore.score.point_referentiel ||
@@ -402,11 +442,12 @@ export default class ReferentielsScoringService {
     }
   }
 
-  mergeScoresEnfants(
-    scoreParent: ActionScoreType,
-    scoreEnfants: ActionScoreType[]
+  mergePointScoresEnfants(
+    scoreParent: ActionPointScoreType,
+    scoreEnfants: ActionPointScoreType[],
+    includePointPotentielAndReferentiel = false
   ) {
-    // Les autres propriétés ont déjà été calculées
+    // only focus on point properties
     scoreParent.point_pas_fait = scoreEnfants.reduce(
       (acc, enfant) => acc + (enfant.point_pas_fait || 0),
       0
@@ -423,6 +464,23 @@ export default class ReferentielsScoringService {
       (acc, enfant) => acc + (enfant.point_non_renseigne || 0),
       0
     );
+    if (includePointPotentielAndReferentiel) {
+      scoreParent.point_potentiel = scoreEnfants.reduce(
+        (acc, enfant) => acc + (enfant.point_potentiel || 0),
+        0
+      );
+      scoreParent.point_referentiel = scoreEnfants.reduce(
+        (acc, enfant) => acc + (enfant.point_referentiel || 0),
+        0
+      );
+    }
+  }
+
+  mergeScoresEnfants(
+    scoreParent: ActionScoreType,
+    scoreEnfants: ActionScoreType[]
+  ) {
+    this.mergePointScoresEnfants(scoreParent, scoreEnfants);
     scoreParent.completed_taches_count = scoreEnfants.reduce(
       (acc, enfant) => acc + (enfant.completed_taches_count || 0),
       0
@@ -443,13 +501,17 @@ export default class ReferentielsScoringService {
       (acc, enfant) => acc + (enfant.pas_concerne_taches_avancement || 0),
       0
     );
-    if (scoreParent.concerne && scoreParent.point_non_renseigne > 0) {
+    if (
+      scoreParent.concerne &&
+      scoreParent.point_non_renseigne &&
+      scoreParent.point_non_renseigne > 0
+    ) {
       scoreParent.renseigne = false;
     }
   }
 
   appliquePersonnalisationScore(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     personnalisationConsequences: GetPersonnalitionConsequencesResponseType,
     scoreMap: { [key: string]: number },
     overridenScoreFactor?: number
@@ -492,16 +554,20 @@ export default class ReferentielsScoringService {
 
     // Maintenant qu'on a appliqué aux enfants, on reactualise les points des parents
     if (referentielActionAvecScore.actions_enfant.length) {
-      referentielActionAvecScore.score.point_fait =
-        referentielActionAvecScore.actions_enfant.reduce(
-          (acc, enfant) => acc + (enfant.score.point_fait || 0),
-          0
-        );
+      // Lorsque le statut d'un parent est renseigné, il prévaut sur la somme de ses enfants
+      // Un peu étrange mais uniquement conservé pour conserver le statut des enfants
+      if (!referentielActionAvecScore.score.a_statut) {
+        referentielActionAvecScore.score.point_fait =
+          referentielActionAvecScore.actions_enfant.reduce(
+            (acc, enfant) => acc + (enfant.score.point_fait || 0),
+            0
+          );
+      }
     }
   }
 
   appliqueRounding(
-    referentielActionAvecScore: ReferentielActionAvecScoreType,
+    referentielActionAvecScore: ReferentielActionWithScoreType,
     ndigits: number = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
   ) {
     referentielActionAvecScore.actions_enfant.forEach((actionEnfant) => {
@@ -606,15 +672,26 @@ export default class ReferentielsScoringService {
     return getActionStatuts;
   }
 
+  getActionPointScore(actionScore: ActionScoreType): ActionPointScoreType {
+    return {
+      point_potentiel: actionScore.point_potentiel || 0,
+      point_fait: actionScore.point_fait || 0,
+      point_programme: actionScore.point_programme || 0,
+      point_pas_fait: actionScore.point_pas_fait || 0,
+      point_non_renseigne: actionScore.point_non_renseigne || 0,
+      point_referentiel: actionScore.point_referentiel || 0,
+    };
+  }
+
   async computeScoreForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
-    date?: string,
+    parameters: GetReferentielScoresRequestType,
     tokenInfo?: SupabaseJwtPayload,
     noCheck?: boolean
-  ): Promise<ReferentielActionAvecScoreType> {
+  ): Promise<ReferentielActionWithScoreType> {
     this.logger.log(
-      `Calcul du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${date}`
+      `Calcul du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${parameters.date} (Depuis referentiels origine: ${parameters.avec_referentiels_origine})`
     );
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
@@ -622,52 +699,330 @@ export default class ReferentielsScoringService {
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,
         referentielId,
-        date,
+        parameters.date,
         tokenInfo
       );
     }
 
     const referentiel = await this.referentielsService.getReferentiel(
       referentielId,
-      true
+      true,
+      parameters.avec_referentiels_origine
     );
 
-    const personnalisationConsequences =
-      await this.personnalisationService.getPersonnalisationConsequencesForCollectivite(
+    if (!parameters.avec_referentiels_origine) {
+      const personnalisationConsequences =
+        await this.personnalisationService.getPersonnalisationConsequencesForCollectivite(
+          collectiviteId,
+          {
+            date: parameters.date,
+            referentiel: referentielId as ReferentielType,
+          },
+          undefined, // already checked
+          collectiviteInfo
+        );
+
+      const actionStatuts = await this.getReferentielActionStatuts(
+        referentielId,
         collectiviteId,
-        {
-          date,
-          referentiel: referentielId as ReferentielType,
-        },
-        undefined, // already checked
-        collectiviteInfo
+        parameters.date
       );
 
-    const actionStatuts = await this.getReferentielActionStatuts(
-      referentielId,
-      collectiviteId,
-      date
-    );
-
-    const actionLevel = referentiel.ordered_item_types.indexOf(
-      ActionType.ACTION
-    );
-    if (actionLevel === -1) {
-      throw new HttpException(
-        `Action type ${ActionType.ACTION} not found for referentiel ${referentielId}`,
-        500
+      const actionLevel = referentiel.ordered_item_types.indexOf(
+        ActionType.ACTION
       );
+      if (actionLevel === -1) {
+        throw new HttpException(
+          `Action type ${ActionType.ACTION} not found for referentiel ${referentielId}`,
+          500
+        );
+      }
+      return this.computeScore(
+        referentiel.items_tree!,
+        personnalisationConsequences,
+        actionStatuts,
+        actionLevel
+      );
+    } else {
+      const actionsOrigineMap: {
+        [origineActionId: string]: ReferentielActionOrigineWithScoreType;
+      } = {};
+
+      const referentielAvecScore = this.buildReferentielAvecScore(
+        referentiel.items_tree!,
+        actionsOrigineMap
+      );
+
+      // Recompute scores for origine referentiels
+      // TODO: get already computed scores from database
+      const referentielsOrigine =
+        referentiel.items_tree!.referentiels_origine || [];
+      const referentielsOriginePromiseScores: Promise<ReferentielActionWithScoreType>[] =
+        [];
+      referentielsOrigine.forEach((referentielOrigine) => {
+        referentielsOriginePromiseScores.push(
+          this.computeScoreForCollectivite(
+            referentielOrigine as ReferentielType,
+            collectiviteId,
+            {
+              ...parameters,
+              avec_referentiels_origine: false,
+            }
+          )
+        );
+      });
+      const referentielsOrigineScores = await Promise.all(
+        referentielsOriginePromiseScores
+      );
+      const scoreMap: GetActionScoresResponseType = {};
+      referentielsOrigineScores.forEach((referentielOrigineScore) => {
+        this.fillScoreMap(referentielOrigineScore, scoreMap);
+      });
+
+      // Apply scores to origine actions
+      const actionOrigines = Object.keys(actionsOrigineMap);
+      if (!actionOrigines.includes('cae_6.3.1.3.2')) {
+        this.logger.warn(`Missing action origine`);
+      } else {
+        this.logger.log(`Found action origine cae_6.3.1.3.2`);
+      }
+      actionOrigines.forEach((origineActionId) => {
+        const origineAction = actionsOrigineMap[origineActionId];
+        if (scoreMap[origineActionId]) {
+          origineAction.score = this.getActionPointScore(
+            scoreMap[origineActionId]
+          );
+        } else {
+          this.logger.warn(
+            `Score not found for origine action ${origineActionId}`
+          );
+        }
+      });
+
+      this.affectScoreRecursivelyFromOrigineActions(referentielAvecScore);
+      //Reset original scores at the root level (not exactly the same in case some action have been removed in new referentiel)
+      referentielsOrigineScores.forEach((referentielOrigineScore) => {
+        referentielAvecScore.scores_origine![
+          referentielOrigineScore.action_id!
+        ] = this.getActionPointScore(referentielOrigineScore.score);
+      });
+
+      return referentielAvecScore;
     }
-    return this.computeScore(
-      referentiel.items_tree!,
-      personnalisationConsequences,
-      actionStatuts,
-      actionLevel
+  }
+
+  updateFromOrigineActions(
+    referentielActionWithScore: ReferentielActionWithScoreType,
+    roundingDigits = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+  ) {
+    const initialScore = referentielActionWithScore.score;
+    const origineActions = referentielActionWithScore.actions_origine;
+    const originePointsPotentiels = origineActions?.reduce(
+      (acc, origineAction) =>
+        acc +
+        (origineAction.score?.point_potentiel || 0) *
+          (origineAction.ponderation || 1),
+      0
+    );
+    const referentielPointsPotentiels = !isNil(initialScore.point_potentiel)
+      ? initialScore.point_potentiel
+      : initialScore.point_referentiel;
+    const ratio = originePointsPotentiels
+      ? (referentielPointsPotentiels || 0) / originePointsPotentiels
+      : 0;
+
+    initialScore.point_fait = roundTo(
+      ratio *
+        (origineActions?.reduce(
+          (acc, origineAction) =>
+            acc +
+            (origineAction.score?.point_fait || 0) *
+              (origineAction.ponderation || 1),
+          0
+        ) || 0),
+      roundingDigits
+    );
+
+    initialScore.point_programme = roundTo(
+      ratio *
+        (origineActions?.reduce(
+          (acc, origineAction) =>
+            acc +
+            (origineAction.score?.point_programme || 0) *
+              (origineAction.ponderation || 1),
+          0
+        ) || 0),
+      roundingDigits
+    );
+    initialScore.point_pas_fait = roundTo(
+      ratio *
+        (origineActions?.reduce(
+          (acc, origineAction) =>
+            acc +
+            (origineAction.score?.point_pas_fait || 0) *
+              (origineAction.ponderation || 1),
+          0
+        ) || 0),
+      roundingDigits
+    );
+
+    // If new action (no origine actions), set non renseigne to all points
+    initialScore.point_non_renseigne = origineActions?.length
+      ? roundTo(
+          ratio *
+            (origineActions?.reduce(
+              (acc, origineAction) =>
+                acc +
+                (origineAction.score?.point_non_renseigne || 0) *
+                  (origineAction.ponderation || 1),
+              0
+            ) || 0),
+          roundingDigits
+        )
+      : referentielPointsPotentiels;
+
+    // Update origine score
+    referentielActionWithScore.scores_origine = {};
+    referentielActionWithScore.referentiels_origine?.forEach(
+      (referentielid) => {
+        const origineReferentielActions =
+          referentielActionWithScore.actions_origine?.filter(
+            (action) => action.referentiel_id === referentielid
+          );
+        referentielActionWithScore.scores_origine![referentielid] = {
+          point_fait: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc + (action.score?.point_fait || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+          point_programme: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc + (action.score?.point_programme || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+          point_pas_fait: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc + (action.score?.point_pas_fait || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+          point_non_renseigne: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc +
+                (action.score?.point_non_renseigne || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+          point_potentiel: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc + (action.score?.point_potentiel || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+          point_referentiel: roundTo(
+            origineReferentielActions?.reduce(
+              (acc, action) =>
+                acc +
+                (action.score?.point_referentiel || 0) * action.ponderation,
+              0
+            ) || 0,
+            roundingDigits
+          ),
+        };
+      }
     );
   }
 
+  affectScoreRecursivelyFromOrigineActions(
+    referentielActionWithScore: ReferentielActionWithScoreType
+  ) {
+    if (referentielActionWithScore.actions_enfant?.length) {
+      referentielActionWithScore.actions_enfant.forEach((actionEnfant) => {
+        this.affectScoreRecursivelyFromOrigineActions(actionEnfant);
+      });
+    }
+
+    if (referentielActionWithScore.action_type === ActionType.SOUS_ACTION) {
+      this.updateFromOrigineActions(referentielActionWithScore);
+    } else {
+      // Consolidate score from children
+      this.mergeScoresEnfants(
+        referentielActionWithScore.score,
+        referentielActionWithScore.actions_enfant.map((enfant) => enfant.score)
+      );
+      referentielActionWithScore.scores_origine = {};
+      referentielActionWithScore.referentiels_origine?.forEach(
+        (referentielId) => {
+          const originalConsolidatedScore: ActionPointScoreType = {
+            point_fait: 0,
+            point_programme: 0,
+            point_pas_fait: 0,
+            point_non_renseigne: 0,
+            point_potentiel: 0,
+            point_referentiel: 0,
+          };
+          this.mergePointScoresEnfants(
+            originalConsolidatedScore,
+            referentielActionWithScore.actions_enfant.map((enfant) =>
+              enfant.scores_origine && enfant.scores_origine[referentielId]
+                ? enfant.scores_origine[referentielId]
+                : {
+                    point_fait: 0,
+                    point_programme: 0,
+                    point_pas_fait: 0,
+                    point_non_renseigne: 0,
+                    point_potentiel: 0,
+                    point_referentiel: 0,
+                  }
+            ),
+            true
+          );
+          referentielActionWithScore.scores_origine![referentielId] =
+            originalConsolidatedScore;
+        }
+      );
+    }
+
+    // now that the score has been consolidated, we can compute the score by tag
+    if (referentielActionWithScore.tags) {
+      referentielActionWithScore.tags.forEach((tag) => {
+        referentielActionWithScore.scores_tag[tag] = referentielActionWithScore.score;
+      });
+    }
+    // Get all tags from children
+    const allTags =[...new Set(referentielActionWithScore.actions_enfant.map((enfant) => Object.keys(enfant.scores_tag)).flat()).values()];
+    allTags.forEach((tag) => {
+      // if the full score has not bee affected yet (= tag on parent)
+      if (!referentielActionWithScore.scores_tag[tag]) {
+        const scoreEnfant = referentielActionWithScore.actions_enfant.map((enfant) => enfant.scores_tag[tag] || {point_fait: 0, point_programme: 0, point_pas_fait: 0, point_non_renseigne: 0, point_potentiel: enfant.score.point_potentiel, point_referentiel: enfant.score.point_referentiel});
+        const consolidatedScore: ActionPointScoreType = {
+          point_fait: 0,
+          point_programme: 0,
+          point_pas_fait: 0,
+          point_non_renseigne: 0,
+          point_potentiel: referentielActionWithScore.score.point_potentiel,
+          point_referentiel: referentielActionWithScore.score.point_referentiel,
+        };
+        this.mergePointScoresEnfants(consolidatedScore, scoreEnfant);
+        referentielActionWithScore.scores_tag[tag] = consolidatedScore;
+      }
+    });
+  }
+
   fillScoreMap(
-    score: ReferentielActionAvecScoreType,
+    score: ReferentielActionWithScoreType,
     scoreMap: GetActionScoresResponseType
   ) {
     scoreMap[score.action_id!] = score.score;
@@ -678,7 +1033,7 @@ export default class ReferentielsScoringService {
   }
 
   fillScorePercentageMap(
-    score: ReferentielActionAvecScoreType,
+    score: ReferentielActionWithScoreType,
     scorePercentageMap: { [actionId: string]: number }
   ) {
     scorePercentageMap[score.action_id!] = score.score.point_potentiel
@@ -713,7 +1068,7 @@ export default class ReferentielsScoringService {
     personnalisationConsequences: GetPersonnalitionConsequencesResponseType,
     actionStatuts: GetActionStatutsResponseType,
     actionLevel: number
-  ): ReferentielActionAvecScoreType {
+  ): ReferentielActionWithScoreType {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
       const actionStatut = actionStatuts[actionStatutKey];
@@ -833,7 +1188,7 @@ export default class ReferentielsScoringService {
     const scores = await this.computeScoreForCollectivite(
       referentielId,
       collectiviteId,
-      savedScoreResult.date
+      { date: savedScoreResult.date }
     );
     const scoreMap = this.fillScoreMap(scores, {});
     const getReferentielScores: GetCheckScoresResponseType = {
@@ -846,8 +1201,6 @@ export default class ReferentielsScoringService {
       if (!_.isEqual(savedScore, scoreMap[actionId])) {
         const scoreDiff = this.getScoreDiff(scoreMap[actionId], savedScore);
         if (scoreDiff) {
-          console.log(JSON.stringify(scoreMap[actionId]));
-          console.log(JSON.stringify(savedScore));
           getReferentielScores.differences[actionId] = scoreDiff;
         }
       }
@@ -873,7 +1226,11 @@ export default class ReferentielsScoringService {
     if (savedScore) {
       for (const key of scoreMapKeys) {
         // We ignore renseigne (weird value in python) and point_potentiel_perso for now
-        if (key !== 'renseigne' && key !== 'point_potentiel_perso') {
+        if (
+          key !== 'a_statut' && // Not existing in python code
+          key !== 'renseigne' &&
+          key !== 'point_potentiel_perso'
+        ) {
           // @ts-ignore
           if (!_.isEqual(savedScore[key], computedScore[key])) {
             hasDiff = true;

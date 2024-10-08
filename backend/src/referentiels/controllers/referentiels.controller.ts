@@ -28,4 +28,14 @@ export class ReferentielsController {
   ): Promise<GetReferentielResponseClass> {
     return this.referentielsService.getReferentiel(referentielId, true);
   }
+
+  @AllowPublicAccess()
+  @Get(':referentiel_id/import')
+  @ApiResponse({ type: GetReferentielResponseClass })
+  async importReferentiel(
+    @Param('referentiel_id') referentielId: ReferentielType,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
+  ): Promise<GetReferentielResponseClass> {
+    return this.referentielsService.importReferentiel(referentielId);
+  }
 }

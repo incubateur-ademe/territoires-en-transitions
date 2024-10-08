@@ -2,6 +2,7 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
+import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
 import { getActionStatutsResponseSchema } from '../models/get-action-statuts.response';
@@ -11,7 +12,6 @@ import { getReferentielScoresResponseSchema } from '../models/get-referentiel-sc
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema
@@ -54,7 +54,7 @@ export class ReferentielsScoringController {
     );
   }
 
-  @AllowAnonymousAccess()
+  @AllowPublicAccess()
   @Get('scores')
   @ApiResponse({ type: GetReferentielScoresResponseClass })
   async getReferentielScoring(
@@ -67,12 +67,13 @@ export class ReferentielsScoringController {
       await this.referentielsScoringService.computeScoreForCollectivite(
         referentielId,
         collectiviteId,
-        parameters.date,
+        parameters,
         tokenInfo
       );
     return { date: parameters.date || new Date().toISOString(), scores };
   }
 
+  @AllowPublicAccess()
   @ApiExcludeEndpoint() // Not in documentation
   @Get('check-scores')
   async checkReferentialScore(

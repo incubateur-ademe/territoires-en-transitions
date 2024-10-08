@@ -1,10 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { default as retry, Options } from 'async-retry';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Options, default as retry } from 'async-retry';
 import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
+import { default as _ } from 'lodash';
+import { z } from 'zod';
 import { initApplicationCredentials } from '../../common/services/gcloud.helper';
+import { getPropertyPaths } from '../../common/services/zod.helper';
 import {
   SheetValueInputOption,
   SheetValueRenderOption,
@@ -20,6 +23,9 @@ export default class SheetService {
   readonly RETRY_STRATEGY: Options = {
     minTimeout: 60000, // Wait for 1min due to sheet api quota limitation
   };
+
+  readonly A_CODE_CHAR = 65;
+  readonly DEFAULT_RANGE = 'A:Z';
 
   private authClient:
     | auth.Compute
@@ -175,45 +181,50 @@ export default class SheetService {
   }> {
     const authClient = await this.getAuthClient();
 
-    const sheetValues = await retry(
+    const sheetValues = await this.executeWithQuotaRetry(
       async (
         bail: (e: Error) => void,
         _num: number
       ): Promise<sheets_v4.Schema$ValueRange | undefined> => {
-        try {
-          const getOptions: sheets_v4.Params$Resource$Spreadsheets$Values$Get =
-            {
-              auth: authClient,
-              spreadsheetId: spreadsheetId,
-              range: range,
-              valueRenderOption: valueRenderOption,
-            };
-          this.logger.log(
-            `Get raw data from sheet ${spreadsheetId} with range ${range} (attempt ${_num})`
-          );
-          const sheetResponse = await sheets.spreadsheets.values.get(
-            getOptions
-          );
-          return sheetResponse.data;
-        } catch (error) {
-          this.logger.error(error);
-          if (error instanceof gaxios.GaxiosError) {
-            const gaxiosError = error as gaxios.GaxiosError;
-            this.logger.error(
-              `Error while retrieving sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
-            );
-            if (error.status === 429) {
-              this.logger.log(`Error due to api quota limitation, retrying`);
-              throw error;
-            }
-          }
-          bail(error as Error);
-        }
-      },
-      {}
+        const getOptions: sheets_v4.Params$Resource$Spreadsheets$Values$Get = {
+          auth: authClient,
+          spreadsheetId: spreadsheetId,
+          range: range,
+          valueRenderOption: valueRenderOption,
+        };
+        this.logger.log(
+          `Get raw data from sheet ${spreadsheetId} with range ${range} (attempt ${_num})`
+        );
+        const sheetResponse = await sheets.spreadsheets.values.get(getOptions);
+        return sheetResponse.data;
+      }
     );
 
     return { data: sheetValues?.values || null };
+  }
+
+  async executeWithQuotaRetry<T>(
+    fn: (bail: (err: Error) => void, num: number) => Promise<T>
+  ): Promise<T> {
+    return retry(async (bail, num): Promise<T | undefined> => {
+      try {
+        return await fn(bail, num);
+      } catch (error) {
+        this.logger.error(error);
+        if (error instanceof gaxios.GaxiosError) {
+          const gaxiosError = error as gaxios.GaxiosError;
+          this.logger.error(
+            `Error while executing function: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
+          );
+          if (error.status === 429) {
+            this.logger.log(`Quota limitation, retrying`);
+            throw error;
+          }
+        }
+        // No need to retry
+        bail(error as Error);
+      }
+    }, this.RETRY_STRATEGY) as Promise<T>;
   }
 
   async overwriteRawDataToSheet(
@@ -223,38 +234,164 @@ export default class SheetService {
     valueInputOption?: SheetValueInputOption
   ) {
     const authClient = await this.getAuthClient();
-    await retry(
+    await this.executeWithQuotaRetry(
       async (bail: (e: Error) => void, num: number): Promise<void> => {
-        try {
-          this.logger.log(
-            `Overwrite data to sheet ${spreadsheetId} in range ${range} (attempt ${num})`
-          );
-          await sheets.spreadsheets.values.update({
-            auth: authClient,
-            spreadsheetId,
-            range: range,
-            valueInputOption: valueInputOption || SheetValueInputOption.RAW,
-            requestBody: {
-              values: data,
-            },
-          });
-        } catch (error) {
-          this.logger.error(error);
-          if (error instanceof gaxios.GaxiosError) {
-            const gaxiosError = error as gaxios.GaxiosError;
-            this.logger.error(
-              `Error while overwriting sheet data: status ${gaxiosError.status}, code ${gaxiosError.code}, message: ${gaxiosError.message}`
+        this.logger.log(
+          `Overwrite data to sheet ${spreadsheetId} in range ${range} (attempt ${num})`
+        );
+        await sheets.spreadsheets.values.update({
+          auth: authClient,
+          spreadsheetId,
+          range: range,
+          valueInputOption: valueInputOption || SheetValueInputOption.RAW,
+          requestBody: {
+            values: data,
+          },
+        });
+      }
+    );
+  }
+
+  getDefaultRangeFromHeader(header: string[], sheetName?: string): string {
+    const numLetters = header.length;
+    let rangeEnd = '';
+    const quotient = Math.floor(numLetters / 26);
+    const remainder = numLetters % 26;
+    if (quotient > 0) {
+      rangeEnd += String.fromCharCode(this.A_CODE_CHAR + quotient - 1);
+    }
+    rangeEnd += String.fromCharCode(this.A_CODE_CHAR + remainder - 1);
+    const rangeWithoutSheet = `A:${rangeEnd}`;
+    if (sheetName) {
+      return `${sheetName}!${rangeWithoutSheet}`;
+    }
+    return rangeWithoutSheet;
+  }
+
+  async getDataFromSheet<T>(
+    spreadsheetId: string,
+    schema: z.ZodObject<any>,
+    range?: string,
+    idProperties?: string[]
+  ): Promise<{ data: T[]; header: string[] | null }> {
+    const expectedHeader = getPropertyPaths(schema);
+    this.logger.log(
+      `Found schema for sheet with expected header ${expectedHeader}`
+    );
+    if (!range) {
+      range = this.getDefaultRangeFromHeader(expectedHeader);
+      this.logger.log(`Use default range ${range} from schema`);
+    } else {
+      this.logger.log(`Use range ${range} for schema`);
+    }
+
+    const data: any[] = [];
+    let header: string[] | null = null;
+    const readDataResult = await this.getRawDataFromSheet(
+      spreadsheetId,
+      range || this.DEFAULT_RANGE
+    );
+    if (readDataResult.data) {
+      header = readDataResult.data[0];
+      for (let iRow = 1; iRow < readDataResult.data.length; iRow++) {
+        const dataRecord: any = {};
+        const row = readDataResult.data[iRow];
+        for (let iField = 0; iField < row.length; iField++) {
+          if (header[iField]) {
+            const fieldName = header[iField].trim();
+            const fieldNameSchema = expectedHeader.find(
+              (header) => header.toLowerCase() === fieldName.toLowerCase()
             );
-            if (error.status === 429) {
-              this.logger.log(`Quota error, retrying`);
-              throw error;
+            let fieldDef =
+              fieldNameSchema && schema.shape
+                ? schema.shape[fieldNameSchema]
+                : null;
+            if (fieldDef instanceof z.ZodOptional) {
+              fieldDef = fieldDef.unwrap();
+            }
+            if (fieldDef instanceof z.ZodNullable) {
+              fieldDef = fieldDef.unwrap();
+            }
+            // Skip empty fields, warning: 0 is not empty
+            if (
+              fieldNameSchema &&
+              row[iField] !== undefined &&
+              row[iField] !== null &&
+              row[iField] !== ''
+            ) {
+              let value: string | number | boolean = `${row[iField]}`.trim();
+              // Always save original field name, to be able to keep it for debugging
+              _.set(dataRecord, fieldNameSchema, value);
+
+              //logger.info(`Found field ${fieldName} with value ${row[iField]}`);
+
+              // try to parse as float
+              if (fieldDef instanceof z.ZodNumber) {
+                // Remove spaces
+                const valueWithoutSpace = value.replace(/\s/g, '');
+                //console.log(valueWithoutSpace);
+                let floatValue = parseFloat(valueWithoutSpace);
+                if (!isNaN(floatValue)) {
+                  //console.log(`Parsed as float ${floatValue}`);
+                  // Try to replace , by .
+                  floatValue = parseFloat(valueWithoutSpace.replace(/,/g, '.'));
+                  //console.log(`Parsed as float ${floatValue}`);
+                  const floatValueStr = floatValue.toString();
+                  if (
+                    fieldNameSchema ||
+                    floatValueStr.length === value.length
+                  ) {
+                    value = floatValue;
+                  }
+                }
+              } else if (fieldDef instanceof z.ZodBoolean) {
+                // Remove spaces
+                const valueWithoutSpace = value
+                  .replace(/\s/g, '')
+                  .toLowerCase();
+                value = valueWithoutSpace === 'true' ? true : false;
+              }
+              _.set(dataRecord, fieldNameSchema, value);
             }
           }
-          // No need to trigger retry if it's not a quota error
-          bail(error as Error);
         }
-      },
-      this.RETRY_STRATEGY
-    );
+
+        if (Object.keys(dataRecord).length > 0) {
+          // lines without id are ignored
+          let missingIdProperties = false;
+          if (idProperties) {
+            missingIdProperties = idProperties.some((idProperty) =>
+              _.isNil(dataRecord[idProperty])
+            );
+          }
+          if (!missingIdProperties) {
+            try {
+              const parsedDataRecord = schema.parse(dataRecord);
+              data.push(parsedDataRecord);
+            } catch (e) {
+              let errorMessage = `Invalid sheet record on line ${iRow} ${JSON.stringify(
+                dataRecord
+              )}`;
+              this.logger.error(errorMessage);
+              this.logger.error(e);
+              if (e instanceof z.ZodError) {
+                const errorList = e.errors.map((error) => {
+                  return `${error.path.join('.')} - ${error.message} (${
+                    error.code
+                  })`;
+                });
+                errorMessage += `: ${errorList.join(', ')}`;
+              }
+              throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+            }
+          } else {
+            this.logger.debug(`Missing id properties on line ${iRow}`);
+          }
+        } else {
+          this.logger.warn(`Empty record on line ${iRow}`);
+        }
+      }
+    }
+    return { data, header };
   }
 }
