@@ -12,11 +12,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
@@ -27,6 +24,7 @@ import {
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -40,8 +38,6 @@ const ModalActionsRecemmentModifiees = ({
 }: Props) => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
-
-  const { data: plansActions } = usePlansActionsListe({});
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
@@ -60,18 +56,12 @@ const ModalActionsRecemmentModifiees = ({
       render={() => (
         <FormSection title="Filtrer sur :" className="!grid-cols-1">
           <Field title="Plans d'action">
-            <SelectMultiple
+            <PlansActionDropdown
               values={filtreState.planActionIds}
-              options={
-                plansActions?.plans.map((p) => ({
-                  label: generateTitle(p.nom),
-                  value: p.id,
-                })) ?? []
-              }
-              onChange={({ values }) =>
+              onChange={({ plans }) =>
                 setFiltreState({
                   ...filtreState,
-                  planActionIds: values as number[],
+                  planActionIds: plans,
                 })
               }
             />

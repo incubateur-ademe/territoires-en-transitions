@@ -9,11 +9,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-  SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
-import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
@@ -23,6 +20,7 @@ import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;
@@ -37,8 +35,6 @@ const ModalActionsDontJeSuisLePilote = ({
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const userId = useAuth().user?.id;
-
-  const { data: plansActions } = usePlansActionsListe({});
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
@@ -57,18 +53,12 @@ const ModalActionsDontJeSuisLePilote = ({
       render={() => (
         <FormSection title="Filtrer sur :" className="!grid-cols-1">
           <Field title="Plans d'action">
-            <SelectMultiple
+            <PlansActionDropdown
               values={filtreState.planActionIds}
-              options={
-                plansActions?.plans.map((p) => ({
-                  label: generateTitle(p.nom),
-                  value: p.id,
-                })) ?? []
-              }
-              onChange={({ values }) =>
+              onChange={({ plans }) =>
                 setFiltreState({
                   ...filtreState,
-                  planActionIds: values as number[],
+                  planActionIds: plans,
                 })
               }
             />
