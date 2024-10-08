@@ -2,6 +2,7 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
+import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
@@ -13,18 +14,18 @@ import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
-  getReferentielScoresRequestSchema,
+  getReferentielScoresRequestSchema
 ) {}
 class GetReferentielScoresResponseClass extends createZodDto(
-  getReferentielScoresResponseSchema,
+  getReferentielScoresResponseSchema
 ) {}
 
 class GetActionStatutsRequestClass extends createZodDto(
-  getActionStatutsRequestSchema,
+  getActionStatutsRequestSchema
 ) {}
 
 class GetActionStatutsResponseClass extends createZodDto(
-  getActionStatutsResponseSchema,
+  getActionStatutsResponseSchema
 ) {}
 
 @ApiTags('Referentiels')
@@ -33,7 +34,7 @@ export class ReferentielsScoringController {
   private readonly logger = new Logger(ReferentielsScoringController.name);
 
   constructor(
-    private readonly referentielsScoringService: ReferentielsScoringService,
+    private readonly referentielsScoringService: ReferentielsScoringService
   ) {}
 
   @AllowAnonymousAccess()
@@ -43,7 +44,7 @@ export class ReferentielsScoringController {
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetActionStatutsRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<GetActionStatutsResponseClass> {
     return this.referentielsScoringService.getReferentielActionStatuts(
       referentielId,
@@ -53,34 +54,35 @@ export class ReferentielsScoringController {
     );
   }
 
-  @AllowAnonymousAccess()
+  @AllowPublicAccess()
   @Get('scores')
   @ApiResponse({ type: GetReferentielScoresResponseClass })
   async getReferentielScoring(
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetReferentielScoresRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<GetReferentielScoresResponseClass> {
     const scores =
       await this.referentielsScoringService.computeScoreForCollectivite(
         referentielId,
         collectiviteId,
-        parameters.date,
+        parameters,
         tokenInfo
       );
     return { date: parameters.date || new Date().toISOString(), scores };
   }
 
+  @AllowPublicAccess()
   @ApiExcludeEndpoint() // Not in documentation
   @Get('check-scores')
   async checkReferentialScore(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielType
   ): Promise<GetCheckScoresResponseType> {
     return await this.referentielsScoringService.checkScoreForCollectivite(
-        referentielId,
-        collectiviteId,
-      );
+      referentielId,
+      collectiviteId
+    );
   }
 }

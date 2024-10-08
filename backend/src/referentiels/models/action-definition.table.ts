@@ -10,14 +10,21 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { ActionType } from './action-type.enum';
+import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielList } from './referentiel.enum';
 
 // Todo: change it reference another table instead
 export const referentielEnum = pgEnum('referentiel', referentielList);
+
+export enum ActionCategoryType {
+  BASES = 'bases',
+  MISE_EN_OEUVRE = 'mise en œuvre',
+  EFFETS = 'effets',
+}
 export const actionCategorieEnum = pgEnum('action_categorie', [
-  'bases',
-  'mise en œuvre',
-  'effets',
+  ActionCategoryType.BASES,
+  ActionCategoryType.MISE_EN_OEUVRE,
+  ActionCategoryType.EFFETS,
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
@@ -30,6 +37,10 @@ export const actionDefinitionTable = pgTable('action_definition', {
     .notNull(),
   action_id: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
+  referentiel_id: varchar('referentiel_id', { length: 30 })
+    .notNull()
+    .references(() => referentielDefinitionTable.id),
+  referentiel_version: varchar('referentiel_version', { length: 16 }).notNull(),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
   description: text('description').notNull(),
@@ -63,6 +74,37 @@ export const actionDefinitionMinimalWithTypeLevel =
 export const createActionDefinitionSchema = createInsertSchema(
   actionDefinitionTable
 );
+
+export enum ImportActionDefinitionCoremeasureType {
+  COREMEASURE = 'coremeasure',
+}
+
+export const importActionDefinitionSchema = createActionDefinitionSchema
+  .partial({
+    action_id: true,
+    description: true,
+    nom: true,
+    contexte: true,
+    exemples: true,
+    ressources: true,
+    referentiel: true,
+    referentiel_id: true,
+    referentiel_version: true,
+    reduction_potentiel: true,
+    perimetre_evaluation: true,
+  })
+  .extend({
+    categorie: z
+      .string()
+      .toLowerCase()
+      .pipe(z.nativeEnum(ActionCategoryType))
+      .optional(),
+    origine: z.string().optional(),
+    coremeasure: z.string().optional(),
+  });
+export type ImportActionDefinitionType = z.infer<
+  typeof importActionDefinitionSchema
+>;
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
