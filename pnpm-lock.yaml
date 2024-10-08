@@ -151,10 +151,10 @@ importers:
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@3.4.4)(react@18.3.1)
+        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d)(react@18.3.1)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d)(react@18.3.1))(zod@3.23.8)
       echarts:
         specifier: ^5.5.1
         version: 5.5.1
@@ -213,8 +213,8 @@ importers:
         specifier: ^6.9.14
         version: 6.9.15
       postgres:
-        specifier: ^3.4.4
-        version: 3.4.4
+        specifier: github:porsager/postgres#master
+        version: https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d
       posthog-js:
         specifier: ^1.131.3
         version: 1.162.0
@@ -6391,6 +6391,7 @@ packages:
 
   drizzle-orm@0.33.0:
     resolution: {integrity: sha512-SHy72R2Rdkz0LEq0PSG/IdvnT3nGiWuRk+2tXZQ90GVq/XQhpCzu/EFT3V2rox+w8MlkBQxifF8pCStNYnERfA==}
+    version: 0.33.0
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -6480,6 +6481,7 @@ packages:
 
   drizzle-zod@0.5.1:
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
+    version: 0.5.1
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
@@ -9924,8 +9926,9 @@ packages:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
 
-  postgres@3.4.4:
-    resolution: {integrity: sha512-IbyN+9KslkqcXa8AO9fxpk97PA4pzewvpi2B3Dwy9u4zpV32QicaEdgmF3eSQUzdRk7ttDHQejNgAEr4XoeH4A==}
+  postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d:
+    resolution: {tarball: https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d}
+    version: 3.4.4
     engines: {node: '>=12'}
 
   posthog-js@1.162.0:
@@ -20130,17 +20133,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@3.4.4)(react@18.3.1):
+  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d)(react@18.3.1):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/pg': 8.6.1
       '@types/react': 18.3.1
-      postgres: 3.4.4
+      postgres: https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d
       react: 18.3.1
 
-  drizzle-zod@0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@3.4.4)(react@18.3.1))(zod@3.23.8):
+  drizzle-zod@0.5.1(drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d)(react@18.3.1))(zod@3.23.8):
     dependencies:
-      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@3.4.4)(react@18.3.1)
+      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(@types/react@18.3.1)(postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d)(react@18.3.1)
       zod: 3.23.8
 
   duplexer@0.1.2: {}
@@ -24849,7 +24852,7 @@ snapshots:
     dependencies:
       xtend: 4.0.2
 
-  postgres@3.4.4: {}
+  postgres@https://codeload.github.com/porsager/postgres/tar.gz/18186998b89a8ec60b82fd7140783f8833810e2d: {}
 
   posthog-js@1.162.0:
     dependencies:
