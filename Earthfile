@@ -960,8 +960,8 @@ app-deploy: ## Déploie le front dans une app Koyeb existante
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
     LOCALLY
-    ## limite des noms dans Koyeb : 23 caractères. Comme on prefixe avec test-app-, 
-    ## on garde 14 caractères max dans le nom de la branche.
+    ## Limite des noms dans Koyeb : 23 caractères. 
+    ## Comme on prefixe avec test-app-, on garde 14 caractères max dans le nom de la branche.
     ## En octobre 2024, Koyeb applique cette règle sur les noms des apps déployées :
     ## ^[a-z0-9]+([.-][a-z0-9]+)*$ and from 3 to 23 chars
     ## (info récupérée auprès du service support)
