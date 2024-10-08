@@ -6,7 +6,7 @@ import {
   ButtonMenu,
   Checkbox,
   Field,
-  Icon,
+  InfoTooltip,
   OptionValue,
   SelectMultiple,
   SelectMultipleOnChangeArgs,
@@ -74,16 +74,16 @@ export const BadgesFilters = ({
       badge.filter.onChange(badge.filter.value ?? false);
     } else {
       const values: OptionValue[] | undefined = badge.filter.values?.filter(
-        v => v !== badge.value,
+        (v) => v !== badge.value
       );
 
-      badge.filter.onChange({selectedValue, values});
+      badge.filter.onChange({ selectedValue, values });
     }
   };
 
   /** Supprime tous les filtres sélectionnés */
   const handleClearFilters = () => {
-    badgesList?.forEach(badge => {
+    badgesList?.forEach((badge) => {
       if (badge.filter.type === 'checkbox') {
         badge.filter.onChange(false);
       } else {
@@ -99,16 +99,16 @@ export const BadgesFilters = ({
   useEffect(() => {
     const newList: BadgeType[] = [];
 
-    filters.forEach(filter => {
+    filters.forEach((filter) => {
       if (filter.type === 'checkbox') {
         if (filter.value)
-          newList.push({filter, value: 'true', label: filter.title});
+          newList.push({ filter, value: 'true', label: filter.title });
       } else {
         if (filter.values !== undefined) {
           const options = getFlatOptions(filter.options);
 
-          filter.values.forEach(value => {
-            const option = options.find(opt => opt.value === value);
+          filter.values.forEach((value) => {
+            const option = options.find((opt) => opt.value === value);
 
             option &&
               newList.push({
@@ -176,19 +176,19 @@ export const BadgesFilters = ({
         }
       >
         <div className="flex flex-col gap-4 w-72 p-4">
-          {filters.map(filter =>
+          {filters.map((filter) =>
             filter.type === 'checkbox' ? (
-              <div className="flex flex-row" key={filter.title}>
+              <div className="flex flex-row items-end" key={filter.title}>
                 <Checkbox
                   label={filter.title}
                   checked={filter.value}
-                  onChange={evt => filter.onChange(evt.currentTarget.checked)}
+                  onChange={(evt) => filter.onChange(evt.currentTarget.checked)}
                 />
                 {!!filter.tooltip && (
-                  <Icon
-                    icon="information-line"
-                    className="cursor-pointer"
-                    title={filter.tooltip}
+                  <InfoTooltip
+                    iconClassName="text-primary-8"
+                    label={filter.tooltip}
+                    size="md"
                   />
                 )}
               </div>
@@ -201,7 +201,7 @@ export const BadgesFilters = ({
                   small
                 />
               </Field>
-            ),
+            )
           )}
         </div>
       </ButtonMenu>
