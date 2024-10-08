@@ -4,7 +4,6 @@ import Statuts from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/ca
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { Card } from '@tet/ui';
-import { useHistory } from 'react-router-dom';
 
 type Props = {
   /** Plan d'action */
@@ -24,19 +23,17 @@ const PlanActionCard = ({
   openInNewTab,
   display = 'row',
 }: Props) => {
-  const history = useHistory();
-
   const { data } = useFichesActionStatuts({
     plan_ids: plan.id.toString(),
   });
 
   const statuts = data?.par_statut;
 
-  const count = plan.axes?.reduce(
+  const axesCount = plan.axes?.reduce(
     (acc: { axe: number; sousAxe: number }, axe: Axe) => {
       if (axe.parent === plan.id) {
         acc.axe++;
-      } else {
+      } else if (axe.parent) {
         acc.sousAxe++;
       }
       return acc;
@@ -54,18 +51,18 @@ const PlanActionCard = ({
       external={openInNewTab}
       className="gap-0 !p-4 hover:bg-white"
     >
-      {/** Nom */}
-      <span className="mb-2 font-bold text-primary-9">
-        {generateTitle(plan.nom)}
-      </span>
-      {/** Type */}
-      {/** TODO : Afficher le vrai type de plan en adaptant au nouveaux types */}
-      {(plan.type || true) && (
-        <span className="text-sm font-medium text-grey-8 uppercase">
-          {/* {plan.type.type} */}
-          Fake Type
+      <div className="flex flex-col gap-2">
+        {/** Nom */}
+        <span className="font-bold text-primary-9">
+          {generateTitle(plan.nom)}
         </span>
-      )}
+        {/** Type */}
+        {plan.type && (
+          <span className="text-sm font-medium text-grey-8 uppercase">
+            {plan.type.type}
+          </span>
+        )}
+      </div>
       {/** Statuts de fiches */}
       {statuts && (
         <Statuts
@@ -77,12 +74,13 @@ const PlanActionCard = ({
       <div className="flex items-center gap-2 text-sm font-normal text-grey-8">
         {/** Nombre d'axes */}
         <span>
-          {count?.axe ?? 0} axe{count && count.axe > 1 ? 's' : ''}
+          {axesCount?.axe ?? 0} axe{axesCount && axesCount.axe > 1 ? 's' : ''}
         </span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de sous-axes */}
         <span>
-          {count?.sousAxe ?? 0} sous-axe{count && count.sousAxe > 1 ? 's' : ''}
+          {axesCount?.sousAxe ?? 0} sous-axe
+          {axesCount && axesCount.sousAxe > 1 ? 's' : ''}
         </span>
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de fiches */}
