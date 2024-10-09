@@ -149,10 +149,10 @@ export async function fetchFilteredIndicateurs(
   }
 
   // par plan
-  if (filtrerPar.planAction) {
+  if (filtrerPar.planAction && filters.planActionIds?.length) {
     query.in(
       'fiche_action_indicateur.fiche_action.fiche_action_axe.axe.plan',
-      filters.planActionIds!
+      filters.planActionIds
     );
   }
 
@@ -185,12 +185,9 @@ export async function fetchFilteredIndicateurs(
   }
 
   // par service pilote
-  if (filtrerPar.service) {
+  if (filtrerPar.service && filters.servicePiloteIds?.length) {
     query.eq('indicateur_service_tag.collectivite_id', collectiviteId);
-    query.in(
-      'indicateur_service_tag.service_tag_id',
-      filters.servicePiloteIds!
-    );
+    query.in('indicateur_service_tag.service_tag_id', filters.servicePiloteIds);
   }
 
   // par personne pilote
@@ -212,7 +209,7 @@ export async function fetchFilteredIndicateurs(
 
   // participation au score CAE
   if (filtrerPar.participationAuScore) {
-    query.is('participation_score', filters.participationScore!);
+    query.is('participation_score', filters.participationScore ?? false);
   }
 
   // On ajoute toujours le filtre sur les valeurs de la collectivité
