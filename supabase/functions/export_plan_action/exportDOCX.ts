@@ -134,7 +134,7 @@ export const exportFiche = (
     Heading2('Indicateurs liés'),
     ...BulletsList(fiche.indicateurs, 'titre'),
     Heading2('Résultats attendus'),
-    ...Bullets(fiche.resultats_attendus),
+    ...BulletsList(fiche.resultats_attendus),
 
     Heading1('Acteurs'),
     Heading2('Cibles'),

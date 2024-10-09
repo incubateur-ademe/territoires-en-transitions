@@ -91,7 +91,7 @@ const exportPlan = (
       worksheet.getCell(data_cols.indicateurs + ligne_courante).value =
         joinTitres(fiche.indicateurs);
       worksheet.getCell(data_cols.resultats_attendus + ligne_courante).value =
-        fiche.resultats_attendus?.join(', ');
+        joinNames(fiche.resultats_attendus);
 
       // Acteurs
       worksheet.getCell(data_cols.cibles + ligne_courante).value =
