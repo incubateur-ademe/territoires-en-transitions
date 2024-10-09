@@ -7,6 +7,7 @@ import {ReactComponent as PictoCarte} from './carte.svg';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
+  recherchesPath,
 } from 'app/paths';
 
 const CollectivitesEngagees = () => {
@@ -17,7 +18,7 @@ const CollectivitesEngagees = () => {
       <Route path={finaliserMonInscriptionUrl}>
         <FinaliserMonInscription />
       </Route>
-      <Route path={recherchesCollectivitesUrl}>
+      <Route path={recherchesPath}>
         <DecouvrirLesCollectivites sansCollectivite={sansCollectivite} />
       </Route>
     </>
