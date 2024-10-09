@@ -12,10 +12,6 @@ import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/Ind
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import {
-  factoryIndicateurInsertToIndicateurListItem,
-  factoryIndicateurListItemToIndicateurInsert,
-} from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/utils';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
