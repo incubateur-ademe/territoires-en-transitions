@@ -1,7 +1,7 @@
+import { FicheResume } from '@tet/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
-import { FicheResume } from '../../FicheAction/data/types';
 import { fetchActionImpactId } from '../../FicheAction/data/useFicheActionImpactId';
 import { sortFichesResume } from '../../FicheAction/data/utils';
 

@@ -96,6 +96,7 @@ export const ficheActionSchema = z.object({
     .or(z.string().datetime({ offset: true }))
     .nullish(),
   financements: z.string().nullish(),
+  actionImpactId: z.string().uuid().nullish(),
 
   // Champ calculé
   planId: z.number().nullish(),
@@ -129,7 +130,7 @@ export type FicheActionInsert = z.infer<typeof ficheActionInsertSchema>;
 
 export const ficheActionUpdateSchema = ficheActionSchema.extend({});
 
-export const resumeSchema = ficheActionSchema
+export const ficheResumeSchema = ficheActionSchema
   .pick({
     id: true,
     collectiviteId: true,
@@ -144,6 +145,7 @@ export const resumeSchema = ficheActionSchema
     plans: true,
     planId: true,
     services: true,
+    actionImpactId: true,
   })
   .extend({
     plans: axeSchema
@@ -152,4 +154,4 @@ export const resumeSchema = ficheActionSchema
       .nullish(),
   });
 
-export type FicheResume = z.infer<typeof resumeSchema>;
+export type FicheResume = z.infer<typeof ficheResumeSchema>;

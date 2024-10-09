@@ -1,4 +1,4 @@
-import { resumeSchema } from '@tet/api/plan-actions';
+import { ficheResumeSchema } from '@tet/api/plan-actions';
 import { personneSchema, tagSchema } from '@tet/api/shared/domain';
 import { z } from 'zod';
 import { definitionSchema } from './definition.schema';
@@ -17,8 +17,8 @@ const plusValeur = z.object({
 const plusDetailsCollectivite = z.object({
   services: z.number().array(), // Lise d'id
   pilotes: personneSchema.array(),
-  fiches: resumeSchema.array(),
-  fichesNonClassees: resumeSchema.array(),
+  fiches: ficheResumeSchema.array(),
+  fichesNonClassees: ficheResumeSchema.array(),
   categoriesUtilisateur: tagSchema.array(),
 });
 
