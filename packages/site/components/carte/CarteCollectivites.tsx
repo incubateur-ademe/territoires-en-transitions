@@ -8,28 +8,27 @@ import {
   region_w_geojson,
   useCarteCollectivitesEngagees,
 } from './useCarteCollectivitesEngagees';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 export type FiltresLabels =
-  | 'engagees'
-  | 'labellisees_eci'
+  | 'toutes'
   | 'labellisees_cae'
-  | 'cot';
+  | 'labellisees_eci'
+  | 'cot'
+  | 'actives';
 
 type CarteCollectivitesProps = {
   filtre: FiltresLabels;
   etoiles: number[];
   forcedZoom?: number;
-  displayLabellisee?: boolean;
 };
 
 const CarteCollectivites = ({
   filtre,
   etoiles,
   forcedZoom,
-  displayLabellisee = false,
 }: CarteCollectivitesProps) => {
-  const {data} = useCarteCollectivitesEngagees();
+  const { data, isLoading } = useCarteCollectivitesEngagees();
   const [localData, setLocalData] = useState(data);
 
   const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
@@ -60,7 +59,7 @@ const CarteCollectivites = ({
             regions: region_w_geojson[];
           }
         | null
-        | undefined,
+        | undefined
     ) => {
       if (data) {
         return {
@@ -79,15 +78,15 @@ const CarteCollectivites = ({
       let tempCollectivites = data.collectivites;
       if (filtre === 'labellisees_cae')
         tempCollectivites = tempCollectivites.filter(
-          c => c.cae_etoiles && etoiles.includes(c.cae_etoiles),
+          (c) => c.cae_etoiles && etoiles.includes(c.cae_etoiles)
         );
       if (filtre === 'labellisees_eci')
         tempCollectivites = tempCollectivites.filter(
-          c => c.eci_etoiles && etoiles.includes(c.eci_etoiles),
+          (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
         );
       if (filtre === 'cot')
-        tempCollectivites = tempCollectivites.filter(c => c.cot === true);
-      setLocalData(prevData => {
+        tempCollectivites = tempCollectivites.filter((c) => c.cot === true);
+      setLocalData((prevData) => {
         if (!prevData) return prevData;
         else
           return {
@@ -98,23 +97,26 @@ const CarteCollectivites = ({
     }
   }, [filtre, etoiles, data]);
 
+  if (isLoading)
+    return (
+      <div className="text-grey-8 flex items-center justify-center mx-auto max-md:my-9 md:my-20">
+        <p>Chargement...</p>
+      </div>
+    );
+
   if (!localData) return null;
 
   return (
     <CarteContainer forcedZoom={forcedZoom}>
       {localData.regions
-        .filter(r => !!r.geojson)
-        .map(r => (
+        .filter((r) => !!r.geojson)
+        .map((r) => (
           <RegionFeature region={r} key={r.insee} />
         ))}
       {localData.collectivites
-        .filter(c => !!c.geojson)
-        .map(c => (
-          <CollectiviteFeature
-            collectivite={c}
-            key={c.collectivite_id}
-            displayLabellisee={displayLabellisee}
-          />
+        .filter((c) => !!c.geojson)
+        .map((c) => (
+          <CollectiviteFeature collectivite={c} key={c.collectivite_id} />
         ))}
     </CarteContainer>
   );
