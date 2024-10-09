@@ -1,15 +1,10 @@
-from business.utils.models.identite import IdentiteCollectivite
-from business.utils.models.reponse import Reponse
-from business.evaluation.personnalisation.regles_parser import ReglesParser
 from business.evaluation.personnalisation.execute_personnalisation_regles import (
-    execute_personnalisation_regles,
-    ActionPersonnalisationConsequence,
-)
-from business.utils.models.regles import (
-    ActionRegles,
-    Regle,
-)
+  ActionPersonnalisationConsequence, execute_personnalisation_regles)
+from business.evaluation.personnalisation.regles_parser import ReglesParser
 from business.utils.models.actions import ActionId
+from business.utils.models.identite import IdentiteCollectivite
+from business.utils.models.regles import ActionRegles, Regle
+from business.utils.models.reponse import Reponse
 
 
 def test_execute_personnalisation_regles_when_all_reponses_are_given():
@@ -122,5 +117,30 @@ def test_execute_personnalisation_regles_with_reduction_depends_on_score():
             desactive=None,
             potentiel_perso=None,
             score_formule="min(score(cae_1.2.3), 0.16666666666666666)",
+        )
+    }
+
+def test_execute_personnalisation_regles_without_answer():
+    regles_parser = ReglesParser(
+        [
+            ActionRegles(
+                ActionId("cae_6.3.1"),
+                [
+                    Regle(
+                        "si identite(type, commune) alors max (reponse(dev_eco_2), 2/8) \n",
+                        "reduction",
+                    ),
+                ],
+            )
+        ]
+    )
+    reponses = [Reponse("dev_eco_4", "NON")]
+    identite = IdentiteCollectivite(type={"commune"})
+
+    assert execute_personnalisation_regles(regles_parser, reponses, identite) == {
+        ActionId("cae_6.3.1"): ActionPersonnalisationConsequence(
+            desactive=None,
+            potentiel_perso=None,
+            score_formule=None,
         )
     }

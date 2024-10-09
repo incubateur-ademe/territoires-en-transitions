@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "jest-e2e.config.ts",
+    "test/**/*.e2e-spec.ts",
+    "src/**/*.d.ts"
+  ]
+}

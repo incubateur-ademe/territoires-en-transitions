@@ -1,7 +1,7 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
-import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
+import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { versionResponseSchema } from '../models/version.models';
 
 /**
@@ -10,7 +10,7 @@ import { versionResponseSchema } from '../models/version.models';
 export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
 @Controller()
 export class VersionController {
-  @PublicEndpoint()
+  @AllowPublicAccess()
   @Get('version')
   @ApiOkResponse({
     type: VersionResponseClass,
