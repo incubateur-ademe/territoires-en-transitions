@@ -76,7 +76,7 @@ export const ficheActionSchema = z.object({
   niveauPriorite: niveauPrioriteSchema.nullish(),
   cibles: cibleSchema.array().nullish(),
   restreint: z.boolean().nullish(),
-  effetsAttendus: effetsAttendus.array().nullish(),
+  resultatsAttendus: effetsAttendus.array().nullish(),
   objectifs: z.string().nullish(),
   budgetPrevisionnel: z.number().nullish(),
   calendrier: z.string().nullish(),

@@ -18,7 +18,7 @@ const IndicateursHeader = ({
 }: IndicateursHeaderProps) => {
   const [isFullObjectifs, setIsFullObjectifs] = useState(false);
 
-  const { objectifs, effetsAttendus } = fiche;
+  const { objectifs, resultatsAttendus: effetsAttendus } = fiche;
 
   const {
     truncatedText: truncatedObjectifs,

@@ -6,18 +6,11 @@ import { objectToCamel, objectToSnake } from 'ts-case-convert';
 
 /** Upsert une fiche action pour une collectivité */
 const upsertFicheAction = async (fiche: FicheAction) => {
-  const ficheToUpdateThroughPGView = ficheActionSchema
-    .omit({
-      planId: true,
-      plans: true,
-      modifiedAt: true,
-      createdAt: true,
-    })
-    .parse(fiche);
-
+  //  TEMPORARY : à terme supprimer le passage par la vue fiches_action
+  // et mettre à jour directement via la table fiche_action (en passant par le backend)
   let query = supabaseClient
     .from('fiches_action')
-    .insert(objectToSnake(ficheToUpdateThroughPGView) as any)
+    .insert(objectToSnake(fiche) as any)
     .select()
     .single();
 
