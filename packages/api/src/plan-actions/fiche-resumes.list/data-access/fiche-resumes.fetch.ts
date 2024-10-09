@@ -129,6 +129,10 @@ export async function ficheResumesFetch({
   // 3. Ajoute les clauses correspondant aux filtres
   // 👇
 
+  if (filtre.ficheActionIds?.length) {
+    query.in('id', filtre.ficheActionIds);
+  }
+
   if (filtre.planActionIds?.length) {
     query.not('plans', 'is', null);
     query.in('plans.plan', filtre.planActionIds);

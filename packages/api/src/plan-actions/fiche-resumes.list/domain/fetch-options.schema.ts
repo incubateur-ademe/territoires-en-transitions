@@ -33,6 +33,7 @@ export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
  */
 export const filtreSchema = filtreRessourceLieesSchema
   .pick({
+    ficheActionIds: true,
     planActionIds: true,
     referentielActionIds: true,
     linkedFicheActionIds: true,

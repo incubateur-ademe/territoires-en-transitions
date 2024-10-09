@@ -17,6 +17,7 @@ export type FicheActionParam =
   | 'bp'
   | 'r'
   | 'il'
+  | 'fa'
   | 'pa'
   | 'ra'
   | 'up'
@@ -49,6 +50,7 @@ export const nameToparams: Record<
   restreint: 'r',
   hasIndicateurLies: 'il',
   planActionIds: 'pa',
+  ficheActionIds: 'fa',
   referentielActionIds: 'ra',
   linkedFicheActionIds: 'lfa',
   utilisateurPiloteIds: 'up',

@@ -88,7 +88,7 @@ export const ficheActionSchema = z.object({
     .or(z.string().datetime({ offset: true }))
     .nullish(),
   financements: z.string().nullish(),
-  actionImpactId: z.string().uuid().nullish(),
+  actionImpactId: z.number().nullish(),
 
   // Champ calculé
   planId: z.number().nullish(),
