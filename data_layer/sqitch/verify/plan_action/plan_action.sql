@@ -2,6 +2,8 @@
 
 BEGIN;
 
-select has_function_privilege('delete_axe_all(integer)', 'execute');
+SELECT 'Bloqué'::fiche_action_statuts = any(enum_range(null::fiche_action_statuts));
+SELECT 'En retard'::fiche_action_statuts = any(enum_range(null::fiche_action_statuts));
+SELECT 'A discuter'::fiche_action_statuts = any(enum_range(null::fiche_action_statuts));
 
 ROLLBACK;

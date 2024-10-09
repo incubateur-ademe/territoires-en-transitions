@@ -1,13 +1,19 @@
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
-import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {useDeleteTag} from 'ui/dropdownLists/tags/useTagDelete';
-import {useTagUpdate} from 'ui/dropdownLists/tags/useTagUpdate';
-import {useTagCreate} from 'ui/dropdownLists/tags/useTagCreate';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {
+  Option,
+  OptionValue,
+  SelectFilter,
+  SelectMultipleProps,
+} from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useTagCreate } from 'ui/dropdownLists/tags/useTagCreate';
+import { useDeleteTag } from 'ui/dropdownLists/tags/useTagDelete';
+import { useTagUpdate } from 'ui/dropdownLists/tags/useTagUpdate';
 
-import {getPersonneStringId} from './utils';
-import {Personne, usePersonneListe} from './usePersonneListe';
+import { Personne } from '@tet/api/collectivites';
+import { usePersonneListe } from './usePersonneListe';
+import { getPersonneStringId } from './utils';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -23,12 +29,12 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 
 /** Sélecteur de personnes de la collectivité */
 const PersonnesDropdown = (props: Props) => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
-  const {data: personneListe} = usePersonneListe();
+  const { data: personneListe } = usePersonneListe();
 
   const options: Option[] = personneListe
-    ? personneListe.map(personne => ({
+    ? personneListe.map((personne) => ({
         value: getPersonneStringId(personne),
         label: personne.nom!,
         disabled: props.disabledOptionsIds?.includes(
@@ -38,22 +44,22 @@ const PersonnesDropdown = (props: Props) => {
     : [];
 
   const getSelectedPersonnes = (values?: OptionValue[]) =>
-    personneListe?.filter(p =>
-      values?.some(v => v === getPersonneStringId(p))
+    personneListe?.filter((p) =>
+      values?.some((v) => v === getPersonneStringId(p))
     ) ?? [];
 
-  const {mutate: updateTag} = useTagUpdate({
-    key: ['personnes', collectivite_id],
+  const { mutate: updateTag } = useTagUpdate({
+    key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
   });
 
-  const {mutate: deleteTag} = useDeleteTag({
-    key: ['personnes', collectivite_id],
+  const { mutate: deleteTag } = useDeleteTag({
+    key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
   });
 
-  const {data: newTag, mutate: createTag} = useTagCreate({
-    key: ['personnes', collectivite_id],
+  const { data: newTag, mutate: createTag } = useTagCreate({
+    key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
   });
 
@@ -63,11 +69,11 @@ const PersonnesDropdown = (props: Props) => {
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
     if (newTag?.data) {
-      const tag = {
-        collectivite_id: collectivite_id!,
+      const tag: Personne = {
+        collectiviteId: collectiviteId!,
         nom: newTag.data[0].nom,
-        tag_id: newTagId,
-        user_id: null,
+        tagId: newTagId ?? null,
+        userId: null,
       };
 
       props.onChange({
@@ -82,7 +88,7 @@ const PersonnesDropdown = (props: Props) => {
       {...props}
       dataTest={props.dataTest ?? 'personnes'}
       options={options}
-      onChange={({values, selectedValue}) =>
+      onChange={({ values, selectedValue }) =>
         props.onChange({
           personnes: getSelectedPersonnes(values),
           selectedPersonne: getSelectedPersonnes([selectedValue])[0],
@@ -90,29 +96,30 @@ const PersonnesDropdown = (props: Props) => {
       }
       createProps={{
         userCreatedOptions:
-          personneListe?.filter(p => p.tag_id).map(p => p.tag_id!.toString()) ??
-          [],
-        onUpdate: (tag_id, tag_name) => {
+          personneListe
+            ?.filter((p) => p.tagId)
+            .map((p) => p.tagId!.toString()) ?? [],
+        onUpdate: (tagId, tagName) => {
           updateTag({
-            collectivite_id: collectivite_id!,
-            id: parseInt(tag_id as string),
-            nom: tag_name,
+            collectiviteId: collectiviteId!,
+            id: parseInt(tagId as string),
+            nom: tagName,
           });
         },
-        onDelete: tag_id => {
+        onDelete: (tagId) => {
           props.onChange({
             personnes: getSelectedPersonnes(
-              props.values?.filter(v => v !== tag_id)
+              props.values?.filter((v) => v !== tagId)
             ),
             selectedPersonne: getSelectedPersonnes(
-              props.values?.filter(v => v === tag_id)
+              props.values?.filter((v) => v === tagId)
             )[0],
           });
-          deleteTag(parseInt(tag_id as string));
+          deleteTag(parseInt(tagId as string));
         },
-        onCreate: inputValue =>
+        onCreate: (inputValue) =>
           createTag({
-            collectivite_id: collectivite_id!,
+            collectiviteId: collectiviteId!,
             nom: inputValue,
           }),
       }}

@@ -18,7 +18,7 @@ type Props = {
 
 const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
   return (
-    <div className="w-80 flex flex-col gap-8 p-4">
+    <div className="w-96 flex flex-col gap-8 p-4">
       <FormSection title="Pilotage :" className="!grid-cols-1">
         <Field title="Plan d'action">
           <PlansActionDropdown

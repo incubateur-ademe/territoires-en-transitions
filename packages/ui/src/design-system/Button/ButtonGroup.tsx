@@ -3,14 +3,19 @@ import classNames from 'classnames';
 
 import { DefaultButtonProps, ButtonSize } from './types';
 import { Button } from './Button';
+import { buttonGroupTheme } from './theme';
 
 type Props = {
   /** Listes de boutons à afficher avec leurs propriétés */
-  buttons: DefaultButtonProps[];
+  buttons: Omit<DefaultButtonProps, 'variant'>[];
   /** Permet d'ajuster les styles du container */
   className?: string;
+  /** Rempli la place disponible, `false` par défaut */
+  fillContainer?: boolean;
   /** Taille des boutons */
   size?: ButtonSize;
+  /** On ne traite que deux variantes, la primaire et une neutre */
+  variant?: 'primary' | 'neutral';
   /** Id du bouton affiché dans une variante primary */
   activeButtonId?: string;
 };
@@ -22,11 +27,13 @@ export const ButtonGroup = ({
   className,
   size = 'md',
   buttons,
+  variant = 'primary',
   activeButtonId,
+  fillContainer = false,
 }: Props) => {
   /** Applique les bons styles pour les borders et border-radius
    * en fonction de la position du bouton dans le tableau */
-  const getButtonStyles = (index: number): CSSProperties => {
+  const getButtonBorder = (index: number): CSSProperties => {
     if (index === 0) {
       return {
         borderTopRightRadius: 0,
@@ -56,19 +63,28 @@ export const ButtonGroup = ({
   };
 
   return (
-    <div className={classNames('flex items-center', className)}>
-      {buttons.map((props, index) => (
-        <Button
-          key={index}
-          {...props}
-          size={size}
-          variant={
-            props.id && activeButtonId === props.id ? 'primary' : 'outlined'
-          }
-          className="!border-primary-7"
-          style={getButtonStyles(index)}
-        />
-      ))}
+    <div className={classNames('grow flex items-center', className)}>
+      {buttons.map((props, index) => {
+        const state = props.id === activeButtonId ? 'active' : 'default';
+
+        const { text, background, border, icon } =
+          buttonGroupTheme[variant][state][
+            props.disabled ? 'disabled' : 'normal'
+          ];
+
+        return (
+          <Button
+            key={index}
+            {...props}
+            size={size}
+            variant="outlined"
+            className={classNames(text, background, border, icon, {
+              'justify-center flex-1 h-full': fillContainer,
+            })}
+            style={getButtonBorder(index)}
+          />
+        );
+      })}
     </div>
   );
 };

@@ -1,20 +1,20 @@
-import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
+import { IndicateurListItem } from '@tet/api/indicateurs/domain';
 import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import { useIntersectionObserver } from 'utils/useIntersectionObserver';
 
 type Props = {
-  definitions?: TIndicateurListItem[];
+  definitions?: IndicateurListItem[];
   isLoading?: boolean;
-  selectedIndicateurs: TIndicateurListItem[] | null;
-  onSelect: (indicateur: TIndicateurListItem) => void;
+  selectedIndicateurs: IndicateurListItem[] | null;
+  onSelect: (indicateur: IndicateurListItem) => void;
 };
 
 /** Affiche une grille de graphiques d'indicateur */
 const SelectIndicateursGrid = (props: Props) => {
-  const {definitions, isLoading, selectedIndicateurs, onSelect} = props;
+  const { definitions, isLoading, selectedIndicateurs, onSelect } = props;
 
   return (
     <>
@@ -31,7 +31,7 @@ const SelectIndicateursGrid = (props: Props) => {
           </div>
           {/** Grid */}
           <div className="flex flex-col gap-6">
-            {definitions.map(definition => (
+            {definitions.map((definition) => (
               <IndicateurChartContainer
                 key={definition.id}
                 definition={definition}
@@ -55,15 +55,15 @@ const SelectIndicateursGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: TIndicateurListItem[] | null;
-    onSelect: (indicateur: TIndicateurListItem) => void;
+    selectedIndicateurs: IndicateurListItem[] | null;
+    onSelect: (indicateur: IndicateurListItem) => void;
   }
 ) => {
-  const {ref, entry} = useIntersectionObserver();
-  const {definition, selectedIndicateurs, onSelect} = props;
+  const { ref, entry } = useIntersectionObserver();
+  const { definition, selectedIndicateurs, onSelect } = props;
 
   const selected =
-    selectedIndicateurs?.some(i => i.id === definition.id) ?? false;
+    selectedIndicateurs?.some((i) => i.id === definition.id) ?? false;
 
   return (
     <div ref={ref} className="min-h-[5rem]">

@@ -3,7 +3,7 @@ import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
-import {useAxeFiches} from '../data/useAxeFiches';
+import { useAxeFiches } from '../data/useAxeFiches';
 import Fiche from './Fiche';
 import classNames from 'classnames';
 
@@ -16,17 +16,17 @@ type Props = {
   axeId: number;
 };
 
-const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
-  const {data, isLoading} = useAxeFiches({ficheIds, axeId});
+const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
+  const { data, isLoading } = useAxeFiches({ ficheIds, axeId });
 
   return (
     <div
-      className={classNames('grid grid-cols-2 gap-6', {'my-2': !isDndActive})}
+      className={classNames('grid grid-cols-2 gap-6', { 'my-2': !isDndActive })}
     >
       {isLoading
-        ? ficheIds.map(id => <FicheActionCardSkeleton key={id} />)
+        ? ficheIds.map((id) => <FicheActionCardSkeleton key={id} />)
         : data &&
-          data.map(fiche => {
+          data.map((fiche) => {
             if (fiche.id! < 0) {
               return <FicheActionCardSkeleton key={fiche.id} />;
             } else {
@@ -41,13 +41,13 @@ const Fiches = ({isDndActive, isAxePage, ficheIds, planId, axeId}: Props) => {
                     fiche.id
                       ? isAxePage
                         ? makeCollectivitePlanActionAxeFicheUrl({
-                            collectiviteId: fiche.collectivite_id!,
+                            collectiviteId: fiche.collectiviteId!,
                             planActionUid: planId.toString(),
                             ficheUid: fiche.id.toString(),
                             axeUid: axeId.toString(),
                           })
                         : makeCollectivitePlanActionFicheUrl({
-                            collectiviteId: fiche.collectivite_id!,
+                            collectiviteId: fiche.collectiviteId!,
                             planActionUid: planId.toString(),
                             ficheUid: fiche.id!.toString(),
                           })

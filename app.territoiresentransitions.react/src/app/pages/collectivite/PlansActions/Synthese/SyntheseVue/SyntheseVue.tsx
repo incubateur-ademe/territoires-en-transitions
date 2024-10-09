@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Link, useLocation, useParams} from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import HeaderTitle from 'ui/HeaderTitle';
 import {
   makeCollectiviteFicheNonClasseeUrl,
@@ -7,23 +7,23 @@ import {
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
-import FiltersPlanAction, {PlanActionFilter} from '../FiltersPlanAction';
-import {FiltersKeys} from '../../FicheAction/data/filters';
-import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
+import FiltersPlanAction, { PlanActionFilter } from '../FiltersPlanAction';
+import { FiltersKeys } from '../../FicheAction/data/filters';
+import { useFichesActionFiltresListe } from '../../FicheAction/data/useFichesActionFiltresListe';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
-import {generateSyntheseVue} from '../utils';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
+import { generateSyntheseVue } from '../utils';
+import { ITEM_ALL } from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
-import {FicheResume} from '../../FicheAction/data/types';
+import { FicheResume } from '@tet/api/plan-actions';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
-  const {syntheseVue} = useParams<{syntheseVue: FiltersKeys}>();
-  const {search} = useLocation();
+  const { syntheseVue } = useParams<{ syntheseVue: FiltersKeys }>();
+  const { search } = useLocation();
 
   const pageUrl = makeCollectivitePlansActionsSyntheseVueUrl({
     collectiviteId: collectivite_id!,
@@ -44,7 +44,7 @@ const SyntheseVue = () => {
     },
   });
 
-  const {items, total, initialFilters, filters, setFilters, filtersCount} =
+  const { items, total, initialFilters, filters, setFilters, filtersCount } =
     filtersData;
 
   const selectPlan = (plan: PlanActionFilter) => {
@@ -52,13 +52,13 @@ const SyntheseVue = () => {
     if (plan.id === ITEM_ALL) {
       delete newFilters.sans_plan;
       delete newFilters.axes;
-      return {...newFilters};
+      return { ...newFilters };
     } else if (plan.id === 'nc') {
       delete newFilters.axes;
-      return {...filters, sans_plan: 1};
+      return { ...filters, sans_plan: 1 };
     } else {
       delete newFilters.sans_plan;
-      return {...filters, axes: [plan.id]};
+      return { ...filters, axes: [plan.id] };
     }
   };
 
@@ -67,7 +67,7 @@ const SyntheseVue = () => {
   return (
     <div data-test="PageGraphSynthese" className="w-full">
       <HeaderTitle
-        customClass={{text: 'text-[1.375rem]'}}
+        customClass={{ text: 'text-[1.375rem]' }}
         titre={vue.titre}
         isReadonly
       />
@@ -98,8 +98,8 @@ const SyntheseVue = () => {
               (filters.sans_plan && 'nc') ||
               (filters.axes && filters.axes[0].toString())
             }
-            getInitialPlan={plan => setPlan(plan)}
-            onChangePlan={plan => {
+            getInitialPlan={(plan) => setPlan(plan)}
+            onChangePlan={(plan) => {
               setFilters(selectPlan(plan));
               setPlan(plan);
             }}
@@ -134,7 +134,7 @@ const SyntheseVue = () => {
                 )}
               </div>
               <div className="grid grid-cols-2 gap-6">
-                {items.map(fiche => (
+                {items.map((fiche) => (
                   <FicheActionCard
                     key={fiche.id}
                     ficheAction={
@@ -179,7 +179,7 @@ export default SyntheseVue;
 
 const ficheWithSelectedPlan = (fiche: FicheResume, plan: PlanActionFilter) => {
   if (plan.id !== ITEM_ALL && fiche.plans && fiche.plans) {
-    const index = fiche.plans.findIndex(p => p?.id === plan.id);
+    const index = fiche.plans.findIndex((p) => p?.id === plan.id);
     return {
       ...fiche,
       plans: [fiche.plans[index]],

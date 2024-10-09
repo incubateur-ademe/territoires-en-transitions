@@ -1,4 +1,4 @@
-import {BadgeState} from './index';
+import { BadgeState } from './index';
 
 /**
  * Thème couleurs du composant Badge
@@ -62,5 +62,11 @@ export const badgeClassnames: Record<
     background: 'bg-grey-3',
     border: 'border-grey-3',
     icon: 'text-grey-6',
+  },
+  custom: {
+    text: '',
+    background: '',
+    border: '',
+    icon: '',
   },
 };

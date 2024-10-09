@@ -1,12 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 import { versionResponseSchema } from '../models/version.models';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
+@ApiTags('Application')
 export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
 @Controller()
 export class VersionController {

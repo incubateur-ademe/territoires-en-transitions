@@ -1,6 +1,6 @@
-import {IndicateurEnfant} from './IndicateurEnfant';
-import {TIndicateurDefinition} from '../../types';
-import {useIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
+import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
+import { useIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
+import { IndicateurEnfant } from './IndicateurEnfant';
 
 /**
  * Affiche le détail d'un indicateur composé
@@ -8,9 +8,9 @@ import {useIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/Indic
 export const IndicateurCompose = ({
   definition,
 }: {
-  definition: TIndicateurDefinition;
+  definition: IndicateurDefinition;
 }) => {
-  const {enfants: enfantIds} = definition;
+  const { enfants: enfantIds } = definition;
   const enfants = useIndicateurDefinitions(definition.id, enfantIds || []);
 
   if (!enfants?.length) return null;
@@ -21,7 +21,9 @@ export const IndicateurCompose = ({
   ]);
 
   const enfantsTries = enfants.sort((a, b) => {
-    if (a.identifiant === null || b.identifiant === null) return 0;
+    if (!a.identifiant || !b.identifiant) {
+      return 0;
+    }
     return a.identifiant.localeCompare(b.identifiant);
   });
 
@@ -42,7 +44,7 @@ export const IndicateurCompose = ({
 
       {
         /** indicateurs enfants */
-        enfantsTries.map(enfant => (
+        enfantsTries.map((enfant) => (
           <IndicateurEnfant
             key={enfant.id}
             definition={enfant}
@@ -54,15 +56,15 @@ export const IndicateurCompose = ({
   );
 };
 // détermine les actions liées communes à un ensemble de définitions
-const findCommonLinkedActions = (definitions: TIndicateurDefinition[]) => {
+const findCommonLinkedActions = (definitions: IndicateurDefinition[]) => {
   // extrait les tableaux d'ids
-  const actionsIds = definitions.map(({actions}) => actions.map(a => a.id));
+  const actionsIds = definitions.map(({ actions }) => actions.map((a) => a.id));
 
   return (
     actionsIds
       // enlève les tableaux vides
-      .filter(a => a?.length)
+      .filter((a) => a?.length)
       // détermine le sous-ensemble des ids communs
-      .reduce((a, b) => a.filter(c => b.includes(c)), [])
+      .reduce((a, b) => a.filter((c) => b.includes(c)), [])
   );
 };

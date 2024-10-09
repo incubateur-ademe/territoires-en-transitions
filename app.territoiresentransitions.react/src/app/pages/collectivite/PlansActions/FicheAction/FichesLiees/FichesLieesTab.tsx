@@ -1,19 +1,22 @@
-import {useState} from 'react';
-import {Button} from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Button } from '@tet/ui';
+import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {FicheAction} from '../data/types';
 import EmptyCard from '../EmptyCard';
-import FichePicto from './FichePicto';
-import ModaleFichesLiees from './ModaleFichesLiees';
-import FichesLieesListe from './FichesLieesListe';
 import LoadingCard from '../LoadingCard';
+import {
+  useFichesActionLiees,
+  useUpdateFichesActionLiees,
+} from '../data/useFichesActionLiees';
+import FichePicto from './FichePicto';
+import FichesLieesListe from './FichesLieesListe';
+import ModaleFichesLiees from './ModaleFichesLiees';
 
 type FichesLieesTabProps = {
   isReadonly: boolean;
   isFicheLoading: boolean;
   isEditLoading: boolean;
   fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
 const FichesLieesTab = ({
@@ -21,23 +24,24 @@ const FichesLieesTab = ({
   isFicheLoading,
   isEditLoading,
   fiche,
-  updateFiche,
 }: FichesLieesTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: fichesLiees } = useFichesActionLiees(fiche.id);
+  const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
+    fiche.id
+  );
 
   if (isFicheLoading) {
     return <LoadingCard title="Fiches des plans liées" />;
   }
 
-  const {fiches_liees: fiches} = fiche;
-
-  const isEmpty = !fiches || fiches.length === 0;
+  const isEmpty = !fichesLiees || fichesLiees.length === 0;
 
   return (
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <FichePicto className={className} />}
+          picto={(className) => <FichePicto className={className} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
           subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
           isReadonly={isReadonly}
@@ -68,13 +72,12 @@ const FichesLieesTab = ({
 
           {/* Liste des fiches des plans liées */}
           <FichesLieesListe
-            fiches={fiches}
+            fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
-            onUnlink={ficheId =>
-              updateFiche({
-                ...fiche,
-                fiches_liees: fiches.filter(f => f.id !== ficheId),
-              })
+            onUnlink={(ficheId) =>
+              updateFichesActionLiees(
+                fichesLiees.filter((f) => f.id !== ficheId).map((f) => f.id)
+              )
             }
           />
         </div>
@@ -83,8 +86,11 @@ const FichesLieesTab = ({
       <ModaleFichesLiees
         isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
-        fiche={fiche}
-        updateFiche={updateFiche}
+        currentFicheId={fiche.id}
+        linkedFicheIds={fichesLiees.map((f) => f.id)}
+        updateLinkedFicheIds={(linkedficheIds) =>
+          updateFichesActionLiees(linkedficheIds)
+        }
       />
     </>
   );

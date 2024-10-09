@@ -1,7 +1,7 @@
-import {SelectMultipleProps} from '@tet/ui';
-import {TFicheActionStructureRow} from 'types/alias';
+import { Tag } from '@tet/api/shared/domain';
+import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
-import {useStructuresListe} from './useStructuresListe';
+import { useStructuresListe } from './useStructuresListe';
 
 type StructuresDropdownProps = Omit<
   SelectMultipleProps,
@@ -12,13 +12,13 @@ type StructuresDropdownProps = Omit<
     structures,
     selectedStructure,
   }: {
-    structures: TFicheActionStructureRow[];
-    selectedStructure: TFicheActionStructureRow;
+    structures: Tag[];
+    selectedStructure: Tag;
   }) => void;
 };
 
 const StructuresDropdown = (props: StructuresDropdownProps) => {
-  const {data, refetch} = useStructuresListe();
+  const { data, refetch } = useStructuresListe();
 
   return (
     <SelectTags
@@ -28,7 +28,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
       tagTableName="structure_tag"
       optionsListe={data}
       refetchOptions={refetch}
-      onChange={({values, selectedValue}) => {
+      onChange={({ values, selectedValue }) => {
         props.onChange({
           structures: values,
           selectedStructure: selectedValue,

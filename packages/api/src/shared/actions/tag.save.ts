@@ -1,6 +1,6 @@
-import {DBClient} from "../../typeUtils";
-import {Tag, TypeTag} from "../domain/tag.schema";
-import {objectToCamel, objectToSnake} from "ts-case-convert";
+import { DBClient } from '../../typeUtils';
+import { Tag, TagInsert, TypeTag } from '../domain/tag.schema';
+import { objectToCamel, objectToSnake } from 'ts-case-convert';
 
 /**
  * Ajoute des tags
@@ -10,13 +10,14 @@ import {objectToCamel, objectToSnake} from "ts-case-convert";
  * @return liste de tags ajoutés avec leur identifiant
  */
 export async function insertTags(
-    dbClient : DBClient,
-    typeTag : TypeTag,
-    tags : Tag[]
-): Promise<Tag[]>{
-    const {data, error} = await dbClient
-        .from(`${typeTag}_tag` as const)
-        .insert(objectToSnake(tags))
-        .select();
-    return data ? objectToCamel(data) as Tag[] : [];
+  dbClient: DBClient,
+  typeTag: TypeTag,
+  tags: TagInsert[]
+): Promise<Tag[]> {
+  const { data } = await dbClient
+    .from(`${typeTag}_tag` as const)
+    .insert(objectToSnake(tags))
+    .select();
+
+  return data ? (objectToCamel(data) as Tag[]) : [];
 }

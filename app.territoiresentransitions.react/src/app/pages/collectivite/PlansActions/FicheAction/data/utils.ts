@@ -1,5 +1,9 @@
-import {naturalSort} from 'utils/naturalSort';
-import {FicheAction, FicheResume} from './types';
+import {
+  FicheAction,
+  FicheActionInsert,
+  FicheResume,
+} from '@tet/api/plan-actions';
+import { naturalSort } from 'utils/naturalSort';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -24,15 +28,15 @@ export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
 };
 
 type FactoryArgs = {
-  collectivite_id: number;
+  collectiviteId: number;
   axeFichesIds?: number[] | null;
-  axe_id?: number;
+  axeId?: number;
 };
 
 export const ficheResumeFactory = ({
-  collectivite_id,
+  collectiviteId,
   axeFichesIds,
-  axe_id,
+  axeId,
 }: FactoryArgs): FicheResume => {
   const lowerId = axeFichesIds
     ? axeFichesIds.reduce((a, b) => (a < b ? a : b))
@@ -40,13 +44,11 @@ export const ficheResumeFactory = ({
   const tempId = Math.min(0, lowerId || 0) - 1;
   return {
     id: tempId,
-    collectivite_id,
-    date_fin_provisoire: null,
-    amelioration_continue: null,
-    modified_at: null,
-    niveau_priorite: null,
-    pilotes: null,
-    plans: axe_id ? [{id: axe_id, collectivite_id}] : null,
+    collectiviteId,
+    dateFinProvisoire: null,
+    ameliorationContinue: null,
+    niveauPriorite: null,
+    plans: axeId ? [{ id: axeId, collectiviteId }] : null,
     statut: null,
     titre: '',
     restreint: false,
@@ -57,15 +59,15 @@ export const ficheResumeFactory = ({
 /** Transforme une fiche action en fiche résumée */
 export const ficheActionToResume = (fiche: FicheAction): FicheResume => ({
   id: fiche.id!,
-  collectivite_id: fiche.collectivite_id!,
-  date_fin_provisoire: fiche.date_fin_provisoire,
-  amelioration_continue: fiche.amelioration_continue,
-  modified_at: fiche.modified_at,
-  niveau_priorite: fiche.niveau_priorite,
+  collectiviteId: fiche.collectiviteId!,
+  dateFinProvisoire: fiche.dateFinProvisoire,
+  ameliorationContinue: fiche.ameliorationContinue,
+  modifiedAt: fiche.modifiedAt!,
+  niveauPriorite: fiche.niveauPriorite,
   pilotes: fiche.pilotes,
-  plans: fiche.axes?.filter(axe => axe.parent === null) ?? null,
+  plans: fiche.axes?.filter((axe) => axe.parent === null) ?? null,
   statut: fiche.statut,
   titre: fiche.titre!,
   restreint: fiche.restreint,
-  services: fiche.services,
+  // services: fiche.services,
 });

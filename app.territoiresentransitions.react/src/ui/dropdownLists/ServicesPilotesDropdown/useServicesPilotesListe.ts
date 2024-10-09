@@ -1,20 +1,21 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TFicheActionServicePiloteRow} from 'types/alias';
+import { Tag } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { objectToCamel } from 'ts-case-convert';
 
 export const useServicesPilotesListe = () => {
-  const collectivite_id = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId()!;
 
-  return useQuery(['services_pilotes', collectivite_id], async () => {
-    const {error, data} = await supabaseClient
+  return useQuery(['services_pilotes', collectiviteId], async () => {
+    const { error, data } = await supabaseClient
       .from('service_tag')
       .select()
-      .eq('collectivite_id', collectivite_id)
+      .eq('collectivite_id', collectiviteId)
       .order('nom');
 
     if (error) throw new Error(error.message);
 
-    return data as TFicheActionServicePiloteRow[];
+    return objectToCamel(data) as Tag[];
   });
 };

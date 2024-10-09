@@ -1,15 +1,15 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistory, useLocation, useParams} from 'react-router-dom';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsSyntheseUrl,
 } from 'app/paths';
-import {FicheResume} from './types';
-import {PlanNode} from '../../PlanAction/data/types';
+import { PlanNode } from '../../PlanAction/data/types';
+import { FicheResume } from '@tet/api/plan-actions';
 
 type Args = {
   ficheId: number;
@@ -25,10 +25,10 @@ export const useDeleteFicheAction = (args: Args) => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const history = useHistory();
-  const {planUid} = useParams<{planUid: string}>();
-  const {pathname} = useLocation();
+  const { planUid } = useParams<{ planUid: string }>();
+  const { pathname } = useLocation();
 
-  const {ficheId, axeId} = args;
+  const { ficheId, axeId } = args;
   const planActionId = parseInt(planUid);
 
   const axe_fiches_key = ['axe_fiches', axeId];
@@ -39,8 +39,8 @@ export const useDeleteFicheAction = (args: Args) => {
       await supabaseClient.from('fiche_action').delete().eq('id', ficheId);
     },
     {
-      meta: {disableToast: true},
-      onMutate: async args => {
+      meta: { disableToast: true },
+      onMutate: async (args) => {
         const previousData = [
           [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
           [flat_axes_Key, queryClient.getQueryData(flat_axes_Key)],
@@ -49,7 +49,7 @@ export const useDeleteFicheAction = (args: Args) => {
         queryClient.setQueryData(
           axe_fiches_key,
           (old: FicheResume[] | undefined): FicheResume[] => {
-            return old?.filter(f => f.id !== ficheId) || [];
+            return old?.filter((f) => f.id !== ficheId) || [];
           }
         );
 
@@ -57,11 +57,11 @@ export const useDeleteFicheAction = (args: Args) => {
           flat_axes_Key,
           (old: PlanNode[] | undefined): PlanNode[] => {
             if (old) {
-              return old.map(a =>
+              return old.map((a) =>
                 a.id === axeId
                   ? {
                       ...a,
-                      fiches: a.fiches?.filter(f => f !== ficheId) ?? null,
+                      fiches: a.fiches?.filter((f) => f !== ficheId) ?? null,
                     }
                   : a
               );
@@ -79,7 +79,7 @@ export const useDeleteFicheAction = (args: Args) => {
         );
       },
       onSuccess: () => {
-        args.keysToInvalidate?.forEach(key =>
+        args.keysToInvalidate?.forEach((key) =>
           queryClient.invalidateQueries(key)
         );
         queryClient.invalidateQueries(axe_fiches_key);

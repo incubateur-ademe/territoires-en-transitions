@@ -1,11 +1,12 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {nameToShortNames, NB_FICHES_PER_PAGE, TFilters} from './filters';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheResume} from './types';
-import {TPersonne} from 'types/alias';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useSearchParams } from 'core-logic/hooks/query';
+import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { TPersonne } from 'types/alias';
+import { FicheResume } from '@tet/api/plan-actions';
+import { objectToCamel } from 'ts-case-convert';
 
 /**
  * Renvoie un tableau de Personne.
@@ -13,10 +14,10 @@ import {TPersonne} from 'types/alias';
  * en fonction de si l'id contient un "_"
  */
 export const makePersonnesWithIds = (personnes?: string[]) => {
-  const personnesNouvelles = personnes?.map(p =>
+  const personnesNouvelles = personnes?.map((p) =>
     p.includes('-')
-      ? {user_id: p, tag_id: null as unknown as number}
-      : {tag_id: parseInt(p)}
+      ? { user_id: p, tag_id: null as unknown as number }
+      : { tag_id: parseInt(p) }
   );
   return personnesNouvelles as unknown as TPersonne[];
 };
@@ -30,7 +31,7 @@ export type TFichesActionsListe = {
   setFilters: (filters: TFilters) => void;
 };
 
-type TFetchedData = {items: FicheResume[]; total: number};
+type TFetchedData = { items: FicheResume[]; total: number };
 
 export const fetchFichesActionFiltresListe = async (
   filters: TFilters
@@ -61,7 +62,7 @@ export const fetchFichesActionFiltresListe = async (
   const sansStatut = getBooleanFromNumber(sans_statut);
   const sansPriorite = getBooleanFromNumber(sans_niveau);
 
-  const {error, data, count} = await supabaseClient.rpc(
+  const { error, data, count } = await supabaseClient.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
@@ -78,14 +79,17 @@ export const fetchFichesActionFiltresListe = async (
       echeance: echeanceSansTableau,
       limit: NB_FICHES_PER_PAGE,
     },
-    {count: 'exact'}
+    { count: 'exact' }
   );
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return {items: (data as unknown as FicheResume[]) || [], total: count || 0};
+  return {
+    items: (objectToCamel(data) as unknown as FicheResume[]) || [],
+    total: count || 0,
+  };
 };
 
 type Args = {
@@ -109,12 +113,12 @@ export const useFichesActionFiltresListe = ({
   );
 
   // charge les données
-  const {data} = useQuery(['fiches_Actions', collectivite_id, filters], () =>
+  const { data } = useQuery(['fiches_Actions', collectivite_id, filters], () =>
     fetchFichesActionFiltresListe(filters)
   );
 
   return {
-    ...(data || {items: [], total: 0}),
+    ...(data || { items: [], total: 0 }),
     initialFilters,
     filters,
     setFilters,

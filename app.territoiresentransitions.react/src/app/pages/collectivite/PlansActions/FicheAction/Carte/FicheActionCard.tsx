@@ -1,17 +1,17 @@
+import { FicheResume } from '@tet/api/plan-actions/domain';
+import { Button, Card, Notification, Tooltip } from '@tet/ui';
+import classNames from 'classnames';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import classNames from 'classnames';
-import { Button, Card, Notification, Tooltip } from '@tet/ui';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { FicheResume } from '../data/types';
-import { generateTitle } from '../data/utils';
-import BadgeStatut from '../../components/BadgeStatut';
 import BadgePriorite from '../../components/BadgePriorite';
-import ModifierFicheModale from './ModifierFicheModale';
+import BadgeStatut from '../../components/BadgeStatut';
+import { generateTitle } from '../data/utils';
 import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
 import { getModifiedSince } from '../utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
+import ModifierFicheModale from './ModifierFicheModale';
 
 type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
@@ -124,13 +124,13 @@ const FicheActionCard = ({
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
-          (ficheAction.niveau_priorite ||
+          (ficheAction.niveauPriorite ||
             ficheAction.statut ||
             ficheAction.actionImpactId) && (
             <div className="flex items-center gap-3">
-              {ficheAction.niveau_priorite && (
+              {ficheAction.niveauPriorite && (
                 <BadgePriorite
-                  priorite={ficheAction.niveau_priorite}
+                  priorite={ficheAction.niveauPriorite}
                   size="sm"
                 />
               )}
@@ -154,20 +154,20 @@ const FicheActionCard = ({
           // Bas de la carte
           <div className="flex flex-col gap-3 text-grey-8 font-normal">
             {/* Date de dernière modification */}
-            {!!ficheAction.modified_at && (
+            {!!ficheAction.modifiedAt && (
               <span
                 className="text-xs font-medium italic"
                 title="Dernière modification"
               >
-                Modifié {getModifiedSince(ficheAction.modified_at)}
+                Modifié {getModifiedSince(ficheAction.modifiedAt)}
               </span>
             )}
 
             {/* Personnes pilote et date de fin prévisionnelle */}
             <FicheActionFooterInfo
               pilotes={ficheAction.pilotes}
-              dateDeFin={ficheAction.date_fin_provisoire}
-              ameliorationContinue={ficheAction.amelioration_continue}
+              dateDeFin={ficheAction.dateFinProvisoire}
+              ameliorationContinue={ficheAction.ameliorationContinue}
             />
           </div>
         }

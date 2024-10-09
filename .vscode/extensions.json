@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "nrwl.angular-console",
+    "vitest.explorer"
+  ]
+}

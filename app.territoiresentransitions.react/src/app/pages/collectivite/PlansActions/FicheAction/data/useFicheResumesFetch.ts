@@ -1,9 +1,11 @@
 import { useQuery } from 'react-query';
 
-import { ficheResumesFetch } from '@tet/api/fiche_actions/fiche_resumes.list/data_access/fiche_resumes.fetch';
+import {
+  FetchOptions,
+  ficheResumesFetch,
+} from '@tet/api/plan-actions/fiche-resumes.list';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { FetchOptions } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
 
 type Props = {
   options?: FetchOptions;

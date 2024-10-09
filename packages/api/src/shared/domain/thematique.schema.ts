@@ -1,11 +1,11 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 /**
  * Schéma zod d'une thématique
  */
 export const thematiqueSchema = z.object({
-    id : z.number(),
-    nom : z.string()
+  id: z.number(),
+  nom: z.string(),
 });
 
 /**
@@ -13,14 +13,13 @@ export const thematiqueSchema = z.object({
  */
 export type Thematique = z.input<typeof thematiqueSchema>;
 
-
 /**
  * Schéma zod d'une sous thématique avec l'objet de la thématique
  */
 export const sousThematiqueSchema = z.object({
-    id : z.number(),
-    nom : z.string(),
-    thematique : thematiqueSchema
+  id: z.number(),
+  sousThematique: z.string(),
+  thematique: thematiqueSchema,
 });
 
 /**
@@ -32,13 +31,12 @@ export type SousThematique = z.input<typeof sousThematiqueSchema>;
  * Schéma zod d'une sous thématique avec l'id de la thématique
  */
 export const sousThematiqueSchemaId = z.object({
-    id : z.number(),
-    nom : z.string(),
-    thematique : z.number()
+  id: z.number(),
+  sousThematique: z.string(),
+  thematiqueId: z.number(),
 });
 
 /**
  * Type TS d'une sous thématique avec l'id de la thématique
  */
 export type SousThematiqueId = z.input<typeof sousThematiqueSchemaId>;
-

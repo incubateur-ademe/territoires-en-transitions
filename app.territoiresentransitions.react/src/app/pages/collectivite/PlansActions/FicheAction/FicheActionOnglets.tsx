@@ -1,10 +1,10 @@
-import {Tab, Tabs} from '@tet/ui';
-import {FicheAction} from './data/types';
+import { Tab, Tabs } from '@tet/ui';
 import BudgetTab from './Budget/BudgetTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type FicheActionOngletsProps = {
   fiche: FicheAction;
@@ -58,7 +58,6 @@ const FicheActionOnglets = ({
           isFicheLoading={isFicheLoading}
           isEditLoading={isEditLoading}
           fiche={fiche}
-          updateFiche={updateFiche}
         />
       </Tab>
 

@@ -1,16 +1,16 @@
 import classNames from 'classnames';
-import {Icon, Notification} from '@tet/ui';
-import {FicheAction} from './data/types';
-import {useFicheActionImpactId} from './data/useFicheActionImpactId';
-import {ModaleActionImpact} from './FicheActionImpact/ModaleActionImpact';
+import { Icon, Notification } from '@tet/ui';
+import { useFicheActionImpactId } from './data/useFicheActionImpactId';
+import { ModaleActionImpact } from './FicheActionImpact/ModaleActionImpact';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type FicheActionImpactProps = {
   fiche: FicheAction;
 };
 
 /** Indique sur une fiche action si elle est issue d'une action à impact */
-const FicheActionImpact = ({fiche}: FicheActionImpactProps) => {
-  const {data: actionImpactId} = useFicheActionImpactId(fiche.id);
+const FicheActionImpact = ({ fiche }: FicheActionImpactProps) => {
+  const { data: actionImpactId } = useFicheActionImpactId(fiche.id);
 
   return actionImpactId ? (
     <ModaleActionImpact actionImpactId={actionImpactId}>

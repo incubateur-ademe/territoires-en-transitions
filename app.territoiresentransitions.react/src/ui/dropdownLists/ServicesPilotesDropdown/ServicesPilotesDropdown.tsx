@@ -1,7 +1,7 @@
-import {SelectMultipleProps} from '@tet/ui';
-import {TFicheActionServicePiloteRow} from 'types/alias';
+import { Tag } from '@tet/api/shared/domain';
+import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
-import {useServicesPilotesListe} from './useServicesPilotesListe';
+import { useServicesPilotesListe } from './useServicesPilotesListe';
 
 type ServicesPilotesDropdownProps = Omit<
   SelectMultipleProps,
@@ -12,14 +12,14 @@ type ServicesPilotesDropdownProps = Omit<
     services,
     selectedService,
   }: {
-    services: TFicheActionServicePiloteRow[];
-    selectedService: TFicheActionServicePiloteRow;
+    services: Tag[];
+    selectedService: Tag;
   }) => void;
   disabledOptionsIds?: number[];
 };
 
 const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
-  const {data, refetch} = useServicesPilotesListe();
+  const { data, refetch } = useServicesPilotesListe();
 
   return (
     <SelectTags
@@ -29,7 +29,7 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
       tagTableName="service_tag"
       optionsListe={data}
       refetchOptions={refetch}
-      onChange={({values, selectedValue}) => {
+      onChange={({ values, selectedValue }) => {
         props.onChange({
           services: values,
           selectedService: selectedValue,

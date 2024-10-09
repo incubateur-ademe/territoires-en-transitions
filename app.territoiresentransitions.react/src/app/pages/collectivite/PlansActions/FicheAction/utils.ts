@@ -1,5 +1,6 @@
-import {differenceInCalendarDays, format} from 'date-fns';
-import {fr} from 'date-fns/locale';
+import { preset } from '@tet/ui';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import _ from 'lodash';
 
 // Renvoie une date avec le mois en toutes lettres
@@ -15,12 +16,12 @@ export const getTextFormattedDate = ({
 
   if (dayOfMonth === '1') {
     return shortMonth
-      ? format(localDate, 'do MMM yyyy', {locale: fr})
-      : format(localDate, 'do MMMM yyyy', {locale: fr});
+      ? format(localDate, 'do MMM yyyy', { locale: fr })
+      : format(localDate, 'do MMMM yyyy', { locale: fr });
   } else
     return shortMonth
-      ? format(localDate, 'd MMM yyyy', {locale: fr})
-      : format(localDate, 'd MMMM yyyy', {locale: fr});
+      ? format(localDate, 'd MMM yyyy', { locale: fr })
+      : format(localDate, 'd MMMM yyyy', { locale: fr });
 };
 
 // Renvoie le format ISO d'une date avec uniquement jour mois et année
@@ -86,5 +87,19 @@ export const getTruncatedText = (text: string | null, limit: number) => {
 
   const isTextTruncated = truncatedText !== text;
 
-  return {truncatedText: `${truncatedText}...`, isTextTruncated};
+  return { truncatedText: `${truncatedText}...`, isTextTruncated };
+};
+
+/** Correspondance entre les statuts et couleurs associées */
+export const statutToColor: Record<string, string> = {
+  'À venir': preset.theme.extend.colors.primary[6],
+  'En cours': preset.theme.extend.colors.info[3],
+  Réalisé: preset.theme.extend.colors.success[3],
+  'En pause': preset.theme.extend.colors.warning[3],
+  Abandonné: preset.theme.extend.colors.grey[5],
+  'A discuter': '#9351CF',
+  Bloqué: preset.theme.extend.colors.new[2],
+  'En retard': preset.theme.extend.colors.error[1],
+  NC: preset.theme.extend.colors.grey[3],
+  'Sans statut': '#E5E5E5',
 };

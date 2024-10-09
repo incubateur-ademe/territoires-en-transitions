@@ -1,20 +1,21 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TSousThematiqueRow} from 'types/alias';
+import { SousThematiqueId } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { objectToCamel } from 'ts-case-convert';
 
-type TFetchedData = TSousThematiqueRow[];
+type TFetchedData = SousThematiqueId[];
 
 const fetchSousThematiqueListe = async (): Promise<TFetchedData> => {
   const query = supabaseClient.from('sous_thematique').select();
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return objectToCamel(data);
 };
 
 export const useSousThematiqueListe = () => {

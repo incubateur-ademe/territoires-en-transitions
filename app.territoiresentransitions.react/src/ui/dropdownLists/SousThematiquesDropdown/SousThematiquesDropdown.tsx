@@ -1,17 +1,22 @@
-import {useEffect} from 'react';
-import {TSousThematiqueRow} from 'types/alias';
-import {useSousThematiqueListe} from './useSousThematiqueListe';
-import {Option, OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
+import { useEffect } from 'react';
+import { useSousThematiqueListe } from './useSousThematiqueListe';
+import {
+  Option,
+  OptionValue,
+  SelectFilter,
+  SelectMultipleProps,
+} from '@tet/ui';
+import { SousThematique, SousThematiqueId } from '@tet/api/shared/domain';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   thematiques: number[];
-  sousThematiques: TSousThematiqueRow[] | null;
+  sousThematiques: SousThematiqueId[] | null | undefined;
   onChange: ({
     sousThematiques,
     selectedSousThematique,
   }: {
-    sousThematiques: TSousThematiqueRow[];
-    selectedSousThematique: TSousThematiqueRow;
+    sousThematiques: SousThematiqueId[];
+    selectedSousThematique: SousThematiqueId;
   }) => void;
 };
 
@@ -21,49 +26,51 @@ const SousThematiquesDropdown = ({
   onChange,
   ...props
 }: Props) => {
-  const {data: sousThematiqueListe} = useSousThematiqueListe();
+  const { data: sousThematiqueListe } = useSousThematiqueListe();
 
   const options: Option[] = (sousThematiqueListe ?? [])
-    .filter(st => thematiques.some(t => st.thematique_id === t))
-    .map(st => ({
+    .filter((st) => thematiques.some((t) => st.thematiqueId === t))
+    .map((st) => ({
       value: st.id,
-      label: st.sous_thematique,
+      label: st.sousThematique,
     }));
 
   const getSelectedSousThematiques = (values?: OptionValue[]) =>
-    (sousThematiqueListe ?? []).filter(st => values?.some(v => v === st.id));
+    (sousThematiqueListe ?? []).filter((st) =>
+      values?.some((v) => v === st.id)
+    );
 
   // Supprime les sous-thématiques quand une thématique est supprimée de la fiche
   useEffect(() => {
     if (sousThematiques) {
       // Récupère la liste des thématiques inclues dans les sous-thématiques
       const selectedThematiques: number[] = [];
-      sousThematiques.forEach(st => {
+      sousThematiques.forEach((st) => {
         if (
           !selectedThematiques.some(
-            selectedtThem => selectedtThem === st.thematique_id
+            (selectedtThem) => selectedtThem === st.thematiqueId
           )
         ) {
-          selectedThematiques.push(st.thematique_id);
+          selectedThematiques.push(st.thematiqueId);
         }
       });
 
       // Si les listes sont différentes, on update la fiche
       if (
         selectedThematiques.some(
-          selectedtThem => !thematiques.some(t => t === selectedtThem)
+          (selectedtThem) => !thematiques.some((t) => t === selectedtThem)
         )
       ) {
-        const newSousThematiques = sousThematiques.filter(st =>
-          thematiques.some(t => t === st.thematique_id)
+        const newSousThematiques = sousThematiques.filter((st) =>
+          thematiques.some((t) => t === st.thematiqueId)
         );
 
         onChange({
           sousThematiques: getSelectedSousThematiques(
-            newSousThematiques?.map(st => st.id)
+            newSousThematiques?.map((st) => st.id)
           ),
           selectedSousThematique: getSelectedSousThematiques([
-            newSousThematiques?.map(st => st.id)[0],
+            newSousThematiques?.map((st) => st.id)[0],
           ])[0],
         });
       }
@@ -74,9 +81,9 @@ const SousThematiquesDropdown = ({
     <SelectFilter
       {...props}
       dataTest={props.dataTest ?? 'sousThematiques'}
-      values={sousThematiques?.map(st => st.id)}
+      values={sousThematiques?.map((st) => st.id)}
       options={options}
-      onChange={({values, selectedValue}) =>
+      onChange={({ values, selectedValue }) =>
         onChange({
           sousThematiques: getSelectedSousThematiques(values),
           selectedSousThematique: getSelectedSousThematiques([

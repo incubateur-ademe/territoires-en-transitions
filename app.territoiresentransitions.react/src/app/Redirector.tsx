@@ -1,9 +1,8 @@
-import {getAuthPaths} from '@tet/api';
+import { getAuthPaths } from '@tet/api';
 import {
   finaliserMonInscriptionUrl,
-  homePath,
   makeCollectiviteAccueilUrl,
-  makeTableauBordLandingUrl,
+  makeTableauBordUrl,
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
@@ -17,9 +16,10 @@ import { useHistory, useLocation } from 'react-router-dom';
 export const Redirector = () => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const { isConnected } = useAuth();
+  const { isConnected, user } = useAuth();
   const { invitationId, invitationEmail, consume } = useInvitationState();
-  const { data: userInfo } = useMesCollectivitesEtPlans();
+  const { data: userCollectivitesEtPlans } = useMesCollectivitesEtPlans();
+
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
   // Quand l'utilisateur connecté
@@ -30,13 +30,23 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (isLandingConnected && userInfo) {
-      const collectiviteId = userInfo?.collectivites?.[0]?.collectivite_id;
-      const auMoinsUnPlanActionsPilotable = !!userInfo?.plans?.length;
+    if (isLandingConnected && userCollectivitesEtPlans) {
+      const collectiviteId =
+        userCollectivitesEtPlans?.collectivites?.[0]?.collectivite_id;
+      const auMoinsUnPlanActionsPilotable =
+        !!userCollectivitesEtPlans?.plans?.length;
 
       if (collectiviteId) {
         if (auMoinsUnPlanActionsPilotable) {
-          history.push(makeTableauBordLandingUrl({ collectiviteId }));
+          if (user?.fonction === 'politique') {
+            history.push(
+              makeTableauBordUrl({ collectiviteId, view: 'collectivite' })
+            );
+          } else {
+            history.push(
+              makeTableauBordUrl({ collectiviteId, view: 'personnel' })
+            );
+          }
         } else {
           history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
         }
@@ -44,7 +54,7 @@ export const Redirector = () => {
         history.push(finaliserMonInscriptionUrl);
       }
     }
-  }, [isLandingConnected, userInfo]);
+  }, [isLandingConnected, userCollectivitesEtPlans]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {

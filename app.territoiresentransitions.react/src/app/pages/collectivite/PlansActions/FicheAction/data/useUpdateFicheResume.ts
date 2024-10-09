@@ -1,6 +1,6 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
-import {FicheResume} from './types';
+import { FicheResume } from '@tet/api/plan-actions';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 /**
  * Édite une fiche résumé
@@ -13,18 +13,18 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
       const {
         titre,
         statut,
-        niveau_priorite,
-        date_fin_provisoire,
-        amelioration_continue,
+        niveauPriorite,
+        dateFinProvisoire,
+        ameliorationContinue,
       } = fiche;
       await supabaseClient
         .from('fiche_action')
         .update({
           titre,
           statut,
-          niveau_priorite,
-          date_fin_provisoire,
-          amelioration_continue,
+          niveau_priorite: niveauPriorite,
+          date_fin_provisoire: dateFinProvisoire,
+          amelioration_continue: ameliorationContinue,
         })
         .eq('id', fiche.id!);
     },
@@ -32,7 +32,7 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
       onMutate: async () => {
         if (invalidationKeys) {
           const previousData = [
-            ...invalidationKeys.map(key => [
+            ...invalidationKeys.map((key) => [
               key,
               queryClient.getQueryData(key),
             ]),
@@ -46,7 +46,7 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
         );
       },
       onSuccess: () => {
-        invalidationKeys?.forEach(key => queryClient.invalidateQueries(key));
+        invalidationKeys?.forEach((key) => queryClient.invalidateQueries(key));
       },
     }
   );

@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {Button} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Button } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import EmptyCard from '../EmptyCard';
 import MoneyPicto from './MoneyPicto';
 import ModaleBudget from './ModaleBudget';
@@ -14,14 +14,10 @@ type BudgetTabProps = {
   updateFiche: (fiche: FicheAction) => void;
 };
 
-const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
+const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {
-    budget_previsionnel: budgetPrevisionnel,
-    financeurs,
-    financements,
-  } = fiche;
+  const { budgetPrevisionnel, financeurs, financements } = fiche;
 
   const isEmpty =
     budgetPrevisionnel === null &&
@@ -32,7 +28,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <MoneyPicto className={className} />}
+          picto={(className) => <MoneyPicto className={className} />}
           title="Budget non renseigné !"
           subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements"
           isReadonly={isReadonly}
@@ -62,7 +58,7 @@ const BudgetTab = ({isReadonly, fiche, updateFiche}: BudgetTabProps) => {
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Budget prévisionnel total :
             </span>
-            {budgetPrevisionnel !== null ? (
+            {!!budgetPrevisionnel ? (
               <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
             ) : (
               <span className="text-sm text-grey-7 leading-7">

@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {QueryKey} from 'react-query';
+import { useRef, useState } from 'react';
+import { QueryKey } from 'react-query';
 
 import {
   Checkbox,
@@ -10,18 +10,18 @@ import {
   ModalFooterOKCancel,
 } from '@tet/ui';
 
-import {FicheResume} from '../data/types';
-import {useUpdateFicheResume} from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
-import {format} from 'date-fns';
+import { useUpdateFicheResume } from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
+import { format } from 'date-fns';
 import {
   useFicheActionAddPilote,
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import { FicheResume } from '@tet/api/plan-actions/domain';
 
 type Props = {
   initialFiche: FicheResume;
@@ -41,15 +41,17 @@ const ModifierFicheModale = ({
   setIsOpen,
   keysToInvalidate,
 }: Props) => {
-  const {mutate: updateFiche} = useUpdateFicheResume(keysToInvalidate);
+  const { mutate: updateFiche } = useUpdateFicheResume(keysToInvalidate);
 
-  const {mutate: addPilotes} = useFicheActionAddPilote(keysToInvalidate);
-  const {mutate: removeUserPilotes} =
+  const { mutate: addPilotes } = useFicheActionAddPilote(keysToInvalidate);
+  const { mutate: removeUserPilotes } =
     useFicheActionRemoveUserPilote(keysToInvalidate);
-  const {mutate: removeTagPilotes} =
+  const { mutate: removeTagPilotes } =
     useFicheActionRemoveTagPilote(keysToInvalidate);
 
   const [fiche, setFiche] = useState(initialFiche);
+
+  const refDatefin = useRef<HTMLInputElement>(null);
 
   return (
     <Modal
@@ -61,7 +63,7 @@ const ModifierFicheModale = ({
       }}
       onClose={() => setFiche(initialFiche)}
       title="Modifier la fiche action"
-      render={({close}) => {
+      render={({ close }) => {
         return (
           <div className="flex flex-col gap-6">
             <Field title="Nom de la fiche action">
@@ -69,7 +71,7 @@ const ModifierFicheModale = ({
                 data-test="FicheNomInput"
                 type="text"
                 value={fiche.titre ?? undefined}
-                onChange={e => setFiche({...fiche, titre: e.target.value})}
+                onChange={(e) => setFiche({ ...fiche, titre: e.target.value })}
                 placeholder="Sans titre"
                 autoFocus
               />
@@ -78,7 +80,7 @@ const ModifierFicheModale = ({
               <Field title="Statut">
                 <StatutsSelectDropdown
                   values={fiche.statut}
-                  onChange={statut =>
+                  onChange={(statut) =>
                     setFiche({
                       ...fiche,
                       statut: statut ?? null,
@@ -88,11 +90,11 @@ const ModifierFicheModale = ({
               </Field>
               <Field title="Niveau de priorité">
                 <PrioritesSelectDropdown
-                  values={fiche.niveau_priorite}
-                  onChange={priorite =>
+                  values={fiche.niveauPriorite}
+                  onChange={(priorite) =>
                     setFiche({
                       ...fiche,
-                      niveau_priorite: priorite ?? null,
+                      niveauPriorite: priorite ?? null,
                     })
                   }
                 />
@@ -101,31 +103,29 @@ const ModifierFicheModale = ({
             <FormSectionGrid>
               <Field title="Personne pilote">
                 <PersonnesDropdown
-                  values={fiche.pilotes?.map(p => getPersonneStringId(p))}
-                  onChange={({personnes}) => {
-                    setFiche({...fiche, pilotes: personnes});
+                  values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
+                  onChange={({ personnes }) => {
+                    setFiche({ ...fiche, pilotes: personnes });
                   }}
                 />
               </Field>
               <Field title="Date de fin prévisionnelle">
                 <Input
+                  ref={refDatefin}
                   type="date"
                   value={
-                    fiche.date_fin_provisoire
-                      ? format(
-                          new Date(fiche.date_fin_provisoire),
-                          'yyyy-MM-dd'
-                        )
+                    fiche.dateFinProvisoire
+                      ? format(new Date(fiche.dateFinProvisoire), 'yyyy-MM-dd')
                       : ''
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setFiche({
                       ...fiche,
-                      date_fin_provisoire:
+                      dateFinProvisoire:
                         e.target.value.length !== 0 ? e.target.value : null,
                     })
                   }
-                  disabled={fiche.amelioration_continue ?? false}
+                  disabled={fiche.ameliorationContinue ?? false}
                 />
                 <div className="mt-2">
                   <Checkbox
@@ -134,11 +134,11 @@ const ModifierFicheModale = ({
                     onChange={() => {
                       setFiche({
                         ...fiche,
-                        amelioration_continue: !fiche.amelioration_continue,
-                        date_fin_provisoire: null,
+                        ameliorationContinue: !fiche.ameliorationContinue,
+                        dateFinProvisoire: null,
                       });
                     }}
-                    checked={!!fiche.amelioration_continue}
+                    checked={!!fiche.ameliorationContinue}
                   />
                 </div>
               </Field>
@@ -149,15 +149,15 @@ const ModifierFicheModale = ({
                   const pilotesToAdd =
                     fiche.pilotes
                       ?.filter(
-                        finalPilote =>
+                        (finalPilote) =>
                           !initialFiche.pilotes?.some(
-                            oldPilote => finalPilote.nom === oldPilote.nom
+                            (oldPilote) => finalPilote.nom === oldPilote.nom
                           )
                       )
-                      .map(pilote => ({
-                        fiche_id: fiche.id!,
-                        user_id: pilote.user_id,
-                        tag_id: pilote.tag_id,
+                      .map((pilote) => ({
+                        ficheId: fiche.id!,
+                        userId: pilote.userId,
+                        tagId: pilote.tagId,
                       })) ?? [];
 
                   if (pilotesToAdd.length > 0) {
@@ -167,25 +167,25 @@ const ModifierFicheModale = ({
                   const pilotesToRemove =
                     initialFiche.pilotes
                       ?.filter(
-                        oldPilote =>
+                        (oldPilote) =>
                           !fiche.pilotes?.some(
-                            finalPilote => finalPilote.nom === oldPilote.nom
+                            (finalPilote) => finalPilote.nom === oldPilote.nom
                           )
                       )
-                      .map(pilote => ({
-                        fiche_id: fiche.id!,
-                        user_id: pilote.user_id,
-                        tag_id: pilote.tag_id,
+                      .map((pilote) => ({
+                        ficheId: fiche.id!,
+                        userId: pilote.userId,
+                        tagId: pilote.tagId,
                       })) ?? [];
                   if (pilotesToRemove.length > 0) {
                     const pilotesTag = pilotesToRemove.filter(
-                      pilote => pilote.tag_id
+                      (pilote) => pilote.tagId
                     );
                     if (pilotesTag.length > 0) {
                       removeTagPilotes(pilotesTag);
                     }
                     const pilotesUser = pilotesToRemove.filter(
-                      pilote => pilote.user_id
+                      (pilote) => pilote.userId
                     );
                     removeUserPilotes(pilotesUser);
                   }
@@ -193,7 +193,7 @@ const ModifierFicheModale = ({
                   close();
                 },
               }}
-              btnCancelProps={{onClick: close}}
+              btnCancelProps={{ onClick: close }}
             />
           </div>
         );

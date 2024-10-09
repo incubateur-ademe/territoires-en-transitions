@@ -1,10 +1,10 @@
-import {testReset} from '../../tests/testReset';
-import {dbAdmin, supabase} from '../../tests/supabase';
-import {fetchFilteredIndicateurs} from './fetchFilteredIndicateurs';
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../tests/auth';
-import {Database} from '../../database.types';
-import {FetchFiltre} from '../domain';
+import { testReset } from '../../tests/testReset';
+import { dbAdmin, supabase } from '../../tests/supabase';
+import { fetchFilteredIndicateurs } from './fetchFilteredIndicateurs';
+import { beforeAll, expect, test } from 'vitest';
+import { signIn, signOut } from '../../tests/auth';
+import { Database } from '../../database.types';
+import { FetchFiltre } from '../domain';
 
 type TableName = keyof Database['public']['Tables'];
 
@@ -87,10 +87,9 @@ const FIXTURE = {
 
 // wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
 const fetchIndicateurs = (filters: FetchFiltre) =>
-  fetchFilteredIndicateurs(supabase, 1, {filtre: filters});
+  fetchFilteredIndicateurs(supabase, 1, { filtre: filters });
 
 beforeAll(async () => {
-  await signIn('yolododo');
   await testReset();
 
   // insère les données de test
@@ -100,6 +99,8 @@ beforeAll(async () => {
       expect(upsert.status).toEqual(201);
     })
   );
+
+  await signIn('yolododo');
 
   return async () => {
     await signOut();
@@ -124,9 +125,9 @@ test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
 
   await supabase
     .from('indicateur_collectivite')
-    .upsert([{indicateur_id: 60, collectivite_id: 1, confidentiel: true}]); // 'cae_8'
+    .upsert([{ indicateur_id: 60, collectivite_id: 1, confidentiel: true }]); // 'cae_8'
 
-  const {data} = await supabase
+  const { data } = await supabase
     .from('indicateur_valeur')
     .select('*')
     .eq('collectivite_id', 1)
@@ -138,7 +139,7 @@ test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
 test("Confidentialité - Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n'ai pas de droits", async () => {
   await signOut();
   await signIn('yulududu');
-  const {data} = await supabase
+  const { data } = await supabase
     .from('indicateur_valeur')
     .select('*')
     .eq('collectivite_id', 1)
@@ -150,7 +151,7 @@ test("Confidentialité - Devrait ne pas pouvoir lire des valeurs des collectivit
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     categorieNoms: ['eci'],
   });
   expect(status).toEqual(200);
@@ -158,7 +159,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi', async () => {
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par texte (dans le titre ou la description)', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     text: 'activité',
     categorieNoms: ['eci'],
   });
@@ -167,7 +168,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par texte (dans le t
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par identifiant', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     text: '#29',
     categorieNoms: ['eci'],
   });
@@ -177,7 +178,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par identifiant', as
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par une thématique', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     thematiqueIds: [5],
     categorieNoms: ['eci'],
   });
@@ -186,7 +187,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par une thématique'
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par plusieurs thématiques', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     thematiqueIds: [5, 4],
     categorieNoms: ['eci'],
   });
@@ -195,7 +196,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par plusieurs théma
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
     categorieNoms: ['eci'],
   });
@@ -204,7 +205,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne pilote'
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par tag de personne pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     personnePiloteIds: [1],
     categorieNoms: ['eci'],
   });
@@ -213,7 +214,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par tag de personne 
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne et tag pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
     personnePiloteIds: [1],
     categorieNoms: ['eci'],
@@ -223,7 +224,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne et tag 
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par action du référentiel', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     actionId: 'eci_1.2',
     categorieNoms: ['eci'],
   });
@@ -232,7 +233,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par action du réfé
 });
 
 test("Filtrer les indicateurs - par le sous-ensemble ECi et par id de plan d'actions", async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     planActionIds: [1],
     categorieNoms: ['eci'],
   });
@@ -241,7 +242,7 @@ test("Filtrer les indicateurs - par le sous-ensemble ECi et par id de plan d'act
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par id de service', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     servicePiloteIds: [1],
     categorieNoms: ['eci'],
   });
@@ -250,7 +251,7 @@ test('Filtrer les indicateurs - par le sous-ensemble ECi et par id de service', 
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     categorieNoms: ['cae'],
   });
   expect(status).toEqual(200);
@@ -258,7 +259,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE', async () => {
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et par le flag "participation au score"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     participationScore: true,
     categorieNoms: ['cae'],
   });
@@ -267,7 +268,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et par le flag "partici
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "complété"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estComplet: true,
     categorieNoms: ['cae'],
   });
@@ -276,7 +277,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "complété
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "complété"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estComplet: false,
     categorieNoms: ['cae'],
   });
@@ -285,7 +286,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "compl�
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "confidentiel"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estConfidentiel: true,
     categorieNoms: ['cae'],
   });
@@ -296,7 +297,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "confidenti
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "confidentiel"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estConfidentiel: false,
     categorieNoms: ['cae'],
   });
@@ -312,7 +313,7 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "confid
 });
 
 test('Filtrer les indicateurs - par indicateur perso', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estPerso: true,
   });
   expect(status).toEqual(200);
@@ -320,7 +321,7 @@ test('Filtrer les indicateurs - par indicateur perso', async () => {
 });
 
 test('Filtrer les indicateurs - par indicateur perso et confidentiel', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estPerso: true,
     estConfidentiel: true,
   });
@@ -335,7 +336,7 @@ test('Filtrer les indicateurs - par indicateur perso et confidentiel', async () 
 });
 
 test('Filtrer les indicateurs - tous les indicateurs', async () => {
-  const {status, data} = await fetchIndicateurs({});
+  const { status, data } = await fetchIndicateurs({});
   expect(status).toEqual(200);
   expect(data.length).toBeGreaterThan(0);
 
@@ -344,12 +345,20 @@ test('Filtrer les indicateurs - tous les indicateurs', async () => {
   }
 });
 
+test('Filtrer les indicateurs - par fiche action', async () => {
+  const { status, data } = await fetchIndicateurs({
+    ficheActionIds: [1],
+  });
+  expect(status).toEqual(200);
+  expect(data).toHaveLength(1);
+});
+
 test('Filtrer les indicateurs - par existence de données open-data', async () => {
   // Ajoute 3 valeurs open-data :
   // - 2 pour l'indicateur 48
   // - 1 pour l'indicateur 17
 
-  const {data: metadonnee} = await dbAdmin
+  const { data: metadonnee } = await dbAdmin
     .from('indicateur_source_metadonnee')
     .insert({
       source_id: 'citepa',
@@ -381,7 +390,7 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
     metadonnee_id: metadonnee![0].id,
   });
 
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     hasOpenData: true,
   });
 

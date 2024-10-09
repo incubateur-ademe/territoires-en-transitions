@@ -1,19 +1,19 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
-import {Indicateurs} from '@tet/api';
-import {Checkbox, Field, Input} from '@tet/ui';
+import { Indicateurs } from '@tet/api';
+import { Checkbox, Field, Input } from '@tet/ui';
 
-import {useFilteredIndicateurDefinitions} from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import SelectIndicateursGrid from './SelectIndicateursGrid';
-import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
+import { IndicateurListItem } from '@tet/api/indicateurs/domain';
+import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import SelectIndicateursGrid from './SelectIndicateursGrid';
 
 type Props = {
-  selectedIndicateurs: TIndicateurListItem[] | null;
-  onSelect: (indicateur: TIndicateurListItem) => void;
+  selectedIndicateurs: IndicateurListItem[] | null;
+  onSelect: (indicateur: IndicateurListItem) => void;
 };
 
-const Content = ({selectedIndicateurs, onSelect}: Props) => {
+const Content = ({ selectedIndicateurs, onSelect }: Props) => {
   const [filters, setFilters] = useState<Indicateurs.FetchFiltre>({});
 
   /** Texte de recherche pour l'input */
@@ -50,12 +50,12 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         <Field title="Thématique" small>
           <ThematiquesDropdown
             values={filters.thematiqueIds}
-            onChange={({thematiques}) =>
+            onChange={({ thematiques }) =>
               setFilters({
                 ...filters,
                 thematiqueIds:
                   thematiques.length > 0
-                    ? thematiques.map(t => t.id)
+                    ? thematiques.map((t) => t.id)
                     : undefined,
               })
             }
@@ -86,7 +86,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         <Checkbox
           label="Indicateur personnalisé"
           checked={filters.estPerso}
-          onChange={event =>
+          onChange={(event) =>
             setFilters({
               ...filters,
               estPerso: event.target.checked ?? undefined,
@@ -96,7 +96,7 @@ const Content = ({selectedIndicateurs, onSelect}: Props) => {
         <Checkbox
           label="Indicateur de la collectivité"
           checked={filters.estFavorisCollectivite}
-          onChange={event =>
+          onChange={(event) =>
             setFilters({
               ...filters,
               estFavorisCollectivite: event.target.checked ?? undefined,

@@ -1,23 +1,21 @@
+import { beforeAll, expect, test } from 'vitest';
+import { signIn, signOut } from '../../tests/auth';
+import { dbAdmin, supabase } from '../../tests/supabase';
+import { testReset } from '../../tests/testReset';
 import {
-  selectIndicateurValeur,
-  selectIndicateurValeurs,
+  getValeursComparaison,
+  selectIndicateurActions,
+  selectIndicateurCategoriesUtilisateur,
+  selectIndicateurChartInfo,
+  selectIndicateurDefinition,
+  selectIndicateurFiches,
   selectIndicateurPilotes,
   selectIndicateurServicesId,
-  selectIndicateurThematiquesId,
-  selectIndicateurFiches,
-  selectIndicateurActions,
-  selectIndicateurListItems,
-  selectIndicateurDefinition,
-  selectIndicateurComplet,
-  selectIndicateurChartInfo,
-  selectIndicateurCategoriesUtilisateur,
-  getValeursComparaison,
   selectIndicateurSources,
+  selectIndicateurThematiquesId,
+  selectIndicateurValeur,
+  selectIndicateurValeurs,
 } from './indicateur.fetch';
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../tests/auth';
-import {dbAdmin, supabase} from '../../tests/supabase';
-import {testReset} from '../../tests/testReset';
 
 beforeAll(async () => {
   await signIn('yolododo');
@@ -25,18 +23,18 @@ beforeAll(async () => {
   // Groupement
   const gp = await dbAdmin
     .from('groupement')
-    .insert({nom: 'test'})
+    .insert({ nom: 'test' })
     .select('id');
   await dbAdmin
     .from('groupement_collectivite')
-    .insert({collectivite_id: 1, groupement_id: gp.data![0].id});
+    .insert({ collectivite_id: 1, groupement_id: gp.data![0].id });
   const gp2 = await dbAdmin
     .from('groupement')
-    .insert({nom: 'test2'})
+    .insert({ nom: 'test2' })
     .select('id');
   await dbAdmin
     .from('groupement_collectivite')
-    .insert({collectivite_id: 2, groupement_id: gp2.data![0].id});
+    .insert({ collectivite_id: 2, groupement_id: gp2.data![0].id });
 
   // Indicateur privé
   const indi = await dbAdmin.from('indicateur_definition').insert({
@@ -48,59 +46,59 @@ beforeAll(async () => {
   // Categories
   const cat = await dbAdmin
     .from('categorie_tag')
-    .upsert({collectivite_id: 1, nom: 'test'})
+    .upsert({ collectivite_id: 1, nom: 'test' })
     .select('id');
   await dbAdmin
     .from('indicateur_categorie_tag')
-    .insert({categorie_tag_id: cat.data![0].id, indicateur_id: 1});
+    .insert({ categorie_tag_id: cat.data![0].id, indicateur_id: 1 });
   const cat2 = await dbAdmin
     .from('categorie_tag')
-    .upsert({groupement_id: gp.data![0].id, nom: 'testGP'})
+    .upsert({ groupement_id: gp.data![0].id, nom: 'testGP' })
     .select('id');
   await dbAdmin
     .from('indicateur_categorie_tag')
-    .insert({categorie_tag_id: cat2.data![0].id, indicateur_id: 1});
+    .insert({ categorie_tag_id: cat2.data![0].id, indicateur_id: 1 });
   const cat3 = await dbAdmin
     .from('categorie_tag')
-    .upsert({groupement_id: gp2.data![0].id, nom: 'testGP2'})
+    .upsert({ groupement_id: gp2.data![0].id, nom: 'testGP2' })
     .select('id');
   await dbAdmin
     .from('indicateur_categorie_tag')
-    .insert({categorie_tag_id: cat3.data![0].id, indicateur_id: 1});
+    .insert({ categorie_tag_id: cat3.data![0].id, indicateur_id: 1 });
   const cat4 = await dbAdmin
     .from('categorie_tag')
-    .upsert({collectivite_id: 2, nom: 'test2'})
+    .upsert({ collectivite_id: 2, nom: 'test2' })
     .select('id');
   await dbAdmin
     .from('indicateur_categorie_tag')
-    .insert({categorie_tag_id: cat4.data![0].id, indicateur_id: 1});
+    .insert({ categorie_tag_id: cat4.data![0].id, indicateur_id: 1 });
   // Pilotes
   await dbAdmin
     .from('indicateur_pilote')
-    .insert({collectivite_id: 1, user_id: null, tag_id: 1, indicateur_id: 1});
+    .insert({ collectivite_id: 1, user_id: null, tag_id: 1, indicateur_id: 1 });
   // Services
   await dbAdmin
     .from('indicateur_service_tag')
-    .insert({collectivite_id: 1, service_tag_id: 1, indicateur_id: 1});
+    .insert({ collectivite_id: 1, service_tag_id: 1, indicateur_id: 1 });
   // Thématiques
   await dbAdmin
     .from('indicateur_thematique')
-    .insert({thematique_id: 1, indicateur_id: 123});
+    .insert({ thematique_id: 1, indicateur_id: 123 });
   // Fiches
   await dbAdmin
     .from('fiche_action_indicateur')
-    .insert({fiche_id: 1, indicateur_id: 123});
+    .insert({ fiche_id: 1, indicateur_id: 123 });
   // Actions
   await dbAdmin
     .from('indicateur_action')
-    .insert({action_id: 'eci_4', indicateur_id: 123});
+    .insert({ action_id: 'eci_4', indicateur_id: 123 });
   // Commentaire
   await dbAdmin
     .from('indicateur_collectivite')
-    .insert({indicateur_id: 1, collectivite_id: 1, commentaire: 'test1'});
+    .insert({ indicateur_id: 1, collectivite_id: 1, commentaire: 'test1' });
   await dbAdmin
     .from('indicateur_collectivite')
-    .insert({indicateur_id: 1, collectivite_id: 2, commentaire: 'test2'});
+    .insert({ indicateur_id: 1, collectivite_id: 2, commentaire: 'test2' });
   // Metadonnées
   const meta = await dbAdmin
     .from('indicateur_source_metadonnee')
@@ -210,25 +208,6 @@ test('Test selectIndicateurActions', async () => {
   expect(data[0].id).eq('eci_4');
 });
 
-test('Test selectIndicateurListItems', async () => {
-  // Récupère la liste des indicateurs prédéfinis et personnalisés
-  const data = await selectIndicateurListItems(supabase, 1, true, true);
-  expect(data).not.toBeNull();
-  expect(data).toHaveLength(124);
-  // Récupère la liste des indicateurs personnalisés
-  const perso = await selectIndicateurListItems(supabase, 1, true, false);
-  expect(perso).not.toBeNull();
-  expect(perso).toHaveLength(1);
-  // Récupère la liste des indicateurs prédéfinis et privé
-  const predef = await selectIndicateurListItems(supabase, 1, false, true);
-  expect(predef).not.toBeNull();
-  expect(predef).toHaveLength(123);
-  // Récupère la liste des indicateurs prédéfinis et non privé
-  const predef2 = await selectIndicateurListItems(supabase, 2, false, true);
-  expect(predef2).not.toBeNull();
-  expect(predef2).toHaveLength(122);
-});
-
 test('Test selectIndicateurValeurs', async () => {
   // Récupère les valeurs utilisateurs
   const data = await selectIndicateurValeurs(supabase, 1, 1, null);
@@ -252,13 +231,6 @@ test('Test selectIndicateurDefinition', async () => {
   expect(data!.identifiant).eq('crte_4.1');
 });
 
-test('Test selectIndicateurComplet', async () => {
-  const data = await selectIndicateurComplet(supabase, 1, 1);
-  expect(data).not.toBeNull();
-  expect(data!.identifiant).eq('crte_4.1');
-  expect(data!.pilotes).toHaveLength(1);
-});
-
 test('Test selectIndicateurChartInfo', async () => {
   // Test retour indicateur
   const data = await selectIndicateurChartInfo(supabase, 1, 1);
@@ -267,7 +239,7 @@ test('Test selectIndicateurChartInfo', async () => {
   const data2 = await selectIndicateurChartInfo(supabase, 48, 1);
   expect(data2).not.toBeNull();
   expect(data2!.enfants).toHaveLength(5);
-  expect(data2!.enfants!.filter(e => (e.id = 8))![0].rempli).toBe(true);
+  expect(data2!.enfants!.filter((e) => (e.id = 8))![0].rempli).toBe(true);
   expect(data2!.valeurs).toHaveLength(0);
   // Test retour indicateur composé cae_2.a non rempli car sans_valeur = false
   await dbAdmin.from('indicateur_valeur').insert({
@@ -301,20 +273,20 @@ test('Test selectIndicateurChartInfo', async () => {
   // Test retour indicateur composé cae_2.a non rempli car sans_valeur = true
   await dbAdmin
     .from('indicateur_definition')
-    .update({sans_valeur_utilisateur: true})
+    .update({ sans_valeur_utilisateur: true })
     .eq('id', 48);
   const data4 = await selectIndicateurChartInfo(supabase, 48, 1);
   expect(data4).not.toBeNull();
   expect(data4!.enfants).toHaveLength(5);
   expect(data4!.valeurs).toHaveLength(1);
   // Test retour indicateur cae_9 non rempli
-  await dbAdmin.from('indicateur_groupe').insert({parent: 114, enfant: 3});
+  await dbAdmin.from('indicateur_groupe').insert({ parent: 114, enfant: 3 });
   const data5 = await selectIndicateurChartInfo(supabase, 114, 1);
   expect(data5).not.toBeNull();
   expect(data5!.enfants).toHaveLength(1);
   expect(data5!.valeurs).toHaveLength(0);
   // Test retour indicateur cae_9 rempli
-  await dbAdmin.from('indicateur_groupe').insert({parent: 114, enfant: 1});
+  await dbAdmin.from('indicateur_groupe').insert({ parent: 114, enfant: 1 });
   const data6 = await selectIndicateurChartInfo(supabase, 114, 1);
   expect(data6).not.toBeNull();
   expect(data6!.enfants).toHaveLength(2);

@@ -1,11 +1,11 @@
-import {useState} from 'react';
-import {Alert, Button} from '@tet/ui';
-import {usePlanActionProfondeur} from '../../../../PlanAction/data/usePlanActionProfondeur';
-import {useAddFicheToAxe} from '../../../data/useAddFicheToAxe';
-import {FicheAction} from '../../../data/types';
-import {checkAxeExistInPlanProfondeur} from '../../../../PlanAction/data/utils';
-import {TProfondeurAxe} from '../../../../PlanAction/data/types';
+import { useState } from 'react';
+import { Alert, Button } from '@tet/ui';
+import { usePlanActionProfondeur } from '../../../../PlanAction/data/usePlanActionProfondeur';
+import { useAddFicheToAxe } from '../../../data/useAddFicheToAxe';
+import { checkAxeExistInPlanProfondeur } from '../../../../PlanAction/data/utils';
+import { TProfondeurAxe } from '../../../../PlanAction/data/types';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
+import { FicheAction } from '@tet/api/plan-actions';
 
 type NouvelEmplacementFicheProps = {
   fiche: FicheAction;
@@ -17,15 +17,15 @@ const NouvelEmplacementFiche = ({
   onSave,
 }: NouvelEmplacementFicheProps) => {
   const plansProfondeur = usePlanActionProfondeur();
-  const {mutate: addFicheToAxe} = useAddFicheToAxe();
+  const { mutate: addFicheToAxe } = useAddFicheToAxe();
 
   // Tableau contenant les ids des axes de la fiche
-  const ficheAxesIds = (fiche.axes ?? []).map(axe => axe.id);
+  const ficheAxesIds = (fiche.axes ?? []).map((axe) => axe.id);
 
   // On retire les plans qui contiennent déjà la fiche
   const plans = plansProfondeur?.plans.filter(
-    plan =>
-      !ficheAxesIds.some(id => checkAxeExistInPlanProfondeur(plan.plan, id!))
+    (plan) =>
+      !ficheAxesIds.some((id) => checkAxeExistInPlanProfondeur(plan.plan, id!))
   );
 
   // L'axe sélectionné et ceux dont il est l'enfant
@@ -36,11 +36,11 @@ const NouvelEmplacementFiche = ({
     const selectedDepth = selectedAxe.profondeur;
     const currentDepth = selectedAxes.length - 1;
     const isAlreadySelected = selectedAxes.some(
-      axe => axe.axe.id === selectedAxe.axe.id
+      (axe) => axe.axe.id === selectedAxe.axe.id
     );
 
     const newSelectedAxes = [
-      ...selectedAxes.filter(axe => axe.profondeur < selectedDepth),
+      ...selectedAxes.filter((axe) => axe.profondeur < selectedDepth),
     ];
 
     if (
@@ -66,7 +66,7 @@ const NouvelEmplacementFiche = ({
         const element = document.getElementById(idToScrollTo.toString());
 
         if (element) {
-          element.scrollIntoView({behavior: 'smooth', inline: 'end'});
+          element.scrollIntoView({ behavior: 'smooth', inline: 'end' });
         }
       }
     }, 0);
@@ -74,10 +74,10 @@ const NouvelEmplacementFiche = ({
 
   // Sauvegarde du plan sélectionné
   const handleSave = () => {
-    const axe = selectedAxes[selectedAxes.length - 1];
+    const { axe } = selectedAxes[selectedAxes.length - 1];
 
     addFicheToAxe({
-      axe: {id: axe.axe.id, nom: axe.axe.nom},
+      axe: { id: axe.id, nom: axe.nom },
       fiche_id: fiche.id!,
     });
 
@@ -94,18 +94,18 @@ const NouvelEmplacementFiche = ({
       {plans && plans.length > 0 ? (
         <div className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
           <ColonneTableauEmplacement
-            axesList={plans.map(plan => plan.plan)}
-            selectedAxesIds={selectedAxes.map(axe => axe.axe.id)}
+            axesList={plans.map((plan) => plan.plan)}
+            selectedAxesIds={selectedAxes.map((axe) => axe.axe.id)}
             maxSelectedDepth={selectedAxes.length - 1}
             onSelectAxe={handleSelectAxe}
           />
 
-          {selectedAxes.map(axe => {
+          {selectedAxes.map((axe) => {
             return !!axe.enfants ? (
               <ColonneTableauEmplacement
                 key={axe.axe.id}
                 axesList={axe.enfants}
-                selectedAxesIds={selectedAxes.map(axe => axe.axe.id)}
+                selectedAxesIds={selectedAxes.map((axe) => axe.axe.id)}
                 maxSelectedDepth={selectedAxes.length - 1}
                 onSelectAxe={handleSelectAxe}
               />

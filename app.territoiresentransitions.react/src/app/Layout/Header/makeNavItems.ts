@@ -11,10 +11,10 @@ import {
   makeCollectivitePlansActionsLandingUrl,
   makeCollectiviteReferentielUrl,
   makeCollectiviteUsersUrl,
-  makeTableauBordLandingUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteIndicateursCollectiviteUrl,
+  makeTableauBordUrl,
 } from 'app/paths';
 import {UserData} from 'core-logic/api/auth/AuthProvider';
 import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
@@ -157,11 +157,21 @@ const makeNavItemsBase = (
       urlPrefix: [`${collectivite.collectivite_id}/plans/`],
       items: [
         {
-          label: 'Tableau de bord',
-          to: makeTableauBordLandingUrl({
+          label: 'Tableau de bord Collectivité',
+          to: makeTableauBordUrl({
             collectiviteId,
+            view: 'collectivite',
           }),
-          urlPrefix: ['/tableau-de-bord/'],
+          urlPrefix: ['/tableau-de-bord/collectivite'],
+          hideToVisitor,
+        },
+        {
+          label: 'Mon suivi personnel',
+          to: makeTableauBordUrl({
+            collectiviteId,
+            view: 'personnel',
+          }),
+          urlPrefix: ['/tableau-de-bord/personnel'],
           hideToVisitor,
         },
         {

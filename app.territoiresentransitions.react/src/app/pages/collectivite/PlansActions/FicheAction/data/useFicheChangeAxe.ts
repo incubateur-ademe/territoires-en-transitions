@@ -1,10 +1,9 @@
-import {useMutation, useQueryClient} from 'react-query';
-
-import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheResume} from './types';
-import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
-import {PlanNode} from '../../PlanAction/data/types';
-import {sortFichesResume} from './utils';
+import { useMutation, useQueryClient } from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import { PlanNode } from '../../PlanAction/data/types';
+import { sortFichesResume } from './utils';
+import { FicheResume } from '@tet/api/plan-actions';
 
 type Args = {
   fiche: FicheResume;
@@ -12,13 +11,13 @@ type Args = {
   new_axe_id: number;
 };
 
-export const useFicheChangeAxe = ({planId}: {planId: number}) => {
+export const useFicheChangeAxe = ({ planId }: { planId: number }) => {
   const queryClient = useQueryClient();
 
   const flat_axes_Key = ['flat_axes', planId];
 
   return useMutation(
-    async ({fiche, new_axe_id, old_axe_id}: Args) => {
+    async ({ fiche, new_axe_id, old_axe_id }: Args) => {
       await supabaseClient.rpc('deplacer_fiche_action_dans_un_axe', {
         fiche_id: fiche.id!,
         new_axe_id,
@@ -27,8 +26,8 @@ export const useFicheChangeAxe = ({planId}: {planId: number}) => {
     },
     {
       mutationKey: 'fiche_change_axe',
-      onMutate: async args => {
-        const {fiche, new_axe_id, old_axe_id} = args;
+      onMutate: async (args) => {
+        const { fiche, new_axe_id, old_axe_id } = args;
         const fiche_id = fiche.id!;
 
         const old_axe_fiches_Key = ['axe_fiches', old_axe_id];
@@ -44,11 +43,11 @@ export const useFicheChangeAxe = ({planId}: {planId: number}) => {
           flat_axes_Key,
           (old: PlanNode[] | undefined): PlanNode[] => {
             if (old) {
-              return old.map(axe => {
+              return old.map((axe) => {
                 if (axe.id === old_axe_id) {
                   return {
                     ...axe,
-                    fiches: axe.fiches?.filter(id => id !== fiche_id) || [],
+                    fiches: axe.fiches?.filter((id) => id !== fiche_id) || [],
                   };
                 } else if (axe.id === new_axe_id) {
                   return {
@@ -68,7 +67,7 @@ export const useFicheChangeAxe = ({planId}: {planId: number}) => {
         queryClient.setQueryData(
           old_axe_fiches_Key,
           (old: FicheResume[] | undefined): FicheResume[] => {
-            return old?.filter(f => f.id !== fiche_id) || [];
+            return old?.filter((f) => f.id !== fiche_id) || [];
           }
         );
 
