@@ -22,6 +22,18 @@ export const useCarteCollectivitesEngagees = () => {
       throw new Error('site_labellisation-carte-engagees');
     }
 
+    // Appel en deux temps pour éviter un timeout
+    const { error: collectivitesActivesError, data: collectivitesActivesData } =
+      await supabase
+        .from('site_labellisation')
+        .select('*, geojson')
+        .eq('engagee', false)
+        .eq('active', true);
+
+    if (collectivitesActivesError) {
+      throw new Error('site_labellisation-carte-engagees');
+    }
+
     const { error: regionsError, data: regionsData } = await supabase
       .from('site_region')
       .select('*, geojson');
@@ -35,7 +47,10 @@ export const useCarteCollectivitesEngagees = () => {
     }
 
     return {
-      collectivites: collectivitesData as unknown as labellisation_w_geojson[],
+      collectivites: [
+        ...(collectivitesData as unknown as labellisation_w_geojson[]),
+        ...(collectivitesActivesData as unknown as labellisation_w_geojson[]),
+      ],
       regions: regionsData as unknown as region_w_geojson[],
     };
   });
