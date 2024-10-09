@@ -6,6 +6,7 @@ import {ScoreRempli, ScoreVide} from './Scores';
 import {ReferentielParamOption} from 'app/paths';
 import {actionIdToLabel} from 'app/labels';
 import {ProgressionRow} from '../data/useProgressionReferentiel';
+import IndicateursCard from '../IndicateursCard';
 
 type Props = {
   collectiviteId: number;
@@ -31,10 +32,12 @@ const EtatDesLieux = ({
   const displayEtatDesLieux =
     progressionScore.data.find(d => d.score_non_renseigne !== 1) !== undefined;
 
+  const TEMPORARY_displayEtatDesLieux = true;
+
   return (
     <div className="flex flex-col gap-6">
       {/** Scores */}
-      {displayEtatDesLieux ? (
+      {TEMPORARY_displayEtatDesLieux ? (
         <>
           <ScoreRempli
             collectiviteId={collectiviteId}
@@ -43,6 +46,7 @@ const EtatDesLieux = ({
             progressionScore={progressionScore}
             potentiel={potentiel}
           />
+          <IndicateursCard collectiviteId={collectiviteId} referentielId={referentiel}/>
           {/** Autres graph */}
           <EtatDesLieuxGraphs
             referentiel={referentiel}
