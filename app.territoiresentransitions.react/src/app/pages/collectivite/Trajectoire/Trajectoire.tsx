@@ -117,7 +117,7 @@ const Presentation = () => {
     <div className="flex flex-row gap-14 py-12">
       <div className="w-3/5">
         <h1>
-          Calculez votre trajectoire de transition écologique avec la méthode
+          Calculez votre trajectoire de transition bas-carbone avec la méthode
           développée par l’ADEME.
         </h1>
         <p className="font-bold text-lg">
