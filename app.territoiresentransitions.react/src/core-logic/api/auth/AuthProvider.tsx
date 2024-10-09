@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: membre } = useMembre(user?.id);
   const userData = useMemo(
     () => (user && dcp ? { ...user, ...dcp, ...membre, isSupport } : null),
-    [user, dcp]
+    [user, dcp, membre]
   );
 
   // initialisation : enregistre l'écouteur de changements d'état
