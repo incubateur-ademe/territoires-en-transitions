@@ -113,16 +113,17 @@ const FilledIndicateursCard = ({
   return (
     <AccueilCard className="grow flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
-      {/* <ButtonWithLink
-        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={makeCollectiviteTousLesIndicateursUrl({collectiviteId})}
-        rounded
-      >
-        Compléter mes indicateurs
-      </ButtonWithLink> */}
       <ButtonWithLink
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
         href={makeCollectiviteIndicateursByReferentielPath({collectiviteId, referentielId})}
+        rounded
+      >
+        Compléter mes indicateurs
+      </ButtonWithLink>
+      {/* TO DO: change tracker ? */}
+      <ButtonWithLink
+        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
+        href={}
         rounded
       >
         Voir les indicateurs complétés en open data
