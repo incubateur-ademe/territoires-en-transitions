@@ -725,3 +725,5 @@ plan_action/fiches [plan_action/fiches@v4.9.0] 2024-09-26T12:07:24Z ,,, <jacquel
 @v4.13.0 2024-10-09T08:38:58Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Améliorations du panier action à impact
 
 plan_action/fiches [plan_action/fiches@v4.13.0] 2024-10-09T08:39:44Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Recrée la fn fiche_action_plan pour prendre en compte le nouveau champ de la table axe
+@v4.14.0 2024-10-09T08:45:40Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # fix(fiche-action): Charge de nouveau les fiches actions depuis la page de recherche
+
