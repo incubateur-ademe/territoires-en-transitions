@@ -8,6 +8,7 @@ import {
 } from '../domain/fetch-options.schema';
 import { FicheResume } from '../../domain';
 import { objectToCamel } from 'ts-case-convert';
+import { fetchPersonnes } from '@tet/api/collectivites';
 
 const ficheActionColumns = [
   'id',
@@ -48,9 +49,7 @@ export async function ficheResumesFetch({
   const relatedTables = new Set<string>();
 
   // Toujours récupérer les pilotes liés à la fiche
-  relatedTables.add(
-    'pilotes:fiche_action_pilote(personne_tag(nom, tag_id:id), utilisateur:dcp(prenom, nom, user_id))'
-  );
+  relatedTables.add('pilotes:fiche_action_pilote(*)');
 
   // Toujours récupérer les services liés à la fiche
   relatedTables.add('services:service_tag(*)');
@@ -269,24 +268,16 @@ export async function ficheResumesFetch({
 
   // 4. Transforme les données pour les adapter au format attendu
 
+  const personnes = await fetchPersonnes(dbClient, collectiviteId);
+
   const fiches = data.map((fiche) => ({
     ...fiche,
     plan_id: fiche.plans?.[0]?.plan,
-    pilotes:
-      (fiche.pilotes as any[])?.flatMap(({ personne_tag, utilisateur }) => {
-        if (personne_tag) {
-          return personne_tag;
-        }
-
-        if (utilisateur) {
-          return {
-            ...utilisateur,
-            nom: `${utilisateur.prenom} ${utilisateur.nom}`,
-          };
-        }
-
-        return [];
-      }) ?? null,
+    pilotes: (fiche.pilotes as any[]).map(({ tag_id, user_id }) =>
+      personnes.find((p) =>
+        tag_id !== null ? p.tagId === tag_id : p.userId === user_id
+      )
+    ),
   }));
 
   return {
