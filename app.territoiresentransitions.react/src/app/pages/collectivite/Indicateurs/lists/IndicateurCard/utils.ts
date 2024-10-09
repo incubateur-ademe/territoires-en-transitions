@@ -29,26 +29,6 @@ export const getIndicateurRestant = (
 };
 
 /**
- * Permet d'ajouter ou retirer un indicateur d'une liste d'indicateurs.
- * Renvoi la liste d'indicateurs mise à jour.
- */
-export function selectIndicateur<T extends { id: number }>({
-  indicateur,
-  selected,
-  selectedIndicateurs,
-}: {
-  indicateur: T;
-  selected: boolean;
-  selectedIndicateurs?: T[] | null;
-}): T[] {
-  if (selected) {
-    return selectedIndicateurs?.filter((i) => i.id !== indicateur.id) ?? [];
-  } else {
-    return [...(selectedIndicateurs ?? []), indicateur];
-  }
-}
-
-/**
  * Retourne le groupe auquel appartient l'indicateur.
  * Si l'id est undefined, on assume que c'est un indicateur personnalisé.
  */

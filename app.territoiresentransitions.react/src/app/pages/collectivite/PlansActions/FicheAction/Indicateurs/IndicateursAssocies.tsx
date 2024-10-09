@@ -8,10 +8,7 @@ import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
 import LoadingCard from '../LoadingCard';
 import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
-import {
-  getIndicateurGroup,
-  selectIndicateur,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
@@ -42,27 +39,21 @@ const IndicateursAssocies = ({
 
   if (isFicheLoading) return <LoadingCard />;
 
-  const selectedIndicateurs =
-    fiche.indicateurs?.map((i) =>
-      factoryIndicateurInsertToIndicateurListItem(i)
-    ) ?? [];
+  const selectedIndicateurs = fiche.indicateurs ?? [];
 
   const isEmpty = selectedIndicateurs.length === 0;
 
   const updateIndicateurs = (indicateur: TIndicateurListItem) => {
-    const selected =
+    // Check si l'indicateur est déjà associé
+    const isAssocie =
       selectedIndicateurs?.some((i) => i.id === indicateur.id) ?? false;
-    const newIndicateurs = selectIndicateur({
-      indicateur,
-      selected,
-      selectedIndicateurs,
-    });
-    updateFiche({
-      ...fiche,
-      indicateurs: newIndicateurs.map((i) =>
-        factoryIndicateurListItemToIndicateurInsert(i)
-      ),
-    });
+
+    // Ajoute ou retire l'indicateur de la liste
+    const indicateurs = isAssocie
+      ? selectedIndicateurs?.filter((i) => i.id !== indicateur.id) ?? []
+      : [...(selectedIndicateurs ?? []), indicateur];
+
+    updateFiche({ ...fiche, indicateurs });
   };
 
   return (
@@ -131,7 +122,6 @@ const IndicateursAssocies = ({
           </div>
 
           {/* Liste des indicateurs */}
-          {/* <IndicateursListe {...{isReadonly, fiche, updateIndicateurs}} /> */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
             {selectedIndicateurs.map((indicateur) => (
               <IndicateurCard
