@@ -19,6 +19,7 @@ import { splitPilotePersonnesAndUsers } from 'ui/dropdownLists/PersonnesDropdown
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;
@@ -89,6 +90,17 @@ const ModalIndicateursSuiviPlan = ({
                   ...splitPilotePersonnesAndUsers(personnes),
                 })
               }
+            />
+          </Field>
+          <Field title="Direction ou service pilote">
+            <ServicesPilotesDropdown
+              values={filtreState?.servicePiloteIds}
+              onChange={({ services }) => {
+                setFiltreState({
+                  ...filtreState,
+                  servicePiloteIds: services.map((s) => s.id),
+                });
+              }}
             />
           </Field>
           <Field title="Thématique de l'indicateur :">
