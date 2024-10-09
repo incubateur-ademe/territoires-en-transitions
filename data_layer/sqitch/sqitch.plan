@@ -722,3 +722,6 @@ automatisation/newsletters_pai 2024-09-02T14:17:56Z ,,, <jacquelina@LanceLibre> 
 collectivite/imports [collectivite/imports@v4.9.0] 2024-09-19T09:42:07Z ,,, <jacquelina@LanceLibre> # Ajoute la table contenant toutes les compétences pour toutes les collectivités
 collectivite/competence [collectivite/competence@v4.9.0] 2024-09-19T09:50:17Z ,,, <jacquelina@LanceLibre> # Ajoute un trigger à la création d'une epci pour remplir la table collectivite_banatic_competence
 plan_action/fiches [plan_action/fiches@v4.9.0] 2024-09-26T12:07:24Z ,,, <jacquelina@LanceLibre> # Remplace les resultats attendus par les effets attendus
+@v4.13.0 2024-10-09T08:38:58Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Améliorations du panier action à impact
+
+plan_action/fiches [plan_action/fiches@v4.13.0] 2024-10-09T08:39:44Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Recrée la fn fiche_action_plan pour prendre en compte le nouveau champ de la table axe
