@@ -1,14 +1,14 @@
 import classNames from 'classnames';
-import {Ref, forwardRef, useId} from 'react';
+import { Ref, forwardRef, useId } from 'react';
 
-import {FieldMessage, FieldMessageProps} from '../Field';
+import { FieldMessage, FieldMessageProps } from '../Field';
 
 export type CheckboxProps = Omit<
   React.ComponentPropsWithoutRef<'input'>,
   'type' | 'size'
 > & {
   /** Libellé associé à la case à cocher */
-  label?: string;
+  label?: React.ReactNode;
   /** Variante visuelle */
   variant?: 'checkbox' | 'switch';
   /** Pour styliser le container */

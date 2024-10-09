@@ -1,6 +1,7 @@
 'use client';
 
 import { RedStar } from '@tet/site/components/labellisation/Star';
+import { Checkbox } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 type FiltreEtoilesProps = {
@@ -38,29 +39,24 @@ const FiltreEtoiles = ({
   }, [etoiles, onChangeEtoiles]);
 
   return (
-    <div className="flex flex-col items-start gap-4">
+    <div className="flex flex-col items-start gap-4 ml-1">
       {etoiles.map((etoile, index) => (
-        <div key={index + 1} className="fr-checkbox-group">
-          <input
-            name={`${index + 1}etoiles`}
-            id={`${index + 1}etoiles`}
-            type="checkbox"
-            aria-describedby={`${index + 1} étoile(s)`}
-            checked={etoile}
-            onChange={() => {
-              const values = [...etoiles];
-              values[index] = !etoiles[index];
-              setEtoiles(values);
-            }}
-          />
-          <label htmlFor={`${index + 1}etoiles`} className="hover:shadow-none">
-            {[1, 2, 3, 4, 5]
-              .filter((e) => e <= index + 1)
-              .map((e) => (
-                <RedStar key={e} className="h-[23px] w-[26px]" />
-              ))}
-          </label>
-        </div>
+        <Checkbox
+          id={`${index + 1}etoiles`}
+          name={`${index + 1}etoiles`}
+          aria-describedby={`${index + 1} étoile(s)`}
+          checked={etoile}
+          onChange={() => {
+            const values = [...etoiles];
+            values[index] = !etoiles[index];
+            setEtoiles(values);
+          }}
+          label={[1, 2, 3, 4, 5]
+            .filter((e) => e <= index + 1)
+            .map((e) => (
+              <RedStar key={e} className="h-[19px] mt-0.5 mr-2" />
+            ))}
+        />
       ))}
     </div>
   );
