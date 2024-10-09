@@ -1,13 +1,13 @@
 import { indicateurListItemSchema } from '@tet/api/indicateurs/domain';
 import { actionSchema } from '@tet/api/referentiel/domain/action.schema';
 import {
-  personneSchema,
   sousThematiqueSchemaId,
   tagSchema,
   thematiqueSchema,
 } from '@tet/api/shared/domain';
 import { z } from 'zod';
 import { axeSchema } from './axe.schema';
+import { personneSchema } from '@tet/api/collectivites';
 
 // Enums
 

@@ -3,7 +3,7 @@ import { objectToSnake } from 'ts-case-convert';
 import { Action } from '../../referentiel/domain/action.schema';
 import { selectTags } from '../../shared/actions/tag.fetch';
 import { insertTags } from '../../shared/actions/tag.save';
-import { Personne } from '../../shared/domain/personne.schema';
+import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { Tag, TagInsert } from '../../shared/domain/tag.schema';
 import { Thematique } from '../../shared/domain/thematique.schema';
 import { DBClient, TablesInsert } from '../../typeUtils';

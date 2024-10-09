@@ -1,9 +1,10 @@
 import { SharedDomain } from '@tet/api';
+import { Personne } from '@tet/api/collectivites';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useUpdateIndicateurCard } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
-import { OpenState } from '@tet/ui/utils/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -12,7 +13,7 @@ type Props = {
   indicateurId: number;
   estPerso: boolean;
   openState: OpenState;
-  pilotes?: SharedDomain.Personne[];
+  pilotes?: Personne[];
   serviceIds?: number[];
   thematiqueIds?: number[];
 };
@@ -35,7 +36,7 @@ const IndicateurCardEditModal = ({
   };
 
   const [state, setState] = useState<{
-    pilotes: SharedDomain.Personne[];
+    pilotes: Personne[];
     services: SharedDomain.Tag[];
     thematiques: SharedDomain.Thematique[];
   }>(initialState);

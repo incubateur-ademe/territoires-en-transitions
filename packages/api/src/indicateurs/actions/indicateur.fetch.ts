@@ -8,7 +8,7 @@ import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
 import { Thematique } from '../../shared/domain';
-import { Personne } from '../../shared/domain/personne.schema';
+import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
 import { Source, SourceMetadonnee } from '../domain';
 import {

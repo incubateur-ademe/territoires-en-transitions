@@ -1,9 +1,10 @@
-import {useMutation} from 'react-query';
+import { useMutation } from 'react-query';
 
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import { Personne, Tag, Thematique } from '@tet/api/shared/domain';
+import { Indicateurs } from '@tet/api';
+import { Personne } from '@tet/api/collectivites';
+import { Tag, Thematique } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 /** Met à jour les pilotes, les services pilotes, les thématique d'un indicateur */
 export const useUpdateIndicateurCard = (

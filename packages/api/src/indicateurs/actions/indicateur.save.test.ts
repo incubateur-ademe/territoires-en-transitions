@@ -1,7 +1,7 @@
 import { beforeAll, expect, test } from 'vitest';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
-import { Personne } from '../../shared/domain/personne.schema';
+import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { TagInsert } from '../../shared/domain/tag.schema';
 import { Thematique } from '../../shared/domain/thematique.schema';
 import { signIn, signOut } from '../../tests/auth';
