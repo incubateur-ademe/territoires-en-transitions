@@ -67,6 +67,7 @@ export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
 export const collectiviteTousLesIndicateursPath = `${collectiviteIndicateursBasePath}/tous-les-indicateurs`;
+export const collectiviteIndicateursByReferentielPath = `${collectiviteIndicateursBasePath}/tous-les-indicateurs?cat=${referentielParam}`;
 export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateursBasePath}/collectivite`;
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
 export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
@@ -158,6 +159,23 @@ export const makeCollectiviteTousLesIndicateursUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeCollectiviteIndicateursByReferentielPath = ({
+  collectiviteId,
+  referentielId
+}: {
+    collectiviteId: number;
+    referentielId: ReferentielParamOption;
+}) =>
+  collectiviteIndicateursByReferentielPath
+      .replace(
+      `:${collectiviteParam}`,
+        collectiviteId.toString()
+      )
+      .replace(
+        `${referentielParam}`,
+        referentielId?.toString() || ''
+      )
 
 export const makeCollectiviteIndicateursCollectiviteUrl = ({
   collectiviteId,
