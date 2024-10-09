@@ -2,7 +2,7 @@ import { objectToCamel } from 'ts-case-convert';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
-} from '../../collectivites/shared/actions/groupement.fetch';
+} from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';

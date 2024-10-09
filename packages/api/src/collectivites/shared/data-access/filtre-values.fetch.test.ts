@@ -1,8 +1,8 @@
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
 import { supabase } from '../../../tests/supabase';
-import { filtreValuesFetch } from './filtre_values.fetch';
-import { FiltreRessourceLiees } from '../domain/filtre_ressource_liees.schema';
+import { filtreValuesFetch } from './filtre-values.fetch';
+import { FiltreRessourceLiees } from '../domain/filtre-ressource-liees.schema';
 
 const getFiltreValues = async ({
   filtre,

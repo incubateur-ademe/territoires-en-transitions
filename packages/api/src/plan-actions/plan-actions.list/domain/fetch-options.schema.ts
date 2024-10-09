@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
-import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre_ressource_liees.schema';
+import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
 
 /**
  * Schema de filtre pour le fetch des plan actions.

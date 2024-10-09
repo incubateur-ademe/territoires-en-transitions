@@ -1,5 +1,5 @@
 import { Indicateurs } from '@tet/api';
-import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
+import { FiltreValues } from '@tet/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { FiltreSpecifique as FiltreSpecifiqueFichesSynthse } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { FiltreSpecifique as FiltreSpecifiqueFicheActions } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';

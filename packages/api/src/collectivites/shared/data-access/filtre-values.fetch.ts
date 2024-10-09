@@ -5,7 +5,7 @@ import {
   FiltreRessourceLiees,
   FiltreValues,
   filtreRessourceLieesSchema,
-} from '../domain/filtre_ressource_liees.schema';
+} from '../domain/filtre-ressource-liees.schema';
 
 type Input = {
   dbClient: DBClient;

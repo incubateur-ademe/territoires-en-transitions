@@ -1,9 +1,9 @@
-import { selectGroupements } from '../../collectivites/shared/actions/groupement.fetch';
+import { selectGroupements } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
 import { DBClient } from '../../typeUtils';
 import { unaccent } from '../../utils/unaccent';
-import { FetchFiltre, FetchOptions } from '../domain/fetch_options.schema';
+import { FetchFiltre, FetchOptions } from '../domain/fetch-options.schema';
 
 const filtresOptions: { [key in keyof FetchFiltre]?: string } = {
   thematiqueIds: 'indicateur_thematique!inner(thematique_id)',

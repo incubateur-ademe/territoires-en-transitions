@@ -2,8 +2,8 @@ import { useQuery } from 'react-query';
 
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { filtreValuesFetch } from '@tet/api/collectivites/shared/actions/filtre_values.fetch';
-import { FiltreRessourceLiees } from '@tet/api/collectivites/shared/domain/filtre_ressource_liees.schema';
+import { filtreValuesFetch } from '@tet/api/collectivites/shared/data-access/filtre-values.fetch';
+import { FiltreRessourceLiees } from '@tet/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 
 type Args = {
   filtre: FiltreRessourceLiees;
