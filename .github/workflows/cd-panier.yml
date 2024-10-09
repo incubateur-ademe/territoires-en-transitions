@@ -32,10 +32,11 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
-          +panier-build
+          +panier-docker
           --ENV_NAME=${{ github.event.inputs.target }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
           --AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
+          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
       - name: Deploy panier on Koyeb

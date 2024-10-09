@@ -1,31 +1,32 @@
 import { ResultatsAttendus } from '@tet/api/plan-actions';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { ficheActionResultatsAttendusOptions } from '../../listesStatiques';
+import { useEffetsAttendus } from './useEffetsAttendus';
 
 type EffetsAttendusDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
   values?: ResultatsAttendus[];
-  onChange: ({
-    effets,
-    selectedEffet,
-  }: {
-    effets: ResultatsAttendus[];
-    selectedEffet: ResultatsAttendus;
-  }) => void;
+  onChange: ({ effets }: { effets: ResultatsAttendus[] }) => void;
 };
 
-const EffetsAttendusDropdown = (props: EffetsAttendusDropdownProps) => {
+const EffetsAttendusDropdown = ({
+  values,
+  onChange,
+}: EffetsAttendusDropdownProps) => {
+  const { data: options } = useEffetsAttendus();
+  if (!options?.length) return;
+
   return (
     <SelectFilter
-      {...props}
+      values={values?.map((v) => v.id)}
       isSearcheable
-      options={ficheActionResultatsAttendusOptions}
-      onChange={({ values, selectedValue }) =>
-        props.onChange({
-          effets: values as ResultatsAttendus[],
-          selectedEffet: selectedValue as ResultatsAttendus,
+      options={options.map(({ id, nom }) => ({ value: id, label: nom }))}
+      onChange={({ values }) =>
+        onChange({
+          effets: options.filter((v) =>
+            values?.includes(v.id)
+          ) as ResultatsAttendus[],
         })
       }
     />

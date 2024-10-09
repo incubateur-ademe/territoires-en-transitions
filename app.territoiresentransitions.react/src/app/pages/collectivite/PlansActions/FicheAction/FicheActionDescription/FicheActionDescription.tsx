@@ -4,6 +4,7 @@ import { Badge, Button } from '@tet/ui';
 import { FicheAction } from '@tet/api/plan-actions';
 import MenuDescription from './MenuDescription';
 import { getTruncatedText } from '../utils';
+import Markdown from 'ui/Markdown';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
@@ -82,9 +83,17 @@ const FicheActionDescription = ({
           Description de l'action :
         </h6>
         <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
-          {(isFullDescription || !isDescriptionTruncated
-            ? description
-            : truncatedDescription) || 'Non renseigné'}
+          {description ? (
+            <Markdown
+              className="[&_ul]:list-disc [&_ul]:pl-8 [&_p]:mb-0"
+              content={(isFullDescription || !isDescriptionTruncated
+                ? description
+                : truncatedDescription
+              ).replaceAll('\\n', '\n')}
+            />
+          ) : (
+            'Non renseigné'
+          )}
         </p>
         {isDescriptionTruncated && (
           <Button

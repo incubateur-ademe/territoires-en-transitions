@@ -2,221 +2,184 @@
 
 BEGIN;
 
---- Contenus
-
-create table categorie_fnv
+create table panier_partenaire
 (
-    id  serial primary key,
+    id serial primary key,
+    nom text
+);
+
+create table action_impact_partenaire
+(
+    action_impact_id integer references action_impact,
+    partenaire_id integer references panier_partenaire,
+    primary key (action_impact_id, partenaire_id)
+);
+
+create table action_impact_typologie
+(
+    id serial primary key,
     nom text not null
 );
-insert into categorie_fnv(id, nom)
-values (1, 'Transversal'),
-       (2, 'Mieux se déplacer'),
-       (3, 'Mieux se loger'),
-       (4, 'Mieux préserver les ressources'),
-       (5, 'Mieux préserver la biodiversité'),
-       (6, 'Mieux produire'),
-       (7, 'Mieux se nourrir'),
-       (8, 'Mieux consommer');
 
-create table action_impact_complexite
+create policy allow_read on action_impact_fiche_action
+    for select using (peut_lire_la_fiche(fiche_id));
+
+drop function thematique(action_impact_state);
+drop function matches_competences(action_impact_state);
+drop function action_impact_temps_de_mise_en_oeuvre(action_impact_state);
+drop function action_impact_fourchette_budgetaire(action_impact_state);
+drop function action_impact_state(panier);
+drop table action_impact_state;
+
+alter table action_impact add column competences_communales boolean default false not null;
+alter table action_impact add column independamment_competences boolean default false not null;
+alter table action_impact add column typologie_id integer references action_impact_typologie;
+
+create table action_impact_state
 (
-    niveau serial primary key,
-    nom    text not null
+    action     action_impact,
+    statut     action_impact_statut,
+    isinpanier boolean,
+    panier panier
 );
-insert into action_impact_complexite(niveau, nom)
-values (1, 'simple'),
-       (2, 'intermédiaire'),
-       (3, 'élevée');
+comment on table action_impact_state is
+    'L''état d''une action par rapport à un panier. On ne se sert pas de cette table pour stocker des données.';
 
-create table action_impact_fourchette_budgetaire
-(
-    niveau serial primary key,
-    nom    text not null
-);
-insert into action_impact_fourchette_budgetaire(niveau, nom)
-values (1, 'De 0 à 40 000€'),
-       (2, 'De 40 000€ à 100 000€'),
-       (3, 'Plus de 100 000€'),
-       (4, 'Non estimé');
+create function action_impact_state(panier) returns SETOF action_impact_state
+    stable
+    language sql
+BEGIN ATOMIC
+SELECT a.*::action_impact AS action,
+       ais.*::action_impact_statut AS statut,
+       (aip.* IS NOT NULL) AS isinpanier,
+       ($1) as panier
+FROM action_impact a
+LEFT JOIN action_impact_panier aip ON aip.action_id = a.id AND aip.panier_id = ($1).id
+LEFT JOIN action_impact_statut ais ON ais.action_id = a.id AND ais.panier_id = ($1).id;
+END;
+comment on function action_impact_state(panier) is 'La liste des actions et de leurs états pour un panier.';
 
-create table action_impact_tier
-(
-    niveau serial primary key,
-    nom    text not null
-);
-insert into action_impact_tier(niveau, nom)
-values (1, '1'),
-       (2, '2'),
-       (3, '3');
+create function action_impact_fourchette_budgetaire(action_impact_state) returns SETOF action_impact_fourchette_budgetaire
+    stable
+    rows 1
+    language sql
+BEGIN ATOMIC
+SELECT b.niveau,
+       b.nom
+FROM action_impact_fourchette_budgetaire b
+WHERE (b.niveau = ($1).action.fourchette_budgetaire);
+END;
+comment on function action_impact_fourchette_budgetaire(action_impact_state) is 'La relation entre le state d''une action et sa fourchette budgétaire.';
 
-create table action_impact_temps_de_mise_en_oeuvre
-(
-    niveau serial primary key,
-    nom    text not null
-);
-insert into action_impact_temps_de_mise_en_oeuvre(niveau, nom)
-values (1, 'Moins d’1 an'),
-       (2, '1 a 2 ans'),
-       (3, 'Plus de 2 ans'),
-       (4, 'Non estimé');
+create function action_impact_temps_de_mise_en_oeuvre(action_impact_state) returns SETOF action_impact_temps_de_mise_en_oeuvre
+    stable
+    rows 1
+    language sql
+BEGIN ATOMIC
+SELECT meo.niveau,
+       meo.nom
+FROM action_impact_temps_de_mise_en_oeuvre meo
+WHERE (meo.niveau = ($1).action.temps_de_mise_en_oeuvre);
+END;
+comment on function action_impact_temps_de_mise_en_oeuvre(action_impact_state) is 'La relation entre le state d''une action et son temps de mise en oeuvre.';
 
-create table effet_attendu
-(
-    id     serial primary key ,
-    nom    text not null,
-    notice text
-);
-insert into effet_attendu (id, nom, notice)
-values (1, 'Adaptation au changement climatique', null),
-       (2, 'Allongement de la durée d''usage', null),
-       (3, 'Amélioration de la qualité de l''air', null),
-       (4, 'Développement des énergies renouvelables', null),
-       (5, 'Préservation de la biodiversité', null),
-       (6, 'Réduction des consommations énergétiques', null),
-       (7, 'Réduction des déchets', null),
-       (8, 'Réduction des polluants atmosphériques', null),
-       (9, 'Réduction des émissions de gaz à effet de serre', null),
-       (10, 'Sobriété ', null),
-       (11, 'Préservation des ressources agricoles, forestières et aquatiques', null),
-       (12, 'Régénération des sols', null),
-       (13, 'Sécurité alimentaire', null),
-       (14, 'Stockage carbone', null),
-       (15, 'Limitation de la sécheresse', null),
-       (16, 'Prévention des inondations', null),
-       (17, 'Accompagnement au changement de pratiques', null),
-       (18, 'Création de lien social', null),
-       (19, 'Réduction des surfaces imperméabilisées', null),
-       (20, 'Réduction du taux de motorisation', null),
-       (21, 'Bénéfique pour la santé', null),
-       (22, 'Amélioration du cadre de vie', null),
-       (23, 'Gains économiques', null),
-       (24, 'Limitation des déplacements', null);
+create function matches_competences(action_impact_state) returns boolean
+    stable
+    language sql
+    security definer
+BEGIN ATOMIC
+with collectivite_panier as (
+                            SELECT coalesce(($1).panier.collectivite_id, ($1).panier.collectivite_preset) as collectivite_id
+                            )
+SELECT case
+           when e is not null then
+               not (($1).action.competences_communales) and
+               (
+                   (
+                   SELECT (
+                              NOT (
+                                  EXISTS (
+                                         SELECT 1
+                                         FROM action_impact_banatic_competence c
+                                         WHERE (c.action_impact_id = ($1).action.id)
+                                         )
+                                  )
+                              )
+                   )
+                       OR
+                   (
+                   SELECT action_impact_matches_competences(
+                                  (
+                                  SELECT collectivite_id
+                                  FROM collectivite_panier
+                                  LIMIT 1
+                                  ),
+                                  ($1).action.id
+                          ) AS action_impact_matches_competences
+                   )
+                   )
+           when c is not null then
+               ($1).action.competences_communales or ($1).action.independamment_competences
+           else
+               true
+       end as result
+FROM collectivite_panier cp
+LEFT JOIN epci e on cp.collectivite_id = e.collectivite_id
+LEFT JOIN commune c on cp.collectivite_id = c.collectivite_id;
+END;
+
+create function thematique(action_impact_state) returns SETOF thematique
+    stable
+    language sql
+BEGIN ATOMIC
+SELECT t.nom,
+       t.id,
+       t.md_id
+FROM (thematique t
+    JOIN action_impact_thematique ait ON ((ait.thematique_id = t.id)))
+WHERE (ait.action_impact_id = ($1).action.id);
+END;
+comment on function thematique(action_impact_state) is 'La relation entre le state d''une action et ses thématiques.';
+
+create function action_definition(action_impact_state) returns SETOF action_definition
+    stable
+    language sql
+    security definer
+BEGIN ATOMIC
+SELECT ad.*
+FROM action_definition ad
+JOIN action_impact_action aia on ad.action_id = aia.action_id
+WHERE (aia.action_impact_id = ($1).action.id);
+END;
+comment on function action_definition(action_impact_state) is 'La relation entre le state d''une action et ses actions du référentiel.';
+
+alter table action_impact_thematique add column ordre integer not null default 1;
+
+create function action_impact_thematique(action_impact_state) returns SETOF action_impact_thematique
+    stable
+    language sql
+BEGIN ATOMIC
+SELECT a.action_impact_id,
+       a.thematique_id,
+       a.ordre
+FROM action_impact_thematique a
+WHERE a.action_impact_id = ($1).action.id
+ORDER BY a.ordre;
+END;
+comment on function action_impact_thematique(action_impact_state) is 'La relation entre le state d''une action et son lien vers la thématique pour récupérer l''ordre.';
+
+create function action_impact_typologie(action_impact_state) returns SETOF action_impact_typologie
+    stable
+    rows 1
+    language sql
+BEGIN ATOMIC
+SELECT a.id,
+       a.nom
+FROM action_impact_typologie a
+WHERE (a.id = ($1).action.typologie_id);
+END;
+comment on function action_impact_typologie(action_impact_state) is 'La relation entre le state d''une action et sa typologie.';
 
 
--- Action à impact
-
-create table action_impact
-(
-    id                       serial primary key,
-
-    titre                      text not null,
-    description                text not null,
-    description_complementaire text not null default '',
-
-    nb_collectivite_en_cours integer not null                                                default 1,
-    nb_collectivite_realise  integer not null                                                default 1,
-    action_continue          boolean not null                                                default false,
-
-    temps_de_mise_en_oeuvre  integer not null references action_impact_temps_de_mise_en_oeuvre  default 1,
-    fourchette_budgetaire    integer not null references action_impact_fourchette_budgetaire default 1,
-    impact_tier              integer not null references action_impact_tier                  default 1,
-
-    subventions_mobilisables jsonb,
-    ressources_externes      jsonb,
-    rex                      jsonb,
-
-    check (jsonb_matches_schema(
-            schema :='{
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {"type": "string"},
-                  "url": {"type": "string"}
-                },
-                "required": ["label", "url"],
-                "additionalProperties": false
-              }
-            }',
-            instance := subventions_mobilisables
-           )),
-    check (jsonb_matches_schema(
-            schema :='{
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {"type": "string"},
-                  "url": {"type": "string"}
-                },
-                "required": ["label", "url"],
-                "additionalProperties": false
-              }
-            }',
-            instance := ressources_externes
-           )),
-        check (jsonb_matches_schema(
-        schema :='{
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {"type": "string"},
-                  "url": {"type": "string"}
-                },
-                "required": ["label", "url"],
-                "additionalProperties": false
-              }
-            }',
-        instance := rex
-        ))
-);
-comment on column action_impact.subventions_mobilisables is 'Subventions mobilisables, liste de liens `[{label: string, url: string}]`';
-comment on column action_impact.ressources_externes is 'Ressources externes, liste de liens `[{label: string, url: string}]`';
-comment on column action_impact.rex is 'Retours sur experience, liste de liens `[{label: string, url: string}]`';
-comment on column action_impact.description is 'La description courte affichée dans le panier.';
-comment on column action_impact.description_complementaire is 'La description complémentaire ajoutée à la fiche action.';
-
---- Table de passage
-
-create table action_impact_thematique
-(
-    action_impact_id integer references action_impact,
-    thematique_id    integer references thematique,
-    primary key (action_impact_id, thematique_id)
-);
-
-create table action_impact_sous_thematique
-(
-    action_impact_id   integer references action_impact,
-    sous_thematique_id integer references sous_thematique,
-    primary key (action_impact_id, sous_thematique_id)
-);
-
-create table action_impact_banatic_competence
-(
-    action_impact_id integer references action_impact,
-    competence_code  integer references banatic_competence,
-    primary key (action_impact_id, competence_code)
-);
-
-create table action_impact_categorie_fnv
-(
-    action_impact_id integer references action_impact,
-    categorie_fnv_id integer references categorie_fnv,
-    primary key (action_impact_id, categorie_fnv_id)
-);
-
-create table action_impact_action
-(
-    action_impact_id integer references action_impact,
-    action_id        action_id references action_definition,
-    primary key (action_impact_id, action_id)
-);
-
-create table action_impact_indicateur
-(
-    action_impact_id integer references action_impact,
-    indicateur_id    indicateur_id references indicateur_definition,
-    primary key (action_impact_id, indicateur_id)
-);
-
-create table action_impact_effet_attendu
-(
-    action_impact_id integer references action_impact,
-    effet_attendu_id integer references effet_attendu,
-    primary key (action_impact_id, effet_attendu_id)
-);
 
 COMMIT;

@@ -1,5 +1,6 @@
 import {Referentiel} from 'types/litterals';
 import {getAuthPaths} from '@tet/api';
+import {ENV} from '../environmentVariables';
 
 const authPaths = getAuthPaths(
   document.location.hostname,
@@ -507,6 +508,12 @@ export const makeCollectiviteJournalUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeCollectivitePanierUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) => `${ENV.panier_url}/landing/collectivite/${collectiviteId}`;
 
 export const makeInvitationLandingPath = (
   invitationId: string,

@@ -26,6 +26,9 @@ export const Selectors = {
   'toutes les collectivités': {
     selector: '[data-test=ToutesLesCollectivites]',
   },
+  'finaliser mon inscription': {
+    selector: '[data-test=FinaliserInscription]',
+  },
   'bouton support': {
     selector: '.crisp-client',
   },

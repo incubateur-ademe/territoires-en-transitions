@@ -4,6 +4,7 @@ export const ENV = {
   supabase_anon_key: process.env.NX_PUBLIC_SUPABASE_KEY,
   supabase_url: process.env.NX_PUBLIC_SUPABASE_URL,
   sentry_dsn: process.env.NX_PUBLIC_SENTRY_DSN,
+  panier_url: process.env.NX_PUBLIC_PANIER_URL,
   posthog: {
     host: process.env.NX_PUBLIC_POSTHOG_HOST,
     key: process.env.NX_PUBLIC_POSTHOG_KEY,

@@ -10,6 +10,7 @@ import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import FicheActionOnglets from './FicheActionOnglets';
+import FicheActionImpact from './FicheActionImpact';
 
 type FicheActionProps = {
   isReadonly: boolean;
@@ -71,6 +72,9 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                     updateFiche({ ...fiche, restreint })
                   }
                 />
+
+                {/** Fiche action issue du panier d’action */}
+                <FicheActionImpact fiche={fiche} />
 
                 {/* Date de dernière modification */}
                 {fiche.modifiedAt && (

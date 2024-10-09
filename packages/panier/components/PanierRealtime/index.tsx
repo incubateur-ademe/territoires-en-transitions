@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-  Panier,
-} from '@tet/api';
+import { Panier } from '@tet/api';
 import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
 import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
 import ListeActions from '@tet/panier/components/ListeActions';
@@ -17,13 +12,13 @@ import {
   usePanierContext,
   useUserContext,
 } from '@tet/panier/providers';
+import {PartagerLeLien} from './PartagerLeLien';
+import { ContenuListesFiltre } from '../FiltresActions/types';
+import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
 
 type PanierRealtimeProps = {
   panier: Panier;
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
-};
+} & ContenuListesFiltre;
 
 /**
  * La partie client du Panier d'Action à Impact
@@ -39,8 +34,11 @@ const PanierRealtime = ({
   budgets,
   temps,
   thematiques,
+  typologies,
 }: PanierRealtimeProps) => {
   const [currentTab, setCurrentTab] = useState<PanierOngletName>('selection');
+  const ajouterActionsRealiseesOuEnCours =
+    useAjouterActionsRealiseesOuEnCoursState();
 
   const router = useRouter();
   const { setCollectiviteId } = useCollectiviteContext();
@@ -91,12 +89,38 @@ const PanierRealtime = ({
     statusId: string | null
   ) => {
     await panierAPI.setActionStatut(actionId, panier.id, statusId);
+
+    // ajoute/enlève l'action du panier si la case à cocher "Ajouter les
+    // actions classées <statut>" est activée
+    const inpanier = panier.inpanier.find((a) => a.id === actionId);
+    if (!inpanier) {
+      if (
+        (statusId === 'en_cours' &&
+          ajouterActionsRealiseesOuEnCours.ajoutEnCours) ||
+        (statusId === 'realise' &&
+          ajouterActionsRealiseesOuEnCours.ajoutRealisees)
+      ) {
+        await panierAPI.addActionToPanier(actionId, panier.id);
+      }
+    }
+    if (inpanier && inpanier.statut !== statusId) {
+      if (
+        (inpanier.statut === 'en_cours' &&
+          ajouterActionsRealiseesOuEnCours.ajoutEnCours) ||
+        (inpanier.statut === 'realise' &&
+          ajouterActionsRealiseesOuEnCours.ajoutRealisees)
+      ) {
+        await panierAPI.removeActionFromPanier(actionId, panier.id);
+      }
+    }
+
     await tracker('statut', {
       collectivite_preset: panier.collectivite_preset,
       panier_id: panier.id,
       action_id: actionId,
       category_id: statusId,
     });
+
     router.refresh();
   };
 
@@ -121,19 +145,27 @@ const PanierRealtime = ({
           }
         </p>
         <ListeActions
-          actionsListe={panier.states}
+          panier={panier}
           onToggleSelected={handleToggleSelected}
           onUpdateStatus={handleUpdateStatus}
           onChangeTab={handleChangeTab}
-          {...{ budgets, temps, thematiques }}
+          {...{
+            budgets,
+            temps,
+            thematiques,
+            typologies,
+          }}
         />
       </div>
 
       <PanierActions
-        actionsListe={panier.contenu}
+        panier={panier}
         budgets={budgets}
+        ajouterActionsRealiseesOuEnCours={ajouterActionsRealiseesOuEnCours}
         onToggleSelected={handleToggleSelected}
       />
+
+      <PartagerLeLien panier={panier} />
     </div>
   );
 };

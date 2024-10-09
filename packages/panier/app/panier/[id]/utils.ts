@@ -1,6 +1,8 @@
 import {
   ActionImpactCategorie,
   ActionImpactThematique,
+  ActionImpactTypologie,
+  FiltreAction,
   Niveau,
   Panier,
   PanierAPI,
@@ -8,31 +10,30 @@ import {
 import { cookies } from 'next/headers';
 import { createClient } from '@tet/panier/src/supabase/server';
 
-const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const getInit = {
   method: 'GET',
   headers: {
     Authorization: `Bearer ${apiKey}`,
-    apiKey: apiKey,
+    apiKey: apiKey ?? '',
   },
 };
 
-export const fetchPanier = async (
-  panierId: string,
-  thematique_ids: number[],
-  budget_ids: number[],
-  temps_ids: number[]
-): Promise<Panier | null> => {
+export const fetchPanier = async ({
+  panierId,
+  filtre,
+}: {
+  panierId: string;
+  filtre: FiltreAction;
+}): Promise<Panier | null> => {
   const supabase = createClient(cookies());
   const api = new PanierAPI(supabase);
 
-  const panier: Panier | null = await api.fetchPanier(
+  const panier: Panier | null = await api.fetchPanier({
     panierId,
-    thematique_ids,
-    budget_ids,
-    temps_ids
-  );
+    filtre,
+  });
 
   return panier;
 };
@@ -53,6 +54,14 @@ export const fetchThematiques = async (): Promise<ActionImpactThematique[]> => {
   return await response.json();
 };
 
+export const fetchTypologies = async (): Promise<ActionImpactTypologie[]> => {
+  const response = await fetch(
+    `${apiUrl}/rest/v1/action_impact_typologie?select=id,nom`,
+    getInit,
+  );
+  return await response.json();
+};
+
 export const fetchNiveaux = async (
   table:
     | 'action_impact_complexite'
@@ -63,3 +72,4 @@ export const fetchNiveaux = async (
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();
 };
+

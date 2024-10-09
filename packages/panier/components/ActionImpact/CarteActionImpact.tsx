@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {CarteActionImpactProps} from './types';
-import {Badge, Button, Card} from '@tet/ui';
+import {Badge, Button, Card, Icon} from '@tet/ui';
 import NiveauBudget from './NiveauBudget';
 
 /**
@@ -10,6 +10,7 @@ import NiveauBudget from './NiveauBudget';
 export const CarteActionImpact = ({
   titre,
   thematiques,
+  typologie,
   budget,
   panier,
   isSelected,
@@ -21,12 +22,13 @@ export const CarteActionImpact = ({
 
   return (
     <Card
-      className={classNames('box-content px-4 py-4 h-28', {
-        '!cursor-default': panier && !isSelected,
-      })}
+      className={classNames('box-content px-4 py-4 h-28 cursor-default')}
       isSelected={isSelected}
       footer={
         <div className="relative z-0">
+          {!!typologie && (
+            <p className="mb-2 text-sm text-grey-7">{typologie.nom}</p>
+          )}
           <div className="flex justify-end items-center gap-2 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
             {/* Badge thématique */}
             {!!thematiques.length && (
@@ -37,39 +39,46 @@ export const CarteActionImpact = ({
           </div>
 
           {/* Boutons d'action, visibles au hover de la carte */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 w-full absolute z-10 bottom-0 right-0 bg-white flex justify-end gap-2">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 w-full absolute z-10 bottom-0 right-0 bg-white flex flex-col items-end gap-2">
             {panier ? (
               <Button size="xs" onClick={() => handleToggleSelect(false)}>
                 Retirer du panier
               </Button>
             ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  size="xs"
-                  className={classNames({
-                    '!bg-primary-2': statut === 'en_cours',
-                  })}
-                  onClick={() => onUpdateStatus?.('en_cours')}
-                >
-                  En cours
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="xs"
-                  className={classNames({
-                    '!bg-primary-2': statut === 'realise',
-                  })}
-                  onClick={() => onUpdateStatus?.('realise')}
-                >
-                  Réalisée
-                </Button>
+              <div className="flex flex-row gap-2 h-10">
+                {statut === 'en_cours' || statut === 'realise' ? (
+                  <Button size="xs" onClick={() => onUpdateStatus?.(statut)}>
+                    Retirer des actions{' '}
+                    {statut === 'realise' ? 'réalisées' : 'en cours'}
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      size="xs"
+                      onClick={() => onUpdateStatus?.('en_cours')}
+                    >
+                      En cours
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="xs"
+                      onClick={() => onUpdateStatus?.('realise')}
+                    >
+                      Réalisée
+                    </Button>
 
-                <Button size="xs" onClick={() => handleToggleSelect(true)}>
-                  Ajouter au panier
-                </Button>
-              </>
+                    <Button size="xs" onClick={() => handleToggleSelect(true)}>
+                      Ajouter au panier
+                    </Button>
+                  </>
+                )}
+              </div>
             )}
+            <span className="text-xs font-medium -mb-1">
+              <Icon icon="eye-line" size="xs" className="mr-1" />
+              Voir le détail de la fiche
+            </span>
           </div>
         </div>
       }

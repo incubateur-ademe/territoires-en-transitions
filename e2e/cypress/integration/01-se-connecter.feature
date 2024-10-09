@@ -90,12 +90,13 @@ Fonctionnalité: Accéder au site et se connecter
     Et que je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors je suis redirigé sur l'app
     Et la page vérifie les conditions suivantes :
-      | Elément                  | Condition |
-      | header                   | visible   |
-      | home                     | absent    |
-      | formulaire de connexion  | absent    |
-      | toutes les collectivités | visible   |
-      | footer                   | présent   |
+      | Elément                   | Condition |
+      | header                    | visible   |
+      | home                      | absent    |
+      | formulaire de connexion   | absent    |
+      | toutes les collectivités  | absent    |
+      | finaliser mon inscription | visible   |
+      | footer                    | présent   |
 
   Scénario: Se connecter par lien unique en tant qu'utilisateur non encore rattaché
     Etant donné que j'ouvre le site
@@ -121,12 +122,13 @@ Fonctionnalité: Accéder au site et se connecter
 
     Quand je clique sur le bouton "Valider" du "formulaire de connexion"
     Alors la page vérifie les conditions suivantes :
-      | Elément                  | Condition |
-      | header                   | visible   |
-      | home                     | absent    |
-      | formulaire de connexion  | absent    |
-      | toutes les collectivités | visible   |
-      | footer                   | présent   |
+      | Elément                   | Condition |
+      | header                    | visible   |
+      | home                      | absent    |
+      | formulaire de connexion   | absent    |
+      | toutes les collectivités  | absent    |
+      | finaliser mon inscription | visible   |
+      | footer                    | présent   |
 
   Scénario: Echouer à se connecter
     Etant donné que j'ouvre le site

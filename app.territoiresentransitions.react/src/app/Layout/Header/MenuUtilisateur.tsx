@@ -7,6 +7,7 @@ import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
+import {Button} from '@tet/ui';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
@@ -23,7 +24,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
   return (
     <DropdownFloater
       placement="bottom"
-      offsetValue={-12}
+      offsetValue={0}
       zIndex={2000}
       render={({close}) => (
         <div
@@ -64,25 +65,30 @@ const MenuUtilisateurBtn = forwardRef(
       isUserPath: boolean;
       user: UserData;
     },
-    ref?: Ref<HTMLDivElement>
+    ref?: Ref<HTMLButtonElement>
   ) => (
-    <div ref={ref} {...props}>
-      <button
-        data-test="connectedMenu"
-        className={`user-menu fr-btn fr-icon-${
-          user.isSupport ? 'customer-service' : 'account'
-        }-${isUserPath ? 'fill' : 'line'}`}
-        style={{maxWidth: '15rem'}}
-        aria-expanded={isOpen}
-      >
-        <span className="line-clamp-1">{user.prenom}</span>
-        <i
-          className={classNames('fr-fi-arrow-down-s-line ml-2 transition-all', {
-            'rotate-180': isOpen,
-          })}
-        />
-      </button>
-    </div>
+    <Button
+      ref={ref}
+      {...props}
+      data-test="connectedMenu"
+      variant="white"
+      size="sm"
+      className={classNames('user-menu text-primary-9 pr-2', {
+        'rounded-b-none': isOpen,
+      })}
+      icon={`${user.isSupport ? 'customer-service' : 'account-circle'}-${
+        isUserPath ? 'fill' : 'line'
+      }`}
+      style={{ maxWidth: '15rem' }}
+      aria-expanded={isOpen}
+    >
+      <span className="line-clamp-1">{user.prenom}</span>
+      <i
+        className={classNames('fr-fi-arrow-down-s-line ml-2 transition-all', {
+          'rotate-180': isOpen,
+        })}
+      />
+    </Button>
   )
 );
 

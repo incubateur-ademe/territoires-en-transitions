@@ -1,8 +1,10 @@
 import BigBasketPicto from '@tet/panier/components/Picto/BigBasketPicto';
 import DashboardPicto from '@tet/panier/components/Picto/DashboardPicto';
+import CollectiviteEngageePicto from '@tet/panier/components/Picto/CollectiviteEngageePicto';
 import Section from '@tet/panier/components/Section';
 import CestParti from './CestParti';
 import ReprendrePanier from './ReprendrePanier';
+import {CommentCaMarche} from './CommentCaMarche';
 
 const Landing = () => {
   return (
@@ -13,23 +15,15 @@ const Landing = () => {
       >
         <div className="lg:w-2/3">
           <h1>
-            Identifiez des actions à impact pour votre collectivité <br />
-            en <span className="text-primary">quelques clics.</span>
+            Faites vivre{' '}
+            <span className="text-primary">la transition écologique</span> sur
+            votre territoire.
           </h1>
-          <ul className="list-disc list-outside text-base text-primary-9 font-bold pl-4 mb-8">
-            <li className="mb-4">
-              Vous avez besoin d&apos;aide pour identifier des actions concrètes
-              adaptées à votre territoire ?
-            </li>
-            <li className="mb-4">
-              Vous souhaitez accélérer votre démarche de transition écologique
-              pour votre commune ou votre intercommunalité ?
-            </li>
-            <li className="mb-4">
-              Vous cherchez à prioriser quelques actions clés à valider avec vos
-              élus ?
-            </li>
-          </ul>
+          <p>
+            Avec le panier d’action à impact, constituez une base d’actions
+            adaptés aux compétences de votre collectivité et retrouvez là au
+            sein d’un plan d’action pilotable.
+          </p>
           <div className="flex gap-x-8 gap-y-4 flex-wrap">
             <CestParti />
             <ReprendrePanier />
@@ -45,22 +39,24 @@ const Landing = () => {
           <DashboardPicto />
         </div>
         <div className="lg:w-1/2">
-          <h3>Comment ça marche ? </h3>
-          <ul className="list-decimal list-outside text-lg text-primary-10 font-bold pl-5">
-            <li className="mb-6">
-              Ajoutez à votre panier les actions impactantes et pertinentes pour
-              votre collectivité.
-            </li>
-            <li className="mb-6">
-              Retrouvez vos fiches actions directement sur votre compte
-              Territoires en Transitions.
-            </li>
-            <li className="mb-6">
-              A vous de jouer ! Vous pouvez modifiez les actions à volonté et
-              vous en servir comme base de travail et outil de dialogue.
-            </li>
-          </ul>
+          <CommentCaMarche />
         </div>
+      </Section>
+
+      <Section
+        className="flex-col gap-y-4 gap-x-12 items-center text-center max-md:pt-12 md:py-24"
+        containerClassName="bg-white"
+      >
+        <CollectiviteEngageePicto />
+        <h3 className="mb-0 max-w-4xl text-primary-8">
+          Vous êtes une collectivité déjà engagée dans le programme Territoires
+          Engagés Transition Écologique ?
+        </h3>
+        <p className="font-bold text-primary-10">
+          Le panier d&apos;actions basé principalement sur les actions des
+          référentiels est conçu en priorité pour faciliter le passage à
+          l&apos;action aux collectivités qui ne sont pas encore engagées !{' '}
+        </p>
       </Section>
     </>
   );

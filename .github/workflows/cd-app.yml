@@ -41,6 +41,7 @@ jobs:
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   deploy-app:

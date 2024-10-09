@@ -1,7 +1,7 @@
 import { extractIdsFromParam } from '@tet/panier/src/utils/extractIdsFromParam';
 import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
-import { fetchNiveaux, fetchPanier, fetchThematiques } from './utils';
+import { fetchNiveaux, fetchPanier, fetchThematiques, fetchTypologies } from './utils';
 import { TrackPageView } from '@tet/ui';
 
 /**
@@ -12,7 +12,7 @@ import { TrackPageView } from '@tet/ui';
  *  - t pour les ids des thématiques ex : 1 ou 1,2
  *  - b pour les ids des fourchettes budgétaires ex : 1 ou 1,2
  *  - m pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
- *  - c pour utiliser les competences ex : true ou false (true par défaut)
+ *  - c pour ne pas restreindre aux compétences territoriales ex : true ou false (false par défaut)
  *
  *  Ainsi que le contrôle de la modale de "Création de plan d’action”
  *  - Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
@@ -25,23 +25,22 @@ async function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const panierId = params.id;
-  const thematique_ids = extractIdsFromParam(searchParams['t'] as string);
-  const budget_ids = extractIdsFromParam(searchParams['b'] as string);
-  const temps_ids = extractIdsFromParam(searchParams['m'] as string);
-  // const match_competences = searchParams['c'] !== 'false';
 
-  const panier = await fetchPanier(
-    panierId,
-    thematique_ids,
-    budget_ids,
-    temps_ids
-  );
+  const filtre = {
+    thematique_ids: extractIdsFromParam(searchParams['t'] as string),
+    typologie_ids: extractIdsFromParam(searchParams['ty'] as string),
+    niveau_budget_ids: extractIdsFromParam(searchParams['b'] as string),
+    niveau_temps_ids: extractIdsFromParam(searchParams['m'] as string),
+    matches_competences: searchParams['c'] !== 'true',
+  };
+  const panier = await fetchPanier({ panierId, filtre });
 
   if (!panier) return notFound();
 
   const budgets = await fetchNiveaux('action_impact_fourchette_budgetaire');
   const temps = await fetchNiveaux('action_impact_temps_de_mise_en_oeuvre');
   const thematiques = await fetchThematiques();
+  const typologies = await fetchTypologies();
 
   return (
     <>
@@ -52,7 +51,15 @@ async function Page({
           panier_id: panier.id,
         }}
       />
-      <PagePanier {...{ panier, budgets, temps, thematiques }} />
+      <PagePanier
+        {...{
+          panier,
+          budgets,
+          temps,
+          thematiques,
+          typologies,
+        }}
+      />
     </>
   );
 }

@@ -26,6 +26,8 @@ export const fetchData = async (
     personnes: await fetchPersonnes(supabaseClient, collectivite_id),
     // - Fiches
     fiches: await fetchFiches(supabaseClient, collectivite_id),
+    // -- Effets attendus
+    effets: await fetchEffetsAttendus(supabaseClient),
   };
 };
 export type TMemoire = Awaited<ReturnType<typeof fetchData>>;
@@ -204,6 +206,33 @@ export const fetchFiches = async (
   for (let i = 0; i < data.length; i++) {
     const fiche: TFicheResume = data[i];
     toReturn.set(fiche.titre ?? "", fiche);
+  }
+  return toReturn;
+};
+
+/**
+ * Récupère les effets attendus
+ * @param supabaseClient client supabase
+ * @return map <nom de l'effet, objet de l'effet>
+ */
+export const fetchEffetsAttendus = async (
+  supabaseClient: TSupabaseClient
+): Promise<
+  Map<string, Database["public"]["Tables"]["effet_attendu"]["Insert"]>
+> => {
+  const query = supabaseClient.from("effet_attendu").select();
+
+  const { error, data } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+  const toReturn = new Map<
+    string,
+    Database["public"]["Tables"]["effet_attendu"]["Insert"]
+  >();
+  for (let i = 0; i < data.length; i++) {
+    const effet: TablesInsert<"effet_attendu"> = data[i];
+    toReturn.set(effet.nom, effet);
   }
   return toReturn;
 };

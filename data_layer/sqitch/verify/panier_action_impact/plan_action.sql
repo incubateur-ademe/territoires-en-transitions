@@ -2,6 +2,11 @@
 
 BEGIN;
 
--- XXX Add verifications here.
+select modified_at, id, nom, collectivite_id, parent, created_at, modified_by, plan, type, panier_id
+from axe
+where false;
+
+select has_function_privilege('plan_from_panier(integer, uuid, integer)', 'execute');
+select has_function_privilege('plan_from_panier(integer, uuid)', 'execute');
 
 ROLLBACK;

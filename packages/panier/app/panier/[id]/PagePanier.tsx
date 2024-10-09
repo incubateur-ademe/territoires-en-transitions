@@ -2,22 +2,15 @@
 
 import PanierRealtime from '@tet/panier/components/PanierRealtime';
 import Section from '@tet/panier/components/Section';
-import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-  Panier,
-} from '@tet/api';
-import {ControlledAlert} from '@tet/ui';
+import { ContenuListesFiltre } from '@tet/panier/components/FiltresActions/types';
+import { Panier } from '@tet/api';
+import { ControlledAlert } from '@tet/ui';
 
 type PagePanierProps = {
   panier: Panier;
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
-};
+} & ContenuListesFiltre;
 
-const PagePanier = ({panier, budgets, temps, thematiques}: PagePanierProps) => {
+const PagePanier = (props: PagePanierProps) => {
   return (
     <>
       <ControlledAlert
@@ -26,7 +19,7 @@ const PagePanier = ({panier, budgets, temps, thematiques}: PagePanierProps) => {
       />
 
       <Section>
-        <PanierRealtime {...{panier, budgets, temps, thematiques}} />
+        <PanierRealtime {...props} />
       </Section>
     </>
   );

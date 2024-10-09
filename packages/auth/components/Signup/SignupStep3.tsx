@@ -24,13 +24,19 @@ const useSignupStep3 = () => {
     nom: z.string().min(1, 'Champ requis'),
     prenom: z.string().min(1, 'Champ requis'),
     telephone: z.string().refine(validateTel),
-    cgu_acceptees: z.boolean().refine(value => !!value, {
+    cgu_acceptees: z.boolean().refine((value) => !!value, {
       message: "Vous devez accepter le cadre d'utilisation de la plateforme",
     }),
   });
 
   return useForm({
     resolver: zodResolver(validationSchema),
+    defaultValues: {
+      nom: '',
+      prenom: '',
+      telephone: '',
+      cgu_acceptees: false,
+    },
   });
 };
 
@@ -41,19 +47,22 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
   const {
     handleSubmit,
     register,
-    formState: {isValid, errors},
+    formState: { isValid, errors },
+    watch,
   } = useSignupStep3();
   const eventTracker = useEventTracker('auth/signup/dcp');
+
+  const cgu_acceptees = watch('cgu_acceptees');
 
   const {
     isLoading,
     error,
     onSubmit,
-    formState: {email},
+    formState: { email },
   } = props;
 
-  const onSubmitForm = handleSubmit(data => {
-    onSubmit({...(data as SignupDataStep3), email});
+  const onSubmitForm = handleSubmit((data) => {
+    onSubmit({ ...(data as SignupDataStep3), email });
     // @ts-expect-error en attendant de gérer le 2ème argument optionnel
     eventTracker('cta_submit', {});
   });
@@ -109,6 +118,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
             </>
           }
           {...register('cgu_acceptees')}
+          checked={cgu_acceptees ?? false}
         />
         {!!error && (
           <FieldMessage messageClassName="mt-4" state="error" message={error} />

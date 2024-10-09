@@ -1,7 +1,10 @@
 import {
   ActionImpactFourchetteBudgetaire,
+  ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
+  ActionImpactTypologie,
+  ActionReferentiel,
 } from '@tet/api';
 
 type LinkType = {
@@ -14,6 +17,8 @@ export type ActionImpactProps = {
   titre: string;
   /** Thématiques de l'action à impact */
   thematiques: ActionImpactThematique[];
+  /** Typologie */
+  typologie: ActionImpactTypologie | null;
   /** Budget de la mise en place de l'action : petit, moyen ou élevé */
   budget?: ActionImpactFourchetteBudgetaire;
   /** Description de l'action à impact */
@@ -27,7 +32,9 @@ export type ActionImpactProps = {
   /** Lien vers les subventions mobilisables */
   subventions?: LinkType[] | null;
   /** Statut de l'action */
-  statut?: 'non_pertinent' | 'en_cours' | 'realise' | null;
+  statut?: ActionImpactStatut;
+  /** Actions des référentiels liées */
+  actionsLiees?: ActionReferentiel[] | null;
   /** Indique si l'action est mise dans le panier */
   panier: boolean;
   /** Initialisation de l'état sélectionné de la carte */
@@ -47,6 +54,7 @@ export type CarteActionImpactProps = Pick<
   ActionImpactProps,
   | 'titre'
   | 'thematiques'
+  | 'typologie'
   | 'budget'
   | 'statut'
   | 'panier'

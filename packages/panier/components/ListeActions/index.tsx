@@ -1,46 +1,49 @@
+/* eslint-disable react/no-unescaped-entities */
 import {useSearchParams} from 'next/navigation';
+import { Panier } from '@tet/api';
 import {
-  ActionImpactFourchetteBudgetaire,
-  ActionImpactState,
-  ActionImpactTempsMiseEnOeuvre,
-  ActionImpactThematique,
-} from '@tet/api';
-import {PanierOngletName, Tab, Tabs} from '@tet/ui';
+  Alert,
+  Button,
+  PanierOngletName,
+  SITE_BASE_URL,
+  Tab,
+  Tabs,
+} from '@tet/ui';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
 import FiltresActions from '@tet/panier/components/FiltresActions';
+import { ContenuListesFiltre } from '../FiltresActions/types';
 
 const getTabLabel = (
-  tab: {label: string; status: string | null},
-  actionsNb: number,
+  tab: { label: string; labelOne?: string; status: string | null },
+  actionsNb: number
 ) => {
-  if (tab.status !== null) {
-    if (actionsNb > 1 || tab.status === 'en_cours') {
-      return `${actionsNb} ${tab.label.toLowerCase()}`;
-    } else {
-      return `${actionsNb} ${tab.label
-        .slice(0, tab.label.length - 1)
-        .toLowerCase()}`;
-    }
+  if (actionsNb === 1 && tab.labelOne) {
+    return `1 ${tab.labelOne.toLowerCase()}`;
   }
-  return tab.label;
+
+  if (actionsNb > 1 || tab.status === 'en_cours') {
+    return `${actionsNb} ${tab.label.toLowerCase()}`;
+  } else {
+    return `${actionsNb} ${tab.label
+      .slice(0, tab.label.length - 1)
+      .toLowerCase()}`;
+  }
 };
 
 type ListeActionsProps = {
-  actionsListe: ActionImpactState[];
-  budgets: ActionImpactFourchetteBudgetaire[];
-  temps: ActionImpactTempsMiseEnOeuvre[];
-  thematiques: ActionImpactThematique[];
+  panier: Panier;
   onToggleSelected: (actionId: number, selected: boolean) => void;
   onUpdateStatus: (actionId: number, statusId: string | null) => void;
   onChangeTab: (tab: PanierOngletName) => void;
-};
+} & ContenuListesFiltre;
 
 const ListeActions = ({
-  actionsListe,
+  panier,
   budgets,
   temps,
   thematiques,
+  typologies,
   onToggleSelected,
   onUpdateStatus,
   onChangeTab,
@@ -49,11 +52,16 @@ const ListeActions = ({
 
   const tabsList: {
     label: string;
+    labelOne?: string;
     shortName: PanierOngletName;
-    status: string | null;
+    status: 'realise' | 'en_cours' | 'selection' | 'importees';
   }[] = [
-    {label: 'Sélection', shortName: 'selection', status: null},
-    {label: 'Réalisées', shortName: 'réalisées', status: 'realise'},
+    {
+      label: 'Propositions',
+      shortName: 'selection',
+      status: 'selection',
+    },
+    { label: 'Réalisées', shortName: 'réalisées', status: 'realise' },
     {
       label: 'En cours de réalisation',
       shortName: 'en cours',
@@ -61,23 +69,36 @@ const ListeActions = ({
     },
   ];
 
+  const actionsDejaImportees = panier.importees;
+  if (actionsDejaImportees.length) {
+    tabsList.push({
+      label: 'Fiches déjà importées',
+      labelOne: 'Fiche déjà importée',
+      shortName: 'importees',
+      status: 'importees',
+    });
+  }
+
   return (
     <Tabs
-      onChange={activeTab => onChangeTab(tabsList[activeTab].shortName)}
+      onChange={(activeTab) => onChangeTab(tabsList[activeTab].shortName)}
       className="grow flex flex-col"
       tabPanelClassName="grow flex flex-col"
       tabsListClassName="!justify-start mb-0"
     >
-      {...tabsList.map(tab => {
-        const actionsFiltrees = actionsListe.filter(
-          a =>
-            (!a.statut && a.statut === tab.status) ||
-            (a.statut && a.statut.categorie_id === tab.status),
-        );
+      {...tabsList.map((tab) => {
+        const actionsFiltrees = panier[tab.status];
 
         return (
           <Tab key={tab.label} label={getTabLabel(tab, actionsFiltrees.length)}>
-            <FiltresActions {...{budgets, temps, thematiques}} />
+            <FiltresActions
+              {...{
+                budgets,
+                temps,
+                thematiques,
+                typologies,
+              }}
+            />
 
             {!tab.status &&
             !actionsFiltrees.length &&
@@ -87,12 +108,63 @@ const ListeActions = ({
               !actionsFiltrees.length ? (
               <ListeVide />
             ) : (
-              <ListeActionsFiltrees
-                actionsListe={actionsFiltrees}
-                onUpdateStatus={onUpdateStatus}
-                onToggleSelected={onToggleSelected}
-                {...{budgets, temps}}
-              />
+              <>
+                {(tab.status === 'en_cours' || tab.status === 'realise') && (
+                  <Alert
+                    className="mb-6"
+                    title="Souhaitez-vous ajouter ces actions à votre panier ?"
+                    footer={
+                      tab.status === 'realise' ? (
+                        <div className="inline">
+                          Valorisez ces actions "réalisées" sur l'&nbsp;
+                          <Button
+                            className="inline-flex mr-1"
+                            variant="underlined"
+                            href={`${SITE_BASE_URL}/outil-numerique`}
+                            external
+                          >
+                            outil numérique
+                          </Button>
+                          aux côtés des actions en cours et à venir pour
+                          constituer et piloter un plan d'action sur l'outil
+                          numérique. Il vous suffit de cocher la case "Ajouter
+                          les actions classées “réalisées” au niveau du panier à
+                          droite.
+                        </div>
+                      ) : (
+                        <div className="inline">
+                          Pour retrouver ces actions "en cours" sur l'&nbsp;
+                          <Button
+                            className="inline-flex mr-1"
+                            variant="underlined"
+                            href={`${SITE_BASE_URL}/outil-numerique`}
+                            external
+                          >
+                            outil numérique
+                          </Button>
+                          et les piloter, il vous suffit de cocher la case
+                          "Ajouter les actions classées “en cours” au niveau du
+                          panier à droite.
+                        </div>
+                      )
+                    }
+                  />
+                )}
+                {tab.shortName === 'importees' && (
+                  <Alert
+                    className="mb-4"
+                    state="info"
+                    title="Ces fiches action ont déjà été ajoutées à votre plan d’action sur l’outil numérique territoires en transitions, retrouvez les dans votre onglet connecté Plans d’action"
+                  />
+                )}
+
+                <ListeActionsFiltrees
+                  actionsListe={actionsFiltrees}
+                  onUpdateStatus={onUpdateStatus}
+                  onToggleSelected={onToggleSelected}
+                  {...{ budgets, temps }}
+                />
+              </>
             )}
           </Tab>
         );

@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import {
   Badge,
   ButtonMenu,
+  Checkbox,
   Field,
+  InfoTooltip,
   OptionValue,
   SelectMultiple,
   SelectMultipleOnChangeArgs,
@@ -12,7 +14,8 @@ import {
   getFlatOptions,
 } from '@tet/ui';
 
-type FilterType = {
+type FilterSelect = {
+  type?: never;
   /** Titre affiché dans <Field /> */
   title: string;
   /** Tag optionnel, affiché dans les badges */
@@ -26,6 +29,22 @@ type FilterType = {
   /** Détecte le changement de valeur du select */
   onChange: (args: SelectMultipleOnChangeArgs) => void;
 };
+
+type FilterCheckbox = {
+  type: 'checkbox';
+  /** Titre affiché dans <Field /> */
+  title: string;
+  /** Tag optionnel, affiché dans les badges */
+  tag?: string;
+  /** Valeur de la checkbox */
+  value?: boolean;
+  /** Contenu de l'infobulle */
+  tooltip?: string;
+  /** Détecte le changement de valeur de la checkbox */
+  onChange: (value: boolean) => void;
+};
+
+type FilterType = FilterSelect | FilterCheckbox;
 
 type BadgeType = {
   filter: FilterType;
@@ -51,17 +70,28 @@ export const BadgesFilters = ({
   const handleCloseBadge = (badge: BadgeType) => {
     const selectedValue = badge.value;
 
-    const values: OptionValue[] | undefined = badge.filter.values?.filter(
-      (v) => v !== badge.value
-    );
+    if (badge.filter.type === 'checkbox') {
+      badge.filter.onChange(badge.filter.value ?? false);
+    } else {
+      const values: OptionValue[] | undefined = badge.filter.values?.filter(
+        (v) => v !== badge.value
+      );
 
-    badge.filter.onChange({ selectedValue, values });
+      badge.filter.onChange({ selectedValue, values });
+    }
   };
 
   /** Supprime tous les filtres sélectionnés */
   const handleClearFilters = () => {
     badgesList?.forEach((badge) => {
-      badge.filter.onChange({ selectedValue: badge.value, values: undefined });
+      if (badge.filter.type === 'checkbox') {
+        badge.filter.onChange(false);
+      } else {
+        badge.filter.onChange({
+          selectedValue: badge.value,
+          values: undefined,
+        });
+      }
     });
   };
 
@@ -70,19 +100,24 @@ export const BadgesFilters = ({
     const newList: BadgeType[] = [];
 
     filters.forEach((filter) => {
-      if (filter.values !== undefined) {
-        const options = getFlatOptions(filter.options);
+      if (filter.type === 'checkbox') {
+        if (filter.value)
+          newList.push({ filter, value: 'true', label: filter.title });
+      } else {
+        if (filter.values !== undefined) {
+          const options = getFlatOptions(filter.options);
 
-        filter.values.forEach((value) => {
-          const option = options.find((opt) => opt.value === value);
+          filter.values.forEach((value) => {
+            const option = options.find((opt) => opt.value === value);
 
-          option &&
-            newList.push({
-              filter,
-              value: option.value,
-              label: option.label,
-            });
-        });
+            option &&
+              newList.push({
+                filter,
+                value: option.value,
+                label: option.label,
+              });
+          });
+        }
       }
     });
 
@@ -137,20 +172,37 @@ export const BadgesFilters = ({
             ? {
                 number: badgesList.length,
               }
-            : {}
+            : undefined
         }
       >
         <div className="flex flex-col gap-4 w-72 p-4">
-          {filters.map((filter) => (
-            <Field key={filter.title} title={filter.title}>
-              <SelectMultiple
-                options={filter.options}
-                values={filter.values}
-                onChange={filter.onChange}
-                small
-              />
-            </Field>
-          ))}
+          {filters.map((filter) =>
+            filter.type === 'checkbox' ? (
+              <div className="flex flex-row items-end" key={filter.title}>
+                <Checkbox
+                  label={filter.title}
+                  checked={filter.value}
+                  onChange={(evt) => filter.onChange(evt.currentTarget.checked)}
+                />
+                {!!filter.tooltip && (
+                  <InfoTooltip
+                    iconClassName="text-primary-8"
+                    label={filter.tooltip}
+                    size="md"
+                  />
+                )}
+              </div>
+            ) : (
+              <Field key={filter.title} title={filter.title}>
+                <SelectMultiple
+                  options={filter.options}
+                  values={filter.values}
+                  onChange={filter.onChange}
+                  small
+                />
+              </Field>
+            )
+          )}
         </div>
       </ButtonMenu>
     </div>

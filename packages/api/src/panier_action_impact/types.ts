@@ -6,7 +6,10 @@ export type ActionImpactCategorie =
 export type ActionImpactThematique = Omit<
   Database['public']['Tables']['thematique']['Row'],
   'md_id'
->;
+> & { ordre: number };
+
+export type ActionImpactTypologie =
+  Database['public']['Tables']['action_impact_typologie']['Row'];
 
 export type Niveau = {niveau: number; nom: string};
 
@@ -16,14 +19,12 @@ export type ActionImpactFourchetteBudgetaire =
 export type ActionImpactTempsMiseEnOeuvre =
   Database['public']['Tables']['action_impact_temps_de_mise_en_oeuvre']['Row'];
 
-export type FNV = Database['public']['Tables']['categorie_fnv']['Row'];
-
 export type Link = {
   url: string;
   label: string;
 };
 
-export type ActionImpact = Omit<
+export type ActionImpactBase = Omit<
   Database['public']['Tables']['action_impact']['Row'],
   'rex' | 'ressources_externes' | 'subventions_mobilisables'
 > & {
@@ -32,24 +33,34 @@ export type ActionImpact = Omit<
   subventions_mobilisables: Link[];
 };
 
-/* Le resumé d'une action à impact, utilisé pour les cartes  */
-export type ActionImpactSnippet =
-  // todo: Omit<ActionImpact, 'description' | 'ressources_externes'>
-  ActionImpact & {thematiques: ActionImpactThematique[]};
-
-/* Une action à impact avec des informations complémentaires, utilisé par la modale */
-export type ActionImpactDetails = ActionImpact & {
+/* Une action à impact avec toutes les informations complémentaires */
+export type ActionImpactDetails = Omit<
+  ActionImpactBase,
+  'fourchette_budgetaire' | 'temps_de_mise_en_oeuvre'
+> & {
   thematiques: ActionImpactThematique[];
-} & {categoriesFNV: FNV[]};
+  typologie: ActionImpactTypologie;
+  fourchette_budgetaire: ActionImpactFourchetteBudgetaire | null;
+  temps_de_mise_en_oeuvre: ActionImpactTempsMiseEnOeuvre | null;
+  actions_liees: ActionReferentiel[] | null;
+};
 
-export type ActionImpactStatut =
-  Database['public']['Tables']['action_impact_statut']['Row'];
+/** Action complète + les informations d'état de celle-ci dans le panier */
+export type ActionImpactFull = ActionImpactDetails & ActionImpactState;
+
+export type ActionImpactStatut = 'en_cours' | 'realise' | null | undefined;
+
+export type ActionReferentiel = {
+  identifiant: string;
+  referentiel: string;
+  nom: string;
+};
 
 export type ActionImpactState = {
-  action: ActionImpact;
-  isinpanier: boolean;
-  statut: ActionImpactStatut | null;
-  thematiques: ActionImpactThematique[];
+  statut: ActionImpactStatut;
+  isinpanier?: boolean;
+  dejaImportee?: boolean;
+  matches_competences?: boolean;
 };
 
 export type PanierBase = Database['public']['Tables']['panier']['Row'];
@@ -57,10 +68,18 @@ export type PanierBase = Database['public']['Tables']['panier']['Row'];
 export type Panier =
   /* Le panier en tant que tel */
   PanierBase & {
-    /* Liste des actions ajoutée au panier */
-    contenu: ActionImpactSnippet[];
-    /* Liste de toutes les actions avec leurs states. */
-    states: ActionImpactState[];
+    /** toutes les actions */
+    //    actions: ActionImpactFull[];
+    /** sélection disponible après filtrage */
+    selection: ActionImpactFull[];
+    /** actions marquées "réalisées" */
+    realise: ActionImpactFull[];
+    /** actions marquées "en cours de réalisation" */
+    en_cours: ActionImpactFull[];
+    /** actions déjà importées dans au moins un plan de la collectivité */
+    importees: ActionImpactFull[];
+    /** actions ajoutées au panier */
+    inpanier: ActionImpactFull[];
   };
 
 export type MaCollectivite = {
@@ -71,3 +90,12 @@ export type MaCollectivite = {
 };
 
 export type MesCollectivite = MaCollectivite[];
+
+/** Options de filtrage */
+export type FiltreAction = {
+  thematique_ids?: number[];
+  typologie_ids?: number[];
+  niveau_budget_ids?: number[];
+  niveau_temps_ids?: number[];
+  matches_competences?: boolean;
+};

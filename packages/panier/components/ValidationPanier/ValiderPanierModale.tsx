@@ -28,7 +28,7 @@ import { panierAPI } from '@tet/panier/src/clientAPI';
 const ValiderPanierModale = () => {
   const { panier } = usePanierContext();
   const { user } = useUserContext();
-  const contenu = panier?.contenu ?? [];
+  const contenu = panier?.inpanier ?? [];
 
   const steps = [
     "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
@@ -170,14 +170,20 @@ const ModeConnecteRattache = ({
   const router = useRouter();
   const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
 
+  // vérifie que l'id est bien présent dans la liste
+  const found =
+    savedCollectiviteId &&
+    !!collectivites?.find((c) => c.collectivite_id === savedCollectiviteId);
+
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
-    savedCollectiviteId ? savedCollectiviteId : collectivites[0].collectivite_id
+    found ? savedCollectiviteId : collectivites[0].collectivite_id
   );
 
   const handleOnClick = async () => {
     const collectivite = collectivites.find(
       (c) => c.collectivite_id === collectiviteId
-    )!;
+    );
+    if (!collectivite) return;
     await tracker('cta_creer_le_plan_click', {
       collectivite_preset: collectivite.collectivite_id,
       panier_id: panier?.id ?? '',

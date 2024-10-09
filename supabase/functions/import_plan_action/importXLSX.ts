@@ -174,7 +174,7 @@ const celluleXLSXToElementFiche = async (
                 f.indicateurs = await nettoie.indicateurs(cellule, memoire);
                 break;
             case 9 : // Résultats attendus -> J | 10
-                f.resultats_attendus = await nettoie.resultats(cellule);
+                f.resultats_attendus = await nettoie.resultats(cellule, memoire);
                 break;
             case 10 : // Cibles -> K | 11
                 f.cibles = await nettoie.cibles(cellule);

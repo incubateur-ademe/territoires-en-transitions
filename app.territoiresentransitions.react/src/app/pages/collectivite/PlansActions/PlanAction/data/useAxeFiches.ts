@@ -1,8 +1,9 @@
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useQuery } from 'react-query';
-import { sortFichesResume } from '../../FicheAction/data/utils';
-import { FicheResume } from '@tet/api/plan-actions';
 import { objectToCamel } from 'ts-case-convert';
+import { FicheResume } from '../../FicheAction/data/types';
+import { fetchActionImpactId } from '../../FicheAction/data/useFicheActionImpactId';
+import { sortFichesResume } from '../../FicheAction/data/utils';
 
 type Args = {
   ficheIds: number[];
@@ -16,6 +17,13 @@ export const useAxeFiches = ({ ficheIds, axeId }: Args) => {
       .select()
       .in('id', ficheIds);
 
-    return sortFichesResume(objectToCamel(data ?? []) as FicheResume[]);
+    const actionsImpact = await fetchActionImpactId(ficheIds);
+
+    return sortFichesResume(objectToCamel(data ?? []) as FicheResume[]).map(
+      (fiche) => {
+        const actionImpact = actionsImpact?.find((f) => f.ficheId === fiche.id);
+        return { ...fiche, actionImpactId: actionImpact?.actionImpactId };
+      }
+    );
   });
 };

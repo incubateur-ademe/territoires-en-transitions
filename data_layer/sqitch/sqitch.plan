@@ -716,4 +716,15 @@ indicateur/fix_json_upsert 2024-09-11T12:49:34Z System Administrator <root@MacBo
 indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v4.9.0] 2024-10-01T15:19:16Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
 @v4.12.3 2024-10-01T16:24:17Z System Administrator <root@AirdeThibaut2.lan> # ajoute les conditions pour exclure les données SNBC
 
+panier_action_impact/action_impact [panier_action_impact/action_impact@v4.6.0] 2024-09-02T09:32:07Z ,,, <jacquelina@LanceLibre> # Ajoute les partenaires
+panier_action_impact/plan_action [panier_action_impact/plan_action@v4.6.0] 2024-09-02T08:56:57Z ,,, <jacquelina@LanceLibre> # Ajoute le lien panier-plan et complète la fonction plan_from_panier.
+automatisation/newsletters_pai 2024-09-02T14:17:56Z ,,, <jacquelina@LanceLibre> # Ajoute un trigger sur la création d'un plan provenant d un panier à impact pour appeller une fonction supabase qui enverra le createur du plan a Brevo
+collectivite/imports [collectivite/imports@v4.9.0] 2024-09-19T09:42:07Z ,,, <jacquelina@LanceLibre> # Ajoute la table contenant toutes les compétences pour toutes les collectivités
+collectivite/competence [collectivite/competence@v4.9.0] 2024-09-19T09:50:17Z ,,, <jacquelina@LanceLibre> # Ajoute un trigger à la création d'une epci pour remplir la table collectivite_banatic_competence
+plan_action/fiches [plan_action/fiches@v4.9.0] 2024-09-26T12:07:24Z ,,, <jacquelina@LanceLibre> # Remplace les resultats attendus par les effets attendus
+@v4.13.0 2024-10-09T08:38:58Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Améliorations du panier action à impact
+
+plan_action/fiches [plan_action/fiches@v4.13.0] 2024-10-09T08:39:44Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Recrée la fn fiche_action_plan pour prendre en compte le nouveau champ de la table axe
+@v4.14.0 2024-10-09T08:45:40Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # fix(fiche-action): Charge de nouveau les fiches actions depuis la page de recherche
+
 plan_action/plan_action [plan_action/plan_action@v4.12.3] 2024-09-25T11:24:37Z System Administrator <root@AirdeThibaut2.lan> # Ajout de statuts pour les fiches action

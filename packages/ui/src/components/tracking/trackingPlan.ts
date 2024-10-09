@@ -28,7 +28,11 @@ export type PageProperties<N extends PageName> =
 /**
  * Liste des onglets de la page panier
  */
-export type PanierOngletName = 'selection' | 'réalisées' | 'en cours';
+export type PanierOngletName =
+  | 'selection'
+  | 'réalisées'
+  | 'en cours'
+  | 'importees';
 
 /** Pour le tracking de page sans données additionnelles */
 type NoProps = {
@@ -208,6 +212,18 @@ export interface TrackingPlan extends Record<never, Page> {
       validation_modale_acteurs_fa: {};
       validation_modale_planning_fa: {};
       cta_indicateur_perso_fa: {};
+      cta_fa_fai: {};
+    };
+  };
+
+  /** Page "créer un plan" */
+  'app/creer-plan': {
+    properties: {collectivite_id: number};
+    onglets: never;
+    events: {
+      cta_creer: {};
+      cta_importer: {};
+      cta_commencer_pai: {};
     };
   };
 
@@ -315,6 +331,8 @@ export interface TrackingPlan extends Record<never, Page> {
         action_id: number;
         category_id: string | null;
       };
+      /** Bouton "copier le lien du panier" */
+      copier_panier_URL: {};
       /* Le bouton "valider la création" affiché dans le panier */
       cta_valider_creation_panier_click: {};
       /* Le bouton "créer le plan d'action" affiché dans la modale */
