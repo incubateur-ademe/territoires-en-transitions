@@ -44,21 +44,13 @@ export const cibleSchema = z.enum([
 
 export type Cible = z.infer<typeof cibleSchema>;
 
-export const resultatsAttendus = z.enum([
-  'Adaptation au changement climatique',
-  'Allongement de la durée d’usage',
-  'Amélioration de la qualité de vie',
-  'Développement des énergies renouvelables',
-  'Efficacité énergétique',
-  'Préservation de la biodiversité',
-  'Réduction des consommations énergétiques',
-  'Réduction des déchets',
-  'Réduction des émissions de gaz à effet de serre',
-  'Réduction des polluants atmosphériques',
-  'Sobriété énergétique',
-]);
+export const effetsAttendus = z.object({
+  id: z.number(),
+  nom: z.string(),
+  notice: z.string().nullish(),
+});
 
-export type ResultatsAttendus = z.infer<typeof resultatsAttendus>;
+export type EffetsAttendus = z.infer<typeof effetsAttendus>;
 
 export const financeurSchema = z.object({
   financeurTag: tagSchema,
@@ -84,7 +76,7 @@ export const ficheActionSchema = z.object({
   niveauPriorite: niveauPrioriteSchema.nullish(),
   cibles: cibleSchema.array().nullish(),
   restreint: z.boolean().nullish(),
-  resultatsAttendus: resultatsAttendus.array().nullish(),
+  effetsAttendus: effetsAttendus.array().nullish(),
   objectifs: z.string().nullish(),
   budgetPrevisionnel: z.number().nullish(),
   calendrier: z.string().nullish(),

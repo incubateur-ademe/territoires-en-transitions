@@ -18,7 +18,7 @@ const IndicateursHeader = ({
 }: IndicateursHeaderProps) => {
   const [isFullObjectifs, setIsFullObjectifs] = useState(false);
 
-  const { objectifs, resultatsAttendus: resultats } = fiche;
+  const { objectifs, effetsAttendus } = fiche;
 
   const {
     truncatedText: truncatedObjectifs,
@@ -89,9 +89,14 @@ const IndicateursHeader = ({
         <span className="uppercase text-primary-9 text-sm font-bold leading-7">
           Effets attendus :
         </span>
-        {resultats && resultats.length ? (
-          resultats.map((res) => (
-            <Badge key={res} title={res} state="standard" uppercase={false} />
+        {effetsAttendus && effetsAttendus.length ? (
+          effetsAttendus.map((res) => (
+            <Badge
+              key={res.nom}
+              title={res.nom}
+              state="standard"
+              uppercase={false}
+            />
           ))
         ) : (
           <span className="text-sm text-grey-7 leading-7">Non renseignés</span>

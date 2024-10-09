@@ -1,4 +1,4 @@
-import { ResultatsAttendus } from '@tet/api/plan-actions';
+import { EffetsAttendus } from '@tet/api/plan-actions';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 import { useEffetsAttendus } from './useEffetsAttendus';
 
@@ -6,8 +6,8 @@ type EffetsAttendusDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
-  values?: ResultatsAttendus[];
-  onChange: ({ effets }: { effets: ResultatsAttendus[] }) => void;
+  values?: EffetsAttendus[];
+  onChange: ({ effets }: { effets: EffetsAttendus[] }) => void;
 };
 
 const EffetsAttendusDropdown = ({
@@ -26,7 +26,7 @@ const EffetsAttendusDropdown = ({
         onChange({
           effets: options.filter((v) =>
             values?.includes(v.id)
-          ) as ResultatsAttendus[],
+          ) as EffetsAttendus[],
         })
       }
     />

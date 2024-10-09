@@ -70,11 +70,11 @@ const ModaleIndicateursHeader = ({
           {/* Effets attendus */}
           <Field title="Effets attendus" className="col-span-2">
             <EffetsAttendusDropdown
-              values={editedFiche.resultatsAttendus ?? []}
+              values={editedFiche.effetsAttendus ?? []}
               onChange={({ effets }) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  resultatsAttendus: effets,
+                  effetsAttendus: effets,
                 }))
               }
             />
