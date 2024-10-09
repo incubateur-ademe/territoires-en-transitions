@@ -1,8 +1,8 @@
-import {SharedDomain} from '@tet/api';
-import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
-import {useUpdateIndicateurCard} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
-import {useEffect, useState} from 'react';
-import {objectToCamel} from 'ts-case-convert';
+import { SharedDomain } from '@tet/api';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { useUpdateIndicateurCard } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
+import { useEffect, useState } from 'react';
+import { objectToCamel } from 'ts-case-convert';
 import { OpenState } from '@tet/ui/utils/types';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
@@ -28,9 +28,10 @@ const IndicateurCardEditModal = ({
   const initialState = {
     pilotes: pilotes ?? [],
     // uniquement l'id nous intéresse pour le state initial
-    services: serviceIds?.map(id => ({id, nom: '', collectiviteId: 0})) ?? [],
+    services:
+      serviceIds?.map((id) => ({ id, nom: '', collectiviteId: 0 })) ?? [],
     // uniquement l'id nous intéresse pour le state initial
-    thematiques: thematiqueIds?.map(id => ({id, nom: ''})) ?? [],
+    thematiques: thematiqueIds?.map((id) => ({ id, nom: '' })) ?? [],
   };
 
   const [state, setState] = useState<{
@@ -45,10 +46,10 @@ const IndicateurCardEditModal = ({
 
   // extrait les userId et les tagId
   const pilotesValues = state.pilotes
-    ?.map(p => p.userId || p.tagId?.toString())
-    .filter(pilote => !!pilote) as string[];
+    ?.map((p) => p.userId || p.tagId?.toString())
+    .filter((pilote) => !!pilote) as string[];
 
-  const {mutate: updateIndicateur} = useUpdateIndicateurCard(
+  const { mutate: updateIndicateur } = useUpdateIndicateurCard(
     indicateurId,
     estPerso
   );
@@ -62,13 +63,13 @@ const IndicateurCardEditModal = ({
           <Field title="Personne pilote :">
             <PersonnesDropdown
               values={pilotesValues}
-              onChange={({personnes}) =>
+              onChange={({ personnes }) =>
                 setState({
                   ...state,
-                  pilotes: personnes.map(personne => ({
-                    collectiviteId: personne.collectivite_id!,
-                    tagId: personne.tag_id,
-                    userId: personne.user_id,
+                  pilotes: personnes.map((personne) => ({
+                    collectiviteId: personne.collectiviteId!,
+                    tagId: personne.tagId,
+                    userId: personne.userId,
                   })),
                 })
               }
@@ -76,8 +77,8 @@ const IndicateurCardEditModal = ({
           </Field>
           <Field title="Direction ou service pilote :">
             <ServicesPilotesDropdown
-              values={state.services.map(s => s.id!)}
-              onChange={({services}) =>
+              values={state.services.map((s) => s.id!)}
+              onChange={({ services }) =>
                 setState({
                   ...state,
                   services: objectToCamel(services),
@@ -88,8 +89,8 @@ const IndicateurCardEditModal = ({
           {estPerso && (
             <Field title="Thématique :">
               <ThematiquesDropdown
-                values={state.thematiques.map(t => t.id)}
-                onChange={({thematiques}) =>
+                values={state.thematiques.map((t) => t.id)}
+                onChange={({ thematiques }) =>
                   setState({
                     ...state,
                     thematiques,
@@ -100,9 +101,9 @@ const IndicateurCardEditModal = ({
           )}
         </div>
       )}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             disabled: JSON.stringify(initialState) === JSON.stringify(state),
             onClick: () => {
