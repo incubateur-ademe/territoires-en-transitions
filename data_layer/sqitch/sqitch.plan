@@ -730,4 +730,5 @@ plan_action/fiches [plan_action/fiches@v4.13.0] 2024-10-09T08:39:44Z Frederic Ar
 plan_action/fiches [plan_action/fiches@v4.14.0] 2024-10-09T15:25:17Z ,,, <jacquelina@LanceLibre> # Corrige la vue public qui contient à tord le code la vue privée
 stats/locales [stats/locales@v4.12.3] 2024-10-02T13:42:48Z ,,, <jacquelina@LanceLibre> # Sépare les refresh des stats locales en deux fonctions pour ne pas dépasser les 2min par fonction qui fait timeout
 cron/refresh_stats_views_locales [cron/refresh_stats_views_locales@v4.12.3] 2024-10-02T13:58:01Z ,,, <jacquelina@LanceLibre> # Ajoute le cron pour le refresh de la fonction refresh_stats_locales_indicateurs
+@v4.15.0 2024-10-10T09:52:36Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fixes divers : stats et export PA
 
