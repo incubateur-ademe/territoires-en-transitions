@@ -18,11 +18,10 @@ const KeyNumbers = ({valuesList}: KeyNumbersProps): JSX.Element => {
           className="px-4 md:py-0 py-8 md:first:pl-0 first:pt-0 md:last:pr-0 last:pb-0"
         >
           <div className="text-[#ff5655] text-4xl font-bold pb-2">
-            {v.value}
-            {!!v.totalValue && <span className="text-xl">/{v.totalValue}</span>}
+            {v.value}/{v.totalValue}
+            {/* {!!v.totalValue && <span className="text-xl">bio/{v.totalValue}</span>} */}
           </div>
-          <div className="text-sm">{v.firstLegend}</div>
-          {!!v.secondLegend && <div className="text-sm">{v.secondLegend}</div>}
+          <div><span className="text-sm uppercase">{v.firstLegend} {v.secondLegend}</span><span> dont X renseignés en open data</span></div>
         </div>
       ))}
     </div>

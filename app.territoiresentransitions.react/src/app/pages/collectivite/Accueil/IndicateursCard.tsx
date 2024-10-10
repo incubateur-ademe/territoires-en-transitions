@@ -1,5 +1,5 @@
 import {referentielToName} from 'app/labels';
-import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
+import {makeCollectiviteIndicateursByReferentielPath, makeCollectiviteTousLesIndicateursUrl, ReferentielParamOption} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
@@ -10,16 +10,20 @@ import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 type IndicateursCardProps = {
   collectiviteId: number;
+  referentielId: ReferentielParamOption;
+};
+
+type IndicateurToDisplayProps = {
+  value: number;
+  totalValue?: number;
+  firstLegend: string;
+  secondLegend?: string;
 };
 
 type FilledIndicateursCardProps = {
   collectiviteId: number;
-  indicateurs: {
-    value: number;
-    totalValue?: number;
-    firstLegend: string;
-    secondLegend?: string;
-  }[];
+  indicateurs: IndicateurToDisplayProps[];
+  referentielId: ReferentielParamOption;
 };
 
 type EmptyIndicateursCardProps = {
@@ -30,7 +34,7 @@ type EmptyIndicateursCardProps = {
  * Carte "indicateurs"
  */
 
-const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
+const IndicateursCard = ({ collectiviteId, referentielId }: IndicateursCardProps ) => {
   const indicateurs = useIndicateursCount();
   if (!indicateurs) {
     return null;
@@ -63,6 +67,19 @@ const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
     // },
   ];
 
+  const pickIndicateur = (indicateursToDisplay: IndicateurToDisplayProps[], referentielId: ReferentielParamOption): IndicateurToDisplayProps[] => {
+    const indicateur = indicateursToDisplay.find(indicateur => indicateur.secondLegend === referentielToName[referentielId]);
+    if (!indicateur) {
+      throw new Error(`Indicateur not found for referentielId: ${referentielId}`);
+    }
+    /**
+     * Wrapping in an array to respect KeyNumbers contract
+     */
+    return [indicateur];
+  }
+
+
+
   const isDisplayingIndicateurs =
     indicateurs.cae?.withValue ||
     indicateurs.eci?.withValue ||
@@ -72,7 +89,8 @@ const IndicateursCard = ({collectiviteId}: IndicateursCardProps) => {
   return isDisplayingIndicateurs ? (
     <FilledIndicateursCard
       collectiviteId={collectiviteId}
-      indicateurs={indicateursToDisplay}
+      indicateurs={pickIndicateur(indicateursToDisplay, referentielId)}
+      referentielId={referentielId}
     />
   ) : (
     <EmptyIndicateursCard collectiviteId={collectiviteId} />
@@ -88,18 +106,26 @@ export default IndicateursCard;
 const FilledIndicateursCard = ({
   collectiviteId,
   indicateurs,
+  referentielId
 }: FilledIndicateursCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
 
   return (
     <AccueilCard className="grow flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
-      <ButtonWithLink
+      {/* <ButtonWithLink
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
         href={makeCollectiviteTousLesIndicateursUrl({collectiviteId})}
         rounded
       >
         Compléter mes indicateurs
+      </ButtonWithLink> */}
+      <ButtonWithLink
+        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
+        href={makeCollectiviteIndicateursByReferentielPath({collectiviteId, referentielId})}
+        rounded
+      >
+        Voir les indicateurs complétés en open data
       </ButtonWithLink>
     </AccueilCard>
   );

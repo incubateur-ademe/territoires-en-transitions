@@ -62,7 +62,7 @@ const AccueilNonConfidentielle = ({
       {!!collectiviteId && (
         <div className="fr-container flex flex-col py-16 gap-16">
           {/* Plans d'action et Indicateurs */}
-          <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
+          {/* <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
             <div className="flex flex-col">
               <TitreSection>Plans d'action</TitreSection>
               <PlansActionCard collectiviteId={collectiviteId} />
@@ -71,11 +71,11 @@ const AccueilNonConfidentielle = ({
               <TitreSection>Indicateurs</TitreSection>
               <IndicateursCard collectiviteId={collectiviteId} />
             </div>
-          </div>
+          </div> */}
 
           {/* États des lieux */}
           <div>
-            <TitreSection>État des lieux</TitreSection>
+            {/* <TitreSection>État des lieux</TitreSection> */}
             <div className="grid lg:grid-cols-2 gap-6">
               {/** Climat Air Énergie */}
               <EtatDesLieux
