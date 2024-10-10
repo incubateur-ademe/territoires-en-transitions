@@ -5,7 +5,7 @@ extendZodWithOpenApi(z);
 
 export const collectiviteRequestSchema = extendApi(
   z.object({
-    collectivite_id: z.coerce.number().int().openapi({
+    collectiviteId: z.coerce.number().int().openapi({
       description: 'Identifiant de la collectivité',
     }),
   }),

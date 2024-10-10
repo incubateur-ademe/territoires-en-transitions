@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
+import { groupementTable } from '../models/groupement.table';
 import {
   CreateGroupementCollectiviteType,
   groupementCollectiviteTable,
-  groupementTable,
-} from '../models/groupement.models';
+} from '../models/groupement-collectivite.table';
 
 @Injectable()
 export default class GroupementsService {
@@ -48,8 +48,8 @@ export default class GroupementsService {
       `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`,
     );
     const createGroupementCollectivite: CreateGroupementCollectiviteType = {
-      collectivite_id: collectiviteId,
-      groupement_id: groupementId,
+      collectiviteId: collectiviteId,
+      groupementId: groupementId,
     };
 
     await this.databaseService.db
