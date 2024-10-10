@@ -5,7 +5,7 @@ import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import {ToolbarIconButton} from 'ui/buttons/ToolbarIconButton';
-import {useUpdateIndicateurPersoDefinition} from './useUpdateIndicateurPersoDefinition';
+import {useUpdateIndicateurDefinition} from './useUpdateIndicateurDefinition';
 import {HeaderIndicateur} from './detail/HeaderIndicateur';
 import {IndicateurValuesTabs} from './detail/IndicateurValuesTabs';
 import {FichesActionLiees} from './FichesActionLiees';
@@ -24,13 +24,13 @@ const IndicateurPersonnaliseBase = ({
   definition: Indicateurs.domain.IndicateurDefinition;
 }) => {
   const {description, unite, titre, rempli} = definition;
-  const {mutate: updateDefinition} = useUpdateIndicateurPersoDefinition();
+  const {mutate: updateDefinition} = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
-    name: 'description' | 'unite' | 'titre',
+    name: 'description' | 'commentaire' | 'unite' | 'titre',
     value: string
   ) => {
     const collectivite_id = collectivite?.collectivite_id;
@@ -38,6 +38,27 @@ const IndicateurPersonnaliseBase = ({
     if (collectivite_id && nouveau !== definition[name]) {
       updateDefinition({...definition, [name]: nouveau});
     }
+  };
+
+  /**
+   * TEMPORARY: currently, description input feeds two columns:
+   * `description` column in `indicateur_definition`
+   * `commentaire` column in `indicateur_collectivite` (via the hardcoded ['commentaire'] prop).
+   * This is step 2 of expand and contract pattern
+   * (https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
+   *
+   * Next step: remove this function and change
+   * handleUpdate('description', e.target.value) to handleUpdate('commentaire', e.target.value).
+   *
+   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
+   */
+  const TEMPORARY_handleDescriptionUpdate = (value: string) => {
+    const trimmedValue = value.trim();
+    updateDefinition({
+      ...definition,
+      description: trimmedValue,
+      commentaire: trimmedValue,
+    });
   };
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -51,7 +72,7 @@ const IndicateurPersonnaliseBase = ({
       <HeaderIndicateur
         title={titre}
         isReadonly={isReadonly}
-        onUpdate={value => handleUpdate('titre', value)}
+        onUpdate={(value) => handleUpdate('titre', value)}
       />
       <div className="px-10 py-6">
         <div className="flex flex-row items-center justify-between mb-6">
@@ -86,7 +107,8 @@ const IndicateurPersonnaliseBase = ({
               className="fr-input fr-mt-1w !outline-none"
               initialValue={description}
               readOnly={isReadonly}
-              onBlur={e => handleUpdate('description', e.target.value)}
+              disabled={isReadonly}
+              onBlur={(e) => TEMPORARY_handleDescriptionUpdate(e.target.value)}
             />
           </Field>
           <IndicateurInfoLiees definition={definition} />
@@ -96,7 +118,7 @@ const IndicateurPersonnaliseBase = ({
               className="fr-input fr-mt-1w !outline-none"
               initialValue={unite}
               readOnly={isReadonly}
-              onBlur={e => handleUpdate('unite', e.target.value)}
+              onBlur={(e) => handleUpdate('unite', e.target.value)}
             />
           </Field>
         </div>
