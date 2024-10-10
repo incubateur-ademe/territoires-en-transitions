@@ -1,6 +1,6 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
-import { ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import {
@@ -24,6 +24,7 @@ class GetIndicateursValeursResponseClass extends createZodDto(
   getIndicateursValeursResponseSchema
 ) {}
 
+@ApiTags('Indicateurs')
 @Controller('indicateurs')
 export class IndicateursController {
   private readonly logger = new Logger(IndicateursController.name);
