@@ -58,14 +58,9 @@ const PanierRealtime = ({
   }, [panier.collectivite_preset, setCollectiviteId]);
 
   useEffect(() => {
-    const socket: Socket = io('http://localhost:3000');
-    socket.on('panierUpdate', (panierId) => {
-      if (panierId === panier.id) {
-        router.refresh();
-      }
-    });
+    const channel = panierAPI.listenToPanierUpdates(panier.id, router.refresh);
     return () => {
-      socket.disconnect();
+      supabase.removeChannel(channel);
     };
   }, [router, panier.id, setUser]);
 
