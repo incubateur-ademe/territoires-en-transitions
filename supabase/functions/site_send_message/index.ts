@@ -11,7 +11,8 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { categorie, objet, prenom, nom, email, message } = await req.json();
+    const { categorie, objet, prenom, nom, email, tel, message } =
+      await req.json();
 
     let destEmail = '';
 
@@ -40,7 +41,9 @@ serve(async (req: Request) => {
         from: 'contact@territoiresentransitions.fr',
         to: destEmail,
         subject: `Homepage : ${objet}`,
-        html: `<p>De : ${prenom} ${nom} (${email})</p><p>${message}</p>`,
+        html: `<p>De : ${prenom} ${nom} (${email}${
+          tel !== '' ? `,Tél. : ${tel}` : ''
+        })</p><p>${message}</p>`,
       }),
     });
 
@@ -60,6 +63,7 @@ serve(async (req: Request) => {
           prenom,
           nom,
           email,
+          tel,
           message,
         }),
       })
