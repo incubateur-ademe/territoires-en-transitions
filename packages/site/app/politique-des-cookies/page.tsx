@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   return (
     <Section>
-      <h1 className="fr-header__body">Gestion des cookies</h1>
+      <h1 className="fr-header__body">Politique des cookies</h1>
       <Cookies />
     </Section>
   );
