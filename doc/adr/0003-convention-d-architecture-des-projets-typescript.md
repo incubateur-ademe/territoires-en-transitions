@@ -19,6 +19,7 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 1. Language FR/EN : domaines, scopes, et entités en français, tout le reste en anglais pour fluidifer l'écriture du code
 
    Exemple : `hasFicheActions()`
+   
    Exemple : `const result = await indicateursFetch()`
 
 1. `kebab-case` pour les noms de fichiers et dossiers
@@ -28,7 +29,9 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 1. Organisation des dossiers en domaine → scope (optionnel) → layer technique
 
    Exemple : `src/indicateurs/models/indicateur.schema.ts`
+   
    Exemple : `src/plan-actions/shared/models/fiche-action.schema.ts`
+   
    Exemple : `src/app/plan-actions/fiche-actions/views/fiche-action.card.tsx`
 
 1. Préfix des fichiers avec son "type"
