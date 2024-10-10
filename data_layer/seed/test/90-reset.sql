@@ -34,6 +34,8 @@ $$
     delete from cot where true;
 -- Vide maintenance
     delete from maintenance where true;
+-- Fix - Reset de la table fiche_action_pilote qui a été vidé lors du truncate dcp cascade
+    select test.reset_from_copy('public', 'fiche_action_pilote');
 -- Renvoie un code 200
     select set_config('response.status', '200', true);
 $$ language sql security definer;
