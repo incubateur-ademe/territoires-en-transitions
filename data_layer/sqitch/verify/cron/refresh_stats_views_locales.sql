@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select 1/count(*) from cron.job where jobname = 'refresh_stats_views_locales';
+select 1/count(*) from cron.job where jobname = 'refresh_stats_views_locales_indicateur';
 
 ROLLBACK;
