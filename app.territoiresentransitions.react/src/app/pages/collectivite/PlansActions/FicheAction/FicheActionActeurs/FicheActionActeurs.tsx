@@ -1,16 +1,16 @@
 import { FicheAction } from '@tet/api/plan-actions';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import EmptyCard from '../EmptyCard';
 import ListeActeurs from './ListeActeurs';
 import ModaleActeurs from './ModaleActeurs';
-import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
-import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
-import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
-import EmptyCard from '../EmptyCard';
 import CiblePicto from './PictosActeurs/CiblePicto';
 import EluPicto from './PictosActeurs/EluPicto';
+import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
 import PartenairePicto from './PictosActeurs/PartenairePicto';
+import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
+import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
 import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
 type FicheActionActeursProps = {
@@ -18,7 +18,6 @@ type FicheActionActeursProps = {
   fiche: FicheAction;
   className?: string;
   updateFiche: (fiche: FicheAction) => void;
-  refetchFiche: () => void;
 };
 
 const FicheActionActeurs = ({
@@ -26,7 +25,6 @@ const FicheActionActeurs = ({
   fiche,
   className,
   updateFiche,
-  refetchFiche,
 }: FicheActionActeursProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -40,10 +38,6 @@ const FicheActionActeurs = ({
     !referents &&
     !partenaires &&
     (!cibles || cibles.length === 0);
-
-  useEffect(() => {
-    if (!isModalOpen) refetchFiche();
-  }, [isModalOpen]);
 
   return (
     <>
@@ -132,12 +126,14 @@ const FicheActionActeurs = ({
         />
       )}
 
-      <ModaleActeurs
-        isOpen={isModalOpen && !isReadonly}
-        setIsOpen={setIsModalOpen}
-        fiche={fiche}
-        updateFiche={updateFiche}
-      />
+      {isModalOpen && !isReadonly && (
+        <ModaleActeurs
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          fiche={fiche}
+          updateFiche={updateFiche}
+        />
+      )}
     </>
   );
 };

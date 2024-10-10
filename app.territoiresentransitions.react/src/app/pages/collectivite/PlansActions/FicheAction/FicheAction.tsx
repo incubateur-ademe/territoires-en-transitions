@@ -1,16 +1,16 @@
-import { useParams } from 'react-router-dom';
-import { format } from 'date-fns';
 import { TrackPageView } from '@tet/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { format } from 'date-fns';
+import { useParams } from 'react-router-dom';
 import { useFicheAction } from './data/useFicheAction';
 import { useUpdateFicheAction } from './data/useUpdateFicheAction';
-import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
-import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
-import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
-import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
-import FicheActionOnglets from './FicheActionOnglets';
+import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
+import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionImpact from './FicheActionImpact';
+import FicheActionOnglets from './FicheActionOnglets';
+import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 
 type FicheActionProps = {
   isReadonly: boolean;
@@ -21,7 +21,7 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
 
   const collectiviteId = useCollectiviteId()!;
 
-  const { data, refetch, isLoading } = useFicheAction(ficheUid);
+  const { data, isLoading } = useFicheAction(ficheUid);
 
   const { mutate: updateFiche, isLoading: isEditLoading } =
     useUpdateFicheAction();
@@ -106,7 +106,6 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                 isReadonly={isReadonly}
                 fiche={fiche}
                 updateFiche={updateFiche}
-                refetchFiche={refetch}
               />
             </div>
 

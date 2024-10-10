@@ -35,10 +35,6 @@ const ModaleActeurs = ({
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id || null;
 
-  useEffect(() => {
-    if (isOpen) setEditedFiche(fiche);
-  }, [isOpen]);
-
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
       updateFiche(editedFiche);
