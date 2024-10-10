@@ -3,12 +3,15 @@ VERSION 0.8
 build:
   FROM ../../+node-alpine-with-all-deps
 
-  ARG --required ANON_KEY
-  ARG --required API_URL
   ARG --required STRAPI_KEY
   ARG --required STRAPI_URL
+  ARG --required ANON_KEY
+  ARG --required API_URL
   ARG --required AXEPTIO_ID
   ARG --required PANIER_URL
+  ARG POSTHOG_HOST
+  ARG POSTHOG_KEY
+  ARG CRISP_WEBSITE_ID
 
   COPY . ./packages/site
 
@@ -34,14 +37,15 @@ build:
 docker:
   FROM ../../+node-alpine
 
-  ARG --required ANON_KEY
-  ARG --required API_URL
   ARG --required STRAPI_KEY
   ARG --required STRAPI_URL
+  ARG --required ANON_KEY
+  ARG --required API_URL
   ARG --required AXEPTIO_ID
   ARG --required PANIER_URL
   ARG POSTHOG_HOST
   ARG POSTHOG_KEY
+  ARG CRISP_WEBSITE_ID
 
   ENV NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY
   ENV NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL

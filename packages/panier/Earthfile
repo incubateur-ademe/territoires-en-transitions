@@ -6,6 +6,9 @@ build:
   ARG --required ANON_KEY
   ARG --required API_URL
   ARG --required AXEPTIO_ID
+  ARG POSTHOG_HOST
+  ARG POSTHOG_KEY
+  ARG CRISP_WEBSITE_ID
 
   COPY . ./packages/panier
 
