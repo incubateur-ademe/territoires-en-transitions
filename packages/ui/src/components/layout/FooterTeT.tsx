@@ -67,8 +67,8 @@ export const FooterTeT = ({
           external: true,
         },
         {
-          label: 'Gestion des cookies',
-          href: `${SITE_BASE_URL}/cookies`,
+          label: 'Politique des cookies',
+          href: `${SITE_BASE_URL}/politique-des-cookies`,
         },
         {
           label: 'Statistiques',
