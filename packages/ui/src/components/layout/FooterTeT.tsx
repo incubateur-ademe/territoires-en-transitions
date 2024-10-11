@@ -59,7 +59,7 @@ export const FooterTeT = ({
         },
         {
           label: 'Mentions légales',
-          href: `${SITE_BASE_URL}/mentions`,
+          href: `${SITE_BASE_URL}/mentions-legales`,
         },
         {
           label: 'Données personnelles',
