@@ -1,11 +1,11 @@
-import {Config} from 'tailwindcss';
+import { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
 
 /** Configuration Tailwind */
 export const preset = {
   content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
-    maxHeight: {'80vh': '80vh'},
+    maxHeight: { '80vh': '80vh' },
     extend: {
       colors: {
         // Anciennes couleurs, à modifier avec l'harmonisation
@@ -122,26 +122,27 @@ export const preset = {
       // `--tw-content`.
       RemixIcon: {
         'check-line': '\\eb7b',
+        'circle-fill': '\\f3c1',
       },
     },
   },
   plugins: [
-    plugin(({addVariant}) => {
+    plugin(({ addVariant }) => {
       // pour cibler le bouton de ràz des input.search
       addVariant('search-reset', '&::-webkit-search-cancel-button');
     }),
 
     // permet de définir la valeur de `--tw-content` à partir d'un code
     // remix-icon défini dans le thème (voir ci-dessus `theme.RemixIcon`)
-    plugin(function ({matchComponents, theme}) {
+    plugin(function ({ matchComponents, theme }) {
       matchComponents(
         {
-          icon: value => ({
+          icon: (value) => ({
             'font-family': 'remixicon',
             '--tw-content': `"${value}"`,
           }),
         },
-        {values: theme('RemixIcon')}
+        { values: theme('RemixIcon') }
       );
     }),
   ],
