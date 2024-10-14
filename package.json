@@ -209,6 +209,7 @@
     "build:panier": "nx build @tet/panier",
     "test:app": "nx test @tet/app",
     "test:api": "nx test @tet/api",
+    "test:backend": "nx test @tet/backend",
     "storybook:app": "nx storybook @tet/app",
     "storybook:auth": "nx storybook @tet/auth",
     "storybook:ui": "nx storybook @tet/ui"
