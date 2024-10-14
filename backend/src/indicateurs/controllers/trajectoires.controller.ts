@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
-import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
+import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
@@ -90,7 +90,7 @@ export class TrajectoiresController {
     );
   }
 
-  @PublicEndpoint()
+  @AllowPublicAccess()
   @Get('modele')
   @ApiOkResponse({
     description:

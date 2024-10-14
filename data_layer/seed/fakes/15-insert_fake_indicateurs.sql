@@ -37,6 +37,11 @@ INSERT INTO public.indicateur_source (id, libelle) VALUES ('rare', 'RARE-OREC');
 INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
 VALUES (2, 'rare', '2024-07-18T00:00:00.000Z', '', 'OREC', '', 'Scope 1&2 (approche cadastrale)', '');
 
+-- Insertion de la source snbc
+INSERT INTO public.indicateur_source (id, libelle) VALUES ('snbc', 'SNBC');
+INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
+VALUES (3, 'snbc', '2024-07-11T00:00:00.000Z', 'SNBC', 'ADEME', 'ADEME', '', '');
+
 -- Insertion pour le calcul de la trajectoire snbc. Cas du pays du Laon
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
                                       resultat_commentaire, objectif, objectif_commentaire)

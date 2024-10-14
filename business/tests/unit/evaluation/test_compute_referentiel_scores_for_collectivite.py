@@ -1,23 +1,17 @@
 import math
-import pytest
 
+import pytest
+from tests.utils.referentiel_factory import (make_action_children,
+                                             make_action_points)
+
+from business.evaluation.evaluation.action_point_tree import ActionPointTree
+from business.evaluation.evaluation.compute_scores import compute_scores
 from business.utils.models.action_score import ActionScore
-from business.utils.models.action_statut import (
-    ActionStatut,
-    DetailedAvancement,
-)
-from business.evaluation.evaluation.action_point_tree import (
-    ActionPointTree,
-)
-from business.evaluation.evaluation.compute_scores import (
-    compute_scores,
-)
+from business.utils.models.action_statut import (ActionStatut,
+                                                 DetailedAvancement)
 from business.utils.models.actions import ActionId
-from business.utils.models.personnalisation import ActionPersonnalisationConsequence
-from tests.utils.referentiel_factory import (
-    make_action_children,
-    make_action_points,
-)
+from business.utils.models.personnalisation import \
+  ActionPersonnalisationConsequence
 
 
 @pytest.fixture
@@ -1231,3 +1225,8 @@ def test_notation_when_potentiel_perso_formule_is_given(simple_point_tree_refere
         / actual_scores[ActionId("eci_2")].point_potentiel,
         rel_tol=3
     )
+
+    assert actual_scores[ActionId("eci_1")].point_fait == 2.143
+    assert actual_scores[ActionId("eci_1.1")].point_fait == 0.714
+    assert actual_scores[ActionId("eci_1.2")].point_fait == 1.429
+    assert actual_scores[ActionId("eci")].point_fait == 7.143
