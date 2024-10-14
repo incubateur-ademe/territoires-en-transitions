@@ -57,5 +57,5 @@ docker-data
 storybook-static
 
 # fichiers `package.json` des packages enfant (créés automatiquement par le lancement des storybooks)
-app.territoiresentransitions.react/package.json
-packages/ui/package.json
+**/package.json
+

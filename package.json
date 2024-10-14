@@ -135,6 +135,7 @@
     "@storybook/addon-styling-webpack": "^1.0.0",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
     "@storybook/core-server": "^8.3.5",
+    "@storybook/nextjs": "^8.3.5",
     "@storybook/preset-create-react-app": "^8.3.5",
     "@storybook/react": "^8.3.5",
     "@storybook/react-webpack5": "^8.3.5",
@@ -214,6 +215,7 @@
     "test:app": "nx test @tet/app",
     "test:api": "nx test @tet/api",
     "storybook:app": "nx storybook @tet/app",
+    "storybook:auth": "nx storybook @tet/auth",
     "storybook:ui": "nx storybook @tet/ui"
   },
   "repository": {
