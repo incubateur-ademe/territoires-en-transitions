@@ -1,4 +1,5 @@
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const path = require('path');
 
 /**
  * Configuration générale du storybook
@@ -31,8 +32,15 @@ module.exports = {
     },
   },
 
-  // chargement des mocks pour le bon fonctionnement des stories dans le storybook
   webpackFinal: async (config) => {
+    // loader pour transpiler les fichiers TS
+    config.module?.rules?.push({
+      test: /\.tsx?$/,
+      use: 'ts-loader',
+      exclude: /node_modules/,
+    });
+
+    // chargement des mocks pour le bon fonctionnement des stories dans le storybook
     config.resolve.alias['core-logic/hooks/useCurrentCollectivite'] =
       require.resolve(
         '../src/core-logic/hooks/__mocks__/useCurrentCollectivite.ts'
