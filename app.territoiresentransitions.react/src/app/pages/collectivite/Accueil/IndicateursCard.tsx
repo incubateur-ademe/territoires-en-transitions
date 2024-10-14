@@ -1,5 +1,5 @@
 import {referentielToName} from 'app/labels';
-import {makeCollectiviteIndicateursByReferentielPath, makeCollectiviteTousLesIndicateursUrl, ReferentielParamOption} from 'app/paths';
+import {makeCollectiviteTousLesIndicateursUrl, ReferentielParamOption} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
@@ -7,6 +7,7 @@ import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import {useIndicateursCount} from './data/useIndicateurSummary';
 import KeyNumbers from 'ui/score/KeyNumbers';
 import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import { Button } from '@tet/ui';
 
 type IndicateursCardProps = {
   collectiviteId: number;
@@ -59,12 +60,6 @@ const IndicateursCard = ({ collectiviteId, referentielId }: IndicateursCardProps
       firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
       secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
     },
-    // {
-    //   value: indicateurs.crte.withValue,
-    //   totalValue: indicateurs.crte.total,
-    //   firstLegend: "indicateurs",
-    //   secondLegend: 'CRTE',
-    // },
   ];
 
   const pickIndicateur = (indicateursToDisplay: IndicateurToDisplayProps[], referentielId: ReferentielParamOption): IndicateurToDisplayProps[] => {
@@ -83,7 +78,6 @@ const IndicateursCard = ({ collectiviteId, referentielId }: IndicateursCardProps
   const isDisplayingIndicateurs =
     indicateurs.cae?.withValue ||
     indicateurs.eci?.withValue ||
-    // indicateurs.crte?.withValue ||
     indicateurs.perso?.total;
 
   return isDisplayingIndicateurs ? (
@@ -113,21 +107,20 @@ const FilledIndicateursCard = ({
   return (
     <AccueilCard className="grow flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
-      <ButtonWithLink
+      <Button
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={makeCollectiviteIndicateursByReferentielPath({collectiviteId, referentielId})}
-        rounded
+        href={`${makeCollectiviteTousLesIndicateursUrl({collectiviteId})}?cat=${referentielId}`}
       >
         Compléter mes indicateurs
-      </ButtonWithLink>
+      </Button>
       {/* TO DO: change tracker ? */}
-      <ButtonWithLink
+      <Button
         onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={}
-        rounded
+        href={`${makeCollectiviteTousLesIndicateursUrl({collectiviteId})}?cat=${referentielId}&od=true`}
       >
+
         Voir les indicateurs complétés en open data
-      </ButtonWithLink>
+      </Button>
     </AccueilCard>
   );
 };
