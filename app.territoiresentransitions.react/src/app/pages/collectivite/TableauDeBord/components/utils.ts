@@ -68,7 +68,7 @@ export const filtersToBadges = (data: FiltreKeys) => {
     } else if (key === 'hasOpenData') {
       data[key] && badgeValues.push('Données Open Data');
     } else if (key === 'hasIndicateurLies') {
-      data[key] && badgeValues.push('Indicateur(s) lié(s)');
+      data[key] && badgeValues.push('Indicateur(s) associé(s)');
     } else if (key === 'ameliorationContinue') {
       data[key] && badgeValues.push('Se répète tous les ans');
     } else if (key === 'priorites') {

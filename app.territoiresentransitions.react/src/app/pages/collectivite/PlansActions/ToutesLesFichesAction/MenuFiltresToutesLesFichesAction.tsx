@@ -41,34 +41,7 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             }}
           />
         </Field>
-        <Field title="Direction ou service pilote">
-          <ServicesPilotesDropdown
-            values={filters.servicePiloteIds}
-            onChange={({ services }) => {
-              const { servicePiloteIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(services
-                  ? { servicePiloteIds: services.map((s) => s.id) }
-                  : {}),
-              });
-            }}
-          />
-        </Field>
-        <Field title="Structure pilote">
-          <StructuresDropdown
-            values={filters.structurePiloteIds}
-            onChange={({ structures }) => {
-              const { structurePiloteIds, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(structures
-                  ? { structurePiloteIds: structures.map((s) => s.id) }
-                  : {}),
-              });
-            }}
-          />
-        </Field>
+
         <Field title="Personne pilote">
           <PersonnesDropdown
             values={pilotes}
@@ -84,6 +57,36 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ? {
                       utilisateurPiloteIds: uIds,
                     }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+
+        <Field title="Direction ou service pilote">
+          <ServicesPilotesDropdown
+            values={filters.servicePiloteIds}
+            onChange={({ services }) => {
+              const { servicePiloteIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(services
+                  ? { servicePiloteIds: services.map((s) => s.id) }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+
+        <Field title="Structure pilote">
+          <StructuresDropdown
+            values={filters.structurePiloteIds}
+            onChange={({ structures }) => {
+              const { structurePiloteIds, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(structures
+                  ? { structurePiloteIds: structures.map((s) => s.id) }
                   : {}),
               });
             }}
@@ -227,7 +230,7 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
         }}
       />
       <Checkbox
-        label="Indicateur(s) lié(s)"
+        label="Indicateur(s) associé(s)"
         checked={filters.hasIndicateurLies}
         onChange={() => {
           const { hasIndicateurLies, ...rest } = filters;
