@@ -1,12 +1,15 @@
-import {referentielToName} from 'app/labels';
-import {makeCollectiviteTousLesIndicateursUrl, ReferentielParamOption} from 'app/paths';
+import { referentielToName } from 'app/labels';
+import {
+  makeCollectiviteTousLesIndicateursUrl,
+  ReferentielParamOption,
+} from 'app/paths';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
-import {PictoIndicateurs} from 'ui/pictogrammes/PictoIndicateur';
+import { PictoIndicateurs } from 'ui/pictogrammes/PictoIndicateur';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import {useIndicateursCount} from './data/useIndicateurSummary';
+import { useIndicateursCount } from './data/useIndicateurSummary';
 import KeyNumbers from 'ui/score/KeyNumbers';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { Button } from '@tet/ui';
 
 type IndicateursCardProps = {
@@ -35,12 +38,15 @@ type EmptyIndicateursCardProps = {
  * Carte "indicateurs"
  */
 
-const IndicateursCard = ({ collectiviteId, referentielId }: IndicateursCardProps ) => {
+const IndicateursCard = ({
+  collectiviteId,
+  referentielId,
+}: IndicateursCardProps) => {
   const indicateurs = useIndicateursCount();
   if (!indicateurs) {
     return null;
   }
-  const {cae, eci, perso} = indicateurs;
+  const { cae, eci, perso } = indicateurs;
 
   const indicateursToDisplay = [
     {
@@ -62,18 +68,24 @@ const IndicateursCard = ({ collectiviteId, referentielId }: IndicateursCardProps
     },
   ];
 
-  const pickIndicateur = (indicateursToDisplay: IndicateurToDisplayProps[], referentielId: ReferentielParamOption): IndicateurToDisplayProps[] => {
-    const indicateur = indicateursToDisplay.find(indicateur => indicateur.secondLegend === referentielToName[referentielId]);
+  const pickIndicateur = (
+    indicateursToDisplay: IndicateurToDisplayProps[],
+    referentielId: ReferentielParamOption
+  ): IndicateurToDisplayProps[] => {
+    const indicateur = indicateursToDisplay.find(
+      (indicateur) =>
+        indicateur.secondLegend === referentielToName[referentielId]
+    );
     if (!indicateur) {
-      throw new Error(`Indicateur not found for referentielId: ${referentielId}`);
+      throw new Error(
+        `Indicateur not found for referentielId: ${referentielId}`
+      );
     }
     /**
      * Wrapping in an array to respect KeyNumbers contract
      */
     return [indicateur];
-  }
-
-
+  };
 
   const isDisplayingIndicateurs =
     indicateurs.cae?.withValue ||
@@ -100,27 +112,39 @@ export default IndicateursCard;
 const FilledIndicateursCard = ({
   collectiviteId,
   indicateurs,
-  referentielId
+  referentielId,
 }: FilledIndicateursCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
 
   return (
     <AccueilCard className="grow flex flex-col">
       <KeyNumbers valuesList={indicateurs} />
-      <Button
-        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={`${makeCollectiviteTousLesIndicateursUrl({collectiviteId})}?cat=${referentielId}`}
-      >
-        Compléter mes indicateurs
-      </Button>
-      {/* TO DO: change tracker ? */}
-      <Button
-        onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-        href={`${makeCollectiviteTousLesIndicateursUrl({collectiviteId})}?cat=${referentielId}&od=true`}
-      >
-
-        Voir les indicateurs complétés en open data
-      </Button>
+      <div className="flex flex-row gap-4">
+        <Button
+          onClick={() =>
+            tracker({ fonction: 'cta_indicateur', action: 'clic' })
+          }
+          href={`${makeCollectiviteTousLesIndicateursUrl({
+            collectiviteId,
+          })}?cat=${referentielId}`}
+          size="sm"
+        >
+          Compléter mes indicateurs
+        </Button>
+        {/* TO DO: change tracker ? */}
+        <Button
+          onClick={() =>
+            tracker({ fonction: 'cta_indicateur', action: 'clic' })
+          }
+          href={`${makeCollectiviteTousLesIndicateursUrl({
+            collectiviteId,
+          })}?cat=${referentielId}&od=true`}
+          variant="outlined"
+          size="sm"
+        >
+          Voir les indicateurs complétés en open data
+        </Button>
+      </div>
     </AccueilCard>
   );
 };
@@ -141,13 +165,14 @@ const EmptyIndicateursCard = ({
           <b>Mesurez</b> l'efficacité de vos actions et{' '}
           <b>atteignez vos objectifs !</b>
         </p>
-        <ButtonWithLink
-          onClick={() => tracker({fonction: 'cta_indicateur', action: 'clic'})}
-          href={makeCollectiviteTousLesIndicateursUrl({collectiviteId})}
-          rounded
+        <Button
+          onClick={() =>
+            tracker({ fonction: 'cta_indicateur', action: 'clic' })
+          }
+          href={makeCollectiviteTousLesIndicateursUrl({ collectiviteId })}
         >
           Compléter mes indicateurs
-        </ButtonWithLink>
+        </Button>
       </>
     </AccueilEmptyCardWithPicto>
   );

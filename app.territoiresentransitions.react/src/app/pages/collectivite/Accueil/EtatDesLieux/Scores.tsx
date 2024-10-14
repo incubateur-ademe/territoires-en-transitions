@@ -1,6 +1,7 @@
-import {TableOptions} from 'react-table';
+import { TableOptions } from 'react-table';
 
-import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
+// import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
+import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 import LabellisationInfo from 'ui/labellisation/LabellisationInfo';
 import Chart from 'ui/charts/Chart';
 import AccueilCard from 'app/pages/collectivite/Accueil/AccueilCard';
@@ -11,13 +12,13 @@ import {
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
 } from 'app/paths';
-import {toLocaleFixed} from 'utils/toFixed';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {useCycleLabellisation} from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
-import {getAggregatedScore} from 'app/pages/collectivite/Accueil/EtatDesLieux/utils';
-import {ProgressionRow} from 'app/pages/collectivite/Accueil/data/useProgressionReferentiel';
+import { toLocaleFixed } from 'utils/toFixed';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { getAggregatedScore } from 'app/pages/collectivite/Accueil/EtatDesLieux/utils';
+import { ProgressionRow } from 'app/pages/collectivite/Accueil/data/useProgressionReferentiel';
 
-import ButtonWithLink from 'ui/buttons/ButtonWithLink';
+import { Button } from '@tet/ui';
 
 type ScoreRempliProps = {
   collectiviteId: number;
@@ -39,11 +40,11 @@ export const ScoreRempli = ({
   potentiel,
 }: ScoreRempliProps): JSX.Element => {
   const tracker = useFonctionTracker();
-  const {parcours, status} = useCycleLabellisation(referentiel);
+  const { parcours, status } = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(progressionScore.data);
 
   return (
-    <AccueilCard className="flex flex-col items-center xl:grid xl:grid-cols-2 gap-8">
+    <AccueilCard className="flex flex-col items-center xl:grid xl:grid-cols-[1.8fr_1fr] gap-4">
       {/* Graphe donut */}
       <div className="w-full max-w-xs xl:order-2 xl:-mr-6">
         <Chart
@@ -65,19 +66,23 @@ export const ScoreRempli = ({
         />
       </div>
 
-      <div className="flex flex-col gap-6 mt-4">
+      <div className="flex flex-col gap-2 mt-4">
         {/** Référentiel */}
-        <div className="flex items-end gap-4">
-          <img src={logoTerritoireEngage} alt="Logo Territoire Engage" />
-          <div className="text-lg font-bold pb-1">{title}</div>
+        <div className="flex flex-col items-start gap-2">
+          <img
+            src={logoTerritoireEngage}
+            alt="Logo Territoire Engage"
+            className="w-[30%]"
+          />
+          <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
         </div>
         {/* Niveau de labellisation et détails */}
         <LabellisationInfo parcours={parcours} score={data} />
 
         {/* Call to action */}
-        <ButtonWithLink
+        <Button
           onClick={() =>
-            tracker({fonction: 'cta_labellisation', action: 'clic'})
+            tracker({ fonction: 'cta_labellisation', action: 'clic' })
           }
           href={makeCollectiviteLabellisationUrl({
             collectiviteId,
@@ -85,12 +90,12 @@ export const ScoreRempli = ({
             labellisationVue: 'suivi',
           })}
           disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
-          rounded
+          size="sm"
         >
           {status === 'audit_en_cours' || status === 'demande_envoyee'
             ? 'Demande envoyée'
             : 'Décrocher les étoiles'}
-        </ButtonWithLink>
+        </Button>
       </div>
     </AccueilCard>
   );
@@ -100,7 +105,7 @@ type ScoreVideProps = {
   collectiviteId: number;
   referentiel: ReferentielParamOption;
   title: string;
-  tags: {label: string; axeId: string}[];
+  tags: { label: string; axeId: string }[];
 };
 
 /** Carte "état des lieux" avec 0 statut renseigné */
@@ -115,9 +120,13 @@ export const ScoreVide = ({
   return (
     <AccueilCard className="flex flex-col gap-11">
       {/* En-tête */}
-      <div className="flex items-end gap-4">
-        <img src={logoTerritoireEngage} alt="Logo Territoire Engage" />
-        <div className="text-lg font-bold pb-1">{title}</div>
+      <div className="flex flex-col items-start gap-2">
+        <img
+          src={logoTerritoireEngage}
+          alt="Logo Territoire Engage"
+          className="w-[30%]"
+        />
+        <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
       </div>
 
       {/* Liste de tags */}
@@ -141,29 +150,26 @@ export const ScoreVide = ({
 
       {/* Call to action */}
       <div className="grid md:grid-cols-2 gap-4">
-        <ButtonWithLink
+        <Button
           onClick={() =>
-            tracker({fonction: 'cta_edl_commencer', action: 'clic'})
+            tracker({ fonction: 'cta_edl_commencer', action: 'clic' })
           }
           href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: referentiel,
             referentielVue: 'progression',
           })}
-          rounded
         >
           Commencer l'état des lieux
-        </ButtonWithLink>
-        <ButtonWithLink
+        </Button>
+        <Button
           onClick={() =>
-            tracker({fonction: 'cta_edl_personnaliser', action: 'clic'})
+            tracker({ fonction: 'cta_edl_personnaliser', action: 'clic' })
           }
-          href={makeCollectivitePersoRefUrl({collectiviteId})}
-          rounded
-          secondary
+          href={makeCollectivitePersoRefUrl({ collectiviteId })}
         >
           Personnaliser le référentiel
-        </ButtonWithLink>
+        </Button>
       </div>
     </AccueilCard>
   );
