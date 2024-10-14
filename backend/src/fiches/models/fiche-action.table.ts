@@ -36,7 +36,7 @@ export const ficheActionResultatsAttendusEnum = pgEnum(
     'Réduction des émissions de gaz à effet de serre',
     'Réduction des polluants atmosphériques',
     'Sobriété énergétique',
-  ],
+  ]
 );
 
 export enum FicheActionStatutsEnumType {
@@ -49,6 +49,8 @@ export enum FicheActionStatutsEnumType {
   EN_RETARD = 'En retard',
   A_DISCUTER = 'A discuter',
 }
+
+export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
 export const ficheActionStatutsEnum = pgEnum('fiche_action_statuts', [
   FicheActionStatutsEnumType.A_VENIR,
@@ -88,7 +90,7 @@ export const ficheActionCiblesEnum = pgEnum('fiche_action_cibles', [
 
 export const ficheActionNiveauxPrioriteEnum = pgEnum(
   'fiche_action_niveaux_priorite',
-  ['Élevé', 'Moyen', 'Bas'],
+  ['Élevé', 'Moyen', 'Bas']
 );
 
 export const ficheActionTable = pgTable('fiche_action', {
@@ -110,7 +112,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     scale: 0,
   }),
   statut: ficheActionStatutsEnum('statut').default(
-    FicheActionStatutsEnumType.A_VENIR,
+    FicheActionStatutsEnumType.A_VENIR
   ),
   niveauPriorite: ficheActionNiveauxPrioriteEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
