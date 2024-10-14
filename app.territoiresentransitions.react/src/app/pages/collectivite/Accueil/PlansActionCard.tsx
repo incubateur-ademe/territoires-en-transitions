@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
-import { Axe } from '@tet/api/plan-actions/domain';
+import { Axe, Statut } from '@tet/api/plan-actions/domain';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -127,7 +127,7 @@ const FilledPlansActionCard = ({
                     ? planActionsStats.statuts.map((st) => ({
                         ...st,
                         id: st.id !== 'NC' ? st.id : 'Sans statut',
-                        color: statutToColor[st.id],
+                        color: statutToColor[st.id as Statut],
                       }))
                     : [],
                 unit: 'fiche',

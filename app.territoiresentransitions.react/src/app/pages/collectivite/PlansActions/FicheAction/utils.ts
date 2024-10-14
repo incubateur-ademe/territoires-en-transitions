@@ -1,3 +1,4 @@
+import { Statut } from '@tet/api/plan-actions';
 import { preset } from '@tet/ui';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -91,7 +92,7 @@ export const getTruncatedText = (text: string | null, limit: number) => {
 };
 
 /** Correspondance entre les statuts et couleurs associées */
-export const statutToColor: Record<string, string> = {
+export const statutToColor: Record<Statut | 'NC' | 'Sans statut', string> = {
   'À venir': preset.theme.extend.colors.primary[6],
   'En cours': preset.theme.extend.colors.info[3],
   Réalisé: preset.theme.extend.colors.success[3],
@@ -100,6 +101,6 @@ export const statutToColor: Record<string, string> = {
   'A discuter': '#9351CF',
   Bloqué: preset.theme.extend.colors.new[2],
   'En retard': preset.theme.extend.colors.error[1],
+  'Sans statut': preset.theme.extend.colors.grey[4],
   NC: preset.theme.extend.colors.grey[3],
-  'Sans statut': '#E5E5E5',
 };

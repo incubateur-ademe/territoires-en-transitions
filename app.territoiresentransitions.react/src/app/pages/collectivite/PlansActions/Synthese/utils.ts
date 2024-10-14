@@ -2,6 +2,7 @@ import { FiltersKeys } from '../FicheAction/data/filters';
 import { TPlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
 import { DonutData } from 'ui/charts/Donut/DonutChart';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { Statut } from '@tet/api/plan-actions';
 
 const statutsGraphTitre = "Répartition par statut d'avancement";
 const pilotesGraphTitre = 'Répartition par personne pilote';
@@ -81,7 +82,7 @@ export const getGraphData = (
         data[graphId].map((st) => ({
           ...st,
           id: st.id !== 'NC' ? st.id : 'Sans statut',
-          color: statutToColor[st.id],
+          color: statutToColor[st.id as Statut],
         })) || []
       );
     case 'pilotes':

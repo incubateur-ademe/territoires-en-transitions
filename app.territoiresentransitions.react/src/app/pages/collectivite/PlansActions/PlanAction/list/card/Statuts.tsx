@@ -23,7 +23,7 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
       <Chart
         donut={{
           chart: {
-            className: '!h-60 border-b border-grey-3',
+            className: '!h-60',
             data: statuts
               ? Object.entries(statuts).map(([statut, { count, valeur }]) => ({
                   id: statut,
@@ -49,47 +49,62 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
   }
 
   if (display === 'row') {
-    return fichesCount > 0 ? (
-      <Tooltip
-        openingDelay={0}
-        label={
-          <div className="max-w-56 flex gap-2 flex-wrap">
-            {Object.entries(statuts).map(([statut, { count, valeur }]) => (
-              <BadgeStatut
-                key={statut}
-                statut={valeur}
-                count={count}
-                size="sm"
-              />
-            ))}
+    /** État sans fiche */
+    if (fichesCount === 0) {
+      return (
+        <Tooltip
+          openingDelay={0}
+          label={<div className="font-normal">Aucune fiche dans ce plan</div>}
+        >
+          <div className="h-3 border border-grey-4 bg-grey-1 w-full rounded-full" />
+        </Tooltip>
+      );
+    } else {
+      /** État avec fiches */
+      return (
+        <Tooltip
+          openingDelay={0}
+          label={
+            <div className="max-w-56 flex gap-2 flex-wrap">
+              {Object.entries(statuts).map(
+                ([statut, { count, valeur }]) =>
+                  count > 0 && (
+                    <BadgeStatut
+                      key={statut}
+                      statut={valeur}
+                      count={count}
+                      size="sm"
+                    />
+                  )
+              )}
+              {/** Si contient uniquement des fiches sans statut */}
+              {fichesCount === statuts['Sans statut']?.count && (
+                <div className="font-normal">
+                  Complétez les statuts de vos fiches action pour voir la
+                  répartition
+                </div>
+              )}
+            </div>
+          }
+        >
+          <div className="flex">
+            {Object.entries(statuts).map(
+              ([_, { count, valeur }]) =>
+                count > 0 && (
+                  <span
+                    key={valeur}
+                    className="h-3 first:rounded-s-full last:rounded-e-full"
+                    style={{
+                      width: `${(count / fichesCount) * 100}%`,
+                      backgroundColor: statutToColor[valeur],
+                    }}
+                  />
+                )
+            )}
           </div>
-        }
-      >
-        <div className="flex">
-          {Object.entries(statuts).map(
-            ([statut, { count }]) =>
-              count > 0 && (
-                <span
-                  key={statut}
-                  className="h-3 first:rounded-s-full last:rounded-e-full"
-                  style={{
-                    width: `${(count / fichesCount) * 100}%`,
-                    backgroundColor: statutToColor[statut],
-                  }}
-                />
-              )
-          )}
-        </div>
-      </Tooltip>
-    ) : (
-      /** État vide */
-      <Tooltip
-        openingDelay={0}
-        label={<div className="font-normal">Aucune fiche dans ce plan</div>}
-      >
-        <div className="h-3 border border-grey-4 bg-grey-2 w-full rounded-full" />
-      </Tooltip>
-    );
+        </Tooltip>
+      );
+    }
   }
 };
 

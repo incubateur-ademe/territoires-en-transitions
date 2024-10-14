@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Chart from 'ui/charts/Chart';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
+import { Statut } from '@tet/api/plan-actions';
 
 type Props = {
   view: TDBViewParam;
@@ -116,22 +117,23 @@ const ModuleAvancementFichesAction = ({ view, module }: Props) => {
       {display === 'row' && (
         <div className="flex flex-wrap gap-2">
           {statutFiches &&
-            Object.entries(statutFiches).map(([statut, { valeur }], index) => (
-              <Link
-                key={index}
-                className="flex flex-col items-center shrink-0 gap-2 p-2 bg-none border border-primary-2 rounded-xl hover:shadow"
-                to={makeFichesActionUrlWithParams(
-                  collectiviteId,
-                  filtres,
-                  valeur
-                )}
-              >
-                <span className="text-3xl text-primary-9 font-bold">
-                  {statutFiches ? statutFiches[statut].count : 0}
-                </span>
-                <BadgeStatut statut={valeur} size="sm" />
-              </Link>
-            ))}
+            Object.entries(statutFiches).map(([statut, { valeur }], index) =>
+              statut === 'Sans statut' ? (
+                <Card statut={valeur} count={statutFiches[statut].count} />
+              ) : (
+                <Link
+                  key={index}
+                  to={makeFichesActionUrlWithParams(
+                    collectiviteId,
+                    filtres,
+                    valeur
+                  )}
+                  className="bg-none rounded-xl hover:shadow"
+                >
+                  <Card statut={valeur} count={statutFiches[statut].count} />
+                </Link>
+              )
+            )}
         </div>
       )}
     </Module>
@@ -139,3 +141,15 @@ const ModuleAvancementFichesAction = ({ view, module }: Props) => {
 };
 
 export default ModuleAvancementFichesAction;
+
+type CardProps = {
+  statut: Statut;
+  count: number;
+};
+
+const Card = ({ statut, count }: CardProps) => (
+  <div className="flex flex-col items-center shrink-0 gap-2 p-2 border border-primary-2 rounded-xl">
+    <span className="text-3xl text-primary-9 font-bold">{count}</span>
+    <BadgeStatut statut={statut} size="sm" />
+  </div>
+);

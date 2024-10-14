@@ -4,6 +4,7 @@ import Statuts from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/ca
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { Card } from '@tet/ui';
+import classNames from 'classnames';
 
 type Props = {
   /** Plan d'action */
@@ -49,7 +50,7 @@ const PlanActionCard = ({
     <Card
       href={link}
       external={openInNewTab}
-      className="gap-0 !p-4 hover:bg-white"
+      className="justify-between gap-0 !p-4 hover:bg-white"
     >
       <div className="flex flex-col gap-2">
         {/** Nom */}
@@ -71,7 +72,14 @@ const PlanActionCard = ({
           display={display}
         />
       )}
-      <div className="flex items-center gap-2 text-sm font-normal text-grey-8">
+      <div
+        className={classNames(
+          'flex items-center gap-2 text-sm font-normal text-grey-8',
+          {
+            'pt-4 border-t border-grey-3': display === 'circular',
+          }
+        )}
+      >
         {/** Nombre d'axes */}
         <span>
           {axesCount?.axe ?? 0} axe{axesCount && axesCount.axe > 1 ? 's' : ''}
