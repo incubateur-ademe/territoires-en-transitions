@@ -45,7 +45,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
       <PlansActionListe
         filtres={module.options.filtre}
         displaySettings={{ display, setDisplay }}
-        // settings={(openState) => (
+        // settings={collectivite?.niveau_acces === 'admin' ? (openState) => (
         //   <>
         //     <Button
         //       variant="outlined"
@@ -65,7 +65,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
         //       keysToInvalidate={[getQueryKey(slug)]}
         //     />
         //   </>
-        // )}
+        // ) : undefined}
       />
     </ModulePage>
   );

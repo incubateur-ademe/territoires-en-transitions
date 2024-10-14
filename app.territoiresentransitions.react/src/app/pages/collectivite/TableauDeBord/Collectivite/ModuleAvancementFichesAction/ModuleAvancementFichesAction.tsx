@@ -10,12 +10,12 @@ import Module, {
 } from 'app/pages/collectivite/TableauDeBord/components/Module';
 import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { TDBViewParam } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Chart from 'ui/charts/Chart';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import { Statut } from '@tet/api/plan-actions';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   view: TDBViewParam;
@@ -24,7 +24,9 @@ type Props = {
 
 /** Module pour afficher l'avancement des fiches action */
 const ModuleAvancementFichesAction = ({ view, module }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+
+  const collectiviteId = collectivite?.collectivite_id;
 
   const trackEvent = useEventTracker('app/tdb/collectivite');
 
@@ -67,17 +69,21 @@ const ModuleAvancementFichesAction = ({ view, module }: Props) => {
           collectivite_id: module.collectiviteId,
         })
       }
-      editModal={(openState) => (
-        <ModalAvancementFichesAction
-          module={module}
-          openState={openState}
-          displaySettings={{
-            display,
-            setDisplay,
-          }}
-          keysToInvalidate={[getQueryKey(collectiviteId)]}
-        />
-      )}
+      editModal={
+        collectivite?.niveau_acces === 'admin'
+          ? (openState) => (
+              <ModalAvancementFichesAction
+                module={module}
+                openState={openState}
+                displaySettings={{
+                  display,
+                  setDisplay,
+                }}
+                keysToInvalidate={[getQueryKey(collectiviteId)]}
+              />
+            )
+          : undefined
+      }
       isLoading={isLoading}
       isEmpty={fichesCount === 0}
       className="!col-span-full xl:!col-span-4"

@@ -46,13 +46,13 @@ const ModuleSuiviPlansAction = ({ view, module }: Props) => {
           collectivite_id: module.collectiviteId,
         })
       }
-      // editModal={(openState) => (
+      // editModal={collectivite?.niveau_acces === 'admin' ? (openState) => (
       //   <ModalSuiviPlansAction
       //     module={module}
       //     openState={openState}
       //     displaySettings={{ display, setDisplay }}
       //   />
-      // )}
+      // ) : undefined}
       isLoading={isLoading}
       isEmpty={plansAction?.length === 0}
       displaySettings={{
