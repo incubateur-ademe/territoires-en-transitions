@@ -3,6 +3,7 @@
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
     "nrwl.angular-console",
-    "vitest.explorer"
+    "vitest.explorer",
+    "GitHub.vscode-pull-request-github"
   ]
 }
