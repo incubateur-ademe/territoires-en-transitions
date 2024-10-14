@@ -1,5 +1,5 @@
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useCreateFicheResume } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { Button, ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
@@ -76,8 +76,6 @@ const ToutesLesFichesAction = () => {
 
   const isReadonly = collectivite?.readonly ?? false;
 
-  const { mutate: createFicheAction } = useCreateFicheAction();
-
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({
       collectiviteId: collectivite?.collectivite_id!,
@@ -88,12 +86,18 @@ const ToutesLesFichesAction = () => {
 
   const filters = convertParamsToFilters(filterParams);
 
+  const { mutate: createFicheResume } = useCreateFicheResume({
+    keysToInvalidate: [
+      ['fiches_resume_collectivite', collectivite?.collectivite_id, filters],
+    ],
+  });
+
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex items-end">
         <h2 className="mb-0 mr-auto">Toutes les actions</h2>
         {!isReadonly && (
-          <Button size="sm" onClick={() => createFicheAction()}>
+          <Button size="sm" onClick={() => createFicheResume()}>
             Créer une fiche d’action
           </Button>
         )}

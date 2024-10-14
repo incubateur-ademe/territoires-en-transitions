@@ -1,5 +1,5 @@
 import { useHistory } from 'react-router-dom';
-import { useMutation, useQueryClient } from 'react-query';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
@@ -45,6 +45,8 @@ type Args = {
   planId?: number;
   /** si renseigné la fiche créée sera ouverte dans un nouvel onglet */
   openInNewTab?: boolean;
+  /** Clés react-query à invalider */
+  keysToInvalidate?: QueryKey[];
 };
 
 export const useCreateFicheResume = (args: Args) => {
@@ -121,6 +123,9 @@ export const useCreateFicheResume = (args: Args) => {
         );
       },
       onSuccess: (data, variables, context) => {
+        args.keysToInvalidate?.forEach((key) =>
+          queryClient.invalidateQueries(key)
+        );
         const newFiche = data as FicheResume;
         if (axeId) {
           // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
