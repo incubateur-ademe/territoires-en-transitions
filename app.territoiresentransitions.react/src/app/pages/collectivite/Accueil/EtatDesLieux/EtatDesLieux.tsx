@@ -1,11 +1,11 @@
-import {TableOptions} from 'react-table';
+import { TableOptions } from 'react-table';
 
 import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
-import {ScoreRempli, ScoreVide} from './Scores';
+import { ScoreRempli, ScoreVide } from './Scores';
 
-import {ReferentielParamOption} from 'app/paths';
-import {actionIdToLabel} from 'app/labels';
-import {ProgressionRow} from '../data/useProgressionReferentiel';
+import { ReferentielParamOption } from 'app/paths';
+import { actionIdToLabel } from 'app/labels';
+import { ProgressionRow } from '../data/useProgressionReferentiel';
 import IndicateursCard from '../IndicateursCard';
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
-  repartitionPhases: {id: string; value: number}[];
+  repartitionPhases: { id: string; value: number }[];
   potentiel: number | undefined;
   referentiel: ReferentielParamOption;
   title: string;
@@ -30,14 +30,15 @@ const EtatDesLieux = ({
   title,
 }: Props): JSX.Element => {
   const displayEtatDesLieux =
-    progressionScore.data.find(d => d.score_non_renseigne !== 1) !== undefined;
+    progressionScore.data.find((d) => d.score_non_renseigne !== 1) !==
+    undefined;
 
-  const TEMPORARY_displayEtatDesLieux = true;
+  // const TEMPORARY_displayEtatDesLieux = true;
 
   return (
     <div className="flex flex-col gap-6">
       {/** Scores */}
-      {TEMPORARY_displayEtatDesLieux ? (
+      {displayEtatDesLieux ? (
         <>
           <ScoreRempli
             collectiviteId={collectiviteId}
@@ -46,7 +47,10 @@ const EtatDesLieux = ({
             progressionScore={progressionScore}
             potentiel={potentiel}
           />
-          <IndicateursCard collectiviteId={collectiviteId} referentielId={referentiel}/>
+          <IndicateursCard
+            collectiviteId={collectiviteId}
+            referentielId={referentiel}
+          />
           {/** Autres graph */}
           <EtatDesLieuxGraphs
             referentiel={referentiel}
@@ -60,7 +64,7 @@ const EtatDesLieux = ({
           collectiviteId={collectiviteId}
           referentiel={referentiel}
           title={title}
-          tags={progressionScore.data.map(d => ({
+          tags={progressionScore.data.map((d) => ({
             label: actionIdToLabel[d.action_id] ?? d.nom,
             axeId: d.action_id,
           }))}
