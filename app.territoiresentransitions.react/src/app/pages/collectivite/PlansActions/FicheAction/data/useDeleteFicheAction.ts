@@ -7,15 +7,18 @@ import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsSyntheseUrl,
+  makeCollectiviteToutesLesFichesUrl,
 } from 'app/paths';
 import { PlanNode } from '../../PlanAction/data/types';
 import { FicheResume } from '@tet/api/plan-actions';
 
 type Args = {
   ficheId: number;
-  /** Invalider la cle axe_fiches et savoir s'il faut rediriger ou non */
+  /** Invalider la cle axe_fiches */
   axeId: number | null;
   keysToInvalidate?: QueryKey[];
+  /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
+  redirect?: boolean;
 };
 
 /**
@@ -84,7 +87,7 @@ export const useDeleteFicheAction = (args: Args) => {
         );
         queryClient.invalidateQueries(axe_fiches_key);
         queryClient.invalidateQueries(flat_axes_Key);
-        if (!axeId) {
+        if (args.redirect) {
           if (planUid) {
             history.push(
               makeCollectivitePlanActionUrl({
@@ -92,33 +95,12 @@ export const useDeleteFicheAction = (args: Args) => {
                 planActionUid: planUid,
               })
             );
-          }
-          // Si la fiche est non classée
-          if (pathname.includes('fiches')) {
-            const fiches = queryClient.getQueryData(
-              axe_fiches_key
-            ) as FicheResume[];
-            // Pas de redirection si l'utilisateur est sur la page "Fiches non classées" et qu'il y a d'autres fiches
-            const pathnameItems = pathname.split('/');
-            const lastPathnameItem = pathnameItems[pathnameItems.length - 1];
-            // Tant qu'il y a plus d'une fiche dans la page "Fiches non classées" on redirige vers celle-ci
-            if (fiches?.length > 0) {
-              // Si l'action vient d'une page fiche action
-              if (lastPathnameItem !== 'fiches') {
-                history.push(
-                  makeCollectiviteFichesNonClasseesUrl({
-                    collectiviteId: collectivite_id!,
-                  })
-                );
-              }
-              // S'il n'y a plus de fiche dans la page "Fiches non classées"
-            } else {
-              history.push(
-                makeCollectivitePlansActionsSyntheseUrl({
-                  collectiviteId: collectivite_id!,
-                })
-              );
-            }
+          } else {
+            history.push(
+              makeCollectiviteToutesLesFichesUrl({
+                collectiviteId: collectivite_id!,
+              })
+            );
           }
         }
       },

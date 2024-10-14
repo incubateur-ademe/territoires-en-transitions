@@ -28,6 +28,7 @@ const MenuDescription = ({
         title={titre}
         isInMultipleAxes={!!axes && axes.length > 1}
         buttonVariant="white"
+        redirect
       />
     </div>
   ) : null;
