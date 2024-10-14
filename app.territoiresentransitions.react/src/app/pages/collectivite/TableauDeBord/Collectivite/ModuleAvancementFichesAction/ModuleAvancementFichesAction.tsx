@@ -11,7 +11,7 @@ import Module, {
 import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { TDBViewParam } from 'app/paths';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Chart from 'ui/charts/Chart';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import { Statut } from '@tet/api/plan-actions';
@@ -23,8 +23,10 @@ type Props = {
 };
 
 /** Module pour afficher l'avancement des fiches action */
-const ModuleAvancementFichesAction = ({ view, module }: Props) => {
+const ModuleAvancementFichesAction = ({ module }: Props) => {
   const collectivite = useCurrentCollectivite();
+
+  const history = useHistory();
 
   const collectiviteId = collectivite?.collectivite_id;
 
@@ -105,6 +107,15 @@ const ModuleAvancementFichesAction = ({ view, module }: Props) => {
                     })
                   )
                 : [],
+              onClick: (statut) =>
+                statut !== 'Sans statut' &&
+                history.push(
+                  makeFichesActionUrlWithParams(
+                    collectiviteId,
+                    filtres,
+                    statut as Statut
+                  )
+                ),
               centeredElement: (
                 <div className="flex flex-col items-center">
                   <span className="text-primary-9 text-2xl font-bold">
