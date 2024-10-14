@@ -3,7 +3,7 @@
 import Markdown from '@tet/site/components/markdown/Markdown';
 import Section from '@tet/site/components/sections/Section';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import Arrow from '@tet/site/app/outil-numerique/Arrow';
 import { useEvolutionTotalActivation } from '@tet/site/app/stats/EvolutionTotalActivationParType';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
@@ -18,6 +18,7 @@ type CompteProps = {
 const Compte = ({ titre, description, cta, image }: CompteProps) => {
   const { data } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = data ? data.courant.total : undefined;
+  const tracker = useEventTracker('site/programme');
 
   return (
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
@@ -38,6 +39,7 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
           />
           <Button
             href="https://auth.territoiresentransitions.fr/signup"
+            onClick={() => tracker('inscription_plateforme', {})}
             className="mt-8 max-lg:mx-auto"
             external
           >

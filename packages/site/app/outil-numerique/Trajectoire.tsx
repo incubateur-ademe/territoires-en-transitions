@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import Section from '@tet/site/components/sections/Section';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
@@ -14,6 +14,8 @@ type TrajectoireProps = {
 };
 
 const Trajectoire = ({ titre, description, cta, image }: TrajectoireProps) => {
+  const tracker = useEventTracker('site/outil-numerique');
+
   return (
     <Section
       className="flex lg:!flex-row justify-between items-center !gap-12"
@@ -25,7 +27,11 @@ const Trajectoire = ({ titre, description, cta, image }: TrajectoireProps) => {
           texte={description}
           className="paragraphe-primary-10 paragraphe-18 markdown_style colored_marker"
         />
-        <Button href="/trajectoire" className="mt-6 max-lg:mx-auto">
+        <Button
+          href="/trajectoire"
+          onClick={() => tracker('decouvrir_trajectoire', {})}
+          className="mt-6 max-lg:mx-auto"
+        >
           {cta}
         </Button>
       </div>

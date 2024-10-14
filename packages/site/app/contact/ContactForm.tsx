@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { supabase } from '../initSupabase';
 import { options } from './data';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormData = {
@@ -32,6 +32,7 @@ const ContactForm = () => {
 
   const searchParams = useSearchParams();
   const router = useRouter();
+  const tracker = useEventTracker('site/contact');
 
   const objet = searchParams.get('objet');
 
@@ -118,7 +119,12 @@ const ContactForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(event) => {
+          handleSubmit(event);
+          tracker('envoyer_message', {});
+        }}
+      >
         <div className="fr-input-group">
           <label className="fr-label" htmlFor="input-objet">
             Objet de votre message

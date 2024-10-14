@@ -3,7 +3,7 @@ import {supabaseClient} from 'core-logic/api/supabase';
 import {useCollectiviteId} from 'core-logic/hooks/params';
 import {Indicateurs} from '@tet/api';
 
-export const useUpdateIndicateurPersoDefinition = () => {
+export const useUpdateIndicateurDefinition = () => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId()!;
 
@@ -18,8 +18,8 @@ export const useUpdateIndicateurPersoDefinition = () => {
       return {definition};
     },
     meta: {
-      success: "L'indicateur personnalisé est enregistré",
-      error: "L'indicateur personnalisé n'a pas été enregistré",
+      success: "L'indicateur est enregistré",
+      error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({definition}) => {
       const {collectiviteId, id} = definition;
