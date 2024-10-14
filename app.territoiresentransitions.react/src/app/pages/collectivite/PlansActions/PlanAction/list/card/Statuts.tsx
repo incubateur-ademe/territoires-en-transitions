@@ -25,11 +25,13 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
           chart: {
             className: '!h-60',
             data: statuts
-              ? Object.entries(statuts).map(([statut, { count, valeur }]) => ({
-                  id: statut,
-                  value: count,
-                  color: statutToColor[valeur],
-                }))
+              ? Object.entries(statuts)
+                  .map(([statut, { count, valeur }]) => ({
+                    id: statut,
+                    value: count,
+                    color: statutToColor[valeur],
+                  }))
+                  .filter(({ value }) => value > 0)
               : [],
             centeredElement: (
               <div className="flex flex-col items-center">

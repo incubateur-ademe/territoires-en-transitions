@@ -99,13 +99,13 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
           donut={{
             chart: {
               data: statutFiches
-                ? Object.entries(statutFiches).map(
-                    ([statut, { count, valeur }]) => ({
+                ? Object.entries(statutFiches)
+                    .map(([statut, { count, valeur }]) => ({
                       id: statut,
                       value: count,
                       color: statutToColor[valeur],
-                    })
-                  )
+                    }))
+                    .filter(({ value }) => value > 0)
                 : [],
               onClick: (statut) =>
                 statut !== 'Sans statut' &&
