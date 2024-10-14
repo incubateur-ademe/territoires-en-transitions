@@ -294,7 +294,6 @@ node-alpine-with-all-deps:
   RUN pnpm install --frozen-lockfile
 
   COPY *.json ./
-  COPY jest.* ./
   COPY vitest.* ./
 
   # Copy shared libraries
@@ -337,7 +336,6 @@ front-deps:
     RUN pnpm install --frozen-lockfile
 
     COPY *.json ./
-    COPY jest.* ./
     COPY vitest.* ./
 
     # Copy only shared libraries
