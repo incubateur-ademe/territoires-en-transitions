@@ -213,7 +213,9 @@
     "build:site": "nx build @tet/site",
     "build:panier": "nx build @tet/panier",
     "test:app": "nx test @tet/app",
-    "test:api": "nx test @tet/api"
+    "test:api": "nx test @tet/api",
+    "storybook:app": "nx storybook @tet/app",
+    "storybook:ui": "nx storybook @tet/ui"
   },
   "repository": {
     "type": "git",
