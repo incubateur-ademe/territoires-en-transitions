@@ -92,7 +92,7 @@ const ModalIndicateursSuiviPlan = ({
               }
             />
           </Field>
-          <Field title="Direction ou service pilote">
+          <Field title="Direction ou service pilote de l'indicateur :">
             <ServicesPilotesDropdown
               values={filtreState?.servicePiloteIds}
               onChange={({ services }) => {

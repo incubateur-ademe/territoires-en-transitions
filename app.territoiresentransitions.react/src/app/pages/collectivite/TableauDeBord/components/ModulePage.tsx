@@ -32,7 +32,9 @@ const ModulePage = ({ view, title, children }: Props) => {
         <Breadcrumbs
           items={[
             {
-              label: 'Tableau de bord',
+              label: `Tableau de bord ${
+                view === 'collectivite' ? 'Collectivité' : ''
+              }`,
               onClick: () =>
                 history.push(
                   makeTableauBordUrl({
