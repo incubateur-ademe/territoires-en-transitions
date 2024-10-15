@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Button, Field, Modal, ModalFooterOKCancel, Textarea} from '@tet/ui';
 import {NOTES_MAX_LENGTH} from './ModaleCreationNote';
-import {getMaxLengthMessage} from '../../utils';
+import { getMaxLengthMessage } from 'utils/formatUtils';
 
 type ModaleEditionNoteProps = {
   notes: string;
