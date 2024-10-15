@@ -52,7 +52,11 @@ const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
 
   return (
     <>
-      <div className="relative group h-full">
+      <div
+        className={classNames('relative group h-full max-w-screen-md', {
+          'mt-3': fichier?.confidentiel,
+        })}
+      >
         {/** Cadenas document privé */}
         {fichier?.confidentiel && (
           <Tooltip label="Document en mode privé">
