@@ -200,16 +200,19 @@ const CarteDocument = ({
       </div>
 
       {/* Alerte de suppression du document */}
-      <AlerteSuppression
-        isOpen={isDeleting && !isReadonly}
-        setIsOpen={setIsDeleting}
-        title="Supprimer le document"
-        message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
-        onDelete={() => {
-          remove();
-          setIsEditLoading(true);
-        }}
-      />
+      {isDeleting && !isReadonly && (
+        <AlerteSuppression
+          className="relative w-auto"
+          isOpen={true}
+          setIsOpen={setIsDeleting}
+          title="Supprimer le document"
+          message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
+          onDelete={() => {
+            remove();
+            setIsEditLoading(true);
+          }}
+        />
+      )}
     </>
   );
 };
