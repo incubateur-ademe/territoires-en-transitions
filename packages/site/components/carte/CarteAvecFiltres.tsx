@@ -46,52 +46,56 @@ const CarteAvecFiltres = () => {
         <CarteCollectivites filtre={filtre} etoiles={etoiles} />
       </div>
 
-      <div className="flex flex-col items-start justify-start mt-11 max-lg:px-4">
-        <div className="flex flex-col md:flex-row lg:flex-col md:max-lg:items-center justify-around gap-8 w-full mb-11">
-          <FiltreLabels
-            selectedFilter={filtre}
-            onChangeFilter={(filtre) => {
-              setFiltre(filtre);
-              setEtoiles([1, 2, 3, 4, 5]);
-            }}
-          />
+      <div className="flex flex-col items-start justify-start gap-11 mt-11 max-lg:px-4 w-[400px] max-lg:w-full">
+        <FiltreLabels
+          selectedFilter={filtre}
+          onChangeFilter={(filtre) => {
+            setFiltre(filtre);
+            setEtoiles([1, 2, 3, 4, 5]);
+          }}
+        />
 
-          <div
-            className={classNames(
-              'flex flex-col items-start w-full md:w-fit lg:w-full',
-              {
-                'max-lg:invisible lg:hidden':
-                  filtre !== 'labellisees_cae' && filtre !== 'labellisees_eci',
-              }
-            )}
-          >
-            <p className="text-primary-8">
-              Je filtre par niveau de labellisation :
-            </p>
-            <FiltreEtoiles initEtoiles={etoiles} onChangeEtoiles={setEtoiles} />
-          </div>
-        </div>
+        <div
+          className={classNames('w-full', {
+            hidden:
+              filtre !== 'toutes' &&
+              filtre !== 'labellisees_cae' &&
+              filtre !== 'labellisees_eci',
+          })}
+        >
+          <Divider className="mb-5" />
 
-        <Divider className="mb-5" />
-
-        <div className="flex flex-col gap-4 text-grey-9 text-sm lg:w-[400px]">
-          <div className="flex gap-3">
-            <div className="bg-[#5575A8] h-4 w-7 my-0.5 rounded-full shrink-0" />
-            <div>
-              <span className="font-bold">
-                Collectivités engagées labellisées et non labellisées
-              </span>
-              <br />
-              labellisées sur au moins un des deux référentiels et engagées non
-              labellisées
+          {(filtre === 'labellisees_cae' || filtre === 'labellisees_eci') && (
+            <div className="flex flex-col items-start w-full md:w-fit lg:w-full">
+              <p className="text-primary-8">
+                Je filtre par niveau de labellisation :
+              </p>
+              <FiltreEtoiles
+                initEtoiles={etoiles}
+                onChangeEtoiles={setEtoiles}
+              />
             </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-[#9E9E9E] h-4 w-7 rounded-full shrink-0" />
-            <div className="font-bold">
-              Collectivités utilisatrices de la plateforme
+          )}
+
+          {filtre === 'toutes' && (
+            <div className="flex flex-col gap-4 text-grey-9 text-sm">
+              <div className="flex gap-3">
+                <div className="bg-[#5575A8] h-4 w-7 my-0.5 rounded-full shrink-0" />
+                <div>
+                  <span className="font-bold">Collectivités engagées</span>
+                  <br />
+                  labellisées sur au moins un des deux référentiels ou engagées
+                  non labellisées
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="bg-[#9E9E9E] h-4 w-7 rounded-full shrink-0" />
+                <div className="font-bold">
+                  Collectivités non engagées utilisatrices de la plateforme
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
