@@ -187,6 +187,7 @@
     "style-loader": "^4.0.0",
     "supabase": "1.151.1",
     "supertest": "^7.0.0",
+    "swc-loader": "^0.2.6",
     "ts-loader": "^9.5.1",
     "ts-node": "10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
