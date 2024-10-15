@@ -10,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.models';
 import { planActionTypeTable } from './plan-action-type.table';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const axeTable = pgTable('axe', {
   id: serial('id').primaryKey(),
@@ -30,3 +31,6 @@ export const axeTable = pgTable('axe', {
   panier_id: integer('panier_id'), // TODO references panier
 });
 export type CreateAxeType = InferInsertModel<typeof axeTable>;
+
+export const axeSchema = createSelectSchema(axeTable);
+export const createAxeSchema = createInsertSchema(axeTable);

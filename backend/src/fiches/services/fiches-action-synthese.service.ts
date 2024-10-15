@@ -23,12 +23,15 @@ import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import {
+  CreateFicheActionType,
   FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
+import { UpsertFicheActionRequestClass } from '../controllers/fiches-action.controller';
+import { UpsertFicheActionRequestType } from '../models/upsert-fiche-action.request';
 
 @Injectable()
 export default class FichesActionSyntheseService {
@@ -314,5 +317,34 @@ export default class FichesActionSyntheseService {
     });
 
     return synthese;
+  }
+
+  async upsertFicheAction(
+    collectiviteId: number,
+    body: UpsertFicheActionRequestType,
+    tokenInfo: SupabaseJwtPayload
+  ) {
+    body.collectiviteId = collectiviteId;
+    const { axes, ...ficheAction } = body;
+    await this.databaseService.db.transaction(async (tx) => {
+      const createdFicheAction = await this.databaseService.db
+        .insert(ficheActionTable)
+        .values(ficheAction as CreateFicheActionType) // TO DO : remove as etc.
+        .onConflictDoUpdate({
+          target: [ficheActionTable.id],
+          set: {
+            titre: sql.raw(`excluded.${ficheActionTable.titre.name}`),
+          },
+        })
+        .returning();
+
+      await this.databaseService.db
+        .delete(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.fiche_id, createdFicheAction[0].id));
+
+      if (axes) {
+        // boucle pour parcourir tous les axes, puis insert dans axeTable. Pas besoin de faire onConflictDoUpdate.
+      }
+    });
   }
 }

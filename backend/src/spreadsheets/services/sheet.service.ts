@@ -17,7 +17,7 @@ export default class SheetService {
   private readonly logger = new Logger(SheetService.name);
 
   readonly RETRY_STRATEGY: Options = {
-    minTimeout: 60000, // Wait for 1min due to sheet api quota limitation
+    // minTimeout: 60000, // Wait for 1min due to sheet api quota limitation
   };
 
   private authClient:
