@@ -4,13 +4,12 @@
     "outDir": "../dist/out-tsc",
     "types": [
       "node",
-      "jest",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
     ]
   },
   "exclude": [
-    "jest.config.ts",
+    "vitest.config.mts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.tsx",
