@@ -1,7 +1,7 @@
 /// <reference types='vitest' />
-import { defineConfig, loadEnv } from 'vite';
-
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   root: __dirname,

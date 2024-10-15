@@ -2,8 +2,6 @@
 
 BEGIN;
 
-select cron.schedule('refresh_stats_views_locales',
-                     '0 2 * * *', -- tout les jours à 2h.
-                     $$select stats.refresh_views_utilisation();$$);
+select cron.unschedule('refresh_stats_views_locales_indicateur');
 
 COMMIT;

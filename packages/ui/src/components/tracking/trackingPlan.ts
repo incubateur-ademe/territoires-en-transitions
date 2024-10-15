@@ -346,4 +346,52 @@ export interface TrackingPlan extends Record<never, Page> {
       };
     };
   };
+
+  /** Tracking du site */
+
+  /* Page d'accueil du site */
+  'site/accueil': {
+    properties: {};
+    onglets: never;
+    events: {
+      decouvrir_programme: {};
+      decouvrir_plateforme: {};
+      demande_contact: {};
+      inscription_newsletter: {};
+    };
+  };
+
+  /* Page programme du site */
+  'site/programme': {
+    properties: {};
+    onglets: never;
+    events: {
+      contact_programme: {};
+      demarrer_programme: {};
+      inscription_plateforme: {};
+      voir_collectivites: {};
+    };
+  };
+
+  /* Page outil numérique du site */
+  'site/outil-numerique': {
+    properties: {};
+    onglets: never;
+    events: {
+      inscription_plateforme: {};
+      inscription_demo: {};
+      decouvrir_pai: {};
+      decouvrir_trajectoire: {};
+      contact_plateforme: {};
+    };
+  };
+
+  /* Page contact du site */
+  'site/contact': {
+    properties: {};
+    onglets: never;
+    events: {
+      envoyer_message: {};
+    };
+  };
 }

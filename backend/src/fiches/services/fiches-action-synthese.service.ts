@@ -59,7 +59,7 @@ export default class FichesActionSyntheseService {
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
       [collectiviteId],
-      NiveauAcces.LECTURE,
+      NiveauAcces.LECTURE
     );
 
     const listeValeurs = Object.values(FicheActionStatutsEnumType) as string[];

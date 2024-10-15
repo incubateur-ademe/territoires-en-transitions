@@ -19,7 +19,8 @@ const ParagrapheArticle = ({
       {image && alignementImage === 'Centre Haut' && (
         <StrapiImage
           data={image}
-          containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mb-6 mx-auto"
+          containerClassName="max-w-full lg:max-w-[80%] h-fit flex flex-col justify-center items-center mb-6 mx-auto"
+          className="h-full max-h-[500px]"
           displayCaption={legendeVisible}
         />
       )}
@@ -60,7 +61,8 @@ const ParagrapheArticle = ({
       {image && alignementImage === 'Centre Bas' && (
         <StrapiImage
           data={image}
-          containerClassName="max-w-full lg:max-w-[80%] h-full flex flex-col justify-center items-center mb-6 mx-auto"
+          containerClassName="max-w-full lg:max-w-[80%] h-fit flex flex-col justify-center items-center mb-6 mx-auto"
+          className="h-full max-h-[500px]"
           displayCaption={legendeVisible}
         />
       )}

@@ -47,11 +47,18 @@ const Article = async ({ params }: { params: { id: string } }) => {
     <>
       <Section className="gap-8">
         {/* Image de couverture */}
-        <StrapiImage
-          data={data.couverture}
-          className="fr-responsive-img max-h-[550px] object-cover"
-          displayCaption={false}
-        />
+        <div className="max-h-[550px] w-full overflow-hidden relative">
+          <StrapiImage
+            data={data.couverture}
+            className="object-cover object-center h-full w-full"
+            containerClassName="object-cover object-center h-full w-full"
+          />
+          {(data.couverture.attributes.caption as unknown as string) && (
+            <div className="text-right text-grey-1 text-[14px] leading-4 py-1 px-2 absolute right-0 top-[526px] bg-grey-8/50 rounded-tl-sm">
+              {data.couverture.attributes.caption as unknown as string}
+            </div>
+          )}
+        </div>
 
         <div>
           {/* Titre */}

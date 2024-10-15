@@ -1,19 +1,18 @@
-import { useHistory } from 'react-router-dom';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
-import { TThematiqueRow } from 'types/alias';
-import { useState } from 'react';
-import FormikInput from 'ui/shared/form/formik/FormikInput';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Thematique } from '@tet/api/shared/domain';
+import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@tet/ui';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from 'app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
-import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import { Thematique } from '@tet/api/shared/domain';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Form, Formik } from 'formik';
+import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
+import * as Yup from 'yup';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -69,11 +68,43 @@ const IndicateurPersoNouveau = ({
   );
 
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
+    definition = TEMPORARY_copyDescriptionToCommentaire(definition);
     save({
       definition: { ...definition, thematiques },
       ficheId,
       isFavoriCollectivite: favoriCollectivite,
     });
+  };
+
+  /**
+   * Temporary: we're taking commentaire value from definition.description
+   * -> step 2 of expand and contract pattern (
+   * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
+   *
+   * Next step: change
+   *
+   * <FormikInput
+        type="area"
+        name="description"
+        label="Description"
+        className="col-span-2"
+      /> to
+      <FormikInput
+        type="area"
+        name="commentaire"
+        label="Commentaire"
+        className="col-span-2"
+      />
+   *
+   * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
+   */
+  const TEMPORARY_copyDescriptionToCommentaire = (
+    definition: TIndicateurPersoDefinitionWrite
+  ): TIndicateurPersoDefinitionWrite => {
+    return {
+      ...definition,
+      commentaire: definition.description,
+    };
   };
 
   return (
