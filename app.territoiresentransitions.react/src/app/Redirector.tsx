@@ -9,7 +9,7 @@ import {
   acceptAgentInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
-import { useMesCollectivitesEtPlans } from 'core-logic/hooks/useOwnedCollectivites';
+import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
 import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -18,7 +18,9 @@ export const Redirector = () => {
   const { pathname } = useLocation();
   const { isConnected, user } = useAuth();
   const { invitationId, invitationEmail, consume } = useInvitationState();
-  const { data: userCollectivitesEtPlans } = useMesCollectivitesEtPlans();
+
+  const collectiviteId = user?.collectivites?.[0]?.collectivite_id;
+  const { data: plansData } = usePlanActionsPilotableFetch(collectiviteId);
 
   const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
@@ -30,31 +32,29 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (isLandingConnected && userCollectivitesEtPlans) {
-      const collectiviteId =
-        userCollectivitesEtPlans?.collectivites?.[0]?.collectivite_id;
-      const auMoinsUnPlanActionsPilotable =
-        !!userCollectivitesEtPlans?.plans?.length;
-
-      if (collectiviteId) {
-        if (auMoinsUnPlanActionsPilotable) {
-          if (user?.fonction === 'politique') {
-            history.push(
-              makeTableauBordUrl({ collectiviteId, view: 'collectivite' })
-            );
-          } else {
-            history.push(
-              makeTableauBordUrl({ collectiviteId, view: 'personnel' })
-            );
-          }
-        } else {
-          history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
-        }
-      } else {
-        history.push(finaliserMonInscriptionUrl);
-      }
+    if (!isLandingConnected) {
+      return;
     }
-  }, [isLandingConnected, userCollectivitesEtPlans]);
+
+    if (!collectiviteId) {
+      history.push(finaliserMonInscriptionUrl);
+      return;
+    }
+
+    const auMoinsUnPlanActionsPilotable = !!plansData?.plans?.length;
+
+    if (!auMoinsUnPlanActionsPilotable) {
+      history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
+      return;
+    }
+
+    history.push(
+      makeTableauBordUrl({
+        collectiviteId,
+        view: user?.fonction === 'politique' ? 'collectivite' : 'personnel',
+      })
+    );
+  }, [isLandingConnected, collectiviteId, user, plansData]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {

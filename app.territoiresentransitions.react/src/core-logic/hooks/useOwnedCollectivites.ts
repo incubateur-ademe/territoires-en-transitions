@@ -1,8 +1,8 @@
-import { useQuery } from 'react-query';
-import { TAuthContext, useAuth } from 'core-logic/api/auth/AuthProvider';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { planActionsPilotableFetch } from '@tet/api/plan-actions';
 import { MaCollectivite } from '@tet/api';
+import { planActionsPilotableFetch } from '@tet/api/plan-actions';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
@@ -46,22 +46,24 @@ export const useSansCollectivite = () => {
 };
 
 // une variante qui renvoi aussi les plans d'actions pilotables de la 1ère collectivité
-export const useMesCollectivitesEtPlans = () => {
-  const { user, isConnected } = useAuth();
-  return useQuery(['mes_collectivites_et_plans', user?.id], async () => {
-    if (!isConnected) return null;
-    const collectivites = await fetchOwnedCollectivites();
-    const collectiviteId = collectivites?.[0]?.collectivite_id;
-    if (collectiviteId) {
+export const usePlanActionsPilotableFetch = (
+  collectiviteId: number | null | undefined
+) => {
+  return useQuery(
+    ['plans_action_pilotable_fetch', collectiviteId],
+    async () => {
+      if (!collectiviteId) {
+        return { plans: null };
+      }
+
       const plans = await planActionsPilotableFetch({
         dbClient: supabaseClient,
         collectiviteId,
       });
-      return { collectivites, plans };
-    }
 
-    return { collectivites, plans: null };
-  });
+      return { plans };
+    }
+  );
 };
 
 export type TMesCollectivites = ReturnType<typeof useOwnedCollectivites>;
