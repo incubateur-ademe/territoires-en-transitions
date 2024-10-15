@@ -66,7 +66,7 @@ export const ScoreRempli = ({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-2 mt-4">
+      <div className="flex flex-col items-center xl:items-start gap-2 mt-4">
         {/** Référentiel */}
         <div className="flex justify-center	xl:justify-start items-center gap-2">
           <img
