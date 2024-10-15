@@ -1,6 +1,8 @@
 import {Alert, Button} from '@tet/ui';
+import classNames from 'classnames';
 
 type AlerteSuppressionProps = {
+  className?: string;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title?: string;
@@ -9,6 +11,7 @@ type AlerteSuppressionProps = {
 };
 
 const AlerteSuppression = ({
+  className,
   isOpen,
   setIsOpen,
   title,
@@ -19,7 +22,10 @@ const AlerteSuppression = ({
     <Alert
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      className="absolute bottom-0 left-0 right-0 w-screen z-modal border-t border-t-info-1"
+      className={classNames(
+        'absolute bottom-0 left-0 right-0 w-screen z-modal border-t border-t-info-1',
+        className
+      )}
       title={title}
       description={message}
       footer={
