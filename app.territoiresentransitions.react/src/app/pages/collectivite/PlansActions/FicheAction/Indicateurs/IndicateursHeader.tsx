@@ -2,7 +2,7 @@ import { useState } from 'react';
 import classNames from 'classnames';
 import { Badge, Button } from '@tet/ui';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
-import { getTruncatedText } from '../utils';
+import { getTruncatedText } from 'utils/formatUtils';
 import { FicheAction } from '@tet/api/plan-actions';
 
 type IndicateursHeaderProps = {

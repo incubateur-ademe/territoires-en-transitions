@@ -8,7 +8,7 @@ import BadgePriorite from '../../components/BadgePriorite';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import ModalePlanning from './ModalePlanning';
-import { getTextFormattedDate, getTruncatedText } from '../utils';
+import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import EmptyCard from '../EmptyCard';
 
 type FicheActionPlanningProps = {
