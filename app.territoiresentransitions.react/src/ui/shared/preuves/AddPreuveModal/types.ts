@@ -61,3 +61,6 @@ export type UploadStatus =
   | UploadStatusDuplicated
   | UploadStatusFailed
   | UploadStatusAborted;
+
+  /** type des documents attendus */
+export type DocType = 'reglementaire' | 'complementaire' | 'annexe' | 'labellisation' | 'audit' | 'rapport';
