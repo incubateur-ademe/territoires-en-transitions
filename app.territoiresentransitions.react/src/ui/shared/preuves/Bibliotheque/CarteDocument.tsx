@@ -9,21 +9,32 @@ import { getAuthorAndDate, getFormattedTitle } from './utils';
 import { useEditPreuve } from './useEditPreuve';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import { getTruncatedText } from 'utils/formatUtils';
+import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
+import { IdentifiantAction } from './IdentifiantAction';
 
 type CarteDocumentProps = {
   isReadonly: boolean;
   document: TPreuve;
+  displayIdentifier?: boolean;
+  classComment?: string;
 };
 
-const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
+const CarteDocument = ({
+  isReadonly,
+  document,
+  displayIdentifier,
+  classComment,
+}: CarteDocumentProps) => {
   const {
     commentaire,
     created_at: dateCreation,
     created_by_nom: auteur,
     fichier,
     lien,
+    action,
+    rapport,
   } = document;
+  const dateVisite = rapport?.date;
 
   const handlers = useEditPreuve(document);
   const { remove, editComment, editFilename, isLoading, isError } = handlers;
@@ -118,6 +129,11 @@ const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
                 />
               )}
 
+              {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
+              {displayIdentifier && action && (
+                <IdentifiantAction action={action} />
+              )}
+
               {/* Date de création et auteur */}
               <span className="text-grey-8 text-sm font-medium">
                 {getAuthorAndDate(dateCreation, auteur)}
@@ -135,7 +151,12 @@ const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
                         size="xs"
                         className="text-grey-7"
                       />
-                      <span className="text-grey-8 text-xs font-medium italic whitespace-pre-wrap">
+                      <span
+                        className={classNames(
+                          'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
+                          classComment
+                        )}
+                      >
                         {isFullCommentaire || !isComTruncated
                           ? commentaire
                           : truncatedCom}
@@ -165,6 +186,14 @@ const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
                   />
                 </>
               )}
+
+              {/* Date de visite */}
+              {!!dateVisite && (
+                <p className="text-xs fr-text-mention--grey mb-1 pl-2">
+                  Visite effectuée le{' '}
+                  {getTextFormattedDate({ date: dateVisite })}
+                </p>
+              )}
             </div>
           </div>
         </Card>
@@ -175,7 +204,7 @@ const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
         isOpen={isDeleting && !isReadonly}
         setIsOpen={setIsDeleting}
         title="Supprimer le document"
-        message="Le document sera définitivement supprimé de la fiche. Voulez-vous vraiment le supprimer ?"
+        message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
         onDelete={() => {
           remove();
           setIsEditLoading(true);
