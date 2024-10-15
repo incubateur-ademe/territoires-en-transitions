@@ -64,7 +64,11 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
             setSubaction={setSubaction}
           />
         ) : (
-          <AddPreuveModal onClose={onClose} handlers={handlers} />
+          <AddPreuveModal
+            docType="complementaire"
+            onClose={onClose}
+            handlers={handlers}
+          />
         );
       }}
     >
