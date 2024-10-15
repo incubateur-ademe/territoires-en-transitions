@@ -66,13 +66,13 @@ export const ScoreRempli = ({
         />
       </div>
 
-      <div className="flex flex-col gap-2 mt-4">
+      <div className="flex flex-col items-center gap-2 mt-4">
         {/** Référentiel */}
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex justify-center	xl:justify-start items-center gap-2">
           <img
             src={logoTerritoireEngage}
             alt="Logo Territoire Engage"
-            className="w-[30%]"
+            className="w-[10%] xl:w-[30%]"
           />
           <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
         </div>

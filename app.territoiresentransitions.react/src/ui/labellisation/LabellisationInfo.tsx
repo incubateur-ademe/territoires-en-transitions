@@ -18,7 +18,7 @@ const LabellisationInfo = ({
   return (
     <div className="flex flex-col gap-3 md:items-start items-center mb-4">
       <LabellisationStars parcours={parcours} />
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-col xl:flex-row gap-4">
         <ScoreDisplay
           score={score.realises / score.max_personnalise}
           percent
