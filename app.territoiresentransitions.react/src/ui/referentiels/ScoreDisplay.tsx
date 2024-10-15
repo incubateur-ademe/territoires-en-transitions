@@ -63,7 +63,7 @@ const ScoreDisplay = ({
             'font-bold': bold === 'legend' || bold === 'all',
           })}
         >
-          {legend ? `${legend} : ` : ''}
+          {legend ? `${legend}\u00A0: ` : '\u00A0'}
         </span>
         <span
           className={classNames({
@@ -74,7 +74,7 @@ const ScoreDisplay = ({
             ? `${toLocaleFixed(
                 Math.round((score ?? 0) * 10000) / 100,
                 (score ?? 0) < 0.01 ? 2 : 0
-              )} %`
+              )}\u00A0%`
             : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
                 scoreMax ?? 0,
                 2
