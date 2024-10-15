@@ -2,6 +2,7 @@ import { SignInWithPasswordCredentials, User } from '@supabase/supabase-js';
 import {
   clearAuthTokens,
   getRootDomain,
+  MaCollectivite,
   restoreSessionFromAuthTokens,
   setAuthTokens,
 } from '@tet/api';
@@ -19,6 +20,7 @@ import {
 } from 'react';
 import { useQuery } from 'react-query';
 import { supabaseClient } from '../supabase';
+import { useOwnedCollectivites } from 'core-logic/hooks/useOwnedCollectivites';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -35,7 +37,12 @@ type Membre = {
   est_referent?: boolean | null;
 };
 
-export type UserData = User & DCP & Membre & { isSupport: boolean | undefined };
+export type UserData = User &
+  DCP &
+  Membre & {
+    collectivites: MaCollectivite[];
+  } & { isSupport: boolean | undefined };
+
 export type DCP = {
   nom?: string;
   prenom?: string;
@@ -61,9 +68,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // charge les données associées à l'utilisateur courant
   const { data: dcp, isSuccess: dcpLoaded } = useDCP(user?.id);
   const { data: isSupport } = useIsSupport(user?.id);
-  const { data: membre } = useMembre(user?.id);
+
+  const userCollectivites = useOwnedCollectivites(user?.id);
+
+  const { data: membre } = useMembre(
+    user?.id,
+    userCollectivites?.at(0)?.collectivite_id
+  );
+
   const userData = useMemo(
-    () => (user && dcp ? { ...user, ...dcp, ...membre, isSupport } : null),
+    () =>
+      user && dcp
+        ? {
+            ...user,
+            ...dcp,
+            ...(membre ?? {}),
+            collectivites: userCollectivites ?? [],
+            isSupport,
+          }
+        : null,
     [user, dcp, membre]
   );
 
@@ -208,19 +231,22 @@ const useIsSupport = (user_id?: string) =>
     return data || false;
   });
 
-const useMembre = (userId?: string) =>
-  useQuery(['user_membre', userId], async () => {
-    if (!userId) {
-      return false;
+const useMembre = (userId?: string, collectiviteId?: number | null) => {
+  return useQuery(['user_membre', userId, collectiviteId], async () => {
+    if (!userId || !collectiviteId) {
+      return null;
     }
+
     const { data } = await supabaseClient
       .from('private_collectivite_membre')
       .select('*')
       .eq('user_id', userId)
+      .eq('collectivite_id', collectiviteId)
       .single();
 
     return data;
   });
+};
 
 const useCurrentSession = () => {
   const { data, error } = useQuery(['session'], async () => {

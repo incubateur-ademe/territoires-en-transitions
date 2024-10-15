@@ -1,12 +1,16 @@
 import { useQuery } from 'react-query';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { TAuthContext, useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { planActionsPilotableFetch } from '@tet/api/plan-actions';
+import { MaCollectivite } from '@tet/api';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
 const fetchOwnedCollectivites = async () => {
-  const query = supabaseClient.from('mes_collectivites').select();
+  const query = supabaseClient
+    .from('mes_collectivites')
+    .select()
+    .returns<MaCollectivite[]>();
   const { error, data } = await query;
 
   if (error) {
@@ -17,25 +21,27 @@ const fetchOwnedCollectivites = async () => {
 
 // donne accès aux collectivités associées au compte de l'utilisateur courant
 // la requête est rechargée quand le user id change
-export const useOwnedCollectivites = () => {
-  const { user, isConnected } = useAuth();
-  const { data } = useQuery(['mes_collectivites', user?.id], () =>
-    isConnected ? fetchOwnedCollectivites() : null
+export const useOwnedCollectivites = (userId: string | undefined) => {
+  const { data } = useQuery(['mes_collectivites', userId], () =>
+    userId ? fetchOwnedCollectivites() : null
   );
-  return data || null;
+  return data ?? null;
 };
 
 /** Indique si l'utilisateur courant n'est pas associé à au moins une collectivité */
 export const useSansCollectivite = () => {
-  const {user, isConnected} = useAuth();
-  const {data: sansCollectivite} = useQuery(['sans_collectivite', user?.id], async () => {
-    if (!isConnected) return null;
+  const { user, isConnected } = useAuth();
+  const { data: sansCollectivite } = useQuery(
+    ['sans_collectivite', user?.id],
+    async () => {
+      if (!isConnected) return null;
 
-    const {count} = await supabaseClient
-      .from('mes_collectivites')
-      .select(undefined, {head: true, count: 'exact'});
-    return count === null ? null : count === 0;
-  });
+      const { count } = await supabaseClient
+        .from('mes_collectivites')
+        .select(undefined, { head: true, count: 'exact' });
+      return count === null ? null : count === 0;
+    }
+  );
   return sansCollectivite ?? true;
 };
 
