@@ -18,6 +18,7 @@ import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
+import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -70,6 +71,7 @@ export const IndicateurPredefiniBase = ({
                   state="grey"
                 />
               )}
+              {definition.hasOpenData && <BadgeOpenData />}
             </div>
             {!!sources?.length && (
               <ImportSourcesSelector
