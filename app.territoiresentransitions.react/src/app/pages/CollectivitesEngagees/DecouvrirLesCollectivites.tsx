@@ -1,31 +1,23 @@
-import {Route, useParams} from 'react-router-dom';
+import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
+import { Route } from 'react-router-dom';
 import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
 import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
-import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
 
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { useSearchParams } from 'core-logic/hooks/query';
 
-import {CollectiviteEngagee} from '@tet/api';
-import {initialFilters, nameToShortNames} from './data/filters';
-import {
-  RecherchesViewParam,
-  recherchesCollectivitesUrl,
-  recherchesPlansUrl,
-} from 'app/paths';
+import { CollectiviteEngagee } from '@tet/api';
+import { recherchesCollectivitesUrl, recherchesPlansUrl } from 'app/paths';
+import { initialFilters, nameToShortNames } from './data/filters';
 
 type Props = {
   sansCollectivite: boolean;
 };
 
-const DecouvrirLesCollectivites = ({sansCollectivite}: Props) => {
+const DecouvrirLesCollectivites = ({ sansCollectivite }: Props) => {
   const auth = useAuth();
-
-  const {isConnected} = auth;
-
-  const viewParam: {recherchesId: RecherchesViewParam} = useParams();
-  const vue = viewParam.recherchesId;
+  const { isConnected } = auth;
 
   /** Filters */
   const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
@@ -42,10 +34,12 @@ const DecouvrirLesCollectivites = ({sansCollectivite}: Props) => {
         className="app fr-container py-16"
       >
         <div className="md:flex md:gap-6 xl:gap-12">
-          {/* Filters column */}
-          <Filters vue={vue} filters={filters} setFilters={setFilters} />
-          {/* Results column */}
           <Route path={recherchesCollectivitesUrl}>
+            <Filters
+              vue="collectivites"
+              filters={filters}
+              setFilters={setFilters}
+            />
             <CollectivitesView
               initialFilters={initialFilters}
               filters={filters}
@@ -53,19 +47,16 @@ const DecouvrirLesCollectivites = ({sansCollectivite}: Props) => {
               isConnected={isConnected}
               canUserClickCard={!sansCollectivite && isConnected}
             />
-            {/* {vue === 'collectivites' && (
-            )} */}
           </Route>
           <Route path={recherchesPlansUrl}>
+            <Filters vue="plans" filters={filters} setFilters={setFilters} />
             <PlansView
               initialFilters={initialFilters}
-              filters={{...filters, trierPar: ['nom']}}
+              filters={{ ...filters, trierPar: ['nom'] }}
               setFilters={setFilters}
               isConnected={isConnected}
               canUserClickCard={!sansCollectivite && isConnected}
             />
-            {/* {vue === 'plans' && (
-            )} */}
           </Route>
         </div>
       </div>
