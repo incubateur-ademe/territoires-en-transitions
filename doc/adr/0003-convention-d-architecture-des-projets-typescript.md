@@ -19,7 +19,7 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 1. Language FR/EN : domaines, scopes, et entités en français, tout le reste en anglais pour fluidifer l'écriture du code
 
    Exemple : `hasFicheActions()`
-   
+
    Exemple : `const result = await indicateursFetch()`
 
 1. `kebab-case` pour les noms de fichiers et dossiers
@@ -29,12 +29,12 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 1. Organisation des dossiers en domaine → scope (optionnel) → layer technique
 
    Exemple : `src/indicateurs/models/indicateur.schema.ts`
-   
+
    Exemple : `src/plan-actions/shared/models/fiche-action.schema.ts`
-   
+
    Exemple : `src/app/plan-actions/fiche-actions/views/fiche-action.card.tsx`
 
-1. Préfix des fichiers avec son "type"
+1. Suffix des fichiers avec son "type"
 
    Exemple type UI : `fiche-action.card.tsx`, `fiche-action.list.tsx`, `fiche-action.list-item.tsx`
 
@@ -49,6 +49,8 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
 Les domaines correspondent aux principaux contextes métiers de la plateforme Territoires en Transition.
 
+Voici les domaines définis actuellement :
+
 1. `utilisateurs`
 2. `collectivites`
 3. `referentiels`
@@ -56,15 +58,38 @@ Les domaines correspondent aux principaux contextes métiers de la plateforme Te
 5. `plan-actions`
 6. `panier-actions`
 
+Les domaines définis doivent rester restreints et (quasi) figés.
+
+L'ajout exceptionnel d'un nouveau domaine ne peut se faire qu'après validation auprès de l'ensemble de l'équipe.
+
+#### Exemples d'entités au sein de ces domaines
+
+```
+plan-actions
+  → plan-action.table
+  → fiche-action.table
+  → fiche-resume.dto
+
+indicateurs
+  → definition.table
+  → valeur.table
+  → categorie.table
+```
+
 ### Les "layers" techniques
 
 Les couches techniques sont représentés au niveau du dossier final du fichier.
 
-Exemples de layer :
+**Nos layers backend :**
 
 - `models` : couche de représentation des données structurées (entités BDD ou simple value objects)
-- `views` : couche d'UI
-- `repos` : couche d'échange de données
+- `services` : couche de logique ou d'échange de données
+- `controllers` : couche de logique ou d'échange de données
+
+**Nos layers frontend :**
+
+- `views` : couche des composants UI
+- `hooks` : couche de logique UI
 
 Au sein d'un layer, chaque fichier peut avoir un "type" préfixé pour préciser son usage et favoriser la découvrabilité et la compréhension de la codebase. On écrira ce type toujours au singulier.
 
