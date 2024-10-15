@@ -1,22 +1,22 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import {Button, Card, Divider, Icon} from '@tet/ui';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
-import {openPreuve} from 'ui/shared/preuves/Bibliotheque/openPreuve';
+import { Button, Card, Divider, Icon, Notification, Tooltip } from '@tet/ui';
+import { TPreuve } from './types';
+import { openPreuve } from './openPreuve';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import MenuCarteDocument from './MenuCarteDocument';
-import {getAuthorAndDate, getFormattedTitle} from './utils';
-import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
-import AlerteSuppression from '../AlerteSuppression';
+import { getAuthorAndDate, getFormattedTitle } from './utils';
+import { useEditPreuve } from './useEditPreuve';
+import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import {getTruncatedText} from '../../utils';
+import { getTruncatedText } from 'utils/formatUtils';
 
 type CarteDocumentProps = {
   isReadonly: boolean;
   document: TPreuve;
 };
 
-const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
+const CarteDocument = ({ isReadonly, document }: CarteDocumentProps) => {
   const {
     commentaire,
     created_at: dateCreation,
@@ -26,14 +26,14 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
   } = document;
 
   const handlers = useEditPreuve(document);
-  const {remove, editComment, editFilename, isLoading, isError} = handlers;
+  const { remove, editComment, editFilename, isLoading, isError } = handlers;
 
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
   const isEditing = editComment.isEditing || editFilename.isEditing;
 
-  const {truncatedText: truncatedCom, isTextTruncated: isComTruncated} =
+  const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
 
   useEffect(() => {
@@ -53,12 +53,19 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
   return (
     <>
       <div className="relative group h-full">
+        {/** Cadenas document privé */}
+        {fichier?.confidentiel && (
+          <Tooltip label="Document en mode privé">
+            <div className="absolute -top-5 left-5">
+              <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
+            </div>
+          </Tooltip>
+        )}
         {/* Menu de la carte document */}
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
             document={document}
-            className="invisible group-hover:visible absolute top-4 right-4 "
-            onEdit={!!fichier ? () => editFilename.enter() : undefined}
+            className="absolute top-4 right-4 "
             onComment={() => editComment.enter()}
             onDelete={() => setIsDeleting(true)}
           />
@@ -70,7 +77,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
             {/* Icône document ou lien */}
             <div
               className={classNames(
-                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center',
+                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center mt-2',
                 {
                   'bg-primary-1': isEditLoading,
                   'bg-primary-3': !isEditLoading,
@@ -136,7 +143,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                         size="xs"
                         className="ml-auto"
                         onClick={() =>
-                          setIsFullCommentaire(prevState => !prevState)
+                          setIsFullCommentaire((prevState) => !prevState)
                         }
                       >
                         {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
