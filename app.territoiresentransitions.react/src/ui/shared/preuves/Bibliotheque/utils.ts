@@ -1,11 +1,11 @@
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
-import {formatFileSize, getExtension} from 'utils/file';
-import {getTextFormattedDate} from '../../utils';
+import { TPreuve } from './types';
+import { formatFileSize, getExtension } from 'utils/file';
+import { getTextFormattedDate } from 'utils/formatUtils';
 
 export const getFormattedTitle = (preuve: TPreuve) => {
-  const {fichier, lien} = preuve;
+  const { fichier, lien } = preuve;
   if (fichier) {
-    const {filename, filesize} = fichier;
+    const { filename, filesize } = fichier;
     return `${filename} (${getExtension(
       filename
     )?.toUpperCase()}, ${formatFileSize(filesize)})`;
@@ -19,7 +19,7 @@ export const getAuthorAndDate = (
   author: string | null
 ) => {
   const formattedDate = date
-    ? getTextFormattedDate({date: date, shortMonth: true})
+    ? getTextFormattedDate({ date: date, shortMonth: true })
     : null;
 
   if (date || author) {

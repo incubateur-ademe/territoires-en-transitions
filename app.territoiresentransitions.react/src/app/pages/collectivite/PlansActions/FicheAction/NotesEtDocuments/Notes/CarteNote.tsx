@@ -1,7 +1,7 @@
 import {Button, Card, Icon} from '@tet/ui';
 import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
-import AlerteSuppression from '../AlerteSuppression';
+import AlerteSuppression from 'ui/shared/preuves/Bibliotheque/AlerteSuppression';
 import DeleteButton from '../../DeleteButton';
 import { getTruncatedText } from 'utils/formatUtils';
 
