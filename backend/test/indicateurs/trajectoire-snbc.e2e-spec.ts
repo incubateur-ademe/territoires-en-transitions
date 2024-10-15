@@ -85,7 +85,7 @@ describe('Calcul de trajectoire SNBC', () => {
       status: VerificationDonneesSNBCStatus.DONNEES_MANQUANTES,
       epci: {
         id: 19,
-        collectivite_id: 3829,
+        collectiviteId: 3829,
         nom: 'CA du Pays de Laon',
         siren: '200043495',
         nature: 'CA',
@@ -305,7 +305,7 @@ describe('Calcul de trajectoire SNBC', () => {
       status: VerificationDonneesSNBCStatus.PRET_A_CALCULER,
       epci: {
         id: 1126,
-        collectivite_id: 4936,
+        collectiviteId: 4936,
         nom: 'Eurométropole de Strasbourg',
         siren: '246700488',
         nature: 'METRO',

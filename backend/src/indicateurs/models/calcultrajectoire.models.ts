@@ -1,11 +1,12 @@
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { epciSchema } from '../../collectivites/models/collectivite.models';
+import { epciSchema } from '../../collectivites/models/epci.table';
 import { collectiviteRequestSchema } from '../../collectivites/models/collectivite.request';
 import {
   indicateurAvecValeursSchema,
   IndicateurValeurType,
-} from './indicateur.models';
+} from './indicateur-valeur.table';
+
 extendZodWithOpenApi(z);
 
 export enum CalculTrajectoireReset {
