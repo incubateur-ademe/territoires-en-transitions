@@ -19,7 +19,6 @@ const KeyNumbers = ({ valuesList }: KeyNumbersProps): JSX.Element => {
         >
           <div className="text-[#ff5655] text-4xl font-bold pb-2">
             {v.value}/{v.totalValue}
-            {/* {!!v.totalValue && <span className="text-xl">bio/{v.totalValue}</span>} */}
           </div>
           <div>
             <span className="text-sm text-primary-9 font-semibold uppercase">
