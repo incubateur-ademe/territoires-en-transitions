@@ -439,9 +439,11 @@ export async function selectIndicateurDefinitions(
     .in('id', indicateurIds)
     .eq('plus.collectivite_id', collectiviteId)
     .eq('valeurs.collectivite_id', collectiviteId);
+
   const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, false)
     : null;
+
   return toReturn ? (objectToCamel(toReturn) as IndicateurDefinition[]) : null;
 }
 
@@ -850,6 +852,7 @@ async function transformeDefinition(
         )
         .map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
+      has_open_data: item.valeurs.some((v: any) => v.metadonnee_id !== null),
     };
   });
 }
