@@ -49,15 +49,6 @@ const FiltreLabels = ({
         checked={selectedFilter === 'cot'}
         onChange={() => onChangeFilter('cot')}
       />
-
-      <RadioButton
-        label="Collectivités utilisatrices de la plateforme"
-        id="actives"
-        value="actives"
-        name="filtre"
-        checked={selectedFilter === 'actives'}
-        onChange={() => onChangeFilter('actives')}
-      />
     </div>
   );
 };
