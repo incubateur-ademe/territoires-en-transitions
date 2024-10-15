@@ -1,12 +1,13 @@
 import classNames from 'classnames';
-import {Button} from '@tet/ui';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
-import DeleteButton from '../../DeleteButton';
+import { Button } from '@tet/ui';
+import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
+import { EditerDocumentModal } from 'ui/shared/preuves/Bibliotheque/EditerDocumentModal';
+import DeleteButton from '../../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
+import { useState } from 'react';
 
 type MenuCarteDocumentProps = {
   document: TPreuve;
   className?: string;
-  onEdit: (() => void) | undefined;
   onComment: () => void;
   onDelete: () => void;
 };
@@ -14,11 +15,11 @@ type MenuCarteDocumentProps = {
 const MenuCarteDocument = ({
   document,
   className,
-  onEdit,
   onComment,
   onDelete,
 }: MenuCarteDocumentProps) => {
-  const {fichier, lien} = document;
+  const { fichier, lien } = document;
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!fichier && !lien) return null;
 
@@ -26,13 +27,20 @@ const MenuCarteDocument = ({
     <>
       <div className={classNames('flex gap-2', className)}>
         {/* Modifier le titre du document */}
-        {!!onEdit && (
+        {!!fichier && (
           <Button
             icon="edit-line"
-            title="Renommer le document"
+            title="Editer le document"
             variant="grey"
             size="xs"
-            onClick={onEdit}
+            onClick={() => setIsOpen(true)}
+          />
+        )}
+        {isOpen && (
+          <EditerDocumentModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            preuve={document}
           />
         )}
 
