@@ -3,7 +3,7 @@ import ModaleEditionNote from './ModaleEditionNote';
 import {useState} from 'react';
 import AlerteSuppression from '../AlerteSuppression';
 import DeleteButton from '../../DeleteButton';
-import {getTruncatedText} from '../../utils';
+import { getTruncatedText } from 'utils/formatUtils';
 
 type CarteNoteProps = {
   isReadonly: boolean;
