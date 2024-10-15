@@ -4,12 +4,6 @@
 
 Backend de territoires en transitions basé sur [Nest](https://github.com/nestjs/nest).
 
-## Installation
-
-```bash
-$ npm install
-```
-
 ## Configuration
 
 Les variables d'environnement suivantes doivent être définies dans un fichier .env (voir le fichier [.env.default](.env.default)):
@@ -23,18 +17,23 @@ Les variables d'environnement suivantes doivent être définies dans un fichier 
 Ces variables d'environnement sont définies:
 
 - pour **TRAJECTOIRE_SNBC_SHEET_ID**, **TRAJECTOIRE_SNBC_XLSX_ID** et **TRAJECTOIRE_SNBC_RESULT_FOLDER_ID** dans les [variables d'environnement de Github](https://github.com/incubateur-ademe/territoires-en-transitions/settings/environments/1431973268/edit) utilisées pour configurer le [déploiement Koyeb](https://app.koyeb.com/services/c7001069-ca11-4fd7-86c6-7feb45b9b68d/settings). Les identifiants peuvent également être récupérés à partir du drive de `territoiresentransitions`.
-- pour  **GCLOUD_SERVICE_ACCOUNT_KEY**, **SUPABASE_JWT_SECRET** et **SUPABASE_SERVICE_ROLE_KEY** dans le [gestionnaire de secret de Koyeb](https://app.koyeb.com/secrets)
+- pour **GCLOUD_SERVICE_ACCOUNT_KEY**, **SUPABASE_JWT_SECRET** et **SUPABASE_SERVICE_ROLE_KEY** dans le [gestionnaire de secret de Koyeb](https://app.koyeb.com/secrets)
 
 ## Scripts disponibles
+
+À lancer depuis la racine du monorepo.
 
 ```bash
 
 # Lance en développement avec rechargement automatique lorsqu'un fichier est modifié
-$ npm run start:dev
+$ pnpm dev:backend
 
-# Lance avec le mode production
-$ npm run start:prod
+# Build avec le mode production
+$ pnpm build:backend
 
 # Lance les tests
-$ npm run test
+$ pnpm test:backend
+
+# Ou directement avec Nx
+$ nx test @tet/backend
 ```
