@@ -32,6 +32,8 @@ export type TooltipProps = {
   activatedBy?: 'click' | 'hover';
   /** Délai d'ouverture de la tooltip */
   openingDelay?: number;
+  /** Délai de fermeture de la tooltip */
+  closingDelay?: number;
   /** Position de la tooltip */
   placement?: Placement;
   /** Affichage d'une flèche sur la tooltip */
@@ -48,6 +50,7 @@ export const Tooltip = ({
   offsetValue = 10,
   activatedBy = 'hover',
   openingDelay = 500,
+  closingDelay = 0,
   placement = 'top',
   withArrow = true,
   className,
@@ -99,7 +102,7 @@ export const Tooltip = ({
   // Configuration des interactions
   const { getReferenceProps, getFloatingProps } = useInteractions([
     (activatedBy === 'click' ? useClick : useHover)(context, {
-      delay: { open: openingDelay, close: 0 },
+      delay: { open: openingDelay, close: closingDelay },
     }),
     useFocus(context),
     useRole(context, { role: 'tooltip' }),

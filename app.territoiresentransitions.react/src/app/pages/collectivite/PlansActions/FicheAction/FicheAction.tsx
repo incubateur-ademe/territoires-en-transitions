@@ -1,37 +1,42 @@
-import {useParams} from 'react-router-dom';
-import {format} from 'date-fns';
-import {TrackPageView} from '@tet/ui';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useFicheAction} from './data/useFicheAction';
-import {useEditFicheAction} from './data/useUpsertFicheAction';
-import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
-import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
-import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import { TrackPageView } from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { format } from 'date-fns';
+import { useParams } from 'react-router-dom';
+import { useFicheAction } from './data/useFicheAction';
+import { useUpdateFicheAction } from './data/useUpdateFicheAction';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
-import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
-import FicheActionOnglets from './FicheActionOnglets';
+import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
+import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionImpact from './FicheActionImpact';
+import FicheActionOnglets from './FicheActionOnglets';
+import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 
 type FicheActionProps = {
   isReadonly: boolean;
 };
 
-const FicheAction = ({isReadonly}: FicheActionProps) => {
-  const {ficheUid} = useParams<{ficheUid: string}>();
-  const {data, refetch, isLoading} = useFicheAction(ficheUid);
-  const {mutate: updateFiche, isLoading: isEditLoading} = useEditFicheAction();
+const FicheAction = ({ isReadonly }: FicheActionProps) => {
+  const { ficheUid } = useParams<{ ficheUid: string }>();
 
-  const collectivite_id = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId()!;
 
-  if (!data || !data.fiche) return null;
+  const { data, isLoading } = useFicheAction(ficheUid);
 
-  const {fiche} = data;
+  const { mutate: updateFiche, isLoading: isEditLoading } =
+    useUpdateFicheAction();
+
+  if (!data) {
+    return null;
+  }
+
+  const fiche = data;
 
   return (
     <>
       <TrackPageView
         pageName={'app/fiche-action'}
-        properties={{collectivite_id}}
+        properties={{ collectivite_id: collectiviteId }}
       />
 
       <div
@@ -42,10 +47,10 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
           {/* Header de la fiche action (titre, fil d'ariane) */}
           <FicheActionHeader
             titre={fiche.titre}
-            collectiviteId={fiche.collectivite_id!}
-            axes={fiche.axes}
+            collectiviteId={fiche.collectiviteId}
+            axes={fiche.axes ?? []}
             isReadonly={isReadonly}
-            updateTitle={titre => updateFiche({...fiche, titre})}
+            updateTitle={(titre) => updateFiche({ ...fiche, titre })}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
             {/* Description, moyens humains et techniques, et thématiques */}
@@ -63,8 +68,8 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
                 <FicheActionRestreint
                   isReadonly={isReadonly}
                   isRestreint={fiche.restreint ?? false}
-                  updateRestreint={restreint =>
-                    updateFiche({...fiche, restreint})
+                  updateRestreint={(restreint) =>
+                    updateFiche({ ...fiche, restreint })
                   }
                 />
 
@@ -72,16 +77,16 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
                 <FicheActionImpact fiche={fiche} />
 
                 {/* Date de dernière modification */}
-                {fiche.modified_at && (
+                {fiche.modifiedAt && (
                   <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 text-sm text-primary-10 font-medium italic flex flex-col items-start max-md:items-center gap-1">
                     <span>
                       Dernière modification le{' '}
-                      {format(new Date(fiche.modified_at), 'dd/MM/yyyy')}
+                      {format(new Date(fiche.modifiedAt), 'dd/MM/yyyy')}
                     </span>
-                    {fiche.created_at !== null && (
+                    {fiche.createdAt && (
                       <span className="text-sm text-primary-10 text-left">
                         Fiche action créée le{' '}
-                        {format(new Date(fiche.created_at), 'dd/MM/yyyy')}
+                        {format(new Date(fiche.createdAt), 'dd/MM/yyyy')}
                       </span>
                     )}
                   </div>
@@ -101,7 +106,6 @@ const FicheAction = ({isReadonly}: FicheActionProps) => {
                 isReadonly={isReadonly}
                 fiche={fiche}
                 updateFiche={updateFiche}
-                refetchFiche={refetch}
               />
             </div>
 

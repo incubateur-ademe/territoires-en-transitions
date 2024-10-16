@@ -1,8 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {diff} from 'utils/diff';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {FicheResume} from '../PlansActions/FicheAction/data/types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
+import { diff } from 'utils/diff';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { FicheResume } from '@tet/api/plan-actions';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
@@ -19,10 +19,10 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
 
   return useMutation(
-    async ({fiches, fiches_liees}: TUpdateFichesActionLieesArgs) => {
+    async ({ fiches, fiches_liees }: TUpdateFichesActionLieesArgs) => {
       // extrait les ids des listes
-      const current_ids = fiches.map(f => f.id);
-      const new_ids = fiches_liees.map(f => f.id);
+      const current_ids = fiches.map((f) => f.id);
+      const new_ids = fiches_liees.map((f) => f.id);
       // extrait les ids des fiches à ajouter ou supprimer
       const [idsToDelete, idsToAdd] = diff(current_ids, new_ids);
 
@@ -31,13 +31,13 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
         await supabaseClient
           .from('fiche_action_action')
           .delete()
-          .match({fiche_id: idsToDelete})
+          .match({ fiche_id: idsToDelete })
           .like('action_id', `${action_id}%`);
       }
 
       // et ajoute les nouvelles
       if (idsToAdd.length) {
-        const toAdd = idsToAdd.map(fiche_id => ({
+        const toAdd = idsToAdd.map((fiche_id) => ({
           fiche_id: fiche_id!,
           action_id,
         }));

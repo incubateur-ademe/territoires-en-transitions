@@ -1,5 +1,5 @@
-import {Modal} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Modal } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 
 type ModaleCreerIndicateurProps = {
@@ -17,10 +17,10 @@ const ModaleCreerIndicateur = ({
 }: ModaleCreerIndicateurProps) => {
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Créer un indicateur personnalisé"
       size="lg"
-      render={({close}) => (
+      render={({ close }) => (
         <IndicateurPersoNouveau
           onClose={close}
           fiche={fiche}

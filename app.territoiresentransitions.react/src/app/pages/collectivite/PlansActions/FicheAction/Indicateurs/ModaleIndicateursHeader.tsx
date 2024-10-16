@@ -7,10 +7,10 @@ import {
   ModalFooterOKCancel,
   Textarea,
 } from '@tet/ui';
-import { FicheAction } from '../data/types';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { getMaxLengthMessage } from '../utils';
 import { OpenState } from '@tet/ui/utils/types';
+import { FicheAction } from '@tet/api/plan-actions';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 
@@ -70,11 +70,11 @@ const ModaleIndicateursHeader = ({
           {/* Effets attendus */}
           <Field title="Effets attendus" className="col-span-2">
             <EffetsAttendusDropdown
-              values={editedFiche.resultats_attendus ?? []}
+              values={editedFiche.resultatsAttendus ?? []}
               onChange={({ effets }) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  resultats_attendus: effets,
+                  resultatsAttendus: effets,
                 }))
               }
             />

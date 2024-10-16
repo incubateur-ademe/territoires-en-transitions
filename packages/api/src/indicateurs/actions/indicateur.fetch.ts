@@ -2,20 +2,18 @@ import { objectToCamel } from 'ts-case-convert';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
-} from '../../collectivites/shared/actions/groupement.fetch';
+} from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
 import { Tables } from '../../database.types';
-import { FicheResume } from '../../fiche_actions/domain/resume.schema';
+import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
 import { Thematique } from '../../shared/domain';
-import { Personne } from '../../shared/domain/personne.schema';
+import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
 import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,
-  IndicateurDefinitionComplet,
-  IndicateurListItem,
 } from '../domain/definition.schema';
 import {
   Valeur,
@@ -281,70 +279,6 @@ export async function selectIndicateurActions(
 }
 
 /**
- * Récupère les identifiants et titres des indicateurs d'une collectivité
- * @param dbClient
- * @param collectiviteId
- * @param personnalise
- * @param predefini
- * @return liste des identifiants et titres des indicateurs
- */
-export async function selectIndicateurListItems(
-  dbClient: DBClient,
-  collectiviteId: number,
-  personnalise: boolean,
-  predefini: boolean
-): Promise<IndicateurListItem[]> {
-  const query = dbClient
-    .from('indicateur_definition')
-    .select(
-      'id, identifiant: identifiant_referentiel, titre, collectivite_id, groupement_id, plus:indicateur_collectivite(collectivite_id)'
-    );
-  if (personnalise && predefini) {
-    // Tous les indicateurs de la collectivité
-    query.or(`collectivite_id.is.null, collectivite_id.eq.${collectiviteId}`);
-  } else if (predefini) {
-    // Tous les indicateurs predefinis
-    query.is('collectivite_id', null);
-  } else {
-    // Tous les indicateurs personnalisés
-    query.eq('collectivite_id', collectiviteId);
-  }
-  const { data } = await query;
-  // Filtre les indicateurs privés
-  let dataFilter = data ? data : [];
-  if (predefini) {
-    const groupement: Groupement[] = await selectGroupementParCollectivite(
-      dbClient,
-      collectiviteId
-    );
-    const groupementIds = groupement.map((gp) => gp.id);
-    dataFilter = dataFilter.filter(
-      (item: any) =>
-        item.groupement_id === null ||
-        groupementIds.includes(item.groupement_id)
-    );
-  }
-  const toReturn = dataFilter.map((item: any) => {
-    const plusInfoFilter =
-      item.plus?.filter((i: any) => i.collectivite_id === collectiviteId) || [];
-    const plusInfo =
-      plusInfoFilter && plusInfoFilter[0]
-        ? plusInfoFilter[0]
-        : { collectivite_id: collectiviteId };
-    if (!item.prive || plusInfo.acces_prive) {
-      return {
-        id: item.id,
-        titre: item.titre,
-        identifiant: item.identifiant,
-        estPerso: item.collectivite_id !== null,
-      };
-    }
-  });
-
-  return toReturn as IndicateurListItem[];
-}
-
-/**
  * Récupère la liste des id des indicateurs favoris de la collectivité
  * @param dbClient
  * @param collectiviteId
@@ -505,9 +439,11 @@ export async function selectIndicateurDefinitions(
     .in('id', indicateurIds)
     .eq('plus.collectivite_id', collectiviteId)
     .eq('valeurs.collectivite_id', collectiviteId);
+
   const toReturn = data
     ? await transformeDefinition(dbClient, data, collectiviteId, false)
     : null;
+
   return toReturn ? (objectToCamel(toReturn) as IndicateurDefinition[]) : null;
 }
 
@@ -551,42 +487,6 @@ export async function selectIndicateurReferentielDefinitions(
     ? await transformeDefinition(dbClient, data, collectiviteId, false)
     : null;
   return toReturn ? (objectToCamel(toReturn) as IndicateurDefinition[]) : null;
-}
-
-/**
- * Récupère toutes les informations annexes d'un indicateur pour une collectivité
- * @param dbClient client supabase
- * @param indicateurId l'identifiant de l'indicateur
- * @param collectiviteId identifiant de la collectivité
- * @return indicateur complet
- */
-export async function selectIndicateurComplet(
-  dbClient: DBClient,
-  indicateurId: number,
-  collectiviteId: number
-): Promise<IndicateurDefinitionComplet | null> {
-  const { data } = await dbClient
-    .from('indicateur_definition')
-    .select(
-      `${COLONNES_DEFINITION.join(',')}, ` +
-        'services:indicateur_service_tag(service_tag_id, collectivite_id),' +
-        'pilotes:indicateur_pilote(' +
-        'tag_id, user_id, collectivite_id, tag:personne_tag(*), user:indicateur_pilote_user(*)),' +
-        'fiches:fiche_action_indicateur(...fiche_resume(*))'
-    )
-    .eq('id', indicateurId)
-    .eq('plus.collectivite_id', collectiviteId)
-    .eq('valeurs.collectivite_id', collectiviteId)
-    .eq('services.collectivite_id', collectiviteId)
-    .eq('pilotes.collectivite_id', collectiviteId)
-    .eq('fiches.fiche_resume.collectivite_id', collectiviteId);
-
-  const toReturn = data
-    ? await transformeDefinition(dbClient, data, collectiviteId, true)
-    : null;
-  return toReturn
-    ? (objectToCamel(toReturn)[0] as IndicateurDefinitionComplet)
-    : null;
 }
 
 /**
@@ -952,6 +852,7 @@ async function transformeDefinition(
         )
         .map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
+      has_open_data: item.valeurs.some((v: any) => v.metadonnee_id !== null),
     };
   });
 }

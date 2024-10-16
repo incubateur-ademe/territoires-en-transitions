@@ -732,3 +732,4 @@ stats/locales [stats/locales@v4.12.3] 2024-10-02T13:42:48Z ,,, <jacquelina@Lance
 cron/refresh_stats_views_locales [cron/refresh_stats_views_locales@v4.12.3] 2024-10-02T13:58:01Z ,,, <jacquelina@LanceLibre> # Ajoute le cron pour le refresh de la fonction refresh_stats_locales_indicateurs
 @v4.15.0 2024-10-10T09:52:36Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fixes divers : stats et export PA
 
+plan_action/plan_action [plan_action/plan_action@v4.12.3] 2024-09-25T11:24:37Z System Administrator <root@AirdeThibaut2.lan> # Ajout de statuts pour les fiches action

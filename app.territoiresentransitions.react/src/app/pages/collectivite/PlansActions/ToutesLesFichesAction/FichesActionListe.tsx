@@ -6,12 +6,12 @@ import {
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
-} from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
+} from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { OpenState } from '@tet/ui/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/Module/ModuleFiltreBadges';
+import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { useCollectiviteId } from 'core-logic/hooks/params';
@@ -206,11 +206,11 @@ const FichesActionListe = ({
                   ],
                 ]}
                 link={
-                  fiche.plan_id
+                  fiche.planId
                     ? makeCollectivitePlanActionFicheUrl({
                         collectiviteId: collectiviteId!,
                         ficheUid: fiche.id.toString(),
-                        planActionUid: fiche.plan_id.toString(),
+                        planActionUid: fiche.planId.toString(),
                       })
                     : makeCollectiviteFicheNonClasseeUrl({
                         collectiviteId: collectiviteId!,

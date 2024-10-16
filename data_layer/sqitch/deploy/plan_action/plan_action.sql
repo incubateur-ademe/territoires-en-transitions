@@ -2,49 +2,51 @@
 
 BEGIN;
 
-create or replace function delete_axe_all(axe_id integer) returns void
-    language plpgsql
-    security definer
-as
-$$
-declare
-    pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
-    facs         fiche_action[];
-    fac          fiche_action;
-begin
-    if have_edition_acces((select collectivite_id from axe where id = delete_axe_all.axe_id))
-           or is_service_role() then
-        for pa_enfant_id in select pa.id from axe pa where pa.parent = delete_axe_all.axe_id
-            loop
-                execute delete_axe_all(pa_enfant_id);
-            end loop;
-        select array_agg(fa.*)
-        from fiche_action fa
-                 join fiche_action_axe faa on fa.id = faa.fiche_id
-        where faa.axe_id = delete_axe_all.axe_id
-        into facs;
-        if facs is not null then
-            foreach fac in array facs
-                loop
-                    if (select count(*) > 1 from fiche_action_axe where fiche_id = fac.id) then
-                        delete
-                        from fiche_action_axe
-                        where fiche_action_axe.fiche_id = fac.id
-                          and fiche_action_axe.axe_id = delete_axe_all.axe_id;
-                    else
-                        delete
-                        from fiche_action
-                        where id = fac.id;
-                    end if;
+-- Ajoute des valeurs d'enum
+ALTER TYPE fiche_action_statuts ADD VALUE IF NOT EXISTS 'Bloqué';
+ALTER TYPE fiche_action_statuts ADD VALUE IF NOT EXISTS 'En retard';
+ALTER TYPE fiche_action_statuts ADD VALUE IF NOT EXISTS 'A discuter';
 
-                end loop;
-        end if;
-        delete from axe where id = delete_axe_all.axe_id;
-    else
-        perform set_config('response.status', '401', true);
-        raise 'L''utilisateur n''a pas les droits en édition sur la collectivité du plan';
-    end if;
-end;
+-- Ajoute une relation calculée pour récupérer les axes enfants d'un plan
+CREATE OR REPLACE FUNCTION axe_enfant(axe)
+  RETURNS SETOF axe
+  LANGUAGE sql
+  STABLE SECURITY INVOKER
+AS $$
+  SELECT * FROM axe WHERE plan = $1.id
 $$;
+
+-- Ajoute des FK pour pouvoir faire fonctionner les ressources embedding avec PostgREST
+ALTER TABLE partenaire_tag
+ADD CONSTRAINT partenaire_tag_collectivite_id_fkey
+FOREIGN KEY (collectivite_id)
+REFERENCES collectivite(id);
+
+ALTER TABLE fiche_action_thematique
+ADD CONSTRAINT fiche_action_thematique_thematique_id_fkey
+FOREIGN KEY (thematique_id)
+REFERENCES thematique(id);
+
+
+-- Change primary key of `fiche_action_financeur_tag` to a composite key to allow resource embedding
+-- Step 1: Remove the existing primary key constraint
+ALTER TABLE fiche_action_financeur_tag DROP CONSTRAINT fiche_action_financeur_tag_pkey;
+
+-- Step 2: Add the new composite primary key
+ALTER TABLE fiche_action_financeur_tag ADD PRIMARY KEY (fiche_id, financeur_tag_id);
+
+
+-- Change la foreign key de `fiche_action_referent` pour pointer sur `public.dcp` au lieu de `auth.users`.
+-- Cela permet à PostgREST de requêter la ressource `dcp` liée.
+
+ALTER TABLE fiche_action_referent
+DROP CONSTRAINT IF EXISTS fiche_action_referent_user_id_fkey;
+
+ALTER TABLE fiche_action_referent
+ADD CONSTRAINT fiche_action_referent_user_id_fkey
+FOREIGN KEY (user_id)
+REFERENCES dcp(user_id);
+
+
 
 COMMIT;

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import {
   Field,
@@ -7,14 +7,14 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
 } from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
+import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModaleActeursProps = {
   isOpen: boolean;
@@ -35,10 +35,6 @@ const ModaleActeurs = ({
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id || null;
 
-  useEffect(() => {
-    if (isOpen) setEditedFiche(fiche);
-  }, [isOpen]);
-
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
       updateFiche(editedFiche);
@@ -47,19 +43,19 @@ const ModaleActeurs = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Acteurs du projet"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Personnes pilote */}
           <Field title="Personne pilote">
             <PersonnesDropdown
               dataTest="personnes-pilotes"
-              values={editedFiche.pilotes?.map(p => getPersonneStringId(p))}
+              values={editedFiche.pilotes?.map((p) => getPersonneStringId(p))}
               placeholder="Sélectionnez ou créez un pilote"
-              onChange={({personnes}) =>
-                setEditedFiche(prevState => ({
+              onChange={({ personnes }) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   pilotes: personnes,
                 }))
@@ -71,9 +67,9 @@ const ModaleActeurs = ({
           <Field title="Direction ou service pilote">
             <ServicesPilotesDropdown
               placeholder="Sélectionnez ou créez un pilote"
-              values={editedFiche.services?.map(s => s.id)}
-              onChange={({services}) =>
-                setEditedFiche(prevState => ({...prevState, services}))
+              values={editedFiche.services?.map((s) => s.id)}
+              onChange={({ services }) =>
+                setEditedFiche((prevState) => ({ ...prevState, services }))
               }
             />
           </Field>
@@ -81,9 +77,9 @@ const ModaleActeurs = ({
           {/* Structures pilote */}
           <Field title="Structure pilote">
             <StructuresDropdown
-              values={editedFiche.structures?.map(s => s.id)}
-              onChange={({structures}) =>
-                setEditedFiche(prevState => ({...prevState, structures}))
+              values={editedFiche.structures?.map((s) => s.id)}
+              onChange={({ structures }) =>
+                setEditedFiche((prevState) => ({ ...prevState, structures }))
               }
             />
           </Field>
@@ -91,10 +87,10 @@ const ModaleActeurs = ({
           {/* Élu·e référent·e */}
           <Field title="Élu·e référent·e">
             <PersonnesDropdown
-              values={editedFiche.referents?.map(r => getPersonneStringId(r))}
+              values={editedFiche.referents?.map((r) => getPersonneStringId(r))}
               placeholder="Sélectionnez ou créez un·e élu·e référent·e"
-              onChange={({personnes}) =>
-                setEditedFiche(prevState => ({
+              onChange={({ personnes }) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   referents: personnes,
                 }))
@@ -105,9 +101,9 @@ const ModaleActeurs = ({
           {/* Partenaires */}
           <Field title="Partenaires">
             <PartenairesDropdown
-              values={editedFiche.partenaires?.map(p => p.id)}
-              onChange={({partenaires}) =>
-                setEditedFiche(prevState => ({...prevState, partenaires}))
+              values={editedFiche.partenaires?.map((p) => p.id)}
+              onChange={({ partenaires }) =>
+                setEditedFiche((prevState) => ({ ...prevState, partenaires }))
               }
             />
           </Field>
@@ -116,17 +112,17 @@ const ModaleActeurs = ({
           <Field title="Cibles">
             <CiblesDropdown
               values={editedFiche.cibles ?? []}
-              onChange={({cibles}) =>
-                setEditedFiche(prevState => ({...prevState, cibles}))
+              onChange={({ cibles }) =>
+                setEditedFiche((prevState) => ({ ...prevState, cibles }))
               }
             />
           </Field>
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               collectiviteId &&

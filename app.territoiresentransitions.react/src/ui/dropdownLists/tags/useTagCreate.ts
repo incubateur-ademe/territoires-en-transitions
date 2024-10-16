@@ -1,6 +1,8 @@
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {CollectiviteTag, TableTag} from '@tet/api';
+import { CollectiviteTag, TableTag } from '@tet/api';
+import { TagInsert } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { objectToSnake } from 'ts-case-convert';
 
 type Tag = CollectiviteTag;
 
@@ -20,28 +22,31 @@ export const useTagCreate = ({
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (tag: Tag) =>
-      await supabaseClient.from(tagTableName).insert(tag).select(),
+    async (tag: TagInsert) =>
+      await supabaseClient
+        .from(tagTableName)
+        .insert(objectToSnake(tag))
+        .select(),
     {
       mutationKey: 'create_tag',
-      onMutate: async tag => {
-        await queryClient.cancelQueries({queryKey: key});
+      onMutate: async (tag) => {
+        await queryClient.cancelQueries({ queryKey: key });
 
-        const previousdata: {tags: Tag[]} | undefined =
+        const previousdata: { tags: Tag[] } | undefined =
           queryClient.getQueryData(key);
 
-        queryClient.setQueryData(key, (old?: Tag[]) => {
+        queryClient.setQueryData(key, (old?: TagInsert[]) => {
           return old ? [tag, ...old] : [tag];
         });
 
-        return {previousdata};
+        return { previousdata };
       },
       onSettled: (data, err, args, context) => {
         if (err) {
           queryClient.setQueryData(key, context?.previousdata);
         }
         queryClient.invalidateQueries(key);
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
       onSuccess: () => onSuccess?.(),
     }

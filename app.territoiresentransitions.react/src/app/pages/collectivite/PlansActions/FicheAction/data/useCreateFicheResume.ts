@@ -1,39 +1,40 @@
-import {useHistory} from 'react-router-dom';
-import {useMutation, useQueryClient} from 'react-query';
+import { useHistory } from 'react-router-dom';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ficheResumeFactory, sortFichesResume} from './utils';
-import {FicheResume} from './types';
-import {PlanNode} from '../../PlanAction/data/types';
-import {waitForMarkup} from 'utils/waitForMarkup';
-import {dropAnimation} from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
-import {makeCollectiviteFicheNonClasseeUrl} from 'app/paths';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { ficheResumeFactory, sortFichesResume } from './utils';
+import { PlanNode } from '../../PlanAction/data/types';
+import { waitForMarkup } from 'utils/waitForMarkup';
+import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
+import { FicheResume } from '@tet/api/plan-actions';
+import { objectToCamel } from 'ts-case-convert';
 
 type queryArgs = {
-  collectivite_id: number;
+  collectiviteId: number;
   axeId?: number;
   actionId?: string;
 };
 
 const createFicheResume = async ({
-  collectivite_id,
+  collectiviteId,
   axeId,
   actionId,
 }: queryArgs) => {
   let query = supabaseClient.rpc('create_fiche', {
-    collectivite_id,
+    collectivite_id: collectiviteId,
     axe_id: axeId,
     action_id: actionId,
   });
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data;
+  return objectToCamel(data);
 };
 
 type Args = {
@@ -44,6 +45,8 @@ type Args = {
   planId?: number;
   /** si renseigné la fiche créée sera ouverte dans un nouvel onglet */
   openInNewTab?: boolean;
+  /** Clés react-query à invalider */
+  keysToInvalidate?: QueryKey[];
 };
 
 export const useCreateFicheResume = (args: Args) => {
@@ -51,7 +54,7 @@ export const useCreateFicheResume = (args: Args) => {
   const collectivite_id = useCollectiviteId();
   const history = useHistory();
 
-  const {axeId, planId, actionId, axeFichesIds, openInNewTab} = args;
+  const { axeId, planId, actionId, axeFichesIds, openInNewTab } = args;
 
   const flat_axes_key = ['flat_axes', planId];
   const axe_fiches_key = ['axe_fiches', axeId];
@@ -66,12 +69,12 @@ export const useCreateFicheResume = (args: Args) => {
 
   return useMutation(
     () =>
-      createFicheResume({collectivite_id: collectivite_id!, axeId, actionId}),
+      createFicheResume({ collectiviteId: collectivite_id!, axeId, actionId }),
     {
       onMutate: async () => {
         if (axeId) {
-          await queryClient.cancelQueries({queryKey: flat_axes_key});
-          await queryClient.cancelQueries({queryKey: axe_fiches_key});
+          await queryClient.cancelQueries({ queryKey: flat_axes_key });
+          await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
           const previousData = [
             [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
@@ -79,8 +82,8 @@ export const useCreateFicheResume = (args: Args) => {
           ];
 
           const tempFiche = ficheResumeFactory({
-            collectivite_id: collectivite_id!,
-            axe_id: axeId,
+            collectiviteId: collectivite_id!,
+            axeId,
             axeFichesIds,
           });
 
@@ -94,12 +97,12 @@ export const useCreateFicheResume = (args: Args) => {
           queryClient.setQueryData(
             flat_axes_key,
             (old: PlanNode[] | undefined) => {
-              const axe = old && old.find(a => a.id === axeId);
+              const axe = old && old.find((a) => a.id === axeId);
               if (axe) {
                 axe.fiches = axe.fiches
                   ? [tempFiche.id!, ...axe.fiches]
                   : [tempFiche.id!];
-                return old.map(a => (a.id === axeId ? axe : a));
+                return old.map((a) => (a.id === axeId ? axe : a));
               } else {
                 return [];
               }
@@ -120,6 +123,9 @@ export const useCreateFicheResume = (args: Args) => {
         );
       },
       onSuccess: (data, variables, context) => {
+        args.keysToInvalidate?.forEach((key) =>
+          queryClient.invalidateQueries(key)
+        );
         const newFiche = data as FicheResume;
         if (axeId) {
           // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
@@ -129,7 +135,7 @@ export const useCreateFicheResume = (args: Args) => {
               return old
                 ? old.length > 0
                   ? sortFichesResume(
-                      old.map(f =>
+                      old.map((f) =>
                         f.id === context?.tempFiche.id ? newFiche : f
                       )
                     )
@@ -142,15 +148,15 @@ export const useCreateFicheResume = (args: Args) => {
           queryClient.setQueryData(
             flat_axes_key,
             (old: PlanNode[] | undefined): PlanNode[] => {
-              const axe = old && old.find(a => a.id === axeId);
+              const axe = old && old.find((a) => a.id === axeId);
               if (axe) {
                 axe.fiches =
                   axe.fiches && axe?.fiches.length > 0
-                    ? axe.fiches.map(id =>
+                    ? axe.fiches.map((id) =>
                         id === context?.tempFiche.id ? newFiche.id! : id
                       )
                     : [newFiche.id!];
-                return old.map(a => (a.id === axeId ? axe : a));
+                return old.map((a) => (a.id === axeId ? axe : a));
               } else return [];
             }
           );
