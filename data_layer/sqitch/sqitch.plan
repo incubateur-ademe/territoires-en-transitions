@@ -735,3 +735,4 @@ cron/refresh_stats_views_locales [cron/refresh_stats_views_locales@v4.12.3] 2024
 plan_action/plan_action [plan_action/plan_action@v4.12.3] 2024-09-25T11:24:37Z System Administrator <root@AirdeThibaut2.lan> # Ajout de statuts pour les fiches action
 
 referentiel/referentiel 2024-10-07T16:09:16Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la table référentiel
+indicateur/change_unite_emission_ges 2024-10-16T21:13:38Z System Administrator <root@AirdeThibaut2.lan> # changement d'unité des indicateurs d'emission GES teq CO2 vers kteq CO2

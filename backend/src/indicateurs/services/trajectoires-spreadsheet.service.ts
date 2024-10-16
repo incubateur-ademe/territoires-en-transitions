@@ -266,10 +266,9 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     // Ecriture des informations d'émission GES
-    // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
     const emissionGesSpreadsheetData =
       resultatVerification.donnees_entree!.emissions_ges.valeurs.map(
-        (valeur) => [(valeur.valeur || 0) / 1000]
+        (valeur) => [(valeur.valeur || 0)]
       );
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
@@ -278,11 +277,10 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     // Ecriture des informations de sequestration
-    // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
     // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais doivent être écrites avec le signe opposé
     const sequestrationSpreadsheetData =
       resultatVerification.donnees_entree!.sequestrations.valeurs.map(
-        (valeur) => [((valeur.valeur || 0) * -1) / 1000]
+        (valeur) => [((valeur.valeur || 0) * -1)]
       );
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
@@ -586,15 +584,14 @@ export default class TrajectoiresSpreadsheetService {
                       .CONSOMMATIONS_IDENTIFIANTS_PREFIX
                   );
 
-                // les valeurs lues sont en ktCO2 et les données dans la plateforme sont en tCO2
-                let facteur = emissionGesOuSequestration ? 1000 : 1;
+                let facteur = 1;
                 const signeInversionSequestration =
                   this.signeInversionSequestration(
                     indicateurResultatDefinition.identifiant_referentiel
                   );
                 if (signeInversionSequestration) {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
-                  facteur = -1 * facteur;
+                  facteur = -1;
                 }
                 const indicateurValeur: CreateIndicateurValeurType = {
                   indicateur_id: indicateurResultatDefinition.id,
