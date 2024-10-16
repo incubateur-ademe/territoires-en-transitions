@@ -1,4 +1,3 @@
-import { ValuesToUnion } from '@tet/api';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';
@@ -8,55 +7,45 @@ type OpenDataIndicateur = {
   metadonnee_id: number | null;
 };
 
-type OpenDataIndicateurWithReferentiel = {
+type OpenDataIndicateurWithCategorie = {
   indicateur_id: number;
   categorie_tag: {
-    nom: string;
+    nom: Categorie | string;
   };
 };
 
-const CATEGORIES = ['cae', 'eci'] as const;
-type Categorie = ValuesToUnion<typeof CATEGORIES>;
+type Categorie = 'cae' | 'eci';
 
-export const useOpenDataIndicateurs = (referentiel: Categorie) => {
-  const collectiviteId = useCollectiviteId();
-
-  return useQuery(['open_data_indicateurs', collectiviteId], () => {
-    if (!collectiviteId) return;
-    return fetchOpenDataIndicateursByReferentiel(collectiviteId, referentiel);
-  });
-};
-
-export const useOpenDataIndicateursCount = (referentiel: Categorie) => {
+export const useOpenDataIndicateursCount = (categorie: Categorie) => {
   const collectiviteId = useCollectiviteId();
 
   return useQuery(['open_data_indicateurs_count', collectiviteId], async () => {
     if (!collectiviteId) return;
-    const indicateurs = await fetchOpenDataIndicateursByReferentiel(
+    const indicateurs = await buildOpenDataIndicateursByCategorie(
       collectiviteId,
-      referentiel
+      categorie
     );
     return indicateurs.length;
   });
 };
 
-const fetchOpenDataIndicateursByReferentiel = async (
+const buildOpenDataIndicateursByCategorie = async (
   collectivite_id: number,
-  referentiel: Categorie
-) => {
+  categorie: Categorie
+): Promise<OpenDataIndicateurWithCategorie[]> => {
   const openDataIndicateurs = await fetchOpenDataIndicateurs(collectivite_id);
   console.log('openDataIndicateurs');
   console.log(openDataIndicateurs);
 
-  const openDataIndicateursWithReferentiel =
-    await fetchOpenDataIndicateursWithReferentiel(
-      buildFilter(openDataIndicateurs),
-      referentiel
+  const openDataIndicateursWithCategorie =
+    await fetchOpenDataIndicateursByCategorie(
+      buildKeys(openDataIndicateurs),
+      categorie
     );
-  console.log('openDataIndicateursWithReferentiel');
-  console.log(openDataIndicateursWithReferentiel);
+  console.log('openDataIndicateursWithCategorie');
+  console.log(openDataIndicateursWithCategorie);
 
-  return openDataIndicateursWithReferentiel;
+  return openDataIndicateursWithCategorie;
 };
 
 /**
@@ -79,19 +68,18 @@ const fetchOpenDataIndicateurs = async (
   return indicateurData;
 };
 
-const buildFilter = (indicateurs: OpenDataIndicateur[]): number[] => {
+const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
   const indicateurIds = indicateurs
-    ? Array.from(new Set(indicateurs.map((indic) => indic['indicateur_id'])))
+    ? Array.from(new Set(indicateurs.map((indic) => indic.indicateur_id)))
     : [];
 
-  console.log(indicateurIds);
   return indicateurIds;
 };
 
-const fetchOpenDataIndicateursWithReferentiel = async (
+const fetchOpenDataIndicateursByCategorie = async (
   indicateurIds: number[],
-  referentiel: Categorie
-): Promise<OpenDataIndicateurWithReferentiel[]> => {
+  categorie: Categorie
+): Promise<OpenDataIndicateurWithCategorie[]> => {
   const { error: categorieError, data: categorieTags } = await supabaseClient
     .from('indicateur_categorie_tag')
     .select(
@@ -99,7 +87,7 @@ const fetchOpenDataIndicateursWithReferentiel = async (
       categorie_tag!inner(nom)`
     )
     .in('indicateur_id', indicateurIds)
-    .match({ 'categorie_tag.nom': referentiel });
+    .match({ 'categorie_tag.nom': categorie });
 
   if (categorieError) throw new Error(categorieError.message);
 
