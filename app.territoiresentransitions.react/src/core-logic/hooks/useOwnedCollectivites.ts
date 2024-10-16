@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
-const fetchOwnedCollectivites = async () => {
+export const fetchOwnedCollectivites = async () => {
   const query = supabaseClient
     .from('mes_collectivites')
     .select()
@@ -16,16 +16,8 @@ const fetchOwnedCollectivites = async () => {
   if (error) {
     throw new Error(error.message);
   }
-  return data || [];
-};
 
-// donne accès aux collectivités associées au compte de l'utilisateur courant
-// la requête est rechargée quand le user id change
-export const useOwnedCollectivites = (userId: string | undefined) => {
-  const { data } = useQuery(['mes_collectivites', userId], () =>
-    userId ? fetchOwnedCollectivites() : null
-  );
-  return data ?? null;
+  return data || [];
 };
 
 /** Indique si l'utilisateur courant n'est pas associé à au moins une collectivité */
@@ -66,4 +58,6 @@ export const usePlanActionsPilotableFetch = (
   );
 };
 
-export type TMesCollectivites = ReturnType<typeof useOwnedCollectivites>;
+export type TMesCollectivites = Awaited<
+  ReturnType<typeof fetchOwnedCollectivites>
+>;

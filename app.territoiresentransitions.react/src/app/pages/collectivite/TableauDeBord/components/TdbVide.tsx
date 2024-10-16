@@ -1,8 +1,8 @@
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import {Button} from '@tet/ui';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { Button } from '@tet/ui';
+import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 const TdbVide = () => {

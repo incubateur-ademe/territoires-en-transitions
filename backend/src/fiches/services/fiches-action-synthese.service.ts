@@ -58,13 +58,6 @@ export default class FichesActionSyntheseService {
       )}`
     );
 
-    // Vérification des droits
-    await this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
-      [collectiviteId],
-      NiveauAcces.LECTURE
-    );
-
     const listeValeurs = Object.values(FicheActionStatutsEnumType) as string[];
     const conditions = this.getConditions(collectiviteId, filter);
     const statutSynthese = await this.getSynthesePourPropriete(
@@ -148,13 +141,6 @@ export default class FichesActionSyntheseService {
       `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
         filter
       )}`
-    );
-
-    // Vérification des droits
-    await this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
-      [collectiviteId],
-      NiveauAcces.LECTURE
     );
 
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();

@@ -16,9 +16,9 @@ import {
   makeCollectiviteIndicateursCollectiviteUrl,
   makeTableauBordUrl,
 } from 'app/paths';
-import {UserData} from 'core-logic/api/auth/AuthProvider';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {TNavDropdown, TNavItem, TNavItemsList} from './types';
+import { UserData } from 'core-logic/api/auth/AuthProvider';
+import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
@@ -46,7 +46,7 @@ const makeNavItemsBase = (
   const collectiviteId = collectivite.collectivite_id;
   const confidentiel =
     collectivite.acces_restreint && collectivite.niveau_acces === null;
-  const hideToVisitor = isVisiteur({user, collectivite});
+  const hideToVisitor = isVisiteur({ user, collectivite });
 
   // items communs qque soient les droits de l'utilisateur courant
   return [
@@ -87,7 +87,7 @@ const makeNavItemsBase = (
       items: [
         {
           label: "Synthèse de l'état des lieux",
-          to: makeCollectiviteAccueilUrl({collectiviteId}),
+          to: makeCollectiviteAccueilUrl({ collectiviteId }),
         },
         {
           label: 'Personnalisation des référentiels',
@@ -163,7 +163,6 @@ const makeNavItemsBase = (
             view: 'collectivite',
           }),
           urlPrefix: ['/tableau-de-bord/collectivite'],
-          hideToVisitor,
         },
         {
           label: 'Mon suivi personnel',
@@ -213,7 +212,7 @@ const makeNavItemsBase = (
         },
         {
           label: 'Trajectoire SNBC territorialisée',
-          to: makeCollectiviteTrajectoirelUrl({collectiviteId}),
+          to: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
         },
       ],
     },
@@ -225,9 +224,9 @@ const makeNavItemsBase = (
 // membre la collectivité)
 const filtreItems = (items: TNavItemsList): TNavItemsList =>
   items
-    ?.filter(item => !item.confidentiel)
-    .filter(item => !item.hideToVisitor)
-    .map(item => {
+    ?.filter((item) => !item.confidentiel)
+    .filter((item) => !item.hideToVisitor)
+    .map((item) => {
       return item.hasOwnProperty('items')
         ? {
             ...item,
@@ -251,7 +250,7 @@ const makeSecondaryNavItemsBase = (
   const collectiviteId = collectivite.collectivite_id;
 
   // On n'affiche pas le menu des paramètres si droit "visiteur"
-  if (isVisiteur({user, collectivite})) {
+  if (isVisiteur({ user, collectivite })) {
     return [];
   }
 

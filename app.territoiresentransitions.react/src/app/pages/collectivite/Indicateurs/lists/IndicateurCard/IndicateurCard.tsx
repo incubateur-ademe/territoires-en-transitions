@@ -22,14 +22,15 @@ import { useIndicateurChartInfo } from 'app/pages/collectivite/Indicateurs/chart
 import { prepareData } from 'app/pages/collectivite/Indicateurs/chart/utils';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
-import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,
 } from 'ui/charts/Line/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
 import { getIndicateurRestant } from './utils';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
+import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -220,9 +221,10 @@ export const IndicateurCardBase = ({
             <div className="max-w-full font-bold line-clamp-2">
               {chartInfo?.titre}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <BadgeACompleter a_completer={isACompleter} size="sm" />
               {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
+              {definition.hasOpenData && <BadgeOpenData size="sm" />}
             </div>
           </>
         )}
