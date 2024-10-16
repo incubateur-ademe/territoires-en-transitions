@@ -11,6 +11,8 @@ import {
 export default class CollectivitesService {
   private readonly logger = new Logger(CollectivitesService.name);
 
+  readonly TEST_COLLECTIVITE_SIREN = '000000000';
+
   constructor(private readonly databaseService: DatabaseService) {}
 
   async getCollectivite(collectiviteId: number) {

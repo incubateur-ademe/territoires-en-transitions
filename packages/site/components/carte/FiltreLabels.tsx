@@ -1,6 +1,6 @@
 'use client';
 
-import RadioAsButton from '@tet/site/components/dstet/buttons/RadioAsButton';
+import { RadioButton } from '@tet/ui';
 import { FiltresLabels } from './CarteCollectivites';
 
 type FiltreLabelsProps = {
@@ -13,34 +13,41 @@ const FiltreLabels = ({
   onChangeFilter,
 }: FiltreLabelsProps) => {
   return (
-    <div className="flex flex-col gap-4 w-[280px]">
-      <RadioAsButton
-        id="engagees"
+    <div className="flex flex-col gap-4 w-fit">
+      <RadioButton
         label="Toutes les collectivités"
+        id="toutes"
+        value="toutes"
         name="filtre"
-        checked={selectedFilter === 'engagees'}
-        onCheck={() => onChangeFilter('engagees')}
+        checked={selectedFilter === 'toutes'}
+        onChange={() => onChangeFilter('toutes')}
       />
-      <RadioAsButton
+
+      <RadioButton
+        label="Labellisées Climat-Air-Énergie"
         id="labellisees_cae"
-        label="Labellisées Climat Air Energie"
+        value="labellisees_cae"
         name="filtre"
         checked={selectedFilter === 'labellisees_cae'}
-        onCheck={() => onChangeFilter('labellisees_cae')}
+        onChange={() => onChangeFilter('labellisees_cae')}
       />
-      <RadioAsButton
-        id="labellisees_eci"
+
+      <RadioButton
         label="Labellisées Économie Circulaire"
+        id="labellisees_eci"
+        value="labellisees_eci"
         name="filtre"
         checked={selectedFilter === 'labellisees_eci'}
-        onCheck={() => onChangeFilter('labellisees_eci')}
+        onChange={() => onChangeFilter('labellisees_eci')}
       />
-      <RadioAsButton
+
+      <RadioButton
+        label="Collectivités engagées non labellisées"
         id="cot"
-        label="Collectivités non labellisées"
+        value="cot"
         name="filtre"
         checked={selectedFilter === 'cot'}
-        onCheck={() => onChangeFilter('cot')}
+        onChange={() => onChangeFilter('cot')}
       />
     </div>
   );

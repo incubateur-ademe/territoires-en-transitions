@@ -17,6 +17,7 @@ import AccesCompte from './AccesCompte';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
 import { notFound } from 'next/navigation';
+import PageContent from './PageContent';
 
 export async function generateMetadata(
   { params }: { params: { code: string } },
@@ -141,21 +142,26 @@ const DetailCollectivite = async ({ params }: { params: { code: string } }) => {
       </div>
 
       {/* Contenu */}
-      {strapiData?.contenu ? (
-        <ContenuCollectivite contenu={strapiData.contenu} />
-      ) : strapiDefaultData ? (
-        <IndicateursCollectivite
-          defaultData={strapiDefaultData.indicateurs}
-          indicateurs={{
-            artificialisation_sols:
-              collectiviteData.collectivite.indicateur_artificialisation,
-            gaz_effet_serre:
-              collectiviteData.collectivite.indicateurs_gaz_effet_serre,
-          }}
-        />
-      ) : (
-        <div className="col-span-full md:col-span-7 lg:col-span-8" />
-      )}
+      <PageContent
+        indicateurs={
+          strapiDefaultData ? (
+            <IndicateursCollectivite
+              defaultData={strapiDefaultData.indicateurs}
+              indicateurs={{
+                artificialisation_sols:
+                  collectiviteData.collectivite.indicateur_artificialisation,
+                gaz_effet_serre:
+                  collectiviteData.collectivite.indicateurs_gaz_effet_serre,
+              }}
+            />
+          ) : null
+        }
+        programme={
+          strapiData?.contenu ? (
+            <ContenuCollectivite contenu={strapiData.contenu} />
+          ) : null
+        }
+      />
     </Section>
   );
 };

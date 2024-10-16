@@ -81,6 +81,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           </div>
           <Footer />
 
+          {/* tag linkedin */}
           <noscript>
             <img
               height="1"
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
             />
           </noscript>
 
+          {/* tag adform */}
           <noscript>
             <p style={{ margin: '0', padding: '0', border: '0' }}>
               <img
@@ -101,10 +103,21 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
               />
             </p>
           </noscript>
+
+          {/* tag azerion */}
+          <noscript>
+            <img
+              src="https://secure.adnxs.com/px?id=1827352&t=2"
+              width="1"
+              height="1"
+            />
+          </noscript>
         </body>
 
+        {/* google tag manager */}
         <GoogleTagManager gtmId="DC-2967404" />
 
+        {/* linkedin */}
         <Script id="linkedin" type="text/javascript">
           {`
             _linkedin_partner_id = "1701996";
@@ -120,6 +133,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
           `}
         </Script>
 
+        {/* adform */}
         <Script id="adform" type="text/javascript">
           {`
             window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
