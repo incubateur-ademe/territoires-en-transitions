@@ -3,14 +3,14 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import ButtonWithLink from 'ui/buttons/ButtonWithLink';
 import { PictoIndicateurs } from 'ui/pictogrammes/PictoIndicateur';
+import { Button } from '@tet/ui';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import { useIndicateursCount } from './data/useIndicateurSummary';
 import KeyNumbers from 'ui/score/KeyNumbers';
+import { useIndicateursCount } from './data/useIndicateurSummary';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { Button } from '@tet/ui';
+import { useOpenDataIndicateurs } from './data/useOpenDataIndicateurs';
 
 type IndicateursCardProps = {
   collectiviteId: number;
@@ -46,6 +46,7 @@ const IndicateursCard = ({
   if (!indicateurs) {
     return null;
   }
+
   const { cae, eci, perso } = indicateurs;
 
   const indicateursToDisplay = [
@@ -116,8 +117,28 @@ const FilledIndicateursCard = ({
 }: FilledIndicateursCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
 
+  const {
+    data: openDataIndicateurs,
+    error,
+    isLoading,
+  } = useOpenDataIndicateurs(referentielId);
+
+  console.log('Open Data Indicateurs:', openDataIndicateurs);
+
   return (
     <AccueilCard className="grow flex flex-col">
+      <div>
+        {openDataIndicateurs ? (
+          openDataIndicateurs.map((indicateur) => (
+            <div>
+              {JSON.stringify(indicateur)}{' '}
+              {/* Ou affichez d'une autre manière */}
+            </div>
+          ))
+        ) : (
+          <div>Aucun indicateur disponible.</div>
+        )}
+      </div>
       <KeyNumbers valuesList={indicateurs} />
       <div className="flex flex-row gap-4">
         <Button
