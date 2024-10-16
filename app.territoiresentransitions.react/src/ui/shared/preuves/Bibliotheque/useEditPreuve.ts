@@ -116,7 +116,11 @@ export const useUpdateBibliothequeFichierFilename = () =>
 // renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
 export const useUpdateBibliothequeFichierConfidentiel = () =>
   useMutation(
-    async (preuve: TPreuve & { updatedConfidentiel: boolean }) => {
+    async (preuve: {
+      collectivite_id: number;
+      fichier: { hash: string };
+      updatedConfidentiel: boolean;
+    }) => {
       if (!preuve?.fichier) {
         return null;
       }

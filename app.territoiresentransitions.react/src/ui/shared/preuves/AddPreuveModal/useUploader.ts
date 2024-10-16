@@ -113,7 +113,11 @@ export const useUploader = (
       const {filename, hash} = status;
       // crée l'entrée dans la bibliothèque
       addFileToLib({collectivite_id, filename, hash}).then(fichier => {
-        setStatus({code: UploadStatusCode.completed, fichier_id: fichier.id});
+        setStatus({
+          code: UploadStatusCode.completed,
+          fichier_id: fichier.id,
+          hash,
+        });
       });
     } else {
       setStatus(status);

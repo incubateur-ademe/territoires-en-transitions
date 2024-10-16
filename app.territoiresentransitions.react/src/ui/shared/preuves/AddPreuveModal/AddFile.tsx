@@ -1,7 +1,7 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
-import {ChangeEvent, FormEvent, useState} from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Button, Field, Input } from '@tet/ui';
 import { HINT, EXPECTED_FORMATS_LIST } from './constants';
 import { filesToUploadList } from './filesToUploadList';
@@ -15,6 +15,7 @@ import {
 } from './types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';
+import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 
 export type TAddFileFromLib = (fichier_id: number) => void;
 
@@ -38,6 +39,9 @@ export const AddFile = (props: TAddFileProps) => {
   const [confidentiel, setConfidentiel] = useState(false);
 
   const collectivite_id = useCollectiviteId();
+
+  const { mutate: updateConfidentiel } =
+    useUpdateBibliothequeFichierConfidentiel();
 
   const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -78,11 +82,31 @@ export const AddFile = (props: TAddFileProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    validFiles.map(({ status }) =>
-      onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
-    );
+    validFiles.map(({ status }) => {
+      onAddFileFromLib((status as UploadStatusCompleted).fichier_id);
+    });
     onClose();
   };
+
+  // Synchronise le flag "confidentiel" des fichiers uploadés avec l'état du
+  // bouton celui-ci pouvant être changé avant/après upload.
+  // Permet de gérer aussi le cas des documents déjà uploadés
+  useEffect(() => {
+    const update = async () => {
+      if (collectivite_id && validFiles?.length) {
+        await Promise.all(
+          validFiles.map(({ status }) =>
+            updateConfidentiel({
+              collectivite_id,
+              fichier: { hash: (status as UploadStatusCompleted).hash },
+              updatedConfidentiel: confidentiel,
+            })
+          )
+        );
+      }
+    };
+    update();
+  }, [collectivite_id, confidentiel, validFiles?.length]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
