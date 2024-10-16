@@ -1,4 +1,5 @@
 import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { useCreateFicheResume } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { Button, ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -86,18 +87,14 @@ const ToutesLesFichesAction = () => {
 
   const filters = convertParamsToFilters(filterParams);
 
-  const { mutate: createFicheResume } = useCreateFicheResume({
-    keysToInvalidate: [
-      ['fiches_resume_collectivite', collectivite?.collectivite_id, filters],
-    ],
-  });
+  const { mutate: createFicheAction } = useCreateFicheAction();
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex items-end">
         <h2 className="mb-0 mr-auto">Toutes les actions</h2>
         {!isReadonly && (
-          <Button size="sm" onClick={() => createFicheResume()}>
+          <Button size="sm" onClick={() => createFicheAction()}>
             Créer une fiche d’action
           </Button>
         )}
