@@ -38,6 +38,7 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
   return (
     !!fichier && (
       <Modal
+        dataTest="edit-doc"
         openState={{ isOpen, setIsOpen }}
         title="Editer le document"
         render={() => (

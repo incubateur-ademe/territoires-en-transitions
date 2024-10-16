@@ -29,6 +29,7 @@ const MenuCarteDocument = ({
         {/* Modifier le titre du document */}
         {!!fichier && (
           <Button
+            data-test="btn-edit"
             icon="edit-line"
             title="Editer le document"
             variant="grey"
@@ -46,6 +47,7 @@ const MenuCarteDocument = ({
 
         {/* Commenter */}
         <Button
+          data-test="btn-comment"
           icon="discuss-line"
           title="Commenter"
           variant="grey"
@@ -55,6 +57,7 @@ const MenuCarteDocument = ({
 
         {/* Supprimer le document */}
         <DeleteButton
+          data-test="btn-delete"
           title="Supprimer le document"
           size="xs"
           onClick={onDelete}

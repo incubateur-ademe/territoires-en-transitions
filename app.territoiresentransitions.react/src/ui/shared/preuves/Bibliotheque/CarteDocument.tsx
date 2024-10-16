@@ -37,12 +37,12 @@ const CarteDocument = ({
   const dateVisite = rapport?.date;
 
   const handlers = useEditPreuve(document);
-  const { remove, editComment, editFilename, isLoading, isError } = handlers;
+  const { remove, editComment, isLoading, isError } = handlers;
 
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
-  const isEditing = editComment.isEditing || editFilename.isEditing;
+  const isEditing = editComment.isEditing;
 
   const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
@@ -67,6 +67,7 @@ const CarteDocument = ({
         className={classNames('relative group h-full max-w-screen-md', {
           'mt-3': fichier?.confidentiel,
         })}
+        data-test="carte-doc"
       >
         {/** Cadenas document privé */}
         {fichier?.confidentiel && (
@@ -112,22 +113,14 @@ const CarteDocument = ({
             {/* Contenu de la carte */}
             <div className="flex flex-col gap-2 w-full">
               {/* Titre avec format et taille du fichier */}
-              {!editFilename.isEditing ? (
-                <span
-                  className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-                  title={
-                    !!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'
-                  }
-                  onClick={() => openPreuve(document)}
-                >
-                  {getFormattedTitle(document)}
-                </span>
-              ) : (
-                <DocumentInput
-                  editElement={editFilename}
-                  className="text-primary-10 text-base"
-                />
-              )}
+              <span
+                className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+                data-test="name"
+                title={!!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+                onClick={() => openPreuve(document)}
+              >
+                {getFormattedTitle(document)}
+              </span>
 
               {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
               {displayIdentifier && action && (
@@ -156,6 +149,7 @@ const CarteDocument = ({
                           'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
                           classComment
                         )}
+                        data-test="comment"
                       >
                         {isFullCommentaire || !isComTruncated
                           ? commentaire
