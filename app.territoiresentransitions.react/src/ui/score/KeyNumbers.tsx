@@ -5,9 +5,13 @@ type KeyNumbersProps = {
     firstLegend: string;
     secondLegend?: string;
   }[];
+  openDataIndicateursCount: number | undefined;
 };
 
-const KeyNumbers = ({ valuesList }: KeyNumbersProps): JSX.Element => {
+const KeyNumbers = ({
+  valuesList,
+  openDataIndicateursCount,
+}: KeyNumbersProps): JSX.Element => {
   return (
     <div
       className={`grid md:grid-cols-${valuesList.length} md:divide-x md:divide-y-0 divide-x-0 divide-y divide-[#e5e5e5] md:mb-auto mb-8 md:pb-4 w-fit`}
@@ -24,7 +28,10 @@ const KeyNumbers = ({ valuesList }: KeyNumbersProps): JSX.Element => {
             <span className="text-sm text-primary-9 font-semibold uppercase">
               {v.firstLegend} {v.secondLegend}
             </span>
-            <span className="text-xs"> dont X renseignés en open data</span>
+            <span className="text-xs">
+              {' '}
+              dont {openDataIndicateursCount} renseignés en open data
+            </span>
           </div>
         </div>
       ))}

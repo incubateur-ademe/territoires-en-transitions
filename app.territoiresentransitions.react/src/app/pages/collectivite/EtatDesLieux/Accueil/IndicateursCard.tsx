@@ -117,25 +117,15 @@ const FilledIndicateursCard = ({
 }: FilledIndicateursCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
 
-  const {
-    data: openDataIndicateurs,
-    error,
-    isLoading,
-  } = useOpenDataIndicateursCount(referentielId);
+  const { data: openDataIndicateursCount } =
+    useOpenDataIndicateursCount(referentielId);
 
   return (
     <AccueilCard className="grow flex flex-col">
-      <div>
-        {openDataIndicateurs ? (
-          <div>
-            {referentielId}
-            {openDataIndicateurs}
-          </div>
-        ) : (
-          <div>Aucun indicateur disponible.</div>
-        )}
-      </div>
-      <KeyNumbers valuesList={indicateurs} />
+      <KeyNumbers
+        valuesList={indicateurs}
+        openDataIndicateursCount={openDataIndicateursCount}
+      />
       <div className="flex flex-row gap-4">
         <Button
           onClick={() =>
