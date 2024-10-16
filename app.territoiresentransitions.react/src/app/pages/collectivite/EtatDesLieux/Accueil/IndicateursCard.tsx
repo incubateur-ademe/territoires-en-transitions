@@ -123,13 +123,14 @@ const FilledIndicateursCard = ({
     isLoading,
   } = useOpenDataIndicateursCount(referentielId);
 
-  console.log('Open Data Indicateurs:', openDataIndicateurs);
-
   return (
     <AccueilCard className="grow flex flex-col">
       <div>
         {openDataIndicateurs ? (
-          <div>{openDataIndicateurs}</div>
+          <div>
+            {referentielId}
+            {openDataIndicateurs}
+          </div>
         ) : (
           <div>Aucun indicateur disponible.</div>
         )}
