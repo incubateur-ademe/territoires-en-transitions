@@ -1,11 +1,11 @@
-import {ReactNode} from 'react';
-import {referentielToName} from 'app/labels';
-import {useProgressionReferentiel} from './data/useProgressionReferentiel';
+import { ReactNode } from 'react';
+import { referentielToName } from 'app/labels';
+import { useProgressionReferentiel } from './data/useProgressionReferentiel';
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
 import IndicateursCard from './IndicateursCard';
 import PlansActionCard from './PlansActionCard';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
 
 /**
  * Affiche la page d'accueil d'une collectivité
@@ -13,7 +13,7 @@ import {useAuth} from 'core-logic/api/auth/AuthProvider';
 const Accueil = (): JSX.Element => {
   const collectivite = useCurrentCollectivite();
 
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   if (!collectivite?.collectivite_id) return <></>;
 
@@ -104,7 +104,7 @@ const AccueilNonConfidentielle = ({
 };
 
 // affiche un titre au-dessus d'une carte
-const TitreSection = ({children}: {children: ReactNode}) => (
+const TitreSection = ({ children }: { children: ReactNode }) => (
   <h5 className="text-xl leading-5 font-extrabold">{children}</h5>
 );
 
