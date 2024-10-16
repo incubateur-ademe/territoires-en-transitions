@@ -97,7 +97,7 @@ export type DonneesARemplirResultType = z.infer<
 
 export const donneesCalculTrajectoireARemplirSchema = extendApi(
   z.object({
-    source: z.string(),
+    sources: z.string().array(),
     emissions_ges: donneesARemplirResultSchema,
     consommations_finales: donneesARemplirResultSchema,
     sequestrations: donneesARemplirResultSchema,
@@ -120,9 +120,9 @@ export const verificationDonneesSNBCResponseSchema = extendApi(
     epci: epciSchema.optional().openapi({
       description: "Informations de l'EPCI",
     }),
-    source_donnees_entree: z.string().optional().openapi({
+    sources_donnees_entree: z.string().array().optional().openapi({
       description:
-        'Source des données utilisées lorsque le calcul a déjà été fait',
+        'Sources des données utilisées lorsque le calcul a déjà été fait',
     }),
     indentifiants_referentiel_manquants_donnees_entree: z
       .array(z.string())
@@ -180,7 +180,7 @@ export const calculTrajectoireResponseSchema = extendApi(
   z
     .object({
       mode: z.nativeEnum(CalculTrajectoireResultatMode),
-      source_donnees_entree: z.string(),
+      sources_donnees_entree: z.string().array(),
       indentifiants_referentiel_manquants_donnees_entree: z.array(z.string()),
       trajectoire: calculTrajectoireResponseDonneesSchema,
     })

@@ -175,8 +175,8 @@ export default class TrajectoiresSpreadsheetService {
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResultType = {
           mode: mode,
-          source_donnees_entree:
-            resultatVerification.source_donnees_entree || '',
+          sources_donnees_entree:
+            resultatVerification.sources_donnees_entree || [],
           indentifiants_referentiel_manquants_donnees_entree:
             resultatVerification.indentifiants_referentiel_manquants_donnees_entree ||
             [],
@@ -384,7 +384,7 @@ export default class TrajectoiresSpreadsheetService {
 
     const result: CalculTrajectoireResultType = {
       mode: mode,
-      source_donnees_entree: resultatVerification.donnees_entree!.source,
+      sources_donnees_entree: resultatVerification.donnees_entree!.sources,
       indentifiants_referentiel_manquants_donnees_entree: [
         ...resultatVerification.donnees_entree!.emissions_ges
           .identifiants_referentiel_manquants,

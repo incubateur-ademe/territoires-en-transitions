@@ -42,6 +42,9 @@ import {
   MinimalIndicateurDefinitionType,
 } from '../models/indicateur.models';
 
+
+
+
 @Injectable()
 export default class IndicateursService {
   private readonly logger = new Logger(IndicateursService.name);
@@ -49,7 +52,8 @@ export default class IndicateursService {
   /**
    * Quand la source_id est NULL, cela signifie que ce sont des donnees saisies par la collectivite
    */
-  public readonly NULL_SOURCE_ID = 'collectivite';
+  static NULL_SOURCE_ID = 'collectivite';
+  static NULL_SOURCE_LABEL = 'saisie manuelle';
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
@@ -87,10 +91,10 @@ export default class IndicateursService {
       conditions.push(eq(indicateurValeurTable.id, options.indicateur_id));
     }
     if (options.sources?.length) {
-      const nullSourceId = options.sources.includes(this.NULL_SOURCE_ID);
+      const nullSourceId = options.sources.includes(IndicateursService.NULL_SOURCE_ID);
       if (nullSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== this.NULL_SOURCE_ID,
+          (s) => s !== IndicateursService.NULL_SOURCE_ID,
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -413,7 +417,7 @@ export default class IndicateursService {
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateur_id}_${v.indicateur_valeur.collectivite_id}_${v.indicateur_valeur.date_valeur}_${v.indicateur_source_metadonnee?.source_id || this.NULL_SOURCE_ID}`;
+        const cleUnicite = `${v.indicateur_valeur.indicateur_id}_${v.indicateur_valeur.collectivite_id}_${v.indicateur_valeur.date_valeur}_${v.indicateur_source_metadonnee?.source_id || IndicateursService.NULL_SOURCE_ID}`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
@@ -543,7 +547,7 @@ export default class IndicateursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonnee_id) {
-            return this.NULL_SOURCE_ID;
+            return IndicateursService.NULL_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonnee_id,
