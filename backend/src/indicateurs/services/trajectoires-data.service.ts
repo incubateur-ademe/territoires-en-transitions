@@ -41,6 +41,8 @@ export default class TrajectoiresDataService {
   );
   public readonly RARE_SOURCE_ID = 'rare';
 
+  public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
+
   public readonly SNBC_SOURCE: CreateIndicateurSourceType = {
     id: 'snbc',
     libelle: 'SNBC',
@@ -558,6 +560,16 @@ export default class TrajectoiresDataService {
       response.epci = collectivite.epci;
     } else {
       response.epci = epci;
+    }
+
+    // Hack to change the SIREN of the test EPCI to a valid one
+    if (
+      response.epci.siren === this.collectivitesService.TEST_COLLECTIVITE_SIREN
+    ) {
+      this.logger.log(
+        `Test collectivite detected, change for a valid SIREN ${this.TEST_COLLECTIVITE_VALID_SIREN}`
+      );
+      response.epci.siren = this.TEST_COLLECTIVITE_VALID_SIREN;
     }
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
