@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui/design-system/Icon';
+import { Icon, IconValue } from '@tet/ui/design-system/Icon';
 import classNames from 'classnames';
 import { AlertState, alertClassnames, stateToIcon } from './utils';
 import { useState } from 'react';
@@ -12,10 +12,14 @@ type AlertProps = {
   footer?: React.ReactNode;
   /** Etat du bloc alerte */
   state?: AlertState;
+  /** Remplace l'icône par défaut */
+  customIcon?: IconValue;
   /** Initialisation de l'état open */
   isOpen?: boolean;
   /** Gestion de l'affichage pour les alertes sur toute la largeur de page */
   fullPageWidth?: boolean;
+  /** Arrondi des angles de la div */
+  rounded?: boolean;
   /** Classname custom */
   className?: string;
   /** Détecte la fermeture du bloc */
@@ -31,8 +35,10 @@ export const Alert = ({
   description,
   footer,
   state = 'info',
+  customIcon,
   isOpen = true,
   fullPageWidth = false,
+  rounded = false,
   className,
   onClose,
 }: AlertProps) => {
@@ -44,7 +50,7 @@ export const Alert = ({
   return (
     <div
       className={classNames(
-        { 'w-full px-4 lg:px-6': fullPageWidth },
+        { 'w-full px-4 lg:px-6': fullPageWidth, 'rounded-lg': rounded },
         styles.background,
         className
       )}
@@ -56,13 +62,14 @@ export const Alert = ({
             hidden: !isOpen,
             'px-4': !fullPageWidth,
             'w-full mx-auto xl:max-w-7xl 2xl:max-w-8xl': fullPageWidth,
+            'rounded-lg': rounded,
           },
           styles.background
         )}
       >
         {/* Icône à gauche du bloc */}
         <Icon
-          icon={stateToIcon[state]}
+          icon={customIcon ? customIcon : stateToIcon[state]}
           className={classNames('mt-0.5', styles.text)}
         />
 
