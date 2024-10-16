@@ -8,7 +8,7 @@ import {
   Textarea,
 } from '@tet/ui';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import { getMaxLengthMessage } from '../utils';
+import { getMaxLengthMessage } from 'utils/formatUtils';
 import { OpenState } from '@tet/ui/utils/types';
 import { FicheAction } from '@tet/api/plan-actions';
 

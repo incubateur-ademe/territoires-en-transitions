@@ -1,39 +1,50 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import {Button, Card, Divider, Icon} from '@tet/ui';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
-import {openPreuve} from 'ui/shared/preuves/Bibliotheque/openPreuve';
+import { Button, Card, Divider, Icon, Notification, Tooltip } from '@tet/ui';
+import { TPreuve } from './types';
+import { openPreuve } from './openPreuve';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import MenuCarteDocument from './MenuCarteDocument';
-import {getAuthorAndDate, getFormattedTitle} from './utils';
-import {useEditPreuve} from 'ui/shared/preuves/Bibliotheque/useEditPreuve';
-import AlerteSuppression from '../AlerteSuppression';
+import { getAuthorAndDate, getFormattedTitle } from './utils';
+import { useEditPreuve } from './useEditPreuve';
+import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import {getTruncatedText} from '../../utils';
+import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
+import { IdentifiantAction } from './IdentifiantAction';
 
 type CarteDocumentProps = {
   isReadonly: boolean;
   document: TPreuve;
+  displayIdentifier?: boolean;
+  classComment?: string;
 };
 
-const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
+const CarteDocument = ({
+  isReadonly,
+  document,
+  displayIdentifier,
+  classComment,
+}: CarteDocumentProps) => {
   const {
     commentaire,
     created_at: dateCreation,
     created_by_nom: auteur,
     fichier,
     lien,
+    action,
+    rapport,
   } = document;
+  const dateVisite = rapport?.date;
 
   const handlers = useEditPreuve(document);
-  const {remove, editComment, editFilename, isLoading, isError} = handlers;
+  const { remove, editComment, isLoading, isError } = handlers;
 
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFullCommentaire, setIsFullCommentaire] = useState(false);
-  const isEditing = editComment.isEditing || editFilename.isEditing;
+  const isEditing = editComment.isEditing;
 
-  const {truncatedText: truncatedCom, isTextTruncated: isComTruncated} =
+  const { truncatedText: truncatedCom, isTextTruncated: isComTruncated } =
     getTruncatedText(commentaire, 160);
 
   useEffect(() => {
@@ -52,13 +63,25 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
 
   return (
     <>
-      <div className="relative group h-full">
+      <div
+        className={classNames('relative group h-full max-w-screen-md', {
+          'mt-3': fichier?.confidentiel,
+        })}
+        data-test="carte-doc"
+      >
+        {/** Cadenas document privé */}
+        {fichier?.confidentiel && (
+          <Tooltip label="Document en mode privé">
+            <div className="absolute -top-5 left-5">
+              <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
+            </div>
+          </Tooltip>
+        )}
         {/* Menu de la carte document */}
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
             document={document}
-            className="invisible group-hover:visible absolute top-4 right-4 "
-            onEdit={!!fichier ? () => editFilename.enter() : undefined}
+            className="absolute top-4 right-4 "
             onComment={() => editComment.enter()}
             onDelete={() => setIsDeleting(true)}
           />
@@ -70,7 +93,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
             {/* Icône document ou lien */}
             <div
               className={classNames(
-                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center',
+                'shrink-0 rounded-md h-9 w-9 flex items-center justify-center mt-2',
                 {
                   'bg-primary-1': isEditLoading,
                   'bg-primary-3': !isEditLoading,
@@ -90,21 +113,18 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
             {/* Contenu de la carte */}
             <div className="flex flex-col gap-2 w-full">
               {/* Titre avec format et taille du fichier */}
-              {!editFilename.isEditing ? (
-                <span
-                  className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
-                  title={
-                    !!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'
-                  }
-                  onClick={() => openPreuve(document)}
-                >
-                  {getFormattedTitle(document)}
-                </span>
-              ) : (
-                <DocumentInput
-                  editElement={editFilename}
-                  className="text-primary-10 text-base"
-                />
+              <span
+                className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+                data-test="name"
+                title={!!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+                onClick={() => openPreuve(document)}
+              >
+                {getFormattedTitle(document)}
+              </span>
+
+              {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
+              {displayIdentifier && action && (
+                <IdentifiantAction action={action} />
               )}
 
               {/* Date de création et auteur */}
@@ -124,7 +144,13 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                         size="xs"
                         className="text-grey-7"
                       />
-                      <span className="text-grey-8 text-xs font-medium italic whitespace-pre-wrap">
+                      <span
+                        className={classNames(
+                          'text-grey-8 text-xs font-medium italic whitespace-pre-wrap',
+                          classComment
+                        )}
+                        data-test="comment"
+                      >
                         {isFullCommentaire || !isComTruncated
                           ? commentaire
                           : truncatedCom}
@@ -136,7 +162,7 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                         size="xs"
                         className="ml-auto"
                         onClick={() =>
-                          setIsFullCommentaire(prevState => !prevState)
+                          setIsFullCommentaire((prevState) => !prevState)
                         }
                       >
                         {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
@@ -154,22 +180,33 @@ const CarteDocument = ({isReadonly, document}: CarteDocumentProps) => {
                   />
                 </>
               )}
+
+              {/* Date de visite */}
+              {!!dateVisite && (
+                <p className="text-xs fr-text-mention--grey mb-1 pl-2">
+                  Visite effectuée le{' '}
+                  {getTextFormattedDate({ date: dateVisite })}
+                </p>
+              )}
             </div>
           </div>
         </Card>
       </div>
 
       {/* Alerte de suppression du document */}
-      <AlerteSuppression
-        isOpen={isDeleting && !isReadonly}
-        setIsOpen={setIsDeleting}
-        title="Supprimer le document"
-        message="Le document sera définitivement supprimé de la fiche. Voulez-vous vraiment le supprimer ?"
-        onDelete={() => {
-          remove();
-          setIsEditLoading(true);
-        }}
-      />
+      {isDeleting && !isReadonly && (
+        <AlerteSuppression
+          className="relative w-auto"
+          isOpen={true}
+          setIsOpen={setIsDeleting}
+          title="Supprimer le document"
+          message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
+          onDelete={() => {
+            remove();
+            setIsEditLoading(true);
+          }}
+        />
+      )}
     </>
   );
 };

@@ -93,14 +93,14 @@ const useUpdatePreuveCommentaire = () =>
   );
 
 // renvoie une fonction de renommage d'un fichier de la bibliothèque
-const useUpdateBibliothequeFichierFilename = () =>
+export const useUpdateBibliothequeFichierFilename = () =>
   useMutation(
-    async (preuve: TPreuve & {updatedFilename: string}) => {
+    async (preuve: TPreuve & { updatedFilename: string }) => {
       if (!preuve?.fichier) {
         return null;
       }
-      const {collectivite_id, fichier, updatedFilename} = preuve;
-      const {hash} = fichier;
+      const { collectivite_id, fichier, updatedFilename } = preuve;
+      const { hash } = fichier;
       return supabaseClient.rpc('update_bibliotheque_fichier_filename', {
         collectivite_id,
         filename: updatedFilename,
@@ -109,6 +109,31 @@ const useUpdateBibliothequeFichierFilename = () =>
     },
     {
       mutationKey: 'update_bibliotheque_fichier_filename',
+      onSuccess: useRefetchPreuves(),
+    }
+  );
+
+// renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
+export const useUpdateBibliothequeFichierConfidentiel = () =>
+  useMutation(
+    async (preuve: {
+      collectivite_id: number;
+      fichier: { hash: string };
+      updatedConfidentiel: boolean;
+    }) => {
+      if (!preuve?.fichier) {
+        return null;
+      }
+      const { collectivite_id, fichier, updatedConfidentiel } = preuve;
+      const { hash } = fichier;
+      return supabaseClient.rpc('update_bibliotheque_fichier_confidentiel', {
+        collectivite_id,
+        confidentiel: updatedConfidentiel,
+        hash,
+      });
+    },
+    {
+      mutationKey: 'update_bibliotheque_fichier_confidentiel',
       onSuccess: useRefetchPreuves(),
     }
   );

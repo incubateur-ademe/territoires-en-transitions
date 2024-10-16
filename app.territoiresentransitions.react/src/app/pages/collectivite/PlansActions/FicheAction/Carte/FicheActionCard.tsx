@@ -9,7 +9,7 @@ import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
 import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
-import { getModifiedSince } from '../utils';
+import { getModifiedSince } from 'utils/formatUtils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 

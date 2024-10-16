@@ -16,11 +16,28 @@ export const Exemple1 = {
   render: Template,
 
   args: {
-    action: {id: 'eci_1.1.1'},
     initialSelection: [
       fileItemMocks.toobig,
       fileItemMocks.unknownFormat,
       fileItemMocks.formatAndSize,
     ],
+  },
+};
+
+export const DocReglementaire = {
+  render: Template,
+
+  args: {
+    initialSelection: [fileItemMocks.running1],
+    docType: 'reglementaire',
+  },
+};
+
+export const DocAnnexe = {
+  render: Template,
+
+  args: {
+    initialSelection: [fileItemMocks.running1],
+    docType: 'annexe',
   },
 };

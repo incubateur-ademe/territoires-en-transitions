@@ -17,12 +17,16 @@ const ModaleAjoutDocument = ({
 }: ModaleAjoutDocumentProps) => {
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Ajouter un document"
       size="lg"
-      render={({descriptionId, close}) => (
+      render={({ descriptionId, close }) => (
         <div id={descriptionId}>
-          <AddPreuveModal onClose={close} handlers={handlers} />
+          <AddPreuveModal
+            docType="annexe"
+            onClose={close}
+            handlers={handlers}
+          />
         </div>
       )}
     />

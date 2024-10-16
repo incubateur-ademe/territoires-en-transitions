@@ -34,9 +34,9 @@ const fetch = async (
   // lit la liste des fichiers de la collectivité
   const query = supabaseClient
     .from('bibliotheque_fichier')
-    .select('id,filename,filesize,hash', {count: 'exact'})
+    .select('id,filename,filesize,hash,confidentiel', { count: 'exact' })
     .eq('collectivite_id', collectivite_id)
-    .order('filename', {ascending: true})
+    .order('filename', { ascending: true })
     .range(NB_ITEMS_PER_PAGE * (page - 1), NB_ITEMS_PER_PAGE * page - 1);
 
   // éventuellement filtrée par nom de fichier

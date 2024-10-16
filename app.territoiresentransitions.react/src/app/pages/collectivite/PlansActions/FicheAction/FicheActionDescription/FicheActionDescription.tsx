@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Badge, Button } from '@tet/ui';
 import { FicheAction } from '@tet/api/plan-actions';
 import MenuDescription from './MenuDescription';
-import { getTruncatedText } from '../utils';
+import { getTruncatedText } from 'utils/formatUtils';
 import Markdown from 'ui/Markdown';
 
 type FicheActionDescriptionProps = {
