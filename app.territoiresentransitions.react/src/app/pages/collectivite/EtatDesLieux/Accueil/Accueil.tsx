@@ -2,8 +2,6 @@ import { ReactNode } from 'react';
 import { referentielToName } from 'app/labels';
 import { useProgressionReferentiel } from './data/useProgressionReferentiel';
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
-import IndicateursCard from './IndicateursCard';
-import PlansActionCard from './PlansActionCard';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 

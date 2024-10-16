@@ -17,7 +17,6 @@ type OpenDataIndicateurWithCategorie = {
 type Categorie = 'cae' | 'eci';
 
 export const useOpenDataIndicateursCount = (categorie: Categorie) => {
-  console.log('categ', categorie);
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
