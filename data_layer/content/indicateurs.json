@@ -24,7 +24,7 @@
       ],
       "titre_long": "Quantit\u00e9 de gaz \u00e0 effet de serre \u00e9mis par les activit\u00e9s et les habitants",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -44,7 +44,7 @@
       "thematiques": [],
       "titre_long": "Emissions  de gaz \u00e0 effet de serre totales nettes",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -90,7 +90,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur r\u00e9sidentiel",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -110,7 +110,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Chauffage / Maisons individuelles",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -130,7 +130,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Chauffage / Logement collectif",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -150,7 +150,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur R\u00e9sidentiel - Autres usages",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -170,7 +170,7 @@
       "thematiques": [],
       "titre_long": "Capture et stockage du carbone",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -193,7 +193,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur tertiaire",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -213,7 +213,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Tertiaire - Chauffage",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -233,7 +233,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Tertiaire - Autres usages",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -256,7 +256,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur du transport routier",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -276,7 +276,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transport routier - mobilit\u00e9 locale",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -296,7 +296,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transport routier - autre",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -319,7 +319,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur des autres transport (hors routier)",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -342,7 +342,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur de l'agriculture",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -362,7 +362,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Energie",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -382,7 +382,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Elevage",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -402,7 +402,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Agriculture - Pratiques culturales",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -425,7 +425,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur des d\u00e9chets",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -448,7 +448,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur de l'industrie hors branche \u00e9nergie",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -468,7 +468,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - M\u00e9taux primaires",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -488,7 +488,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Chimie",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -508,7 +508,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Non-m\u00e9talliques",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -528,7 +528,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Agro-industries",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -548,7 +548,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Equipements",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -568,7 +568,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Papier-carton",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -588,7 +588,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Industrie - Autres industries",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -611,7 +611,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre du secteur de l'industrie branche \u00e9nergie",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -631,7 +631,7 @@
       "thematiques": [],
       "titre_long": "Emissions de gaz \u00e0 effet de serre secteur Transports",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3697,7 +3697,7 @@
       ],
       "titre_long": "S\u00e9questration nette de dioxyde de carbone dans les sols et la for\u00eat",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3720,7 +3720,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans la for\u00eat",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3743,7 +3743,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les terres agricoles et les prairies",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3763,7 +3763,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les cultures",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3783,7 +3783,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les prairies",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3803,7 +3803,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les vignes",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3823,7 +3823,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les vergers",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3846,7 +3846,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les autres sols",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3866,7 +3866,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les zones humides",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3886,7 +3886,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les sols artificiels",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
@@ -3906,7 +3906,7 @@
       "thematiques": [],
       "titre_long": "S\u00e9questration nette de CO2 dans les produits bois",
       "type": null,
-      "unite": "teq CO2",
+      "unite": "kteq CO2",
       "valeur_indicateur": null
     },
     {
