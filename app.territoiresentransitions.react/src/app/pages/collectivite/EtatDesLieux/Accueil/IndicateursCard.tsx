@@ -10,7 +10,7 @@ import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import KeyNumbers from 'ui/score/KeyNumbers';
 import { useIndicateursCount } from './data/useIndicateurSummary';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useOpenDataIndicateurs } from './data/useOpenDataIndicateurs';
+import { useOpenDataIndicateursCount } from './data/useOpenDataIndicateurs';
 
 type IndicateursCardProps = {
   collectiviteId: number;
@@ -121,7 +121,7 @@ const FilledIndicateursCard = ({
     data: openDataIndicateurs,
     error,
     isLoading,
-  } = useOpenDataIndicateurs(referentielId);
+  } = useOpenDataIndicateursCount(referentielId);
 
   console.log('Open Data Indicateurs:', openDataIndicateurs);
 
@@ -129,12 +129,7 @@ const FilledIndicateursCard = ({
     <AccueilCard className="grow flex flex-col">
       <div>
         {openDataIndicateurs ? (
-          openDataIndicateurs.map((indicateur) => (
-            <div>
-              {JSON.stringify(indicateur)}{' '}
-              {/* Ou affichez d'une autre manière */}
-            </div>
-          ))
+          <div>{openDataIndicateurs}</div>
         ) : (
           <div>Aucun indicateur disponible.</div>
         )}
