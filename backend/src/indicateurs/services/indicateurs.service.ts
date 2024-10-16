@@ -17,9 +17,7 @@ import * as _ from 'lodash';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
-import {
-  GetIndicateursValeursResponseType,
-} from '../models/get-indicateurs.response';
+import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
 import { groupementTable } from '../../collectivites/models/groupement.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import {
@@ -55,7 +53,8 @@ export default class IndicateursService {
   /**
    * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
    */
-  public readonly NULL_SOURCE_ID = 'collectivite';
+  static NULL_SOURCE_ID = 'collectivite';
+  static NULL_SOURCE_LABEL = 'saisie manuelle';
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
@@ -91,10 +90,12 @@ export default class IndicateursService {
       conditions.push(eq(indicateurValeurTable.id, options.indicateurId));
     }
     if (options.sources?.length) {
-      const nullSourceId = options.sources.includes(this.NULL_SOURCE_ID);
+      const nullSourceId = options.sources.includes(
+        IndicateursService.NULL_SOURCE_ID
+      );
       if (nullSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== this.NULL_SOURCE_ID
+          (s) => s !== IndicateursService.NULL_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -434,7 +435,8 @@ export default class IndicateursService {
         const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
           v.indicateur_valeur.collectiviteId
         }_${v.indicateur_valeur.dateValeur}_${
-          v.indicateur_source_metadonnee?.sourceId || this.NULL_SOURCE_ID
+          v.indicateur_source_metadonnee?.sourceId ||
+          IndicateursService.NULL_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
@@ -565,7 +567,7 @@ export default class IndicateursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {
-            return this.NULL_SOURCE_ID;
+            return IndicateursService.NULL_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonneeId
