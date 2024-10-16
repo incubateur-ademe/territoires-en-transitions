@@ -14,36 +14,38 @@ Afin d'améliorer la lisibilité, la cohérence et la maintenabilité de notre c
 
 Les conventions de nommage et d'architecture choisies suivent les standards par défaut Typescript, ESLint, Node, Next.js, et Nest.js.
 
-**→ Pour les apps et librairies :**
+- **Language FR et EN**
 
-1. Language FR/EN : domaines, scopes, et entités en français, tout le reste en anglais pour fluidifer l'écriture du code
+  → domaines, scopes, et entités en français
+  → tout le reste en anglais pour fluidifer l'écriture du code : les objets et propriétés non "métier", les commentaires, les logs
 
-   Exemple : `hasFicheActions()`
+  Exemple : `hasFicheActions()`
 
-   Exemple : `const result = await indicateursFetch()`
+  Exemple : `const result = await indicateursFetch()`
 
-1. `kebab-case` pour les noms de fichiers et dossiers
+- **Commentaires** : conformément à "Clean Code", le code expressif ne nécessite pas de commentaire. Sauf si la complexité le justifie.
 
-   Exemple : `src/app/plan-actions/plan-actions.tsx`
+- **`kebab-case` pour les noms de fichiers et dossiers**
 
-1. Organisation des dossiers en domaine → scope (optionnel) → layer technique
+  Exemple : `src/app/plan-actions/plan-actions.tsx`
 
-   Exemple : `src/indicateurs/models/indicateur.schema.ts`
+- **Organisation des dossiers d'abord par domaine → puis scope → puis layer technique**
 
-   Exemple : `src/plan-actions/shared/models/fiche-action.schema.ts`
+  Exemple : `src/indicateurs/models/indicateur.schema.ts`
 
-   Exemple : `src/app/plan-actions/fiche-actions/views/fiche-action.card.tsx`
+  Exemple : `src/plan-actions/shared/models/fiche-action.schema.ts`
 
-1. Suffix des fichiers avec son "type"
+  Exemple : `src/app/plan-actions/fiche-actions/views/fiche-action.card.tsx`
 
-   Exemple type UI : `fiche-action.card.tsx`, `fiche-action.list.tsx`, `fiche-action.list-item.tsx`
+- **Suffix des fichiers avec son "type"**
 
-**→ Pour les librairies uniquement :**
+  Exemple type UI : `fiche-action.card.tsx`, `fiche-action.list.tsx`, `fiche-action.list-item.tsx`
 
-1. `index.ts` au niveau des sous-scopes, pour rassembler tous les exports associés et simplifier les imports.
+- **`index.ts` au niveau des sous-scopes**, si besoin, pour rassembler tous les exports associés et simplifier les imports.
 
-   Exemple : `src/plan-actions/fiche-actions/index.ts`
-   → résultat à l'import : `import { FicheAction } from '@tet/api/fiche-actions'`
+  Exemple : `src/plan-actions/fiche-actions/index.ts`
+
+  → résultat à l'import : `import { FicheAction } from '@tet/api/fiche-actions'`
 
 ### Les domaines métiers territoires en Transition
 
@@ -56,7 +58,7 @@ Voici les domaines définis actuellement :
 3. `referentiels`
 4. `indicateurs`
 5. `plan-actions`
-6. `panier-actions`
+6. `impact-actions`
 
 Les domaines définis doivent rester restreints et (quasi) figés.
 
@@ -66,53 +68,55 @@ L'ajout exceptionnel d'un nouveau domaine ne peut se faire qu'après validation 
 
 ```
 plan-actions
-  → plan-action.table
-  → fiche-action.table
-  → fiche-resume.dto
+  → plan-action
+  → fiche-action
 
 indicateurs
-  → definition.table
-  → valeur.table
-  → categorie.table
+  → definition
+  → valeur
+  → categorie
 ```
 
-### Les "layers" techniques
+### Les "layers" et "types" techniques
 
-Les couches techniques sont représentés au niveau du dossier final du fichier.
+Les layers techniques sont représentés au niveau du dossier final du fichier.
 
-**Nos layers backend :**
+Au sein d'un layer, chaque fichier peut avoir un "type" préfixé pour préciser son usage et favoriser la découvrabilité et la compréhension de la codebase. On écrira ce type toujours au singulier.
+
+#### Nos layers backend :
 
 - `models` : couche de représentation des données structurées (entités BDD ou simple value objects)
 - `services` : couche de logique ou d'échange de données
 - `controllers` : couche de logique ou d'échange de données
 
-**Nos layers frontend :**
+Exemples de type :
+
+- `models/fiche-action.`**`table`**`.ts`
+- `models/fiche-action.`**`dto`**`.ts`
+- `services/fiche-action.`**`repo`**`.ts`
+
+Exemples plus granulaires, si pertinent :
+
+- `services/fiche-action.`**`save`**`.ts`
+- `services/fiche-action.`**`fetch-one`**`.ts`
+- `services/fiche-actions.`**`fetch-all`**`.ts`
+
+#### Nos layers frontend :
 
 - `views` : couche des composants UI
 - `hooks` : couche de logique UI
-
-Au sein d'un layer, chaque fichier peut avoir un "type" préfixé pour préciser son usage et favoriser la découvrabilité et la compréhension de la codebase. On écrira ce type toujours au singulier.
-
-Exemples de type :
-
-**Pour les models :**
-
-- `model` → `models/fiche-action.model.ts`
-
-**Pour les repos :**
-
-- `save` → `models/fiche-action.save.ts`
-- `fetch-one` → `models/fiche-action.fetch-one.ts`
-- `fetch-all` → `models/fiche-actions.fetch-all.ts`
 
 ## Consequences
 
 1.  Standards par défaut
 
-    On évite ainsi les débats basés sur les préférences personnelles, et on facilite la prise en main du code par les nouveaux arrivants sur le projet.
+    Les conventions se veulent simples, avec le moins d'exceptions possibles.
 
-    → Voir les conventions de Next.js par exemple sur le projet de démo [`commerce`](https://github.com/vercel/commerce) par les équipes de Vercel, ou bien sur les [fichiers par défaut](https://nextjs.org/docs/app/api-reference/file-conventions) du framework.
-    → Voir
+    Les conventions suivent au maximum les standards de la communauté. On évite ainsi les débats basés sur les préférences personnelles, et on facilite la prise en main du code par les nouveaux arrivants sur le projet.
+
+    Note particulière concernant le `kebab-case` des dossiers et fichiers : ce choix est principalement motivé par le fait de suivre la convention Next.js (App Router), framework – et donc architecture de dossier du router associé – utilisé par la plupart de nos apps. À noter que de nombreux autres projets suivent aussi désormais ce standard.
+
+    → Voir par exemple le projet de démo Next.js [`commerce`](https://github.com/vercel/commerce) par les équipes de Vercel, ou bien simplement les [fichiers par défaut](https://nextjs.org/docs/app/api-reference/file-conventions) du framework.
 
 2.  Automatiser les conventions
 
@@ -122,6 +126,8 @@ Exemples de type :
 
 ## Useful links
 
-- Inspirations autour du concept d'architecture hexagonale / clean architecture
+- Inspirations autour du concept d'architecture hexagonale / clean code
 
   → https://dev.to/dyarleniber/hexagonal-architecture-and-clean-architecture-with-examples-48oi
+
+  → https://damien.pobel.fr/post/clean-code/
