@@ -1,4 +1,4 @@
-import {Link, Redirect, Route} from 'react-router-dom';
+import { Link, Redirect, Route } from 'react-router-dom';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
@@ -12,16 +12,16 @@ import {
   makeCollectivitePlansActionsNouveauUrl,
 } from 'app/paths';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
-import {useFichesNonClasseesListe} from './FicheAction/data/useFichesNonClasseesListe';
-import {useCreateFicheAction} from './FicheAction/data/useUpsertFicheAction';
-import {CreerPlanPage} from './ParcoursCreationPlan/CreerPlanPage';
-import {ImporterPlanPage} from './ParcoursCreationPlan/ImporterPlanPage';
-import {SelectionPage} from './ParcoursCreationPlan/SelectionPage';
-import {PlanActionPage} from './PlanAction/PlanActionPage';
+import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
+import { CreerPlanPage } from './ParcoursCreationPlan/CreerPlanPage';
+import { ImporterPlanPage } from './ParcoursCreationPlan/ImporterPlanPage';
+import { SelectionPage } from './ParcoursCreationPlan/SelectionPage';
+import { PlanActionPage } from './PlanAction/PlanActionPage';
 import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
+import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 
 type Props = {
   collectivite_id: number;
@@ -31,12 +31,12 @@ type Props = {
 /**
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
-export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
-  const {data: axes} = usePlansNavigation();
-  const {data: fichesNonClasseesListe} =
+export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
+  const { data: axes } = usePlansNavigation();
+  const { data: fichesNonClasseesListe } =
     useFichesNonClasseesListe(collectivite_id);
 
-  const {mutate: createFicheAction} = useCreateFicheAction();
+  const { mutate: createFicheAction } = useCreateFicheAction();
 
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
@@ -82,7 +82,7 @@ export const PlansActionsRoutes = ({collectivite_id, readonly}: Props) => {
             collectiviteId: collectivite_id,
             planActionUid:
               axes
-                ?.filter(axe => axe.depth === 0)
+                ?.filter((axe) => axe.depth === 0)
                 .at(0)
                 ?.id.toString() || '',
           })}

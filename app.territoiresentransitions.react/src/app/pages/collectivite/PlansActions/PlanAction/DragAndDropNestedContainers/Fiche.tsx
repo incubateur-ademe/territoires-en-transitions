@@ -1,11 +1,10 @@
-import {createPortal} from 'react-dom';
-import {DragOverlay, useDraggable} from '@dnd-kit/core';
-
+import { createPortal } from 'react-dom';
+import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
-import {FicheResume} from '../../FicheAction/data/types';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
-import {QueryKey} from 'react-query';
+import { QueryKey } from 'react-query';
+import { FicheResume } from '@tet/api/plan-actions';
 
 export type FicheDndData = {
   type: 'fiche';
@@ -21,7 +20,7 @@ type Props = {
   editKeysToInvalidate?: QueryKey[];
 };
 
-const Fiche = ({planId, axeId, url, fiche, editKeysToInvalidate}: Props) => {
+const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -61,7 +60,7 @@ const Fiche = ({planId, axeId, url, fiche, editKeysToInvalidate}: Props) => {
         )}
       {!active && (
         <div
-          className={classNames('h-full', {'cursor-default': !canDrag})}
+          className={classNames('h-full', { 'cursor-default': !canDrag })}
           ref={draggableRef}
           {...listeners}
           {...attributes}

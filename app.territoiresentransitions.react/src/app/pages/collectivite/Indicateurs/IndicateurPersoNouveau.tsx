@@ -1,18 +1,18 @@
-import {useHistory} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {FicheAction} from '../PlansActions/FicheAction/data/types';
-import {Form, Formik} from 'formik';
-import * as Yup from 'yup';
-import {TThematiqueRow} from 'types/alias';
-import {useState} from 'react';
-import FormikInput from 'ui/shared/form/formik/FormikInput';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { FicheAction } from '@tet/api/plan-actions';
+import { Thematique } from '@tet/api/shared/domain';
+import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@tet/ui';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from 'app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
-import {Alert, Button, Checkbox, Field, FormSectionGrid} from '@tet/ui';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Form, Formik } from 'formik';
+import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import FormikInput from 'ui/shared/form/formik/FormikInput';
+import * as Yup from 'yup';
 
 const validation = Yup.object({
   titre: Yup.string()
@@ -38,7 +38,7 @@ const IndicateurPersoNouveau = ({
   const history = useHistory();
   const ficheId = fiche?.id;
 
-  const {mutate: save, isLoading} = useInsertIndicateurPersoDefinition({
+  const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
     onSuccess: (indicateurId) => {
       // redirige vers la page de l'indicateur après la création
       const url = makeCollectiviteIndicateursUrl({
@@ -55,7 +55,7 @@ const IndicateurPersoNouveau = ({
     },
   });
 
-  const [thematiques, setThematiques] = useState<TThematiqueRow[]>(
+  const [thematiques, setThematiques] = useState<Thematique[]>(
     fiche?.thematiques ?? []
   );
 
@@ -70,7 +70,7 @@ const IndicateurPersoNouveau = ({
   const onSave = (definition: TIndicateurPersoDefinitionWrite) => {
     definition = TEMPORARY_copyDescriptionToCommentaire(definition);
     save({
-      definition: {...definition, thematiques},
+      definition: { ...definition, thematiques },
       ficheId,
       isFavoriCollectivite: favoriCollectivite,
     });
@@ -81,8 +81,8 @@ const IndicateurPersoNouveau = ({
    * -> step 2 of expand and contract pattern (
    * https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern).
    *
-   * Next step: change             
-   * 
+   * Next step: change
+   *
    * <FormikInput
         type="area"
         name="description"
@@ -95,7 +95,7 @@ const IndicateurPersoNouveau = ({
         label="Commentaire"
         className="col-span-2"
       />
-   * 
+   *
    * Related to this PR: https://github.com/incubateur-ademe/territoires-en-transitions/pull/3313.
    */
   const TEMPORARY_copyDescriptionToCommentaire = (
@@ -119,7 +119,7 @@ const IndicateurPersoNouveau = ({
       validationSchema={validation}
       onSubmit={onSave}
     >
-      {({isValid}) => (
+      {({ isValid }) => (
         <Form className="flex flex-col gap-8">
           {/* Message d'information sur les indicateurs personnalisés */}
           <Alert
@@ -142,7 +142,7 @@ const IndicateurPersoNouveau = ({
             <Field title="Thématique" className="col-span-2">
               <ThematiquesDropdown
                 values={thematiques?.map((t) => t.id)}
-                onChange={({thematiques}) => setThematiques(thematiques)}
+                onChange={({ thematiques }) => setThematiques(thematiques)}
               />
             </Field>
 

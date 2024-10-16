@@ -1,7 +1,8 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateurs, SharedDomain} from '@tet/api';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Indicateurs } from '@tet/api';
+import { Personne } from '@tet/api/collectivites';
 
 /** Met à jour les personnes pilotes d'un indicateur */
 export const useUpsertIndicateurPilote = (indicateurId: number) => {
@@ -10,7 +11,7 @@ export const useUpsertIndicateurPilote = (indicateurId: number) => {
 
   return useMutation({
     mutationKey: `upsert_indicateur_pilotes`,
-    mutationFn: async (pilotes: SharedDomain.Personne[]) => {
+    mutationFn: async (pilotes: Personne[]) => {
       if (!collectivite_id) return;
       return Indicateurs.save.upsertPilotes(
         supabaseClient,

@@ -10,6 +10,8 @@ type ModaleSuppressionProps = {
   axeId?: number | null;
   keysToInvalidate?: QueryKey[];
   buttonVariant?: 'white' | 'grey';
+  /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
+  redirect?: boolean;
 };
 
 /**
@@ -22,11 +24,13 @@ const ModaleSuppression = ({
   axeId,
   keysToInvalidate,
   buttonVariant,
+  redirect,
 }: ModaleSuppressionProps) => {
   const { mutate: deleteFiche } = useDeleteFicheAction({
     ficheId: ficheId!,
     axeId: axeId ?? null,
     keysToInvalidate: keysToInvalidate,
+    redirect,
   });
 
   return (

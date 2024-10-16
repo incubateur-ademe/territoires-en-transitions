@@ -1,34 +1,41 @@
-import {useState} from 'react';
 import classNames from 'classnames';
+import { useState } from 'react';
 
-import {Button, Card, CardProps, Checkbox, Tooltip} from '@tet/ui';
-import {Notification} from '@tet/ui';
+import {
+  Button,
+  Card,
+  CardProps,
+  Checkbox,
+  Notification,
+  Tooltip,
+} from '@tet/ui';
 
+import {
+  IndicateurChartInfo,
+  IndicateurListItem,
+} from '@tet/api/indicateurs/domain';
 import IndicateurChart, {
   IndicateurChartData,
   IndicateurChartProps,
 } from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
-import {useIndicateurChartInfo} from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
-import {
-  TIndicateurChartInfo,
-  TIndicateurListItem,
-} from 'app/pages/collectivite/Indicateurs/types';
+import { useIndicateurChartInfo } from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
+import { prepareData } from 'app/pages/collectivite/Indicateurs/chart/utils';
+import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,
 } from 'ui/charts/Line/utils';
-import {prepareData} from 'app/pages/collectivite/Indicateurs/chart/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
-import {getIndicateurRestant} from './utils';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {transformeValeurs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
+import { getIndicateurRestant } from './utils';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
 import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
-import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
-  definition: TIndicateurListItem;
+  definition: IndicateurListItem;
   /** Permet de sélectionner ou dissocier l'indicateur */
   selectState?: {
     /**
@@ -38,7 +45,7 @@ export type IndicateurCardProps = {
      */
     checkbox?: boolean;
     selected: boolean;
-    setSelected: (indicateur: TIndicateurListItem) => void;
+    setSelected: (indicateur: IndicateurListItem) => void;
   };
   /** Rend la carte comme un lien. Ne peux pas être utilisé avec la prop `selectState` */
   href?: string;
@@ -53,7 +60,7 @@ export type IndicateurCardProps = {
   /** Affiche les options de modification au hover de la carte */
   isEditable?: boolean;
   /** Permet d'ajouter des éléments dans le groupe de menus */
-  otherMenuActions?: (indicateur: TIndicateurListItem) => React.ReactNode[];
+  otherMenuActions?: (indicateur: IndicateurListItem) => React.ReactNode[];
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
@@ -76,13 +83,13 @@ const IndicateurCard = ({
   }
 
   // lit les données nécessaires à l'affichage du graphe
-  const {data: chartInfo, isLoading} = useIndicateurChartInfo(
+  const { data: chartInfo, isLoading } = useIndicateurChartInfo(
     props.definition.id,
     autoRefresh
   );
 
   // sépare les données objectifs/résultats
-  const {valeurs} = transformeValeurs(chartInfo?.valeurs || []);
+  const { valeurs } = transformeValeurs(chartInfo?.valeurs || []);
 
   // Assemblage des données pour le graphique
   const data = {
@@ -106,7 +113,7 @@ export default IndicateurCard;
 export type IndicateurCardBaseProps = IndicateurCardProps & {
   data: IndicateurChartData;
   isLoading: boolean;
-  chartInfo?: TIndicateurChartInfo | null;
+  chartInfo?: IndicateurChartInfo | null;
 };
 
 /**
@@ -150,7 +157,7 @@ export const IndicateurCardBase = ({
 
   /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
   const hasValeurOrObjectif =
-    data.valeurs.filter(v => typeof v.valeur === 'number').length > 0;
+    data.valeurs.filter((v) => typeof v.valeur === 'number').length > 0;
 
   const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
 
@@ -184,7 +191,9 @@ export const IndicateurCardBase = ({
         dataTest={`chart-${definition.id}`}
         className={classNames(
           'h-full font-normal !gap-3 !p-6',
-          {'border-primary-7': selectState?.checkbox && selectState?.selected},
+          {
+            'border-primary-7': selectState?.checkbox && selectState?.selected,
+          },
           className
         )}
         href={href}
@@ -199,6 +208,8 @@ export const IndicateurCardBase = ({
                 titre: definition.titre,
                 estPerso: definition.estPerso,
                 identifiant: definition.identifiant || null,
+                // description: chartInfo?.titreLong ?? '',
+                // unite: chartInfo?.unite ?? '',
                 hasOpenData: definition.hasOpenData,
               })
             }
@@ -210,9 +221,10 @@ export const IndicateurCardBase = ({
             <div className="max-w-full font-bold line-clamp-2">
               {chartInfo?.titre}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <BadgeACompleter a_completer={isACompleter} size="sm" />
               {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
+              {definition.hasOpenData && <BadgeOpenData size="sm" />}
             </div>
           </>
         )}
@@ -239,8 +251,8 @@ export const IndicateurCardBase = ({
                   data={data}
                   isLoading={isLoading}
                   className={classNames(
-                    {'grow-0': isNotLoadingNotFilled},
-                    {'!items-end': chartInfo?.rempli},
+                    { 'grow-0': isNotLoadingNotFilled },
+                    { '!items-end': chartInfo?.rempli },
                     chart?.className
                   )}
                   chartConfig={{
@@ -282,14 +294,14 @@ export const IndicateurCardBase = ({
                 {hasValeurOrObjectif && (
                   <div className="flex flex-wrap gap-4 ml-2 mt-2">
                     {generateLineLegendItems(prepareData(data.valeurs)).map(
-                      ({name, color, symbole}) => (
+                      ({ name, color, symbole }) => (
                         <div key={name} className="flex items-center gap-2">
                           {!!symbole ? (
                             symbole(color)
                           ) : (
                             <div
                               className="w-3 h-3 rounded-full"
-                              style={{backgroundColor: color}}
+                              style={{ backgroundColor: color }}
                             />
                           )}
                           <div className="text-xs text-grey-8">{name}</div>

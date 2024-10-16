@@ -1,23 +1,24 @@
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import {HeaderIndicateur} from './detail/HeaderIndicateur';
-import {IndicateurCompose} from './detail/IndicateurCompose';
-import {IndicateurSidePanelToolbar} from './IndicateurSidePanelToolbar';
-import {TIndicateurDefinition} from '../types';
-import {useIndicateurDefinition} from './useIndicateurDefinition';
-import {Badge, Field, TrackPageView} from '@tet/ui';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIndicateurImportSources} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
-import {ImportSourcesSelector} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
+import { HeaderIndicateur } from './detail/HeaderIndicateur';
+import { IndicateurCompose } from './detail/IndicateurCompose';
+import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';
+import { TIndicateurDefinition } from '../types';
+import { useIndicateurDefinition } from './useIndicateurDefinition';
+import { Badge, Field, TrackPageView } from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useIndicateurImportSources } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
+import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import {referentielToName} from 'app/labels';
-import {IndicateurValuesTabs} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
-import {IndicateurInfoLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
-import {FichesActionLiees} from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
+import { referentielToName } from 'app/labels';
+import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
+import { IndicateurInfoLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
+import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useUpdateIndicateurDefinition} from './useUpdateIndicateurDefinition';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
+import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -25,23 +26,22 @@ export const IndicateurPredefiniBase = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
-  const {commentaire} = definition;
-  const {mutate: updateDefinition} = useUpdateIndicateurDefinition();
+  const { commentaire } = definition;
+  const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
 
   const collectivite_id = useCollectiviteId()!;
 
-  const {sources, currentSource, setCurrentSource} = useIndicateurImportSources(
-    definition.id
-  );
+  const { sources, currentSource, setCurrentSource } =
+    useIndicateurImportSources(definition.id);
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (name: 'commentaire', value: string) => {
     const collectivite_id = collectivite?.collectivite_id;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
-      updateDefinition({...definition, [name]: nouveau});
+      updateDefinition({ ...definition, [name]: nouveau });
     }
   };
 
@@ -49,7 +49,7 @@ export const IndicateurPredefiniBase = ({
     <>
       <TrackPageView
         pageName="app/indicateurs/predefini"
-        properties={{collectivite_id, indicateur_id: definition.identifiant!}}
+        properties={{ collectivite_id, indicateur_id: definition.identifiant! }}
       />
       <HeaderIndicateur title={definition.titre} />
       <div className="px-10 py-4">
@@ -71,6 +71,7 @@ export const IndicateurPredefiniBase = ({
                   state="grey"
                 />
               )}
+              {definition.hasOpenData && <BadgeOpenData />}
             </div>
             {!!sources?.length && (
               <ImportSourcesSelector
@@ -81,6 +82,7 @@ export const IndicateurPredefiniBase = ({
               />
             )}
             <IndicateurDetailChart
+              className="mb-10"
               definition={definition}
               rempli={definition.rempli}
               source={currentSource}

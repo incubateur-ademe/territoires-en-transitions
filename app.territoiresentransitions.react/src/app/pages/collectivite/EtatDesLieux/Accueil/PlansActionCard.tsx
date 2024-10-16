@@ -1,24 +1,24 @@
-import { useHistory } from 'react-router-dom';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 
+import { Axe, Statut } from '@tet/api/plan-actions/domain';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
-import { TAxeRow } from 'types/alias';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import ButtonWithLink from 'ui/buttons/ButtonWithLink';
+import Chart from 'ui/charts/Chart';
 import { PictoPlansAction } from 'ui/pictogrammes/PictoPlansAction';
+import KeyNumbers from 'ui/score/KeyNumbers';
+import { usePlansActionsListe } from '../PlansActions/PlanAction/data/usePlansActionsListe';
+import { usePlanActionTableauDeBord } from '../PlansActions/Synthese/data/usePlanActionTableauDeBord';
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import KeyNumbers from 'ui/score/KeyNumbers';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { statutToColor } from 'app/pages/collectivite/PlansActions/Synthese/utils';
-import Chart from 'ui/charts/Chart';
-import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import { usePlanActionTableauDeBord } from '@tet/app/pages/collectivite/PlansActions/Synthese/data/usePlanActionTableauDeBord';
+import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
 
 type PlanActionCardProps = {
   collectiviteId: number;
@@ -26,7 +26,7 @@ type PlanActionCardProps = {
 
 type FilledPlansActionCardProps = {
   collectiviteId: number;
-  plans: TAxeRow[];
+  plans: Axe[];
 };
 
 type EmptyPlansActionCardProps = {
@@ -40,7 +40,7 @@ type EmptyPlansActionCardProps = {
 const PlansActionCard = ({
   collectiviteId,
 }: PlanActionCardProps): JSX.Element => {
-  const plansActions = usePlansActionsListe(collectiviteId);
+  const { data: plansActions } = usePlansActionsListe({});
 
   return plansActions?.plans?.length ? (
     <FilledPlansActionCard
@@ -127,7 +127,7 @@ const FilledPlansActionCard = ({
                     ? planActionsStats.statuts.map((st) => ({
                         ...st,
                         id: st.id !== 'NC' ? st.id : 'Sans statut',
-                        color: statutToColor[st.id],
+                        color: statutToColor[st.id as Statut],
                       }))
                     : [],
                 unit: 'fiche',

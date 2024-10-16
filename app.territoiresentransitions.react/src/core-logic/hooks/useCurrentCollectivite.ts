@@ -1,9 +1,8 @@
-import {useQuery} from 'react-query';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TNiveauAcces} from 'types/alias';
-import {useOwnedCollectivites} from './useOwnedCollectivites';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { TNiveauAcces } from 'types/alias';
 
 export type CurrentCollectivite = {
   collectivite_id: number;
@@ -18,10 +17,10 @@ export type CurrentCollectivite = {
 
 // charge une collectivité
 const fetchCurrentCollectivite = async (collectivite_id: number) => {
-  const {data} = await supabaseClient
+  const { data } = await supabaseClient
     .from('collectivite_niveau_acces')
     .select()
-    .match({collectivite_id});
+    .match({ collectivite_id });
 
   const collectivite = data![0];
   return collectivite;
@@ -46,18 +45,16 @@ function toCurrentCollectivite(collectivite: any): CurrentCollectivite {
 // et détermine si elle est en lecture seule pour l'utilisateur courant ou non
 // la requête est rechargée quand le user id ou le collectivite id changent
 export const useCurrentCollectivite = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
+  const collectiviteId = useCollectiviteId();
 
-  const ownedCollectivites = useOwnedCollectivites();
-  const collectivite_id = useCollectiviteId();
-
-  const {data} = useQuery(
-    ['current_collectivite', collectivite_id, user?.id],
+  const { data } = useQuery(
+    ['current_collectivite', collectiviteId, user?.id],
     async () => {
-      const collectivite = collectivite_id
-        ? await fetchCurrentCollectivite(collectivite_id)
-        : ownedCollectivites?.length
-        ? ownedCollectivites[0]
+      const collectivite = collectiviteId
+        ? await fetchCurrentCollectivite(collectiviteId)
+        : user?.collectivites?.length
+        ? user.collectivites[0]
         : null;
 
       if (!collectivite) {

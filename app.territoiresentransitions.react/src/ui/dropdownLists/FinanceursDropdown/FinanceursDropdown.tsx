@@ -1,7 +1,7 @@
-import {SelectMultipleProps} from '@tet/ui';
-import {TFinanceurTagInsert} from 'types/alias';
-import {useFinanceursListe} from './useFinanceursListe';
+import { Tag } from '@tet/api/shared/domain';
+import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
+import { useFinanceursListe } from './useFinanceursListe';
 
 type FinanceursDropdownProps = Omit<
   SelectMultipleProps,
@@ -13,13 +13,13 @@ type FinanceursDropdownProps = Omit<
     financeurs,
     selectedFinanceur,
   }: {
-    financeurs: TFinanceurTagInsert[];
-    selectedFinanceur: TFinanceurTagInsert;
+    financeurs: Tag[];
+    selectedFinanceur: Tag;
   }) => void;
 };
 
 const FinanceursDropdown = (props: FinanceursDropdownProps) => {
-  const {data, refetch} = useFinanceursListe();
+  const { data, refetch } = useFinanceursListe();
 
   return (
     <SelectTags
@@ -29,10 +29,10 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
       optionsListe={data}
       disabledOptionsIds={props.disabledOptionsIds}
       userCreatedOptionsIds={(data ?? [])
-        .map(d => d.id)
-        .filter(d => !props.disabledOptionsIds?.includes(d))}
+        .map((d) => d.id)
+        .filter((d) => !props.disabledOptionsIds?.includes(d))}
       refetchOptions={refetch}
-      onChange={({values, selectedValue}) => {
+      onChange={({ values, selectedValue }) => {
         props.onChange({
           financeurs: values,
           selectedFinanceur: selectedValue,

@@ -135,3 +135,69 @@ export const buttonSizeClassnames: Record<
     iconButton: 'p-5',
   },
 };
+
+/**
+ * Thème couleurs du composant ButtonGroup
+ **/
+export const buttonGroupTheme = {
+  primary: {
+    default: {
+      normal: {
+        text: '',
+        background: '',
+        border: '',
+        icon: '',
+      },
+      disabled: {
+        text: '!text-primary-3',
+        background: '!bg-primary-0',
+        border: '!border-primary-4',
+        icon: 'fill-primary-3',
+      },
+    },
+    active: {
+      normal: {
+        text: 'text-white hover:text-white',
+        background: 'bg-primary-7 hover:!bg-primary-8',
+        border: '',
+        icon: '',
+      },
+      disabled: {
+        text: '!text-primary-2',
+        background: '!bg-primary-4',
+        border: '!border-primary-4',
+        icon: 'fill-primary-2',
+      },
+    },
+  },
+  neutral: {
+    default: {
+      normal: {
+        text: '!text-grey-7 hover:!text-grey-7',
+        background: '!bg-white hover:!bg-[#F9F9F9]',
+        border: '!border-grey-7 hover:!border-grey-6',
+        icon: '!fill-grey-7 hover:!fill-grey-7',
+      },
+      disabled: {
+        text: '!text-gray-300',
+        background: '!bg-white',
+        border: '!border-grey-4',
+        icon: 'fill-grey-1',
+      },
+    },
+    active: {
+      normal: {
+        text: '!text-grey-7 hover:!text-grey-7',
+        background: '!bg-grey-3 hover:!bg-grey-4',
+        border: '!border-grey-7 hover:!border-grey-6',
+        icon: '!fill-grey-7 hover:!fill-grey-7',
+      },
+      disabled: {
+        text: '!text-grey-7 !text-opacity-70',
+        background: '!bg-grey-3',
+        border: '!border-grey-5',
+        icon: 'fill-grey-1',
+      },
+    },
+  },
+};

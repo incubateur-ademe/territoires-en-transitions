@@ -1,26 +1,33 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useQuery} from 'react-query';
-import {FicheResume} from '../../FicheAction/data/types';
-import {sortFichesResume} from '../../FicheAction/data/utils';
-import {fetchActionImpactId} from '../../FicheAction/data/useFicheActionImpactId';
+import { FicheResume, ficheResumesFetch } from '@tet/api/plan-actions';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { objectToCamel } from 'ts-case-convert';
+import { fetchActionImpactId } from '../../FicheAction/data/useFicheActionImpactId';
+import { sortFichesResume } from '../../FicheAction/data/utils';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type Args = {
   ficheIds: number[];
   axeId: number;
 };
 
-export const useAxeFiches = ({ficheIds, axeId}: Args) => {
+export const useAxeFiches = ({ ficheIds, axeId }: Args) => {
+  const collectiviteId = useCollectiviteId()!;
+
   return useQuery(['axe_fiches', axeId, ficheIds], async () => {
-    const {data} = await supabaseClient
-      .from('fiche_resume')
-      .select()
-      .in('id', ficheIds);
+    const { data } = await ficheResumesFetch({
+      dbClient: supabaseClient,
+      collectiviteId,
+      options: { filtre: { ficheActionIds: ficheIds } },
+    });
 
-     const {data: actionsImpact} = await fetchActionImpactId(ficheIds);
+    const actionsImpact = await fetchActionImpactId(ficheIds);
 
-     return sortFichesResume(data as FicheResume[]).map(fiche => {
-       const actionImpact = actionsImpact?.find(f => f.fiche_id === fiche.id);
-       return {...fiche, actionImpactId: actionImpact?.action_impact_id};
-     });
+    return sortFichesResume(objectToCamel(data ?? []) as FicheResume[]).map(
+      (fiche) => {
+        const actionImpact = actionsImpact?.find((f) => f.ficheId === fiche.id);
+        return { ...fiche, actionImpactId: actionImpact?.actionImpactId };
+      }
+    );
   });
 };

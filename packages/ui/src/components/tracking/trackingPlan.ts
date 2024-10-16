@@ -136,7 +136,11 @@ export interface TrackingPlan extends Record<never, Page> {
   'app/tdb/collectivite': {
     properties: { collectivite_id: number };
     onglets: never;
-    events: never;
+    events: {
+      // clic sur le bouton "éditer" de chaque module
+      tdb_modifier_filtres_avancement_actions: {};
+      tdb_modifier_filtres_suivi_plans: {};
+    };
   };
 
   /** Page tableau de bord personnel */
@@ -178,6 +182,24 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       tdb_modifier_filtres_actions_modifiees: {};
       tdb_valider_filtres_actions_modifiees: {};
+    };
+  };
+
+  /** Page TDB "avancement des fiches action" */
+  'app/tdb/collectivite/fiche-actions-par-statut': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_avancement_actions: {};
+    };
+  };
+
+  /** Page TDB "suivi des plans d'actions" */
+  'app/tdb/collectivite/suivi-plan-actions': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_suivi_plan_actions: {};
     };
   };
 

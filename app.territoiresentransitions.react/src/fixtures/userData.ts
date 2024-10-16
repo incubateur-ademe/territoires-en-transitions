@@ -1,4 +1,4 @@
-import {UserData} from 'core-logic/api/auth/AuthProvider';
+import { UserData } from 'core-logic/api/auth/AuthProvider';
 
 export const fakeUserData: UserData = {
   app_metadata: {},
@@ -17,4 +17,5 @@ export const fakeUserData: UserData = {
   updated_at: '2022-07-26T12:38:33.382147Z',
   user_metadata: {},
   isSupport: false,
+  collectivites: [],
 };

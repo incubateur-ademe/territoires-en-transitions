@@ -1,6 +1,6 @@
-import {Referentiel} from 'types/litterals';
-import {getAuthPaths} from '@tet/api';
-import {ENV} from '../environmentVariables';
+import { Referentiel } from 'types/litterals';
+import { getAuthPaths } from '@tet/api';
+import { ENV } from '../environmentVariables';
 
 const authPaths = getAuthPaths(
   document.location.hostname,
@@ -111,17 +111,6 @@ export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personne
 export const TDBModuleId = 'tdbModule';
 export const collectiviteTDBModulePath = `${collectiviteTDBPath}/:${TDBModuleId}`;
 
-export const makeTableauBordLandingUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) => {
-  return collectiviteTDBBasePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-};
-
 export const makeTableauBordUrl = ({
   collectiviteId,
   view,
@@ -202,7 +191,6 @@ export const makeCollectiviteTrajectoirelUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
 
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());
