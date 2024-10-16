@@ -3,6 +3,7 @@ import {
   finaliserMonInscriptionUrl,
   makeCollectiviteAccueilUrl,
   makeTableauBordUrl,
+  signUpPath,
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
@@ -22,7 +23,7 @@ export const Redirector = () => {
   const collectiviteId = user?.collectivites?.[0]?.collectivite_id;
   const { data: plansData } = usePlanActionsPilotableFetch(collectiviteId);
 
-  const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
+  const isLandingConnected = user && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -32,6 +33,11 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
+    if (user && !user.dcp) {
+      // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
+      document.location.replace(`${signUpPath}&view=etape3`);
+    }
+
     if (!isLandingConnected) {
       return;
     }
@@ -43,7 +49,7 @@ export const Redirector = () => {
 
     const auMoinsUnPlanActionsPilotable = !!plansData?.plans?.length;
 
-    if (!auMoinsUnPlanActionsPilotable) {
+    if (plansData?.plans && !auMoinsUnPlanActionsPilotable) {
       history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
       return;
     }
@@ -51,7 +57,11 @@ export const Redirector = () => {
     history.push(
       makeTableauBordUrl({
         collectiviteId,
-        view: user?.fonction === 'politique' ? 'collectivite' : 'personnel',
+        view:
+          user.collectivites?.find((c) => c.collectivite_id)?.membre
+            ?.fonction === 'politique'
+            ? 'collectivite'
+            : 'personnel',
       })
     );
   }, [isLandingConnected, collectiviteId, user, plansData]);
