@@ -10,7 +10,7 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import { getIsoFormattedDate } from 'utils/formatUtils';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
