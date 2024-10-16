@@ -13,9 +13,7 @@ import { NextFunction, Response } from 'express';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
-import {
-  calculTrajectoireRequestSchema,
-} from '../models/calcul-trajectoire.request';
+import { calculTrajectoireRequestSchema } from '../models/calcul-trajectoire.request';
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';

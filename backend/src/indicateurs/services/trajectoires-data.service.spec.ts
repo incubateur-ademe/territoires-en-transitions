@@ -187,6 +187,91 @@ describe('TrajectoiresDataService test', () => {
     });
   });
 
+  describe('getClosestValeur', () => {
+    it('Cas standard', async () => {
+      const indicateurValeurs: IndicateurValeurType[] = [
+        {
+          id: 640644,
+          collectiviteId: 3894,
+          indicateurId: 304,
+          dateValeur: '2013-01-01',
+          metadonneeId: 4,
+          resultat: 9.94,
+          resultatCommentaire: null,
+          objectif: null,
+          objectifCommentaire: null,
+          estimation: null,
+          modifiedAt: DateTime.fromISO('2024-07-18T13:25:40.776Z').toJSDate(),
+          createdAt: DateTime.fromISO('2024-07-10T13:44:47.193Z').toJSDate(),
+          modifiedBy: null,
+          createdBy: null,
+        },
+        {
+          id: 640645,
+          collectiviteId: 3894,
+          indicateurId: 304,
+          dateValeur: '2014-01-01',
+          metadonneeId: 4,
+          resultat: 7.39,
+          resultatCommentaire: null,
+          objectif: null,
+          objectifCommentaire: null,
+          estimation: null,
+          modifiedAt: DateTime.fromISO('2024-07-18T13:25:40.776Z').toJSDate(),
+          createdAt: DateTime.fromISO('2024-07-10T13:44:47.193Z').toJSDate(),
+          modifiedBy: null,
+          createdBy: null,
+        },
+        {
+          id: 640646,
+          collectiviteId: 3894,
+          indicateurId: 304,
+          dateValeur: '2016-01-01',
+          metadonneeId: 4,
+          resultat: 7.47,
+          resultatCommentaire: null,
+          objectif: null,
+          objectifCommentaire: null,
+          estimation: null,
+          modifiedAt: DateTime.fromISO('2024-07-18T13:25:40.776Z').toJSDate(),
+          createdAt: DateTime.fromISO('2024-07-10T13:44:47.193Z').toJSDate(),
+          modifiedBy: null,
+          createdBy: null,
+        },
+        {
+          id: 640647,
+          collectiviteId: 3894,
+          indicateurId: 304,
+          dateValeur: '2017-01-01',
+          metadonneeId: 4,
+          resultat: 7.48,
+          resultatCommentaire: null,
+          objectif: null,
+          objectifCommentaire: null,
+          estimation: null,
+          modifiedAt: DateTime.fromISO('2024-07-18T13:25:40.776Z').toJSDate(),
+          createdAt: DateTime.fromISO('2024-07-10T13:44:47.193Z').toJSDate(),
+          modifiedBy: null,
+          createdBy: null,
+        },
+      ];
+
+      const closestResultat =
+        trajectoiresDataService.getClosestValeur(indicateurValeurs);
+      const closestResultatAttendu: {
+        valeur: number | null;
+        date_min: string | null;
+        date_max: string | null;
+      } = {
+        valeur: 7.39,
+        date_min: '2014-01-01',
+        date_max: '2014-01-01',
+      };
+
+      expect(closestResultat).toEqual(closestResultatAttendu);
+    });
+  });
+
   describe('extractSourceIdentifiantManquantsFromCommentaire', () => {
     it('Extraction nominale avec un identifiant manquant', async () => {
       const commentaire = 'Source: rare - Indicateurs manquants: cae_2.a';
@@ -196,7 +281,35 @@ describe('TrajectoiresDataService test', () => {
           commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
-        source: 'rare',
+        sources: ['rare'],
+        identifiants_referentiel_manquants: ['cae_2.a'],
+      });
+    });
+
+    it('Extraction avec deux sources avec un identifiant manquant', async () => {
+      const commentaire =
+        "Sources des données d'entrée: rare,aldo - Indicateurs manquants: cae_2.a";
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        sources: ['rare', 'aldo'],
+        identifiants_referentiel_manquants: ['cae_2.a'],
+      });
+    });
+
+    it('Extraction la source saisie manuelle et un identifiant manquant', async () => {
+      const commentaire =
+        "Sources des données d'entrée:   saisie manuelle   - Indicateurs manquants: cae_2.a";
+
+      const sourceIdentifiantManquants =
+        trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
+          commentaire
+        );
+      expect(sourceIdentifiantManquants).toEqual({
+        sources: ['collectivite'],
         identifiants_referentiel_manquants: ['cae_2.a'],
       });
     });
@@ -210,7 +323,7 @@ describe('TrajectoiresDataService test', () => {
           commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
-        source: 'collectivite',
+        sources: ['collectivite'],
         identifiants_referentiel_manquants: ['cae_2.a', 'cae_63.c'],
       });
     });
@@ -223,7 +336,7 @@ describe('TrajectoiresDataService test', () => {
           commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
-        source: 'collectivite',
+        sources: ['collectivite'],
         identifiants_referentiel_manquants: [],
       });
     });
@@ -236,7 +349,7 @@ describe('TrajectoiresDataService test', () => {
           commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
-        source: 'collectivite',
+        sources: ['collectivite'],
         identifiants_referentiel_manquants: [],
       });
     });
@@ -249,7 +362,7 @@ describe('TrajectoiresDataService test', () => {
           commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
-        source: 'collectivite',
+        sources: ['collectivite'],
         identifiants_referentiel_manquants: [],
       });
     });
