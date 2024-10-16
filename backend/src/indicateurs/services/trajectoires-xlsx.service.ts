@@ -162,14 +162,14 @@ export default class TrajectoiresXlsxService {
         valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
-        (valeur.valeur || 0) / 1000;
+        (valeur.valeur || 0);
     });
     valeurIndicateurs?.sequestrations.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
-        ((valeur.valeur || 0) * -1) / 1000;
+        ((valeur.valeur || 0) * -1);
     });
     valeurIndicateurs?.consommationsFinales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
