@@ -16,8 +16,8 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
 - **Language FR et EN**
 
-  → domaines, scopes, et entités en français
-  → tout le reste en anglais pour fluidifer l'écriture du code : les objets et propriétés non "métier", les commentaires, les logs
+  → En français : nom des domaines, scopes, entités, leur attributs si métier
+  → En anglais : tout le reste, les objets et attributs non "métier", les commentaires, les logs
 
   Exemple : `hasFicheActions()`
 
