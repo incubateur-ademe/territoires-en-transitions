@@ -4,7 +4,6 @@ import { TableOptions } from 'react-table';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 import LabellisationInfo from 'ui/labellisation/LabellisationInfo';
 import Chart from 'ui/charts/Chart';
-import AccueilCard from 'app/pages/collectivite/Accueil/AccueilCard';
 
 import {
   ReferentielParamOption,
@@ -15,10 +14,11 @@ import {
 import { toLocaleFixed } from 'utils/toFixed';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
-import { getAggregatedScore } from 'app/pages/collectivite/Accueil/EtatDesLieux/utils';
-import { ProgressionRow } from 'app/pages/collectivite/Accueil/data/useProgressionReferentiel';
 
 import { Button } from '@tet/ui';
+import { ProgressionRow } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
+import { getAggregatedScore } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
+import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilCard';
 
 type ScoreRempliProps = {
   collectiviteId: number;

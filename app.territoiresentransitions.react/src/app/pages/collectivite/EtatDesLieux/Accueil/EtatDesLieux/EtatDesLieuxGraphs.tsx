@@ -1,13 +1,13 @@
-import {ReferentielParamOption} from 'app/paths';
-import {TableOptions} from 'react-table';
-import {ProgressionRow} from '../data/useProgressionReferentiel';
+import { ReferentielParamOption } from 'app/paths';
+import { TableOptions } from 'react-table';
+import { ProgressionRow } from '../data/useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
-import {referentielToName} from 'app/labels';
-import {toLocaleFixed} from 'utils/toFixed';
-import {useState} from 'react';
-import AccueilCard from 'app/pages/collectivite/Accueil/AccueilCard';
+import { referentielToName } from 'app/labels';
+import { toLocaleFixed } from 'utils/toFixed';
+import { useState } from 'react';
 import Chart from 'ui/charts/Chart';
-import {Button} from '@tet/ui';
+import { Button } from '@tet/ui';
+import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilCard';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielParamOption;
@@ -16,7 +16,7 @@ type EtatDesLieuxGraphsProps = {
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
-  repartitionPhases: {id: string; value: number}[];
+  repartitionPhases: { id: string; value: number }[];
 };
 
 /**
@@ -65,7 +65,7 @@ const EtatDesLieuxGraphs = ({
       <GraphCard
         title={progressionParPhaseTitre}
         subTitle={referentielToName[referentiel]}
-        renderGraph={openState => (
+        renderGraph={(openState) => (
           <Chart
             donut={{
               chart: {
@@ -78,7 +78,7 @@ const EtatDesLieuxGraphs = ({
               },
             }}
             infos={{
-              modal: {...openState},
+              modal: { ...openState },
               title: progressionParPhaseTitre,
               subtitle: referentielToName[referentiel],
               fileName: `${referentiel}-realise-par-phase`,
@@ -101,7 +101,7 @@ type Props = {
   }) => React.ReactNode;
 };
 
-const GraphCard = ({title, subTitle, renderGraph}: Props) => {
+const GraphCard = ({ title, subTitle, renderGraph }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(!isOpen);
   return (
@@ -121,7 +121,7 @@ const GraphCard = ({title, subTitle, renderGraph}: Props) => {
           Détails
         </Button>
       </div>
-      {renderGraph({isOpen, setIsOpen: toggleOpen})}
+      {renderGraph({ isOpen, setIsOpen: toggleOpen })}
     </AccueilCard>
   );
 };
