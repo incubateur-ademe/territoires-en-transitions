@@ -1,13 +1,16 @@
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import {Button} from '@tet/ui';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { Button } from '@tet/ui';
+import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 const TdbVide = () => {
-  const collectivite_id = useCollectiviteId();
+  const currentCollectivite = useCurrentCollectivite();
+
   const history = useHistory();
+
+  if (!currentCollectivite) return null;
 
   return (
     <div className="col-span-full flex flex-col items-center p-12 text-center bg-primary-0 border border-primary-4 rounded-xl">
@@ -22,17 +25,19 @@ const TdbVide = () => {
         Les fiches seront modifiables à tout moment et vous pourrez les piloter
         depuis ce tableau de bord !
       </p>
-      <Button
-        onClick={() =>
-          history.push(
-            makeCollectivitePlansActionsNouveauUrl({
-              collectiviteId: collectivite_id!,
-            })
-          )
-        }
-      >
-        Créer un plan d'action
-      </Button>
+      {!currentCollectivite.readonly && (
+        <Button
+          onClick={() =>
+            history.push(
+              makeCollectivitePlansActionsNouveauUrl({
+                collectiviteId: currentCollectivite.collectivite_id!,
+              })
+            )
+          }
+        >
+          Créer un plan d'action
+        </Button>
+      )}
     </div>
   );
 };
