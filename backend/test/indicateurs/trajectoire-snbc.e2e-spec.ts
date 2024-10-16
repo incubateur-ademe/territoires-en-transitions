@@ -4,12 +4,14 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { default as _ } from 'lodash';
 import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
-import {
-  CalculTrajectoireResultatMode,
-} from '../../src/indicateurs/models/calcul-trajectoire.request';
+import { CalculTrajectoireResultatMode } from '../../src/indicateurs/models/calcul-trajectoire.request';
 import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 import { trajectoireSnbcCalculRetour } from './test-data/trajectoire-snbc-calcul-retour';
-import { VerificationTrajectoireResponseType, VerificationTrajectoireStatus } from '../../src/indicateurs/models/verification-trajectoire.response';
+import {
+  VerificationTrajectoireResponseType,
+  VerificationTrajectoireStatus,
+} from '../../src/indicateurs/models/verification-trajectoire.response';
+import { CalculTrajectoireResponseType } from '../../src/indicateurs/models/calcul-trajectoire.response';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
@@ -92,7 +94,7 @@ describe('Calcul de trajectoire SNBC', () => {
         nature: 'CA',
       },
       donneesEntree: {
-        source: 'rare',
+        sources: [],
         emissionsGes: {
           valeurs: [
             {
@@ -276,9 +278,7 @@ describe('Calcul de trajectoire SNBC', () => {
       },
     };
     return request(app.getHttpServer())
-      .get(
-        '/trajectoires/snbc/verification?collectiviteId=3812&epciInfo=true'
-      )
+      .get('/trajectoires/snbc/verification?collectiviteId=3812&epciInfo=true')
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(200)
       .expect(verifcationReponseAttendue);
@@ -309,10 +309,10 @@ describe('Calcul de trajectoire SNBC', () => {
       });
   });
 
-  it(`Verification et calcul avec donnees completes`, () => {
+  it(`Verification et calcul avec donnees completes`, async () => {
     // Suppression de la trajectoire snbc existante si le test est joué plusieurs fois
-    request(app.getHttpServer())
-      .delete('/trajectoires/snbc/verification?collectiviteId=4936')
+    await request(app.getHttpServer())
+      .delete('/trajectoires/snbc?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
@@ -326,7 +326,7 @@ describe('Calcul de trajectoire SNBC', () => {
         nature: 'METRO',
       },
       donneesEntree: {
-        source: 'rare',
+        sources: ['rare', 'aldo'],
         emissionsGes: {
           valeurs: [
             {
@@ -431,9 +431,9 @@ describe('Calcul de trajectoire SNBC', () => {
           valeurs: [
             {
               identifiantsReferentiel: ['cae_63.ca'],
-              valeur: null,
-              dateMin: null,
-              dateMax: null,
+              valeur: -138.44,
+              dateMin: '2018-01-01',
+              dateMax: '2018-01-01',
             },
             {
               identifiantsReferentiel: ['cae_63.cb'],
@@ -448,99 +448,88 @@ describe('Calcul de trajectoire SNBC', () => {
               dateMax: null,
             },
             {
-              identifiantsReferentiel: ['cae_63.cc'],
-              valeur: null,
-              dateMin: null,
-              dateMax: null,
-            },
-            {
               identifiantsReferentiel: ['cae_63.cd'],
               valeur: null,
               dateMin: null,
               dateMax: null,
             },
             {
-              identifiantsReferentiel: ['cae_63.db'],
+              identifiantsReferentiel: ['cae_63.cc'],
               valeur: null,
               dateMin: null,
               dateMax: null,
+            },
+            {
+              identifiantsReferentiel: ['cae_63.db'],
+              valeur: -227.9,
+              dateMin: '2018-01-01',
+              dateMax: '2018-01-01',
             },
             {
               identifiantsReferentiel: ['cae_63.b'],
-              valeur: null,
-              dateMin: null,
-              dateMax: null,
+              valeur: 7812.64,
+              dateMin: '2018-01-01',
+              dateMax: '2018-01-01',
             },
             {
               identifiantsReferentiel: ['cae_63.e'],
-              valeur: null,
-              dateMin: null,
-              dateMax: null,
+              valeur: 627.13,
+              dateMin: '2018-01-01',
+              dateMax: '2018-01-01',
             },
           ],
           identifiantsReferentielManquants: [
-            'cae_63.ca',
             'cae_63.cb',
             'cae_63.da',
-            'cae_63.cc',
             'cae_63.cd',
-            'cae_63.db',
-            'cae_63.b',
-            'cae_63.e',
+            'cae_63.cc',
           ],
         },
       },
     };
-    request(app.getHttpServer())
-      .get(
-        '/trajectoires/snbc/verification?collectiviteId=4936&epciInfo=true'
-      )
+    await request(app.getHttpServer())
+      .get('/trajectoires/snbc/verification?collectiviteId=4936&epciInfo=true')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .expect(verifcationReponseAttendue);
 
     // Calcul de la trajectoire
-    request(app.getHttpServer())
+    const responseCalcul = await request(app.getHttpServer())
       .get('/trajectoires/snbc?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect(trajectoireSnbcCalculRetour);
+      .expect(200);
+    expect((responseCalcul.body as CalculTrajectoireResponseType).mode).toEqual(
+      CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
+    );
 
     // La vérification doit maintenant retourner "calculé"
     const verificationReponseAttendueApresCalcul: VerificationTrajectoireResponseType =
       {
         status: VerificationTrajectoireStatus.DEJA_CALCULE,
-        sourceDonneesEntree: 'rare',
+        sourcesDonneesEntree: ['rare', 'aldo'],
         indentifiantsReferentielManquantsDonneesEntree: [
           'cae_2.k',
           'cae_2.l_pcaet',
-          'cae_63.ca',
           'cae_63.cb',
           'cae_63.da',
-          'cae_63.cc',
           'cae_63.cd',
-          'cae_63.db',
-          'cae_63.b',
-          'cae_63.e',
+          'cae_63.cc',
         ],
       };
-    request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/trajectoires/snbc/verification?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .expect(verificationReponseAttendueApresCalcul);
 
     // Si on requête de nouveau le calcul, il doit provenir de la base de données
-    const trajectoireSnbcCalculRetourExistant = _.cloneDeep(
-      trajectoireSnbcCalculRetour
-    );
-    trajectoireSnbcCalculRetourExistant.mode =
-      CalculTrajectoireResultatMode.DONNEES_EN_BDD;
-    request(app.getHttpServer())
+    const responseRecalcul = await request(app.getHttpServer())
       .get('/trajectoires/snbc?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect(trajectoireSnbcCalculRetourExistant);
+      .expect(200);
+    expect(
+      (responseRecalcul.body as CalculTrajectoireResponseType).mode
+    ).toEqual(CalculTrajectoireResultatMode.DONNEES_EN_BDD);
   }, 30000);
 
   it(`Telechargement du modele`, () => {

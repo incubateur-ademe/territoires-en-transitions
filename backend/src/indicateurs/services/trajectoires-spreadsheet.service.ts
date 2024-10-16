@@ -97,7 +97,7 @@ export default class TrajectoiresSpreadsheetService {
 
     if (
       resultatVerification.status ===
-      VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
+        VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
       !resultatVerification.epci
     ) {
       throw new UnprocessableEntityException(
@@ -170,12 +170,11 @@ export default class TrajectoiresSpreadsheetService {
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResultType = {
           mode: mode,
-          sourceDonneesEntree:
-            resultatVerification.sourceDonneesEntree || '',
+          sourcesDonneesEntree: resultatVerification.sourcesDonneesEntree || [],
           indentifiantsReferentielManquantsDonneesEntree:
             resultatVerification.indentifiantsReferentielManquantsDonneesEntree ||
             [],
-            spreadsheetId: trajectoireCalculSheetId,
+          spreadsheetId: trajectoireCalculSheetId,
           trajectoire: {
             emissionsGes: emissionGesTrajectoire,
             consommationsFinales: consommationsTrajectoire,
@@ -188,7 +187,7 @@ export default class TrajectoiresSpreadsheetService {
       }
     } else if (
       resultatVerification.status ===
-      VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
+        VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
       !resultatVerification.donneesEntree
     ) {
       const identifiantsReferentielManquants = [
@@ -263,9 +262,9 @@ export default class TrajectoiresSpreadsheetService {
     // Ecriture des informations d'émission GES
     // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
     const emissionGesSpreadsheetData =
-      resultatVerification.donneesEntree!.emissionsGes.valeurs.map(
-        (valeur) => [(valeur.valeur || 0) / 1000]
-      );
+      resultatVerification.donneesEntree!.emissionsGes.valeurs.map((valeur) => [
+        (valeur.valeur || 0) / 1000,
+      ]);
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
       this.trajectoiresDataService.SNBC_EMISSIONS_GES_CELLULES,
@@ -379,7 +378,7 @@ export default class TrajectoiresSpreadsheetService {
 
     const result: CalculTrajectoireResultType = {
       mode: mode,
-      sourceDonneesEntree: resultatVerification.donneesEntree!.source,
+      sourcesDonneesEntree: resultatVerification.donneesEntree!.sources,
       indentifiantsReferentielManquantsDonneesEntree: [
         ...resultatVerification.donneesEntree!.emissionsGes
           .identifiantsReferentielManquants,

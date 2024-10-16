@@ -22,7 +22,10 @@ import {
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { VerificationTrajectoireResultType, VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import {
+  VerificationTrajectoireResultType,
+  VerificationTrajectoireStatus,
+} from '../models/verification-trajectoire.response';
 import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
@@ -32,14 +35,15 @@ import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dt
 export default class TrajectoiresDataService {
   private readonly logger = new Logger(TrajectoiresDataService.name);
 
-  private readonly OBJECTIF_COMMENTAIRE_SOURCE = 'Source:';
+  private readonly OBJECTIF_COMMENTAIRE_SOURCE = "Source des données d'entrée:";
   private readonly OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS =
     'Indicateurs manquants:';
 
   private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
-    String.raw`${this.OBJECTIF_COMMENTAIRE_SOURCE}\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
+    String.raw`Source[^-]*:\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
   );
   public readonly RARE_SOURCE_ID = 'rare';
+  public readonly ALDO_SOURCE_ID = 'aldo';
 
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
 
@@ -246,15 +250,19 @@ export default class TrajectoiresDataService {
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
   ): string {
     const identifiantsManquants = [
-      ...donneesCalculTrajectoire.emissionsGes
-        .identifiantsReferentielManquants,
+      ...donneesCalculTrajectoire.emissionsGes.identifiantsReferentielManquants,
       ...donneesCalculTrajectoire.consommationsFinales
         .identifiantsReferentielManquants,
       ...donneesCalculTrajectoire.sequestrations
         .identifiantsReferentielManquants,
     ];
-
-    let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source}`;
+    const source = donneesCalculTrajectoire.sources
+      .join(',')
+      .replace(
+        IndicateursService.NULL_SOURCE_ID,
+        IndicateursService.NULL_SOURCE_LABEL
+      );
+    let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
     if (identifiantsManquants.length) {
       commentaitre += ` - ${
         this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS
@@ -265,13 +273,20 @@ export default class TrajectoiresDataService {
   }
 
   extractSourceIdentifiantManquantsFromCommentaire(commentaire: string): {
-    source: string;
+    sources: string[];
     identifiants_referentiel_manquants: string[];
   } | null {
     const match = commentaire.match(this.OBJECTIF_COMMENTAIRE_REGEXP);
     if (match) {
+      const extractedSources = match[1].split(',').map((i) => i.trim());
+      const replacedExtractedSource = extractedSources.map((source) => {
+        if (source.localeCompare(IndicateursService.NULL_SOURCE_LABEL) === 0) {
+          return IndicateursService.NULL_SOURCE_ID;
+        }
+        return source;
+      });
       return {
-        source: match[1],
+        sources: replacedExtractedSource,
         identifiants_referentiel_manquants: match[2]
           ? match[2]
               .split(',')
@@ -293,20 +308,29 @@ export default class TrajectoiresDataService {
     forceDonneesCollectivite?: boolean
   ): Promise<DonneesCalculTrajectoireARemplirType> {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
-    const source = forceDonneesCollectivite
-      ? this.indicateursService.NULL_SOURCE_ID
-      : this.RARE_SOURCE_ID;
+    const sources = forceDonneesCollectivite
+      ? [IndicateursService.NULL_SOURCE_ID]
+      : [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID];
     this.logger.log(
-      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis la source ${source}`
+      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis les sources ${sources.join(
+        ','
+      )}`
     );
+
     const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const emissionsGesSources = indicateurValeursEmissionsGes
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
@@ -321,8 +345,14 @@ export default class TrajectoiresDataService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const consommationsFinalesSources = indicateurValeursConsommationsFinales
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
@@ -337,16 +367,30 @@ export default class TrajectoiresDataService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const sequestrationSources = indicateurValeursSequestration
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    // Allow closest for sequestration
     const donneesSequestration = this.getValeursARemplirPourIdentifiants(
       this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursSequestration
+      indicateurValeursSequestration,
+      true
     );
+
+    const uniqueSources = _.uniq([
+      ...emissionsGesSources,
+      ...consommationsFinalesSources,
+      ...sequestrationSources,
+    ]);
     return {
-      source: source,
+      sources: uniqueSources,
       emissionsGes: donneesEmissionsGes,
       consommationsFinales: donneesConsommationsFinales,
       sequestrations: donneesSequestration,
@@ -359,7 +403,8 @@ export default class TrajectoiresDataService {
    */
   getValeursARemplirPourIdentifiants(
     identifiantsReferentiel: string[][],
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
+    useClosestIfNoInterpolation?: boolean // if not interpolation is available, allow to use the closest value
   ): DonneesARemplirResultType {
     const valeursARemplir: DonneesARemplirValeurType[] = [];
     const identifiantsReferentielManquants: string[] = [];
@@ -414,30 +459,43 @@ export default class TrajectoiresDataService {
             }
           }
         } else {
-          const interpolationResultat = this.getInterpolationValeur(
-            identifiantIndicateurValeurs.map((v) => v.indicateur_valeur)
+          const indicateurValeurs = identifiantIndicateurValeurs.map(
+            (v) => v.indicateur_valeur
           );
+          let interpolationOrClosestResultat =
+            this.getInterpolationValeur(indicateurValeurs);
+          if (
+            !interpolationOrClosestResultat.valeur &&
+            useClosestIfNoInterpolation
+          ) {
+            interpolationOrClosestResultat =
+              this.getClosestValeur(indicateurValeurs);
+          }
 
-          if (!interpolationResultat.valeur) {
+          if (!interpolationOrClosestResultat.valeur) {
             identifiantsReferentielManquants.push(identifiant);
             valeurARemplir.valeur = null;
           } else {
             // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null (pour un autre indicateur contribuant à la même valeur)
             if (valeurARemplir.valeur !== null) {
-              valeurARemplir.valeur += interpolationResultat.valeur;
+              valeurARemplir.valeur += interpolationOrClosestResultat.valeur;
               if (
                 !valeurARemplir.dateMax ||
-                (interpolationResultat.date_max &&
-                  interpolationResultat.date_max > valeurARemplir.dateMax)
+                (interpolationOrClosestResultat.date_max &&
+                  interpolationOrClosestResultat.date_max >
+                    valeurARemplir.dateMax)
               ) {
-                valeurARemplir.dateMax = interpolationResultat.date_max;
+                valeurARemplir.dateMax =
+                  interpolationOrClosestResultat.date_max;
               }
               if (
                 !valeurARemplir.dateMin ||
-                (interpolationResultat.date_min &&
-                  interpolationResultat.date_min < valeurARemplir.dateMin)
+                (interpolationOrClosestResultat.date_min &&
+                  interpolationOrClosestResultat.date_min <
+                    valeurARemplir.dateMin)
               ) {
-                valeurARemplir.dateMin = interpolationResultat.date_min;
+                valeurARemplir.dateMin =
+                  interpolationOrClosestResultat.date_min;
               }
             }
           }
@@ -447,6 +505,36 @@ export default class TrajectoiresDataService {
     return {
       valeurs: valeursARemplir,
       identifiantsReferentielManquants: identifiantsReferentielManquants,
+    };
+  }
+
+  getClosestValeur(indicateurValeurs: IndicateurValeurType[]): {
+    valeur: number | null;
+    date_min: string | null;
+    date_max: string | null;
+  } {
+    const time2015 = new Date(this.SNBC_DATE_REFERENCE).getTime();
+    let closestValeur: number | null = null;
+    let closestDate: string | null = null;
+    let currentDiff: number | null = null;
+
+    indicateurValeurs.forEach((indicateurValeur) => {
+      const timeIndicateurValeur = new Date(
+        indicateurValeur.dateValeur
+      ).getTime();
+      const diff = Math.abs(time2015 - timeIndicateurValeur);
+      if (!currentDiff || diff < currentDiff) {
+        currentDiff = diff;
+        closestValeur = indicateurValeur.resultat;
+        closestDate = indicateurValeur.dateValeur;
+      }
+    });
+
+    // Return this response with both date_min & date_max to match getInterpolationValeur signature and simplify rest of the code
+    return {
+      valeur: closestValeur,
+      date_min: closestDate,
+      date_max: closestDate,
     };
   }
 
@@ -516,7 +604,7 @@ export default class TrajectoiresDataService {
       (v) => v.valeur !== null
     ).length;
     const valeurConsommationFinalesValides =
-    consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
+      consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
     return (
       valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 3
     );
@@ -587,9 +675,11 @@ export default class TrajectoiresDataService {
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || ''
         );
-      response.sourceDonneesEntree = sourceIdentifiantManquants?.source || '';
+      response.sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
       this.logger.log(
-        `Source des données SNBC déjà calculées : ${response.sourceDonneesEntree}`
+        `Sources des données SNBC déjà calculées : ${response.sourcesDonneesEntree?.join(
+          ','
+        )}`
       );
       response.indentifiantsReferentielManquantsDonneesEntree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
@@ -605,8 +695,9 @@ export default class TrajectoiresDataService {
         request.collectiviteId,
         !isNil(request.forceUtilisationDonneesCollectivite)
           ? request.forceUtilisationDonneesCollectivite
-          : response.sourceDonneesEntree ===
-            this.indicateursService.NULL_SOURCE_ID
+          : response.sourcesDonneesEntree?.includes(
+              IndicateursService.NULL_SOURCE_ID
+            )
           ? true
           : false
       );
