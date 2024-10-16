@@ -50,7 +50,7 @@ const TableauDeBord = () => {
         <Route exact path={collectiviteTDBCollectivitePath}>
           <View
             view={'collectivite'}
-            title="Le tableau de bord collaboratif de la collectivité."
+            title="Le tableau de bord collaboratif de la collectivité"
             description="Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs."
           >
             {isEmpty ? <TdbVide /> : <Collectivite />}
