@@ -36,7 +36,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre          | Commentaire |
       | bien nommé.doc |             |
 
-    Quand je clique sur le bouton "Décrire" de la preuve "bien nommé.doc" de l'action "1.1.1"
+    Quand je clique sur le bouton "Commenter" de la preuve "bien nommé.doc" de l'action "1.1.1"
     Et que je saisi "une phrase" comme commentaire de la preuve "bien nommé.doc" de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre          | Commentaire |
@@ -45,7 +45,7 @@ Fonctionnalité: Associer des preuves aux actions
     Quand je clique sur la preuve "bien nommé.doc" de l'action "1.1.1"
     Alors le fichier "bien nommé.doc" doit avoir été téléchargé
 
-    Quand je clique sur le bouton "Renommer" de la preuve "bien nommé.doc" de l'action "1.1.1"
+    Quand je clique sur le bouton "Editer" de la preuve "bien nommé.doc" de l'action "1.1.1"
     Et que je saisi "nouveau nom" comme nom de la preuve "bien nommé.doc" de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre           | Commentaire |
@@ -177,7 +177,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre   | Commentaire |
       | Exemple |             |
 
-    Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
+    Quand je clique sur le bouton "Commenter" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |
@@ -196,7 +196,7 @@ Fonctionnalité: Associer des preuves aux actions
       | Titre   | Commentaire     |
       | Exemple | mon commentaire |
 
-    Quand je clique sur le bouton "Décrire" de la preuve "Exemple" de l'action "1.1.1"
+    Quand je clique sur le bouton "Commenter" de la preuve "Exemple" de l'action "1.1.1"
     Et que je saisi "deux mots" comme commentaire de la preuve "Exemple" de l'action "1.1.1"
     Alors la liste des preuves complémentaires de la sous-action "1.1.1" contient les lignes suivantes :
       | Titre   | Commentaire |

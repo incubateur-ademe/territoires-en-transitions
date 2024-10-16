@@ -22,4 +22,13 @@ export const LocalSelectors = {
   'Télécharger toutes les preuves': {
     selector: '[data-test=DownloadDocs]',
   },
+  Commenter: {
+    selector: '[data-test=btn-comment]',
+  },
+  Editer: {
+    selector: '[data-test=btn-edit]',
+  },
+  Supprimer: {
+    selector: '[data-test=btn-delete]',
+  },
 };
