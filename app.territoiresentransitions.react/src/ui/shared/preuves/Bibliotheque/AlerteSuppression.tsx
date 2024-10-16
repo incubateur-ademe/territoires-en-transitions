@@ -1,4 +1,4 @@
-import {Alert, Button} from '@tet/ui';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import classNames from 'classnames';
 
 type AlerteSuppressionProps = {
@@ -19,32 +19,25 @@ const AlerteSuppression = ({
   onDelete,
 }: AlerteSuppressionProps) => {
   return (
-    <Alert
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
-      className={classNames(
-        'absolute bottom-0 left-0 right-0 w-screen z-modal border-t border-t-info-1',
-        className
-      )}
-      title={title}
-      description={message}
-      footer={
-        <div className="flex gap-3">
-          <Button variant="outlined" size="xs" onClick={() => setIsOpen(false)}>
-            Annuler
-          </Button>
-          <Button
-            size="xs"
-            onClick={() => {
-              onDelete();
-              setIsOpen(false);
+    isOpen && (
+      <Modal
+        openState={{ isOpen, setIsOpen }}
+        title={title}
+        dataTest="confirm-suppr"
+        description={message}
+        renderFooter={({ close }) => (
+          <ModalFooterOKCancel
+            btnCancelProps={{ onClick: close }}
+            btnOKProps={{
+              onClick: () => {
+                onDelete();
+                close();
+              },
             }}
-          >
-            Confirmer
-          </Button>
-        </div>
-      }
-    />
+          />
+        )}
+      />
+    )
   );
 };
 
