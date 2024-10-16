@@ -17,16 +17,20 @@ type OpenDataIndicateurWithCategorie = {
 type Categorie = 'cae' | 'eci';
 
 export const useOpenDataIndicateursCount = (categorie: Categorie) => {
+  console.log('categ', categorie);
   const collectiviteId = useCollectiviteId();
 
-  return useQuery(['open_data_indicateurs_count', collectiviteId], async () => {
-    if (!collectiviteId) return;
-    const indicateurs = await buildOpenDataIndicateursByCategorie(
-      collectiviteId,
-      categorie
-    );
-    return indicateurs.length;
-  });
+  return useQuery(
+    ['open_data_indicateurs_count', collectiviteId, categorie],
+    async () => {
+      if (!collectiviteId) return;
+      const indicateurs = await buildOpenDataIndicateursByCategorie(
+        collectiviteId,
+        categorie
+      );
+      return indicateurs.length;
+    }
+  );
 };
 
 const buildOpenDataIndicateursByCategorie = async (
