@@ -1,3 +1,13 @@
+import { SignInWithPasswordCredentials, User } from '@supabase/supabase-js';
+import {
+  clearAuthTokens,
+  getRootDomain,
+  restoreSessionFromAuthTokens,
+  setAuthTokens,
+} from '@tet/api';
+import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import { signUpPath } from 'app/paths';
+import { ENV } from 'environmentVariables';
 import {
   createContext,
   ReactNode,
@@ -6,18 +16,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { User, SignInWithPasswordCredentials } from '@supabase/supabase-js';
 import { useQuery } from 'react-query';
-import {
-  clearAuthTokens,
-  getRootDomain,
-  restoreSessionFromAuthTokens,
-  setAuthTokens,
-} from '@tet/api';
 import { supabaseClient } from '../supabase';
-import { signUpPath } from 'app/paths';
-import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
-import { ENV } from 'environmentVariables';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -200,23 +200,27 @@ const useIsSupport = (user_id?: string) =>
     return data || false;
   });
 
-const useCurrentSession = () => {
-  const { data, error } = useQuery(['session'], async () => {
-    const { data, error } = await supabaseClient.auth.getSession();
+export async function getSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (data?.session) {
+    return data.session;
+  }
+  if (error) throw error;
+
+  // restaure une éventuelle session précédente
+  const ret = await restoreSessionFromAuthTokens(supabaseClient);
+  if (ret) {
+    const { data, error } = ret;
     if (data?.session) {
       return data.session;
     }
     if (error) throw error;
+  }
+}
 
-    // restaure une éventuelle session précédente
-    const ret = await restoreSessionFromAuthTokens(supabaseClient);
-    if (ret) {
-      const { data, error } = ret;
-      if (data?.session) {
-        return data.session;
-      }
-      if (error) throw error;
-    }
+const useCurrentSession = () => {
+  const { data, error } = useQuery(['session'], async () => {
+    return getSession();
   });
 
   if (error || !data) {
@@ -225,3 +229,13 @@ const useCurrentSession = () => {
 
   return data;
 };
+
+export async function getAuthHeaders() {
+  const session = await getSession();
+  return session?.access_token
+    ? {
+        authorization: `Bearer ${session.access_token}`,
+        apikey: `${ENV.supabase_anon_key}`,
+      }
+    : null;
+}

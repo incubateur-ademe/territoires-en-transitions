@@ -3,7 +3,6 @@ import {
   QueryClient as TanstackQueryClient,
   QueryClientProvider as TanstackQueryClientProvider,
 } from '@tanstack/react-query';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTrackingClient, TrackingProvider } from '@tet/ui';
 import { CollectiviteRoutes } from 'app/pages/collectivite/CollectiviteRoutes';
 import Home from 'app/pages/Home';
@@ -11,6 +10,7 @@ import { Redirector } from 'app/Redirector';
 import { ScrollToTopOnPageChange } from 'app/ScrollToTopOnPageChange';
 import { Toasters } from 'app/Toasters';
 import { ENV } from 'environmentVariables';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import {
   Redirect,
@@ -20,7 +20,6 @@ import {
 } from 'react-router-dom';
 import { E2E } from './E2E';
 
-import { httpBatchLink } from '@trpc/react-query';
 import Layout from 'app/Layout';
 import { CollectivitesEngageesPage } from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import {
@@ -33,7 +32,7 @@ import {
 import { VisitTracker } from 'app/VisitTracker';
 import { AuthProvider } from 'core-logic/api/auth/AuthProvider';
 import { ScoreListenerProvider } from 'core-logic/hooks/useScoreListener';
-import { trpc } from 'utils/trpc';
+import { trpc, trpcClient } from 'utils/trpc';
 import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
 import { ProfilPage } from './pages/Profil/ProfilPage';
 
@@ -48,19 +47,6 @@ const theme = createTheme({
 const trackingClient = createTrackingClient(ENV.posthog);
 const queryClient = new QueryClient();
 const tanstackQueryClient = new TanstackQueryClient();
-const trpcClient = trpc.createClient({
-  links: [
-    httpBatchLink({
-      url: 'http://localhost:8080/trpc',
-      // You can pass any HTTP headers you wish here
-      async headers() {
-        return {
-          // authorization: getAuthCookie(),
-        };
-      },
-    }),
-  ],
-});
 
 export const App = () => {
   return (
