@@ -294,7 +294,7 @@ export async function fetchFilteredIndicateurs(
         titre: d.titre as string,
         estPerso: d.collectivite_id !== null,
         identifiant: d.identifiant_referentiel as string,
-        hasOpenData: d.indicateur_valeur?.some((v) => !!v.metadonnee_id),
+        hasOpenData: d.indicateur_valeur?.some((v) => v.metadonnee_id !== null),
       })),
   };
 }

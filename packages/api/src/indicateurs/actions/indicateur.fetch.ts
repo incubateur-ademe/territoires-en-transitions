@@ -852,7 +852,7 @@ async function transformeDefinition(
         )
         .map((e: any) => e.id),
       parents: item?.parents?.map((p: any) => p.id),
-      has_open_data: item.valeurs.some((v: any) => !!v.metadonnee_id),
+      has_open_data: item.valeurs.some((v: any) => v.metadonnee_id !== null),
     };
   });
 }
