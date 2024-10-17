@@ -25,7 +25,16 @@ const NOMS_SOURCE: Record<string, string> = {
   [SourceIndicateur.RARE]: 'RARE-OREC',
 };
 
-export const getNomSource = (id: string) => NOMS_SOURCE[id] ? NOMS_SOURCE[id] : id.toUpperCase(); 
+export const getNomSource = (id: string) =>
+  NOMS_SOURCE[id] ? NOMS_SOURCE[id] : id.toUpperCase();
+
+// émissions nettes GES
+export const EMISSIONS_NETTES = {
+  id: 'cae_1.aa',
+  nom: 'Émissions nettes',
+  coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
+  color: '#111',
+};
 
 // liste des indicateurs Trajectoire
 export const INDICATEURS_TRAJECTOIRE = [
