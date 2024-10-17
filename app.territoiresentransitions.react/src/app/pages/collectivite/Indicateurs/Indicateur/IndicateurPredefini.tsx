@@ -144,5 +144,7 @@ export const IndicateurPredefini = ({
   const definition = useIndicateurDefinition(indicateurId);
   if (!definition) return null;
 
+  console.log(definition);
+
   return <IndicateurPredefiniBase definition={definition} />;
 };

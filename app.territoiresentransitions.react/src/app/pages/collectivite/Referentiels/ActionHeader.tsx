@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ActionTopNav} from './ActionNav';
-import {ActionSidePanelToolbar} from './ActionSidePanelToolbar';
-import {PersoPotentiel} from '../PersoPotentielModal/PersoPotentiel';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionTopNav } from './ActionNav';
+import { ActionSidePanelToolbar } from './ActionSidePanelToolbar';
+import { PersoPotentiel } from '../PersoPotentielModal/PersoPotentiel';
 import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
-import {SuiviScoreRow} from '../EtatDesLieux/Referentiel/data/useScoreRealise';
+import { SuiviScoreRow } from '../EtatDesLieux/Referentiel/data/useScoreRealise';
 import HeaderFixed from '../CollectivitePageLayout/HeaderFixed';
 
 /**
@@ -25,7 +25,7 @@ export const ActionHeader = ({
 }) => {
   return (
     <HeaderFixed
-      render={({isScrolled}) => (
+      render={({ isScrolled }) => (
         <div
           className={classNames('bg-white', {
             'border-b border-b-[#e5e7eb]': isScrolled,

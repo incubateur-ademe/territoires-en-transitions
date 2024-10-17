@@ -71,6 +71,7 @@ export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateur
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
 export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+export const collectiviteSyntheseReferentielPath = `${collectivitePath}/referentiels/accueil`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
@@ -430,6 +431,16 @@ export const makeCollectivitePlanActionAxeUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid)
     .replace(`:${axeParam}`, axeUid);
+
+export const makeCollectiviteSyntheseReferentielUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteSyntheseReferentielPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
 
 export const makeCollectiviteAccueilUrl = ({
   collectiviteId,

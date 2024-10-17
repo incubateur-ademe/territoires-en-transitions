@@ -1,9 +1,9 @@
-import {ReactNode} from 'react';
-import {Redirect, Route, RouteProps} from 'react-router-dom';
+import { ReactNode } from 'react';
+import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import {ActionPage} from 'app/pages/collectivite/Referentiels/ActionPage';
-import {ReferentielsPage} from 'app/pages/collectivite/Referentiels/ReferentielsPage';
-import {MembresPage} from 'app/pages/collectivite/Users/MembresPage';
+import { ActionPage } from 'app/pages/collectivite/Referentiels/ActionPage';
+import { ReferentielsPage } from 'app/pages/collectivite/Referentiels/ReferentielsPage';
+import { MembresPage } from 'app/pages/collectivite/Users/MembresPage';
 import {
   collectiviteAccueilPath,
   collectiviteActionPath,
@@ -15,20 +15,22 @@ import {
   collectivitePersoRefThematiquePath,
   collectivitePlansActionsBasePath,
   collectiviteReferentielPath,
+  collectiviteSyntheseReferentielPath,
   collectiviteTrajectoirePath,
   collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
 } from 'app/paths';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import AccueilPage from './Accueil/AccueilPage';
-import {BibliothequeDocsPage} from './BibliothequeDocs/BibliothequeDocsPage';
-import {JournalActivitePage} from './Historique/JournalActivitePage';
-import {ParcoursLabellisationPage} from './ParcoursLabellisation/ParcoursLabellisationPage';
-import {PersoReferentielPage} from './PersoReferentiel/PersoReferentielPage';
-import {PersoReferentielThematiquePage} from './PersoReferentielThematique/PersoReferentielThematiquePage';
-import {PlansActionsPage} from './PlansActions/PlansActionsPage';
-import {IndicateursPage} from 'app/pages/collectivite/Indicateurs/IndicateursPage';
-import {TrajectoirePage} from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
+import { JournalActivitePage } from './Historique/JournalActivitePage';
+import { ParcoursLabellisationPage } from './ParcoursLabellisation/ParcoursLabellisationPage';
+import { PersoReferentielPage } from './PersoReferentiel/PersoReferentielPage';
+import { PersoReferentielThematiquePage } from './PersoReferentielThematique/PersoReferentielThematiquePage';
+import { PlansActionsPage } from './PlansActions/PlansActionsPage';
+import { IndicateursPage } from 'app/pages/collectivite/Indicateurs/IndicateursPage';
+import { TrajectoirePage } from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
+import { AccueilPage as SyntheseEtatDesLieuxPage } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
+import { AccueilPage } from '@tet/app/pages/collectivite/Accueil/AccueilPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -38,11 +40,15 @@ import {TrajectoirePage} from 'app/pages/collectivite/Trajectoire/TrajectoirePag
 export const CollectiviteRoutes = () => {
   return (
     <>
+      <Route path={collectiviteAccueilPath}>
+        <AccueilPage />
+      </Route>
+
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
       </Route>
-      <Route path={collectiviteAccueilPath}>
-        <AccueilPage />
+      <Route path={collectiviteSyntheseReferentielPath}>
+        <SyntheseEtatDesLieuxPage />
       </Route>
       <Route path={collectiviteActionPath}>
         <ActionPage />
@@ -84,7 +90,7 @@ export const CollectiviteRoutes = () => {
 // protège une route quand la collectivité est en accès restreint (redirige vers
 // l'accueil')
 export const RouteEnAccesRestreint = (props: RouteProps) => {
-  const {children, ...other} = props;
+  const { children, ...other } = props;
   const collectivite = useCurrentCollectivite();
   if (!collectivite) {
     return null;
@@ -93,7 +99,7 @@ export const RouteEnAccesRestreint = (props: RouteProps) => {
   return (
     <Route
       {...other}
-      render={({location}) =>
+      render={({ location }) =>
         collectivite.acces_restreint && collectivite.niveau_acces === null ? (
           <Redirect
             to={makeCollectiviteAccueilUrl({
