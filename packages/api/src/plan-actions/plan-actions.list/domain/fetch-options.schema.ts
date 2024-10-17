@@ -25,7 +25,7 @@ const fetchSortSchema = z.object({
 export type FetchSort = z.infer<typeof fetchSortSchema>;
 
 export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
-  filtre: fetchFilterSchema,
+  filtre: fetchFilterSchema.optional(),
 });
 
 export type FetchOptions = z.input<typeof fetchOptionsSchema>;

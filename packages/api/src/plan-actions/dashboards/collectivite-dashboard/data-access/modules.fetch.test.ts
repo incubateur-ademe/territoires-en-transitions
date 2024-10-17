@@ -4,7 +4,7 @@ import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
 import { signIn, signOut } from '@tet/api/tests/auth';
 import { supabase } from '@tet/api/tests/supabase';
-import { moduleNew, resetTableauDeBordModules } from './modules.fixture.test';
+import { moduleNew, resetTableauDeBordModules } from './modules.test-fixture';
 
 const params = {
   dbClient: supabase,

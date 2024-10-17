@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { filtreRessourceLieesSchema } from '@tet/api/collectivites/shared/domain/filtre-ressource-liees.schema';
+import { filtreRessourceLieesSchema } from '@tet/api/collectivites';
 import { cibleSchema } from '@tet/api/plan-actions/domain';
 
 export const filtreSpecifiqueSchema = z.object({

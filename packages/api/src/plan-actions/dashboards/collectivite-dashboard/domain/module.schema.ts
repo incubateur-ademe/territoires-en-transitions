@@ -1,11 +1,11 @@
 import {
   Filtre as FiltreFichesSynthese,
   filtreSchema,
-} from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
+} from './fiches-synthese.schema';
 import {
   FetchFilter as FetchFilterPlanActions,
   fetchOptionsSchema as planActionsFetchOptionsSchema,
-} from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+} from '@tet/api/plan-actions';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum([

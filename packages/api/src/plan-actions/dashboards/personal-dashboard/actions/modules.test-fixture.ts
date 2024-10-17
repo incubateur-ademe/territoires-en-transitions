@@ -7,7 +7,7 @@ export const moduleNew: ModuleInsert = {
   collectiviteId: 1,
   userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
   titre: 'Mon module personnalisé',
-  slug: 'mon-module-personnalise',
+  slug: 'actions-dont-je-suis-pilote',
   type: 'fiche_action.list',
   options: {
     filtre: {
@@ -16,9 +16,7 @@ export const moduleNew: ModuleInsert = {
   },
 };
 
-export async function resetTableauDeBordModules(params: {
-  collectiviteId: number;
-}) {
+export async function resetModules(params: { collectiviteId: number }) {
   // Supprime les modules existants
   await dbAdmin
     .from('tableau_de_bord_module')

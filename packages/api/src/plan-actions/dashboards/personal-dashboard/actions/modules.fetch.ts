@@ -1,5 +1,5 @@
 import { objectToCamel } from 'ts-case-convert';
-import { planActionsFetch } from '@tet/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
+import { planActionsFetch } from '@tet/api/plan-actions';
 import {
   ModuleSelect,
   defaultSlugsSchema,

@@ -14,6 +14,7 @@
     "vitest.config.mts",
     "vitest.config.ts",
     "src/**/*.test.ts",
+    "src/**/*.test-fixture.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.tsx",

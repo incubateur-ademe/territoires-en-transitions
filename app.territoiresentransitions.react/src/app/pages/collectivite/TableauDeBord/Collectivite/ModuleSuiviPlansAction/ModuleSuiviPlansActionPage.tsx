@@ -43,7 +43,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
         properties={{ collectivite_id: module.collectiviteId }}
       />
       <PlansActionListe
-        filtres={module.options.filtre}
+        filtres={module.options.filtre ?? {}}
         displaySettings={{ display, setDisplay }}
         // settings={collectivite?.niveau_acces === 'admin' ? (openState) => (
         //   <>
