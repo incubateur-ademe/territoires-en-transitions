@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from 'vitest';
 import { defaultSlugsSchema } from '../domain/module.schema';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
-import { moduleNew, resetTableauDeBordModules } from './modules.test-fixture';
+import { moduleNew, resetModules } from './modules.test-fixture';
 import { signIn, signOut } from '@tet/api/tests/auth';
 import { supabase } from '@tet/api/tests/supabase';
 
@@ -15,10 +15,10 @@ const params = {
 const numberOfModulesByDefault = 3;
 
 beforeEach(async () => {
+  await resetModules(params);
   await signIn('yolododo');
 
   return async () => {
-    await resetTableauDeBordModules(params);
     await signOut();
   };
 });
@@ -44,15 +44,16 @@ test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregi
 });
 
 test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
-  const defaultSlug = defaultSlugsSchema.enum['actions-dont-je-suis-pilote'];
-  const module = {
+  const slug = defaultSlugsSchema.enum['actions-dont-je-suis-pilote'];
+
+  const myModule = {
     ...moduleNew,
-    slug: defaultSlug,
+    slug: slug,
   };
 
   await modulesSave({
     ...params,
-    module,
+    module: myModule,
   });
 
   const { data } = await modulesFetch(params);
@@ -64,31 +65,35 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
 
   expect(data).toHaveLength(3);
 
+  // Modules must always be in the same order
   expect(data).toMatchObject([
-    module,
     {
       titre: expect.stringMatching(/indicateurs/i),
       type: 'indicateur.list',
       options: expect.any(Object),
     },
+    myModule,
     {
       titre: expect.stringMatching(/actions/i),
       type: 'fiche_action.list',
-      slug: expect.not.stringMatching(defaultSlug),
+      slug: expect.not.stringMatching(slug),
     },
   ]);
 });
 
 test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
-  const module = moduleNew;
+  const myModule = {
+    ...moduleNew,
+    slug: defaultSlugsSchema.enum['actions-dont-je-suis-pilote'],
+  };
 
   await modulesSave({
     ...params,
-    module,
+    module: myModule,
   });
 
   const { data } = await modulesFetch(params);
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 
   // Se connecte avec un autre utilisateur de la collectivité, autorisé en lecture
   await signOut();
@@ -98,7 +103,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   const { data: authorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
-    .eq('id', module.id);
+    .eq('id', myModule.id);
 
   expect(authorizedData).toHaveLength(1);
 
@@ -110,7 +115,7 @@ test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
   const { data: unauthorizedData } = await supabase
     .from('tableau_de_bord_module')
     .select('*')
-    .eq('id', module.id);
+    .eq('id', myModule.id);
 
   expect(unauthorizedData).toHaveLength(0);
 });

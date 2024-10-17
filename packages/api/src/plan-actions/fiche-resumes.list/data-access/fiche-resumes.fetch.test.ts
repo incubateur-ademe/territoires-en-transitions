@@ -39,7 +39,9 @@ test('Fetch avec filtre sur une personne', async () => {
 
   for (const fiche of data) {
     expect(fiche).toMatchObject({
-      pilotes: expect.arrayContaining([{ tag_id: 1, nom: 'Lou Piote' }]),
+      pilotes: expect.arrayContaining([
+        expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
+      ]),
     });
   }
 });
@@ -61,11 +63,11 @@ test('Fetch avec filtre sur un utilisateur', async () => {
   for (const fiche of data) {
     expect(fiche).toMatchObject({
       pilotes: expect.arrayContaining([
-        {
-          user_id: yoloDodoUuid,
-          nom: expect.any(String),
-          prenom: expect.any(String),
-        },
+        expect.objectContaining({
+          userId: yoloDodoUuid,
+          nom: 'Yolo Dodo',
+          tagId: null,
+        }),
       ]),
     });
   }
@@ -105,7 +107,7 @@ test('Fetch avec filtre sur un service', async () => {
   for (const fiche of data) {
     expect(fiche).toMatchObject({
       services: expect.arrayContaining([
-        { id: 2, nom: 'Ultra service', collectivite_id: 1 },
+        { id: 2, nom: 'Ultra service', collectiviteId: 1 },
       ]),
     });
   }
@@ -130,7 +132,7 @@ test('Fetch avec filtre sur un plan', async () => {
   expect(data[0].plans?.[0]).toMatchObject({
     nom: 'Plan Vélo 2020-2024', // correspond au plan racine
     parent: null,
-    collectivite_id: 1,
+    collectiviteId: 1,
   });
 });
 
