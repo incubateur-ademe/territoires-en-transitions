@@ -136,18 +136,20 @@ const FilledIndicateursCard = ({
           Compléter mes indicateurs
         </Button>
         {/* TO DO: change tracker ? */}
-        <Button
-          onClick={() =>
-            tracker({ fonction: 'cta_indicateur', action: 'clic' })
-          }
-          href={`${makeCollectiviteTousLesIndicateursUrl({
-            collectiviteId,
-          })}?cat=${referentielId}&od=true`}
-          variant="outlined"
-          size="sm"
-        >
-          Voir les indicateurs complétés en open data
-        </Button>
+        {openDataIndicateursCount !== 0 && (
+          <Button
+            onClick={() =>
+              tracker({ fonction: 'cta_indicateur', action: 'clic' })
+            }
+            href={`${makeCollectiviteTousLesIndicateursUrl({
+              collectiviteId,
+            })}?cat=${referentielId}&od=true`}
+            variant="outlined"
+            size="sm"
+          >
+            Voir les indicateurs complétés en open data
+          </Button>
+        )}
       </div>
     </AccueilCard>
   );
