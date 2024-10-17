@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from 'vitest';
 import { defaultSlugsSchema } from '../domain/module.schema';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
-import { moduleNew, resetTableauDeBordModules } from './modules.fixture.test';
+import { moduleNew, resetTableauDeBordModules } from './modules.test-fixture';
 import { signIn, signOut } from '@tet/api/tests/auth';
 import { supabase } from '@tet/api/tests/supabase';
 

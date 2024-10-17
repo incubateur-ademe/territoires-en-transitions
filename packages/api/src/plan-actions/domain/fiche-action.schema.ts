@@ -1,5 +1,5 @@
 import { indicateurListItemSchema } from '@tet/api/indicateurs/domain';
-import { actionSchema } from '@tet/api/referentiel/domain/action.schema';
+import { actionSchema } from '@tet/api/referentiel';
 import {
   sousThematiqueSchemaId,
   tagSchema,

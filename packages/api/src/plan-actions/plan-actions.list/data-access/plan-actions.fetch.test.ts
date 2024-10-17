@@ -112,8 +112,6 @@ describe('Fetch avec select', () => {
       withSelect: ['axes'],
     });
 
-    console.log(plans);
-
     for (const plan of plans) {
       expect(plan.axes).toEqual(expect.any(Array));
     }
