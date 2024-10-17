@@ -6,7 +6,6 @@ import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
-import { CreateFicheActionType } from '../models/fiche-action.table';
 import { PublicEndpoint } from 'backend/src/auth/decorators/public-endpoint.decorator';
 import { upsertFicheActionRequestSchema } from '../models/upsert-fiche-action.request';
 
@@ -69,7 +68,8 @@ export class FichesActionController {
   @Post('')
   // TODO: type it for documentation
   @ApiOkResponse({
-    description: "Récupération des fiches action d'une collectivité",
+    // TODO: add description
+    description: '',
   })
   async upsertFichesAction(
     @Param('collectivite_id') collectiviteId: number,
