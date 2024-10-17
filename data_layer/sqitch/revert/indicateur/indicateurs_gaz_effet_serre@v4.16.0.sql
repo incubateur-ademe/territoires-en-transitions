@@ -1,7 +1,7 @@
 -- Deploy tet:indicateur/indicateurs_gaz_effet_serre to pg
 BEGIN;
 DROP function public.indicateurs_gaz_effet_serre(site_labellisation);
-create function public.indicateurs_gaz_effet_serre(site_labellisation) returns jsonb security definer language sql BEGIN ATOMIC
+create or replace function public.indicateurs_gaz_effet_serre(site_labellisation) returns jsonb security definer language sql BEGIN ATOMIC
 SELECT to_jsonb(array_agg(d))
 from (
         SELECT iri.date_valeur,
@@ -14,8 +14,6 @@ from (
             JOIN indicateur_source src on src.id = ism.source_id
         WHERE iri.collectivite_id = ($1).collectivite_id
             AND iri.metadonnee_id is not null
-            AND iri.resultat is not null
-            AND src.id in ('rare', 'citepa')
             AND id.identifiant_referentiel::text = ANY (
                 ARRAY [
                 'cae_1.g'::character varying,
