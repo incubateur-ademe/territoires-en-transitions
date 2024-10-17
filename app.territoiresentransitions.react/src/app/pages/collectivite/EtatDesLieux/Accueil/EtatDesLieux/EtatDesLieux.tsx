@@ -33,8 +33,6 @@ const EtatDesLieux = ({
     progressionScore.data.find((d) => d.score_non_renseigne !== 1) !==
     undefined;
 
-  // const TEMPORARY_displayEtatDesLieux = true;
-
   return (
     <div className="flex flex-col gap-6">
       {/** Scores */}

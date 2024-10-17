@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { referentielToName } from 'app/labels';
 import { useProgressionReferentiel } from './data/useProgressionReferentiel';
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
@@ -15,7 +14,7 @@ const Accueil = (): JSX.Element => {
 
   if (!collectivite?.collectivite_id) return <></>;
 
-  /** Vérifi que l'utilisateur peut accéder à la collectivité */
+  /** Vérifie que l'utilisateur peut accéder à la collectivité */
   const hasNoAccessToCollectivite =
     collectivite.acces_restreint &&
     collectivite.niveau_acces === null &&
@@ -59,21 +58,7 @@ const AccueilNonConfidentielle = ({
     <main data-test="TableauBord" className="bg-bf975 -mb-8">
       {!!collectiviteId && (
         <div className="fr-container flex flex-col py-16 gap-16">
-          {/* Plans d'action et Indicateurs */}
-          {/* <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
-            <div className="flex flex-col">
-              <TitreSection>Plans d'action</TitreSection>
-              <PlansActionCard collectiviteId={collectiviteId} />
-            </div>
-            <div className="flex flex-col">
-              <TitreSection>Indicateurs</TitreSection>
-              <IndicateursCard collectiviteId={collectiviteId} />
-            </div>
-          </div> */}
-
-          {/* États des lieux */}
           <div>
-            {/* <TitreSection>État des lieux</TitreSection> */}
             <div className="grid lg:grid-cols-2 gap-6">
               {/** Climat Air Énergie */}
               <EtatDesLieux
@@ -100,10 +85,5 @@ const AccueilNonConfidentielle = ({
     </main>
   );
 };
-
-// affiche un titre au-dessus d'une carte
-const TitreSection = ({ children }: { children: ReactNode }) => (
-  <h5 className="text-xl leading-5 font-extrabold">{children}</h5>
-);
 
 export default Accueil;

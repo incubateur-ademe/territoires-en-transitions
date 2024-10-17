@@ -1,3 +1,4 @@
+import { ReferentielParamOption } from '@tet/app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';
@@ -7,16 +8,9 @@ type OpenDataIndicateur = {
   metadonnee_id: number | null;
 };
 
-type OpenDataIndicateurWithCategorie = {
-  indicateur_id: number;
-  categorie_tag: {
-    nom: Categorie | string;
-  };
-};
-
-type Categorie = 'cae' | 'eci';
-
-export const useOpenDataIndicateursCount = (categorie: Categorie) => {
+export const useOpenDataIndicateursCount = (
+  categorie: ReferentielParamOption
+) => {
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
@@ -34,41 +28,40 @@ export const useOpenDataIndicateursCount = (categorie: Categorie) => {
 
 const buildOpenDataIndicateursByCategorie = async (
   collectivite_id: number,
-  categorie: Categorie
-): Promise<OpenDataIndicateurWithCategorie[]> => {
+  categorie: ReferentielParamOption
+) => {
   const openDataIndicateurs = await fetchOpenDataIndicateurs(collectivite_id);
-  console.log('openDataIndicateurs');
-  console.log(openDataIndicateurs);
 
   const openDataIndicateursWithCategorie =
     await fetchOpenDataIndicateursByCategorie(
       buildKeys(openDataIndicateurs),
       categorie
     );
-  console.log('openDataIndicateursWithCategorie');
-  console.log(openDataIndicateursWithCategorie);
 
   return openDataIndicateursWithCategorie;
 };
 
 /**
- * Only open data indicateurs have metadonnee_id, so we use this column.
+ * Only open data indicateurs have metadonnee_id, so we use this column to fetch them.
  */
-const fetchOpenDataIndicateurs = async (
-  collectivite_id: number
-): Promise<OpenDataIndicateur[]> => {
-  const { error: indicateurError, data: indicateurData } = await supabaseClient
-    .from('indicateur_valeur')
-    .select(
-      `indicateur_id,
-      metadonnee_id`
-    )
-    .match({ collectivite_id })
-    .not('metadonnee_id', 'is', null); // magic happens here
+const fetchOpenDataIndicateurs = async (collectivite_id: number) => {
+  try {
+    const { error, data } = await supabaseClient
+      .from('indicateur_valeur')
+      .select(
+        `indicateur_id,
+        metadonnee_id`
+      )
+      .match({ collectivite_id })
+      .not('metadonnee_id', 'is', null); // magic happens here
 
-  if (indicateurError) throw new Error(indicateurError.message);
+    if (error) throw new Error(error.message);
 
-  return indicateurData;
+    return data;
+  } catch (error) {
+    console.error('Error fetching open data indicateurs:', error);
+    return [];
+  }
 };
 
 const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
@@ -81,18 +74,23 @@ const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
 
 const fetchOpenDataIndicateursByCategorie = async (
   indicateurIds: number[],
-  categorie: Categorie
-): Promise<OpenDataIndicateurWithCategorie[]> => {
-  const { error: categorieError, data: categorieTags } = await supabaseClient
-    .from('indicateur_categorie_tag')
-    .select(
-      `indicateur_id,
-      categorie_tag!inner(nom)`
-    )
-    .in('indicateur_id', indicateurIds)
-    .match({ 'categorie_tag.nom': categorie });
+  categorie: ReferentielParamOption
+) => {
+  try {
+    const { error, data } = await supabaseClient
+      .from('indicateur_categorie_tag')
+      .select(
+        `indicateur_id,
+        categorie_tag!inner(nom)`
+      )
+      .in('indicateur_id', indicateurIds)
+      .match({ 'categorie_tag.nom': categorie });
 
-  if (categorieError) throw new Error(categorieError.message);
+    if (error) throw new Error(error.message);
 
-  return categorieTags;
+    return data;
+  } catch (error) {
+    console.error('Error fetching open data indicateurs by category:', error);
+    return [];
+  }
 };

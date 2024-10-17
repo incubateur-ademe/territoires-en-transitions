@@ -43,11 +43,12 @@ const IndicateursCard = ({
   referentielId,
 }: IndicateursCardProps) => {
   const indicateurs = useIndicateursCount();
+  console.log(indicateurs);
   if (!indicateurs) {
     return null;
   }
 
-  const { cae, eci, perso } = indicateurs;
+  const { cae, eci } = indicateurs;
 
   const indicateursToDisplay = [
     {
@@ -62,11 +63,12 @@ const IndicateursCard = ({
       firstLegend: 'indicateurs',
       secondLegend: referentielToName.eci,
     },
-    {
-      value: perso?.total || 0,
-      firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
-      secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
-    },
+    // Commenting out this part since we do not display indicateurs perso anymore.
+    // {
+    //   value: perso?.total || 0,
+    //   firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
+    //   secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
+    // },
   ];
 
   const pickIndicateur = (
@@ -75,23 +77,18 @@ const IndicateursCard = ({
   ): IndicateurToDisplayProps[] => {
     const indicateur = indicateursToDisplay.find(
       (indicateur) =>
+        indicateur.secondLegend &&
         indicateur.secondLegend === referentielToName[referentielId]
     );
-    if (!indicateur) {
-      throw new Error(
-        `Indicateur not found for referentielId: ${referentielId}`
-      );
-    }
     /**
-     * Wrapping in an array to respect KeyNumbers contract
+     * Wrapping in an array to respect KeyNumbers component contract
      */
-    return [indicateur];
+    return indicateur ? [indicateur] : [];
   };
 
   const isDisplayingIndicateurs =
-    indicateurs.cae?.withValue ||
-    indicateurs.eci?.withValue ||
-    indicateurs.perso?.total;
+    indicateurs.cae?.withValue || indicateurs.eci?.withValue;
+  // || indicateurs.perso?.total;
 
   return isDisplayingIndicateurs ? (
     <FilledIndicateursCard
@@ -124,7 +121,7 @@ const FilledIndicateursCard = ({
     <AccueilCard className="grow flex flex-col">
       <KeyNumbers
         valuesList={indicateurs}
-        openDataIndicateursCount={openDataIndicateursCount}
+        openDataIndicateursCount={openDataIndicateursCount || 0}
       />
       <div className="flex flex-row gap-4">
         <Button
