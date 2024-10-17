@@ -1,12 +1,12 @@
 import { TableOptions } from 'react-table';
 
-import EtatDesLieuxGraphs from './EtatDesLieuxGraphs';
-import { ScoreRempli, ScoreVide } from './Scores';
+import EtatDesLieuxGraphs from './graphs/EtatDesLieuxGraphs';
+import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
 import { ReferentielParamOption } from 'app/paths';
 import { actionIdToLabel } from 'app/labels';
 import { ProgressionRow } from '../data/useProgressionReferentiel';
-import IndicateursCard from '../IndicateursCard';
+import IndicateursCard from './IndicateursCard';
 
 type Props = {
   collectiviteId: number;

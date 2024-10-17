@@ -5,12 +5,10 @@ import {
 } from 'app/paths';
 import { PictoIndicateurs } from 'ui/pictogrammes/PictoIndicateur';
 import { Button } from '@tet/ui';
-import AccueilCard from './AccueilCard';
-import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
-import KeyNumbers from 'ui/score/KeyNumbers';
-import { useIndicateursCount } from './data/useIndicateurSummary';
+import { useIndicateursCount } from '../data/useIndicateurSummary';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useOpenDataIndicateursCount } from './data/useOpenDataIndicateurs';
+import { useOpenDataIndicateursCount } from '../data/useOpenDataIndicateurs';
+import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 
 type IndicateursCardProps = {
   collectiviteId: number;
@@ -43,7 +41,6 @@ const IndicateursCard = ({
   referentielId,
 }: IndicateursCardProps) => {
   const indicateurs = useIndicateursCount();
-  console.log(indicateurs);
   if (!indicateurs) {
     return null;
   }
@@ -63,12 +60,6 @@ const IndicateursCard = ({
       firstLegend: 'indicateurs',
       secondLegend: referentielToName.eci,
     },
-    // Commenting out this part since we do not display indicateurs perso anymore.
-    // {
-    //   value: perso?.total || 0,
-    //   firstLegend: `indicateur${perso?.total > 1 ? 's' : ''}`,
-    //   secondLegend: `personnalisé${perso?.total > 1 ? 's' : ''}`,
-    // },
   ];
 
   const pickIndicateur = (
@@ -119,10 +110,29 @@ const FilledIndicateursCard = ({
 
   return (
     <AccueilCard className="grow flex flex-col">
-      <KeyNumbers
-        valuesList={indicateurs}
-        openDataIndicateursCount={openDataIndicateursCount || 0}
-      />
+      <div
+        className={`grid md:grid-cols-${indicateurs.length} md:divide-x md:divide-y-0 divide-x-0 divide-y divide-[#e5e5e5] md:mb-auto mb-8 md:pb-4 w-fit`}
+      >
+        {indicateurs.map((v, index) => (
+          <div
+            key={index}
+            className="px-4 md:py-0 py-8 md:first:pl-0 first:pt-0 md:last:pr-0 last:pb-0"
+          >
+            <div className="text-[#ff5655] text-4xl font-bold pb-2">
+              {v.value}/{v.totalValue}
+            </div>
+            <div>
+              <span className="text-sm text-primary-9 font-semibold uppercase">
+                {v.firstLegend} {v.secondLegend}
+              </span>
+              <span className="text-xs">
+                {' '}
+                dont {openDataIndicateursCount} renseignés en open data
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="flex flex-row gap-4">
         <Button
           onClick={() =>
@@ -165,8 +175,11 @@ const EmptyIndicateursCard = ({
   const tracker = useFonctionTracker();
 
   return (
-    <AccueilEmptyCardWithPicto picto={<PictoIndicateurs />}>
-      <>
+    <AccueilCard className="grow grid md:grid-cols-3 gap-8">
+      <div className="m-auto">
+        <PictoIndicateurs />
+      </div>
+      <div className="md:col-span-2 flex flex-col justify-end">
         <p className="text-sm m-0 pb-12">
           <b>Mesurez</b> l'efficacité de vos actions et{' '}
           <b>atteignez vos objectifs !</b>
@@ -179,7 +192,7 @@ const EmptyIndicateursCard = ({
         >
           Compléter mes indicateurs
         </Button>
-      </>
-    </AccueilEmptyCardWithPicto>
+      </div>
+    </AccueilCard>
   );
 };

@@ -2,7 +2,7 @@ import { TableOptions } from 'react-table';
 
 // import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
-import LabellisationInfo from 'ui/labellisation/LabellisationInfo';
+import LabellisationInfo from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
 import Chart from 'ui/charts/Chart';
 
 import {
@@ -18,7 +18,7 @@ import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisat
 import { Button } from '@tet/ui';
 import { ProgressionRow } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
 import { getAggregatedScore } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
-import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilCard';
+import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 
 type ScoreRempliProps = {
   collectiviteId: number;
@@ -44,9 +44,9 @@ export const ScoreRempli = ({
   const data = getAggregatedScore(progressionScore.data);
 
   return (
-    <AccueilCard className="flex flex-col items-center xl:grid xl:grid-cols-[1.8fr_1fr] gap-4">
+    <AccueilCard className="flex flex-col items-center xl:flex-row xl:justify-between">
       {/* Graphe donut */}
-      <div className="w-full max-w-xs xl:order-2 xl:-mr-6">
+      <div className="w-full max-w-xs xl:order-2">
         <Chart
           donut={{
             chart: {
@@ -66,13 +66,13 @@ export const ScoreRempli = ({
         />
       </div>
 
-      <div className="flex flex-col items-center xl:items-start gap-2 mt-4">
+      <div className="flex flex-col items-center xl:items-start gap-2 shrink-0">
         {/** Référentiel */}
-        <div className="flex justify-center	xl:justify-start items-center gap-2">
+        <div className="flex items-center justify-center gap-3 xl:flex-col xl:items-start xl:gap-0 xl:-mt-3">
           <img
             src={logoTerritoireEngage}
             alt="Logo Territoire Engage"
-            className="w-[10%] xl:w-[30%]"
+            className="w-12 xl:w-24"
           />
           <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
         </div>
@@ -118,13 +118,13 @@ export const ScoreVide = ({
   const tracker = useFonctionTracker();
 
   return (
-    <AccueilCard className="flex flex-col gap-11">
+    <AccueilCard className="flex flex-col gap-7">
       {/* En-tête */}
-      <div className="flex flex-col items-start gap-2">
+      <div className="flex flex-col items-start xl:-mt-3">
         <img
           src={logoTerritoireEngage}
           alt="Logo Territoire Engage"
-          className="w-[30%]"
+          className="w-24"
         />
         <h6 className="text-lg font-bold uppercase m-0">{title}</h6>
       </div>
@@ -149,8 +149,9 @@ export const ScoreVide = ({
       </ul>
 
       {/* Call to action */}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <Button
+          size="sm"
           onClick={() =>
             tracker({ fonction: 'cta_edl_commencer', action: 'clic' })
           }
@@ -163,6 +164,7 @@ export const ScoreVide = ({
           Commencer l'état des lieux
         </Button>
         <Button
+          size="sm"
           onClick={() =>
             tracker({ fonction: 'cta_edl_personnaliser', action: 'clic' })
           }
