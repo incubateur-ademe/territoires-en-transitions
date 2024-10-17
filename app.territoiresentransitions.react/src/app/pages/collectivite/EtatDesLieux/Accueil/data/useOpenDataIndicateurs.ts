@@ -4,8 +4,8 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 type OpenDataIndicateur = {
-  indicateur_id: number;
-  metadonnee_id: number | null;
+  indicateurId: number;
+  metadonneeId: number | null;
 };
 
 export const useOpenDataIndicateursCount = (
@@ -57,7 +57,10 @@ const fetchOpenDataIndicateurs = async (collectivite_id: number) => {
 
     if (error) throw new Error(error.message);
 
-    return data;
+    return data.map((item: any) => ({
+      indicateurId: item.indicateur_id,
+      metadonneeId: item.metadonnee_id,
+    }));
   } catch (error) {
     console.error('Error fetching open data indicateurs:', error);
     return [];
@@ -66,7 +69,7 @@ const fetchOpenDataIndicateurs = async (collectivite_id: number) => {
 
 const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
   const indicateurIds = indicateurs
-    ? Array.from(new Set(indicateurs.map((indic) => indic.indicateur_id)))
+    ? Array.from(new Set(indicateurs.map((indic) => indic.indicateurId)))
     : [];
 
   return indicateurIds;
