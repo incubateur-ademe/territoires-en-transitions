@@ -15,6 +15,7 @@ import {
   collectivitePersoRefThematiquePath,
   collectivitePlansActionsBasePath,
   collectiviteReferentielPath,
+  collectiviteSyntheseReferentielPath,
   collectiviteTrajectoirePath,
   collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
@@ -28,7 +29,8 @@ import { PersoReferentielThematiquePage } from './PersoReferentielThematique/Per
 import { PlansActionsPage } from './PlansActions/PlansActionsPage';
 import { IndicateursPage } from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import { TrajectoirePage } from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
-import AccueilPage from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
+import { AccueilPage as SyntheseEtatDesLieuxPage } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
+import { AccueilPage } from '@tet/app/pages/collectivite/Accueil/AccueilPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.
@@ -38,11 +40,15 @@ import AccueilPage from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/Accuei
 export const CollectiviteRoutes = () => {
   return (
     <>
+      <Route path={collectiviteAccueilPath}>
+        <AccueilPage />
+      </Route>
+
       <Route path={collectiviteReferentielPath}>
         <ReferentielsPage />
       </Route>
-      <Route path={collectiviteAccueilPath}>
-        <AccueilPage />
+      <Route path={collectiviteSyntheseReferentielPath}>
+        <SyntheseEtatDesLieuxPage />
       </Route>
       <Route path={collectiviteActionPath}>
         <ActionPage />
