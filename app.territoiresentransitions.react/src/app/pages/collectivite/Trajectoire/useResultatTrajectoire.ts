@@ -1,7 +1,12 @@
 import {useQuery} from 'react-query';
 import {useApiClient} from 'core-logic/api/useApiClient';
 import {useCollectiviteId} from 'core-logic/hooks/params';
-import {DATE_FIN, IndicateurTrajectoire, SourceIndicateur} from './constants';
+import {
+  DATE_FIN,
+  EMISSIONS_NETTES,
+  IndicateurTrajectoire,
+  SourceIndicateur,
+} from './constants';
 import {
   getKey,
   IndicateurAvecValeurs,
@@ -144,7 +149,27 @@ export const useResultatTrajectoire = ({
       !!data?.indentifiants_referentiel_manquants_donnees_entree?.length) ||
     false;
 
+  // extrait les données des émissions nettes pour le graphe tous secteurs
+  const dataEmissionsNettes =
+    indicateur.id === 'emissions_ges' &&
+    !secteur &&
+    trajectoire?.find(
+      (t) => t.definition.identifiant_referentiel === EMISSIONS_NETTES.id
+    );
+  const emissionsNettes = dataEmissionsNettes
+    ? {
+        id: EMISSIONS_NETTES.id,
+        name: EMISSIONS_NETTES.nom,
+        color: EMISSIONS_NETTES.color,
+        source: dataEmissionsNettes.valeurs.map((v) => ({
+          x: v.date_valeur,
+          y: v.objectif * (EMISSIONS_NETTES.coef || 1),
+        })),
+      }
+    : null;
+
   return {
+    emissionsNettes,
     identifiant,
     objectifs,
     resultats,
