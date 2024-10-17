@@ -79,7 +79,6 @@ const IndicateursCard = ({
 
   const isDisplayingIndicateurs =
     indicateurs.cae?.withValue || indicateurs.eci?.withValue;
-  // || indicateurs.perso?.total;
 
   return isDisplayingIndicateurs ? (
     <FilledIndicateursCard
