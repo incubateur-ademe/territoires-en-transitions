@@ -58,15 +58,21 @@ const EtatDesLieux = ({
           />
         </>
       ) : (
-        <ScoreVide
-          collectiviteId={collectiviteId}
-          referentiel={referentiel}
-          title={title}
-          tags={progressionScore.data.map((d) => ({
-            label: actionIdToLabel[d.action_id] ?? d.nom,
-            axeId: d.action_id,
-          }))}
-        />
+        <>
+          <ScoreVide
+            collectiviteId={collectiviteId}
+            referentiel={referentiel}
+            title={title}
+            tags={progressionScore.data.map((d) => ({
+              label: actionIdToLabel[d.action_id] ?? d.nom,
+              axeId: d.action_id,
+            }))}
+          />
+          <IndicateursCard
+            collectiviteId={collectiviteId}
+            referentielId={referentiel}
+          />
+        </>
       )}
     </div>
   );

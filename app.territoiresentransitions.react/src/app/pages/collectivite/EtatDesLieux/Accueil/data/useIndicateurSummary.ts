@@ -1,55 +1,30 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ValuesToUnion} from '@tet/api';
+import { useQuery } from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Referentiel } from '@tet/api/referentiel/domain/enum.schema';
 
-const CATEGORIES = ['cae', 'eci', 'perso'] as const;
-type Categorie = ValuesToUnion<typeof CATEGORIES>;
-
-/**
- * Récupère les summary des indicateurs d'une catégorie et d'une collectivité données
- */
-const fetchIndicateurSummary = async (collectivite_id: number) => {
-  const {error, data} = await supabaseClient
+const fetchIndicateurSummary = async (
+  collectivite_id: number,
+  referentiel: Referentiel
+) => {
+  const { error, data } = await supabaseClient
     .from('indicateur_summary')
     .select('*')
-    .match({collectivite_id});
+    .match({ collectivite_id, categorie: referentiel });
 
   if (error) throw new Error(error.message);
 
-  return data.filter(
-    s => s.categorie && CATEGORIES.includes(s.categorie as Categorie)
-  );
+  return data;
 };
 
 /**
- * Récupère les summary des indicateurs d'un groupe et d'une collectivité données
+ * Récupère le summary des indicateurs d'un référentiel pour une collectivité donnée
  */
-const useIndicateurSummary = () => {
+export const useIndicateurSummary = (referentiel: Referentiel) => {
   const collectiviteId = useCollectiviteId();
 
-  return useQuery(['indicateur_summary', collectiviteId], () => {
+  return useQuery(['indicateur_summary', collectiviteId, referentiel], () => {
     if (!collectiviteId) return;
-    return fetchIndicateurSummary(collectiviteId);
+    return fetchIndicateurSummary(collectiviteId, referentiel);
   });
-};
-
-/**
- * Renvoie les compteurs pour tous les indicateurs
- */
-export const useIndicateursCount = () => {
-  const {data, isLoading} = useIndicateurSummary();
-
-  if (isLoading || !data) {
-    return;
-  }
-
-  const parCategorie = new Map();
-  data?.forEach(d => {
-    parCategorie.set(d.categorie, {total: d.nombre, withValue: d.rempli});
-  });
-  return Object.fromEntries(parCategorie.entries()) as Record<
-    Categorie,
-    {total: number; withValue: number}
-  >;
 };
