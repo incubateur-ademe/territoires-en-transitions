@@ -1,13 +1,3 @@
-import { SignInWithPasswordCredentials, User } from '@supabase/supabase-js';
-import {
-  clearAuthTokens,
-  getRootDomain,
-  restoreSessionFromAuthTokens,
-  setAuthTokens,
-} from '@tet/api';
-import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
-import { signUpPath } from 'app/paths';
-import { ENV } from 'environmentVariables';
 import {
   Session,
   SignInWithPasswordCredentials,
