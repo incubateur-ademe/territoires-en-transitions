@@ -11,7 +11,8 @@ import Module, {
 import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { TDBViewParam } from 'app/paths';
 import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import Link from 'next/link';
 import Chart from 'ui/charts/Chart';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import { Statut } from '@tet/api/plan-actions';
@@ -140,7 +141,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
               ) : (
                 <Link
                   key={index}
-                  to={makeFichesActionUrlWithParams(
+                  href={makeFichesActionUrlWithParams(
                     collectiviteId,
                     filtres,
                     valeur

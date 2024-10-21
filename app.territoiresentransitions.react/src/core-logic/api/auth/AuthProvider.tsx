@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         environment = 'development';
 
       if (environment === 'production' || environment === 'test') {
-        // @ts-ignore
+        // @ts-expect-error - StonlyWidget is not defined
         window.StonlyWidget('identify', userData.user_id);
       }
     } else {

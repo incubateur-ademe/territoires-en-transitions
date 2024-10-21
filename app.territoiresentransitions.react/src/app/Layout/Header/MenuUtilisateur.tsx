@@ -1,21 +1,24 @@
-import {forwardRef, Ref} from 'react';
-import {Link, useHistory, useLocation} from 'react-router-dom';
-import {useQueryClient} from 'react-query';
+import { Button } from '@tet/ui';
+import { monComptePath } from 'app/paths';
 import classNames from 'classnames';
-import {monComptePath} from 'app/paths';
-import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
+import { TAuthContext, UserData } from 'core-logic/api/auth/AuthProvider';
+import { usePathname } from 'next/navigation';
+import { forwardRef, Ref } from 'react';
+import { useQueryClient } from 'react-query';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
-import {Button} from '@tet/ui';
+import { HeaderPropsWithModalState } from './types';
+import Link from 'next/link';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
  */
 const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
-  const {auth, setModalOpened} = props;
-  const {user} = auth;
-  const {pathname} = useLocation();
+  const { auth, setModalOpened } = props;
+  const { user } = auth;
+  const pathname = usePathname();
+
   if (!user) {
     return null;
   }
@@ -26,7 +29,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
       placement="bottom"
       offsetValue={0}
       zIndex={2000}
-      render={({close}) => (
+      render={({ close }) => (
         <div
           className="m-0 p-0 user-menu"
           onClick={() => {
@@ -35,7 +38,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           }}
         >
           <Link
-            to={monComptePath}
+            href={monComptePath}
             className="fr-nav__link"
             aria-current={isUserPath ? 'page' : undefined}
           >
@@ -95,15 +98,15 @@ const MenuUtilisateurBtn = forwardRef(
 /**
  * Bouton "Déconnexion"
  */
-const Deconnexion = ({auth}: {auth: TAuthContext}) => {
+const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
   const history = useHistory();
   const queryClient = useQueryClient();
   return (
     <Link
       className="fr-nav__link"
-      style={{backgroundImage: 'none'}}
+      style={{ backgroundImage: 'none' }}
       data-test="logoutBtn"
-      to="/"
+      href="/"
       onClick={() => {
         auth.disconnect().then(() => {
           // Supprime le cache de la session

@@ -1,15 +1,14 @@
-import {Link} from 'react-router-dom';
-
-import {Referentiel} from 'types/litterals';
-import {toPercentString} from 'utils/score';
-import {referentielToName} from 'app/labels';
-import {NIVEAUX} from 'ui/labellisation/getNiveauInfo';
-import {GreyStar, RedStar} from 'ui/labellisation/Star';
-import {TCollectiviteCarte} from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {makeCollectiviteAccueilUrl} from 'app/paths';
+import Link from 'next/link';
+import { Referentiel } from 'types/litterals';
+import { toPercentString } from 'utils/score';
+import { referentielToName } from 'app/labels';
+import { NIVEAUX } from 'ui/labellisation/getNiveauInfo';
+import { GreyStar, RedStar } from 'ui/labellisation/Star';
+import { TCollectiviteCarte } from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { makeCollectiviteAccueilUrl } from 'app/paths';
 import classNames from 'classnames';
-import {Icon} from '@tet/ui';
+import { Icon } from '@tet/ui';
 
 type Props = {
   collectivite: TCollectiviteCarte;
@@ -23,14 +22,19 @@ type Props = {
  * Affiche le nom et des éléments de scores.
  * Lien vers le tableau de bord de la collectivité.
  */
-export const CollectiviteCarte = ({collectivite, canUserClickCard}: Props) => {
+export const CollectiviteCarte = ({
+  collectivite,
+  canUserClickCard,
+}: Props) => {
   const tracker = useFonctionTracker();
 
   return (
     <Link
       data-test="CollectiviteCarte"
-      onClick={() => tracker({fonction: 'collectivite_carte', action: 'clic'})}
-      to={
+      onClick={() =>
+        tracker({ fonction: 'collectivite_carte', action: 'clic' })
+      }
+      href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,
@@ -121,11 +125,11 @@ export type TCinqEtoilesProps = {
  * Les étoiles affichées dans la colonne des informations relative au
  * référentiel.
  */
-const CinqEtoiles = ({etoiles}: TCinqEtoilesProps) => {
+const CinqEtoiles = ({ etoiles }: TCinqEtoilesProps) => {
   return (
     <div className="flex gap-2">
       {/* <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"> */}
-      {NIVEAUX.map(niveau => {
+      {NIVEAUX.map((niveau) => {
         const obtenue = etoiles >= niveau;
         const Star = obtenue ? RedStar : GreyStar;
         return <Star key={niveau} className="!w-6 !h-6" />;

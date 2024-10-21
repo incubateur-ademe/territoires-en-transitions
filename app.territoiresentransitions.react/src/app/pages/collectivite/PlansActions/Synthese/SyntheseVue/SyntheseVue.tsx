@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import HeaderTitle from 'ui/HeaderTitle';
+import { FicheResume } from '@tet/api/plan-actions';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -8,17 +6,20 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import HeaderTitle from 'ui/HeaderTitle';
+import { ITEM_ALL } from 'ui/shared/filters/commons';
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
-import FiltersPlanAction, { PlanActionFilter } from '../FiltersPlanAction';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import { FiltersKeys } from '../../FicheAction/data/filters';
 import { useFichesActionFiltresListe } from '../../FicheAction/data/useFichesActionFiltresListe';
-import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
+import FiltersPlanAction, { PlanActionFilter } from '../FiltersPlanAction';
+import { generateSyntheseVue } from '../utils';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
-import { generateSyntheseVue } from '../utils';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
-import { FicheResume } from '@tet/api/plan-actions';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -76,7 +77,7 @@ const SyntheseVue = () => {
         <div className="py-6">
           <Link
             className="p-1 shrink-0 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
-            to={makeCollectivitePlansActionsSyntheseUrl({
+            href={makeCollectivitePlansActionsSyntheseUrl({
               collectiviteId: collectivite_id!,
             })}
           >

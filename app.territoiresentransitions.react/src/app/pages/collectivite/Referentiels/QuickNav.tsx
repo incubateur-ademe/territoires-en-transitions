@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
-import {useHistory, Link} from 'react-router-dom';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Link from 'next/link';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import {
   actionPath,
   displayName,
@@ -8,12 +9,12 @@ import {
   findChildren,
   searchAncestors,
 } from 'utils/actions';
-import {Menu, MenuItem} from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import {makeCollectiviteReferentielUrl} from 'app/paths';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionTitleList} from 'core-logic/hooks/referentiel';
-import {ActionTitleRead} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
+import { makeCollectiviteReferentielUrl } from 'app/paths';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionTitleList } from 'core-logic/hooks/referentiel';
+import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
 /**
  * Returns a list of menu items
@@ -60,7 +61,7 @@ const actionsToMenuItems = (
 export const OrientationQuickNav = (props: {
   action: ActionDefinitionSummary;
 }) => {
-  const {action} = props;
+  const { action } = props;
   const collectiviteId = useCollectiviteId()!;
   const titles = useActionTitleList(action.referentiel);
 
@@ -73,7 +74,7 @@ export const OrientationQuickNav = (props: {
     <nav className="flex flex-row text-sm text-grey425 items-start">
       <div className="flex flex-row flex-nowrap">
         <Link
-          to={makeCollectiviteReferentielUrl({
+          href={makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: action.referentiel,
           })}
@@ -83,7 +84,7 @@ export const OrientationQuickNav = (props: {
 
         <span className="mx-2">&gt;</span>
       </div>
-      {grandParents.map(parent => {
+      {grandParents.map((parent) => {
         // we build a menu for every parent
         return (
           <div className="flex flex-row flex-nowrap" key={parent.id}>
@@ -127,7 +128,7 @@ const OrientationSwitcher = (props: {
         className="truncate max-w-lg cursor-pointer"
         aria-controls={menuId}
         aria-haspopup="true"
-        onClick={e => {
+        onClick={(e) => {
           setAnchorEl(e.currentTarget);
           setOpened(!opened);
         }}
@@ -139,8 +140,8 @@ const OrientationSwitcher = (props: {
         open={opened}
         onClose={handleClose}
         anchorEl={anchorEl}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
-        transformOrigin={{vertical: 'top', horizontal: 'left'}}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
         {actionsToMenuItems(siblings!, props.titles, onSelect)}
       </Menu>

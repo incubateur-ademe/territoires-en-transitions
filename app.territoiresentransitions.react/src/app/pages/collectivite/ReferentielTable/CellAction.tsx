@@ -1,9 +1,9 @@
-import {CellProps} from 'react-table';
-import {Link} from 'react-router-dom';
-import {makeCollectiviteTacheUrl, ReferentielParamOption} from 'app/paths';
-import {ActionReferentiel} from './useReferentiel';
-import {Kbd} from 'ui/shared/Kbd';
-import {Tooltip} from '@tet/ui';
+import { CellProps } from 'react-table';
+import Link from 'next/link';
+import { makeCollectiviteTacheUrl, ReferentielParamOption } from 'app/paths';
+import { ActionReferentiel } from './useReferentiel';
+import { Kbd } from 'ui/shared/Kbd';
+import { Tooltip } from '@tet/ui';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
@@ -48,7 +48,7 @@ export const CellAction = (props: TCellProps) => {
   } = props;
   if (!collectiviteId || !referentielId) return null;
 
-  const {depth, identifiant} = row.original;
+  const { depth, identifiant } = row.original;
   const haveSubrows = row.subRows.length > 0;
   const isNotMaxDepth = !maxDepth || depth < maxDepth;
   const showExpand = alwaysShowExpand || (haveSubrows && isNotMaxDepth);
@@ -84,8 +84,8 @@ export const CellAction = (props: TCellProps) => {
             depth > idDepth ? (
               <Link
                 className="hover:underline active:underline active:!bg-transparent"
-                onClick={evt => evt.stopPropagation()}
-                to={makeCollectiviteTacheUrl({
+                onClick={(evt) => evt.stopPropagation()}
+                href={makeCollectiviteTacheUrl({
                   collectiviteId,
                   actionId: row.original.action_id,
                   referentielId,
@@ -124,9 +124,9 @@ const infoDeplier = (
 );
 
 // affiche le picto reflétant l'état plié/déplié
-const Expand = ({row, referentielId}: TCellProps) => {
-  const {isExpanded, original} = row;
-  const {depth} = original;
+const Expand = ({ row, referentielId }: TCellProps) => {
+  const { isExpanded, original } = row;
+  const { depth } = original;
   const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
   const className = [
     'fr-mr-1w hover:!bg-transparent',
@@ -143,7 +143,7 @@ const Expand = ({row, referentielId}: TCellProps) => {
         {...row.getToggleRowExpandedProps()}
         onMouseOver={undefined}
         title=""
-        onClick={evt => {
+        onClick={(evt) => {
           evt.stopPropagation();
           row.toggleRowExpanded();
         }}

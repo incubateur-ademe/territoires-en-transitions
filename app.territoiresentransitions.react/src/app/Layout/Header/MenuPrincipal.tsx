@@ -1,19 +1,20 @@
-import {useEffect} from 'react';
-import {Link, useLocation} from 'react-router-dom';
-import {useId} from '@floating-ui/react';
+import { useId } from '@floating-ui/react';
+import {
+  finaliserMonInscriptionUrl,
+  recherchesCollectivitesUrl,
+} from 'app/paths';
 import classNames from 'classnames';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import { makeNavItems, makeSecondaryNavItems } from './makeNavItems';
+import { SelectCollectivite } from './SelectCollectivite';
 import {
   HeaderPropsWithModalState,
   TNavDropdown,
   TNavItem,
   TNavItemsList,
 } from './types';
-import {makeNavItems, makeSecondaryNavItems} from './makeNavItems';
-import {SelectCollectivite} from './SelectCollectivite';
-import {
-  finaliserMonInscriptionUrl,
-  recherchesCollectivitesUrl,
-} from 'app/paths';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -108,12 +109,12 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 };
 
 /** Affiche un item de menu */
-const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
-  const {item, setModalOpened, setOpenedId} = props;
-  const {to, label, urlPrefix} = item;
+const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
+  const { item, setModalOpened, setOpenedId } = props;
+  const { to, label, urlPrefix } = item;
 
   // vérifie si l'item correspond au début du chemin courant
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const current =
     pathname.startsWith(to) || pathIncludes(pathname, urlPrefix)
       ? 'page'
@@ -122,7 +123,7 @@ const NavItem = (props: HeaderPropsWithModalState & {item: TNavItem}) => {
   return (
     <li className="fr-nav__item">
       <Link
-        to={to}
+        href={to}
         target="_self"
         className="fr-nav__link"
         aria-controls="modal-header__menu"
@@ -144,17 +145,17 @@ const NavDropdown = (
     item: TNavDropdown;
   }
 ) => {
-  const {item, openedId, setOpenedId} = props;
-  const {title, items, urlPrefix} = item;
+  const { item, openedId, setOpenedId } = props;
+  const { title, items, urlPrefix } = item;
 
   const id = useId(); // utilise le générateur d'id de floater
   const opened = openedId === id; // vérifie si le menu est ouvert
 
   // vérifie si le menu contient un item correspondant au chemin courant
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const current =
     pathIncludes(pathname, urlPrefix) ||
-    items.findIndex(({to}) => pathname.startsWith(to)) !== -1
+    items.findIndex(({ to }) => pathname.startsWith(to)) !== -1
       ? 'true'
       : undefined;
 
@@ -169,9 +170,12 @@ const NavDropdown = (
       >
         {title}
       </button>
-      <div className={classNames('fr-menu', {'fr-collapse': !opened})} id={id}>
+      <div
+        className={classNames('fr-menu', { 'fr-collapse': !opened })}
+        id={id}
+      >
         <ul className="fr-menu__list" onClickCapture={() => setOpenedId(null)}>
-          {items.map(item => (
+          {items.map((item) => (
             <NavItem key={item.to} {...props} item={item} />
           ))}
         </ul>
@@ -186,7 +190,7 @@ const cleanUrlPrefix = (urlPrefix?: string) => {
 
   const prefix = urlPrefix
     .split('/')
-    .filter(s => s && s !== '?')
+    .filter((s) => s && s !== '?')
     .join('/');
 
   if (!prefix) return undefined;
@@ -196,6 +200,6 @@ const cleanUrlPrefix = (urlPrefix?: string) => {
 // renvoi `true` si le chemin contient un des segments donnés
 const pathIncludes = (pathname: string, urlPrefix?: string[]) => {
   return urlPrefix
-    ?.map(prefix => cleanUrlPrefix(prefix))
-    .find(prefix => prefix && pathname.includes(prefix));
+    ?.map((prefix) => cleanUrlPrefix(prefix))
+    .find((prefix) => prefix && pathname.includes(prefix));
 };

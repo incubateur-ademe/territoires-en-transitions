@@ -1,19 +1,18 @@
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
-
-import {useCreatePlanAction} from '../PlanAction/data/useUpsertAxe';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
+import { useState } from 'react';
+import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
 import FormField from 'ui/shared/form/FormField';
 import PlanTypeDropdown from '../PlanAction/PlanTypeDropdown';
-import {TPlanType} from 'types/alias';
+import { TPlanType } from 'types/alias';
+import Link from 'next/link';
 
 const CreerPlan = () => {
   const collectivite_id = useCollectiviteId();
 
-  const [plan, setPlan] = useState<{nom?: string; type?: TPlanType}>({});
+  const [plan, setPlan] = useState<{ nom?: string; type?: TPlanType }>({});
 
-  const {mutate: createPlanAction} = useCreatePlanAction();
+  const { mutate: createPlanAction } = useCreatePlanAction();
 
   const handleCreate = () => {
     createPlanAction({
@@ -38,17 +37,17 @@ const CreerPlan = () => {
             <input
               data-test="PlanNomInput"
               className="fr-input"
-              onChange={e => setPlan({...plan, nom: e.target.value})}
+              onChange={(e) => setPlan({ ...plan, nom: e.target.value })}
             />
           </FormField>
           <PlanTypeDropdown
             type={plan.type?.id}
-            onSelect={type => setPlan({...plan, type})}
+            onSelect={(type) => setPlan({ ...plan, type })}
           />
           <div className="flex items-center justify-end gap-6 mt-4">
             <Link
               className="fr-btn fr-btn--tertiary fr-btn--icon-left !mb-0 fr-icon-arrow-left-line hover:!bg-[#EEEEEE]"
-              to={makeCollectivitePlansActionsNouveauUrl({
+              href={makeCollectivitePlansActionsNouveauUrl({
                 collectiviteId: collectivite_id!,
               })}
             >

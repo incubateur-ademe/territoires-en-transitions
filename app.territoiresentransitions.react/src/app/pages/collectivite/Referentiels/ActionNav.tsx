@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom';
+import Link from 'next/link';
 
 /**
  * Affiche les boutons "Action précédente" et "Action suivante" en haut de page
@@ -13,7 +13,7 @@ export const ActionTopNav = ({
   <div className="min-h-[1.5rem] flex justify-between fr-text--sm !m-0 fr-mt-2w overflow-hidden">
     {prevActionLink ? (
       <Link
-        to={prevActionLink}
+        href={prevActionLink}
         className="fr-fi-arrow-left-line fr-btn--icon-left active-transparent"
       >
         Action précédente
@@ -23,7 +23,7 @@ export const ActionTopNav = ({
     )}
     {!!nextActionLink && (
       <Link
-        to={nextActionLink}
+        href={nextActionLink}
         className="justify-self-end fr-fi-arrow-right-line fr-btn--icon-right active-transparent"
       >
         Action suivante

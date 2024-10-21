@@ -1,4 +1,4 @@
-import { Link, Redirect, Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
@@ -22,6 +22,7 @@ import {
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
 import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import Link from 'next/link';
 
 type Props = {
   collectivite_id: number;
@@ -65,7 +66,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
               <Link
                 data-test="AjouterPlanAction"
                 className="fr-btn fr-btn--tertiary"
-                to={makeCollectivitePlansActionsNouveauUrl({
+                href={makeCollectivitePlansActionsNouveauUrl({
                   collectiviteId: collectivite_id,
                 })}
               >
