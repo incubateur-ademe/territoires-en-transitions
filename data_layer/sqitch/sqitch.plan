@@ -735,3 +735,6 @@ cron/refresh_stats_views_locales [cron/refresh_stats_views_locales@v4.12.3] 2024
 plan_action/plan_action [plan_action/plan_action@v4.12.3] 2024-09-25T11:24:37Z System Administrator <root@AirdeThibaut2.lan> # Ajout de statuts pour les fiches action
 @v4.16.0 2024-10-16T14:16:21Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en v4.16.0
 
+indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v4.16.0] 2024-10-16T16:41:31Z System Administrator <root@AirdeThibaut2.lan> # uniquement donnees citepa pour la page publique
+@v4.17.0 2024-10-16T17:05:46Z System Administrator <root@AirdeThibaut2.lan> # uniquement donnees citepa pour la page publique
+
