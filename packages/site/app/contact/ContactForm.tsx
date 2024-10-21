@@ -59,7 +59,7 @@ const ContactForm = () => {
     });
   };
 
-  const handleChangeSelect = (value: OptionValue) => {
+  const handleChangeSelect = (value?: OptionValue) => {
     const categorie = options.find((opt) =>
       opt.options.some((o) => o.value === value)
     );
