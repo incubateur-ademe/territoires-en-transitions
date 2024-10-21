@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import * as Sentry from '@sentry/react';
-import { App } from './app/App';
+import { LegacyRouter } from './app/legacy-router';
 import { ENV } from './environmentVariables';
 import React from 'react';
 
@@ -26,6 +26,6 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <App />
+    <LegacyRouter />
   </React.StrictMode>
 );

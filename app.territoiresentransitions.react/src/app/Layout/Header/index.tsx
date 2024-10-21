@@ -1,3 +1,5 @@
+'use client';
+
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useMaintenance } from '../useMaintenance';
