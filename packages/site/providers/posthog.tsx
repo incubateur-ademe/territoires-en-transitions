@@ -36,9 +36,6 @@ function loadScripts(choices: Record<string, boolean | undefined>) {
   if (choices.crisp) {
     loadCrispWidget();
   }
-  // if ('posthog' in choices) {
-  //   loadPosthog();
-  // }
 
   if (choices.adform) {
     loadAdform();
