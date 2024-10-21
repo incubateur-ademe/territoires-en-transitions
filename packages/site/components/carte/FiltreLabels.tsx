@@ -14,6 +14,11 @@ const FiltreLabels = ({
 }: FiltreLabelsProps) => {
   return (
     <div className="flex flex-col gap-4 w-fit">
+      {/** Toutes les collectivitées :
+       * - engagées labellisées CAE ou ECI
+       * - engagées non labellisées (= COT non labellisées)
+       * - actives sur la plateforme, engagées ou non
+       */}
       <RadioButton
         label="Toutes les collectivités"
         id="toutes"
@@ -23,6 +28,7 @@ const FiltreLabels = ({
         onChange={() => onChangeFilter('toutes')}
       />
 
+      {/* Labellisées CAE */}
       <RadioButton
         label="Labellisées Climat-Air-Énergie"
         id="labellisees_cae"
@@ -32,6 +38,7 @@ const FiltreLabels = ({
         onChange={() => onChangeFilter('labellisees_cae')}
       />
 
+      {/* Labellisées ECI */}
       <RadioButton
         label="Labellisées Économie Circulaire"
         id="labellisees_eci"
@@ -41,13 +48,14 @@ const FiltreLabels = ({
         onChange={() => onChangeFilter('labellisees_eci')}
       />
 
+      {/* Collectivités COT non labellisées */}
       <RadioButton
         label="Collectivités engagées non labellisées"
-        id="cot"
-        value="cot"
+        id="cot_non_labellisees"
+        value="cot_non_labellisees"
         name="filtre"
-        checked={selectedFilter === 'cot'}
-        onChange={() => onChangeFilter('cot')}
+        checked={selectedFilter === 'cot_non_labellisees'}
+        onChange={() => onChangeFilter('cot_non_labellisees')}
       />
     </div>
   );
