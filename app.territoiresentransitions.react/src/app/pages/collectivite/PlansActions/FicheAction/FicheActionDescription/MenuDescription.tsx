@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { FicheAction } from '@tet/api/plan-actions';
+import ExportPDFButton from 'ui/exportPdf/ExportPDFButton';
 import ModaleDescription from './ModaleDescription';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 import ModaleSuppression from './ModaleSuppression';
@@ -23,6 +24,7 @@ const MenuDescription = ({
     <div className={classNames('flex gap-4', className)}>
       <ModaleDescription fiche={fiche} updateFiche={updateFiche} />
       <ModaleEmplacement fiche={fiche} />
+      <ExportPDFButton content={<p style={{ fontSize: '8px' }}>test</p>} />
       <ModaleSuppression
         ficheId={ficheId}
         title={titre}
