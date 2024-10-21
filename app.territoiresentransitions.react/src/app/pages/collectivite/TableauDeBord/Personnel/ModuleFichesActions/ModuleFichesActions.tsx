@@ -1,8 +1,11 @@
-import { useHistory } from 'react-router-dom';
-
 import { Button, useEventTracker } from '@tet/ui';
 
 import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { SortFichesAction } from '@tet/api/plan-actions/fiche-resumes.list';
+import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
@@ -11,14 +14,10 @@ import {
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import PictoExpert from 'ui/pictogrammes/PictoExpert';
-import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
-import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
-import { SortFichesAction } from '@tet/api/plan-actions/fiche-resumes.list';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useRouter } from 'next/navigation';
+import PictoExpert from 'ui/pictogrammes/PictoExpert';
 
 type Props = {
   view: TDBViewParam;
@@ -35,7 +34,7 @@ const SLUG_TO_TRACKING_ID = {
 const ModuleFichesActions = ({ view, module }: Props) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
-  const history = useHistory();
+  const router = useRouter();
 
   const trackEvent = useEventTracker('app/tdb/personnel');
 
@@ -99,7 +98,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             variant="grey"
             size="sm"
             onClick={() =>
-              history.push(
+              router.push(
                 makeTableauBordModuleUrl({
                   collectiviteId: collectiviteId!,
                   view,

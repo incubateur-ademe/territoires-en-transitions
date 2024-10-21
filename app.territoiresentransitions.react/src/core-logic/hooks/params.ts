@@ -1,10 +1,10 @@
-import { useParams, useRouteMatch } from 'react-router-dom';
 import {
   ActionVueParamOption,
   collectivitePath,
   LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
+import { useParams } from 'next/navigation';
 
 export const useCollectiviteId = (): number | null => {
   // on utilise ici useRouteMatch au lieu de useParams car le header
@@ -19,27 +19,27 @@ export const useCollectiviteId = (): number | null => {
 };
 
 export const useReferentielId = (): string | null => {
-  const { referentielId } = useParams<{ referentielId: string | undefined }>();
+  const { referentielId } = useParams<{ referentielId?: string }>();
   return referentielId || null;
 };
 
 export const useReferentielVue = (): ReferentielVueParamOption | null => {
   const { referentielVue } = useParams<{
-    referentielVue: ReferentielVueParamOption | undefined;
+    referentielVue?: ReferentielVueParamOption;
   }>();
   return referentielVue || null;
 };
 
 export const useActionVue = (): ActionVueParamOption | null => {
   const { actionVue } = useParams<{
-    actionVue: ActionVueParamOption | undefined;
+    actionVue?: ActionVueParamOption;
   }>();
   return actionVue || null;
 };
 
 export const useLabellisationVue = (): LabellisationVueParamOption | null => {
   const { labellisationVue } = useParams<{
-    labellisationVue: LabellisationVueParamOption | undefined;
+    labellisationVue?: LabellisationVueParamOption;
   }>();
   return labellisationVue || null;
 };

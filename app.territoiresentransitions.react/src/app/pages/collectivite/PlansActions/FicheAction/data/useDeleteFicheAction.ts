@@ -1,16 +1,14 @@
 import { supabaseClient } from 'core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { FicheResume } from '@tet/api/plan-actions';
 import {
-  makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsSyntheseUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useParams, useRouter } from 'next/navigation';
 import { PlanNode } from '../../PlanAction/data/types';
-import { FicheResume } from '@tet/api/plan-actions';
 
 type Args = {
   ficheId: number;
@@ -27,9 +25,8 @@ type Args = {
 export const useDeleteFicheAction = (args: Args) => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
-  const history = useHistory();
+  const router = useRouter();
   const { planUid } = useParams<{ planUid: string }>();
-  const { pathname } = useLocation();
 
   const { ficheId, axeId } = args;
   const planActionId = parseInt(planUid);
@@ -89,14 +86,14 @@ export const useDeleteFicheAction = (args: Args) => {
         queryClient.invalidateQueries(flat_axes_Key);
         if (args.redirect) {
           if (planUid) {
-            history.push(
+            router.push(
               makeCollectivitePlanActionUrl({
                 collectiviteId: collectivite_id!,
                 planActionUid: planUid,
               })
             );
           } else {
-            history.push(
+            router.push(
               makeCollectiviteToutesLesFichesUrl({
                 collectiviteId: collectivite_id!,
               })

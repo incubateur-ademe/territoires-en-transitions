@@ -1,19 +1,19 @@
-import {useParams} from 'react-router-dom';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {PageHeader} from 'ui/PageHeader';
-import {ThematiqueQR} from './ThematiqueQR';
-import {useThematique} from './useThematique';
-import {useChangeReponseHandler} from '../PersoPotentielModal/useChangeReponseHandler';
-import {useNextThematiqueId} from './useNextThematiqueId';
-import {useCarteIdentite} from './useCarteIdentite';
-import {useQuestionsReponses} from './useQuestionsReponses';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useParams } from 'next/navigation';
+import { PageHeader } from 'ui/PageHeader';
+import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
+import { ThematiqueQR } from './ThematiqueQR';
+import { useCarteIdentite } from './useCarteIdentite';
+import { useNextThematiqueId } from './useNextThematiqueId';
+import { useQuestionsReponses } from './useQuestionsReponses';
+import { useThematique } from './useThematique';
 
 const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
-  const {collectivite_id, nom} = collectivite || {};
-  const {thematiqueId} = useParams<{thematiqueId: string | undefined}>();
+  const { collectivite_id, nom } = collectivite || {};
+  const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
-  const qr = useQuestionsReponses({thematique_id: thematiqueId});
+  const qr = useQuestionsReponses({ thematique_id: thematiqueId });
   const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
   const identite = useCarteIdentite(collectivite_id);
   const handleChange = useChangeReponseHandler(collectivite_id || null);
@@ -29,7 +29,7 @@ const PersoReferentielThematique = () => {
       </PageHeader>
       <main className="fr-container fr-mt-1w fr-mb-4w" data-test="thematique">
         <ThematiqueQR
-          collectivite={{id: collectivite_id, nom: nom || ''}}
+          collectivite={{ id: collectivite_id, nom: nom || '' }}
           thematique={thematique}
           questionReponses={qr || []}
           nextThematiqueId={nextThematiqueId}

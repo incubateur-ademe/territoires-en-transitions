@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import Link from 'next/link';
+import { Menu, MenuItem } from '@mui/material';
+import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
+import { makeCollectiviteReferentielUrl } from 'app/paths';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useActionTitleList } from 'core-logic/hooks/referentiel';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import {
   actionPath,
   displayName,
@@ -9,12 +15,6 @@ import {
   findChildren,
   searchAncestors,
 } from 'utils/actions';
-import { Menu, MenuItem } from '@mui/material';
-import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import { makeCollectiviteReferentielUrl } from 'app/paths';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { useActionTitleList } from 'core-logic/hooks/referentiel';
-import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
 /**
  * Returns a list of menu items
@@ -107,7 +107,7 @@ const OrientationSwitcher = (props: {
 }) => {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const history = useHistory();
+  const router = useRouter();
   const collectiviteId = useCollectiviteId()!;
 
   const menuId = `${props.action.id}-menu`;
@@ -119,7 +119,7 @@ const OrientationSwitcher = (props: {
 
   const onSelect = (selectedId: string) => {
     setOpened(false);
-    history.push(actionPath(collectiviteId, selectedId));
+    router.push(actionPath(collectiviteId, selectedId));
   };
 
   return (

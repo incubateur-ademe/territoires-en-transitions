@@ -1,8 +1,8 @@
 import { Axe } from '@tet/api/plan-actions';
 import { Breadcrumbs, Button } from '@tet/ui';
 import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
 import CheminFiche from './CheminFiche';
 
 type CheminsFicheProps = {
@@ -12,14 +12,14 @@ type CheminsFicheProps = {
 };
 
 const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
-  const history = useHistory();
+  const router = useRouter();
 
   // Plan actuellement consulté
   const { planUid } = useParams<{ planUid: string }>();
 
   // Si plusieurs emplacements, on récupère l'axe qui correpond
   // au plan actuellement consulté
-  const axeId = !!axes
+  const axeId = axes
     ? axes.length === 1
       ? axes[0].id
       : axes.find((a) => a.plan === parseInt(planUid))?.id
@@ -46,7 +46,7 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
             {
               label: 'Fiches non classées',
               onClick: () =>
-                history.push(
+                router.push(
                   makeCollectiviteFichesNonClasseesUrl({
                     collectiviteId: collectiviteId,
                   })

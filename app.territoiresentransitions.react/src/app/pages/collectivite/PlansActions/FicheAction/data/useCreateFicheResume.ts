@@ -1,15 +1,14 @@
-import { useHistory } from 'react-router-dom';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
-
+import { FicheResume } from '@tet/api/plan-actions';
+import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { ficheResumeFactory, sortFichesResume } from './utils';
-import { PlanNode } from '../../PlanAction/data/types';
-import { waitForMarkup } from 'utils/waitForMarkup';
-import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
-import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
-import { FicheResume } from '@tet/api/plan-actions';
+import { useRouter } from 'next/navigation';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
+import { waitForMarkup } from 'utils/waitForMarkup';
+import { PlanNode } from '../../PlanAction/data/types';
+import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
+import { ficheResumeFactory, sortFichesResume } from './utils';
 
 type queryArgs = {
   collectiviteId: number;
@@ -22,7 +21,7 @@ const createFicheResume = async ({
   axeId,
   actionId,
 }: queryArgs) => {
-  let query = supabaseClient.rpc('create_fiche', {
+  const query = supabaseClient.rpc('create_fiche', {
     collectivite_id: collectiviteId,
     axe_id: axeId,
     action_id: actionId,
@@ -52,7 +51,7 @@ type Args = {
 export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
-  const history = useHistory();
+  const router = useRouter();
 
   const { axeId, planId, actionId, axeFichesIds, openInNewTab } = args;
 
@@ -63,7 +62,7 @@ export const useCreateFicheResume = (args: Args) => {
     if (openInNewTab) {
       window.open(url, '_blank');
     } else {
-      history.push(url);
+      router.push(url);
     }
   };
 

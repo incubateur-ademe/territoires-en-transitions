@@ -2,14 +2,13 @@ import { Button } from '@tet/ui';
 import { monComptePath } from 'app/paths';
 import classNames from 'classnames';
 import { TAuthContext, UserData } from 'core-logic/api/auth/AuthProvider';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { forwardRef, Ref } from 'react';
 import { useQueryClient } from 'react-query';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import './MenuUtilisateur.css';
 import { HeaderPropsWithModalState } from './types';
 import Link from 'next/link';
-import { useHistory } from 'react-router-dom';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
@@ -99,7 +98,7 @@ const MenuUtilisateurBtn = forwardRef(
  * Bouton "Déconnexion"
  */
 const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
-  const history = useHistory();
+  const router = useRouter();
   const queryClient = useQueryClient();
   return (
     <Link
@@ -114,7 +113,7 @@ const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
             queryKey: ['session'],
           });
 
-          history.push('/');
+          router.push('/');
         });
       }}
     >

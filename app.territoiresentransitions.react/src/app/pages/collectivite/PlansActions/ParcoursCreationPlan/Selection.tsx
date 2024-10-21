@@ -1,20 +1,20 @@
+import { Button, TrackingPlan, useEventTracker } from '@tet/ui';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from 'app/paths';
 import classNames from 'classnames';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {useHistory} from 'react-router-dom';
-import {ReactComponent as DocumentAddPicto} from './document-add.svg';
-import {ReactComponent as DocumentDownloadPicto} from './document-download.svg';
-import {ReactComponent as ShoppingBasket} from './shopping-basket.svg';
-import {Button, TrackingPlan, useEventTracker} from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useRouter } from 'next/navigation';
+import { ReactComponent as DocumentAddPicto } from './document-add.svg';
+import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
+import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
-  const history = useHistory();
+  const router = useRouter();
 
   const tracker = useFonctionTracker();
 
@@ -61,8 +61,8 @@ const Selection = () => {
             className="mt-4 self-center"
             variant="outlined"
             onClick={() => {
-              history.goBack();
-              tracker({fonction: 'annulation', action: 'clic'});
+              router.back();
+              tracker({ fonction: 'annulation', action: 'clic' });
             }}
           >
             Annuler
@@ -101,7 +101,7 @@ const SelectFlowButton = ({
     <div
       className={classNames(
         'grow bg-white border border-gray-200 rounded-lg hover:bg-primary-0',
-        {'!bg-primary hover:!bg-primary-6': isPrimary}
+        { '!bg-primary hover:!bg-primary-6': isPrimary }
       )}
     >
       <a
@@ -109,7 +109,7 @@ const SelectFlowButton = ({
         className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
         href={url}
         onClick={() => {
-          trackEvent(trackingId, {collectivite_id});
+          trackEvent(trackingId, { collectivite_id });
         }}
       >
         {icon}

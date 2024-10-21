@@ -1,18 +1,17 @@
-import { useParams } from 'react-router-dom';
-
-import {
-  defaultSlugsSchema as personalSlug,
-  Slug as PersonalSlug,
-} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   defaultSlugsSchema as colectiviteSlug,
   Slug as CollectiviteSlug,
 } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
-import { TDBViewParam } from 'app/paths';
-import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import {
+  defaultSlugsSchema as personalSlug,
+  Slug as PersonalSlug,
+} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import ModuleSuiviPlansActionPage from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
 import ModuleFichesActionsPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';
+import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import { TDBViewParam } from 'app/paths';
+import { useParams } from 'next/navigation';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action
@@ -20,11 +19,10 @@ import ModuleIndicateursPage from '@tet/app/pages/collectivite/TableauDeBord/Per
  * On utilise le slug (url param) du module pour afficher la bonne page.
  * */
 const ModulePageRoutes = () => {
-  const {
-    tdbModule: slug,
-    tdbView,
-  }: { tdbModule: PersonalSlug | CollectiviteSlug; tdbView: TDBViewParam } =
-    useParams();
+  const { tdbModule: slug, tdbView } = useParams<{
+    tdbModule: PersonalSlug | CollectiviteSlug;
+    tdbView: TDBViewParam;
+  }>();
 
   if (
     slug === personalSlug.enum['actions-dont-je-suis-pilote'] ||

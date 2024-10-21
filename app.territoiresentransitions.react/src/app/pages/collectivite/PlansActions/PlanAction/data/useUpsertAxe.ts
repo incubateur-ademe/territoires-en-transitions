@@ -1,20 +1,20 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useMutation, useQueryClient} from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistory} from 'react-router-dom';
-import {makeCollectivitePlanActionUrl} from 'app/paths';
-import {TAxeInsert} from 'types/alias';
-import {waitForMarkup} from 'utils/waitForMarkup';
-import {PlanNode} from './types';
-import {planNodeFactory, sortPlanNodes} from './utils';
+import { makeCollectivitePlanActionUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useRouter } from 'next/navigation';
+import { TAxeInsert } from 'types/alias';
+import { waitForMarkup } from 'utils/waitForMarkup';
+import { PlanNode } from './types';
+import { planNodeFactory, sortPlanNodes } from './utils';
 
 /**
  * Upsert un axe pour une collectivité.
  * S'il n'a pas de parent, alors cela est considéré comme un nouveau plan
  */
 export const upsertAxe = async (axe: TAxeInsert) => {
-  let query = supabaseClient.from('axe').upsert(axe).select();
+  const query = supabaseClient.from('axe').upsert(axe).select();
 
   const {error, data} = await query;
 
@@ -31,7 +31,7 @@ export const upsertAxe = async (axe: TAxeInsert) => {
 export const useCreatePlanAction = () => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
-  const history = useHistory();
+  const router = useRouter();
 
   const navigation_key = ['plans_navigation', collectivite_id];
 
@@ -66,7 +66,7 @@ export const useCreatePlanAction = () => {
       queryClient.invalidateQueries(navigation_key);
     },
     onSuccess: data => {
-      history.push(
+      router.push(
         makeCollectivitePlanActionUrl({
           collectiviteId: collectivite_id!,
           planActionUid: data[0].id!.toString(),

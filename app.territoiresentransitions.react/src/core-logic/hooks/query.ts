@@ -1,9 +1,13 @@
-import {useEffect, useMemo, useState} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
+import {
+  usePathname,
+  useRouter,
+  useSearchParams as useSearchParamsNext,
+} from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { ITEM_ALL } from 'ui/shared/filters/commons';
 
 export const useQuery = (): URLSearchParams => {
-  const {search} = useLocation();
+  const search = useSearchParamsNext();
   return useMemo(() => new URLSearchParams(search), [search]);
 };
 
@@ -18,8 +22,8 @@ export const useSearchParams = <T extends TParams>(
   initialParams: T,
   nameToShortName: TNamesMap
 ): [params: T, setParams: (newParams: T) => void, paramsCount: number] => {
-  const history = useHistory();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const shortNameToName = useMemo(
     () => invertKeyValues(nameToShortName),
     [nameToShortName]
@@ -41,18 +45,15 @@ export const useSearchParams = <T extends TParams>(
   // synchronise l'url à partir de l'état interne
   useEffect(() => {
     const search = objectToSearchParams(params, nameToShortName);
-    if (
-      location.pathname.endsWith(viewName) &&
-      searchParams.toString() !== search
-    ) {
-      history.replace({...location, search: '?' + search});
+    if (pathname.endsWith(viewName) && searchParams.toString() !== search) {
+      router.replace(`${pathname}?${search.toString()}`);
     }
-  }, [params, location.pathname]);
+  }, [params, pathname]);
 
   // besoin de ça car les params ne s'actualisent pas au changement d'URL entre 2 plans d'action
   useEffect(() => {
     setParams(currentParamsFromURL);
-  }, [location.pathname]);
+  }, [pathname]);
 
   return [params, setParams, paramsCount];
 };
@@ -70,8 +71,8 @@ export const searchParamsToObject = <T extends TParams>(
     if (shortNameToName[key]) {
       ret[shortNameToName[key]] = value
         ?.split(',')
-        ?.filter(s => s !== '')
-        .map(s => {
+        ?.filter((s) => s !== '')
+        .map((s) => {
           try {
             return decodeURIComponent(s);
           } catch (e) {
@@ -80,7 +81,7 @@ export const searchParamsToObject = <T extends TParams>(
         });
     }
   });
-  return {...initialParams, ...ret};
+  return { ...initialParams, ...ret };
 };
 
 // fait l'opération inverse

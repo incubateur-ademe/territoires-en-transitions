@@ -1,6 +1,4 @@
 import classNames from 'classnames';
-import { useHistory } from 'react-router-dom';
-
 import { Axe, Statut } from '@tet/api/plan-actions/domain';
 import {
   makeCollectivitePlanActionUrl,
@@ -19,6 +17,7 @@ import { usePlanActionTableauDeBord } from '../PlansActions/Synthese/data/usePla
 import AccueilCard from './AccueilCard';
 import AccueilEmptyCardWithPicto from './AccueilEmptyCardWithPicto';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { useRouter } from 'next/navigation';
 
 type PlanActionCardProps = {
   collectiviteId: number;
@@ -63,7 +62,7 @@ const FilledPlansActionCard = ({
   plans,
 }: FilledPlansActionCardProps): JSX.Element => {
   const tracker = useFonctionTracker();
-  const history = useHistory();
+  const router = useRouter();
   const { data: planActionsStats } = usePlanActionTableauDeBord(
     collectiviteId,
     null,
@@ -133,7 +132,7 @@ const FilledPlansActionCard = ({
                 unit: 'fiche',
                 displayPercentageValue: true,
                 onClick: () => {
-                  history.push(
+                  router.push(
                     makeCollectivitePlansActionsSyntheseVueUrl({
                       collectiviteId,
                       vue: 'statuts',

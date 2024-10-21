@@ -1,20 +1,20 @@
-import {Tabs, Tab} from 'ui/shared/Tabs';
-import {useAudit} from '../Audit/useAudit';
-import AuditSuivi from '../AuditSuivi';
-import {
-  useCollectiviteId,
-  useLabellisationVue,
-  useReferentielId,
-} from 'core-logic/hooks/params';
+import { Alert } from '@tet/ui';
 import {
   LabellisationVueParamOption,
   makeCollectiviteLabellisationUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {useHistory} from 'react-router-dom';
+import {
+  useCollectiviteId,
+  useLabellisationVue,
+  useReferentielId,
+} from 'core-logic/hooks/params';
+import { useRouter } from 'next/navigation';
+import { Tab, Tabs } from 'ui/shared/Tabs';
+import { useAudit } from '../Audit/useAudit';
 import AuditComparaison from '../AuditComparaison';
+import AuditSuivi from '../AuditSuivi';
 import CriteresLabellisation from './CriteresLabellisation';
-import {Alert} from '@tet/ui';
 
 // index des onglets de la page Labellisation
 const TABS_INDEX: Record<LabellisationVueParamOption, number> = {
@@ -31,8 +31,8 @@ const TABS_INDEX: Record<LabellisationVueParamOption, number> = {
  * "Critères de labellisation" est visible (sans les onglets).
  */
 export const LabellisationTabs = () => {
-  const history = useHistory();
-  const {data: audit} = useAudit();
+  const router = useRouter();
+  const { data: audit } = useAudit();
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
   const vue = useLabellisationVue();
@@ -48,7 +48,7 @@ export const LabellisationTabs = () => {
 
     // met à jour l'url
     if (collectiviteId && name && name !== vue) {
-      history.replace(
+      router.replace(
         makeCollectiviteLabellisationUrl({
           collectiviteId,
           referentielId,

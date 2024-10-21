@@ -7,8 +7,8 @@ import {
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import HeaderTitle from 'ui/HeaderTitle';
 import { ITEM_ALL } from 'ui/shared/filters/commons';
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
@@ -24,7 +24,7 @@ import SyntheseVueGraph from './SyntheseVueGraph';
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
   const { syntheseVue } = useParams<{ syntheseVue: FiltersKeys }>();
-  const { search } = useLocation();
+  const search = useSearchParams();
 
   const pageUrl = makeCollectivitePlansActionsSyntheseVueUrl({
     collectiviteId: collectivite_id!,
@@ -118,7 +118,7 @@ const SyntheseVue = () => {
         <div className="my-8 border-b border-gray-200" />
         {/** Fiches */}
         <div className="mb-16">
-          {search.length && search.length > 1 ? (
+          {search.toString().length && search.toString().length > 1 ? (
             <>
               <div className="flex items-baseline mb-8">
                 <p
