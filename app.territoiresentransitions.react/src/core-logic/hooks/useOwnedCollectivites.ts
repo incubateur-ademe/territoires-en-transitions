@@ -11,6 +11,7 @@ export const fetchOwnedCollectivites = async () => {
     .from('mes_collectivites')
     .select()
     .returns<MaCollectivite[]>();
+
   const { error, data } = await query;
 
   if (error) {
