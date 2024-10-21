@@ -2,46 +2,37 @@
 
 BEGIN;
 
-create or replace function delete_axe_all(axe_id integer) returns void
-    language plpgsql
-as
-$$
-declare
-    pa_enfant_id integer; -- Id d'un plan d'action enfant du plan d'action courant
-    facs         fiche_action[];
-    fac          fiche_action;
-begin
-    if have_edition_acces((select collectivite_id from axe where id = delete_axe_all.axe_id)) then
-        for pa_enfant_id in select pa.id from axe pa where pa.parent = delete_axe_all.axe_id
-            loop
-                execute delete_axe_all(pa_enfant_id);
-            end loop;
-        select array_agg(fa.*)
-        from fiche_action fa
-                 join fiche_action_axe faa on fa.id = faa.fiche_id
-        where faa.axe_id = delete_axe_all.axe_id
-        into facs;
-        if facs is not null then
-            foreach fac in array facs
-                loop
-                    if (select count(*) > 1 from fiche_action_axe where fiche_id = fac.id) then
-                        delete
-                        from fiche_action_axe
-                        where fiche_action_axe.fiche_id = fac.id
-                          and fiche_action_axe.axe_id = delete_axe_all.axe_id;
-                    else
-                        delete
-                        from fiche_action
-                        where id = fac.id;
-                    end if;
+-- Revert foreign key of `fiche_action_referent`
 
-                end loop;
-        end if;
-        delete from axe where id = delete_axe_all.axe_id;
-    else
-        perform set_config('response.status', '401', true);
-    end if;
-end;
-$$;
+ALTER TABLE fiche_action_referent
+DROP CONSTRAINT IF EXISTS fiche_action_referent_user_id_fkey;
+
+ALTER TABLE fiche_action_referent
+ADD CONSTRAINT fiche_action_referent_user_id_fkey
+FOREIGN KEY (user_id)
+REFERENCES auth.users(id);
+
+
+
+-- Revert primary key of `fiche_action_financeur_tag`
+-- Step 1: Remove the composite primary key
+ALTER TABLE fiche_action_financeur_tag DROP CONSTRAINT fiche_action_financeur_tag_pkey;
+
+-- Step 2: Recreate the primary key on the id column
+ALTER TABLE fiche_action_financeur_tag ADD CONSTRAINT fiche_action_financeur_tag_pkey PRIMARY KEY (id);
+
+
+
+-- ENUM fiche_action_statuts
+-- Unfortunately not possible to remove an enum value in postgres for now
+--
+
+ALTER TABLE fiche_action_thematique
+DROP CONSTRAINT IF EXISTS fiche_action_thematique_thematique_id_fkey;
+
+ALTER TABLE partenaire_tag
+DROP CONSTRAINT IF EXISTS partenaire_tag_collectivite_id_fkey;
+
+DROP FUNCTION axe_enfant(axe);
 
 COMMIT;

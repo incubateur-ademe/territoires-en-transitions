@@ -15,7 +15,7 @@ from (
         WHERE iri.collectivite_id = ($1).collectivite_id
             AND iri.metadonnee_id is not null
             AND iri.resultat is not null
-            AND src.id in ('rare', 'citepa')
+            AND src.id in ('citepa')
             AND id.identifiant_referentiel::text = ANY (
                 ARRAY [
                 'cae_1.g'::character varying,

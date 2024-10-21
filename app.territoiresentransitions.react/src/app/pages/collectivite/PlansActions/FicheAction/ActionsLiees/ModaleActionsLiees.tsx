@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
-import {Field, Modal, ModalFooterOKCancel} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import ActionsReferentielsDropdown from 'ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 
 type ModaleActionsLieesProps = {
@@ -31,15 +31,15 @@ const ModaleActionsLiees = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Lier une action des référentiels"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <Field fieldId={descriptionId} title="Actions des référentiels liées">
           <ActionsReferentielsDropdown
-            values={editedFiche.actions?.map(action => action.id)}
-            onChange={({actions}) =>
-              setEditedFiche(prevState => ({
+            values={editedFiche.actions?.map((action) => action.id)}
+            onChange={({ actions }) =>
+              setEditedFiche((prevState) => ({
                 ...prevState,
                 actions,
               }))
@@ -48,9 +48,9 @@ const ModaleActionsLiees = ({
         </Field>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

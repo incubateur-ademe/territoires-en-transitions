@@ -1,5 +1,5 @@
-import { ModifiedSince } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fetch_options.schema';
-import { Statut } from '@tet/api/fiche_actions/fiche_resumes.list/domain/fiche_resumes.schema';
+import { Statut } from '@tet/api/plan-actions';
+import { ModifiedSince } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,
@@ -61,10 +61,13 @@ export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
 
 export const ficheActionStatutOptions: Options<Statut> = [
   { value: 'À venir', label: 'À venir' },
+  { value: 'A discuter', label: 'À discuter' },
   { value: 'En cours', label: 'En cours' },
   { value: 'Réalisé', label: 'Réalisé' },
+  { value: 'En retard', label: 'En retard' },
   { value: 'En pause', label: 'En pause' },
   { value: 'Abandonné', label: 'Abandonné' },
+  { value: 'Bloqué', label: 'Bloqué' },
 ];
 
 export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =

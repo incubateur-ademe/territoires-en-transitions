@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    axeptioSettings: { clientId: string };
+    axeptioSettings: { clientId: string; userCookiesDomain: string };
     _axcb: { push: (callback: (sdk: unknown) => void) => void };
   }
 }
@@ -42,15 +42,20 @@ export const getNextConsentEnvId = (): string => {
  */
 export function Consent({
   onConsentSave,
+  onCookiesComplete,
   script,
   consentId,
 }: {
-  onConsentSave: () => void;
+  onConsentSave?: () => void;
+  onCookiesComplete?: (choices: Record<string, boolean | undefined>) => void;
   script: (props: ScriptLikeProps) => JSX.Element;
   consentId: string;
 }) {
   if (typeof window !== 'undefined') {
-    window.axeptioSettings = { clientId: consentId };
+    window.axeptioSettings = {
+      clientId: consentId,
+      userCookiesDomain: 'territoiresentransitions.fr',
+    };
   }
 
   return (
@@ -60,8 +65,16 @@ export function Consent({
         onLoad: () => {
           window._axcb.push((sdk) => {
             // @ts-expect-error type unknown
+            sdk.on(
+              'cookies:complete',
+              (choices: Record<string, boolean | undefined>) => {
+                onCookiesComplete?.(choices);
+              }
+            );
+
+            // @ts-expect-error type unknown
             sdk.on('consent:saved', function () {
-              onConsentSave();
+              onConsentSave?.();
             });
           });
         },

@@ -1,9 +1,9 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
-import {Badge, Button} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { Badge, Button } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import MenuDescription from './MenuDescription';
-import {getTruncatedText} from '../utils';
+import { getTruncatedText } from '../utils';
 import Markdown from 'ui/Markdown';
 
 type FicheActionDescriptionProps = {
@@ -22,22 +22,17 @@ const FicheActionDescription = ({
   const [isFullDescription, setIsFullDescription] = useState(false);
   const [isFullRessources, setIsFullRessources] = useState(false);
 
-  const {
-    thematiques,
-    sous_thematiques: sousThematiques,
-    description,
-    ressources,
-  } = fiche;
+  const { thematiques, sousThematiques, description, ressources } = fiche;
 
   const {
     truncatedText: truncatedDescription,
     isTextTruncated: isDescriptionTruncated,
-  } = getTruncatedText(description, 1000);
+  } = getTruncatedText(description ?? '', 1000);
 
   const {
     truncatedText: truncatedRessources,
     isTextTruncated: isRessourcesTruncated,
-  } = getTruncatedText(ressources, 1000);
+  } = getTruncatedText(ressources ?? '', 1000);
 
   return (
     <div
@@ -54,7 +49,7 @@ const FicheActionDescription = ({
         {/* Liste des thématiques et sous-thématiques sous forme de badges */}
         {(thematiques?.length || sousThematiques?.length) && (
           <div className="flex flex-wrap gap-4">
-            {thematiques?.map(thematique => (
+            {thematiques?.map((thematique) => (
               <Badge
                 key={thematique.id}
                 title={thematique.nom}
@@ -62,10 +57,10 @@ const FicheActionDescription = ({
                 state="info"
               />
             ))}
-            {sousThematiques?.map(ssThematique => (
+            {sousThematiques?.map((ssThematique) => (
               <Badge
                 key={ssThematique.id}
-                title={ssThematique.sous_thematique}
+                title={ssThematique.sousThematique}
                 uppercase={false}
                 state="info"
               />
@@ -105,7 +100,7 @@ const FicheActionDescription = ({
             variant="underlined"
             size="xs"
             className="ml-auto !text-grey-2 !border-grey-2"
-            onClick={() => setIsFullDescription(prevState => !prevState)}
+            onClick={() => setIsFullDescription((prevState) => !prevState)}
           >
             {isFullDescription ? 'Voir moins' : 'Voir plus'}
           </Button>
@@ -127,7 +122,7 @@ const FicheActionDescription = ({
             variant="underlined"
             size="xs"
             className="ml-auto !text-grey-2 !border-grey-2"
-            onClick={() => setIsFullRessources(prevState => !prevState)}
+            onClick={() => setIsFullRessources((prevState) => !prevState)}
           >
             {isFullRessources ? 'Voir moins' : 'Voir plus'}
           </Button>

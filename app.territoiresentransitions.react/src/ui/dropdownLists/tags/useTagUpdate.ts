@@ -1,8 +1,8 @@
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {CollectiviteTag, TableTag} from '@tet/api';
-
-type Tag = CollectiviteTag;
+import { TableTag } from '@tet/api';
+import { TagUpdate } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { objectToSnake } from 'ts-case-convert';
 
 type Args = {
   key: QueryKey;
@@ -20,30 +20,35 @@ export const useTagUpdate = ({
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (tag: Tag) => {
+    async (tag: TagUpdate) => {
       if (tag.id)
-        await supabaseClient.from(tagTableName).update(tag).eq('id', tag.id);
+        await supabaseClient
+          .from(tagTableName)
+          .update(objectToSnake(tag))
+          .eq('id', tag.id);
     },
     {
       mutationKey: 'update_tag',
-      onMutate: async tag => {
-        await queryClient.cancelQueries({queryKey: key});
+      onMutate: async (tag) => {
+        await queryClient.cancelQueries({ queryKey: key });
 
-        const previousdata: {tags: Tag[]} | undefined =
+        const previousdata: { tags: TagUpdate[] } | undefined =
           queryClient.getQueryData(key);
 
-        queryClient.setQueryData(key, (old?: Tag[]) => {
-          return old ? old.map((v: Tag) => (v.id === tag.id ? tag : v)) : [];
+        queryClient.setQueryData(key, (old?: TagUpdate[]) => {
+          return old
+            ? old.map((v: TagUpdate) => (v.id === tag.id ? tag : v))
+            : [];
         });
 
-        return {previousdata};
+        return { previousdata };
       },
       onSettled: (data, err, args, context) => {
         if (err) {
           queryClient.setQueryData(key, context?.previousdata);
         }
         queryClient.invalidateQueries(key);
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
       onSuccess: () => onSuccess?.(),
     }

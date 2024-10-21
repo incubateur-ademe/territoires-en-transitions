@@ -1,7 +1,7 @@
-import {Redirect, Route} from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 
-import {usePlansActionsListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import Modules from 'app/pages/collectivite/TableauDeBord/Module/Modules';
+import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import ModulePageRoutes from '@tet/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
 import {
   collectiviteTDBBasePath,
   collectiviteTDBCollectivitePath,
@@ -9,16 +9,17 @@ import {
   collectiviteTDBPersonnelPath,
   makeTableauBordUrl,
 } from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import Personnel from './Personnel';
-import View from './View';
-import TdbVide from './TdbVide';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import Personnel from './Personnel/Personnel';
+import View from './components/View';
+import TdbVide from './components/TdbVide';
+import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
   const collectivite_id = useCollectiviteId();
 
-  const plansActions = usePlansActionsListe(collectivite_id!);
+  const { data: plansActions } = usePlansActionsListe({});
 
   const isEmpty = plansActions?.plans.length === 0;
 
@@ -49,14 +50,15 @@ const TableauDeBord = () => {
         <Route exact path={collectiviteTDBCollectivitePath}>
           <View
             view={'collectivite'}
-            title="Le tableau de bord collaboratif de ma collectivité."
-            description="Ce tableau de bord est destiné à l'ensemble des personnes de ma collectivité et peut être modifié par les administrateurs."
-            children={undefined}
-          />
+            title="Le tableau de bord collaboratif de la collectivité"
+            description="Ce tableau de bord est destiné à l'ensemble des personnes de la collectivité et peut être modifié par les administrateurs."
+          >
+            {isEmpty ? <TdbVide /> : <Collectivite />}
+          </View>
         </Route>
         {/** Modules */}
         <Route path={collectiviteTDBModulePath}>
-          <Modules />
+          <ModulePageRoutes />
         </Route>
       </div>
     </div>
