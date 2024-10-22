@@ -4,7 +4,7 @@ import {
   LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
-import { useParams } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 export const useCollectiviteId = (): number | null => {
   // on utilise ici useRouteMatch au lieu de useParams car le header

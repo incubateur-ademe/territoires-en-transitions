@@ -11,7 +11,7 @@ import ModuleFichesActionsPage from '@tet/app/pages/collectivite/TableauDeBord/P
 import ModuleIndicateursPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';
 import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import { TDBViewParam } from 'app/paths';
-import { useParams } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 /**
  * Permet d'afficher la bonne page d'un module du tableau de bord plans d'action

@@ -7,7 +7,8 @@ import { IndicateurPersonnalise } from './IndicateurPersonnalise';
 import { IndicateurPredefini } from './IndicateurPredefini';
 import { indicateurViewParam, IndicateurViewParamOption } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { redirect, useParams, useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 /**
  * Affiche le détail d'un indicateur

@@ -1,10 +1,10 @@
 import { useActionDownToTache } from 'core-logic/hooks/referentiel';
-import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Referentiel } from 'types/litterals';
 import { lazy } from 'utils/lazy';
 import { renderLoader } from 'utils/renderLoader';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
+import { useParams } from 'react-router-dom';
 
 const ActionReferentielAvancement = lazy(
   () => import('app/pages/collectivite/Referentiels/Action')

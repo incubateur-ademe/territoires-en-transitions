@@ -1,8 +1,9 @@
 import { Axe } from '@tet/api/plan-actions';
 import { Breadcrumbs, Button } from '@tet/ui';
 import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import CheminFiche from './CheminFiche';
 
 type CheminsFicheProps = {

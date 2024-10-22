@@ -3,7 +3,7 @@ import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import { useEditAxe } from '../data/useEditAxe';
 import classNames from 'classnames';
 import { PlanNode } from '../data/types';
-import { useParams } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 type Props = {
   axe: PlanNode;

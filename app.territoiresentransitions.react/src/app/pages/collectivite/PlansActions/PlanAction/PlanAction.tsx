@@ -8,11 +8,12 @@ import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 import { Breadcrumbs } from '@tet/ui';
 import { makeCollectivitePlanActionUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { generateTitle } from '../FicheAction/data/utils';
 import { PlanNode } from './data/types';
 import { usePlanAction } from './data/usePlanAction';
 import { checkAxeHasFiche } from './data/utils';
+import { useParams } from 'react-router-dom';
 
 type PlanActionProps = {
   /** Axe racine du plan d'action (depth = 0) */

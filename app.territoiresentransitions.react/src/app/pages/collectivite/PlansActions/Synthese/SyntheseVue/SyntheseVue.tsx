@@ -7,7 +7,7 @@ import {
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import HeaderTitle from 'ui/HeaderTitle';
 import { ITEM_ALL } from 'ui/shared/filters/commons';
@@ -20,6 +20,7 @@ import { generateSyntheseVue } from '../utils';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
 import SyntheseVueGraph from './SyntheseVueGraph';
+import { useParams } from 'react-router-dom';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();

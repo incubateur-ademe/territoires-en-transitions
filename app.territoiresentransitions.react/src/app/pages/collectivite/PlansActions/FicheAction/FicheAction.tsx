@@ -1,7 +1,6 @@
 import { TrackPageView } from '@tet/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { format } from 'date-fns';
-import { useParams } from 'next/navigation';
 import { useFicheAction } from './data/useFicheAction';
 import { useUpdateFicheAction } from './data/useUpdateFicheAction';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
@@ -11,6 +10,7 @@ import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
+import { useParams } from 'react-router-dom';
 
 type FicheActionProps = {
   isReadonly: boolean;

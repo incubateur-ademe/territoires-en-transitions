@@ -1,7 +1,8 @@
 import { Breadcrumbs } from '@tet/ui';
 import { TDBViewParam, makeTableauBordUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 type Props = {
   title: string;
