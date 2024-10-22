@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import BackendConfigurationService from '../../common/services/backend-configuration.service';
+import BackendConfigurationService from '../../config/configuration.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
 import { PublicEndpoint } from '../decorators/public-endpoint.decorator';
 import { SupabaseJwtPayload } from '../models/auth.models';
@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
-    private backendConfigurationService: BackendConfigurationService,
+    private configService: BackendConfigurationService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
 
     const publicEndpoint = this.reflector.get(
       PublicEndpoint,
-      context.getHandler(),
+      context.getHandler()
     );
 
     if (publicEndpoint) {
@@ -43,10 +43,8 @@ export class AuthGuard implements CanActivate {
       const payload: SupabaseJwtPayload = await this.jwtService.verifyAsync(
         token,
         {
-          secret:
-            this.backendConfigurationService.getBackendConfiguration()
-              .SUPABASE_JWT_SECRET,
-        },
+          secret: this.configService.get('SUPABASE_JWT_SECRET'),
+        }
       );
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
