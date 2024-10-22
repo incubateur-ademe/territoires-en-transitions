@@ -67,7 +67,7 @@
     "google-auth-library": "^9.14.1",
     "googleapis": "^144.0.0",
     "html2canvas": "^1.4.1",
-    "http-proxy-middleware": "^3.0.2",
+    "http-proxy-middleware": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
     "jszip": "^3.10.1",
     "leaflet": "^1.9.4",
