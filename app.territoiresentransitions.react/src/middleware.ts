@@ -1,0 +1,52 @@
+import { getAuthBaseUrl } from '@tet/api';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { resetPwdPath, signInPath, signUpPath } from './app/paths';
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    {
+      source:
+        '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
+  ],
+};
+
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  const nextPathname = request.nextUrl.pathname;
+  const requestUrl = new URL(request.url);
+
+  if (isAuthUrl(nextPathname)) {
+    return redirectToAuthDomain(requestUrl);
+  }
+}
+
+function isAuthUrl(pathname: string) {
+  return (
+    pathname.startsWith(signInPath) ||
+    pathname.startsWith(signUpPath) ||
+    pathname.startsWith(resetPwdPath)
+  );
+}
+
+function redirectToAuthDomain(requestUrl: URL) {
+  const authBaseUrl = getAuthBaseUrl(requestUrl.hostname);
+
+  const authUrl = new URL(requestUrl.pathname, authBaseUrl);
+  authUrl.search = requestUrl.search;
+
+  return NextResponse.redirect(authUrl);
+}
