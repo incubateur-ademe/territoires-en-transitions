@@ -383,6 +383,7 @@ app-build: ## construit l'image de l'app
     COPY $APP_DIR/. $APP_DIR/
     COPY $UI_DIR/. $UI_DIR
     COPY $API_DIR/. $API_DIR
+    COPY $BACKEND_DIR/. $BACKEND_DIR
     RUN pnpm run build:app
     EXPOSE 3000
     WORKDIR $APP_DIR
