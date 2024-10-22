@@ -22,10 +22,12 @@ import {
 import { E2E } from './E2E';
 import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
 import { ProfilPage } from './pages/Profil/ProfilPage';
+import LegacyRouterSync from './legacy-router-sync';
 
 export default function LegacyRouter() {
   return (
     <Router>
+      <LegacyRouterSync />
       <ScoreListenerProvider>
         <E2E />
         <ScrollToTopOnPageChange />
