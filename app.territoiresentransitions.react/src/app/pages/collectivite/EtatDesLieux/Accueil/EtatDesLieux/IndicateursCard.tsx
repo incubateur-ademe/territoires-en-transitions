@@ -70,7 +70,7 @@ const IndicateursCard = ({
             variant="outlined"
             size="sm"
           >
-            Voir les indicateurs complétés en open data
+            Voir les indicateurs disponibles en open data
           </Button>
         )}
       </div>
