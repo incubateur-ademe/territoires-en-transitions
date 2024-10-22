@@ -45,7 +45,7 @@ export const ActionBottomNav = ({
   <div className="flex justify-end mt-8 gap-4">
     {!!prevActionLink && (
       <Link
-        to={prevActionLink}
+        href={prevActionLink}
         className="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
       >
         Action précédente
@@ -53,7 +53,7 @@ export const ActionBottomNav = ({
     )}
     {!!nextActionLink && (
       <Link
-        to={nextActionLink}
+        href={nextActionLink}
         className="fr-btn fr-btn fr-fi-arrow-right-line fr-btn--icon-right"
       >
         Action suivante
