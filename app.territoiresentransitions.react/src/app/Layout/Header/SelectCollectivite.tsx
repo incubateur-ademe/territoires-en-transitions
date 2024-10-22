@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import {makeCollectiviteAccueilUrl} from 'app/paths';
-import {Link} from 'react-router-dom';
-import {BadgeNiveauAcces} from './BadgeNiveauAcces';
-import {HeaderPropsWithModalState} from './types';
-import {Tooltip} from '@tet/ui';
+import { makeCollectiviteAccueilUrl } from 'app/paths';
+import { BadgeNiveauAcces } from './BadgeNiveauAcces';
+import { HeaderPropsWithModalState } from './types';
+import { Tooltip } from '@tet/ui';
+import Link from 'next/link';
 
 const ID = 'SelectCollectivite';
 
@@ -27,7 +27,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
 
   // liste des collectivités à afficher
   const listCollectivites = ownedCollectivites?.filter(
-    ({nom}) => nom !== currentCollectivite.nom
+    ({ nom }) => nom !== currentCollectivite.nom
   );
 
   return (
@@ -51,7 +51,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
             <b
               className={classNames(
                 'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
-                {'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened}
+                { 'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened }
               )}
             >
               {currentCollectivite.nom}
@@ -74,10 +74,10 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
             onClickCapture={() => setOpenedId(null)}
           >
             {listCollectivites.map(
-              ({collectivite_id, nom, niveau_acces, est_auditeur}) => (
+              ({ collectivite_id, nom, niveau_acces, est_auditeur }) => (
                 <li className="fr-nav__item" key={collectivite_id}>
                   <Link
-                    to={makeCollectiviteAccueilUrl({
+                    href={makeCollectiviteAccueilUrl({
                       collectiviteId: collectivite_id!,
                     })}
                     target="_self"

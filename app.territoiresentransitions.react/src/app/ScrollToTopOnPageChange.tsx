@@ -1,11 +1,11 @@
-import {useLocation} from 'react-router-dom';
-import {useEffect} from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export const scrollToTop = () =>
   document.getElementById('app-header')?.scrollIntoView();
 
 export const ScrollToTopOnPageChange = () => {
-  const {pathname} = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     scrollToTop();

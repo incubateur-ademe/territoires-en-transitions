@@ -1,8 +1,8 @@
-import {Button, useEventTracker} from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import {makeCollectiviteTousLesIndicateursUrl} from 'app/paths';
-import {useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 type Props = {
@@ -10,10 +10,10 @@ type Props = {
   isReadonly: boolean;
 };
 
-const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
+const EmptyIndicateurFavori = ({ collectiviteId, isReadonly }: Props) => {
   const tracker = useEventTracker('app/indicateurs/collectivite');
 
-  const history = useHistory();
+  const router = useRouter();
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
@@ -34,7 +34,7 @@ const EmptyIndicateurFavori = ({collectiviteId, isReadonly}: Props) => {
               tracker('explorerIndicateursClick', {
                 collectivite_id: collectiviteId!,
               });
-              history.push(
+              router.push(
                 makeCollectiviteTousLesIndicateursUrl({
                   collectiviteId: collectiviteId!,
                 })

@@ -1,13 +1,13 @@
-import {Redirect, useParams} from 'react-router-dom';
 import {
   indicateurIdParam,
   indicateurIdentiantReferentielParam,
   makeCollectiviteTousLesIndicateursUrl,
 } from 'app/paths';
-import {IndicateurPersonnalise} from './IndicateurPersonnalise';
-import {IndicateurPredefini} from './IndicateurPredefini';
-import {indicateurViewParam, IndicateurViewParamOption} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { IndicateurPersonnalise } from './IndicateurPersonnalise';
+import { IndicateurPredefini } from './IndicateurPredefini';
+import { indicateurViewParam, IndicateurViewParamOption } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { redirect, useParams, useRouter } from 'next/navigation';
 
 /**
  * Affiche le détail d'un indicateur
@@ -32,12 +32,10 @@ const Indicateur = () => {
   const view = params[indicateurViewParam] || 'perso';
 
   if (!indicateurId) {
-    return (
-      <Redirect
-        to={makeCollectiviteTousLesIndicateursUrl({
-          collectiviteId: collectiviteId!,
-        })}
-      />
+    redirect(
+      makeCollectiviteTousLesIndicateursUrl({
+        collectiviteId: collectiviteId!,
+      })
     );
   }
 

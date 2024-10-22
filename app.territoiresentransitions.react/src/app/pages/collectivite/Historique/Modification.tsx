@@ -1,12 +1,12 @@
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {format} from 'date-fns';
-import {fr} from 'date-fns/locale';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import classNames from 'classnames';
 
-import {referentielToName} from 'app/labels';
-import {HistoriqueType, THistoriqueItem} from './types';
-import {ReferentielOfIndicateur} from 'types/litterals';
+import { referentielToName } from 'app/labels';
+import { HistoriqueType, THistoriqueItem } from './types';
+import { ReferentielOfIndicateur } from 'types/litterals';
+import Link from 'next/link';
 
 export type HistoriqueDescription = {
   titre: string;
@@ -43,7 +43,7 @@ const Modification = ({
   pageLink,
 }: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const {modified_at, modified_by_nom, type, action_id} = historique;
+  const { modified_at, modified_by_nom, type, action_id } = historique;
   const referentielId =
     SHOW_REFERENTIEL.includes(type) && action_id?.substring(0, 3);
   const referentielNom =
@@ -83,7 +83,7 @@ const Modification = ({
                 {referentielNom}
               </p>
             ) : null}
-            {descriptions.map(desc => (
+            {descriptions.map((desc) => (
               <p key={desc.titre} className="mb-2 last:mb-0">
                 <span className="text-gray-500">{desc.titre} : </span>
                 {desc.description}
@@ -119,7 +119,7 @@ const Modification = ({
           )}
           {!!pageLink && (
             <Link
-              to={pageLink}
+              href={pageLink}
               className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
             >
               Voir la page{' '}

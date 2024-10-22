@@ -11,12 +11,12 @@ import {
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 export const Redirector = () => {
-  const history = useHistory();
-  const { pathname } = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const { isConnected, user } = useAuth();
   const { invitationId, invitationEmail, consume } = useInvitationState();
 
@@ -43,18 +43,18 @@ export const Redirector = () => {
     }
 
     if (!collectiviteId) {
-      history.push(finaliserMonInscriptionUrl);
+      router.push(finaliserMonInscriptionUrl);
       return;
     }
 
     const auMoinsUnPlanActionsPilotable = !!plansData?.plans?.length;
 
     if (plansData?.plans && !auMoinsUnPlanActionsPilotable) {
-      history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
+      router.push(makeCollectiviteAccueilUrl({ collectiviteId }));
       return;
     }
 
-    history.push(
+    router.push(
       makeTableauBordUrl({
         collectiviteId,
         view:
@@ -64,7 +64,7 @@ export const Redirector = () => {
             : 'personnel',
       })
     );
-  }, [isLandingConnected, collectiviteId, user, plansData]);
+  }, [isLandingConnected, collectiviteId, user, plansData, router]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
@@ -74,7 +74,7 @@ export const Redirector = () => {
       if (isConnected && consume) {
         // si connecté on consomme l'invitation
         acceptAgentInvitation(invitationId).then(() => {
-          history.replace('/');
+          router.replace('/');
         });
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"
@@ -95,7 +95,7 @@ export const Redirector = () => {
         document.location.replace(signUpPathFromInvitation);
       }
     }
-  }, [isConnected, invitationId]);
+  }, [isConnected, invitationId, router, invitationEmail, consume]);
 
   return null;
 };

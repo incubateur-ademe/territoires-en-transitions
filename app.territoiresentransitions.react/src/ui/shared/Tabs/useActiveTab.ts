@@ -1,4 +1,4 @@
-import {useHistory, useLocation} from 'react-router-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type TOptions = {
   paramName?: string;
@@ -12,9 +12,9 @@ type TOptions = {
  * 1er onglet est sélectionné si la valeur n'est pas présente.
  */
 export const useActiveTab = (options?: TOptions | undefined) => {
-  const {paramName = 'v', defaultActiveTab = 0} = options || {};
-  const {pathname, search} = useLocation();
-  const history = useHistory();
+  const { paramName = 'v', defaultActiveTab = 0 } = options || {};
+  const search = useSearchParams();
+  const router = useRouter();
   const params = new URLSearchParams(search);
   const activeTab = parseInt(
     params.get(paramName) || defaultActiveTab.toString()
@@ -25,9 +25,9 @@ export const useActiveTab = (options?: TOptions | undefined) => {
     // met à jour l'url
     if (index !== activeTab) {
       params.set(paramName, index.toString());
-      history.replace({pathname, search: params.toString()});
+      router.replace(`?${params.toString()}`, { scroll: false });
     }
   };
 
-  return {activeTab, onChangeTab};
+  return { activeTab, onChangeTab };
 };

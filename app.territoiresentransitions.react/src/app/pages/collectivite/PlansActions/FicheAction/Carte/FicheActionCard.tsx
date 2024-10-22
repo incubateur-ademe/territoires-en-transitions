@@ -2,9 +2,9 @@ import { FicheResume } from '@tet/api/plan-actions/domain';
 import { Button, Card, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
-import { useHistory } from 'react-router-dom';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
@@ -39,7 +39,7 @@ const FicheActionCard = ({
   onUnlink,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
-  const history = useHistory();
+  const router = useRouter();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -119,7 +119,7 @@ const FicheActionCard = ({
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
         )}
-        onClick={!isNotClickable && link ? () => history.push(link) : undefined}
+        onClick={!isNotClickable && link ? () => router.push(link) : undefined}
         disabled={isNotClickable}
         external={openInNewTab}
         header={

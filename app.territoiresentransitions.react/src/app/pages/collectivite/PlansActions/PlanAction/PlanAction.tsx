@@ -1,18 +1,18 @@
-import {useState} from 'react';
-import {useHistory, useParams} from 'react-router-dom';
+import { useState } from 'react';
 
-import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
-import PlanActionFooter from './PlanActionFooter';
-import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
 import Arborescence from './DragAndDropNestedContainers/Arborescence';
+import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAccordeon';
+import PlanActionFooter from './PlanActionFooter';
+import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {checkAxeHasFiche} from './data/utils';
-import {usePlanAction} from './data/usePlanAction';
-import {PlanNode} from './data/types';
-import {makeCollectivitePlanActionUrl} from 'app/paths';
-import {generateTitle} from '../FicheAction/data/utils';
-import {Breadcrumbs} from '@tet/ui';
+import { Breadcrumbs } from '@tet/ui';
+import { makeCollectivitePlanActionUrl } from 'app/paths';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useParams, useRouter } from 'next/navigation';
+import { generateTitle } from '../FicheAction/data/utils';
+import { PlanNode } from './data/types';
+import { usePlanAction } from './data/usePlanAction';
+import { checkAxeHasFiche } from './data/utils';
 
 type PlanActionProps = {
   /** Axe racine du plan d'action (depth = 0) */
@@ -23,8 +23,8 @@ type PlanActionProps = {
   axes: PlanNode[];
 };
 
-export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
-  const history = useHistory();
+export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
+  const router = useRouter();
   const collectivite = useCurrentCollectivite();
 
   const isReadonly = collectivite?.readonly ?? false;
@@ -58,14 +58,14 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
                 {
                   label: generateTitle(plan.nom),
                   onClick: () =>
-                    history.push(
+                    router.push(
                       makeCollectivitePlanActionUrl({
                         collectiviteId: collectivite?.collectivite_id!,
                         planActionUid: axe.id.toString(),
                       })
                     ),
                 },
-                {label: generateTitle(axe.nom)},
+                { label: generateTitle(axe.nom) },
               ]}
             />
           </div>
@@ -79,7 +79,7 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
             plan={plan}
             axe={axe}
             isAxePage={isAxePage}
-            setIsFiltered={isFiltered => setIsFiltered(isFiltered)}
+            setIsFiltered={(isFiltered) => setIsFiltered(isFiltered)}
           />
         )}
         {/** Arboresence (fiches + sous-axes) */}
@@ -105,16 +105,16 @@ export const PlanAction = ({plan, axe, axes}: PlanActionProps) => {
  * Le `plan` est toujours requis car on l'utilise dans les hooks et plus particulièrement les invalidations des clés react-query.
  */
 const PlanActionConnected = () => {
-  const {planUid} = useParams<{planUid: string}>();
-  const {axeUid} = useParams<{axeUid?: string}>();
+  const { planUid } = useParams<{ planUid: string }>();
+  const { axeUid } = useParams<{ axeUid?: string }>();
 
-  const {data: allPlanNodes, isLoading: planLoading} = usePlanAction(
+  const { data: allPlanNodes, isLoading: planLoading } = usePlanAction(
     parseInt(planUid)
   );
 
-  const plan = allPlanNodes?.find(a => a?.depth === 0);
+  const plan = allPlanNodes?.find((a) => a?.depth === 0);
 
-  const axe = allPlanNodes?.find(a => a.id.toString() === axeUid);
+  const axe = allPlanNodes?.find((a) => a.id.toString() === axeUid);
 
   return !planLoading && plan && allPlanNodes ? (
     <PlanAction plan={plan} axe={axe ?? plan} axes={allPlanNodes} />

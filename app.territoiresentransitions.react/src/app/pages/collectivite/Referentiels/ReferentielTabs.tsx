@@ -1,6 +1,4 @@
-import {useHistory} from 'react-router-dom';
-import {Tabs, Tab} from 'ui/shared/Tabs';
-import {referentielToName} from 'app/labels';
+import { referentielToName } from 'app/labels';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
@@ -11,10 +9,12 @@ import {
   useReferentielId,
   useReferentielVue,
 } from 'core-logic/hooks/params';
-import {ReferentielOfIndicateur} from 'types/litterals';
+import { useRouter } from 'next/navigation';
+import { ReferentielOfIndicateur } from 'types/litterals';
+import { Tab, Tabs } from 'ui/shared/Tabs';
 import AidePriorisation from '../AidePriorisation';
-import Progression from './Referentiels';
 import DetailTacheTable from '../DetailTaches';
+import Progression from './Referentiels';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -29,7 +29,7 @@ const ReferentielTabs = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
   const referentielVue = useReferentielVue();
-  const history = useHistory();
+  const router = useRouter();
 
   if (!referentielId || !referentielVue) {
     return null;
@@ -48,7 +48,7 @@ const ReferentielTabs = () => {
 
       // met à jour l'url
       if (name && name !== referentielVue) {
-        history.replace(
+        router.replace(
           makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId,

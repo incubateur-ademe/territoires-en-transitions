@@ -1,14 +1,13 @@
-import { useHistory } from 'react-router-dom';
-
 import { Button } from '@tet/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
-import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useRouter } from 'next/navigation';
+import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 const TdbVide = () => {
   const currentCollectivite = useCurrentCollectivite();
 
-  const history = useHistory();
+  const router = useRouter();
 
   if (!currentCollectivite) return null;
 
@@ -28,7 +27,7 @@ const TdbVide = () => {
       {!currentCollectivite.readonly && (
         <Button
           onClick={() =>
-            history.push(
+            router.push(
               makeCollectivitePlansActionsNouveauUrl({
                 collectiviteId: currentCollectivite.collectivite_id!,
               })

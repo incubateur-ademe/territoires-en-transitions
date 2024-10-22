@@ -1,8 +1,8 @@
-import { useHistory } from 'react-router-dom';
-
 import { Button, useEventTracker } from '@tet/ui';
 
 import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
@@ -14,10 +14,9 @@ import {
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useRouter } from 'next/navigation';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import { getQueryKey } from '../../Personnel/usePersonalModulesFetch';
-import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
-import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 
 type Props = {
   view: TDBViewParam;
@@ -27,7 +26,7 @@ type Props = {
 const ModuleIndicateurs = ({ view, module }: Props) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
-  const history = useHistory();
+  const router = useRouter();
 
   const trackEvent = useEventTracker('app/tdb/personnel');
 
@@ -60,7 +59,7 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
           <Button
             size="sm"
             onClick={() =>
-              history.push(
+              router.push(
                 makeCollectiviteTousLesIndicateursUrl({
                   collectiviteId: collectiviteId!,
                 })
@@ -74,7 +73,7 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
               variant="grey"
               size="sm"
               onClick={() =>
-                history.push(
+                router.push(
                   makeTableauBordModuleUrl({
                     collectiviteId: collectiviteId!,
                     view,

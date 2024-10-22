@@ -1,11 +1,11 @@
-import {useLocation} from 'react-router-dom';
-import {useAuth} from '../core-logic/api/auth/AuthProvider';
-import {useEffect} from 'react';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TablesInsert} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useLocalisation} from 'core-logic/hooks/useLocalisation';
-import {ENV} from 'environmentVariables';
+import { TablesInsert } from '@tet/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useLocalisation } from 'core-logic/hooks/useLocalisation';
+import { ENV } from 'environmentVariables';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import { useAuth } from '../core-logic/api/auth/AuthProvider';
 
 /**
  * Représente la visite d'une page.
@@ -19,7 +19,7 @@ type Visite = TablesInsert<'visite'>;
  * @returns success
  */
 const track = async (visite: Visite): Promise<boolean> => {
-  const {status} = await supabaseClient.from('visite').insert(visite);
+  const { status } = await supabaseClient.from('visite').insert(visite);
   return status === 201;
 };
 
@@ -27,9 +27,9 @@ const track = async (visite: Visite): Promise<boolean> => {
  * Permet d'enregistrer les visites.
  */
 export const VisitTracker = () => {
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   const localisation = useLocalisation();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const collectivite_id = useCollectiviteId();
 
   useEffect(() => {
@@ -53,4 +53,3 @@ export const VisitTracker = () => {
 
   return null;
 };
-

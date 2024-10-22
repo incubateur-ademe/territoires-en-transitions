@@ -1,9 +1,9 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import {useEditAxe} from '../data/useEditAxe';
+import { useEditAxe } from '../data/useEditAxe';
 import classNames from 'classnames';
-import {PlanNode} from '../data/types';
-import {useParams} from 'react-router-dom';
+import { PlanNode } from '../data/types';
+import { useParams } from 'next/navigation';
 
 type Props = {
   axe: PlanNode;
@@ -12,10 +12,10 @@ type Props = {
   isReadonly: boolean;
 };
 
-const AxeTitre = ({planActionId, axe, isOpen, isReadonly}: Props) => {
-  const {axeUid} = useParams<{axeUid: string}>();
+const AxeTitre = ({ planActionId, axe, isOpen, isReadonly }: Props) => {
+  const { axeUid } = useParams<{ axeUid: string }>();
 
-  const {mutate: updatePlan} = useEditAxe(
+  const { mutate: updatePlan } = useEditAxe(
     axeUid ? parseInt(axeUid) : planActionId
   );
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -26,10 +26,10 @@ const AxeTitre = ({planActionId, axe, isOpen, isReadonly}: Props) => {
     if (inputRef.current) {
       if (axe.nom) {
         inputRef.current.value !== axe.nom &&
-          updatePlan({...axe, nom: inputRef.current.value.trim()});
+          updatePlan({ ...axe, nom: inputRef.current.value.trim() });
       } else {
         inputRef.current.value.trim().length > 0 &&
-          updatePlan({...axe, nom: inputRef.current.value.trim()});
+          updatePlan({ ...axe, nom: inputRef.current.value.trim() });
       }
     }
   };

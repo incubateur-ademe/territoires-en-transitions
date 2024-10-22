@@ -1,14 +1,14 @@
-import {usePlanActionTableauDeBord} from './data/usePlanActionTableauDeBord';
+import { usePlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
-import {Link} from 'react-router-dom';
+import Link from 'next/link';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
-import {PlanActionFilter} from './FiltersPlanAction';
-import {generateSyntheseGraphData} from './utils';
+import { PlanActionFilter } from './FiltersPlanAction';
+import { generateSyntheseGraphData } from './utils';
 import Chart from 'ui/charts/Chart';
-import {Card} from '@tet/ui';
+import { Card } from '@tet/ui';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;
@@ -38,7 +38,7 @@ const SyntheseGraphsList = ({
     return plan.id;
   };
 
-  const {data, isLoading} = usePlanActionTableauDeBord(
+  const { data, isLoading } = usePlanActionTableauDeBord(
     collectiviteId,
     selectedPlanId(selectedPlan),
     withoutPlan
@@ -47,7 +47,7 @@ const SyntheseGraphsList = ({
   return data ? (
     <div className="fr-grid-row fr-grid-row--gutters">
       {generateSyntheseGraphData(data).map(
-        graph =>
+        (graph) =>
           !!graph.data.length && (
             <div key={graph.title} className="fr-col-sm-12 fr-col-xl-6">
               <Card
@@ -94,7 +94,7 @@ const SyntheseGraphsList = ({
         <div className="flex justify-center mt-6">
           <Link
             className="fr-btn"
-            to={makeCollectivitePlansActionsNouveauUrl({
+            href={makeCollectivitePlansActionsNouveauUrl({
               collectiviteId,
             })}
           >

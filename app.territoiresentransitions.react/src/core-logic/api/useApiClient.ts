@@ -1,7 +1,7 @@
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { getFileNameFromResponse } from 'core-logic/api/getFilenameFromResponse';
 
-const BASE_URL = `${process.env.NX_PUBLIC_BACKEND_URL}/api/v1`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 
 type JSONValue =
   | string

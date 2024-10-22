@@ -1,12 +1,12 @@
-import {useMemo} from 'react';
-import {Enums} from '@tet/api';
-import {useLocation} from 'react-router-dom';
+import { Enums } from '@tet/api';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 /**
  * Renvoi la localisation utilisée par le tracker.
  */
 export const useLocalisation = (): Localisation => {
-  const {pathname} = useLocation();
+  const pathname = usePathname();
   return useMemo<Localisation>(() => locationFromPath(pathname), [pathname]);
 };
 
@@ -130,5 +130,5 @@ const locationFromPath = (path: string): Localisation => {
     page = 'membre';
   }
 
-  return {page, tag, onglet};
+  return { page, tag, onglet };
 };

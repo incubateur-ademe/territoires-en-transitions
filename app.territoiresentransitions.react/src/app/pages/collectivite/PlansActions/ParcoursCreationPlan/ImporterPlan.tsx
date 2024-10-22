@@ -1,14 +1,14 @@
-import {Alert} from '@tet/ui';
-import {makeCollectivitePlansActionsNouveauUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {Link} from 'react-router-dom';
+import { Alert } from '@tet/ui';
+import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import Link from 'next/link';
 import ContextMenu from 'ui/shared/select/ContextMenu';
-import {MenuTriggerButton} from 'ui/shared/select/MenuTriggerButton';
+import { MenuTriggerButton } from 'ui/shared/select/MenuTriggerButton';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
-  {value: 'xlsx', label: 'Format Excel (.xlsx)'},
-  {value: 'ods', label: 'Format OpenDocument (.ods)'},
+  { value: 'xlsx', label: 'Format Excel (.xlsx)' },
+  { value: 'ods', label: 'Format OpenDocument (.ods)' },
 ];
 
 const ImporterPlan = () => {
@@ -54,8 +54,8 @@ const ImporterPlan = () => {
             fonctionne !
           </p>
           <Alert
-            title={`Pour toute question, contactez-nous sur le support en ligne 
-              ou par email à contact@territoiresentransitions.fr. 
+            title={`Pour toute question, contactez-nous sur le support en ligne
+              ou par email à contact@territoiresentransitions.fr.
               Nous sommes là pour vous aider !`}
           />
           <div className="h-[1px] my-8 bg-gray-300" />
@@ -76,7 +76,7 @@ const ImporterPlan = () => {
           <div className="flex items-center gap-6 ml-auto mt-6">
             <Link
               className="fr-btn fr-btn--tertiary fr-btn--icon-left !mb-0 fr-icon-arrow-left-line hover:!bg-[#EEEEEE]"
-              to={makeCollectivitePlansActionsNouveauUrl({
+              href={makeCollectivitePlansActionsNouveauUrl({
                 collectiviteId: collectivite_id!,
               })}
             >
@@ -85,7 +85,10 @@ const ImporterPlan = () => {
             <ContextMenu
               options={DOWNLOAD_TEMPLATE_OPTIONS}
               onSelect={(format: string) => {
-                tracker({fonction: 'modele_import', action: 'telechargement'});
+                tracker({
+                  fonction: 'modele_import',
+                  action: 'telechargement',
+                });
                 window.open(
                   `/20231107-Fichier-Import-PA-NEW.${format}`,
                   '_blank'
