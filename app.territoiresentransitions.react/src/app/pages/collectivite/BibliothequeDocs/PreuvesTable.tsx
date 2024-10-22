@@ -1,4 +1,4 @@
-import {useEffect, useRef, Fragment} from 'react';
+import { useEffect, useRef, Fragment } from 'react';
 import {
   Column,
   CellProps,
@@ -7,11 +7,11 @@ import {
   useFlexLayout,
   Row,
 } from 'react-table';
-import {Referentiel} from 'types/litterals';
-import {TableData} from './useTableData';
-import {CellAction} from '../ReferentielTable/CellAction';
-import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { Referentiel } from 'types/litterals';
+import { TableData } from './useTableData';
+import { CellAction } from '../ReferentielTable/CellAction';
+import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import '../ReferentielTable/styles.css';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 
@@ -42,13 +42,13 @@ const subActionLevel = {
  */
 export const PreuvesTable = (props: TPreuvesTableProps) => {
   const collectiviteId = useCollectiviteId();
-  const {tableData, referentielId} = props;
+  const { tableData, referentielId } = props;
   const maxDepth = subActionLevel[referentielId];
-  const {table, isLoading} = tableData;
+  const { table, isLoading } = tableData;
 
   // crée l'instance de la table
   const tableInstance = useTable(
-    {...table, columns: COLUMNS},
+    { ...table, columns: COLUMNS },
     useExpanded,
     useFlexLayout
   );
@@ -68,12 +68,12 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
       isInitialLoading.current = false;
       flatRows
         // filtre les lignes à déplier
-        .filter(row => row.original.depth < maxDepth)
+        .filter((row) => row.original.depth < maxDepth)
         // déplie les lignes voulues
         // NOTE: on utilise `as unknown as string[]` pour contourner une erreur
         // de typage dans react-table : `toggleRowExpanded` attend bien un id
         // unique en 1er argument et non un tableau comme l'indique son typage
-        .forEach(row => toggleRowExpanded(row.id as unknown as string[]));
+        .forEach((row) => toggleRowExpanded(row.id as unknown as string[]));
     }
   }, [table?.data?.length, flatRows, toggleRowExpanded, isInitialLoading]);
 
@@ -94,8 +94,8 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
               rows: Row<ActionReferentiel>[]
             ) => {
               prepareRow(row);
-              const {original, isExpanded} = row;
-              const {depth, nom, identifiant, action_id} = original;
+              const { original, isExpanded } = row;
+              const { depth, nom, identifiant, action_id } = original;
               // dernière ligne avant une nouvelle section
               const isLast =
                 (!rows[index + 1] || rows[index + 1].depth === 0) &&
@@ -105,7 +105,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                 isExpanded ? 'open' : 'close'
               } ${isLast ? 'last' : ''}`;
 
-              const {key, ...rowProps} = row.getRowProps();
+              const { key, ...rowProps } = row.getRowProps();
 
               const action = {
                 id: action_id,
@@ -121,9 +121,13 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                       title={(nom as string) || ''}
                       {...rowProps}
                     >
-                      {row.cells.map(cell => {
+                      {row.cells.map((cell, index) => {
                         return (
-                          <div className="cell" {...cell.getCellProps()}>
+                          <div
+                            className="cell"
+                            {...cell.getCellProps()}
+                            key={index}
+                          >
                             {cell.render('Cell', {
                               collectiviteId,
                               referentielId,
