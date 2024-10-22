@@ -199,7 +199,7 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "dev": "nx run-many --parallel 4 -t dev -p @tet/app @tet/auth @tet/panier @tet/site",
+    "dev": "nx run-many --parallel 5 -t dev -p @tet/app @tet/auth @tet/panier @tet/site @tet/backend",
     "dev:app": "nx run-many -t dev -p @tet/app @tet/auth @tet/backend",
     "dev:backend": "nx dev @tet/backend",
     "dev:site": "nx dev @tet/site",
