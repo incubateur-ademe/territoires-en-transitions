@@ -4,6 +4,7 @@ import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePage
 import SectionCard from '@tet/app/pages/collectivite/Accueil/SectionCard';
 import {
   makeCollectivitePanierUrl,
+  makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteSyntheseReferentielUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteToutesLesFichesUrl,
@@ -96,13 +97,28 @@ const Accueil = (): JSX.Element => {
             }`}
             description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
             buttons={[
-              {
-                children: 'Aller sur mon tableau de bord',
-                href: makeTableauBordUrl({
-                  collectiviteId,
-                  view: 'personnel',
-                }),
-              },
+              collectivite.readonly
+                ? {
+                    children: 'Aller sur le tableau de bord de la collectivité',
+                    href: makeTableauBordUrl({
+                      collectiviteId,
+                      view: 'collectivite',
+                    }),
+                  }
+                : planActionsCount > 0
+                ? {
+                    children: 'Aller sur mon tableau de bord',
+                    href: makeTableauBordUrl({
+                      collectiviteId,
+                      view: 'personnel',
+                    }),
+                  }
+                : {
+                    children: 'Créer mon 1er plan !',
+                    href: makeCollectivitePlansActionsNouveauUrl({
+                      collectiviteId,
+                    }),
+                  },
               ficheActionCount > 0
                 ? {
                     children: 'Toutes les fiches action',
