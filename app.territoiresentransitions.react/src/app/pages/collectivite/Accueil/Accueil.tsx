@@ -192,17 +192,17 @@ const Accueil = (): JSX.Element => {
             description="Identifiez de nouvelles actions à mettre en place sur votre territoire pour accélérer la transition écologique."
             additionalInfos="Communes ou intercommunalités, quelque soit votre engagement actuel dans la transition écologique, constituez-vous une base d’actions adaptées à vos compétences."
             buttons={[
-              panier && panier.count > 0
-                ? {
-                    children: 'Reprendre ma sélection d’actions',
-                    href: makeCollectivitePanierUrl({ collectiviteId }),
-                    external: true,
-                  }
-                : {
-                    children: 'Tester le panier',
-                    href: makeCollectivitePanierUrl({ collectiviteId }),
-                    external: true,
-                  },
+              {
+                children:
+                  panier && panier.count > 0
+                    ? 'Reprendre ma sélection d’actions'
+                    : 'Tester le panier',
+                href: makeCollectivitePanierUrl({
+                  collectiviteId,
+                  panierId: panier?.panierId,
+                }),
+                external: true,
+              },
             ]}
           />
         </div>

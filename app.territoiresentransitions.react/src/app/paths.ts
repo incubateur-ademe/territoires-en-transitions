@@ -510,9 +510,16 @@ export const makeCollectiviteJournalUrl = ({
 
 export const makeCollectivitePanierUrl = ({
   collectiviteId,
+  panierId,
 }: {
-  collectiviteId: number;
-}) => `${ENV.panier_url}/landing/collectivite/${collectiviteId}`;
+  collectiviteId?: number | null;
+  panierId?: string;
+}) =>
+  panierId
+    ? `${ENV.panier_url}/panier/${panierId}`
+    : collectiviteId
+    ? `${ENV.panier_url}/landing/collectivite/${collectiviteId}`
+    : `${ENV.panier_url}/landing`;
 
 export const makeInvitationLandingPath = (
   invitationId: string,
