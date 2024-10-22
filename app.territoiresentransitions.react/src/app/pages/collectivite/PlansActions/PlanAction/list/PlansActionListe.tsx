@@ -82,6 +82,8 @@ const PlansActionListe = ({
     withSelect: ['axes'],
     options: {
       filtre: {},
+      page: currentPage,
+      limit: maxNbOfCards,
       sort: [
         {
           field: sort,
@@ -95,8 +97,6 @@ const PlansActionListe = ({
   useEffect(() => {
     setCurrentPage(1);
   }, [isLoading]);
-
-  const countTotal = data?.plans.length || 0;
 
   return (
     <>
@@ -113,10 +113,10 @@ const PlansActionListe = ({
         </div>
         {/** Nombre total de résultats */}
         <span className="shrink-0 text-grey-7 mr-auto">
-          {isLoading ? '--' : countTotal}
+          {isLoading ? '--' : data?.count}
           {` `}
           {`plan`}
-          {countTotal > 1 ? 's' : ''}
+          {data && data?.count > 1 ? 's' : ''}
         </span>
         <ButtonGroup
           activeButtonId={displaySettings?.display}
@@ -187,7 +187,7 @@ const PlansActionListe = ({
             <Pagination
               className="mx-auto"
               selectedPage={currentPage}
-              nbOfElements={countTotal}
+              nbOfElements={data?.count ?? 0}
               maxElementsPerPage={maxNbOfCards}
               onChange={(page) => setCurrentPage(page)}
             />

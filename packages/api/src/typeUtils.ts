@@ -1,5 +1,5 @@
-import {createClient} from '@supabase/supabase-js';
-import {Database} from './database.types';
+import { createClient } from '@supabase/supabase-js';
+import { Database } from './database.types';
 
 // client supabase avec le typage de la base
 export type DBClient = ReturnType<typeof createClient<Database>>;
@@ -23,14 +23,17 @@ export type CompositeTypes<
 > = Database['public']['CompositeTypes'][T];
 
 // un exemple de type d'objet tag associé à une collectivité
-export type CollectiviteTag = Database['public']['Tables']['partenaire_tag']['Insert'];
+export type CollectiviteTag =
+  Database['public']['Tables']['partenaire_tag']['Insert'];
 
 // la liste des tables correspondant au schéma CollectiviteTag
 // utilise le "key remapping" et les types conditionnels
 // Ref: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#key-remapping-via-as
 //      https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 export type TableTag = keyof {
-  [K in TableName as TablesInsert<K> extends CollectiviteTag ? K : never]: unknown;
+  [K in TableName as TablesInsert<K> extends CollectiviteTag
+    ? K
+    : never]: unknown;
 };
 
 /**
@@ -54,14 +57,3 @@ export type NonNullableFields<T> = {
  * Ref: https://stackoverflow.com/questions/73135992/add-a-prefix-to-each-type-in-a-string-union-type
  */
 export type Prefix<P extends string, S extends string> = `${P}${S}`;
-
-/**
- * Génère un type union à partir des valeurs d'un tableau de chaînes.
- *
- * Exemple :
- * ```
- * const myArray = ['val1', 'val2'] as const
- * type MyUnion = ValuesToUnion<typeof myArray> // = 'val1' | 'val2
- * ```
- */
-export type ValuesToUnion<T extends readonly string[]> = T[number];

@@ -1,11 +1,28 @@
-import {ReactNode} from 'react';
-import {referentielToName} from 'app/labels';
-import {useProgressionReferentiel} from './data/useProgressionReferentiel';
-import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
-import IndicateursCard from './IndicateursCard';
-import PlansActionCard from './PlansActionCard';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import SectionCard from '@tet/app/pages/collectivite/Accueil/SectionCard';
+import {
+  makeCollectivitePanierUrl,
+  makeCollectivitePlansActionsNouveauUrl,
+  makeCollectiviteSyntheseReferentielUrl,
+  makeCollectiviteTousLesIndicateursUrl,
+  makeCollectiviteToutesLesFichesUrl,
+  makeCollectiviteTrajectoirelUrl,
+  makeTableauBordUrl,
+  recherchesCollectivitesUrl,
+} from '@tet/app/paths';
+import PictoEtatDesLieux from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
+import PictoPlansAction from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
+import PictoIndicateurs from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
+import PictoTrajectoire from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
+import PictoCollectivite from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
+import PictoPanierActions from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
+import { Button } from '@tet/ui';
+import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
+import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useFicheActionCount } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 
 /**
  * Affiche la page d'accueil d'une collectivité
@@ -13,99 +30,192 @@ import {useAuth} from 'core-logic/api/auth/AuthProvider';
 const Accueil = (): JSX.Element => {
   const collectivite = useCurrentCollectivite();
 
-  const {user} = useAuth();
+  const { user } = useAuth();
+
+  const { mutate: createFicheAction } = useCreateFicheAction();
+
+  const { count: planActionsCount } = usePlanActionsCount();
+
+  const { count: ficheActionCount } = useFicheActionCount();
+
+  const { data: panier } = useNbActionsDansPanier(
+    collectivite?.collectivite_id!
+  );
 
   if (!collectivite?.collectivite_id) return <></>;
 
-  /** Vérifi que l'utilisateur peut accéder à la collectivité */
-  const hasNoAccessToCollectivite =
-    collectivite.acces_restreint &&
-    collectivite.niveau_acces === null &&
-    !user?.isSupport &&
-    !collectivite.est_auditeur;
+  const { collectivite_id: collectiviteId } = collectivite;
 
-  /** S'il ne peut pas, on affiche un message */
-  if (hasNoAccessToCollectivite) {
-    return (
-      <div className="flex-grow flex">
-        <div className="m-auto text-grey-7">
-          Cette collectivité n’est pas accessible en mode visite.
-        </div>
-      </div>
-    );
-  }
-
-  /** Sinon on affiche la page.
-   * Ceci permet de ne pas appeler `useProgressionReferentiel`
-   * qui ne marche pas si l'utilisateur n'a pas les droits */
   return (
-    <AccueilNonConfidentielle collectiviteId={collectivite.collectivite_id} />
-  );
-};
+    <main className="grow -mb-8 py-12 px-4 lg:px-6 bg-grey-2">
+      <CollectivitePageLayout>
+        <h2 className="mb-4">Bonjour {user?.prenom} !</h2>
+        <div className="mb-12 text-lg text-grey-8">
+          <p>
+            Bienvenue sur Territoires en Transitions ! À la fois espace de
+            travail personnel et collaboratif, la plateforme est là pour vous
+            aider à accélérer la transition écologique de votre collectivité.
+          </p>
 
-/** Affiche le tableau de bord de l'accueil pour les utilisateurs avec les droits nécessaires */
-const AccueilNonConfidentielle = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) => {
-  const {
-    caeTable: caeProgressionScore,
-    eciTable: eciProgressionScore,
-    caeRepartitionPhases,
-    eciRepartitionPhases,
-    caePotentiel,
-    eciPotentiel,
-  } = useProgressionReferentiel();
-  return (
-    <main data-test="TableauBord" className="bg-bf975 -mb-8">
-      {!!collectiviteId && (
-        <div className="fr-container flex flex-col py-16 gap-16">
-          {/* Plans d'action et Indicateurs */}
-          <div className="grid lg:grid-cols-2 gap-x-6 gap-y-16">
-            <div className="flex flex-col">
-              <TitreSection>Plans d'action</TitreSection>
-              <PlansActionCard collectiviteId={collectiviteId} />
-            </div>
-            <div className="flex flex-col">
-              <TitreSection>Indicateurs</TitreSection>
-              <IndicateursCard collectiviteId={collectiviteId} />
-            </div>
-          </div>
-
-          {/* États des lieux */}
-          <div>
-            <TitreSection>État des lieux</TitreSection>
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/** Climat Air Énergie */}
-              <EtatDesLieux
-                collectiviteId={collectiviteId}
-                progressionScore={caeProgressionScore}
-                repartitionPhases={caeRepartitionPhases}
-                potentiel={caePotentiel}
-                referentiel="cae"
-                title={referentielToName.cae}
-              />
-              {/** Écomomie circulaire */}
-              <EtatDesLieux
-                collectiviteId={collectiviteId}
-                progressionScore={eciProgressionScore}
-                repartitionPhases={eciRepartitionPhases}
-                potentiel={eciPotentiel}
-                referentiel="eci"
-                title={referentielToName.eci}
-              />
-            </div>
-          </div>
+          <p>
+            Développée par l'ADEME en partenariat avec beta.gouv, elle s'adresse
+            à toutes les collectivités.
+            <br />
+            Que vous soyez ou non (ou pas encore !) engagés dans le programme de
+            l'ADEME, découvrez et utilisez gratuitement les fonctionnalités
+            proposées !
+          </p>
+          <p>
+            La plateforme évolue selon vos besoins. N'hésitez pas à nous écrire
+            via le chat en ligne pour échanger !
+          </p>
         </div>
-      )}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <SectionCard
+            picto={<PictoEtatDesLieux />}
+            title="État des lieux"
+            description="Faites vos états des lieux dans le cadre du programme Territoire Engagé Transition Écologique de l'ADEME."
+            buttons={[
+              {
+                children: "Synthèse de l'EDL",
+                href: makeCollectiviteSyntheseReferentielUrl({
+                  collectiviteId,
+                }),
+              },
+              {
+                children: "Plus d'informations sur le programme",
+                href: 'https://www.territoiresentransitions.fr/programme',
+                external: true,
+                variant: 'outlined',
+              },
+            ]}
+          />
+          <SectionCard
+            picto={<PictoPlansAction />}
+            title={`${planActionsCount > 0 ? `${planActionsCount} ` : ''}${
+              planActionsCount === 1 ? 'Plan d’action' : 'Plans d’actions'
+            }`}
+            description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
+            buttons={[
+              collectivite.readonly
+                ? {
+                    children: 'Aller sur le tableau de bord de la collectivité',
+                    href: makeTableauBordUrl({
+                      collectiviteId,
+                      view: 'collectivite',
+                    }),
+                  }
+                : planActionsCount > 0
+                ? {
+                    children: 'Aller sur mon tableau de bord',
+                    href: makeTableauBordUrl({
+                      collectiviteId,
+                      view: 'personnel',
+                    }),
+                  }
+                : {
+                    children: 'Créer mon 1er plan !',
+                    href: makeCollectivitePlansActionsNouveauUrl({
+                      collectiviteId,
+                    }),
+                  },
+              ficheActionCount > 0
+                ? {
+                    children: 'Toutes les fiches action',
+                    href: makeCollectiviteToutesLesFichesUrl({
+                      collectiviteId,
+                    }),
+                    variant: 'outlined',
+                  }
+                : {
+                    children: 'Créer une fiche action',
+                    onClick: () => createFicheAction(),
+                    variant: 'outlined',
+                  },
+            ]}
+          />
+          <SectionCard
+            picto={<PictoIndicateurs />}
+            title="Indicateurs"
+            description="Complétez et suivez les indicateurs liés à vos plans et à vos actions. 
+            Nous proposons une bibliothèque d'indicateurs pré-définis par l'ADEME et certains sont déjà remplis via l'open data !"
+            buttons={[
+              {
+                children: 'Voir tous les indicateurs',
+                href: makeCollectiviteTousLesIndicateursUrl({ collectiviteId }),
+              },
+              {
+                children: 'Découvrir les indicateurs disponibles en open data',
+                href: `${makeCollectiviteTousLesIndicateursUrl({
+                  collectiviteId,
+                })}?od=true`,
+                variant: 'outlined',
+              },
+            ]}
+          />
+          <SectionCard
+            picto={<PictoTrajectoire />}
+            title="Trajectoire SNBC territorialisée"
+            description="Calculez votre trajectoire SNBC territorialisée et définissez ou validez vos objectifs (par exemple lors d’un suivi annuel ou d’un bilan à mi-parcours d’un PCAET), en quantifiant les efforts à réaliser pour chaque secteur. Cette trajectoire n’est pas contraignante : elle sert d’outil d’aide à la décision et de point de référence."
+            buttons={[
+              {
+                children: 'Découvrir la fonctionnalité',
+                href: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
+              },
+            ]}
+          />
+          <SectionCard
+            picto={<PictoCollectivite />}
+            title="Collectivités"
+            description="Inspirez vous des états des lieux, plans d'actions et indicateurs proches géographiquement ou qui vous ressemblent.
+            Parcourez librement les plans d'actions et indicateurs des autres collectivités utilisatrices de l'outil !"
+            buttons={[
+              {
+                children: "S'inspirer",
+                href: recherchesCollectivitesUrl,
+              },
+              {
+                children: 'En savoir plus sur la confidentialité',
+                href: 'https://aide.territoiresentransitions.fr/fr/article/la-confidentialite-sur-territoires-en-transitions-18gpnno/',
+                variant: 'outlined',
+                external: true,
+              },
+            ]}
+          />
+          <SectionCard
+            picto={<PictoPanierActions />}
+            title={
+              panier && panier.count > 0
+                ? `${panier.count} actions dans votre panier`
+                : 'Panier d’actions'
+            }
+            description="Identifiez de nouvelles actions à mettre en place sur votre territoire pour accélérer la transition écologique."
+            additionalInfos="Communes ou intercommunalités, quelque soit votre engagement actuel dans la transition écologique, constituez-vous une base d’actions adaptées à vos compétences."
+            buttons={[
+              {
+                children:
+                  panier && panier.count > 0
+                    ? 'Reprendre ma sélection d’actions'
+                    : 'Tester le panier',
+                href: makeCollectivitePanierUrl({
+                  collectiviteId,
+                  panierId: panier?.panierId,
+                }),
+                external: true,
+              },
+            ]}
+          />
+        </div>
+        <Button
+          className="mt-20 mb-8 mx-auto"
+          variant="outlined"
+          href="https://www.territoiresentransitions.fr/"
+        >
+          Retourner sur le site
+        </Button>
+      </CollectivitePageLayout>
     </main>
   );
 };
-
-// affiche un titre au-dessus d'une carte
-const TitreSection = ({children}: {children: ReactNode}) => (
-  <h5 className="text-xl leading-5 font-extrabold">{children}</h5>
-);
 
 export default Accueil;

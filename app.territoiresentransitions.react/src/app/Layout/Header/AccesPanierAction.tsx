@@ -1,10 +1,11 @@
-import {useQuery} from 'react-query';
-import {PanierAPI} from '@tet/api';
-import {Button} from '@tet/ui';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ENV} from 'environmentVariables';
+import { useQuery } from 'react-query';
+import { PanierAPI } from '@tet/api';
+import { Button } from '@tet/ui';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { ENV } from 'environmentVariables';
 import classNames from 'classnames';
+import { makeCollectivitePanierUrl } from '@tet/app/paths';
 
 const panierAPI = new PanierAPI(supabaseClient);
 
@@ -13,13 +14,8 @@ const panierAPI = new PanierAPI(supabaseClient);
  */
 export const AccesPanierAction = () => {
   const collectiviteId = useCollectiviteId();
-  const {data} = useNbActionsDansPanier(collectiviteId);
-  const {panierId, count} = data || {};
-  const url = panierId
-    ? `${ENV.panier_url}/panier/${panierId}`
-    : collectiviteId
-    ? `${ENV.panier_url}/landing/collectivite/${collectiviteId}`
-    : `${ENV.panier_url}/landing`;
+  const { data } = useNbActionsDansPanier(collectiviteId);
+  const { panierId, count } = data || {};
 
   return (
     <Button
@@ -29,7 +25,13 @@ export const AccesPanierAction = () => {
       icon="shopping-basket-2-line"
       notification={count ? { number: count, variant: 'info' } : undefined}
       onClick={() => {
-        window.open(url, '_blank');
+        window.open(
+          makeCollectivitePanierUrl({
+            collectiviteId,
+            panierId,
+          }),
+          '_blank'
+        );
       }}
     >
       Panier d'action

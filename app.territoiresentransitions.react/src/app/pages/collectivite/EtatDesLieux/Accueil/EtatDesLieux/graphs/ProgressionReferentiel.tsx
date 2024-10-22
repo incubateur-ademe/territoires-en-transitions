@@ -1,11 +1,11 @@
-import {avancementToLabel, referentielToName} from 'app/labels';
-import {ReferentielParamOption} from 'app/paths';
-import {actionAvancementColors} from 'app/theme';
-import {TableOptions} from 'react-table';
+import { avancementToLabel, referentielToName } from 'app/labels';
+import { ReferentielParamOption } from 'app/paths';
+import { actionAvancementColors } from 'app/theme';
+import { TableOptions } from 'react-table';
 import BarChartCardWithSubrows from 'ui/charts/old/BarChartCardWithSubrows';
-import {ProgressionRow} from '../data/useProgressionReferentiel';
-import {getFormattedScore} from './utils';
-import {TBarChartScoreTable} from 'ui/charts/old/BarChartCardWithSubrows';
+import { ProgressionRow } from '../../data/useProgressionReferentiel';
+import { getFormattedScore } from '../utils';
+import { TBarChartScoreTable } from 'ui/charts/old/BarChartCardWithSubrows';
 
 // Définition des couleurs des graphes
 const customColors = {

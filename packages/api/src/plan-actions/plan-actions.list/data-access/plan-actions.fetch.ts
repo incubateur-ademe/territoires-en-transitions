@@ -31,7 +31,7 @@ export const planActionsFetch = async ({
   options = { filtre: {} },
   withSelect = [],
 }: Props): Promise<TFetchedData> => {
-  const { filtre, sort } = fetchOptionsSchema.parse(options);
+  const { filtre, sort, page, limit } = fetchOptionsSchema.parse(options);
 
   const parts = new Set<string>();
   parts.add('type:plan_action_type(*)');
@@ -44,7 +44,10 @@ export const planActionsFetch = async ({
 
   const query = dbClient
     .from('axe')
-    .select(['*', ...parts].join(','))
+    .select(['*', ...parts].join(','), {
+      count: 'exact',
+    })
+    .range((page - 1) * limit, page * limit - 1)
     .eq('collectivite_id', collectiviteId)
     .is('parent', null);
 
@@ -57,6 +60,7 @@ export const planActionsFetch = async ({
   });
 
   const { error, data, count } = await query;
+
   if (error) {
     throw new Error(error.message);
   }
