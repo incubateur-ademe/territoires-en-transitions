@@ -88,6 +88,7 @@
     "react-markdown": "^9.0.1",
     "react-number-format": "^5.3.1",
     "react-pdf-html": "^2.1.2",
+    "react-pdf-tailwind": "^2.3.0",
     "react-query": "^3.39.1",
     "react-router-dom": "^5.2.0",
     "react-swipeable": "^7.0.1",

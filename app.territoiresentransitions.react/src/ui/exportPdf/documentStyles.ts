@@ -38,6 +38,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: '1pt',
     borderBottomColor: colors.primary[5],
     padding: '12pt 25pt',
+    marginBottom: '12pt',
   },
   logo: {
     height: '100%',

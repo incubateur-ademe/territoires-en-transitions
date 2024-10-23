@@ -71,7 +71,6 @@ const FicheActionPlanning = ({
           <FilledCalendarPicto className="mx-auto" />
 
           {/* Date de début */}
-
           <div>
             <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
               Date de début
