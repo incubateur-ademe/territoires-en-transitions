@@ -22,7 +22,6 @@ import { createSelectSchema } from 'drizzle-zod';
 import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
 import { z } from 'zod';
 import { createZodDto } from '@anatine/zod-nestjs';
-import { createPlanFromPanierRequestSchema } from './create-plan-from-panier.request';
 
 export const actionImpactTable = pgTable('action_impact', {
   id: serial('id').primaryKey(),
