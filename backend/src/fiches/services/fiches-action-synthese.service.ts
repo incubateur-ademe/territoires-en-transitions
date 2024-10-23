@@ -30,7 +30,6 @@ import {
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { UpsertFicheActionRequestClass } from '../controllers/fiches-action.controller';
 import { UpsertFicheActionRequestType } from '../models/upsert-fiche-action.request';
 
 @Injectable()
