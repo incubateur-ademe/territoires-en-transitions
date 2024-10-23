@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { default as postgres } from 'postgres';
-import BackendConfigurationService from './backend-configuration.service';
+import ConfigurationService from '../../config/configuration.service';
 
 @Injectable()
 export default class DatabaseService implements OnApplicationShutdown {
@@ -9,20 +9,14 @@ export default class DatabaseService implements OnApplicationShutdown {
   public readonly db: PostgresJsDatabase;
   private readonly client: postgres.Sql;
 
-  constructor(
-    private readonly backendConfigurationService: BackendConfigurationService
-  ) {
+  constructor(private readonly configService: ConfigurationService) {
     this.logger.log(`Initializing database service`);
-    this.client = postgres(
-      backendConfigurationService.getBackendConfiguration()
-        .SUPABASE_DATABASE_URL,
-      {
-        prepare: false,
-        connection: {
-          application_name: `Backend ${process.env.APPLICATION_VERSION}`,
-        },
-      }
-    );
+    this.client = postgres(this.configService.get('SUPABASE_DATABASE_URL'), {
+      prepare: false,
+      connection: {
+        application_name: `Backend ${process.env.APPLICATION_VERSION}`,
+      },
+    });
 
     this.db = drizzle(this.client);
   }

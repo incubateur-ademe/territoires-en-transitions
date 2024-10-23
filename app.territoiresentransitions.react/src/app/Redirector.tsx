@@ -33,6 +33,8 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
+    if (!plansData?.plans) return;
+
     if (user && !user.dcp) {
       // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
       document.location.replace(`${signUpPath}&view=etape3`);
@@ -47,23 +49,21 @@ export const Redirector = () => {
       return;
     }
 
-    const auMoinsUnPlanActionsPilotable = !!plansData?.plans?.length;
-
-    if (plansData?.plans && !auMoinsUnPlanActionsPilotable) {
-      history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
+    if (plansData.plans.length > 0) {
+      history.push(
+        makeTableauBordUrl({
+          collectiviteId,
+          view:
+            user.collectivites?.find((c) => c.collectivite_id)?.membre
+              ?.fonction === 'politique'
+              ? 'collectivite'
+              : 'personnel',
+        })
+      );
       return;
     }
 
-    history.push(
-      makeTableauBordUrl({
-        collectiviteId,
-        view:
-          user.collectivites?.find((c) => c.collectivite_id)?.membre
-            ?.fonction === 'politique'
-            ? 'collectivite'
-            : 'personnel',
-      })
-    );
+    history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
   }, [isLandingConnected, collectiviteId, user, plansData]);
 
   // réagit aux changements de l'état "invitation"

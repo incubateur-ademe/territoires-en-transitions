@@ -25,23 +25,24 @@ export function middleware(request: NextRequest) {
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc} 
-      *.axept.io 
-      *.posthog.com 
-      client.crisp.chat 
-      *.googletagmanager.com 
-      *.adform.net 
+    script-src ${scriptSrc}
+      *.axept.io
+      *.posthog.com
+      client.crisp.chat
+      *.googletagmanager.com
+      *.adform.net
       https://snap.licdn.com;
     style-src ${styleSrc} client.crisp.chat;
-    img-src 'self' blob: data: 
-      ytimg.com 
-      px.ads.linkedin.com 
-      server.adform.net 
-      https://axeptio.imgix.net 
+    img-src 'self' blob: data:
+      ytimg.com
+      px.ads.linkedin.com
+      server.adform.net
+      https://axeptio.imgix.net
       https://favicons.axept.io
-      https://image.crisp.chat 
-      https://client.crisp.chat 
-      https://px4.ads.linkedin.com 
+      https://image.crisp.chat
+      https://client.crisp.chat
+      https://px4.ads.linkedin.com
+      https://secure.adnxs.com
       ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
         'strapiapp',
         'media.strapiapp'
