@@ -12,10 +12,10 @@ export class ActionImpactController {
   @Get('details')
   @ApiResponse({ type: ActionImpactDetailsClass })
   async fetchActionImpactDetails(
-    @Query() request: { actionImpactId: number },
+    @Query() request: { actionImpactId: number }
   ): Promise<ActionImpactDetailsClass | null> {
     return this.indicateurService.getActionImpactDetails(
-      request.actionImpactId,
+      request.actionImpactId
     );
   }
 }

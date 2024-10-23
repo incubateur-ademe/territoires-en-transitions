@@ -45,7 +45,7 @@ export const getIndicateursValeursRequestSchema = extendApi(
     })
     .openapi({
       title: 'Filtre de récupération des valeurs des indicateurs',
-    }),
+    })
 );
 export type GetIndicateursValeursRequestType = z.infer<
   typeof getIndicateursValeursRequestSchema
@@ -58,7 +58,7 @@ export const getIndicateursValeursResponseSchema = extendApi(
     })
     .openapi({
       title: 'Valeurs par indicateur et par source',
-    }),
+    })
 );
 
 export type GetIndicateursValeursResponseType = z.infer<

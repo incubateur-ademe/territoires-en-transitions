@@ -14,8 +14,8 @@ export const planActionTypeTable = pgTable(
   (table) => {
     return {
       planActionTypeCategorieTypeKey: uniqueIndex(
-        'plan_action_type_categorie_type_key',
+        'plan_action_type_categorie_type_key'
       ).on(table.categorie, table.type),
     };
-  },
+  }
 );

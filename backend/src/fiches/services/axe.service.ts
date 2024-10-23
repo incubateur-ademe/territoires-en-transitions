@@ -17,7 +17,7 @@ export default class AxeService {
    */
   async createAxe(axe: CreateAxeType): Promise<number> {
     this.logger.log(
-      `Création de l'axe ${axe.nom} pour la collectivité ${axe.collectiviteId}`,
+      `Création de l'axe ${axe.nom} pour la collectivité ${axe.collectiviteId}`
     );
     const axeCree = await this.databaseService.db
       .insert(axeTable)
@@ -43,11 +43,11 @@ export default class AxeService {
           or(
             and(
               isNull(axeTable.parent),
-              isNull(axe.parent ? axe.parent : null),
+              isNull(axe.parent ? axe.parent : null)
             ),
-            eq(axeTable.parent, axe.parent),
-          ),
-        ),
+            eq(axeTable.parent, axe.parent)
+          )
+        )
       );
     const axeExistant = axeExistants?.length > 0 ? axeExistants[0] : null;
     if (!axeExistant) {

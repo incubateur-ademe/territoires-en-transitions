@@ -20,9 +20,9 @@ export const sousThematiqueTable = pgTable(
   (table) => {
     return {
       sousThematiqueSousThematiqueThematiqueIdKey: uniqueIndex(
-        'sous_thematique_sous_thematique_thematique_id_key ',
+        'sous_thematique_sous_thematique_thematique_id_key '
       ).on(table.sousThematique, table.thematiqueId),
     };
-  },
+  }
 );
 export type SousThematiqueType = InferSelectModel<typeof sousThematiqueTable>;

@@ -7,8 +7,14 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { thematiqueSchema, ThematiqueType } from '../../taxonomie/models/thematique.table';
-import { categorieFNVSchema, CategorieFNVType } from '../../taxonomie/models/categorie-fnv.table';
+import {
+  thematiqueSchema,
+  ThematiqueType,
+} from '../../taxonomie/models/thematique.table';
+import {
+  categorieFNVSchema,
+  CategorieFNVType,
+} from '../../taxonomie/models/categorie-fnv.table';
 import { actionImpactTempsDeMiseEnOeuvreTable } from './action-impact-temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
@@ -90,5 +96,5 @@ export const actionImpactDetailsSchema = actionImpactTransformeSchema.extend({
 });
 
 export class ActionImpactDetailsClass extends createZodDto(
-  actionImpactDetailsSchema,
+  actionImpactDetailsSchema
 ) {}

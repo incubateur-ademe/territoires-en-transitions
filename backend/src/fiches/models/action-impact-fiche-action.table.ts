@@ -7,12 +7,12 @@ export const actionImpactFicheActionTable = pgTable(
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     actionImpactId: integer('action_impact_id').references(
-      () => actionImpactTable.id,
+      () => actionImpactTable.id
     ),
   },
   (table) => {
     return {
       pk: primaryKey({ columns: [table.ficheId, table.actionImpactId] }),
     };
-  },
+  }
 );

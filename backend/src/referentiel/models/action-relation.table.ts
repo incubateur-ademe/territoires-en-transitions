@@ -13,7 +13,7 @@ export const actionRelationTable = pgTable('action_relation', {
     .notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
   parent: varchar('parent', { length: 30 }).references(
-    () => actionDefinitionTable.actionId,
+    () => actionDefinitionTable.actionId
   ),
 });
 

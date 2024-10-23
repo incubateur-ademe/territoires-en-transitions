@@ -4,5 +4,5 @@ export const planActionTypeCategorieTable = pgTable(
   'plan_action_type_categorie',
   {
     categorie: text('categorie').primaryKey(),
-  },
+  }
 );

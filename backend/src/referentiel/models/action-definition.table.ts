@@ -18,7 +18,7 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.actionId,
+  () => actionDefinitionTable.actionId
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
@@ -52,7 +52,7 @@ export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
 export const createActionDefinitionSchema = createInsertSchema(
-  actionDefinitionTable,
+  actionDefinitionTable
 );
 
 export type ActionDefinitionAvecParentType = Pick<
@@ -60,5 +60,5 @@ export type ActionDefinitionAvecParentType = Pick<
   'actionId'
 > &
   Partial<ActionDefinitionType> & {
-  parentActionId: string | null;
-};
+    parentActionId: string | null;
+  };

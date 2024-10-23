@@ -25,8 +25,8 @@ export default class TagService {
         .where(
           and(
             eq(partenaireTagTable.nom, nom.trim()),
-            eq(partenaireTagTable.collectiviteId, collectiviteId),
-          ),
+            eq(partenaireTagTable.collectiviteId, collectiviteId)
+          )
         );
       tag = tags.length > 0 ? tags[0] : null;
     }

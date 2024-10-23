@@ -23,5 +23,3 @@ export const DocumentBase = {
   modifiedBy: uuid('modified_by'), // TODO references auth.uid,
   lien: jsonb('lien'),
 };
-
-

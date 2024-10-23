@@ -7,12 +7,12 @@ export const ficheActionStructureTagTable = pgTable(
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     structureTagId: integer('structure_tag_id').references(
-      () => structureTagTable.id,
+      () => structureTagTable.id
     ),
   },
   (table) => {
     return {
       pk: primaryKey({ columns: [table.ficheId, table.structureTagId] }),
     };
-  },
+  }
 );

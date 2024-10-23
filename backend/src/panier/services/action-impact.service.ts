@@ -30,10 +30,10 @@ export default class ActionImpactService {
    * @return l'action détaillé
    */
   async getActionImpactDetails(
-    actionImpactId: number,
+    actionImpactId: number
   ): Promise<ActionImpactDetailsType | null> {
     this.logger.log(
-      `Récupération du détail de l'action à impact ${actionImpactId}`,
+      `Récupération du détail de l'action à impact ${actionImpactId}`
     );
     const actions = await this.databaseService.db
       .select({
@@ -47,19 +47,19 @@ export default class ActionImpactService {
       .from(actionImpactTable)
       .leftJoin(
         actionImpactThematiqueTable,
-        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId)
       )
       .leftJoin(
         thematiqueTable,
-        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id),
+        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id)
       )
       .leftJoin(
         actionImpactCategorieFNVTable,
-        eq(actionImpactTable.id, actionImpactCategorieFNVTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactCategorieFNVTable.actionImpactId)
       )
       .leftJoin(
         categorieFNVTable,
-        eq(actionImpactCategorieFNVTable.categorieFnvId, categorieFNVTable.id),
+        eq(actionImpactCategorieFNVTable.categorieFnvId, categorieFNVTable.id)
       )
       .where(eq(actionImpactTable.id, actionImpactId))
       .limit(1);
@@ -73,7 +73,7 @@ export default class ActionImpactService {
    */
   async majActionImpactFromDirectus(
     action: ActionImpact,
-    datas: Datas,
+    datas: Datas
   ): Promise<void> {
     // Upsert action_impact
     const actionToSave = {
@@ -97,7 +97,7 @@ export default class ActionImpactService {
           description: sql.raw(`excluded.description`),
           fourchetteBudgetaire: sql.raw(`excluded.fourchette_budgetaire`),
           descriptionComplementaire: sql.raw(
-            `excluded.description_complementaire`,
+            `excluded.description_complementaire`
           ),
           tempsDeMiseEnOeuvre: sql.raw(`excluded.temps_de_mise_en_oeuvre`),
           ressourcesExternes: sql.raw(`excluded.ressources_externes`),
@@ -106,7 +106,7 @@ export default class ActionImpactService {
         },
       });
     Logger.log(
-      `Action ${action.id} - Sauvegarde de l''action à impact : réussi`,
+      `Action ${action.id} - Sauvegarde de l''action à impact : réussi`
     );
     // Upsert action_impact_thematique
     await this.databaseService.db
@@ -121,11 +121,11 @@ export default class ActionImpactService {
         });
       if (!query) {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de la thématique ${thematique.thematique_id} : échec`,
+          `Action ${action.id} - Sauvegarde de la thématique ${thematique.thematique_id} : échec`
         );
       } else {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de la thématique ${thematique.thematique_id} : réussi`,
+          `Action ${action.id} - Sauvegarde de la thématique ${thematique.thematique_id} : réussi`
         );
       }
     }
@@ -138,7 +138,7 @@ export default class ActionImpactService {
     for (const thematique of action.sous_thematiques) {
       // Récupère le nom de la sous thématique dans directus
       const thematiqueDirectus = datas.sousThematiquesDirectus.find(
-        (t) => t.id === thematique.sous_thematique_id,
+        (t) => t.id === thematique.sous_thematique_id
       );
       if (thematiqueDirectus) {
         // Fait le lien avec la sous thématique en BDD via le nom
@@ -152,11 +152,11 @@ export default class ActionImpactService {
             });
           if (!query) {
             Logger.log(
-              `Action ${action.id} - Sauvegarde de la sous thématique ${thematiqueBDD.id} : échec`,
+              `Action ${action.id} - Sauvegarde de la sous thématique ${thematiqueBDD.id} : échec`
             );
           } else {
             Logger.log(
-              `Action ${action.id} - Sauvegarde de la sous thématique ${thematiqueBDD.id} : réussi`,
+              `Action ${action.id} - Sauvegarde de la sous thématique ${thematiqueBDD.id} : réussi`
             );
           }
         }
@@ -171,7 +171,7 @@ export default class ActionImpactService {
     for (const indicateur of action.indicateurs) {
       // Récupère l'indentifiant BDD de l'indicateur à partir de son identifiant référentiel
       const indicateurId = datas.indicateurs.get(
-        indicateur.indicateur_predefini_id!,
+        indicateur.indicateur_predefini_id!
       )?.id;
       if (indicateurId) {
         const query = await this.databaseService.db
@@ -182,11 +182,11 @@ export default class ActionImpactService {
           });
         if (!query) {
           Logger.log(
-            `Action ${action.id} - Sauvegarde de l'indicateur ${indicateur.indicateur_predefini_id} : échec`,
+            `Action ${action.id} - Sauvegarde de l'indicateur ${indicateur.indicateur_predefini_id} : échec`
           );
         } else {
           Logger.log(
-            `Action ${action.id} - Sauvegarde de l'indicateur ${indicateur.indicateur_predefini_id} : réussi`,
+            `Action ${action.id} - Sauvegarde de l'indicateur ${indicateur.indicateur_predefini_id} : réussi`
           );
         }
       }
@@ -204,7 +204,7 @@ export default class ActionImpactService {
           effetAttenduId: effet.action_impact_effet_attendu_id,
         });
       Logger.log(
-        `Action ${action.id} - Sauvegarde de l'effet attendu ${effet.action_impact_effet_attendu_id} réussi`,
+        `Action ${action.id} - Sauvegarde de l'effet attendu ${effet.action_impact_effet_attendu_id} réussi`
       );
     }
 
@@ -221,11 +221,11 @@ export default class ActionImpactService {
         });
       if (!query) {
         Logger.log(
-          `Action ${action.id} - Sauvegarde du partenaire ${partenaire.action_impact_partenaire_id} : échec`,
+          `Action ${action.id} - Sauvegarde du partenaire ${partenaire.action_impact_partenaire_id} : échec`
         );
       } else {
         Logger.log(
-          `Action ${action.id} - Sauvegarde du partenaire ${partenaire.action_impact_partenaire_id} : réussi`,
+          `Action ${action.id} - Sauvegarde du partenaire ${partenaire.action_impact_partenaire_id} : réussi`
         );
       }
     }
@@ -243,11 +243,11 @@ export default class ActionImpactService {
         });
       if (!query) {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de l'action référentiel ${actionRef.action_referentiel_id} : échec`,
+          `Action ${action.id} - Sauvegarde de l'action référentiel ${actionRef.action_referentiel_id} : échec`
         );
       } else {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de l'action référentiel ${actionRef.action_referentiel_id} : réussi`,
+          `Action ${action.id} - Sauvegarde de l'action référentiel ${actionRef.action_referentiel_id} : réussi`
         );
       }
     }
@@ -265,11 +265,11 @@ export default class ActionImpactService {
         });
       if (!query) {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de la compétence ${competence.competence_code} : échec`,
+          `Action ${action.id} - Sauvegarde de la compétence ${competence.competence_code} : échec`
         );
       } else {
         Logger.log(
-          `Action ${action.id} - Sauvegarde de la compétence ${competence.competence_code} : réussi`,
+          `Action ${action.id} - Sauvegarde de la compétence ${competence.competence_code} : réussi`
         );
       }
     }

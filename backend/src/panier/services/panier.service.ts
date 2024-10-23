@@ -41,7 +41,7 @@ export default class PanierService {
     private readonly directusService: DirectusService,
     private readonly thematiqueService: ThematiqueService,
     private readonly indicateurService: IndicateursService,
-    private readonly actionImpactService: ActionImpactService,
+    private readonly actionImpactService: ActionImpactService
   ) {}
 
   /**
@@ -61,9 +61,9 @@ export default class PanierService {
             isNull(panierTable.collectiviteId),
             gt(
               panierTable.createdAt,
-              sql.raw(`current_timestamp - interval '1 month'`),
-            ),
-          ),
+              sql.raw(`current_timestamp - interval '1 month'`)
+            )
+          )
         );
       panier = paniers.length > 0 ? paniers[0] : null;
     }
@@ -106,8 +106,8 @@ export default class PanierService {
       .where(
         and(
           eq(actionImpactPanierTable.actionId, actionId),
-          eq(actionImpactPanierTable.panierId, panierId),
-        ),
+          eq(actionImpactPanierTable.panierId, panierId)
+        )
       );
     this.panierGateway.emitPanierUpdate(panierId);
   }
@@ -121,11 +121,11 @@ export default class PanierService {
   async setActionImpactCategorie(
     actionId: number,
     panierId: string,
-    categorieId: string | null,
+    categorieId: string | null
   ): Promise<void> {
     if (categorieId) {
       this.logger.log(
-        `Remplacement par le statut ${categorieId} sur l'action ${actionId} pour le panier ${panierId}`,
+        `Remplacement par le statut ${categorieId} sur l'action ${actionId} pour le panier ${panierId}`
       );
       await this.databaseService.db
         .insert(actionImpactStatutTable)
@@ -143,15 +143,15 @@ export default class PanierService {
         });
     } else {
       this.logger.log(
-        `Retrait de la catégorie sur l'action ${actionId} pour le panier ${panierId}`,
+        `Retrait de la catégorie sur l'action ${actionId} pour le panier ${panierId}`
       );
       await this.databaseService.db
         .delete(actionImpactCategorieTable)
         .where(
           and(
             eq(actionImpactPanierTable.actionId, actionId),
-            eq(actionImpactPanierTable.panierId, panierId),
-          ),
+            eq(actionImpactPanierTable.panierId, panierId)
+          )
         );
     }
     this.panierGateway.emitPanierUpdate(panierId);
@@ -169,7 +169,7 @@ export default class PanierService {
     panierId: string,
     thematiqueIds: number[],
     niveauxBudget: number[],
-    niveauxTemps: number[],
+    niveauxTemps: number[]
   ): Promise<ActionImpactStateType[]> {
     const where = [];
 
@@ -180,7 +180,7 @@ export default class PanierService {
     if (niveauxBudget && niveauxBudget.length > 0) {
       where.push(isNotNull(actionImpactTable.fourchetteBudgetaire));
       where.push(
-        inArray(actionImpactTable.fourchetteBudgetaire, niveauxBudget),
+        inArray(actionImpactTable.fourchetteBudgetaire, niveauxBudget)
       );
     }
     if (niveauxTemps && niveauxTemps.length > 0) {
@@ -200,59 +200,56 @@ export default class PanierService {
         actionImpactStatutTable,
         and(
           eq(actionImpactTable.id, actionImpactStatutTable.actionId),
-          eq(actionImpactStatutTable.panierId, panierId),
-        ),
+          eq(actionImpactStatutTable.panierId, panierId)
+        )
       )
       .leftJoin(
         actionImpactThematiqueTable,
-        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId)
       )
       .leftJoin(
         thematiqueTable,
-        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id),
+        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id)
       )
       .leftJoin(
         actionImpactPanierTable,
         and(
           eq(actionImpactPanierTable.actionId, actionImpactTable.id),
-          eq(actionImpactPanierTable.panierId, panierId),
-        ),
+          eq(actionImpactPanierTable.panierId, panierId)
+        )
       )
       .where(and(...where));
 
     return Object.values(
-      actions.reduce(
-        (acc, row) => {
-          const actionId = row.action.id;
+      actions.reduce((acc, row) => {
+        const actionId = row.action.id;
 
-          if (!acc[actionId]) {
-            acc[actionId] = {
-              action: {
-                ...row.action,
-                rex: Array.isArray(row.action.rex) ? row.action.rex : [],
-                subventionsMobilisables: Array.isArray(
-                  row.action.subventionsMobilisables,
-                )
-                  ? row.action.subventionsMobilisables
-                  : [],
-                ressourcesExternes: Array.isArray(row.action.ressourcesExternes)
-                  ? row.action.ressourcesExternes
-                  : [],
-              },
-              isinpanier: !!row.isInPanier,
-              statut: row.statut || null,
-              thematiques: [],
-            };
-          }
+        if (!acc[actionId]) {
+          acc[actionId] = {
+            action: {
+              ...row.action,
+              rex: Array.isArray(row.action.rex) ? row.action.rex : [],
+              subventionsMobilisables: Array.isArray(
+                row.action.subventionsMobilisables
+              )
+                ? row.action.subventionsMobilisables
+                : [],
+              ressourcesExternes: Array.isArray(row.action.ressourcesExternes)
+                ? row.action.ressourcesExternes
+                : [],
+            },
+            isinpanier: !!row.isInPanier,
+            statut: row.statut || null,
+            thematiques: [],
+          };
+        }
 
-          if (row.thematique) {
-            acc[actionId].thematiques.push(row.thematique);
-          }
+        if (row.thematique) {
+          acc[actionId].thematiques.push(row.thematique);
+        }
 
-          return acc;
-        },
-        {} as Record<number, ActionImpactStateType>,
-      ),
+        return acc;
+      }, {} as Record<number, ActionImpactStateType>)
     );
   }
 
@@ -268,26 +265,26 @@ export default class PanierService {
     panierId: string,
     thematiqueIds: number[],
     niveauxBudget: number[],
-    niveauxTemps: number[],
+    niveauxTemps: number[]
   ): Promise<PanierCompletType | null> {
     const paniersResult = await this.databaseService.db
       .select()
       .from(panierTable)
       .leftJoin(
         actionImpactPanierTable,
-        eq(actionImpactPanierTable.panierId, panierTable.id),
+        eq(actionImpactPanierTable.panierId, panierTable.id)
       )
       .leftJoin(
         actionImpactTable,
-        eq(actionImpactTable.id, actionImpactPanierTable.actionId),
+        eq(actionImpactTable.id, actionImpactPanierTable.actionId)
       )
       .leftJoin(
         actionImpactThematiqueTable,
-        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId)
       )
       .leftJoin(
         thematiqueTable,
-        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id),
+        eq(actionImpactThematiqueTable.thematiqueId, thematiqueTable.id)
       )
       .where(eq(panierTable.id, panierId));
 
@@ -296,45 +293,42 @@ export default class PanierService {
         panierId,
         thematiqueIds,
         niveauxBudget,
-        niveauxTemps,
+        niveauxTemps
       );
       return {
         ...paniersResult[0].panier,
         contenu: Object.values(
           paniersResult
             .filter((f) => f.action_impact !== null)
-            .reduce(
-              (acc, row) => {
-                const actionId = row.action_impact!.id;
+            .reduce((acc, row) => {
+              const actionId = row.action_impact!.id;
 
-                if (!acc[actionId]) {
-                  acc[actionId] = {
-                    ...row.action_impact!,
-                    rex: Array.isArray(row.action_impact!.rex)
-                      ? row.action_impact!.rex
-                      : [],
-                    subventionsMobilisables: Array.isArray(
-                      row.action_impact!.subventionsMobilisables,
-                    )
-                      ? row.action_impact!.subventionsMobilisables
-                      : [],
-                    ressourcesExternes: Array.isArray(
-                      row.action_impact!.ressourcesExternes,
-                    )
-                      ? row.action_impact!.ressourcesExternes
-                      : [],
-                    thematiques: [],
-                  };
-                }
+              if (!acc[actionId]) {
+                acc[actionId] = {
+                  ...row.action_impact!,
+                  rex: Array.isArray(row.action_impact!.rex)
+                    ? row.action_impact!.rex
+                    : [],
+                  subventionsMobilisables: Array.isArray(
+                    row.action_impact!.subventionsMobilisables
+                  )
+                    ? row.action_impact!.subventionsMobilisables
+                    : [],
+                  ressourcesExternes: Array.isArray(
+                    row.action_impact!.ressourcesExternes
+                  )
+                    ? row.action_impact!.ressourcesExternes
+                    : [],
+                  thematiques: [],
+                };
+              }
 
-                if (row.thematique) {
-                  acc[actionId].thematiques.push(row.thematique);
-                }
+              if (row.thematique) {
+                acc[actionId].thematiques.push(row.thematique);
+              }
 
-                return acc;
-              },
-              {} as Record<number, ActionImpactSnippetType>,
-            ),
+              return acc;
+            }, {} as Record<number, ActionImpactSnippetType>)
         ),
         states: actionsFiltrees,
       };

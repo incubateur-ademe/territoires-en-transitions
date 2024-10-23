@@ -10,11 +10,11 @@ export const initApplicationCredentials = () => {
   ) {
     const serviceAccountFile = `${__dirname}/keyfile.json`;
     logger.log(
-      `Writing Google Cloud credentials to file: ${serviceAccountFile}`,
+      `Writing Google Cloud credentials to file: ${serviceAccountFile}`
     );
     fs.writeFileSync(
       serviceAccountFile,
-      process.env.GCLOUD_SERVICE_ACCOUNT_KEY,
+      process.env.GCLOUD_SERVICE_ACCOUNT_KEY
     );
     process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountFile;
   }

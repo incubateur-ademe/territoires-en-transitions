@@ -15,9 +15,9 @@ export const createPlanFromPanierRequestSchema = extendApi(
     })
     .openapi({
       title: 'Panier à transformer en plan pour une collectivité.',
-    }),
+    })
 );
 
 export class CreatePlanFromPanierRequestClass extends createZodDto(
-  createPlanFromPanierRequestSchema,
+  createPlanFromPanierRequestSchema
 ) {}

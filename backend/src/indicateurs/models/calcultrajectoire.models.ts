@@ -30,7 +30,7 @@ export const modeleTrajectoireTelechargementRequestSchema = extendApi(
         description:
           'Récupère les données du fichier xlsx depuis le drive plutôt que le cache local',
       }),
-  }),
+  })
 );
 export type ModeleTrajectoireTelechargementRequestType = z.infer<
   typeof modeleTrajectoireTelechargementRequestSchema
@@ -61,7 +61,7 @@ export const verificationTrajectoireRequestSchema = extendApi(
         description:
           "Force l'utilisation des données de la collectivité plutôt que celles du rare",
       }),
-  }),
+  })
 );
 export type VerificationTrajectoireRequestType = z.infer<
   typeof verificationTrajectoireRequestSchema
@@ -80,7 +80,7 @@ export const donneesARemplirValeurSchema = extendApi(
     valeur: z.number().nullable(),
     date_min: z.string().nullable(),
     date_max: z.string().nullable(),
-  }),
+  })
 );
 export type DonneesARemplirValeurType = z.infer<
   typeof donneesARemplirValeurSchema
@@ -90,7 +90,7 @@ export const donneesARemplirResultSchema = extendApi(
   z.object({
     valeurs: z.array(donneesARemplirValeurSchema),
     identifiants_referentiel_manquants: z.array(z.string()),
-  }),
+  })
 );
 export type DonneesARemplirResultType = z.infer<
   typeof donneesARemplirResultSchema
@@ -102,7 +102,7 @@ export const donneesCalculTrajectoireARemplirSchema = extendApi(
     emissions_ges: donneesARemplirResultSchema,
     consommations_finales: donneesARemplirResultSchema,
     sequestrations: donneesARemplirResultSchema,
-  }),
+  })
 );
 export type DonneesCalculTrajectoireARemplirType = z.infer<
   typeof donneesCalculTrajectoireARemplirSchema
@@ -132,7 +132,7 @@ export const verificationDonneesSNBCResponseSchema = extendApi(
         description:
           "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait",
       }),
-  }),
+  })
 );
 export type VerificationDonneesSNBCResponseType = z.infer<
   typeof verificationDonneesSNBCResponseSchema
@@ -156,7 +156,7 @@ export const calculTrajectoireRequestSchema = extendApi(
         description:
           "Force l'utilisation des données de la collectivité plutôt que celles du rare",
       }),
-  }),
+  })
 );
 export type CalculTrajectoireRequestType = z.infer<
   typeof calculTrajectoireRequestSchema
@@ -171,7 +171,7 @@ export const calculTrajectoireResponseDonneesSchema = extendApi(
     })
     .openapi({
       title: 'Données de la trajectoire SNBC',
-    }),
+    })
 );
 export type CalculTrajectoireResponseDonneesType = z.infer<
   typeof calculTrajectoireResponseDonneesSchema
@@ -187,7 +187,7 @@ export const calculTrajectoireResponseSchema = extendApi(
     })
     .openapi({
       title: 'Réponse du calcul de la trajectoire SNBC',
-    }),
+    })
 );
 export type CalculTrajectoireResponseType = z.infer<
   typeof calculTrajectoireResponseSchema

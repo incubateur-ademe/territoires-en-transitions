@@ -19,6 +19,7 @@ import { SupabaseJwtPayload } from 'backend/src/auth/models/auth.models';
 export class GetFichesActionSyntheseResponseClass extends createZodDto(
   getFichesActionSyntheseSchema
 ) {}
+
 export class GetFichesActionFilterRequestClass extends createZodDto(
   getFichesActionFilterRequestSchema
 ) {}
