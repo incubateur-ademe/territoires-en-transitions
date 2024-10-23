@@ -73,6 +73,7 @@ const IndicateursCollectivite = () => {
                 variant="outlined"
                 icon="equalizer-line"
                 size="sm"
+                text="Filtrer"
               >
                 <MenuFiltresTousLesIndicateurs
                   filters={filters}
