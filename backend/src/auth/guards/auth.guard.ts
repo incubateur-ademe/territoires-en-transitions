@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +21,8 @@ export class AuthGuard implements CanActivate {
     private jwtService: JwtService,
     private reflector: Reflector,
     private configService: BackendConfigurationService
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -44,7 +45,7 @@ export class AuthGuard implements CanActivate {
       const payload: SupabaseJwtPayload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: this.configService.get('SUPABASE_JWT_SECRET'),
+          secret: this.configService.get('SUPABASE_JWT_SECRET')
         }
       );
       // 💡 We're assigning the payload to the request object here

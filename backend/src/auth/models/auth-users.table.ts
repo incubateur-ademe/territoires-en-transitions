@@ -9,8 +9,8 @@ export const authUsersTable = authSchemaDB.table('users', {
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }),
   lastSignInAt: timestamp('last_sign_in_at', {
     withTimezone: true,
-    mode: 'string',
-  }),
+    mode: 'string'
+  })
 
   /*
   TODO

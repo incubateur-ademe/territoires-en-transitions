@@ -14,9 +14,6 @@ import {
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { utilisateurSupportTable } from '../models/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
-import { userCrm } from '../models/user-crm.dto';
-import { dcpTable } from '../models/dcp.table';
-import { authUsersTable } from '../models/auth-users.table';
 
 @Injectable()
 export class AuthService {
@@ -209,29 +206,5 @@ export class AuthService {
       return authorise;
     }
     return false;
-  }
-
-  /**
-   * Récupère les informations de l'utilisateur utiles pour le dialogue avec des crms
-   * @param tokenInfo token de l'utilisateur
-   * @return les informations crm de l'utilisateur
-   */
-  async getUserCrmInfo(tokenInfo: SupabaseJwtPayload): Promise<userCrm | null> {
-    if (tokenInfo.sub) {
-      const result = await this.databaseService.db
-        .select({
-          prenom: dcpTable.prenom,
-          nom: dcpTable.nom,
-          email: dcpTable.email,
-          telephone: dcpTable.telephone,
-          creation: authUsersTable.createdAt,
-          derniereConnexion: authUsersTable.lastSignInAt,
-        })
-        .from(dcpTable)
-        .innerJoin(authUsersTable, eq(dcpTable.userId, authUsersTable.id))
-        .where(eq(dcpTable.userId, tokenInfo.sub));
-      return result[0] || null;
-    }
-    return null;
   }
 }

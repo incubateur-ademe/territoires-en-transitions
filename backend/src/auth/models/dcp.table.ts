@@ -17,6 +17,6 @@ export const dcpTable = pgTable('dcp', {
   telephone: varchar('telephone', { length: 30 }),
   cguAccepteesLe: timestamp('cgu_acceptees_le', {
     withTimezone: true,
-    mode: 'string',
-  }),
+    mode: 'string'
+  })
 });
