@@ -541,7 +541,7 @@ describe('Test indicateur.save', async () => {
     // Ajout valeur import
     const { data: meta, error } = await dbAdmin
       .from('indicateur_source_metadonnee')
-      .insert({
+      .upsert({
         source_id: 'citepa',
         date_version: new Date().toLocaleDateString('sv-SE'),
       })

@@ -445,7 +445,7 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
 
   const { data: metadonnee } = await dbAdmin
     .from('indicateur_source_metadonnee')
-    .insert({
+    .upsert({
       source_id: 'citepa',
       date_version: new Date().toLocaleDateString('sv-SE'),
     })
