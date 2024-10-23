@@ -145,6 +145,15 @@ export async function ficheResumesFetch({
     query.or(
       `not.and(fiche_action_lien_1.is.null, fiche_action_lien_2.is.null)`
     );
+
+    query.or(`fiche_deux.in.(${filtre.linkedFicheActionIds})`, {
+      referencedTable: 'fiche_action_lien_1',
+    });
+
+    query.or(`fiche_une.in.(${filtre.linkedFicheActionIds})`, {
+      referencedTable: 'fiche_action_lien_2',
+    });
+
     query.not('id', 'in', `(${filtre.linkedFicheActionIds})`);
   }
 
@@ -155,7 +164,7 @@ export async function ficheResumesFetch({
         ','
       )}),tag_id.in.(${filtre.personnePiloteIds.join(',')})`,
       {
-        foreignTable: 'pilotes',
+        referencedTable: 'pilotes',
       }
     );
     query.in('pilotes.tag_id', filtre.personnePiloteIds);

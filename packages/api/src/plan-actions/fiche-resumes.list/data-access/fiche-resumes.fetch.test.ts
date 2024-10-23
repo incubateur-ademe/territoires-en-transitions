@@ -1,6 +1,6 @@
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
-import { supabase } from '../../../tests/supabase';
+import { dbAdmin, supabase } from '../../../tests/supabase';
 import { ficheResumesFetch } from './fiche-resumes.fetch';
 
 const params = {
@@ -171,12 +171,38 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
 });
 
 test('Fetch avec filtre sur une fiche liée', async () => {
+  await dbAdmin.from('fiche_action_lien').insert([
+    { fiche_une: 1, fiche_deux: 5 },
+    { fiche_une: 5, fiche_deux: 3 },
+  ]);
+
+  onTestFinished(async () => {
+    await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 1 });
+    await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 5 });
+  });
+
+  // Test avec une action associée à plusieurs fiches
+  const { data: fichesWithAction } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        linkedFicheActionIds: [5],
+      },
+    },
+  });
+
+  if (!fichesWithAction) {
+    expect.fail();
+  }
+
+  expect(fichesWithAction).toHaveLength(2);
+
   // Test avec une fiche associée à aucune autre fiche
   const { data: noFichesFound } = await ficheResumesFetch({
     ...params,
     options: {
       filtre: {
-        linkedFicheActionIds: [5],
+        linkedFicheActionIds: [10],
       },
     },
   });
@@ -186,22 +212,6 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   }
 
   expect(noFichesFound).toHaveLength(0);
-
-  // Test avec une action associée à plusieurs fiches
-  const { data: fichesWithAction } = await ficheResumesFetch({
-    ...params,
-    options: {
-      filtre: {
-        linkedFicheActionIds: [10],
-      },
-    },
-  });
-
-  if (!fichesWithAction) {
-    expect.fail();
-  }
-
-  expect(fichesWithAction.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur un statut', async () => {
