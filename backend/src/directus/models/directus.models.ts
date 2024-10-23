@@ -2,7 +2,6 @@
  * Liste les types retournés par l'api de directus
  */
 
-
 export type Link = {
   label: string;
   url: string;

@@ -17,7 +17,7 @@ export const deleteIndicateursValeursRequestSchema = extendApi(
     })
     .openapi({
       title: 'Filtre de suppression des valeurs des indicateurs',
-    }),
+    })
 );
 export type DeleteIndicateursValeursRequestType = z.infer<
   typeof deleteIndicateursValeursRequestSchema
@@ -30,7 +30,7 @@ export const deleteIndicateursValeursResponseSchema = extendApi(
     })
     .openapi({
       title: 'Identifiant des valeurs supprimées',
-    }),
+    })
 );
 
 export type DeleteIndicateursValeursResponseType = z.infer<

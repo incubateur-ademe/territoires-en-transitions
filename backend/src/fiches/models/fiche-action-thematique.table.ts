@@ -12,5 +12,5 @@ export const ficheActionThematiqueTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.ficheId, table.thematiqueId] }),
     };
-  },
+  }
 );

@@ -11,7 +11,7 @@ export const groupementCollectiviteTable = pgTable('groupement_collectivite', {
     () => collectiviteTable.id,
     {
       onDelete: 'cascade',
-    },
+    }
   ),
 });
 export type GroupementCollectiviteType = InferSelectModel<

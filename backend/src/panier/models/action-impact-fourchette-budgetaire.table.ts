@@ -6,7 +6,7 @@ export const actionImpactFourchetteBudgetaireTable = pgTable(
   {
     niveau: serial('niveau').primaryKey(),
     nom: text('nom').notNull(),
-  },
+  }
 );
 export type ActionImpactFourchetteBudgetaireType = InferSelectModel<
   typeof actionImpactFourchetteBudgetaireTable

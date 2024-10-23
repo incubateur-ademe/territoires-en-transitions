@@ -6,5 +6,5 @@ export const preuveReglementaireDefinitionTable = pgTable(
     id: varchar('id').primaryKey(),
     nom: text('nom').notNull(),
     description: text('description').notNull(),
-  },
+  }
 );

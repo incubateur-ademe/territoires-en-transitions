@@ -9,6 +9,7 @@ import { versionResponseSchema } from '../models/version.models';
  */
 @ApiTags('Application')
 export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
+
 @Controller()
 export class VersionController {
   @PublicEndpoint()

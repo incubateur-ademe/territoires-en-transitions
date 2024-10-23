@@ -32,7 +32,7 @@ export default class GroupementsService {
     if (groupementResult.length > 1) {
       throw new HttpException(
         `Plusieurs groupements trouvés avec le nom ${nom}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
 
@@ -42,10 +42,10 @@ export default class GroupementsService {
 
   async ajouteCollectiviteAuGroupement(
     groupementId: number,
-    collectiviteId: number,
+    collectiviteId: number
   ) {
     this.logger.log(
-      `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`,
+      `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`
     );
     const createGroupementCollectivite: CreateGroupementCollectiviteType = {
       collectiviteId: collectiviteId,

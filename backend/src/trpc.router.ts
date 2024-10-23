@@ -9,7 +9,7 @@ export class TrpcRouter {
 
   constructor(
     private readonly trpc: TrpcService,
-    private readonly trajectoiresRouter: TrajectoiresRouter,
+    private readonly trajectoiresRouter: TrajectoiresRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -22,7 +22,7 @@ export class TrpcRouter {
       `/trpc`,
       trpcExpress.createExpressMiddleware({
         router: this.appRouter,
-      }),
+      })
     );
   }
 }

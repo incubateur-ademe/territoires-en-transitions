@@ -12,9 +12,9 @@ export const actionInPanierRequestSchema = extendApi(
     })
     .openapi({
       title: 'Action à impact dans un panier.',
-    }),
+    })
 );
 
 export class ActionInPanierRequestClass extends createZodDto(
-  actionInPanierRequestSchema,
+  actionInPanierRequestSchema
 ) {}

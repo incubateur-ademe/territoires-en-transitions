@@ -20,5 +20,5 @@ export const actionImpactBanaticCompetenceTable = pgTable(
         name: 'action_impact_banatic_competence_pkey',
       }),
     };
-  },
+  }
 );

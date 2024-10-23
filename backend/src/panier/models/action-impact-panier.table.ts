@@ -16,5 +16,5 @@ export const actionImpactPanierTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.panierId, table.actionId] }),
     };
-  },
+  }
 );

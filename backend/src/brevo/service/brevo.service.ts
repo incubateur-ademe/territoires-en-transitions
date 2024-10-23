@@ -6,12 +6,9 @@ import ConfigurationService from '../../config/configuration.service';
 export default class BrevoService {
   private readonly logger = new Logger(BrevoService.name);
 
-  constructor(
-    private readonly configurationService: ConfigurationService,
-  ) {}
+  constructor(private readonly configurationService: ConfigurationService) {}
 
-  private readonly brevoKey =
-    this.configurationService.get('BREVO_API_KEY');
+  private readonly brevoKey = this.configurationService.get('BREVO_API_KEY');
   private readonly headers = {
     Accept: 'application/json',
     'Api-key': `${this.brevoKey}`,
@@ -54,7 +51,7 @@ export default class BrevoService {
         method: 'POST',
         headers: this.headers,
         body: JSON.stringify({ emails: emails }),
-      },
+      }
     );
     if (!response.ok) {
       console.log(
@@ -62,7 +59,7 @@ export default class BrevoService {
           emails +
           " n'ont pas pu être ajouté à la liste #" +
           list +
-          '.',
+          '.'
       );
       return null;
     }
@@ -108,7 +105,7 @@ export default class BrevoService {
         method: 'POST',
         headers: this.headers,
         body: JSON.stringify({ emails: emails }),
-      },
+      }
     );
     if (!response.ok) {
       console.log(
@@ -116,7 +113,7 @@ export default class BrevoService {
           emails +
           " n'ont pas pu être enlevé de la liste #" +
           list +
-          '.',
+          '.'
       );
       return null;
     }

@@ -1,10 +1,4 @@
-import {
-  integer,
-  pgTable,
-  primaryKey,
-  text,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { integer, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
 import { InferSelectModel } from 'drizzle-orm';
 import { panierTable } from './panier.table';
@@ -28,11 +22,11 @@ export const actionImpactStatutTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.panierId, table.actionId] }),
     };
-  },
+  }
 );
 export type ActionImpactStatutType = InferSelectModel<
   typeof actionImpactStatutTable
 >;
 export const actionImpactStatutSchema = createSelectSchema(
-  actionImpactStatutTable,
+  actionImpactStatutTable
 );

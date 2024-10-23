@@ -16,7 +16,7 @@ export const modifiedSinceSchema = z.enum([
 ]);
 
 export const getModifiedSinceDate = (
-  modifiedSince: ModifiedSinceEnum,
+  modifiedSince: ModifiedSinceEnum
 ): Date => {
   const now = DateTime.now();
   switch (modifiedSince) {

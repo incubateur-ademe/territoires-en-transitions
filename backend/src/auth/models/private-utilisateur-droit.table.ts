@@ -34,7 +34,7 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
     .default(sql.raw(`CURRENT_TIMESTAMP`))
     .notNull(),
   modifiedAt: timestamp('modified_at', { withTimezone: true }).default(
-    sql.raw(`CURRENT_TIMESTAMP`),
+    sql.raw(`CURRENT_TIMESTAMP`)
   ),
   active: boolean('active').notNull(),
   niveauAcces: niveauAccessEnum('niveau_acces')

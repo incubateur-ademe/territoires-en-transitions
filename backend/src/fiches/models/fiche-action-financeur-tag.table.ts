@@ -10,8 +10,8 @@ export const ficheActionFinanceurTagTable = pgTable(
       .notNull()
       .references(() => ficheActionTable.id),
     financeurTagId: integer('financeur_tag_id').references(
-      () => financeurTagTable.id,
+      () => financeurTagTable.id
     ),
     montantTtc: integer('montant_ttc'),
-  },
+  }
 );

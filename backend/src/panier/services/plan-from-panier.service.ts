@@ -81,7 +81,7 @@ export default class PlanFromPanierService {
     private readonly ficheService: FicheService,
     private readonly documentService: DocumentService,
     private readonly authService: AuthService,
-    private readonly brevoService: BrevoService,
+    private readonly brevoService: BrevoService
   ) {}
 
   /**
@@ -96,12 +96,12 @@ export default class PlanFromPanierService {
     tokenInfo: SupabaseJwtPayload,
     collectiviteId: number,
     panierId: string,
-    planId?: number,
+    planId?: number
   ): Promise<number> {
     // Vérifie les droits
     await this.authService.verifieAccesRestreintCollectivite(
       tokenInfo,
-      collectiviteId,
+      collectiviteId
     );
     let axeId;
     if (!planId) {
@@ -138,137 +138,128 @@ export default class PlanFromPanierService {
    * @return les actions à impact et leurs informations liées
    */
   private async getActionsFromPanier(
-    panierId: string,
+    panierId: string
   ): Promise<actionsFromPanier[]> {
     const result = await this.databaseService.db
       .select()
       .from(actionImpactTable)
       .innerJoin(
         actionImpactPanierTable,
-        eq(actionImpactTable.id, actionImpactPanierTable.actionId),
+        eq(actionImpactTable.id, actionImpactPanierTable.actionId)
       )
       .leftJoin(
         actionImpactThematiqueTable,
-        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactThematiqueTable.actionImpactId)
       )
       .leftJoin(
         actionImpactSousThematiqueTable,
-        eq(
-          actionImpactTable.id,
-          actionImpactSousThematiqueTable.actionImpactId,
-        ),
+        eq(actionImpactTable.id, actionImpactSousThematiqueTable.actionImpactId)
       )
       .leftJoin(
         actionImpactFourchetteBudgetaireTable,
         eq(
           actionImpactTable.fourchetteBudgetaire,
-          actionImpactFourchetteBudgetaireTable.niveau,
-        ),
+          actionImpactFourchetteBudgetaireTable.niveau
+        )
       )
       .leftJoin(
         actionImpactIndicateurTable,
-        eq(actionImpactTable.id, actionImpactIndicateurTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactIndicateurTable.actionImpactId)
       )
       .leftJoin(
         actionImpactEffetAttenduTable,
-        eq(actionImpactTable.id, actionImpactEffetAttenduTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactEffetAttenduTable.actionImpactId)
       )
       .leftJoin(
         actionImpactActionTable,
-        eq(actionImpactTable.id, actionImpactActionTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactActionTable.actionImpactId)
       )
       .leftJoin(
         actionImpactPartenaireTable,
-        eq(actionImpactTable.id, actionImpactPartenaireTable.actionImpactId),
+        eq(actionImpactTable.id, actionImpactPartenaireTable.actionImpactId)
       )
       .leftJoin(
         panierPartenaireTable,
-        eq(panierPartenaireTable.id, actionImpactPartenaireTable.partenaireId),
+        eq(panierPartenaireTable.id, actionImpactPartenaireTable.partenaireId)
       )
       .leftJoin(
         actionImpactStatutTable,
         and(
           eq(actionImpactTable.id, actionImpactStatutTable.actionId),
-          eq(
-            actionImpactPanierTable.panierId,
-            actionImpactStatutTable.panierId,
-          ),
-        ),
+          eq(actionImpactPanierTable.panierId, actionImpactStatutTable.panierId)
+        )
       )
       .leftJoin(
         actionImpactCategorieTable,
-        eq(actionImpactStatutTable.categorieId, actionImpactCategorieTable.id),
+        eq(actionImpactStatutTable.categorieId, actionImpactCategorieTable.id)
       )
       .where(eq(actionImpactPanierTable.panierId, panierId));
 
     // Transforme le résultat de la requête en des objects
     // de type addPlanFromPanierResult plus facile à manipuler
     return Object.values(
-      result.reduce(
-        (acc, row) => {
-          const actionId = row.action_impact.id;
+      result.reduce((acc, row) => {
+        const actionId = row.action_impact.id;
 
-          if (!acc[actionId]) {
-            acc[actionId] = {
-              action_impact: {
-                ...row.action_impact,
-                rex: Array.isArray(row.action_impact.rex)
-                  ? row.action_impact.rex
-                  : [],
-                subventionsMobilisables: Array.isArray(
-                  row.action_impact.subventionsMobilisables,
-                )
-                  ? row.action_impact.subventionsMobilisables
-                  : [],
-                ressourcesExternes: Array.isArray(
-                  row.action_impact.ressourcesExternes,
-                )
-                  ? row.action_impact.ressourcesExternes
-                  : [],
-              },
-              action_impact_thematique: [],
-              action_impact_sous_thematique: [],
-              action_impact_indicateur: [],
-              action_impact_effet_attendu: [],
-              action_impact_action: [],
-              panier_partenaire: [],
-              action_impact_fourchette_budgetaire:
-                row.action_impact_fourchette_budgetaire,
-              action_impact_categorie: row.action_impact_categorie,
-            };
-          }
+        if (!acc[actionId]) {
+          acc[actionId] = {
+            action_impact: {
+              ...row.action_impact,
+              rex: Array.isArray(row.action_impact.rex)
+                ? row.action_impact.rex
+                : [],
+              subventionsMobilisables: Array.isArray(
+                row.action_impact.subventionsMobilisables
+              )
+                ? row.action_impact.subventionsMobilisables
+                : [],
+              ressourcesExternes: Array.isArray(
+                row.action_impact.ressourcesExternes
+              )
+                ? row.action_impact.ressourcesExternes
+                : [],
+            },
+            action_impact_thematique: [],
+            action_impact_sous_thematique: [],
+            action_impact_indicateur: [],
+            action_impact_effet_attendu: [],
+            action_impact_action: [],
+            panier_partenaire: [],
+            action_impact_fourchette_budgetaire:
+              row.action_impact_fourchette_budgetaire,
+            action_impact_categorie: row.action_impact_categorie,
+          };
+        }
 
-          if (row.action_impact_thematique) {
-            acc[actionId].action_impact_thematique.push(
-              row.action_impact_thematique,
-            );
-          }
-          if (row.action_impact_sous_thematique) {
-            acc[actionId].action_impact_sous_thematique.push(
-              row.action_impact_sous_thematique,
-            );
-          }
-          if (row.action_impact_indicateur) {
-            acc[actionId].action_impact_indicateur.push(
-              row.action_impact_indicateur,
-            );
-          }
-          if (row.action_impact_effet_attendu) {
-            acc[actionId].action_impact_effet_attendu.push(
-              row.action_impact_effet_attendu,
-            );
-          }
-          if (row.action_impact_action) {
-            acc[actionId].action_impact_action.push(row.action_impact_action);
-          }
-          if (row.panier_partenaire) {
-            acc[actionId].panier_partenaire.push(row.panier_partenaire);
-          }
+        if (row.action_impact_thematique) {
+          acc[actionId].action_impact_thematique.push(
+            row.action_impact_thematique
+          );
+        }
+        if (row.action_impact_sous_thematique) {
+          acc[actionId].action_impact_sous_thematique.push(
+            row.action_impact_sous_thematique
+          );
+        }
+        if (row.action_impact_indicateur) {
+          acc[actionId].action_impact_indicateur.push(
+            row.action_impact_indicateur
+          );
+        }
+        if (row.action_impact_effet_attendu) {
+          acc[actionId].action_impact_effet_attendu.push(
+            row.action_impact_effet_attendu
+          );
+        }
+        if (row.action_impact_action) {
+          acc[actionId].action_impact_action.push(row.action_impact_action);
+        }
+        if (row.panier_partenaire) {
+          acc[actionId].panier_partenaire.push(row.panier_partenaire);
+        }
 
-          return acc;
-        },
-        {} as Record<number, actionsFromPanier>,
-      ),
+        return acc;
+      }, {} as Record<number, actionsFromPanier>)
     );
   }
 
@@ -281,7 +272,7 @@ export default class PlanFromPanierService {
   private async addFicheFromActionImpact(
     collectiviteId: number,
     axeId: number,
-    action: actionsFromPanier,
+    action: actionsFromPanier
   ) {
     // On créé une fiche
     const ficheId = await this.ficheService.createFiche({
@@ -313,7 +304,7 @@ export default class PlanFromPanierService {
       for (const thematique of action.action_impact_sous_thematique) {
         await this.ficheService.addSousThematique(
           ficheId,
-          thematique.sousThematiqueId,
+          thematique.sousThematiqueId
         );
       }
     }
@@ -334,7 +325,7 @@ export default class PlanFromPanierService {
       for (const actionRef of action.action_impact_action) {
         await this.ficheService.addActionReferentiel(
           ficheId,
-          actionRef.actionId,
+          actionRef.actionId
         );
       }
     }
@@ -345,7 +336,7 @@ export default class PlanFromPanierService {
         await this.documentService.createLienAnnexe(
           ficheId,
           ressource as lienType,
-          collectiviteId,
+          collectiviteId
         );
       }
     }
@@ -354,7 +345,7 @@ export default class PlanFromPanierService {
         await this.documentService.createLienAnnexe(
           ficheId,
           ressource as lienType,
-          collectiviteId,
+          collectiviteId
         );
       }
     }
@@ -365,7 +356,7 @@ export default class PlanFromPanierService {
         await this.ficheService.addPartenaireByNom(
           ficheId,
           partenaire.nom,
-          collectiviteId,
+          collectiviteId
         );
       }
     }
@@ -392,7 +383,7 @@ export default class PlanFromPanierService {
           // Vérifie si le contact appartient déjà à la liste
           if (
             !contactJson.listIds.includes(
-              BrevoLists.ID_LIST_BREVO_ONBOARDING_PAI,
+              BrevoLists.ID_LIST_BREVO_ONBOARDING_PAI
             )
           ) {
             emails.push(email);
@@ -402,7 +393,7 @@ export default class PlanFromPanierService {
             if (contactJson.listIds.includes(listId)) {
               await this.brevoService.removeContactsFromList(emails, listId);
               this.logger.log(
-                'remove contact' + contactJson.email + ' from list ' + listId,
+                'remove contact' + contactJson.email + ' from list ' + listId
               );
             }
           }

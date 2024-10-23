@@ -20,5 +20,5 @@ export const collectiviteBanaticCompetenceTable = pgTable(
         name: 'collectivite_banatic_competence_pkey',
       }),
     };
-  },
+  }
 );

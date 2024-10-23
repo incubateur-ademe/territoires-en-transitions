@@ -5,5 +5,5 @@ export const actionImpactTempsDeMiseEnOeuvreTable = pgTable(
   {
     niveau: serial('niveau').primaryKey(),
     nom: text('nom').notNull(),
-  },
+  }
 );

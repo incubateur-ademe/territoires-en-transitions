@@ -18,5 +18,5 @@ export const actionImpactPartenaireTable = pgTable(
         columns: [table.actionImpactId, table.partenaireId],
       }),
     };
-  },
+  }
 );

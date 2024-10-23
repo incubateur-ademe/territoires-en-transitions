@@ -12,8 +12,8 @@ export const ficheActionReferentTable = pgTable(
   (table) => {
     return {
       ficheActionReferentFicheIdUserIdTagIdKey: uniqueIndex(
-        'fiche_action_referent_fiche_id_user_id_tag_id_key ',
+        'fiche_action_referent_fiche_id_user_id_tag_id_key '
       ).on(table.ficheId, table.userId, table.tagId),
     };
-  },
+  }
 );
