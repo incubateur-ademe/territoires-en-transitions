@@ -515,10 +515,11 @@ describe('Test indicateur.save', async () => {
     expect(data2).toHaveLength(0);
   });
 
-  test.only('Test upsertValeursUtilisateurAvecSource', async () => {
+  test('Test upsertValeursUtilisateurAvecSource', async () => {
     // On signout pour pouvoir bypasser les RLS en mode dbAdmin
     // (sinon le dbAdmin ne fonctionne pas)
     await signOut();
+    await testReset();
 
     // Ajout valeur utilisateur
     const { data: val } = await dbAdmin
@@ -605,7 +606,7 @@ describe('Test indicateur.save', async () => {
     expect(d2).toHaveLength(2);
 
     // Test que le résultat a bien été appliqué
-    const idNewValeur = d2.filter((d) => d.id !== val.id)![0].id;
+    const idNewValeur = d2.filter((d) => d.id !== val.id)![0].id as number;
     await dbAdmin.from('indicateur_valeur').delete().eq('id', idNewValeur);
 
     const d3bis = await selectIndicateurValeurs(supabase, 1, 1, null);
