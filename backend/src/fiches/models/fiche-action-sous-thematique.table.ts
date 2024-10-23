@@ -7,12 +7,12 @@ export const ficheActionSousThematiqueTable = pgTable(
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     thematiqueId: integer('thematique_id').references(
-      () => sousThematiqueTable.id,
+      () => sousThematiqueTable.id
     ),
   },
   (table) => {
     return {
       pk: primaryKey({ columns: [table.ficheId, table.thematiqueId] }),
     };
-  },
+  }
 );

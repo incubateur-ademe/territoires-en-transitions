@@ -18,7 +18,7 @@ export const actionImpactActionTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.actionImpactId, table.actionId] }),
     };
-  },
+  }
 );
 
 export type ActionImpactActionType = InferSelectModel<

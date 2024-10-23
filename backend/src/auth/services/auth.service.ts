@@ -24,18 +24,18 @@ export class AuthService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly collectiviteService: CollectivitesService,
+    private readonly collectiviteService: CollectivitesService
   ) {}
 
   aDroitsSuffisants(
     tokenRole: SupabaseRole,
     droits: UtilisateurDroitType[],
     collectiviteIds: number[],
-    niveauAccessMinimum: NiveauAcces,
+    niveauAccessMinimum: NiveauAcces
   ): boolean {
     if (tokenRole === SupabaseRole.SERVICE_ROLE) {
       this.logger.log(
-        `Rôle de service détecté, accès autorisé à toutes les collectivités`,
+        `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
       return true;
     } else if (tokenRole === SupabaseRole.AUTHENTICATED) {
@@ -45,28 +45,28 @@ export class AuthService {
       for (const collectiviteId of collectiviteIds) {
         const droit = droits.find(
           (droit) =>
-            droit.collectiviteId.toString() === collectiviteId.toString(), // Etrangement collectiviteId est un string
+            droit.collectiviteId.toString() === collectiviteId.toString() // Etrangement collectiviteId est un string
         );
         if (!droit) {
           this.logger.log(
-            `Droit introuvable pour la collectivité ${collectiviteId}`,
+            `Droit introuvable pour la collectivité ${collectiviteId}`
           );
           return false;
         }
 
         if (!droit.active) {
           this.logger.log(
-            `Droit inactif pour la collectivité ${collectiviteId} et l'utilisateur ${droit.userId}`,
+            `Droit inactif pour la collectivité ${collectiviteId} et l'utilisateur ${droit.userId}`
           );
           return false;
         }
 
         const droitNiveauAccessIndex = niveauAccessOrdonne.indexOf(
-          droit.niveauAcces,
+          droit.niveauAcces
         );
         if (droitNiveauAccessIndex < niveauAccessMinimumIndex) {
           this.logger.log(
-            `Niveau d'accès insuffisant pour la collectivité ${collectiviteId} et l'utilisateur ${droit.userId} (niveau d'accès: ${droit.niveauAcces}, demandé: ${niveauAccessMinimum})`,
+            `Niveau d'accès insuffisant pour la collectivité ${collectiviteId} et l'utilisateur ${droit.userId} (niveau d'accès: ${droit.niveauAcces}, demandé: ${niveauAccessMinimum})`
           );
           return false;
         }
@@ -78,17 +78,19 @@ export class AuthService {
 
   async getDroitsUtilisateur(
     userId: string,
-    collectiviteIds?: number[],
+    collectiviteIds?: number[]
   ): Promise<UtilisateurDroitType[]> {
     this.logger.log(
-      `Récupération des droits de l'utilisateur ${userId} et les collectivités ${collectiviteIds?.join(', ')}`,
+      `Récupération des droits de l'utilisateur ${userId} et les collectivités ${collectiviteIds?.join(
+        ', '
+      )}`
     );
     const conditions: (SQLWrapper | SQL)[] = [
       eq(utilisateurDroitTable.userId, userId),
     ];
     if (collectiviteIds?.length) {
       conditions.push(
-        inArray(utilisateurDroitTable.collectiviteId, collectiviteIds),
+        inArray(utilisateurDroitTable.collectiviteId, collectiviteIds)
       );
     }
     const droits = await this.databaseService.db
@@ -103,7 +105,7 @@ export class AuthService {
     tokenInfo: SupabaseJwtPayload,
     collectiviteIds: number[],
     niveauAccessMinimum: NiveauAcces,
-    doNotThrow?: boolean,
+    doNotThrow?: boolean
   ): Promise<boolean> {
     let droits: UtilisateurDroitType[] = [];
     const userId = tokenInfo?.sub;
@@ -114,7 +116,7 @@ export class AuthService {
       tokenInfo?.role,
       droits,
       collectiviteIds,
-      niveauAccessMinimum,
+      niveauAccessMinimum
     );
     if (!authorise && !doNotThrow) {
       throw new UnauthorizedException(`Droits insuffisants`);
@@ -166,17 +168,18 @@ export class AuthService {
   async verifieAccesRestreintCollectivite(
     tokenInfo: SupabaseJwtPayload,
     collectiviteId: number,
-    doNotThrow?: boolean,
+    doNotThrow?: boolean
   ): Promise<boolean> {
     if (tokenInfo.role === SupabaseRole.SERVICE_ROLE) {
       this.logger.log(
-        `Rôle de service détecté, accès autorisé à toutes les collectivités`,
+        `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
       return true;
     } else if (tokenInfo.role === SupabaseRole.AUTHENTICATED) {
       let authorise = false;
-      const collectivite =
-        await this.collectiviteService.getCollectivite(collectiviteId);
+      const collectivite = await this.collectiviteService.getCollectivite(
+        collectiviteId
+      );
       if (collectivite.collectivite.accessRestreint) {
         // Si la collectivité est en accès restreint, l'utilisateur doit :
         // avoir un droit en lecture sur la collectivité, ou avoir un rôle support,
@@ -186,7 +189,7 @@ export class AuthService {
             tokenInfo,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow,
+            doNotThrow
           )) || (await this.estSupport(tokenInfo)); // TODO || private.est_auditeur(collectivite_id)
       } else {
         // Si la collectivité n'est pas en accès restreint, l'utilisateur doit :
@@ -197,7 +200,7 @@ export class AuthService {
             tokenInfo,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow,
+            doNotThrow
           ));
       }
       if (!authorise && !doNotThrow) {

@@ -19,7 +19,7 @@ export default class FicheService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly tagService: TagService,
+    private readonly tagService: TagService
   ) {}
 
   /**
@@ -29,7 +29,7 @@ export default class FicheService {
    */
   async createFiche(fiche: CreateFicheActionType): Promise<number> {
     this.logger.log(
-      `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`,
+      `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
     const ficheCree = await this.databaseService.db
       .insert(ficheActionTable)
@@ -57,7 +57,7 @@ export default class FicheService {
    */
   async addSousThematique(
     ficheId: number,
-    thematiqueId: number,
+    thematiqueId: number
   ): Promise<void> {
     await this.databaseService.db
       .insert(ficheActionSousThematiqueTable)
@@ -86,7 +86,7 @@ export default class FicheService {
    */
   async addEffetAttendu(
     ficheId: number,
-    effetAttenduId: number,
+    effetAttenduId: number
   ): Promise<void> {
     await this.databaseService.db.insert(ficheActionEffetAttenduTable).values({
       ficheId: ficheId,
@@ -115,7 +115,7 @@ export default class FicheService {
   async addPartenaireByNom(
     ficheId: number,
     nomTag: string,
-    collectiviteId: number,
+    collectiviteId: number
   ): Promise<void> {
     const tagId = await this.tagService.getPartenaireId(nomTag, collectiviteId);
     await this.addPartenaireById(ficheId, tagId);

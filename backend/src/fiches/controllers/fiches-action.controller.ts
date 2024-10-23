@@ -13,6 +13,7 @@ import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 export class GetFichesActionSyntheseResponseClass extends createZodDto(
   getFichesActionSyntheseSchema
 ) {}
+
 export class GetFichesActionFilterRequestClass extends createZodDto(
   getFichesActionFilterRequestSchema
 ) {}

@@ -32,8 +32,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           [],
           [1],
-          NiveauAcces.LECTURE,
-        ),
+          NiveauAcces.LECTURE
+        )
       ).toBe(false);
     });
 
@@ -43,8 +43,8 @@ describe('AuthService', () => {
           SupabaseRole.ANON,
           [],
           [],
-          NiveauAcces.LECTURE,
-        ),
+          NiveauAcces.LECTURE
+        )
       ).toBe(false);
     });
 
@@ -54,8 +54,8 @@ describe('AuthService', () => {
           SupabaseRole.SERVICE_ROLE,
           [],
           [1, 2, 3],
-          NiveauAcces.ADMIN,
-        ),
+          NiveauAcces.ADMIN
+        )
       ).toBe(true);
     });
 
@@ -88,8 +88,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(true);
     });
 
@@ -122,8 +122,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
 
@@ -156,8 +156,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
 
@@ -180,8 +180,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
   });

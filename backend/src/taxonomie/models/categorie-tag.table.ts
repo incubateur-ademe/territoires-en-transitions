@@ -1,4 +1,10 @@
-import { boolean, integer, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { TagBase } from './tag.basetable';
 
 export const categorieTagTable = pgTable('categorie_tag', {

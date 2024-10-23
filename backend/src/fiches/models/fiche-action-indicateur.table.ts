@@ -7,12 +7,12 @@ export const ficheActionIndicateurTable = pgTable(
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     indicateurId: integer('indicateur_id').references(
-      () => indicateurDefinitionTable.id,
+      () => indicateurDefinitionTable.id
     ),
   },
   (table) => {
     return {
       pk: primaryKey({ columns: [table.ficheId, table.indicateurId] }),
     };
-  },
+  }
 );

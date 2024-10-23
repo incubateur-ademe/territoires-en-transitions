@@ -1,5 +1,6 @@
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+
 extendZodWithOpenApi(z);
 
 export const backendConfigurationSchema = z.object({
@@ -36,12 +37,10 @@ export const backendConfigurationSchema = z.object({
       'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC',
   }),
   DIRECTUS_API_KEY: z.string().min(1).openapi({
-    description:
-        "Clé pour la connexion à l'api de Directus"
+    description: "Clé pour la connexion à l'api de Directus",
   }),
   BREVO_API_KEY: z.string().min(1).openapi({
-    description:
-        "Clé pour la connexion à l'api de Brevo"
+    description: "Clé pour la connexion à l'api de Brevo",
   }),
 });
 export type BackendConfigurationType = z.infer<

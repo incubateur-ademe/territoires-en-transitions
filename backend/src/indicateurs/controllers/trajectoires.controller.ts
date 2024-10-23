@@ -29,21 +29,23 @@ import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 export class CalculTrajectoireResponseClass extends createZodDto(
-  calculTrajectoireResponseSchema,
+  calculTrajectoireResponseSchema
 ) {}
+
 export class CalculTrajectoireRequestClass extends createZodDto(
-  calculTrajectoireRequestSchema,
+  calculTrajectoireRequestSchema
 ) {}
 
 export class ModeleTrajectoireTelechargementRequestClass extends createZodDto(
-  modeleTrajectoireTelechargementRequestSchema,
+  modeleTrajectoireTelechargementRequestSchema
 ) {}
 
 export class VerificationTrajectoireRequestClass extends createZodDto(
-  verificationTrajectoireRequestSchema,
+  verificationTrajectoireRequestSchema
 ) {}
+
 export class VerificationDonneesSNBCResponseClass extends createZodDto(
-  verificationDonneesSNBCResponseSchema,
+  verificationDonneesSNBCResponseSchema
 ) {}
 
 @ApiTags('Trajectoires')
@@ -54,23 +56,23 @@ export class TrajectoiresController {
   constructor(
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
-    private readonly trajectoiresXlsxService: TrajectoiresXlsxService,
+    private readonly trajectoiresXlsxService: TrajectoiresXlsxService
   ) {}
 
   @Get('')
   @ApiResponse({ type: CalculTrajectoireResponseClass })
   async calculeTrajectoireSnbc(
     @Query() request: CalculTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
-      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { spreadsheet_id, ...response } =
       await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
         request,
-        tokenInfo,
+        tokenInfo
       );
     return response;
   }
@@ -78,15 +80,15 @@ export class TrajectoiresController {
   @Delete('')
   async deleteTrajectoireSnbc(
     @Query() request: CollectiviteRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<void> {
     this.logger.log(
-      `Suppression de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+      `Suppression de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
     );
     await this.trajectoiresDataService.deleteTrajectoireSnbc(
       request.collectivite_id,
       undefined,
-      tokenInfo,
+      tokenInfo
     );
   }
 
@@ -99,13 +101,13 @@ export class TrajectoiresController {
   downloadModeleSnbc(
     @Query() request: ModeleTrajectoireTelechargementRequestClass,
     @Res() res: Response,
-    @Next() next: NextFunction,
+    @Next() next: NextFunction
   ) {
     this.logger.log(`Téléchargement du modele de trajectoire SNBC`);
     this.trajectoiresXlsxService.downloadModeleTrajectoireSnbc(
       request,
       res,
-      next,
+      next
     );
   }
 
@@ -118,16 +120,16 @@ export class TrajectoiresController {
     @Query() request: CollectiviteRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload,
     @Res() res: Response,
-    @Next() next: NextFunction,
+    @Next() next: NextFunction
   ) {
     this.logger.log(
-      `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+      `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
     );
     this.trajectoiresXlsxService.downloadTrajectoireSnbc(
       request,
       tokenInfo,
       res,
-      next,
+      next
     );
   }
 
@@ -139,16 +141,16 @@ export class TrajectoiresController {
   })
   async verificationDonneesSnbc(
     @Query() request: VerificationTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<VerificationDonneesSNBCResponseClass> {
     this.logger.log(
-      `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`,
+      `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { valeurs, ...response } =
       await this.trajectoiresDataService.verificationDonneesSnbc(
         request,
-        tokenInfo,
+        tokenInfo
       );
     if (!request.epci_info) {
       delete response.epci;

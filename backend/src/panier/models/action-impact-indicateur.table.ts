@@ -19,7 +19,7 @@ export const actionImpactIndicateurTable = pgTable(
         columns: [table.actionImpactId, table.indicateurId],
       }),
     };
-  },
+  }
 );
 export type ActionImpactIndicateurType = InferSelectModel<
   typeof actionImpactIndicateurTable

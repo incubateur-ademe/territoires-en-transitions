@@ -14,5 +14,5 @@ export const lienSchema = extendApi(
     })
     .openapi({
       title: 'Un lien URL.',
-    }),
+    })
 );

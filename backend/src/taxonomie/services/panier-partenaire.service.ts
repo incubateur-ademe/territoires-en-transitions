@@ -10,7 +10,7 @@ export default class PanierPartenaireService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly directusService: DirectusService,
+    private readonly directusService: DirectusService
   ) {}
 
   /**
