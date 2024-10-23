@@ -7,10 +7,12 @@ import {
   UpdateFicheActionType,
 } from '../models/fiche-action.table';
 import { UpsertFicheActionRequestType } from '../models/upsert-fiche-action.request';
-import { UpdateAxeRequestType } from '../models/update-fiche-action.request';
+// import { UpdateAxeRequestType } from '../models/update-fiche-action.request';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 
 @Injectable()
 export default class FichesActionUpdateService {
@@ -18,10 +20,10 @@ export default class FichesActionUpdateService {
 
   async updateFicheAction(
     ficheActionId: number,
-    body: UpsertFicheActionRequestType,
+    body: UpdateFicheActionRequestType,
     tokenInfo: SupabaseJwtPayload
   ) {
-    const { axes, ...ficheAction } = body;
+    const { axes, thematiques, ...ficheAction } = body;
     return await this.databaseService.db.transaction(async (tx) => {
       const updatedFicheAction = await tx
         .update(ficheActionTable)
@@ -29,11 +31,13 @@ export default class FichesActionUpdateService {
         .where(eq(ficheActionTable.id, ficheActionId))
         .returning();
 
+      /**
+       * ===== AXES: start =====
+       */
+
       // if (axes && axes.length > 0) this.updateAxes(ficheActionId, axes, tx);
       if (axes && axes.length > 0) {
-        const axesIds: number[] = axes
-          .map((axe) => axe.id)
-          .filter((id): id is number => id !== undefined);
+        const axesIds = this.collectIds(axes);
 
         /**
          * Axes update, step 1: removing all axes that are not linked to fiche action anymore
@@ -64,59 +68,108 @@ export default class FichesActionUpdateService {
           });
       }
 
+      /**
+       * ===== AXES: end =====
+       */
+
+      /**
+       * ===== THEMATIQUES: start =====
+       */
+
+      if (thematiques && thematiques.length > 0) {
+        const thematiquesIds = this.collectIds(thematiques);
+
+        await tx
+          .delete(ficheActionThematiqueTable)
+          .where(
+            and(
+              eq(ficheActionThematiqueTable.fiche_id, ficheActionId),
+              notInArray(
+                ficheActionThematiqueTable.thematique_id,
+                thematiquesIds
+              )
+            )
+          );
+
+        await tx
+          .insert(ficheActionThematiqueTable)
+          .values(
+            thematiquesIds.map((thematiqueId) => ({
+              fiche_id: ficheActionId,
+              thematique_id: thematiqueId,
+            }))
+          )
+          .onConflictDoNothing({
+            target: [
+              ficheActionThematiqueTable.fiche_id,
+              ficheActionThematiqueTable.thematique_id,
+            ],
+          });
+      }
+
+      /**
+       * ===== THEMATIQUES: end =====
+       */
+
       return updatedFicheAction;
     });
+  }
+
+  collectIds(objects: { id?: number }[]): number[] {
+    return objects
+      .map((object) => object.id)
+      .filter((id): id is number => id !== undefined);
   }
 
   /**
    * Not working (only one of the two actions is executed)
    */
-  async updateAxes(
-    ficheActionId: number,
-    axes: UpdateAxeRequestType[],
-    tx: PgTransaction<
-      PostgresJsQueryResultHKT,
-      Record<string, never>,
-      ExtractTablesWithRelations<Record<string, never>>
-    >
-  ) {
-    const axesIds: number[] = axes
-      .map((axe) => axe.id)
-      .filter((id): id is number => id !== undefined);
+  // async updateAxes(
+  //   ficheActionId: number,
+  //   axes: UpdateAxeRequestType[],
+  //   tx: PgTransaction<
+  //     PostgresJsQueryResultHKT,
+  //     Record<string, never>,
+  //     ExtractTablesWithRelations<Record<string, never>>
+  //   >
+  // ) {
+  //   const axesIds: number[] = axes
+  //     .map((axe) => axe.id)
+  //     .filter((id): id is number => id !== undefined);
 
-    console.log(axesIds);
+  //   console.log(axesIds);
 
-    /**
-     * Axes update, step 1: removing all axes that are not linked to fiche action anymore
-     */
+  //   /**
+  //    * Axes update, step 1: removing all axes that are not linked to fiche action anymore
+  //    */
 
-    await tx
-      .delete(ficheActionAxeTable)
-      .where(
-        and(
-          eq(ficheActionAxeTable.fiche_id, ficheActionId),
-          notInArray(ficheActionAxeTable.axe_id, axesIds)
-        )
-      );
+  //   await tx
+  //     .delete(ficheActionAxeTable)
+  //     .where(
+  //       and(
+  //         eq(ficheActionAxeTable.fiche_id, ficheActionId),
+  //         notInArray(ficheActionAxeTable.axe_id, axesIds)
+  //       )
+  //     );
 
-    /**
-     * Axes update, step 2: add new axes to fiche action and leave all existing relevant axes
-     */
+  //   /**
+  //    * Axes update, step 2: add new axes to fiche action and leave all existing relevant axes
+  //    */
 
-    console.log('Inserting axes into ficheActionAxeTable with ids:', axesIds);
+  //   console.log('Inserting axes into ficheActionAxeTable with ids:', axesIds);
 
-    await tx
-      .insert(ficheActionAxeTable)
-      .values(
-        axesIds.map((axeId) => ({
-          fiche_id: ficheActionId,
-          axe_id: axeId,
-        }))
-      )
-      .onConflictDoNothing({
-        target: [ficheActionAxeTable.fiche_id, ficheActionAxeTable.axe_id],
-      });
+  //   await tx
+  //     .insert(ficheActionAxeTable)
+  //     .values(
+  //       axesIds.map((axeId) => ({
+  //         fiche_id: ficheActionId,
+  //         axe_id: axeId,
+  //       }))
+  //     )
+  //     .onConflictDoNothing({
+  //       target: [ficheActionAxeTable.fiche_id, ficheActionAxeTable.axe_id],
+  //     });
 
-    console.log('Inserting done');
-  }
+  //   console.log('Inserting done');
+  // }
 }
