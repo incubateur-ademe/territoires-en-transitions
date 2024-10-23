@@ -211,7 +211,9 @@ const ModeConnecteRattache = ({
           }))}
           values={collectiviteId}
           onChange={(value) => {
-            setCollectiviteId(value);
+            if (value) {
+              setCollectiviteId(value);
+            }
           }}
         />
       </Field>
