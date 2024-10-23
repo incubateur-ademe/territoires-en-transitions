@@ -1,5 +1,5 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
@@ -7,7 +7,11 @@ import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synth
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
 import { PublicEndpoint } from 'backend/src/auth/decorators/public-endpoint.decorator';
-import { upsertFicheActionRequestSchema } from '../models/upsert-fiche-action.request';
+import {
+  upsertFicheActionRequestSchema,
+  UpsertFicheActionRequestType,
+} from '../models/upsert-fiche-action.request';
+import FichesActionUpdateService from '../services/fiches-action-update.service';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -18,7 +22,7 @@ export class GetFichesActionSyntheseResponseClass extends createZodDto(
 export class GetFichesActionFilterRequestClass extends createZodDto(
   getFichesActionFilterRequestSchema
 ) {}
-export class UpsertFicheActionRequestClass extends createZodDto(
+export class UpdateFicheActionRequestClass extends createZodDto(
   upsertFicheActionRequestSchema
 ) {}
 
@@ -26,7 +30,8 @@ export class UpsertFicheActionRequestClass extends createZodDto(
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FichesActionController {
   constructor(
-    private readonly fichesActionSyntheseService: FichesActionSyntheseService
+    private readonly fichesActionSyntheseService: FichesActionSyntheseService,
+    private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
 
   @Get('synthese')
@@ -47,6 +52,7 @@ export class FichesActionController {
     );
   }
 
+  @PublicEndpoint()
   @Get('')
   // TODO: type it for documentation
   @ApiOkResponse({
@@ -65,19 +71,19 @@ export class FichesActionController {
   }
 
   @PublicEndpoint()
-  @Post('')
+  @Put(':id')
   // TODO: type it for documentation
   @ApiOkResponse({
-    // TODO: add description
-    description: '',
+    type: UpdateFicheActionRequestClass,
+    description: "Mise à jour d'une fiche action",
   })
-  async upsertFichesAction(
-    @Param('collectivite_id') collectiviteId: number,
-    @Body() body: UpsertFicheActionRequestClass,
+  async updateFichesAction(
+    @Param('id') id: number,
+    @Body() body: UpsertFicheActionRequestType,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
-    return this.fichesActionSyntheseService.upsertFicheAction(
-      collectiviteId,
+    return await this.fichesActionUpdateService.updateFicheAction(
+      id,
       body,
       tokenInfo
     );
