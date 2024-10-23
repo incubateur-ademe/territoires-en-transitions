@@ -18,5 +18,5 @@ export const actionImpactCategorieFNVTable = pgTable(
         columns: [table.actionImpactId, table.categorieFnvId],
       }),
     };
-  },
+  }
 );

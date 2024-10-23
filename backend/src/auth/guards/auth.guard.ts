@@ -16,6 +16,7 @@ import { SupabaseJwtPayload } from '../models/supabase-jwt.models';
 @Injectable()
 export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name);
+
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,

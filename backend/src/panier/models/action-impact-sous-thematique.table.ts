@@ -19,7 +19,7 @@ export const actionImpactSousThematiqueTable = pgTable(
         columns: [table.actionImpactId, table.sousThematiqueId],
       }),
     };
-  },
+  }
 );
 
 export type ActionImpactSousThematiqueType = InferSelectModel<

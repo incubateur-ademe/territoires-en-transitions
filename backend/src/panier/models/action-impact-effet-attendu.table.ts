@@ -19,7 +19,7 @@ export const actionImpactEffetAttenduTable = pgTable(
         columns: [table.actionImpactId, table.effetAttenduId],
       }),
     };
-  },
+  }
 );
 export type ActionImpactEffetAttenduType = InferSelectModel<
   typeof actionImpactEffetAttenduTable

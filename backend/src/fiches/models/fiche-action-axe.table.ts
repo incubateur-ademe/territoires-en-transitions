@@ -12,5 +12,5 @@ export const ficheActionAxeTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.ficheId, table.axeId] }),
     };
-  },
+  }
 );

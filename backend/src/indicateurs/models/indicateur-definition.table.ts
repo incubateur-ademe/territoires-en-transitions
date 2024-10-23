@@ -1,4 +1,13 @@
-import { boolean, doublePrecision, integer, pgTable, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  doublePrecision,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
@@ -11,7 +20,7 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
     () => collectiviteTable.id,
     {
       onDelete: 'cascade',
-    },
+    }
   ),
   identifiantReferentiel: text('identifiant_referentiel').unique(),
   titre: text('titre').notNull(),
@@ -41,10 +50,10 @@ export type CreateIndicateurDefinitionType = InferInsertModel<
   typeof indicateurDefinitionTable
 >;
 export const indicateurDefinitionSchema = createSelectSchema(
-  indicateurDefinitionTable,
+  indicateurDefinitionTable
 );
 export const createIndicateurDefinitionSchema = createInsertSchema(
-  indicateurDefinitionTable,
+  indicateurDefinitionTable
 );
 export const minimaleIndicateurDefinitionSchema =
   indicateurDefinitionSchema.pick({

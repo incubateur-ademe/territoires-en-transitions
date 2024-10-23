@@ -25,6 +25,7 @@ import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
 } from './indicateur-source-metadonnee.table';
+
 extendZodWithOpenApi(z);
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
@@ -44,7 +45,7 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
     () => indicateurSourceMetadonneeTable.id,
     {
       onDelete: 'cascade',
-    },
+    }
   ),
   resultat: doublePrecision('resultat'),
   resultatCommentaire: text('resultat_commentaire'),
@@ -69,7 +70,7 @@ export type CreateIndicateurValeurType = InferInsertModel<
 >;
 export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
 export const createIndicateurValeurSchema = createInsertSchema(
-  indicateurValeurTable,
+  indicateurValeurTable
 );
 
 export const indicateurValeurGroupeeSchema = extendApi(
@@ -89,7 +90,7 @@ export const indicateurValeurGroupeeSchema = extendApi(
       objectif: true,
       objectifCommentaire: true,
       metadonneeId: true,
-    }),
+    })
 );
 
 export type IndicateurValeurGroupeeType = z.infer<
@@ -97,7 +98,7 @@ export type IndicateurValeurGroupeeType = z.infer<
 >;
 
 export class IndicateurValeurGroupee extends createZodDto(
-  indicateurValeurGroupeeSchema,
+  indicateurValeurGroupeeSchema
 ) {}
 
 export const indicateurAvecValeursSchema = extendApi(
@@ -108,14 +109,15 @@ export const indicateurAvecValeursSchema = extendApi(
     })
     .openapi({
       title: 'Indicateur définition et valeurs ordonnées par date',
-    }),
+    })
 );
 
 export type IndicateurAvecValeursType = z.infer<
   typeof indicateurAvecValeursSchema
 >;
+
 export class IndicateurAvecValeursClass extends createZodDto(
-  indicateurAvecValeursSchema,
+  indicateurAvecValeursSchema
 ) {}
 
 export const indicateurValeursGroupeeParSourceSchema = extendApi(
@@ -127,10 +129,11 @@ export const indicateurValeursGroupeeParSourceSchema = extendApi(
     })
     .openapi({
       title: 'Indicateur valeurs pour une source donnée',
-    }),
+    })
 );
+
 export class IndicateurValeursGroupeeParSource extends createZodDto(
-  indicateurValeursGroupeeParSourceSchema,
+  indicateurValeursGroupeeParSourceSchema
 ) {}
 
 export const indicateurAvecValeursParSourceSchema = extendApi(
@@ -141,10 +144,11 @@ export const indicateurAvecValeursParSourceSchema = extendApi(
     })
     .openapi({
       title: 'Filtre de récupération des valeurs des indicateurs',
-    }),
+    })
 );
+
 export class IndicateurAvecValeursParSource extends createZodDto(
-  indicateurAvecValeursParSourceSchema,
+  indicateurAvecValeursParSourceSchema
 ) {}
 
 export interface IndicateurValeurAvecMetadonnesDefinition {

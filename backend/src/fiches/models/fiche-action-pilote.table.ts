@@ -13,12 +13,12 @@ export const ficheActionPiloteTable = pgTable(
     return {
       oneUserPerFiche: uniqueIndex('one_user_per_fiche ').on(
         table.ficheId,
-        table.userId,
+        table.userId
       ),
       oneTagPerFiche: uniqueIndex('one_tag_per_fiche ').on(
         table.ficheId,
-        table.tagId,
+        table.tagId
       ),
     };
-  },
+  }
 );

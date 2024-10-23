@@ -1,11 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import {
-  integer,
-  pgEnum,
-  pgTable,
-  serial,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { integer, pgEnum, pgTable, serial, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from './collectivite.table';
 

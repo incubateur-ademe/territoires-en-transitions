@@ -10,9 +10,7 @@ import ConfigurationService from 'backend/src/config/configuration.service';
 export default class DirectusService {
   private readonly logger = new Logger(DirectusService.name);
 
-  constructor(
-    private readonly configurationService: ConfigurationService,
-  ) {}
+  constructor(private readonly configurationService: ConfigurationService) {}
 
   private readonly directusKey =
     this.configurationService.get('DIRECTUS_API_KEY');
@@ -32,7 +30,7 @@ export default class DirectusService {
       {
         method: 'GET',
         headers: this.headers,
-      },
+      }
     );
 
     if (!response.ok) {

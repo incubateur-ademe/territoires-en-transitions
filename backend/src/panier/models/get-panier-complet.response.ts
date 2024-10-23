@@ -30,7 +30,7 @@ export const actionImpactStateSchema = extendApi(
     isinpanier: z.boolean(),
     statut: actionImpactStatutSchema.nullable(),
     thematiques: z.array(thematiqueSchema),
-  }),
+  })
 );
 
 export type PanierCompletType =
@@ -50,7 +50,7 @@ export const panierCompletSchema = extendApi(
     })
     .openapi({
       title: `Panier d'une collectivité avec son contenu.`,
-    }),
+    })
 );
 
 export class PanierCompletClass extends createZodDto(panierCompletSchema) {}

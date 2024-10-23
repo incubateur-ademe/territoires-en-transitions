@@ -11,5 +11,5 @@ export const ficheActionLienTable = pgTable(
     return {
       pk: primaryKey({ columns: [table.ficheUne, table.ficheDeux] }),
     };
-  },
+  }
 );

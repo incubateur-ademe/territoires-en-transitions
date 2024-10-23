@@ -5,6 +5,7 @@ export enum SupabaseRole {
   SERVICE_ROLE = 'service_role',
   ANON = 'anon', // Anonymous
 }
+
 export interface SupabaseJwtPayload extends jwt.JwtPayload {
   email?: string;
   phone?: string;

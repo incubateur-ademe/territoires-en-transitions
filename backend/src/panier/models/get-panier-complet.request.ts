@@ -19,9 +19,9 @@ export const getPanierCompletRequestSchema = extendApi(
     .openapi({
       title:
         'Identifiant du panier et filtres à appliquer sur le contenu à récupérer.',
-    }),
+    })
 );
 
 export class GetPanierCompletRequestClass extends createZodDto(
-  getPanierCompletRequestSchema,
+  getPanierCompletRequestSchema
 ) {}

@@ -19,10 +19,10 @@ export default class DocumentService {
   async createLienAnnexe(
     ficheId: number,
     lien: lienType,
-    collectiviteId: number,
+    collectiviteId: number
   ): Promise<number> {
     this.logger.log(
-      `Création de l'annexe ${lien.label} pour la collectivité ${collectiviteId}`,
+      `Création de l'annexe ${lien.label} pour la collectivité ${collectiviteId}`
     );
     const annexeCree = await this.databaseService.db
       .insert(annexeTable)

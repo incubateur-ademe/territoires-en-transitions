@@ -28,17 +28,17 @@ export class PanierController {
 
   constructor(
     private readonly panierService: PanierService,
-    private readonly planFromPanierService: PlanFromPanierService,
+    private readonly planFromPanierService: PlanFromPanierService
   ) {}
 
   @Get('')
   @ApiResponse({ type: PanierClass })
   async panierFromLanding(
-    @Query() request: CollectiviteRequestType,
+    @Query() request: CollectiviteRequestType
   ): Promise<PanierClass | null> {
     if (request.collectivite_id) {
       this.logger.log(
-        `Récupération du panier de la collectivité ${request.collectivite_id}.`,
+        `Récupération du panier de la collectivité ${request.collectivite_id}.`
       );
     } else {
       this.logger.log(`Création d'un nouveau panier.`);
@@ -48,86 +48,86 @@ export class PanierController {
 
   @Post('action_impact')
   async addActionToPanier(
-    @Body() request: ActionInPanierRequestClass,
+    @Body() request: ActionInPanierRequestClass
   ): Promise<void> {
     this.logger.log(
-      `Ajoute l'action ${request.actionImpactId} au panier ${request.panierId}`,
+      `Ajoute l'action ${request.actionImpactId} au panier ${request.panierId}`
     );
     await this.panierService.addActionImpact(
       request.actionImpactId,
-      request.panierId,
+      request.panierId
     );
   }
 
   @Delete('action_impact')
   async removeActionFromPanier(
-    @Query() request: ActionInPanierRequestClass,
+    @Query() request: ActionInPanierRequestClass
   ): Promise<void> {
     this.logger.log(
-      `Enlève l'action ${request.actionImpactId} au panier ${request.panierId}`,
+      `Enlève l'action ${request.actionImpactId} au panier ${request.panierId}`
     );
     await this.panierService.removeActionImpact(
       request.actionImpactId,
-      request.panierId,
+      request.panierId
     );
   }
 
   @Put('action_impact/statut')
   async setActionStatut(
-    @Body() request: ActionInPanierStatutRequestClass,
+    @Body() request: ActionInPanierStatutRequestClass
   ): Promise<void> {
     this.logger.log(
-      `Change le statut de l'action ${request.actionImpactId} dans le panier ${request.panierId} par ${request.categorieId}`,
+      `Change le statut de l'action ${request.actionImpactId} dans le panier ${request.panierId} par ${request.categorieId}`
     );
     await this.panierService.setActionImpactCategorie(
       request.actionImpactId,
       request.panierId,
-      request.categorieId || null,
+      request.categorieId || null
     );
   }
 
   @Get('contenu')
   @ApiResponse({ type: PanierCompletClass })
   async fetchPanier(
-    @Query() request: GetPanierCompletRequestClass,
+    @Query() request: GetPanierCompletRequestClass
   ): Promise<PanierCompletClass | null> {
     this.logger.log(`Récupération du contenu du panier ${request.panierId}.`);
     return this.panierService.getPanierComplet(
       request.panierId,
       request.thematiquesIds,
       request.niveauxBudget,
-      request.niveauxTemps,
+      request.niveauxTemps
     );
   }
 
   @Post('contenu')
   async createPlanFromPanier(
     @Body() request: CreatePlanFromPanierRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<number | null> {
     if (request.planId) {
       this.logger.log(
-        `Ajoute le contenu du panier ${request.panierId} au plan ${request.planId} pour la collectivité ${request.collectiviteId}`,
+        `Ajoute le contenu du panier ${request.panierId} au plan ${request.planId} pour la collectivité ${request.collectiviteId}`
       );
     } else {
       this.logger.log(
-        `Cree un plan à partir du panier ${request.panierId} pour la collectivité ${request.collectiviteId}`,
+        `Cree un plan à partir du panier ${request.panierId} pour la collectivité ${request.collectiviteId}`
       );
     }
     return await this.planFromPanierService.addPlanFromPanier(
       tokenInfo,
       request.collectiviteId,
       request.panierId,
-      request.planId,
+      request.planId
     );
   }
 
   @Put('directus')
   async majPanierFromDirectus(
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<void> {
     this.logger.log(
-      `Met à jour les contenus du panier dans l'app par rapport au contenu dans Directus.`,
+      `Met à jour les contenus du panier dans l'app par rapport au contenu dans Directus.`
     );
     await this.panierService.majPanierFromDirectus(tokenInfo);
   }

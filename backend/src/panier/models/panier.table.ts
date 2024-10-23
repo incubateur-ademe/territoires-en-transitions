@@ -19,7 +19,7 @@ export const panierTable = pgTable('panier', {
     .defaultNow(),
   createdBy: uuid('created_by'), // TODO references auth.users
   collectiviteId: integer('collectivite_id').references(
-    () => collectiviteTable.id,
+    () => collectiviteTable.id
   ),
   collectivitePreset: integer('collectivite_preset')
     .unique()
@@ -28,7 +28,7 @@ export const panierTable = pgTable('panier', {
     .notNull()
     .defaultNow(),
   private: boolean('private').generatedAlwaysAs(
-    (): SQL => sql`(${panierTable.collectiviteId} is not null)`,
+    (): SQL => sql`(${panierTable.collectiviteId} is not null)`
   ),
 });
 export type PanierType = InferSelectModel<typeof panierTable>;

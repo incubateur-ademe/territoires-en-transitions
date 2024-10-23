@@ -7,12 +7,12 @@ export const ficheActionEffetAttenduTable = pgTable(
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),
     effetAttenduId: integer('effet_attendu_id').references(
-      () => effetAttenduTable.id,
+      () => effetAttenduTable.id
     ),
   },
   (table) => {
     return {
       pk: primaryKey({ columns: [table.ficheId, table.effetAttenduId] }),
     };
-  },
+  }
 );

@@ -150,7 +150,7 @@ describe('IndicateursService', () => {
       const indicateurValeursGroupees =
         indicateurService.groupeIndicateursValeursParIndicateur(
           indicateurValeurs,
-          indicateurDefinitions,
+          indicateurDefinitions
         );
       const expectedIndicateurValeursGroupees: IndicateurAvecValeursType[] = [
         {
@@ -200,7 +200,7 @@ describe('IndicateursService', () => {
       ];
 
       expect(indicateurValeursGroupees).toEqual(
-        expectedIndicateurValeursGroupees,
+        expectedIndicateurValeursGroupees
       );
     });
   });
@@ -365,7 +365,7 @@ describe('IndicateursService', () => {
         indicateurService.groupeIndicateursValeursParIndicateurEtSource(
           indicateurValeurs,
           indicateurDefinitions,
-          indicateurMetadonnees,
+          indicateurMetadonnees
         );
       const expectedIndicateurValeursGroupees: IndicateurAvecValeursParSource[] =
         [
@@ -386,10 +386,10 @@ describe('IndicateursService', () => {
               sansValeurUtilisateur: false,
               valeurCalcule: null,
               modifiedAt: DateTime.fromISO(
-                '2024-08-12T12:07:14.638Z',
+                '2024-08-12T12:07:14.638Z'
               ).toJSDate(),
               createdAt: DateTime.fromISO(
-                '2024-08-12T12:07:14.638Z',
+                '2024-08-12T12:07:14.638Z'
               ).toJSDate(),
               modifiedBy: null,
               createdBy: null,
@@ -402,7 +402,7 @@ describe('IndicateursService', () => {
                     id: 1,
                     sourceId: 'rare',
                     dateVersion: DateTime.fromISO(
-                      '2024-07-18T00:00:00.000Z',
+                      '2024-07-18T00:00:00.000Z'
                     ).toJSDate(),
                     nomDonnees: '',
                     diffuseur: 'OREC',
@@ -452,10 +452,10 @@ describe('IndicateursService', () => {
               sansValeurUtilisateur: false,
               valeurCalcule: null,
               modifiedAt: DateTime.fromISO(
-                '2024-08-12T12:07:14.638Z',
+                '2024-08-12T12:07:14.638Z'
               ).toJSDate(),
               createdAt: DateTime.fromISO(
-                '2024-08-12T12:07:14.638Z',
+                '2024-08-12T12:07:14.638Z'
               ).toJSDate(),
               modifiedBy: null,
               createdBy: null,
@@ -478,7 +478,7 @@ describe('IndicateursService', () => {
         ];
 
       expect(indicateurValeursGroupees).toEqual(
-        expectedIndicateurValeursGroupees,
+        expectedIndicateurValeursGroupees
       );
     });
   });
@@ -527,7 +527,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -577,7 +577,7 @@ describe('IndicateursService', () => {
             id: 2,
             sourceId: 'snbc',
             dateVersion: DateTime.fromISO(
-              '2024-07-11T00:00:00.000Z',
+              '2024-07-11T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: null,
             diffuseur: null,
@@ -589,7 +589,7 @@ describe('IndicateursService', () => {
       ];
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource(
-          indicateurValeurs,
+          indicateurValeurs
         );
 
       // Même date mais deux sources différentes, on ne doit pas dédoublonner
@@ -597,7 +597,7 @@ describe('IndicateursService', () => {
         _.cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -644,7 +644,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -693,7 +693,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -705,7 +705,7 @@ describe('IndicateursService', () => {
       ];
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource(
-          indicateurValeurs,
+          indicateurValeurs
         );
 
       // Même date mais deux indicateurs différents, on ne doit pas dédoublonner
@@ -713,7 +713,7 @@ describe('IndicateursService', () => {
         _.cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -760,7 +760,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -811,7 +811,7 @@ describe('IndicateursService', () => {
       ];
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource(
-          indicateurValeurs,
+          indicateurValeurs
         );
 
       // Même date mais deux sources différentes, on ne doit pas dédoublonner
@@ -819,7 +819,7 @@ describe('IndicateursService', () => {
         _.cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -866,7 +866,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -916,7 +916,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -928,7 +928,7 @@ describe('IndicateursService', () => {
       ];
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource(
-          indicateurValeurs,
+          indicateurValeurs
         );
 
       // Deux collectivités différentes, on ne doit pas dédoublonner
@@ -936,7 +936,7 @@ describe('IndicateursService', () => {
         _.cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -983,7 +983,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -1033,7 +1033,7 @@ describe('IndicateursService', () => {
             id: 1,
             sourceId: 'rare',
             dateVersion: DateTime.fromISO(
-              '2024-07-18T00:00:00.000Z',
+              '2024-07-18T00:00:00.000Z'
             ).toJSDate(),
             nomDonnees: '',
             diffuseur: 'OREC',
@@ -1045,7 +1045,7 @@ describe('IndicateursService', () => {
       ];
       const indicateurValeursDedoublonnees =
         indicateurService.dedoublonnageIndicateurValeursParSource(
-          indicateurValeurs,
+          indicateurValeurs
         );
 
       // Même source mais deux dates différentes, on ne doit pas dédoublonner
@@ -1053,7 +1053,7 @@ describe('IndicateursService', () => {
         _.cloneDeep(indicateurValeurs);
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -1163,7 +1163,7 @@ describe('IndicateursService', () => {
         [_.cloneDeep(indicateurValeur2)];
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
 
       // On inverse l'ordre des valeurs
@@ -1174,7 +1174,7 @@ describe('IndicateursService', () => {
         ]);
 
       expect(indicateurValeursDedoublonnees2).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
 
@@ -1237,7 +1237,7 @@ describe('IndicateursService', () => {
         [_.cloneDeep(indicateurValeur1)];
 
       expect(indicateurValeursDedoublonnees).toEqual(
-        indicateurValeursDedoublonneesAttendues,
+        indicateurValeursDedoublonneesAttendues
       );
     });
   });

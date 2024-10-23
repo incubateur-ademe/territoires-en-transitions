@@ -70,7 +70,7 @@ export const getFichesActionFilterRequestSchema = extendApi(
     })
     .openapi({
       title: 'Filtre de récupération des fiches action',
-    }),
+    })
 );
 export type GetFichesActionFilterRequestType = z.infer<
   typeof getFichesActionFilterRequestSchema

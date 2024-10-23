@@ -31,6 +31,7 @@ import TrajectoiresDataService from './trajectoires-data.service';
 export default class TrajectoiresSpreadsheetService {
   private readonly logger = new Logger(TrajectoiresSpreadsheetService.name);
   private readonly TRAJECTOIRE_GROUPEMENT = 'trajectoire';
+
   constructor(
     private readonly configService: ConfigurationService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
@@ -130,7 +131,7 @@ export default class TrajectoiresSpreadsheetService {
           indicateurDefinitions,
           (definition) =>
             definition.identifiantReferentiel?.startsWith(
-              this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+              this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
             ) || false
         );
 
@@ -141,7 +142,7 @@ export default class TrajectoiresSpreadsheetService {
           indicateurEmissionsSequestrationDefinitions,
           (definition) =>
             definition.identifiantReferentiel?.startsWith(
-              this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+              this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
             ) || false
         );
 
@@ -340,7 +341,7 @@ export default class TrajectoiresSpreadsheetService {
       indicateurResultatDefinitions,
       (definition) =>
         definition.identifiantReferentiel?.startsWith(
-          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX,
+          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
         ) || false
     );
 
@@ -351,7 +352,7 @@ export default class TrajectoiresSpreadsheetService {
       indicateurResultatSequestrationEmissionsDefinitions,
       (definition) =>
         definition.identifiantReferentiel?.startsWith(
-          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX,
+          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
         ) || false
     );
 

@@ -16,7 +16,7 @@ export const indicateurSourceMetadonneeTable = pgTable(
     producteur: text('producteur'),
     methodologie: text('methodologie'),
     limites: text('limites'),
-  },
+  }
 );
 export type IndicateurSourceMetadonneeType = InferSelectModel<
   typeof indicateurSourceMetadonneeTable
@@ -25,8 +25,8 @@ export type CreateIndicateurSourceMetadonneeType = InferInsertModel<
   typeof indicateurSourceMetadonneeTable
 >;
 export const indicateurSourceMetadonneeSchema = createSelectSchema(
-  indicateurSourceMetadonneeTable,
+  indicateurSourceMetadonneeTable
 );
 export const createIndicateurSourceMetadonneeSchema = createInsertSchema(
-  indicateurSourceMetadonneeTable,
+  indicateurSourceMetadonneeTable
 );
