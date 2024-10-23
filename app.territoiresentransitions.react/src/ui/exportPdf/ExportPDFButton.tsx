@@ -4,13 +4,14 @@ import { Button } from '@tet/ui';
 import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 type ExportPDFButtonType = {
   content: JSX.Element;
+  fileName: string;
 };
 
-const ExportPDFButton = ({ content }: ExportPDFButtonType) => {
+const ExportPDFButton = ({ content, fileName }: ExportPDFButtonType) => {
   const [instance, updateInstance] = usePDF({ document: undefined });
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
 
@@ -19,7 +20,7 @@ const ExportPDFButton = ({ content }: ExportPDFButtonType) => {
       if (TEST_MODE && instance.url) {
         window.open(instance.url, '_blank');
       } else {
-        saveBlob(instance.blob, 'test.pdf');
+        saveBlob(instance.blob, `${fileName}.pdf`);
       }
       setIsDownloadRequested(false);
     }
