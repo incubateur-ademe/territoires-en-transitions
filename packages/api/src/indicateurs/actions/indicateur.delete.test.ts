@@ -1,12 +1,9 @@
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../tests/auth';
-import { testReset } from '../../tests/testReset';
 import { dbAdmin, supabase } from '../../tests/supabase';
-import { deleteIndicateur, deleteIndicateurValeur } from './indicateur.delete';
-import {
-  selectIndicateurDefinition,
-  selectIndicateurValeur,
-} from './indicateur.fetch';
+import { testReset } from '../../tests/testReset';
+import { deleteIndicateur } from './indicateur.delete';
+import { selectIndicateurDefinition } from './indicateur.fetch';
 
 beforeAll(async () => {
   await signIn('yolododo');
