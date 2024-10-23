@@ -72,7 +72,6 @@ export class FichesActionController {
 
   @PublicEndpoint()
   @Put(':id')
-  // TODO: type it for documentation
   @ApiOkResponse({
     type: UpdateFicheActionRequestClass,
     description: "Mise à jour d'une fiche action",
