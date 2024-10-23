@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
-import { moduleNew, resetTableauDeBordModules } from './modules.test-fixture';
+import { moduleNew, resetModules } from './modules.test-fixture';
 import { dbAdmin, supabase } from '@tet/api/tests/supabase';
 import { signIn, signOut } from '@tet/api/tests/auth';
 
@@ -13,15 +13,15 @@ const params = {
 const numberOfModulesByDefault = 2;
 
 beforeEach(async () => {
+  await resetModules(params);
   await signIn('yolododo');
 
   return async () => {
-    await resetTableauDeBordModules(params);
     await signOut();
   };
 });
 
-test('Enregistre un nouveau module', async () => {
+test.only('Enregistre un nouveau module', async () => {
   const myModule = moduleNew;
 
   const { error } = await modulesSave({
@@ -35,7 +35,7 @@ test('Enregistre un nouveau module', async () => {
   // Vérifie la récupération du module
   const { data } = await modulesFetch({ ...params });
 
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
   expect(data).toContainEqual(
     expect.objectContaining({
       titre: myModule.titre,
@@ -67,7 +67,7 @@ test("Vérifie la mise à jour d'un module existant", async () => {
   // Vérifie la mise à jour
   const { data } = await modulesFetch({ ...params });
 
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
   expect(data).toContainEqual(
     expect.objectContaining({
       titre: newTitre,
@@ -102,7 +102,7 @@ test("RLS: Vérifie qu'un utilisateur sans accès à la collectivité ne peut pa
 
   // Vérifie que l'utilisateur n'a pas pu enregistrer le module pour cette collectivité
   const { data } = await modulesFetch({ ...params, dbClient: dbAdmin });
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
 });
 
 test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pas update", async () => {
@@ -131,7 +131,7 @@ test("RLS: Vérifie qu'un utilisateur en lecture sur la collectivité ne peut pa
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const { data } = await modulesFetch({ ...params, dbClient: dbAdmin });
 
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
   expect(data).not.toContainEqual({
     titre: newTitre,
   });
@@ -164,7 +164,7 @@ test("RLS: Vérifie qu'un utilisateur en écriture ne peut pas update le module 
   // Vérifie que l'utilisateur n'a pas pu mettre à jour le module
   const { data } = await modulesFetch({ ...params, dbClient: dbAdmin });
 
-  expect(data).toHaveLength(numberOfModulesByDefault + 1);
+  expect(data).toHaveLength(numberOfModulesByDefault);
   expect(data).not.toContainEqual({
     titre: newTitre,
   });

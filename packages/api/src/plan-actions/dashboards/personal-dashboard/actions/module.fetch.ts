@@ -6,7 +6,7 @@ import {
   getDefaultModule,
 } from '../domain/module.schema';
 import { DBClient } from '@tet/api/typeUtils';
-import { planActionsFetch } from '@tet/api/plan-actions/plan-actions.list/data-access';
+import { planActionsFetch } from '@tet/api/plan-actions';
 
 export type ReturnType<S extends Slug> =
   S extends 'indicateurs-de-suivi-de-mes-plans'

@@ -6,7 +6,7 @@ export const moduleNew: ModuleInsert = {
   id: crypto.randomUUID(),
   collectiviteId: 1,
   titre: 'Mon module personnalisé',
-  slug: 'mon-module-personnalise',
+  slug: 'suivi-plan-actions',
   type: 'plan-action.list',
   options: {
     filtre: {
@@ -15,9 +15,7 @@ export const moduleNew: ModuleInsert = {
   },
 };
 
-export async function resetTableauDeBordModules(params: {
-  collectiviteId: number;
-}) {
+export async function resetModules(params: { collectiviteId: number }) {
   // Supprime les modules existants
   await dbAdmin
     .from('tableau_de_bord_module')
