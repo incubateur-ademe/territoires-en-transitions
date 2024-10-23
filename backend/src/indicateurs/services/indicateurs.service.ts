@@ -118,62 +118,6 @@ export default class IndicateursService {
   }
 
   /**
-   * Récupère les indicateurs prédéfinis et ceux disponibles pour une collectivité
-   * @param collectiviteId identifiant de la collectivité voulue, vide pour ne récupérer que les indicateurs prédéfinis
-   * @return les définitions des indicateurs
-   */
-  async getIndicateursDefinitions(
-    collectiviteId?: number
-  ): Promise<IndicateurDefinitionType[]> {
-    const conditions = [];
-    const conditionPredefini = and(
-      isNull(indicateurDefinitionTable.collectiviteId),
-      isNull(indicateurDefinitionTable.groupementId)
-    );
-    if (collectiviteId) {
-      conditions.push(
-        or(
-          conditionPredefini,
-          eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-          // TODO tester si ça marche comme ça
-        )
-      );
-    } else {
-      conditions.push(conditionPredefini);
-    }
-
-    return this.databaseService.db
-      .select(getTableColumns(indicateurDefinitionTable))
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        groupementTable,
-        eq(indicateurDefinitionTable.groupementId, groupementTable.id)
-      )
-      .leftJoin(
-        groupementCollectiviteTable,
-        eq(groupementTable.id, groupementCollectiviteTable.groupementId)
-      )
-      .where(and(...conditions));
-  }
-
-  /**
-   * Récupère les indicateurs predefinis
-   * @return une map d'indicateurs avec en clé l'identifiant référentiel
-   */
-  async getIndicateursPredefinisMap(): Promise<
-    Map<string, IndicateurDefinitionType>
-  > {
-    const result = await this.getIndicateursDefinitions();
-    const toReturn = new Map<string, IndicateurDefinitionType>();
-    for (let i = 0; i < result.length; i++) {
-      const indicateur = result[i];
-      toReturn.set(indicateur.identifiantReferentiel!, indicateur);
-    }
-    return toReturn;
-  }
-
-  /**
    * Récupère les valeurs d'indicateurs selon les options données
    * @param options
    */
