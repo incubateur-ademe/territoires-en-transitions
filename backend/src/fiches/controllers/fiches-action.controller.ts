@@ -7,11 +7,11 @@ import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synth
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
 import { PublicEndpoint } from 'backend/src/auth/decorators/public-endpoint.decorator';
-import {
-  upsertFicheActionRequestSchema,
-  UpsertFicheActionRequestType,
-} from '../models/upsert-fiche-action.request';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
+import {
+  updateFicheActionRequestSchema,
+  UpdateFicheActionRequestType,
+} from '../models/update-fiche-action.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -23,7 +23,7 @@ export class GetFichesActionFilterRequestClass extends createZodDto(
   getFichesActionFilterRequestSchema
 ) {}
 export class UpdateFicheActionRequestClass extends createZodDto(
-  upsertFicheActionRequestSchema
+  updateFicheActionRequestSchema
 ) {}
 
 @ApiTags('Fiches action')
@@ -52,7 +52,6 @@ export class FichesActionController {
     );
   }
 
-  @PublicEndpoint()
   @Get('')
   // TODO: type it for documentation
   @ApiOkResponse({
@@ -78,7 +77,7 @@ export class FichesActionController {
   })
   async updateFichesAction(
     @Param('id') id: number,
-    @Body() body: UpsertFicheActionRequestType,
+    @Body() body: UpdateFicheActionRequestType,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
     return await this.fichesActionUpdateService.updateFicheAction(

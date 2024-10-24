@@ -12,7 +12,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { NiveauAcces, SupabaseJwtPayload } from '../../auth/models/auth.models';
+import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CountSyntheseType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
@@ -30,7 +30,7 @@ import {
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { UpsertFicheActionRequestType } from '../models/upsert-fiche-action.request';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 
 @Injectable()
 export default class FichesActionSyntheseService {
@@ -302,34 +302,5 @@ export default class FichesActionSyntheseService {
     });
 
     return synthese;
-  }
-
-  async upsertFicheAction(
-    collectiviteId: number,
-    body: UpsertFicheActionRequestType,
-    tokenInfo: SupabaseJwtPayload
-  ) {
-    body.collectiviteId = collectiviteId;
-    const { axes, ...ficheAction } = body;
-    await this.databaseService.db.transaction(async (tx) => {
-      const createdFicheAction = await this.databaseService.db
-        .insert(ficheActionTable)
-        .values(ficheAction as CreateFicheActionType) // TO DO : remove as etc.
-        .onConflictDoUpdate({
-          target: [ficheActionTable.id],
-          set: {
-            titre: sql.raw(`excluded.${ficheActionTable.titre.name}`),
-          },
-        })
-        .returning();
-
-      await this.databaseService.db
-        .delete(ficheActionAxeTable)
-        .where(eq(ficheActionAxeTable.fiche_id, createdFicheAction[0].id));
-
-      if (axes) {
-        // boucle pour parcourir tous les axes, puis insert dans axeTable. Pas besoin de faire onConflictDoUpdate.
-      }
-    });
   }
 }
