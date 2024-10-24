@@ -3699,11 +3699,6 @@ packages:
       typescript:
         optional: true
 
-  '@storybook/preview-api@8.3.3':
-    resolution: {integrity: sha512-GP2QlaF3BBQGAyo248N7549YkTQjCentsc1hUvqPnFWU4xfjkejbnFk8yLaIw0VbYbL7jfd7npBtjZ+6AnphMQ==}
-    peerDependencies:
-      storybook: ^8.3.3
-
   '@storybook/preview-api@8.3.5':
     resolution: {integrity: sha512-VPqpudE8pmjTLvdNJoW/2//nqElDgUOmIn3QxbbCmdZTHDg5tFtxuqwdlNfArF0TxvTSBDIulXt/Q6K56TAfTg==}
     peerDependencies:
@@ -17278,10 +17273,6 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/preview-api@8.3.3(storybook@8.3.5)':
-    dependencies:
-      storybook: 8.3.5
-
   '@storybook/preview-api@8.3.5(storybook@8.3.5)':
     dependencies:
       storybook: 8.3.5
@@ -17365,7 +17356,7 @@ snapshots:
       '@storybook/core-common': 8.3.3(storybook@8.3.5)
       '@storybook/csf': 0.1.11
       '@storybook/csf-tools': 8.3.3(storybook@8.3.5)
-      '@storybook/preview-api': 8.3.3(storybook@8.3.5)
+      '@storybook/preview-api': 8.3.5(storybook@8.3.5)
       '@swc/core': 1.5.29(@swc/helpers@0.5.13)
       '@swc/jest': 0.2.36(@swc/core@1.5.29(@swc/helpers@0.5.13))
       expect-playwright: 0.8.0
