@@ -4,7 +4,7 @@ import { Button } from '@tet/ui';
 import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 type ExportPDFButtonType = {
   content: JSX.Element;

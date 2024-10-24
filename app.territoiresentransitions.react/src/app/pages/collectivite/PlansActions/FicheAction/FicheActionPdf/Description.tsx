@@ -6,7 +6,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
   const { thematiques, sousThematiques, description, ressources } = fiche;
 
   return (
-    <Card className="bg-primary-6 border-primary-6 mb-4">
+    <Card className="bg-primary-6 border-primary-6">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
       {(thematiques?.length || sousThematiques?.length) && (
         <p style={twToCss('mt-0 mb-4 text-xs font-bold text-info-2')}>
