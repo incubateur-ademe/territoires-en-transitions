@@ -10,9 +10,6 @@ type TableName = keyof Database['public']['Tables'];
 
 const yaladadaUUid = '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561';
 
-/**
- * TO DO: update or delete comments
- */
 const FIXTURE = {
   indicateur_action: [
     {
@@ -112,10 +109,6 @@ beforeAll(async () => {
   };
 });
 
-/***
- * TO DO: move from this file
- * Make confidentiel: true more expressive?
- */
 test('Confidentialité - Devrait pouvoir voir des résultats insérés en confidentiel', async () => {
   await supabase.from('indicateur_valeur').upsert([
     {
@@ -145,10 +138,6 @@ test('Confidentialité - Devrait pouvoir voir des résultats insérés en confid
   expect(data).toHaveLength(2);
 });
 
-/**
- * TO DO: put in a beforeAll in a specific describe confidentialité
- * Remove comments
- */
 test("Confidentialité - Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n'ai pas de droits", async () => {
   await supabase.from('indicateur_valeur').upsert([
     {
