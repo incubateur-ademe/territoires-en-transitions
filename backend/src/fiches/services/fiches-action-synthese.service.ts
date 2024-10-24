@@ -12,7 +12,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { NiveauAcces, SupabaseJwtPayload } from '../../auth/models/auth.models';
+import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CountSyntheseType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
@@ -23,12 +23,14 @@ import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import {
+  CreateFicheActionType,
   FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 
 @Injectable()
 export default class FichesActionSyntheseService {

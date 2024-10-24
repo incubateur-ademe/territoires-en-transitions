@@ -11,6 +11,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
   'Approvisionnement durable',
@@ -132,4 +133,14 @@ export const ficheActionTable = pgTable('fiche_action', {
   restreint: boolean('restreint').default(false),
 });
 export type FicheActionTableType = typeof ficheActionTable;
+
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
+export type UpdateFicheActionType = Partial<
+  Omit<
+    InferInsertModel<typeof ficheActionTable>,
+    'id' | 'createdAt' | 'modifiedAt' | 'modifiedBy'
+  >
+>;
+
+export const ficheActionSchema = createSelectSchema(ficheActionTable);
+export const createFicheActionSchema = createInsertSchema(ficheActionTable);
