@@ -9,7 +9,6 @@ import {
   recherchesLandingPath,
 } from 'app/paths';
 import { Redirector } from 'app/Redirector';
-import { ScrollToTopOnPageChange } from 'app/ScrollToTopOnPageChange';
 import { Toasters } from 'app/Toasters';
 import { VisitTracker } from 'app/VisitTracker';
 import { ScoreListenerProvider } from 'core-logic/hooks/useScoreListener';
@@ -30,7 +29,6 @@ export default function LegacyRouter() {
       <LegacyRouterSync />
       <ScoreListenerProvider>
         <E2E />
-        <ScrollToTopOnPageChange />
         <Toasters />
         <Redirector />
         <VisitTracker />
