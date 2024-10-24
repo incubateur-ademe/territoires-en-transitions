@@ -70,7 +70,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                   collectiviteId: collectivite_id,
                 })}
               >
-                Ajouter un plan d'action
+                Ajouter un plan d&apos;action
               </Link>
             </li>
           </>

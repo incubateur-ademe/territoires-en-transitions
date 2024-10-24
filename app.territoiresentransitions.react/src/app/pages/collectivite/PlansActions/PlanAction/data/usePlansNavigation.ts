@@ -1,22 +1,26 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from 'app/paths';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {SideNavLinks} from 'ui/shared/SideNav';
-import {generateTitle} from '../../FicheAction/data/utils';
-import {FlatAxe, PlanNode} from './types';
-import {childrenOfPlanNodes, flatAxesToPlanNodes, sortPlanNodes} from './utils';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { SideNavLinks } from '@tet/app/pages/collectivite/CollectivitePageLayout/SideNav';
+import { generateTitle } from '../../FicheAction/data/utils';
+import { FlatAxe, PlanNode } from './types';
+import {
+  childrenOfPlanNodes,
+  flatAxesToPlanNodes,
+  sortPlanNodes,
+} from './utils';
 
 export const usePlansNavigation = () => {
   const collectivite_id = useCollectiviteId();
 
   return useQuery(['plans_navigation', collectivite_id], async () => {
-    const {data} = await supabaseClient.rpc('navigation_plans', {
+    const { data } = await supabaseClient.rpc('navigation_plans', {
       collectivite_id: collectivite_id!,
     });
     const planNodes = data && flatAxesToPlanNodes(data as FlatAxe[]);
@@ -37,11 +41,11 @@ export const generatePlanActionNavigationLinks = (
 ) => {
   const plansLinks: SideNavLinks = [];
 
-  const plans = axes && sortPlanNodes(axes.filter(axe => axe.depth === 0));
+  const plans = axes && sortPlanNodes(axes.filter((axe) => axe.depth === 0));
 
   if (axes && plans) {
     plansLinks.push(
-      ...plans.map(plan => {
+      ...plans.map((plan) => {
         if (childrenOfPlanNodes(plan, axes).length > 0) {
           return {
             link: makeCollectivitePlanActionUrl({
@@ -49,7 +53,7 @@ export const generatePlanActionNavigationLinks = (
               planActionUid: plan.id.toString(),
             }),
             displayName: generateTitle(plan.nom),
-            enfants: childrenOfPlanNodes(plan, axes).map(axe => ({
+            enfants: childrenOfPlanNodes(plan, axes).map((axe) => ({
               link: makeCollectivitePlanActionAxeUrl({
                 collectiviteId,
                 planActionUid: plan.id.toString(),
